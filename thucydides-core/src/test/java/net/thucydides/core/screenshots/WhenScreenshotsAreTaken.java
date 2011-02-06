@@ -1,4 +1,4 @@
-package org.thucydides.core.screenshots;
+package net.thucydides.core.screenshots;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -11,6 +11,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+
+import net.thucydides.core.screenshots.Photographer;
 
 import org.junit.Before;
 import org.junit.Rule;

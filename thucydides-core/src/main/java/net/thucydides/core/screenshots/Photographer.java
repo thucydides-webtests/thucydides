@@ -1,4 +1,4 @@
-package org.thucydides.core.screenshots;
+package net.thucydides.core.screenshots;
 
 import java.io.File;
 import java.io.IOException;

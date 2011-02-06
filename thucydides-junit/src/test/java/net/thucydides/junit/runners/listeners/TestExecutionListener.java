@@ -1,7 +1,6 @@
 package net.thucydides.junit.runners.listeners;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.runner.Description;

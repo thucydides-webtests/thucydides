@@ -1,4 +1,4 @@
-package net.thucydides.junit.runners;
+package net.thucydides.core.webdriver;
 
 public enum SupportedWebDriver {
     FIREFOX, CHROME;

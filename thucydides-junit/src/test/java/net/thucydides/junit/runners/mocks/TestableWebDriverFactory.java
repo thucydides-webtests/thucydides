@@ -1,6 +1,6 @@
 package net.thucydides.junit.runners.mocks;
 
-import net.thucydides.junit.runners.WebDriverFactory;
+import net.thucydides.core.webdriver.WebDriverFactory;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;

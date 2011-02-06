@@ -2,12 +2,12 @@ package net.thucydides.junit.runners.mocks;
 
 import java.io.File;
 
+import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.runners.ThucydidesRunner;
-import net.thucydides.junit.runners.WebDriverFactory;
 
 import org.junit.runners.model.InitializationError;
 import org.openqa.selenium.TakesScreenshot;
-import org.thucydides.core.screenshots.Photographer;
 import static org.mockito.Mockito.mock;
 
 /**

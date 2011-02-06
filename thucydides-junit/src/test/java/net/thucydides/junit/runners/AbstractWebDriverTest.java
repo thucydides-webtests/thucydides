@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.runners.mocks.MockThucydidesRunner;
 import net.thucydides.junit.runners.samples.ManagedWebDriverSample;
 

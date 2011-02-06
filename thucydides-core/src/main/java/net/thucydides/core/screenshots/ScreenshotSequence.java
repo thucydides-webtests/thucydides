@@ -1,4 +1,4 @@
-package org.thucydides.core.screenshots;
+package net.thucydides.core.screenshots;
 
 import java.util.concurrent.atomic.AtomicLong;
 

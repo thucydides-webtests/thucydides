@@ -1,7 +1,7 @@
 package net.thucydides.junit.runners;
 
-import static net.thucydides.junit.runners.SupportedWebDriver.FIREFOX;
-import static net.thucydides.junit.runners.SupportedWebDriver.CHROME;
+import static net.thucydides.core.webdriver.SupportedWebDriver.CHROME;
+import static net.thucydides.core.webdriver.SupportedWebDriver.FIREFOX;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;

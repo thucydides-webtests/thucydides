@@ -2,6 +2,10 @@ package net.thucydides.junit.runners;
 
 import java.io.File;
 
+import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.webdriver.SupportedWebDriver;
+import net.thucydides.core.webdriver.UnsupportedDriverException;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
 
 import org.junit.runner.notification.Failure;
@@ -13,7 +17,6 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.thucydides.core.screenshots.Photographer;
 
 /**
  * A test runner for WebDriver-based web tests. This test runner initializes a

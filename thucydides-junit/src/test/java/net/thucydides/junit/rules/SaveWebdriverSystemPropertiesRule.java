@@ -2,9 +2,7 @@ package net.thucydides.junit.rules;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
-import net.thucydides.junit.runners.WebdriverSystemProperty;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;

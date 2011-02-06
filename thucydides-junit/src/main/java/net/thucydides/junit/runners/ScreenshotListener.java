@@ -2,9 +2,10 @@ package net.thucydides.junit.runners;
 
 import java.io.IOException;
 
+import net.thucydides.core.screenshots.Photographer;
+
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;
-import org.thucydides.core.screenshots.Photographer;
 
 /**
  * Takes and stores screenshots at strategic points during the tests.

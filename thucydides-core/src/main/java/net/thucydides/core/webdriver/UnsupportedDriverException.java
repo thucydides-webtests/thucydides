@@ -1,4 +1,4 @@
-package net.thucydides.junit.runners;
+package net.thucydides.core.webdriver;
 
 /**
  * Thrown when the test runner tries to use an unsupported WebDriver driver.

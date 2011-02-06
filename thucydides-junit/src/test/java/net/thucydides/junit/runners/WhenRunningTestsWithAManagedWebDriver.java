@@ -3,26 +3,21 @@ package net.thucydides.junit.runners;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.startsWith;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thucydides.junit.integration.samples.ManagedWebDriverSample;
-import net.thucydides.junit.integration.samples.ManagedWebDriverSampleWithAFailingTest;
+import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.runners.listeners.TestExecutionListener;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.junit.runners.samples.ManagedWebDriverSampleWithFailingTest;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
-import org.thucydides.core.screenshots.Photographer;
 
 /**
  * Managing the WebDriver instance during a test run The instance should be

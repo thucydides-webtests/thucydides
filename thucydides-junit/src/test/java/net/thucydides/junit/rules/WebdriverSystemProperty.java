@@ -1,4 +1,4 @@
-package net.thucydides.junit.runners;
+package net.thucydides.junit.rules;
 
 /**
  * Properties that can be passed to a web driver test to customize its behaviour.
