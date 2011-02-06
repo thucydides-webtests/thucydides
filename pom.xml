@@ -132,7 +132,7 @@
     </modules>
     <profiles>
         <profile>
-            <id>fast-build</id>
+            <id>fastbuild</id>
             <build>
                 <plugins>
                     <plugin>
