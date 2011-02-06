@@ -4,3 +4,5 @@
 .classpath
 .project
 .settings
+/thucydides-junit/target/
+/thucydides-core/target/

@@ -2,13 +2,11 @@ package net.thucydides.junit.internals;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.junit.annotations.Managed;
+
+import org.openqa.selenium.WebDriver;
 
 /**
  * The WebDriver driver is stored as an annotated field in the test classes.

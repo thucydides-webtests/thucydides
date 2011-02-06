@@ -3,7 +3,6 @@ package net.thucydides.junit.runners;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 
 public class WebDriverFactory {
 
@@ -17,8 +16,6 @@ public class WebDriverFactory {
                 return newFirefoxDriver();
             case CHROME:
                 return newChromeDriver();
-            case IEXPLORER:
-                return newInternetExplorerDriver();
             default:
                 throw new IllegalArgumentException(driverType + " support hasn't been implemented yet - this is a bug.");
         }
@@ -32,7 +29,4 @@ public class WebDriverFactory {
         return new FirefoxDriver();
     }
     
-    protected WebDriver newInternetExplorerDriver() {
-        return new InternetExplorerDriver();
-    }    
 }

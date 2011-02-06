@@ -31,12 +31,6 @@ public class WhenInstanciatingANewDriver {
          assertThat(driver.toString(), containsString("ChromeDriver"));
     }
 
-    @Test
-    public void should_support_creating_an_internet_explorer_driver() {
-         WebDriver driver = webDriverFactory.newInstanceOf(SupportedWebDriver.IEXPLORER);
-         assertThat(driver.toString(), containsString("InternetExplorerDriver"));
-    }
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     

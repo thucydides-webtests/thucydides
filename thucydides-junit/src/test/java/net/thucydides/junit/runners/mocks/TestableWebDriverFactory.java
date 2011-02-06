@@ -43,14 +43,7 @@ public class TestableWebDriverFactory extends WebDriverFactory {
         firefoxDriver = mock(FirefoxDriver.class);
         return firefoxDriver;
     }
-    
-    @Override
-    protected WebDriver newInternetExplorerDriver() {
-        internetExplorerCount++;
-        internetExplorerDriver = mock(InternetExplorerDriver.class);
-        return internetExplorerDriver;
-    }
-    
+        
     public int createdFirefoxDrivers() {
         return firefoxCount;
     }

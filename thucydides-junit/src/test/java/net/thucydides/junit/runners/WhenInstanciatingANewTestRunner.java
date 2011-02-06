@@ -7,8 +7,6 @@ import net.thucydides.junit.integration.samples.ManagedWebDriverSample;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.junit.runners.mocks.MockThucydidesRunner;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.matchers.JUnitMatchers;
@@ -52,19 +50,6 @@ public class WhenInstanciatingANewTestRunner {
         verify(mockBrowserFactory, times(1)).newInstanceOf(SupportedWebDriver.CHROME);
     }
     
-    @Test
-    public void we_can_override_the_default_driver_to_use_iexplored()
-            throws InitializationError {
-        
-        WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
-
-        System.setProperty("webdriver.driver", "iexplorer");
-        runner.newDriver();
-        
-        verify(mockBrowserFactory, times(1)).newInstanceOf(SupportedWebDriver.IEXPLORER);
-    }
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -81,6 +66,20 @@ public class WhenInstanciatingANewTestRunner {
         System.setProperty("webdriver.driver", "htmlunit");
         runner.newDriver();
     }
+    
+    @Test
+    public void iexplored_is_not_currently_a_supported_driver()
+            throws InitializationError {
+        
+        thrown.expect(UnsupportedDriverException.class);
+        thrown.expectMessage(JUnitMatchers.containsString("iexplorer is not a supported browser. Supported driver values are:"));
+        
+        WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
+        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+
+        System.setProperty("webdriver.driver", "iexplorer");
+        runner.newDriver();
+    }    
 
     private ThucydidesRunner getTestRunnerUsing(WebDriverFactory browserFactory) throws InitializationError {
         return new MockThucydidesRunner(ManagedWebDriverSample.class, browserFactory);   

@@ -1,8 +1,14 @@
 package net.thucydides.junit.integration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.startsWith;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,12 +23,13 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
+import org.thucydides.core.screenshots.Photographer;
 
 public class WhenAUserTestsASimpleWebPage {
     
     @Rule
     public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
-
+    
     @Test
     public void the_tests_should_be_executed_in_the_right_order()
             throws InitializationError {
@@ -48,7 +55,6 @@ public class WhenAUserTestsASimpleWebPage {
     public void the_test_case_should_ignore_following_tests_if_a_test_fails()
     throws InitializationError {
 
-        System.out.println("Creating runner");
         ThucydidesRunner runner = new ThucydidesRunner(ManagedWebDriverSampleWithAFailingTest.class);
 
         final RunNotifier notifier = new RunNotifier();
@@ -65,16 +71,6 @@ public class WhenAUserTestsASimpleWebPage {
         assertThat(testListener.getExecutedTests(), is(expectedTestOrder));
         assertThat(testListener.getFailedTests(), hasItem("the_user_performs_a_search_on_cats"));
         assertThat(testListener.getIgnoredTests(), hasItem("the_results_page_title_should_contain_the_word_Cats"));
-    }
-
-    @Test
-    public void one_browser_window_should_remain_open_after_each_test() {
-
-    }
-
-    @Test
-    public void all_browser_windows_should_be_closed_after_the_test_case() {
-
     }
 
 }

@@ -1,7 +1,7 @@
 package net.thucydides.junit.runners;
 
 public enum SupportedWebDriver {
-    FIREFOX, CHROME, IEXPLORER;
+    FIREFOX, CHROME;
 
     public static String listOfSupportedDrivers() {
         StringBuffer result = new StringBuffer();

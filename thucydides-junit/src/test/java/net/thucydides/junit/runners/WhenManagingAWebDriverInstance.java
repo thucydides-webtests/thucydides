@@ -1,7 +1,7 @@
 package net.thucydides.junit.runners;
 
 import static net.thucydides.junit.runners.SupportedWebDriver.FIREFOX;
-import static net.thucydides.junit.runners.SupportedWebDriver.IEXPLORER;
+import static net.thucydides.junit.runners.SupportedWebDriver.CHROME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -80,7 +80,7 @@ public class WhenManagingAWebDriverInstance extends AbstractWebDriverTest {
             assertThat(e.getMessage(), allOf(containsString("htmlunit is not a supported browser"),
                                              containsString("Supported driver values are: "),
                                              containsString(FIREFOX.toString()),
-                                             containsString(IEXPLORER.toString())
+                                             containsString(CHROME.toString())
                                              ));
         }
         
