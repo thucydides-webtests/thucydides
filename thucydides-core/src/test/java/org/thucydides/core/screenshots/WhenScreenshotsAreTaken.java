@@ -50,7 +50,7 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         
-        photographer.takeScreenshot();
+        photographer.takeScreenshot("screenshot");
         
         verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());        
     }
@@ -60,7 +60,7 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         
-        String screenshotFile = photographer.takeScreenshot();
+        String screenshotFile = photographer.takeScreenshot("screenshot");
         File savedScreenshot = new File(screenshotDirectory, screenshotFile);
         
         assertThat(savedScreenshot.isFile(), is(true));
@@ -71,7 +71,7 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         
-        String savedFileName = photographer.takeScreenshot();
+        String savedFileName = photographer.takeScreenshot("screenshot");
         
         File savedScreenshot = new File(screenshotDirectory, savedFileName);
         
@@ -84,8 +84,8 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         
-        String screenshotName1 = photographer.takeScreenshot();
-        String screenshotName2 = photographer.takeScreenshot();
+        String screenshotName1 = photographer.takeScreenshot("screenshot");
+        String screenshotName2 = photographer.takeScreenshot("screenshot");
         
         assertThat(screenshotName1, is(not((screenshotName2))));
     }
@@ -103,7 +103,7 @@ public class WhenScreenshotsAreTaken {
     public void by_default_screenshot_files_start_with_Screenshot() throws IOException {
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
 
-        String screenshotFile = photographer.takeScreenshot();
+        String screenshotFile = photographer.takeScreenshot("screenshot");
         
         assertThat(screenshotFile, startsWith("screenshot"));
     }

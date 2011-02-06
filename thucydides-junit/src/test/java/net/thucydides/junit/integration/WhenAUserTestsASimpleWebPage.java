@@ -3,12 +3,7 @@ package net.thucydides.junit.integration;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.startsWith;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,7 +18,6 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
-import org.thucydides.core.screenshots.Photographer;
 
 public class WhenAUserTestsASimpleWebPage {
     

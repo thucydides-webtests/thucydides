@@ -23,7 +23,6 @@ public class Photographer {
     final ScreenshotSequence screenshotSequence;
 
     final static ScreenshotSequence DEFAULT_SCREENSHOT_SEQUENCE = new ScreenshotSequence();
-    private static final String DEFAULT_PREFIX = "screenshot";
     
     public Photographer(TakesScreenshot driver, File targetDirectory) {
         this.driver = driver;
@@ -35,12 +34,8 @@ public class Photographer {
         return screenshotSequence.next();
     }
     
-    public String takeScreenshot() throws IOException {
-        return takeScreenshot(DEFAULT_PREFIX);
-    }
-
     private String nextScreenshotName(String prefix) {
-        long nextScreenshotNumber = screenshotSequence.next();
+        long nextScreenshotNumber = nextScreenshotNumber() ;
         return prefix + nextScreenshotNumber + ".png";
     }
 
