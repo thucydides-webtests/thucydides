@@ -27,7 +27,7 @@ public class WhenInterceptingScreenshots {
     
     @Test
     public void should_name_the_screenshots_after_each_test_based_on_the_test_name() throws Exception {
-        ScreenshotListener listener = new ScreenshotListener(photographer);
+        NarrationListener listener = new NarrationListener(photographer);
         
         when(description.getMethodName()).thenReturn("some_test_method_name");
         listener.testFinished(description);

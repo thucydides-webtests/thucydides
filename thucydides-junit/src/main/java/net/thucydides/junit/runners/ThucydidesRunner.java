@@ -47,7 +47,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     /**
      * Records screenshots for successful or failing tests.
      */
-    private ScreenshotListener screenshotListener;
+    private NarrationListener fieldReporter;
     
     /**
      * As soon as a test fails, all subsequent tests are ignored.
@@ -118,8 +118,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         noPreviousTestHasFailed();
         notifier.addListener(new FailureListener(this));
 
-        screenshotListener = new ScreenshotListener(getPhotographer());
-        notifier.addListener(screenshotListener);
+        fieldReporter = new NarrationListener(getPhotographer());
+        notifier.addListener(fieldReporter);
         
         super.run(notifier);
        
@@ -134,14 +134,14 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         aPreviousTestHasFailed = true;        
     }
 
-    private void notifyListenersOfTestFailure(ScreenshotListener screenshotListener) {
+    private void notifyListenersOfTestFailure(NarrationListener screenshotListener) {
         screenshotListener.aTestHasFailed();
     }
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
         if (aPreviousTestHasFailed) {
-            notifyListenersOfTestFailure(screenshotListener);
+            notifyListenersOfTestFailure(fieldReporter);
             notifier.fireTestIgnored(describeChild(method));
         } else {
             super.runChild(method, notifier);

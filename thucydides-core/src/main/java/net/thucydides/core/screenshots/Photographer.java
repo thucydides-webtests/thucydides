@@ -39,12 +39,12 @@ public class Photographer {
         return prefix + nextScreenshotNumber + ".png";
     }
 
-    public String takeScreenshot(String prefix) throws IOException {
+    public File takeScreenshot(String prefix) throws IOException {
         File screenshot = driver.getScreenshotAs(OutputType.FILE);
         File savedScreenshot = new File(targetDirectory, nextScreenshotName(prefix));
         FileUtils.copyFile(screenshot, savedScreenshot);
         
-        return savedScreenshot.getName();
+        return savedScreenshot;
     }
 
 }

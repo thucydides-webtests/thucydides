@@ -62,7 +62,7 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         
-        String screenshotFile = photographer.takeScreenshot("screenshot");
+        String screenshotFile = photographer.takeScreenshot("screenshot").getName();
         File savedScreenshot = new File(screenshotDirectory, screenshotFile);
         
         assertThat(savedScreenshot.isFile(), is(true));
@@ -73,7 +73,7 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         
-        String savedFileName = photographer.takeScreenshot("screenshot");
+        String savedFileName = photographer.takeScreenshot("screenshot").getName();
         
         File savedScreenshot = new File(screenshotDirectory, savedFileName);
         
@@ -86,8 +86,8 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         
-        String screenshotName1 = photographer.takeScreenshot("screenshot");
-        String screenshotName2 = photographer.takeScreenshot("screenshot");
+        String screenshotName1 = photographer.takeScreenshot("screenshot").getName();
+        String screenshotName2 = photographer.takeScreenshot("screenshot").getName();
         
         assertThat(screenshotName1, is(not((screenshotName2))));
     }
@@ -96,7 +96,7 @@ public class WhenScreenshotsAreTaken {
     public void calling_api_can_provide_a_meaningful_prefix_for_the_screenshot() throws IOException {
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
 
-        String screenshotFile = photographer.takeScreenshot("test1_finished");
+        String screenshotFile = photographer.takeScreenshot("test1_finished").getName();
         
         assertThat(screenshotFile, startsWith("test1_finished"));
     }
@@ -105,7 +105,7 @@ public class WhenScreenshotsAreTaken {
     public void by_default_screenshot_files_start_with_Screenshot() throws IOException {
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
 
-        String screenshotFile = photographer.takeScreenshot("screenshot");
+        String screenshotFile = photographer.takeScreenshot("screenshot").getName();
         
         assertThat(screenshotFile, startsWith("screenshot"));
     }

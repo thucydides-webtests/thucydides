@@ -5,6 +5,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+/**
+ * Provides an instance of a supported WebDriver.
+ * When you instanciate a Webdriver instance for Firefox or Chrome, it opens a new browser.
+ * We
+ * 
+ * @author johnsmart
+ *
+ */
 public class WebDriverFactory {
 
     public WebDriver newInstanceOf(SupportedWebDriver driverType)  {
