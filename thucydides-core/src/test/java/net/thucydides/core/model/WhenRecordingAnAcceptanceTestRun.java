@@ -3,21 +3,23 @@ package net.thucydides.core.model;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
-
+import static net.thucydides.core.model.TestResult.*;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 public class WhenRecordingAnAcceptanceTestRun {
 
-    @Test
-    public void the_acceptance_test_run_should_have_a_title() {
-        AcceptanceTestRun testRun = new AcceptanceTestRun("Searching on Google");
-        assertThat(testRun.getTitle(), is("Searching on Google"));
+    AcceptanceTestRun testRun;
+    
+    @Before
+    public void prepareAcceptanceTestRun() {
+        testRun = new AcceptanceTestRun("Searching on Google");
     }
-
+    
     @Test
     public void the_title_can_only_be_written_once() {
         AcceptanceTestRun testRun = new AcceptanceTestRun();
@@ -27,7 +29,7 @@ public class WhenRecordingAnAcceptanceTestRun {
             fail("We shouldn't be able to change the title once set");
         } catch (IllegalStateException e) {
             assertThat(e.getMessage(),
-                    is("Test runs are immutable - the title can only be defined once."));
+                    is("The title can only be defined once."));
         }
         assertThat(testRun.getTitle(), is("the proper title"));
 
@@ -36,7 +38,6 @@ public class WhenRecordingAnAcceptanceTestRun {
     @Test
     public void the_acceptance_test_run_should_record_test_steps() {
 
-        AcceptanceTestRun testRun = new AcceptanceTestRun("Searching on Google");
         assertThat(testRun.getTestSteps().size(), is(0));
 
         testRun.recordStep(successfulTestStepCalled("The user opens the Google search page"));
@@ -50,16 +51,13 @@ public class WhenRecordingAnAcceptanceTestRun {
     
     @Test
     public void the_recorded_test_steps_must_have_a_description_and_a_result() {
-        AcceptanceTestRun testRun = new AcceptanceTestRun("Searching on Google");
-        
         exception.expect(NullPointerException.class);
         exception.expectMessage("The test step result was not defined");
         testRun.recordStep(new TestStep("The user opens the Google search page"));
     }
     
+    @Test
     public void the_returned_test_steps_list_should_be_read_only() {
-        AcceptanceTestRun testRun = new AcceptanceTestRun("Searching on Google");
-
         testRun.recordStep(successfulTestStepCalled("The user opens the Google search page"));
 
         List<TestStep> testSteps = testRun.getTestSteps();
@@ -73,10 +71,128 @@ public class WhenRecordingAnAcceptanceTestRun {
         }
     }
     
-    private TestStep successfulTestStepCalled(String description) {
-        TestStep step = new TestStep(description);
-        step.setResult(TestResult.SUCCESS);
-        return step;
+    @Test
+    public void the_acceptance_test_case_is_successful_if_all_the_tests_are_successful() {
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+
+        assertThat(testRun.getResult(), is(SUCCESS));
+       
+    }
+ 
+    @Test
+    public void the_acceptance_test_case_is_a_failure_if_one_test_has_failed() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(failingTestStepCalled("Step 2"));
+        testRun.recordStep(skippedTestStepCalled("Step 3"));
+
+        assertThat(testRun.getResult(), is(FAILURE));
+    }
+    
+    @Test
+    public void the_acceptance_test_case_is_failing_if_multiple_tests_have_failed() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(failingTestStepCalled("Step 2"));
+        testRun.recordStep(failingTestStepCalled("Step 3"));
+        testRun.recordStep(successfulTestStepCalled("Step 4"));
+
+        assertThat(testRun.getResult(), is(FAILURE));
     }
 
+    @Test
+    public void the_acceptance_test_case_is_pending_if_at_least_one_test_is_pending_and_none_have_failed() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(pendingTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+        testRun.recordStep(successfulTestStepCalled("Step 4"));
+
+        assertThat(testRun.getResult(), is(PENDING));
+    }
+    
+    @Test
+    public void the_acceptance_test_case_is_failing_if_there_is_a_failure_even_with_pending_test_cases() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(pendingTestStepCalled("Step 2"));
+        testRun.recordStep(failingTestStepCalled("Step 3"));
+        testRun.recordStep(successfulTestStepCalled("Step 4"));
+
+        assertThat(testRun.getResult(), is(FAILURE));
+    }
+
+    @Test
+    public void the_acceptance_test_case_is_ignored_if_all_test_cases_are_ignored() {
+
+        testRun.recordStep(ignoredTestStepCalled("Step 1"));
+        testRun.recordStep(ignoredTestStepCalled("Step 2"));
+        testRun.recordStep(ignoredTestStepCalled("Step 3"));
+        testRun.recordStep(ignoredTestStepCalled("Step 4"));
+
+        assertThat(testRun.getResult(), is(IGNORED));
+    }
+
+    @Test
+    public void if_one_test_is_ignored_among_others_it_will_not_affect_the_outcome_for_failing_tests() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(pendingTestStepCalled("Step 2"));
+        testRun.recordStep(failingTestStepCalled("Step 3"));
+        testRun.recordStep(ignoredTestStepCalled("Step 4"));
+        testRun.recordStep(successfulTestStepCalled("Step 5"));
+
+        assertThat(testRun.getResult(), is(FAILURE));
+    }
+
+    @Test
+    public void if_one_test_is_ignored_among_others_it_will_not_affect_the_outcome_for_pending_tests() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(pendingTestStepCalled("Step 2"));
+        testRun.recordStep(failingTestStepCalled("Step 3"));
+        testRun.recordStep(ignoredTestStepCalled("Step 4"));
+        testRun.recordStep(successfulTestStepCalled("Step 5"));
+        testRun.recordStep(pendingTestStepCalled("Step 6"));
+
+        assertThat(testRun.getResult(), is(FAILURE));
+    }
+
+    @Test
+    public void if_one_test_is_ignored_among_others_it_will_not_affect_the_outcome_for_successful_tests() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+        testRun.recordStep(ignoredTestStepCalled("Step 4"));
+
+        assertThat(testRun.getResult(), is(SUCCESS));
+    }
+
+    private TestStep successfulTestStepCalled(String description) {
+        return createNewTestStep(description, SUCCESS);
+    }
+
+    private TestStep failingTestStepCalled(String description) {
+        return createNewTestStep(description, FAILURE);
+    }
+    private TestStep skippedTestStepCalled(String description) {
+        return createNewTestStep(description, SKIPPED);
+    }
+
+    private TestStep ignoredTestStepCalled(String description) {
+        return createNewTestStep(description, IGNORED);
+    }
+    private TestStep pendingTestStepCalled(String description) {
+        return createNewTestStep(description, PENDING);
+    }
+    
+    private TestStep createNewTestStep(String description, TestResult result) {
+        TestStep step = new TestStep(description);
+        step.setResult(result);
+        return step;
+    }
+    
 }

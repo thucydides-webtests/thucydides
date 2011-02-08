@@ -8,6 +8,8 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
+import com.google.common.base.Preconditions;
+
 /**
  * A test listener that records the names of the executed tests.
  * Good for testing what tests where executed and in what order.
@@ -30,6 +32,7 @@ public class TestExecutionListener extends RunListener {
     @Override
     public void testFailure(Failure failure) throws Exception {
         failedTests.add(failure.getDescription().getMethodName());
+        
         super.testFailure(failure);
     }
     
@@ -37,6 +40,11 @@ public class TestExecutionListener extends RunListener {
     public void testIgnored(Description description) throws Exception {
         ignoredTests.add(description.getMethodName());
         super.testIgnored(description);
+    }
+    
+    @Override
+    public void testFinished(Description description) throws Exception {
+        super.testFinished(description);
     }
     
     @Override

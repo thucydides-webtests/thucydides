@@ -24,7 +24,7 @@ public class ManagedWebDriverSampleWithFailingTest {
     }
     
     @Test
-    public void then_gets_here_step_3() {
+    public void but_fail_here_in_step_3() {
         assertThat(true, is(false));
     }
     

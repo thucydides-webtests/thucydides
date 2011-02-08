@@ -32,21 +32,44 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <source>1.5</source>
+                    <aggregate>true</aggregate>
+                    <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+                    <docletArtifact>
+                        <groupId>org.umlgraph</groupId>
+                        <artifactId>doclet</artifactId>
+                        <version>5.1</version>
+                    </docletArtifact>
+                    <additionalparam>-views -all -inferrel -inferdep -inferdepinpackage -hide java.* -collpackages java.util.* -qualify</additionalparam>
+                    <!-- <additionalparam> -views -all -inferrel -inferdep 
+                        -quiet -hide java.* -collpackages java.util.* -qualify -postfixpackage -nodefontsize 
+                        9 -nodefontpackagesize 7 -outputencoding utf8 </additionalparam> -->
+                    <useStandardDocletOptions>true</useStandardDocletOptions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.0-beta-3</version>
                 <configuration>
                     <reportPlugins>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin
-                            </artifactId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
                             <version>2.7</version>
                         </plugin>
                         <plugin>
-                            <artifactId>maven-project-info-reports-plugin
-                            </artifactId>
+                            <artifactId>maven-project-info-reports-plugin</artifactId>
                             <version>2.2</version>
                         </plugin>
+
+                        <plug-in>
+                            <artifactid>maven-javadoc-plugin</artifactid>
+                            <version>2.7</version>
+                        </plug-in>
                     </reportPlugins>
                 </configuration>
             </plugin>
@@ -128,10 +151,8 @@
                                 <configuration>
                                     <skip>false</skip>
                                     <includes>
-                                        <include>**/When*.java</include>
-                                        <include>**/*Test.java</include>
-                                        <include>**/integration/*.java
-                                        </include>
+                                        <include>**/integration/When*.java</include>
+                                        <include>**/integration/*Test.java</include>
                                     </includes>
                                     <excludes>
                                         <exclude>**/Abstract*.java

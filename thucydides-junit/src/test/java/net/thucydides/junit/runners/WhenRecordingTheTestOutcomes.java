@@ -1,40 +1,44 @@
 package net.thucydides.junit.runners;
 
-import static org.mockito.Matchers.startsWith;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import net.thucydides.core.screenshots.Photographer;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
+import org.junit.runner.Result;
 import org.mockito.Mock;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 
-public class WhenInterceptingScreenshots {
+public class WhenRecordingTheTestOutcomes {
 
     @Mock
     Photographer photographer;
 
     @Mock
     Description description;
+
+    @Mock
+    Result result;
     
     @Before
     public void setupMocks() {
         MockitoAnnotations.initMocks(this);
+        
+        when(description.getClassName()).thenReturn("ATestClassName");
+        when(description.getMethodName()).thenReturn("when_I_run_a_test");
     }
     
+
     @Test
-    public void should_name_the_screenshots_after_each_test_based_on_the_test_name() throws Exception {
+    public void the_narration_listener_builds_a_model_from_the_junit_test_execution() throws Exception {
         NarrationListener listener = new NarrationListener(photographer);
         
-        when(description.getMethodName()).thenReturn("some_test_method_name");
-
+        listener.testRunStarted(description);
         listener.testStarted(description);
         listener.testFinished(description);
+        listener.testRunFinished(result);
         
-        verify(photographer).takeScreenshot(startsWith("some_test_method_name"));
     }
-    
 }
+

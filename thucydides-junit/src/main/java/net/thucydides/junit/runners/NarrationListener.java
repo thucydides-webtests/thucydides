@@ -1,18 +1,20 @@
 package net.thucydides.junit.runners;
 
+import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.IGNORED;
+import static net.thucydides.core.model.TestResult.SKIPPED;
+import static net.thucydides.core.model.TestResult.SUCCESS;
+
 import java.io.File;
 import java.io.IOException;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
-import static net.thucydides.core.model.TestResult.*;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.Photographer;
 
 import org.junit.runner.Description;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
 
 /**
  * Observes the test run and stores test run details for later reporting.
@@ -22,21 +24,23 @@ import org.junit.runner.notification.RunListener;
  * @author johnsmart
  *
  */
-class NarrationListener extends RunListener {
+class NarrationListener extends StickyFailureListener {
 
     private final Photographer photographer;
     private final AcceptanceTestRun acceptanceTestRun;
     
-    private boolean aPreviousTestHasFailed = false;
     private TestStep currentTestStep;
+    
     
     public NarrationListener(Photographer photographer) {
         this.photographer = photographer;
         acceptanceTestRun = new AcceptanceTestRun();
     }
     
-    protected void aTestHasFailed() {
-        aPreviousTestHasFailed = true;
+    private void getCurrentTestStepFrom(Description description) {
+        if (currentTestStep == null) {
+            currentTestStep = new TestStep(fromTestName(description.getMethodName()));
+        }
     }
     
     @Override
@@ -50,7 +54,7 @@ class NarrationListener extends RunListener {
      */
     @Override
     public void testStarted(Description description) throws Exception {
-        currentTestStep = new TestStep(fromTestName(description.getMethodName()));
+        getCurrentTestStepFrom(description);
         super.testStarted(description);
     }
     /**
@@ -58,6 +62,7 @@ class NarrationListener extends RunListener {
      */
     @Override
     public void testIgnored(Description description) throws Exception {
+        getCurrentTestStepFrom(description);
         markCurrentTestAs(IGNORED);
         super.testIgnored(description);
     }    
@@ -71,6 +76,9 @@ class NarrationListener extends RunListener {
     @Override
     public void testFinished(Description description) throws Exception {
         super.testFinished(description);
+
+        updatePreviousTestFailures();
+        
         if (noPreviousTestHasFailed()) {
             File screenshot = takeScreenshotAtEndOfTestFor(aTestCalled(description));
             currentTestStep.setScreenshot(screenshot);
@@ -80,12 +88,16 @@ class NarrationListener extends RunListener {
         currentTestStep = null;
     }
     
+    private boolean noPreviousTestHasFailed() {
+        return !aPreviousTestHasFailed();
+    }
+
     private void updateTestResultIfRequired() {
         if (currentTestResultIsKnown()) {
             return;
         }
         
-        if (aPreviousTestHasFailed) {
+        if (aPreviousTestHasFailed()) {
             markCurrentTestAs(SKIPPED);
         } else {
             markCurrentTestAs(SUCCESS);
@@ -96,18 +108,8 @@ class NarrationListener extends RunListener {
         return currentTestStep.getResult() != null;
     }
 
-    private void markCurrentTestAs(TestResult result) {       
+    private void markCurrentTestAs(TestResult result) {      
         currentTestStep.setResult(result);
-    }
-
-    @Override
-    public void testRunFinished(Result result) throws Exception {
-        //acceptanceTestRun.calculateOverallResult()
-        super.testRunFinished(result);
-    }
-    
-    private boolean noPreviousTestHasFailed() {
-        return !aPreviousTestHasFailed;
     }
 
     protected String aTestCalled(Description description) {

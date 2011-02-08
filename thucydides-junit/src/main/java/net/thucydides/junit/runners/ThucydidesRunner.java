@@ -8,8 +8,7 @@ import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
 
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
+import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -23,6 +22,9 @@ import org.openqa.selenium.WebDriver;
  * WebDriver instance before running the tests in their order of appearance. At
  * the end of the tests, it closes and quits the WebDriver instance.
  * 
+ * @depend - <listener> - NarrationListener
+ * @depend - <listener> - FailureListener
+ *
  * @author johnsmart
  * 
  */
@@ -45,15 +47,16 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private File outputDirectory;
 
     /**
+     * Keeps track of whether any tests have failed so far.
+     */
+    
+    private FailureListener failureListener;
+    
+    /**
      * Records screenshots for successful or failing tests.
      */
     private NarrationListener fieldReporter;
     
-    /**
-     * As soon as a test fails, all subsequent tests are ignored.
-     */
-    private boolean aPreviousTestHasFailed = false;
-
     /**
      * Takes cares of screenshots.
      * The member variable makes for more convenient testing.
@@ -115,10 +118,11 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     @Override
     public void run(RunNotifier notifier) {
         initializeDriver();
-        noPreviousTestHasFailed();
-        notifier.addListener(new FailureListener(this));
-
+        
+        failureListener = new FailureListener();
         fieldReporter = new NarrationListener(getPhotographer());
+
+        notifier.addListener(failureListener);
         notifier.addListener(fieldReporter);
         
         super.run(notifier);
@@ -126,22 +130,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         closeDriver();
     }
 
-    private void noPreviousTestHasFailed() {
-        aPreviousTestHasFailed = false;
+    @Override
+    public void sort(Sorter sorter) {
+        super.sort(sorter);
     }
 
-    protected void aTestHasFailed() {
-        aPreviousTestHasFailed = true;        
-    }
-
-    private void notifyListenersOfTestFailure(NarrationListener screenshotListener) {
-        screenshotListener.aTestHasFailed();
-    }
-
+    
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        if (aPreviousTestHasFailed) {
-            notifyListenersOfTestFailure(fieldReporter);
+        if (failureListener.aPreviousTestHasFailed()) {
             notifier.fireTestIgnored(describeChild(method));
         } else {
             super.runChild(method, notifier);
@@ -234,23 +231,4 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             webdriver.get().quit();
         }
     }
-
-    /**
-     * Keeps track of failing tests, so that subsequent ones can be ignored.
-     * @author johnsmart
-     *
-     */
-    private class FailureListener extends RunListener {
-
-        private final ThucydidesRunner thucydidesRunner;
-        
-        public FailureListener(ThucydidesRunner thucydidesRunner) {
-            this.thucydidesRunner = thucydidesRunner;
-        }
-
-        public void testFailure(Failure failure) throws Exception {
-            thucydidesRunner.aTestHasFailed();
-        }
-    }
-    
 }
