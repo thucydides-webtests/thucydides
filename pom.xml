@@ -43,6 +43,15 @@
                             <version>2.2</version>
                         </plugin>
                         <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-pmd-plugin</artifactId>
+                            <version>2.5</version>
+                            <configuration>
+                                <sourceEncoding>utf-8</sourceEncoding>
+                                <targetJdk>1.5</targetJdk>
+                            </configuration>
+                        </plugin>
+                        <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>cobertura-maven-plugin</artifactId>
                             <configuration>
@@ -240,6 +249,7 @@
                                     <excludes>
                                         <exclude>**/Abstract*.java</exclude>
                                         <exclude>**/samples/*.java</exclude>
+                                        <exclude>**/integration/*.java</exclude>
                                     </excludes>
                                 </configuration>
                             </execution>
