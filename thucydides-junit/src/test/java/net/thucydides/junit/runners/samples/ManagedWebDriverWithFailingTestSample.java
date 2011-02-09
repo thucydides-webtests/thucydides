@@ -10,7 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @RunWith(ThucydidesRunner.class)
-public class ManagedWebDriverSampleWithFailingTest {
+public class ManagedWebDriverWithFailingTestSample {
     
     @Managed
     public WebDriver webdriver;

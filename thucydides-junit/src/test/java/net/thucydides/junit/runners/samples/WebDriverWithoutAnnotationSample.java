@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-public class WebDriverSampleWithoutAnnotation {
+public class WebDriverWithoutAnnotationSample {
     
     public WebDriver webdriver;
     

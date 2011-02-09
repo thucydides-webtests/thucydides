@@ -13,7 +13,7 @@ import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.runners.samples.WebDriverSampleWithoutAnnotation;
+import net.thucydides.junit.runners.samples.WebDriverWithoutAnnotationSample;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -92,7 +92,7 @@ public class WhenManagingAWebDriverInstance extends AbstractWebDriverTest {
     public void when_no_annotated_field_is_found_an_exception_is_thrown() throws InitializationError {
 
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(WebDriverSampleWithoutAnnotation.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(WebDriverWithoutAnnotationSample.class, mockBrowserFactory);
         
         runner.run(new RunNotifier());
     }    

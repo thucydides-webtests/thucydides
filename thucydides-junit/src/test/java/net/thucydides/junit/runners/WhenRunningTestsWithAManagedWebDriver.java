@@ -15,7 +15,7 @@ import java.util.List;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.runners.listeners.TestExecutionListener;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.runners.samples.ManagedWebDriverSampleWithFailingTest;
+import net.thucydides.junit.runners.samples.ManagedWebDriverWithFailingTestSample;
 
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
@@ -73,7 +73,7 @@ public class WhenRunningTestsWithAManagedWebDriver extends AbstractWebDriverTest
             IOException {
 
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(ManagedWebDriverSampleWithFailingTest.class,
+        ThucydidesRunner runner = getTestRunnerUsing(ManagedWebDriverWithFailingTestSample.class,
                 mockBrowserFactory);
 
         final Photographer mockPhotographer = runner.getPhotographer();
@@ -91,7 +91,7 @@ public class WhenRunningTestsWithAManagedWebDriver extends AbstractWebDriverTest
             IOException {
 
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(ManagedWebDriverSampleWithFailingTest.class,
+        ThucydidesRunner runner = getTestRunnerUsing(ManagedWebDriverWithFailingTestSample.class,
                 mockBrowserFactory);
 
         final RunNotifier notifier = new RunNotifier();
