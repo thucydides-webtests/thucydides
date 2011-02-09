@@ -1,4 +1,4 @@
-package net.thucydides.junit.runners;
+    package net.thucydides.junit.runners;
 
 import java.io.File;
 
@@ -79,6 +79,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private void setupThePhotographer() {
+        // TODO: The output directory should be defined by an external parameter
+        // TODO: Report an error if the output directory could not be made
         outputDirectory = new File(DEFAULT_OUTPUT_DIRECTORY);
         outputDirectory.mkdirs();
         photographer = getPhotographerFor((TakesScreenshot) getDriver(), outputDirectory);

@@ -16,7 +16,7 @@ import org.openqa.selenium.WebDriver;
  *
  */
 @RunWith(ThucydidesRunner.class)
-public class ManagedWebDriverSampleWithAFailingTest {
+public class ManagedWebDriverWithAFailingTestSample {
 
     @Managed
     public WebDriver driver;

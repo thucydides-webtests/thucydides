@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.thucydides.junit.integration.samples.ManagedWebDriverSample;
-import net.thucydides.junit.integration.samples.ManagedWebDriverSampleWithAFailingTest;
+import net.thucydides.junit.integration.samples.ManagedWebDriverWithAFailingTestSample;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.junit.runners.listeners.TestExecutionListener;
@@ -49,7 +49,7 @@ public class WhenAUserTestsASimpleWebPage {
     public void the_test_case_should_ignore_following_tests_if_a_test_fails()
     throws InitializationError {
 
-        ThucydidesRunner runner = new ThucydidesRunner(ManagedWebDriverSampleWithAFailingTest.class);
+        ThucydidesRunner runner = new ThucydidesRunner(ManagedWebDriverWithAFailingTestSample.class);
 
         final RunNotifier notifier = new RunNotifier();
 
