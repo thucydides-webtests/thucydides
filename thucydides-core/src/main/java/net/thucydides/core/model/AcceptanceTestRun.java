@@ -1,6 +1,7 @@
 package net.thucydides.core.model;
 
 import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.*;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -129,5 +130,25 @@ public class AcceptanceTestRun {
 
     private List<TestResult> getCurrentTestResults() {
         return convert(testSteps, new ExtractTestResultsConverter());
+    }
+
+    public Integer getSuccessCount() {
+        return select(testSteps, having(on(TestStep.class).isSuccessful())).size();
+    }
+
+    public Integer getFailureCount() {
+        return select(testSteps, having(on(TestStep.class).isFailure())).size();
+    }
+
+    public Integer getIgnoredCount() {
+        return select(testSteps, having(on(TestStep.class).isIgnored())).size();
+    }
+
+    public Integer getSkippedCount() {
+        return select(testSteps, having(on(TestStep.class).isSkipped())).size();
+    }
+
+    public Integer getPendingCount() {
+        return select(testSteps, having(on(TestStep.class).isPending())).size();
     }
 }

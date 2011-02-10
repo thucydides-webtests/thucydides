@@ -170,6 +170,89 @@ public class WhenRecordingAnAcceptanceTestRun {
 
         assertThat(testRun.getResult(), is(SUCCESS));
     }
+    
+    @Test
+    public void the_model_should_provide_the_number_of_successful_test_steps() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+
+        assertThat(testRun.getSuccessCount(), is(3));
+    }
+
+    @Test
+    public void the_model_should_provide_the_number_of_successful_test_steps_in_presence_of_other_outcomes() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(ignoredTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 4"));
+        testRun.recordStep(skippedTestStepCalled("Step 5"));
+
+        assertThat(testRun.getSuccessCount(), is(2));
+    }
+  
+    @Test
+    public void the_model_should_provide_the_number_of_failed_test_steps() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(ignoredTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 4"));
+        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.recordStep(skippedTestStepCalled("Step 6"));
+
+        assertThat(testRun.getFailureCount(), is(2));
+    }
+
+    @Test
+    public void the_model_should_provide_the_number_of_ignored_test_steps() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(ignoredTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 4"));
+        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.recordStep(skippedTestStepCalled("Step 6"));
+        testRun.recordStep(skippedTestStepCalled("Step 7"));
+        testRun.recordStep(skippedTestStepCalled("Step 8"));
+        testRun.recordStep(skippedTestStepCalled("Step 9"));
+
+        assertThat(testRun.getIgnoredCount(), is(1));
+    }
+
+    @Test
+    public void the_model_should_provide_the_number_of_skipped_test_steps() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(ignoredTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 4"));
+        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.recordStep(skippedTestStepCalled("Step 6"));
+        testRun.recordStep(skippedTestStepCalled("Step 7"));
+        testRun.recordStep(skippedTestStepCalled("Step 8"));
+        testRun.recordStep(skippedTestStepCalled("Step 9"));
+
+        assertThat(testRun.getSkippedCount(), is(4));
+    }
+
+    @Test
+    public void the_model_should_provide_the_number_of_pending_test_steps() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(ignoredTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 4"));
+        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.recordStep(skippedTestStepCalled("Step 6"));
+        testRun.recordStep(pendingTestStepCalled("Step 7"));
+        testRun.recordStep(pendingTestStepCalled("Step 8"));
+        testRun.recordStep(pendingTestStepCalled("Step 9"));
+
+        assertThat(testRun.getPendingCount(), is(3));
+    }
 
     private TestStep successfulTestStepCalled(String description) {
         return createNewTestStep(description, SUCCESS);
@@ -194,5 +277,6 @@ public class WhenRecordingAnAcceptanceTestRun {
         step.setResult(result);
         return step;
     }
+    
     
 }

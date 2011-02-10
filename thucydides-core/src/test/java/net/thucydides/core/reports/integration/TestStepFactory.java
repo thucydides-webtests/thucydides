@@ -1,4 +1,4 @@
-package net.thucydides.core.reports;
+package net.thucydides.core.reports.integration;
 
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;

@@ -21,6 +21,12 @@ public class AcceptanceTestRunConverter implements Converter {
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
         AcceptanceTestRun testRun = (AcceptanceTestRun) value;
         writer.addAttribute("title", testRun.getTitle());
+        writer.addAttribute("steps", Integer.toString(testRun.getTestSteps().size()));
+        writer.addAttribute("successful", Integer.toString(testRun.getSuccessCount()));
+        writer.addAttribute("failures", Integer.toString(testRun.getFailureCount()));
+        writer.addAttribute("skipped", Integer.toString(testRun.getSkippedCount()));
+        writer.addAttribute("ignored", Integer.toString(testRun.getIgnoredCount()));
+        writer.addAttribute("pending", Integer.toString(testRun.getPendingCount()));
         writer.addAttribute("result", testRun.getResult().toString());
 
         List<TestStep> steps = testRun.getTestSteps();

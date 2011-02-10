@@ -32,11 +32,44 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin
+                            </artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <source>1.5</source>
+                    <aggregate>true</aggregate>
+                    <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+                    <docletArtifact>
+                        <groupId>org.umlgraph</groupId>
+                        <artifactId>doclet</artifactId>
+                        <version>5.1</version>
+                    </docletArtifact>
+                    <additionalparam>-views -all -inferrel
+                        -inferdep
+                        -inferdepinpackage -hide
+                        java.* -collpackages
+                        java.util.*
+                        -qualify</additionalparam>
+                    <useStandardDocletOptions>true</useStandardDocletOptions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <targetJdk>1.5</targetJdk>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <configuration>
+                    <formats>
+                        <format>html</format>
+                        <format>xml</format>
+                    </formats>
                 </configuration>
             </plugin>
             <plugin>
@@ -50,15 +83,6 @@
                             <artifactId>maven-project-info-reports-plugin
                             </artifactId>
                             <version>2.2</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-pmd-plugin</artifactId>
-                            <version>2.5</version>
-                            <configuration>
-                                <sourceEncoding>utf-8</sourceEncoding>
-                                <targetJdk>1.5</targetJdk>
-                            </configuration>
                         </plugin>
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
@@ -258,7 +282,6 @@
                                     <excludes>
                                         <exclude>**/Abstract*.java</exclude>
                                         <exclude>**/samples/*.java</exclude>
-                                        <exclude>**/integration/*.java</exclude>
                                     </excludes>
                                 </configuration>
                             </execution>

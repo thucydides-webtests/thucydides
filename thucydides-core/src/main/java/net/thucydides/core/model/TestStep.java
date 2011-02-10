@@ -3,6 +3,7 @@ package net.thucydides.core.model;
 import java.io.File;
 
 import com.google.common.base.Preconditions;
+import static net.thucydides.core.model.TestResult.*;
 
 /**
  * An acceptence test run is made up of test steps.
@@ -44,6 +45,26 @@ public class TestStep {
     
     public File getScreenshot() {
         return screenshot;
+    }
+
+    public Boolean isSuccessful() {
+        return getResult() == SUCCESS;
+    }
+
+    public Boolean isFailure() {
+        return  getResult() == FAILURE;
+    }
+
+    public Boolean isIgnored() {
+        return  getResult() == IGNORED;
+    }
+
+    public Boolean isSkipped() {
+        return  getResult() == SKIPPED;
+    }
+
+    public Boolean isPending() {
+        return  getResult() == PENDING;
     }
 
 }
