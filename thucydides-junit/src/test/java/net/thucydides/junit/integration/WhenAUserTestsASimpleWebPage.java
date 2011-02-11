@@ -15,7 +15,6 @@ import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.junit.runners.listeners.TestExecutionListener;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;

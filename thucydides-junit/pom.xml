@@ -5,15 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>thucydides</artifactId>
-        <groupId>org.thucydides</groupId>
+        <groupId>net.thucydides</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>org.thucydides</groupId>
+    <groupId>net.thucydides</groupId>
     <artifactId>thucydides-junit</artifactId>
     <name>thucydides-junit</name>
     <dependencies>
         <dependency>
-            <groupId>org.thucydides</groupId>
+            <groupId>net.thucydides</groupId>
             <artifactId>thucydides-core</artifactId>
             <version>${project.version}</version>
             <type>jar</type>

@@ -10,13 +10,13 @@ import org.junit.runner.notification.Failure;
  */
 class FailureListener extends StickyFailureListener {
 
-    public void testFailure(Failure failure) throws Exception {
+    public void testFailure(final Failure failure) throws Exception {
         aTestHasFailed();        
         super.testFailure(failure);
     }
     
     @Override
-    public void testFinished(Description description) throws Exception {
+    public void testFinished(final Description description) throws Exception {
         updatePreviousTestFailures();
         super.testFinished(description);
     }

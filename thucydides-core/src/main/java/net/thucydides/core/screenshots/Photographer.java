@@ -18,13 +18,13 @@ import org.openqa.selenium.TakesScreenshot;
  */
 public class Photographer {
 
-    final TakesScreenshot driver;
-    final File targetDirectory;
-    final ScreenshotSequence screenshotSequence;
+    private final TakesScreenshot driver;
+    private final File targetDirectory;
+    private final ScreenshotSequence screenshotSequence;
 
-    final static ScreenshotSequence DEFAULT_SCREENSHOT_SEQUENCE = new ScreenshotSequence();
+    private static final ScreenshotSequence DEFAULT_SCREENSHOT_SEQUENCE = new ScreenshotSequence();
     
-    public Photographer(TakesScreenshot driver, File targetDirectory) {
+    public Photographer(final TakesScreenshot driver, final File targetDirectory) {
         this.driver = driver;
         this.targetDirectory = targetDirectory;
         this.screenshotSequence = DEFAULT_SCREENSHOT_SEQUENCE;
@@ -34,12 +34,15 @@ public class Photographer {
         return screenshotSequence.next();
     }
     
-    private String nextScreenshotName(String prefix) {
+    private String nextScreenshotName(final String prefix) {
         long nextScreenshotNumber = nextScreenshotNumber() ;
         return prefix + nextScreenshotNumber + ".png";
     }
 
-    public File takeScreenshot(String prefix) throws IOException {
+    /**
+     * Take a screenshot of the current browser and store it in the output directory.
+     */
+    public File takeScreenshot(final String prefix) throws IOException {
         File screenshot = driver.getScreenshotAs(OutputType.FILE);
         File savedScreenshot = new File(targetDirectory, nextScreenshotName(prefix));
         FileUtils.copyFile(screenshot, savedScreenshot);

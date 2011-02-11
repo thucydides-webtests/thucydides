@@ -34,12 +34,12 @@ class NarrationListener extends StickyFailureListener {
     
     private TestStep currentTestStep;
 
-    public NarrationListener(Photographer photographer) {
+    public NarrationListener(final Photographer photographer) {
         this.photographer = photographer;
         acceptanceTestRun = new AcceptanceTestRun();
     }
 
-    private void getCurrentTestStepFrom(Description description) {
+    private void getCurrentTestStepFrom(final Description description) {
         if (currentTestStep == null) {
             currentTestStep = new TestStep(
                     fromTestName(description.getMethodName()));
@@ -51,16 +51,24 @@ class NarrationListener extends StickyFailureListener {
     }
 
     /**
+     * Set the title of the test run.
+     * The title of the test run should only be set once. It is either set explicitly,
+     * via the Title annotation, or derived from the class name.
+     */
+    public void setTestRunTitle(final String title) {
+        acceptanceTestRun.setTitle(title);
+    }
+    /**
      * Create a new test step for use with this test.
      */
     @Override
-    public void testStarted(Description description) throws Exception {
+    public void testStarted(final Description description) throws Exception {
         updateTestRunTitleBasedOn(description);
         getCurrentTestStepFrom(description);
         super.testStarted(description);
     }
 
-    private void updateTestRunTitleBasedOn(Description description) {
+    private void updateTestRunTitleBasedOn(final Description description) {
         if (acceptanceTestRun.getTitle() == null) {
             acceptanceTestRun.setTitle(fromTitleIn(description));
         }
@@ -70,20 +78,20 @@ class NarrationListener extends StickyFailureListener {
      * Ignored tests (e.g. @Ignored) should be marked as skipped.
      */
     @Override
-    public void testIgnored(Description description) throws Exception {
+    public void testIgnored(final Description description) throws Exception {
         getCurrentTestStepFrom(description);
         markCurrentTestAs(IGNORED);
         super.testIgnored(description);
     }
 
     @Override
-    public void testFailure(Failure failure) throws Exception {
+    public void testFailure(final Failure failure) throws Exception {
         markCurrentTestAs(FAILURE);
         super.testFailure(failure);
     }
 
     @Override
-    public void testFinished(Description description) throws Exception {
+    public void testFinished(final Description description) throws Exception {
         super.testFinished(description);
 
         updatePreviousTestFailures();
@@ -117,15 +125,15 @@ class NarrationListener extends StickyFailureListener {
         return currentTestStep.getResult() != null;
     }
 
-    private void markCurrentTestAs(TestResult result) {
+    private void markCurrentTestAs(final TestResult result) {
         currentTestStep.setResult(result);
     }
 
-    protected String aTestCalled(Description description) {
+    protected String aTestCalled(final Description description) {
         return description.getMethodName();
     }
 
-    private File takeScreenshotAtEndOfTestFor(String testName)
+    private File takeScreenshotAtEndOfTestFor(final String testName)
             throws IOException {
         String snapshotName = Inflector.getInstance().underscore(testName);
         return photographer.takeScreenshot(snapshotName);
@@ -134,7 +142,7 @@ class NarrationListener extends StickyFailureListener {
     /**
      * Turns a classname into a human-readable title.
      */
-    protected String fromTitleIn(Description description) {
+    protected String fromTitleIn(final Description description) {
         String testClassName = "";
         if (description.getTestClass() != null) {
             testClassName = description.getTestClass().getSimpleName();
@@ -148,7 +156,7 @@ class NarrationListener extends StickyFailureListener {
     /**
      * Turns a classname into a human-readable title.
      */
-    private String fromTestName(String testName) {
+    private String fromTestName(final String testName) {
         String humanizedName = inflector.humanize(inflector.underscore(testName));
         if (!humanizedName.endsWith(".")) {
             humanizedName = humanizedName + ".";

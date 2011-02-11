@@ -17,7 +17,7 @@ public abstract class AbstractWebDriverTest {
                 return new MockThucydidesRunner(ManagedWebDriverSample.class, browserFactory);   
             }
 
-    protected ThucydidesRunner getTestRunnerUsing(Class testClass, WebDriverFactory browserFactory)
+    protected ThucydidesRunner getTestRunnerUsing(Class<?> testClass, WebDriverFactory browserFactory)
             throws InitializationError {
                 return new MockThucydidesRunner(testClass, browserFactory);   
             }

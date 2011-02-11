@@ -11,6 +11,7 @@ import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
 
 import org.junit.runner.manipulation.Sorter;
@@ -37,6 +38,9 @@ import com.google.common.base.Preconditions;
  */
 public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
+    /**
+     * Use this property to define the output directory in which reports will be stored.
+     */
     public static final String OUTPUT_DIRECTORY_PROPERTY = "thucydides.outputDirectory";
 
     private static final String DEFAULT_OUTPUT_DIRECTORY = "target/thucydides";
@@ -48,7 +52,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     private WebDriverFactory webDriverFactory;
 
-    ThreadLocal<WebDriver> webdriver = new ThreadLocal<WebDriver>();
+    /**
+     * A WebDriver instance is shared across all the tests executed by the runner in a given test run.
+     */
+    private ThreadLocal<WebDriver> webdriver = new ThreadLocal<WebDriver>();
 
     /**
      * HTML and XML reports will be generated in this directory.
@@ -66,6 +73,11 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     private NarrationListener fieldReporter;
 
+    /**
+     * The Field Reporter observes and records what happens during the execution of the test.
+     * Once the test is over, the Field Reporter can provide the acceptance test outcome in the 
+     * form of an AcceptanceTestRun object.
+     */
     public NarrationListener getFieldReporter() {
         if (fieldReporter == null) {
             fieldReporter = new NarrationListener(getPhotographer());
@@ -80,7 +92,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * 
      * @param fieldReporter
      */
-    public void setFieldReporter(NarrationListener fieldReporter) {
+    public void setFieldReporter(final NarrationListener fieldReporter) {
         Preconditions.checkArgument(this.fieldReporter == null,
                 "The field reporter object can only be assigned once.");
         this.fieldReporter = fieldReporter;
@@ -106,14 +118,14 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * @throws UnsupportedDriverException
      *             if the requested driver type is not supported
      */
-    public ThucydidesRunner(Class<?> klass) throws InitializationError {
+    public ThucydidesRunner(final Class<?> klass) throws InitializationError {
         super(klass);
         checkRequestedDriverType();
         checkThatManagedFieldIsDefinedIn(klass);
         webDriverFactory = new WebDriverFactory();
     }
 
-    public void setOutputDirectory(File outputDirectory) {
+    public void setOutputDirectory(final File outputDirectory) {
         this.outputDirectory = outputDirectory;
     }
 
@@ -154,12 +166,11 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return photographer;
     }
 
-    protected Photographer getPhotographerFor(TakesScreenshot driver,
-            File outputDirectory) {
-        return new Photographer((TakesScreenshot) getDriver(), outputDirectory);
+    protected Photographer getPhotographerFor(final TakesScreenshot driver, final File directory) {
+        return new Photographer((TakesScreenshot) getDriver(), directory);
     }
 
-    private void checkThatManagedFieldIsDefinedIn(Class<?> testCase) {
+    private void checkThatManagedFieldIsDefinedIn(final  Class<?> testCase) {
         ManagedWebDriverAnnotatedField.findFirstAnnotatedField(testCase);
     }
 
@@ -167,7 +178,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Ensure that the requested driver type is valid before we start the tests.
      * Otherwise, throw an InitializationError.
      */
-    private void checkRequestedDriverType() throws UnsupportedDriverException {
+    private void checkRequestedDriverType() {
         findDriverType();
     }
 
@@ -175,19 +186,19 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Override the default web driver factory. Normal users shouldn't need to
      * do this very often.
      */
-    public void setWebDriverFactory(WebDriverFactory webDriverFactory) {
+    public void setWebDriverFactory(final WebDriverFactory webDriverFactory) {
         this.webDriverFactory = webDriverFactory;
     }
 
     @Override
-    public void run(RunNotifier notifier) {
+    public void run(final RunNotifier notifier) {
         initializeDriver();
 
         failureListener = new FailureListener();
 
         notifier.addListener(failureListener);
         notifier.addListener(getFieldReporter());
-
+                
         super.run(notifier);
 
         closeDriver();
@@ -206,7 +217,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * @throws IOException
      * 
      */
-    private void generateReports(AcceptanceTestRun acceptanceTestRun) {
+    private void generateReports(final AcceptanceTestRun acceptanceTestRun) {
         for (AcceptanceTestReporter reporter : getSubscribedReporters()) {
             try {
                 reporter.generateReportFor(acceptanceTestRun);
@@ -226,18 +237,18 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * subscribe to the listener. The listener will tell them when the test is
      * done, and the reporter can decide what to do.
      */
-    public void subscribeReported(AcceptanceTestReporter reporter) {
+    public void subscribeReported(final AcceptanceTestReporter reporter) {
         reporter.setOutputDirectory(getOutputDirectory());
         subscribedReporters.add(reporter);
     }
 
     @Override
-    public void sort(Sorter sorter) {
+    public void sort(final Sorter sorter) {
         super.sort(sorter);
     }
 
     @Override
-    protected void runChild(FrameworkMethod method, RunNotifier notifier) {
+    protected void runChild(final FrameworkMethod method, final RunNotifier notifier) {
         if (failureListener.aPreviousTestHasFailed()) {
             notifier.fireTestIgnored(describeChild(method));
         } else {
@@ -246,16 +257,25 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     @Override
-    protected Statement methodInvoker(FrameworkMethod method, Object test) {
+    protected Statement methodInvoker(final FrameworkMethod method, final Object test) {
         injectDriverInto(test);
+        setTestRunTitleIfAnnotationFoundOn(test);
         return super.methodInvoker(method, test);
     }
 
+    private void setTestRunTitleIfAnnotationFoundOn(final Object test) {
+        Title titleAnnotation = test.getClass().getAnnotation(Title.class);
+        if (titleAnnotation != null) {
+            String title = titleAnnotation.value();
+            System.out.println("Setting title to " + title);
+            getFieldReporter().setTestRunTitle(title);
+        }
+    }
+
     /**
-     * Instanciate the @Managed-annotated WebDriver instance with current
-     * WebDriver.
+     * Instanciate the @Managed-annotated WebDriver instance with current WebDriver.
      */
-    protected void injectDriverInto(Object testCase) {
+    protected void injectDriverInto(final Object testCase) {
         ManagedWebDriverAnnotatedField webDriverField = ManagedWebDriverAnnotatedField
                 .findFirstAnnotatedField(testCase.getClass());
 
@@ -268,7 +288,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * 
      * @throws UnsupportedDriverException
      */
-    private void initializeDriver() throws UnsupportedDriverException {
+    private void initializeDriver() {
         webdriver.set(newDriver());
     }
 
@@ -280,13 +300,12 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * @throws UnsupportedDriverException
      *             if the driver type is not supported.
      */
-    protected WebDriver newDriver() throws UnsupportedDriverException {
+    protected WebDriver newDriver() {
         SupportedWebDriver supportedDriverType = findDriverType();
         return webDriverFactory.newInstanceOf(supportedDriverType);
     }
 
-    private SupportedWebDriver findDriverType()
-            throws UnsupportedDriverException {
+    private SupportedWebDriver findDriverType() {
         String driverType = System.getProperty("webdriver.driver", "firefox");
         SupportedWebDriver supportedDriverType = lookupSupportedDriverTypeFor(driverType);
         return supportedDriverType;
@@ -302,8 +321,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * 
      * @throws UnsupportedDriverException
      */
-    private SupportedWebDriver lookupSupportedDriverTypeFor(String driverType)
-            throws UnsupportedDriverException {
+    private SupportedWebDriver lookupSupportedDriverTypeFor(final String driverType) {
         SupportedWebDriver driver = null;
         try {
             driver = SupportedWebDriver.valueOf(driverType.toUpperCase());
@@ -315,8 +333,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return driver;
     }
 
-    private void throwUnsupportedDriverExceptionFor(String driverType)
-            throws UnsupportedDriverException {
+    private void throwUnsupportedDriverExceptionFor(final String driverType) {
         throw new UnsupportedDriverException(driverType
                 + " is not a supported browser. Supported driver values are: "
                 + SupportedWebDriver.listOfSupportedDrivers());

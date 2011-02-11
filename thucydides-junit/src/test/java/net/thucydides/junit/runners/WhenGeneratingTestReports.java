@@ -12,9 +12,9 @@ import java.io.IOException;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.integration.samples.OpenGoogleHomePageSample;
+import net.thucydides.junit.integration.samples.OpenGoogleHomePageWithTitleSample;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 
 import org.junit.Before;
@@ -70,9 +70,26 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
         
         assertThat(fieldReporter.getAcceptanceTestRun().getTitle(), is("Open google home page sample"));
 
-        
     }
     
+    @Test
+    public void the_developer_can_overrire_the_test_case_title_using_the_Title_annotation()
+            throws InitializationError, IOException {
+        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
+        
+        Photographer photographer = mock(Photographer.class);
+        NarrationListener fieldReporter = new NarrationListener(photographer);
+        
+        ThucydidesRunner runner = getTestRunnerUsing(OpenGoogleHomePageWithTitleSample.class, mockBrowserFactory);
+        runner.setFieldReporter(fieldReporter);
+        
+        runner.subscribeReported(mockReporter);
+        runner.run(new RunNotifier());
+        
+        assertThat(fieldReporter.getAcceptanceTestRun().getTitle(), is("Open the Google home page"));
+
+    }
+
     @Test
     public void the_runer_should_tell_the_reporter_what_directory_to_use()
             throws InitializationError, IOException {

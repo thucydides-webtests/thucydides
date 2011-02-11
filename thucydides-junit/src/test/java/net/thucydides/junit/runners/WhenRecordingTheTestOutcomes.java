@@ -26,6 +26,7 @@ public class WhenRecordingTheTestOutcomes {
     Result result;
     
     @Before
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void setupMocks() {
         MockitoAnnotations.initMocks(this);
         

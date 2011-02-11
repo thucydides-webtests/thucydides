@@ -15,7 +15,10 @@ import org.openqa.selenium.firefox.FirefoxDriver;
  */
 public class WebDriverFactory {
 
-    public WebDriver newInstanceOf(SupportedWebDriver driverType)  {
+    /***
+     * Create a new WebDriver instance of a given type.
+     */
+    public WebDriver newInstanceOf(final SupportedWebDriver driverType)  {
         if (driverType == null) {
             throw new IllegalArgumentException("Driver type cannot be null");
         }
@@ -26,7 +29,8 @@ public class WebDriverFactory {
             case CHROME:
                 return newChromeDriver();
             default:
-                throw new IllegalArgumentException(driverType + " support hasn't been implemented yet - this is a bug.");
+                throw new IllegalArgumentException(driverType 
+                          + " support hasn't been implemented yet - this is a bug.");
         }
     }
 

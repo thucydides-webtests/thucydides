@@ -2,6 +2,10 @@ package net.thucydides.junit.runners;
 
 import org.junit.runner.notification.RunListener;
 
+/**
+ * A listener capable of keeping track of whether tests have already failed.
+ *
+ */
 public class StickyFailureListener extends RunListener {
 
     public StickyFailureListener() {

@@ -1,9 +1,14 @@
 package net.thucydides.core.model;
 
+import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.IGNORED;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SKIPPED;
+import static net.thucydides.core.model.TestResult.SUCCESS;
+
 import java.io.File;
 
 import com.google.common.base.Preconditions;
-import static net.thucydides.core.model.TestResult.*;
 
 /**
  * An acceptence test run is made up of test steps.
@@ -21,7 +26,7 @@ public class TestStep {
     private File screenshot;
     private TestResult result;
     
-    public TestStep(String description) {
+    public TestStep(final String description) {
         this.description = description;
     }
 
@@ -29,13 +34,21 @@ public class TestStep {
         return description;
     }
 
-    public void setScreenshot(File screenshot) {
-        Preconditions.checkState(this.screenshot == null, "Test steps are immutable - a screenshot can only be assigned once.");
+    /**
+     * Each test step can be associated with a screenshot.
+     */
+    public void setScreenshot(final File screenshot) {
+        Preconditions.checkState(this.screenshot == null, 
+                                 "Test steps are immutable - a screenshot can only be assigned once.");
         this.screenshot = screenshot;
     }
     
-    public void setResult(TestResult result) {
-        Preconditions.checkState(this.result == null, "Test steps are immutable - the test result can only be assigned once.");
+    /**
+     * Each test step has a result, indicating the outcome of this step.
+     */
+    public void setResult(final TestResult result) {
+        Preconditions.checkState(this.result == null, 
+                                 "Test steps are immutable - the test result can only be assigned once.");
         this.result = result;
     }
    

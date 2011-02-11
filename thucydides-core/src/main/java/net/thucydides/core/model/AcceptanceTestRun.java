@@ -1,7 +1,9 @@
 package net.thucydides.core.model;
 
 import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.*;
+import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.select;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -29,7 +31,7 @@ public class AcceptanceTestRun {
 
     private String title;
 
-    final private List<TestStep> testSteps = new ArrayList<TestStep>();
+    private final List<TestStep> testSteps = new ArrayList<TestStep>();
 
     /**
      * Create a new acceptance test run instance.
@@ -42,16 +44,14 @@ public class AcceptanceTestRun {
      * For convenience, you can create a test run directly with a title 
      * using this constructor.
      */
-    public AcceptanceTestRun(String title) {
+    public AcceptanceTestRun(final String title) {
         this.title = title;
     }
 
     /**
      * The test case title.
-     * Cannot be modified once set.
      */
-    public void setTitle(String title) {
-        Preconditions.checkState(this.title == null, "The title can only be defined once.");
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -105,7 +105,7 @@ public class AcceptanceTestRun {
     /**
      * Add a test step to this acceptance test.
      */
-    public void recordStep(TestStep step) {
+    public void recordStep(final TestStep step) {
         Preconditions.checkNotNull(step.getDescription(),
                 "The test step description was not defined.");
         Preconditions.checkNotNull(step.getResult(), "The test step result was not defined");
@@ -113,7 +113,7 @@ public class AcceptanceTestRun {
         testSteps.add(step);
     }
 
-    private boolean containsOnly(List<TestResult> testResults, TestResult value) {
+    private boolean containsOnly(final List<TestResult> testResults, final TestResult value) {
         for(TestResult result : testResults) {
             if (result != value) {
                 return false;
@@ -122,8 +122,8 @@ public class AcceptanceTestRun {
         return true;
     }
 
-    static private class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
-        public TestResult convert(TestStep step) {
+    private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
+        public TestResult convert(final TestStep step) {
             return step.getResult();
         }
     }

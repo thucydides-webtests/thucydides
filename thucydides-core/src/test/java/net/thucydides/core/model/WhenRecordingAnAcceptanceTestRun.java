@@ -21,21 +21,6 @@ public class WhenRecordingAnAcceptanceTestRun {
     }
     
     @Test
-    public void the_title_can_only_be_written_once() {
-        AcceptanceTestRun testRun = new AcceptanceTestRun();
-        testRun.setTitle("the proper title");
-        try {
-            testRun.setTitle("a different title");
-            fail("We shouldn't be able to change the title once set");
-        } catch (IllegalStateException e) {
-            assertThat(e.getMessage(),
-                    is("The title can only be defined once."));
-        }
-        assertThat(testRun.getTitle(), is("the proper title"));
-
-    }
-
-    @Test
     public void the_acceptance_test_run_should_record_test_steps() {
 
         assertThat(testRun.getTestSteps().size(), is(0));
