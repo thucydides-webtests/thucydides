@@ -89,8 +89,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Inject a custom field reporter into the runner. You shouldn't normally
      * need to do this - the runner will use the default implementation
      * otherwise. But useful for testing or extending the framework.
-     * 
-     * @param fieldReporter
      */
     public void setFieldReporter(final NarrationListener fieldReporter) {
         Preconditions.checkArgument(this.fieldReporter == null,

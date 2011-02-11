@@ -82,7 +82,6 @@ public class AcceptanceTestRun {
      * If any steps are pending, the test as a whole is considered pending.
      * If all of the steps are ignored, the test will be considered 'ignored'.
      * If all of the tests succeed except the ignored tests, the test is a success.
-     * @return
      */
     public TestResult getResult() {
         List<TestResult> allTestResults = getCurrentTestResults();
