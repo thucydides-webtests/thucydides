@@ -3,6 +3,11 @@ package net.thucydides.junit.runners;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+import java.io.File;
+
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -84,6 +89,33 @@ public class WhenInstanciatingANewTestRunner {
         runner.newDriver();
     }    
 
+    @Test
+    public void the_default_output_directory_should_follow_the_maven_convention() throws InitializationError {
+
+        WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
+        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+
+        File outputDirectory = runner.getOutputDirectory();
+        
+        assertThat(outputDirectory.getPath(), is("target/thucydides"));
+        System.setProperty("thucydides.output.dir", "reports/thucydides");
+
+    }
+    
+    @Test
+    public void the_output_directory_can_be_defined_by_a_system_property() throws InitializationError {
+
+        WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
+        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+        
+        System.setProperty("thucydides.outputDirectory", "reports/thucydides");
+
+        File outputDirectory = runner.getOutputDirectory();
+        
+        assertThat(outputDirectory.getPath(), is("reports/thucydides"));
+
+    }
+    
     private ThucydidesRunner getTestRunnerUsing(WebDriverFactory browserFactory) throws InitializationError {
         return new MockThucydidesRunner(ManagedWebDriverSample.class, browserFactory);   
     }

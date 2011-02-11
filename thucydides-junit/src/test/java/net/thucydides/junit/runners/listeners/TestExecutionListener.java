@@ -8,8 +8,6 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
-import com.google.common.base.Preconditions;
-
 /**
  * A test listener that records the names of the executed tests.
  * Good for testing what tests where executed and in what order.

@@ -14,7 +14,6 @@ import net.thucydides.core.model.AcceptanceTestRun;
 public interface AcceptanceTestReporter {
 
     File generateReportFor(AcceptanceTestRun testRun) throws IOException;
-    
     void setOutputDirectory(File outputDirectory);
     
 }

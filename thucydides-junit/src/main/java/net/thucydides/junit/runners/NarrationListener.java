@@ -15,38 +15,39 @@ import net.thucydides.core.screenshots.Photographer;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
+import org.modeshape.common.text.Inflector;
 
 /**
  * Observes the test run and stores test run details for later reporting.
- * Observations are recorded in an AcceptanceTestRun object.
- * This includes recording the names and results of each test, 
- * and taking and storing screenshots at strategic points during the tests.
+ * Observations are recorded in an AcceptanceTestRun object. This includes
+ * recording the names and results of each test, and taking and storing
+ * screenshots at strategic points during the tests.
+ * 
  * @author johnsmart
- *
+ * 
  */
 class NarrationListener extends StickyFailureListener {
 
     private final Photographer photographer;
     private final AcceptanceTestRun acceptanceTestRun;
+    private final Inflector inflector = Inflector.getInstance();
     
     private TestStep currentTestStep;
-    
-    
+
     public NarrationListener(Photographer photographer) {
         this.photographer = photographer;
         acceptanceTestRun = new AcceptanceTestRun();
     }
-    
+
     private void getCurrentTestStepFrom(Description description) {
         if (currentTestStep == null) {
-            currentTestStep = new TestStep(fromTestName(description.getMethodName()));
+            currentTestStep = new TestStep(
+                    fromTestName(description.getMethodName()));
         }
     }
-    
-    @Override
-    public void testRunStarted(Description description) throws Exception {        
-        acceptanceTestRun.setTitle(fromClassname(description.getClassName()));
-        super.testRunStarted(description);
+
+    public AcceptanceTestRun getAcceptanceTestRun() {
+        return acceptanceTestRun;
     }
 
     /**
@@ -54,9 +55,17 @@ class NarrationListener extends StickyFailureListener {
      */
     @Override
     public void testStarted(Description description) throws Exception {
+        updateTestRunTitleBasedOn(description);
         getCurrentTestStepFrom(description);
         super.testStarted(description);
     }
+
+    private void updateTestRunTitleBasedOn(Description description) {
+        if (acceptanceTestRun.getTitle() == null) {
+            acceptanceTestRun.setTitle(fromTitleIn(description));
+        }
+    }
+
     /**
      * Ignored tests (e.g. @Ignored) should be marked as skipped.
      */
@@ -65,7 +74,7 @@ class NarrationListener extends StickyFailureListener {
         getCurrentTestStepFrom(description);
         markCurrentTestAs(IGNORED);
         super.testIgnored(description);
-    }    
+    }
 
     @Override
     public void testFailure(Failure failure) throws Exception {
@@ -78,7 +87,7 @@ class NarrationListener extends StickyFailureListener {
         super.testFinished(description);
 
         updatePreviousTestFailures();
-        
+
         if (noPreviousTestHasFailed()) {
             File screenshot = takeScreenshotAtEndOfTestFor(aTestCalled(description));
             currentTestStep.setScreenshot(screenshot);
@@ -87,7 +96,7 @@ class NarrationListener extends StickyFailureListener {
         acceptanceTestRun.recordStep(currentTestStep);
         currentTestStep = null;
     }
-    
+
     private boolean noPreviousTestHasFailed() {
         return !aPreviousTestHasFailed();
     }
@@ -96,7 +105,7 @@ class NarrationListener extends StickyFailureListener {
         if (currentTestResultIsKnown()) {
             return;
         }
-        
+
         if (aPreviousTestHasFailed()) {
             markCurrentTestAs(SKIPPED);
         } else {
@@ -108,30 +117,43 @@ class NarrationListener extends StickyFailureListener {
         return currentTestStep.getResult() != null;
     }
 
-    private void markCurrentTestAs(TestResult result) {      
+    private void markCurrentTestAs(TestResult result) {
         currentTestStep.setResult(result);
     }
 
     protected String aTestCalled(Description description) {
         return description.getMethodName();
     }
-    
-    private File takeScreenshotAtEndOfTestFor(String testName) throws IOException {
-       return photographer.takeScreenshot(testName);
-    }  
-    
+
+    private File takeScreenshotAtEndOfTestFor(String testName)
+            throws IOException {
+        String snapshotName = Inflector.getInstance().underscore(testName);
+        return photographer.takeScreenshot(snapshotName);
+    }
+
     /**
      * Turns a classname into a human-readable title.
      */
-    private String fromClassname(String className) {
-        return className;
+    protected String fromTitleIn(Description description) {
+        String testClassName = "";
+        if (description.getTestClass() != null) {
+            testClassName = description.getTestClass().getSimpleName();
+        } else {
+            testClassName = description.getClassName();
+        }
+        String testCaseNameWithUnderscores = inflector.underscore(testClassName);
+        return inflector.humanize(testCaseNameWithUnderscores);
     }
 
     /**
      * Turns a classname into a human-readable title.
      */
     private String fromTestName(String testName) {
-        return testName;
+        String humanizedName = inflector.humanize(inflector.underscore(testName));
+        if (!humanizedName.endsWith(".")) {
+            humanizedName = humanizedName + ".";
+        }
+        return humanizedName;
     }
-    
+
 }

@@ -16,6 +16,7 @@ import org.openqa.selenium.WebDriver;
  *
  */
 @RunWith(ThucydidesRunner.class)
+//@Title("User searches for cats on Google")
 public class ManagedWebDriverSample {
 
     @Managed

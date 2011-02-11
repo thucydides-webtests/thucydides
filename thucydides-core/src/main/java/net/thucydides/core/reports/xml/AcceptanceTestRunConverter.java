@@ -5,6 +5,7 @@ import java.util.List;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestStep;
 
+import com.google.common.base.Preconditions;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -20,6 +21,8 @@ public class AcceptanceTestRunConverter implements Converter {
 
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
         AcceptanceTestRun testRun = (AcceptanceTestRun) value;
+        Preconditions.checkNotNull(testRun, "The test run was null - WTF?");
+        
         writer.addAttribute("title", testRun.getTitle());
         writer.addAttribute("steps", Integer.toString(testRun.getTestSteps().size()));
         writer.addAttribute("successful", Integer.toString(testRun.getSuccessCount()));

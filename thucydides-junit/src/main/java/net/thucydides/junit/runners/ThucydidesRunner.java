@@ -1,7 +1,12 @@
-    package net.thucydides.junit.runners;
+package net.thucydides.junit.runners;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
@@ -17,6 +22,8 @@ import org.junit.runners.model.Statement;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
+import com.google.common.base.Preconditions;
+
 /**
  * A test runner for WebDriver-based web tests. This test runner initializes a
  * WebDriver instance before running the tests in their order of appearance. At
@@ -24,11 +31,13 @@ import org.openqa.selenium.WebDriver;
  * 
  * @depend - <listener> - NarrationListener
  * @depend - <listener> - FailureListener
- *
+ * 
  * @author johnsmart
  * 
  */
 public class ThucydidesRunner extends BlockJUnit4ClassRunner {
+
+    public static final String OUTPUT_DIRECTORY_PROPERTY = "thucydides.outputDirectory";
 
     private static final String DEFAULT_OUTPUT_DIRECTORY = "target/thucydides";
 
@@ -49,20 +58,46 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     /**
      * Keeps track of whether any tests have failed so far.
      */
-    
+
     private FailureListener failureListener;
-    
+
     /**
      * Records screenshots for successful or failing tests.
      */
     private NarrationListener fieldReporter;
-    
+
+    public NarrationListener getFieldReporter() {
+        if (fieldReporter == null) {
+            fieldReporter = new NarrationListener(getPhotographer());
+        }
+        return fieldReporter;
+    }
+
     /**
-     * Takes cares of screenshots.
-     * The member variable makes for more convenient testing.
+     * Inject a custom field reporter into the runner. You shouldn't normally
+     * need to do this - the runner will use the default implementation
+     * otherwise. But useful for testing or extending the framework.
+     * 
+     * @param fieldReporter
+     */
+    public void setFieldReporter(NarrationListener fieldReporter) {
+        Preconditions.checkArgument(this.fieldReporter == null,
+                "The field reporter object can only be assigned once.");
+        this.fieldReporter = fieldReporter;
+    }
+
+    /**
+     * Who needs to be notified when a test is done.
+     */
+    private List<AcceptanceTestReporter> subscribedReporters = new ArrayList<AcceptanceTestReporter>();
+
+    /**
+     * Takes cares of screenshots. The member variable makes for more convenient
+     * testing. TODO: Is the photographer too tightly bound with the runner
+     * class?
      */
     private Photographer photographer;
-    
+
     /**
      * Creates a new test runner for WebDriver web tests.
      * 
@@ -78,14 +113,40 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         webDriverFactory = new WebDriverFactory();
     }
 
-    private void setupThePhotographer() {
-        // TODO: The output directory should be defined by an external parameter
-        // TODO: Report an error if the output directory could not be made
-        outputDirectory = new File(DEFAULT_OUTPUT_DIRECTORY);
-        outputDirectory.mkdirs();
-        photographer = getPhotographerFor((TakesScreenshot) getDriver(), outputDirectory);
+    public void setOutputDirectory(File outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
-    
+
+    /**
+     * The output directory is where the test runner writes the XML and HTML
+     * reports to. By default, it will be in 'target/thucydides', but you can
+     * override this value either programmatically or by providing a value in
+     * the <b>thucydides.output.dir</b> system property.
+     * 
+     */
+    public File getOutputDirectory() {
+        if (outputDirectory == null) {
+            outputDirectory = deriveOutputDirectoryFromSystemProperties();
+        }
+        return outputDirectory;
+    }
+
+    private File deriveOutputDirectoryFromSystemProperties() {
+        String systemDefinedDirectory = System
+                .getProperty(OUTPUT_DIRECTORY_PROPERTY);
+        if (systemDefinedDirectory == null) {
+            systemDefinedDirectory = DEFAULT_OUTPUT_DIRECTORY;
+        }
+        return new File(systemDefinedDirectory);
+    }
+
+    private void setupThePhotographer() {
+        // TODO: Report an error if the output directory could not be made
+        getOutputDirectory().mkdirs();
+        photographer = getPhotographerFor((TakesScreenshot) getDriver(),
+                outputDirectory);
+    }
+
     protected Photographer getPhotographer() {
         if (photographer == null) {
             setupThePhotographer();
@@ -93,10 +154,11 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return photographer;
     }
 
-    protected Photographer getPhotographerFor(TakesScreenshot driver, File outputDirectory) {
+    protected Photographer getPhotographerFor(TakesScreenshot driver,
+            File outputDirectory) {
         return new Photographer((TakesScreenshot) getDriver(), outputDirectory);
     }
-    
+
     private void checkThatManagedFieldIsDefinedIn(Class<?> testCase) {
         ManagedWebDriverAnnotatedField.findFirstAnnotatedField(testCase);
     }
@@ -120,16 +182,53 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     @Override
     public void run(RunNotifier notifier) {
         initializeDriver();
-        
+
         failureListener = new FailureListener();
-        fieldReporter = new NarrationListener(getPhotographer());
 
         notifier.addListener(failureListener);
-        notifier.addListener(fieldReporter);
-        
+        notifier.addListener(getFieldReporter());
+
         super.run(notifier);
-       
+
         closeDriver();
+
+        generateReports(fieldReporter.getAcceptanceTestRun());
+    }
+
+    /**
+     * A test runner can generate reports via Reporter instances that subscribe
+     * to the test runner. The test runner tells the reporter what directory to
+     * place the reports in. Then, at the end of the test, the test runner
+     * notifies these reporters of the test outcomes. The reporter's job is to
+     * process each test run outcome and do whatever is appropriate.
+     * 
+     * @throws IllegalArgumentException
+     * @throws IOException
+     * 
+     */
+    private void generateReports(AcceptanceTestRun acceptanceTestRun) {
+        for (AcceptanceTestReporter reporter : getSubscribedReporters()) {
+            try {
+                reporter.generateReportFor(acceptanceTestRun);
+            } catch (IOException e) {
+                throw new IllegalArgumentException(
+                        "Failed to generate reports using " + reporter, e);
+            }
+        }
+    }
+
+    private List<AcceptanceTestReporter> getSubscribedReporters() {
+        return subscribedReporters;
+    }
+
+    /**
+     * To generate reports, different AcceptanceTestReporter instances need to
+     * subscribe to the listener. The listener will tell them when the test is
+     * done, and the reporter can decide what to do.
+     */
+    public void subscribeReported(AcceptanceTestReporter reporter) {
+        reporter.setOutputDirectory(getOutputDirectory());
+        subscribedReporters.add(reporter);
     }
 
     @Override
@@ -137,7 +236,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         super.sort(sorter);
     }
 
-    
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
         if (failureListener.aPreviousTestHasFailed()) {
@@ -146,7 +244,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             super.runChild(method, notifier);
         }
     }
-    
+
     @Override
     protected Statement methodInvoker(FrameworkMethod method, Object test) {
         injectDriverInto(test);

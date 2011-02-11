@@ -45,9 +45,7 @@ public class WhenRunningTestsWithAManagedWebDriver extends AbstractWebDriverTest
 
         TestExecutionListener testListener = new TestExecutionListener();
         notifier.addListener(testListener);
-
         runner.run(notifier);
-
         assertThat(testListener.getExecutedTests(), is(expectedTestOrder));
     }
 
