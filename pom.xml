@@ -72,7 +72,12 @@
                     </formats>
                 </configuration>
             </plugin>
-            <plugin>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-release-plugin</artifactId>
+	        <version>2.1</version>
+	      </plugin>
+	      <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.0-beta-3</version>
@@ -291,4 +296,15 @@
             </build>
         </profile>
     </profiles>
-</project>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>wakaleo-snapshots</id>
+            <name>Wakaleo Snapshots</name>
+            <url>http://www.wakaleo-labs.com/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>wakaleo-releases</id>
+            <name>Wakaleo Releases</name>
+            <url>http://www.wakaleo-labs.com/nexus/content/repositories/releases</url>
+        </repository>
+    </distributionManagement></project>
