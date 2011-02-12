@@ -21,7 +21,6 @@ public enum SupportedWebDriver {
 
     /**
      * Convenience method listing the currently supported browsers.
-     * @return
      */
     public static String listOfSupportedDrivers() {
         return Joiner.on(", ").join(SupportedWebDriver.values());

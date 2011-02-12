@@ -4,6 +4,7 @@ import static net.thucydides.core.hamcrest.XMLMatchers.isSimilarTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.containsString;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,7 +149,38 @@ public class WhenGeneratingAnXMLReport {
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
     }
+    
+    @Test
+    public void should_include_error_message_for_failing_test()
+            throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
 
+        TestStep step = TestStepFactory.failingTestStepCalled("step 1");
+        step.failedWith("Oh nose!", new IllegalArgumentException());
+
+        testRun.recordStep(step);
+
+        File xmlReport = reporter.generateReportFor(testRun);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, containsString("<error>Oh nose!</error>"));
+    }
+    
+    @Test
+    public void should_include_exception_stack_dump_for_failing_test()
+            throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+
+        TestStep step = TestStepFactory.failingTestStepCalled("step 1");
+        step.failedWith("Oh nose!", new IllegalArgumentException());
+
+        testRun.recordStep(step);
+
+        File xmlReport = reporter.generateReportFor(testRun);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, containsString("<exception>java.lang.IllegalArgumentException"));
+    }    
     private String getStringFrom(File reportFile) throws IOException {
         return FileUtils.readFileToString(reportFile);
     }

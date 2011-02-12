@@ -65,5 +65,24 @@ public class WhenWeCreateATestStep {
         assertThat(step.getResult(), is(TestResult.FAILURE));
     }
      
+    @Test
+    public void when_a_step_fails_the_error_message_can_be_recorded() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+      
+        step.setResult(TestResult.FAILURE);
+        Exception e = new IllegalStateException();
+        step.failedWith("Oh nose!",e);
+        assertThat(step.getErrorMessage(), is("Oh nose!"));
+    }
+    
+    @Test
+    public void when_a_step_fails_the_stack_trace_is_also_recorded() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+      
+        step.setResult(TestResult.FAILURE);
+        Exception e = new IllegalStateException();
+        step.failedWith("Oh nose!",e);
+        assertThat(step.getException(), is(e));
+    }
     
 }

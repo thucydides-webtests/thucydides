@@ -25,6 +25,8 @@ public class TestStep {
     private final String description;    
     private File screenshot;
     private TestResult result;
+    private String errorMessage;
+    private Exception cause;
     
     public TestStep(final String description) {
         this.description = description;
@@ -51,7 +53,19 @@ public class TestStep {
                                  "Test steps are immutable - the test result can only be assigned once.");
         this.result = result;
     }
-   
+    
+    /**
+     * Indicate that this step failed with a given error.
+     */
+    public void failedWith(final String message, final Exception e) {
+        this.errorMessage = message;
+        this.cause = e;
+    }
+    
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
     public TestResult getResult() {
         return result;
     }
@@ -78,6 +92,10 @@ public class TestStep {
 
     public Boolean isPending() {
         return  getResult() == PENDING;
+    }
+
+    public Exception getException() {
+        return cause;
     }
 
 }

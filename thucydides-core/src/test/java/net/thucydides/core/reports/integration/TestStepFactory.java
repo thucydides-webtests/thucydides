@@ -10,7 +10,6 @@ import net.thucydides.core.model.TestStep;
 
 public class TestStepFactory {
 
-
     public static TestStep successfulTestStepCalled(String description) {
         return createNewTestStep(description, SUCCESS);
     }
@@ -18,6 +17,7 @@ public class TestStepFactory {
     public static TestStep failingTestStepCalled(String description) {
         return createNewTestStep(description, FAILURE);
     }
+
     public static TestStep skippedTestStepCalled(String description) {
         return createNewTestStep(description, SKIPPED);
     }
@@ -25,6 +25,7 @@ public class TestStepFactory {
     public static TestStep ignoredTestStepCalled(String description) {
         return createNewTestStep(description, IGNORED);
     }
+
     public static TestStep pendingTestStepCalled(String description) {
         return createNewTestStep(description, PENDING);
     }
@@ -33,4 +34,5 @@ public class TestStepFactory {
         TestStep step = new TestStep(description);
         step.setResult(result);
         return step;
-    }}
+    }
+}

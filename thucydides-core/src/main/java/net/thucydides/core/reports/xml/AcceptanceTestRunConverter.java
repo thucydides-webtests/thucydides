@@ -1,5 +1,7 @@
 package net.thucydides.core.reports.xml;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -52,13 +54,45 @@ public class AcceptanceTestRunConverter implements Converter {
             writer.startNode("test-step");
             writeResult(writer, step);
             writeDescription(writer, step);
+            writeErrorForFailingTest(writer, step);
             writeScreenshotIfPresent(writer, step);
             writer.endNode();
         }
     }
 
-    private void writeScreenshotIfPresent(final HierarchicalStreamWriter writer, 
-                                          final TestStep step) {
+    private void writeErrorForFailingTest(final HierarchicalStreamWriter writer, final TestStep step) {
+        if (step.isFailure()) {
+            writeErrorMessageAndException(writer, step);
+        }
+
+    }
+
+    private void writeErrorMessageAndException(final HierarchicalStreamWriter writer,
+            final TestStep step) {
+        if (step.getErrorMessage() != null) {
+            writeErrorMessageNode(writer, step.getErrorMessage());
+            if (step.getException() != null) {
+                writeExceptionNode(writer, step.getException());
+            }
+        }
+    }
+
+    private void writeExceptionNode(final HierarchicalStreamWriter writer, final Exception cause) {
+        writer.startNode("exception");
+        StringWriter stringWriter = new StringWriter();
+        cause.printStackTrace(new PrintWriter(stringWriter));
+        writer.setValue(stringWriter.toString());
+        writer.endNode();
+    }
+
+    private void writeErrorMessageNode(final HierarchicalStreamWriter writer,
+            final String errorMessage) {
+        writer.startNode("error");
+        writer.setValue(errorMessage);
+        writer.endNode();
+    }
+
+    private void writeScreenshotIfPresent(final HierarchicalStreamWriter writer, final TestStep step) {
         if (step.getScreenshot() != null) {
             writer.startNode("screenshot");
             writer.setValue(step.getScreenshot().getName());
@@ -77,11 +111,10 @@ public class AcceptanceTestRunConverter implements Converter {
     }
 
     /**
-     * Convert XML to an AcceptanceTestRun object.
-     * Not needed for now.
+     * Convert XML to an AcceptanceTestRun object. Not needed for now.
      */
-    public Object unmarshal(final HierarchicalStreamReader reader, 
-                            final UnmarshallingContext context) {
+    public Object unmarshal(final HierarchicalStreamReader reader,
+            final UnmarshallingContext context) {
         throw new NotImplementedException();
     }
 
