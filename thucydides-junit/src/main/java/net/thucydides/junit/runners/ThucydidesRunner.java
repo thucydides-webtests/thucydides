@@ -7,9 +7,7 @@ import java.util.List;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.webdriver.SupportedWebDriver;
-import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
@@ -74,13 +72,18 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private NarrationListener fieldReporter;
 
     /**
+     * Retrieve the runner configuration from an external source.
+     */
+    private Configuration configuration;
+    
+    /**
      * The Field Reporter observes and records what happens during the execution of the test.
      * Once the test is over, the Field Reporter can provide the acceptance test outcome in the 
      * form of an AcceptanceTestRun object.
      */
     public NarrationListener getFieldReporter() {
         if (fieldReporter == null) {
-            fieldReporter = new NarrationListener(getPhotographer());
+            fieldReporter = new NarrationListener((TakesScreenshot) getDriver(), getOutputDirectory());
         }
         return fieldReporter;
     }
@@ -106,7 +109,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * testing. TODO: Is the photographer too tightly bound with the runner
      * class?
      */
-    private Photographer photographer;
+//    private Photographer photographer;
 
     /**
      * Creates a new test runner for WebDriver web tests.
@@ -137,8 +140,16 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     public File getOutputDirectory() {
         if (outputDirectory == null) {
             outputDirectory = deriveOutputDirectoryFromSystemProperties();
+            outputDirectory.mkdirs();
         }
         return outputDirectory;
+    }
+
+    private Configuration getConfiguration() {
+        if (configuration == null) {
+            configuration = new Configuration();
+        }
+        return configuration;
     }
 
     private File deriveOutputDirectoryFromSystemProperties() {
@@ -150,24 +161,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return new File(systemDefinedDirectory);
     }
 
-    private void setupThePhotographer() {
-        // TODO: Report an error if the output directory could not be made
-        getOutputDirectory().mkdirs();
-        photographer = getPhotographerFor((TakesScreenshot) getDriver(),
-                outputDirectory);
-    }
-
-    protected Photographer getPhotographer() {
-        if (photographer == null) {
-            setupThePhotographer();
-        }
-        return photographer;
-    }
-
-    protected Photographer getPhotographerFor(final TakesScreenshot driver, final File directory) {
-        return new Photographer((TakesScreenshot) getDriver(), directory);
-    }
-
     private void checkThatManagedFieldIsDefinedIn(final  Class<?> testCase) {
         ManagedWebDriverAnnotatedField.findFirstAnnotatedField(testCase);
     }
@@ -177,7 +170,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Otherwise, throw an InitializationError.
      */
     private void checkRequestedDriverType() {
-        findDriverType();
+        getConfiguration().findDriverType();
     }
 
     /**
@@ -265,7 +258,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         Title titleAnnotation = test.getClass().getAnnotation(Title.class);
         if (titleAnnotation != null) {
             String title = titleAnnotation.value();
-            System.out.println("Setting title to " + title);
             getFieldReporter().setTestRunTitle(title);
         }
     }
@@ -299,42 +291,12 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      *             if the driver type is not supported.
      */
     protected WebDriver newDriver() {
-        SupportedWebDriver supportedDriverType = findDriverType();
+        SupportedWebDriver supportedDriverType = getConfiguration().findDriverType();
         return webDriverFactory.newInstanceOf(supportedDriverType);
-    }
-
-    private SupportedWebDriver findDriverType() {
-        String driverType = System.getProperty("webdriver.driver", "firefox");
-        SupportedWebDriver supportedDriverType = lookupSupportedDriverTypeFor(driverType);
-        return supportedDriverType;
     }
 
     protected WebDriver getDriver() {
         return webdriver.get();
-    }
-
-    /**
-     * Transform a driver type into the SupportedWebDriver enum. Driver type can
-     * be any case.
-     * 
-     * @throws UnsupportedDriverException
-     */
-    private SupportedWebDriver lookupSupportedDriverTypeFor(final String driverType) {
-        SupportedWebDriver driver = null;
-        try {
-            driver = SupportedWebDriver.valueOf(driverType.toUpperCase());
-        } catch (NullPointerException npe) {
-            throwUnsupportedDriverExceptionFor(driverType);
-        } catch (IllegalArgumentException iae) {
-            throwUnsupportedDriverExceptionFor(driverType);
-        }
-        return driver;
-    }
-
-    private void throwUnsupportedDriverExceptionFor(final String driverType) {
-        throw new UnsupportedDriverException(driverType
-                + " is not a supported browser. Supported driver values are: "
-                + SupportedWebDriver.listOfSupportedDrivers());
     }
 
     /**

@@ -12,7 +12,6 @@ import java.io.IOException;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.integration.samples.OpenGoogleHomePageSample;
 import net.thucydides.junit.integration.samples.OpenGoogleHomePageWithTitleSample;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
@@ -23,6 +22,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.TakesScreenshot;
 
 /**
  * Managing the WebDriver instance during a test run The instance should be
@@ -59,8 +59,7 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
             throws InitializationError, IOException {
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
         
-        Photographer photographer = mock(Photographer.class);
-        NarrationListener fieldReporter = new NarrationListener(photographer);
+        NarrationListener fieldReporter = createMockNarrationListener();
         
         ThucydidesRunner runner = getTestRunnerUsing(OpenGoogleHomePageSample.class, mockBrowserFactory);
         runner.setFieldReporter(fieldReporter);
@@ -71,14 +70,20 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
         assertThat(fieldReporter.getAcceptanceTestRun().getTitle(), is("Open google home page sample"));
 
     }
+
+    private NarrationListener createMockNarrationListener() {
+        TakesScreenshot driver = mock(TakesScreenshot.class);
+        File outputDirectory = mock(File.class);
+        NarrationListener fieldReporter = new NarrationListener(driver, outputDirectory);
+        return fieldReporter;
+    }
     
     @Test
     public void the_developer_can_overrire_the_test_case_title_using_the_Title_annotation()
             throws InitializationError, IOException {
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
         
-        Photographer photographer = mock(Photographer.class);
-        NarrationListener fieldReporter = new NarrationListener(photographer);
+        NarrationListener fieldReporter = createMockNarrationListener();
         
         ThucydidesRunner runner = getTestRunnerUsing(OpenGoogleHomePageWithTitleSample.class, mockBrowserFactory);
         runner.setFieldReporter(fieldReporter);

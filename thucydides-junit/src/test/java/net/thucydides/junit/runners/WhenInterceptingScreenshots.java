@@ -1,16 +1,21 @@
 package net.thucydides.junit.runners;
 
 import static org.mockito.Matchers.startsWith;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+
 import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.junit.runners.mocks.TestableNarrationListener;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.TakesScreenshot;
 
 public class WhenInterceptingScreenshots {
 
@@ -27,14 +32,16 @@ public class WhenInterceptingScreenshots {
     
     @Test
     public void should_name_the_screenshots_after_each_test_based_on_the_test_name() throws Exception {
-        NarrationListener listener = new NarrationListener(photographer);
+        TakesScreenshot driver = mock(TakesScreenshot.class);
+        File outputDirectory = mock(File.class);
+        NarrationListener listener = new TestableNarrationListener(driver, outputDirectory);
         
         when(description.getMethodName()).thenReturn("some_test_method_name");
 
         listener.testStarted(description);
         listener.testFinished(description);
-        
+
+        Photographer photographer = listener.getPhotographer();        
         verify(photographer).takeScreenshot(startsWith("some_test_method_name"));
     }
-    
 }

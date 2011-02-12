@@ -3,9 +3,14 @@ package net.thucydides.junit.runners;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.io.File;
+
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.integration.samples.OpenGoogleHomePageSample;
+import net.thucydides.junit.runners.mocks.TestableNarrationListener;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +18,7 @@ import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.TakesScreenshot;
 
 public class WhenRecordingTheTestOutcomes {
 
@@ -38,7 +44,7 @@ public class WhenRecordingTheTestOutcomes {
 
     @Test
     public void the_narration_listener_builds_a_model_from_the_junit_test_execution() throws Exception {
-        NarrationListener listener = new NarrationListener(photographer);
+        NarrationListener listener = createMockNarrationListener();
         
         listener.testRunStarted(description);
         listener.testStarted(description);
@@ -51,7 +57,7 @@ public class WhenRecordingTheTestOutcomes {
     
     @Test
     public void the_narration_listener_builds_a_humanized_title_for_the_test_case() throws Exception {
-        NarrationListener listener = new NarrationListener(photographer);
+        NarrationListener listener = createMockNarrationListener();
         
         listener.testRunStarted(description);
         listener.testStarted(description);
@@ -62,5 +68,13 @@ public class WhenRecordingTheTestOutcomes {
         
     }
 
+    
+    private NarrationListener createMockNarrationListener() {
+        TakesScreenshot driver = mock(TakesScreenshot.class);
+        File outputDirectory = mock(File.class);
+        NarrationListener fieldReporter = new TestableNarrationListener(driver, outputDirectory);
+        return fieldReporter;
+    }
+    
 }
 

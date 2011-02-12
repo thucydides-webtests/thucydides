@@ -14,12 +14,13 @@ public abstract class AbstractWebDriverTest {
 
     protected ThucydidesRunner getTestRunnerUsing(WebDriverFactory browserFactory)
             throws InitializationError {
-                return new MockThucydidesRunner(ManagedWebDriverSample.class, browserFactory);   
-            }
+        return new MockThucydidesRunner(ManagedWebDriverSample.class, browserFactory);
+    }
 
-    protected ThucydidesRunner getTestRunnerUsing(Class<?> testClass, WebDriverFactory browserFactory)
-            throws InitializationError {
-                return new MockThucydidesRunner(testClass, browserFactory);   
-            }
+    protected ThucydidesRunner getTestRunnerUsing(Class<?> testClass,
+            WebDriverFactory browserFactory) throws InitializationError {
+        ThucydidesRunner runner = new MockThucydidesRunner(testClass, browserFactory);
+        return runner;
+    }
 
 }

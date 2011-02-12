@@ -16,6 +16,7 @@ import net.thucydides.core.screenshots.Photographer;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.modeshape.common.text.Inflector;
+import org.openqa.selenium.TakesScreenshot;
 
 /**
  * Observes the test run and stores test run details for later reporting.
@@ -26,7 +27,7 @@ import org.modeshape.common.text.Inflector;
  * @author johnsmart
  * 
  */
-class NarrationListener extends StickyFailureListener {
+public class NarrationListener extends StickyFailureListener {
 
     private final Photographer photographer;
     private final AcceptanceTestRun acceptanceTestRun;
@@ -34,9 +35,9 @@ class NarrationListener extends StickyFailureListener {
     
     private TestStep currentTestStep;
 
-    public NarrationListener(final Photographer photographer) {
-        this.photographer = photographer;
+    public NarrationListener(final TakesScreenshot driver, final  File outputDirectory) {
         acceptanceTestRun = new AcceptanceTestRun();
+        photographer = new Photographer(driver, outputDirectory);
     }
 
     private void getCurrentTestStepFrom(final Description description) {
@@ -45,7 +46,7 @@ class NarrationListener extends StickyFailureListener {
                     fromTestName(description.getMethodName()));
         }
     }
-
+    
     public AcceptanceTestRun getAcceptanceTestRun() {
         return acceptanceTestRun;
     }
@@ -136,7 +137,11 @@ class NarrationListener extends StickyFailureListener {
     private File takeScreenshotAtEndOfTestFor(final String testName)
             throws IOException {
         String snapshotName = Inflector.getInstance().underscore(testName);
-        return photographer.takeScreenshot(snapshotName);
+        return getPhotographer().takeScreenshot(snapshotName);
+    }
+
+    public Photographer getPhotographer() {
+        return photographer;
     }
 
     /**

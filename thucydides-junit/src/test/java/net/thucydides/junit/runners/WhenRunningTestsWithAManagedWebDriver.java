@@ -5,21 +5,25 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.startsWith;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.runners.listeners.TestExecutionListener;
+import net.thucydides.junit.runners.mocks.TestableNarrationListener;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.junit.runners.samples.ManagedWebDriverWithFailingTestSample;
 
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
+import org.openqa.selenium.TakesScreenshot;
 
 /**
  * Managing the WebDriver instance during a test run The instance should be
@@ -36,6 +40,8 @@ public class WhenRunningTestsWithAManagedWebDriver extends AbstractWebDriverTest
             throws InitializationError {
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
         ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+        NarrationListener fieldReporter = createMockNarrationListener();        
+        runner.setFieldReporter(fieldReporter);
 
         final RunNotifier notifier = new RunNotifier();
 
@@ -54,10 +60,12 @@ public class WhenRunningTestsWithAManagedWebDriver extends AbstractWebDriverTest
 
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
         ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
-
+        NarrationListener fieldReporter = createMockNarrationListener();        
+        runner.setFieldReporter(fieldReporter);
+        
         runner.run(new RunNotifier());
 
-        final Photographer mockPhotographer = runner.getPhotographer();
+        final Photographer mockPhotographer = fieldReporter.getPhotographer();
 
         verify(mockPhotographer).takeScreenshot(startsWith("should_do_this_step_1"));
         verify(mockPhotographer).takeScreenshot(startsWith("should_do_that_step_2"));
@@ -74,8 +82,12 @@ public class WhenRunningTestsWithAManagedWebDriver extends AbstractWebDriverTest
         ThucydidesRunner runner = getTestRunnerUsing(ManagedWebDriverWithFailingTestSample.class,
                 mockBrowserFactory);
 
-        final Photographer mockPhotographer = runner.getPhotographer();
+        NarrationListener fieldReporter = createMockNarrationListener();        
+        runner.setFieldReporter(fieldReporter);
+        
         runner.run(new RunNotifier());
+
+        final Photographer mockPhotographer = fieldReporter.getPhotographer();
 
         verify(mockPhotographer).takeScreenshot(startsWith("should_do_this_step_1"));
         verify(mockPhotographer).takeScreenshot(startsWith("should_do_that_step_2"));
@@ -91,6 +103,9 @@ public class WhenRunningTestsWithAManagedWebDriver extends AbstractWebDriverTest
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
         ThucydidesRunner runner = getTestRunnerUsing(ManagedWebDriverWithFailingTestSample.class,
                 mockBrowserFactory);
+
+        NarrationListener fieldReporter = createMockNarrationListener();        
+        runner.setFieldReporter(fieldReporter);
 
         final RunNotifier notifier = new RunNotifier();
 
@@ -108,4 +123,11 @@ public class WhenRunningTestsWithAManagedWebDriver extends AbstractWebDriverTest
         assertThat(testListener.getIgnoredTests(), hasItems("dont_get_to_here","or_to_here"));
     }
 
+    private NarrationListener createMockNarrationListener() {
+        TakesScreenshot driver = mock(TakesScreenshot.class);
+        File outputDirectory = mock(File.class);
+        NarrationListener fieldReporter = new TestableNarrationListener(driver, outputDirectory);
+        return fieldReporter;
+    }
+    
 }
