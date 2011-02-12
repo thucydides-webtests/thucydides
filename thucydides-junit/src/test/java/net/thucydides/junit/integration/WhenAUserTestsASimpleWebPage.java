@@ -3,6 +3,8 @@ package net.thucydides.junit.integration;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 
 import java.io.File;
 import java.util.Arrays;
@@ -15,6 +17,7 @@ import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.junit.runners.listeners.TestExecutionListener;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
@@ -89,6 +92,34 @@ public class WhenAUserTestsASimpleWebPage {
         assertThat(expectedXMLReport.exists(), is(true));
     }
     
+    @Test
+    public void a_failing_test_should_record_the_error_in_the_xml_report() throws Exception {
+
+        ThucydidesRunner runner = new ThucydidesRunner(ManagedWebDriverWithAFailingTestSample.class);
+        File outputDirectory = temporaryFolder.newFolder("output");
+        runner.setOutputDirectory(outputDirectory);
+
+        XMLAcceptanceTestReporter reporter = new XMLAcceptanceTestReporter();
+        runner.subscribeReported(reporter);
+
+        final RunNotifier notifier = new RunNotifier();
+
+        TestExecutionListener testListener = new TestExecutionListener();
+        notifier.addListener(testListener);
+
+        runner.run(notifier);
+        
+        File expectedXMLReport = new File(outputDirectory, "managed_web_driver_with_a_failing_test_sample.xml");
+        assertThat(expectedXMLReport.exists(), is(true));
+        String xmlContents = FileUtils.readFileToString(expectedXMLReport);
+        
+        System.out.println("xmlContents = " + xmlContents);
+        assertThat(xmlContents, containsString("<error>"));
+        assertThat(xmlContents, containsString("<exception>"));
+        assertThat(xmlContents, containsString("Expected: is &lt;2&gt;"));
+        assertThat(xmlContents, containsString("got: &lt;1&gt;"));
+    }    
+
     @Test
     public void the_xml_report_should_by_default_go_to_a_maven_compatible_directory() throws Exception {
   

@@ -37,13 +37,6 @@ import com.google.common.base.Preconditions;
 public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     /**
-     * Use this property to define the output directory in which reports will be stored.
-     */
-    public static final String OUTPUT_DIRECTORY_PROPERTY = "thucydides.outputDirectory";
-
-    private static final String DEFAULT_OUTPUT_DIRECTORY = "target/thucydides";
-
-    /**
      * Creates new browser instances. The Browser Factory's job is to provide
      * new web driver instances. It is designed to isolate the test runner from
      * the business of creating and managing WebDriver drivers.
@@ -139,7 +132,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     public File getOutputDirectory() {
         if (outputDirectory == null) {
-            outputDirectory = deriveOutputDirectoryFromSystemProperties();
+            outputDirectory = getConfiguration().getOutputDirectory();
             outputDirectory.mkdirs();
         }
         return outputDirectory;
@@ -152,15 +145,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return configuration;
     }
 
-    private File deriveOutputDirectoryFromSystemProperties() {
-        String systemDefinedDirectory = System
-                .getProperty(OUTPUT_DIRECTORY_PROPERTY);
-        if (systemDefinedDirectory == null) {
-            systemDefinedDirectory = DEFAULT_OUTPUT_DIRECTORY;
-        }
-        return new File(systemDefinedDirectory);
-    }
-
     private void checkThatManagedFieldIsDefinedIn(final  Class<?> testCase) {
         ManagedWebDriverAnnotatedField.findFirstAnnotatedField(testCase);
     }
@@ -170,7 +154,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Otherwise, throw an InitializationError.
      */
     private void checkRequestedDriverType() {
-        getConfiguration().findDriverType();
+        getConfiguration().getDriverType();
     }
 
     /**
@@ -194,7 +178,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
         closeDriver();
 
-        generateReports(fieldReporter.getAcceptanceTestRun());
+        generateReportsFor(getFieldReporter().getAcceptanceTestRun());
     }
 
     /**
@@ -208,7 +192,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * @throws IOException
      * 
      */
-    private void generateReports(final AcceptanceTestRun acceptanceTestRun) {
+    private void generateReportsFor(final AcceptanceTestRun acceptanceTestRun) {
         for (AcceptanceTestReporter reporter : getSubscribedReporters()) {
             try {
                 reporter.generateReportFor(acceptanceTestRun);
@@ -231,11 +215,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     public void subscribeReported(final AcceptanceTestReporter reporter) {
         reporter.setOutputDirectory(getOutputDirectory());
         subscribedReporters.add(reporter);
-    }
-
-    @Override
-    public void sort(final Sorter sorter) {
-        super.sort(sorter);
     }
 
     @Override
@@ -291,7 +270,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      *             if the driver type is not supported.
      */
     protected WebDriver newDriver() {
-        SupportedWebDriver supportedDriverType = getConfiguration().findDriverType();
+        SupportedWebDriver supportedDriverType = getConfiguration().getDriverType();
         return webDriverFactory.newInstanceOf(supportedDriverType);
     }
 

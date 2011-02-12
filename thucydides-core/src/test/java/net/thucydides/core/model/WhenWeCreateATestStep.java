@@ -80,7 +80,7 @@ public class WhenWeCreateATestStep {
         TestStep step = new TestStep("a narrative description");
       
         step.setResult(TestResult.FAILURE);
-        Exception e = new IllegalStateException();
+        Throwable e = new IllegalStateException();
         step.failedWith("Oh nose!",e);
         assertThat(step.getException(), is(e));
     }

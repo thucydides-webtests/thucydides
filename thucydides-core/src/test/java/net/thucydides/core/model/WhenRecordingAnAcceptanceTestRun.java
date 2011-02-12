@@ -238,6 +238,16 @@ public class WhenRecordingAnAcceptanceTestRun {
 
         assertThat(testRun.getPendingCount(), is(3));
     }
+    
+    @Test
+    public void the_model_records_a_human_readable_title_for_the_test_case() {
+
+        testRun.setTitle("A test case");
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+
+        assertThat(testRun.getTitle(), is("A test case"));
+    }    
 
     private TestStep successfulTestStepCalled(String description) {
         return createNewTestStep(description, SUCCESS);

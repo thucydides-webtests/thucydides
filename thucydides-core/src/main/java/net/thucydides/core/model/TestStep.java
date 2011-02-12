@@ -26,7 +26,7 @@ public class TestStep {
     private File screenshot;
     private TestResult result;
     private String errorMessage;
-    private Exception cause;
+    private Throwable cause;
     
     public TestStep(final String description) {
         this.description = description;
@@ -57,7 +57,7 @@ public class TestStep {
     /**
      * Indicate that this step failed with a given error.
      */
-    public void failedWith(final String message, final Exception e) {
+    public void failedWith(final String message, final Throwable e) {
         this.errorMessage = message;
         this.cause = e;
     }
@@ -94,7 +94,7 @@ public class TestStep {
         return  getResult() == PENDING;
     }
 
-    public Exception getException() {
+    public Throwable getException() {
         return cause;
     }
 

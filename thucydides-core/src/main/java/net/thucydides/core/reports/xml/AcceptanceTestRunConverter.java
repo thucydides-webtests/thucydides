@@ -77,7 +77,7 @@ public class AcceptanceTestRunConverter implements Converter {
         }
     }
 
-    private void writeExceptionNode(final HierarchicalStreamWriter writer, final Exception cause) {
+    private void writeExceptionNode(final HierarchicalStreamWriter writer, final Throwable cause) {
         writer.startNode("exception");
         StringWriter stringWriter = new StringWriter();
         cause.printStackTrace(new PrintWriter(stringWriter));

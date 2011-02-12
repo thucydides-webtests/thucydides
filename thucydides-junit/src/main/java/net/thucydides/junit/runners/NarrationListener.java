@@ -88,7 +88,12 @@ public class NarrationListener extends StickyFailureListener {
     @Override
     public void testFailure(final Failure failure) throws Exception {
         markCurrentTestAs(FAILURE);
+        recordErrorMessageFrom(failure);
         super.testFailure(failure);
+    }
+
+    private void recordErrorMessageFrom(final Failure failure) {
+        currentTestStep.failedWith(failure.getMessage(), failure.getException());
     }
 
     @Override

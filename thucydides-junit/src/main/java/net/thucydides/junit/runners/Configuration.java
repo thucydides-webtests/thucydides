@@ -1,5 +1,7 @@
 package net.thucydides.junit.runners;
 
+import java.io.File;
+
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 
@@ -21,13 +23,33 @@ public class Configuration {
     public static final String DEFAULT_WEBDRIVER_DRIVER = "firefox";
     
     /**
+     * Use this property to define the output directory in which reports will be stored.
+     */
+    public static final String OUTPUT_DIRECTORY_PROPERTY = "thucydides.outputDirectory";
+
+    /**
+     * By default, reports will go here.
+     */
+    private static final String DEFAULT_OUTPUT_DIRECTORY = "target/thucydides";
+
+    /**
      * Get the currently-configured browser type.
      */
-    public SupportedWebDriver findDriverType() {        
+    public SupportedWebDriver getDriverType() {        
         String driverType = System.getProperty(WEBDRIVER_DRIVER, DEFAULT_WEBDRIVER_DRIVER);
         return lookupSupportedDriverTypeFor(driverType);
     }
-
+    
+    /**
+     * Where should the reports go?
+     */
+    public File getOutputDirectory() {
+        String systemDefinedDirectory = System.getProperty(OUTPUT_DIRECTORY_PROPERTY);
+        if (systemDefinedDirectory == null) {
+            systemDefinedDirectory = DEFAULT_OUTPUT_DIRECTORY;
+        }
+        return new File(systemDefinedDirectory);
+    }
     /**
      * Transform a driver type into the SupportedWebDriver enum. Driver type can
      * be any case.
