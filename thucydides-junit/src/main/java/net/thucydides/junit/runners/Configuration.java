@@ -25,8 +25,7 @@ public class Configuration {
      */
     public SupportedWebDriver findDriverType() {        
         String driverType = System.getProperty(WEBDRIVER_DRIVER, DEFAULT_WEBDRIVER_DRIVER);
-        SupportedWebDriver supportedDriverType = lookupSupportedDriverTypeFor(driverType);
-        return supportedDriverType;
+        return lookupSupportedDriverTypeFor(driverType);
     }
 
     /**
@@ -39,8 +38,6 @@ public class Configuration {
         SupportedWebDriver driver = null;
         try {
             driver = SupportedWebDriver.valueOf(driverType.toUpperCase());
-        } catch (NullPointerException npe) {
-            throwUnsupportedDriverExceptionFor(driverType);
         } catch (IllegalArgumentException iae) {
             throwUnsupportedDriverExceptionFor(driverType);
         }

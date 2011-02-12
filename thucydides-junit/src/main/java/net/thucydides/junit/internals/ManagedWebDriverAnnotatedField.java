@@ -61,7 +61,7 @@ public class ManagedWebDriverAnnotatedField {
     public void setValue(final Object testCase, final WebDriver manageDriver) {
         try {
             field.set(testCase, manageDriver);
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
             throw new InvalidManagedWebDriverFieldException("Could not access or set web driver field: " + field);
         }
     }
