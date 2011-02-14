@@ -135,4 +135,35 @@ public class WhenAUserTestsASimpleWebPage {
         assertThat(expectedXMLReport.exists(), is(true));
     }
 
+    
+    @Test
+    public void an_html_report_should_also_be_generated_in_the_output_directory() throws Exception {
+  
+        ThucydidesRunner runner = new ThucydidesRunner(ManagedWebDriverSample.class);
+        File outputDirectory = new File("target/thucydides");
+        
+        XMLAcceptanceTestReporter reporter = new XMLAcceptanceTestReporter();
+        runner.subscribeReported(reporter);
+        
+        runner.run(new RunNotifier());
+
+        File expectedXMLReport = new File(outputDirectory, "managed_web_driver_sample.html");
+        assertThat(expectedXMLReport.exists(), is(true));
+    }
+    
+    @Test
+    public void the_stylesheet_for_the_html_report_should_also_be_copies_to_the_output_directory() throws Exception {
+  
+        ThucydidesRunner runner = new ThucydidesRunner(ManagedWebDriverSample.class);
+        File outputDirectory = new File("target/thucydides");
+        
+        XMLAcceptanceTestReporter reporter = new XMLAcceptanceTestReporter();
+        runner.subscribeReported(reporter);
+        
+        runner.run(new RunNotifier());
+
+        File expectedStylesheet = new File(outputDirectory, "default.css");
+        assertThat(expectedStylesheet.exists(), is(true));
+    }
+
 }

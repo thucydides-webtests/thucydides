@@ -3,6 +3,7 @@ package net.thucydides.junit.runners;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.thucydides.core.model.AcceptanceTestRun;
@@ -12,7 +13,6 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
 
-import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -22,11 +22,16 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 /**
  * A test runner for WebDriver-based web tests. This test runner initializes a
  * WebDriver instance before running the tests in their order of appearance. At
  * the end of the tests, it closes and quits the WebDriver instance.
+ * 
+ * The test runner will by default produce output in XML and HTML. This
+ * can extended by subscribing more reporter implementations to the test runner.
+ * TODO: I'm not sure about how to subscribe more report modules - probably via Maven or Ant.
  * 
  * @depend - <listener> - NarrationListener
  * @depend - <listener> - FailureListener
@@ -96,14 +101,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Who needs to be notified when a test is done.
      */
     private List<AcceptanceTestReporter> subscribedReporters = new ArrayList<AcceptanceTestReporter>();
-
-    /**
-     * Takes cares of screenshots. The member variable makes for more convenient
-     * testing. TODO: Is the photographer too tightly bound with the runner
-     * class?
-     */
-//    private Photographer photographer;
-
+    
     /**
      * Creates a new test runner for WebDriver web tests.
      * 
@@ -138,6 +136,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return outputDirectory;
     }
 
+    /**
+     * The configuration manages output directories and driver types.
+     * They can be defined as system values, or have sensible defaults.
+     */
     private Configuration getConfiguration() {
         if (configuration == null) {
             configuration = new Configuration();
@@ -168,6 +170,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     @Override
     public void run(final RunNotifier notifier) {
         initializeDriver();
+        setupDefaultReporters();
 
         failureListener = new FailureListener();
 
@@ -179,6 +182,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         closeDriver();
 
         generateReportsFor(getFieldReporter().getAcceptanceTestRun());
+    }
+
+    private void setupDefaultReporters() {
+        subscribedReporters.addAll(getConfiguration().getDefaultReporters());
     }
 
     /**
@@ -195,6 +202,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private void generateReportsFor(final AcceptanceTestRun acceptanceTestRun) {
         for (AcceptanceTestReporter reporter : getSubscribedReporters()) {
             try {
+                reporter.setOutputDirectory(getOutputDirectory());
                 reporter.generateReportFor(acceptanceTestRun);
             } catch (IOException e) {
                 throw new IllegalArgumentException(
@@ -203,8 +211,11 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private List<AcceptanceTestReporter> getSubscribedReporters() {
-        return subscribedReporters;
+    /**
+     * What reports is this test runner configured to generate?
+     */
+    public List<AcceptanceTestReporter> getSubscribedReporters() {
+        return ImmutableList.copyOf(subscribedReporters);
     }
 
     /**
@@ -216,7 +227,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         reporter.setOutputDirectory(getOutputDirectory());
         subscribedReporters.add(reporter);
     }
-
+    
     @Override
     protected void runChild(final FrameworkMethod method, final RunNotifier notifier) {
         if (failureListener.aPreviousTestHasFailed()) {

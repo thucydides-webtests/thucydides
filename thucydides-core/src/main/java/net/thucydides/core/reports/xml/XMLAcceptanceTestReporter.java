@@ -14,35 +14,41 @@ import com.thoughtworks.xstream.XStream;
 
 /**
  * Generates acceptance test results in XML form.
- *
+ * 
  */
 public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
 
     private File outputDirectory;
     private final Inflector inflector = Inflector.getInstance();
-    
+
+    /**
+     * We don't need any resourcs for XML reports.
+     */
+    public void setResourceDirectory(final String resourceDirectoryPath) {
+    }
+
     /**
      * Generate an XML report for a given test run.
      */
     public File generateReportFor(final AcceptanceTestRun testRun) throws IOException {
 
         Preconditions.checkNotNull(outputDirectory);
-        
+
         XStream xstream = new XStream();
         xstream.alias("acceptance-test-run", AcceptanceTestRun.class);
         xstream.registerConverter(new AcceptanceTestRunConverter());
         String xmlContents = xstream.toXML(testRun);
-        
+
         String reportFilename = getNormalizedTestNameFor(testRun);
         File report = new File(getOutputDirectory(), reportFilename);
         FileUtils.writeStringToFile(report, xmlContents);
-        
+
         return report;
     }
 
     /**
-     * Return a filesystem-friendly version of the test case name.
-     * The filesytem version should have no spaces and have the XML file suffix.
+     * Return a filesystem-friendly version of the test case name. The filesytem
+     * version should have no spaces and have the XML file suffix.
      */
     public String getNormalizedTestNameFor(final AcceptanceTestRun testRun) {
         String testCaseNameWithUnderscores = inflector.underscore(testRun.getTitle());
@@ -50,7 +56,7 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
         String lowerCaseTestCaseNameWithUnderscores = lowerCaseTestCaseName.replaceAll("\\s", "_");
         return lowerCaseTestCaseNameWithUnderscores + ".xml";
     }
-    
+
     public File getOutputDirectory() {
         return outputDirectory;
     }

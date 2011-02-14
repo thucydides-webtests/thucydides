@@ -6,6 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.atLeast;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,7 +105,7 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
 
         runner.run(new RunNotifier());
 
-        verify(mockReporter).setOutputDirectory(any(File.class));
+        verify(mockReporter,atLeast(1)).setOutputDirectory(any(File.class));
     }
 
     @Test

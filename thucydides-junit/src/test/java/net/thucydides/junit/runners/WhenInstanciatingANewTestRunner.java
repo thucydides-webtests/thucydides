@@ -1,10 +1,10 @@
 package net.thucydides.junit.runners;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 import java.io.File;
 
@@ -115,7 +115,7 @@ public class WhenInstanciatingANewTestRunner {
         assertThat(outputDirectory.getPath(), is("reports/thucydides"));
 
     }
-    
+
     private ThucydidesRunner getTestRunnerUsing(WebDriverFactory browserFactory) throws InitializationError {
         return new MockThucydidesRunner(ManagedWebDriverSample.class, browserFactory);   
     }

@@ -1,19 +1,27 @@
 package net.thucydides.junit.runners;
 
 import java.io.File;
+import java.util.Collection;
 
+import com.google.common.collect.ImmutableList;
+
+import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
+import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 
 /**
- * Centralized configuration of the test runner.
- * Most configuration elements can be set using system properties.
- *
+ * Centralized configuration of the test runner. You can configure the output
+ * directory, the browser to use, and the reports to generate. Most
+ * configuration elements can be set using system properties.
+ * 
  */
 public class Configuration {
 
     /**
-     * Use the 'webdriver.driver' property to tell Thucydides what browser to run the tests in.
+     * Use the 'webdriver.driver' property to tell Thucydides what browser to
+     * run the tests in.
      */
     public static final String WEBDRIVER_DRIVER = "webdriver.driver";
 
@@ -21,9 +29,10 @@ public class Configuration {
      * The default browser is Firefox.
      */
     public static final String DEFAULT_WEBDRIVER_DRIVER = "firefox";
-    
+
     /**
-     * Use this property to define the output directory in which reports will be stored.
+     * Use this property to define the output directory in which reports will be
+     * stored.
      */
     public static final String OUTPUT_DIRECTORY_PROPERTY = "thucydides.outputDirectory";
 
@@ -35,11 +44,11 @@ public class Configuration {
     /**
      * Get the currently-configured browser type.
      */
-    public SupportedWebDriver getDriverType() {        
+    public SupportedWebDriver getDriverType() {
         String driverType = System.getProperty(WEBDRIVER_DRIVER, DEFAULT_WEBDRIVER_DRIVER);
         return lookupSupportedDriverTypeFor(driverType);
     }
-    
+
     /**
      * Where should the reports go?
      */
@@ -50,6 +59,7 @@ public class Configuration {
         }
         return new File(systemDefinedDirectory);
     }
+
     /**
      * Transform a driver type into the SupportedWebDriver enum. Driver type can
      * be any case.
@@ -64,13 +74,20 @@ public class Configuration {
             throwUnsupportedDriverExceptionFor(driverType);
         }
         return driver;
-    } 
-    
+    }
+
     private void throwUnsupportedDriverExceptionFor(final String driverType) {
         throw new UnsupportedDriverException(driverType
                 + " is not a supported browser. Supported driver values are: "
                 + SupportedWebDriver.listOfSupportedDrivers());
     }
 
-    
+    /**
+     * The default reporters applicable for standard test runs.
+     */
+    public Collection<? extends AcceptanceTestReporter> getDefaultReporters() {
+        return ImmutableList.of(new XMLAcceptanceTestReporter(),
+                                new HtmlAcceptanceTestReporter());
+    }
+
 }

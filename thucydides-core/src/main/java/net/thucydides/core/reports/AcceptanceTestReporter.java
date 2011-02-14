@@ -23,4 +23,11 @@ public interface AcceptanceTestReporter {
      */
     void setOutputDirectory(File outputDirectory);
     
+    /**
+     * Define or override the directory where report resources are stored.
+     * This can be on the file system or on the classpath
+     * @param resourceDirectory
+     */
+    void setResourceDirectory(String resourceDirectoryPath);
+    
 }
