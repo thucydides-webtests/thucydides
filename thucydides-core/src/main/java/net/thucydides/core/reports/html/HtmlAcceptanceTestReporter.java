@@ -1,5 +1,7 @@
 package net.thucydides.core.reports.html;
 
+import static net.thucydides.core.reports.ReportNamer.ReportType.HTML;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,20 +12,20 @@ import java.util.regex.Pattern;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.ReportNamer;
 import net.thucydides.core.resources.ResourceList;
 
 import org.apache.commons.io.FileUtils;
-import org.modeshape.common.text.Inflector;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-
 /**
  * Generates acceptance test results in XML form.
+ * TODO: Tidy up this class. 
  * 
  */
 public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
@@ -34,12 +36,12 @@ public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
 
     private File outputDirectory;
 
-    private final Inflector inflector = Inflector.getInstance();
+    private ReportNamer reportNamer = new ReportNamer(HTML);
 
     private String resourceDirectory = DEFAULT_RESOURCE_DIRECTORY;
 
     private VelocityEngine ve = new VelocityEngine();
-
+    
     public HtmlAcceptanceTestReporter() {
         ve.setProperty(Velocity.RESOURCE_LOADER, "classpath");
         ve.addProperty("classpath." + Velocity.RESOURCE_LOADER + ".class",
@@ -70,7 +72,7 @@ public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
         template.merge(context, sw);
         htmlContents = sw.toString();
 
-        String reportFilename = getNormalizedTestNameFor(testRun);
+        String reportFilename = reportNamer.getNormalizedTestNameFor(testRun);
         File report = new File(getOutputDirectory(), reportFilename);
         FileUtils.writeStringToFile(report, htmlContents);
 
@@ -97,8 +99,8 @@ public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
         }
     }
 
-    private Pattern allFilesInDirectory(String resourceDirectory2) {
-        return Pattern.compile(".*" + resourceDirectory + "/.*");
+    private Pattern allFilesInDirectory(final String directory) {
+        return Pattern.compile(".*" + directory + "/.*");
    }
 
     private void copyFileToTargetDirectory(final String resourcePath, final File targetDirectory)
@@ -128,17 +130,6 @@ public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
 
     private Template getTemplate() {
         return ve.getTemplate("velocity/default.vm");
-    }
-
-    /**
-     * Return a filesystem-friendly version of the test case name. The filesytem
-     * version should have no spaces and have the XML file suffix.
-     */
-    public String getNormalizedTestNameFor(final AcceptanceTestRun testRun) {
-        String testCaseNameWithUnderscores = inflector.underscore(testRun.getTitle());
-        String lowerCaseTestCaseName = testCaseNameWithUnderscores.toLowerCase();
-        String lowerCaseTestCaseNameWithUnderscores = lowerCaseTestCaseName.replaceAll("\\s", "_");
-        return lowerCaseTestCaseNameWithUnderscores + ".html";
     }
 
     public File getOutputDirectory() {

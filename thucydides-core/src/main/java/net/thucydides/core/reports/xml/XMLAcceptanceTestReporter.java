@@ -1,13 +1,15 @@
 package net.thucydides.core.reports.xml;
 
+import static net.thucydides.core.reports.ReportNamer.ReportType.XML;
+
 import java.io.File;
 import java.io.IOException;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.ReportNamer;
 
 import org.apache.commons.io.FileUtils;
-import org.modeshape.common.text.Inflector;
 
 import com.google.common.base.Preconditions;
 import com.thoughtworks.xstream.XStream;
@@ -19,7 +21,8 @@ import com.thoughtworks.xstream.XStream;
 public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
 
     private File outputDirectory;
-    private final Inflector inflector = Inflector.getInstance();
+
+    private ReportNamer reportNamer = new ReportNamer(XML);
 
     /**
      * We don't need any resourcs for XML reports.
@@ -39,22 +42,11 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
         xstream.registerConverter(new AcceptanceTestRunConverter());
         String xmlContents = xstream.toXML(testRun);
 
-        String reportFilename = getNormalizedTestNameFor(testRun);
+        String reportFilename = reportNamer.getNormalizedTestNameFor(testRun);
         File report = new File(getOutputDirectory(), reportFilename);
         FileUtils.writeStringToFile(report, xmlContents);
 
         return report;
-    }
-
-    /**
-     * Return a filesystem-friendly version of the test case name. The filesytem
-     * version should have no spaces and have the XML file suffix.
-     */
-    public String getNormalizedTestNameFor(final AcceptanceTestRun testRun) {
-        String testCaseNameWithUnderscores = inflector.underscore(testRun.getTitle());
-        String lowerCaseTestCaseName = testCaseNameWithUnderscores.toLowerCase();
-        String lowerCaseTestCaseNameWithUnderscores = lowerCaseTestCaseName.replaceAll("\\s", "_");
-        return lowerCaseTestCaseNameWithUnderscores + ".xml";
     }
 
     public File getOutputDirectory() {
