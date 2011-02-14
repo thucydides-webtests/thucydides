@@ -21,7 +21,7 @@ public class WhenReadingResourcesFromTheClasspath {
     public void should_return_a_list_of_resources_in_a_given_package() {
         Pattern pattern = Pattern.compile(".*/resourcelist/.*");
         Collection<String> resources = ResourceList.getResources(pattern);
-        assertThat(resources.size(), is(2));
+        assertThat(resources.size(), greaterThan(0));
         assertThat(resources, hasItems(endsWith("resourcelist/sample.css"),endsWith("resourcelist/sample.xsl")));
     }
     

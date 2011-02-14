@@ -98,8 +98,6 @@ public class WhenInstanciatingANewTestRunner {
         File outputDirectory = runner.getOutputDirectory();
         
         assertThat(outputDirectory.getPath(), is("target/thucydides"));
-        System.setProperty("thucydides.output.dir", "reports/thucydides");
-
     }
     
     @Test
@@ -108,11 +106,11 @@ public class WhenInstanciatingANewTestRunner {
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
         ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
         
-        System.setProperty("thucydides.outputDirectory", "reports/thucydides");
+        System.setProperty("thucydides.outputDirectory", "target/reports/thucydides");
 
         File outputDirectory = runner.getOutputDirectory();
         
-        assertThat(outputDirectory.getPath(), is("reports/thucydides"));
+        assertThat(outputDirectory.getPath(), is("target/reports/thucydides"));
 
     }
 

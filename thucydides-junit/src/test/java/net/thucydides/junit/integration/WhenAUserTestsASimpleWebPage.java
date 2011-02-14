@@ -3,7 +3,6 @@ package net.thucydides.junit.integration;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 
 import java.io.File;
@@ -80,7 +79,7 @@ public class WhenAUserTestsASimpleWebPage {
     public void the_test_case_should_generate_an_xml_report() throws Exception {
   
         ThucydidesRunner runner = new ThucydidesRunner(ManagedWebDriverSample.class);
-        File outputDirectory = temporaryFolder.newFolder("output");
+        File outputDirectory = temporaryFolder.newFolder("target/output");
         runner.setOutputDirectory(outputDirectory);
         
         XMLAcceptanceTestReporter reporter = new XMLAcceptanceTestReporter();
@@ -96,7 +95,7 @@ public class WhenAUserTestsASimpleWebPage {
     public void a_failing_test_should_record_the_error_in_the_xml_report() throws Exception {
 
         ThucydidesRunner runner = new ThucydidesRunner(ManagedWebDriverWithAFailingTestSample.class);
-        File outputDirectory = temporaryFolder.newFolder("output");
+        File outputDirectory = temporaryFolder.newFolder("target/output");
         runner.setOutputDirectory(outputDirectory);
 
         XMLAcceptanceTestReporter reporter = new XMLAcceptanceTestReporter();
@@ -149,21 +148,6 @@ public class WhenAUserTestsASimpleWebPage {
 
         File expectedXMLReport = new File(outputDirectory, "managed_web_driver_sample.html");
         assertThat(expectedXMLReport.exists(), is(true));
-    }
-    
-    @Test
-    public void the_stylesheet_for_the_html_report_should_also_be_copies_to_the_output_directory() throws Exception {
-  
-        ThucydidesRunner runner = new ThucydidesRunner(ManagedWebDriverSample.class);
-        File outputDirectory = new File("target/thucydides");
-        
-        XMLAcceptanceTestReporter reporter = new XMLAcceptanceTestReporter();
-        runner.subscribeReported(reporter);
-        
-        runner.run(new RunNotifier());
-
-        File expectedStylesheet = new File(outputDirectory, "default.css");
-        assertThat(expectedStylesheet.exists(), is(true));
     }
 
 }

@@ -7,7 +7,7 @@ import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
 import static net.thucydides.core.reports.ReportNamer.ReportType.*;
 import org.junit.Test;
 
-public class WhenNamingTheXmlReports {
+public class WhenNamingTheReports {
 
     @Test
     public void the_report_filename_should_be_based_on_the_test_case_name() {
