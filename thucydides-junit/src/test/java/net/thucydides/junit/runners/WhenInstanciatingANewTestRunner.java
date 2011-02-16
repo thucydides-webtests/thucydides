@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.matchers.JUnitMatchers;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.MethodRule;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 /**
@@ -40,7 +41,7 @@ public class WhenInstanciatingANewTestRunner {
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
         ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
 
-        runner.newDriver();
+        runner.run(new RunNotifier());
 
         verify(mockBrowserFactory, times(1)).newInstanceOf(SupportedWebDriver.FIREFOX);
     }
@@ -53,7 +54,7 @@ public class WhenInstanciatingANewTestRunner {
         ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
 
         System.setProperty("webdriver.driver", "chrome");
-        runner.newDriver();
+        runner.run(new RunNotifier());
         
         verify(mockBrowserFactory, times(1)).newInstanceOf(SupportedWebDriver.CHROME);
     }
@@ -72,7 +73,7 @@ public class WhenInstanciatingANewTestRunner {
         ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
 
         System.setProperty("webdriver.driver", "htmlunit");
-        runner.newDriver();
+        runner.run(new RunNotifier());
     }
     
     @Test
@@ -86,7 +87,7 @@ public class WhenInstanciatingANewTestRunner {
         ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
 
         System.setProperty("webdriver.driver", "iexplorer");
-        runner.newDriver();
+        runner.run(new RunNotifier());
     }    
 
     @Test

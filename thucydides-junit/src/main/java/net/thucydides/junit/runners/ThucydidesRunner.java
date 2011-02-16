@@ -9,8 +9,6 @@ import java.util.List;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.core.webdriver.SupportedWebDriver;
-import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Pending;
 import net.thucydides.junit.annotations.Step;
@@ -53,11 +51,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private WebDriverFactory webDriverFactory;
 
     /**
-     * A WebDriver instance is shared across all the tests executed by the runner in a given test run.
-     */
-    private ThreadLocal<WebDriver> webdriver = new ThreadLocal<WebDriver>();
-
-    /**
      * HTML and XML reports will be generated in this directory.
      */
     private File outputDirectory;
@@ -73,6 +66,9 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     private NarrationListener fieldReporter;
 
+    
+    private WebdriverManager webdriverManager;
+    
     /**
      * Retrieve the runner configuration from an external source.
      */
@@ -173,21 +169,21 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(final RunNotifier notifier) {
-        initializeDriver();
-        setupDefaultReporters();
-
+        webdriverManager = new WebdriverManager(webDriverFactory, getConfiguration());
         failureListener = new FailureListener();
 
+        setupDefaultReporters();
+        
         notifier.addListener(failureListener);
         notifier.addListener(getFieldReporter());
                 
         super.run(notifier);
 
-        closeDriver();
-
         generateReportsFor(getFieldReporter().getAcceptanceTestRun());
+        
+        webdriverManager.closeDriver();
     }
-
+    
     private void setupDefaultReporters() {
         subscribedReporters.addAll(getConfiguration().getDefaultReporters());
     }
@@ -276,31 +272,9 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         webDriverField.setValue(testCase, getDriver());
     }
 
-    /**
-     * A new WebDriver is created before any of the tests are run. The driver is
-     * determined by the 'webdriver.driver' system property.
-     * 
-     * @throws UnsupportedDriverException
-     */
-    private void initializeDriver() {
-        webdriver.set(newDriver());
-    }
-
-    /**
-     * Create a new driver instance based on system property values. You can
-     * override this method to use a custom driver if you really know what you
-     * are doing.
-     * 
-     * @throws UnsupportedDriverException
-     *             if the driver type is not supported.
-     */
-    protected WebDriver newDriver() {
-        SupportedWebDriver supportedDriverType = getConfiguration().getDriverType();
-        return webDriverFactory.newInstanceOf(supportedDriverType);
-    }
 
     protected WebDriver getDriver() {
-        return webdriver.get();
+        return webdriverManager.getWebdriver();
     }
 
     @Override
@@ -336,14 +310,5 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         
         return orderedFramework;
     }
-
-    /**
-     * We shut down the Webdriver at the end of the tests. This should shut down
-     * the browser as well.
-     */
-    private void closeDriver() {
-        if ((webdriver != null) && (webdriver.get() != null)) {
-            webdriver.get().quit();
-        }
-    }
+    
 }

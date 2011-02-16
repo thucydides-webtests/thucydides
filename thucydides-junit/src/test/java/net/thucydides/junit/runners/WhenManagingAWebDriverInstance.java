@@ -52,18 +52,7 @@ public class WhenManagingAWebDriverInstance extends AbstractWebDriverTest {
         
         final RunNotifier notifier = new RunNotifier();
         runner.run(notifier);
-        
         verify(mockBrowserFactory.getFirefoxDriver(), times(1)).quit();
-    }
-
-    @Test(expected=UnsupportedDriverException.class)
-    public void when_an_unsupported_driver_is_used_an_unsupported_driver_exception_occurs() throws InitializationError {
-
-        System.setProperty("webdriver.driver", "htmlunit");      
-        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
-        
-        runner.run(new RunNotifier());
     }
     
     @SuppressWarnings("unchecked")
