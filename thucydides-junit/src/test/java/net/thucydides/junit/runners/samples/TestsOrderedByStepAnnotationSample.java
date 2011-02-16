@@ -9,29 +9,25 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-public class ManagedWebDriverSample {
+public class TestsOrderedByStepAnnotationSample {
     
     @Managed
     public WebDriver webdriver;
-    
-    @Test @Step(1)
-    public void should_do_this_step_1() {
-    }
-        
+            
     @Test @Step(2)
-    public void should_do_that_step_2() {
+    public void should_do_this_step_second() {
     }
     
     @Test @Step(3)
-    public void then_gets_here_step_3() {
+    public void should_do_this_step_third() {
+    }
+    
+    @Test @Step(1)
+    public void shoud_do_this_step_first() {
     }
     
     @Test @Step(4)
-    public void finally_gets_here_step_4() {
+    public void should_do_this_step_forth() {
     }
     
-    @Test @Step(5)
-    public void and_at_the_end_step_5() {
-        
-    }
 }

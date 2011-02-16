@@ -2,6 +2,7 @@ package net.thucydides.junit.runners;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +10,10 @@ import java.util.List;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.webdriver.SupportedWebDriver;
+import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.junit.annotations.Pending;
+import net.thucydides.junit.annotations.Step;
 import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
 
@@ -230,11 +234,21 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     
     @Override
     protected void runChild(final FrameworkMethod method, final RunNotifier notifier) {
-        if (failureListener.aPreviousTestHasFailed()) {
+        if (weShouldIgnore(method)) {
             notifier.fireTestIgnored(describeChild(method));
         } else {
             super.runChild(method, notifier);
         }
+    }
+
+    private boolean weShouldIgnore(final FrameworkMethod method) {
+        return  ((failureListener.aPreviousTestHasFailed()) || isPending(method));
+    }
+
+    private boolean isPending(final FrameworkMethod method) {
+        Method testMethod = method.getMethod();
+        Pending pending = testMethod.getAnnotation(Pending.class);
+        return (pending != null);
     }
 
     @Override
@@ -287,6 +301,40 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     protected WebDriver getDriver() {
         return webdriver.get();
+    }
+
+    @Override
+    protected List<FrameworkMethod> computeTestMethods() {
+        List<FrameworkMethod> unorderedTests = super.computeTestMethods();       
+        return orderTestStepsIn(unorderedTests);
+    }
+    
+    private List<FrameworkMethod> orderTestStepsIn(final List<FrameworkMethod> unorderedTests) {
+        // TODO : Rewrite all this cleanly
+        List<OrderedTestStepMethod> orderedTests = new ArrayList<OrderedTestStepMethod>();
+        for(FrameworkMethod testMethod : unorderedTests) {
+            OrderedTestStepMethod orderedTest = null;
+            Step step = testMethod.getAnnotation(Step.class);
+            if (step != null) {
+                orderedTest = new OrderedTestStepMethod(testMethod,step.value());
+            } else {
+                orderedTest = new OrderedTestStepMethod(testMethod,0);
+            }
+            orderedTests.add(orderedTest);
+        }
+        return orderedFrameworkMethodsIn(orderedTests);
+    }
+
+    private List<FrameworkMethod> orderedFrameworkMethodsIn(final List<OrderedTestStepMethod> orderedTests) {
+        Collections.sort(orderedTests);
+        
+        List<FrameworkMethod> orderedFramework = new ArrayList<FrameworkMethod>();
+        
+        for(OrderedTestStepMethod orderedMethod : orderedTests) {
+            orderedFramework.add(orderedMethod.getFrameworkMethod());
+        }
+        
+        return orderedFramework;
     }
 
     /**

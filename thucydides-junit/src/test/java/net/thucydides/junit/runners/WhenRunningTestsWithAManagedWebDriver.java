@@ -5,25 +5,21 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.startsWith;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.runners.listeners.TestExecutionListener;
-import net.thucydides.junit.runners.mocks.TestableNarrationListener;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.junit.runners.samples.ManagedWebDriverWithFailingTestSample;
 
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
-import org.openqa.selenium.TakesScreenshot;
 
 /**
  * Managing the WebDriver instance during a test run The instance should be
@@ -34,26 +30,6 @@ import org.openqa.selenium.TakesScreenshot;
  * 
  */
 public class WhenRunningTestsWithAManagedWebDriver extends AbstractWebDriverTest {
-
-    @Test
-    public void the_tests_should_be_executed_in_the_order_of_appearance()
-            throws InitializationError {
-        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
-        NarrationListener fieldReporter = createMockNarrationListener();        
-        runner.setFieldReporter(fieldReporter);
-
-        final RunNotifier notifier = new RunNotifier();
-
-        final List<String> expectedTestOrder = Arrays.asList("should_do_this_step_1",
-                "should_do_that_step_2", "then_gets_here_step_3", "finally_gets_here_step_4",
-                "and_at_the_end_step_5");
-
-        TestExecutionListener testListener = new TestExecutionListener();
-        notifier.addListener(testListener);
-        runner.run(notifier);
-        assertThat(testListener.getExecutedTests(), is(expectedTestOrder));
-    }
 
     @Test
     public void should_take_a_screenshot_after_each_test() throws InitializationError, IOException {
@@ -121,13 +97,6 @@ public class WhenRunningTestsWithAManagedWebDriver extends AbstractWebDriverTest
         assertThat(testListener.getExecutedTests(), is(expectedTestOrder));
         assertThat(testListener.getFailedTests(), hasItem("but_fail_here_in_step_3"));
         assertThat(testListener.getIgnoredTests(), hasItems("dont_get_to_here","or_to_here"));
-    }
-
-    private NarrationListener createMockNarrationListener() {
-        TakesScreenshot driver = mock(TakesScreenshot.class);
-        File outputDirectory = mock(File.class);
-        NarrationListener fieldReporter = new TestableNarrationListener(driver, outputDirectory);
-        return fieldReporter;
     }
     
 }

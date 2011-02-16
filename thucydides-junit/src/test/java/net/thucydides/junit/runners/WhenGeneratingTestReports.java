@@ -3,10 +3,10 @@ package net.thucydides.junit.runners;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.atLeast;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,6 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openqa.selenium.TakesScreenshot;
 
 /**
  * Managing the WebDriver instance during a test run The instance should be
@@ -70,13 +69,6 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
         
         assertThat(fieldReporter.getAcceptanceTestRun().getTitle(), is("Open google home page sample"));
 
-    }
-
-    private NarrationListener createMockNarrationListener() {
-        TakesScreenshot driver = mock(TakesScreenshot.class);
-        File outputDirectory = mock(File.class);
-        NarrationListener fieldReporter = new NarrationListener(driver, outputDirectory);
-        return fieldReporter;
     }
     
     @Test
