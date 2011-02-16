@@ -4,9 +4,6 @@ import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.io.File;
-
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.runners.mocks.TestableNarrationListener;
 
@@ -33,8 +30,8 @@ public class WhenInterceptingScreenshots {
     @Test
     public void should_name_the_screenshots_after_each_test_based_on_the_test_name() throws Exception {
         TakesScreenshot driver = mock(TakesScreenshot.class);
-        File outputDirectory = mock(File.class);
-        NarrationListener listener = new TestableNarrationListener(driver, outputDirectory);
+        Configuration configuration = mock(Configuration.class);
+        NarrationListener listener = new TestableNarrationListener(driver, configuration);
         
         when(description.getMethodName()).thenReturn("some_test_method_name");
 

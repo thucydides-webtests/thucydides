@@ -4,14 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Pending;
-import net.thucydides.junit.annotations.Step;
 import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
 
@@ -51,14 +50,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private WebDriverFactory webDriverFactory;
 
     /**
-     * HTML and XML reports will be generated in this directory.
-     */
-    private File outputDirectory;
-
-    /**
      * Keeps track of whether any tests have failed so far.
      */
-
     private FailureListener failureListener;
 
     /**
@@ -81,9 +74,16 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     public NarrationListener getFieldReporter() {
         if (fieldReporter == null) {
-            fieldReporter = new NarrationListener((TakesScreenshot) getDriver(), getOutputDirectory());
+            fieldReporter = new NarrationListener((TakesScreenshot) getDriver(), getConfiguration());
         }
         return fieldReporter;
+    }
+    
+    public TakesScreenshot getSnapshotCapableDriverFrom(final WebDriver driver) {
+        if (TakesScreenshot.class.isAssignableFrom(driver.getClass())) {
+            return (TakesScreenshot) driver;
+        }
+        throw new UnsupportedDriverException(driver + " does not support screenshots.");
     }
 
     /**
@@ -117,25 +117,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         webDriverFactory = new WebDriverFactory();
     }
 
-    public void setOutputDirectory(final File outputDirectory) {
-        this.outputDirectory = outputDirectory;
-    }
-
-    /**
-     * The output directory is where the test runner writes the XML and HTML
-     * reports to. By default, it will be in 'target/thucydides', but you can
-     * override this value either programmatically or by providing a value in
-     * the <b>thucydides.output.dir</b> system property.
-     * 
-     */
-    public File getOutputDirectory() {
-        if (outputDirectory == null) {
-            outputDirectory = getConfiguration().getOutputDirectory();
-            outputDirectory.mkdirs();
-        }
-        return outputDirectory;
-    }
-
     /**
      * The configuration manages output directories and driver types.
      * They can be defined as system values, or have sensible defaults.
@@ -147,6 +128,14 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return configuration;
     }
 
+    /**
+     * Set the configuration for a test runner.
+     * @param configuration
+     */
+    public void setConfiguration(final Configuration configuration) {
+        this.configuration = configuration;
+    }
+    
     private void checkThatManagedFieldIsDefinedIn(final  Class<?> testCase) {
         ManagedWebDriverAnnotatedField.findFirstAnnotatedField(testCase);
     }
@@ -167,6 +156,13 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this.webDriverFactory = webDriverFactory;
     }
 
+    public File getOutputDirectory() {
+        return getConfiguration().getOutputDirectory();
+    }
+    
+    /**
+     * Runs the tests in the acceptance test case.
+     */
     @Override
     public void run(final RunNotifier notifier) {
         webdriverManager = new WebdriverManager(webDriverFactory, getConfiguration());
@@ -177,9 +173,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         notifier.addListener(failureListener);
         notifier.addListener(getFieldReporter());
 
-        System.out.println("START TESTS");
         super.run(notifier);
-        System.out.println("END TESTS");
 
         generateReportsFor(getFieldReporter().getAcceptanceTestRun());
         
@@ -203,13 +197,18 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     private void generateReportsFor(final AcceptanceTestRun acceptanceTestRun) {
         for (AcceptanceTestReporter reporter : getSubscribedReporters()) {
-            try {
-                reporter.setOutputDirectory(getOutputDirectory());
-                reporter.generateReportFor(acceptanceTestRun);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(
-                        "Failed to generate reports using " + reporter, e);
-            }
+            generateReportFor(acceptanceTestRun, reporter);
+        }
+    }
+
+    private void generateReportFor(final AcceptanceTestRun acceptanceTestRun,
+                                   final AcceptanceTestReporter reporter) {
+        try {
+            reporter.setOutputDirectory(getConfiguration().getOutputDirectory());
+            reporter.generateReportFor(acceptanceTestRun);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(
+                    "Failed to generate reports using " + reporter, e);
         }
     }
 
@@ -225,8 +224,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * subscribe to the listener. The listener will tell them when the test is
      * done, and the reporter can decide what to do.
      */
-    public void subscribeReported(final AcceptanceTestReporter reporter) {
-        reporter.setOutputDirectory(getOutputDirectory());
+    public void subscribeReporter(final AcceptanceTestReporter reporter) {
+        reporter.setOutputDirectory(getConfiguration().getOutputDirectory());
         subscribedReporters.add(reporter);
     }
     
@@ -282,35 +281,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     @Override
     protected List<FrameworkMethod> computeTestMethods() {
         List<FrameworkMethod> unorderedTests = super.computeTestMethods();       
-        return orderTestStepsIn(unorderedTests);
+        return OrderedTestSteps.sort(unorderedTests);
     }
-    
-    private List<FrameworkMethod> orderTestStepsIn(final List<FrameworkMethod> unorderedTests) {
-        // TODO : Rewrite all this cleanly
-        List<OrderedTestStepMethod> orderedTests = new ArrayList<OrderedTestStepMethod>();
-        for(FrameworkMethod testMethod : unorderedTests) {
-            OrderedTestStepMethod orderedTest = null;
-            Step step = testMethod.getAnnotation(Step.class);
-            if (step != null) {
-                orderedTest = new OrderedTestStepMethod(testMethod,step.value());
-            } else {
-                orderedTest = new OrderedTestStepMethod(testMethod,0);
-            }
-            orderedTests.add(orderedTest);
-        }
-        return orderedFrameworkMethodsIn(orderedTests);
-    }
-
-    private List<FrameworkMethod> orderedFrameworkMethodsIn(final List<OrderedTestStepMethod> orderedTests) {
-        Collections.sort(orderedTests);
-        
-        List<FrameworkMethod> orderedFramework = new ArrayList<FrameworkMethod>();
-        
-        for(OrderedTestStepMethod orderedMethod : orderedTests) {
-            orderedFramework.add(orderedMethod.getFrameworkMethod());
-        }
-        
-        return orderedFramework;
-    }
-    
+   
 }

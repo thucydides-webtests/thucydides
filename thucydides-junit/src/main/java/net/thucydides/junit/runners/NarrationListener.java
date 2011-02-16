@@ -35,9 +35,10 @@ public class NarrationListener extends StickyFailureListener {
     
     private TestStep currentTestStep;
 
-    public NarrationListener(final TakesScreenshot driver, final  File outputDirectory) {
+    public NarrationListener(final TakesScreenshot driver, final Configuration configuration) {
         acceptanceTestRun = new AcceptanceTestRun();
-        photographer = new Photographer(driver, outputDirectory);
+        TakesScreenshot screenshotCapableDriver = (TakesScreenshot) driver;
+        photographer = new Photographer(screenshotCapableDriver, configuration.getOutputDirectory());
     }
 
     private void getCurrentTestStepFrom(final Description description) {

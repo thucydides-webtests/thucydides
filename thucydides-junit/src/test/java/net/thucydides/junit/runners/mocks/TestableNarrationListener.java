@@ -1,19 +1,18 @@
 package net.thucydides.junit.runners.mocks;
 
-import java.io.File;
+import static org.mockito.Mockito.mock;
+import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.junit.runners.Configuration;
+import net.thucydides.junit.runners.NarrationListener;
 
 import org.openqa.selenium.TakesScreenshot;
-
-import net.thucydides.core.screenshots.Photographer;
-import net.thucydides.junit.runners.NarrationListener;
-import static org.mockito.Mockito.mock;
 
 public class TestableNarrationListener extends NarrationListener {
 
     private Photographer mockPhotographer;
     
-    public TestableNarrationListener(final TakesScreenshot driver, final File outputDirectory) {
-        super(driver, outputDirectory);
+    public TestableNarrationListener(final TakesScreenshot driver, final Configuration configuration) {
+        super(driver, configuration);
         mockPhotographer = mock(Photographer.class);
     }
 

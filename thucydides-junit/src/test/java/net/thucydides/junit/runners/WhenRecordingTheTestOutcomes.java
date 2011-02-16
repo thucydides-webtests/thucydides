@@ -5,9 +5,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.io.File;
-
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.integration.samples.OpenGoogleHomePageSample;
 import net.thucydides.junit.runners.mocks.TestableNarrationListener;
@@ -71,9 +68,8 @@ public class WhenRecordingTheTestOutcomes {
     
     private NarrationListener createMockNarrationListener() {
         TakesScreenshot driver = mock(TakesScreenshot.class);
-        File outputDirectory = mock(File.class);
-        NarrationListener fieldReporter = new TestableNarrationListener(driver, outputDirectory);
-        return fieldReporter;
+        Configuration configuration = mock(Configuration.class);
+        return new TestableNarrationListener(driver, configuration);
     }
     
 }

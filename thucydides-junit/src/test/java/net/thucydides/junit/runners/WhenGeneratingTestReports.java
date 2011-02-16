@@ -47,7 +47,7 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
             throws InitializationError, IOException {
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
         ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
-        runner.subscribeReported(mockReporter);
+        runner.subscribeReporter(mockReporter);
 
         runner.run(new RunNotifier());
 
@@ -64,7 +64,7 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
         ThucydidesRunner runner = getTestRunnerUsing(OpenGoogleHomePageSample.class, mockBrowserFactory);
         runner.setFieldReporter(fieldReporter);
         
-        runner.subscribeReported(mockReporter);
+        runner.subscribeReporter(mockReporter);
         runner.run(new RunNotifier());
         
         assertThat(fieldReporter.getAcceptanceTestRun().getTitle(), is("Open google home page sample"));
@@ -81,7 +81,7 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
         ThucydidesRunner runner = getTestRunnerUsing(OpenGoogleHomePageWithTitleSample.class, mockBrowserFactory);
         runner.setFieldReporter(fieldReporter);
         
-        runner.subscribeReported(mockReporter);
+        runner.subscribeReporter(mockReporter);
         runner.run(new RunNotifier());
         
         assertThat(fieldReporter.getAcceptanceTestRun().getTitle(), is("Open the Google home page"));
@@ -93,7 +93,7 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
             throws InitializationError, IOException {
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
         ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
-        runner.subscribeReported(mockReporter);
+        runner.subscribeReporter(mockReporter);
 
         runner.run(new RunNotifier());
 
@@ -109,8 +109,8 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
         AcceptanceTestReporter reporter1 = mock(AcceptanceTestReporter.class);
         AcceptanceTestReporter reporter2 = mock(AcceptanceTestReporter.class);
 
-        runner.subscribeReported(reporter1);
-        runner.subscribeReported(reporter2);
+        runner.subscribeReporter(reporter1);
+        runner.subscribeReporter(reporter2);
 
         runner.run(new RunNotifier());
 
@@ -126,7 +126,7 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
 
         when(mockReporter.generateReportFor(any(AcceptanceTestRun.class))).thenThrow(new IOException());
         
-        runner.subscribeReported(mockReporter);
+        runner.subscribeReporter(mockReporter);
         runner.run(new RunNotifier());
     }
     

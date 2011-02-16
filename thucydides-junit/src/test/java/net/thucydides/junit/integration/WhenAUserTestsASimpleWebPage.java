@@ -13,6 +13,7 @@ import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
 import net.thucydides.junit.integration.samples.ManagedWebDriverSample;
 import net.thucydides.junit.integration.samples.ManagedWebDriverWithAFailingTestSample;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.junit.runners.Configuration;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.junit.runners.listeners.TestExecutionListener;
 
@@ -80,10 +81,10 @@ public class WhenAUserTestsASimpleWebPage {
   
         ThucydidesRunner runner = new ThucydidesRunner(ManagedWebDriverSample.class);
         File outputDirectory = temporaryFolder.newFolder("target/output");
-        runner.setOutputDirectory(outputDirectory);
+        setOuputDirectory(runner, outputDirectory);
         
         XMLAcceptanceTestReporter reporter = new XMLAcceptanceTestReporter();
-        runner.subscribeReported(reporter);
+        runner.subscribeReporter(reporter);
         
         runner.run(new RunNotifier());
 
@@ -96,10 +97,10 @@ public class WhenAUserTestsASimpleWebPage {
 
         ThucydidesRunner runner = new ThucydidesRunner(ManagedWebDriverWithAFailingTestSample.class);
         File outputDirectory = temporaryFolder.newFolder("target/output");
-        runner.setOutputDirectory(outputDirectory);
+        setOuputDirectory(runner, outputDirectory);
 
         XMLAcceptanceTestReporter reporter = new XMLAcceptanceTestReporter();
-        runner.subscribeReported(reporter);
+        runner.subscribeReporter(reporter);
 
         final RunNotifier notifier = new RunNotifier();
 
@@ -117,6 +118,12 @@ public class WhenAUserTestsASimpleWebPage {
         assertThat(xmlContents, containsString("<exception>"));
         assertThat(xmlContents, containsString("Expected: is &lt;2&gt;"));
         assertThat(xmlContents, containsString("got: &lt;1&gt;"));
+    }
+
+    private void setOuputDirectory(ThucydidesRunner runner, File outputDirectory) {
+        Configuration configuration = new Configuration();
+        configuration.setOutputDirectory(outputDirectory);
+        runner.setConfiguration(configuration);
     }    
 
     @Test
@@ -126,7 +133,7 @@ public class WhenAUserTestsASimpleWebPage {
         File outputDirectory = new File("target/thucydides");
         
         XMLAcceptanceTestReporter reporter = new XMLAcceptanceTestReporter();
-        runner.subscribeReported(reporter);
+        runner.subscribeReporter(reporter);
         
         runner.run(new RunNotifier());
 
@@ -142,7 +149,7 @@ public class WhenAUserTestsASimpleWebPage {
         File outputDirectory = new File("target/thucydides");
         
         XMLAcceptanceTestReporter reporter = new XMLAcceptanceTestReporter();
-        runner.subscribeReported(reporter);
+        runner.subscribeReporter(reporter);
         
         runner.run(new RunNotifier());
 

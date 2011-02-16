@@ -40,6 +40,11 @@ public class Configuration {
      * By default, reports will go here.
      */
     private static final String DEFAULT_OUTPUT_DIRECTORY = "target/thucydides";
+    
+    /**
+     * HTML and XML reports will be generated in this directory.
+     */
+    private File outputDirectory;    
 
     /**
      * Get the currently-configured browser type.
@@ -52,7 +57,7 @@ public class Configuration {
     /**
      * Where should the reports go?
      */
-    public File getOutputDirectory() {
+    public File loadOutputDirectoryFromSystemProperties() {
         String systemDefinedDirectory = System.getProperty(OUTPUT_DIRECTORY_PROPERTY);
         if (systemDefinedDirectory == null) {
             systemDefinedDirectory = DEFAULT_OUTPUT_DIRECTORY;
@@ -60,6 +65,28 @@ public class Configuration {
         return new File(systemDefinedDirectory);
     }
 
+    
+    public void setOutputDirectory(final File outputDirectory) {
+        this.outputDirectory = outputDirectory;
+    }
+
+    /**
+     * The output directory is where the test runner writes the XML and HTML
+     * reports to. By default, it will be in 'target/thucydides', but you can
+     * override this value either programmatically or by providing a value in
+     * the <b>thucydides.output.dir</b> system property.
+     * 
+     */
+    public File getOutputDirectory() {
+        if (outputDirectory == null) {
+            outputDirectory = loadOutputDirectoryFromSystemProperties();
+            outputDirectory.mkdirs();
+        }
+        return outputDirectory;
+    }
+
+
+    
     /**
      * Transform a driver type into the SupportedWebDriver enum. Driver type can
      * be any case.

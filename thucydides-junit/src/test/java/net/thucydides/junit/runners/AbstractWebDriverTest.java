@@ -1,9 +1,6 @@
 package net.thucydides.junit.runners;
 
 import static org.mockito.Mockito.mock;
-
-import java.io.File;
-
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.runners.mocks.MockThucydidesRunner;
 import net.thucydides.junit.runners.mocks.TestableNarrationListener;
@@ -31,8 +28,8 @@ public abstract class AbstractWebDriverTest {
     
     protected NarrationListener createMockNarrationListener() {
         TakesScreenshot driver = mock(TakesScreenshot.class);
-        File outputDirectory = mock(File.class);
-        NarrationListener fieldReporter = new TestableNarrationListener(driver, outputDirectory);
+        Configuration configuration = mock(Configuration.class);
+        NarrationListener fieldReporter = new TestableNarrationListener(driver, configuration);
         return fieldReporter;
     }
 }
