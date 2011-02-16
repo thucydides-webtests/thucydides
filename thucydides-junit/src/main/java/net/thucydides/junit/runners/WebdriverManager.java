@@ -5,7 +5,7 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 
 import org.openqa.selenium.WebDriver;
 
-class WebdriverManager{
+class WebdriverManager {
 
     /**
      * Creates new browser instances. The Browser Factory's job is to provide
@@ -35,6 +35,7 @@ class WebdriverManager{
      */
     private void initializeDriver() {
         webdriver.set(newDriver());
+        System.out.println("OPENING BROWSER");
     }
 
     /**
@@ -51,8 +52,10 @@ class WebdriverManager{
     }
     
     public void closeDriver() {
+        System.out.println("CLOSING BROWSER");
         if ((webdriver != null) && (webdriver.get() != null)) {
             webdriver.get().quit();
+            webdriver.remove();
         }
     }
 

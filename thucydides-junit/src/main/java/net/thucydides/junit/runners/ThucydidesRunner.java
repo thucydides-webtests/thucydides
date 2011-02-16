@@ -176,8 +176,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         
         notifier.addListener(failureListener);
         notifier.addListener(getFieldReporter());
-                
+
+        System.out.println("START TESTS");
         super.run(notifier);
+        System.out.println("END TESTS");
 
         generateReportsFor(getFieldReporter().getAcceptanceTestRun());
         
