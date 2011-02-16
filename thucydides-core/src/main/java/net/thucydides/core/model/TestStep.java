@@ -8,8 +8,6 @@ import static net.thucydides.core.model.TestResult.SUCCESS;
 
 import java.io.File;
 
-import com.google.common.base.Preconditions;
-
 /**
  * An acceptence test run is made up of test steps.
  * Each step should represent an action by the user, and (generally) an expected outcome.
@@ -40,8 +38,6 @@ public class TestStep {
      * Each test step can be associated with a screenshot.
      */
     public void setScreenshot(final File screenshot) {
-        Preconditions.checkState(this.screenshot == null, 
-                                 "Test steps are immutable - a screenshot can only be assigned once.");
         this.screenshot = screenshot;
     }
     
@@ -49,8 +45,6 @@ public class TestStep {
      * Each test step has a result, indicating the outcome of this step.
      */
     public void setResult(final TestResult result) {
-        Preconditions.checkState(this.result == null, 
-                                 "Test steps are immutable - the test result can only be assigned once.");
         this.result = result;
     }
     
