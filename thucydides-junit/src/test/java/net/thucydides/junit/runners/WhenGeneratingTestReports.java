@@ -72,7 +72,7 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
     }
     
     @Test
-    public void the_developer_can_overrire_the_test_case_title_using_the_Title_annotation()
+    public void the_developer_can_override_the_test_case_title_using_the_Title_annotation()
             throws InitializationError, IOException {
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
         
@@ -85,6 +85,24 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
         runner.run(new RunNotifier());
         
         assertThat(fieldReporter.getAcceptanceTestRun().getTitle(), is("Open the Google home page"));
+
+    }
+
+    @Test
+    public void the_developer_can_override_a_test_step_title_using_the_Description_annotation()
+            throws InitializationError, IOException {
+        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
+        
+        NarrationListener fieldReporter = createMockNarrationListener();
+        
+        ThucydidesRunner runner = getTestRunnerUsing(OpenGoogleHomePageWithTitleSample.class, mockBrowserFactory);
+        runner.setFieldReporter(fieldReporter);
+        
+        runner.subscribeReporter(mockReporter);
+        runner.run(new RunNotifier());
+        
+        String recordedStepDescription = fieldReporter.getAcceptanceTestRun().getTestSteps().get(0).getDescription();
+        assertThat(recordedStepDescription, is("The user opens the Google home page."));
 
     }
 

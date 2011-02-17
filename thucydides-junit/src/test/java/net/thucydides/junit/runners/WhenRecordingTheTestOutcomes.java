@@ -35,7 +35,7 @@ public class WhenRecordingTheTestOutcomes {
         
         Class testClass = OpenGoogleHomePageSample.class;
         when(description.getTestClass()).thenReturn(testClass);
-        when(description.getMethodName()).thenReturn("when_I_run_a_test");
+        when(description.getMethodName()).thenReturn("the_user_opens_the_page");
     }
     
 

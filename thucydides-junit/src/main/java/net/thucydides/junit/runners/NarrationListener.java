@@ -7,11 +7,13 @@ import static net.thucydides.core.model.TestResult.SUCCESS;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.junit.annotations.StepDescription;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -43,8 +45,8 @@ public class NarrationListener extends StickyFailureListener {
 
     private void getCurrentTestStepFrom(final Description description) {
         if (currentTestStep == null) {
-            currentTestStep = new TestStep(
-                    fromTestName(description.getMethodName()));
+            String testName = testNameFrom(description);
+            currentTestStep = new TestStep(testName);
         }
     }
     
@@ -164,10 +166,37 @@ public class NarrationListener extends StickyFailureListener {
         return inflector.humanize(testCaseNameWithUnderscores);
     }
 
+    private String testNameFrom(Description description) {
+        String annotatedDescription = annotatedDescriptionOf(description);
+        if (annotatedDescription != null) {
+            return annotatedDescription;
+        }
+        return humanizedTestNameFrom(description);
+    }
+
+
+    protected String annotatedDescriptionOf(final Description description) {
+        String annotatedDescription = null;
+        try {
+            Method testMethod = description.getTestClass().getDeclaredMethod(description.getMethodName(), (Class[]) null);
+            StepDescription stepDescription = (StepDescription) testMethod.getAnnotation(StepDescription.class);
+            if (stepDescription != null) {
+                annotatedDescription = stepDescription.value();
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return annotatedDescription;
+    }
+    
     /**
      * Turns a classname into a human-readable title.
      */
-    private String fromTestName(final String testName) {
+    private String humanizedTestNameFrom(final Description description) {
+        
+        String testName = description.getMethodName();
         String humanizedName = inflector.humanize(inflector.underscore(testName));
         if (!humanizedName.endsWith(".")) {
             humanizedName = humanizedName + ".";

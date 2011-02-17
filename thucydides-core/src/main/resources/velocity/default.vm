@@ -2,13 +2,14 @@
     
 <html>
     <body>
-        <h2>Acceptance test result: $testrun.Title/></h2>
+        <h2>Acceptance test run: $testrun.Title</h2>
         <table>
-            <tr><th>Step</th><th>Outcome</th></tr>
+            <tr><th>Step</th><th>Outcome</th><th>Screenshot</th></tr>
             #foreach($step in $testrun.TestSteps)
             <tr class="resulttable.$step.result">
                 <td>$step.description</td>
                 <td>$step.result</td>
+                <td><$step.screenshot.name</td>
             </tr>
             #end
         </table>

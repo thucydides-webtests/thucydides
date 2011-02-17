@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.junit.integration.samples.OpenGoogleHomePageSample;
 import net.thucydides.junit.runners.mocks.TestableNarrationListener;
 
 import org.junit.Before;
@@ -33,12 +34,14 @@ public class WhenInterceptingScreenshots {
         Configuration configuration = mock(Configuration.class);
         NarrationListener listener = new TestableNarrationListener(driver, configuration);
         
-        when(description.getMethodName()).thenReturn("some_test_method_name");
+        Class testClass = OpenGoogleHomePageSample.class;
+        when(description.getTestClass()).thenReturn(testClass);
+        when(description.getMethodName()).thenReturn("the_user_opens_the_page");
 
         listener.testStarted(description);
         listener.testFinished(description);
 
         Photographer photographer = listener.getPhotographer();        
-        verify(photographer).takeScreenshot(startsWith("some_test_method_name"));
+        verify(photographer).takeScreenshot(startsWith("the_user_opens_the_page"));
     }
 }
