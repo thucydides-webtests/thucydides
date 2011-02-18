@@ -8,11 +8,11 @@ import static org.mockito.Mockito.verify;
 
 import java.io.File;
 
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.integration.samples.ManagedWebDriverSample;
-import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.junit.runners.mocks.MockThucydidesRunner;
 
 import org.junit.Rule;

@@ -10,6 +10,13 @@
     <description>An Acceptance Testing framework for web applications
         based on WebDriver, and integrating with JUnit and easyb.</description>
     <url>www://github.com/wakaleo/thucydides</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <organization>
         <name>Wakaleo Consulting</name>
         <url>http://www.wakaleo.com</url>
@@ -19,15 +26,22 @@
         <url>https://github.com/wakaleo/thucydides/issues</url>
     </issueManagement>
     <ciManagement>
-        <system>hudson/jenkins</system>
-        <url>http://www.wakaleo-labs.com/hudson/view/thucydides</url>
+        <system>jenkins</system>
+        <url>http://www.wakaleo-labs.com/jenkins/view/thucydides</url>
     </ciManagement>
-    <inceptionYear>January 2011</inceptionYear>
+    <inceptionYear>2011</inceptionYear>
     <scm>
         <connection>scm:git:git@github.com/wakaleo/thucydides</connection>
         <developerConnection>scm:git:git@github.com/wakaleo/thucydides</developerConnection>
         <url>scm:git:git@github.com/wakaleo/thucydides</url>
     </scm>
+    <developers>
+        <developer>
+            <id>johnsmart</id>
+            <name>John Ferguson Smart</name>
+            <email>john.smart@wakaleo.com</email>
+        </developer>
+    </developers>
     <build>
         <plugins>
             <plugin>

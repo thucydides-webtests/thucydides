@@ -1,15 +1,14 @@
 package net.thucydides.core.model;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
 
 public class WhenWeCreateATestStep {
 

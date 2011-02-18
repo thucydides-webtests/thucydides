@@ -13,7 +13,7 @@ import org.openqa.selenium.WebDriver;
  *
  */
 @RunWith(ThucydidesRunner.class)
-public class OpenGoogleHomePageSample {
+public class GoogleSearchWithPageObjectsSample {
 
     @Managed
     public WebDriver driver;

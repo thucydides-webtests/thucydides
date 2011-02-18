@@ -36,4 +36,5 @@ public class ManagedWebDriverWithAFailingTestSample {
     public void the_results_page_title_should_contain_the_word_Cats() {
         assertThat(driver.getTitle(), containsString("cats"));
     }
+
 }

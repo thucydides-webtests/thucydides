@@ -13,9 +13,9 @@ import java.io.IOException;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.junit.integration.samples.OpenGoogleHomePageSample;
 import net.thucydides.junit.integration.samples.OpenGoogleHomePageWithTitleSample;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
+import net.thucydides.junit.runners.samples.TestUsingTitleAnnotationSample;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -61,13 +61,13 @@ public class WhenGeneratingTestReports extends AbstractWebDriverTest {
         
         NarrationListener fieldReporter = createMockNarrationListener();
         
-        ThucydidesRunner runner = getTestRunnerUsing(OpenGoogleHomePageSample.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(TestUsingTitleAnnotationSample.class, mockBrowserFactory);
         runner.setFieldReporter(fieldReporter);
         
         runner.subscribeReporter(mockReporter);
         runner.run(new RunNotifier());
         
-        assertThat(fieldReporter.getAcceptanceTestRun().getTitle(), is("Open google home page sample"));
+        assertThat(fieldReporter.getAcceptanceTestRun().getTitle(), is("This test has a special name"));
 
     }
     

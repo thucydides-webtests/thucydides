@@ -9,9 +9,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
-import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.junit.runners.samples.WebDriverWithoutAnnotationSample;
 

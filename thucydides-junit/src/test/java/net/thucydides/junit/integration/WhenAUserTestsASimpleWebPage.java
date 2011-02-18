@@ -9,10 +9,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
 import net.thucydides.junit.integration.samples.ManagedWebDriverSample;
 import net.thucydides.junit.integration.samples.ManagedWebDriverWithAFailingTestSample;
-import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.junit.runners.Configuration;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.junit.runners.listeners.TestExecutionListener;

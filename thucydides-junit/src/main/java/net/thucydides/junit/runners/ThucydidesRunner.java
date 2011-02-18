@@ -7,12 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
-import net.thucydides.junit.annotations.Pending;
+import net.thucydides.junit.annotations.ManagedPages;
 import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
+import net.thucydides.junit.internals.PagesAnnotatedField;
+import net.thucydides.junit.internals.TestStatus;
 
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -238,19 +241,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private boolean weShouldIgnore(final FrameworkMethod method) {
-        return  ((failureListener.aPreviousTestHasFailed()) || isPending(method));
-    }
-
-    private boolean isPending(final FrameworkMethod method) {
-        Method testMethod = method.getMethod();
-        Pending pending = testMethod.getAnnotation(Pending.class);
-        return (pending != null);
+    private boolean weShouldIgnore(final FrameworkMethod method) {        
+        final Method testMethod = method.getMethod();
+        return  ((failureListener.aPreviousTestHasFailed()) || TestStatus.of(testMethod).isPending());
     }
 
     @Override
     protected Statement methodInvoker(final FrameworkMethod method, final Object test) {
         injectDriverInto(test);
+        injectAnnotatedPagesObjectIfPresentInto(test);
         setTestRunTitleIfAnnotationFoundOn(test);
         return super.methodInvoker(method, test);
     }
@@ -273,6 +272,17 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         webDriverField.setValue(testCase, getDriver());
     }
 
+    /**
+     * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
+     */
+    protected void injectAnnotatedPagesObjectIfPresentInto(final Object testCase) {
+       PagesAnnotatedField pagesField = PagesAnnotatedField.findFirstAnnotatedField(testCase.getClass());
+       if (pagesField != null) {
+           Pages pages = new Pages(getDriver());
+           pages.setDefaultBaseUrl(pagesField.getDefaultBaseUrl());
+           pagesField.setValue(testCase, pages);
+       }
+    }
 
     protected WebDriver getDriver() {
         return webdriverManager.getWebdriver();

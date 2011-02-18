@@ -1,9 +1,6 @@
 package net.thucydides.junit.runners;
 
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.IGNORED;
-import static net.thucydides.core.model.TestResult.SKIPPED;
-import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.model.TestResult.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,11 +11,14 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.annotations.StepDescription;
+import net.thucydides.junit.internals.TestStatus;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.modeshape.common.text.Inflector;
 import org.openqa.selenium.TakesScreenshot;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Observes the test run and stores test run details for later reporting.
@@ -84,8 +84,17 @@ public class NarrationListener extends StickyFailureListener {
     @Override
     public void testIgnored(final Description description) throws Exception {
         getCurrentTestStepFrom(description);
-        markCurrentTestAs(IGNORED);
         super.testIgnored(description);
+        
+        Method testMethod = getTestMethodFrom(description);
+        if (TestStatus.of(testMethod).isPending()) {
+            markCurrentTestAs(PENDING);
+        } else if (TestStatus.of(testMethod).isIgnored()) {
+            markCurrentTestAs(IGNORED);
+        } else {
+            markCurrentTestAs(SKIPPED);
+        }
+        recordCurrentTestStep();
     }
 
     @Override
@@ -110,6 +119,12 @@ public class NarrationListener extends StickyFailureListener {
             currentTestStep.setScreenshot(screenshot);
         }
         updateTestResultIfRequired();
+        
+        recordCurrentTestStep();
+    }
+    
+    private void recordCurrentTestStep() {
+        Preconditions.checkNotNull(currentTestStep);
         acceptanceTestRun.recordStep(currentTestStep);
         currentTestStep = null;
     }
@@ -178,7 +193,7 @@ public class NarrationListener extends StickyFailureListener {
     protected String annotatedDescriptionOf(final Description description) {
         String annotatedDescription = null;
         try {
-            Method testMethod = description.getTestClass().getDeclaredMethod(description.getMethodName(), (Class[]) null);
+            Method testMethod = getTestMethodFrom(description);
             StepDescription stepDescription = (StepDescription) testMethod.getAnnotation(StepDescription.class);
             if (stepDescription != null) {
                 annotatedDescription = stepDescription.value();
@@ -189,6 +204,10 @@ public class NarrationListener extends StickyFailureListener {
             e.printStackTrace();
         }
         return annotatedDescription;
+    }
+
+    private Method getTestMethodFrom(final Description description) throws NoSuchMethodException {
+        return description.getTestClass().getDeclaredMethod(description.getMethodName(), (Class[]) null);
     }
     
     /**
