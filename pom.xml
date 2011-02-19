@@ -84,7 +84,10 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-clover2-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>3.0.4</version>
+                <configuration>
+                    <licenseLocation>${user.home}/.clover/clover.license.txt</licenseLocation>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
