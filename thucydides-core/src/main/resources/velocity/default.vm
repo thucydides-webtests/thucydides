@@ -3,13 +3,16 @@
 <html>
     <body>
         <h2>Acceptance test run: $testrun.Title</h2>
-        <table>
+        <table border=1>
             <tr><th>Step</th><th>Outcome</th><th>Screenshot</th></tr>
             #foreach($step in $testrun.TestSteps)
             <tr class="resulttable.$step.result">
                 <td>$step.description</td>
                 <td>$step.result</td>
-                <td><$step.screenshot.name</td>
+                <td>#if( $step.screenshot )
+                    <a href="$step.screenshot.name">Screenshot</a>
+                    #end
+                </td>
             </tr>
             #end
         </table>
