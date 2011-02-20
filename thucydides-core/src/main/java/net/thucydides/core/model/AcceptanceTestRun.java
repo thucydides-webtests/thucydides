@@ -12,15 +12,19 @@ import static net.thucydides.core.model.TestResult.SUCCESS;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.thucydides.core.annotations.UserStory;
+
 import ch.lambdaj.function.convert.Converter;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Represents the results of an acceptance test execution. 
+ * Represents the results of an acceptance test (or "scenario") execution. 
  * This includes the narrative steps taken during the test, screenshots at each step, 
  * the results of each step, and the overall result.
+ * An Acceptance test scenario can be associated with a UserStory using the UserStory
+ * annotation.
  * 
  * @composed 1..* steps * TestStep
  * 
@@ -33,6 +37,8 @@ public class AcceptanceTestRun {
 
     private final List<TestStep> testSteps = new ArrayList<TestStep>();
 
+    private Class userStory;
+    
     /**
      * Create a new acceptance test run instance.
      */
@@ -150,4 +156,21 @@ public class AcceptanceTestRun {
     public Integer getPendingCount() {
         return select(testSteps, having(on(TestStep.class).isPending())).size();
     }
+
+    public void setUserStory(final Class<?> userStory) {
+        if (!isAnAnnotatedUserStory(userStory)) {
+            throw new IllegalArgumentException("The user story class " + userStory + " was not annotated with @UserStory");
+        }
+        this.userStory = userStory;
+    }
+
+    private boolean isAnAnnotatedUserStory(Class<?> userStoryCandidate) {
+        UserStory annotation = userStoryCandidate.getAnnotation(UserStory.class);
+        return (annotation != null);
+    }
+
+    public Class<?> getUserStory() {
+        return userStory;
+    }
+
 }

@@ -45,40 +45,51 @@ public final class ResourceList {
     private static Collection<String> getResources(final String element, final Pattern pattern) {
         final ArrayList<String> retval = new ArrayList<String>();
         final File file = new File(element);
-        if (file.isDirectory()) {
-            retval.addAll(getResourcesFromDirectory(file, pattern));
-        } else {
+        if (isAJarFile(file)) {
             retval.addAll(getResourcesFromJarFile(file, pattern));
+        } else {
+            retval.addAll(getResourcesFromDirectory(file, pattern));
         }
         return retval;
+    }
+    
+    private static boolean isAJarFile(final File file) {
+        if (file.isDirectory()) {
+            return false;
+        } else if ((file.getName().endsWith(".jar")) || (file.getName().endsWith(".zip"))) {
+            return true;
+        }
+        return false;
     }
 
     private static Collection<String> getResourcesFromJarFile(final File file, final Pattern pattern) {
         final ArrayList<String> retval = new ArrayList<String>();
-        ZipFile zf;
-        try {
-            zf = new ZipFile(file);
-        } catch (final ZipException e) {
-            System.out.println("Failed to open " + file);
-            throw new Error(e);
-        } catch (final IOException e) {
-            System.out.println("Failed to open " + file);
-            throw new Error(e);
-        }
-        @SuppressWarnings("rawtypes")
-        final Enumeration e = zf.entries();
-        while (e.hasMoreElements()) {
-            final ZipEntry ze = (ZipEntry) e.nextElement();
-            final String fileName = ze.getName();
-            final boolean accept = pattern.matcher(fileName).matches();
-            if (accept) {
-                retval.add(fileName);
+        if (file.exists()) {
+            ZipFile zf;
+            try {
+                zf = new ZipFile(file);
+            } catch (final ZipException e) {
+                System.out.println("Failed to open " + file);
+                throw new Error(e);
+            } catch (final IOException e) {
+                System.out.println("Failed to open " + file);
+                throw new Error(e);
             }
-        }
-        try {
-            zf.close();
-        } catch (final IOException e1) {
-            throw new Error(e1);
+            @SuppressWarnings("rawtypes")
+            final Enumeration e = zf.entries();
+            while (e.hasMoreElements()) {
+                final ZipEntry ze = (ZipEntry) e.nextElement();
+                final String fileName = ze.getName();
+                final boolean accept = pattern.matcher(fileName).matches();
+                if (accept) {
+                    retval.add(fileName);
+                }
+            }
+            try {
+                zf.close();
+            } catch (final IOException e1) {
+                throw new Error(e1);
+            }
         }
         return retval;
     }
@@ -87,18 +98,22 @@ public final class ResourceList {
             final Pattern pattern) {
         final ArrayList<String> retval = new ArrayList<String>();
         final File[] fileList = directory.listFiles();
-        for (final File file : fileList) {
-            if (file.isDirectory()) {
-                retval.addAll(getResourcesFromDirectory(file, pattern));
-            } else {
-                try {
-                    final String fileName = file.getCanonicalPath();
-                    final boolean accept = pattern.matcher(fileName).matches();
-                    if (accept) {
-                        retval.add(fileName);
+        if (fileList != null) {
+            for (final File file : fileList) {
+                if (file.isDirectory() && (file.exists())) {
+                    retval.addAll(getResourcesFromDirectory(file, pattern));
+                } else {
+                    if (file.exists()) {
+                        try {
+                            final String fileName = file.getCanonicalPath();
+                            final boolean accept = pattern.matcher(fileName).matches();
+                            if (accept) {
+                                retval.add(fileName);
+                            }
+                        } catch (final IOException e) {
+                            throw new Error(e);
+                        }
                     }
-                } catch (final IOException e) {
-                    throw new Error(e);
                 }
             }
         }
