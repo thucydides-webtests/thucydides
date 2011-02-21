@@ -51,7 +51,7 @@ public class Pages {
         driver.get(homeUrl);
     }
 
-    public PageObject currentPageAt(Class<? extends PageObject> pageObjectClass) throws WrongPageException{
+    public PageObject currentPageAt(final Class<? extends PageObject> pageObjectClass) throws WrongPageException{
         PageObject pageCandidate = getCurrentPageOfType(pageObjectClass);
         String currentUrl = driver.getCurrentUrl();
         if (!pageCandidate.compatibleWithUrl(currentUrl)) {
@@ -69,7 +69,8 @@ public class Pages {
      * @return
      * @throws IllegalArgumentException
      */
-    private PageObject getCurrentPageOfType(Class<? extends PageObject> pageObjectClass) throws WrongPageException {
+    private PageObject getCurrentPageOfType(final Class<? extends PageObject> pageObjectClass) 
+      throws WrongPageException {
         PageObject currentPage = null;
         try {
             @SuppressWarnings("rawtypes")
@@ -85,12 +86,13 @@ public class Pages {
         return currentPage;
     }
 
-    private void thisIsNotThePageYourLookingFor( Class<? extends PageObject> pageObjectClass) throws WrongPageException {
+    private void thisIsNotThePageYourLookingFor(final Class<? extends PageObject> pageObjectClass) 
+        throws WrongPageException {
         thisIsNotThePageYourLookingFor(pageObjectClass, null);
     }
             
     private void thisIsNotThePageYourLookingFor(
-            Class<? extends PageObject> pageObjectClass, Exception e)
+            final Class<? extends PageObject> pageObjectClass, final Exception e)
             throws WrongPageException {
         
         String errorDetails = "This is not the page you're looking for:\n"

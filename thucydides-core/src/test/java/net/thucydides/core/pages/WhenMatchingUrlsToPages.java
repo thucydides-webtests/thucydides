@@ -1,12 +1,11 @@
 package net.thucydides.core.pages;
 
-import net.thucydides.core.annotations.CompatibleWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import net.thucydides.core.annotations.At;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
@@ -33,7 +32,7 @@ public class WhenMatchingUrlsToPages {
         assertThat(page.compatibleWithUrl("http://www.apache.org"), is(true));
     }
 
-    @CompatibleWith("http://www.apache.org")
+    @At("http://www.apache.org")
     final class PageObjectWithHardcodedUrlDefinition extends PageObject {
         public PageObjectWithHardcodedUrlDefinition(WebDriver driver) {
             super(driver);
@@ -58,7 +57,7 @@ public class WhenMatchingUrlsToPages {
         assertThat(page.compatibleWithUrl("http://projects.apache.org"), is(false));
     }
     
-    @CompatibleWith("http://.*.apache.org")
+    @At("http://.*.apache.org")
     final class PageObjectForAnyApacheProject extends PageObject {
         public PageObjectForAnyApacheProject(WebDriver driver) {
             super(driver);
@@ -71,7 +70,7 @@ public class WhenMatchingUrlsToPages {
         assertThat(page.compatibleWithUrl("http://lucene.apache.org"), is(true));
     }
 
-    @CompatibleWith("http://maven.apache.org/.*")
+    @At("http://maven.apache.org/.*")
     final class PageObjectForAnyMavenProjectPage extends PageObject {
         public PageObjectForAnyMavenProjectPage(WebDriver driver) {
             super(driver);
@@ -84,7 +83,7 @@ public class WhenMatchingUrlsToPages {
         assertThat(page.compatibleWithUrl("http://maven.apache.org/what-is-maven.html"), is(true));
     }
 
-    @CompatibleWith("http://.*/whatever/comes/next")
+    @At("http://.*/whatever/comes/next")
     final class PageObjectWithWildcardServerName extends PageObject {
         public PageObjectWithWildcardServerName(WebDriver driver) {
             super(driver);
@@ -97,7 +96,7 @@ public class WhenMatchingUrlsToPages {
         assertThat(page.compatibleWithUrl("http://maven.apache.org/whatever/comes/next"), is(true));
     }
 
-    @CompatibleWith(urls={"http://maven.apache.org","lucene.apache.org"})
+    @At(urls={"http://maven.apache.org","lucene.apache.org"})
     final class MavenOrLucenePage extends PageObject {
         public MavenOrLucenePage(WebDriver driver) {
             super(driver);
@@ -111,7 +110,7 @@ public class WhenMatchingUrlsToPages {
         assertThat(page.compatibleWithUrl("http://maven.apache.org"), is(true));
     }
 
-    @CompatibleWith(urls={"#HOST/"})
+    @At(urls={"#HOST/"})
     final class GenericHomePage extends PageObject {
         public GenericHomePage(WebDriver driver) {
             super(driver);
@@ -126,7 +125,7 @@ public class WhenMatchingUrlsToPages {
         assertThat(page.compatibleWithUrl("http://maven.apache.org/something/"), is(false));
     }
 
-    @CompatibleWith(urls={"#HOST/somewhere"})
+    @At(urls={"#HOST/somewhere"})
     final class GenericInternalPage extends PageObject {
         public GenericInternalPage(WebDriver driver) {
             super(driver);
@@ -139,6 +138,26 @@ public class WhenMatchingUrlsToPages {
         assertThat(page.compatibleWithUrl("http://lucene.apache.org/somewhere"), is(true));
         assertThat(page.compatibleWithUrl("http://maven.apache.org/somewhere"), is(true));
         assertThat(page.compatibleWithUrl("http://maven.apache.org/somethingelse"), is(false));
+    }
+    
+    @At("#HOST/common/microRegistration")
+    final class PageWithUrlParameters extends PageObject {
+        public PageWithUrlParameters(WebDriver driver) {
+            super(driver);
+        }
+    }
+
+    @Test
+    public void should_match_simple_urls_with_parameters() {
+        PageObject page = new PageWithUrlParameters(webdriver);
+        assertThat(page.compatibleWithUrl("https://www.placemyad.com.au/common/microRegistration?a=1"), is(true));
+    }
+
+    @Test
+    public void should_match_complex_urls_with_parameters() {
+        PageObject page = new PageWithUrlParameters(webdriver);
+        assertThat(page.compatibleWithUrl("https://www.placemyad.com.au/common/microRegistration?continueAction=print&continueNamespace=%2Femployment"), 
+                                         is(true));
     }
     
 }
