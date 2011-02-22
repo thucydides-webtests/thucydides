@@ -7,6 +7,8 @@ import net.thucydides.core.annotations.At;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 
@@ -158,6 +160,14 @@ public class WhenMatchingUrlsToPages {
         PageObject page = new PageWithUrlParameters(webdriver);
         assertThat(page.compatibleWithUrl("https://www.placemyad.com.au/common/microRegistration?continueAction=print&continueNamespace=%2Femployment"), 
                                          is(true));
+    }
+
+    @Test
+    public void should_know_what_page_we_are_on() {
+        WebDriver driver = mock(WebDriver.class);
+        when(driver.getCurrentUrl()).thenReturn("https://www.placemyad.com.au/common/microRegistration");
+        Pages pages = new Pages(driver);
+        assertThat(pages.isCurrentPageAt(PageWithUrlParameters.class), is(true));
     }
     
 }

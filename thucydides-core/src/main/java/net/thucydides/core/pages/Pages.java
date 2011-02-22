@@ -61,6 +61,15 @@ public class Pages {
         return pageCandidate;
     }
     
+    public boolean isCurrentPageAt(final Class<? extends PageObject> pageObjectClass) {
+        try {
+            PageObject pageCandidate = getCurrentPageOfType(pageObjectClass);
+            String currentUrl = driver.getCurrentUrl();
+            return (pageCandidate.compatibleWithUrl(currentUrl));
+        } catch (WrongPageException e) {
+            return false;
+        }
+    }
 
     /**
      * Create a new Page Object of the given type.

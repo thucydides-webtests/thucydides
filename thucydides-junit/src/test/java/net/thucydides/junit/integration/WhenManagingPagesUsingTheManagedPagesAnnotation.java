@@ -55,7 +55,7 @@ public class WhenManagingPagesUsingTheManagedPagesAnnotation {
         assertThat(driver.getCurrentUrl(), is("http://projects.apache.org/"));
     }    
     
-    @Test  @Step(4)
+    @Test  @Step(4) 
     public void the_pages_objects_manager_should_know_what_page_object_you_should_use() throws WrongPageException {
         pages.openHomePage();
         ApacheHomePage page = (ApacheHomePage) pages.currentPageAt(ApacheHomePage.class);

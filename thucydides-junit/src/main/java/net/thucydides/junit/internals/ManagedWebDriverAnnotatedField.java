@@ -62,7 +62,9 @@ public class ManagedWebDriverAnnotatedField {
         try {
             field.set(testCase, manageDriver);
         } catch (IllegalAccessException e) {
-            throw new InvalidManagedWebDriverFieldException("Could not access or set web driver field: " + field);
+            throw new InvalidManagedWebDriverFieldException("Could not access or set web driver field: " 
+                         + field 
+                         + " - is this field public?");
         }
     }
 }

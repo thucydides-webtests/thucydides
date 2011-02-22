@@ -1,9 +1,7 @@
-package net.thucydides.junit.runners.samples;
+package net.thucydides.junit.samples;
 
 import net.thucydides.junit.annotations.Managed;
-import net.thucydides.junit.annotations.Pending;
 import net.thucydides.junit.annotations.Step;
-import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.runners.ThucydidesRunner;
 
 import org.junit.Test;
@@ -11,12 +9,11 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-@Title("This test has a special name")
-public class TestUsingTitleAnnotationSample {
+public class ManagedPagesSample {
     
     @Managed
     public WebDriver webdriver;
-    
+
     @Test @Step(1)
     public void should_do_this_step_1() {
     }
@@ -25,13 +22,16 @@ public class TestUsingTitleAnnotationSample {
     public void should_do_that_step_2() {
     }
     
-    @Pending
-    @Test @Step(3)    
-    public void skip_this_pending_step() {
+    @Test @Step(3)
+    public void then_gets_here_step_3() {
     }
     
-    @Pending
     @Test @Step(4)
-    public void this_step_is_pending_too() {
+    public void finally_gets_here_step_4() {
+    }
+    
+    @Test @Step(5)
+    public void and_at_the_end_step_5() {
+        
     }
 }

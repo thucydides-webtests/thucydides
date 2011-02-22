@@ -4,7 +4,7 @@ import static org.mockito.Mockito.mock;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.runners.mocks.MockThucydidesRunner;
 import net.thucydides.junit.runners.mocks.TestableNarrationListener;
-import net.thucydides.junit.runners.samples.ManagedWebDriverSample;
+import net.thucydides.junit.samples.ManagedWebDriverSample;
 
 import org.junit.runners.model.InitializationError;
 import org.openqa.selenium.TakesScreenshot;

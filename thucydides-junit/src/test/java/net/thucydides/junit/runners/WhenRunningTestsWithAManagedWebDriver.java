@@ -15,7 +15,7 @@ import java.util.List;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.runners.listeners.TestExecutionListener;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.runners.samples.ManagedWebDriverWithFailingTestSample;
+import net.thucydides.junit.samples.ManagedWebDriverWithFailingTestSample;
 
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;

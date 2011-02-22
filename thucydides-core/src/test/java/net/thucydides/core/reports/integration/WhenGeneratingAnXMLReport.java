@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.containsString;
 import java.io.File;
 import java.io.IOException;
 
+import net.thucydides.core.annotations.UserStory;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -54,6 +55,30 @@ public class WhenGeneratingAnXMLReport {
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
     }
+    
+    @UserStory
+    private final class SomeUserStory {};
+    
+    @Test
+    public void should_include_the_user_story_if_present()
+            throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setUserStory(SomeUserStory.class);
+        
+        String expectedReport = 
+        "<acceptance-test-run title='A simple test case' user-story='SomeUserStory' steps='1' successful='1'"
+        + " failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+        + "  <test-step result='SUCCESS'>\n"
+        + "    <description>step 1</description>\n"
+        + "  </test-step>\n" + "</acceptance-test-run>";
+
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        File xmlReport = reporter.generateReportFor(testRun);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }    
 
     @Test
     public void should_generate_an_XML_report_with_a_name_based_on_the_test_run_title()

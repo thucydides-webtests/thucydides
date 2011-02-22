@@ -12,6 +12,6 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface UserStory {
+public @interface ForUserStory {
     Class<?> value();
 }

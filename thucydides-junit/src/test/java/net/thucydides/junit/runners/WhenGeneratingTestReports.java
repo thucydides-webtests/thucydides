@@ -15,7 +15,7 @@ import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.junit.integration.samples.OpenGoogleHomePageWithTitleSample;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.runners.samples.TestUsingTitleAnnotationSample;
+import net.thucydides.junit.samples.TestUsingTitleAnnotationSample;
 
 import org.junit.Before;
 import org.junit.Test;

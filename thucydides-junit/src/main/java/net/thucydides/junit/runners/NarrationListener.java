@@ -1,6 +1,10 @@
 package net.thucydides.junit.runners;
 
-import static net.thucydides.core.model.TestResult.*;
+import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.IGNORED;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SKIPPED;
+import static net.thucydides.core.model.TestResult.SUCCESS;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +14,7 @@ import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.junit.annotations.ForUserStory;
 import net.thucydides.junit.annotations.StepDescription;
 import net.thucydides.junit.internals.TestStatus;
 
@@ -62,14 +67,28 @@ public class NarrationListener extends StickyFailureListener {
     public void setTestRunTitle(final String title) {
         acceptanceTestRun.setTitle(title);
     }
+    
     /**
      * Create a new test step for use with this test.
      */
     @Override
     public void testStarted(final Description description) throws Exception {
         updateTestRunTitleBasedOn(description);
+        updateUserStoryIfDefinedIn(description);
         getCurrentTestStepFrom(description);
         super.testStarted(description);
+    }
+
+    private void updateUserStoryIfDefinedIn(final Description description) {
+        Class<?> userStory = userStoryFor(description);
+        if ((userStory != null) && (userStoryHasNotBeenDefinedFor(acceptanceTestRun))) {
+            acceptanceTestRun.setUserStory(userStory);
+        }
+        
+    }
+
+    private boolean userStoryHasNotBeenDefinedFor(final AcceptanceTestRun acceptanceTestRun2) {
+        return (acceptanceTestRun.getUserStory() == null);
     }
 
     private void updateTestRunTitleBasedOn(final Description description) {
@@ -181,7 +200,7 @@ public class NarrationListener extends StickyFailureListener {
         return inflector.humanize(testCaseNameWithUnderscores);
     }
 
-    private String testNameFrom(Description description) {
+    private String testNameFrom(final Description description) {
         String annotatedDescription = annotatedDescriptionOf(description);
         if (annotatedDescription != null) {
             return annotatedDescription;
@@ -190,6 +209,19 @@ public class NarrationListener extends StickyFailureListener {
     }
 
 
+    protected Class<?> userStoryFor(final Description description) {
+        Class<?> userStory = null;
+        try {
+            ForUserStory forUserStory = description.getTestClass().getAnnotation(ForUserStory.class);
+            if (forUserStory != null) {
+                userStory = forUserStory.value();
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } 
+        return userStory;
+    }
+    
     protected String annotatedDescriptionOf(final Description description) {
         String annotatedDescription = null;
         try {

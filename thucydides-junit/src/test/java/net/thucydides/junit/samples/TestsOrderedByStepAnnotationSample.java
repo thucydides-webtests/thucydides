@@ -1,4 +1,4 @@
-package net.thucydides.junit.runners.samples;
+package net.thucydides.junit.samples;
 
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.Step;

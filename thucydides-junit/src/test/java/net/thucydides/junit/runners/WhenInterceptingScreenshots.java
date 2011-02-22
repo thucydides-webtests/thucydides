@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.runners.mocks.TestableNarrationListener;
-import net.thucydides.junit.runners.samples.ManagedPagesSample;
+import net.thucydides.junit.samples.ManagedPagesSample;
 
 import org.junit.Before;
 import org.junit.Test;

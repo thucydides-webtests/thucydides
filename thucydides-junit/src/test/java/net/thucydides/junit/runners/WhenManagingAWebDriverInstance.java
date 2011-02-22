@@ -13,7 +13,7 @@ import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.runners.samples.WebDriverWithoutAnnotationSample;
+import net.thucydides.junit.samples.WebDriverWithoutAnnotationSample;
 
 import org.junit.Rule;
 import org.junit.Test;

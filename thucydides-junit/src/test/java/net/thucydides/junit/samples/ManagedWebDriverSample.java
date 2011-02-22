@@ -1,4 +1,4 @@
-package net.thucydides.junit.runners.samples;
+package net.thucydides.junit.samples;
 
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.Step;
@@ -7,11 +7,9 @@ import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 @RunWith(ThucydidesRunner.class)
-public class ManagedWebDriverWithFailingTestSample {
+public class ManagedWebDriverSample {
     
     @Managed
     public WebDriver webdriver;
@@ -25,16 +23,15 @@ public class ManagedWebDriverWithFailingTestSample {
     }
     
     @Test @Step(3)
-    public void but_fail_here_in_step_3() {
-        assertThat(true, is(false));
+    public void then_gets_here_step_3() {
     }
     
     @Test @Step(4)
-    public void dont_get_to_here() {
+    public void finally_gets_here_step_4() {
     }
     
     @Test @Step(5)
-    public void or_to_here() {
+    public void and_at_the_end_step_5() {
         
     }
 }

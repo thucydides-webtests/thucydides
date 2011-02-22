@@ -8,7 +8,7 @@ import java.util.List;
 
 import net.thucydides.junit.runners.listeners.TestExecutionListener;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.runners.samples.TestUsingPendingAnnotationSample;
+import net.thucydides.junit.samples.TestUsingPendingAnnotationSample;
 
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;

@@ -8,8 +8,8 @@ import java.util.List;
 
 import net.thucydides.junit.runners.listeners.TestExecutionListener;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.runners.samples.TestsOrderedByStepAnnotationSample;
-import net.thucydides.junit.runners.samples.TestsOrderedInAlphabeticalOrderSample;
+import net.thucydides.junit.samples.TestsOrderedByStepAnnotationSample;
+import net.thucydides.junit.samples.TestsOrderedInAlphabeticalOrderSample;
 
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;

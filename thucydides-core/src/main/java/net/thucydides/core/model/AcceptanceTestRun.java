@@ -24,7 +24,7 @@ import com.google.common.collect.ImmutableList;
  * This includes the narrative steps taken during the test, screenshots at each step, 
  * the results of each step, and the overall result.
  * An Acceptance test scenario can be associated with a UserStory using the UserStory
- * annotation.
+ * annotation. 
  * 
  * @composed 1..* steps * TestStep
  * 
@@ -37,7 +37,7 @@ public class AcceptanceTestRun {
 
     private final List<TestStep> testSteps = new ArrayList<TestStep>();
 
-    private Class userStory;
+    private Class<?> userStory;
     
     /**
      * Create a new acceptance test run instance.
@@ -159,18 +159,27 @@ public class AcceptanceTestRun {
 
     public void setUserStory(final Class<?> userStory) {
         if (!isAnAnnotatedUserStory(userStory)) {
-            throw new IllegalArgumentException("The user story class " + userStory + " was not annotated with @UserStory");
+            throw new IllegalArgumentException("The user story class " 
+                                                + userStory + " was not annotated with @UserStory");
         }
         this.userStory = userStory;
     }
 
-    private boolean isAnAnnotatedUserStory(Class<?> userStoryCandidate) {
+    private boolean isAnAnnotatedUserStory(final Class<?> userStoryCandidate) {
         UserStory annotation = userStoryCandidate.getAnnotation(UserStory.class);
         return (annotation != null);
     }
 
     public Class<?> getUserStory() {
         return userStory;
+    }
+
+    public Boolean isSuccess() {
+        return (getResult() == SUCCESS);
+    }
+
+    public Boolean isFailure() {
+        return (getResult() == FAILURE);
     }
 
 }
