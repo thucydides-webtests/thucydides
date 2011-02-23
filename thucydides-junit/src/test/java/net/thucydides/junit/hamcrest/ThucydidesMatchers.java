@@ -1,7 +1,6 @@
 package net.thucydides.junit.hamcrest;
 
 import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.junit.runners.OrderedTestStepMethod;
 
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
@@ -15,15 +14,6 @@ public class ThucydidesMatchers {
         return new ContainsAnInstanceOfMatcher(reporterClass);
     }
     
-    @Factory
-    public static OrderedTestStepLessThanMatcher lessThan(OrderedTestStepMethod testStep) {
-        return new OrderedTestStepLessThanMatcher(testStep);
-    }
-    
-    @Factory
-    public static OrderedTestStepGreaterThanMatcher greaterThan(OrderedTestStepMethod testStep) {
-        return new OrderedTestStepGreaterThanMatcher(testStep);
-    }
     
     @Factory
     public static Matcher<Failure> hasMessage(Matcher<String> matcher){
