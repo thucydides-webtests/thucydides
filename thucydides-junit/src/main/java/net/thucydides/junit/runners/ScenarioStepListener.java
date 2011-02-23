@@ -17,11 +17,11 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.annotations.StepDescription;
+import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.internals.TestStatus;
 
 import org.junit.runner.Description;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.modeshape.common.text.Inflector;
@@ -65,10 +65,18 @@ public class ScenarioStepListener extends RunListener {
 
     private void recordCurrentTestStep(final Description description) {
         getCurrentTestStepFrom(description);
+        addAnyTestedRequirementsIn(description);
         String testName = testNameFrom(description);
         currentTestStep.setDescription(testName);
         currentAcceptanceTestRun.recordStep(currentTestStep);
         currentTestStep = null;
+    }
+
+    private void addAnyTestedRequirementsIn(final Description description) {
+        String requirement = annotatedRequirementsOf(description);
+        if (requirement != null) {
+            currentTestStep.testsRequirement(requirement);
+        }
     }
 
     private File grabScreenshotFileFor(final String testName) throws IOException {
@@ -91,6 +99,7 @@ public class ScenarioStepListener extends RunListener {
         currentAcceptanceTestRun = new AcceptanceTestRun();
         acceptanceTestRuns.add(currentAcceptanceTestRun);
         updateTestRunTitleBasedOn(description);
+        updateTestRunRequirementsBasedOn(description);
         getCurrentTestStepFrom(description);
     }
 
@@ -150,6 +159,13 @@ public class ScenarioStepListener extends RunListener {
         }
     }
 
+    private void updateTestRunRequirementsBasedOn(final Description description) {
+        String requirement = annotatedRequirementsOf(description);
+        if (requirement != null) {
+            currentAcceptanceTestRun.testsRequirement(requirement);
+        }
+    }
+
     /**
      * Turns a method into a human-readable title.
      */
@@ -172,7 +188,7 @@ public class ScenarioStepListener extends RunListener {
         }
         return humanizedTestNameFrom(description);
     }
-
+    
     protected String annotatedDescriptionOf(final Description description) {
         String annotatedDescription = null;
         try {
@@ -206,6 +222,23 @@ public class ScenarioStepListener extends RunListener {
             e.printStackTrace();
         }
         return null;
+    }
+
+    protected String annotatedRequirementsOf(final Description description) {
+        String requirement = null;
+        try {
+            Method testMethod = getTestMethodFrom(description);
+            TestsRequirement testsRequirement = (TestsRequirement) testMethod
+                    .getAnnotation(TestsRequirement.class);
+            if (testsRequirement != null) {
+                requirement = testsRequirement.value();
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return requirement;
     }
 
     /**

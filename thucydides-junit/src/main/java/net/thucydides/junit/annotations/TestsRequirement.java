@@ -4,10 +4,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.RetentionPolicy;
+
 /**
- * What order will a test be executed in the test run.
+ * Annotation that marks a WebDriver field as one that is managed by the Test Runner.
+ * The Thucydides Test Runner will instantiate this WebDriver before the tests start,
+ * and close it once they have all finished.
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Step {}
+public @interface TestsRequirement {
+    String value();
+}

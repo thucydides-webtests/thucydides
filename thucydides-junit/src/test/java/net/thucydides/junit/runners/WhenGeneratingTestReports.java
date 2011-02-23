@@ -45,7 +45,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
     @Test
     public void a_test_reporter_can_subscribe_to_the_runner() throws InitializationError, IOException {
         
-        TestStepRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
         runner.subscribeReporter(mockReporter);
 
         runner.run(new RunNotifier());;
@@ -58,7 +58,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
     public void the_runer_should_tell_the_reporter_what_directory_to_use()
             throws InitializationError, IOException {
         
-        TestStepRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
         runner.subscribeReporter(mockReporter);
 
         runner.run(new RunNotifier());;
@@ -70,7 +70,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
     public void multiple_test_reporters_can_subscribe_to_the_runner()
             throws InitializationError, IOException {
 
-        TestStepRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
         
         AcceptanceTestReporter reporter1 = mock(AcceptanceTestReporter.class);
         AcceptanceTestReporter reporter2 = mock(AcceptanceTestReporter.class);
@@ -88,7 +88,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
     public void the_test_should_fail_with_an_error_if_the_reporter_breaks()
             throws InitializationError, IOException {
 
-        TestStepRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
 
         when(mockReporter.generateReportFor(any(AcceptanceTestRun.class))).thenThrow(new IOException());
         

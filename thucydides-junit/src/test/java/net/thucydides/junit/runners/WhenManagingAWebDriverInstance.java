@@ -38,7 +38,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Test
     public void the_driver_should_be_initialized_before_the_tests() throws InitializationError  {
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        TestStepRunner runner = getTestRunnerUsing(SampleFailingScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(SampleFailingScenario.class, mockBrowserFactory);
         
         final RunNotifier notifier = new RunNotifier();
         runner.run(new RunNotifier());
@@ -49,7 +49,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Test
     public void the_driver_should_be_closed_after_the_tests() throws InitializationError {
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        TestStepRunner runner = getTestRunnerUsing(SampleFailingScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(SampleFailingScenario.class, mockBrowserFactory);
         
         final RunNotifier notifier = new RunNotifier();
         runner.run(new RunNotifier());
@@ -62,7 +62,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
 
         System.setProperty("webdriver.driver", "htmlunit");      
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        TestStepRunner runner = null;
+        ThucydidesRunner runner = null;
         try {
             runner = getTestRunnerUsing(SampleFailingScenario.class, mockBrowserFactory);
             final RunNotifier notifier = new RunNotifier();
@@ -81,7 +81,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     public void when_no_annotated_field_is_found_an_exception_is_thrown() throws InitializationError {
 
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        TestStepRunner runner = getTestRunnerUsing(SampleScenarioWithUnannotatedWebDriver.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(SampleScenarioWithUnannotatedWebDriver.class, mockBrowserFactory);
         
         runner.run(new RunNotifier());
     }    

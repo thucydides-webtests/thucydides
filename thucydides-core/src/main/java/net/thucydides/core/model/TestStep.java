@@ -7,6 +7,10 @@ import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * An acceptence test run is made up of test steps.
@@ -25,6 +29,7 @@ public class TestStep {
     private TestResult result;
     private String errorMessage;
     private Throwable cause;
+    private List<String> testedRequirement = new ArrayList<String>();
     
     public TestStep() {
     }
@@ -39,6 +44,14 @@ public class TestStep {
     
     public String getDescription() {
         return description;
+    }
+
+    public void testsRequirement(final String requirement) {
+        testedRequirement.add(requirement);
+    }
+    
+    public List<String> getTestedRequirements() {
+        return ImmutableList.copyOf(testedRequirement);
     }
 
     @Override

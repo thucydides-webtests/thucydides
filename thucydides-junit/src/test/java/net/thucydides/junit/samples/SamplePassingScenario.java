@@ -4,13 +4,14 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.ManagedPages;
 import net.thucydides.junit.annotations.Steps;
-import net.thucydides.junit.runners.TestStepRunner;
+import net.thucydides.junit.annotations.TestsRequirement;
+import net.thucydides.junit.runners.ThucydidesRunner;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
-@RunWith(TestStepRunner.class)
+@RunWith(ThucydidesRunner.class)
 public class SamplePassingScenario {
     
     @Managed
@@ -23,6 +24,7 @@ public class SamplePassingScenario {
     public SampleScenarioSteps steps;
         
     @Test
+    @TestsRequirement("ABC")
     public void happy_day_scenario() {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
@@ -32,6 +34,7 @@ public class SamplePassingScenario {
     }
     
     @Test
+    @TestsRequirement("DEF")
     public void edge_case_1() {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();

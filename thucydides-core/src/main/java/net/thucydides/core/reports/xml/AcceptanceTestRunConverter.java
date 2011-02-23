@@ -41,7 +41,6 @@ public class AcceptanceTestRunConverter implements Converter {
         Preconditions.checkNotNull(testRun, "The test run was null - WTF?");
 
         writer.addAttribute("title", testRun.getTitle());
-        addUserStoryAttributeIfPresentTo(writer, testRun);
         writer.addAttribute("steps", Integer.toString(testRun.getTestSteps().size()));
         writer.addAttribute("successful", Integer.toString(testRun.getSuccessCount()));
         writer.addAttribute("failures", Integer.toString(testRun.getFailureCount()));
@@ -49,11 +48,13 @@ public class AcceptanceTestRunConverter implements Converter {
         writer.addAttribute("ignored", Integer.toString(testRun.getIgnoredCount()));
         writer.addAttribute("pending", Integer.toString(testRun.getPendingCount()));
         writer.addAttribute("result", testRun.getResult().toString());
+        addRequirementsTo(writer, testRun.getTestedRequirements());
 
         List<TestStep> steps = testRun.getTestSteps();
         for (TestStep step : steps) {
             writer.startNode("test-step");
             writeResult(writer, step);
+            addRequirementsTo(writer, step.getTestedRequirements());
             writeDescription(writer, step);
             writeErrorForFailingTest(writer, step);
             writeScreenshotIfPresent(writer, step);
@@ -61,10 +62,16 @@ public class AcceptanceTestRunConverter implements Converter {
         }
     }
 
-    private void addUserStoryAttributeIfPresentTo(final HierarchicalStreamWriter writer,
-            final AcceptanceTestRun testRun) {
-        if (testRun.getUserStory() != null) {
-            writer.addAttribute("user-story", testRun.getUserStory().getSimpleName());
+    private void addRequirementsTo(final HierarchicalStreamWriter writer,
+            final List<String> requirements) {
+        if (!requirements.isEmpty()) {
+            writer.startNode("requirements");
+            for(String requirement : requirements) {
+                writer.startNode("requirement");
+                writer.setValue(requirement);
+                writer.endNode();
+            }
+            writer.endNode();
         }
     }
 

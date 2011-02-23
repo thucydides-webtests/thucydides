@@ -157,4 +157,20 @@ public class WhenMatchingUrlsToPages {
         assertThat(pages.isCurrentPageAt(PageWithUrlDefinitions.class), is(true));
     }
     
+    @Test
+    public void should_not_throw_exception_if_on_right_page() {
+        WebDriver driver = mock(WebDriver.class);
+        when(driver.getCurrentUrl()).thenReturn("https://www.placemyad.com.au/common/microRegistration");
+        Pages pages = new Pages(driver);
+        pages.currentPageAt(PageWithUrlDefinitions.class);
+    }
+
+    @Test(expected=WrongPageException.class)
+    public void should_throw_exception_if_not_on_right_page() {
+        WebDriver driver = mock(WebDriver.class);
+        when(driver.getCurrentUrl()).thenReturn("https://www.placemyad.com.au/common/somewhereElse");
+        Pages pages = new Pages(driver);
+        pages.currentPageAt(PageWithUrlDefinitions.class);
+    }
+    
 }

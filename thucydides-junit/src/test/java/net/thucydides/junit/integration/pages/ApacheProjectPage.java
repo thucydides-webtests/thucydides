@@ -7,6 +7,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @At("http://projects.apache.org")
 public class ApacheProjectPage extends PageObject {
@@ -14,6 +16,9 @@ public class ApacheProjectPage extends PageObject {
     @FindBy(linkText="Categories")
     WebElement categoriesLink;
     
+    @FindBy(linkText="DOES-NOT-EXIST")
+    WebElement doesNotExistLink;
+
     public ApacheProjectPage(WebDriver driver) {
         super(driver);
     }
@@ -26,4 +31,12 @@ public class ApacheProjectPage extends PageObject {
         categoriesLink.click();
     }
 
+    public void clickOnInexistantLink() {
+        categoriesLink.click();
+    }
+    
+    public void clickOnProjectsAndCheckTitle() {
+        assertThat(getTitle(), is("Not the right one"));
+    }
+    
 }

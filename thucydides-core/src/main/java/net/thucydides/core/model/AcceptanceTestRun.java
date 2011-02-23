@@ -12,8 +12,6 @@ import static net.thucydides.core.model.TestResult.SUCCESS;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thucydides.core.annotations.UserStory;
-
 import ch.lambdaj.function.convert.Converter;
 
 import com.google.common.base.Preconditions;
@@ -34,11 +32,11 @@ import com.google.common.collect.ImmutableList;
 public class AcceptanceTestRun {
 
     private String title;
+    
+    private List<String> testedRequirement = new ArrayList<String>();
 
     private final List<TestStep> testSteps = new ArrayList<TestStep>();
 
-    private Class<?> userStory;
-    
     /**
      * Create a new acceptance test run instance.
      */
@@ -72,6 +70,14 @@ public class AcceptanceTestRun {
         return title;
     }
 
+    public void testsRequirement(final String requirement) {
+        Preconditions.checkNotNull(requirement);
+        testedRequirement.add(requirement);
+    }
+    
+    public List<String> getTestedRequirements() {
+        return ImmutableList.copyOf(testedRequirement);
+    }
     /**
      * An acceptance test is made up of a series of steps.
      * Each step is in fact a small test, which follows on from 
@@ -155,23 +161,6 @@ public class AcceptanceTestRun {
 
     public Integer getPendingCount() {
         return select(testSteps, having(on(TestStep.class).isPending())).size();
-    }
-
-    public void setUserStory(final Class<?> userStory) {
-        if (!isAnAnnotatedUserStory(userStory)) {
-            throw new IllegalArgumentException("The user story class " 
-                                                + userStory + " was not annotated with @UserStory");
-        }
-        this.userStory = userStory;
-    }
-
-    private boolean isAnAnnotatedUserStory(final Class<?> userStoryCandidate) {
-        UserStory annotation = userStoryCandidate.getAnnotation(UserStory.class);
-        return (annotation != null);
-    }
-
-    public Class<?> getUserStory() {
-        return userStory;
     }
 
     public Boolean isSuccess() {

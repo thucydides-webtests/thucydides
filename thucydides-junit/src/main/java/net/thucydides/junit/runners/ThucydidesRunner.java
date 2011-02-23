@@ -34,7 +34,7 @@ import com.google.common.collect.ImmutableList;
  * @author johnsmart
  * 
  */
-public class TestStepRunner extends BlockJUnit4ClassRunner {
+public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     /**
      * Creates new browser instances. The Browser Factory's job is to provide
@@ -88,7 +88,7 @@ public class TestStepRunner extends BlockJUnit4ClassRunner {
      * @throws UnsupportedDriverException
      *             if the requested driver type is not supported
      */
-    public TestStepRunner(final Class<?> klass) throws InitializationError {
+    public ThucydidesRunner(final Class<?> klass) throws InitializationError {
         super(klass);
         checkRequestedDriverType();
         TestCaseAnnotations.checkThatTestCaseIsCorrectlyAnnotated(klass);

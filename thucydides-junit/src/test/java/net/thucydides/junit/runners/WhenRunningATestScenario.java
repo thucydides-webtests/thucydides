@@ -53,7 +53,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test    
     public void the_steps_maintain_a_browser_open_across_the_execution_of_all_the_steps() throws InitializationError  {
        
-        TestStepRunner runner = new TestStepRunner(SamplePassingScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
@@ -64,7 +64,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test    
     public void the_test_runner_records_the_steps_as_they_are_executed() throws InitializationError  {
        
-        TestStepRunner runner = new TestStepRunner(SamplePassingScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         
@@ -75,7 +75,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test
     public void the_test_runner_skips_any_tests_after_a_failure() throws Exception  {
        
-        TestStepRunner runner = new TestStepRunner(SingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         
@@ -95,7 +95,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test 
     public void the_test_runner_initializes_the_steps_object() throws InitializationError  {
        
-        TestStepRunner runner = new TestStepRunner(SamplePassingScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         
@@ -105,7 +105,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test    
     public void the_test_runner_records_the_name_of_the_test_scenario() throws InitializationError  {
        
-        TestStepRunner runner = new TestStepRunner(SingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         
@@ -119,7 +119,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
     @Test    
     public void the_test_runner_records_each_step_of_the_test_scenario() throws InitializationError  {
-        TestStepRunner runner = new TestStepRunner(SingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
@@ -131,7 +131,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     
     @Test    
     public void the_test_runner_distinguishes_between_ignored_skipped_and_pending_steps() throws InitializationError  {
-        TestStepRunner runner = new TestStepRunner(SingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         
@@ -149,7 +149,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     
     @Test    
     public void the_test_runner_should_store_screenshots_only_for_successful_and_failed_tests() throws InitializationError  {
-        TestStepRunner runner = new TestStepRunner(SingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         
@@ -169,7 +169,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     
     @Test    
     public void the_test_runner_records_an_acceptance_test_result_for_each_test() throws InitializationError  {
-        TestStepRunner runner = new TestStepRunner(SamplePassingScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         
@@ -180,7 +180,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test    
     public void the_test_runner_records_each_step_with_a_nice_name() throws InitializationError  {
        
-        TestStepRunner runner = new TestStepRunner(SingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         
@@ -195,7 +195,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test    
     public void step_titles_can_be_overridden_with_the_StepDescription_annotation() throws InitializationError  {
        
-        TestStepRunner runner = new TestStepRunner(AnnotatedSingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(AnnotatedSingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         
@@ -210,7 +210,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test    
     public void scenario_titles_can_be_overridden_with_the_Title_annotation() throws InitializationError  {
        
-        TestStepRunner runner = new TestStepRunner(AnnotatedSingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(AnnotatedSingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         
@@ -223,7 +223,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
     @Test
     public void test_runner_takes_a_screenshot_after_each_step() throws InitializationError {
-        TestStepRunner runner = new TestStepRunner(SingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
         
@@ -234,14 +234,14 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
     @Test(expected=InvalidStepsFieldException.class)
     public void the_test_scenario_must_have_a_steps_field() throws InitializationError  {
-        TestStepRunner runner = new TestStepRunner(SampleScenarioWithoutSteps.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithoutSteps.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
     }
 
     @Test(expected=InvalidManagedPagesFieldException.class)
     public void the_test_scenario_must_have_a_pages_field() throws InitializationError  {
-        TestStepRunner runner = new TestStepRunner(SampleScenarioWithoutPages.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithoutPages.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
     }

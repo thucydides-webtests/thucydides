@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Pending;
 import net.thucydides.junit.annotations.Step;
+import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.steps.ScenarioSteps;
 
 import org.junit.Ignore;
@@ -16,10 +17,12 @@ public class SampleScenarioSteps extends ScenarioSteps {
     }
 
     @Step
+    @TestsRequirement("DEF")
     public void stepThatSucceeds() {
     }
 
     @Step
+    @TestsRequirement("GHI")
     public void anotherStepThatSucceeds() {
     }
 
