@@ -18,6 +18,6 @@ public class OrderedTestStepGreaterThanMatcher extends TypeSafeMatcher<OrderedTe
     }
 
     public void describeTo(Description description) {
-        description.appendText("greated than '").appendText(testStep.toString()).appendText("'");
+        description.appendText("greater than '").appendText(testStep.toString()).appendText("'");
     }
 }

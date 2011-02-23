@@ -1,13 +1,17 @@
 package net.thucydides.junit.runners.mocks;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.io.IOException;
+
 import net.thucydides.core.webdriver.WebDriverFactory;
 
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
-
-import static org.mockito.Mockito.mock;
 
 /**
  * A mock web driver factory for tests.
@@ -21,27 +25,65 @@ import static org.mockito.Mockito.mock;
  */
 public class TestableWebDriverFactory extends WebDriverFactory {
 
-    private ChromeDriver chromeDriver = null;
-    private FirefoxDriver firefoxDriver = null;
-    private InternetExplorerDriver internetExplorerDriver = null;
-    
+    private WebDriver driver;
+    private File screenshotFile;
     private int firefoxCount = 0;
     private int chromeCount = 0;
-    private int internetExplorerCount = 0;
     
+    
+    public TestableWebDriverFactory() {
+    }
+
+    public TestableWebDriverFactory(File temporaryDirectory) {
+        screenshotFile = new File(temporaryDirectory, "screenshot.png");
+        try {
+            screenshotFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public WebDriver getDriver() {
+        if (driver == null) {
+            getFirefoxDriver();
+        }
+        return driver;
+    }
+    
+    public WebDriver getFirefoxDriver() {
+        if (driver == null) {
+            FirefoxDriver mockDriver = mock(FirefoxDriver.class);            
+            when(mockDriver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotFile);
+            
+            driver = mockDriver;
+        }
+        return driver;
+    }
+
+    public WebDriver getChromeDriver() {
+        if (driver == null) {
+            ChromeDriver mockDriver = mock(ChromeDriver.class);            
+            when(mockDriver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotFile);
+            
+            driver = mockDriver;
+        }
+        return driver;
+    }
     
     @Override
     protected WebDriver newChromeDriver() {
         chromeCount++;
-        chromeDriver = mock(ChromeDriver.class);
-        return chromeDriver;
+        return (WebDriver) getChromeDriver();
     }
 
+    public int fireFoxOpenedCount() {
+        return firefoxCount;
+    }
+    
     @Override
     protected WebDriver newFirefoxDriver() {
         firefoxCount++;
-        firefoxDriver = mock(FirefoxDriver.class);
-        return firefoxDriver;
+        return (WebDriver) getFirefoxDriver();
     }
         
     public int createdFirefoxDrivers() {
@@ -50,21 +92,5 @@ public class TestableWebDriverFactory extends WebDriverFactory {
     
     public int createdChromeDrivers() {
         return chromeCount;
-    }
-    
-    public int createdInternetExplorerDrivers() {
-        return internetExplorerCount;
-    }
-
-    public ChromeDriver getChromeDriver() {
-        return chromeDriver;
-    }
-
-    public FirefoxDriver getFirefoxDriver() {
-        return firefoxDriver;
-    }
-
-    public InternetExplorerDriver getInternetExplorerDriver() {
-        return internetExplorerDriver;
     }
 }

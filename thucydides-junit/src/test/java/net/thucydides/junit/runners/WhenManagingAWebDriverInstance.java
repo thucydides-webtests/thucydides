@@ -6,14 +6,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.samples.WebDriverWithoutAnnotationSample;
+import net.thucydides.junit.samples.SampleFailingScenario;
+import net.thucydides.junit.samples.SampleScenarioWithUnannotatedWebDriver;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,7 +30,7 @@ import org.junit.runners.model.InitializationError;
  * @author johnsmart
  * 
  */
-public class WhenManagingAWebDriverInstance extends AbstractWebDriverTest {
+public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
 
     @Rule
     public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
@@ -37,10 +38,10 @@ public class WhenManagingAWebDriverInstance extends AbstractWebDriverTest {
     @Test
     public void the_driver_should_be_initialized_before_the_tests() throws InitializationError  {
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+        TestStepRunner runner = getTestRunnerUsing(SampleFailingScenario.class, mockBrowserFactory);
         
         final RunNotifier notifier = new RunNotifier();
-        runner.run(notifier);
+        runner.run(new RunNotifier());
         
         assertThat(mockBrowserFactory.createdFirefoxDrivers(), is(1));
     }
@@ -48,24 +49,25 @@ public class WhenManagingAWebDriverInstance extends AbstractWebDriverTest {
     @Test
     public void the_driver_should_be_closed_after_the_tests() throws InitializationError {
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+        TestStepRunner runner = getTestRunnerUsing(SampleFailingScenario.class, mockBrowserFactory);
         
         final RunNotifier notifier = new RunNotifier();
-        runner.run(notifier);
-        verify(mockBrowserFactory.getFirefoxDriver(), times(1)).quit();
+        runner.run(new RunNotifier());
+        verify(mockBrowserFactory.getDriver(), times(1)).quit();
     }
     
     @SuppressWarnings("unchecked")
     @Test
-    public void when_an_unsupported_driver_is_used_no_driver_is_created() throws InitializationError {
+    public void when_an_unsupported_driver_is_used_an_error_is_raised() throws InitializationError {
 
         System.setProperty("webdriver.driver", "htmlunit");      
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = null;
+        TestStepRunner runner = null;
         try {
-            runner = getTestRunnerUsing(mockBrowserFactory);
+            runner = getTestRunnerUsing(SampleFailingScenario.class, mockBrowserFactory);
             final RunNotifier notifier = new RunNotifier();
             runner.run(notifier);
+            fail();
         } catch (UnsupportedDriverException e) {
             assertThat(e.getMessage(), allOf(containsString("htmlunit is not a supported browser"),
                                              containsString("Supported driver values are: "),
@@ -73,15 +75,13 @@ public class WhenManagingAWebDriverInstance extends AbstractWebDriverTest {
                                              containsString(CHROME.toString())
                                              ));
         }
-        
-        assertThat(mockBrowserFactory.getFirefoxDriver(), is(nullValue()));
     }
     
     @Test(expected=InvalidManagedWebDriverFieldException.class)
     public void when_no_annotated_field_is_found_an_exception_is_thrown() throws InitializationError {
 
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(WebDriverWithoutAnnotationSample.class, mockBrowserFactory);
+        TestStepRunner runner = getTestRunnerUsing(SampleScenarioWithUnannotatedWebDriver.class, mockBrowserFactory);
         
         runner.run(new RunNotifier());
     }    

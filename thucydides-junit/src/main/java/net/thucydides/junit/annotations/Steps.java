@@ -5,11 +5,10 @@ import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.RetentionPolicy;
 /**
- * What order will a test be executed in the test run.
- *
+ * Marks a class that implements test steps as individual methods.
+ * Each method that represents a test step should be marked by the Step annotation.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Step {
-    int value() default 0;
+@Target(ElementType.FIELD)
+public @interface Steps {
 }

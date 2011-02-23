@@ -2,6 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>6</version>
+    </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides</artifactId>
     <version>0.1.0-SNAPSHOT</version>
@@ -303,16 +308,4 @@
             </build>
         </profile>
     </profiles>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>wakaleo-snapshots</id>
-            <name>Wakaleo Snapshots</name>
-            <url>http://www.wakaleo-labs.com/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>wakaleo-releases</id>
-            <name>Wakaleo Releases</name>
-            <url>http://www.wakaleo-labs.com/nexus/content/repositories/releases</url>
-        </repository>
-    </distributionManagement>
 </project>

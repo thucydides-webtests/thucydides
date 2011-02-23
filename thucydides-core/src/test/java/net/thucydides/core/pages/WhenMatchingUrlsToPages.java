@@ -21,16 +21,10 @@ public class WhenMatchingUrlsToPages {
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
     }
-    
-    final class PageObjectWithNoUrlDefinitions extends PageObject {
-        public PageObjectWithNoUrlDefinitions(WebDriver driver) {
-            super(driver);
-        }
-    }
-    
+        
     @Test
     public void by_default_all_urls_will_work_with_a_page() {
-        PageObjectWithNoUrlDefinitions page = new PageObjectWithNoUrlDefinitions(webdriver);
+        PageWithNoUrlDefinitions page = new PageWithNoUrlDefinitions(webdriver);
         assertThat(page.compatibleWithUrl("http://www.apache.org"), is(true));
     }
 
@@ -141,23 +135,16 @@ public class WhenMatchingUrlsToPages {
         assertThat(page.compatibleWithUrl("http://maven.apache.org/somewhere"), is(true));
         assertThat(page.compatibleWithUrl("http://maven.apache.org/somethingelse"), is(false));
     }
-    
-    @At("#HOST/common/microRegistration")
-    final class PageWithUrlParameters extends PageObject {
-        public PageWithUrlParameters(WebDriver driver) {
-            super(driver);
-        }
-    }
 
     @Test
     public void should_match_simple_urls_with_parameters() {
-        PageObject page = new PageWithUrlParameters(webdriver);
+        PageObject page = new PageWithUrlDefinitions(webdriver);
         assertThat(page.compatibleWithUrl("https://www.placemyad.com.au/common/microRegistration?a=1"), is(true));
     }
 
     @Test
     public void should_match_complex_urls_with_parameters() {
-        PageObject page = new PageWithUrlParameters(webdriver);
+        PageObject page = new PageWithUrlDefinitions(webdriver);
         assertThat(page.compatibleWithUrl("https://www.placemyad.com.au/common/microRegistration?continueAction=print&continueNamespace=%2Femployment"), 
                                          is(true));
     }
@@ -167,7 +154,7 @@ public class WhenMatchingUrlsToPages {
         WebDriver driver = mock(WebDriver.class);
         when(driver.getCurrentUrl()).thenReturn("https://www.placemyad.com.au/common/microRegistration");
         Pages pages = new Pages(driver);
-        assertThat(pages.isCurrentPageAt(PageWithUrlParameters.class), is(true));
+        assertThat(pages.isCurrentPageAt(PageWithUrlDefinitions.class), is(true));
     }
     
 }

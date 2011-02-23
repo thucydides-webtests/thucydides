@@ -31,7 +31,7 @@ public class WhenKeepingTrackOfVisitedPages {
         final Pages pages = new Pages(driver);
         
         pages.setDefaultBaseUrl("http://www.google.com");        
-        pages.openHomePage();
+        pages.start();
         
         verify(driver).get(baseUrl);    
     }
@@ -46,7 +46,7 @@ public class WhenKeepingTrackOfVisitedPages {
         pages.setDefaultBaseUrl(defaultBaseUrl);        
         System.setProperty("webdriver.base.url", systemDefinedBaseUrl);
         
-        pages.openHomePage();
+        pages.start();
         
         verify(driver).get(systemDefinedBaseUrl);    
     }

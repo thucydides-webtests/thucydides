@@ -10,6 +10,9 @@ import com.google.common.base.Preconditions;
 
 /**
  * The Pages object keeps track of what web pages a test visits, and helps with mapping pages to Page Objects.
+ * A Pages object is associated with a WebDriver driver instance, so you need a Pages object for any
+ * given WebDriver driver.
+ * 
  * @author johnsmart
  *
  */
@@ -41,17 +44,21 @@ public class Pages {
         }
     }
 
+    public WebDriver getDriver() {
+        return driver;
+    }
+    
     /**
      * Opens a browser on the application home page, as defined by the base URL.
      */
-    public void openHomePage() {        
+    public void start() {        
         Preconditions.checkNotNull(driver);
         
         final String homeUrl = getBaseUrl();
         driver.get(homeUrl);
     }
 
-    public PageObject currentPageAt(final Class<? extends PageObject> pageObjectClass) throws WrongPageException{
+    public PageObject currentPageAt(final Class<? extends PageObject> pageObjectClass) {
         PageObject pageCandidate = getCurrentPageOfType(pageObjectClass);
         String currentUrl = driver.getCurrentUrl();
         if (!pageCandidate.compatibleWithUrl(currentUrl)) {

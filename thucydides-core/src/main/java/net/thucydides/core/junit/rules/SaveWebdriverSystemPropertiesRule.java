@@ -18,22 +18,22 @@ import org.junit.runners.model.Statement;
  */
 public class SaveWebdriverSystemPropertiesRule implements MethodRule {
     
-    private static final Map<String,String> originalWebDriverPropertyValues = new HashMap<String,String>();
+    private static final Map<String,String> ORIGINAL_WEB_DRIVER_PROPERTY_VALUES = new HashMap<String,String>();
     {
         for (WebdriverSystemProperty property : WebdriverSystemProperty.values()) {
             savePropertyValueFor(property);
         }                        
     }
     
-    private static void savePropertyValueFor(WebdriverSystemProperty property) {
+    private static void savePropertyValueFor(final WebdriverSystemProperty property) {
         String propertyName = property.getPropertyName();
         String currentValue = System.getProperty(propertyName);
         if (currentValue != null) {
-            originalWebDriverPropertyValues.put(propertyName, currentValue);
+            ORIGINAL_WEB_DRIVER_PROPERTY_VALUES.put(propertyName, currentValue);
         }
     }
     
-    public Statement apply(final Statement statement, FrameworkMethod method, Object target) {
+    public Statement apply(final Statement statement, final FrameworkMethod method, final Object target) {
         return new Statement() {
 
             @Override
@@ -54,9 +54,9 @@ public class SaveWebdriverSystemPropertiesRule implements MethodRule {
                 }                        
             }
 
-            private void restorePropertyValueFor(WebdriverSystemProperty property) {
+            private void restorePropertyValueFor(final WebdriverSystemProperty property) {
                 String propertyName = property.getPropertyName();
-                String originalValue = originalWebDriverPropertyValues.get(propertyName);
+                String originalValue = ORIGINAL_WEB_DRIVER_PROPERTY_VALUES.get(propertyName);
                 if (originalValue != null) {                        
                     System.setProperty(propertyName, originalValue);
                 } else {

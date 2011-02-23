@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import net.thucydides.core.pages.Pages;
+import net.thucydides.junit.annotations.InvalidManagedPagesFieldException;
 import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.junit.annotations.ManagedPages;
 
@@ -15,6 +16,9 @@ import net.thucydides.junit.annotations.ManagedPages;
  */
 public class PagesAnnotatedField {
 
+    private static final String NO_ANNOTATED_FIELD_ERROR 
+    = "No Pages field annotated with @ManagedPages was found in the test case.";
+
     private Field field;
     private ManagedPages annotation;
     
@@ -23,19 +27,16 @@ public class PagesAnnotatedField {
      */
     public static PagesAnnotatedField findFirstAnnotatedField(final Class<?> testClass) {
 
-        PagesAnnotatedField annotatedField = null;
-        
         for (Field field : testClass.getDeclaredFields()) {
             ManagedPages fieldAnnotation = annotationFrom(field);
             if (fieldAnnotation != null) {
-                annotatedField = new PagesAnnotatedField(field, fieldAnnotation);
-                break;
+                return new PagesAnnotatedField(field, fieldAnnotation);
             }
         }
-        return annotatedField;
+        throw new InvalidManagedPagesFieldException(NO_ANNOTATED_FIELD_ERROR);
     }
 
-    private static ManagedPages annotationFrom(Field aField) {
+    private static ManagedPages annotationFrom(final Field aField) {
         ManagedPages annotationOnField = null;
         if (isFieldAnnotated(aField)) {
             annotationOnField = aField.getAnnotation(ManagedPages.class);

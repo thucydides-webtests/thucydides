@@ -20,16 +20,23 @@ import java.io.File;
  */
 public class TestStep {
 
-    private final String description;    
+    private String description;    
     private File screenshot;
     private TestResult result;
     private String errorMessage;
     private Throwable cause;
     
+    public TestStep() {
+    }
+
     public TestStep(final String description) {
         this.description = description;
     }
 
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+    
     public String getDescription() {
         return description;
     }

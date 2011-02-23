@@ -12,8 +12,7 @@ import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
-import net.thucydides.junit.integration.samples.ManagedWebDriverSample;
-import net.thucydides.junit.runners.mocks.MockThucydidesRunner;
+import net.thucydides.junit.samples.SingleTestScenario;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,7 +29,7 @@ import org.junit.runners.model.InitializationError;
  * @author johnsmart
  * 
  */
-public class WhenInstanciatingANewTestRunner {
+public class WhenInstanciatingANewTestRunner  extends AbstractTestStepRunnerTest {
 
     @Rule
     public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
@@ -39,10 +38,10 @@ public class WhenInstanciatingANewTestRunner {
     public void the_default_driver_should_be_firefox() throws InitializationError {
 
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+        TestStepRunner runner = getTestRunnerUsing(SingleTestScenario.class,  mockBrowserFactory);
 
-        runner.run(new RunNotifier());
-
+        runner.run(new RunNotifier());;
+        
         verify(mockBrowserFactory, times(1)).newInstanceOf(SupportedWebDriver.FIREFOX);
     }
 
@@ -51,10 +50,10 @@ public class WhenInstanciatingANewTestRunner {
             throws InitializationError {
         
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+        TestStepRunner runner = getTestRunnerUsing(SingleTestScenario.class, mockBrowserFactory);
 
         System.setProperty("webdriver.driver", "chrome");
-        runner.run(new RunNotifier());
+        runner.run(new RunNotifier());;
         
         verify(mockBrowserFactory, times(1)).newInstanceOf(SupportedWebDriver.CHROME);
     }
@@ -70,7 +69,7 @@ public class WhenInstanciatingANewTestRunner {
         thrown.expectMessage(JUnitMatchers.containsString("htmlunit is not a supported browser. Supported driver values are:"));
         
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+        TestStepRunner runner = getTestRunnerUsing(SingleTestScenario.class, mockBrowserFactory);
 
         System.setProperty("webdriver.driver", "htmlunit");
         runner.run(new RunNotifier());
@@ -84,7 +83,7 @@ public class WhenInstanciatingANewTestRunner {
         thrown.expectMessage(JUnitMatchers.containsString("iexplorer is not a supported browser. Supported driver values are:"));
         
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+        TestStepRunner runner = getTestRunnerUsing(SingleTestScenario.class, mockBrowserFactory);
 
         System.setProperty("webdriver.driver", "iexplorer");
         runner.run(new RunNotifier());
@@ -94,7 +93,7 @@ public class WhenInstanciatingANewTestRunner {
     public void the_default_output_directory_should_follow_the_maven_convention() throws InitializationError {
 
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+        TestStepRunner runner = getTestRunnerUsing(SingleTestScenario.class, mockBrowserFactory);
 
         File outputDirectory = runner.getOutputDirectory();
         
@@ -105,7 +104,7 @@ public class WhenInstanciatingANewTestRunner {
     public void the_output_directory_can_be_defined_by_a_system_property() throws InitializationError {
 
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-        ThucydidesRunner runner = getTestRunnerUsing(mockBrowserFactory);
+        TestStepRunner runner = getTestRunnerUsing(SingleTestScenario.class, mockBrowserFactory);
         
         System.setProperty("thucydides.outputDirectory", "target/reports/thucydides");
 
@@ -113,10 +112,5 @@ public class WhenInstanciatingANewTestRunner {
         
         assertThat(outputDirectory.getPath(), is("target/reports/thucydides"));
 
-    }
-
-    private ThucydidesRunner getTestRunnerUsing(WebDriverFactory browserFactory) throws InitializationError {
-        return new MockThucydidesRunner(ManagedWebDriverSample.class, browserFactory);   
-    }
-    
+    }    
 }

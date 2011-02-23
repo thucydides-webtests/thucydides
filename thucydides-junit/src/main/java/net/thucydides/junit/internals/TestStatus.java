@@ -6,16 +6,21 @@ import org.junit.Ignore;
 
 import net.thucydides.junit.annotations.Pending;
 
-public class TestStatus {
+/**
+ * Determine the status of a method based on its annotations.
+ * @author johnsmart
+ *
+ */
+public final class TestStatus {
     
-    final Method method;
+    private final Method method;
     
-    private TestStatus(Method method) {
+    private TestStatus(final Method method) {
         super();
         this.method = method;
     }
 
-    public static TestStatus of(Method method) {
+    public static TestStatus of(final Method method) {
         return new TestStatus(method);
     }
 

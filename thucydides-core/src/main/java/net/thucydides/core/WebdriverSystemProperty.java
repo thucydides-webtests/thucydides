@@ -14,7 +14,7 @@ public enum WebdriverSystemProperty {
 
     private String propertyName;
 
-    private WebdriverSystemProperty(String propertyName) {
+    private WebdriverSystemProperty(final String propertyName) {
         this.propertyName = propertyName;
     }
 

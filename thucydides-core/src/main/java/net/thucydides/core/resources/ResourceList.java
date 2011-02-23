@@ -69,10 +69,8 @@ public final class ResourceList {
             try {
                 zf = new ZipFile(file);
             } catch (final ZipException e) {
-                System.out.println("Failed to open " + file);
                 throw new Error(e);
             } catch (final IOException e) {
-                System.out.println("Failed to open " + file);
                 throw new Error(e);
             }
             @SuppressWarnings("rawtypes")
