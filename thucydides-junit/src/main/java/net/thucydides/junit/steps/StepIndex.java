@@ -8,6 +8,38 @@ import java.util.List;
 import net.thucydides.core.annotations.StepProvider;
 import net.thucydides.junit.annotations.Step;
 
+/**
+ * The Step Index class is a way to allow the dynamic discovery of what test steps are available.
+ * This assumes you are writing your Page Objects and ScenarioStep classes in a separate artifact,
+ * which unit tests can then invoke. This is the most flexible way of implementing the page objects
+ * and steps.
+ * 
+ * To use this class, override it and add a public array of classes containing the list of scenario step
+ * classes your test API provides. Then annotate this field using the '@StepProvider' annotation,
+ * as shown here:
+ * <pre><code>
+    public class MyWebSiteStepIndex extends StepIndex {
+
+        @StepProvider
+        public Class<?>[] stepClasses = {AddWidgetScenarioSteps.class, SearchWidgetsScenarioSteps.class};
+
+    }
+ * </code></pre>
+ * 
+ * Users can then discover the scenario classes as shown here:
+ * <pre><code>
+ *      List<Method> stepMethods = index.getStepsFor(scenarioClass);
+ * </code></pre>
+ * 
+ * They can also discover the scenario step methods as shown here:
+ * <pre><code>
+ *      StepIndex index = new MyWebSiteStepIndex();
+        List stepClasses = index.getStepClasses();
+ * </code></pre>
+ * 
+ * @author johnsmart
+ *
+ */
 public abstract class StepIndex {
 
     public List<Class<? extends ScenarioSteps>> getStepClasses() {

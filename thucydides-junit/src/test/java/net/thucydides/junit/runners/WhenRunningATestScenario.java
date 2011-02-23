@@ -2,8 +2,8 @@ package net.thucydides.junit.runners;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.anyObject;
@@ -12,8 +12,7 @@ import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.util.List;
-
-import javax.swing.border.EmptyBorder;
+import java.util.Set;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
@@ -26,6 +25,7 @@ import net.thucydides.junit.samples.SamplePassingScenario;
 import net.thucydides.junit.samples.SampleScenarioWithoutPages;
 import net.thucydides.junit.samples.SampleScenarioWithoutSteps;
 import net.thucydides.junit.samples.SingleTestScenario;
+import net.thucydides.junit.samples.SingleTestScenarioWithSeveralBusinessRules;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -231,6 +231,82 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         
         verify(driver, times(3)).getScreenshotAs((OutputType<?>) anyObject());
     }
+
+    
+    @Test
+    public void the_TestsRequirement_annotation_can_associated_a_business_rule_to_a_test() throws Exception {
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();        
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+        
+        assertThat(testRun.getTestedRequirements(), hasItem("SOME_BUSINESS_RULE"));
+
+    }    
+    
+    @Test
+    public void the_TestsRequirement_annotation_can_associated_several_business_rules_to_a_test() throws Exception {
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenarioWithSeveralBusinessRules.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();        
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+        
+        assertThat(testRun.getTestedRequirements(), hasItem("SOME_BUSINESS_RULE_1"));
+        assertThat(testRun.getTestedRequirements(), hasItem("SOME_BUSINESS_RULE_2"));
+
+    }    
+
+    
+    @Test
+    public void the_TestsRequirement_annotation_can_associated_a_business_rule_to_a_test_step() throws Exception {
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();        
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+        List<TestStep> steps = testRun.getTestSteps();
+        TestStep step1 = steps.get(0);
+        
+        assertThat(step1.getTestedRequirements(), hasItem("LOW_LEVEL_BUSINESS_RULE"));
+
+    }    
+
+    @Test
+    public void the_TestsRequirement_annotation_can_associated_multiple_business_rules_to_a_test_step() throws Exception {
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();        
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+        List<TestStep> steps = testRun.getTestSteps();
+        TestStep step2 = steps.get(3);
+        
+        assertThat(step2.getTestedRequirements(), hasItem("LOW_LEVEL_BUSINESS_RULE_1"));
+        assertThat(step2.getTestedRequirements(), hasItem("LOW_LEVEL_BUSINESS_RULE_2"));
+
+    }    
+
+    @Test
+    public void the_test_run_can_calculate_all_the_tested_business_rules_in_a_test_run() throws Exception {
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();        
+        AcceptanceTestRun testRun = executedScenarios.get(0);        
+        Set<String> allTestedRequirements = testRun.getAllTestedRequirements();
+        assertThat(allTestedRequirements, hasItem("SOME_BUSINESS_RULE"));
+        assertThat(allTestedRequirements, hasItem("LOW_LEVEL_BUSINESS_RULE"));
+        assertThat(allTestedRequirements, hasItem("LOW_LEVEL_BUSINESS_RULE_1"));
+        assertThat(allTestedRequirements, hasItem("LOW_LEVEL_BUSINESS_RULE_2"));
+
+    }    
 
     @Test(expected=InvalidStepsFieldException.class)
     public void the_test_scenario_must_have_a_steps_field() throws InitializationError  {

@@ -10,12 +10,15 @@ import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ch.lambdaj.function.convert.Converter;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Represents the results of an acceptance test (or "scenario") execution. 
@@ -33,7 +36,7 @@ public class AcceptanceTestRun {
 
     private String title;
     
-    private List<String> testedRequirement = new ArrayList<String>();
+    private Set<String> testedRequirement = new HashSet<String>();
 
     private final List<TestStep> testSteps = new ArrayList<TestStep>();
 
@@ -75,8 +78,8 @@ public class AcceptanceTestRun {
         testedRequirement.add(requirement);
     }
     
-    public List<String> getTestedRequirements() {
-        return ImmutableList.copyOf(testedRequirement);
+    public Set<String> getTestedRequirements() {
+        return ImmutableSet.copyOf(testedRequirement);
     }
     /**
      * An acceptance test is made up of a series of steps.
@@ -169,6 +172,15 @@ public class AcceptanceTestRun {
 
     public Boolean isFailure() {
         return (getResult() == FAILURE);
+    }
+
+    public Set<String> getAllTestedRequirements() {
+        Set<String> allTestedRequirements = new HashSet<String>();
+        allTestedRequirements.addAll(getTestedRequirements());
+        for (TestStep step : getTestSteps()) {
+            allTestedRequirements.addAll(step.getTestedRequirements());
+        }
+        return allTestedRequirements;
     }
 
 }

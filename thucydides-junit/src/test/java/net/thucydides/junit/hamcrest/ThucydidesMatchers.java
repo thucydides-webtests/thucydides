@@ -1,5 +1,7 @@
 package net.thucydides.junit.hamcrest;
 
+import java.lang.reflect.Method;
+
 import net.thucydides.core.reports.AcceptanceTestReporter;
 
 import org.hamcrest.Factory;
@@ -29,5 +31,11 @@ public class ThucydidesMatchers {
     public static Matcher<Description> hasDescriptionMethodName(Matcher<String> matcher){
         return new DescriptionWithMethodNameMatcher(matcher);
     }
-        
+    
+    @Factory
+    public static Matcher<Method> withName(Matcher<String> matcher) {
+        return new MethodNamedMatcher(matcher);
+    }
+    
+         
 }

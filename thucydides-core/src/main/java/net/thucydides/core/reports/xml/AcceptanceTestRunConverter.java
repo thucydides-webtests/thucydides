@@ -3,6 +3,7 @@ package net.thucydides.core.reports.xml;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
 
@@ -62,11 +63,10 @@ public class AcceptanceTestRunConverter implements Converter {
         }
     }
 
-    private void addRequirementsTo(final HierarchicalStreamWriter writer,
-            final List<String> requirements) {
-        if (!requirements.isEmpty()) {
+    private void addRequirementsTo(final HierarchicalStreamWriter writer, final Set<String> set) {
+        if (!set.isEmpty()) {
             writer.startNode("requirements");
-            for(String requirement : requirements) {
+            for(String requirement : set) {
                 writer.startNode("requirement");
                 writer.setValue(requirement);
                 writer.endNode();

@@ -18,6 +18,7 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.annotations.StepDescription;
 import net.thucydides.junit.annotations.TestsRequirement;
+import net.thucydides.junit.annotations.TestsRequirements;
 import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.internals.TestStatus;
 
@@ -73,9 +74,11 @@ public class ScenarioStepListener extends RunListener {
     }
 
     private void addAnyTestedRequirementsIn(final Description description) {
-        String requirement = annotatedRequirementsOf(description);
-        if (requirement != null) {
-            currentTestStep.testsRequirement(requirement);
+        List<String> requirements = annotatedRequirementsOf(description);
+        if (!requirements.isEmpty()) {
+            for (String requirement : requirements) {
+                currentTestStep.testsRequirement(requirement);
+            }
         }
     }
 
@@ -136,11 +139,11 @@ public class ScenarioStepListener extends RunListener {
 
     @Override
     public void testFinished(final Description description) throws Exception {
-        
+
         getCurrentTestStepFrom(description);
-        markCurrentTestAs(SUCCESS);        
+        markCurrentTestAs(SUCCESS);
         takeScreenshotFor(description);
-        
+
         recordCurrentTestStep(description);
     }
 
@@ -160,8 +163,8 @@ public class ScenarioStepListener extends RunListener {
     }
 
     private void updateTestRunRequirementsBasedOn(final Description description) {
-        String requirement = annotatedRequirementsOf(description);
-        if (requirement != null) {
+        List<String> requirements = annotatedRequirementsOf(description);
+        for(String requirement : requirements) {
             currentAcceptanceTestRun.testsRequirement(requirement);
         }
     }
@@ -188,7 +191,7 @@ public class ScenarioStepListener extends RunListener {
         }
         return humanizedTestNameFrom(description);
     }
-    
+
     protected String annotatedDescriptionOf(final Description description) {
         String annotatedDescription = null;
         try {
@@ -224,21 +227,35 @@ public class ScenarioStepListener extends RunListener {
         return null;
     }
 
-    protected String annotatedRequirementsOf(final Description description) {
-        String requirement = null;
+    protected List<String> annotatedRequirementsOf(final Description description) {
+        List<String> requirements = new ArrayList<String>();
         try {
             Method testMethod = getTestMethodFrom(description);
-            TestsRequirement testsRequirement = (TestsRequirement) testMethod
-                    .getAnnotation(TestsRequirement.class);
-            if (testsRequirement != null) {
-                requirement = testsRequirement.value();
-            }
+            addRequirementFrom(requirements, testMethod);
+            addMultipleRequirementsFrom(requirements, testMethod);
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-        return requirement;
+        return requirements;
+    }
+
+    private void addMultipleRequirementsFrom(final List<String> requirements,final Method testMethod) {
+        TestsRequirements testRequirements = (TestsRequirements) testMethod.getAnnotation(TestsRequirements.class);
+        if (testRequirements != null) {
+            for(String requirement : testRequirements.value()) {
+                requirements.add(requirement);
+            }
+        }
+    }
+
+    private void addRequirementFrom(final List<String> requirements, final Method testMethod) {
+        TestsRequirement testsRequirement = (TestsRequirement) testMethod
+                .getAnnotation(TestsRequirement.class);
+        if (testsRequirement != null) {
+            requirements.add(testsRequirement.value());
+        }
     }
 
     /**
