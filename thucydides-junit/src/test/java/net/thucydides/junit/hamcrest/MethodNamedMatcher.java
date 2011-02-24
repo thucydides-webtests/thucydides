@@ -21,5 +21,4 @@ public class MethodNamedMatcher extends TypeSafeMatcher<Method> {
         description.appendText("a method with a name that ");
         matcher.describeTo(description);
     }
-
 }

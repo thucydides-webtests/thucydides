@@ -36,6 +36,5 @@ public class ThucydidesMatchers {
     public static Matcher<Method> withName(Matcher<String> matcher) {
         return new MethodNamedMatcher(matcher);
     }
-    
          
 }
