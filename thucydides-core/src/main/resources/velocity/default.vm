@@ -3,10 +3,24 @@
 <html>
     <body>
         <h2>Acceptance test run: $testrun.Title</h2>
-        <table border=1>
+        <p>RESULT: $testrun.result</p>
+    
+        <table style="border:thin;border-color: gray; border-style: solid;">
+            <tr><th>Steps</th><th>Failed</th><th>Pending</th><th>Skipped</th></tr>
+            <tr><td>$testrun.stepCount</td><td>$testrun.failureCount</td><td>$testrun.pendingCount</td><td>$testrun.skippedCount</td></tr>
+        </table>
+        <p/>
+        <table style="border:thin;border-color: gray; border-style: solid;">
             <tr><th>Step</th><th>Outcome</th><th>Screenshot</th></tr>
             #foreach($step in $testrun.TestSteps)
-            <tr class="resulttable.$step.result">
+                #if ($step.result == "FAILURE")
+                    #set( $rowcolor = "#FFB0B0" )
+                #elseif ($step.result == "SUCCESS")
+                    #set( $rowcolor = "#B0FFB0" )
+                #else
+                    #set( $rowcolor = "#FFFFB0" )
+                #end
+            <tr bgcolor="$rowcolor">
                 <td>$step.description</td>
                 <td>$step.result</td>
                 <td>#if( $step.screenshot )

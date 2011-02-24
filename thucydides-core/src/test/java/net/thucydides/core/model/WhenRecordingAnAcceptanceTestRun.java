@@ -239,6 +239,17 @@ public class WhenRecordingAnAcceptanceTestRun {
         assertThat(testRun.getPendingCount(), is(3));
     }
     
+
+    @Test
+    public void a_test_run_with_only_successful_tests_is_successful() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+
+        assertThat(testRun.getResult(), is(TestResult.SUCCESS));
+    }
+
     @Test
     public void the_model_records_a_human_readable_title_for_the_test_case() {
 

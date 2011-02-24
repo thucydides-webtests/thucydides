@@ -146,6 +146,10 @@ public class AcceptanceTestRun {
         return convert(testSteps, new ExtractTestResultsConverter());
     }
 
+    public Integer getStepCount() {
+        return testSteps.size();
+    }
+
     public Integer getSuccessCount() {
         return select(testSteps, having(on(TestStep.class).isSuccessful())).size();
     }
