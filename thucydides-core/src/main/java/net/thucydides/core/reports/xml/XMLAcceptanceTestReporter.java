@@ -4,8 +4,11 @@ import static net.thucydides.core.reports.ReportNamer.ReportType.XML;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -65,6 +68,29 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
 
     public void setOutputDirectory(final File outputDirectory) {
         this.outputDirectory = outputDirectory;
+    }
+
+    public List<AcceptanceTestRun> loadAllReportsFrom(final File reportsDirectory) throws IOException {
+        
+        List<AcceptanceTestRun> acceptanceTests = new ArrayList<AcceptanceTestRun>();
+        
+        File[] reportFiles = getAllXMLFilesFrom(reportsDirectory);
+        
+        for(File reportFile : reportFiles) {
+            AcceptanceTestRun testRun = loadReportFrom(reportFile);
+            acceptanceTests.add(testRun);
+        }
+        
+        return acceptanceTests;
+    }
+
+    private File[] getAllXMLFilesFrom(final File reportsDirectory) {
+        File[] reportFiles = reportsDirectory.listFiles(new FilenameFilter() {
+           public boolean accept(final File file, final String filename) {
+                return filename.toLowerCase().endsWith(".xml");
+            }   
+        });
+        return reportFiles;
     }
 
 }

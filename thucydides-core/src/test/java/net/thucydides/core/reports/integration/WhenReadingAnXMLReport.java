@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
@@ -155,5 +156,41 @@ public class WhenReadingAnXMLReport {
         assertThat(testRun.getTestSteps().get(0).getTestedRequirements().size(), is(2));
         assertThat(testRun.getTestSteps().get(0).getTestedRequirements(), hasItem("12"));
         assertThat(testRun.getTestSteps().get(0).getTestedRequirements(), hasItem("32"));
+    }
+    
+    @Test
+    public void should_load_a_set_of_all_acceptance_tests_in_a_given_directory() throws IOException {
+        File reportsDirectory = temporaryDirectory.newFolder("stored-reports");
+        saveSomeXMLReportsIn(reportsDirectory);
+        
+        List<AcceptanceTestRun> testRuns = reporter.loadAllReportsFrom(reportsDirectory);
+        assertThat(testRuns.size(), is(3));
+    }
+    
+    
+    private void saveSomeXMLReportsIn(File outputDirectory) throws IOException {
+        String storedReportXML1 = "<acceptance-test-run title='A simple test case 1' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+            + "  <test-step result='SUCCESS'>\n"
+            + "    <description>step 1</description>\n"
+            + "    <screenshot>step_1.png</screenshot>\n"
+            + "  </test-step>\n" 
+            + "</acceptance-test-run>";        
+        FileUtils.writeStringToFile(new File(outputDirectory,"report1.xml"), storedReportXML1);
+
+        String storedReportXML2 = "<acceptance-test-run title='A simple test case 2' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+            + "  <test-step result='SUCCESS'>\n"
+            + "    <description>step 1</description>\n"
+            + "    <screenshot>step_1.png</screenshot>\n"
+            + "  </test-step>\n" 
+            + "</acceptance-test-run>";        
+        FileUtils.writeStringToFile(new File(outputDirectory,"report2.xml"), storedReportXML2);
+    
+        String storedReportXML3 = "<acceptance-test-run title='A simple test case 3' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+            + "  <test-step result='SUCCESS'>\n"
+            + "    <description>step 1</description>\n"
+            + "    <screenshot>step_1.png</screenshot>\n"
+            + "  </test-step>\n" 
+            + "</acceptance-test-run>";        
+        FileUtils.writeStringToFile(new File(outputDirectory,"report3.xml"), storedReportXML3);
     }
 }

@@ -63,7 +63,7 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.recordStep(successfulTestStepCalled("Step 3"));
 
         assertThat(testRun.getResult(), is(SUCCESS));
-       
+        assertThat(testRun.isSuccess(), is(true));
     }
  
     @Test
@@ -74,6 +74,7 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.recordStep(skippedTestStepCalled("Step 3"));
 
         assertThat(testRun.getResult(), is(FAILURE));
+        assertThat(testRun.isFailure(), is(true));
     }
     
     @Test

@@ -55,16 +55,6 @@ public class TestStep {
         return ImmutableSet.copyOf(testedRequirement);
     }
 
-    @Override
-    public String toString() {
-        StringBuffer buf = new StringBuffer();
-        buf.append("[Test step '");
-        buf.append(description);
-        buf.append("' result=");
-        buf.append(result);
-        buf.append("]");
-        return buf.toString();
-    }
     /**
      * Each test step can be associated with a screenshot.
      */
