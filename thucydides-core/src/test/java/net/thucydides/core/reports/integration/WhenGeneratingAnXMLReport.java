@@ -22,19 +22,17 @@ import org.junit.rules.TemporaryFolder;
 
 public class WhenGeneratingAnXMLReport {
 
-    @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
-
     private AcceptanceTestReporter reporter;
 
+    @Rule 
+    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+    
     private File outputDirectory;
-
+    
     @Before
     public void setupTestReporter() {
         reporter = new XMLAcceptanceTestReporter();
-
-        outputDirectory = temporaryDirectory.newFolder("target/thucydides");
-
+        outputDirectory = temporaryDirectory.newFolder("temp");
         reporter.setOutputDirectory(outputDirectory);
     }
 
@@ -138,8 +136,7 @@ public class WhenGeneratingAnXMLReport {
     }
 
     @Test
-    public void should_generate_an_XML_report_in_the_target_directory()
-            throws Exception {
+    public void should_generate_an_XML_report_in_the_target_directory() throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
 
         File xmlReport = reporter.generateReportFor(testRun);
@@ -252,7 +249,8 @@ public class WhenGeneratingAnXMLReport {
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, containsString("<exception>java.lang.IllegalArgumentException"));
-    }    
+    }
+    
     private String getStringFrom(File reportFile) throws IOException {
         return FileUtils.readFileToString(reportFile);
     }

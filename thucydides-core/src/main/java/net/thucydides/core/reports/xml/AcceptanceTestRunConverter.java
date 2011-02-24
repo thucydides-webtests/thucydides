@@ -5,9 +5,8 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 
 import com.google.common.base.Preconditions;
@@ -66,7 +65,7 @@ public class AcceptanceTestRunConverter implements Converter {
     private void addRequirementsTo(final HierarchicalStreamWriter writer, final Set<String> set) {
         if (!set.isEmpty()) {
             writer.startNode("requirements");
-            for(String requirement : set) {
+            for (String requirement : set) {
                 writer.startNode("requirement");
                 writer.setValue(requirement);
                 writer.endNode();
@@ -130,8 +129,73 @@ public class AcceptanceTestRunConverter implements Converter {
      */
     public Object unmarshal(final HierarchicalStreamReader reader,
             final UnmarshallingContext context) {
-        
-        throw new NotImplementedException();
+
+        AcceptanceTestRun testRun = new AcceptanceTestRun();
+
+        testRun.setTitle(reader.getAttribute("title"));
+        readChildren(reader, testRun);
+        return testRun;
     }
 
+    private void readChildren(final HierarchicalStreamReader reader, final AcceptanceTestRun testRun) {
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String childNode = reader.getNodeName();
+            if (childNode.equals("test-step")) {
+                readTestStep(reader, testRun);
+            } else if (childNode.equals("requirements")) {
+                readTestRunRequirements(reader, testRun);
+            }
+            reader.moveUp();
+        }
+    }
+
+    private void readTestRunRequirements(final HierarchicalStreamReader reader, final AcceptanceTestRun testRun) {
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String requirement = reader.getValue();
+            testRun.testsRequirement(requirement);
+            reader.moveUp();
+        }
+    }
+
+    private void readTestStepRequirements(final HierarchicalStreamReader reader, final TestStep step) {
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String requirement = reader.getValue();
+            step.testsRequirement(requirement);
+            reader.moveUp();
+        }
+    }    
+    /*
+     * <test-step result="SUCCESS"> <description>The customer navigates to the
+     * metro masthead site.</description>
+     * <screenshot>the_customer_navigates_to_the_metro_masthead_site2
+     * .png</screenshot> </test-step>
+     */
+    private void readTestStep(final HierarchicalStreamReader reader, final AcceptanceTestRun testRun) {
+        TestStep step = new TestStep();
+        String testResultValue = reader.getAttribute("result");
+        TestResult result = TestResult.valueOf(testResultValue);
+        step.setResult(result);
+
+        readTestStepChildren(reader, step);
+
+        testRun.recordStep(step);
+    }
+    
+    private void readTestStepChildren(final HierarchicalStreamReader reader, final TestStep step) {
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String childNode = reader.getNodeName();
+            if (childNode.equals("description")) {
+                step.setDescription(reader.getValue());
+            } else if (childNode.equals("requirements")) {
+                readTestStepRequirements(reader, step);
+            } else if (childNode.equals("screenshot")) {
+                step.setScreenshotPath(reader.getValue());
+            }
+            reader.moveUp();
+        }
+    }
 }

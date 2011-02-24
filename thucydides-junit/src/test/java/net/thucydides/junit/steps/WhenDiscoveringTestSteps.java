@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.thucydides.core.annotations.StepProvider;
@@ -23,21 +24,29 @@ public class WhenDiscoveringTestSteps {
 
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void client_app_can_discover_available_test_step_classes() {
         StepIndex index = new ApacheStepIndex();
-        List stepClasses = index.getStepClasses();
-        assertThat(stepClasses, hasItem(ApacheScenarioSteps.class));
+        List<Class<? extends ScenarioSteps>> stepClasses = index.getStepClasses();
+        assertThat(stepClasses.contains(ApacheScenarioSteps.class), is(true));
     }
 
     @Test
     public void client_app_can_discover_available_test_steps() {
         StepIndex index = new ApacheStepIndex();
         List<Method> stepMethods = index.getStepsFor(ApacheScenarioSteps.class);
-        assertThat(stepMethods, hasItem(withName(is("clickOnProjects"))));
+        List<String> methodNames = methodNamesFrom(stepMethods);
+        assertThat(methodNames, hasItem("clickOnProjects"));
     }
     
+    private List<String> methodNamesFrom(List<Method> stepMethods) {
+        List<String> results = new ArrayList<String>();
+        for(Method method : stepMethods) {
+            results.add(method.getName());
+        }
+        return results;
+    }
+
     public class ApacheStepIndexWithoutAnnotation extends StepIndex {
 
         public Class<?>[] stepClasses = {ApacheScenarioSteps.class};

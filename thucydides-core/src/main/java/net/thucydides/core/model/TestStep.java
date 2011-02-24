@@ -26,6 +26,7 @@ public class TestStep {
 
     private String description;    
     private File screenshot;
+    private String screenshotPath;
     private TestResult result;
     private String errorMessage;
     private Throwable cause;
@@ -71,6 +72,13 @@ public class TestStep {
         this.screenshot = screenshot;
     }
     
+    public void setScreenshotPath(final String screenshotPath) {
+        this.screenshotPath = screenshotPath;
+    }
+    
+    public String getScreenshotPath() {
+        return screenshotPath;
+    }
     /**
      * Each test step has a result, indicating the outcome of this step.
      */

@@ -3,7 +3,9 @@ package net.thucydides.core.reports.xml;
 import static net.thucydides.core.reports.ReportNamer.ReportType.XML;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -49,6 +51,14 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
         return report;
     }
 
+    public AcceptanceTestRun loadReportFrom(final File reportFile) throws IOException {
+        XStream xstream = new XStream();
+        xstream.alias("acceptance-test-run", AcceptanceTestRun.class);
+        xstream.registerConverter(new AcceptanceTestRunConverter());
+        InputStream input = new FileInputStream(reportFile);
+        return (AcceptanceTestRun) xstream.fromXML(input); 
+    }
+    
     public File getOutputDirectory() {
         return outputDirectory;
     }
