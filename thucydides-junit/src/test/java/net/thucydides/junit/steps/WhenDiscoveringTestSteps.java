@@ -5,7 +5,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import net.thucydides.core.annotations.StepProvider;
@@ -34,7 +33,7 @@ public class WhenDiscoveringTestSteps {
     @Test
     public void client_app_can_discover_available_test_steps() {
         StepIndex index = new ApacheStepIndex();
-        List<Method> stepMethods = index.getStepsFor(ApacheScenarioSteps.class);
+        List stepMethods = index.getStepsFor(ApacheScenarioSteps.class);
         assertThat(stepMethods, hasItem(withName(is("clickOnProjects"))));
     }
     
