@@ -14,7 +14,7 @@ public class WhenNamingTheReports {
         ReportNamer reportNamer = new ReportNamer(XML);
         
         AcceptanceTestRun testRun = new AcceptanceTestRun("ASimpleTestCase");
-
+        testRun.setMethodName("a_simple_test_case");
         String reportName = reportNamer.getNormalizedTestNameFor(testRun);
         
         assertThat(reportName, is("a_simple_test_case.xml"));
@@ -26,6 +26,7 @@ public class WhenNamingTheReports {
         ReportNamer reportNamer = new ReportNamer(XML);
         
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setMethodName("a_simple_test_case");
 
         String reportName = reportNamer.getNormalizedTestNameFor(testRun);
         
@@ -37,7 +38,8 @@ public class WhenNamingTheReports {
 
         ReportNamer reportNamer = new ReportNamer(HTML);
         
-        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case: exception case");
+        testRun.setMethodName("a_simple_test_case");
 
         String reportName = reportNamer.getNormalizedTestNameFor(testRun);
         

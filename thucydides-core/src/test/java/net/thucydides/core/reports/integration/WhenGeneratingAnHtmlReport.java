@@ -37,6 +37,7 @@ public class WhenGeneratingAnHtmlReport {
     public void should_generate_an_HTML_report_for_an_acceptance_test_run() throws Exception {
 
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setMethodName("a_simple_test_case");
         testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         File htmlReport = reporter.generateReportFor(testRun);
@@ -50,6 +51,7 @@ public class WhenGeneratingAnHtmlReport {
     public void css_stylesheets_should_also_be_copied_to_the_output_directory() throws Exception {
 
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setMethodName("a_simple_test_case");
         testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         reporter.generateReportFor(testRun);
@@ -63,6 +65,7 @@ public class WhenGeneratingAnHtmlReport {
     public void the_report_file_and_the_resources_should_be_together() throws Exception {
 
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setMethodName("a_simple_test_case");
         testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         reporter.generateReportFor(testRun);
@@ -77,6 +80,7 @@ public class WhenGeneratingAnHtmlReport {
     public void resources_should_also_be_copied_from_the_classpath_to_the_output_directory() throws Exception {
 
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setMethodName("a_simple_test_case");
         testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         reporter.setResourceDirectory("scripts.selenium");

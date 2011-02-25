@@ -1,7 +1,5 @@
 package net.thucydides.core.reports;
 
-import org.modeshape.common.text.Inflector;
-
 import net.thucydides.core.model.AcceptanceTestRun;
 
 /**
@@ -32,8 +30,6 @@ public class ReportNamer {
             return suffix;
         }
     }
-
-    private final Inflector inflector = Inflector.getInstance();
     
     private ReportType type;
         
@@ -46,10 +42,7 @@ public class ReportNamer {
      * version should have no spaces and have the XML file suffix.
      */
     public String getNormalizedTestNameFor(final AcceptanceTestRun testRun) {
-        String testCaseNameWithUnderscores = inflector.underscore(testRun.getTitle());
-        String lowerCaseTestCaseName = testCaseNameWithUnderscores.toLowerCase();
-        String lowerCaseTestCaseNameWithUnderscores = lowerCaseTestCaseName.replaceAll("\\s", "_");
-        return lowerCaseTestCaseNameWithUnderscores + "." + type.toString();
+        return testRun.getMethodName() + "." + type.toString();
     }
 
 }

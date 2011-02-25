@@ -35,6 +35,8 @@ public class AcceptanceTestRun {
 
     private String title;
 
+    private String methodName;
+    
     private UserStory userStory;
 
     private Set<String> testedRequirement = new HashSet<String>();
@@ -73,6 +75,14 @@ public class AcceptanceTestRun {
         return title;
     }
 
+    public void setMethodName(final String methodName) {
+        this.methodName = methodName;
+    }
+    
+    public String getMethodName() {
+        return methodName;
+    }
+    
     public void testsRequirement(final String requirement) {
         Preconditions.checkNotNull(requirement);
         testedRequirement.add(requirement);

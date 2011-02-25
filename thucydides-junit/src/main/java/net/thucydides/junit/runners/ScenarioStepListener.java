@@ -100,6 +100,7 @@ public class ScenarioStepListener extends RunListener {
     @Override
     public void testRunStarted(final Description description) throws Exception {
         currentAcceptanceTestRun = new AcceptanceTestRun();
+        currentAcceptanceTestRun.setMethodName(description.getMethodName());
         acceptanceTestRuns.add(currentAcceptanceTestRun);
         updateTestRunTitleBasedOn(description);
         updateTestRunRequirementsBasedOn(description);

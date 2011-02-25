@@ -130,7 +130,7 @@ public class WhenGeneratingAnXMLReport {
     public void should_generate_an_XML_report_with_a_name_based_on_the_test_run_title()
             throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
-
+        testRun.setMethodName("a_simple_test_case");
         File xmlReport = reporter.generateReportFor(testRun);
 
         assertThat(xmlReport.getName(), is("a_simple_test_case.xml"));
