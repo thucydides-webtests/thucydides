@@ -261,6 +261,15 @@ public class WhenRecordingAnAcceptanceTestRun {
         assertThat(testRun.getTitle(), is("A test case"));
     }    
 
+    @Test
+    public void an_acceptance_test_relates_to_a_user_story() {
+        testRun.setTitle("A test case");
+        testRun.setUserStory(new UserStory("A user story", "US1"));
+        
+        assertThat(testRun.getUserStory().getName(), is("A user story"));
+        assertThat(testRun.getUserStory().getCode(), is("US1"));
+    }
+    
     private TestStep successfulTestStepCalled(String description) {
         return createNewTestStep(description, SUCCESS);
     }

@@ -8,6 +8,7 @@ import java.util.Set;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.UserStory;
 
 import com.google.common.base.Preconditions;
 import com.thoughtworks.xstream.converters.Converter;
@@ -48,6 +49,7 @@ public class AcceptanceTestRunConverter implements Converter {
         writer.addAttribute("ignored", Integer.toString(testRun.getIgnoredCount()));
         writer.addAttribute("pending", Integer.toString(testRun.getPendingCount()));
         writer.addAttribute("result", testRun.getResult().toString());
+        addUserStoryTo(writer, testRun.getUserStory());
         addRequirementsTo(writer, testRun.getTestedRequirements());
 
         List<TestStep> steps = testRun.getTestSteps();
@@ -58,6 +60,15 @@ public class AcceptanceTestRunConverter implements Converter {
             writeDescription(writer, step);
             writeErrorForFailingTest(writer, step);
             writeScreenshotIfPresent(writer, step);
+            writer.endNode();
+        }
+    }
+
+    private void addUserStoryTo(final HierarchicalStreamWriter writer, final UserStory userStory) {
+        if (userStory != null) {
+            writer.startNode("user-story");
+            writer.addAttribute("name", userStory.getName());
+            writer.addAttribute("code", userStory.getCode());
             writer.endNode();
         }
     }
@@ -145,12 +156,24 @@ public class AcceptanceTestRunConverter implements Converter {
                 readTestStep(reader, testRun);
             } else if (childNode.equals("requirements")) {
                 readTestRunRequirements(reader, testRun);
+            } else if (childNode.equals("user-story")) {
+                readUserStory(reader, testRun);
             }
             reader.moveUp();
         }
     }
 
-    private void readTestRunRequirements(final HierarchicalStreamReader reader, final AcceptanceTestRun testRun) {
+
+    private void readUserStory(final HierarchicalStreamReader reader,
+                               final AcceptanceTestRun testRun) {
+        String storyName = reader.getAttribute("name");
+        String storyCode = reader.getAttribute("code");
+        testRun.setUserStory(new UserStory(storyName, storyCode));
+    }
+
+
+    private void readTestRunRequirements(final HierarchicalStreamReader reader,
+            final AcceptanceTestRun testRun) {
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             String requirement = reader.getValue();
@@ -166,7 +189,8 @@ public class AcceptanceTestRunConverter implements Converter {
             step.testsRequirement(requirement);
             reader.moveUp();
         }
-    }    
+    }
+
     /*
      * <test-step result="SUCCESS"> <description>The customer navigates to the
      * metro masthead site.</description>
@@ -183,7 +207,7 @@ public class AcceptanceTestRunConverter implements Converter {
 
         testRun.recordStep(step);
     }
-    
+
     private void readTestStepChildren(final HierarchicalStreamReader reader, final TestStep step) {
         while (reader.hasMoreChildren()) {
             reader.moveDown();

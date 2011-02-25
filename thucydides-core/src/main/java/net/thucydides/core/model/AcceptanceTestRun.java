@@ -21,11 +21,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Represents the results of an acceptance test (or "scenario") execution. 
- * This includes the narrative steps taken during the test, screenshots at each step, 
- * the results of each step, and the overall result.
- * An Acceptance test scenario can be associated with a UserStory using the UserStory
- * annotation. 
+ * Represents the results of an acceptance test (or "scenario") execution. This
+ * includes the narrative steps taken during the test, screenshots at each step,
+ * the results of each step, and the overall result. An Acceptance test scenario
+ * can be associated with a UserStory using the UserStory annotation.
  * 
  * @composed 1..* steps * TestStep
  * 
@@ -35,7 +34,9 @@ import com.google.common.collect.ImmutableSet;
 public class AcceptanceTestRun {
 
     private String title;
-    
+
+    private UserStory userStory;
+
     private Set<String> testedRequirement = new HashSet<String>();
 
     private final List<TestStep> testSteps = new ArrayList<TestStep>();
@@ -47,9 +48,8 @@ public class AcceptanceTestRun {
     }
 
     /**
-     * The title is immutable once set.
-     * For convenience, you can create a test run directly with a title 
-     * using this constructor.
+     * The title is immutable once set. For convenience, you can create a test
+     * run directly with a title using this constructor.
      */
     public AcceptanceTestRun(final String title) {
         this.title = title;
@@ -77,26 +77,26 @@ public class AcceptanceTestRun {
         Preconditions.checkNotNull(requirement);
         testedRequirement.add(requirement);
     }
-    
+
     public Set<String> getTestedRequirements() {
         return ImmutableSet.copyOf(testedRequirement);
     }
+
     /**
-     * An acceptance test is made up of a series of steps.
-     * Each step is in fact a small test, which follows on from 
-     * the previous one. The outcome of the acceptance test
-     * as a whole depends on the outcome of all of the steps.
+     * An acceptance test is made up of a series of steps. Each step is in fact
+     * a small test, which follows on from the previous one. The outcome of the
+     * acceptance test as a whole depends on the outcome of all of the steps.
      */
     public List<TestStep> getTestSteps() {
         return ImmutableList.copyOf(testSteps);
     }
-    
+
     /**
-     * The outcome of the acceptance test, based on the outcome of the test steps.
-     * If any steps fail, the test as a whole is considered a failure. 
-     * If any steps are pending, the test as a whole is considered pending.
-     * If all of the steps are ignored, the test will be considered 'ignored'.
-     * If all of the tests succeed except the ignored tests, the test is a success.
+     * The outcome of the acceptance test, based on the outcome of the test
+     * steps. If any steps fail, the test as a whole is considered a failure. If
+     * any steps are pending, the test as a whole is considered pending. If all
+     * of the steps are ignored, the test will be considered 'ignored'. If all
+     * of the tests succeed except the ignored tests, the test is a success.
      */
     public TestResult getResult() {
         List<TestResult> allTestResults = getCurrentTestResults();
@@ -104,18 +104,18 @@ public class AcceptanceTestRun {
         if (allTestResults.contains(FAILURE)) {
             return FAILURE;
         }
-        
+
         if (allTestResults.contains(PENDING)) {
             return PENDING;
         }
-        
-        if (containsOnly(allTestResults,IGNORED)) {
+
+        if (containsOnly(allTestResults, IGNORED)) {
             return IGNORED;
         }
-        
+
         return SUCCESS;
     }
-    
+
     /**
      * Add a test step to this acceptance test.
      */
@@ -123,12 +123,12 @@ public class AcceptanceTestRun {
         Preconditions.checkNotNull(step.getDescription(),
                 "The test step description was not defined.");
         Preconditions.checkNotNull(step.getResult(), "The test step result was not defined");
-       
+
         testSteps.add(step);
     }
 
     private boolean containsOnly(final List<TestResult> testResults, final TestResult value) {
-        for(TestResult result : testResults) {
+        for (TestResult result : testResults) {
             if (result != value) {
                 return false;
             }
@@ -185,6 +185,14 @@ public class AcceptanceTestRun {
             allTestedRequirements.addAll(step.getTestedRequirements());
         }
         return allTestedRequirements;
+    }
+
+    public void setUserStory(final UserStory userStory) {
+        this.userStory = userStory;
+    }
+
+    public UserStory getUserStory() {
+        return userStory;
     }
 
 }

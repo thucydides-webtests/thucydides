@@ -2,8 +2,20 @@
     
 <html>
     <body>
-        <h2>Acceptance test run: $testrun.Title</h2>
-        <p>RESULT: $testrun.result</p>
+        <h2>$testrun.Title</h2>
+                #if ($testrun.result == "FAILURE")
+                    #set( $color = "#FFB0B0" )
+                #elseif ($testrun.result == "SUCCESS")
+                    #set( $color = "#B0FFB0" )
+                #elseif ($testrun.result == "PENDING")
+                    #set( $color = "#eecbad" )
+                #else
+                    #set( $color = "#FFFFB0" )
+                #end
+        <table border="none" >
+            <tr bgcolor="$color"><td><b>RESULT:</b></td> <td>$testrun.result</td></tr>
+            <tr><td><b>REQUIREMENTS TESTED:</b></td> <td>$testrun.allTestedRequirements</td></tr>
+        <table>   
     
         <table style="border:thin;border-color: gray; border-style: solid;">
             <tr><th>Steps</th><th>Failed</th><th>Pending</th><th>Skipped</th></tr>
@@ -17,6 +29,8 @@
                     #set( $rowcolor = "#FFB0B0" )
                 #elseif ($step.result == "SUCCESS")
                     #set( $rowcolor = "#B0FFB0" )
+                #elseif ($step.result == "PENDING")
+                    #set( $rowcolor = "#eecbad" )
                 #else
                     #set( $rowcolor = "#FFFFB0" )
                 #end
