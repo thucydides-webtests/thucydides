@@ -1,19 +1,15 @@
 package net.thucydides.core.reports.integration;
 
-import static net.thucydides.core.hamcrest.XMLMatchers.isSimilarTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
-import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
 
 import org.apache.commons.io.FileUtils;
@@ -178,16 +174,7 @@ public class WhenReadingAnXMLReport {
 
         assertThat(testRun.getUserStory(), is(notNullValue()));
     }
-    
-    @Test
-    public void should_load_a_set_of_all_acceptance_tests_in_a_given_directory() throws IOException {
-        File reportsDirectory = temporaryDirectory.newFolder("stored-reports");
-        saveSomeXMLReportsIn(reportsDirectory);
-        
-        List<AcceptanceTestRun> testRuns = reporter.loadAllReportsFrom(reportsDirectory);
-        assertThat(testRuns.size(), is(3));
-    }
-    
+
     
     private void saveSomeXMLReportsIn(File outputDirectory) throws IOException {
         String storedReportXML1 = "<acceptance-test-run title='A simple test case 1' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"

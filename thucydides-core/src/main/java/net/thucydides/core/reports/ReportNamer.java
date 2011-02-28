@@ -1,6 +1,7 @@
 package net.thucydides.core.reports;
 
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.AggregateTestResults;
 
 /**
  * Determies the correct default name for test reports.
@@ -10,7 +11,7 @@ import net.thucydides.core.model.AcceptanceTestRun;
 public class ReportNamer {
 
     /**
-     * The report namer knows how to find names for thest types of reports
+     * The report namer knows how to find names for these types of reports
      */
     public enum ReportType {
         /** XML reports */
@@ -43,6 +44,10 @@ public class ReportNamer {
      */
     public String getNormalizedTestNameFor(final AcceptanceTestRun testRun) {
         return testRun.getMethodName() + "." + type.toString();
+    }
+
+    public String getNormalizedTestNameFor(final AggregateTestResults testResults) {
+        return testResults.getTitle() + "." + type.toString();
     }
 
 }

@@ -42,6 +42,7 @@ public class AcceptanceTestRunConverter implements Converter {
         Preconditions.checkNotNull(testRun, "The test run was null - WTF?");
 
         writer.addAttribute("title", testRun.getTitle());
+        writer.addAttribute("name", testRun.getMethodName());
         writer.addAttribute("steps", Integer.toString(testRun.getTestSteps().size()));
         writer.addAttribute("successful", Integer.toString(testRun.getSuccessCount()));
         writer.addAttribute("failures", Integer.toString(testRun.getFailureCount()));
@@ -62,6 +63,7 @@ public class AcceptanceTestRunConverter implements Converter {
             writeScreenshotIfPresent(writer, step);
             writer.endNode();
         }
+
     }
 
     private void addUserStoryTo(final HierarchicalStreamWriter writer, final UserStory userStory) {
@@ -144,6 +146,7 @@ public class AcceptanceTestRunConverter implements Converter {
         AcceptanceTestRun testRun = new AcceptanceTestRun();
 
         testRun.setTitle(reader.getAttribute("title"));
+        testRun.setMethodName(reader.getAttribute("name"));
         readChildren(reader, testRun);
         return testRun;
     }

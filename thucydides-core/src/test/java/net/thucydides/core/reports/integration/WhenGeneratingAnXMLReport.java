@@ -41,7 +41,7 @@ public class WhenGeneratingAnXMLReport {
     public void should_generate_an_XML_report_for_an_acceptance_test_run()
             throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
-        String expectedReport = "<acceptance-test-run title='A simple test case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+        String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
                 + "  <test-step result='SUCCESS'>\n"
                 + "    <description>step 1</description>\n"
                 + "  </test-step>\n" + "</acceptance-test-run>";
@@ -60,7 +60,7 @@ public class WhenGeneratingAnXMLReport {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
         
         String expectedReport = 
-        "<acceptance-test-run title='A simple test case' steps='1' successful='1'"
+        "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1'"
         + " failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
         + "  <requirements>\n"
         + "    <requirement>ABC</requirement>\n"
@@ -83,7 +83,7 @@ public class WhenGeneratingAnXMLReport {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
         
         String expectedReport = 
-        "<acceptance-test-run title='A simple test case' steps='1' successful='1'"
+        "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1'"
         + " failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
         + "  <requirements>\n"
         + "    <requirement>ABC</requirement>\n"
@@ -107,7 +107,7 @@ public class WhenGeneratingAnXMLReport {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
         
         String expectedReport = 
-        "<acceptance-test-run title='A simple test case' steps='1' successful='1'"
+        "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1'"
         + " failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
         + "  <test-step result='SUCCESS'>\n"
         + "    <requirements>\n"
@@ -149,7 +149,7 @@ public class WhenGeneratingAnXMLReport {
     public void should_count_the_total_number_of_steps_with_each_outcome_in_acceptance_test_run()
             throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
-        String expectedReport = "<acceptance-test-run title='A simple test case' steps='9' successful='2' failures='3' skipped='1' ignored='2' pending='1' result='FAILURE'>\n"
+        String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='9' successful='2' failures='3' skipped='1' ignored='2' pending='1' result='FAILURE'>\n"
                 + "  <test-step result='SUCCESS'>\n"
                 + "    <description>step 1</description>\n"
                 + "  </test-step>\n"
@@ -198,7 +198,7 @@ public class WhenGeneratingAnXMLReport {
     public void should_include_the_name_of_any_screenshots_where_present()
             throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
-        String expectedReport = "<acceptance-test-run title='A simple test case' steps='2' successful='1' failures='1' skipped='0' ignored='0' pending='0' result='FAILURE'>\n"
+        String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='2' successful='1' failures='1' skipped='0' ignored='0' pending='0' result='FAILURE'>\n"
                 + "  <test-step result='SUCCESS'>\n"
                 + "    <description>step 1</description>\n"
                 + "    <screenshot>step_1.png</screenshot>\n"
@@ -224,7 +224,7 @@ public class WhenGeneratingAnXMLReport {
     public void should_include_the_name_and_code_of_the_user_story_if_present()
             throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
-        String expectedReport = "<acceptance-test-run title='A simple test case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+        String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
                 + "  <user-story name='A user story' code='US1' />\n"
                 + "  <test-step result='SUCCESS'>\n"
                 + "    <description>step 1</description>\n"

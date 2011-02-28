@@ -55,6 +55,7 @@ public class AcceptanceTestRun {
      */
     public AcceptanceTestRun(final String title) {
         this.title = title;
+        this.methodName = normalizedFormOf(title);
     }
 
     /**
@@ -83,6 +84,10 @@ public class AcceptanceTestRun {
         return methodName;
     }
     
+    private String normalizedFormOf(final String name) {
+        return name.replaceAll("\\s", "_").toLowerCase();
+    }
+
     public void testsRequirement(final String requirement) {
         Preconditions.checkNotNull(requirement);
         testedRequirement.add(requirement);
@@ -186,6 +191,10 @@ public class AcceptanceTestRun {
 
     public Boolean isFailure() {
         return (getResult() == FAILURE);
+    }
+
+    public Boolean isPending() {
+        return (getResult() == PENDING);
     }
 
     public Set<String> getAllTestedRequirements() {

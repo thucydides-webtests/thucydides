@@ -191,5 +191,6 @@
     <modules>
         <module>thucydides-core</module>
         <module>thucydides-junit</module>
-    </modules>
+        <module>maven-thucydides-plugin</module>
+  </modules>
 </project>

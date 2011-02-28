@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import static net.thucydides.core.model.TestStepFactory.*;
 
 public class WhenRecordingAnAcceptanceTestRun {
 
@@ -270,29 +271,7 @@ public class WhenRecordingAnAcceptanceTestRun {
         assertThat(testRun.getUserStory().getCode(), is("US1"));
     }
     
-    private TestStep successfulTestStepCalled(String description) {
-        return createNewTestStep(description, SUCCESS);
-    }
 
-    private TestStep failingTestStepCalled(String description) {
-        return createNewTestStep(description, FAILURE);
-    }
-    private TestStep skippedTestStepCalled(String description) {
-        return createNewTestStep(description, SKIPPED);
-    }
-
-    private TestStep ignoredTestStepCalled(String description) {
-        return createNewTestStep(description, IGNORED);
-    }
-    private TestStep pendingTestStepCalled(String description) {
-        return createNewTestStep(description, PENDING);
-    }
-    
-    private TestStep createNewTestStep(String description, TestResult result) {
-        TestStep step = new TestStep(description);
-        step.setResult(result);
-        return step;
-    }
     
     
 }
