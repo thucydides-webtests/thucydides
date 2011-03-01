@@ -7,3 +7,5 @@
 .settings
 /thucydides-junit/target/
 /thucydides-core/target/
+
+/maven-thucydides-plugin/target/
