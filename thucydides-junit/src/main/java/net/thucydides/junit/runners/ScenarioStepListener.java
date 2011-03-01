@@ -5,6 +5,8 @@ import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.util.NameConverter.humanize;
+import static net.thucydides.core.util.NameConverter.underscore;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +27,6 @@ import net.thucydides.junit.internals.TestStatus;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
-import org.modeshape.common.text.Inflector;
 import org.openqa.selenium.TakesScreenshot;
 
 /**
@@ -41,13 +42,11 @@ public class ScenarioStepListener extends RunListener {
 
     private final List<AcceptanceTestRun> acceptanceTestRuns;
     private final Photographer photographer;
-    private final Inflector inflector;
     private AcceptanceTestRun currentAcceptanceTestRun;
     private TestStep currentTestStep;
 
     public ScenarioStepListener(final TakesScreenshot driver, final Configuration configuration) {
         acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
-        inflector = Inflector.getInstance();
 
         TakesScreenshot screenshotCapableDriver = (TakesScreenshot) driver;
         photographer = new Photographer(screenshotCapableDriver, configuration.getOutputDirectory());
@@ -83,7 +82,7 @@ public class ScenarioStepListener extends RunListener {
     }
 
     private File grabScreenshotFileFor(final String testName) throws IOException {
-        String snapshotName = Inflector.getInstance().underscore(testName);
+        String snapshotName = underscore(testName);
         File screenshot = null;
         try {
             screenshot = getPhotographer().takeScreenshot(snapshotName);
@@ -177,10 +176,10 @@ public class ScenarioStepListener extends RunListener {
 
         String annotationTitle = getAnnotatedTitleFrom(description);
         if (annotationTitle != null) {
-            return inflector.humanize(annotationTitle);
+            return humanize(annotationTitle);
         } else {
             String testMethodName = description.getMethodName();
-            return inflector.humanize(testMethodName);
+            return humanize(testMethodName);
         }
     }
 
@@ -265,7 +264,7 @@ public class ScenarioStepListener extends RunListener {
     private String humanizedTestNameFrom(final Description description) {
 
         String testName = description.getMethodName();
-        String humanizedName = inflector.humanize(inflector.underscore(testName));
+        String humanizedName = humanize(testName);
         if (!humanizedName.endsWith(".")) {
             humanizedName = humanizedName + ".";
         }

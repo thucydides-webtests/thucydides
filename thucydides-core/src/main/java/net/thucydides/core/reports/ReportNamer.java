@@ -2,6 +2,7 @@ package net.thucydides.core.reports;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.AggregateTestResults;
+import net.thucydides.core.util.NameConverter;
 
 /**
  * Determies the correct default name for test reports.
@@ -47,7 +48,8 @@ public class ReportNamer {
     }
 
     public String getNormalizedTestNameFor(final AggregateTestResults testResults) {
-        return testResults.getTitle() + "." + type.toString();
+        String testNameWithUnderscores = NameConverter.underscore(testResults.getTitle());
+        return testNameWithUnderscores + "." + type.toString();
     }
 
 }

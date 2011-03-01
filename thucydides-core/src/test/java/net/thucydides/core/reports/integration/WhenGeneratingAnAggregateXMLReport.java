@@ -56,6 +56,17 @@ public class WhenGeneratingAnAggregateXMLReport {
         assertThat(aggregateReport.exists(), is(true));
     }
 
+    @Test
+    public void should_write_aggregate_report_to_a_file_with_underscores_in_the_name()
+            throws Exception {
+        
+        File sourceDirectory = new File("src/test/resources/reports");
+
+        AggregateTestResults aggregateTestResults = reporter.loadAllReportsFrom(sourceDirectory);
+        reporter.setSourceDirectory(sourceDirectory);
+        File aggregateReport = reporter.generateReportFor(aggregateTestResults);
+        assertThat(aggregateReport.getName(), is("all_user_stories.xml"));
+    }
 
     private String getStringFrom(File reportFile) throws IOException {
         return FileUtils.readFileToString(reportFile);
