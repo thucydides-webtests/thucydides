@@ -32,7 +32,7 @@ public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
 
     private static final int BUFFER_SIZE = 4096;
 
-    private static final String DEFAULT_RESOURCE_DIRECTORY = "/report-resources";
+    private static final String DEFAULT_RESOURCE_DIRECTORY = "report-resources";
 
     private File outputDirectory;
 
@@ -91,12 +91,39 @@ public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
         Pattern resourcePattern = allFilesInDirectory(resourceDirectory);
         Collection<String> reportResources = ResourceList.getResources(resourcePattern);
         for (String resourcePath : reportResources) {
-            if (resourceIsAFile(resourcePath)) {
-                copyFileToTargetDirectory(resourcePath, targetDirectory);
-            } else {
-                copyFileFromClasspathToTargetDirectory(resourcePath, targetDirectory);
+            String targetSubDirectory = findTargetSubDirectoryFrom(resourcePath, targetDirectory);
+            File copyTo = new File(targetDirectory, targetSubDirectory);
+            if (resourceIsFromAJar(resourcePath) 
+                && (thisIsNotTheRoot(resourcePath)) 
+                && (thisIsNotADirectory(resourcePath))) {
+                copyFileFromClasspathToTargetDirectory(resourcePath, copyTo);
             }
         }
+    }
+
+    private boolean thisIsNotADirectory(final String resourcePath) {
+        return !resourcePath.endsWith("/");
+    }
+
+    private boolean thisIsNotTheRoot(final String resourcePath) {
+        return !resourceDirectory.equals(resourcePath);
+    }
+
+    private String findTargetSubDirectoryFrom(final String resourcePath, final File inTargetDirectory) throws IOException {
+        File targetDirectory = inTargetDirectory;
+        if (resourcePath.startsWith(resourceDirectory)) {
+            int subDirectoryStartsAt = resourceDirectory.length() + 1;
+            String resourcePathName = resourcePath.substring(subDirectoryStartsAt);
+            if (resourcePathName.endsWith("/")) {
+                return resourcePathName;
+            } else {
+                targetDirectory = new File(resourcePathName).getParentFile();
+                if (targetDirectory != null) {
+                    return targetDirectory.getPath();
+                }
+            }
+        }
+        return "";
     }
 
     private Pattern allFilesInDirectory(final String directory) {
@@ -113,7 +140,10 @@ public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
         
         File resourceOnClasspath = new File(resourcePath);
         InputStream in = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
-        File destinationFile=new File(targetDirectory, resourceOnClasspath.getName());
+        File destinationFile = new File(targetDirectory, resourceOnClasspath.getName());
+        if (destinationFile.getParent() != null) {
+            new File(destinationFile.getParent()).mkdirs();
+        }
         FileOutputStream out = new FileOutputStream(destinationFile);
         byte[] buffer = new byte[BUFFER_SIZE];  
         int bytesRead;  
@@ -124,8 +154,8 @@ public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
         out.close(); 
     }
 
-    private boolean resourceIsAFile(final String resourcePath) {
-        return resourcePath.startsWith("/");
+    private boolean resourceIsFromAJar(final String resourcePath) {
+        return !resourcePath.startsWith("/");
     }
 
     private Template getTemplate() {

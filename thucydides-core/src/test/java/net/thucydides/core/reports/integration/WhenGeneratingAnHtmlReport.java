@@ -1,5 +1,8 @@
 package net.thucydides.core.reports.integration;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -7,8 +10,6 @@ import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -41,10 +42,8 @@ public class WhenGeneratingAnHtmlReport {
         testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         File htmlReport = reporter.generateReportFor(testRun);
-        String generatedReportText = getStringFrom(htmlReport);
 
         assertThat(htmlReport.exists(), is(true));
-        System.out.println(generatedReportText);
     }
 
     @Test
@@ -56,9 +55,9 @@ public class WhenGeneratingAnHtmlReport {
 
         reporter.generateReportFor(testRun);
         
-        File cssStylesheet = new File(outputDirectory,"default.css");
+        File cssDir = new File(outputDirectory, "css");
+        File cssStylesheet = new File(cssDir, "core.css");
         assertThat(cssStylesheet.exists(), is(true));
-
     }
 
     @Test
@@ -76,19 +75,16 @@ public class WhenGeneratingAnHtmlReport {
         assertThat(report.exists(), is(true));
 
     }
+    
     @Test
-    public void resources_should_also_be_copied_from_the_classpath_to_the_output_directory() throws Exception {
+    public void a_sample_report_should_be_generated_in_the_target_directory() throws Exception {
 
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
         testRun.setMethodName("a_simple_test_case");
         testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        reporter.setResourceDirectory("scripts.selenium");
+        reporter.setOutputDirectory(new File("target/thucyidides"));
         reporter.generateReportFor(testRun);
-
-        File jsScriptOnClasspath = new File(outputDirectory,"findElement.js");
-        assertThat(jsScriptOnClasspath.exists(), is(true));
-
     }
     
     private String getStringFrom(File reportFile) throws IOException {

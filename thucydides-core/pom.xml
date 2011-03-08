@@ -49,5 +49,10 @@
         	<artifactId>velocity</artifactId>
         	<version>1.7</version>
         </dependency>
+        <dependency>
+        	<groupId>net.thucydides</groupId>
+        	<artifactId>thucydides-report-resources</artifactId>
+        	<version>0.1.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

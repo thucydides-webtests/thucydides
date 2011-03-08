@@ -196,6 +196,7 @@
         <checkstyle.rules>http://www.wakaleo-labs.com/sonar/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo</checkstyle.rules>
     </properties>
     <modules>
+        <module>thucydides-report-resources</module>
         <module>thucydides-core</module>
         <module>thucydides-junit</module>
         <module>maven-thucydides-plugin</module>
