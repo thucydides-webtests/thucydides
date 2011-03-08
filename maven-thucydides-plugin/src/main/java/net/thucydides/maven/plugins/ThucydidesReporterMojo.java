@@ -25,6 +25,14 @@ public class ThucydidesReporterMojo extends AbstractMojo {
      */
     private File outputDirectory;
 
+    /**
+     * Thucydides test reports are read from here
+     * 
+     * @parameter expression="${project.build.directory}/thucydides"
+     * @required
+     */
+    private File sourceDirectory;
+
     public void execute() throws MojoExecutionException {
         if (!outputDirectory.exists()) {
             outputDirectory.mkdirs();
@@ -33,10 +41,9 @@ public class ThucydidesReporterMojo extends AbstractMojo {
         try {
             XMLAggregateTestReporter reporter = new XMLAggregateTestReporter();
             reporter.setOutputDirectory(outputDirectory);
-            File sourceDirectory = outputDirectory;
 
-            AggregateTestResults aggregateTestResults = reporter
-                    .loadAllReportsFrom(sourceDirectory);
+            AggregateTestResults aggregateTestResults 
+                = reporter.loadAllReportsFrom(sourceDirectory);
             reporter.setSourceDirectory(sourceDirectory);
             reporter.generateReportFor(aggregateTestResults);
         } catch (IOException e) {

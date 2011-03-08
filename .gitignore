@@ -1,11 +1,7 @@
-/.project
-/.settings/
-/target/
-.idea
-.classpath
 .project
 .settings
-/thucydides-junit/target/
-/thucydides-core/target/
+target
+.idea
+.classpath
 
 /maven-thucydides-plugin/target/

@@ -25,7 +25,7 @@
                 <artifactId>maven-thucydides-plugin</artifactId>
                 <version>0.1.1-SNAPSHOT</version>
                 <configuration>
-                <outputDirectory>${project.build.directory}/out</outputDirectory>
+                    <outputDirectory>/Users/johnsmart/out</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

@@ -35,6 +35,8 @@ public class WhenGeneratingAnXMLReport {
         reporter = new XMLAcceptanceTestReporter();
         outputDirectory = temporaryDirectory.newFolder("temp");
         reporter.setOutputDirectory(outputDirectory);
+        startsWith("whatever");
+        
     }
 
     @Test
@@ -67,7 +69,8 @@ public class WhenGeneratingAnXMLReport {
         + "  </requirements>\n"
         + "  <test-step result='SUCCESS'>\n"
         + "    <description>step 1</description>\n"
-        + "  </test-step>\n" + "</acceptance-test-run>";
+        + "  </test-step>\n" 
+        + "</acceptance-test-run>";
 
         testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
         testRun.testsRequirement("ABC");
