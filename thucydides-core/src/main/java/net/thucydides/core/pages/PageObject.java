@@ -8,7 +8,11 @@ import java.util.regex.Pattern;
 
 import net.thucydides.core.annotations.At;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.RenderedWebElement;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
@@ -21,11 +25,15 @@ import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
  */
 public abstract class PageObject {
 
-    private static final int TIMEOUT = 5;
+    private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 100;
+
+    private static final int TIMEOUT = 60;
     
     private static final String OPTIONAL_PARAMS = "/?(\\?.*)?";
 
     private static final Map<String, String> MACROS = new HashMap<String, String>();
+
+    private static final long WAIT_FOR_TIMEOUT = 30000;    
     {
         MACROS.put("#HOST", "https?://[^/]+");
     }
@@ -121,4 +129,43 @@ public abstract class PageObject {
     private boolean urlIsCompatibleWithThisPattern(final String currentUrl, final Pattern pattern) {
         return pattern.matcher(currentUrl).matches();
     }
+    
+    public PageObject waitForRenderedElements(final By byElementCriteria) {
+        long end = System.currentTimeMillis() + WAIT_FOR_TIMEOUT;
+        while (System.currentTimeMillis() < end) {
+            if (elementIsDisplayed(byElementCriteria)) {
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        checkThatElementAppeared(byElementCriteria);
+        return this;
+    }
+
+    protected void waitABit(final long timeInMilliseconds) {
+        try {
+            Thread.sleep(timeInMilliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean elementIsDisplayed(final By byElementCriteria) {
+        boolean isDisplayed = false;
+        try {
+            RenderedWebElement renderedElement = (RenderedWebElement) driver.findElement(byElementCriteria);
+            isDisplayed = renderedElement.isDisplayed();
+        } catch (NoSuchElementException noSuchElement) {
+            // Don't case 
+        }
+        return isDisplayed;
+    }
+
+    private void checkThatElementAppeared(final By byElementCriteria) {
+        driver.findElement(byElementCriteria);
+    }
+
+    public List<WebElement> thenReturnElementList(final By byListCriteria) {
+        return driver.findElements(byListCriteria);
+    }    
 }

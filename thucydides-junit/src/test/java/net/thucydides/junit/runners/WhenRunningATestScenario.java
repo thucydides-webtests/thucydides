@@ -26,6 +26,7 @@ import net.thucydides.junit.samples.SampleScenarioWithoutPages;
 import net.thucydides.junit.samples.SampleScenarioWithoutSteps;
 import net.thucydides.junit.samples.SingleTestScenario;
 import net.thucydides.junit.samples.SingleTestScenarioWithSeveralBusinessRules;
+import net.thucydides.junit.samples.TestScenarioWithParameterizedSteps;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -148,6 +149,23 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
     
     @Test    
+    public void the_test_runner_executes_steps_with_parameters() throws InitializationError  {
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+        
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        assertThat(executedScenarios.size(), greaterThan(0));
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+        TestStep ignored = testRun.getTestSteps().get(1);
+        TestStep pending = testRun.getTestSteps().get(2);
+        TestStep skipped = testRun.getTestSteps().get(5);
+        
+        assertThat(ignored.getResult(), is(TestResult.IGNORED));
+        assertThat(pending.getResult(), is(TestResult.PENDING));
+        assertThat(skipped.getResult(), is(TestResult.SKIPPED));
+    }
+    @Test    
     public void the_test_runner_should_store_screenshots_only_for_successful_and_failed_tests() throws InitializationError  {
         ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
@@ -190,6 +208,36 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestStep firstStep = testRun.getTestSteps().get(0);
         
         assertThat(firstStep.getDescription(), is("Step that succeeds."));
+    }
+
+    @Test    
+    public void the_test_runner_records_each_step_with_a_nice_name_when_steps_have_parameters() throws InitializationError  {
+       
+        ThucydidesRunner runner = new ThucydidesRunner(TestScenarioWithParameterizedSteps.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+        
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+        TestStep firstStep = testRun.getTestSteps().get(0);
+        
+        assertThat(firstStep.getDescription(), is("Step with a parameter: foo."));
+    }
+    
+    @Test    
+    public void the_test_runner_records_each_step_with_a_nice_name_when_steps_have_multiple_parameters() throws InitializationError  {
+       
+        ThucydidesRunner runner = new ThucydidesRunner(TestScenarioWithParameterizedSteps.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+        
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+        TestStep secondStep = testRun.getTestSteps().get(1);
+        
+        assertThat(secondStep.getDescription(), is("Step with two parameters: foo, 2."));
     }
 
     @Test    

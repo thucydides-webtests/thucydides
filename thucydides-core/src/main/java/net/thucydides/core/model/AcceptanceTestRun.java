@@ -39,6 +39,8 @@ public class AcceptanceTestRun {
     
     private UserStory userStory;
 
+    private double duration;
+    
     private Set<String> testedRequirement = new HashSet<String>();
 
     private final List<TestStep> testSteps = new ArrayList<TestStep>();
@@ -105,6 +107,8 @@ public class AcceptanceTestRun {
     public List<TestStep> getTestSteps() {
         return ImmutableList.copyOf(testSteps);
     }
+    
+    
 
     /**
      * The outcome of the acceptance test, based on the outcome of the test
@@ -212,6 +216,14 @@ public class AcceptanceTestRun {
 
     public UserStory getUserStory() {
         return userStory;
+    }
+
+    public void setDuration(double duration) {
+        this.duration = duration;
+    }
+
+    public double getDuration() {
+        return duration;
     }
 
 }

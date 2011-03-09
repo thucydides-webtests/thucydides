@@ -82,6 +82,11 @@ public class WhenGeneratingAnHtmlReport {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
         testRun.setMethodName("a_simple_test_case");
         testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 2"));
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 3"));
+        testRun.recordStep(TestStepFactory.failingTestStepCalled("step 4"));
+        testRun.recordStep(TestStepFactory.skippedTestStepCalled("step 5"));
+        testRun.recordStep(TestStepFactory.pendingTestStepCalled("step 6"));
 
         reporter.setOutputDirectory(new File("target/thucyidides"));
         reporter.generateReportFor(testRun);

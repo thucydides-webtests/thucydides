@@ -2,6 +2,8 @@ package net.thucydides.core.screenshots;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
@@ -21,6 +23,7 @@ public class Photographer {
     private final TakesScreenshot driver;
     private final File targetDirectory;
     private final ScreenshotSequence screenshotSequence;
+    private final MessageDigest digest;
 
     private static final ScreenshotSequence DEFAULT_SCREENSHOT_SEQUENCE = new ScreenshotSequence();
     
@@ -28,6 +31,17 @@ public class Photographer {
         this.driver = driver;
         this.targetDirectory = targetDirectory;
         this.screenshotSequence = DEFAULT_SCREENSHOT_SEQUENCE;
+        this.digest = getMd5Digest();
+    }
+
+    private MessageDigest getMd5Digest() {
+        MessageDigest md = null;        
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return md;
     }
 
     protected long nextScreenshotNumber() {
@@ -36,9 +50,18 @@ public class Photographer {
     
     private String nextScreenshotName(final String prefix) {
         long nextScreenshotNumber = nextScreenshotNumber() ;
-        return prefix + nextScreenshotNumber + ".png";
+        return "screenshot-" + getMD5DigestFrom(prefix) + nextScreenshotNumber + ".png";
     }
 
+    private String getMD5DigestFrom(String value) {
+        byte[] messageDigest = digest.digest(value.getBytes());
+        StringBuffer hexString = new StringBuffer();
+        for (int i=0;i<messageDigest.length;i++) {
+            hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+        }
+        return hexString.toString();
+    }
+    
     /**
      * Take a screenshot of the current browser and store it in the output directory.
      */

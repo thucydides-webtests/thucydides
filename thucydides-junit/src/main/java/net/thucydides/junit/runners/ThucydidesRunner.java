@@ -10,6 +10,7 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.steps.StepFactory;
+import net.thucydides.junit.steps.junit.ScenarioStepListener;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;

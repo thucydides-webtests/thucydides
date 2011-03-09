@@ -27,6 +27,17 @@ public class ScenarioSteps {
     }
 
     /**
+     * Pause the test to wait for the page to display completely.
+     * This is not normally recommended practice, but is useful from time to time.
+     */
+    public void waitABit(final long delayInMilliseconds) {
+        try {
+            Thread.sleep(delayInMilliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
      * Marks the last step in a requirements test.
      * You <em>must</em> place this as the last method in your test
      * case for reporting to work correctly.

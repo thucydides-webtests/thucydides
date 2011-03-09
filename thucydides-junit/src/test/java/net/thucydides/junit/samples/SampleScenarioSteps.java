@@ -56,5 +56,13 @@ public class SampleScenarioSteps extends ScenarioSteps {
 
     public void anUnannotatedMethod() {
     }
+
+    @Step
+    public void stepWithAParameter(String value) {
+    }
     
+    @Step
+    public void stepWithTwoParameters(String value, int number) {
+    }
+
 }

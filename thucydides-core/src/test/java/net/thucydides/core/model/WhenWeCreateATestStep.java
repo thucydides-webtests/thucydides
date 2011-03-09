@@ -1,6 +1,7 @@
 package net.thucydides.core.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
 
 import java.io.File;
@@ -49,6 +50,15 @@ public class WhenWeCreateATestStep {
         Throwable e = new IllegalStateException();
         step.failedWith("Oh nose!",e);
         assertThat(step.getException(), is(e));
+    }
+    
+    @Test
+    public void we_can_record_the_lifetime_of_a_test_step() throws InterruptedException {
+        TestStep step = new TestStep("a narrative description");
+        Thread.sleep(10);
+        step.recordDuration();        
+        assertThat(step.getDuration(), is(greaterThanOrEqualTo(10L)));
+        assertThat(step.getDuration(), is(lessThan(100L)));
     }
     
 }

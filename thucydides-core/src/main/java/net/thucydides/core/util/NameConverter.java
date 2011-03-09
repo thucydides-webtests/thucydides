@@ -21,7 +21,7 @@ public final class NameConverter {
      * Converts a class or method name into a human-readable sentence.
      */
     public static String humanize(final String name) {
-        if (name.contains(" ")) {
+        if (name.contains(" ") && !name.contains(":")) {
             return name;
         } else {
             String noUnderscores = name.replaceAll("_", " ");

@@ -30,15 +30,24 @@ public class TestStep {
     private TestResult result;
     private String errorMessage;
     private Throwable cause;
+    private long duration;
+    private long startTime;
+    
     private Set<String> testedRequirement = new HashSet<String>();
     
     public TestStep() {
+        startTime = System.currentTimeMillis();
     }
 
     public TestStep(final String description) {
+        this();
         this.description = description;
     }
 
+    public void recordDuration() {
+        setDuration(System.currentTimeMillis() - startTime);
+    }
+    
     public void setDescription(final String description) {
         this.description = description;
     }
@@ -118,6 +127,14 @@ public class TestStep {
 
     public Throwable getException() {
         return cause;
+    }
+
+    public void setDuration(final long duration) {
+        this.duration = duration;
+    }
+
+    public long getDuration() {
+        return duration;
     }
 
 }

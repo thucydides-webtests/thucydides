@@ -26,7 +26,7 @@ margin:0 auto;
 }
 
 body {
-	background-color: #f7f8f3;
+    background-color: #f7f8f3;
 }
 
 .middlecontent
@@ -95,11 +95,21 @@ float:left;
 .middlebgm
 {
 background-image:url(../images/middle.jpg);
-height:39px;  background-repeat:repeat-x;
+height:39px; background-repeat:repeat-x;
 float:left; width:1008px;
 }
 
 
+.story-outcome-icon 
+{
+    padding: 4px;
+}
+
+.test-case-title 
+{
+    margin: 4px;
+    font-family:euphemia, verdana, sans-serif; font-size:24px; color: #88a717; font-weight:bold; font-size-adjust:inherit;
+}
 
 .rightbgm
 {
@@ -108,38 +118,58 @@ width:7px; height:39px;
 float:left; 
 }
 
+.pending-color {
+    color: #0d78ae;
+}
+
+.success-color {
+    color: #88a717;
+}
+
+.failure-color {
+    color: #CC0033;
+}
+
+.ignore-color {
+    color: #CCCC33;
+}
+
+.skip-color {
+    color: #fd3e03;
+}
+
 .bluetext
 {
-font:Euphemia; font-size:16px; color: #0d78ae;
+font-family:euphemia, verdana, sans-serif; font-size:16px; color: #0d78ae;
 }
 
 .redtext
 {
-font:Euphemia; font-size:16px; color:#CC0033;
+font-family:euphemia, verdana, sans-serif; font-size:16px; color:#CC0033;
 }
 .yellowtext
 {
-font:Euphemia; font-size:16px; color:#CCCC33;
+font-family:euphemia, verdana, sans-serif; font-size:16px; color:#CCCC33;
 }
 .lightredtext
 {
-font:Euphemia; font-size:16px; color:#FF6600;
+font-family:euphemia, verdana, sans-serif; font-size:16px; color:#FF6600;
 }
 .lightgreentext
 {
-font:Euphemia; font-size:16px; color: #88a717;
+font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717;
 }
 .orangetext
 {
-font:Euphemia; font-size:24px; color: #fd3e03; font-weight:bold; font-size-adjust:inherit;
+font-family:euphemia, verdana, sans-serif; font-size:24px; color: #fd3e03; font-weight:bold; font-size-adjust:inherit;
 }
 .lightorangetext
 {
-font:Euphemia; font-size:16px; color: #fd3e03; 
+font-family:euphemia, verdana, sans-serif; font-size:16px; color: #fd3e03; 
 }
 .greentext
 {
-font:Euphemia; font-size:16px; color: #88a717; font-weight:bold;
+font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-weight:bold;
 }
 
 .textmiddle

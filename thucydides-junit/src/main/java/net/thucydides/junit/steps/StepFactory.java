@@ -7,6 +7,7 @@ import org.junit.runner.notification.RunListener;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.junit.steps.junit.StepInterceptor;
 
 /**
  * Produces an instance of a set of requirement steps for use in the acceptance tests.

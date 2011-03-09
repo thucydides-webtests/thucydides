@@ -93,12 +93,12 @@ public class WhenScreenshotsAreTaken {
     }
 
     @Test
-    public void calling_api_can_provide_a_meaningful_prefix_for_the_screenshot() throws IOException {
+    public void calling_api_generates_a_filename_safe_hashed_name_for_the_screenshot() throws IOException {
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
 
         String screenshotFile = photographer.takeScreenshot("test1_finished").getName();
         
-        assertThat(screenshotFile, startsWith("test1_finished"));
+        assertThat(screenshotFile, startsWith("screenshot-989da2d4"));
     }
     
     @Test

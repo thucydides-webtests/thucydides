@@ -1,4 +1,4 @@
-package net.thucydides.junit.runners;
+package net.thucydides.junit.steps.junit;
 
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
@@ -23,6 +23,7 @@ import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.annotations.TestsRequirements;
 import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.internals.TestStatus;
+import net.thucydides.junit.runners.Configuration;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -68,6 +69,7 @@ public class ScenarioStepListener extends RunListener {
         addAnyTestedRequirementsIn(description);
         String testName = testNameFrom(description);
         currentTestStep.setDescription(testName);
+        currentTestStep.recordDuration();
         currentAcceptanceTestRun.recordStep(currentTestStep);
         currentTestStep = null;
     }
@@ -210,8 +212,29 @@ public class ScenarioStepListener extends RunListener {
     }
 
     private Method getTestMethodFrom(final Description description) throws NoSuchMethodException {
-        return description.getTestClass().getDeclaredMethod(description.getMethodName(),
-                (Class[]) null);
+        return methodCalled(withNoArguments(description.getMethodName()), inTestClassFrom(description));
+    }
+
+    private String withNoArguments(String methodName) {
+        int firstSpace = methodName.indexOf(":");
+        if (firstSpace > 0) {
+            return methodName.substring(0, firstSpace);
+        }
+        return methodName;
+    }
+
+    private Class<?> inTestClassFrom(final Description description) {
+        return description.getTestClass();
+    }
+
+    private Method methodCalled(final String methodName, final Class<?> testClass) {
+        Method[] methods = testClass.getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                return method;
+            }
+        }
+        throw new IllegalArgumentException("No test method called " + methodName + " was found in " + testClass);
     }
 
     private String getAnnotatedTitleFrom(final Description description) {

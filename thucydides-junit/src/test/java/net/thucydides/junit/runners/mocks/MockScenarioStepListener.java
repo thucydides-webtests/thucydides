@@ -4,7 +4,7 @@ import org.openqa.selenium.TakesScreenshot;
 import static org.mockito.Mockito.*;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.junit.runners.Configuration;
-import net.thucydides.junit.runners.ScenarioStepListener;
+import net.thucydides.junit.steps.junit.ScenarioStepListener;
 
 
 public class MockScenarioStepListener extends ScenarioStepListener {

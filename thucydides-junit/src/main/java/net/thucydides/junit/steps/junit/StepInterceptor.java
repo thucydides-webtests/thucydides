@@ -1,4 +1,4 @@
-package net.thucydides.junit.steps;
+package net.thucydides.junit.steps.junit;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -7,13 +7,14 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import net.thucydides.junit.annotations.Pending;
 import net.thucydides.junit.annotations.Step;
+import net.thucydides.junit.steps.StepResult;
 
 import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
-/**
+/** 
  * Listen to step results and publish JUnit notification messages.
  * @author johnsmart
  *
@@ -48,12 +49,12 @@ public class StepInterceptor implements MethodInterceptor {
         }
         
         if (isPending(method) || isIgnored(method) ) {
-            notifyTestSkippedFor(method);
+            notifyTestSkippedFor(method, args);
             return null;
         }
         
         if (failureHasOccured) {
-            notifyTestSkippedFor(method);
+            notifyTestSkippedFor(method, args);
             return null;
         }
         
@@ -75,10 +76,10 @@ public class StepInterceptor implements MethodInterceptor {
         Object result = null;
         try {
             result = proxy.invokeSuper(obj, args);
-            notifyTestFinishedFor(method);
+            notifyTestFinishedFor(method, args);
         } catch (Throwable e) {
             error = e;
-            notifyFailureOf(method, e);
+            notifyFailureOf(method, args, e);
             failureHasOccured = true;
         }
         resultTally.logExecutedTest();
@@ -95,15 +96,37 @@ public class StepInterceptor implements MethodInterceptor {
         return (pendingAnnotation != null);
     }
 
-    private void notifyTestFinishedFor(final Method method) throws Exception {
-        Description description = Description.createTestDescription(testStepClass, method.getName());
+    private void notifyTestFinishedFor(final Method method, final Object[] args) throws Exception {
+        Description description = Description.createTestDescription(testStepClass, getTestNameFrom(method, args));
         for(RunListener listener : listeners) {
             listener.testFinished(description);
         }
     }
 
-    private void notifyTestSkippedFor(final Method method) throws Exception {
-        Description description = Description.createTestDescription(testStepClass, method.getName());
+    private String getTestNameFrom(final Method method, final Object[] args) {
+        if ((args == null) || (args.length == 0)) {
+            return method.getName();
+        } else {
+            return testNameWithArguments(method, args);
+        }
+    }
+
+    private String testNameWithArguments(final Method method, final Object[] args) {
+        StringBuffer testName = new StringBuffer(method.getName());
+        testName.append(": "); 
+        boolean isFirst = true;
+        for(Object arg: args) {
+            if (!isFirst) {
+                testName.append(", ");
+            }
+            testName.append(arg);
+            isFirst = false;
+        }
+        return testName.toString();
+    }
+
+    private void notifyTestSkippedFor(final Method method, final Object[] args) throws Exception {
+        Description description = Description.createTestDescription(testStepClass, getTestNameFrom(method, args));
         for(RunListener listener : listeners) {
             listener.testIgnored(description);
         }
@@ -116,8 +139,8 @@ public class StepInterceptor implements MethodInterceptor {
         }
     }
 
-    private void notifyFailureOf(final Method method, final Throwable e) throws Exception {
-        Description description = Description.createTestDescription(testStepClass, method.getName());
+    private void notifyFailureOf(final Method method, final Object[] args, final Throwable e) throws Exception {
+        Description description = Description.createTestDescription(testStepClass, getTestNameFrom(method, args));
         Failure failure = new Failure(description, e);
 
         for(RunListener listener : listeners) {
