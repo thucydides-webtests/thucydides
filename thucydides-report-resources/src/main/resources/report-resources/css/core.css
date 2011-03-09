@@ -114,6 +114,23 @@ float:left; width:1008px;
     text-align: right;
 }
 
+.test-FAILURE {
+    background-color: #f0e3e3;
+}
+
+.test-SKIPPED {
+    background-color: #eeeadd;
+}
+
+
+.test-IGNORED {
+    background-color: #eeeadd;
+}
+
+.test-PENDING {
+    background-color: #e5f2eb;
+}
+
 .rightbgm
 {
 background-image:url(../images/middle-right.jpg);

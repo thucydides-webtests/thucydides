@@ -112,7 +112,7 @@ a:active {
 
 <div class="tableraw">
 <table border="0" width="980"  height="40" >
-  <tr>
+  <tr class="test-$step.result">
     <td width="35"><img src="images/$step_outcome_icon" width="25" height="25" /></td>
     <td width="%" class="bluetext"><span class="bluetext">$step.description</span></td>
     <td width="150" class="bluetext">
