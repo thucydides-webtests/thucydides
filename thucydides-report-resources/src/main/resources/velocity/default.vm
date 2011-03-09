@@ -69,10 +69,11 @@ a:active {
    	   <div class="titlebar">
        	 <div class="leftbgm"></div>
             <div class="middlebgm">
-                <table>
+                <table width="980">
                     <tr>
-                        <td><img class="story-outcome-icon" src="images/$outcome_icon" width="25" height="25" /></td>
-                        <td><span class="test-case-title"><span class="$outcome_text">$testrun.Title</span></span></td>
+                        <td width="25"><img class="story-outcome-icon" src="images/$outcome_icon" width="25" height="25" /></td>
+                        <td width="%"><span class="test-case-title"><span class="$outcome_text">$testrun.Title</span></span></td>
+                        <td width="75"><span class="test-case-duration"><span class="greentext">$testrun.duration ms</span></span></td>
                     </tr>
                 </table>
             </div>
@@ -89,11 +90,11 @@ a:active {
  <div class="toptableraw">
   	      <table width="980" height="50" border="0">
   <tr>
-    <td width="6">&nbsp;</td>
+    <td width="35">&nbsp;</td>
     <td width="%" class="greentext">Step</td>
-    <td width="125" class="greentext">Screenshot</td>
-    <td width="125" class="greentext">Outcome</td>
-    <td width="100" class="greentext">Duration</td>
+    <td width="150" class="greentext">Screenshot</td>
+    <td width="150" class="greentext">Outcome</td>
+    <td width="75" class="greentext">Duration</td>
   </tr>
 </table>
 </div>
@@ -112,15 +113,15 @@ a:active {
 <div class="tableraw">
 <table border="0" width="980"  height="40" >
   <tr>
-    <td width="6"><img src="images/$step_outcome_icon" width="25" height="25" /></td>
+    <td width="35"><img src="images/$step_outcome_icon" width="25" height="25" /></td>
     <td width="%" class="bluetext"><span class="bluetext">$step.description</span></td>
-    <td width="125" class="bluetext">
+    <td width="150" class="bluetext">
 		#if( $step.screenshot )
 	          <a href="$step.screenshot.name"><img src="images/screen.png" width="48" height="48" /></a>
         #end
     </td>
-    <td width="125"><span class="lightgreentext">$step.result</span></td>
-    <td width="100"><span class="lightgreentext">$step.duration ms</span></td>
+    <td width="150"><span class="lightgreentext">$step.result</span></td>
+    <td width="75"><span class="lightgreentext">$step.duration ms</span></td>
   </tr>
 </table>
 </div>

@@ -105,10 +105,13 @@ float:left; width:1008px;
     padding: 4px;
 }
 
-.test-case-title 
-{
+.test-case-title {
     margin: 4px;
     font-family:euphemia, verdana, sans-serif; font-size:24px; color: #88a717; font-weight:bold; font-size-adjust:inherit;
+}
+
+.test-case-duration {
+    text-align: right;
 }
 
 .rightbgm

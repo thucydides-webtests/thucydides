@@ -71,6 +71,7 @@ public class ScenarioStepListener extends RunListener {
         currentTestStep.setDescription(testName);
         currentTestStep.recordDuration();
         currentAcceptanceTestRun.recordStep(currentTestStep);
+        currentAcceptanceTestRun.recordDuration();
         currentTestStep = null;
     }
 

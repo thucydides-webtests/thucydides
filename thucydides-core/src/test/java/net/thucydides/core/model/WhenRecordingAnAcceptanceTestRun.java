@@ -1,7 +1,9 @@
 package net.thucydides.core.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.fail;
 import static net.thucydides.core.model.TestResult.*;
 import java.util.List;
@@ -269,6 +271,14 @@ public class WhenRecordingAnAcceptanceTestRun {
         
         assertThat(testRun.getUserStory().getName(), is("A user story"));
         assertThat(testRun.getUserStory().getCode(), is("US1"));
+    }
+    
+    @Test
+    public void we_can_record_the_lifetime_of_a_test_run() throws InterruptedException {
+        Thread.sleep(10);
+        testRun.recordDuration();        
+        assertThat(testRun.getDuration(), is(greaterThanOrEqualTo(10L)));
+        assertThat(testRun.getDuration(), is(lessThan(100L)));
     }
     
 

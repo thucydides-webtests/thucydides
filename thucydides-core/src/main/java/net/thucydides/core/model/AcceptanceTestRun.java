@@ -39,7 +39,9 @@ public class AcceptanceTestRun {
     
     private UserStory userStory;
 
-    private double duration;
+    private long duration;
+
+    private long startTime;
     
     private Set<String> testedRequirement = new HashSet<String>();
 
@@ -49,6 +51,7 @@ public class AcceptanceTestRun {
      * Create a new acceptance test run instance.
      */
     public AcceptanceTestRun() {
+        startTime = System.currentTimeMillis();
     }
 
     /**
@@ -56,6 +59,7 @@ public class AcceptanceTestRun {
      * run directly with a title using this constructor.
      */
     public AcceptanceTestRun(final String title) {
+        this();
         this.title = title;
         this.methodName = normalizedFormOf(title);
     }
@@ -218,11 +222,15 @@ public class AcceptanceTestRun {
         return userStory;
     }
 
-    public void setDuration(double duration) {
+    public void recordDuration() {
+        setDuration(System.currentTimeMillis() - startTime);
+    }
+
+    public void setDuration(final long duration) {
         this.duration = duration;
     }
 
-    public double getDuration() {
+    public long getDuration() {
         return duration;
     }
 
