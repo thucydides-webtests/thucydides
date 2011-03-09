@@ -28,7 +28,6 @@ public class SearchingOnGoogleStory {
         pages.start();
         steps.open_home_page();
         steps.searchFor("cats");
-//        steps.waitABit(500);
         steps.resultListShouldContain("Cat - Wikipedia, the free encyclopedia");
 
         steps.done();
@@ -39,7 +38,6 @@ public class SearchingOnGoogleStory {
         pages.start();
         steps.open_home_page();
         steps.searchFor("dogs");
-        steps.waitABit(500);
         steps.resultListShouldContain("Dog - Wikipedia, the free encyclopedia");
 
         steps.done();
