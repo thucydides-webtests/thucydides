@@ -1,11 +1,14 @@
-package net.thucydides.junit.runners;
-
-import net.thucydides.core.webdriver.SupportedWebDriver;
-import net.thucydides.core.webdriver.WebDriverFactory;
+package net.thucydides.core.webdriver;
 
 import org.openqa.selenium.WebDriver;
 
-class WebdriverManager {
+/**
+ * Manage WebDriver instances.
+ * 
+ * @author johnsmart
+ *
+ */
+public class WebdriverManager {
 
     /**
      * Creates new browser instances. The Browser Factory's job is to provide

@@ -18,12 +18,12 @@ import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.junit.annotations.StepDescription;
 import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.annotations.TestsRequirements;
 import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.internals.TestStatus;
-import net.thucydides.junit.runners.Configuration;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;

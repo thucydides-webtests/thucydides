@@ -1,4 +1,4 @@
-package net.thucydides.junit.runners;
+package net.thucydides.core.webdriver;
 
 import java.io.File;
 import java.util.Collection;
@@ -8,8 +8,6 @@ import com.google.common.collect.ImmutableList;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
-import net.thucydides.core.webdriver.SupportedWebDriver;
-import net.thucydides.core.webdriver.UnsupportedDriverException;
 
 /**
  * Centralized configuration of the test runner. You can configure the output

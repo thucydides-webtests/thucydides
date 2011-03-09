@@ -1,9 +1,9 @@
-package net.thucydides.junit.runners;
+package net.thucydides.core.webdriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import net.thucydides.core.webdriver.SupportedWebDriver;
-import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
+import net.thucydides.core.webdriver.mocks.TestableWebDriverFactory;
 
 import org.junit.Before;
 import org.junit.Rule;

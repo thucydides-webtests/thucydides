@@ -3,7 +3,7 @@ package net.thucydides.junit.runners.mocks;
 import org.openqa.selenium.TakesScreenshot;
 import static org.mockito.Mockito.*;
 import net.thucydides.core.screenshots.Photographer;
-import net.thucydides.junit.runners.Configuration;
+import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.junit.steps.junit.ScenarioStepListener;
 
 
