@@ -69,11 +69,11 @@ a:active {
    	   <div class="titlebar">
        	 <div class="leftbgm"></div>
             <div class="middlebgm">
-                <table width="980">
+                <table width="1005">
                     <tr>
                         <td width="25"><img class="story-outcome-icon" src="images/$outcome_icon" width="25" height="25" /></td>
                         <td width="%"><span class="test-case-title"><span class="$outcome_text">$testrun.Title</span></span></td>
-                        <td width="75"><span class="test-case-duration"><span class="greentext">$testrun.duration ms</span></span></td>
+                        <td width="100"><span class="test-case-duration"><span class="greentext">$testrun.duration ms</span></span></td>
                     </tr>
                 </table>
             </div>

@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.thucydides.core.annotations.At;
 
 import org.openqa.selenium.By;
@@ -18,7 +19,7 @@ import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 
 /**
- * An abstract class representing a WebDriver page object.
+ * A base class representing a WebDriver page object.
  * 
  * @author johnsmart
  * 
@@ -33,6 +34,8 @@ public abstract class PageObject {
 
     private static final Map<String, String> MACROS = new HashMap<String, String>();
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PageObject.class);
+    
     private static final long WAIT_FOR_TIMEOUT = 30000;    
     {
         MACROS.put("#HOST", "https?://[^/]+");
@@ -156,7 +159,7 @@ public abstract class PageObject {
             RenderedWebElement renderedElement = (RenderedWebElement) driver.findElement(byElementCriteria);
             isDisplayed = renderedElement.isDisplayed();
         } catch (NoSuchElementException noSuchElement) {
-            // Don't case 
+            LOGGER.info("No such element " + noSuchElement);
         }
         return isDisplayed;
     }
@@ -168,4 +171,13 @@ public abstract class PageObject {
     public List<WebElement> thenReturnElementList(final By byListCriteria) {
         return driver.findElements(byListCriteria);
     }    
+    
+    /**
+     * Check that the specified text appears somewhere in the page.
+     */
+    public void shouldContainText(final String textValue) {
+        String textInBody = String.format("//body[contains(.,\"%s\")]", textValue);
+        driver.findElements(By.xpath(textInBody));
+    }
+
 }

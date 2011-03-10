@@ -1,9 +1,0 @@
-<acceptance-test-run title="A simple test case" steps="2" successful="1" failures="1" skipped="0" ignored="0" pending="0" result="FAILURE">
-  <test-step result="SUCCESS">
-    <description>step 1</description>
-    <screenshot>step_1.png</screenshot>
-  </test-step>
-  <test-step result="FAILURE">
-    <description>step 2</description>
-  </test-step>
-</acceptance-test-run>

@@ -43,4 +43,13 @@ public class SearchingOnGoogleStory {
         steps.done();
     }
     
+    @Test
+    public void searching_for_hamsters_should_find_the_wikipedia_entry() {
+        pages.start();
+        steps.open_home_page();
+        steps.searchFor("hamsters");
+        steps.resultListShouldContain("Hamster - Wikipedia, the free encyclopedia");
+
+        steps.done();
+    }
 }

@@ -216,7 +216,7 @@ public class ScenarioStepListener extends RunListener {
         return methodCalled(withNoArguments(description.getMethodName()), inTestClassFrom(description));
     }
 
-    private String withNoArguments(String methodName) {
+    private String withNoArguments(final String methodName) {
         int firstSpace = methodName.indexOf(":");
         if (firstSpace > 0) {
             return methodName.substring(0, firstSpace);
@@ -229,7 +229,7 @@ public class ScenarioStepListener extends RunListener {
     }
 
     private Method methodCalled(final String methodName, final Class<?> testClass) {
-        Method[] methods = testClass.getDeclaredMethods();
+        Method[] methods = testClass.getMethods();
         for (Method method : methods) {
             if (method.getName().equals(methodName)) {
                 return method;

@@ -20,6 +20,7 @@ import org.openqa.selenium.TakesScreenshot;
  */
 public class Photographer {
 
+    private static final int MESSAGE_DIGEST_MASK = 0xFF;
     private final TakesScreenshot driver;
     private final File targetDirectory;
     private final ScreenshotSequence screenshotSequence;
@@ -53,11 +54,11 @@ public class Photographer {
         return "screenshot-" + getMD5DigestFrom(prefix) + nextScreenshotNumber + ".png";
     }
 
-    private String getMD5DigestFrom(String value) {
+    private String getMD5DigestFrom(final String value) {
         byte[] messageDigest = digest.digest(value.getBytes());
         StringBuffer hexString = new StringBuffer();
         for (int i=0;i<messageDigest.length;i++) {
-            hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+            hexString.append(Integer.toHexString(MESSAGE_DIGEST_MASK & messageDigest[i]));
         }
         return hexString.toString();
     }

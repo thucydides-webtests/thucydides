@@ -43,7 +43,6 @@ public class StepInterceptor implements MethodInterceptor {
             ifAnErrorOccuredThrow(error);
             return null;
         }
-        
         if (!isATestStep(method)) {
             return invokeMethod(obj, method, args, proxy);
         }

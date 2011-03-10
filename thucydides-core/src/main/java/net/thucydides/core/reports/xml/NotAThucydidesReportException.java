@@ -1,8 +1,15 @@
 package net.thucydides.core.reports.xml;
 
+/**
+ * Exception thrown if we attempt to process a file that is not a valid Thucydides XML report.
+ * @author johnsmart
+ *
+ */
 public class NotAThucydidesReportException extends Exception {
 
-    public NotAThucydidesReportException(String message) {
+    private static final long serialVersionUID = 1L;
+
+    public NotAThucydidesReportException(final String message) {
         super(message);
     }
 

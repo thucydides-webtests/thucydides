@@ -9,7 +9,14 @@ package net.thucydides.core;
  */
 public enum WebdriverSystemProperty {
 
-    DRIVER("webdriver.driver"),
+    /**
+     * The WebDriver driver - firefox or chrome.
+     */
+    DRIVER("webdriver.driver"),    
+    
+    /**
+     * The default starting URL for the application, and base URL for relative paths.
+     */
     BASE_URL("webdriver.base.url");
 
     private String propertyName;

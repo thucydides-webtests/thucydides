@@ -39,15 +39,24 @@ public class ThucydidesReporterMojo extends AbstractMojo {
         }
 
         try {
-            XMLAggregateTestReporter reporter = new XMLAggregateTestReporter();
-            reporter.setOutputDirectory(outputDirectory);
-
-            AggregateTestResults aggregateTestResults 
-                = reporter.loadAllReportsFrom(sourceDirectory);
-            reporter.setSourceDirectory(sourceDirectory);
-            reporter.generateReportFor(aggregateTestResults);
+            generateXMLAggregateReport();
+            generateHtmlAggregateReport();
         } catch (IOException e) {
             throw new MojoExecutionException("Error generating aggregate thucydides reports", e);
         }
     }
+
+    private void generateXMLAggregateReport() throws IOException {
+        XMLAggregateTestReporter reporter = new XMLAggregateTestReporter();
+        reporter.setOutputDirectory(outputDirectory);
+
+        AggregateTestResults aggregateTestResults 
+            = reporter.loadAllReportsFrom(sourceDirectory);
+        reporter.setSourceDirectory(sourceDirectory);
+        reporter.generateReportFor(aggregateTestResults);
+    }
+    
+    private void generateHtmlAggregateReport() throws IOException {
+    }
+    
 }

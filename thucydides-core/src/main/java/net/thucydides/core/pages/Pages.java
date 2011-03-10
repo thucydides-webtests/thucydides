@@ -94,7 +94,7 @@ public class Pages {
             Constructor<? extends PageObject> constructor 
                 = (Constructor<? extends PageObject>) pageObjectClass.getConstructor(constructorArgs);
             currentPage = (PageObject) constructor.newInstance(driver);
-            currentPage.setDriver(driver);
+            //currentPage.setDriver(driver);
         } catch (Exception e) {
             e.printStackTrace();
             thisIsNotThePageYourLookingFor(pageObjectClass);
@@ -110,5 +110,4 @@ public class Pages {
         
         throw new WrongPageException(errorDetails);
     }
-            
 }
