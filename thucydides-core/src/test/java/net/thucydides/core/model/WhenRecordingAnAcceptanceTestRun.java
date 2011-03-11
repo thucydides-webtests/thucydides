@@ -267,10 +267,11 @@ public class WhenRecordingAnAcceptanceTestRun {
     @Test
     public void an_acceptance_test_relates_to_a_user_story() {
         testRun.setTitle("A test case");
-        testRun.setUserStory(new UserStory("A user story", "US1"));
+        testRun.setUserStory(new UserStory("A user story", "US1", "UserStory"));
         
         assertThat(testRun.getUserStory().getName(), is("A user story"));
         assertThat(testRun.getUserStory().getCode(), is("US1"));
+        assertThat(testRun.getUserStory().getSource(), is("UserStory"));
     }
     
     @Test

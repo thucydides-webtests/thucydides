@@ -5,7 +5,6 @@ import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
-import static net.thucydides.core.util.NameConverter.humanize;
 import static net.thucydides.core.util.NameConverter.underscore;
 
 import java.io.File;
@@ -17,12 +16,11 @@ import java.util.List;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.UserStory;
 import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.Configuration;
-import net.thucydides.junit.annotations.StepDescription;
-import net.thucydides.junit.annotations.TestsRequirement;
-import net.thucydides.junit.annotations.TestsRequirements;
-import net.thucydides.junit.annotations.Title;
+import net.thucydides.junit.annotations.UserStoryCode;
 import net.thucydides.junit.internals.TestStatus;
 
 import org.junit.runner.Description;
@@ -67,7 +65,8 @@ public class ScenarioStepListener extends RunListener {
     private void recordCurrentTestStep(final Description description) {
         getCurrentTestStepFrom(description);
         addAnyTestedRequirementsIn(description);
-        String testName = testNameFrom(description);
+        AnnotatedDescription testDescription = new AnnotatedDescription(description);
+        String testName = testDescription.getName();
         currentTestStep.setDescription(testName);
         currentTestStep.recordDuration();
         currentAcceptanceTestRun.recordStep(currentTestStep);
@@ -76,7 +75,8 @@ public class ScenarioStepListener extends RunListener {
     }
 
     private void addAnyTestedRequirementsIn(final Description description) {
-        List<String> requirements = annotatedRequirementsOf(description);
+        AnnotatedDescription testDescription = new AnnotatedDescription(description);
+        List<String> requirements = testDescription.getAnnotatedRequirements();
         if (!requirements.isEmpty()) {
             for (String requirement : requirements) {
                 currentTestStep.testsRequirement(requirement);
@@ -103,10 +103,27 @@ public class ScenarioStepListener extends RunListener {
     public void testRunStarted(final Description description) throws Exception {
         currentAcceptanceTestRun = new AcceptanceTestRun();
         currentAcceptanceTestRun.setMethodName(description.getMethodName());
+        currentAcceptanceTestRun.setUserStory(withUserStoryFrom(description));
         acceptanceTestRuns.add(currentAcceptanceTestRun);
         updateTestRunTitleBasedOn(description);
         updateTestRunRequirementsBasedOn(description);
         getCurrentTestStepFrom(description);
+    }
+
+    private UserStory withUserStoryFrom(final Description description) {
+        String name = NameConverter.humanize(description.getTestClass().getSimpleName());
+        String code = userStoryCodeFromAnnotationIfPresentIn(description.getTestClass());
+        String source = description.getTestClass().getCanonicalName(); 
+        return new UserStory(name, code, source);
+    }
+
+    private String userStoryCodeFromAnnotationIfPresentIn(final Class<?> testClass) {
+        UserStoryCode userStoryAnnotation = testClass.getAnnotation(UserStoryCode.class);
+        if (userStoryAnnotation != null) {
+            return userStoryAnnotation.value();
+        } else {
+            return "";
+        }
     }
 
     @Override
@@ -115,7 +132,8 @@ public class ScenarioStepListener extends RunListener {
         getCurrentTestStepFrom(description);
         markCurrentTestAs(IGNORED);
 
-        Method testMethod = getTestMethodFrom(description);
+        AnnotatedDescription testDescription = new AnnotatedDescription(description);
+        Method testMethod = testDescription.getTestMethod();
         if (TestStatus.of(testMethod).isPending()) {
             markCurrentTestAs(PENDING);
         } else if (TestStatus.of(testMethod).isIgnored()) {
@@ -161,138 +179,18 @@ public class ScenarioStepListener extends RunListener {
 
     private void updateTestRunTitleBasedOn(final Description description) {
         if (currentAcceptanceTestRun.getTitle() == null) {
-            currentAcceptanceTestRun.setTitle(fromTitleIn(description));
+            AnnotatedDescription testDescription = new AnnotatedDescription(description);
+            currentAcceptanceTestRun.setTitle(testDescription.getTitle());
         }
     }
 
     private void updateTestRunRequirementsBasedOn(final Description description) {
-        List<String> requirements = annotatedRequirementsOf(description);
+        AnnotatedDescription testDescription = new AnnotatedDescription(description);
+        List<String> requirements = testDescription.getAnnotatedRequirements();
         for(String requirement : requirements) {
             currentAcceptanceTestRun.testsRequirement(requirement);
         }
     }
 
-    /**
-     * Turns a method into a human-readable title.
-     */
-    protected String fromTitleIn(final Description description) {
-
-        String annotationTitle = getAnnotatedTitleFrom(description);
-        if (annotationTitle != null) {
-            return humanize(annotationTitle);
-        } else {
-            String testMethodName = description.getMethodName();
-            return humanize(testMethodName);
-        }
-    }
-
-    // REFACTOR INTO EXTERNAL CLASS
-    private String testNameFrom(final Description description) {
-        String annotatedDescription = annotatedDescriptionOf(description);
-        if (annotatedDescription != null) {
-            return annotatedDescription;
-        }
-        return humanizedTestNameFrom(description);
-    }
-
-    protected String annotatedDescriptionOf(final Description description) {
-        String annotatedDescription = null;
-        try {
-            Method testMethod = getTestMethodFrom(description);
-            StepDescription stepDescription = (StepDescription) testMethod
-                    .getAnnotation(StepDescription.class);
-            if (stepDescription != null) {
-                annotatedDescription = stepDescription.value();
-            }
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return annotatedDescription;
-    }
-
-    private Method getTestMethodFrom(final Description description) throws NoSuchMethodException {
-        return methodCalled(withNoArguments(description.getMethodName()), inTestClassFrom(description));
-    }
-
-    private String withNoArguments(final String methodName) {
-        int firstSpace = methodName.indexOf(":");
-        if (firstSpace > 0) {
-            return methodName.substring(0, firstSpace);
-        }
-        return methodName;
-    }
-
-    private Class<?> inTestClassFrom(final Description description) {
-        return description.getTestClass();
-    }
-
-    private Method methodCalled(final String methodName, final Class<?> testClass) {
-        Method[] methods = testClass.getMethods();
-        for (Method method : methods) {
-            if (method.getName().equals(methodName)) {
-                return method;
-            }
-        }
-        throw new IllegalArgumentException("No test method called " + methodName + " was found in " + testClass);
-    }
-
-    private String getAnnotatedTitleFrom(final Description description) {
-        try {
-            Method testMethod = getTestMethodFrom(description);
-            Title title = (Title) testMethod.getAnnotation(Title.class);
-            if (title != null) {
-                return title.value();
-            }
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    protected List<String> annotatedRequirementsOf(final Description description) {
-        List<String> requirements = new ArrayList<String>();
-        try {
-            Method testMethod = getTestMethodFrom(description);
-            addRequirementFrom(requirements, testMethod);
-            addMultipleRequirementsFrom(requirements, testMethod);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return requirements;
-    }
-
-    private void addMultipleRequirementsFrom(final List<String> requirements,final Method testMethod) {
-        TestsRequirements testRequirements = (TestsRequirements) testMethod.getAnnotation(TestsRequirements.class);
-        if (testRequirements != null) {
-            for(String requirement : testRequirements.value()) {
-                requirements.add(requirement);
-            }
-        }
-    }
-
-    private void addRequirementFrom(final List<String> requirements, final Method testMethod) {
-        TestsRequirement testsRequirement = (TestsRequirement) testMethod
-                .getAnnotation(TestsRequirement.class);
-        if (testsRequirement != null) {
-            requirements.add(testsRequirement.value());
-        }
-    }
-
-    /**
-     * Turns a classname into a human-readable title.
-     */
-    private String humanizedTestNameFrom(final Description description) {
-
-        String testName = description.getMethodName();
-        String humanizedName = humanize(testName);
-        if (!humanizedName.endsWith(".")) {
-            humanizedName = humanizedName + ".";
-        }
-        return humanizedName;
-    }
 
 }

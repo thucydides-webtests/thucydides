@@ -4,6 +4,7 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.ManagedPages;
 import net.thucydides.junit.annotations.Steps;
+import net.thucydides.junit.annotations.UserStoryCode;
 import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.runners.ThucydidesRunner;
@@ -18,6 +19,7 @@ import org.openqa.selenium.WebDriver;
  *
  */
 @RunWith(ThucydidesRunner.class)
+@UserStoryCode("US101")
 public class OpenApacheHomePageWithTitleSample {
 
     @Managed

@@ -224,20 +224,19 @@ public class WhenGeneratingAnXMLReport {
     }
     
     @Test
-    public void should_include_the_name_and_code_of_the_user_story_if_present()
+    public void should_include_the_details_of_the_user_story_if_present()
             throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
         String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-                + "  <user-story name='A user story' code='US1' />\n"
+                + "  <user-story name='A user story' code='US1' source='UserStory'/>\n"
                 + "  <test-step result='SUCCESS'>\n"
                 + "    <description>step 1</description>\n"
                 + "    <screenshot>step_1.png</screenshot>\n"
                 + "  </test-step>\n"
                 + "</acceptance-test-run>";
 
-        testRun.setUserStory(new UserStory("A user story","US1"));
+        testRun.setUserStory(new UserStory("A user story","US1", "UserStory"));
         
-
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         step1.setScreenshot(screenshot);

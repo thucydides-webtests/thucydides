@@ -22,20 +22,30 @@ import com.google.common.collect.ImmutableList;
  * @author johnsmart
  * 
  */
-public class AggregateTestResults {
+public class UserStoryTestResults {
 
     private List<AcceptanceTestRun> testRuns;
-
+    
     private final String title;
+    
+    private UserStory userStory;
     
     /**
      * Create a new acceptance test run instance.
      */
-    public AggregateTestResults(final String title) {
+    public UserStoryTestResults(final UserStory someUserStory) {
         testRuns = new ArrayList<AcceptanceTestRun>();
-        this.title = title;
+        this.title = someUserStory.getName();
+        this.userStory = someUserStory;
     }
 
+    public UserStory getUserStory() {
+        return userStory;
+    }
+    
+    public void setUserStory(final UserStory userStory) {
+        this.userStory = userStory;
+    }
     /**
      * Add a test run result to the aggregate set of results.
      */
@@ -115,4 +125,14 @@ public class AggregateTestResults {
         return true;
     }
 
+    /**
+     * Does this set of test results correspond to a specified user story?
+     */
+    public boolean containsResultsFor(final UserStory aUserStory) {
+        if (getUserStory() != null) {
+            return getUserStory().equals(aUserStory);
+        } else {
+            return false;
+        }
+    }
 }

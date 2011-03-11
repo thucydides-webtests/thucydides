@@ -17,6 +17,7 @@ import java.util.Set;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.UserStory;
 import net.thucydides.junit.annotations.InvalidManagedPagesFieldException;
 import net.thucydides.junit.annotations.InvalidStepsFieldException;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
@@ -193,6 +194,23 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         
         List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
         assertThat(executedScenarios.size(), is(3));
+    }
+
+    @Test    
+    public void the_test_runner_derives_the_user_story_from_the_test_case_class() throws InitializationError  {
+       
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+        
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+        UserStory userStory = testRun.getUserStory();
+
+        assertThat(userStory.getName(), is("Single test scenario"));
+        assertThat(userStory.getSource(), is("net.thucydides.junit.samples.SingleTestScenario"));
+        assertThat(userStory.getCode(), is("US01"));
     }
 
     @Test    

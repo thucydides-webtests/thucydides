@@ -1,7 +1,7 @@
 package net.thucydides.core.reports;
 
 import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.model.AggregateTestResults;
+import net.thucydides.core.model.UserStoryTestResults;
 import net.thucydides.core.util.NameConverter;
 
 /**
@@ -47,7 +47,7 @@ public class ReportNamer {
         return testRun.getMethodName() + "." + type.toString();
     }
 
-    public String getNormalizedTestNameFor(final AggregateTestResults testResults) {
+    public String getNormalizedTestNameFor(final UserStoryTestResults testResults) {
         String testNameWithUnderscores = NameConverter.underscore(testResults.getTitle());
         return testNameWithUnderscores + "." + type.toString();
     }

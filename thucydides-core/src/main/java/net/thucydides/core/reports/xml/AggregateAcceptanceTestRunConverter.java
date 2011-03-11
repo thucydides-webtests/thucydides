@@ -3,7 +3,7 @@ package net.thucydides.core.reports.xml;
 import java.util.List;
 
 import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.model.AggregateTestResults;
+import net.thucydides.core.model.UserStoryTestResults;
 
 import org.apache.commons.lang.NotImplementedException;
 
@@ -27,7 +27,7 @@ public class AggregateAcceptanceTestRunConverter implements Converter {
      */
     @SuppressWarnings("rawtypes")
     public boolean canConvert(final Class clazz) {
-        return AggregateTestResults.class.isAssignableFrom(clazz);
+        return UserStoryTestResults.class.isAssignableFrom(clazz);
     }
 
     /**
@@ -35,7 +35,7 @@ public class AggregateAcceptanceTestRunConverter implements Converter {
      */
     public void marshal(final Object value, final HierarchicalStreamWriter writer,
             final MarshallingContext context) {
-        AggregateTestResults testResults = (AggregateTestResults) value;
+        UserStoryTestResults testResults = (UserStoryTestResults) value;
         Preconditions.checkNotNull(testResults, "The test results were null - WTF?");
 
         writer.addAttribute("title", testResults.getTitle());

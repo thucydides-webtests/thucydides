@@ -71,6 +71,7 @@ public class AcceptanceTestRunConverter implements Converter {
             writer.startNode("user-story");
             writer.addAttribute("name", userStory.getName());
             writer.addAttribute("code", userStory.getCode());
+            writer.addAttribute("source", userStory.getSource());
             writer.endNode();
         }
     }
@@ -171,7 +172,8 @@ public class AcceptanceTestRunConverter implements Converter {
                                final AcceptanceTestRun testRun) {
         String storyName = reader.getAttribute("name");
         String storyCode = reader.getAttribute("code");
-        testRun.setUserStory(new UserStory(storyName, storyCode));
+        String storySource = reader.getAttribute("source");
+        testRun.setUserStory(new UserStory(storyName, storyCode, storySource));
     }
 
 

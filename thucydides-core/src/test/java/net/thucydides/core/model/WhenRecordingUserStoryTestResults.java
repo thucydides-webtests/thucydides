@@ -11,58 +11,59 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class WhenRecordingAggregateTestResults {
+public class WhenRecordingUserStoryTestResults {
 
-    private AggregateTestResults aggregateTestResults;
+    private UserStory userStory = new UserStory("Some user story","","");
+    private UserStoryTestResults userStoryTestResults;
 
     @Before
     public void init() {
-        aggregateTestResults = new AggregateTestResults("User Story 1");
+        userStoryTestResults = new UserStoryTestResults(userStory);
     }
 
     @Test
-    public void an_aggregate_test_result_contain_a_set_of_test_runs() {
+    public void a_user_story_test_result_contain_a_set_of_test_runs() {
         AcceptanceTestRun testRun1 = thatFailsCalled("Test Run 1");
         AcceptanceTestRun testRun2 = thatSucceedsCalled("Test Run 2");
 
-        aggregateTestResults.recordTestRun(testRun1);
-        aggregateTestResults.recordTestRun(testRun2);
+        userStoryTestResults.recordTestRun(testRun1);
+        userStoryTestResults.recordTestRun(testRun2);
 
-        Assert.assertThat(aggregateTestResults.getTotal(), is(2));
-        Assert.assertThat(aggregateTestResults.getTestRuns(), allOf(hasItem(testRun1), hasItem(testRun2)));
+        Assert.assertThat(userStoryTestResults.getTotal(), is(2));
+        Assert.assertThat(userStoryTestResults.getTestRuns(), allOf(hasItem(testRun1), hasItem(testRun2)));
     }
     
 
     @Test
     public void an_aggregate_test_result_should_count_the_number_of_failed_test_runs() {
 
-        aggregateTestResults.recordTestRun(thatFailsCalled("Test Run 1"));
-        aggregateTestResults.recordTestRun(thatFailsCalled("Test Run 2"));
+        userStoryTestResults.recordTestRun(thatFailsCalled("Test Run 1"));
+        userStoryTestResults.recordTestRun(thatFailsCalled("Test Run 2"));
 
-        Assert.assertThat(aggregateTestResults.getFailureCount(), is(2));
+        Assert.assertThat(userStoryTestResults.getFailureCount(), is(2));
     }
 
     @Test
     public void an_aggregate_test_result_should_count_the_number_of_successful_test_runs() {
 
-        aggregateTestResults.recordTestRun(thatFailsCalled("Test Run 1"));
-        aggregateTestResults.recordTestRun(thatSucceedsCalled("Test Run 2"));
-        aggregateTestResults.recordTestRun(thatFailsCalled("Test Run 3"));
+        userStoryTestResults.recordTestRun(thatFailsCalled("Test Run 1"));
+        userStoryTestResults.recordTestRun(thatSucceedsCalled("Test Run 2"));
+        userStoryTestResults.recordTestRun(thatFailsCalled("Test Run 3"));
 
-        Assert.assertThat(aggregateTestResults.getFailureCount(), is(2));
-        Assert.assertThat(aggregateTestResults.getSuccessCount(), is(1));
+        Assert.assertThat(userStoryTestResults.getFailureCount(), is(2));
+        Assert.assertThat(userStoryTestResults.getSuccessCount(), is(1));
     }
 
     @Test
     public void an_aggregate_test_result_should_count_the_number_of_pending_test_runs() {
 
-        aggregateTestResults.recordTestRun(thatFailsCalled("Test Run 1"));
-        aggregateTestResults.recordTestRun(thatSucceedsCalled("Test Run 2"));
-        aggregateTestResults.recordTestRun(thatIsPendingCalled("Test Run 3"));
-        aggregateTestResults.recordTestRun(thatIsPendingCalled("Test Run 4"));
-        aggregateTestResults.recordTestRun(thatIsPendingCalled("Test Run 5"));
+        userStoryTestResults.recordTestRun(thatFailsCalled("Test Run 1"));
+        userStoryTestResults.recordTestRun(thatSucceedsCalled("Test Run 2"));
+        userStoryTestResults.recordTestRun(thatIsPendingCalled("Test Run 3"));
+        userStoryTestResults.recordTestRun(thatIsPendingCalled("Test Run 4"));
+        userStoryTestResults.recordTestRun(thatIsPendingCalled("Test Run 5"));
 
-        Assert.assertThat(aggregateTestResults.getPendingCount(), is(3));
+        Assert.assertThat(userStoryTestResults.getPendingCount(), is(3));
     }
 
     private AcceptanceTestRun thatFailsCalled(String title) {

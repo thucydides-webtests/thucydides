@@ -2,9 +2,11 @@ package net.thucydides.maven.plugins;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
-import net.thucydides.core.model.AggregateTestResults;
-import net.thucydides.core.reports.xml.XMLAggregateTestReporter;
+import net.thucydides.core.model.UserStoryTestResults;
+import net.thucydides.core.model.loaders.UserStoryLoader;
+import net.thucydides.core.reports.html.HtmlUserStoryTestReporter;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -39,24 +41,22 @@ public class ThucydidesReporterMojo extends AbstractMojo {
         }
 
         try {
-            generateXMLAggregateReport();
-            generateHtmlAggregateReport();
+            generateHtmlStoryReports();
         } catch (IOException e) {
             throw new MojoExecutionException("Error generating aggregate thucydides reports", e);
         }
     }
 
-    private void generateXMLAggregateReport() throws IOException {
-        XMLAggregateTestReporter reporter = new XMLAggregateTestReporter();
+    private void generateHtmlStoryReports() throws IOException {
+        HtmlUserStoryTestReporter reporter = new HtmlUserStoryTestReporter();
         reporter.setOutputDirectory(outputDirectory);
-
-        AggregateTestResults aggregateTestResults 
-            = reporter.loadAllReportsFrom(sourceDirectory);
-        reporter.setSourceDirectory(sourceDirectory);
-        reporter.generateReportFor(aggregateTestResults);
-    }
-    
-    private void generateHtmlAggregateReport() throws IOException {
+        
+        UserStoryLoader loader = new UserStoryLoader();
+        List<UserStoryTestResults> userStoryResults = loader.loadStoriesFrom(sourceDirectory);
+        
+        for(UserStoryTestResults userStoryTestResults : userStoryResults) {
+            reporter.generateReportFor(userStoryTestResults);
+        }
     }
     
 }

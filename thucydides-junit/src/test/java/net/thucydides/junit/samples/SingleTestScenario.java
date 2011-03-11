@@ -5,6 +5,7 @@ import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.ManagedPages;
 import net.thucydides.junit.annotations.Steps;
 import net.thucydides.junit.annotations.TestsRequirement;
+import net.thucydides.junit.annotations.UserStoryCode;
 import net.thucydides.junit.runners.ThucydidesRunner;
 
 import org.junit.Test;
@@ -12,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
+@UserStoryCode("US01")
 public class SingleTestScenario {
     
     @Managed
