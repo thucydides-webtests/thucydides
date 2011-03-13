@@ -1,7 +1,5 @@
-package net.thucydides.core.reports;
+package net.thucydides.core.model;
 
-import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.model.UserStoryTestResults;
 import net.thucydides.core.util.NameConverter;
 
 /**
@@ -15,10 +13,13 @@ public class ReportNamer {
      * The report namer knows how to find names for these types of reports
      */
     public enum ReportType {
-        /** XML reports */
+        /** report name with no suffix. */
+        ROOT(""),
+        
+        /** XML reports. */
         XML("xml"), 
         
-        /** HTML reports */
+        /** HTML reports. */
         HTML("html");
         
         private String suffix;
@@ -44,12 +45,25 @@ public class ReportNamer {
      * version should have no spaces and have the XML file suffix.
      */
     public String getNormalizedTestNameFor(final AcceptanceTestRun testRun) {
-        return testRun.getMethodName() + "." + type.toString();
+        String userStory = "";
+        if (testRun.getUserStory() != null) {
+            userStory = NameConverter.underscore(testRun.getUserStory().getName()) + "_";
+        }
+        return appendSuffixTo(userStory + testRun.getMethodName());
     }
 
-    public String getNormalizedTestNameFor(final UserStoryTestResults testResults) {
-        String testNameWithUnderscores = NameConverter.underscore(testResults.getTitle());
-        return testNameWithUnderscores + "." + type.toString();
+    public String getNormalizedTestNameFor(final UserStory userStory) {
+        String testNameWithUnderscores = NameConverter.underscore(userStory.getName());
+        return appendSuffixTo(testNameWithUnderscores);
     }
+
+    private String appendSuffixTo(final String testNameWithUnderscores) {
+        if (type == ReportType.ROOT) {
+            return testNameWithUnderscores;
+        } else {
+            return testNameWithUnderscores + "." + type.toString();
+        }
+    }
+    
 
 }

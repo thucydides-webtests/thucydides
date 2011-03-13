@@ -1,14 +1,14 @@
 package net.thucydides.core.reports.html;
 
-import static net.thucydides.core.reports.ReportNamer.ReportType.HTML;
+import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.core.reports.ReportNamer;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.velocity.Template;
@@ -25,9 +25,6 @@ public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
     private static final String DEFAULT_RESOURCE_DIRECTORY = "report-resources";
 
     private File outputDirectory;
-
-    private ReportNamer reportNamer = new ReportNamer(HTML);
-
     
     private TemplateManager templateManager = new TemplateManager();
     
@@ -55,7 +52,7 @@ public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
         template.merge(context, sw);
         htmlContents = sw.toString();
 
-        String reportFilename = reportNamer.getNormalizedTestNameFor(testRun);
+        String reportFilename = testRun.getReportName(HTML);
         File report = new File(getOutputDirectory(), reportFilename);
         FileUtils.writeStringToFile(report, htmlContents);
 

@@ -8,7 +8,7 @@ import net.thucydides.core.model.UserStoryTestResults;
 /**
  * Generates an aggregate acceptance test report. 
  * The class reads all the reports from the output directory and generates an aggregate report
- * summarizing the results using th generateReportsFor() method.
+ * summarizing the results using the generateReportsFor() method.
  */
 public abstract class UserStoryTestReporter {
 
@@ -35,13 +35,4 @@ public abstract class UserStoryTestReporter {
     public void setOutputDirectory(final File outputDirectory) {
         this.outputDirectory = outputDirectory;
     }
-
-    public void setSourceDirectory(final File sourceDirectory) {
-        this.sourceDirectory = sourceDirectory;
-    }
-
-    public File getSourceDirectory() {
-        return sourceDirectory;
-    }
-
 }

@@ -1,6 +1,6 @@
 package net.thucydides.core.reports.html;
 
-import static net.thucydides.core.reports.ReportNamer.ReportType.HTML;
+import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,13 +8,14 @@ import java.io.StringWriter;
 import java.util.List;
 
 import net.thucydides.core.model.UserStoryTestResults;
-import net.thucydides.core.reports.ReportNamer;
+import net.thucydides.core.model.loaders.UserStoryLoader;
 import net.thucydides.core.reports.UserStoryTestReporter;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generates an aggregate acceptance test report in XML form. Reads all the
@@ -29,10 +30,10 @@ public class HtmlUserStoryTestReporter extends UserStoryTestReporter {
 
     private TemplateManager templateManager = new TemplateManager();
 
-    private ReportNamer reportNamer = new ReportNamer(HTML);
-
     private String resourceDirectory = DEFAULT_RESOURCE_DIRECTORY;
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlUserStoryTestReporter.class);
+
     /**
      * Resources such as CSS stylesheets or images.
      */
@@ -46,6 +47,10 @@ public class HtmlUserStoryTestReporter extends UserStoryTestReporter {
      */
     @Override
     public File generateReportFor(final UserStoryTestResults userStoryTestResults) throws IOException {
+        
+        LOGGER.info("Generating report for user story " 
+                    + userStoryTestResults.getTitle() + " to " + getOutputDirectory());
+        
         String htmlContents = "";
         Template template = getTemplate();
         VelocityContext context = new VelocityContext();
@@ -54,7 +59,7 @@ public class HtmlUserStoryTestReporter extends UserStoryTestReporter {
         template.merge(context, sw);
         htmlContents = sw.toString();
 
-        String reportFilename =  reportNamer.getNormalizedTestNameFor(userStoryTestResults);
+        String reportFilename = userStoryTestResults.getReportName(HTML);
         File report = new File(getOutputDirectory(), reportFilename);
         FileUtils.writeStringToFile(report, htmlContents);
 
@@ -65,6 +70,15 @@ public class HtmlUserStoryTestReporter extends UserStoryTestReporter {
 
     private Template getTemplate() {
         return templateManager.getTemplateFrom(DEFAULT_USER_STORY_TEMPLATE);
+    }
+
+    public void generateReportsForStoriesFrom(final File sourceDirectory) throws IOException {
+        UserStoryLoader loader = new UserStoryLoader();
+        List<UserStoryTestResults> userStoryResults = loader.loadStoriesFrom(sourceDirectory);
+        
+        for(UserStoryTestResults userStoryTestResults : userStoryResults) {
+            generateReportFor(userStoryTestResults);
+        }
     }
 
 }

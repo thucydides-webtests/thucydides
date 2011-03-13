@@ -65,7 +65,7 @@ public class WhenRecordingUserStoryTestResults {
 
         Assert.assertThat(userStoryTestResults.getPendingCount(), is(3));
     }
-
+    
     private AcceptanceTestRun thatFailsCalled(String title) {
         AcceptanceTestRun testRun = new AcceptanceTestRun(title);
         testRun.recordStep(successfulTestStepCalled("Step 1"));

@@ -4,6 +4,7 @@ import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
+import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -46,6 +47,16 @@ public class UserStoryTestResults {
     public void setUserStory(final UserStory userStory) {
         this.userStory = userStory;
     }
+
+    public String getReportName(final ReportNamer.ReportType type) {
+        ReportNamer reportNamer = new ReportNamer(type);
+        return reportNamer.getNormalizedTestNameFor(getUserStory());
+    }
+
+    public String getReportName() {
+        return getReportName(ROOT);
+    }
+    
     /**
      * Add a test run result to the aggregate set of results.
      */

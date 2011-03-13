@@ -29,6 +29,11 @@ body {
     background-color: #f7f8f3;
 }
 
+.outcome-icon {
+    width: 25px;
+    height: 25px;    
+ }
+
 .middlecontent
 {
 

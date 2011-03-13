@@ -49,14 +49,8 @@ public class ThucydidesReporterMojo extends AbstractMojo {
 
     private void generateHtmlStoryReports() throws IOException {
         HtmlUserStoryTestReporter reporter = new HtmlUserStoryTestReporter();
-        reporter.setOutputDirectory(outputDirectory);
-        
-        UserStoryLoader loader = new UserStoryLoader();
-        List<UserStoryTestResults> userStoryResults = loader.loadStoriesFrom(sourceDirectory);
-        
-        for(UserStoryTestResults userStoryTestResults : userStoryResults) {
-            reporter.generateReportFor(userStoryTestResults);
-        }
+        reporter.setOutputDirectory(outputDirectory);        
+        reporter.generateReportsForStoriesFrom(sourceDirectory);
     }
     
 }

@@ -1,6 +1,6 @@
 package net.thucydides.core.reports.xml;
 
-import static net.thucydides.core.reports.ReportNamer.ReportType.XML;
+import static net.thucydides.core.model.ReportNamer.ReportType.XML;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,7 +9,6 @@ import java.io.InputStream;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.core.reports.ReportNamer;
 
 import org.apache.commons.io.FileUtils;
 
@@ -24,8 +23,6 @@ import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
 
     private File outputDirectory;
-
-    private ReportNamer reportNamer = new ReportNamer(XML);
 
     /**
      * We don't need any resources for XML reports.
@@ -45,7 +42,7 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
         xstream.registerConverter(new AcceptanceTestRunConverter());
         String xmlContents = xstream.toXML(testRun);
 
-        String reportFilename = reportNamer.getNormalizedTestNameFor(testRun);
+        String reportFilename = testRun.getReportName(XML);
         File report = new File(getOutputDirectory(), reportFilename);
         FileUtils.writeStringToFile(report, xmlContents);
 

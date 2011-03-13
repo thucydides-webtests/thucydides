@@ -14,6 +14,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.RenderedWebElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.ElementNotDisplayedException;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
@@ -26,9 +27,11 @@ import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
  */
 public abstract class PageObject {
 
-    private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 100;
+    private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 50;
 
     private static final int TIMEOUT = 60;
+    
+    private long waitForTimeout = WAIT_FOR_ELEMENT_PAUSE_LENGTH;
     
     private static final String OPTIONAL_PARAMS = "/?(\\?.*)?";
 
@@ -47,10 +50,15 @@ public abstract class PageObject {
     public PageObject(final WebDriver driver) {
         ElementLocatorFactory finder = new AjaxElementLocatorFactory(driver, TIMEOUT);
         this.driver = driver;
+        this.waitForTimeout = WAIT_FOR_TIMEOUT;
         PageFactory.initElements(finder, this);
         fetchMatchingPageExpressions();
     }
 
+    public void setWaitForTimeout(final long waitForTimeout) {
+        this.waitForTimeout = waitForTimeout;
+    }
+    
     private void fetchMatchingPageExpressions() {
         At compatibleWithAnnotation = this.getClass().getAnnotation(At.class);
         if (compatibleWithAnnotation != null) {
@@ -134,7 +142,7 @@ public abstract class PageObject {
     }
     
     public PageObject waitForRenderedElements(final By byElementCriteria) {
-        long end = System.currentTimeMillis() + WAIT_FOR_TIMEOUT;
+        long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
             if (elementIsDisplayed(byElementCriteria)) {
                 break;
@@ -142,7 +150,14 @@ public abstract class PageObject {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         checkThatElementAppeared(byElementCriteria);
+        checkThatElementIsDisplayed(byElementCriteria);
         return this;
+    }
+
+    private void checkThatElementIsDisplayed(final By byElementCriteria) {
+        if (!elementIsDisplayed(byElementCriteria)) {
+            throw new ElementNotDisplayedException("Element not displayed: " + byElementCriteria);
+        }
     }
 
     protected void waitABit(final long timeInMilliseconds) {
@@ -177,7 +192,11 @@ public abstract class PageObject {
      */
     public void shouldContainText(final String textValue) {
         String textInBody = String.format("//body[contains(.,\"%s\")]", textValue);
-        driver.findElements(By.xpath(textInBody));
+        List<WebElement> elements = driver.findElements(By.xpath(textInBody));
+        if (elements.isEmpty()) {
+            String errorMessage = String.format("The text '%s' was not found in the page", textValue);
+            throw new NoSuchElementException(errorMessage);
+        }
     }
 
 }

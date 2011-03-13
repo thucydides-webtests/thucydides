@@ -92,8 +92,5 @@ public class WhenGeneratingAnHtmlReport {
         reporter.generateReportFor(testRun);
     }
     
-    private String getStringFrom(File reportFile) throws IOException {
-        return FileUtils.readFileToString(reportFile);
-    }
 
 }

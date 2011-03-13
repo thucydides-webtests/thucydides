@@ -1,5 +1,6 @@
 package net.thucydides.core.model;
 
+import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 import net.thucydides.core.util.EqualsUtils;
 
 /**
@@ -30,6 +31,15 @@ public class UserStory {
         this.name = name;
         this.code = code;
         this.source = source;
+    }
+
+    public String getReportName(final ReportNamer.ReportType type) {
+        ReportNamer reportNamer = new ReportNamer(type);
+        return reportNamer.getNormalizedTestNameFor(this);
+    }
+
+    public String getReportName() {
+        return getReportName(ROOT);
     }
 
     @Override
