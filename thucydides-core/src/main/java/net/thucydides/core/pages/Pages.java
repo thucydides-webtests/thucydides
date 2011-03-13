@@ -1,6 +1,6 @@
 package net.thucydides.core.pages;
 
-import static net.thucydides.core.WebdriverSystemProperty.BASE_URL;
+import static net.thucydides.core.ThucydidesSystemProperty.BASE_URL;
 
 import java.lang.reflect.Constructor;
 

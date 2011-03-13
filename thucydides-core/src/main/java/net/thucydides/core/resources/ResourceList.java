@@ -33,24 +33,24 @@ public final class ResourceList {
      * @return the resources in the order they are found
      */
     public static Collection<String> getResources(final Pattern pattern) {
-        final ArrayList<String> retval = new ArrayList<String>();
+        final ArrayList<String> resources = new ArrayList<String>();
         final String classPath = System.getProperty("java.class.path", ".");
         final String[] classPathElements = classPath.split(":");
         for (final String element : classPathElements) {
-            retval.addAll(getResources(element, pattern));
+            resources.addAll(getResources(element, pattern));
         }
-        return retval;
+        return resources;
     }
 
     private static Collection<String> getResources(final String element, final Pattern pattern) {
-        final ArrayList<String> retval = new ArrayList<String>();
+        final ArrayList<String> resources = new ArrayList<String>();
         final File file = new File(element);
         if (isAJarFile(file)) {
-            retval.addAll(getResourcesFromJarFile(file, pattern));
+            resources.addAll(getResourcesFromJarFile(file, pattern));
         } else {
-            retval.addAll(getResourcesFromDirectory(file, pattern));
+            resources.addAll(getResourcesFromDirectory(file, pattern));
         }
-        return retval;
+        return resources;
     }
     
     private static boolean isAJarFile(final File file) {
@@ -93,7 +93,7 @@ public final class ResourceList {
     }
 
     private static Collection<String> getResourcesFromDirectory(final File directory,
-            final Pattern pattern) {
+                                                                final Pattern pattern) {
         final ArrayList<String> retval = new ArrayList<String>();
         final File[] fileList = directory.listFiles();
         if (fileList != null) {

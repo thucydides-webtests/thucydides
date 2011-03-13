@@ -4,14 +4,10 @@ import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 
 import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
 import com.google.common.base.Preconditions;
@@ -20,57 +16,27 @@ import com.google.common.base.Preconditions;
  * Generates acceptance test results in XML form.
  * 
  */
-public class HtmlAcceptanceTestReporter implements AcceptanceTestReporter {
+public class HtmlAcceptanceTestReporter extends HtmlReporter implements AcceptanceTestReporter {
 
-    private static final String DEFAULT_RESOURCE_DIRECTORY = "report-resources";
-
-    private File outputDirectory;
+    private static final String DEFAULT_ACCEPTANCE_TEST_REPORT = "velocity/default.vm";
     
-    private TemplateManager templateManager = new TemplateManager();
-    
-    private String resourceDirectory = DEFAULT_RESOURCE_DIRECTORY;
-    
-    /**
-     * Resources such as CSS stylesheets or images.
-     */
-    public void setResourceDirectory(final String resourceDirectory) {
-        this.resourceDirectory = resourceDirectory;
+    public HtmlAcceptanceTestReporter() {
+        setTemplatePath(DEFAULT_ACCEPTANCE_TEST_REPORT);
     }
-
     /**
      * Generate an XML report for a given test run.
      */
     public File generateReportFor(final AcceptanceTestRun testRun) throws IOException {
 
-        Preconditions.checkNotNull(outputDirectory);
+        Preconditions.checkNotNull(getOutputDirectory());
 
-        String htmlContents = "";
-        Template template = getTemplate();
         VelocityContext context = new VelocityContext();
         context.put("testrun", testRun);
-        StringWriter sw = new StringWriter();
-        template.merge(context, sw);
-        htmlContents = sw.toString();
+        String htmlContents = mergeVelocityTemplate(context);
+
+        copyResourcesToOutputDirectory();
 
         String reportFilename = testRun.getReportName(HTML);
-        File report = new File(getOutputDirectory(), reportFilename);
-        FileUtils.writeStringToFile(report, htmlContents);
-
-        HtmlResourceCopier copier = new HtmlResourceCopier(resourceDirectory);
-        copier.copyHTMLResourcesTo(getOutputDirectory());
-        return report;
+        return writeReportToOutputDirectory(reportFilename, htmlContents);
     }
-
-    private Template getTemplate() {
-        return templateManager.getTemplateFrom("velocity/default.vm");
-    }
-
-    public File getOutputDirectory() {
-        return outputDirectory;
-    }
-
-    public void setOutputDirectory(final File outputDirectory) {
-        this.outputDirectory = outputDirectory;
-    }
-
 }

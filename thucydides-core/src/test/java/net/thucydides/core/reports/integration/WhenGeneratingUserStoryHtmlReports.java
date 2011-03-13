@@ -13,6 +13,7 @@ import java.io.IOException;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.UserStory;
 import net.thucydides.core.model.UserStoryTestResults;
+import net.thucydides.core.reports.UserStoryTestReporter;
 import net.thucydides.core.reports.html.HtmlUserStoryTestReporter;
 
 import org.apache.commons.io.FileUtils;
@@ -29,7 +30,7 @@ public class WhenGeneratingUserStoryHtmlReports {
     private UserStory userStory = new UserStory("A User Story", "", "");
     private UserStoryTestResults userStoryTestResults;
 
-    private HtmlUserStoryTestReporter reporter;
+    private UserStoryTestReporter reporter;
 
     private File outputDirectory;
 

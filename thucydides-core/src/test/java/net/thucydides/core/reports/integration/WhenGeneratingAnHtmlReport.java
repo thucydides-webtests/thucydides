@@ -4,16 +4,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import java.io.File;
-import java.io.IOException;
 
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.MethodRule;
 import org.junit.rules.TemporaryFolder;
 
 public class WhenGeneratingAnHtmlReport {
@@ -28,9 +28,7 @@ public class WhenGeneratingAnHtmlReport {
     @Before
     public void setupTestReporter() {
         reporter = new HtmlAcceptanceTestReporter();
-
         outputDirectory = temporaryDirectory.newFolder("target/thucydides");
-
         reporter.setOutputDirectory(outputDirectory);
     }
 
@@ -70,12 +68,62 @@ public class WhenGeneratingAnHtmlReport {
         reporter.generateReportFor(testRun);
         
         File report = new File(outputDirectory,"a_simple_test_case.html");
-        File cssStylesheet = new File(outputDirectory,"default.css");
+        File cssDir = new File(outputDirectory, "css");
+        File cssStylesheet = new File(cssDir, "core.css");
         assertThat(cssStylesheet.exists(), is(true));
         assertThat(report.exists(), is(true));
-
     }
     
+    @Test
+    public void the_resources_can_come_from_a_different_location_in_a_jar_file() throws Exception {
+
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setMethodName("a_simple_test_case");
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        final String alternativeResourceDirectory = "alt-report-resources";
+        reporter.setResourceDirectory(alternativeResourceDirectory);
+        reporter.generateReportFor(testRun);
+        
+        File expectedCssStylesheet = new File(new File(outputDirectory,"css"), "alternative.css");
+        assertThat(expectedCssStylesheet.exists(), is(true));
+    }
+
+
+    @Rule
+    public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
+
+    @Test
+    public void a_different_resource_location_can_be_specified_by_using_a_system_property() throws Exception {
+
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setMethodName("a_simple_test_case");
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        System.setProperty("thucydides.report.resources", "alt-report-resources");
+        reporter.generateReportFor(testRun);
+        
+        File expectedCssStylesheet = new File(new File(outputDirectory,"css"), "alternative.css");
+        assertThat(expectedCssStylesheet.exists(), is(true));
+    }
+
+    @Test
+    public void when_an_alternative_resource_directory_is_used_the_default_stylesheet_is_not_copied() throws Exception {
+
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setMethodName("a_simple_test_case");
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        final String alternativeResourceDirectory = "alt-report-resources";
+        reporter.setResourceDirectory(alternativeResourceDirectory);
+        reporter.generateReportFor(testRun);
+        
+        File defaultCssStylesheet = new File(new File(outputDirectory,"css"), "core.css");
+        assertThat(defaultCssStylesheet.exists(), is(false));
+    }
+    
+    
+
     @Test
     public void a_sample_report_should_be_generated_in_the_target_directory() throws Exception {
 

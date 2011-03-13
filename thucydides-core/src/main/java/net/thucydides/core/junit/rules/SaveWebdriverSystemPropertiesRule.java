@@ -3,7 +3,7 @@ package net.thucydides.core.junit.rules;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.thucydides.core.WebdriverSystemProperty;
+import net.thucydides.core.ThucydidesSystemProperty;
 
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
@@ -20,12 +20,12 @@ public class SaveWebdriverSystemPropertiesRule implements MethodRule {
     
     private static final Map<String,String> ORIGINAL_WEB_DRIVER_PROPERTY_VALUES = new HashMap<String,String>();
     {
-        for (WebdriverSystemProperty property : WebdriverSystemProperty.values()) {
+        for (ThucydidesSystemProperty property : ThucydidesSystemProperty.values()) {
             savePropertyValueFor(property);
         }                        
     }
     
-    private static void savePropertyValueFor(final WebdriverSystemProperty property) {
+    private static void savePropertyValueFor(final ThucydidesSystemProperty property) {
         String propertyName = property.getPropertyName();
         String currentValue = System.getProperty(propertyName);
         if (currentValue != null) {
@@ -49,12 +49,12 @@ public class SaveWebdriverSystemPropertiesRule implements MethodRule {
 
             private void restoreOldSystemProperties() {
                 
-                for (WebdriverSystemProperty property : WebdriverSystemProperty.values()) {
+                for (ThucydidesSystemProperty property : ThucydidesSystemProperty.values()) {
                     restorePropertyValueFor(property);
                 }                        
             }
 
-            private void restorePropertyValueFor(final WebdriverSystemProperty property) {
+            private void restorePropertyValueFor(final ThucydidesSystemProperty property) {
                 String propertyName = property.getPropertyName();
                 String originalValue = ORIGINAL_WEB_DRIVER_PROPERTY_VALUES.get(propertyName);
                 if (originalValue != null) {                        

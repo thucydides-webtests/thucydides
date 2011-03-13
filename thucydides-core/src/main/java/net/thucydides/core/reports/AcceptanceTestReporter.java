@@ -6,7 +6,7 @@ import java.io.IOException;
 import net.thucydides.core.model.AcceptanceTestRun;
 
 /**
- * Generates a report based on a set of acceptence test results.
+ * Generates a report based on a set of acceptance test results.
  *
  * @author johnsmart
  *
@@ -26,7 +26,6 @@ public interface AcceptanceTestReporter {
     /**
      * Define or override the directory where report resources are stored.
      * This can be on the file system or on the classpath
-     * @param resourceDirectory
      */
     void setResourceDirectory(String resourceDirectoryPath);
     

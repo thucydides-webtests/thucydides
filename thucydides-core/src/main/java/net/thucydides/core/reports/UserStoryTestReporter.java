@@ -10,29 +10,22 @@ import net.thucydides.core.model.UserStoryTestResults;
  * The class reads all the reports from the output directory and generates an aggregate report
  * summarizing the results using the generateReportsFor() method.
  */
-public abstract class UserStoryTestReporter {
-
-    private File outputDirectory;
-
-    private File sourceDirectory;
+public interface UserStoryTestReporter {
 
     /**
      * Where do report resources come from.
      * We don't need any resources for XML reports, so this does nothing by default.
      */
-    public void setResourceDirectory(final String resourceDirectoryPath) {
-    }
+    void setResourceDirectory(final String resourceDirectoryPath);
 
     /**
-     * Generate an aggregate report for the test results of a single user story.
+     * Generates a set of user story reports from a given directory.
      */
-    public abstract File generateReportFor(final UserStoryTestResults aggregateTestResults) throws IOException;
+    void generateReportsForStoriesFrom(final File sourceDirectory) throws IOException;
+    
+    File getOutputDirectory();
 
-    public File getOutputDirectory() {
-        return outputDirectory;
-    }
+    void setOutputDirectory(final File outputDirectory);
 
-    public void setOutputDirectory(final File outputDirectory) {
-        this.outputDirectory = outputDirectory;
-    }
+    File generateReportFor(UserStoryTestResults userStoryTestResults) throws IOException;
 }

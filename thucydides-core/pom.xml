@@ -52,9 +52,15 @@
         	<version>1.7</version>
         </dependency>
         <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-report-resources</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
         	<groupId>net.thucydides</groupId>
-        	<artifactId>thucydides-report-resources</artifactId>
+        	<artifactId>thucydides-sample-alternative-resources</artifactId>
         	<version>0.1.1-SNAPSHOT</version>
+        	<scope>test</scope>
         </dependency>
     </dependencies>
 </project>
