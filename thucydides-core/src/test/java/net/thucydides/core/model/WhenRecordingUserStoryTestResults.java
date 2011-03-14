@@ -4,6 +4,7 @@ import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.*;
 
@@ -33,6 +34,50 @@ public class WhenRecordingUserStoryTestResults {
         Assert.assertThat(userStoryTestResults.getTestRuns(), allOf(hasItem(testRun1), hasItem(testRun2)));
     }
     
+    @Test
+    public void a_user_story_is_successful_if_all_tests_are_successful() {
+        AcceptanceTestRun testRun1 = thatSucceedsCalled("Test Run 1");
+        AcceptanceTestRun testRun2 = thatSucceedsCalled("Test Run 2");
+
+        userStoryTestResults.recordTestRun(testRun1);
+        userStoryTestResults.recordTestRun(testRun2);
+
+        Assert.assertThat(userStoryTestResults.getResult(), is(TestResult.SUCCESS));
+    }
+
+    
+    @Test
+    public void a_user_story_fails_if_at_least_one_test_fails() {
+        AcceptanceTestRun testRun1 = thatSucceedsCalled("Test Run 1");
+        AcceptanceTestRun testRun2 = thatFailsCalled("Test Run 2");
+
+        userStoryTestResults.recordTestRun(testRun1);
+        userStoryTestResults.recordTestRun(testRun2);
+
+        Assert.assertThat(userStoryTestResults.getResult(), is(TestResult.FAILURE));
+    }
+
+    @Test
+    public void a_user_story_is_pending_if_at_least_one_test_is_pending() {
+        AcceptanceTestRun testRun1 = thatSucceedsCalled("Test Run 1");
+        AcceptanceTestRun testRun2 = thatIsPendingCalled("Test Run 2");
+
+        userStoryTestResults.recordTestRun(testRun1);
+        userStoryTestResults.recordTestRun(testRun2);
+
+        Assert.assertThat(userStoryTestResults.getResult(), is(TestResult.PENDING));
+    }
+
+    @Test
+    public void a_user_story_is_ignored_if_all_tests_are_ignored() {
+        AcceptanceTestRun testRun1 = thatIsIgnoredCalled("Test Run 2");
+        AcceptanceTestRun testRun2 = thatIsIgnoredCalled("Test Run 2");
+
+        userStoryTestResults.recordTestRun(testRun1);
+        userStoryTestResults.recordTestRun(testRun2);
+
+        Assert.assertThat(userStoryTestResults.getResult(), is(TestResult.IGNORED));
+    }
 
     @Test
     public void an_aggregate_test_result_should_count_the_number_of_failed_test_runs() {
@@ -90,4 +135,13 @@ public class WhenRecordingUserStoryTestResults {
         testRun.recordStep(pendingTestStepCalled("Step 5"));
         return testRun;
     }
+    
+    private AcceptanceTestRun thatIsIgnoredCalled(String title) {
+        AcceptanceTestRun testRun = new AcceptanceTestRun(title);
+        testRun.recordStep(ignoredTestStepCalled("Step 1"));
+        testRun.recordStep(ignoredTestStepCalled("Step 2"));
+        testRun.recordStep(ignoredTestStepCalled("Step 3"));
+        return testRun;
+    }
+
 }
