@@ -17,12 +17,13 @@ import net.thucydides.junit.steps.StepFactory;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.fail;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class WhenInstantiatingStepLibraries {
+public class WhenUsingStepLibraries {
 
     StepFactory stepFactory;
     
@@ -206,7 +207,7 @@ public class WhenInstantiatingStepLibraries {
         assertThat(result.getFailureCount(), is(1));
     }
     
-    @Test(expected=AssertionError.class)
+    @Test
     public void the_proxy_should_notify_of_failure_details_in_result() throws Exception {
         
         ResultStoreListener resultlistener = new ResultStoreListener();
@@ -216,11 +217,61 @@ public class WhenInstantiatingStepLibraries {
         steps.anotherStepThatSucceeds();
         steps.stepThatFails();        
         steps.stepThatIsPending();
+
+        try {
+            steps.done();
+            fail("Test failure should have caused an exception");
+        } catch(AssertionError e) {
+            Result result = resultlistener.savedResult;
+            assertThat(result.getFailures().size(), is(1));
+            assertThat(result.getRunCount(), is(3));
+        }
+    }
+    
+    @Test
+    public void test_steps_can_be_organized_in_groups_using_the_TestGroup_annotation() throws Exception {
+        
+        steps.groupOfSteps();
+
+        verify(listener).testFinished(argThat(hasDescriptionMethodName(containsString("stepThatSucceeds"))));
+        verify(listener).testFailure(argThat(hasMethodName(containsString("stepThatFails"))));
+        verify(listener).testIgnored(argThat(hasDescriptionMethodName(containsString("stepThatShouldBeSkipped"))));
+
+    }
+
+    @Test
+    public void test_groups_do_not_affect_test_results() throws Exception {
+        
+        ResultStoreListener resultlistener = new ResultStoreListener();
+        
+        stepFactory.addListener(resultlistener);
+        steps.groupOfSteps();
+
+        verify(listener).testFinished(argThat(hasDescriptionMethodName(containsString("stepThatSucceeds"))));
+        verify(listener).testFailure(argThat(hasMethodName(containsString("stepThatFails"))));
+        verify(listener).testIgnored(argThat(hasDescriptionMethodName(containsString("stepThatShouldBeSkipped"))));
+
+        try {
+            steps.done();
+            fail("Test failure should have caused an exception");
+        } catch(AssertionError e) {
+            Result result = resultlistener.savedResult;
+            assertThat(result.wasSuccessful(), is(false));
+            assertThat(result.getIgnoreCount(), is(1));
+            assertThat(result.getFailureCount(), is(1));
+            assertThat(result.getRunCount(), is(2));
+        }
+        
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void errors_within_a_test_group_should_throw_an_exception() throws Exception {
+        
+        ResultStoreListener resultlistener = new ResultStoreListener();
+        
+        stepFactory.addListener(resultlistener);
+        steps.groupOfStepsContainingAnError();
         steps.done();
-        
-        Result result = resultlistener.savedResult;
-        
-        assertThat(result.getFailures().size(), is(1));
     }
     
 }

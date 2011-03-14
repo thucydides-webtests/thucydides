@@ -1,6 +1,5 @@
 package net.thucydides.junit.steps;
 
-import static net.thucydides.junit.hamcrest.ThucydidesMatchers.withName;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;

@@ -1,12 +1,14 @@
 package net.thucydides.junit.steps.junit;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import net.thucydides.junit.annotations.Pending;
 import net.thucydides.junit.annotations.Step;
+import net.thucydides.junit.annotations.StepGroup;
 import net.thucydides.junit.steps.StepResult;
 
 import org.junit.Ignore;
@@ -24,6 +26,7 @@ public class StepInterceptor implements MethodInterceptor {
     private final List<RunListener> listeners;
     private final Class<?> testStepClass;
     private StepResult resultTally;
+    private List<Throwable> stepExceptions;
     
     private boolean failureHasOccured = false;
     private Throwable error = null;
@@ -33,6 +36,7 @@ public class StepInterceptor implements MethodInterceptor {
         this.listeners = listeners;
         this.failureHasOccured = false;
         this.resultTally = new StepResult();
+        this.stepExceptions = new ArrayList<Throwable>();
     }
 
     public Object intercept(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
@@ -43,6 +47,18 @@ public class StepInterceptor implements MethodInterceptor {
             ifAnErrorOccuredThrow(error);
             return null;
         }
+        
+        if (isATestGroup(method)) {
+            return runTestGroupStep(obj, method, args, proxy);
+        } else {
+            return testStepResult(obj, method, args, proxy);
+        }
+        
+    }
+
+    private Object testStepResult(Object obj, Method method, Object[] args,
+                                  MethodProxy proxy) throws Throwable {
+
         if (!isATestStep(method)) {
             return invokeMethod(obj, method, args, proxy);
         }
@@ -58,6 +74,26 @@ public class StepInterceptor implements MethodInterceptor {
         }
         
         return runTestStep(obj, method, args, proxy);
+        
+    }
+
+    private Object runTestGroupStep(Object obj, Method method, Object[] args,
+            MethodProxy proxy) throws Throwable {
+
+        Object result = null;
+        try {
+            result = proxy.invokeSuper(obj, args);
+        } catch (Throwable e) {
+            if (!stepExceptions.contains(e)) {
+                throw e;
+            }
+        }
+        return result;
+    }
+
+    private boolean isATestGroup(Method method) {
+        StepGroup stepGroupAnnotation = (StepGroup) method.getAnnotation(StepGroup.class);
+        return (stepGroupAnnotation != null);
     }
 
     private boolean isATestStep(final Method method) {
@@ -78,6 +114,7 @@ public class StepInterceptor implements MethodInterceptor {
             notifyTestFinishedFor(method, args);
         } catch (Throwable e) {
             error = e;
+            stepExceptions.add(e);
             notifyFailureOf(method, args, e);
             failureHasOccured = true;
         }

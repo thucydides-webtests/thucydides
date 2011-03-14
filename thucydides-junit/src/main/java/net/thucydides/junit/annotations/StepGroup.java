@@ -5,10 +5,9 @@ import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.RetentionPolicy;
 /**
- * A step in an acceptance test.
- * Steps are like mini unit-tests, executed in a predetermined order. 
+ * A group of steps
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Step {}
+public @interface StepGroup {}

@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Pending;
 import net.thucydides.junit.annotations.Step;
+import net.thucydides.junit.annotations.StepGroup;
 import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.annotations.TestsRequirements;
 import net.thucydides.junit.steps.ScenarioSteps;
@@ -63,6 +64,23 @@ public class SampleScenarioSteps extends ScenarioSteps {
     
     @Step
     public void stepWithTwoParameters(String value, int number) {
+    }
+    
+    @StepGroup
+    public void groupOfSteps() {
+        stepThatSucceeds();
+        stepThatFails();
+        stepThatShouldBeSkipped();
+        
+    }
+
+    @StepGroup
+    public void groupOfStepsContainingAnError() {
+        stepThatSucceeds();
+        anotherStepThatSucceeds();
+        String nullString = null;
+        int thisShouldFail = nullString.length();
+        
     }
 
 }
