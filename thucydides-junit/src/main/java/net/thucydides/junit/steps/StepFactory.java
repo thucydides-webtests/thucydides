@@ -8,6 +8,7 @@ import org.junit.runner.notification.RunListener;
 import net.sf.cglib.proxy.Enhancer;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.junit.runners.TestCaseAnnotations;
 
 /**
  * Produces an instance of a set of requirement steps for use in the acceptance tests.
@@ -37,14 +38,24 @@ public class StepFactory {
      * This is actually a proxy that allows reporting and screenshots to
      * be performed at each step.
      */
-    public ScenarioSteps newSteps(final Class<? extends ScenarioSteps> testClass) {
+    public ScenarioSteps newSteps(final Class<? extends ScenarioSteps> scenarioStepsClass) {
         Enhancer e = new Enhancer();
-        e.setSuperclass(testClass);
-        StepInterceptor stepInterceptor = new StepInterceptor(testClass, listeners);
+        e.setSuperclass(scenarioStepsClass);
+        StepInterceptor stepInterceptor = new StepInterceptor(scenarioStepsClass, listeners);
         e.setCallback(stepInterceptor);
         
         Object[] arguments = new Object[1];
         arguments[0] = pages;
-        return (ScenarioSteps) e.create(CONSTRUCTOR_ARG_TYPES, arguments);
+        ScenarioSteps steps = (ScenarioSteps) e.create(CONSTRUCTOR_ARG_TYPES, arguments);
+
+        instanciateAnyNestedStepLibrariesIn(steps, scenarioStepsClass);
+        
+        return steps;
+
+    }
+
+    private void instanciateAnyNestedStepLibrariesIn(final ScenarioSteps steps, 
+                                                     final Class<? extends ScenarioSteps> scenarioStepsClass){
+        TestCaseAnnotations.injectNestedScenarioStepsInto(steps, this, scenarioStepsClass);
     }
 }

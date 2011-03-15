@@ -2,23 +2,15 @@ package net.thucydides.core.steps;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
+import static org.mockito.Mockito.when;
 import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepProvider;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.steps.StepIndex;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.mockito.Mockito.*;
 import org.openqa.selenium.WebDriver;
 
 public class WhenOrganizingTestStepsInAScenario {

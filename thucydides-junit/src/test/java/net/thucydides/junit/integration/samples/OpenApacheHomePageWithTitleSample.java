@@ -1,9 +1,9 @@
 package net.thucydides.junit.integration.samples;
 
+import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.ManagedPages;
-import net.thucydides.junit.annotations.Steps;
 import net.thucydides.junit.annotations.UserStoryCode;
 import net.thucydides.junit.annotations.Title;
 import net.thucydides.junit.annotations.TestsRequirement;

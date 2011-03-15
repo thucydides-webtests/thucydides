@@ -1,5 +1,7 @@
 package net.thucydides.junit.runners;
 
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
 
 import net.thucydides.core.pages.Pages;
@@ -35,7 +37,7 @@ public final class TestCaseAnnotations {
      * There must be a ScenarioSteps field in the test case annotated with the Steps annotation.
      */
     private static void checkThatStepsFieldIsDefinedIn(final  Class<?> testCase) {
-        StepsAnnotatedField.findFirstAnnotatedField(testCase);
+        StepsAnnotatedField.findMandatoryAnnotatedFields(testCase);
     }
 
     /**
@@ -57,13 +59,30 @@ public final class TestCaseAnnotations {
     }
 
     /**
-     * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
+     * Instantiates the step scenario fields in a test case.
      */
     public static void injectScenarioStepsInto(final Object testCase, final StepFactory stepFactory) {
-       StepsAnnotatedField stepsField = StepsAnnotatedField.findFirstAnnotatedField(testCase.getClass());
-       Class<? extends ScenarioSteps> scenarioStepsClass = stepsField.getFieldClass();
-       ScenarioSteps steps = (ScenarioSteps) stepFactory.newSteps(scenarioStepsClass);  
-       stepsField.setValue(testCase, steps);
+        List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findMandatoryAnnotatedFields(testCase.getClass());
+        instanciateScenarioStepFields(testCase, stepFactory, stepsFields);
+     }
+
+    public static void injectNestedScenarioStepsInto(final ScenarioSteps scenarioSteps, 
+                                                     final StepFactory stepFactory,
+                                                     final Class<? extends ScenarioSteps> scenarioStepsClass) {
+        List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findOptionalAnnotatedFields(scenarioStepsClass);
+        instanciateScenarioStepFields(scenarioSteps, stepFactory, stepsFields);
+     }
+
+
+    private static void instanciateScenarioStepFields(
+            final Object testCaseOrSteps, final StepFactory stepFactory,
+            List<StepsAnnotatedField> stepsFields) {
+        for(StepsAnnotatedField stepsField : stepsFields) {
+               Class<? extends ScenarioSteps> scenarioStepsClass = stepsField.getFieldClass();
+               ScenarioSteps steps = (ScenarioSteps) stepFactory.newSteps(scenarioStepsClass);  
+               injectNestedScenarioStepsInto(steps, stepFactory, scenarioStepsClass);
+               stepsField.setValue(testCaseOrSteps, steps);
+           }
     }
 
     /**

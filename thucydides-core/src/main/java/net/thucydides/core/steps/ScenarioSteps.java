@@ -1,7 +1,6 @@
 package net.thucydides.core.steps;
 
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.screenshots.Photographer;
 
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;

@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.is;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.junit.annotations.TestsRequirement;
@@ -13,22 +12,17 @@ import net.thucydides.junit.annotations.TestsRequirements;
 
 import org.junit.Ignore;
 
-public class SampleScenarioSteps extends ScenarioSteps {
+public class SampleScenarioNestedSteps extends ScenarioSteps {
     
-    public SampleScenarioSteps(Pages pages) {
+    public SampleScenarioNestedSteps(Pages pages) {
         super(pages);
     }
 
-    @Steps
-    public SampleScenarioNestedSteps nestedSteps;
-    
     @Step
-    @TestsRequirement("LOW_LEVEL_BUSINESS_RULE")
     public void stepThatSucceeds() {
     }
 
     @Step
-    @TestsRequirements({"LOW_LEVEL_BUSINESS_RULE_1","LOW_LEVEL_BUSINESS_RULE_2"})
     public void anotherStepThatSucceeds() {
     }
 
@@ -47,12 +41,6 @@ public class SampleScenarioSteps extends ScenarioSteps {
     
     @Step
     public void stepThatShouldBeSkipped() {
-    }
-
-    @StepGroup("Nested group of steps")
-    public void stepThatCallsNestedSteps() {
-        nestedSteps.stepThatSucceeds();
-        nestedSteps.anotherStepThatSucceeds();
     }
 
     @Step
@@ -98,7 +86,6 @@ public class SampleScenarioSteps extends ScenarioSteps {
         anotherStepThatSucceeds();
         String nullString = null;
         int thisShouldFail = nullString.length();
-        
     }
 
 }
