@@ -23,6 +23,7 @@ public class GoogleResultsPage extends PageObject {
     }
 
     public List<String> getResultTitles() {
+        waitForRenderedElements(By.id("pnnext"));
         List<WebElement> results = getDriver().findElements(By.className("r"));
         List<String> resultTitles = new ArrayList<String>();
         for(WebElement result : results) {

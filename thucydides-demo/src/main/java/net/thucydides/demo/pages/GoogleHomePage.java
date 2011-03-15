@@ -24,5 +24,6 @@ public class GoogleHomePage extends PageObject {
     public void searchFor(String term) {
         query.sendKeys(term);
         searchButton.click();
+        waitABit(200);
     }
 }
