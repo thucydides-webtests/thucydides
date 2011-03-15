@@ -21,6 +21,12 @@ import org.slf4j.LoggerFactory;
  */
 public class UserStoryLoader {
 
+    private final class XmlFilenameFilter implements FilenameFilter {
+        public boolean accept(final File file, final String filename) {
+            return filename.toLowerCase().endsWith(".xml");
+        }
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UserStoryLoader.class);
 
     /**
@@ -66,13 +72,8 @@ public class UserStoryLoader {
 
 
 
-
     private File[] getAllXMLFilesFrom(final File reportsDirectory) {
-        File[] reportFiles = reportsDirectory.listFiles(new FilenameFilter() {
-            public boolean accept(final File file, final String filename) {
-                return filename.toLowerCase().endsWith(".xml");
-            }
-        });
+        File[] reportFiles = reportsDirectory.listFiles(new XmlFilenameFilter());
         return reportFiles;
     }
 }

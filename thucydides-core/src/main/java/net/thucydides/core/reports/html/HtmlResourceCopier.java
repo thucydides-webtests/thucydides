@@ -34,7 +34,7 @@ public class HtmlResourceCopier {
         Pattern resourcePattern = allFilesInDirectory(resourceDirectory);
         Collection<String> reportResources = ResourceList.getResources(resourcePattern);
         for (String resourcePath : reportResources) {
-            String targetSubDirectory = findTargetSubDirectoryFrom(resourcePath, targetDirectory);
+            String targetSubDirectory = findTargetSubDirectoryFrom(resourcePath);
             File copyTo = new File(targetDirectory, targetSubDirectory);
             if (resourceIsFromAJar(resourcePath) 
                 && (thisIsNotTheRoot(resourcePath)) 
@@ -52,16 +52,15 @@ public class HtmlResourceCopier {
         return !resourceDirectory.equals(resourcePath);
     }
 
-    private String findTargetSubDirectoryFrom(final String resourcePath, final File inTargetDirectory) 
+    private String findTargetSubDirectoryFrom(final String resourcePath) 
       throws IOException {
-        File targetDirectory = inTargetDirectory;
         if (resourcePath.startsWith(resourceDirectory)) {
             int subDirectoryStartsAt = resourceDirectory.length() + 1;
             String resourcePathName = resourcePath.substring(subDirectoryStartsAt);
             if (resourcePathName.endsWith("/")) {
                 return resourcePathName;
             } else {
-                targetDirectory = new File(resourcePathName).getParentFile();
+                File targetDirectory = new File(resourcePathName).getParentFile();
                 if (targetDirectory != null) {
                     return targetDirectory.getPath();
                 }
@@ -84,13 +83,16 @@ public class HtmlResourceCopier {
             new File(destinationFile.getParent()).mkdirs();
         }
         FileOutputStream out = new FileOutputStream(destinationFile);
-        byte[] buffer = new byte[BUFFER_SIZE];  
-        int bytesRead;  
-        while ((bytesRead = in.read(buffer)) != -1) {  
-            out.write(buffer, 0, bytesRead);  
-        }  
-        in.close();  
-        out.close(); 
+        try {
+            byte[] buffer = new byte[BUFFER_SIZE];  
+            int bytesRead;  
+            while ((bytesRead = in.read(buffer)) != -1) {  
+                out.write(buffer, 0, bytesRead);  
+            }  
+        } finally {
+            in.close();  
+            out.close(); 
+        }
     }
 
     private boolean resourceIsFromAJar(final String resourcePath) {

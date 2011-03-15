@@ -18,6 +18,42 @@ import org.junit.runners.model.Statement;
  */
 public class SaveWebdriverSystemPropertiesRule implements MethodRule {
     
+    private final class RestorePropertiesStatement extends Statement {
+        private final Statement statement;
+
+        private RestorePropertiesStatement(Statement statement) {
+            this.statement = statement;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            try {
+                statement.evaluate();
+            } catch(Throwable exception) {
+                throw exception;
+            } finally {
+                restoreOldSystemProperties();
+            }
+        }
+
+        private void restoreOldSystemProperties() {
+            
+            for (ThucydidesSystemProperty property : ThucydidesSystemProperty.values()) {
+                restorePropertyValueFor(property);
+            }                        
+        }
+
+        private void restorePropertyValueFor(final ThucydidesSystemProperty property) {
+            String propertyName = property.getPropertyName();
+            String originalValue = ORIGINAL_WEB_DRIVER_PROPERTY_VALUES.get(propertyName);
+            if (originalValue != null) {                        
+                System.setProperty(propertyName, originalValue);
+            } else {
+                System.clearProperty(propertyName);
+            }
+        }
+    }
+
     private static final Map<String,String> ORIGINAL_WEB_DRIVER_PROPERTY_VALUES = new HashMap<String,String>();
     {
         for (ThucydidesSystemProperty property : ThucydidesSystemProperty.values()) {
@@ -34,35 +70,6 @@ public class SaveWebdriverSystemPropertiesRule implements MethodRule {
     }
     
     public Statement apply(final Statement statement, final FrameworkMethod method, final Object target) {
-        return new Statement() {
-
-            @Override
-            public void evaluate() throws Throwable {
-                try {
-                    statement.evaluate();
-                } catch(Throwable exception) {
-                    throw exception;
-                } finally {
-                    restoreOldSystemProperties();
-                }
-            }
-
-            private void restoreOldSystemProperties() {
-                
-                for (ThucydidesSystemProperty property : ThucydidesSystemProperty.values()) {
-                    restorePropertyValueFor(property);
-                }                        
-            }
-
-            private void restorePropertyValueFor(final ThucydidesSystemProperty property) {
-                String propertyName = property.getPropertyName();
-                String originalValue = ORIGINAL_WEB_DRIVER_PROPERTY_VALUES.get(propertyName);
-                if (originalValue != null) {                        
-                    System.setProperty(propertyName, originalValue);
-                } else {
-                    System.clearProperty(propertyName);
-                }
-            }
-        };
+        return new RestorePropertiesStatement(statement);
     }    
 }

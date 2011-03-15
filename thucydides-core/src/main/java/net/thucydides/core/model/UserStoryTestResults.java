@@ -5,10 +5,6 @@ import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
 import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.IGNORED;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SUCCESS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,30 +106,8 @@ public class UserStoryTestResults {
 
     
     public TestResult getResult() {
-        List<TestResult> allTestResults = getCurrentTestResults();
-
-        if (allTestResults.contains(FAILURE)) {
-            return FAILURE;
-        }
-
-        if (allTestResults.contains(PENDING)) {
-            return PENDING;
-        }
-
-        if (containsOnly(allTestResults, IGNORED)) {
-            return IGNORED;
-        }
-
-        return SUCCESS;
-    }
-
-    private boolean containsOnly(final List<TestResult> testResults, final TestResult value) {
-        for (TestResult result : testResults) {
-            if (result != value) {
-                return false;
-            }
-        }
-        return true;
+        TestResultList testResults = new TestResultList(getCurrentTestResults());
+        return testResults.getOverallResult();
     }
 
     /**

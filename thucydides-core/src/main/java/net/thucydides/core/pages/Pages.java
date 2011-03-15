@@ -5,6 +5,8 @@ import static net.thucydides.core.ThucydidesSystemProperty.BASE_URL;
 import java.lang.reflect.Constructor;
 
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
@@ -22,6 +24,8 @@ public class Pages {
 
     private String defaultBaseUrl;
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(Pages.class);
+
     public Pages(final WebDriver driver) {
         this.driver = driver;
     }
@@ -73,7 +77,7 @@ public class Pages {
             PageObject pageCandidate = getCurrentPageOfType(pageObjectClass);
             String currentUrl = driver.getCurrentUrl();
             return (pageCandidate.compatibleWithUrl(currentUrl));
-        } catch (WrongPageException e) {
+        } catch (WrongPageError e) {
             return false;
         }
     }
@@ -94,9 +98,8 @@ public class Pages {
             Constructor<? extends PageObject> constructor 
                 = (Constructor<? extends PageObject>) pageObjectClass.getConstructor(constructorArgs);
             currentPage = (PageObject) constructor.newInstance(driver);
-            //currentPage.setDriver(driver);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.info("Failed to instanciate page of type " + pageObjectClass, e);
             thisIsNotThePageYourLookingFor(pageObjectClass);
         }        
         return currentPage;
@@ -108,6 +111,6 @@ public class Pages {
             + "I was looking for a page compatible with " + pageObjectClass + "\n"
             + "I was at the URL " + driver.getCurrentUrl();
         
-        throw new WrongPageException(errorDetails);
+        throw new WrongPageError(errorDetails);
     }
 }

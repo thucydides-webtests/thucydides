@@ -1,5 +1,6 @@
 package net.thucydides.core.model;
 
+
 /**
  * Acceptance test results. 
  * Records the possible outcomes of tests within an acceptance test case
@@ -40,5 +41,6 @@ public enum TestResult {
      * In a JUnit test case, you can use the (Thucydides) @Pending annotation to mark this.
      * A pending test case is a test case that has at least one pending test.
      */
-    PENDING
+    PENDING;
+    
 }

@@ -112,7 +112,7 @@ public class ScenarioStepListener extends RunListener {
     }
 
     @Override
-    public void testStarted(Description description) throws Exception {
+    public void testStarted(final Description description) throws Exception {
         super.testStarted(description);
         getCurrentTestStepFrom(description);
         if (description.getAnnotation(StepGroup.class) != null) {

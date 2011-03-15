@@ -6,7 +6,6 @@ import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
 import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 
@@ -132,25 +131,10 @@ public class AcceptanceTestRun {
      * of the tests succeed except the ignored tests, the test is a success.
      */
     public TestResult getResult() {
-        List<TestResult> allTestResults = getCurrentTestResults();
-        return getOverallResultFor(allTestResults);
+        TestResultList testResults = new TestResultList(getCurrentTestResults());
+        return testResults.getOverallResult();
     }
 
-    private TestResult getOverallResultFor(List<TestResult> allTestResults) {
-        if (allTestResults.contains(FAILURE)) {
-            return FAILURE;
-        }
-
-        if (allTestResults.contains(PENDING)) {
-            return PENDING;
-        }
-
-        if (containsOnly(allTestResults, IGNORED)) {
-            return IGNORED;
-        }
-
-        return SUCCESS;
-    }
 
     /**
      * Add a test step to this acceptance test.
@@ -161,15 +145,6 @@ public class AcceptanceTestRun {
         Preconditions.checkNotNull(step.getResult(), "The test step result was not defined");
 
         testSteps.add(step);
-    }
-
-    private boolean containsOnly(final List<TestResult> testResults, final TestResult value) {
-        for (TestResult result : testResults) {
-            if (result != value) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
@@ -247,12 +222,12 @@ public class AcceptanceTestRun {
         return duration;
     }
 
-    public TestResult getResultForGroup(String group) {
-        List<TestResult> testResultsInGroup = getTestResultsInGroup(group);
-        return getOverallResultFor(testResultsInGroup);
+    public TestResult getResultForGroup(final String group) {
+        TestResultList testResults = new TestResultList(getTestResultsInGroup(group));
+        return testResults.getOverallResult();
     }
 
-    private List<TestResult> getTestResultsInGroup(String group) {
+    private List<TestResult> getTestResultsInGroup(final String group) {
         List<TestResult> results = new ArrayList<TestResult>();
         for(TestStep step : getTestSteps()) {
             if (step.isInGroup(group)) {

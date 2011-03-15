@@ -44,7 +44,7 @@ public abstract class StepIndex {
 
     public List<Class<? extends ScenarioSteps>> getStepClasses() {
         Field stepProviderField = getStepProviderField();
-        List<Class<? extends ScenarioSteps>> stepProviders = new ArrayList<Class<? extends ScenarioSteps>>();
+        List<Class<? extends ScenarioSteps>> stepProviders;
         try {
             Class<?>[] providerFieldValue = (Class<?>[]) stepProviderField.get(this);
             stepProviders = getStepProvidersFrom(providerFieldValue);

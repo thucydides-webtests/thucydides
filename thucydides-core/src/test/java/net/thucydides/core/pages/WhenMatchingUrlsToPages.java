@@ -173,7 +173,7 @@ public class WhenMatchingUrlsToPages {
         pages.currentPageAt(PageWithUrlDefinitions.class);
     }
 
-    @Test(expected=WrongPageException.class)
+    @Test(expected=WrongPageError.class)
     public void should_throw_exception_if_not_on_right_page() {
         WebDriver driver = mock(WebDriver.class);
         when(driver.getCurrentUrl()).thenReturn("https://www.placemyad.com.au/common/somewhereElse");
@@ -181,7 +181,7 @@ public class WhenMatchingUrlsToPages {
         pages.currentPageAt(PageWithUrlDefinitions.class);
     }
     
-    @Test(expected=WrongPageException.class)
+    @Test(expected=WrongPageError.class)
     public void should_throw_exception_if_fetching_a_page_of_the_wrong_type() {
         WebDriver driver = mock(WebDriver.class);
         when(driver.getCurrentUrl()).thenReturn("https://www.placemyad.com.au/common/microRegistration");

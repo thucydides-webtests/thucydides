@@ -16,7 +16,7 @@ public class ThucydidesPlugin extends BasePlugin {
      */
     private WebDriverFactory webDriverFactory;
 
-    WebdriverManager webdriverManager;
+    private WebdriverManager webdriverManager;
   
     /**
      * Retrieve the runner configuration from an external source.
