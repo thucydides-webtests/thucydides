@@ -249,6 +249,29 @@ public class WhenGeneratingAnXMLReport {
     }
     
     @Test
+    public void should_include_the_step_group_if_present()
+            throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS' group='TestStepGroup'>\n"
+                + "    <description>step 1</description>\n"
+                + "    <screenshot>step_1.png</screenshot>\n"
+                + "  </test-step>\n"
+                + "</acceptance-test-run>";
+
+        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        File screenshot = temporaryDirectory.newFile("step_1.png");
+        step1.setScreenshot(screenshot);
+        step1.setGroup("TestStepGroup");
+        testRun.recordStep(step1);
+
+        File xmlReport = reporter.generateReportFor(testRun);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }
+
+    @Test
     public void should_include_error_message_for_failing_test()
             throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");

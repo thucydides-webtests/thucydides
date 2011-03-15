@@ -1,13 +1,13 @@
 package net.thucydides.junit.integration.samples;
 
+import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.annotations.Step;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.WrongPageException;
-import net.thucydides.junit.annotations.Pending;
-import net.thucydides.junit.annotations.Step;
+import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.integration.pages.ApacheHomePage;
 import net.thucydides.junit.integration.pages.ApacheProjectPage;
-import net.thucydides.junit.steps.ScenarioSteps;
 
 public class ApacheScenarioSteps extends ScenarioSteps {
     

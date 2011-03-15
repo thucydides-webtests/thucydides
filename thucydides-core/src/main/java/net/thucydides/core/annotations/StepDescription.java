@@ -1,4 +1,4 @@
-package net.thucydides.junit.annotations;
+package net.thucydides.core.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

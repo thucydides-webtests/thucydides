@@ -90,14 +90,16 @@ a:active {
  <div class="toptableraw">
   	      <table width="980" height="50" border="0">
   <tr>
-    <td width="35">&nbsp;</td>
-    <td width="%" class="greentext">Step</td>
+    <td width="40">&nbsp;</td>
+    <td width="%" class="greentext">Steps</td>
     <td width="150" class="greentext">Screenshot</td>
     <td width="150" class="greentext">Outcome</td>
     <td width="75" class="greentext">Duration</td>
   </tr>
 </table>
 </div>
+
+#set($current_group = "<NOGROUP>")
 
 #foreach($step in $testrun.TestSteps)
     #if ($step.result == "FAILURE")
@@ -110,11 +112,41 @@ a:active {
 		#set( $step_outcome_icon = "ignor.png" )
     #end
 
+#if ($step.group != $current_group)
+    #if ($step.group)
+        #set( $current_group = $step.group ) 
+        #set( $current_group_result = $testrun.getResultForGroup($step.group) )
+        #set($step_icon_size = 20)
+        #set($step_class_root = "nested")
+        #if ($current_group_result == "FAILURE")
+            #set( $group_outcome_icon = "fail.png" )
+        #elseif ($current_group_result == "SUCCESS")
+            #set( $group_outcome_icon = "success.png" )
+        #elseif ($current_group_result == "PENDING")
+            #set( $group_outcome_icon = "pending.png" )
+        #else
+            #set( $outcome_icon = "ignor.png" )
+        #end
+        <div class="tableraw">
+        <table border="0" width="980"  height="40" >
+          <tr class="test-$current_group_result">
+            <td width="40"><img src="images/$group_outcome_icon" width="25" height="25" /></td>
+            <td width="%" colspan="2"><span class="group-heading">$step.group</span></td>
+            <td width="150"><span class="lightgreentext">&nbsp;</span></td>
+            <td width="75"><span class="lightgreentext">&nbsp;</span></td>
+          </tr>
+        </table>
+        </div>
+    #else
+        #set($step_icon_size = 25)
+        #set($step_class_root = "top-level")
+    #end
+#end
 <div class="tableraw">
 <table border="0" width="980"  height="40" >
   <tr class="test-$step.result">
-    <td width="35"><img src="images/$step_outcome_icon" width="25" height="25" /></td>
-    <td width="%" class="bluetext"><span class="bluetext">$step.description</span></td>
+    <td width="40"><img src="images/$step_outcome_icon" class="${step_class_root}-icon" /></td>
+    <td width="%"><span class="${step_class_root}-step">$step.description</span></td>
     <td width="150" class="bluetext">
 		#if( $step.screenshot )
 	          <a href="$step.screenshot.name"><img src="images/screen.png" width="48" height="48" /></a>

@@ -2,13 +2,13 @@ package net.thucydides.junit.samples;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.annotations.Step;
+import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.junit.annotations.Pending;
-import net.thucydides.junit.annotations.Step;
-import net.thucydides.junit.annotations.StepGroup;
+import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.annotations.TestsRequirements;
-import net.thucydides.junit.steps.ScenarioSteps;
 
 import org.junit.Ignore;
 
@@ -66,7 +66,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
     public void stepWithTwoParameters(String value, int number) {
     }
     
-    @StepGroup
+    @StepGroup("Group of steps")
     public void groupOfSteps() {
         stepThatSucceeds();
         stepThatFails();
@@ -74,7 +74,15 @@ public class SampleScenarioSteps extends ScenarioSteps {
         
     }
 
-    @StepGroup
+    @StepGroup("Another group of steps")
+    public void anotherGroupOfSteps() {
+        stepThatSucceeds();
+        anotherStepThatSucceeds();
+        stepThatIsPending();
+        
+    }
+
+    @StepGroup("Group of steps")
     public void groupOfStepsContainingAnError() {
         stepThatSucceeds();
         anotherStepThatSucceeds();

@@ -2,11 +2,11 @@ package net.thucydides.junit.samples;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.annotations.Step;
+import net.thucydides.core.annotations.StepDescription;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.junit.annotations.Pending;
-import net.thucydides.junit.annotations.Step;
-import net.thucydides.junit.annotations.StepDescription;
-import net.thucydides.junit.steps.ScenarioSteps;
+import net.thucydides.core.steps.ScenarioSteps;
 
 import org.junit.Ignore;
 

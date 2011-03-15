@@ -122,8 +122,23 @@ public class WhenGeneratingAnHtmlReport {
         assertThat(defaultCssStylesheet.exists(), is(false));
     }
     
-    
 
+    @Test
+    public void the_report_should_list_test_groups_as_headings_in_the_table() throws Exception {
+
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case with groups");
+        testRun.setMethodName("a_simple_test_case_with_groups");
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1", "Group 1"));
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 2", "Group 1"));
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 3", "Group 1"));
+        testRun.recordStep(TestStepFactory.failingTestStepCalled("step 4", "Group 2"));
+        testRun.recordStep(TestStepFactory.skippedTestStepCalled("step 5", "Group 2"));
+        testRun.recordStep(TestStepFactory.pendingTestStepCalled("step 6"));
+
+        reporter.setOutputDirectory(new File("target/thucyidides"));
+        reporter.generateReportFor(testRun);
+    }
+    
     @Test
     public void a_sample_report_should_be_generated_in_the_target_directory() throws Exception {
 

@@ -133,7 +133,10 @@ public class AcceptanceTestRun {
      */
     public TestResult getResult() {
         List<TestResult> allTestResults = getCurrentTestResults();
+        return getOverallResultFor(allTestResults);
+    }
 
+    private TestResult getOverallResultFor(List<TestResult> allTestResults) {
         if (allTestResults.contains(FAILURE)) {
             return FAILURE;
         }
@@ -242,6 +245,21 @@ public class AcceptanceTestRun {
 
     public long getDuration() {
         return duration;
+    }
+
+    public TestResult getResultForGroup(String group) {
+        List<TestResult> testResultsInGroup = getTestResultsInGroup(group);
+        return getOverallResultFor(testResultsInGroup);
+    }
+
+    private List<TestResult> getTestResultsInGroup(String group) {
+        List<TestResult> results = new ArrayList<TestResult>();
+        for(TestStep step : getTestSteps()) {
+            if (step.isInGroup(group)) {
+                results.add(step.getResult());
+            }
+        }
+        return results;
     }
 
 }

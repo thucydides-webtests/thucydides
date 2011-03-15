@@ -3,10 +3,10 @@ package net.thucydides.junit.runners;
 import org.openqa.selenium.WebDriver;
 
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
 import net.thucydides.junit.internals.PagesAnnotatedField;
 import net.thucydides.junit.internals.StepsAnnotatedField;
-import net.thucydides.junit.steps.ScenarioSteps;
 import net.thucydides.junit.steps.StepFactory;
 
 /**

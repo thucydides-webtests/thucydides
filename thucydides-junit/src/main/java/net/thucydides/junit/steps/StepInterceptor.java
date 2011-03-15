@@ -1,15 +1,15 @@
-package net.thucydides.junit.steps.junit;
+package net.thucydides.junit.steps;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import net.thucydides.junit.annotations.Pending;
-import net.thucydides.junit.annotations.Step;
-import net.thucydides.junit.annotations.StepGroup;
-import net.thucydides.junit.steps.StepResult;
+import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.annotations.Step;
+import net.thucydides.core.annotations.StepGroup;
 
 import org.junit.Ignore;
 import org.junit.runner.Description;
@@ -27,7 +27,7 @@ public class StepInterceptor implements MethodInterceptor {
     private final Class<?> testStepClass;
     private StepResult resultTally;
     private List<Throwable> stepExceptions;
-    
+    private Stack<StepGroup> groupStack;
     private boolean failureHasOccured = false;
     private Throwable error = null;
 
@@ -37,6 +37,7 @@ public class StepInterceptor implements MethodInterceptor {
         this.failureHasOccured = false;
         this.resultTally = new StepResult();
         this.stepExceptions = new ArrayList<Throwable>();
+        this.groupStack = new Stack<StepGroup>();
     }
 
     public Object intercept(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
@@ -48,11 +49,15 @@ public class StepInterceptor implements MethodInterceptor {
             return null;
         }
         
-        if (isATestGroup(method)) {
-            return runTestGroupStep(obj, method, args, proxy);
+        Object result = null;
+        if (isATestGroup(method)) {            
+            groupStack.push(getTestGroupAnnotationFor(method));
+            result = runTestGroupStep(obj, method, args, proxy);
+            groupStack.pop();
         } else {
-            return testStepResult(obj, method, args, proxy);
+            result = testStepResult(obj, method, args, proxy);
         }
+        return result;
         
     }
 
@@ -62,6 +67,8 @@ public class StepInterceptor implements MethodInterceptor {
         if (!isATestStep(method)) {
             return invokeMethod(obj, method, args, proxy);
         }
+        
+        notifyTestStarted(method, args);
         
         if (isPending(method) || isIgnored(method) ) {
             notifyTestSkippedFor(method, args);
@@ -75,6 +82,13 @@ public class StepInterceptor implements MethodInterceptor {
         
         return runTestStep(obj, method, args, proxy);
         
+    }
+
+    private StepGroup getCurrentGroup() {
+        if (groupStack.isEmpty()) {
+            return null;
+        }
+        return groupStack.peek();
     }
 
     private Object runTestGroupStep(Object obj, Method method, Object[] args,
@@ -92,8 +106,11 @@ public class StepInterceptor implements MethodInterceptor {
     }
 
     private boolean isATestGroup(Method method) {
-        StepGroup stepGroupAnnotation = (StepGroup) method.getAnnotation(StepGroup.class);
-        return (stepGroupAnnotation != null);
+        return (getTestGroupAnnotationFor(method) != null);
+    }
+
+    private StepGroup getTestGroupAnnotationFor(Method method) {
+        return method.getAnnotation(StepGroup.class);
     }
 
     private boolean isATestStep(final Method method) {
@@ -188,6 +205,20 @@ public class StepInterceptor implements MethodInterceptor {
     private void notifyFinished(final Method method) throws Exception {
         for(RunListener listener : listeners) {
             listener.testRunFinished(resultTally);
+        }
+    }
+
+    private void notifyTestStarted(final Method method, final Object[] args) throws Exception {
+
+        StepGroup group = getCurrentGroup();
+        Description description = null;
+        if (group != null) {
+            description = Description.createTestDescription(testStepClass, getTestNameFrom(method, args), group);
+        } else {
+            description = Description.createTestDescription(testStepClass, getTestNameFrom(method, args));
+        }
+        for(RunListener listener : listeners) {
+            listener.testStarted(description);
         }
     }
 

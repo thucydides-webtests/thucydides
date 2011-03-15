@@ -57,6 +57,7 @@ public class AcceptanceTestRunConverter implements Converter {
         for (TestStep step : steps) {
             writer.startNode("test-step");
             writeResult(writer, step);
+            writeTestGroup(writer, step);
             addRequirementsTo(writer, step.getTestedRequirements());
             writeDescription(writer, step);
             writeErrorForFailingTest(writer, step);
@@ -130,6 +131,12 @@ public class AcceptanceTestRunConverter implements Converter {
 
     private void writeResult(final HierarchicalStreamWriter writer, final TestStep step) {
         writer.addAttribute("result", step.getResult().toString());
+    }
+
+    private void writeTestGroup(final HierarchicalStreamWriter writer, final TestStep step) {
+        if (step.getGroup() != null) {
+            writer.addAttribute("group", step.getGroup());
+        }
     }
 
     private void writeDescription(final HierarchicalStreamWriter writer, final TestStep step) {
@@ -207,6 +214,9 @@ public class AcceptanceTestRunConverter implements Converter {
         String testResultValue = reader.getAttribute("result");
         TestResult result = TestResult.valueOf(testResultValue);
         step.setResult(result);
+
+        String group = reader.getAttribute("group");
+        step.setGroup(group);
 
         readTestStepChildren(reader, step);
 

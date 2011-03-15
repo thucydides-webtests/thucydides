@@ -1,4 +1,4 @@
-package net.thucydides.junit.steps;
+package net.thucydides.core.steps;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -9,31 +9,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thucydides.core.annotations.StepProvider;
-import net.thucydides.junit.integration.pages.ApacheHomePage;
-import net.thucydides.junit.integration.samples.ApacheScenarioSteps;
+import net.thucydides.core.steps.StepIndex;
 
 import org.junit.Test;
 
 public class WhenDiscoveringTestSteps {
 
-    public class ApacheStepIndex extends StepIndex {
+    public class SimpleStepIndex extends StepIndex {
 
         @StepProvider
-        public Class<?>[] stepClasses = {ApacheScenarioSteps.class};
+        public Class<?>[] stepClasses = {SimpleScenarioSteps.class};
 
     }
 
     @Test
     public void client_app_can_discover_available_test_step_classes() {
-        StepIndex index = new ApacheStepIndex();
+        StepIndex index = new SimpleStepIndex();
         List<Class<? extends ScenarioSteps>> stepClasses = index.getStepClasses();
-        assertThat(stepClasses.contains(ApacheScenarioSteps.class), is(true));
+        assertThat(stepClasses.contains(SimpleScenarioSteps.class), is(true));
     }
 
     @Test
     public void client_app_can_discover_available_test_steps() {
-        StepIndex index = new ApacheStepIndex();
-        List<Method> stepMethods = index.getStepsFor(ApacheScenarioSteps.class);
+        StepIndex index = new SimpleStepIndex();
+        List<Method> stepMethods = index.getStepsFor(SimpleScenarioSteps.class);
         List<String> methodNames = methodNamesFrom(stepMethods);
         assertThat(methodNames, hasItem("clickOnProjects"));
     }
@@ -48,7 +47,7 @@ public class WhenDiscoveringTestSteps {
 
     public class ApacheStepIndexWithoutAnnotation extends StepIndex {
 
-        public Class<?>[] stepClasses = {ApacheScenarioSteps.class};
+        public Class<?>[] stepClasses = {SimpleScenarioSteps.class};
 
     }
     
@@ -58,10 +57,12 @@ public class WhenDiscoveringTestSteps {
         index.getStepClasses();
     }
 
+    public class BadlyTypedScenarioSteps {};
+    
     public class ApacheStepIndexWithWrongTypes extends StepIndex {
 
         @StepProvider
-        public Class<?>[] stepClasses = {ApacheScenarioSteps.class, ApacheHomePage.class};
+        public Class<?>[] stepClasses = {SimpleScenarioSteps.class,  BadlyTypedScenarioSteps.class};
 
     }
 

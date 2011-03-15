@@ -12,8 +12,8 @@ import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 
+import net.thucydides.junit.steps.ScenarioStepListener;
 import net.thucydides.junit.steps.StepFactory;
-import net.thucydides.junit.steps.junit.ScenarioStepListener;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;

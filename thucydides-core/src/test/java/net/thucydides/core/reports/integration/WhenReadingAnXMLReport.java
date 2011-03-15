@@ -174,4 +174,24 @@ public class WhenReadingAnXMLReport {
         assertThat(testRun.getUserStory(), is(notNullValue()));
     }
 
+    @Test
+    public void should_load_acceptance_test_report_with_test_groups_from_xml_file()
+            throws Exception {
+        String storedReportXML = 
+                  "<acceptance-test-run title='A simple test case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS' group='TestGroup'>\n"
+                + "    <requirements>\n"
+                + "      <requirement>12</requirement>\n"
+                + "      <requirement>32</requirement>\n"
+                + "    </requirements>\n"
+                + "    <description>step 1</description>\n"
+                + "  </test-step>\n" + "</acceptance-test-run>";
+
+        File report = temporaryDirectory.newFile("saved-report.xml");
+        FileUtils.writeStringToFile(report, storedReportXML);
+
+        AcceptanceTestRun testRun = reporter.loadReportFrom(report);
+
+        assertThat(testRun.getTestSteps().get(0).getGroup(), is("TestGroup"));
+    }
 }

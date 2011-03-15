@@ -143,26 +143,6 @@ width:7px; height:39px;
 float:left; 
 }
 
-.pending-color {
-    color: #0d78ae;
-}
-
-.success-color {
-    color: #88a717;
-}
-
-.failure-color {
-    color: #CC0033;
-}
-
-.ignore-color {
-    color: #CCCC33;
-}
-
-.skip-color {
-    color: #fd3e03;
-}
-
 .bluetext
 {
 font-family:euphemia, verdana, sans-serif; font-size:16px; color: #0d78ae;
@@ -245,4 +225,51 @@ background-color:#f1f3e8; width:980px;
 .icon
 {
 height:16px; width:16px;
+}
+
+/* Added by jfs */  
+.pending-color {
+    color: #0d78ae;
+}
+
+.success-color {
+    color: #88a717;
+}
+
+.failure-color {
+    color: #CC0033;
+}
+
+.ignore-color {
+    color: #CCCC33;
+}
+
+.skip-color {
+    color: #fd3e03;
+}
+
+.group-heading {
+    font-family:euphemia, verdana, sans-serif; font-size:18px; color: #0d78ae; font-weight: bold;
+}
+
+
+.top-level-step {
+    font-family:euphemia, verdana, sans-serif; font-size:16px; color: #0d78ae;
+}
+.nested-step {
+    font-family:euphemia, verdana, sans-serif; font-size:16px; font-style:italic; color: #0d78ae;
+    margin-left: 15px;
+}
+
+.top-level-icon {
+
+    height: 25px;
+    width: 25px;  
+}
+
+.nested-icon {
+
+    margin-left: 15px;
+    height: 20px;
+    width: 20px;  
 }

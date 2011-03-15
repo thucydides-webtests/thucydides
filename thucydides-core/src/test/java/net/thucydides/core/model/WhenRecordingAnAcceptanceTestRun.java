@@ -244,6 +244,53 @@ public class WhenRecordingAnAcceptanceTestRun {
     }
     
 
+    
+    @Test
+    public void a_test_group_with_only_successful_tests_is_successful() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1", "Group 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2", "Group 1"));
+        testRun.recordStep(failingTestStepCalled("Step 3", "Group 2"));
+
+        assertThat(testRun.getResultForGroup("Group 1"), is(TestResult.SUCCESS));
+    }
+
+    @Test
+    public void a_test_group_with_a_failing_test_fails() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1", "Group 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2", "Group 1"));
+        testRun.recordStep(failingTestStepCalled("Step 3", "Group 1"));
+        testRun.recordStep(skippedTestStepCalled("Step 4", "Group 1"));
+        testRun.recordStep(ignoredTestStepCalled("Step 5", "Group 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 4", "Group 2"));
+
+        assertThat(testRun.getResultForGroup("Group 1"), is(TestResult.FAILURE));
+    }
+    
+    @Test
+    public void a_test_group_with_a_pending_test_is_pending() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1", "Group 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2", "Group 1"));
+        testRun.recordStep(pendingTestStepCalled("Step 3", "Group 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 4", "Group 2"));
+
+        assertThat(testRun.getResultForGroup("Group 1"), is(TestResult.PENDING));
+    }
+
+    @Test
+    public void a_test_group_with_only_ignored_tests_is_ignored() {
+
+        testRun.recordStep(ignoredTestStepCalled("Step 1", "Group 1"));
+        testRun.recordStep(ignoredTestStepCalled("Step 2", "Group 1"));
+        testRun.recordStep(ignoredTestStepCalled("Step 3", "Group 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 4", "Group 2"));
+
+        assertThat(testRun.getResultForGroup("Group 1"), is(TestResult.IGNORED));
+    }
+
+
     @Test
     public void a_test_run_with_only_successful_tests_is_successful() {
 

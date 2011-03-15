@@ -27,6 +27,7 @@ public class TestStep {
     private String description;    
     private File screenshot;
     private String screenshotPath;
+    private String group;
     private TestResult result;
     private String errorMessage;
     private Throwable cause;
@@ -135,6 +136,18 @@ public class TestStep {
 
     public long getDuration() {
         return duration;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+    
+    public String getGroup() {
+        return group;
+    }
+    
+    public boolean isInGroup(final String aGroup) {
+        return aGroup.equals(group);
     }
 
 }

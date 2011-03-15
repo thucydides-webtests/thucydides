@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import org.junit.Ignore;
 
-import net.thucydides.junit.annotations.Pending;
+import net.thucydides.core.annotations.Pending;
 
 /**
  * Determine the status of a method based on its annotations.

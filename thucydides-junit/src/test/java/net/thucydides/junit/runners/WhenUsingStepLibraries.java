@@ -11,17 +11,20 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import net.thucydides.core.pages.Pages;
-import net.thucydides.junit.samples.SampleScenarioSteps;
-import net.thucydides.junit.steps.StepFactory;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.fail;
+
+import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+
+import net.thucydides.core.pages.Pages;
+import net.thucydides.junit.samples.SampleScenarioSteps;
+import net.thucydides.junit.steps.StepFactory;
 
 public class WhenUsingStepLibraries {
 
@@ -274,4 +277,11 @@ public class WhenUsingStepLibraries {
         steps.done();
     }
     
+    
+    final class TestGroupListener extends RunListener {
+        @Override
+        public void testFinished(Description description) throws Exception {
+            super.testFinished(description);
+        }
+    }
 }

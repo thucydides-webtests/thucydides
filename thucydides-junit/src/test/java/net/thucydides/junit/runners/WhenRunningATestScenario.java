@@ -27,6 +27,7 @@ import net.thucydides.junit.samples.SampleScenarioWithoutPages;
 import net.thucydides.junit.samples.SampleScenarioWithoutSteps;
 import net.thucydides.junit.samples.SingleTestScenario;
 import net.thucydides.junit.samples.SingleTestScenarioWithSeveralBusinessRules;
+import net.thucydides.junit.samples.TestScenarioWithGroups;
 import net.thucydides.junit.samples.TestScenarioWithParameterizedSteps;
 
 import org.junit.Before;
@@ -186,6 +187,25 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         
     }
     
+    @Test    
+    public void the_test_runner_executes_tests_in_groups() throws InitializationError  {
+        ThucydidesRunner runner = new ThucydidesRunner(TestScenarioWithGroups.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+        
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        assertThat(executedScenarios.size(), is(1));
+        List<TestStep> testSteps = executedScenarios.get(0).getTestSteps();
+        assertThat(testSteps.size(), is(7));
+        assertThat(testSteps.get(0).getGroup(), is("Group of steps"));
+        assertThat(testSteps.get(1).getGroup(), is("Group of steps"));
+        assertThat(testSteps.get(2).getGroup(), is("Group of steps"));
+        assertThat(testSteps.get(3).getGroup(), is("Another group of steps"));
+        assertThat(testSteps.get(4).getGroup(), is("Another group of steps"));
+        assertThat(testSteps.get(5).getGroup(), is("Another group of steps"));
+        assertThat(testSteps.get(6).getGroup(), is(nullValue()));
+    }
+
     @Test    
     public void the_test_runner_records_an_acceptance_test_result_for_each_test() throws InitializationError  {
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenario.class);

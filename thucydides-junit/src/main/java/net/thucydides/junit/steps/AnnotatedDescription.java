@@ -1,4 +1,4 @@
-package net.thucydides.junit.steps.junit;
+package net.thucydides.junit.steps;
 
 import static net.thucydides.core.util.NameConverter.humanize;
 
@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thucydides.junit.annotations.StepDescription;
+import net.thucydides.core.annotations.StepDescription;
 import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.annotations.TestsRequirements;
 import net.thucydides.junit.annotations.Title;

@@ -2,7 +2,7 @@ package net.thucydides.junit.runners.mocks;
 
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.runners.ThucydidesRunner;
-import net.thucydides.junit.steps.junit.ScenarioStepListener;
+import net.thucydides.junit.steps.ScenarioStepListener;
 
 import org.junit.runners.model.InitializationError;
 import org.openqa.selenium.TakesScreenshot;

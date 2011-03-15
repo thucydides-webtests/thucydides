@@ -1,12 +1,12 @@
-package net.thucydides.junit.steps;
+package net.thucydides.core.steps;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepProvider;
-import net.thucydides.junit.annotations.Step;
 
 /**
  * The Step Index class is a way to allow the dynamic discovery of what test steps are available.

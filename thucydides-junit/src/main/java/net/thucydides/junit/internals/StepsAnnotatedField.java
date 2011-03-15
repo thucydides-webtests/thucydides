@@ -2,10 +2,10 @@ package net.thucydides.junit.internals;
 
 import java.lang.reflect.Field;
 
+import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.junit.annotations.InvalidStepsFieldException;
 import net.thucydides.junit.annotations.Steps;
-import net.thucydides.junit.steps.ScenarioSteps;
 
 /**
  * The Pages object keeps track of the Page Objects used during the tests.

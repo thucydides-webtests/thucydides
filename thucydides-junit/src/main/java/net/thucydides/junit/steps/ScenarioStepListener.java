@@ -1,4 +1,4 @@
-package net.thucydides.junit.steps.junit;
+package net.thucydides.junit.steps;
 
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
@@ -110,6 +111,17 @@ public class ScenarioStepListener extends RunListener {
         getCurrentTestStepFrom(description);
     }
 
+    @Override
+    public void testStarted(Description description) throws Exception {
+        super.testStarted(description);
+        getCurrentTestStepFrom(description);
+        if (description.getAnnotation(StepGroup.class) != null) {
+            StepGroup group = description.getAnnotation(StepGroup.class);
+            String groupName = group.value();
+            currentTestStep.setGroup(groupName);
+        }
+    }
+    
     private UserStory withUserStoryFrom(final Description description) {
         String name = NameConverter.humanize(description.getTestClass().getSimpleName());
         String code = userStoryCodeFromAnnotationIfPresentIn(description.getTestClass());
