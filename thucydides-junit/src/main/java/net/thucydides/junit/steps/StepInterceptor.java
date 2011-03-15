@@ -61,8 +61,10 @@ public class StepInterceptor implements MethodInterceptor {
         
     }
 
-    private Object testStepResult(Object obj, Method method, Object[] args,
-                                  MethodProxy proxy) throws Throwable {
+    private Object testStepResult(final Object obj, 
+            final Method method, 
+            final Object[] args,
+            final MethodProxy proxy) throws Throwable {
 
         if (!isATestStep(method)) {
             return invokeMethod(obj, method, args, proxy);
@@ -91,8 +93,10 @@ public class StepInterceptor implements MethodInterceptor {
         return groupStack.peek();
     }
 
-    private Object runTestGroupStep(Object obj, Method method, Object[] args,
-            MethodProxy proxy) throws Throwable {
+    private Object runTestGroupStep(final Object obj, 
+            final Method method, 
+            final Object[] args,
+            final MethodProxy proxy) throws Throwable {
 
         Object result = null;
         try {
@@ -105,11 +109,11 @@ public class StepInterceptor implements MethodInterceptor {
         return result;
     }
 
-    private boolean isATestGroup(Method method) {
+    private boolean isATestGroup(final Method method) {
         return (getTestGroupAnnotationFor(method) != null);
     }
 
-    private StepGroup getTestGroupAnnotationFor(Method method) {
+    private StepGroup getTestGroupAnnotationFor(final Method method) {
         return method.getAnnotation(StepGroup.class);
     }
 

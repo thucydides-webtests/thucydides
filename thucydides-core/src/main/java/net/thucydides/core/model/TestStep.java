@@ -138,7 +138,7 @@ public class TestStep {
         return duration;
     }
 
-    public void setGroup(String group) {
+    public void setGroup(final String group) {
         this.group = group;
     }
     
