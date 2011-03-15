@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
@@ -76,21 +77,41 @@ public class HtmlResourceCopier {
     private void copyFileFromClasspathToTargetDirectory(final String resourcePath,
             final File targetDirectory) throws IOException {
         
-        File resourceOnClasspath = new File(resourcePath);
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
-        File destinationFile = new File(targetDirectory, resourceOnClasspath.getName());
-        if (destinationFile.getParent() != null) {
-            new File(destinationFile.getParent()).mkdirs();
-        }
-        FileOutputStream out = new FileOutputStream(destinationFile);
+        FileOutputStream out = null;
+        InputStream in = null;
+        
         try {
-            byte[] buffer = new byte[BUFFER_SIZE];  
-            int bytesRead;  
-            while ((bytesRead = in.read(buffer)) != -1) {  
-                out.write(buffer, 0, bytesRead);  
-            }  
+            File resourceOnClasspath = new File(resourcePath);
+            in = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
+
+            File destinationFile = new File(targetDirectory, resourceOnClasspath.getName());
+            if (destinationFile.getParent() != null) {
+                new File(destinationFile.getParent()).mkdirs();
+            }
+            
+            out = new FileOutputStream(destinationFile);
+            
+            copyData(in, out); 
+            
         } finally {
+            closeSafely(out, in);
+        }
+    }
+
+    private void copyData(final InputStream in, final OutputStream out) throws IOException {
+        byte[] buffer = new byte[BUFFER_SIZE];  
+        int bytesRead;  
+        while ((bytesRead = in.read(buffer)) != -1) {  
+            out.write(buffer, 0, bytesRead);  
+        }
+    }
+
+    private void closeSafely(final OutputStream out, final InputStream in)
+            throws IOException {
+        if (in != null) {
             in.close();  
+        }
+        if (out != null) {
             out.close(); 
         }
     }

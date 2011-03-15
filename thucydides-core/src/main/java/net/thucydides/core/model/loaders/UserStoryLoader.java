@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UserStoryLoader {
 
-    private final class XmlFilenameFilter implements FilenameFilter {
+    private static final class XmlFilenameFilter implements FilenameFilter {
         public boolean accept(final File file, final String filename) {
             return filename.toLowerCase().endsWith(".xml");
         }

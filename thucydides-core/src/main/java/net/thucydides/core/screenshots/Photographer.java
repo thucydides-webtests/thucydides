@@ -8,6 +8,8 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The photographer takes and stores screenshots during the test.
@@ -26,6 +28,8 @@ public class Photographer {
     private final ScreenshotSequence screenshotSequence;
     private final MessageDigest digest;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Photographer.class);
+
     private static final ScreenshotSequence DEFAULT_SCREENSHOT_SEQUENCE = new ScreenshotSequence();
     
     public Photographer(final TakesScreenshot driver, final File targetDirectory) {
@@ -40,7 +44,7 @@ public class Photographer {
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to create digest for screenshot name.", e);
         }
         return md;
     }

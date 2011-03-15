@@ -1,8 +1,11 @@
 package net.thucydides.core.steps;
 
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.screenshots.Photographer;
 
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A set of reusable steps for use in an acceptance test suite.
@@ -12,6 +15,8 @@ import org.openqa.selenium.WebDriver;
  */
 public class ScenarioSteps {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioSteps.class);
+
     private Pages pages;
     
     public ScenarioSteps(final Pages pages) {
@@ -34,7 +39,7 @@ public class ScenarioSteps {
         try {
             Thread.sleep(delayInMilliseconds);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.warn("Wait a bit method was interrupted.", e);
         }
     }
     /**

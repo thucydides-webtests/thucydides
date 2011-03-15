@@ -98,7 +98,7 @@ public class Pages {
             Constructor<? extends PageObject> constructor 
                 = (Constructor<? extends PageObject>) pageObjectClass.getConstructor(constructorArgs);
             currentPage = (PageObject) constructor.newInstance(driver);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.info("Failed to instanciate page of type " + pageObjectClass, e);
             thisIsNotThePageYourLookingFor(pageObjectClass);
         }        

@@ -28,14 +28,14 @@ public class TestResultList {
                 return PENDING;
             }
 
-            if (containsOnly(testResults, IGNORED)) {
+            if (containsOnly(IGNORED)) {
                 return IGNORED;
             }
 
             return SUCCESS;
     }
 
-    private boolean containsOnly(final List<TestResult> testResults, final TestResult value) {
+    private boolean containsOnly(final TestResult value) {
         for (TestResult result : testResults) {
             if (result != value) {
                 return false;
