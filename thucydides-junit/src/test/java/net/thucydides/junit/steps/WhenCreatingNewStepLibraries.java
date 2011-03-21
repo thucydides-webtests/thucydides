@@ -21,7 +21,7 @@ public class WhenCreatingNewStepLibraries {
     Pages pages;
     
     @Mock
-    RunListener mockListener;
+    ScenarioStepListener mockListener;
     
     StepFactory factory;
     
@@ -74,8 +74,8 @@ public class WhenCreatingNewStepLibraries {
         
         steps.groupOfStepsContainingAFailure();
         
-        verify(mockListener,times(3)).testStarted(any(Description.class));
-        verify(mockListener).testFinished(any(Description.class));
+        verify(mockListener,times(4)).testStarted(any(Description.class));
+        verify(mockListener,times(2)).testFinished(any(Description.class));
         verify(mockListener).testFailure(any(Failure.class));      
         verify(mockListener).testIgnored(any(Description.class));
     }
@@ -87,8 +87,8 @@ public class WhenCreatingNewStepLibraries {
         
         steps.stepThatCallsNestedSteps();
         
-        verify(mockListener,times(2)).testStarted(any(Description.class));
-        verify(mockListener,times(2)).testFinished(any(Description.class));
+        verify(mockListener,times(3)).testStarted(any(Description.class));
+        verify(mockListener,times(3)).testFinished(any(Description.class));
     }
 
 }

@@ -27,7 +27,6 @@ public class StepInterceptor implements MethodInterceptor {
     private final Class<?> testStepClass;
     private StepResult resultTally;
     private List<Throwable> stepExceptions;
-    private Stack<StepGroup> groupStack;
     private boolean failureHasOccured = false;
     private Throwable error = null;
 
@@ -37,7 +36,6 @@ public class StepInterceptor implements MethodInterceptor {
         this.failureHasOccured = false;
         this.resultTally = new StepResult();
         this.stepExceptions = new ArrayList<Throwable>();
-        this.groupStack = new Stack<StepGroup>();
     }
 
     public Object intercept(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
@@ -50,10 +48,10 @@ public class StepInterceptor implements MethodInterceptor {
         }
         
         Object result = null;
-        if (isATestGroup(method)) {            
-            groupStack.push(getTestGroupAnnotationFor(method));
+        if (isATestGroup(method)) {     
+            notifyGroupStarted(method, args);
             result = runTestGroupStep(obj, method, args, proxy);
-            groupStack.pop();
+            notifyGroupFinished(method, args);
         } else {
             result = testStepResult(obj, method, args, proxy);
         }
@@ -84,13 +82,6 @@ public class StepInterceptor implements MethodInterceptor {
         
         return runTestStep(obj, method, args, proxy);
         
-    }
-
-    private StepGroup getCurrentGroup() {
-        if (groupStack.isEmpty()) {
-            return null;
-        }
-        return groupStack.peek();
     }
 
     private Object runTestGroupStep(final Object obj, 
@@ -212,15 +203,25 @@ public class StepInterceptor implements MethodInterceptor {
         }
     }
 
+    private void notifyGroupStarted(final Method method, final Object[] args) throws Exception {
+
+        Description description = Description.createTestDescription(testStepClass, getTestNameFrom(method, args));
+        for(RunListener listener : listeners) {
+            listener.testStarted(description);
+        }
+    }
+
+    private void notifyGroupFinished(final Method method, final Object[] args) throws Exception {
+
+        Description description = Description.createTestDescription(testStepClass, getTestNameFrom(method, args));
+        for(RunListener listener : listeners) {
+            listener.testFinished(description);
+        }
+    }
+
     private void notifyTestStarted(final Method method, final Object[] args) throws Exception {
 
-        StepGroup group = getCurrentGroup();
-        Description description = null;
-        if (group != null) {
-            description = Description.createTestDescription(testStepClass, getTestNameFrom(method, args), group);
-        } else {
-            description = Description.createTestDescription(testStepClass, getTestNameFrom(method, args));
-        }
+        Description description = Description.createTestDescription(testStepClass, getTestNameFrom(method, args));
         for(RunListener listener : listeners) {
             listener.testStarted(description);
         }

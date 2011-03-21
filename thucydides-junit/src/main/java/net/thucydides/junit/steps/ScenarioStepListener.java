@@ -114,9 +114,18 @@ public class ScenarioStepListener extends RunListener {
 
     @Override
     public void testStarted(final Description description) throws Exception {
-        System.out.println("Test started for " + description);
-        super.testStarted(description);
-        getCurrentTestStepFrom(description);
+        AnnotatedDescription testDescription = new AnnotatedDescription(description);
+
+        if (testDescription.isAGroup()) {
+            testGroupStarted(testDescription);
+        } else {
+            super.testStarted(description);
+            getCurrentTestStepFrom(description);
+        }
+    }
+
+    public void testGroupStarted(AnnotatedDescription testDescription) {
+        currentAcceptanceTestRun.startGroup(testDescription.getGroupName());
     }
     
     private UserStory withUserStoryFrom(final Description description) {
@@ -170,11 +179,16 @@ public class ScenarioStepListener extends RunListener {
     @Override
     public void testFinished(final Description description) throws Exception {
 
-        getCurrentTestStepFrom(description);
-        markCurrentTestAs(SUCCESS);
-        takeScreenshotFor(description);
+        AnnotatedDescription testDescription = new AnnotatedDescription(description);
 
-        recordCurrentTestStep(description);
+        if (testDescription.isAGroup()) {
+            currentAcceptanceTestRun.endGroup();
+        } else {
+            getCurrentTestStepFrom(description);
+            markCurrentTestAs(SUCCESS);
+            takeScreenshotFor(description);
+            recordCurrentTestStep(description);
+        }
     }
 
     private void takeScreenshotFor(final Description description) throws IOException {

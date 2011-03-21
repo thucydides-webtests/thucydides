@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thucydides.core.annotations.StepDescription;
+import net.thucydides.core.annotations.StepGroup;
+import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.annotations.TestsRequirements;
 import net.thucydides.junit.annotations.Title;
@@ -148,5 +150,31 @@ public class AnnotatedDescription {
             humanizedName = humanizedName + ".";
         }
         return humanizedName;
+    }
+
+    public boolean isAGroup() {
+        try {
+            Method testMethod = getTestMethod();
+            StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
+            if (testGroup != null) {
+                return true;
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public String getGroupName() {
+        try {
+            Method testMethod = getTestMethod();
+            StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
+            if (testGroup != null) {
+                return testGroup.value();
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return null;
     }    
 }
