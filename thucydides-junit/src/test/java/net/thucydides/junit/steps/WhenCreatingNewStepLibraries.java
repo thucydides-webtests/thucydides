@@ -72,7 +72,7 @@ public class WhenCreatingNewStepLibraries {
         factory.addListener(mockListener);
         SampleScenarioSteps steps = (SampleScenarioSteps) factory.newSteps(SampleScenarioSteps.class);
         
-        steps.groupOfSteps();
+        steps.groupOfStepsContainingAFailure();
         
         verify(mockListener,times(3)).testStarted(any(Description.class));
         verify(mockListener).testFinished(any(Description.class));

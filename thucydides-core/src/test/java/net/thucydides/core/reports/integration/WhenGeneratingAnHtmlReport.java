@@ -1,5 +1,10 @@
 package net.thucydides.core.reports.integration;
 
+import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -128,12 +133,26 @@ public class WhenGeneratingAnHtmlReport {
 
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case with groups");
         testRun.setMethodName("a_simple_test_case_with_groups");
-        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1", "Group 1"));
-        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 2", "Group 1"));
-        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 3", "Group 1"));
-        testRun.recordStep(TestStepFactory.failingTestStepCalled("step 4", "Group 2"));
-        testRun.recordStep(TestStepFactory.skippedTestStepCalled("step 5", "Group 2"));
-        testRun.recordStep(TestStepFactory.pendingTestStepCalled("step 6"));
+
+        testRun.recordStep(successfulTestStepCalled("Step 0"));
+        testRun.startGroup("A group");
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 7"));
+        testRun.recordStep(pendingTestStepCalled("Step 10"));
+        testRun.startGroup("Another group");
+        testRun.recordStep(successfulTestStepCalled("Step 4"));
+        testRun.recordStep(successfulTestStepCalled("Step 5"));
+        testRun.recordStep(ignoredTestStepCalled("Step 6"));
+        testRun.recordStep(failingTestStepCalled("Step 7"));
+        testRun.recordStep(failingTestStepCalled("Step 8"));
+        testRun.recordStep(skippedTestStepCalled("Step 9"));
+        testRun.recordStep(pendingTestStepCalled("Step 10"));
+        testRun.recordStep(pendingTestStepCalled("Step 11"));
+        testRun.recordStep(pendingTestStepCalled("Step 12"));
+        testRun.endGroup();
+        testRun.endGroup();
 
         reporter.setOutputDirectory(new File("target/thucyidides"));
         reporter.generateReportFor(testRun);

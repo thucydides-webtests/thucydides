@@ -26,7 +26,7 @@ public class TestScenarioWithGroups {
         
     @Test
     public void happy_day_scenario() {
-        steps.groupOfSteps();
+        steps.groupOfStepsContainingAFailure();
         steps.anotherGroupOfSteps();
         steps.stepThatSucceeds();
         steps.done();

@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.UserStory;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -198,6 +199,112 @@ public class WhenGeneratingAnXMLReport {
     }
 
     @Test
+    public void should_record_test_groups_as_nested_structures()
+            throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A nested test case");
+        String expectedReport = 
+                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='3' successful='3' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                + "  <test-group name='Group 1'>\n"
+                + "    <test-step result='SUCCESS'>\n"
+                + "      <description>step 1</description>\n"
+                + "    </test-step>\n"
+                + "    <test-step result='SUCCESS'>\n"
+                + "      <description>step 2</description>\n"
+                + "    </test-step>\n"
+                + "    <test-step result='SUCCESS'>\n"
+                + "      <description>step 3</description>\n"
+                + "    </test-step>\n"
+                + "  </test-group>\n" 
+                + "</acceptance-test-run>";
+
+        testRun.startGroup("Group 1");
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 2"));
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 3"));
+        testRun.endGroup();
+
+        File xmlReport = reporter.generateReportFor(testRun);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }    
+    
+    @Test
+    public void should_record_nested_test_groups_as_nested_structures()
+            throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A nested test case");
+        String expectedReport = 
+                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='5' successful='5' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                + "  <test-group name='Group 1'>\n"
+                + "    <test-step result='SUCCESS'>\n"
+                + "      <description>step 1</description>\n"
+                + "    </test-step>\n"
+                + "    <test-step result='SUCCESS'>\n"
+                + "      <description>step 2</description>\n"
+                + "    </test-step>\n"
+                + "    <test-step result='SUCCESS'>\n"
+                + "      <description>step 3</description>\n"
+                + "    </test-step>\n"
+                + "    <test-group name='Group 1.1'>\n"
+                + "      <test-step result='SUCCESS'>\n"
+                + "        <description>step 4</description>\n"
+                + "      </test-step>\n"
+                + "      <test-step result='SUCCESS'>\n"
+                + "        <description>step 5</description>\n"
+                + "      </test-step>\n"
+                + "    </test-group>\n" 
+                + "  </test-group>\n" 
+                + "</acceptance-test-run>";
+
+        testRun.startGroup("Group 1");
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 2"));
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 3"));
+        testRun.startGroup("Group 1.1");
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 4"));
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 5"));
+        testRun.endGroup();
+        testRun.endGroup();
+
+        File xmlReport = reporter.generateReportFor(testRun);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }    
+    
+    @Test
+    public void should_record_minimal_nested_test_groups_as_nested_structures()
+            throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A nested test case");
+        String expectedReport = 
+                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                + "  <test-group name='Group 1'>\n"
+                + "    <test-group name='Group 1.1'>\n"
+                + "      <test-group name='Group 1.1.1'>\n"
+                + "        <test-step result='SUCCESS'>\n"
+                + "          <description>step 1</description>\n"
+                + "        </test-step>\n"
+                + "      </test-group>\n" 
+                + "    </test-group>\n" 
+                + "  </test-group>\n" 
+                + "</acceptance-test-run>";
+
+        testRun.startGroup("Group 1");
+        testRun.startGroup("Group 1.1");
+        testRun.startGroup("Group 1.1.1");
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+        testRun.endGroup();
+        testRun.endGroup();
+        testRun.endGroup();
+
+        File xmlReport = reporter.generateReportFor(testRun);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }    
+    
+
+    @Test
     public void should_include_the_name_of_any_screenshots_where_present()
             throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
@@ -212,7 +319,7 @@ public class WhenGeneratingAnXMLReport {
 
         File screenshot = temporaryDirectory.newFile("step_1.png");
 
-        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         step1.setScreenshot(screenshot);
         testRun.recordStep(step1);
         testRun.recordStep(TestStepFactory.failingTestStepCalled("step 2"));
@@ -237,7 +344,7 @@ public class WhenGeneratingAnXMLReport {
 
         testRun.setUserStory(new UserStory("A user story","US1", "UserStory"));
         
-        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         step1.setScreenshot(screenshot);
         testRun.recordStep(step1);
@@ -249,34 +356,11 @@ public class WhenGeneratingAnXMLReport {
     }
     
     @Test
-    public void should_include_the_step_group_if_present()
-            throws Exception {
-        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
-        String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-                + "  <test-step result='SUCCESS' group='TestStepGroup'>\n"
-                + "    <description>step 1</description>\n"
-                + "    <screenshot>step_1.png</screenshot>\n"
-                + "  </test-step>\n"
-                + "</acceptance-test-run>";
-
-        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        File screenshot = temporaryDirectory.newFile("step_1.png");
-        step1.setScreenshot(screenshot);
-        step1.setGroup("TestStepGroup");
-        testRun.recordStep(step1);
-
-        File xmlReport = reporter.generateReportFor(testRun);
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
-    }
-
-    @Test
     public void should_include_error_message_for_failing_test()
             throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
 
-        TestStep step = TestStepFactory.failingTestStepCalled("step 1");
+        ConcreteTestStep step = TestStepFactory.failingTestStepCalled("step 1");
         step.failedWith("Oh nose!", new IllegalArgumentException());
 
         testRun.recordStep(step);
@@ -292,7 +376,7 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
 
-        TestStep step = TestStepFactory.failingTestStepCalled("step 1");
+        ConcreteTestStep step = TestStepFactory.failingTestStepCalled("step 1");
         step.failedWith("Oh nose!", new IllegalArgumentException());
 
         testRun.recordStep(step);

@@ -81,6 +81,13 @@ public class WhenUsingStepLibraries {
         
         verify(listener).testFailure(argThat(hasMethodName(containsString("stepThatFails"))));
     }
+
+    @Test
+    public void the_proxy_should_report_the_step_name_when_a_nested_step_fails() throws Exception {
+        steps.stepThatFails();
+        steps.groupOfStepsContainingAFailure();
+        verify(listener).testFailure(argThat(hasMethodName(containsString("stepThatFails"))));
+    }
     
     @Test
     public void the_proxy_should_notify_listeners_of_skipped_steps_following_a_test_failure() throws Exception {
@@ -234,7 +241,7 @@ public class WhenUsingStepLibraries {
     @Test
     public void test_steps_can_be_organized_in_groups_using_the_TestGroup_annotation() throws Exception {
         
-        steps.groupOfSteps();
+        steps.groupOfStepsContainingAFailure();
 
         verify(listener).testFinished(argThat(hasDescriptionMethodName(containsString("stepThatSucceeds"))));
         verify(listener).testFailure(argThat(hasMethodName(containsString("stepThatFails"))));
@@ -248,7 +255,7 @@ public class WhenUsingStepLibraries {
         ResultStoreListener resultlistener = new ResultStoreListener();
         
         stepFactory.addListener(resultlistener);
-        steps.groupOfSteps();
+        steps.groupOfStepsContainingAFailure();
 
         verify(listener).testFinished(argThat(hasDescriptionMethodName(containsString("stepThatSucceeds"))));
         verify(listener).testFailure(argThat(hasMethodName(containsString("stepThatFails"))));

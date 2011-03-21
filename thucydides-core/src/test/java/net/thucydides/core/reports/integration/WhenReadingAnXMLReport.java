@@ -8,7 +8,9 @@ import static org.hamcrest.Matchers.notNullValue;
 import java.io.File;
 
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
 
 import org.apache.commons.io.FileUtils;
@@ -37,7 +39,7 @@ public class WhenReadingAnXMLReport {
 
     @Test
     public void should_load_acceptance_test_report_from_xml_file() throws Exception {
-        String storedReportXML = "<acceptance-test-run title='A simple test case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+        String storedReportXML = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
                 + "  <test-step result='SUCCESS'>\n"
                 + "    <description>step 1</description>\n"
                 + "    <screenshot>step_1.png</screenshot>\n"
@@ -50,11 +52,67 @@ public class WhenReadingAnXMLReport {
         AcceptanceTestRun testRun = reporter.loadReportFrom(report);
 
         assertThat(testRun.getTitle(), is("A simple test case"));
+        
+        ConcreteTestStep testStep = (ConcreteTestStep) testRun.getTestSteps().get(0);
         assertThat(testRun.getTestSteps().size(), is(1));
-        assertThat(testRun.getTestSteps().get(0).getResult(), is(TestResult.SUCCESS));
-        assertThat(testRun.getTestSteps().get(0).getDescription(), is("step 1"));
-        assertThat(testRun.getTestSteps().get(0).getScreenshotPath(), is("step_1.png"));
+        assertThat(testStep.getResult(), is(TestResult.SUCCESS));
+        assertThat(testStep.getDescription(), is("step 1"));
+        assertThat(testStep.getScreenshotPath(), is("step_1.png"));
     }
+    
+    @Test
+    public void should_load_acceptance_test_report_with_nested_groups_from_xml_file() throws Exception {
+        String storedReportXML = 
+            "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+            + "  <test-group name='Group 1'>\n"
+            + "    <test-group name='Group 1.1'>\n"
+            + "      <test-group name='Group 1.1.1'>\n"
+            + "        <test-step result='SUCCESS'>\n"
+            + "          <description>step 1</description>\n"
+            + "        </test-step>\n"
+            + "      </test-group>\n" 
+            + "    </test-group>\n" 
+            + "  </test-group>\n" 
+            + "</acceptance-test-run>";
+
+        File report = temporaryDirectory.newFile("saved-report.xml");
+        FileUtils.writeStringToFile(report, storedReportXML);
+
+        AcceptanceTestRun testRun = reporter.loadReportFrom(report);
+
+        assertThat(testRun.getTitle(), is("A nested test case"));
+        
+        TestStepGroup group1 = (TestStepGroup) testRun.getTestSteps().get(0);
+        TestStepGroup group1_1 = (TestStepGroup) group1.getSteps().get(0);
+        TestStepGroup group1_1_1 = (TestStepGroup) group1_1.getSteps().get(0);
+        assertThat(testRun.getTestSteps().size(), is(1));
+    }
+
+    @Test
+    public void should_load_acceptance_test_report_with_simple_nested_groups_from_xml_file() throws Exception {
+        String storedReportXML = 
+            "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+            + "  <test-group name='Group 1'>\n"
+            + "    <test-group name='Group 1.1'>\n"
+            + "      <test-step result='SUCCESS'>\n"
+            + "        <description>step 1</description>\n"
+            + "      </test-step>\n"
+            + "    </test-group>\n" 
+            + "  </test-group>\n" 
+            + "</acceptance-test-run>";
+
+        File report = temporaryDirectory.newFile("saved-report.xml");
+        FileUtils.writeStringToFile(report, storedReportXML);
+
+        AcceptanceTestRun testRun = reporter.loadReportFrom(report);
+
+        assertThat(testRun.getTitle(), is("A nested test case"));
+        
+        TestStepGroup group1 = (TestStepGroup) testRun.getTestSteps().get(0);
+        TestStepGroup group1_1 = (TestStepGroup) group1.getSteps().get(0);
+        assertThat(testRun.getTestSteps().size(), is(1));
+    }
+
 
     @Test
     public void should_load_acceptance_test_report_with_multiple_test_steps_from_xml_file()
@@ -172,26 +230,5 @@ public class WhenReadingAnXMLReport {
         AcceptanceTestRun testRun = reporter.loadReportFrom(report);
 
         assertThat(testRun.getUserStory(), is(notNullValue()));
-    }
-
-    @Test
-    public void should_load_acceptance_test_report_with_test_groups_from_xml_file()
-            throws Exception {
-        String storedReportXML = 
-                  "<acceptance-test-run title='A simple test case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-                + "  <test-step result='SUCCESS' group='TestGroup'>\n"
-                + "    <requirements>\n"
-                + "      <requirement>12</requirement>\n"
-                + "      <requirement>32</requirement>\n"
-                + "    </requirements>\n"
-                + "    <description>step 1</description>\n"
-                + "  </test-step>\n" + "</acceptance-test-run>";
-
-        File report = temporaryDirectory.newFile("saved-report.xml");
-        FileUtils.writeStringToFile(report, storedReportXML);
-
-        AcceptanceTestRun testRun = reporter.loadReportFrom(report);
-
-        assertThat(testRun.getTestSteps().get(0).getGroup(), is("TestGroup"));
     }
 }

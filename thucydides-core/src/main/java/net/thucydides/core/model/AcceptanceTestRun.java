@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import ch.lambdaj.function.convert.Converter;
 
@@ -47,6 +48,8 @@ public class AcceptanceTestRun {
 
     private final List<TestStep> testSteps = new ArrayList<TestStep>();
 
+    private final Stack<TestStepGroup> groupStack = new Stack<TestStepGroup>();
+    
     /**
      * Create a new acceptance test run instance.
      */
@@ -142,9 +145,17 @@ public class AcceptanceTestRun {
     public void recordStep(final TestStep step) {
         Preconditions.checkNotNull(step.getDescription(),
                 "The test step description was not defined.");
-        Preconditions.checkNotNull(step.getResult(), "The test step result was not defined");
 
-        testSteps.add(step);
+        if (groupStack.isEmpty()) {
+            testSteps.add(step);
+        } else {
+            addStepToCurrentGroup(step);
+        }
+    }
+
+    private void addStepToCurrentGroup(final TestStep step) {
+        TestStepGroup group = groupStack.peek();
+        group.addTestStep(step);
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
@@ -162,23 +173,37 @@ public class AcceptanceTestRun {
     }
 
     public Integer getSuccessCount() {
-        return select(testSteps, having(on(TestStep.class).isSuccessful())).size();
+        List<TestStep> allTestSteps = getNestedTestSteps();
+        return select(allTestSteps, having(on(TestStep.class).isSuccessful())).size();
+    }
+
+    private List<TestStep> getNestedTestSteps() {
+        List<TestStep> allNestedTestSteps = new ArrayList<TestStep>();
+        
+        for (TestStep testStep : testSteps) {
+            allNestedTestSteps.addAll(testStep.getFlattenedSteps());
+        }
+        return allNestedTestSteps;
     }
 
     public Integer getFailureCount() {
-        return select(testSteps, having(on(TestStep.class).isFailure())).size();
+        List<TestStep> allTestSteps = getNestedTestSteps();
+        return select(allTestSteps, having(on(TestStep.class).isFailure())).size();
     }
 
     public Integer getIgnoredCount() {
-        return select(testSteps, having(on(TestStep.class).isIgnored())).size();
+        List<TestStep> allTestSteps = getNestedTestSteps();
+        return select(allTestSteps, having(on(TestStep.class).isIgnored())).size();
     }
 
     public Integer getSkippedCount() {
-        return select(testSteps, having(on(TestStep.class).isSkipped())).size();
+        List<TestStep> allTestSteps = getNestedTestSteps();
+        return select(allTestSteps, having(on(TestStep.class).isSkipped())).size();
     }
 
     public Integer getPendingCount() {
-        return select(testSteps, having(on(TestStep.class).isPending())).size();
+        List<TestStep> allTestSteps = getNestedTestSteps();
+        return select(allTestSteps, having(on(TestStep.class).isPending())).size();
     }
 
     public Boolean isSuccess() {
@@ -222,7 +247,35 @@ public class AcceptanceTestRun {
         return duration;
     }
 
-    public TestResult getResultForGroup(final String group) {
+    public void startGroup(String description) {
+        TestStepGroup newGroup = new TestStepGroup(description);
+        
+        if (currentlyInGroup()) {
+            addStepToCurrentGroup(newGroup);
+        } else {
+            testSteps.add(newGroup);
+        }
+        
+        groupStack.push(newGroup);
+    }
+
+    private boolean currentlyInGroup() {
+        return !groupStack.isEmpty();
+    }
+
+    public void endGroup() {
+        if (!groupStack.isEmpty()) {
+            groupStack.pop();
+        }
+    }
+
+    public Integer countTestSteps() {
+        return getNestedTestSteps().size();
+    }
+
+/*
+     public TestResult getResultForGroup(final String group) {
+
         TestResultList testResults = new TestResultList(getTestResultsInGroup(group));
         return testResults.getOverallResult();
     }
@@ -236,5 +289,6 @@ public class AcceptanceTestRun {
         }
         return results;
     }
+    */
 
 }

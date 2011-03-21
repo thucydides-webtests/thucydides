@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Set;
 
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.core.model.UserStory;
 
 import com.google.common.base.Preconditions;
@@ -43,7 +45,7 @@ public class AcceptanceTestRunConverter implements Converter {
 
         writer.addAttribute("title", testRun.getTitle());
         writer.addAttribute("name", testRun.getMethodName());
-        writer.addAttribute("steps", Integer.toString(testRun.getTestSteps().size()));
+        writer.addAttribute("steps", Integer.toString(testRun.countTestSteps()));
         writer.addAttribute("successful", Integer.toString(testRun.getSuccessCount()));
         writer.addAttribute("failures", Integer.toString(testRun.getFailureCount()));
         writer.addAttribute("skipped", Integer.toString(testRun.getSkippedCount()));
@@ -55,16 +57,30 @@ public class AcceptanceTestRunConverter implements Converter {
 
         List<TestStep> steps = testRun.getTestSteps();
         for (TestStep step : steps) {
-            writer.startNode("test-step");
-            writeResult(writer, step);
-            writeTestGroup(writer, step);
-            addRequirementsTo(writer, step.getTestedRequirements());
-            writeDescription(writer, step);
-            writeErrorForFailingTest(writer, step);
-            writeScreenshotIfPresent(writer, step);
-            writer.endNode();
+            writeStepTo(writer, step);
         }
 
+    }
+
+    private void writeStepTo(HierarchicalStreamWriter writer, TestStep step) {
+        if (step instanceof TestStepGroup) {
+            writer.startNode("test-group");
+            writer.addAttribute("name", step.getDescription());
+            List<TestStep> nestedSteps = ((TestStepGroup) step).getSteps();
+            for(TestStep nestedStep : nestedSteps) {
+                writeStepTo(writer, nestedStep);
+            }
+            writer.endNode();
+        } else {
+            ConcreteTestStep concreteStep = (ConcreteTestStep) step;
+            writer.startNode("test-step");
+            writeResult(writer, concreteStep);
+            addRequirementsTo(writer, step.getTestedRequirements());
+            writeDescription(writer, concreteStep);
+            writeErrorForFailingTest(writer, concreteStep);
+            writeScreenshotIfPresent(writer, concreteStep);
+            writer.endNode();
+        }
     }
 
     private void addUserStoryTo(final HierarchicalStreamWriter writer, final UserStory userStory) {
@@ -89,7 +105,7 @@ public class AcceptanceTestRunConverter implements Converter {
         }
     }
 
-    private void writeErrorForFailingTest(final HierarchicalStreamWriter writer, final TestStep step) {
+    private void writeErrorForFailingTest(final HierarchicalStreamWriter writer, final ConcreteTestStep step) {
         if (step.isFailure()) {
             writeErrorMessageAndException(writer, step);
         }
@@ -97,7 +113,7 @@ public class AcceptanceTestRunConverter implements Converter {
     }
 
     private void writeErrorMessageAndException(final HierarchicalStreamWriter writer,
-            final TestStep step) {
+            final ConcreteTestStep step) {
         if (step.getErrorMessage() != null) {
             writeErrorMessageNode(writer, step.getErrorMessage());
             if (step.getException() != null) {
@@ -121,7 +137,7 @@ public class AcceptanceTestRunConverter implements Converter {
         writer.endNode();
     }
 
-    private void writeScreenshotIfPresent(final HierarchicalStreamWriter writer, final TestStep step) {
+    private void writeScreenshotIfPresent(final HierarchicalStreamWriter writer, final ConcreteTestStep step) {
         if (step.getScreenshot() != null) {
             writer.startNode("screenshot");
             writer.setValue(step.getScreenshot().getName());
@@ -131,12 +147,6 @@ public class AcceptanceTestRunConverter implements Converter {
 
     private void writeResult(final HierarchicalStreamWriter writer, final TestStep step) {
         writer.addAttribute("result", step.getResult().toString());
-    }
-
-    private void writeTestGroup(final HierarchicalStreamWriter writer, final TestStep step) {
-        if (step.getGroup() != null) {
-            writer.addAttribute("group", step.getGroup());
-        }
     }
 
     private void writeDescription(final HierarchicalStreamWriter writer, final TestStep step) {
@@ -165,6 +175,8 @@ public class AcceptanceTestRunConverter implements Converter {
             String childNode = reader.getNodeName();
             if (childNode.equals("test-step")) {
                 readTestStep(reader, testRun);
+            } else if (childNode.equals("test-group")) {
+                readTestGroup(reader, testRun);
             } else if (childNode.equals("requirements")) {
                 readTestRunRequirements(reader, testRun);
             } else if (childNode.equals("user-story")) {
@@ -210,20 +222,24 @@ public class AcceptanceTestRunConverter implements Converter {
      * .png</screenshot> </test-step>
      */
     private void readTestStep(final HierarchicalStreamReader reader, final AcceptanceTestRun testRun) {
-        TestStep step = new TestStep();
+        ConcreteTestStep step = new ConcreteTestStep();
         String testResultValue = reader.getAttribute("result");
         TestResult result = TestResult.valueOf(testResultValue);
         step.setResult(result);
-
-        String group = reader.getAttribute("group");
-        step.setGroup(group);
 
         readTestStepChildren(reader, step);
 
         testRun.recordStep(step);
     }
 
-    private void readTestStepChildren(final HierarchicalStreamReader reader, final TestStep step) {
+    private void readTestGroup(final HierarchicalStreamReader reader, final AcceptanceTestRun testRun) {
+        String name = reader.getAttribute("name");
+        testRun.startGroup(name);
+        readChildren(reader, testRun);
+        testRun.endGroup();
+    }
+
+    private void readTestStepChildren(final HierarchicalStreamReader reader, final ConcreteTestStep step) {
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             String childNode = reader.getNodeName();

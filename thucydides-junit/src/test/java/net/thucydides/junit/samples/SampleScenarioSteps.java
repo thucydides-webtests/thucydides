@@ -77,7 +77,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
     }
     
     @StepGroup("Group of steps")
-    public void groupOfSteps() {
+    public void groupOfStepsContainingAFailure() {
         stepThatSucceeds();
         stepThatFails();
         stepThatShouldBeSkipped();

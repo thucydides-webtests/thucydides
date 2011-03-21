@@ -15,6 +15,7 @@ import java.util.List;
 
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.UserStory;
@@ -43,7 +44,7 @@ public class ScenarioStepListener extends RunListener {
     private final List<AcceptanceTestRun> acceptanceTestRuns;
     private final Photographer photographer;
     private AcceptanceTestRun currentAcceptanceTestRun;
-    private TestStep currentTestStep;
+    private ConcreteTestStep currentTestStep;
 
     public ScenarioStepListener(final TakesScreenshot driver, final Configuration configuration) {
         acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
@@ -59,7 +60,7 @@ public class ScenarioStepListener extends RunListener {
 
     private void getCurrentTestStepFrom(final Description description) {
         if (currentTestStep == null) {
-            currentTestStep = new TestStep();
+            currentTestStep = new ConcreteTestStep();
         }
     }
 
@@ -113,13 +114,9 @@ public class ScenarioStepListener extends RunListener {
 
     @Override
     public void testStarted(final Description description) throws Exception {
+        System.out.println("Test started for " + description);
         super.testStarted(description);
         getCurrentTestStepFrom(description);
-        if (description.getAnnotation(StepGroup.class) != null) {
-            StepGroup group = description.getAnnotation(StepGroup.class);
-            String groupName = group.value();
-            currentTestStep.setGroup(groupName);
-        }
     }
     
     private UserStory withUserStoryFrom(final Description description) {

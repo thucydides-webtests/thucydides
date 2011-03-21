@@ -26,7 +26,7 @@ public class WhenAssociatingTestedRequirementsWithTestRuns {
     
     @Test
     public void a_test_step_can_test_several_requirments() {
-        TestStep step = new TestStep();
+        TestStep step = new ConcreteTestStep();
         step.testsRequirement("A");
         step.testsRequirement("B");
         assertThat(step.getTestedRequirements(), hasItems("A","B"));
@@ -38,11 +38,11 @@ public class WhenAssociatingTestedRequirementsWithTestRuns {
         testRun.testsRequirement("A");
         testRun.testsRequirement("B");
         
-        TestStep step1 = new TestStep("Step 1");
+        ConcreteTestStep step1 = new ConcreteTestStep("Step 1");
         step1.setResult(TestResult.SUCCESS);
         step1.testsRequirement("C");
 
-        TestStep step2 = new TestStep("Step 2");
+        ConcreteTestStep step2 = new ConcreteTestStep("Step 2");
         step2.setResult(TestResult.SUCCESS);
         step2.testsRequirement("D");
 

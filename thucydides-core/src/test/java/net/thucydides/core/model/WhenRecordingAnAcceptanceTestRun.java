@@ -1,18 +1,24 @@
 package net.thucydides.core.model;
 
+import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.IGNORED;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.fail;
-import static net.thucydides.core.model.TestResult.*;
+
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import static net.thucydides.core.model.TestStepFactory.*;
 
 public class WhenRecordingAnAcceptanceTestRun {
 
@@ -34,15 +40,6 @@ public class WhenRecordingAnAcceptanceTestRun {
         assertThat(testRun.getTestSteps().size(), is(2));
     }
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-    
-    @Test
-    public void the_recorded_test_steps_must_have_a_description_and_a_result() {
-        exception.expect(NullPointerException.class);
-        exception.expectMessage("The test step result was not defined");
-        testRun.recordStep(new TestStep("The user opens the Google search page"));
-    }
     
     @Test
     public void the_returned_test_steps_list_should_be_read_only() {
@@ -52,7 +49,7 @@ public class WhenRecordingAnAcceptanceTestRun {
         assertThat(testSteps.size(), is(1));
 
         try {
-            testSteps.add(new TestStep("The user opens the Google search page"));
+            testSteps.add(new ConcreteTestStep("The user opens the Google search page"));
             fail("An UnsupportedOperationException exception should have been thrown");
         } catch (UnsupportedOperationException e) {
             assertThat(testRun.getTestSteps().size(), is(1));
@@ -244,53 +241,6 @@ public class WhenRecordingAnAcceptanceTestRun {
     }
     
 
-    
-    @Test
-    public void a_test_group_with_only_successful_tests_is_successful() {
-
-        testRun.recordStep(successfulTestStepCalled("Step 1", "Group 1"));
-        testRun.recordStep(successfulTestStepCalled("Step 2", "Group 1"));
-        testRun.recordStep(failingTestStepCalled("Step 3", "Group 2"));
-
-        assertThat(testRun.getResultForGroup("Group 1"), is(TestResult.SUCCESS));
-    }
-
-    @Test
-    public void a_test_group_with_a_failing_test_fails() {
-
-        testRun.recordStep(successfulTestStepCalled("Step 1", "Group 1"));
-        testRun.recordStep(successfulTestStepCalled("Step 2", "Group 1"));
-        testRun.recordStep(failingTestStepCalled("Step 3", "Group 1"));
-        testRun.recordStep(skippedTestStepCalled("Step 4", "Group 1"));
-        testRun.recordStep(ignoredTestStepCalled("Step 5", "Group 1"));
-        testRun.recordStep(successfulTestStepCalled("Step 4", "Group 2"));
-
-        assertThat(testRun.getResultForGroup("Group 1"), is(TestResult.FAILURE));
-    }
-    
-    @Test
-    public void a_test_group_with_a_pending_test_is_pending() {
-
-        testRun.recordStep(successfulTestStepCalled("Step 1", "Group 1"));
-        testRun.recordStep(successfulTestStepCalled("Step 2", "Group 1"));
-        testRun.recordStep(pendingTestStepCalled("Step 3", "Group 1"));
-        testRun.recordStep(successfulTestStepCalled("Step 4", "Group 2"));
-
-        assertThat(testRun.getResultForGroup("Group 1"), is(TestResult.PENDING));
-    }
-
-    @Test
-    public void a_test_group_with_only_ignored_tests_is_ignored() {
-
-        testRun.recordStep(ignoredTestStepCalled("Step 1", "Group 1"));
-        testRun.recordStep(ignoredTestStepCalled("Step 2", "Group 1"));
-        testRun.recordStep(ignoredTestStepCalled("Step 3", "Group 1"));
-        testRun.recordStep(successfulTestStepCalled("Step 4", "Group 2"));
-
-        assertThat(testRun.getResultForGroup("Group 1"), is(TestResult.IGNORED));
-    }
-
-
     @Test
     public void a_test_run_with_only_successful_tests_is_successful() {
 
@@ -299,6 +249,189 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.recordStep(successfulTestStepCalled("Step 3"));
 
         assertThat(testRun.getResult(), is(TestResult.SUCCESS));
+    }
+
+    @Test
+    public void an_acceptance_test_run_can_contain_steps_nested_in_step_groups() {
+        testRun.startGroup("A group");
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+        testRun.endGroup();
+        
+        assertThat(testRun.getTestSteps().size(), is(1));
+    }
+
+
+    private void createNestedTestSteps() {
+        testRun.recordStep(successfulTestStepCalled("Step 0"));
+        testRun.startGroup("A group");
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+        testRun.startGroup("Another group");
+        testRun.recordStep(successfulTestStepCalled("Step 4"));
+        testRun.recordStep(successfulTestStepCalled("Step 5"));
+        testRun.endGroup();
+        testRun.endGroup();
+    }
+
+    @Test
+    public void an_acceptance_test_run_can_contain_step_groups_nested_in_step_groups() {
+        createNestedTestSteps();
+        assertThat(testRun.getTestSteps().size(), is(2));
+    }
+    
+    @Test
+    public void when_test_steps_are_nested_step_count_should_include_all_steps() {
+        createNestedTestSteps();
+        assertThat(testRun.countTestSteps(), is(6));
+    }
+
+    @Test
+    public void an_acceptance_test_run_can_count_all_the_successful_nested_test_steps() {
+        createNestedTestRun();
+        assertThat(testRun.getSuccessCount(), is(6));
+    }
+
+    @Test
+    public void an_acceptance_test_run_can_count_all_the_failing_nested_test_steps() {
+        createNestedTestRun();
+        
+        assertThat(testRun.getFailureCount(), is(3));
+    }
+
+    @Test
+    public void an_acceptance_test_run_can_count_all_the_pending_nested_test_steps() {
+        createNestedTestRun();
+        
+        assertThat(testRun.getPendingCount(), is(4));
+    }
+    
+    @Test
+    public void an_acceptance_test_run_can_count_all_the_ignored_nested_test_steps() {
+        createNestedTestRun();
+        
+        assertThat(testRun.getIgnoredCount(), is(1));
+    }
+
+    @Test
+    public void an_acceptance_test_run_can_count_all_the_skipped_test_steps() {
+        createNestedTestRun();
+        
+        assertThat(testRun.getSkippedCount(), is(1));
+    }
+
+    private void createNestedTestRun() {
+        testRun.recordStep(successfulTestStepCalled("Step 0"));
+        testRun.startGroup("A group");
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 7"));
+        testRun.recordStep(pendingTestStepCalled("Step 10"));
+        testRun.startGroup("Another group");
+        testRun.recordStep(successfulTestStepCalled("Step 4"));
+        testRun.recordStep(successfulTestStepCalled("Step 5"));
+        testRun.recordStep(ignoredTestStepCalled("Step 6"));
+        testRun.recordStep(failingTestStepCalled("Step 7"));
+        testRun.recordStep(failingTestStepCalled("Step 8"));
+        testRun.recordStep(skippedTestStepCalled("Step 9"));
+        testRun.recordStep(pendingTestStepCalled("Step 10"));
+        testRun.recordStep(pendingTestStepCalled("Step 11"));
+        testRun.recordStep(pendingTestStepCalled("Step 12"));
+        testRun.endGroup();
+        testRun.endGroup();
+    }
+
+    @Test
+    public void a_test_group_with_only_successful_tests_is_successful() {
+
+        testRun.startGroup("A group");
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+        testRun.endGroup();
+
+        TestStep aGroup = testRun.getTestSteps().get(0);
+        assertThat(aGroup.getResult(), is(TestResult.SUCCESS));
+    }
+
+
+    @Test
+    public void a_test_group_with_a_failing_test_fails() {
+
+        testRun.startGroup("A group");
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(failingTestStepCalled("Step 3"));
+        testRun.recordStep(skippedTestStepCalled("Step 4"));
+        testRun.recordStep(ignoredTestStepCalled("Step 5"));
+        testRun.recordStep(successfulTestStepCalled("Step 4"));
+        testRun.endGroup();
+
+        TestStep aGroup = testRun.getTestSteps().get(0);
+        assertThat(aGroup.getResult(), is(TestResult.FAILURE));
+    }
+
+    
+    @Test
+    public void a_test_group_with_a_pending_test_is_pending() {
+
+        testRun.startGroup("A group");
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(pendingTestStepCalled("Step 3"));
+        testRun.recordStep(successfulTestStepCalled("Step 4"));
+        testRun.endGroup();
+
+        TestStep aGroup = testRun.getTestSteps().get(0);
+        assertThat(aGroup.getResult(), is(TestResult.PENDING));
+    }
+    
+    @Test
+    public void a_test_group_with_only_ignored_tests_is_ignored() {
+
+        testRun.startGroup("A group");
+        testRun.recordStep(ignoredTestStepCalled("Step 1"));
+        testRun.recordStep(ignoredTestStepCalled("Step 2"));
+        testRun.recordStep(ignoredTestStepCalled("Step 3"));
+        testRun.endGroup();
+        testRun.recordStep(successfulTestStepCalled("Step 4"));
+
+        TestStep aGroup = testRun.getTestSteps().get(0);
+        assertThat(aGroup.getResult(), is(TestResult.IGNORED));
+    }
+
+    @Test
+    public void a_test_run_with_a_nested_group_containing_a_failure_is_a_failure() {
+        testRun.startGroup("A group");
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+        testRun.startGroup("Another group");
+        testRun.recordStep(successfulTestStepCalled("Step 4"));
+        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.endGroup();
+        testRun.endGroup();
+        
+        assertThat(testRun.getResult(), is(TestResult.FAILURE));
+    }
+
+    @Test
+    public void a_test_group_with_a_nested_group_containing_a_failure_is_a_failure() {
+        testRun.startGroup("A group");
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(successfulTestStepCalled("Step 2"));
+        testRun.recordStep(successfulTestStepCalled("Step 3"));
+        testRun.startGroup("Another group");
+        testRun.recordStep(successfulTestStepCalled("Step 4"));
+        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.endGroup();
+        testRun.endGroup();
+       
+        TestStep aGroup = testRun.getTestSteps().get(0);
+        assertThat(aGroup.getResult(), is(TestResult.FAILURE));
     }
 
     @Test

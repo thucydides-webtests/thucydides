@@ -133,7 +133,7 @@ a:active {
             <td width="40"><img src="images/$group_outcome_icon" width="25" height="25" /></td>
             <td width="%" colspan="2"><span class="group-heading">$step.group</span></td>
             <td width="150"><span class="lightgreentext">&nbsp;</span></td>
-            <td width="75"><span class="lightgreentext">&nbsp;</span></td>
+            <td width="100"><span class="lightgreentext">&nbsp;</span></td>
           </tr>
         </table>
         </div>
@@ -147,13 +147,13 @@ a:active {
   <tr class="test-$step.result">
     <td width="40"><img src="images/$step_outcome_icon" class="${step_class_root}-icon" /></td>
     <td width="%"><span class="${step_class_root}-step">$step.description</span></td>
-    <td width="150" class="bluetext">
+    <td width="100" class="bluetext">
 		#if( $step.screenshot )
-	          <a href="$step.screenshot.name"><img src="images/screen.png" width="48" height="48" /></a>
+	          <a href="$step.screenshot.name"><img src="$step.screenshot.name" width="48" height="48" /></a>
         #end
     </td>
     <td width="150"><span class="lightgreentext">$step.result</span></td>
-    <td width="75"><span class="lightgreentext">$step.duration ms</span></td>
+    <td width="100"><span class="lightgreentext">$step.duration ms</span></td>
   </tr>
 </table>
 </div>
