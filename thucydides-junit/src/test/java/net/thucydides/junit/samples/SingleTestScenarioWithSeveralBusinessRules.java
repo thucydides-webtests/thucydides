@@ -30,8 +30,5 @@ public class SingleTestScenarioWithSeveralBusinessRules {
         steps.stepThatIsIgnored();
         steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
-        steps.stepThatFails();
-        steps.stepThatShouldBeSkipped();
-        steps.done();
     }    
 }

@@ -13,7 +13,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.RenderedWebElement;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.ElementNotDisplayedException;
+import org.openqa.selenium.support.ui.Select;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -23,6 +25,9 @@ public class WhenManagingAPageObject {
     @Mock
     WebDriver driver;
 
+    @Mock
+    Select mockSelect;
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
@@ -31,6 +36,11 @@ public class WhenManagingAPageObject {
     final class BasicPageObject extends PageObject {
         public BasicPageObject(WebDriver driver) {
             super(driver);
+        }
+        
+        @Override
+        protected Select findSelectFor(WebElement dropdownList) {
+            return mockSelect;
         }
     }
 
@@ -65,6 +75,27 @@ public class WhenManagingAPageObject {
         page.waitForRenderedElements(By.id("whatever"));
     }
     
+    @Test
+    public void entering_a_value_in_a_field_will_clear_it_first() {
+        WebElement field = mock(WebElement.class);
+        BasicPageObject page = new BasicPageObject(driver);
+
+        page.typeInto(field, "some value");
+        
+        verify(field).clear();
+        verify(field).sendKeys("some value");
+    }
+    
+    @Test
+    public void picking_a_value_in_a_dropdown_picks_by_visible_text() {
+        WebElement field = mock(WebElement.class);
+        BasicPageObject page = new BasicPageObject(driver);
+
+        page.selectFromDropdown(field, "Visible label");
+        
+        verify(mockSelect).selectByVisibleText("Visible label");
+    }
+
     @Test(expected=NoSuchElementException.class)
     public void page_will_throw_exception_if_waiting_for_rendered_element_does_not_exist() {
         

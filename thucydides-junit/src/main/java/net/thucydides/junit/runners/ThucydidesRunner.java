@@ -164,6 +164,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         webdriverManager.closeDriver();
         
         generateReportsFor(getStepListener().getTestRunResults());
+        
+        stepFactory.notifyStepFailures();
     }
     
     private void setupDefaultReporters() {
@@ -220,9 +222,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         
         notifyTestStart(method);
         
-        Statement result = super.methodInvoker(method, test);
-        
-        return result;
+        return super.methodInvoker(method, test);
     }
 
     

@@ -78,4 +78,9 @@ public class ConcreteTestStep extends TestStep {
     public List<? extends TestStep> getFlattenedSteps() {
         return Arrays.asList(this);
     }
+
+    @Override
+    public boolean isAGroup() {
+        return false;
+    }
 }

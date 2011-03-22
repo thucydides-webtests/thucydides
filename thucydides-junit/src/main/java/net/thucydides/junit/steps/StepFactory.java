@@ -23,6 +23,8 @@ public class StepFactory {
     
     private final List<RunListener> listeners = new ArrayList<RunListener>();
     
+    private final List<ScenarioSteps> managedSteps = new ArrayList<ScenarioSteps>();
+    
     public StepFactory(final Pages pages) {
         this.pages = pages;
     }
@@ -49,6 +51,8 @@ public class StepFactory {
         ScenarioSteps steps = (ScenarioSteps) e.create(CONSTRUCTOR_ARG_TYPES, arguments);
 
         instanciateAnyNestedStepLibrariesIn(steps, scenarioStepsClass);
+
+        managedSteps.add(steps);
         
         return steps;
 
@@ -57,5 +61,11 @@ public class StepFactory {
     private void instanciateAnyNestedStepLibrariesIn(final ScenarioSteps steps, 
                                                      final Class<? extends ScenarioSteps> scenarioStepsClass){
         TestCaseAnnotations.injectNestedScenarioStepsInto(steps, this, scenarioStepsClass);
+    }
+
+    public void notifyStepFailures() {
+        for(ScenarioSteps step : managedSteps) {
+            step.done();
+        }
     }
 }

@@ -258,18 +258,16 @@ height:16px; width:16px;
 }
 .nested-step {
     font-family:euphemia, verdana, sans-serif; font-size:16px; font-style:italic; color: #0d78ae;
-    margin-left: 15px;
 }
 
 .top-level-icon {
 
     height: 25px;
-    width: 25px;  
+    width: 25px;
+    margin-right: 5px;
 }
 
 .nested-icon {
-
-    margin-left: 15px;
     height: 20px;
     width: 20px;  
 }

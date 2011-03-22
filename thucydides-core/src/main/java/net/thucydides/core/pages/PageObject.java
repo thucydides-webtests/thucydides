@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.thucydides.core.annotations.At;
+import net.thucydides.core.webelements.Checkbox;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -18,6 +19,7 @@ import org.openqa.selenium.interactions.ElementNotDisplayedException;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
+import org.openqa.selenium.support.ui.Select;
 
 /**
  * A base class representing a WebDriver page object.
@@ -191,12 +193,43 @@ public abstract class PageObject {
      * Check that the specified text appears somewhere in the page.
      */
     public void shouldContainText(final String textValue) {
-        String textInBody = String.format("//body[contains(.,\"%s\")]", textValue);
-        List<WebElement> elements = driver.findElements(By.xpath(textInBody));
-        if (elements.isEmpty()) {
+        if (!containsText(textValue)) {
             String errorMessage = String.format("The text '%s' was not found in the page", textValue);
             throw new NoSuchElementException(errorMessage);
         }
     }
 
+    /**
+     * Clear a field and enter a value into it.
+     */
+    public void typeInto(WebElement field, String value) {
+        field.clear();
+        field.sendKeys(value);
+    }
+    
+    public void selectFromDropdown(WebElement dropdown, String visibleLabel) {
+        Select dropdownSelect = findSelectFor(dropdown);
+        dropdownSelect.selectByVisibleText(visibleLabel);
+    }
+
+    public void setCheckbox(WebElement field, boolean value) {
+        Checkbox checkbox = new Checkbox(field);
+        checkbox.setChecked(value);
+    }
+    
+    protected Select findSelectFor(WebElement dropdownList) {
+        return new Select(dropdownList);
+    }
+
+    /**
+     * Check that the specified text appears somewhere in the page.
+     */
+    public boolean containsText(final String textValue) {
+        String textInBody = String.format("//body[contains(.,\"%s\")]", textValue);
+        List<WebElement> elements = driver.findElements(By.xpath(textInBody));
+        if (elements.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
 }

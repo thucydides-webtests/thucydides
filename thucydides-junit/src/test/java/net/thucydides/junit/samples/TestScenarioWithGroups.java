@@ -29,6 +29,5 @@ public class TestScenarioWithGroups {
         steps.groupOfStepsContainingAFailure();
         steps.anotherGroupOfSteps();
         steps.stepThatSucceeds();
-        steps.done();
     }    
 }

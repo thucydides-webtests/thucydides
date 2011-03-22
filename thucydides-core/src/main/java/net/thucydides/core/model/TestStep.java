@@ -92,5 +92,7 @@ public abstract class TestStep {
     }
 
     public abstract List<? extends TestStep> getFlattenedSteps();
+    
+    public abstract boolean isAGroup();
 
 }

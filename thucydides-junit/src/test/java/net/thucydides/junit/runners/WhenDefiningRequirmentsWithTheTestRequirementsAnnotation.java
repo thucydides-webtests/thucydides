@@ -13,6 +13,7 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.junit.samples.SingleTestScenario;
 import net.thucydides.junit.samples.SingleTestScenarioWithSeveralBusinessRules;
+import net.thucydides.junit.samples.SuccessfulSingleTestScenario;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,7 +37,7 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
     
     @Test
     public void the_TestsRequirement_annotation_can_associated_a_business_rule_to_a_test() throws Exception {
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
@@ -64,7 +65,7 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
     
     @Test
     public void the_TestsRequirement_annotation_can_associated_a_business_rule_to_a_test_step() throws Exception {
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
@@ -79,7 +80,7 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
 
     @Test
     public void the_TestsRequirement_annotation_can_associated_multiple_business_rules_to_a_test_step() throws Exception {
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
@@ -95,7 +96,7 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
 
     @Test
     public void the_test_run_can_calculate_all_the_tested_business_rules_in_a_test_run() throws Exception {
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 

@@ -228,7 +228,7 @@ public class StepInterceptor implements MethodInterceptor {
     }
 
     private boolean invokingLast(final Method method) {
-        return method.getName().equals("done");
+        return (method.getName().equals("done") || (method.getName().equals("finalize")));
     }
 
 }

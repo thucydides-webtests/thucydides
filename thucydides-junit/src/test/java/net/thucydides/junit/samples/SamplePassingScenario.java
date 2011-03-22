@@ -30,7 +30,6 @@ public class SamplePassingScenario {
         steps.stepThatIsIgnored();
         steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
-        steps.done();
     }
     
     @Test
@@ -39,13 +38,11 @@ public class SamplePassingScenario {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();
         steps.stepThatIsPending();
-        steps.done();
     }
     
     @Test
     public void edge_case_2() {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();
-        steps.done();
     }
 }

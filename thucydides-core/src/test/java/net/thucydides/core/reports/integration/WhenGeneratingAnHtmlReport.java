@@ -139,12 +139,12 @@ public class WhenGeneratingAnHtmlReport {
         testRun.recordStep(successfulTestStepCalled("Step 1"));
         testRun.recordStep(successfulTestStepCalled("Step 2"));
         testRun.recordStep(successfulTestStepCalled("Step 3"));
-        testRun.recordStep(failingTestStepCalled("Step 7"));
-        testRun.recordStep(pendingTestStepCalled("Step 10"));
         testRun.startGroup("Another group");
         testRun.recordStep(successfulTestStepCalled("Step 4"));
         testRun.recordStep(successfulTestStepCalled("Step 5"));
+        testRun.startGroup("Yet another group");
         testRun.recordStep(ignoredTestStepCalled("Step 6"));
+        testRun.endGroup();
         testRun.recordStep(failingTestStepCalled("Step 7"));
         testRun.recordStep(failingTestStepCalled("Step 8"));
         testRun.recordStep(skippedTestStepCalled("Step 9"));
@@ -152,7 +152,10 @@ public class WhenGeneratingAnHtmlReport {
         testRun.recordStep(pendingTestStepCalled("Step 11"));
         testRun.recordStep(pendingTestStepCalled("Step 12"));
         testRun.endGroup();
+        testRun.recordStep(pendingTestStepCalled("Step 13"));
+        testRun.recordStep(pendingTestStepCalled("Step 14"));
         testRun.endGroup();
+        testRun.recordStep(skippedTestStepCalled("Step 15"));
 
         reporter.setOutputDirectory(new File("target/thucyidides"));
         reporter.generateReportFor(testRun);

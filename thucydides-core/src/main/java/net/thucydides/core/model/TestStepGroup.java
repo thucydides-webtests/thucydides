@@ -44,4 +44,9 @@ public class TestStepGroup extends TestStep {
         return nestedTestSteps;
     }
 
+    @Override
+    public boolean isAGroup() {
+        return true;
+    }
+
 }

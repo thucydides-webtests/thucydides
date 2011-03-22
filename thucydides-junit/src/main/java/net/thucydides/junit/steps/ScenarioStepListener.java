@@ -191,6 +191,7 @@ public class ScenarioStepListener extends RunListener {
         }
     }
 
+    
     private void takeScreenshotFor(final Description description) throws IOException {
         File screenshot = grabScreenshotFileFor(aTestCalled(description));
         currentTestStep.setScreenshot(screenshot);

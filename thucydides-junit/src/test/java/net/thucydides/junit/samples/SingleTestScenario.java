@@ -34,6 +34,5 @@ public class SingleTestScenario {
         steps.anotherStepThatSucceeds();
         steps.stepThatFails();
         steps.stepThatShouldBeSkipped();
-        steps.done();
     }    
 }
