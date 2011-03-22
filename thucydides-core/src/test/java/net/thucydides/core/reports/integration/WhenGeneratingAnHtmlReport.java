@@ -145,8 +145,8 @@ public class WhenGeneratingAnHtmlReport {
         testRun.startGroup("Yet another group");
         testRun.recordStep(ignoredTestStepCalled("Step 6"));
         testRun.endGroup();
-        testRun.recordStep(failingTestStepCalled("Step 7"));
-        testRun.recordStep(failingTestStepCalled("Step 8"));
+        testRun.recordStep(failingTestStepCalled("Step 7", new AssertionError("Oh bother!")));
+        testRun.recordStep(failingTestStepCalled("Step 8", new AssertionError("Oh bother!")));
         testRun.recordStep(skippedTestStepCalled("Step 9"));
         testRun.recordStep(pendingTestStepCalled("Step 10"));
         testRun.recordStep(pendingTestStepCalled("Step 11"));

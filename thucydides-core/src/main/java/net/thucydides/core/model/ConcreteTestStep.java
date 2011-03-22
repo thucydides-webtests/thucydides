@@ -57,6 +57,7 @@ public class ConcreteTestStep extends TestStep {
      * Indicate that this step failed with a given error.
      */
     public void failedWith(final String message, final Throwable e) {
+        this.result = TestResult.FAILURE;
         this.errorMessage = message;
         this.cause = e;
     }
@@ -83,4 +84,5 @@ public class ConcreteTestStep extends TestStep {
     public boolean isAGroup() {
         return false;
     }
+
 }

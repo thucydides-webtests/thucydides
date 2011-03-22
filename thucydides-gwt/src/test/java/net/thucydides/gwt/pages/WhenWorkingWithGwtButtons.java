@@ -21,6 +21,7 @@ public class WhenWorkingWithGwtButtons {
     public static WebDriver driver;
 
     private GwtShowcaseButtonPage buttonPage;
+
     @BeforeClass
     public static void openBrowser() {
         driver = new FirefoxDriver();

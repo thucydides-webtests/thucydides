@@ -152,6 +152,12 @@ a:active {
             <td width="150"><span class="lightgreentext">$step.result</span></td>
             <td width="100"><span class="lightgreentext">$step.duration ms</span></td>
           </tr>
+            #if (($step.result == "FAILURE") && (!$step.isAGroup()))
+              <tr class="test-$step.result">
+                <td width="40">&nbsp</td>
+                <td width="%" colspan="4"><span class="error-message" >$step.errorMessage</span></td>
+              </tr>
+            #end
         </table>
     </div>
 #end

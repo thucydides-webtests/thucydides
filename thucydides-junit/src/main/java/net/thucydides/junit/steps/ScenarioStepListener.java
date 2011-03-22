@@ -13,11 +13,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.UserStory;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.util.NameConverter;
@@ -172,8 +170,15 @@ public class ScenarioStepListener extends RunListener {
 
         getCurrentTestStepFrom(failure.getDescription());
         markCurrentTestAs(FAILURE);
+        recordFailureDetailsInFailingTestStep(failure);
         takeScreenshotFor(failure.getDescription());
         recordCurrentTestStep(failure.getDescription());
+    }
+
+    private void recordFailureDetailsInFailingTestStep(Failure failure) {
+        if (!currentTestStep.isAGroup()) {
+            ((ConcreteTestStep) currentTestStep).failedWith(failure.getMessage(), failure.getException());
+        }
     }
 
     @Override

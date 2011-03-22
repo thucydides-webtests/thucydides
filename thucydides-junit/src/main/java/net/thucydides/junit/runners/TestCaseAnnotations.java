@@ -1,15 +1,10 @@
 package net.thucydides.junit.runners;
 
-import java.util.List;
-
-import org.openqa.selenium.WebDriver;
-
-import net.thucydides.core.pages.Pages;
-import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
 import net.thucydides.junit.internals.PagesAnnotatedField;
 import net.thucydides.junit.internals.StepsAnnotatedField;
-import net.thucydides.junit.steps.StepFactory;
+
+import org.openqa.selenium.WebDriver;
 
 /**
  * Utility class used to inject fields into a test case.
@@ -56,44 +51,6 @@ public final class TestCaseAnnotations {
                 .findFirstAnnotatedField(testCase.getClass());
 
         webDriverField.setValue(testCase, driver);
-    }
-
-    /**
-     * Instantiates the step scenario fields in a test case.
-     */
-    public static void injectScenarioStepsInto(final Object testCase, final StepFactory stepFactory) {
-        List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findMandatoryAnnotatedFields(testCase.getClass());
-        instanciateScenarioStepFields(testCase, stepFactory, stepsFields);
-     }
-
-    public static void injectNestedScenarioStepsInto(final ScenarioSteps scenarioSteps, 
-                                                     final StepFactory stepFactory,
-                                                     final Class<? extends ScenarioSteps> scenarioStepsClass) {
-        List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findOptionalAnnotatedFields(scenarioStepsClass);
-        instanciateScenarioStepFields(scenarioSteps, stepFactory, stepsFields);
-     }
-
-
-    private static void instanciateScenarioStepFields(
-            final Object testCaseOrSteps, final StepFactory stepFactory,
-            List<StepsAnnotatedField> stepsFields) {
-        for(StepsAnnotatedField stepsField : stepsFields) {
-               Class<? extends ScenarioSteps> scenarioStepsClass = stepsField.getFieldClass();
-               ScenarioSteps steps = (ScenarioSteps) stepFactory.newSteps(scenarioStepsClass);  
-               injectNestedScenarioStepsInto(steps, stepFactory, scenarioStepsClass);
-               stepsField.setValue(testCaseOrSteps, steps);
-           }
-    }
-
-    /**
-     * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
-     */
-    public static void injectAnnotatedPagesObjectInto(final Object testCase, final Pages pages) {
-       PagesAnnotatedField pagesField = PagesAnnotatedField.findFirstAnnotatedField(testCase.getClass());
-       if (pagesField != null) {
-           pages.setDefaultBaseUrl(pagesField.getDefaultBaseUrl());
-           pagesField.setValue(testCase, pages);
-       }
     }
 
 }

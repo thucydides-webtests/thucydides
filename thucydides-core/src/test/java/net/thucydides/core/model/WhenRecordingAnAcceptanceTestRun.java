@@ -70,19 +70,31 @@ public class WhenRecordingAnAcceptanceTestRun {
     public void the_acceptance_test_case_is_a_failure_if_one_test_has_failed() {
 
         testRun.recordStep(successfulTestStepCalled("Step 1"));
-        testRun.recordStep(failingTestStepCalled("Step 2"));
+        testRun.recordStep(failingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
         testRun.recordStep(skippedTestStepCalled("Step 3"));
 
         assertThat(testRun.getResult(), is(FAILURE));
         assertThat(testRun.isFailure(), is(true));
     }
-    
+
+    @Test
+    public void if_a_step_fails_the_error_message_should_be_returned_with_the_result() {
+
+        testRun.recordStep(successfulTestStepCalled("Step 1"));
+        testRun.recordStep(failingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testRun.recordStep(skippedTestStepCalled("Step 3"));
+
+
+        ConcreteTestStep failingStep = (ConcreteTestStep) testRun.getTestSteps().get(1);
+        assertThat(failingStep.getErrorMessage(), is("Oh bother!"));
+    }
+
     @Test
     public void the_acceptance_test_case_is_failing_if_multiple_tests_have_failed() {
 
         testRun.recordStep(successfulTestStepCalled("Step 1"));
-        testRun.recordStep(failingTestStepCalled("Step 2"));
-        testRun.recordStep(failingTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testRun.recordStep(failingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
         testRun.recordStep(successfulTestStepCalled("Step 4"));
 
         assertThat(testRun.getResult(), is(FAILURE));
@@ -104,7 +116,7 @@ public class WhenRecordingAnAcceptanceTestRun {
 
         testRun.recordStep(successfulTestStepCalled("Step 1"));
         testRun.recordStep(pendingTestStepCalled("Step 2"));
-        testRun.recordStep(failingTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
         testRun.recordStep(successfulTestStepCalled("Step 4"));
 
         assertThat(testRun.getResult(), is(FAILURE));
@@ -126,7 +138,7 @@ public class WhenRecordingAnAcceptanceTestRun {
 
         testRun.recordStep(successfulTestStepCalled("Step 1"));
         testRun.recordStep(pendingTestStepCalled("Step 2"));
-        testRun.recordStep(failingTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
         testRun.recordStep(ignoredTestStepCalled("Step 4"));
         testRun.recordStep(successfulTestStepCalled("Step 5"));
 
@@ -138,7 +150,7 @@ public class WhenRecordingAnAcceptanceTestRun {
 
         testRun.recordStep(successfulTestStepCalled("Step 1"));
         testRun.recordStep(pendingTestStepCalled("Step 2"));
-        testRun.recordStep(failingTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
         testRun.recordStep(ignoredTestStepCalled("Step 4"));
         testRun.recordStep(successfulTestStepCalled("Step 5"));
         testRun.recordStep(pendingTestStepCalled("Step 6"));
@@ -173,7 +185,7 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.recordStep(successfulTestStepCalled("Step 1"));
         testRun.recordStep(successfulTestStepCalled("Step 2"));
         testRun.recordStep(ignoredTestStepCalled("Step 3"));
-        testRun.recordStep(failingTestStepCalled("Step 4"));
+        testRun.recordStep(failingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
         testRun.recordStep(skippedTestStepCalled("Step 5"));
 
         assertThat(testRun.getSuccessCount(), is(2));
@@ -185,8 +197,8 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.recordStep(successfulTestStepCalled("Step 1"));
         testRun.recordStep(successfulTestStepCalled("Step 2"));
         testRun.recordStep(ignoredTestStepCalled("Step 3"));
-        testRun.recordStep(failingTestStepCalled("Step 4"));
-        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.recordStep(failingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testRun.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testRun.recordStep(skippedTestStepCalled("Step 6"));
 
         assertThat(testRun.getFailureCount(), is(2));
@@ -198,8 +210,8 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.recordStep(successfulTestStepCalled("Step 1"));
         testRun.recordStep(successfulTestStepCalled("Step 2"));
         testRun.recordStep(ignoredTestStepCalled("Step 3"));
-        testRun.recordStep(failingTestStepCalled("Step 4"));
-        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.recordStep(failingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testRun.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testRun.recordStep(skippedTestStepCalled("Step 6"));
         testRun.recordStep(skippedTestStepCalled("Step 7"));
         testRun.recordStep(skippedTestStepCalled("Step 8"));
@@ -214,8 +226,8 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.recordStep(successfulTestStepCalled("Step 1"));
         testRun.recordStep(successfulTestStepCalled("Step 2"));
         testRun.recordStep(ignoredTestStepCalled("Step 3"));
-        testRun.recordStep(failingTestStepCalled("Step 4"));
-        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.recordStep(failingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testRun.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testRun.recordStep(skippedTestStepCalled("Step 6"));
         testRun.recordStep(skippedTestStepCalled("Step 7"));
         testRun.recordStep(skippedTestStepCalled("Step 8"));
@@ -230,8 +242,8 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.recordStep(successfulTestStepCalled("Step 1"));
         testRun.recordStep(successfulTestStepCalled("Step 2"));
         testRun.recordStep(ignoredTestStepCalled("Step 3"));
-        testRun.recordStep(failingTestStepCalled("Step 4"));
-        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.recordStep(failingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testRun.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testRun.recordStep(skippedTestStepCalled("Step 6"));
         testRun.recordStep(pendingTestStepCalled("Step 7"));
         testRun.recordStep(pendingTestStepCalled("Step 8"));
@@ -328,14 +340,14 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.recordStep(successfulTestStepCalled("Step 1"));
         testRun.recordStep(successfulTestStepCalled("Step 2"));
         testRun.recordStep(successfulTestStepCalled("Step 3"));
-        testRun.recordStep(failingTestStepCalled("Step 7"));
+        testRun.recordStep(failingTestStepCalled("Step 7", new AssertionError("Oh bother!")));
         testRun.recordStep(pendingTestStepCalled("Step 10"));
         testRun.startGroup("Another group");
         testRun.recordStep(successfulTestStepCalled("Step 4"));
         testRun.recordStep(successfulTestStepCalled("Step 5"));
         testRun.recordStep(ignoredTestStepCalled("Step 6"));
-        testRun.recordStep(failingTestStepCalled("Step 7"));
-        testRun.recordStep(failingTestStepCalled("Step 8"));
+        testRun.recordStep(failingTestStepCalled("Step 7", new AssertionError("Oh bother!")));
+        testRun.recordStep(failingTestStepCalled("Step 8", new AssertionError("Oh bother!")));
         testRun.recordStep(skippedTestStepCalled("Step 9"));
         testRun.recordStep(pendingTestStepCalled("Step 10"));
         testRun.recordStep(pendingTestStepCalled("Step 11"));
@@ -364,7 +376,7 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.startGroup("A group");
         testRun.recordStep(successfulTestStepCalled("Step 1"));
         testRun.recordStep(successfulTestStepCalled("Step 2"));
-        testRun.recordStep(failingTestStepCalled("Step 3"));
+        testRun.recordStep(failingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
         testRun.recordStep(skippedTestStepCalled("Step 4"));
         testRun.recordStep(ignoredTestStepCalled("Step 5"));
         testRun.recordStep(successfulTestStepCalled("Step 4"));
@@ -411,7 +423,7 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.recordStep(successfulTestStepCalled("Step 3"));
         testRun.startGroup("Another group");
         testRun.recordStep(successfulTestStepCalled("Step 4"));
-        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testRun.endGroup();
         testRun.endGroup();
         
@@ -426,7 +438,7 @@ public class WhenRecordingAnAcceptanceTestRun {
         testRun.recordStep(successfulTestStepCalled("Step 3"));
         testRun.startGroup("Another group");
         testRun.recordStep(successfulTestStepCalled("Step 4"));
-        testRun.recordStep(failingTestStepCalled("Step 5"));
+        testRun.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testRun.endGroup();
         testRun.endGroup();
        

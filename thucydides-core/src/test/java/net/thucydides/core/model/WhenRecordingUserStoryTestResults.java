@@ -114,7 +114,7 @@ public class WhenRecordingUserStoryTestResults {
     private AcceptanceTestRun thatFailsCalled(String title) {
         AcceptanceTestRun testRun = new AcceptanceTestRun(title);
         testRun.recordStep(successfulTestStepCalled("Step 1"));
-        testRun.recordStep(failingTestStepCalled("Step 2"));
+        testRun.recordStep(failingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
         testRun.recordStep(skippedTestStepCalled("Step 3"));
         return testRun;
     }

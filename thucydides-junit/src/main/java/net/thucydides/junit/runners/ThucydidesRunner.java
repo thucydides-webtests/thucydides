@@ -13,6 +13,7 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 
 import net.thucydides.junit.steps.ScenarioStepListener;
+import net.thucydides.junit.steps.StepAnnotations;
 import net.thucydides.junit.steps.StepFactory;
 
 import org.junit.runner.Description;
@@ -247,7 +248,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     protected void injectScenarioStepsInto(final Object testCase) {
        stepFactory = new StepFactory(pages);
-       TestCaseAnnotations.injectScenarioStepsInto(testCase, stepFactory);
+       StepAnnotations.injectScenarioStepsInto(testCase, stepFactory);
     }
 
     /**
@@ -255,7 +256,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     protected void injectAnnotatedPagesObjectInto(final Object testCase) {
        pages = new Pages(getDriver());
-       TestCaseAnnotations.injectAnnotatedPagesObjectInto(testCase, pages); 
+       StepAnnotations.injectAnnotatedPagesObjectInto(testCase, pages); 
     }
 
     protected WebDriver getDriver() {

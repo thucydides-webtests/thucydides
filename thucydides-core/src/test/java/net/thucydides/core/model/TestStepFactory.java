@@ -11,8 +11,8 @@ public class TestStepFactory {
         return createNewTestStep(description, SUCCESS);
     }
     
-    public static TestStep failingTestStepCalled(String description) {
-        return createNewTestStep(description, FAILURE);
+    public static TestStep failingTestStepCalled(String description, AssertionError assertionError) {
+        return createNewTestStep(description, FAILURE, assertionError);
     }
     
     public static TestStep skippedTestStepCalled(String description) {
@@ -27,6 +27,11 @@ public class TestStepFactory {
         return createNewTestStep(description, PENDING);
     }
 
+    public static TestStep createNewTestStep(String description, TestResult result, AssertionError assertionError) {
+        ConcreteTestStep step = new ConcreteTestStep(description);
+        step.failedWith(assertionError.getMessage(), assertionError);
+        return step;
+    }
     public static TestStep createNewTestStep(String description, TestResult result) {
         ConcreteTestStep step = new ConcreteTestStep(description);
         step.setResult(result);

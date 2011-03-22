@@ -56,10 +56,11 @@ public abstract class TestStep {
     public void setDescription(final String description) {
         this.description = description;
     }
-    
+
     public String getDescription() {
         return description;
     }
+
 
     public abstract TestResult getResult();
 

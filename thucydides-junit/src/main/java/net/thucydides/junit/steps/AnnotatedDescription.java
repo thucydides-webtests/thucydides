@@ -8,7 +8,6 @@ import java.util.List;
 
 import net.thucydides.core.annotations.StepDescription;
 import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.annotations.TestsRequirements;
 import net.thucydides.junit.annotations.Title;

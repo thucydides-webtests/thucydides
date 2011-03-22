@@ -1,11 +1,8 @@
 package net.thucydides.junit.runners;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -94,6 +91,38 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         assertThat(steps.get(3).isSuccessful(), is(true));
         assertThat(steps.get(4).isFailure(), is(true));
         assertThat(steps.get(5).isSkipped(), is(true));
+    }
+
+    @Test
+    public void when_a_test_fails_the_message_is_recorded_in_the_test_step() throws Exception  {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runExpectingFailure(runner);
+
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+
+        List<TestStep> steps = testRun.getTestSteps();
+        ConcreteTestStep failingStep = (ConcreteTestStep) steps.get(4);
+        assertThat(failingStep.getErrorMessage(), allOf(containsString("Expected: is <2>"), containsString("got: <1>")));
+    }
+
+    @Test
+    public void when_a_test_fails_the_exception_is_recorded_in_the_test_step() throws Exception  {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runExpectingFailure(runner);
+
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+
+        List<TestStep> steps = testRun.getTestSteps();
+        ConcreteTestStep failingStep = (ConcreteTestStep) steps.get(4);
+        assertThat(failingStep.getException(), is(AssertionError.class));
     }
 
     private void runExpectingFailure(ThucydidesRunner runner) {

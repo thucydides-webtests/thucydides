@@ -3,12 +3,11 @@ package net.thucydides.junit.steps;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.runner.notification.RunListener;
-
 import net.sf.cglib.proxy.Enhancer;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
-import net.thucydides.junit.runners.TestCaseAnnotations;
+
+import org.junit.runner.notification.RunListener;
 
 /**
  * Produces an instance of a set of requirement steps for use in the acceptance tests.
@@ -60,7 +59,7 @@ public class StepFactory {
 
     private void instanciateAnyNestedStepLibrariesIn(final ScenarioSteps steps, 
                                                      final Class<? extends ScenarioSteps> scenarioStepsClass){
-        TestCaseAnnotations.injectNestedScenarioStepsInto(steps, this, scenarioStepsClass);
+        StepAnnotations.injectNestedScenarioStepsInto(steps, this, scenarioStepsClass);
     }
 
     public void notifyStepFailures() {
