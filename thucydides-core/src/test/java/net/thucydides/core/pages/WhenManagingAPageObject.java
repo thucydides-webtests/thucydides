@@ -117,5 +117,17 @@ public class WhenManagingAPageObject {
         page.setWaitForTimeout(100);
         page.waitForRenderedElements(By.id("whatever"));
     }     
+    
+    @Test
+    public void page_object_should_know_when_a_field_is_visible() {
+        BasicPageObject page = new BasicPageObject(driver);
+        
+        RenderedWebElement field = mock(RenderedWebElement.class);
+        
+        page.userCanSee(field);
+        
+        verify(field).isDisplayed();
+        
+    }
 
 }

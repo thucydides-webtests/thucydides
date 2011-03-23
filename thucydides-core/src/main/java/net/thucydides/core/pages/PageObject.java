@@ -1,9 +1,6 @@
 package net.thucydides.core.pages;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -207,9 +204,41 @@ public abstract class PageObject {
         field.sendKeys(value);
     }
     
-    public void selectFromDropdown(WebElement dropdown, String visibleLabel) {
+    public void selectFromDropdown(final WebElement dropdown, final String visibleLabel) {
         Select dropdownSelect = findSelectFor(dropdown);
         dropdownSelect.selectByVisibleText(visibleLabel);
+    }
+
+    public void selectMultipleItemsFromDropdown(WebElement dropdown, String... selectedLabels) {
+        for(String selectedLabel : selectedLabels) {
+            String optionPath = String.format("//option[.='%s']", selectedLabel);
+            WebElement option = dropdown.findElement(By.xpath(optionPath));
+            option.click();
+        }
+    }
+
+    public Set<String> getSelectedOptionLabelsFrom(final WebElement dropdown) {
+        Set<String> selectedOptions = new HashSet<String>();
+
+        List<WebElement> options = dropdown.findElements(By.tagName("option"));
+        for(WebElement option : options) {
+            if (option.isSelected()) {
+                selectedOptions.add(option.getText());
+            }
+        }
+        return selectedOptions;
+    }
+
+    public Set<String> getSelectedOptionValuesFrom(final WebElement dropdown) {
+        Set<String> selectedOptions = new HashSet<String>();
+
+        List<WebElement> options = dropdown.findElements(By.tagName("option"));
+        for(WebElement option : options) {
+            if (option.isSelected()) {
+                selectedOptions.add(option.getValue());
+            }
+        }
+        return selectedOptions;
     }
 
     public void setCheckbox(WebElement field, boolean value) {
@@ -231,5 +260,9 @@ public abstract class PageObject {
             return false;
         }
         return true;
+    }
+
+    public boolean userCanSee(WebElement field) {
+        return ((RenderedWebElement) field).isDisplayed();
     }
 }
