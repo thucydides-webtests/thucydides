@@ -6,7 +6,7 @@ import java.io.IOException;
 import net.thucydides.core.model.UserStoryTestResults;
 
 /**
- * Generates an aggregate acceptance test report. 
+ * Generates an aggregate acceptance test report for each user story.
  * The class reads all the reports from the output directory and generates an aggregate report
  * summarizing the results using the generateReportsFor() method.
  */

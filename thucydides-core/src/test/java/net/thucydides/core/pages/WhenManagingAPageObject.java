@@ -1,9 +1,15 @@
 package net.thucydides.core.pages;
 
-import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,9 +22,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.ElementNotDisplayedException;
 import org.openqa.selenium.support.ui.Select;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 public class WhenManagingAPageObject {
 
@@ -33,7 +36,7 @@ public class WhenManagingAPageObject {
         MockitoAnnotations.initMocks(this);
     }
     
-    final class BasicPageObject extends PageObject {
+    class BasicPageObject extends PageObject {
         public BasicPageObject(WebDriver driver) {
             super(driver);
         }
@@ -76,6 +79,39 @@ public class WhenManagingAPageObject {
     }
     
     @Test
+    public void page_will_wait_for_text_to_appear_requested() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement textBlock = mock(WebElement.class);
+        
+        List<WebElement> emptyList = Arrays.asList();
+        List<WebElement> listWithElements = Arrays.asList(textBlock);
+        
+        when(driver.findElements(any(By.class))).thenReturn(emptyList).thenReturn(listWithElements);
+
+        page.waitForTextToAppear("hi there");
+    }
+
+    @Test(expected=NoSuchElementException.class)
+    public void should_contain_text_should_throw_an_assertion_if_text_is_not_visible() {
+        BasicPageObject page = new BasicPageObject(driver);        
+        List<WebElement> emptyList = Arrays.asList();        
+        when(driver.findElements(any(By.class))).thenReturn(emptyList);
+        
+        page.shouldContainText("hi there");
+    }
+    
+    @Test
+    public void should_contain_text_should_do_nothing_if_text_is_present() {
+        WebElement textBlock = mock(WebElement.class);
+        BasicPageObject page = new BasicPageObject(driver);        
+        List<WebElement> emptyList = Arrays.asList(textBlock);        
+        when(driver.findElements(any(By.class))).thenReturn(emptyList);
+        
+        page.shouldContainText("hi there");
+    }
+
+    @Test
     public void entering_a_value_in_a_field_will_clear_it_first() {
         WebElement field = mock(WebElement.class);
         BasicPageObject page = new BasicPageObject(driver);
@@ -105,6 +141,7 @@ public class WhenManagingAPageObject {
         page.setWaitForTimeout(100);
         page.waitForRenderedElements(By.id("whatever"));
     }    
+
     
     @Test(expected=ElementNotDisplayedException.class)
     public void page_will_throw_exception_if_waiting_for_rendered_element_is_not_visible() {
@@ -120,8 +157,7 @@ public class WhenManagingAPageObject {
     
     @Test
     public void page_object_should_know_when_a_field_is_visible() {
-        BasicPageObject page = new BasicPageObject(driver);
-        
+        BasicPageObject page = new BasicPageObject(driver);       
         RenderedWebElement field = mock(RenderedWebElement.class);
         
         page.userCanSee(field);
@@ -129,5 +165,25 @@ public class WhenManagingAPageObject {
         verify(field).isDisplayed();
         
     }
+    
+    @Test(expected=AssertionError.class)
+    public void should_be_visible_should_throw_an_assertion_if_element_is_not_visible() {
+        BasicPageObject page = new BasicPageObject(driver);       
+        RenderedWebElement field = mock(RenderedWebElement.class);
+        when(field.isDisplayed()).thenReturn(false);
+        
+        page.shouldBeVisible(field);
+    }
+    
+    @Test
+    public void should_be_visible_should_do_nothing_if_element_is_visible() {
+        BasicPageObject page = new BasicPageObject(driver);       
+        RenderedWebElement field = mock(RenderedWebElement.class);
+        when(field.isDisplayed()).thenReturn(true);
+        
+        page.shouldBeVisible(field);
+    }
+
+
 
 }

@@ -20,7 +20,7 @@ public abstract class HtmlReporter {
     private static final String DEFAULT_RESOURCE_DIRECTORY = "report-resources";
     private String resourceDirectory = DEFAULT_RESOURCE_DIRECTORY;
     private File outputDirectory;
-    private TemplateManager templateManager = new TemplateManager();
+    protected final TemplateManager templateManager = new TemplateManager();
 
     private String templatePath;
     
@@ -79,13 +79,18 @@ public abstract class HtmlReporter {
     /**
      * Merge a velocity template using a provided velocity context.
      */
-    protected String mergeVelocityTemplate(final VelocityContext context) {
+    protected String mergeVelocityTemplate(final Template template, final VelocityContext context) {
         String htmlContents = "";
-        Template template = getTemplate();
         StringWriter sw = new StringWriter();
         template.merge(context, sw);
         htmlContents = sw.toString();
         return htmlContents;
+    }
+    /**
+     * Merge a velocity template using a provided velocity context.
+     */
+    protected String mergeVelocityTemplate(final VelocityContext context) {
+        return mergeVelocityTemplate(getTemplate(), context);
     }
 
     /**

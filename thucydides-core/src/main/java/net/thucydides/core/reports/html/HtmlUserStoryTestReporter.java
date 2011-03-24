@@ -10,6 +10,7 @@ import net.thucydides.core.model.UserStoryTestResults;
 import net.thucydides.core.model.loaders.UserStoryLoader;
 import net.thucydides.core.reports.UserStoryTestReporter;
 
+import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
     private static final String DEFAULT_USER_STORY_TEMPLATE = "velocity/user-story.vm";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlUserStoryTestReporter.class);
+    private static final String STORIES_TEMPLATE_PATH = "velocity/stories.vm";
 
     public HtmlUserStoryTestReporter() {
         setTemplatePath(DEFAULT_USER_STORY_TEMPLATE);
@@ -55,6 +57,25 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
         for(UserStoryTestResults userStoryTestResults : userStoryResults) {
             generateReportFor(userStoryTestResults);
         }
+
+        generateStoriesReportFor(userStoryResults);
+    }
+
+    private void generateStoriesReportFor(List<UserStoryTestResults> userStoryResults) throws IOException {
+        for(UserStoryTestResults userStory : userStoryResults) {
+            System.out.println("Story: " + userStory.getTitle());
+        }
+
+        LOGGER.info("Generating summary report for user stories to "+ getOutputDirectory());
+
+        VelocityContext context = new VelocityContext();
+        context.put("stories", userStoryResults);
+        Template storyTemplate = templateManager.getTemplateFrom(STORIES_TEMPLATE_PATH);
+        String htmlContents = mergeVelocityTemplate(storyTemplate, context);
+
+        copyResourcesToOutputDirectory();
+
+        writeReportToOutputDirectory("stories.html", htmlContents);
     }
 
 }

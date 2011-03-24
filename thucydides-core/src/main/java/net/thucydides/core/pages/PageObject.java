@@ -153,6 +153,20 @@ public abstract class PageObject {
         return this;
     }
 
+    public PageObject waitForTextToAppear(String expectedText) {
+        long end = System.currentTimeMillis() + waitForTimeout;
+        while (System.currentTimeMillis() < end) {
+            if (containsText(expectedText)) {
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (!containsText(expectedText)) {
+            throw new ElementNotDisplayedException("Expected text was not displayed: '" + expectedText + "'");
+        }
+        return this;
+    }
+
     private void checkThatElementIsDisplayed(final By byElementCriteria) {
         if (!elementIsDisplayed(byElementCriteria)) {
             throw new ElementNotDisplayedException("Element not displayed: " + byElementCriteria);
@@ -262,7 +276,17 @@ public abstract class PageObject {
         return true;
     }
 
-    public boolean userCanSee(WebElement field) {
-        return ((RenderedWebElement) field).isDisplayed();
+    public boolean userCanSee(final WebElement field) {
+        if (RenderedWebElement.class.isAssignableFrom(field.getClass())) {
+            return ((RenderedWebElement) field).isDisplayed();
+        } else {
+            return false;
+        }
+    }
+    
+    public void shouldBeVisible(final WebElement field) {
+        if (!userCanSee(field)) {
+            throw new AssertionError("The " + field + " element should be visible");
+        }
     }
 }
