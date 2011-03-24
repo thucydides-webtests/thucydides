@@ -52,7 +52,7 @@ public class GwtButton {
         button.click();
     }
 
-    public void waitUntilEnabled() {
+    public GwtButton waitUntilEnabled() {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
             if (isEnabled()) {
@@ -63,6 +63,7 @@ public class GwtButton {
         if (isDisabled()) {
             throw new ElementNotDisplayedException("The '" + label + "' button should be enabled but was not.");
         }
+        return this;
 
     }
 
