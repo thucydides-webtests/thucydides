@@ -20,6 +20,11 @@ public class GwtButton {
         this.button = button;
     }
 
+    public GwtButton(WebElement button) {
+        this.button = button;
+        this.label = button.getText();
+    }
+
     public void setWaitForTimeout(final long waitForTimeout) {
         this.waitForTimeout = waitForTimeout;
     }
@@ -43,6 +48,10 @@ public class GwtButton {
         return !renderedButton.isEnabled();
     }
 
+    public void click() {
+        button.click();
+    }
+
     public void waitUntilEnabled() {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
@@ -54,7 +63,7 @@ public class GwtButton {
         if (isDisabled()) {
             throw new ElementNotDisplayedException("The '" + label + "' button should be enabled but was not.");
         }
-        
+
     }
 
     protected void waitABit(final long timeInMilliseconds) {

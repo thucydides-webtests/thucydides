@@ -85,6 +85,26 @@ public class WhenWorkingWithGwtButtons {
         disabledButton.waitUntilEnabled();
     }
 
+    @Test
+    public void you_can_also_find_a_gwt_button_using_a_By_expression() {
+        GwtButton normalButton = buttonPage.findButton(By.id("gwt-debug-cwBasicButton-normal"));
+        assertThat(normalButton.isEnabled(), is(true));
+    }
+
+
+    @Test
+    public void a_button_identified_by_a_By_expression_should_still_return_the_correct_label() {
+        GwtButton normalButton = buttonPage.findButton(By.id("gwt-debug-cwBasicButton-normal"));
+        assertThat(normalButton.getLabel(), is("Normal Button"));
+    }
+
+    @Test
+    public void a_button_can_be_instanciated_directly_from_a_web_element() {
+        GwtButton normalButton = new GwtButton(driver.findElement(By.id("gwt-debug-cwBasicButton-normal")));
+        assertThat(normalButton.getLabel(), is("Normal Button"));
+    }
+
+
     @AfterClass
     public static void closeBrowser() {
         driver.quit();
