@@ -18,6 +18,8 @@ import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.openqa.selenium.support.ui.Select;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * A base class representing a WebDriver page object.
  * 
@@ -153,6 +155,9 @@ public abstract class PageObject {
         return this;
     }
 
+    /**
+     * Waits for a given text to appear anywhere on the page.
+     */
     public PageObject waitForTextToAppear(String expectedText) {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
@@ -165,6 +170,80 @@ public abstract class PageObject {
             throw new ElementNotDisplayedException("Expected text was not displayed: '" + expectedText + "'");
         }
         return this;
+    }
+    
+    /**
+     * Waits for any of a number of text blocks to appear anywhere on the screen
+     * @param expectedText
+     * @return
+     */
+    public PageObject waitForAnyTextToAppear(String... expectedText) {
+        long end = System.currentTimeMillis() + waitForTimeout;
+        while (System.currentTimeMillis() < end) {
+            if (pageContains(expectedText)) {
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (!pageContains(expectedText)) {
+            throw new ElementNotDisplayedException("Expected text was not displayed: '" + expectedText + "'");
+        }
+        return this;
+    }
+
+    /**
+     * Waits for all of a number of text blocks to appear somewhere on the screen
+     * @param expectedText
+     * @return
+     */
+    public PageObject waitForAllTextToAppear(String... expectedTexts) {
+        long end = System.currentTimeMillis() + waitForTimeout;
+
+        List<String> requestedTexts = buildInitialListOfExpectedTextsFrom(expectedTexts);
+        
+        boolean allTextsFound = false;
+        while (System.currentTimeMillis() < end) {
+            requestedTexts = removeAnyTextsPresentOnPageFrom(requestedTexts);
+
+            if (requestedTexts.isEmpty()) {
+                allTextsFound = true;
+                break;
+            }
+            
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (!allTextsFound) {
+            throw new ElementNotDisplayedException("Expected text was not displayed: '" + requestedTexts + "'");
+        }
+        return this;
+    }
+
+    private List<String> buildInitialListOfExpectedTextsFrom(
+            String... expectedTexts) {
+        List<String> requestedTexts = new ArrayList<String>();
+        requestedTexts.addAll(Arrays.asList(expectedTexts));
+        return requestedTexts;
+    }
+
+    private List<String> removeAnyTextsPresentOnPageFrom(final List<String> requestedTexts) {
+        List<String> updatedList = new ArrayList<String>();
+        updatedList.addAll(requestedTexts);
+        
+        for(String requestedText : requestedTexts) {
+            if (pageContains(requestedText)) {
+                updatedList.remove(requestedText);
+            }
+        }
+        return updatedList;
+    }
+
+    private boolean pageContains(String... expectedTexts) {
+        for(String expectedText : expectedTexts) {
+            if (containsText(expectedText)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void checkThatElementIsDisplayed(final By byElementCriteria) {

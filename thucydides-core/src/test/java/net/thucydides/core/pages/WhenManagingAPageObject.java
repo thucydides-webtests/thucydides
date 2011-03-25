@@ -92,6 +92,7 @@ public class WhenManagingAPageObject {
         page.waitForTextToAppear("hi there");
     }
 
+
     @Test(expected=NoSuchElementException.class)
     public void should_contain_text_should_throw_an_assertion_if_text_is_not_visible() {
         BasicPageObject page = new BasicPageObject(driver);        
