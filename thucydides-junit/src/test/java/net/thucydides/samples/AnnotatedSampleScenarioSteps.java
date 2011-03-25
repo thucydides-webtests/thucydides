@@ -1,4 +1,4 @@
-package net.thucydides.junit.samples;
+package net.thucydides.samples;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

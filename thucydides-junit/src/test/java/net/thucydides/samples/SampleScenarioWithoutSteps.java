@@ -1,6 +1,5 @@
-package net.thucydides.junit.samples;
+package net.thucydides.samples;
 
-import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.ManagedPages;
@@ -11,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-public class SampleFailingScenario {
+public class SampleScenarioWithoutSteps {
     
     @Managed
     public WebDriver webdriver;
@@ -19,7 +18,6 @@ public class SampleFailingScenario {
     @ManagedPages(defaultUrl = "http://www.google.com")
     public Pages pages;
     
-    @Steps
     public SampleScenarioSteps steps;
         
     @Test

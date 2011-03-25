@@ -7,8 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
 
 import org.junit.After;
 import org.junit.Ignore;
@@ -40,28 +38,27 @@ public class WhenGeneratingThucydidesReportsInMaven {
 
         initVerifier(testDir);
 
+        runTests();
         verifier.executeGoal("thucydides:aggregate");
         verifier.verifyErrorFreeLog();
 
-        //verifier.assertFilePresent("target/thucydides/all_user_stories.xml");
+        verifier.assertFilePresent("target/thucydides/stories.html");
     }
     
     @Test
-    @Ignore
+    @Ignore("Pending implementation and testing")
     public void the_user_can_override_the_default_output_directory() throws Exception {
         File testDir = ResourceExtractor.simpleExtractResources(getClass(), "/test-projects/project-with-different-output-dir");
 
         initVerifier(testDir);
 
+        runTests();
         verifier.executeGoal("thucydides:aggregate");
         verifier.verifyErrorFreeLog();
 
         File expectedOutputFile = new File(verifier.getBasedir(), "target/out");
         System.out.println("Files = " + expectedOutputFile.list());
-        verifier.assertFilePresent("target/out/all_user_stories.xml");
-
-        String report = getStringFrom(new File(verifier.getBasedir(), "target/out/all_user_stories.xml"));
-        assertThat(report, is(not("")));
+        verifier.assertFilePresent("target/out/stories.html");
     }
 
     @Test
@@ -70,6 +67,13 @@ public class WhenGeneratingThucydidesReportsInMaven {
         
     }
     
+    private void runTests() {
+        try {
+            verifier.executeGoal("test");
+        } catch (VerificationException e) {
+            e.printStackTrace();
+        }
+    }
     private Verifier initVerifier(File testDir) throws VerificationException, IOException {
         verifier = new Verifier(testDir.getAbsolutePath());
         verifier.deleteArtifact("net.thucydides.maven.plugins.samples", "simple-project", "1.0", "pom");

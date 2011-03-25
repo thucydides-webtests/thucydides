@@ -4,14 +4,12 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.junit.runners.TestCaseAnnotations;
-import net.thucydides.junit.samples.SampleScenarioSteps;
+import net.thucydides.samples.SampleScenarioSteps;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 

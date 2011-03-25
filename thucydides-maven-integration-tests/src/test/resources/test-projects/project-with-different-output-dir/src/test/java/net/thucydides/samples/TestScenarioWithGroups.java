@@ -1,18 +1,19 @@
-package net.thucydides.junit.samples;
+package net.thucydides.samples;
 
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.ManagedPages;
+import net.thucydides.junit.annotations.UserStoryCode;
 import net.thucydides.junit.runners.ThucydidesRunner;
-import net.thucydides.junit.annotations.Title;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-public class AnnotatedSingleTestScenario {
+@UserStoryCode("US02")
+public class TestScenarioWithGroups {
     
     @Managed
     public WebDriver webdriver;
@@ -21,14 +22,20 @@ public class AnnotatedSingleTestScenario {
     public Pages pages;
     
     @Steps
-    public AnnotatedSampleScenarioSteps steps;
+    public SampleScenarioSteps steps;
         
     @Test
-    @Title("Oh happy days!")
     public void happy_day_scenario() {
-        steps.stepThatSucceeds();
-        steps.stepThatIsIgnored();
-        steps.stepThatIsPending();
-        steps.anotherStepThatSucceeds();
+        steps.anotherGroupOfSteps();
+        steps.stepThree("e");
+        steps.stepFour("f");
     }    
+
+    @Test
+    public void failing_scenario() {
+        steps.groupOfStepsContainingAFailure();
+        steps.anotherGroupOfSteps();
+        steps.stepThatSucceeds();
+    }    
+	
 }

@@ -95,6 +95,26 @@ public class WhenGeneratingUserStoryHtmlReports {
     }
     
     @Test
+    public void should_generate_stories_html_report() throws Exception {
+        HtmlUserStoryTestReporter reporter = new HtmlUserStoryTestReporter();
+        reporter.setOutputDirectory(outputDirectory);  
+        File sourceDirectory = new File("src/test/resources/multiple-user-story-reports");
+        reporter.generateReportsForStoriesFrom(sourceDirectory);
+        File expectedStoryHtmlReport = new File(outputDirectory, "stories.html");
+        assertThat(expectedStoryHtmlReport.exists(), is(true));
+    }
+
+    @Test
+    public void should_copy_resources_to_target_directory() throws Exception {
+        HtmlUserStoryTestReporter reporter = new HtmlUserStoryTestReporter();
+        reporter.setOutputDirectory(outputDirectory);  
+        File sourceDirectory = new File("src/test/resources/multiple-user-story-reports");
+        reporter.generateReportsForStoriesFrom(sourceDirectory);
+        File expectedCssStylesheet = new File(new File(outputDirectory,"css"), "core.css");
+        assertThat(expectedCssStylesheet.exists(), is(true));
+    }
+
+    @Test
     public void aggregate_failing_story_should_display_failing_icon() throws Exception {
         File userStoryReport = reporter.generateReportFor(userStoryTestResults);
         String reportText = getStringFrom(userStoryReport);

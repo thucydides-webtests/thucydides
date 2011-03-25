@@ -23,7 +23,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 
 import net.thucydides.core.pages.Pages;
-import net.thucydides.junit.samples.SampleScenarioSteps;
+import net.thucydides.samples.SampleScenarioSteps;
 import net.thucydides.junit.steps.StepFactory;
 
 public class WhenUsingStepLibraries {

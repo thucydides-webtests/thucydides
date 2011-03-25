@@ -12,7 +12,7 @@ import java.io.IOException;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.samples.AnnotatedSingleTestScenario;
+import net.thucydides.samples.AnnotatedSingleTestScenario;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -54,6 +54,8 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
         UserStoryLoader loader = new UserStoryLoader();
         List<UserStoryTestResults> userStoryResults = loader.loadStoriesFrom(sourceDirectory);
         
+        copyResourcesToOutputDirectory();
+
         for(UserStoryTestResults userStoryTestResults : userStoryResults) {
             generateReportFor(userStoryTestResults);
         }

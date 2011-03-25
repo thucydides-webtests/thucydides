@@ -1,10 +1,11 @@
-package net.thucydides.junit.samples;
+package net.thucydides.samples;
 
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.ManagedPages;
-import net.thucydides.junit.annotations.TestsRequirements;
+import net.thucydides.junit.annotations.TestsRequirement;
+import net.thucydides.junit.annotations.UserStoryCode;
 import net.thucydides.junit.runners.ThucydidesRunner;
 
 import org.junit.Test;
@@ -12,7 +13,8 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-public class SingleTestScenarioWithSeveralBusinessRules {
+@UserStoryCode("US01")
+public class SuccessfulSingleTestScenario {
     
     @Managed
     public WebDriver webdriver;
@@ -24,7 +26,7 @@ public class SingleTestScenarioWithSeveralBusinessRules {
     public SampleScenarioSteps steps;
         
     @Test
-    @TestsRequirements({"SOME_BUSINESS_RULE_1","SOME_BUSINESS_RULE_2"})
+    @TestsRequirement("SOME_BUSINESS_RULE")
     public void happy_day_scenario() {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();

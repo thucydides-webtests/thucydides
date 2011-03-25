@@ -18,14 +18,14 @@ import net.thucydides.core.model.UserStory;
 import net.thucydides.junit.annotations.InvalidManagedPagesFieldException;
 import net.thucydides.junit.annotations.InvalidStepsFieldException;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.samples.AnnotatedSingleTestScenario;
-import net.thucydides.junit.samples.SamplePassingScenario;
-import net.thucydides.junit.samples.SampleScenarioWithoutPages;
-import net.thucydides.junit.samples.SampleScenarioWithoutSteps;
-import net.thucydides.junit.samples.SingleTestScenario;
-import net.thucydides.junit.samples.SuccessfulSingleTestScenario;
-import net.thucydides.junit.samples.TestScenarioWithGroups;
-import net.thucydides.junit.samples.TestScenarioWithParameterizedSteps;
+import net.thucydides.samples.AnnotatedSingleTestScenario;
+import net.thucydides.samples.SamplePassingScenario;
+import net.thucydides.samples.SampleScenarioWithoutPages;
+import net.thucydides.samples.SampleScenarioWithoutSteps;
+import net.thucydides.samples.SingleTestScenario;
+import net.thucydides.samples.SuccessfulSingleTestScenario;
+import net.thucydides.samples.TestScenarioWithGroups;
+import net.thucydides.samples.TestScenarioWithParameterizedSteps;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -270,7 +270,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         UserStory userStory = testRun.getUserStory();
 
         assertThat(userStory.getName(), is("Successful single test scenario"));
-        assertThat(userStory.getSource(), is("net.thucydides.junit.samples.SuccessfulSingleTestScenario"));
+        assertThat(userStory.getSource(), is("net.thucydides.samples.SuccessfulSingleTestScenario"));
         assertThat(userStory.getCode(), is("US01"));
     }
 

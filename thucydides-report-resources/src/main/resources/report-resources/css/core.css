@@ -272,6 +272,54 @@ height:16px; width:16px;
     width: 20px;  
 }
 
+.summary-icon {
+    height: 15px;
+    width: 15px;
+    margin-right: 5px;
+}
+
 .error-message {
     font-family:euphemia, verdana, sans-serif; font-size:12px; color:#CC0033; text-align:right;
 }
+
+.SUCCESS-text {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #88a717;
+}
+
+.FAILURE-text {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #fd3e03; font-style:italic;
+}
+
+.PENDING-text {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color:#CCCC33; font-style:italic;
+}
+
+.SUCCESS-item-text {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #88a717; font-style:italic;
+}
+
+.FAILURE-item-text {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #fd3e03; font-style:italic;
+}
+
+.PENDING-item-text {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color:#0d78ae; font-style:italic;
+}
+/*
+.redtext
+{
+font-family:euphemia, verdana, sans-serif; font-size:16px; color:#CC0033;
+}
+.lightredtext
+{
+font-family:euphemia, verdana, sans-serif; font-size:16px; color:#FF6600;
+}
+.lightorangetext
+{
+font-family:euphemia, verdana, sans-serif; font-size:16px; color: #fd3e03;
+}
+.greentext
+{
+font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-weight:bold;
+}
+*/

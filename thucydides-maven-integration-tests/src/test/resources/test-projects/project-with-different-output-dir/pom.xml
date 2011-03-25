@@ -16,6 +16,19 @@
             <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-junit</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.1</version>
+            <type>pom</type>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -25,7 +38,7 @@
                 <artifactId>maven-thucydides-plugin</artifactId>
                 <version>0.1.1-SNAPSHOT</version>
                 <configuration>
-                    <outputDirectory>/Users/johnsmart/out</outputDirectory>
+                    <outputDirectory>${basedir}/target/out</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

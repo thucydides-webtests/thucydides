@@ -2,10 +2,7 @@ package net.thucydides.maven.plugins;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
-import net.thucydides.core.model.UserStoryTestResults;
-import net.thucydides.core.model.loaders.UserStoryLoader;
 import net.thucydides.core.reports.html.HtmlUserStoryTestReporter;
 
 import org.apache.maven.plugin.AbstractMojo;

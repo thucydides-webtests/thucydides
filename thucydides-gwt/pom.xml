@@ -5,11 +5,11 @@
   <parent>
     <artifactId>thucydides</artifactId>
     <groupId>net.thucydides</groupId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.2-SNAPSHOT</version>
   </parent>
   <groupId>net.thucydides</groupId>
   <artifactId>thucydides-gwt</artifactId>
-  <version>0.1.1-SNAPSHOT</version>
+  <version>0.1.2-SNAPSHOT</version>
   <name>thucydides-gwt</name>
   <url>http://maven.apache.org</url>
   <properties>
@@ -19,7 +19,7 @@
   	<dependency>
   		<groupId>net.thucydides</groupId>
   		<artifactId>thucydides-core</artifactId>
-  		<version>0.1.1-SNAPSHOT</version>
+  		<version>0.1.2-SNAPSHOT</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>

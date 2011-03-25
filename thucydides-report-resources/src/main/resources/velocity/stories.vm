@@ -35,7 +35,7 @@
         #accordion ul li {
             font-weight: normal;
             cursor: auto;
-            padding: 0 0 0 7px;
+            padding: 7px 0 0 7px;
         }
 
         #accordion a {
@@ -116,43 +116,70 @@
                     <table width="980" height="50" border="0">
                         <tr>
                             <td width="10">&nbsp;</td>
-                            <td width="400" class="greentext">Stories</td>
-                            <td width="150" class="greentext">Test Cases</td>
-                            <td width="140" class="greentext">Failed</td>
-                            <td width="180" class="greentext">Pending</td>
+                            <td width="600" class="greentext">Stories</td>
+                            <td width="100" class="greentext">Test Cases</td>
+                            <td width="100" class="greentext">Failed</td>
+                            <td width="100" class="greentext">Pending</td>
                         </tr>
                     </table>
                 </div>
 
                 #foreach($story in $stories)
-                <div class="tableraw">
-                    <table border="0" height="40" width="980">
-                        <tr>
-                            <td width="10">&nbsp;</td>
-                            <td width="400" class="bluetext">
+                    #if ($story.result == "FAILURE")
+                        #set( $story_outcome_icon = "fail.png" )
+                        #set( $story_outcome_text = "failing-color" )
+                    #elseif ($story.result == "SUCCESS")
+                        #set( $story_outcome_icon = "success.png" )
+                        #set( $story_outcome_text = "success-color" )
+                    #elseif ($story.result == "PENDING")
+                        #set( $story_outcome_icon = "pending.png" )
+                        #set( $story_outcome_text = "pending-color" )
+                    #else
+                        #set( $story_outcome_icon = "ignor.png" )
+                        #set( $story_outcome_text = "ignore-color" )
+                    #end
+                    <div class="tableraw">
+                        <table border="0" height="40" width="980">
+                            <tr>
+                                <td width="10">&nbsp;</td>
+                                <td width="400" class="bluetext">
 
-                                <ul id="accordion">
-                                    <li>
-                                        <div></div>
-                                        <ul></ul>
-                                    </li>
-                                    <li>
-                                        <div>$story.title</div>
-                                        <ul>
-                                            #foreach($testRun in $story.testRuns)
-                                            <li><a href="${testRun.reportName}.html" class="lightgreentext">$testRun.title</a></li>
-                                            #end
-                                        </ul>
-                                    </li>
+                                    <ul id="accordion">
+                                        <li>
+                                            <div></div>
+                                            <ul></ul>
+                                        </li>
+                                        <li>
+                                            <div><img src="images/${story_outcome_icon}" class="summary-icon"/><span class="${story.result}-text">$story.title</span></div>
+                                            <ul>
+                                                #foreach($testRun in $story.testRuns)
+                                                    #if ($testRun.result == "FAILURE")
+                                                        #set( $outcome_icon = "fail.png" )
+                                                        #set( $outcome_text = "failing-color" )
+                                                    #elseif ($testRun.result == "SUCCESS")
+                                                        #set( $outcome_icon = "success.png" )
+                                                        #set( $outcome_text = "success-color" )
+                                                    #elseif ($testRun.result == "PENDING")
+                                                        #set( $outcome_icon = "pending.png" )
+                                                        #set( $outcome_text = "pending-color" )
+                                                    #else
+                                                        #set( $outcome_icon = "ignor.png" )
+                                                        #set( $outcome_text = "ignore-color" )
+                                                    #end
 
-                                </ul>
-                            </td>
-                            <td width="150" class="bluetext">$story.total</td>
-                            <td width="140" class="redtext"><span class="lightgreentext">$testRun.failure</td>
-                            <td width="180" class="lightgreentext">$testRun.pending</td>
-                        </tr>
-                    </table>
-                </div>
+                                                    <li><img src="images/${outcome_icon}" class="summary-icon"/><a href="${testRun.reportName}.html" class="${testRun.result}-item-text">$testRun.title</a></li>
+                                                #end
+                                            </ul>
+                                        </li>
+
+                                    </ul>
+                                </td>
+                                <td width="150" class="bluetext">$story.total</td>
+                                <td width="140" class="redtext"><span class="lightgreentext">$story.failureCount</td>
+                                <td width="180" class="lightgreentext">$story.pendingCount</td>
+                            </tr>
+                        </table>
+                    </div>
                #end
             </div>
         </div>

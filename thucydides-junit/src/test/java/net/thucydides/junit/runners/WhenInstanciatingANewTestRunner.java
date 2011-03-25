@@ -12,8 +12,7 @@ import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
-import net.thucydides.junit.samples.SingleTestScenario;
-import net.thucydides.junit.samples.SuccessfulSingleTestScenario;
+import net.thucydides.samples.SuccessfulSingleTestScenario;
 
 import org.junit.Rule;
 import org.junit.Test;

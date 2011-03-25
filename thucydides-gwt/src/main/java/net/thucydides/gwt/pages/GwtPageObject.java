@@ -22,18 +22,25 @@ public abstract class GwtPageObject extends PageObject {
     /**
      * Return a GWT Button widget with a given label.
      */
-    public GwtButton getButtonLabelled(String label) {
+    public GwtButton getButtonLabelled(final String label) {
         String buttonXPath = String.format("//button[contains(.,'%s')]", label);
         WebElement button = getDriver().findElement(By.xpath(buttonXPath));
         return new GwtButton(label, button);
     }
 
-    public GwtButton findButton(By byIdentifer) {
+    /**
+     * Get a Gwt button using a Selenium identifier.
+     */
+    public GwtButton findButton(final By byIdentifer) {
         WebElement button = getDriver().findElement(byIdentifer);
         return new GwtButton(button.getText(), button);
     }
 
-    public FileToUpload uploadFileFromResourcePath(String filename) {
+    /**
+     * Upload a file using a fluent interface.
+     * Files are assumed to be on the classpath, e.g. in the src/main/resources directory
+     */
+    public FileToUpload uploadFileFromResourcePath(final String filename) {
         ClassLoader cldr = Thread.currentThread().getContextClassLoader();
         String uploadPath = cldr.getResource(filename).getFile();
         return new FileToUpload(uploadPath);

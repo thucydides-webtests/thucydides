@@ -4,6 +4,11 @@ import org.openqa.selenium.RenderedWebElement;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.ElementNotDisplayedException;
 
+/**
+ * A GWT button.
+ * This provides some extra features, such as knowing whether a button is enabled
+ * and waiting until it is enabled if required.
+ */
 public class GwtButton {
 
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 50;
@@ -15,12 +20,12 @@ public class GwtButton {
     private final String label;
     private final WebElement button;
 
-    public GwtButton(String label, WebElement button) {
+    public GwtButton(final String label,final WebElement button) {
         this.label = label;
         this.button = button;
     }
 
-    public GwtButton(WebElement button) {
+    public GwtButton(final WebElement button) {
         this.button = button;
         this.label = button.getText();
     }

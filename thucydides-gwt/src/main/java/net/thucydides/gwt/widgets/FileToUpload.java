@@ -2,6 +2,9 @@ package net.thucydides.gwt.widgets;
 
 import org.openqa.selenium.WebElement;
 
+/**
+ * A class that helps upload a file to an HTML form in using a fluent API.
+ */
 public class FileToUpload {
     final String filename;
 
@@ -9,7 +12,7 @@ public class FileToUpload {
         this.filename = filename;
     }
 
-    public void to(WebElement uploadFileField) {
+    public void to(final WebElement uploadFileField) {
          uploadFileField.sendKeys(filename);
     }
 }
