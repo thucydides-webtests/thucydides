@@ -21,13 +21,27 @@ public final class NameConverter {
      * Converts a class or method name into a human-readable sentence.
      */
     public static String humanize(final String name) {
-        if (name.contains(" ") && !name.contains(":")) {
+        if (name.contains(" ") && !thereAreParametersIn(name)) {
             return name;
+        } else if (thereAreParametersIn(name)){
+            return humanizeNameWithParameters(name);
         } else {
             String noUnderscores = name.replaceAll("_", " ");
             String splitCamelCase = splitCamelCase(noUnderscores);
             return StringUtils.capitalizeFirstLetter(splitCamelCase.toLowerCase());
         }
+    }
+
+    private static String humanizeNameWithParameters(String name) {
+        int parametersStartAt = name.indexOf(": ");
+        String bareName = name.substring(0, parametersStartAt);
+        String humanizedBareName = humanize(bareName);
+        String parameters = name.substring(parametersStartAt);
+        return humanizedBareName + parameters;
+    }
+
+    private static boolean thereAreParametersIn(String name) {
+        return name.contains(": ");
     }
 
     /**
