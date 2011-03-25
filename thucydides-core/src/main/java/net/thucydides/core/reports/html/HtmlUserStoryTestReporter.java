@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import net.thucydides.core.model.UserStoryTestResults;
+import net.thucydides.core.model.UserStoriesResultSet;
 import net.thucydides.core.model.loaders.UserStoryLoader;
 import net.thucydides.core.reports.UserStoryTestReporter;
 
@@ -26,6 +27,7 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlUserStoryTestReporter.class);
     private static final String STORIES_TEMPLATE_PATH = "velocity/stories.vm";
+    private static final String HOME_TEMPLATE_PATH = "velocity/home.vm";
 
     public HtmlUserStoryTestReporter() {
         setTemplatePath(DEFAULT_USER_STORY_TEMPLATE);
@@ -70,14 +72,25 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
 
         LOGGER.info("Generating summary report for user stories to "+ getOutputDirectory());
 
+        copyResourcesToOutputDirectory();
+
+        generateStoriesReport(userStoryResults);
+        generateReportHomePage(userStoryResults);
+    }
+
+    private void generateStoriesReport(List<UserStoryTestResults> userStoryResults) throws IOException {
         VelocityContext context = new VelocityContext();
         context.put("stories", userStoryResults);
         Template storyTemplate = templateManager.getTemplateFrom(STORIES_TEMPLATE_PATH);
         String htmlContents = mergeVelocityTemplate(storyTemplate, context);
-
-        copyResourcesToOutputDirectory();
-
         writeReportToOutputDirectory("stories.html", htmlContents);
     }
 
+    private void generateReportHomePage(List<UserStoryTestResults> userStoryResults) throws IOException {
+        VelocityContext context = new VelocityContext();
+        context.put("stories", new UserStoriesResultSet(userStoryResults));
+        Template storyTemplate = templateManager.getTemplateFrom(HOME_TEMPLATE_PATH);
+        String htmlContents = mergeVelocityTemplate(storyTemplate, context);
+        writeReportToOutputDirectory("home.html", htmlContents);
+    }
 }

@@ -26,6 +26,11 @@ public class WhenMakingTestNamesMoreReadable {
     }
 
     @Test
+    public void test_names_with_parameters_should_only_modify_the_name() {
+        assertThat(NameConverter.humanize("aTestMethod: ABC def bGd"), is("A test method: ABC def bGd"));
+    }
+
+    @Test
     public void camelCase_method_names_should_be_converted_to_human_readable_sentences() {
         assertThat(NameConverter.humanize("aTestMethod"), is("A test method"));
     }

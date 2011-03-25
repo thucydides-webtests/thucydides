@@ -77,11 +77,9 @@
         <div id="menu">
             <table border="0">
                 <tr>
-                    <td><a href="Home.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>
-                    <td><a href="Features.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a>
-                    </td>
-                    <td><a href="Stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a>
-                    </td>
+                    <td><a href="home.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>
+                    <td><a href="features.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a></td>
+                    <td><a href="stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a></td>
                 </tr>
             </table>
         </div>
@@ -93,8 +91,8 @@
     <div id="contenttop">
         <div class="leftbg"></div>
         <div class="middlebg">
-            <div style="height:30px;"><span class="bluetext">Home</span> / <span class="lightgreentext"><a
-                    href="Features.html" class="lightgreentext">Features</a></span></div>
+            <div style="height:30px;"><span class="bluetext"><a href="home.html">Home</a></span> / <span class="lightgreentext"><a
+                    href="features.html" class="lightgreentext">Features</a></span></div>
         </div>
         <div class="rightbg"></div>
     </div>
@@ -142,7 +140,7 @@
                         <table border="0" height="40" width="980">
                             <tr>
                                 <td width="10">&nbsp;</td>
-                                <td width="400" class="bluetext">
+                                <td width="600" class="bluetext">
 
                                     <ul id="accordion">
                                         <li>
@@ -174,9 +172,9 @@
 
                                     </ul>
                                 </td>
-                                <td width="150" class="bluetext">$story.total</td>
-                                <td width="140" class="redtext"><span class="lightgreentext">$story.failureCount</td>
-                                <td width="180" class="lightgreentext">$story.pendingCount</td>
+                                <td width="100" class="bluetext">$story.total</td>
+                                <td width="100" class="redtext"><span class="lightgreentext">$story.failureCount</td>
+                                <td width="100" class="lightgreentext">$story.pendingCount</td>
                             </tr>
                         </table>
                     </div>
