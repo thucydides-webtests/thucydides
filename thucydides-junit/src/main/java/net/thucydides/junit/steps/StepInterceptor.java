@@ -14,6 +14,8 @@ import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** 
  * Listen to step results and publish JUnit notification messages.
@@ -28,6 +30,7 @@ public class StepInterceptor implements MethodInterceptor {
     private List<Throwable> stepExceptions;
     private boolean failureHasOccured = false;
     private Throwable error = null;
+    private static final Logger LOGGER = LoggerFactory.getLogger(StepInterceptor.class);
 
     public StepInterceptor(final Class<?> testStepClass, final List<RunListener> listeners) {
         this.testStepClass = testStepClass;
@@ -88,6 +91,7 @@ public class StepInterceptor implements MethodInterceptor {
             final Object[] args,
             final MethodProxy proxy) throws Throwable {
 
+        LOGGER.info("Running test step group " + method);
         Object result = null;
         try {
             result = proxy.invokeSuper(obj, args);
@@ -119,6 +123,7 @@ public class StepInterceptor implements MethodInterceptor {
 
     private Object runTestStep(final Object obj, final Method method, final Object[] args,
             final MethodProxy proxy) throws Throwable {
+        LOGGER.info("Running test step " + method);
         Object result = null;
         try {
             result = proxy.invokeSuper(obj, args);
@@ -160,7 +165,7 @@ public class StepInterceptor implements MethodInterceptor {
 
     private String testNameWithArguments(final Method method, final Object[] args) {
         StringBuffer testName = new StringBuffer(method.getName());
-        testName.append(": "); 
+        testName.append(": <span class='parameters'>"); 
         boolean isFirst = true;
         for(Object arg: args) {
             if (!isFirst) {
@@ -169,6 +174,7 @@ public class StepInterceptor implements MethodInterceptor {
             testName.append(arg);
             isFirst = false;
         }
+        testName.append("</span>");
         return testName.toString();
     }
 

@@ -172,6 +172,26 @@ public abstract class PageObject {
         return this;
     }
     
+    public PageObject waitForTextToDisappear(String expectedText) {
+        return waitForTextToDisappear(expectedText, waitForTimeout);
+    }
+    /**
+     * Waits for a given text to not be anywhere on the page.
+     */
+    public PageObject waitForTextToDisappear(String expectedText, long timeout) {
+        long end = System.currentTimeMillis() + timeout;
+        while (System.currentTimeMillis() < end) {
+            if (!containsText(expectedText)) {
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (containsText(expectedText)) {
+            throw new ElementNotDisplayedException("Text was still displayed after timeout: '" + expectedText + "'");
+        }
+        return this;
+    }
+
     /**
      * Waits for any of a number of text blocks to appear anywhere on the screen
      * @param expectedText
