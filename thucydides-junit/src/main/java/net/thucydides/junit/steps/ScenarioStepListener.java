@@ -69,8 +69,8 @@ public class ScenarioStepListener extends RunListener {
         String testName = testDescription.getName();
         currentTestStep.setDescription(testName);
         currentTestStep.recordDuration();
-        currentAcceptanceTestRun.recordStep(currentTestStep);
-        currentAcceptanceTestRun.recordDuration();
+        getCurrentAcceptanceTestRun().recordStep(currentTestStep);
+        getCurrentAcceptanceTestRun().recordDuration();
         currentTestStep = null;
     }
 
@@ -99,12 +99,17 @@ public class ScenarioStepListener extends RunListener {
         return photographer;
     }
 
+    protected AcceptanceTestRun getCurrentAcceptanceTestRun() {
+        if (currentAcceptanceTestRun == null) {
+            currentAcceptanceTestRun = new AcceptanceTestRun();
+        }
+        return currentAcceptanceTestRun;
+    }
     @Override
     public void testRunStarted(final Description description) throws Exception {
-        currentAcceptanceTestRun = new AcceptanceTestRun();
-        currentAcceptanceTestRun.setMethodName(description.getMethodName());
-        currentAcceptanceTestRun.setUserStory(withUserStoryFrom(description));
-        acceptanceTestRuns.add(currentAcceptanceTestRun);
+        getCurrentAcceptanceTestRun().setMethodName(description.getMethodName());
+        getCurrentAcceptanceTestRun().setUserStory(withUserStoryFrom(description));
+        acceptanceTestRuns.add(getCurrentAcceptanceTestRun());
         updateTestRunTitleBasedOn(description);
         updateTestRunRequirementsBasedOn(description);
         getCurrentTestStepFrom(description);
@@ -123,7 +128,7 @@ public class ScenarioStepListener extends RunListener {
     }
 
     public void testGroupStarted(AnnotatedDescription testDescription) {
-        currentAcceptanceTestRun.startGroup(testDescription.getGroupName());
+        getCurrentAcceptanceTestRun().startGroup(testDescription.getGroupName());
     }
     
     private UserStory withUserStoryFrom(final Description description) {
@@ -187,7 +192,7 @@ public class ScenarioStepListener extends RunListener {
         AnnotatedDescription testDescription = new AnnotatedDescription(description);
 
         if (testDescription.isAGroup()) {
-            currentAcceptanceTestRun.endGroup();
+            getCurrentAcceptanceTestRun().endGroup();
         } else {
             getCurrentTestStepFrom(description);
             markCurrentTestAs(SUCCESS);
@@ -207,9 +212,9 @@ public class ScenarioStepListener extends RunListener {
     }
 
     private void updateTestRunTitleBasedOn(final Description description) {
-        if (currentAcceptanceTestRun.getTitle() == null) {
+        if (getCurrentAcceptanceTestRun().getTitle() == null) {
             AnnotatedDescription testDescription = new AnnotatedDescription(description);
-            currentAcceptanceTestRun.setTitle(testDescription.getTitle());
+            getCurrentAcceptanceTestRun().setTitle(testDescription.getTitle());
         }
     }
 
@@ -217,7 +222,7 @@ public class ScenarioStepListener extends RunListener {
         AnnotatedDescription testDescription = new AnnotatedDescription(description);
         List<String> requirements = testDescription.getAnnotatedRequirements();
         for(String requirement : requirements) {
-            currentAcceptanceTestRun.testsRequirement(requirement);
+            getCurrentAcceptanceTestRun().testsRequirement(requirement);
         }
     }
 

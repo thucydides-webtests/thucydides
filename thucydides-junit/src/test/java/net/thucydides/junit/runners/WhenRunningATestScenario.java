@@ -286,7 +286,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         AcceptanceTestRun testRun = executedScenarios.get(0);
         TestStep firstStep = testRun.getTestSteps().get(0);
         
-        assertThat(firstStep.getDescription(), is("Step that succeeds."));
+        assertThat(firstStep.getDescription(), is("Step that succeeds"));
     }
 
     @Test    
@@ -301,7 +301,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         AcceptanceTestRun testRun = executedScenarios.get(0);
         TestStep firstStep = testRun.getTestSteps().get(0);
         
-        assertThat(firstStep.getDescription(), is("Step with a parameter: <span class='parameters'>foo</span>"));
+        assertThat(firstStep.getDescription(), is("Step with a parameter: <span class='single-parameter'>foo</span>"));
     }
     
     @Test    

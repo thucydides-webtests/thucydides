@@ -295,6 +295,9 @@ height:16px; width:16px;
     font-size:14px; font-style: italic; color:grey;
 }
 
+.single-parameter {
+    font-size:14px; font-style: italic; color:grey;
+}
 
 .SUCCESS-text {
     font-family:euphemia, verdana, sans-serif; font-size:14px; color: #88a717;

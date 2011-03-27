@@ -175,7 +175,11 @@ public class StepInterceptor implements MethodInterceptor {
         StringBuffer testName = new StringBuffer(method.getName());
         testName.append(": ");
         if (addMarkup) {
-            testName.append("<span class='parameters'>");
+            if (args.length == 1) {
+                testName.append("<span class='single-parameter'>");
+            } else {
+                testName.append("<span class='parameters'>");
+            }
         }
         boolean isFirst = true;
         for (Object arg : args) {
