@@ -254,7 +254,10 @@ height:16px; width:16px;
 
 
 .top-level-step {
-    font-family:euphemia, verdana, sans-serif; font-size:16px; color: #0d78ae;
+    font-family:euphemia, verdana, sans-serif; font-size:16px; color: #0d78ae; font-weight: bold;
+}
+.nested-group-step {
+    font-family:euphemia, verdana, sans-serif; font-size:16px; font-style:italic; color: #0d78ae;
 }
 .nested-step {
     font-family:euphemia, verdana, sans-serif; font-size:16px; font-style:italic; color: #0d78ae;
@@ -272,6 +275,11 @@ height:16px; width:16px;
     width: 20px;  
 }
 
+.nested-group-icon {
+    height: 20px;
+    width: 20px;  
+}
+
 .summary-icon {
     height: 15px;
     width: 15px;
@@ -281,6 +289,12 @@ height:16px; width:16px;
 .error-message {
     font-family:euphemia, verdana, sans-serif; font-size:12px; color:#CC0033; text-align:right;
 }
+
+.parameters {
+	display: block;
+    font-size:14px; font-style: italic; color:grey;
+}
+
 
 .SUCCESS-text {
     font-family:euphemia, verdana, sans-serif; font-size:14px; color: #88a717;

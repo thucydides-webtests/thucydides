@@ -30,7 +30,7 @@ public abstract class PageObject {
 
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 50;
 
-    private static final int TIMEOUT = 60;
+    private static final int TIMEOUT = 120;
     
     private long waitForTimeout = WAIT_FOR_ELEMENT_PAUSE_LENGTH;
     
@@ -286,7 +286,7 @@ public abstract class PageObject {
             RenderedWebElement renderedElement = (RenderedWebElement) driver.findElement(byElementCriteria);
             isDisplayed = renderedElement.isDisplayed();
         } catch (NoSuchElementException noSuchElement) {
-            LOGGER.info("No such element " + noSuchElement);
+            LOGGER.trace("No such element " + noSuchElement);
         }
         return isDisplayed;
     }

@@ -142,13 +142,8 @@ public class AnnotatedDescription {
      * Turns a classname into a human-readable title.
      */
     private String getHumanizedTestName() {
-
         String testName = description.getMethodName();
-        String humanizedName = humanize(testName);
-        if (!humanizedName.endsWith(".")) {
-            humanizedName = humanizedName + ".";
-        }
-        return humanizedName;
+        return humanize(testName);
     }
 
     public boolean isAGroup() {

@@ -133,7 +133,11 @@ a:active {
 
     #set($step_icon_size = 20)
     #if ( $level > 1)
-        #set($step_class_root = "nested")
+		#if ($step.isAGroup()) 
+			#set($step_class_root = "nested")
+		#else
+			#set($step_class_root = "nested-group")
+		#end
     #else
         #set($step_class_root = "top-level")
     #end
@@ -149,8 +153,8 @@ a:active {
                       <a href="$step.screenshot.name"><img src="$step.screenshot.name" width="48" height="48" /></a>
                 #end
             </td>
-            <td width="150"><span class="lightgreentext">$step.result</span></td>
-            <td width="100"><span class="lightgreentext">$step.duration ms</span></td>
+            <td width="150"><span class="${step_class_root}-step">$step.result</span></td>
+            <td width="100"><span class="${step_class_root}-step">$step.duration ms</span></td>
           </tr>
             #if (($step.result == "FAILURE") && (!$step.isAGroup()))
               <tr class="test-$step.result">

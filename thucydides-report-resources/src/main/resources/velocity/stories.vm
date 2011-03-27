@@ -9,7 +9,7 @@
         #accordion {
             list-style: none;
             padding: 0 0 0 0;
-            width: 400px;
+            width: 600px;
         }
 
         #accordion div {
@@ -173,7 +173,7 @@
                                     </ul>
                                 </td>
                                 <td width="100" class="bluetext">$story.total</td>
-                                <td width="100" class="redtext"><span class="lightgreentext">$story.failureCount</td>
+                                <td width="100" class="redtext"><span class="lightgreentext">$story.failureCount</span></td>
                                 <td width="100" class="lightgreentext">$story.pendingCount</td>
                             </tr>
                         </table>

@@ -265,7 +265,8 @@ public class AcceptanceTestRun {
 
     public void endGroup() {
         if (!groupStack.isEmpty()) {
-            groupStack.pop();
+            TestStepGroup group = groupStack.pop();
+            group.recordDuration();
         }
     }
 
