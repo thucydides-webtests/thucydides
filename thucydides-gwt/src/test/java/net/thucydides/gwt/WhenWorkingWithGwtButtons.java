@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import net.thucydides.gwt.pages.GwtShowcaseButtonPage;
 import net.thucydides.gwt.widgets.GwtButton;
 

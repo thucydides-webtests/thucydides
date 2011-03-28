@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepDescription;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.junit.annotations.TestsRequirement;
@@ -60,15 +61,21 @@ public class AnnotatedDescription {
         String annotatedDescription = null;
         try {
             Method testMethod = getTestMethod();
-            StepDescription stepDescription = (StepDescription) testMethod
-                    .getAnnotation(StepDescription.class);
-            if (stepDescription != null) {
-                annotatedDescription = stepDescription.value();
-            }
+            annotatedDescription = getNameFromTestDescriptionAnnotation(annotatedDescription, testMethod);
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
+        }
+        return annotatedDescription;
+    }
+
+    private String getNameFromTestDescriptionAnnotation(
+            String annotatedDescription, Method testMethod) {
+        StepDescription stepDescription = (StepDescription) testMethod
+                .getAnnotation(StepDescription.class);
+        if (stepDescription != null) {
+            annotatedDescription = stepDescription.value();
         }
         return annotatedDescription;
     }
@@ -113,15 +120,29 @@ public class AnnotatedDescription {
         return null;
     }
     
-    public String getName() {
-        AnnotatedDescription testDescription = new AnnotatedDescription(description);
-        String annotatedDescription = testDescription.getAnnotatedDescription();
-        if (annotatedDescription != null) {
-            return annotatedDescription;
+    public String getAnnotatedStepName() {
+        try {
+            Method testMethod = getTestMethod();
+            Step step = (Step) testMethod.getAnnotation(Step.class);
+            if ((step != null) && (step.value().length() > 0)) {
+                return step.value();
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
-        return getHumanizedTestName();
+        return null;
     }
 
+    public String getName() {
+        AnnotatedDescription testDescription = new AnnotatedDescription(description);
+        String annotatedTestName = getAnnotatedStepName();
+        String annotatedDescription = testDescription.getAnnotatedDescription();
+        if (annotatedTestName != null) {
+            return annotatedTestName;
+        } else if (annotatedDescription != null) {
+            return annotatedDescription;
+        } else return getHumanizedTestName();
+    }
     /**
      * Turns a method into a human-readable title.
      */

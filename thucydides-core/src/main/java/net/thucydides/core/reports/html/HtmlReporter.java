@@ -9,6 +9,8 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import org.apache.commons.io.FileUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An HTML report generates reports in a given directory and uses resources (images,...) from another.
@@ -21,6 +23,8 @@ public abstract class HtmlReporter {
     private String resourceDirectory = DEFAULT_RESOURCE_DIRECTORY;
     private File outputDirectory;
     protected final TemplateManager templateManager = new TemplateManager();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlReporter.class);
 
     private String templatePath;
     
@@ -100,6 +104,7 @@ public abstract class HtmlReporter {
                                                 final String htmlContents) throws IOException {
         File report = new File(getOutputDirectory(), reportFilename);
         FileUtils.writeStringToFile(report, htmlContents);
+        LOGGER.debug("Writing HTML report to " + report.getAbsolutePath());
         return report;
     }
 

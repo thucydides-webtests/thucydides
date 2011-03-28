@@ -13,7 +13,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * An acceptence test run is made up of test steps.
+ * An acceptance test run is made up of test steps.
  * Test steps can be either concrete steps or groups of steps.
  * Each concrete step should represent an action by the user, and (generally) an expected outcome.
  * A test step is described by a narrative-style phrase (e.g. "the user clicks 
@@ -48,7 +48,6 @@ public abstract class TestStep {
         return ImmutableSet.copyOf(testedRequirement);
     }
 
-
     public void recordDuration() {
         setDuration(System.currentTimeMillis() - startTime);
     }
@@ -60,7 +59,6 @@ public abstract class TestStep {
     public String getDescription() {
         return description;
     }
-
 
     public abstract TestResult getResult();
 

@@ -11,4 +11,6 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Step {}
+public @interface Step {
+    String value() default "";
+}

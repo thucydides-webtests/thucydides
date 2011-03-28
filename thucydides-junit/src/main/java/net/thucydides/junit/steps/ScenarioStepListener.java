@@ -105,8 +105,15 @@ public class ScenarioStepListener extends RunListener {
         }
         return currentAcceptanceTestRun;
     }
+     
+    protected AcceptanceTestRun getNewCurrentAcceptanceTestRun() {
+        currentAcceptanceTestRun = null;
+        return getCurrentAcceptanceTestRun();
+    }
+
     @Override
     public void testRunStarted(final Description description) throws Exception {
+        getNewCurrentAcceptanceTestRun();
         getCurrentAcceptanceTestRun().setMethodName(description.getMethodName());
         getCurrentAcceptanceTestRun().setUserStory(withUserStoryFrom(description));
         acceptanceTestRuns.add(getCurrentAcceptanceTestRun());

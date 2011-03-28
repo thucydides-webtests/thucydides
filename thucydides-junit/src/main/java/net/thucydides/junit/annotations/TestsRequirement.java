@@ -6,9 +6,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Annotation that marks a WebDriver field as one that is managed by the Test Runner.
- * The Thucydides Test Runner will instantiate this WebDriver before the tests start,
- * and close it once they have all finished.
+ * Used to associate a test with a particular reauirement or issue.
  *
  */
 @Retention(RetentionPolicy.RUNTIME)

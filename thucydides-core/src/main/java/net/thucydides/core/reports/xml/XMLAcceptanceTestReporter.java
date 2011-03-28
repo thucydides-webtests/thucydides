@@ -11,6 +11,8 @@ import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.thoughtworks.xstream.XStream;
@@ -23,6 +25,8 @@ import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
 
     private File outputDirectory;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XMLAcceptanceTestReporter.class);
 
     /**
      * We don't need any resources for XML reports.
@@ -44,6 +48,7 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
 
         String reportFilename = testRun.getReportName(XML);
         File report = new File(getOutputDirectory(), reportFilename);
+        LOGGER.debug("Writing XML report to " + report.getAbsolutePath());
         FileUtils.writeStringToFile(report, xmlContents);
 
         return report;

@@ -55,7 +55,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
         nestedSteps.anotherStepThatSucceeds();
     }
 
-    @Step
+    @Step("A pending step")
     @Pending
     public void stepThatIsPending() {
     }

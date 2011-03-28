@@ -290,6 +290,21 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test    
+    public void default_test_names_can_be_overriden_in_the_Test_annotation() throws InitializationError  {
+       
+        ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+        
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+        TestStep pendingStep = testRun.getTestSteps().get(2);
+        
+        assertThat(pendingStep.getDescription(), is("A pending step"));
+    }
+
+    @Test    
     public void the_test_runner_records_each_step_with_a_nice_name_when_steps_have_parameters() throws InitializationError  {
        
         ThucydidesRunner runner = new ThucydidesRunner(TestScenarioWithParameterizedSteps.class);
