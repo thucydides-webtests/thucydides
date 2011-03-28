@@ -5,3 +5,5 @@ target
 .classpath
 
 /maven-thucydides-plugin/target/
+
+/thucydides-core/.checkstyle
