@@ -162,7 +162,7 @@ public class StepInterceptor implements MethodInterceptor {
         return getTestNameFrom(method, args, true);
     }
     
-    private String getTestNameFrom(final Method method, final Object[] args, boolean addMarkup) {
+    private String getTestNameFrom(final Method method, final Object[] args, final boolean addMarkup) {
         if ((args == null) || (args.length == 0)) {
             return method.getName();
         } else {
@@ -171,7 +171,7 @@ public class StepInterceptor implements MethodInterceptor {
     }
 
     private String testNameWithArguments(final Method method,
-            final Object[] args, boolean addMarkup) {
+            final Object[] args, final boolean addMarkup) {
         StringBuffer testName = new StringBuffer(method.getName());
         testName.append(": ");
         if (addMarkup) {

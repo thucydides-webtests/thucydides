@@ -1,7 +1,6 @@
 package net.thucydides.core.pages;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,16 +13,12 @@ import net.thucydides.core.webelements.Checkbox;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.RenderedWebElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.ElementNotDisplayedException;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.openqa.selenium.support.ui.Select;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A base class representing a WebDriver page object.
@@ -43,8 +38,6 @@ public abstract class PageObject {
 
     private static final Map<String, String> MACROS = new HashMap<String, String>();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PageObject.class);
-    
     private static final long WAIT_FOR_TIMEOUT = 30000;    
     {
         MACROS.put("#HOST", "https?://[^/]+");
@@ -53,6 +46,8 @@ public abstract class PageObject {
 
     private List<Pattern> matchingPageExpressions = new ArrayList<Pattern>();
 
+    private RenderedPageObjectView renderedView;
+    
     public PageObject(final WebDriver driver) {
         ElementLocatorFactory finder = new AjaxElementLocatorFactory(driver, TIMEOUT);
         this.driver = driver;
@@ -63,6 +58,13 @@ public abstract class PageObject {
 
     public void setWaitForTimeout(final long waitForTimeout) {
         this.waitForTimeout = waitForTimeout;
+    }
+    
+    private RenderedPageObjectView getRenderedView() {
+        if (renderedView == null) {
+            renderedView = new RenderedPageObjectView(driver, waitForTimeout);
+        }
+        return renderedView;
     }
     
     private void fetchMatchingPageExpressions() {
@@ -148,15 +150,7 @@ public abstract class PageObject {
     }
     
     public PageObject waitForRenderedElements(final By byElementCriteria) {
-        long end = System.currentTimeMillis() + waitForTimeout;
-        while (System.currentTimeMillis() < end) {
-            if (elementIsDisplayed(byElementCriteria)) {
-                break;
-            }
-            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
-        }
-        checkThatElementAppeared(byElementCriteria);
-        checkThatElementIsDisplayed(byElementCriteria);
+        getRenderedView().waitFor(byElementCriteria);
         return this;
     }
 
@@ -164,16 +158,7 @@ public abstract class PageObject {
      * Waits for a given text to appear anywhere on the page.
      */
     public PageObject waitForTextToAppear(String expectedText) {
-        long end = System.currentTimeMillis() + waitForTimeout;
-        while (System.currentTimeMillis() < end) {
-            if (containsText(expectedText)) {
-                break;
-            }
-            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
-        }
-        if (!containsText(expectedText)) {
-            throw new ElementNotDisplayedException("Expected text was not displayed: '" + expectedText + "'");
-        }
+        getRenderedView().waitForText(expectedText);
         return this;
     }
     
@@ -184,16 +169,7 @@ public abstract class PageObject {
      * Waits for a given text to not be anywhere on the page.
      */
     public PageObject waitForTextToDisappear(String expectedText, long timeout) {
-        long end = System.currentTimeMillis() + timeout;
-        while (System.currentTimeMillis() < end) {
-            if (!containsText(expectedText)) {
-                break;
-            }
-            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
-        }
-        if (containsText(expectedText)) {
-            throw new ElementNotDisplayedException("Text was still displayed after timeout: '" + expectedText + "'");
-        }
+        getRenderedView().waitForTextToDisappear(expectedText, timeout);
         return this;
     }
 
@@ -203,16 +179,7 @@ public abstract class PageObject {
      * @return
      */
     public PageObject waitForAnyTextToAppear(String... expectedText) {
-        long end = System.currentTimeMillis() + waitForTimeout;
-        while (System.currentTimeMillis() < end) {
-            if (pageContains(expectedText)) {
-                break;
-            }
-            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
-        }
-        if (!pageContains(expectedText)) {
-            throw new ElementNotDisplayedException("Expected text was not displayed: '" + expectedText + "'");
-        }
+        getRenderedView().waitForAnyTextToAppear(expectedText);
         return this;
     }
 
@@ -222,59 +189,8 @@ public abstract class PageObject {
      * @return
      */
     public PageObject waitForAllTextToAppear(String... expectedTexts) {
-        long end = System.currentTimeMillis() + waitForTimeout;
-
-        List<String> requestedTexts = buildInitialListOfExpectedTextsFrom(expectedTexts);
-        
-        boolean allTextsFound = false;
-        while (System.currentTimeMillis() < end) {
-            requestedTexts = removeAnyTextsPresentOnPageFrom(requestedTexts);
-
-            if (requestedTexts.isEmpty()) {
-                allTextsFound = true;
-                break;
-            }
-            
-            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
-        }
-        if (!allTextsFound) {
-            throw new ElementNotDisplayedException("Expected text was not displayed: '" + requestedTexts + "'");
-        }
+        getRenderedView().waitForAllTextToAppear(expectedTexts);
         return this;
-    }
-
-    private List<String> buildInitialListOfExpectedTextsFrom(
-            String... expectedTexts) {
-        List<String> requestedTexts = new ArrayList<String>();
-        requestedTexts.addAll(Arrays.asList(expectedTexts));
-        return requestedTexts;
-    }
-
-    private List<String> removeAnyTextsPresentOnPageFrom(final List<String> requestedTexts) {
-        List<String> updatedList = new ArrayList<String>();
-        updatedList.addAll(requestedTexts);
-        
-        for(String requestedText : requestedTexts) {
-            if (pageContains(requestedText)) {
-                updatedList.remove(requestedText);
-            }
-        }
-        return updatedList;
-    }
-
-    private boolean pageContains(String... expectedTexts) {
-        for(String expectedText : expectedTexts) {
-            if (containsText(expectedText)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void checkThatElementIsDisplayed(final By byElementCriteria) {
-        if (!elementIsDisplayed(byElementCriteria)) {
-            throw new ElementNotDisplayedException("Element not displayed: " + byElementCriteria);
-        }
     }
 
     protected void waitABit(final long timeInMilliseconds) {
@@ -283,21 +199,6 @@ public abstract class PageObject {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    private boolean elementIsDisplayed(final By byElementCriteria) {
-        boolean isDisplayed = false;
-        try {
-            RenderedWebElement renderedElement = (RenderedWebElement) driver.findElement(byElementCriteria);
-            isDisplayed = renderedElement.isDisplayed();
-        } catch (NoSuchElementException noSuchElement) {
-            LOGGER.trace("No such element " + noSuchElement);
-        }
-        return isDisplayed;
-    }
-
-    private void checkThatElementAppeared(final By byElementCriteria) {
-        driver.findElement(byElementCriteria);
     }
 
     public List<WebElement> thenReturnElementList(final By byListCriteria) {
@@ -372,20 +273,12 @@ public abstract class PageObject {
      * Check that the specified text appears somewhere in the page.
      */
     public boolean containsText(final String textValue) {
-        String textInBody = String.format("//body[contains(.,\"%s\")]", textValue);
-        List<WebElement> elements = driver.findElements(By.xpath(textInBody));
-        if (elements.isEmpty()) {
-            return false;
-        }
-        return true;
+        return getRenderedView().containsText(textValue);
+
     }
 
     public boolean userCanSee(final WebElement field) {
-        if (RenderedWebElement.class.isAssignableFrom(field.getClass())) {
-            return ((RenderedWebElement) field).isDisplayed();
-        } else {
-            return false;
-        }
+        return getRenderedView().userCanSee(field);
     }
     
     public void shouldBeVisible(final WebElement field) {

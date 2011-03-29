@@ -65,7 +65,7 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
         generateStoriesReportFor(userStoryResults);
     }
 
-    private void generateStoriesReportFor(List<UserStoryTestResults> userStoryResults) throws IOException {
+    private void generateStoriesReportFor(final List<UserStoryTestResults> userStoryResults) throws IOException {
         for(UserStoryTestResults userStory : userStoryResults) {
             System.out.println("Story: " + userStory.getTitle());
         }
@@ -78,18 +78,18 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
         generateReportHomePage(userStoryResults);
     }
 
-    private void generateStoriesReport(List<UserStoryTestResults> userStoryResults) throws IOException {
+    private void generateStoriesReport(final List<UserStoryTestResults> userStoryResults) throws IOException {
         VelocityContext context = new VelocityContext();
         context.put("stories", userStoryResults);
-        Template storyTemplate = templateManager.getTemplateFrom(STORIES_TEMPLATE_PATH);
+        Template storyTemplate = getTemplateManager().getTemplateFrom(STORIES_TEMPLATE_PATH);
         String htmlContents = mergeVelocityTemplate(storyTemplate, context);
         writeReportToOutputDirectory("stories.html", htmlContents);
     }
 
-    private void generateReportHomePage(List<UserStoryTestResults> userStoryResults) throws IOException {
+    private void generateReportHomePage(final List<UserStoryTestResults> userStoryResults) throws IOException {
         VelocityContext context = new VelocityContext();
         context.put("stories", new UserStoriesResultSet(userStoryResults));
-        Template storyTemplate = templateManager.getTemplateFrom(HOME_TEMPLATE_PATH);
+        Template storyTemplate = getTemplateManager().getTemplateFrom(HOME_TEMPLATE_PATH);
         String htmlContents = mergeVelocityTemplate(storyTemplate, context);
         writeReportToOutputDirectory("home.html", htmlContents);
     }

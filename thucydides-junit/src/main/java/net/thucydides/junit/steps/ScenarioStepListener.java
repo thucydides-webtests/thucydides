@@ -134,7 +134,7 @@ public class ScenarioStepListener extends RunListener {
         }
     }
 
-    public void testGroupStarted(AnnotatedDescription testDescription) {
+    public void testGroupStarted(final AnnotatedDescription testDescription) {
         getCurrentAcceptanceTestRun().startGroup(testDescription.getGroupName());
     }
     
@@ -187,7 +187,7 @@ public class ScenarioStepListener extends RunListener {
         recordCurrentTestStep(failure.getDescription());
     }
 
-    private void recordFailureDetailsInFailingTestStep(Failure failure) {
+    private void recordFailureDetailsInFailingTestStep(final Failure failure) {
         if (!currentTestStep.isAGroup()) {
             ((ConcreteTestStep) currentTestStep).failedWith(failure.getMessage(), failure.getException());
         }

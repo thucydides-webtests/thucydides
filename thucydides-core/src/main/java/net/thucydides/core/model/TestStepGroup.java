@@ -5,15 +5,21 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Test steps can be organized in groups.
+ * Test step groups can be nested to any level, and contain either other test step groups
+ * or leaf-level test steps.
+ *
+ */
 public class TestStepGroup extends TestStep {
 
     private List<TestStep> steps = new ArrayList<TestStep>();
 
-    public TestStepGroup(String description) {
+    public TestStepGroup(final String description) {
         super(description);
     }
 
-    public void addTestStep(TestStep step) {
+    public void addTestStep(final TestStep step) {
         steps.add(step);
     }
 

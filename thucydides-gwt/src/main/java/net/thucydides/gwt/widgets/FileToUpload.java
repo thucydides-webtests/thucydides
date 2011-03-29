@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
  * A class that helps upload a file to an HTML form in using a fluent API.
  */
 public class FileToUpload {
-    final String filename;
+    private final String filename;
 
     public FileToUpload(final String filename) {
         this.filename = filename;

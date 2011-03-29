@@ -27,8 +27,6 @@ import com.google.common.collect.ImmutableSet;
  * the results of each step, and the overall result. An Acceptance test scenario
  * can be associated with a UserStory using the UserStory annotation.
  * 
- * @composed 1..* steps * TestStep
- * 
  * @author johnsmart
  * 
  */
@@ -247,7 +245,7 @@ public class AcceptanceTestRun {
         return duration;
     }
 
-    public void startGroup(String description) {
+    public void startGroup(final String description) {
         TestStepGroup newGroup = new TestStepGroup(description);
         
         if (currentlyInGroup()) {

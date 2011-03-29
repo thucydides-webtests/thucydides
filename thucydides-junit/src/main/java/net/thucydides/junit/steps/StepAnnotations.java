@@ -34,7 +34,7 @@ public final class StepAnnotations {
 
     private static void instanciateScenarioStepFields(
             final Object testCaseOrSteps, final StepFactory stepFactory,
-            List<StepsAnnotatedField> stepsFields) {
+            final List<StepsAnnotatedField> stepsFields) {
         for(StepsAnnotatedField stepsField : stepsFields) {
                Class<? extends ScenarioSteps> scenarioStepsClass = stepsField.getFieldClass();
                ScenarioSteps steps = (ScenarioSteps) stepFactory.newSteps(scenarioStepsClass);  

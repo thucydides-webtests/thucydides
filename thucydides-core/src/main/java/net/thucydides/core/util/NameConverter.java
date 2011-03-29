@@ -32,7 +32,7 @@ public final class NameConverter {
         }
     }
 
-    private static String humanizeNameWithParameters(String name) {
+    private static String humanizeNameWithParameters(final String name) {
         int parametersStartAt = name.indexOf(": ");
         String bareName = name.substring(0, parametersStartAt);
         String humanizedBareName = humanize(bareName);
@@ -40,7 +40,7 @@ public final class NameConverter {
         return humanizedBareName + parameters;
     }
 
-    private static boolean thereAreParametersIn(String name) {
+    private static boolean thereAreParametersIn(final String name) {
         return name.contains(": ");
     }
 

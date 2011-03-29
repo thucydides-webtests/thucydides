@@ -22,7 +22,7 @@ public abstract class HtmlReporter {
     private static final String DEFAULT_RESOURCE_DIRECTORY = "report-resources";
     private String resourceDirectory = DEFAULT_RESOURCE_DIRECTORY;
     private File outputDirectory;
-    protected final TemplateManager templateManager = new TemplateManager();
+    private final TemplateManager templateManager = new TemplateManager();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlReporter.class);
 
@@ -34,6 +34,10 @@ public abstract class HtmlReporter {
 
     public Template getTemplate() {
         return templateManager.getTemplateFrom(getTemplatePath());        
+    }
+
+    protected TemplateManager getTemplateManager() {
+        return templateManager;
     }
     
     public String getTemplatePath() {
