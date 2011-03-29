@@ -157,11 +157,24 @@ public abstract class PageObject {
         return this;
     }
 
+    public PageObject waitForRenderedElementsToDisappear(final By byElementCriteria) {
+        getRenderedView().waitForElementsToDisappear(byElementCriteria);
+        return this;
+    }
+    
     /**
      * Waits for a given text to appear anywhere on the page.
      */
     public PageObject waitForTextToAppear(final String expectedText) {
         getRenderedView().waitForText(expectedText);
+        return this;
+    }
+
+    /**
+     * Waits for a given text to appear anywhere on the page.
+     */
+    public PageObject waitForTextToAppear(WebElement element, final String expectedText) {
+        getRenderedView().waitForText(element, expectedText);
         return this;
     }
 
@@ -190,7 +203,7 @@ public abstract class PageObject {
     }
 
     public PageObject waitForAnyTextToAppear(final WebElement element,
-            final String... expectedText) {
+                                             final String... expectedText) {
         getRenderedView().waitForAnyTextToAppear(element, expectedText);
         return this;
     }

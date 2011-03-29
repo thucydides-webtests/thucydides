@@ -53,8 +53,11 @@ class RenderedPageObjectView {
     private boolean elementIsDisplayed(final By byElementCriteria) {
         boolean isDisplayed = false;
         try {
-            RenderedWebElement renderedElement = (RenderedWebElement) driver
-                    .findElement(byElementCriteria);
+            List<WebElement> matchingElements = driver.findElements(byElementCriteria);
+            if (matchingElements.isEmpty()) {
+                return false;
+            }            
+            RenderedWebElement renderedElement  = (RenderedWebElement) matchingElements.get(0);
             isDisplayed = renderedElement.isDisplayed();
         } catch (NoSuchElementException noSuchElement) {
             LOGGER.trace("No such element " + noSuchElement);
@@ -83,6 +86,20 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (!containsText(expectedText)) {
+            throw new ElementNotDisplayedException(
+                    "Expected text was not displayed: '" + expectedText + "'");
+        }
+    }
+
+    public void waitForText(WebElement element, final String expectedText) {
+        long end = System.currentTimeMillis() + waitForTimeout;
+        while (System.currentTimeMillis() < end) {
+            if (containsText(element, expectedText)) {
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (!containsText(element, expectedText)) {
             throw new ElementNotDisplayedException(
                     "Expected text was not displayed: '" + expectedText + "'");
         }
@@ -212,6 +229,20 @@ class RenderedPageObjectView {
             }
         }
         return updatedList;
+    }
+
+    public void waitForElementsToDisappear(By byElementCriteria) {
+        long end = System.currentTimeMillis() + waitForTimeout;
+        while (System.currentTimeMillis() < end) {
+            if (!elementIsDisplayed(byElementCriteria)) {
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (elementIsDisplayed(byElementCriteria)) {
+            throw new ElementNotDisplayedException("Element should not be displayed displayed: "
+                    + byElementCriteria);
+        }
     }
   
 }

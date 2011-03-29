@@ -60,7 +60,12 @@ public class WhenManagingAPageObject {
     public void page_will_wait_for_rendered_element_if_it_is_already_present() {
         
         RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        List<WebElement> renderedElements = new ArrayList<WebElement>();
+        renderedElements.add(renderedElement);
+        
         when(driver.findElement(any(By.class))).thenReturn(renderedElement);
+        when(driver.findElements(any(By.class))).thenReturn(renderedElements);
+        
         when(renderedElement.isDisplayed()).thenReturn(true);
         
         BasicPageObject page = new BasicPageObject(driver);
@@ -68,13 +73,29 @@ public class WhenManagingAPageObject {
     }
     
     @Test
+    public void page_will_wait_for_rendered_element_to_disappear() {
+        
+        List<WebElement> emptyList = Arrays.asList();
+        when(driver.findElements(any(By.class))).thenReturn(emptyList);
+        
+        BasicPageObject page = new BasicPageObject(driver);
+        page.setWaitForTimeout(100);
+        page.waitForRenderedElementsToDisappear(By.id("whatever"));
+    }
+
+    @Test
     public void page_will_wait_for_rendered_element_if_it_is_not_already_present() {
         
         RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        List<WebElement> renderedElements = new ArrayList<WebElement>();
+        renderedElements.add(renderedElement);
+        
         when(driver.findElement(any(By.class))).thenReturn(renderedElement);
+        when(driver.findElements(any(By.class))).thenReturn(renderedElements);
         when(renderedElement.isDisplayed()).thenReturn(false).thenReturn(false).thenReturn(true);
         
         BasicPageObject page = new BasicPageObject(driver);
+        page.setWaitForTimeout(100);
         page.waitForRenderedElements(By.id("whatever"));
     }
     
@@ -93,6 +114,21 @@ public class WhenManagingAPageObject {
     }
 
     @Test
+    public void page_will_wait_for_text_to_appear_in_element_if_requested() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement textBlock = mock(WebElement.class);
+        WebElement searchedBlock = mock(WebElement.class);
+        
+        List<WebElement> emptyList = Arrays.asList();
+        List<WebElement> listWithElements = Arrays.asList(textBlock);
+        
+        when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList).thenReturn(listWithElements);
+
+        page.waitForTextToAppear(searchedBlock,"hi there");
+    }
+
+    @Test
     public void page_will_wait_for_text_to_appear_in_an_element_if_requested() {
 
         BasicPageObject page = new BasicPageObject(driver);
@@ -107,6 +143,33 @@ public class WhenManagingAPageObject {
         page.waitForAnyTextToAppear(searchedBlock, "hi there");
     }
 
+    @Test(expected=ElementNotDisplayedException.class)
+    public void page_will_fail_if_single_text_fails_to_appear_in_an_element_if_requested() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement searchedBlock = mock(WebElement.class);
+        
+        List<WebElement> emptyList = Arrays.asList();
+        
+        when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList);
+        page.setWaitForTimeout(100);
+        page.waitForAnyTextToAppear(searchedBlock, "hi there");
+    }
+    
+    @Test(expected=ElementNotDisplayedException.class)
+    public void page_will_fail_if_text_fails_to_appear_in_an_element_if_requested() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement searchedBlock = mock(WebElement.class);
+        
+        List<WebElement> emptyList = Arrays.asList();
+        
+        when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList);
+
+        page.setWaitForTimeout(100);
+        page.waitForAnyTextToAppear(searchedBlock, "hi there");
+    }
+    
     @Test
     public void page_will_wait_for_text_to_disappear_if_requested() {
 
