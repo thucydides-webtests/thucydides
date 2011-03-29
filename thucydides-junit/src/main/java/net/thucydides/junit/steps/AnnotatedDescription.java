@@ -61,7 +61,7 @@ public class AnnotatedDescription {
         String annotatedDescription = null;
         try {
             Method testMethod = getTestMethod();
-            annotatedDescription = getNameFromTestDescriptionAnnotation(annotatedDescription, testMethod);
+            annotatedDescription = getNameFromTestDescriptionAnnotation(testMethod);
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
@@ -70,10 +70,10 @@ public class AnnotatedDescription {
         return annotatedDescription;
     }
 
-    private String getNameFromTestDescriptionAnnotation(
-            String annotatedDescription, Method testMethod) {
+    private String getNameFromTestDescriptionAnnotation(Method testMethod) {
         StepDescription stepDescription = (StepDescription) testMethod
                 .getAnnotation(StepDescription.class);
+        String annotatedDescription = null;
         if (stepDescription != null) {
             annotatedDescription = stepDescription.value();
         }

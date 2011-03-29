@@ -98,6 +98,15 @@ class RenderedPageObjectView {
         return true;
     }
 
+    public boolean containsText(final WebElement element, final String textValue) {
+        String textInBody = String.format("//body[contains(.,\"%s\")]", textValue);
+        List<WebElement> elements = element.findElements(By.xpath(textInBody));
+        if (elements.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean userCanSee(final WebElement field) {
         if (RenderedWebElement.class.isAssignableFrom(field.getClass())) {
             return ((RenderedWebElement) field).isDisplayed();
@@ -132,6 +141,29 @@ class RenderedPageObjectView {
         }
     }
     
+    public void waitForAnyTextToAppear(WebElement element, String[] expectedText) {
+        long end = System.currentTimeMillis() + waitForTimeout;
+        while (System.currentTimeMillis() < end) {
+            if (elementContains(element, expectedText)) {
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (!elementContains(element, expectedText)) {
+            throw new ElementNotDisplayedException("Expected text was not displayed: '" + expectedText + "'");
+        }
+        
+    }
+
+    private boolean elementContains(final WebElement element, final String... expectedTexts) {
+        for(String expectedText : expectedTexts) {
+            if (containsText(element, expectedText)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean pageContains(final String... expectedTexts) {
         for(String expectedText : expectedTexts) {
             if (containsText(expectedText)) {
@@ -158,7 +190,8 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (!allTextsFound) {
-            throw new ElementNotDisplayedException("Expected text was not displayed: '" + requestedTexts + "'");
+            throw new ElementNotDisplayedException("Expected text was not displayed: '" 
+                                                    + Arrays.toString(requestedTexts.toArray()) + "'");
         }
     }
     

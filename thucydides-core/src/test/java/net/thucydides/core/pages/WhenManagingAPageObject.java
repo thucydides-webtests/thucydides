@@ -93,6 +93,21 @@ public class WhenManagingAPageObject {
     }
 
     @Test
+    public void page_will_wait_for_text_to_appear_in_an_element_if_requested() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement textBlock = mock(WebElement.class);
+        WebElement searchedBlock = mock(WebElement.class);
+        
+        List<WebElement> emptyList = Arrays.asList();
+        List<WebElement> listWithElements = Arrays.asList(textBlock);
+        
+        when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList).thenReturn(listWithElements);
+
+        page.waitForAnyTextToAppear(searchedBlock, "hi there");
+    }
+
+    @Test
     public void page_will_wait_for_text_to_disappear_if_requested() {
 
         BasicPageObject page = new BasicPageObject(driver);
@@ -105,7 +120,7 @@ public class WhenManagingAPageObject {
 
         page.waitForTextToDisappear("hi there");
     }
-
+    
     @Test(expected=NoSuchElementException.class)
     public void should_contain_text_should_throw_an_assertion_if_text_is_not_visible() {
         BasicPageObject page = new BasicPageObject(driver);        

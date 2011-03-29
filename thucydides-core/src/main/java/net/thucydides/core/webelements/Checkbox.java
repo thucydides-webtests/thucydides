@@ -16,7 +16,7 @@ public class Checkbox {
         this.checkboxField = checkboxField;
     }
 
-    public void setChecked(boolean value) {
+    public void setChecked(final boolean value) {
         if (checkboxField.isSelected()) {
             clickToUnselect(value);
         } else {
@@ -24,13 +24,13 @@ public class Checkbox {
         }
     }
     
-    private void clickToSelect(boolean value) {
+    private void clickToSelect(final boolean value) {
         if (value) {
             checkboxField.click();
         }
     }
 
-    private void clickToUnselect(boolean value) {
+    private void clickToUnselect(final boolean value) {
         if (!value) {
             checkboxField.click();
         }

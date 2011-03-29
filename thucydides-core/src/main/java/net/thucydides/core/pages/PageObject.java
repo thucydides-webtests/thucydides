@@ -31,14 +31,14 @@ public abstract class PageObject {
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 50;
 
     private static final int TIMEOUT = 120;
-    
+
     private long waitForTimeout = WAIT_FOR_ELEMENT_PAUSE_LENGTH;
-    
+
     private static final String OPTIONAL_PARAMS = "/?(\\?.*)?";
 
     private static final Map<String, String> MACROS = new HashMap<String, String>();
 
-    private static final long WAIT_FOR_TIMEOUT = 30000;    
+    private static final long WAIT_FOR_TIMEOUT = 30000;
     {
         MACROS.put("#HOST", "https?://[^/]+");
     }
@@ -47,9 +47,10 @@ public abstract class PageObject {
     private List<Pattern> matchingPageExpressions = new ArrayList<Pattern>();
 
     private RenderedPageObjectView renderedView;
-    
+
     public PageObject(final WebDriver driver) {
-        ElementLocatorFactory finder = new AjaxElementLocatorFactory(driver, TIMEOUT);
+        ElementLocatorFactory finder = new AjaxElementLocatorFactory(driver,
+                TIMEOUT);
         this.driver = driver;
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
         PageFactory.initElements(finder, this);
@@ -59,14 +60,14 @@ public abstract class PageObject {
     public void setWaitForTimeout(final long waitForTimeout) {
         this.waitForTimeout = waitForTimeout;
     }
-    
+
     private RenderedPageObjectView getRenderedView() {
         if (renderedView == null) {
             renderedView = new RenderedPageObjectView(driver, waitForTimeout);
         }
         return renderedView;
     }
-    
+
     private void fetchMatchingPageExpressions() {
         At compatibleWithAnnotation = this.getClass().getAnnotation(At.class);
         if (compatibleWithAnnotation != null) {
@@ -86,8 +87,8 @@ public abstract class PageObject {
     }
 
     private boolean valueIsDefinedFor(final At compatibleWithAnnotation) {
-        return ((compatibleWithAnnotation.value() != null) && (compatibleWithAnnotation.value()
-                .length() > 0));
+        return ((compatibleWithAnnotation.value() != null) && (compatibleWithAnnotation
+                .value().length() > 0));
     }
 
     private void worksWithUrlPattern(final String urlPattern) {
@@ -99,7 +100,8 @@ public abstract class PageObject {
         String patternWithExpandedMacros = urlPattern;
         for (String macro : MACROS.keySet()) {
             String expanded = MACROS.get(macro);
-            patternWithExpandedMacros = patternWithExpandedMacros.replaceAll(macro, expanded);
+            patternWithExpandedMacros = patternWithExpandedMacros.replaceAll(
+                    macro, expanded);
         }
         patternWithExpandedMacros = patternWithExpandedMacros + OPTIONAL_PARAMS;
         return patternWithExpandedMacros;
@@ -145,10 +147,11 @@ public abstract class PageObject {
         return matchingPageExpressions.isEmpty();
     }
 
-    private boolean urlIsCompatibleWithThisPattern(final String currentUrl, final Pattern pattern) {
+    private boolean urlIsCompatibleWithThisPattern(final String currentUrl,
+            final Pattern pattern) {
         return pattern.matcher(currentUrl).matches();
     }
-    
+
     public PageObject waitForRenderedElements(final By byElementCriteria) {
         getRenderedView().waitFor(byElementCriteria);
         return this;
@@ -157,38 +160,49 @@ public abstract class PageObject {
     /**
      * Waits for a given text to appear anywhere on the page.
      */
-    public PageObject waitForTextToAppear(String expectedText) {
+    public PageObject waitForTextToAppear(final String expectedText) {
         getRenderedView().waitForText(expectedText);
         return this;
     }
-    
-    public PageObject waitForTextToDisappear(String expectedText) {
+
+    public PageObject waitForTextToDisappear(final String expectedText) {
         return waitForTextToDisappear(expectedText, waitForTimeout);
     }
+
     /**
      * Waits for a given text to not be anywhere on the page.
      */
-    public PageObject waitForTextToDisappear(String expectedText, long timeout) {
+    public PageObject waitForTextToDisappear(final String expectedText,
+            final long timeout) {
         getRenderedView().waitForTextToDisappear(expectedText, timeout);
         return this;
     }
 
     /**
      * Waits for any of a number of text blocks to appear anywhere on the screen
+     * 
      * @param expectedText
      * @return
      */
-    public PageObject waitForAnyTextToAppear(String... expectedText) {
+    public PageObject waitForAnyTextToAppear(final String... expectedText) {
         getRenderedView().waitForAnyTextToAppear(expectedText);
         return this;
     }
 
+    public PageObject waitForAnyTextToAppear(final WebElement element,
+            final String... expectedText) {
+        getRenderedView().waitForAnyTextToAppear(element, expectedText);
+        return this;
+    }
+
     /**
-     * Waits for all of a number of text blocks to appear somewhere on the screen
+     * Waits for all of a number of text blocks to appear somewhere on the
+     * screen
+     * 
      * @param expectedText
      * @return
      */
-    public PageObject waitForAllTextToAppear(String... expectedTexts) {
+    public PageObject waitForAllTextToAppear(final String... expectedTexts) {
         getRenderedView().waitForAllTextToAppear(expectedTexts);
         return this;
     }
@@ -203,14 +217,15 @@ public abstract class PageObject {
 
     public List<WebElement> thenReturnElementList(final By byListCriteria) {
         return driver.findElements(byListCriteria);
-    }    
-    
+    }
+
     /**
      * Check that the specified text appears somewhere in the page.
      */
     public void shouldContainText(final String textValue) {
         if (!containsText(textValue)) {
-            String errorMessage = String.format("The text '%s' was not found in the page", textValue);
+            String errorMessage = String.format(
+                    "The text '%s' was not found in the page", textValue);
             throw new NoSuchElementException(errorMessage);
         }
     }
@@ -218,19 +233,22 @@ public abstract class PageObject {
     /**
      * Clear a field and enter a value into it.
      */
-    public void typeInto(WebElement field, String value) {
+    public void typeInto(final WebElement field, final String value) {
         field.clear();
         field.sendKeys(value);
     }
-    
-    public void selectFromDropdown(final WebElement dropdown, final String visibleLabel) {
+
+    public void selectFromDropdown(final WebElement dropdown,
+            final String visibleLabel) {
         Select dropdownSelect = findSelectFor(dropdown);
         dropdownSelect.selectByVisibleText(visibleLabel);
     }
 
-    public void selectMultipleItemsFromDropdown(WebElement dropdown, String... selectedLabels) {
-        for(String selectedLabel : selectedLabels) {
-            String optionPath = String.format("//option[.='%s']", selectedLabel);
+    public void selectMultipleItemsFromDropdown(final WebElement dropdown,
+            final String... selectedLabels) {
+        for (String selectedLabel : selectedLabels) {
+            String optionPath = String
+                    .format("//option[.='%s']", selectedLabel);
             WebElement option = dropdown.findElement(By.xpath(optionPath));
             option.click();
         }
@@ -240,7 +258,7 @@ public abstract class PageObject {
         Set<String> selectedOptions = new HashSet<String>();
 
         List<WebElement> options = dropdown.findElements(By.tagName("option"));
-        for(WebElement option : options) {
+        for (WebElement option : options) {
             if (option.isSelected()) {
                 selectedOptions.add(option.getText());
             }
@@ -252,7 +270,7 @@ public abstract class PageObject {
         Set<String> selectedOptions = new HashSet<String>();
 
         List<WebElement> options = dropdown.findElements(By.tagName("option"));
-        for(WebElement option : options) {
+        for (WebElement option : options) {
             if (option.isSelected()) {
                 selectedOptions.add(option.getValue());
             }
@@ -260,12 +278,12 @@ public abstract class PageObject {
         return selectedOptions;
     }
 
-    public void setCheckbox(WebElement field, boolean value) {
+    public void setCheckbox(final WebElement field, final boolean value) {
         Checkbox checkbox = new Checkbox(field);
         checkbox.setChecked(value);
     }
-    
-    protected Select findSelectFor(WebElement dropdownList) {
+
+    protected Select findSelectFor(final WebElement dropdownList) {
         return new Select(dropdownList);
     }
 
@@ -280,10 +298,11 @@ public abstract class PageObject {
     public boolean userCanSee(final WebElement field) {
         return getRenderedView().userCanSee(field);
     }
-    
+
     public void shouldBeVisible(final WebElement field) {
         if (!userCanSee(field)) {
-            throw new AssertionError("The " + field + " element should be visible");
+            throw new AssertionError("The " + field
+                    + " element should be visible");
         }
     }
 }
