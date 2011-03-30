@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
+import net.thucydides.core.resources.FileResources;
 import net.thucydides.core.resources.ResourceList;
 
 /**
@@ -33,15 +34,15 @@ public class HtmlResourceCopier {
     public void copyHTMLResourcesTo(final File targetDirectory) throws IOException {
 
         Pattern resourcePattern = allFilesInDirectory(resourceDirectory);
+        FileResources fileResource = FileResources.from(resourceDirectory);
+
         Collection<String> reportResources = ResourceList.getResources(resourcePattern);
         for (String resourcePath : reportResources) {
-            String targetSubDirectory = findTargetSubDirectoryFrom(resourcePath);
-            File copyTo = new File(targetDirectory, targetSubDirectory);
-            if (resourceIsFromAJar(resourcePath) 
-                && (thisIsNotTheRoot(resourcePath)) 
-                && (thisIsNotADirectory(resourcePath))) {
-                copyFileFromClasspathToTargetDirectory(resourcePath, copyTo);
-            }
+                if (resourceIsFromAJar(resourcePath)
+                        && (thisIsNotTheRoot(resourcePath))
+                        && (thisIsNotADirectory(resourcePath))) {
+                	fileResource.copyResourceTo(resourcePath, targetDirectory);
+                }
         }
     }
 
@@ -71,7 +72,8 @@ public class HtmlResourceCopier {
     }
 
     private Pattern allFilesInDirectory(final String directory) {
-        return Pattern.compile(".*" + directory + "/.*");
+        String allFilesPattern = String.format(".*[\\\\/]?%s[\\\\/].*", directory);
+        return Pattern.compile(allFilesPattern);
    }
 
     private void copyFileFromClasspathToTargetDirectory(final String resourcePath,
