@@ -31,6 +31,8 @@ import org.junit.runners.model.InitializationError;
  */
 public class WhenInstanciatingANewTestRunner  extends AbstractTestStepRunnerTest {
 
+	private static final FILE_SEPARATOR = System.getProperty("file.separator");
+	
     @Rule
     public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
 
@@ -97,7 +99,7 @@ public class WhenInstanciatingANewTestRunner  extends AbstractTestStepRunnerTest
 
         File outputDirectory = runner.getOutputDirectory();
         
-        assertThat(outputDirectory.getPath(), is("target/thucydides"));
+        assertThat(outputDirectory.getPath(), is("target" + FILE_SEPARATOR + "thucydides"));
     }
     
     @Test
@@ -106,7 +108,9 @@ public class WhenInstanciatingANewTestRunner  extends AbstractTestStepRunnerTest
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
         ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class, mockBrowserFactory);
         
-        System.setProperty("thucydides.outputDirectory", "target/reports/thucydides");
+        System.setProperty("thucydides.outputDirectory", "target" + FILE_SEPARATOR 
+        											   + "reports" + FILE_SEPARATOR
+        											   + "thucydides");
 
         File outputDirectory = runner.getOutputDirectory();
         
