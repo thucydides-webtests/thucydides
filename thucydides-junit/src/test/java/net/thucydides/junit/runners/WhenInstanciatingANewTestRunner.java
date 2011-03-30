@@ -31,7 +31,7 @@ import org.junit.runners.model.InitializationError;
  */
 public class WhenInstanciatingANewTestRunner  extends AbstractTestStepRunnerTest {
 
-	private static final FILE_SEPARATOR = System.getProperty("file.separator");
+	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	
     @Rule
     public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
