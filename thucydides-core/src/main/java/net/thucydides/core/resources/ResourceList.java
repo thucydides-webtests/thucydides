@@ -23,6 +23,8 @@ public final class ResourceList {
     private ResourceList() {
     }
 
+    final static String PATH_SEPARATOR = System.getProperty("path.separator");
+
     /**
      * Find a list of resources matching a given path on the classpath. for all
      * elements of java.class.path get a Collection of resources Pattern pattern
@@ -35,7 +37,7 @@ public final class ResourceList {
     public static Collection<String> getResources(final Pattern pattern) {
         final ArrayList<String> resources = new ArrayList<String>();
         final String classPath = System.getProperty("java.class.path", ".");
-        final String[] classPathElements = classPath.split(":");
+        final String[] classPathElements = classPath.split(PATH_SEPARATOR);
         for (final String element : classPathElements) {
             resources.addAll(getResources(element, pattern));
         }
@@ -78,6 +80,7 @@ public final class ResourceList {
             while (e.hasMoreElements()) {
                 final ZipEntry ze = (ZipEntry) e.nextElement();
                 final String fileName = ze.getName();
+                
                 final boolean accept = pattern.matcher(fileName).matches();
                 if (accept) {
                     retval.add(fileName);

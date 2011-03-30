@@ -51,11 +51,9 @@ public class WhenGeneratingAnHtmlReport {
 
     @Test
     public void css_stylesheets_should_also_be_copied_to_the_output_directory() throws Exception {
-
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
         testRun.setMethodName("a_simple_test_case");
         testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
-
         reporter.generateReportFor(testRun);
         
         File cssDir = new File(outputDirectory, "css");
