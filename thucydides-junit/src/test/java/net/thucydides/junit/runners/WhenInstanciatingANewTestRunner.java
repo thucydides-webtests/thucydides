@@ -114,7 +114,25 @@ public class WhenInstanciatingANewTestRunner  extends AbstractTestStepRunnerTest
 
         File outputDirectory = runner.getOutputDirectory();
         
-        assertThat(outputDirectory.getPath(), is("target/reports/thucydides"));
+        assertThat(outputDirectory.getPath(), is("target" + FILE_SEPARATOR 
+												   + "reports" + FILE_SEPARATOR
+												   + "thucydides"));
+
+    }    
+
+    @Test
+    public void the_output_directory_can_be_defined_by_a_system_property_using_any_standard_separators() throws InitializationError {
+
+        WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
+        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class, mockBrowserFactory);
+        
+        System.setProperty("thucydides.outputDirectory", "target/reports/thucydides");
+
+        File outputDirectory = runner.getOutputDirectory();
+        
+        assertThat(outputDirectory.getPath(), is("target" + FILE_SEPARATOR 
+												   + "reports" + FILE_SEPARATOR
+												   + "thucydides"));
 
     }    
 }
