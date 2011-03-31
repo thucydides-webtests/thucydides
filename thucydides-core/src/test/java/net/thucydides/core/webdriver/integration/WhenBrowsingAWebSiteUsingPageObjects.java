@@ -11,9 +11,11 @@ import net.thucydides.core.pages.PageObject;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.interactions.ElementNotDisplayedException;
 
@@ -35,11 +37,15 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     @Before
     public void open_local_static_site() {
         driver = new HtmlUnitDriver();
+        openStaticTestSite(driver);
+    }
+
+    private void openStaticTestSite(WebDriver driver) {
         File baseDir = new File(System.getProperty("user.dir"));
         File testSite = new File(baseDir,"src/test/resources/static-site/index.html");
-        driver.get("file://" + testSite.getAbsolutePath());
+        this.driver.get("file://" + testSite.getAbsolutePath());
     }
-    
+
     @Test
     public void should_find_page_title() {
         IndexPage indexPage = new IndexPage(driver);

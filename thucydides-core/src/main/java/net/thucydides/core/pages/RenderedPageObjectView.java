@@ -50,7 +50,7 @@ class RenderedPageObjectView {
         }
     }
 
-    private boolean elementIsDisplayed(final By byElementCriteria) {
+    public boolean elementIsDisplayed(final By byElementCriteria) {
         boolean isDisplayed = false;
         try {
             List<WebElement> matchingElements = driver.findElements(byElementCriteria);

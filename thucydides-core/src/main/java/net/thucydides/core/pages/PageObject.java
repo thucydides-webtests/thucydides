@@ -25,9 +25,8 @@ import org.openqa.selenium.support.ui.Select;
 
 /**
  * A base class representing a WebDriver page object.
- * 
+ *
  * @author johnsmart
- * 
  */
 public abstract class PageObject {
 
@@ -42,9 +41,11 @@ public abstract class PageObject {
     private static final Map<String, String> MACROS = new HashMap<String, String>();
 
     private static final long WAIT_FOR_TIMEOUT = 30000;
+
     {
         MACROS.put("#HOST", "https?://[^/]+");
     }
+
     private WebDriver driver;
 
     private List<Pattern> matchingPageExpressions = new ArrayList<Pattern>();
@@ -139,7 +140,6 @@ public abstract class PageObject {
     /**
      * Does this page object work for this URL? When matching a URL, we check
      * with and without trailing slashes
-     * 
      */
     public final boolean compatibleWithUrl(final String currentUrl) {
         if (thereAreNoPatternsDefined()) {
@@ -165,7 +165,7 @@ public abstract class PageObject {
     }
 
     private boolean urlIsCompatibleWithThisPattern(final String currentUrl,
-            final Pattern pattern) {
+                                                   final Pattern pattern) {
         return pattern.matcher(currentUrl).matches();
     }
 
@@ -178,7 +178,7 @@ public abstract class PageObject {
         getRenderedView().waitForElementsToDisappear(byElementCriteria);
         return this;
     }
-    
+
     /**
      * Waits for a given text to appear anywhere on the page.
      */
@@ -203,14 +203,13 @@ public abstract class PageObject {
      * Waits for a given text to not be anywhere on the page.
      */
     public PageObject waitForTextToDisappear(final String expectedText,
-            final long timeout) {
+                                             final long timeout) {
         getRenderedView().waitForTextToDisappear(expectedText, timeout);
         return this;
     }
 
     /**
      * Waits for any of a number of text blocks to appear anywhere on the screen
-     * 
      */
     public PageObject waitForAnyTextToAppear(final String... expectedText) {
         getRenderedView().waitForAnyTextToAppear(expectedText);
@@ -226,7 +225,6 @@ public abstract class PageObject {
     /**
      * Waits for all of a number of text blocks to appear somewhere on the
      * screen
-     * 
      */
     public PageObject waitForAllTextToAppear(final String... expectedTexts) {
         getRenderedView().waitForAllTextToAppear(expectedTexts);
@@ -265,13 +263,13 @@ public abstract class PageObject {
     }
 
     public void selectFromDropdown(final WebElement dropdown,
-            final String visibleLabel) {
+                                   final String visibleLabel) {
         Select dropdownSelect = findSelectFor(dropdown);
         dropdownSelect.selectByVisibleText(visibleLabel);
     }
 
     public void selectMultipleItemsFromDropdown(final WebElement dropdown,
-            final String... selectedLabels) {
+                                                final String... selectedLabels) {
         for (String selectedLabel : selectedLabels) {
             String optionPath = String
                     .format("//option[.='%s']", selectedLabel);
@@ -360,11 +358,18 @@ public abstract class PageObject {
         getDriver().get(startingUrl);
     }
 
+    /**
+     * Returns true if at least one matching element is found on the page and is visible.
+     */
+    public Boolean isElementVisible(By byCriteria) {
+        return getRenderedView().elementIsDisplayed(byCriteria);
+    }
+
     private String urlWithParametersSubstituted(final String template, final String[] parameterValues) {
 
         String url = template;
-        for(int i = 0; i < parameterValues.length; i++) {
-            String variable = String.format("{%d}",i + 1);
+        for (int i = 0; i < parameterValues.length; i++) {
+            String variable = String.format("{%d}", i + 1);
             url = url.replace(variable, parameterValues[i]);
         }
         return addDefaultBaseUrlIfRelative(url);

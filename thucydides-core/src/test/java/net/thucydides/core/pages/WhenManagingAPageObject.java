@@ -276,7 +276,6 @@ public class WhenManagingAPageObject {
         page.shouldBeVisible(field);
     }
 
-
     @Test
     public void the_page_should_initially_open_at_the_systemwide_default_url() {
 
