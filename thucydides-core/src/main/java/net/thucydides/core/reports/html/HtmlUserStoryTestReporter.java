@@ -39,7 +39,7 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
      */
     public File generateReportFor(final UserStoryTestResults userStoryTestResults) throws IOException {
         
-        LOGGER.info("Generating report for user story " 
+        LOGGER.info("Generating report for user story "
                     + userStoryTestResults.getTitle() + " to " + getOutputDirectory());
         
         VelocityContext context = new VelocityContext();
@@ -82,7 +82,9 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
         VelocityContext context = new VelocityContext();
         context.put("stories", userStoryResults);
         Template storyTemplate = getTemplateManager().getTemplateFrom(STORIES_TEMPLATE_PATH);
+        LOGGER.debug("Generating stories page");
         String htmlContents = mergeVelocityTemplate(storyTemplate, context);
+        LOGGER.debug("Writing stories page");
         writeReportToOutputDirectory("stories.html", htmlContents);
     }
 
@@ -90,7 +92,9 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
         VelocityContext context = new VelocityContext();
         context.put("stories", new UserStoriesResultSet(userStoryResults));
         Template storyTemplate = getTemplateManager().getTemplateFrom(HOME_TEMPLATE_PATH);
+        LOGGER.debug("Generating home page");
         String htmlContents = mergeVelocityTemplate(storyTemplate, context);
+        LOGGER.debug("Writing stories page");
         writeReportToOutputDirectory("home.html", htmlContents);
     }
 }

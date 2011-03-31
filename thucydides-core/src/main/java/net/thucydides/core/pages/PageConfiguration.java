@@ -7,7 +7,7 @@ import static net.thucydides.core.ThucydidesSystemProperty.BASE_URL;
  */
 public class PageConfiguration {
 
-    private static PageConfiguration pageConfiguration;
+    private static volatile PageConfiguration pageConfiguration;
 
     /**
      * The current system page configuration.
