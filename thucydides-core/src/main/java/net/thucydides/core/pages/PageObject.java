@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.thucydides.core.annotations.At;
+import net.thucydides.core.annotations.DefaultUrl;
+import net.thucydides.core.annotations.NamedUrl;
+import net.thucydides.core.annotations.NamedUrls;
 import net.thucydides.core.webelements.Checkbox;
 
 import org.openqa.selenium.By;
@@ -49,7 +52,7 @@ public abstract class PageObject {
 
     private RenderedPageObjectView renderedView;
 
-    private PageUrls pageUrls;
+    private String defaultBaseUrl;
 
     public PageObject(final WebDriver driver) {
         ElementLocatorFactory finder = new AjaxElementLocatorFactory(driver,
@@ -57,7 +60,6 @@ public abstract class PageObject {
         this.driver = driver;
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
         PageFactory.initElements(finder, this);
-        pageUrls = new PageUrls(this);
         fetchMatchingPageExpressions();
     }
 
@@ -66,14 +68,14 @@ public abstract class PageObject {
     }
 
     public void setDefaultBaseUrl(String baseUrl) {
-        pageUrls.setDefaultBaseUrl(baseUrl);
+        this.defaultBaseUrl = baseUrl;
     }
 
     public String getDefaultBaseUrl() {
-        if (pageUrls.getDefaultBaseUrl() == null) {
+        if (defaultBaseUrl == null) {
             return PageConfiguration.getCurrentConfiguration().getBaseUrl();
         } else {
-            return pageUrls.getDefaultBaseUrl();
+            return defaultBaseUrl;
         }
     }
 
@@ -332,7 +334,7 @@ public abstract class PageObject {
      * If the DefaultUrl annotation is not present, the default base URL will be used.
      */
     public void open() {
-        String startingUrl = pageUrls.getStartingUrl();
+        String startingUrl = startFromUrlAnnotationOrBaseUrl();
         getDriver().get(startingUrl);
     }
 
@@ -341,8 +343,8 @@ public abstract class PageObject {
      * Parameters are represented in the URL using {0}, {1}, etc.
      */
     public void open(final String... parameterValues) {
-        String startingUrlTemplate = pageUrls.getStartingUrl();
-        String startingUrl = pageUrls.getUrlWithParametersSubstituted(startingUrlTemplate, parameterValues);
+        String startingUrlTemplate = startFromUrlAnnotationOrBaseUrl();
+        String startingUrl = urlWithParametersSubstituted(startingUrlTemplate, parameterValues);
         getDriver().get(startingUrl);
     }
 
@@ -351,16 +353,60 @@ public abstract class PageObject {
     }
 
     public void open(final String urlTemplateName, final String[] parameterValues) {
-        String startingUrlTemplate = pageUrls.getNamedUrl(urlTemplateName);
-        String startingUrl = pageUrls.getUrlWithParametersSubstituted(startingUrlTemplate, parameterValues);
+        String startingUrlTemplate = getNamedUrl(urlTemplateName);
+        String startingUrl = urlWithParametersSubstituted(startingUrlTemplate, parameterValues);
         getDriver().get(startingUrl);
     }
 
     /**
      * Returns true if at least one matching element is found on the page and is visible.
      */
-    public Boolean isElementVisible(final By byCriteria) {
+    public Boolean isElementVisible(By byCriteria) {
         return getRenderedView().elementIsDisplayed(byCriteria);
     }
 
+    private String urlWithParametersSubstituted(final String template, final String[] parameterValues) {
+
+        String url = template;
+        for (int i = 0; i < parameterValues.length; i++) {
+            String variable = String.format("{%d}", i + 1);
+            url = url.replace(variable, parameterValues[i]);
+        }
+        return addDefaultBaseUrlIfRelative(url);
+    }
+
+    private String startFromUrlAnnotationOrBaseUrl() {
+        DefaultUrl urlAnnotation = getClass().getAnnotation(DefaultUrl.class);
+        if (urlAnnotation != null) {
+            String annotatedBaseUrl = urlAnnotation.value();
+            return addDefaultBaseUrlIfRelative(annotatedBaseUrl);
+        }
+
+        return getDefaultBaseUrl();
+    }
+
+    private String addDefaultBaseUrlIfRelative(String url) {
+        if (isARelativeUrl(url)) {
+            return getDefaultBaseUrl() + url;
+        } else {
+            return url;
+        }
+    }
+
+    private boolean isARelativeUrl(String url) {
+        return url.startsWith("/");
+    }
+
+    private String getNamedUrl(final String name) {
+        NamedUrls urlAnnotation = getClass().getAnnotation(NamedUrls.class);
+        if (urlAnnotation != null) {
+            NamedUrl[] namedUrlList = urlAnnotation.value();
+            for (NamedUrl namedUrl : namedUrlList) {
+                if (namedUrl.name().equals(name)) {
+                    return namedUrl.url();
+                }
+            }
+        }
+        throw new IllegalArgumentException("No URL named " + name + " was found in this class");
+    }
 }

@@ -7,7 +7,7 @@ import java.io.*;
 /**
  * Utility class used to copy resources from a classpath to a target directory.
  */
-public final class FileResources {
+public class FileResources {
 
     private static final int BUFFER_SIZE = 4096;
 

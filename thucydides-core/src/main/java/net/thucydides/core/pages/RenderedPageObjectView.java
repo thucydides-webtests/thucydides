@@ -91,7 +91,7 @@ class RenderedPageObjectView {
         }
     }
 
-    public void waitForText(final WebElement element, final String expectedText) {
+    public void waitForText(WebElement element, final String expectedText) {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
             if (containsText(element, expectedText)) {
@@ -158,7 +158,7 @@ class RenderedPageObjectView {
         }
     }
     
-    public void waitForAnyTextToAppear(final WebElement element, final String[] expectedText) {
+    public void waitForAnyTextToAppear(WebElement element, String[] expectedText) {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
             if (elementContains(element, expectedText)) {
@@ -231,7 +231,7 @@ class RenderedPageObjectView {
         return updatedList;
     }
 
-    public void waitForElementsToDisappear(final By byElementCriteria) {
+    public void waitForElementsToDisappear(By byElementCriteria) {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
             if (!elementIsDisplayed(byElementCriteria)) {

@@ -62,7 +62,7 @@ public class AcceptanceTestRunConverter implements Converter {
 
     }
 
-    private void writeStepTo(final HierarchicalStreamWriter writer, final TestStep step) {
+    private void writeStepTo(HierarchicalStreamWriter writer, TestStep step) {
         if (step instanceof TestStepGroup) {
             writer.startNode("test-group");
             writer.addAttribute("name", step.getDescription());
