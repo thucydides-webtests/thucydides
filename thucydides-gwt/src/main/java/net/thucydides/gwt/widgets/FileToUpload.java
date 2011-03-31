@@ -23,21 +23,21 @@ public class FileToUpload {
     }
 
 
-    private String osSpecificPathOf(final String filename) {
-        if (isAWindows(filename)) {
-            return windowsNative(filename);
+    private String osSpecificPathOf(final String fileToUpload) {
+        if (isAWindows(fileToUpload)) {
+            return windowsNative(fileToUpload);
         } else {
-            return filename;
+            return fileToUpload;
         }
     }
 
-    private String windowsNative(final String filename) {
-        String bareFilename = filename.substring(1);
+    private String windowsNative(final String fileToUpload) {
+        String bareFilename = fileToUpload.substring(1);
         return StringUtils.replace(bareFilename,"/","\\");
     }
 
-    private boolean isAWindows(final String filename) {
-        Matcher matcher = windowsPath.matcher(filename);
+    private boolean isAWindows(final String fileToUpload) {
+        Matcher matcher = windowsPath.matcher(fileToUpload);
         return matcher.matches();
     }
 }

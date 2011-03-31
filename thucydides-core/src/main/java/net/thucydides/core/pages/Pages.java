@@ -21,31 +21,11 @@ import com.google.common.base.Preconditions;
 public class Pages {
 
     private final WebDriver driver;
-
-    private String defaultBaseUrl;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(Pages.class);
 
     public Pages(final WebDriver driver) {
         this.driver = driver;
-    }
-
-    /**
-     * This is the URL where test cases start.
-     * The default value can be overriden using the webdriver.baseurl property.
-     * It is also the base URL used to build relative paths.
-     */
-    public void setDefaultBaseUrl(final String defaultBaseUrl) {
-        this.defaultBaseUrl = defaultBaseUrl;
-    }
-
-    private String getBaseUrl() {
-        String systemDefinedBaseUrl = System.getProperty(BASE_URL.getPropertyName());
-        if (systemDefinedBaseUrl != null) {
-            return systemDefinedBaseUrl;
-        } else {
-            return defaultBaseUrl;
-        }
     }
 
     public WebDriver getDriver() {
@@ -58,7 +38,7 @@ public class Pages {
     public void start() {        
         Preconditions.checkNotNull(driver);
         
-        final String homeUrl = getBaseUrl();
+        final String homeUrl = PageConfiguration.getCurrentConfiguration().getBaseUrl();
         driver.get(homeUrl);
     }
 

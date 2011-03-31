@@ -30,7 +30,7 @@ public class WhenKeepingTrackOfVisitedPages {
         final String baseUrl = "http://www.google.com";
         final Pages pages = new Pages(driver);
         
-        pages.setDefaultBaseUrl("http://www.google.com");        
+        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://www.google.com");
         pages.start();
         
         verify(driver).get(baseUrl);    
@@ -43,7 +43,7 @@ public class WhenKeepingTrackOfVisitedPages {
         final String systemDefinedBaseUrl = "http://www.google.com.au";
         final Pages pages = new Pages(driver);
         
-        pages.setDefaultBaseUrl(defaultBaseUrl);        
+        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl(defaultBaseUrl);
         System.setProperty("webdriver.base.url", systemDefinedBaseUrl);
         
         pages.start();
