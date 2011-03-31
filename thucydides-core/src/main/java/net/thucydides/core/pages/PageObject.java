@@ -51,6 +51,8 @@ public abstract class PageObject {
 
     private RenderedPageObjectView renderedView;
 
+    private String defaultBaseUrl;
+
     public PageObject(final WebDriver driver) {
         ElementLocatorFactory finder = new AjaxElementLocatorFactory(driver,
                 TIMEOUT);
@@ -62,6 +64,18 @@ public abstract class PageObject {
 
     public void setWaitForTimeout(final long waitForTimeout) {
         this.waitForTimeout = waitForTimeout;
+    }
+
+    public void setDefaultBaseUrl(String baseUrl) {
+        this.defaultBaseUrl = baseUrl;
+    }
+
+    public String getDefaultBaseUrl() {
+        if (defaultBaseUrl == null) {
+            return PageConfiguration.getCurrentConfiguration().getBaseUrl();
+        } else {
+            return defaultBaseUrl;
+        }
     }
 
     private RenderedPageObjectView getRenderedView() {
@@ -363,12 +377,12 @@ public abstract class PageObject {
             return addDefaultBaseUrlIfRelative(annotatedBaseUrl);
         }
 
-        return PageConfiguration.getCurrentConfiguration().getBaseUrl();
+        return getDefaultBaseUrl();
     }
 
     private String addDefaultBaseUrlIfRelative(String url) {
         if (isARelativeUrl(url)) {
-            return PageConfiguration.getCurrentConfiguration().getBaseUrl() + url;
+            return getDefaultBaseUrl() + url;
         } else {
             return url;
         }

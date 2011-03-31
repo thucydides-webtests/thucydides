@@ -26,8 +26,12 @@ public class Pages {
 
     private String defaultBaseUrl;
 
+    private PageConfiguration pageConfiguration;
+
+
     public Pages(final WebDriver driver) {
         this.driver = driver;
+        this.pageConfiguration = new PageConfiguration();
     }
 
     public WebDriver getDriver() {
@@ -49,7 +53,8 @@ public class Pages {
         if (!pageCandidate.compatibleWithUrl(currentUrl)) {
             thisIsNotThePageYourLookingFor(pageObjectClass);
         }
-        
+        pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
+
         return pageCandidate;
     }
     
@@ -104,7 +109,7 @@ public class Pages {
         if (defaultBaseUrl != null) {
             return defaultBaseUrl;
         } else {
-            return PageConfiguration.getCurrentConfiguration().getBaseUrl();
+            return pageConfiguration.getBaseUrl();
         }
     }
 

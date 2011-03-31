@@ -279,13 +279,16 @@ public class WhenManagingAPageObject {
 
     @Test
     public void the_page_should_initially_open_at_the_systemwide_default_url() {
+
+        System.setProperty("webdriver.base.url","http://www.google.com");
+
         BasicPageObject page = new BasicPageObject(driver);
-        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://www.google.com");
 
         Pages pages = new Pages(driver);
         pages.start();
 
         verify(driver).get("http://www.google.com");
+        System.setProperty("webdriver.base.url","");
     }
 
     @Test
