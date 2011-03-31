@@ -24,6 +24,8 @@ public class Pages {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(Pages.class);
 
+    private String defaultBaseUrl;
+
     public Pages(final WebDriver driver) {
         this.driver = driver;
     }
@@ -38,8 +40,7 @@ public class Pages {
     public void start() {        
         Preconditions.checkNotNull(driver);
         
-        final String homeUrl = PageConfiguration.getCurrentConfiguration().getBaseUrl();
-        driver.get(homeUrl);
+        driver.get(getDefaultBaseUrl());
     }
 
     public PageObject currentPageAt(final Class<? extends PageObject> pageObjectClass) {
@@ -61,6 +62,8 @@ public class Pages {
             return false;
         }
     }
+
+
 
     /**
      * Create a new Page Object of the given type.
@@ -92,5 +95,23 @@ public class Pages {
             + "I was at the URL " + driver.getCurrentUrl();
         
         throw new WrongPageError(errorDetails);
+    }
+
+    /**
+     * The default URL for this set of tests, or the system default URL if undefined.
+     */
+    public String getDefaultBaseUrl() {
+        if (defaultBaseUrl != null) {
+            return defaultBaseUrl;
+        } else {
+            return PageConfiguration.getCurrentConfiguration().getBaseUrl();
+        }
+    }
+
+    /**
+     * Set a default base URL for a specific set of tests.
+     */
+    public void setDefaultBaseUrl(String defaultBaseUrl) {
+        this.defaultBaseUrl = defaultBaseUrl;
     }
 }

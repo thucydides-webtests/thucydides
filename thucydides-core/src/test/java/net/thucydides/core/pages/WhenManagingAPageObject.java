@@ -277,5 +277,27 @@ public class WhenManagingAPageObject {
     }
 
 
+    @Test
+    public void the_page_should_initially_open_at_the_systemwide_default_url() {
+        BasicPageObject page = new BasicPageObject(driver);
+        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://www.google.com");
+
+        Pages pages = new Pages(driver);
+        pages.start();
+
+        verify(driver).get("http://www.google.com");
+    }
+
+    @Test
+    public void the_start_url_for_a_set_of_pages_can_be_overridden() {
+        BasicPageObject page = new BasicPageObject(driver);
+        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://www.google.com");
+
+        Pages pages = new Pages(driver);
+        pages.setDefaultBaseUrl("http://www.google.co.nz");
+        pages.start();
+
+        verify(driver).get("http://www.google.co.nz");
+    }
 
 }
