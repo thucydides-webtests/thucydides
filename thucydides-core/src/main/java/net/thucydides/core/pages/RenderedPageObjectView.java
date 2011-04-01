@@ -145,16 +145,17 @@ class RenderedPageObjectView {
         }
     }
 
-    public void waitForAnyTextToAppear(final String... expectedText) {
+    public void waitForAnyTextToAppear(final String... expectedTexts) {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
-            if (pageContains(expectedText)) {
+            if (pageContains(expectedTexts)) {
                 break;
             }
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
-        if (!pageContains(expectedText)) {
-            throw new ElementNotDisplayedException("Expected text was not displayed: '" + expectedText + "'");
+        if (!pageContains(expectedTexts)) {
+            throw new ElementNotDisplayedException("Expected text was not displayed: Was expecting any of '"
+                      + Arrays.toString(expectedTexts));
         }
     }
     
@@ -207,9 +208,13 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (!allTextsFound) {
-            throw new ElementNotDisplayedException("Expected text was not displayed: '" 
-                                                    + Arrays.toString(requestedTexts.toArray()) + "'");
+            throw new ElementNotDisplayedException("Expected text was not displayed: was expecting all of "
+                                                    + printableFormOf(requestedTexts));
         }
+    }
+
+    private String printableFormOf(final List<String> texts) {
+        return Arrays.toString(texts.toArray());
     }
     
 
