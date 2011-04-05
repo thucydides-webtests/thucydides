@@ -22,7 +22,7 @@ public class UserStory {
     private final String code;
 
     /**
-     * Where the user story is defined, such as the JUnit class or the easyb
+     * Where the user story is defined, such as the JUnit class or the net.thucydides.easyb
      * story. This is used to uniquely group test results by user story.
      */
     private final String source;

@@ -156,7 +156,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     @Override
     public void run(final RunNotifier notifier) {
-        webdriverManager = new WebdriverManager(webDriverFactory, getConfiguration());
+        webdriverManager = new WebdriverManager(webDriverFactory);
         
         setupDefaultReporters();
 

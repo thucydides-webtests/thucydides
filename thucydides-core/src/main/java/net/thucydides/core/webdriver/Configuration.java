@@ -44,10 +44,16 @@ public class Configuration {
      */
     private File outputDirectory;    
 
+    
+    /**
+     * The default URL used as the starting point and web context
+     */
+    private String defaultBaseUrl;
+
     /**
      * Get the currently-configured browser type.
      */
-    public SupportedWebDriver getDriverType() {
+    public static SupportedWebDriver getDriverType() {
         String driverType = System.getProperty(WEBDRIVER_DRIVER, DEFAULT_WEBDRIVER_DRIVER);
         return lookupSupportedDriverTypeFor(driverType);
     }
@@ -91,7 +97,7 @@ public class Configuration {
      * 
      * @throws UnsupportedDriverException
      */
-    private SupportedWebDriver lookupSupportedDriverTypeFor(final String driverType) {
+    private static SupportedWebDriver lookupSupportedDriverTypeFor(final String driverType) {
         SupportedWebDriver driver = null;
         try {
             driver = SupportedWebDriver.valueOf(driverType.toUpperCase());
@@ -101,7 +107,7 @@ public class Configuration {
         return driver;
     }
 
-    private void throwUnsupportedDriverExceptionFor(final String driverType) {
+    private static void throwUnsupportedDriverExceptionFor(final String driverType) {
         throw new UnsupportedDriverException(driverType
                 + " is not a supported browser. Supported driver values are: "
                 + SupportedWebDriver.listOfSupportedDrivers());

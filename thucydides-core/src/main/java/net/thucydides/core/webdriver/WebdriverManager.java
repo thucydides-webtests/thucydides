@@ -4,6 +4,8 @@ import org.openqa.selenium.WebDriver;
 
 /**
  * Manage WebDriver instances.
+ * It instantiates browser drivers, based on the test configuration, and manages them for the
+ * duration of the tests.
  * 
  * @author johnsmart
  *
@@ -17,16 +19,14 @@ public class WebdriverManager {
      */
     private WebDriverFactory webDriverFactory;
 
-    private Configuration configuration;
     /**
      * A WebDriver instance is shared across all the tests executed by the runner in a given test run.
      */
     private ThreadLocal<WebDriver> webdriver = new ThreadLocal<WebDriver>();
 
     
-    public WebdriverManager(final WebDriverFactory webDriverFactory, final Configuration configuration) {
+    public WebdriverManager(final WebDriverFactory webDriverFactory) {
         this.webDriverFactory = webDriverFactory;
-        this.configuration = configuration;
         initializeDriver();
     }
 
@@ -49,7 +49,7 @@ public class WebdriverManager {
      *             if the driver type is not supported.
      */
     protected WebDriver newDriver() {
-        SupportedWebDriver supportedDriverType = configuration.getDriverType();
+        SupportedWebDriver supportedDriverType = Configuration.getDriverType();
         return webDriverFactory.newInstanceOf(supportedDriverType);
     }
     

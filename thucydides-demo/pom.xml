@@ -68,7 +68,7 @@
                 </executions>
                 <configuration>
                     <storyType>html</storyType>
-                    <storyReport>${project.build.directory}/easyb/stories.html</storyReport>
+                    <storyReport>${project.build.directory}/net.thucydides.easyb/stories.html</storyReport>
                 </configuration>
                 <dependencies>
                     <dependency>

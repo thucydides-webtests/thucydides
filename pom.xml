@@ -12,7 +12,7 @@
     <packaging>pom</packaging>
     <name>thucydides</name>
     <description>An Acceptance Testing framework for web applications
-        based on WebDriver, and integrating with JUnit and easyb.</description>
+        based on WebDriver, and integrating with JUnit and net.thucydides.easyb.</description>
     <url>www://github.com/wakaleo/thucydides</url>
     <licenses>
         <license>
@@ -213,7 +213,7 @@
         <module>thucydides-junit</module>
         <module>thucydides-maven-plugin</module>
         <module>thucydides-maven-integration-tests</module>
-        <module>thucydides-easyb-plugin</module>
+        <module>thucydides-easyb</module>
     <module>thucydides-gwt</module>
   </modules>
 </project>

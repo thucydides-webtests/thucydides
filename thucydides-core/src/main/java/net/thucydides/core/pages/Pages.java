@@ -1,7 +1,5 @@
 package net.thucydides.core.pages;
 
-import static net.thucydides.core.ThucydidesSystemProperty.BASE_URL;
-
 import java.lang.reflect.Constructor;
 
 import org.openqa.selenium.WebDriver;
@@ -45,6 +43,7 @@ public class Pages {
         Preconditions.checkNotNull(driver);
         
         driver.get(getDefaultBaseUrl());
+
     }
 
     public PageObject currentPageAt(final Class<? extends PageObject> pageObjectClass) {

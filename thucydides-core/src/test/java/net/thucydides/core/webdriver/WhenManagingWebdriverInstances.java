@@ -37,7 +37,7 @@ public class WhenManagingWebdriverInstances {
     
     @Test
     public void a_new_webdriver_instance_is_created_when_the_webdriver_manager_is_created() {
-        new WebdriverManager(factory, config);        
+        new WebdriverManager(factory);        
         
         verify(factory).newInstanceOf(any(SupportedWebDriver.class));
     }
@@ -46,7 +46,7 @@ public class WhenManagingWebdriverInstances {
     public void a_new_firefox_webdriver_instance_is_created_when_the_webdriver_system_property_is_set_to_firefox() {
 
         System.setProperty(Configuration.WEBDRIVER_DRIVER, "firefox");
-        new WebdriverManager(factory, config);        
+        new WebdriverManager(factory);        
         
         verify(factory).newInstanceOf(SupportedWebDriver.FIREFOX);
     }
@@ -55,7 +55,7 @@ public class WhenManagingWebdriverInstances {
     public void a_new_chrome_webdriver_instance_is_created_when_the_webdriver_system_property_is_set_to_chrome() {
 
         System.setProperty(Configuration.WEBDRIVER_DRIVER, "chrome");
-        new WebdriverManager(factory, config);        
+        new WebdriverManager(factory);        
         
         verify(factory).newInstanceOf(SupportedWebDriver.CHROME);
     }
@@ -64,20 +64,20 @@ public class WhenManagingWebdriverInstances {
     public void iexplorer_is_not_supported() {
 
         System.setProperty(Configuration.WEBDRIVER_DRIVER, "iexplorer");
-        new WebdriverManager(factory, config);        
+        new WebdriverManager(factory);        
     }
 
     @Test
     public void we_can_obtain_the_webdriver_from_the_manager() {
 
-        WebdriverManager manager = new WebdriverManager(factory, config);        
+        WebdriverManager manager = new WebdriverManager(factory);        
         assertThat(manager.getWebdriver(), is(webDriver));
     }
     
     @Test
     public void when_the_manager_is_closed_the_browser_quits() {
 
-        WebdriverManager manager = new WebdriverManager(factory, config);        
+        WebdriverManager manager = new WebdriverManager(factory);        
         manager.closeDriver();
         
         verify(webDriver).quit();

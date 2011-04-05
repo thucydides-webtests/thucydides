@@ -43,8 +43,7 @@ public class ScenarioSteps {
     }
     /**
      * Marks the last step in a requirements test.
-     * You <em>must</em> place this as the last method in your test
-     * case for reporting to work correctly. 
+     * Used internally to trigger JUnit listener events at the end of a test case.
      */
     public void done() {}
 }
