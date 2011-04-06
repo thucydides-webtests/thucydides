@@ -7,3 +7,6 @@ target
 /maven-thucydides-plugin/target/
 
 /thucydides-core/.checkstyle
+velocity.log.1
+/thucydides-junit/velocity.log
+/thucydides-core/velocity.log

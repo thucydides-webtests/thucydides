@@ -1,6 +1,7 @@
 package net.thucydides.easyb;
 
 
+import groovy.lang.Binding;
 import net.thucydides.core.pages.Pages;
 
 
@@ -17,26 +18,21 @@ public class ThucydidesPlugin extends BasePlugin {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThucydidesPlugin.class);
 
     private WebdriverManager webdriverManager;
-  
-    private boolean isBrowserOpen = false;
     
     /**
      * Retrieve the runner configuration from an external source.
      */
-    
-    private PluginConfiguration configuration = new PluginConfiguration();
 
-    /**
-     * Define the default URL to be used when opening web pages with Thucydides
-     * @param defaultUrl
-     */
-    public void use_default_url(String defaultUrl) {
-        LOGGER.info("Setting default URL to " + defaultUrl);
-        
+    public ThucydidesPlugin() {
+        println "instanciating plugin " + this
+
+        Object.mixin ThucydidesExtensions;
     }
-    
+
+
     @Override
     public String getName() {
+        println "get name for plugin " + this
         return "thucydides";
     }
 
@@ -55,35 +51,34 @@ public class ThucydidesPlugin extends BasePlugin {
     
     @Override
     public Object beforeStory(final Binding binding) {
-        
+        println "before story"
+        println "Configuration: " + configuration;
+        println "Initializing pages with base URL " + getConfiguration().getDefaultBaseUrl()
+
         WebDriver driver = getWebdriverManager().getWebdriver();        
         binding.setVariable("driver", driver);
         binding.setVariable("thucydides", configuration);
-        
+
+        Pages pages = new Pages(getWebdriverManager().getWebdriver());
+        pages.setDefaultBaseUrl(getConfiguration().getDefaultBaseUrl());
+        binding.setVariable("pages", pages);
+        pages.start();
+
+
         return super.beforeStory(binding);
     }
     
-    private void initializePagesInFirstScenario(final Binding binding) {
-        if (!isBrowserOpen) {
-            Pages pages = new Pages(getWebdriverManager().getWebdriver());
-            pages.setDefaultBaseUrl(configuration.getDefaultBaseUrl());
-            binding.setVariable("pages", pages);      
-            pages.start();
-            isBrowserOpen = true;
-        }
-    }
-    
+
     @Override
     public Object beforeScenario(final Binding binding) {
         LOGGER.debug("Before scenario");
-        initializePagesInFirstScenario(binding);
         return super.beforeScenario(binding);
     }
     
     @Override
     public Object afterStory(final Binding binding) {
         WebDriver driver = (WebDriver) binding.getVariable("driver");
-        driver.close();
+        driver.quit();
         return super.afterStory(binding);
     }
     
@@ -91,16 +86,9 @@ public class ThucydidesPlugin extends BasePlugin {
      * The configuration manages output directories and driver types.
      * They can be defined as system values, or have sensible defaults.
      */
-    protected PluginConfiguration getConfiguration() {
-        return configuration;
+    public PluginConfiguration getConfiguration() {
+        return PluginConfiguration.getInstance();
     }
 
-    /**
-     * Set the configuration for a test runner.
-     * @param configuration
-     */
-//    public void setConfiguration(final Configuration configuration) {
-//        this.configuration = configuration;
-//    }
         
 }
