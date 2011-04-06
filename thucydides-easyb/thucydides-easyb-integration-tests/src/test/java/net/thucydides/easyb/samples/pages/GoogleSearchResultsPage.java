@@ -3,7 +3,6 @@ package net.thucydides.easyb.samples.pages;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
 
 import org.openqa.selenium.By;
