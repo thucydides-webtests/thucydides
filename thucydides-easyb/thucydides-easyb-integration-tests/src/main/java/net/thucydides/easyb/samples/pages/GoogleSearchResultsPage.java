@@ -25,10 +25,13 @@ public class GoogleSearchResultsPage extends PageObject {
     }
  
     public List<String> getTopicTitles() {
+
+        waitForRenderedElements(By.id("pnnext"));
+        waitABit(500);
+
         List<String> titles = new ArrayList<String>();
         
         List<WebElement> titleElements = getDriver().findElements(By.cssSelector(".r"));
-        System.out.println("titles = " + titleElements);
         for (WebElement titleElement : titleElements) {
             titles.add(titleElement.getText());
         }
