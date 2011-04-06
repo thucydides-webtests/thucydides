@@ -25,14 +25,13 @@ public class ThucydidesPlugin extends BasePlugin {
 
     public ThucydidesPlugin() {
         println "instanciating plugin " + this
-
+        resetConfiguration();
         Object.mixin ThucydidesExtensions;
     }
 
 
     @Override
     public String getName() {
-        println "get name for plugin " + this
         return "thucydides";
     }
 
@@ -77,7 +76,9 @@ public class ThucydidesPlugin extends BasePlugin {
     
     @Override
     public Object afterStory(final Binding binding) {
+        LOGGER.debug("After scenario");
         WebDriver driver = (WebDriver) binding.getVariable("driver");
+        driver.close();
         driver.quit();
         return super.afterStory(binding);
     }
@@ -90,5 +91,9 @@ public class ThucydidesPlugin extends BasePlugin {
         return PluginConfiguration.getInstance();
     }
 
-        
+    public PluginConfiguration resetConfiguration() {
+        println "resetting configuration"
+        return PluginConfiguration.reset();
+    }
+
 }

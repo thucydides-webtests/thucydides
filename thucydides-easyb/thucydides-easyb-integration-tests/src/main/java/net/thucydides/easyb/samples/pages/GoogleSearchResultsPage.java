@@ -24,14 +24,17 @@ public class GoogleSearchResultsPage extends PageObject {
         super(driver);
     }
  
-    public List<String> getSearchResultTitles() {
+    public List<String> getTopicTitles() {
         List<String> titles = new ArrayList<String>();
         
-        List<WebElement> titleElements = getDriver().findElements(By.tagName("h3"));
+        List<WebElement> titleElements = getDriver().findElements(By.cssSelector(".r"));
+        System.out.println("titles = " + titleElements);
         for (WebElement titleElement : titleElements) {
             titles.add(titleElement.getText());
         }
         
         return titles;
     }
+
+
 }

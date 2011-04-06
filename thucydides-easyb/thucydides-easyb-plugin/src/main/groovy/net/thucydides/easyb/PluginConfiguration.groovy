@@ -4,6 +4,10 @@ public class PluginConfiguration {
 
     private static ThreadLocal<PluginConfiguration> configuration = new ThreadLocal<PluginConfiguration>();
 
+    public static synchronized reset() {
+        configuration.remove();
+    }
+
     public static synchronized PluginConfiguration getInstance() {
         if (configuration.get() == null) {
             configuration.set(new PluginConfiguration());
@@ -12,7 +16,7 @@ public class PluginConfiguration {
     }
 
     String defaultBaseUrl;
-    
+
     /**
      * Define the base URL to be used for this story.
      */
@@ -20,11 +24,11 @@ public class PluginConfiguration {
         println "uses default base url of " + defaultBaseUrl;
         setDefaultBaseUrl(defaultBaseUrl);
     }
-    
+
     public void setDefaultBaseUrl(String defaultBaseUrl) {
         this.defaultBaseUrl = defaultBaseUrl;
     }
-    
+
     public String getDefaultBaseUrl() {
         return defaultBaseUrl;
     }

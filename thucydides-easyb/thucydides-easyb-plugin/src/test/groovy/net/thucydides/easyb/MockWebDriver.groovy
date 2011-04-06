@@ -61,8 +61,11 @@ class MockWebDriver implements WebDriver {
     }
 
 
-    def boolean openedAt(String url) {
-        openedUrls.contains(url)
+    def void shouldHaveOpenedAt(String url) {
+        if (!openedUrls.contains(url)) {
+            throw new AssertionError("The URL $url; was never opened: opened URLS were: $openedUrls");
+        }
+
     }
 
     def boolean wasClosed() {

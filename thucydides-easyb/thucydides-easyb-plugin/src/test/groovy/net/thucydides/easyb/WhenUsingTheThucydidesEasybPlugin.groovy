@@ -11,7 +11,7 @@ import org.openqa.selenium.WebDriver
 public class WhenUsingTheThucydidesEasybPlugin {
 
     ThucydidesPlugin plugin
-    def binding;
+    Binding binding
 
     class BrowserlessThucydidesPlugin extends ThucydidesPlugin {
         @Override
@@ -28,6 +28,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
     @Before
     public void initMocks() {
         plugin = new BrowserlessThucydidesPlugin();
+        plugin.resetConfiguration();
         binding = new Binding();
     }
 
@@ -91,7 +92,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
         WebDriver driver = (WebDriver) binding.getVariable("driver");
 
-        assert driver.openedAt("http://www.google.co.nz")
+        driver.shouldHaveOpenedAt("http://www.google.co.nz")
     }
 
     @Test
@@ -102,7 +103,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
         WebDriver driver = (WebDriver) binding.getVariable("driver");
 
-        assert driver.openedAt("http://www.google.com")
+        driver.shouldHaveOpenedAt("http://www.google.com")
     }
 
     @Test

@@ -1,23 +1,14 @@
 package net.thucydides.easyb.samples
 
-import org.openqa.selenium.By;
+import org.openqa.selenium.By
+import net.thucydides.easyb.samples.pages.GoogleSearchPage
+import net.thucydides.easyb.samples.pages.GoogleSearchResultsPage;
 
 using "thucydides"
 
 thucydides.uses_default_base_url "http://www.google.com"
 
 
-before "open browser", {
-//    thucydides.uses_default_base_url "http://www.google.com"
-
-}
-/*
-before_each "stuff", {
-    println "before each"
-   // thucydides.uses_default_url "http://www.google.com"
-   
-}
-*/
 /**
  * In the simplest case, Thucydides is simply used to manage a WebDriver instance.
  * This instance is injected into the story context under the name of 'driver'
@@ -39,15 +30,20 @@ scenario "Looking for cats in Google", {
 /**
  * Thucydides can also manage pages for us.
  */
-  /*
+
 scenario "Looking for dogs in Google", {
     given "a browser open at the Google home page", {
         searchPage = pages.currentPageAt(GoogleSearchPage)
     }
-    when "the user searchs for 'Dogs'"
-    then "the Dogs entry in Wikipedia should appear on the first page"
+    when "the user searchs for 'Dogs'", {
+        searchPage.searchFor "Dogs"
+    }
+    then "the Dogs entry in Wikipedia should appear on the first page", {
+        resultsPage = pages.currentPageAt(GoogleSearchResultsPage)
+        resultsPage.topicTitles.shouldHave "Dog - Wikipedia, the free encyclopedia"
+    }
 }
-*/
+
 /**
 * Or you can break functional tests into steps and step groups.
 * This makes the net.thucydides.easyb story a high-level (business-friendly) acceptance test,

@@ -7,7 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-@At("http://gwt.google.com/samples/Showcase/Showcase.html#!CwBasicButton")
+@At("http://gwt.google.com/samples1/Showcase/Showcase.html#!CwBasicButton")
 public class GwtShowcaseButtonPage extends GwtPageObject {
 
     public GwtShowcaseButtonPage(WebDriver driver) {

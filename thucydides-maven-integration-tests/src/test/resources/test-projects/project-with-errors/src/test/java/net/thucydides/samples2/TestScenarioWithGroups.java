@@ -1,4 +1,4 @@
-package net.thucydides.samples;
+package net.thucydides.samples2;
 
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
@@ -12,8 +12,8 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-@UserStoryCode("US01")
-public class TestScenarioForAnotherUserStory {
+@UserStoryCode("US02")
+public class TestScenarioWithGroups {
     
     @Managed
     public WebDriver webdriver;
@@ -26,19 +26,16 @@ public class TestScenarioForAnotherUserStory {
         
     @Test
     public void happy_day_scenario() {
-		steps.stepThatSucceeds();
-		steps.anotherStepThatSucceeds();
-        steps.stepThatCallsNestedSteps();
-        steps.stepThree("a");
-        steps.stepFour("c");
+        steps.anotherGroupOfSteps();
+        steps.stepThree("e");
+        steps.stepFour("f");
     }    
 
     @Test
-    public void another_successful_scenario() {
-		steps.stepThatSucceeds();
-		steps.anotherStepThatSucceeds();
+    public void failing_scenario() {
+        steps.groupOfStepsContainingAFailure();
         steps.anotherGroupOfSteps();
-        steps.stepFour("c");
+        steps.stepThatSucceeds();
     }    
 	
 }

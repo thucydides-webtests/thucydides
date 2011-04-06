@@ -6,7 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-@At("http://gwt.google.com/samples/Showcase/Showcase.html#!CwFileUpload")
+@At("http://gwt.google.com/samples1/Showcase/Showcase.html#!CwFileUpload")
 public class GwtShowcaseUploadPage extends GwtPageObject {
 
     @FindBy(id="gwt-debug-cwFileUpload")

@@ -53,8 +53,8 @@ public class WhenGeneratingAStoryReportWithErrors {
 
     private Verifier initVerifier(File testDir) throws VerificationException, IOException {
         verifier = new Verifier(testDir.getAbsolutePath());
-        verifier.deleteArtifact("net.thucydides.maven.plugins.samples", "simple-project", "1.0", "pom");
-        verifier.deleteArtifact("net.thucydides.maven.plugins.samples", "simple-project", "1.0","jar");
+        verifier.deleteArtifact("net.thucydides.maven.plugins.samples1", "simple-project", "1.0", "pom");
+        verifier.deleteArtifact("net.thucydides.maven.plugins.samples1", "simple-project", "1.0","jar");
         return verifier;
     }
     

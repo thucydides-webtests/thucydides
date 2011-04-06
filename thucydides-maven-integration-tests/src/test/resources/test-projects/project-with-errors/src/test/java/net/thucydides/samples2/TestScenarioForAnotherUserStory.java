@@ -1,4 +1,4 @@
-package net.thucydides.samples;
+package net.thucydides.samples2;
 
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;

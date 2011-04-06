@@ -26,7 +26,7 @@ public class WhenWorkingWithGwtButtons {
     @BeforeClass
     public static void openBrowser() {
         driver = new FirefoxDriver();
-        driver.get("http://gwt.google.com/samples/Showcase/Showcase.html#!CwBasicButton");
+        driver.get("http://gwt.google.com/samples1/Showcase/Showcase.html#!CwBasicButton");
     }
     
     @Before

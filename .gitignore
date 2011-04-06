@@ -10,3 +10,6 @@ target
 velocity.log.1
 /thucydides-junit/velocity.log
 /thucydides-core/velocity.log
+velocity.log
+*.iml
+pom.xml.versionsBackup
