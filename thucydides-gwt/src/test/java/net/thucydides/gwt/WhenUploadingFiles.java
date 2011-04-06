@@ -21,7 +21,7 @@ public class WhenUploadingFiles {
     public void should_upload_a_file_from_the_resources_directory() {
 
         WebDriver driver = new FirefoxDriver();
-        driver.get("http://gwt.google.com/samples1/Showcase/Showcase.html#!CwFileUpload");
+        driver.get("http://gwt.google.com/samples/Showcase/Showcase.html#!CwFileUpload");
 
         uploadPage = new GwtShowcaseUploadPage(driver);
         uploadPage.waitForRenderedElements(By.xpath("//button"));
