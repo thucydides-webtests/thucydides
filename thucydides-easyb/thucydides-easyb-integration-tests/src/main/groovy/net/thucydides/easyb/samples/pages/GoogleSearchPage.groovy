@@ -5,7 +5,8 @@ import net.thucydides.core.pages.PageObject;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.FindBy
+import org.openqa.selenium.By;
 
 @DefaultUrl("http://www.google.com")
 class GoogleSearchPage extends PageObject {
@@ -24,5 +25,7 @@ class GoogleSearchPage extends PageObject {
         searchQuery.clear()
         searchQuery.sendKeys(query)
         searchButton.click()
+        waitForRenderedElements(By.id("pnnext"))
+        waitABit 500
     }
 }

@@ -21,9 +21,6 @@ class GoogleSearchResultsPage extends PageObject {
  
     def getTopicTitles() {
 
-        waitForRenderedElements(By.id("pnnext"))
-        waitABit 1000
-
         def titles = []
         def titleElements = getDriver().findElements(By.cssSelector(".r"))
 
