@@ -1,8 +1,8 @@
 package net.thucydides.easyb.samples
 
 import org.openqa.selenium.By
-import pages.GoogleSearchPage
-import pages.GoogleSearchResultsPage;
+import net.thucydides.easyb.samples.pages.GoogleSearchPage
+import net.thucydides.easyb.samples.pages.GoogleSearchResultsPage;
 
 using "thucydides"
 
