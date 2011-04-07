@@ -8,13 +8,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 class GoogleSearchResultsPage extends PageObject {
-    
-    @FindBy(name="q")
-    WebElement searchQuery;
-    
-    @FindBy(name="btnG")
-    WebElement searchButton;
-    
+
     public GoogleSearchResultsPage(WebDriver driver) {
         super(driver);
     }
@@ -35,4 +29,7 @@ class GoogleSearchResultsPage extends PageObject {
     }
 
 
+    def clickOnSearchResult(String title) {
+        driver.findElement(By.xpath("//a[.='$title']")).click()
+    }
 }
