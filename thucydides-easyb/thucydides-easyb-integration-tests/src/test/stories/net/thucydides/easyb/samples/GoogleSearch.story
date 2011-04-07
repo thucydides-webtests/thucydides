@@ -49,9 +49,9 @@ scenario "Looking for dogs in Google", {
 * This makes the net.thucydides.easyb story a high-level (business-friendly) acceptance test,
 * with the details hidden in the steps. Steps can be 
 */
-/*
-scenario "Looking for dogs in Google", {
+
+scenario "Looking for dogs in Google and navigating to Wikipedia", {
    given "a browser open at the Google home page"
    when "the user searchs for 'Dogs'"
    then "the Dogs entry in Wikipedia should appear on the first page"
-} */
+}

@@ -91,7 +91,7 @@ class RenderedPageObjectView {
         }
     }
 
-    public void waitForText(WebElement element, final String expectedText) {
+    public void waitForText(final WebElement element, final String expectedText) {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
             if (containsText(element, expectedText)) {
@@ -159,7 +159,7 @@ class RenderedPageObjectView {
         }
     }
     
-    public void waitForAnyTextToAppear(WebElement element, String[] expectedText) {
+    public void waitForAnyTextToAppear(final WebElement element, final String[] expectedText) {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
             if (elementContains(element, expectedText)) {
@@ -168,7 +168,8 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (!elementContains(element, expectedText)) {
-            throw new ElementNotDisplayedException("Expected text was not displayed: '" + expectedText + "'");
+            throw new ElementNotDisplayedException("Expected text was not displayed: '"
+                                                    + Arrays.toString(expectedText) + "'");
         }
         
     }
@@ -236,7 +237,7 @@ class RenderedPageObjectView {
         return updatedList;
     }
 
-    public void waitForElementsToDisappear(By byElementCriteria) {
+    public void waitForElementsToDisappear(final By byElementCriteria) {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
             if (!elementIsDisplayed(byElementCriteria)) {

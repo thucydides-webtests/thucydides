@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.UserStory;
@@ -23,7 +24,7 @@ public class UserStoryLoader {
 
     private static final class XmlFilenameFilter implements FilenameFilter {
         public boolean accept(final File file, final String filename) {
-            return filename.toLowerCase().endsWith(".xml");
+            return filename.toLowerCase(Locale.getDefault()).endsWith(".xml");
         }
     }
 
@@ -73,7 +74,6 @@ public class UserStoryLoader {
 
 
     private File[] getAllXMLFilesFrom(final File reportsDirectory) {
-        File[] reportFiles = reportsDirectory.listFiles(new XmlFilenameFilter());
-        return reportFiles;
+        return reportsDirectory.listFiles(new XmlFilenameFilter());
     }
 }

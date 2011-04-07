@@ -2,6 +2,7 @@ package net.thucydides.core.webdriver;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Locale;
 
 import com.google.common.collect.ImmutableList;
 
@@ -43,12 +44,6 @@ public class Configuration {
      * HTML and XML reports will be generated in this directory.
      */
     private File outputDirectory;    
-
-    
-    /**
-     * The default URL used as the starting point and web context
-     */
-    private String defaultBaseUrl;
 
     /**
      * Get the currently-configured browser type.
@@ -100,7 +95,7 @@ public class Configuration {
     private static SupportedWebDriver lookupSupportedDriverTypeFor(final String driverType) {
         SupportedWebDriver driver = null;
         try {
-            driver = SupportedWebDriver.valueOf(driverType.toUpperCase());
+            driver = SupportedWebDriver.valueOf(driverType.toUpperCase(Locale.getDefault()));
         } catch (IllegalArgumentException iae) {
             throwUnsupportedDriverExceptionFor(driverType);
         }

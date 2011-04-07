@@ -41,6 +41,6 @@ public enum TestResult {
      * In a JUnit test case, you can use the (Thucydides) @Pending annotation to mark this.
      * A pending test case is a test case that has at least one pending test.
      */
-    PENDING;
+    PENDING
     
 }

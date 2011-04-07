@@ -115,7 +115,7 @@ public class Pages {
     /**
      * Set a default base URL for a specific set of tests.
      */
-    public void setDefaultBaseUrl(String defaultBaseUrl) {
+    public void setDefaultBaseUrl(final String defaultBaseUrl) {
         this.defaultBaseUrl = defaultBaseUrl;
     }
 }

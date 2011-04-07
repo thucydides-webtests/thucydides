@@ -1,4 +1,4 @@
-package net.thucydides.core.steps;
+package net.thucydides.core.model;
 
 import net.thucydides.core.pages.Pages;
 

@@ -4,6 +4,7 @@ import static net.thucydides.core.util.NameConverter.humanize;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.thucydides.core.annotations.Step;
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class AnnotatedDescription {
-    
+
     private final Description description;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatedDescription.class);
@@ -38,18 +39,14 @@ public class AnnotatedDescription {
             addMultipleRequirementsFrom(requirements, testMethod);
         } catch (SecurityException e) {
             LOGGER.error("Could not access requirements annotation", e);
-        } catch (NoSuchMethodException e) {
-            LOGGER.error("Method not found", e);
         }
         return requirements;
     }
-    
-    private void addMultipleRequirementsFrom(final List<String> requirements,final Method testMethod) {
+
+    private void addMultipleRequirementsFrom(final List<String> requirements, final Method testMethod) {
         TestsRequirements testRequirements = (TestsRequirements) testMethod.getAnnotation(TestsRequirements.class);
         if (testRequirements != null) {
-            for(String requirement : testRequirements.value()) {
-                requirements.add(requirement);
-            }
+            requirements.addAll(Arrays.asList(testRequirements.value()));
         }
     }
 
@@ -68,8 +65,6 @@ public class AnnotatedDescription {
             annotatedDescription = getNameFromTestDescriptionAnnotation(testMethod);
         } catch (SecurityException e) {
             LOGGER.error("Could not access description annotation", e);
-        } catch (NoSuchMethodException e) {
-            LOGGER.error("Method not found", e);
         }
         return annotatedDescription;
     }
@@ -84,7 +79,7 @@ public class AnnotatedDescription {
         return annotatedDescription;
     }
 
-    public Method getTestMethod() throws NoSuchMethodException {
+    public Method getTestMethod() {
         return methodCalled(withNoArguments(description.getMethodName()), getTestClass());
     }
 
@@ -112,27 +107,20 @@ public class AnnotatedDescription {
     }
 
     public String getAnnotatedTitle() {
-        try {
-            Method testMethod = getTestMethod();
-            Title title = (Title) testMethod.getAnnotation(Title.class);
-            if (title != null) {
-                return title.value();
-            }
-        } catch (NoSuchMethodException e) {
-            LOGGER.error("Method not found", e);
+
+        Method testMethod = getTestMethod();
+        Title title = (Title) testMethod.getAnnotation(Title.class);
+        if (title != null) {
+            return title.value();
         }
         return null;
     }
-    
+
     public String getAnnotatedStepName() {
-        try {
-            Method testMethod = getTestMethod();
-            Step step = (Step) testMethod.getAnnotation(Step.class);
-            if ((step != null) && (step.value().length() > 0)) {
-                return step.value();
-            }
-        } catch (NoSuchMethodException e) {
-            LOGGER.error("Method not found", e);
+        Method testMethod = getTestMethod();
+        Step step = (Step) testMethod.getAnnotation(Step.class);
+        if ((step != null) && (step.value().length() > 0)) {
+            return step.value();
         }
         return null;
     }
@@ -145,8 +133,11 @@ public class AnnotatedDescription {
             return annotatedTestName;
         } else if (annotatedDescription != null) {
             return annotatedDescription;
-        } else return getHumanizedTestName();
+        } else {
+            return getHumanizedTestName();
+        }
     }
+
     /**
      * Turns a method into a human-readable title.
      */
@@ -172,28 +163,21 @@ public class AnnotatedDescription {
     }
 
     public boolean isAGroup() {
-        try {
-            Method testMethod = getTestMethod();
-            StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
-            if (testGroup != null) {
-                return true;
-            }
-        } catch (NoSuchMethodException e) {
-            LOGGER.error("Method not found", e);
+
+        Method testMethod = getTestMethod();
+        StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
+        if (testGroup != null) {
+            return true;
         }
         return false;
     }
 
     public String getGroupName() {
-        try {
-            Method testMethod = getTestMethod();
-            StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
-            if (testGroup != null) {
-                return testGroup.value();
-            }
-        } catch (NoSuchMethodException e) {
-            LOGGER.error("Method not found", e);
+        Method testMethod = getTestMethod();
+        StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
+        if (testGroup != null) {
+            return testGroup.value();
         }
         return null;
-    }    
+    }
 }

@@ -12,18 +12,18 @@ public class ThucydidesExtensions {
     }
 
     private ThucydidesPlugin getLocalThucydidesPlugin() {
-        Iterator providers = ServiceRegistry.lookupProviders(EasybPlugin.class, ClassLoader.getSystemClassLoader())
-        def found = false
-        ThucydidesPlugin plugin;
-        while (providers.hasNext()) {
-            Object provider = providers.next()
+        Iterator providers = ServiceRegistry.lookupProviders(EasybPlugin, ClassLoader.getSystemClassLoader())
+
+        ThucydidesPlugin plugin
+
+        providers.each { provider ->
             if (provider instanceof ThucydidesPlugin) {
-                println "Plugin found: " + provider;
                 plugin = (ThucydidesPlugin) provider;
             }
         }
-        if (plugin != null) {
-            return plugin;
+
+        if (plugin) {
+            return plugin
         }
         throw new IllegalStateException("No Thucydides Plugin was found for this story.")
     }

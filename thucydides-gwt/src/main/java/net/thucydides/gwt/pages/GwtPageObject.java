@@ -15,7 +15,7 @@ import org.openqa.selenium.WebElement;
  */
 public abstract class GwtPageObject extends PageObject {
 
-    public GwtPageObject(WebDriver driver) {
+    public GwtPageObject(final WebDriver driver) {
         super(driver);
     }
 

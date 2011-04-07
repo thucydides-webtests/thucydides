@@ -25,6 +25,8 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
         public WebElement multiselect;
 
+        public WebElement checkbox;
+        
         public IndexPage(WebDriver driver) {
             super(driver);
         }
@@ -63,7 +65,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         IndexPage indexPage = new IndexPage(driver);
         indexPage.shouldContainText("This text is not in the pages");
     }
-
+    
     @Test
     public void should_select_in_multiple_select_lists_correctly() {
         IndexPage indexPage = new IndexPage(driver);
@@ -83,6 +85,44 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         assertThat(selectedValues.size(), is(2));
         assertThat(selectedValues, hasItems("1", "3"));
     }
+    
+    @Test
+    public void ticking_an_empty_checkbox_should_set_the_value_to_true() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.setCheckbox(indexPage.checkbox, true);
+        
+        assertThat(indexPage.checkbox.isSelected(), is(true));
+    }
+    
+    @Test
+    public void ticking_a_set_checkbox_should_set_the_value_to_true() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.checkbox.setSelected();
+        
+        indexPage.setCheckbox(indexPage.checkbox, true);
+        
+        assertThat(indexPage.checkbox.isSelected(), is(true));
+    }
+    
+    @Test
+    public void unticking_an_unset_checkbox_should_set_the_value_to_false() {
+        IndexPage indexPage = new IndexPage(driver);
+        
+        indexPage.setCheckbox(indexPage.checkbox, false);
+        
+        assertThat(indexPage.checkbox.isSelected(), is(false));
+    }
+    
+    @Test
+    public void unticking_a_set_checkbox_should_set_the_value_to_false() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.checkbox.setSelected();
+        
+        indexPage.setCheckbox(indexPage.checkbox, false);
+        
+        assertThat(indexPage.checkbox.isSelected(), is(false));
+    }
+    
     
     @Test
     public void should_know_when_text_appears_on_a_page() {

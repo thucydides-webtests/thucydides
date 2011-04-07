@@ -8,6 +8,7 @@ import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.*;
 
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,67 @@ public class WhenRecordingUserStoryTestResults {
         userStoryTestResults = new UserStoryTestResults(userStory);
     }
 
+    @Test
+    public void a_user_story_is_equal_to_itself() {
+        UserStory story = new UserStory("name 1", "code 1", "source 1");
+
+        Assert.assertThat(story.equals(story), is(true));
+    }
+    
+    @Test
+    public void user_stories_with_identical_field_values_are_equal() {
+        UserStory story1 = new UserStory("name 1", "code 1", "source 1");
+        UserStory story2 = new UserStory("name 1", "code 1", "source 1");
+
+        Assert.assertThat(story1.equals(story2), is(true));
+        Assert.assertThat(story1.hashCode(), is(equalTo(story2.hashCode())));
+    }
+
+    @Test
+    public void user_stories_with_null_field_values_are_equal() {
+        UserStory story1 = new UserStory("name 1", null, "source 1");
+        UserStory story2 = new UserStory("name 1", null, "source 1");
+
+        Assert.assertThat(story1.equals(story2), is(true));
+        Assert.assertThat(story1.hashCode(), is(equalTo(story2.hashCode())));
+    }
+    
+    @Test
+    public void user_stories_with_a_null_field_value_and_other_different_values_are_not_equal() {
+        UserStory story1 = new UserStory("name 1", null, "source 1");
+        UserStory story2 = new UserStory("name 2", null, "source 2");
+
+        Assert.assertThat(story1.equals(story2), is(not(true)));
+        Assert.assertThat(story1.hashCode(), is(not(equalTo(story2.hashCode()))));
+    }
+    
+    @Test
+    public void user_stories_with_different_names_are_not_equal() {
+        UserStory story1 = new UserStory("name 1", "code 1", "source 1");
+        UserStory story2 = new UserStory("name 2", "code 1", "source 1");
+
+        Assert.assertThat(story1.equals(story2), is(not(true)));
+        Assert.assertThat(story1.hashCode(), is(not(equalTo(story2.hashCode()))));
+    }
+  
+    @Test
+    public void user_stories_with_different_codes_are_not_equal() {
+        UserStory story1 = new UserStory("name 1", "code 1", "source 1");
+        UserStory story2 = new UserStory("name 1", "code 2", "source 1");
+
+        Assert.assertThat(story1.equals(story2), is(not(true)));
+        Assert.assertThat(story1.hashCode(), is(not(equalTo(story2.hashCode()))));
+    }
+    
+    @Test
+    public void user_stories_with_different_source_are_not_equal() {
+        UserStory story1 = new UserStory("name 1", "code 1", "source 1");
+        UserStory story2 = new UserStory("name 1", "code 1", "source 2");
+
+        Assert.assertThat(story1.equals(story2), is(not(true)));
+        Assert.assertThat(story1.hashCode(), is(not(equalTo(story2.hashCode()))));
+    }
+    
     @Test
     public void a_user_story_test_result_contain_a_set_of_test_runs() {
         AcceptanceTestRun testRun1 = thatFailsCalled("Test Run 1");
@@ -111,6 +173,41 @@ public class WhenRecordingUserStoryTestResults {
         Assert.assertThat(userStoryTestResults.getPendingCount(), is(3));
     }
     
+    @Test
+    public void a_aggregate_test_result_set_knows_what_stories_it_contains() {
+
+        UserStory someStory = new UserStory("name", "code", "source");
+        UserStoryTestResults testResults = new UserStoryTestResults(someStory);
+
+        testResults.recordTestRun(thatSucceedsCalled("Test Run"));
+
+        Assert.assertThat(testResults.containsResultsFor(someStory), is(true));
+    }
+    
+    @Test
+    public void a_aggregate_test_result_set_matches_stories_by_field_values() {
+
+        UserStory someStory = new UserStory("name", "code", "source");
+        UserStoryTestResults testResults = new UserStoryTestResults(someStory);
+        
+        testResults.recordTestRun(thatSucceedsCalled("Test Run"));
+        
+        Assert.assertThat(testResults.containsResultsFor(new UserStory("name", "code", "source")), is(true));
+    }
+    
+    @Test
+    public void a_aggregate_test_result_set_knows_what_stories_it_doesnt_contain() {
+
+        UserStory someStory1 = new UserStory("name 1", "code", "source");
+        UserStory someStory2 = new UserStory("name 2", "code", "source");
+
+        UserStoryTestResults testResults = new UserStoryTestResults(someStory1);
+        
+        testResults.recordTestRun(thatSucceedsCalled("Test Run"));
+
+        Assert.assertThat(testResults.containsResultsFor(someStory2), is(false));
+    }
+    
     private AcceptanceTestRun thatFailsCalled(String title) {
         AcceptanceTestRun testRun = new AcceptanceTestRun(title);
         testRun.recordStep(successfulTestStepCalled("Step 1"));
@@ -143,5 +240,5 @@ public class WhenRecordingUserStoryTestResults {
         testRun.recordStep(ignoredTestStepCalled("Step 3"));
         return testRun;
     }
-
+    
 }

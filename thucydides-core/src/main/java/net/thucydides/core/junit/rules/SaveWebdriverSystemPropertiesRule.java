@@ -21,7 +21,7 @@ public class SaveWebdriverSystemPropertiesRule implements MethodRule {
     private static final class RestorePropertiesStatement extends Statement {
         private final Statement statement;
 
-        private RestorePropertiesStatement(Statement statement) {
+        private RestorePropertiesStatement(final Statement statement) {
             this.statement = statement;
         }
 
@@ -29,8 +29,6 @@ public class SaveWebdriverSystemPropertiesRule implements MethodRule {
         public void evaluate() throws Throwable {
             try {
                 statement.evaluate();
-            } catch(Throwable exception) {
-                throw exception;
             } finally {
                 restoreOldSystemProperties();
             }
@@ -55,7 +53,8 @@ public class SaveWebdriverSystemPropertiesRule implements MethodRule {
     }
 
     private static final Map<String,String> ORIGINAL_WEB_DRIVER_PROPERTY_VALUES = new HashMap<String,String>();
-    {
+
+    static {
         for (ThucydidesSystemProperty property : ThucydidesSystemProperty.values()) {
             savePropertyValueFor(property);
         }                        

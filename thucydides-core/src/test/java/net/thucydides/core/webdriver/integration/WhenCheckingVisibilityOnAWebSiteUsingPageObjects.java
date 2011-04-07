@@ -70,6 +70,5 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
 
         assertThat(indexPage.isElementVisible(By.xpath("//h2[.='Non-existant title']")), is(false));
     }
-
-
+    
 }

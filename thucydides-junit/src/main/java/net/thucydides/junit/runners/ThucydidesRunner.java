@@ -129,7 +129,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Otherwise, throw an InitializationError.
      */
     private void checkRequestedDriverType() {
-        getConfiguration().getDriverType();
+        Configuration.getDriverType();
     }
 
     /**

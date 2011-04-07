@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.model.ScenarioSteps;
 import net.thucydides.junit.annotations.InvalidStepsFieldException;
 
 /**

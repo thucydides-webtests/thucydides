@@ -16,17 +16,17 @@ public interface AcceptanceTestReporter {
     /**
      * Generate reports for a given acceptance test run.
      */
-    File generateReportFor(AcceptanceTestRun testRun) throws IOException;
+    File generateReportFor(final AcceptanceTestRun testRun) throws IOException;
     
     /**
      * Define the output directory in which the reports will be written.
      */
-    void setOutputDirectory(File outputDirectory);
+    void setOutputDirectory(final File outputDirectory);
     
     /**
      * Define or override the directory where report resources are stored.
      * This can be on the file system or on the classpath
      */
-    void setResourceDirectory(String resourceDirectoryPath);
+    void setResourceDirectory(final String resourceDirectoryPath);
     
 }

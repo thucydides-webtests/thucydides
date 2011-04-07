@@ -74,6 +74,15 @@ public class WhenDefiningPageUrls {
         verify(webdriver).get("http://jira.mycompany.org/issues/ISSUE-1");
     }
 
+    @Test
+    public void the_pages_object_provides_access_to_the_webdriver_instance() {
+        PageObject page = new PageObjectWithParameterizedUrlDefinition(webdriver);
+
+        page.getDriver().get("http://www.google.com");
+
+        verify(webdriver).get("http://www.google.com");
+    }
+    
     @DefaultUrl("http://jira.mycompany.org")
     @NamedUrls(
       {

@@ -5,13 +5,13 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 /**
- * A collection of user story test results
+ * A collection of user story test results.
  */
 public class UserStoriesResultSet {
 
     private final List<UserStoryTestResults> stories;
 
-    public UserStoriesResultSet(List<UserStoryTestResults> stories) {
+    public UserStoriesResultSet(final List<UserStoryTestResults> stories) {
         this.stories = stories;
     }
 

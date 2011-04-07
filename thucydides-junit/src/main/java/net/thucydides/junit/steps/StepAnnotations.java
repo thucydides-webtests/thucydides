@@ -2,8 +2,8 @@ package net.thucydides.junit.steps;
 
 import java.util.List;
 
+import net.thucydides.core.model.ScenarioSteps;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.junit.internals.PagesAnnotatedField;
 import net.thucydides.junit.internals.StepsAnnotatedField;
 

@@ -9,6 +9,7 @@ import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import ch.lambdaj.function.convert.Converter;
 
 import com.google.common.collect.ImmutableList;

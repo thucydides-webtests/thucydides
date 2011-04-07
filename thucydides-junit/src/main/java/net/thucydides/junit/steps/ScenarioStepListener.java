@@ -88,7 +88,7 @@ public class ScenarioStepListener extends RunListener {
         }
     }
 
-    private File grabScreenshotFileFor(final String testName) throws IOException {
+    private File grabScreenshotFileFor(final String testName) {
         String snapshotName = underscore(testName);
         File screenshot = null;
         try {

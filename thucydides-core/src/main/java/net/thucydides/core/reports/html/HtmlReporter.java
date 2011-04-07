@@ -3,7 +3,6 @@ package net.thucydides.core.reports.html;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URL;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 

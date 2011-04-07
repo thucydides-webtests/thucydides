@@ -1,5 +1,6 @@
 package net.thucydides.core.util;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +17,7 @@ public final class NameConverter {
     private static final Pattern CAMEL_CASE_MATCHER_PATTERN = Pattern.compile("\\p{Lu}");
 
     private NameConverter() {}
-    
+
     /**
      * Converts a class or method name into a human-readable sentence.
      */
@@ -28,7 +29,7 @@ public final class NameConverter {
         } else {
             String noUnderscores = name.replaceAll("_", " ");
             String splitCamelCase = splitCamelCase(noUnderscores);
-            return StringUtils.capitalizeFirstLetter(splitCamelCase.toLowerCase());
+            return StringUtils.capitalizeFirstLetter(splitCamelCase.toLowerCase(Locale.getDefault()));
         }
     }
 
@@ -61,7 +62,7 @@ public final class NameConverter {
      * Transform a camel-case word to underscored-version.
      */
     public static String underscore(final String name) {
-        return  name.replaceAll(" ", "_").toLowerCase().trim();
+        return  name.replaceAll(" ", "_").toLowerCase(Locale.getDefault()).trim();
     }
 
 }

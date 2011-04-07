@@ -1,8 +1,13 @@
 package net.thucydides.core.resources;
 
-import org.apache.commons.lang.StringUtils;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import java.io.*;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Utility class used to copy resources from a classpath to a target directory.

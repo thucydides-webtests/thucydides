@@ -12,8 +12,10 @@ import static net.thucydides.core.model.TestResult.SUCCESS;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
+
 
 import ch.lambdaj.function.convert.Converter;
 
@@ -101,7 +103,7 @@ public class AcceptanceTestRun {
     }
     
     private String normalizedFormOf(final String name) {
-        return name.replaceAll("\\s", "_").toLowerCase();
+        return name.replaceAll("\\s", "_").toLowerCase(Locale.getDefault());
     }
 
     public void testsRequirement(final String requirement) {

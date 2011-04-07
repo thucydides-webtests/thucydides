@@ -55,15 +55,21 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
     }
 
     public AcceptanceTestRun loadReportFrom(final File reportFile) throws NotAThucydidesReportException, IOException {
+
+        InputStream input = null;
         try {
             XStream xstream = new XStream();
             xstream.alias("acceptance-test-run", AcceptanceTestRun.class);
             xstream.registerConverter(new AcceptanceTestRunConverter());
-            InputStream input = new FileInputStream(reportFile);
+            input = new FileInputStream(reportFile);
             return (AcceptanceTestRun) xstream.fromXML(input);
         } catch (CannotResolveClassException e) {
             throw new NotAThucydidesReportException("This file is not a thucydides report: "
                     + reportFile);
+        } finally {
+            if (input != null) {
+                input.close();
+            }
         }
     }
 

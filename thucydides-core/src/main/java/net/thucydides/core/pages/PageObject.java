@@ -46,7 +46,7 @@ public abstract class PageObject {
 
     private static final long WAIT_FOR_TIMEOUT = 30000;
 
-    {
+    static {
         MACROS.put("#HOST", "https?://[^/]+");
     }
 
@@ -71,7 +71,7 @@ public abstract class PageObject {
         this.waitForTimeout = waitForTimeout;
     }
 
-    public void setDefaultBaseUrl(String baseUrl) {
+    public void setDefaultBaseUrl(final String baseUrl) {
         this.defaultBaseUrl = baseUrl;
     }
 
@@ -194,7 +194,7 @@ public abstract class PageObject {
     /**
      * Waits for a given text to appear anywhere on the page.
      */
-    public PageObject waitForTextToAppear(WebElement element, final String expectedText) {
+    public PageObject waitForTextToAppear(final WebElement element, final String expectedText) {
         getRenderedView().waitForText(element, expectedText);
         return this;
     }
@@ -213,7 +213,7 @@ public abstract class PageObject {
     }
 
     /**
-     * Waits for any of a number of text blocks to appear anywhere on the screen
+     * Waits for any of a number of text blocks to appear anywhere on the screen.
      */
     public PageObject waitForAnyTextToAppear(final String... expectedText) {
         getRenderedView().waitForAnyTextToAppear(expectedText);
@@ -227,8 +227,7 @@ public abstract class PageObject {
     }
 
     /**
-     * Waits for all of a number of text blocks to appear somewhere on the
-     * screen
+     * Waits for all of a number of text blocks to appear on the screen.
      */
     public PageObject waitForAllTextToAppear(final String... expectedTexts) {
         getRenderedView().waitForAllTextToAppear(expectedTexts);
@@ -365,7 +364,7 @@ public abstract class PageObject {
     /**
      * Returns true if at least one matching element is found on the page and is visible.
      */
-    public Boolean isElementVisible(By byCriteria) {
+    public Boolean isElementVisible(final By byCriteria) {
         return getRenderedView().elementIsDisplayed(byCriteria);
     }
 
@@ -389,7 +388,7 @@ public abstract class PageObject {
         return getDefaultBaseUrl();
     }
 
-    private String addDefaultBaseUrlIfRelative(String url) {
+    private String addDefaultBaseUrlIfRelative(final String url) {
         if (isARelativeUrl(url)) {
             return getDefaultBaseUrl() + url;
         } else {
@@ -397,7 +396,7 @@ public abstract class PageObject {
         }
     }
 
-    private boolean isARelativeUrl(String url) {
+    private boolean isARelativeUrl(final String url) {
         return url.startsWith("/");
     }
 

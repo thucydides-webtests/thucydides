@@ -23,7 +23,7 @@ public final class ResourceList {
     private ResourceList() {
     }
 
-    final static String PATH_SEPARATOR = System.getProperty("path.separator");
+    private static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
     /**
      * Find a list of resources matching a given path on the classpath. for all

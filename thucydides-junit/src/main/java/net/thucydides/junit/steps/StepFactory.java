@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.cglib.proxy.Enhancer;
+import net.thucydides.core.model.ScenarioSteps;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.steps.ScenarioSteps;
 
 import org.junit.runner.notification.RunListener;
 

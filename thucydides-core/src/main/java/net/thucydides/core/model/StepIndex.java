@@ -1,4 +1,4 @@
-package net.thucydides.core.steps;
+package net.thucydides.core.model;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
