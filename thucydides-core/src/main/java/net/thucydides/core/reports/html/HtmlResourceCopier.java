@@ -5,7 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import net.thucydides.core.resources.FileResources;
@@ -16,8 +19,6 @@ import net.thucydides.core.resources.ResourceList;
  *
  */
 public class HtmlResourceCopier {
-    
-    private static final int BUFFER_SIZE = 4096;
 
     private String resourceDirectory;
     
@@ -37,13 +38,28 @@ public class HtmlResourceCopier {
         FileResources fileResource = FileResources.from(resourceDirectory);
 
         Collection<String> reportResources = ResourceList.getResources(resourcePattern);
+
         for (String resourcePath : reportResources) {
-                if (resourceIsFromAJar(resourcePath)
-                        && (thisIsNotTheRoot(resourcePath))
-                        && (thisIsNotADirectory(resourcePath))) {
+                if (fileResourceFromAJar(resourcePath)) {
                 	fileResource.copyResourceTo(resourcePath, targetDirectory);
+                } else if (fileResourceFromPath(resourcePath)) {
+                    fileResource.copyResourceTo(resourcePath, targetDirectory);
                 }
         }
+    }
+
+    private boolean fileResourceFromAJar(final String resourcePath) {
+        return (resourceIsFromAJar(resourcePath)
+                            && (thisIsNotTheRoot(resourcePath))
+                            && (thisIsNotADirectory(resourcePath)));
+
+    }
+
+    private boolean fileResourceFromPath(final String resourcePath) {
+        return (resourceIsFromAJar(resourcePath)
+                            && (thisIsNotTheRoot(resourcePath))
+                            && (thisIsNotADirectory(resourcePath)));
+
     }
 
     private boolean thisIsNotADirectory(final String resourcePath) {

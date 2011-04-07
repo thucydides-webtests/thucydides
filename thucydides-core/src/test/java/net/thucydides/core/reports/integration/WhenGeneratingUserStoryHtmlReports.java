@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.is;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.UserStory;
@@ -107,8 +108,12 @@ public class WhenGeneratingUserStoryHtmlReports {
     @Test
     public void should_copy_resources_to_target_directory() throws Exception {
         HtmlUserStoryTestReporter reporter = new HtmlUserStoryTestReporter();
-        reporter.setOutputDirectory(outputDirectory);  
-        File sourceDirectory = new File("src/test/resources/multiple-user-story-reports");
+        reporter.setOutputDirectory(outputDirectory);
+
+        URL dir = Thread.currentThread().getContextClassLoader().getResource("multiple-user-story-reports");
+        dir.getPath();
+        File sourceDirectory = new File(dir.getPath());
+        //File sourceDirectory = new File("src/test/resources/multiple-user-story-reports");
         reporter.generateReportsForStoriesFrom(sourceDirectory);
         File expectedCssStylesheet = new File(new File(outputDirectory,"css"), "core.css");
         assertThat(expectedCssStylesheet.exists(), is(true));
