@@ -14,6 +14,8 @@ import net.thucydides.junit.annotations.TestsRequirements;
 import net.thucydides.junit.annotations.Title;
 
 import org.junit.runner.Description;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -21,6 +23,8 @@ import org.junit.runner.Description;
 public class AnnotatedDescription {
     
     private final Description description;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatedDescription.class);
 
     public AnnotatedDescription(final Description description) {
         this.description = description;
@@ -33,9 +37,9 @@ public class AnnotatedDescription {
             addRequirementFrom(requirements, testMethod);
             addMultipleRequirementsFrom(requirements, testMethod);
         } catch (SecurityException e) {
-            e.printStackTrace();
+            LOGGER.error("Could not access requirements annotation", e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            LOGGER.error("Method not found", e);
         }
         return requirements;
     }
@@ -63,9 +67,9 @@ public class AnnotatedDescription {
             Method testMethod = getTestMethod();
             annotatedDescription = getNameFromTestDescriptionAnnotation(testMethod);
         } catch (SecurityException e) {
-            e.printStackTrace();
+            LOGGER.error("Could not access description annotation", e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            LOGGER.error("Method not found", e);
         }
         return annotatedDescription;
     }
@@ -115,7 +119,7 @@ public class AnnotatedDescription {
                 return title.value();
             }
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            LOGGER.error("Method not found", e);
         }
         return null;
     }
@@ -128,7 +132,7 @@ public class AnnotatedDescription {
                 return step.value();
             }
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            LOGGER.error("Method not found", e);
         }
         return null;
     }
@@ -175,7 +179,7 @@ public class AnnotatedDescription {
                 return true;
             }
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            LOGGER.error("Method not found", e);
         }
         return false;
     }
@@ -188,7 +192,7 @@ public class AnnotatedDescription {
                 return testGroup.value();
             }
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            LOGGER.error("Method not found", e);
         }
         return null;
     }    

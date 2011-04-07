@@ -27,6 +27,8 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.openqa.selenium.TakesScreenshot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Observes the test run and stores test run details for later reporting.
@@ -43,6 +45,8 @@ public class ScenarioStepListener extends RunListener {
     private final Photographer photographer;
     private AcceptanceTestRun currentAcceptanceTestRun;
     private ConcreteTestStep currentTestStep;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioStepListener.class);
 
     public ScenarioStepListener(final TakesScreenshot driver, final Configuration configuration) {
         acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
@@ -90,7 +94,7 @@ public class ScenarioStepListener extends RunListener {
         try {
             screenshot = getPhotographer().takeScreenshot(snapshotName);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to save screenshot file", e);
         }
         return screenshot;
     }

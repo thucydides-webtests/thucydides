@@ -22,6 +22,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.openqa.selenium.support.ui.Select;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A base class representing a WebDriver page object.
@@ -39,6 +41,8 @@ public abstract class PageObject {
     private static final String OPTIONAL_PARAMS = "/?(\\?.*)?";
 
     private static final Map<String, String> MACROS = new HashMap<String, String>();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PageObject.class);
 
     private static final long WAIT_FOR_TIMEOUT = 30000;
 
@@ -235,7 +239,7 @@ public abstract class PageObject {
         try {
             Thread.sleep(timeInMilliseconds);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error("Wait interrupted", e);
         }
     }
 

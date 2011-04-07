@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.custommonkey.xmlunit.Diff;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 public class XMLIsSimilarMatcher extends TypeSafeMatcher<String> {
@@ -13,6 +15,8 @@ public class XMLIsSimilarMatcher extends TypeSafeMatcher<String> {
     
     private String errorMessage = "";
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(XMLIsSimilarMatcher.class);
+
     public XMLIsSimilarMatcher(String xmlDocument) {
         this.xmlDocument = xmlDocument;
     }
@@ -28,10 +32,10 @@ public class XMLIsSimilarMatcher extends TypeSafeMatcher<String> {
             }
         } catch (SAXException e) {
             xmlIsSimilar = false; 
-            e.printStackTrace();
+            LOGGER.info(e.getMessage());
         } catch (IOException e) {
             xmlIsSimilar = false; 
-            e.printStackTrace();
+            LOGGER.info(e.getMessage());
         }
         return xmlIsSimilar;
     }

@@ -13,5 +13,4 @@ public class InvalidStepsFieldException extends RuntimeException {
     public InvalidStepsFieldException(final String message) {
         super(message);
     }
- 
 }

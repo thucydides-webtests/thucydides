@@ -26,6 +26,8 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 import com.google.common.collect.ImmutableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A test runner for WebDriver-based web tests. This test runner initializes a
@@ -67,7 +69,9 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Retrieve the runner configuration from an external source.
      */
     private Configuration configuration;
-    
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThucydidesRunner.class);
+
     /**
      * The Field Reporter observes and records what happens during the execution of the test.
      * Once the test is over, the Field Reporter can provide the acceptance test outcome in the 
@@ -238,7 +242,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             getStepListener().testRunStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(),
                                                                           method.getName()));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to start test run", e);
         }
     }
 

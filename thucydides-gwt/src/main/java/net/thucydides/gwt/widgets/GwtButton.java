@@ -3,6 +3,8 @@ package net.thucydides.gwt.widgets;
 import org.openqa.selenium.RenderedWebElement;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.ElementNotDisplayedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A GWT button.
@@ -16,6 +18,8 @@ public class GwtButton {
     private static final int TIMEOUT = 60 * 1000;
     
     private long waitForTimeout = TIMEOUT;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GwtButton.class);
 
     private final String label;
     private final WebElement button;
@@ -76,7 +80,7 @@ public class GwtButton {
         try {
             Thread.sleep(timeInMilliseconds);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error("Wait interrupted", e);
         }
     }
     

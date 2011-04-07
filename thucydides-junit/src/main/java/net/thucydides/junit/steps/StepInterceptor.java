@@ -52,7 +52,7 @@ public class StepInterceptor implements MethodInterceptor {
             return null;
         }
 
-        Object result = null;
+        Object result;
         if (isATestGroup(method)) {
             notifyGroupStarted(method, args);
             result = runTestGroupStep(obj, method, args, proxy);
@@ -111,12 +111,12 @@ public class StepInterceptor implements MethodInterceptor {
     }
 
     private boolean isATestStep(final Method method) {
-        Step stepAnnotation = (Step) method.getAnnotation(Step.class);
+        Step stepAnnotation = method.getAnnotation(Step.class);
         return (stepAnnotation != null);
     }
 
     private boolean isIgnored(final Method method) {
-        Ignore ignoreAnnotation = (Ignore) method.getAnnotation(Ignore.class);
+        Ignore ignoreAnnotation = method.getAnnotation(Ignore.class);
         return (ignoreAnnotation != null);
     }
 
@@ -144,8 +144,7 @@ public class StepInterceptor implements MethodInterceptor {
     }
 
     private boolean isPending(final Method method) {
-        Pending pendingAnnotation = (Pending) method
-                .getAnnotation(Pending.class);
+        Pending pendingAnnotation =  method.getAnnotation(Pending.class);
         return (pendingAnnotation != null);
     }
 

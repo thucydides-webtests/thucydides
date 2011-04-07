@@ -73,7 +73,7 @@ class RenderedPageObjectView {
         try {
             Thread.sleep(timeInMilliseconds);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error("Wait interrupted", e);
         }
     }
 

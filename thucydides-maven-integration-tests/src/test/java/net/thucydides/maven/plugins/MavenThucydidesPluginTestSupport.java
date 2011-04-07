@@ -4,6 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.junit.After;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +22,8 @@ public class MavenThucydidesPluginTestSupport {
 
     Verifier verifier;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MavenThucydidesPluginTestSupport.class);
+
     @After
     public void cleanupVerifier() throws VerificationException {
         if (verifier != null) {
@@ -32,7 +36,7 @@ public class MavenThucydidesPluginTestSupport {
             verifier.executeGoal("clean");
             verifier.executeGoal("test");
         } catch (VerificationException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to execute Maven goals in sample project", e);
         }
     }
 
