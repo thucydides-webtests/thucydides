@@ -2,12 +2,13 @@ package net.thucydides.easyb.samples
 
 import org.openqa.selenium.By
 import net.thucydides.easyb.samples.pages.GoogleSearchPage
-import net.thucydides.easyb.samples.pages.GoogleSearchResultsPage;
+import net.thucydides.easyb.samples.pages.GoogleSearchResultsPage
+import net.thucydides.easyb.samples.pages.GoogleSearchSteps;
 
 using "thucydides"
 
 thucydides.uses_default_base_url "http://www.google.com"
-
+thucydides.uses_steps_from GoogleSearchSteps
 
 /**
  * In the simplest case, Thucydides is simply used to manage a WebDriver instance.
@@ -52,6 +53,12 @@ scenario "Looking for dogs in Google", {
 
 scenario "Looking for dogs in Google and navigating to Wikipedia", {
    given "a browser open at the Google home page"
-   when "the user searchs for 'Dogs'"
-   then "the Dogs entry in Wikipedia should appear on the first page"
+   when "the user searchs for 'Dogs'", {
+       steps.search_for "Dogs"
+   }
+   and "the user clicks on the Wikipedia entry", {
+       steps.click_on_search_result_with_title "Dog - Wikipedia, the free encyclopedia"
+   }
+   then "the Dogs entry in Wikipedia should appear on the first page", {
+   }
 }
