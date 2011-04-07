@@ -16,17 +16,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class WhenGeneratingAStoryReport {
+public class WhenGeneratingAStoryReport extends MavenThucydidesPluginTestSupport {
 
-    Verifier verifier;
-    
-    @After
-    public void cleanupVerifier() throws VerificationException {
-        if (verifier != null) {
-            verifier.resetStreams();
-        }
-    }
-    
     @Before
     public void generateTheHtmlReport() throws Exception {
         File testDir = ResourceExtractor.simpleExtractResources(getClass(), "/test-projects/simple-project");
@@ -35,18 +26,10 @@ public class WhenGeneratingAStoryReport {
         runTests();
     }
 
-    private void runTests() {
-        try {
-            verifier.executeGoal("test");
-        } catch (VerificationException e) {
-            e.printStackTrace();
-        }
-    }
-    
     @Test
     public void the_aggregate_goal_should_produce_a_story_report() throws Exception {
 
-        verifier.executeGoal("thucydides:aggregate");
+        verifier.executeGoal(THUCYDIDES_AGGREGATE);
 
         verifier.verifyErrorFreeLog();
         verifier.assertFilePresent("target/thucydides/stories.html");
@@ -58,20 +41,10 @@ public class WhenGeneratingAStoryReport {
     @Test
     public void the_aggregate_goal_should_produce_a_report_home_page() throws Exception {
 
-        verifier.executeGoal("thucydides:aggregate");
+        verifier.executeGoal(THUCYDIDES_AGGREGATE);
 
         verifier.verifyErrorFreeLog();
         verifier.assertFilePresent("target/thucydides/home.html");
     }
 
-    private Verifier initVerifier(File testDir) throws VerificationException, IOException {
-        verifier = new Verifier(testDir.getAbsolutePath());
-        verifier.deleteArtifact("net.thucydides.maven.plugins.samples1", "simple-project", "1.0", "pom");
-        verifier.deleteArtifact("net.thucydides.maven.plugins.samples1", "simple-project", "1.0","jar");
-        return verifier;
-    }
-    
-    private String getStringFrom(File reportFile) throws IOException {
-        return FileUtils.readFileToString(reportFile);
-    }
 }

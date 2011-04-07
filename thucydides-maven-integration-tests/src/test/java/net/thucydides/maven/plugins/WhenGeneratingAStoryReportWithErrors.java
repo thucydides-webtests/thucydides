@@ -15,17 +15,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-public class WhenGeneratingAStoryReportWithErrors {
+public class WhenGeneratingAStoryReportWithErrors extends MavenThucydidesPluginTestSupport {
 
-    Verifier verifier;
-    
-    @After
-    public void cleanupVerifier() throws VerificationException {
-        if (verifier != null) {
-            verifier.resetStreams();
-        }
-    }
-    
     @Before
     public void generateTheHtmlReport() throws Exception {
         File testDir = ResourceExtractor.simpleExtractResources(getClass(), "/test-projects/project-with-errors");
@@ -34,31 +25,13 @@ public class WhenGeneratingAStoryReportWithErrors {
         runTests();
     }
 
-    private void runTests() {
-        try {
-            verifier.executeGoal("test");
-        } catch (VerificationException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Test
     public void the_aggregate_goal_should_produce_a_story_and_home_report_even_with_test_errors() throws Exception {
 
-        verifier.executeGoal("thucydides:aggregate");
+        verifier.executeGoal(THUCYDIDES_AGGREGATE);
 
         verifier.assertFilePresent("target/thucydides/stories.html");
         verifier.assertFilePresent("target/thucydides/home.html");
    }
 
-    private Verifier initVerifier(File testDir) throws VerificationException, IOException {
-        verifier = new Verifier(testDir.getAbsolutePath());
-        verifier.deleteArtifact("net.thucydides.maven.plugins.samples1", "simple-project", "1.0", "pom");
-        verifier.deleteArtifact("net.thucydides.maven.plugins.samples1", "simple-project", "1.0","jar");
-        return verifier;
-    }
-    
-    private String getStringFrom(File reportFile) throws IOException {
-        return FileUtils.readFileToString(reportFile);
-    }
 }

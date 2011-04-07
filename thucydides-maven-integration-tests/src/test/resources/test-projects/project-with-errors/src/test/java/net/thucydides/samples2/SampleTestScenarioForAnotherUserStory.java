@@ -1,4 +1,4 @@
-package net.thucydides.samples1;
+package net.thucydides.samples2;
 
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
@@ -13,7 +13,7 @@ import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
 @UserStoryCode("US01")
-public class TestScenarioForAnotherUserStory {
+public class SampleTestScenarioForAnotherUserStory {
     
     @Managed
     public WebDriver webdriver;

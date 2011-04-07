@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -12,7 +13,8 @@
     <packaging>pom</packaging>
     <name>thucydides</name>
     <description>An Acceptance Testing framework for web applications
-        based on WebDriver, and integrating with JUnit and net.thucydides.easyb.</description>
+        based on WebDriver, and integrating with JUnit and net.thucydides.easyb.
+    </description>
     <url>www://github.com/wakaleo/thucydides</url>
     <licenses>
         <license>
@@ -50,6 +52,15 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
                 <configuration>
@@ -60,14 +71,15 @@
                     </includes>
                     <excludes>
                         <exclude>**/Abstract*.java</exclude>
-                        <exclude>**/samples/*.java </exclude>
+                        <exclude>**/samples/*.java</exclude>
+                        <exclude>**/Sample*.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin
-                            </artifactId>
+                </artifactId>
                 <version>2.7</version>
                 <configuration>
                     <source>1.5</source>
@@ -83,7 +95,8 @@
                         -inferdepinpackage -hide
                         java.* -collpackages
                         java.util.*
-                        -qualify</additionalparam>
+                        -qualify
+                    </additionalparam>
                     <useStandardDocletOptions>true</useStandardDocletOptions>
                 </configuration>
             </plugin>
@@ -107,52 +120,6 @@
                 <version>2.6</version>
                 <configuration>
                     <configLocation>${checkstyle.rules}</configLocation>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.0-beta-3</version>
-                <configuration>
-                    <reportPlugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-project-info-reports-plugin
-                            </artifactId>
-                            <version>2.2</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-checkstyle-plugin</artifactId>
-                            <version>2.6</version>
-                            <configuration>
-                                <configLocation>${checkstyle.rules}</configLocation>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin
-                            </artifactId>
-                            <version>2.7</version>
-                            <configuration>
-                                <source>1.5</source>
-                                <aggregate>true</aggregate>
-                                <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-                                <docletArtifact>
-                                    <groupId>org.umlgraph</groupId>
-                                    <artifactId>doclet</artifactId>
-                                    <version>5.1</version>
-                                </docletArtifact>
-                                <additionalparam>-views -all -inferrel
-                                    -inferdep
-                                    -inferdepinpackage -hide
-                                    java.* -collpackages
-                                    java.util.*
-                                    -qualify</additionalparam>
-                                <useStandardDocletOptions>true</useStandardDocletOptions>
-                            </configuration>
-                        </plugin>
-                    </reportPlugins>
                 </configuration>
             </plugin>
             <plugin>
@@ -206,6 +173,63 @@
         <surefire.version>2.7.1</surefire.version>
         <checkstyle.rules>http://www.wakaleo-labs.com/sonar/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo</checkstyle.rules>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>site</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <version>3.0-beta-3</version>
+                        <configuration>
+                            <reportPlugins>
+                                <plugin>
+                                    <groupId>org.apache.maven.plugins</groupId>
+                                    <artifactId>maven-project-info-reports-plugin
+                                    </artifactId>
+                                    <version>2.2</version>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.apache.maven.plugins</groupId>
+                                    <artifactId>maven-checkstyle-plugin</artifactId>
+                                    <version>2.6</version>
+                                    <configuration>
+                                        <configLocation>${checkstyle.rules}</configLocation>
+                                    </configuration>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.apache.maven.plugins</groupId>
+                                    <artifactId>maven-javadoc-plugin
+                                    </artifactId>
+                                    <version>2.7</version>
+                                    <configuration>
+                                        <source>1.5</source>
+                                        <aggregate>true</aggregate>
+                                        <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+                                        <docletArtifact>
+                                            <groupId>org.umlgraph</groupId>
+                                            <artifactId>doclet</artifactId>
+                                            <version>5.1</version>
+                                        </docletArtifact>
+                                        <additionalparam>-views -all -inferrel
+                                            -inferdep
+                                            -inferdepinpackage -hide
+                                            java.* -collpackages
+                                            java.util.*
+                                            -qualify
+                                        </additionalparam>
+                                        <useStandardDocletOptions>true</useStandardDocletOptions>
+                                    </configuration>
+                                </plugin>
+                            </reportPlugins>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <modules>
         <module>thucydides-report-resources</module>
         <module>thucydides-sample-alternative-resources</module>
@@ -214,6 +238,6 @@
         <module>thucydides-maven-plugin</module>
         <module>thucydides-maven-integration-tests</module>
         <module>thucydides-easyb</module>
-    <module>thucydides-gwt</module>
-  </modules>
+        <module>thucydides-gwt</module>
+    </modules>
 </project>
