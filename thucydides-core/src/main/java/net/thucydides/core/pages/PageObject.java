@@ -1,14 +1,9 @@
 package net.thucydides.core.pages;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
-import net.thucydides.core.annotations.At;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
@@ -35,22 +30,14 @@ public abstract class PageObject {
 
     private long waitForTimeout = WAIT_FOR_ELEMENT_PAUSE_LENGTH;
 
-    private static final String OPTIONAL_PARAMS = "/?(\\?.*)?";
-
-    private static final Map<String, String> MACROS = new HashMap<String, String>();
-
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PageObject.class);
 
     private static final long WAIT_FOR_TIMEOUT = 30000;
 
-    static {
-        MACROS.put("#HOST", "https?://[^/]+");
-    }
-
     private WebDriver driver;
 
-    private List<Pattern> matchingPageExpressions = new ArrayList<Pattern>();
+    private MatchingPageExpressions matchingPageExpressions;
 
     private RenderedPageObjectView renderedView;
 
@@ -89,42 +76,7 @@ public abstract class PageObject {
     }
 
     private void fetchMatchingPageExpressions() {
-        At compatibleWithAnnotation = this.getClass().getAnnotation(At.class);
-        if (compatibleWithAnnotation != null) {
-            if (valueIsDefinedFor(compatibleWithAnnotation)) {
-                worksWithUrlPattern(compatibleWithAnnotation.value());
-            } else {
-                worksWithUrlPatternList(compatibleWithAnnotation.urls());
-            }
-        }
-
-    }
-
-    private void worksWithUrlPatternList(final String[] urls) {
-        for (String url : urls) {
-            worksWithUrlPattern(url);
-        }
-    }
-
-    private boolean valueIsDefinedFor(final At compatibleWithAnnotation) {
-        return ((compatibleWithAnnotation.value() != null) && (compatibleWithAnnotation
-                .value().length() > 0));
-    }
-
-    private void worksWithUrlPattern(final String urlPattern) {
-        String processedUrlPattern = substituteMacrosIn(urlPattern);
-        matchingPageExpressions.add(Pattern.compile(processedUrlPattern));
-    }
-
-    private String substituteMacrosIn(final String urlPattern) {
-        String patternWithExpandedMacros = urlPattern;
-        for (String macro : MACROS.keySet()) {
-            String expanded = MACROS.get(macro);
-            patternWithExpandedMacros = patternWithExpandedMacros.replaceAll(
-                    macro, expanded);
-        }
-        patternWithExpandedMacros = patternWithExpandedMacros + OPTIONAL_PARAMS;
-        return patternWithExpandedMacros;
+        matchingPageExpressions = new MatchingPageExpressions(this);
     }
 
     public WebDriver getDriver() {
@@ -152,23 +104,11 @@ public abstract class PageObject {
     }
 
     private boolean matchUrlAgainstEachPattern(final String currentUrl) {
-        boolean pageWorksHere = false;
-        for (Pattern pattern : matchingPageExpressions) {
-            if (urlIsCompatibleWithThisPattern(currentUrl, pattern)) {
-                pageWorksHere = true;
-                break;
-            }
-        }
-        return pageWorksHere;
+        return matchingPageExpressions.matchUrlAgainstEachPattern(currentUrl);
     }
 
     private boolean thereAreNoPatternsDefined() {
         return matchingPageExpressions.isEmpty();
-    }
-
-    private boolean urlIsCompatibleWithThisPattern(final String currentUrl,
-                                                   final Pattern pattern) {
-        return pattern.matcher(currentUrl).matches();
     }
 
     public PageObject waitForRenderedElements(final By byElementCriteria) {
@@ -275,8 +215,7 @@ public abstract class PageObject {
     public void selectMultipleItemsFromDropdown(final WebElement dropdown,
                                                 final String... selectedLabels) {
         for (String selectedLabel : selectedLabels) {
-            String optionPath = String
-                    .format("//option[.='%s']", selectedLabel);
+            String optionPath = String.format("//option[.='%s']", selectedLabel);
             WebElement option = dropdown.findElement(By.xpath(optionPath));
             option.click();
         }
