@@ -14,10 +14,7 @@ import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
 import net.thucydides.core.webelements.Checkbox;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
@@ -361,6 +358,17 @@ public abstract class PageObject {
         getDriver().get(startingUrl);
     }
 
+
+    public void clickOn(final WebElement webElement) {
+        try {
+            webElement.click();
+        } catch (WebDriverException e) {
+            LOGGER.error("Click failed. This could be a flicking failure, so I'll wait 1 second and try again", e);
+            waitABit(1000);
+        }
+        webElement.click();
+
+    }
     /**
      * Returns true if at least one matching element is found on the page and is visible.
      */
