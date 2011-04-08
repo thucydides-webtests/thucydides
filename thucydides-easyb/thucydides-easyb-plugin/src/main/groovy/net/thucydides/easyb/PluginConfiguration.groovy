@@ -1,6 +1,6 @@
 package net.thucydides.easyb
 
-import net.thucydides.core.model.ScenarioSteps;
+import net.thucydides.core.steps.ScenarioSteps
 
 public class PluginConfiguration {
 

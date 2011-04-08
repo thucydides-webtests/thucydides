@@ -1,11 +1,8 @@
 package net.thucydides.easyb.samples
 
-import org.openqa.selenium.By
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.WebElement
 import net.thucydides.core.annotations.Step
 import net.thucydides.core.pages.Pages
-import net.thucydides.core.model.ScenarioSteps
+import net.thucydides.core.steps.ScenarioSteps
 
 class SampleSteps extends ScenarioSteps {
 

@@ -27,7 +27,7 @@ public class MatchingPageExpressions {
         buildMatchingExpressionsList(pageObject);
     }
 
-    private void buildMatchingExpressionsList(PageObject pageObject) {
+    private void buildMatchingExpressionsList(final PageObject pageObject) {
         At compatibleWithAnnotation = pageObject.getClass().getAnnotation(At.class);
         if (compatibleWithAnnotation != null) {
             if (valueIsDefinedFor(compatibleWithAnnotation)) {

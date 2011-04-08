@@ -2,7 +2,7 @@ package net.thucydides.junit.steps;
 
 import java.util.List;
 
-import net.thucydides.core.model.ScenarioSteps;
+import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.internals.PagesAnnotatedField;
 import net.thucydides.junit.internals.StepsAnnotatedField;
@@ -24,7 +24,7 @@ public final class StepAnnotations {
         instanciateScenarioStepFields(testCase, stepFactory, stepsFields);
      }
 
-    public static void injectNestedScenarioStepsInto(final ScenarioSteps scenarioSteps, 
+    public static void injectNestedScenarioStepsInto(final ScenarioSteps scenarioSteps,
                                                      final StepFactory stepFactory,
                                                      final Class<? extends ScenarioSteps> scenarioStepsClass) {
         List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findOptionalAnnotatedFields(scenarioStepsClass);

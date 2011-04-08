@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import net.thucydides.core.annotations.Step;
-import net.thucydides.core.model.ScenarioSteps;
 import net.thucydides.core.pages.Pages;
 
 import org.junit.Before;

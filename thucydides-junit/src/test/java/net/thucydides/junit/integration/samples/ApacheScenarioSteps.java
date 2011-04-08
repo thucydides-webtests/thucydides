@@ -2,7 +2,7 @@ package net.thucydides.junit.integration.samples;
 
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
-import net.thucydides.core.model.ScenarioSteps;
+import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.WrongPageError;
 import net.thucydides.junit.annotations.TestsRequirement;

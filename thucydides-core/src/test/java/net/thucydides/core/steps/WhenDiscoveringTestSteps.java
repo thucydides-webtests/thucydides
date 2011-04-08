@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thucydides.core.annotations.StepProvider;
-import net.thucydides.core.model.ScenarioSteps;
-import net.thucydides.core.model.StepIndex;
 
 import org.junit.Test;
 

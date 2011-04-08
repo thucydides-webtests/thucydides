@@ -2,7 +2,6 @@ package net.thucydides.core.steps;
 
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
-import net.thucydides.core.model.ScenarioSteps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.WrongPageError;
 

@@ -27,16 +27,6 @@ public class WebdriverManager {
     
     public WebdriverManager(final WebDriverFactory webDriverFactory) {
         this.webDriverFactory = webDriverFactory;
-        initializeDriver();
-    }
-
-    /**
-     * A new WebDriver is created before any of the tests are run. The driver is
-     * determined by the 'webdriver.driver' system property.
-     * 
-     * @throws UnsupportedDriverException
-     */
-    private final void initializeDriver() {
         webdriver.set(newDriver());
     }
 

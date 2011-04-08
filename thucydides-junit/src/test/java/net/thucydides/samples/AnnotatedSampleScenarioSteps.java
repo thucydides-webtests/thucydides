@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.is;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepDescription;
-import net.thucydides.core.model.ScenarioSteps;
+import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.pages.Pages;
 
 import org.junit.Ignore;
