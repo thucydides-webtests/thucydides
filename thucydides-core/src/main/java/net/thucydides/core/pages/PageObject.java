@@ -59,7 +59,9 @@ public abstract class PageObject {
     public PageObject(final WebDriver driver) {
         this.driver = driver;
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
+
         WebDriverFactory.initElementsWithAjaxSupport(this, driver);
+
         fetchMatchingPageExpressions();
     }
 

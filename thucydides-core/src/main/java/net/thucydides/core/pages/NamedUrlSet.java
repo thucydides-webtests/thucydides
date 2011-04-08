@@ -11,7 +11,7 @@ class NamedUrlSet {
     }
 
     public String getNamedUrl(final String name) {
-        NamedUrls urlAnnotation = getClass().getAnnotation(NamedUrls.class);
+        NamedUrls urlAnnotation = pageObject.getClass().getAnnotation(NamedUrls.class);
         if (urlAnnotation != null) {
             NamedUrl[] namedUrlList = urlAnnotation.value();
             for (NamedUrl namedUrl : namedUrlList) {

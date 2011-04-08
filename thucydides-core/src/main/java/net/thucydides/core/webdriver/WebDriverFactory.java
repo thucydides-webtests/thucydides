@@ -50,8 +50,8 @@ public class WebDriverFactory {
     /**
      * Initialize a page object's fields using the specified WebDriver instance.
      */
-    public static void initElementsWithAjaxSupport(Object pageObject, WebDriver driver) {
+    public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver) {
         ElementLocatorFactory finder = new AjaxElementLocatorFactory(driver, TIMEOUT);
-        PageFactory.initElements(finder, driver);
+        PageFactory.initElements(finder, pageObject);
     }
 }
