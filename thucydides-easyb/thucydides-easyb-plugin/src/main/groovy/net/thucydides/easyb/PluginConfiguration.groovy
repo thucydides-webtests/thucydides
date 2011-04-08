@@ -1,4 +1,6 @@
-package net.thucydides.easyb;
+package net.thucydides.easyb
+
+import net.thucydides.core.model.ScenarioSteps;
 
 public class PluginConfiguration {
 
@@ -15,7 +17,9 @@ public class PluginConfiguration {
         return configuration.get();
     }
 
-    String defaultBaseUrl;
+    def defaultBaseUrl;
+
+    def registeredSteps = [];
 
     /**
      * Define the base URL to be used for this story.
@@ -24,6 +28,13 @@ public class PluginConfiguration {
         println "uses default base url of " + defaultBaseUrl;
         setDefaultBaseUrl(defaultBaseUrl);
     }
+
+    public void uses_steps_from(Class<ScenarioSteps> stepsClass) {
+        println "Declaring step library $stepsClass"
+        registeredSteps += stepsClass
+        println "Registered steps: $registeredSteps"
+    }
+
 
     public void setDefaultBaseUrl(String defaultBaseUrl) {
         this.defaultBaseUrl = defaultBaseUrl;

@@ -94,7 +94,7 @@ public class StepInterceptor implements MethodInterceptor {
         Object result = null;
         try {
             result = proxy.invokeSuper(obj, args);
-        } catch (Throwable e) {
+        } catch (AssertionError e) {
             if (!stepExceptions.contains(e)) {
                 throw e;
             }
@@ -127,7 +127,7 @@ public class StepInterceptor implements MethodInterceptor {
         try {
             result = proxy.invokeSuper(obj, args);
             notifyTestFinishedFor(method, args);
-        } catch (Throwable e) {
+        } catch (AssertionError e) {
             error = e;
             stepExceptions.add(e);
             notifyFailureOf(method, args, e);

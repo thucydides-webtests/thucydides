@@ -10,12 +10,11 @@ import net.thucydides.core.resources.ResourceList;
 
 /**
  * Utility class that copies HTML resource files (images, stylesheets...) from a JAR to a target directory.
- *
  */
 public class HtmlResourceCopier {
 
     private String resourceDirectory;
-    
+
     public HtmlResourceCopier(final String resourceDirectory) {
         super();
         this.resourceDirectory = resourceDirectory;
@@ -34,25 +33,25 @@ public class HtmlResourceCopier {
         Collection<String> reportResources = ResourceList.getResources(resourcePattern);
 
         for (String resourcePath : reportResources) {
-                if (fileResourceFromAJar(resourcePath)) {
-                	fileResource.copyResourceTo(resourcePath, targetDirectory);
-                } else if (fileResourceFromPath(resourcePath)) {
-                    fileResource.copyResourceTo(resourcePath, targetDirectory);
-                }
+            if (fileResourceFromAJar(resourcePath)) {
+                fileResource.copyResourceTo(resourcePath, targetDirectory);
+            } else if (fileResourceFromPath(resourcePath)) {
+                fileResource.copyResourceTo(resourcePath, targetDirectory);
+            }
         }
     }
 
     private boolean fileResourceFromAJar(final String resourcePath) {
         return (resourceIsFromAJar(resourcePath)
-                            && (thisIsNotTheRoot(resourcePath))
-                            && (thisIsNotADirectory(resourcePath)));
+                && (thisIsNotTheRoot(resourcePath))
+                && (thisIsNotADirectory(resourcePath)));
 
     }
 
     private boolean fileResourceFromPath(final String resourcePath) {
         return (resourceIsFromAJar(resourcePath)
-                            && (thisIsNotTheRoot(resourcePath))
-                            && (thisIsNotADirectory(resourcePath)));
+                && (thisIsNotTheRoot(resourcePath))
+                && (thisIsNotADirectory(resourcePath)));
 
     }
 
@@ -67,7 +66,7 @@ public class HtmlResourceCopier {
     private Pattern allFilesInDirectory(final String directory) {
         String allFilesPattern = String.format(".*[\\\\/]?%s[\\\\/].*", directory);
         return Pattern.compile(allFilesPattern);
-   }
+    }
 
     private boolean resourceIsFromAJar(final String resourcePath) {
         return !resourcePath.startsWith("/");

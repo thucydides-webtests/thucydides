@@ -69,7 +69,7 @@ public class AnnotatedDescription {
         return annotatedDescription;
     }
 
-    private String getNameFromTestDescriptionAnnotation(Method testMethod) {
+    private String getNameFromTestDescriptionAnnotation(final Method testMethod) {
         StepDescription stepDescription = (StepDescription) testMethod
                 .getAnnotation(StepDescription.class);
         String annotatedDescription = null;

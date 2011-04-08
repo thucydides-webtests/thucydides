@@ -66,10 +66,6 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
     }
 
     private void generateStoriesReportFor(final List<UserStoryTestResults> userStoryResults) throws IOException {
-        for(UserStoryTestResults userStory : userStoryResults) {
-            System.out.println("Story: " + userStory.getTitle());
-        }
-
         LOGGER.info("Generating summary report for user stories to "+ getOutputDirectory());
 
         copyResourcesToOutputDirectory();

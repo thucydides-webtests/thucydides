@@ -73,7 +73,7 @@ public class PagesAnnotatedField {
         try {
             field.set(testCase, pages);
         } catch (IllegalAccessException e) {
-            throw new InvalidManagedWebDriverFieldException("Could not access or set managed pages field: " + field);
+            throw new InvalidManagedWebDriverFieldException("Could not access or set managed pages field: " + field, e);
         }
     }
     

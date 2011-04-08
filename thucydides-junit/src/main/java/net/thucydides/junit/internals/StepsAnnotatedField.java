@@ -80,7 +80,7 @@ public class StepsAnnotatedField {
         try {
             field.set(testCase, steps);
         } catch (IllegalAccessException e) {
-            throw new InvalidStepsFieldException("Could not access or set @Steps field: " + field);
+            throw new InvalidStepsFieldException("Could not access or set @Steps field: " + field, e);
         }
     }
 

@@ -64,7 +64,7 @@ public class ManagedWebDriverAnnotatedField {
         } catch (IllegalAccessException e) {
             throw new InvalidManagedWebDriverFieldException("Could not access or set web driver field: " 
                          + field 
-                         + " - is this field public?");
+                         + " - is this field public?", e);
         }
     }
 }

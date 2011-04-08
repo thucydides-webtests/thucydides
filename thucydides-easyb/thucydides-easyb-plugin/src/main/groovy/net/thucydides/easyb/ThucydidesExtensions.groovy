@@ -5,25 +5,34 @@ import javax.imageio.spi.ServiceRegistry;
 
 public class ThucydidesExtensions {
 
+    private ThucydidesPlugin plugin = null
+
     public PluginConfiguration getThucydides() {
-        def configuration = getLocalThucydidesPlugin().getConfiguration();
-        println "Configuration: " + configuration;
+        def configuration = getPlugin().getConfiguration();
         return configuration;
     }
 
+
+    private ThucydidesPlugin getPlugin() {
+        if (plugin == null) {
+            plugin = getLocalThucydidesPlugin()
+        }
+        return plugin
+    }
+
     private ThucydidesPlugin getLocalThucydidesPlugin() {
+
         Iterator providers = ServiceRegistry.lookupProviders(EasybPlugin, ClassLoader.getSystemClassLoader())
 
-        ThucydidesPlugin plugin
-
+        def registeredPlugin
         providers.each { provider ->
             if (provider instanceof ThucydidesPlugin) {
-                plugin = (ThucydidesPlugin) provider;
+                registeredPlugin = provider;
             }
         }
 
-        if (plugin) {
-            return plugin
+        if (registeredPlugin) {
+            return registeredPlugin
         }
         throw new IllegalStateException("No Thucydides Plugin was found for this story.")
     }

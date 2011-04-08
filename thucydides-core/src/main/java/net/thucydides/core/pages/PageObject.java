@@ -14,7 +14,11 @@ import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
 import net.thucydides.core.webelements.Checkbox;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
@@ -24,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A base class representing a WebDriver page object.
- *
+ * 
  * @author johnsmart
  */
 public abstract class PageObject {
@@ -32,6 +36,7 @@ public abstract class PageObject {
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 50;
 
     private static final int TIMEOUT = 120;
+    private static final int ONE_SECOND = 1000;
 
     private long waitForTimeout = WAIT_FOR_ELEMENT_PAUSE_LENGTH;
 
@@ -39,7 +44,8 @@ public abstract class PageObject {
 
     private static final Map<String, String> MACROS = new HashMap<String, String>();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PageObject.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(PageObject.class);
 
     private static final long WAIT_FOR_TIMEOUT = 30000;
 
@@ -166,7 +172,7 @@ public abstract class PageObject {
     }
 
     private boolean urlIsCompatibleWithThisPattern(final String currentUrl,
-                                                   final Pattern pattern) {
+            final Pattern pattern) {
         return pattern.matcher(currentUrl).matches();
     }
 
@@ -175,7 +181,8 @@ public abstract class PageObject {
         return this;
     }
 
-    public PageObject waitForRenderedElementsToDisappear(final By byElementCriteria) {
+    public PageObject waitForRenderedElementsToDisappear(
+            final By byElementCriteria) {
         getRenderedView().waitForElementsToDisappear(byElementCriteria);
         return this;
     }
@@ -191,7 +198,8 @@ public abstract class PageObject {
     /**
      * Waits for a given text to appear anywhere on the page.
      */
-    public PageObject waitForTextToAppear(final WebElement element, final String expectedText) {
+    public PageObject waitForTextToAppear(final WebElement element,
+            final String expectedText) {
         getRenderedView().waitForText(element, expectedText);
         return this;
     }
@@ -204,13 +212,14 @@ public abstract class PageObject {
      * Waits for a given text to not be anywhere on the page.
      */
     public PageObject waitForTextToDisappear(final String expectedText,
-                                             final long timeout) {
+            final long timeout) {
         getRenderedView().waitForTextToDisappear(expectedText, timeout);
         return this;
     }
 
     /**
-     * Waits for any of a number of text blocks to appear anywhere on the screen.
+     * Waits for any of a number of text blocks to appear anywhere on the
+     * screen.
      */
     public PageObject waitForAnyTextToAppear(final String... expectedText) {
         getRenderedView().waitForAnyTextToAppear(expectedText);
@@ -218,7 +227,7 @@ public abstract class PageObject {
     }
 
     public PageObject waitForAnyTextToAppear(final WebElement element,
-                                             final String... expectedText) {
+            final String... expectedText) {
         getRenderedView().waitForAnyTextToAppear(element, expectedText);
         return this;
     }
@@ -263,13 +272,13 @@ public abstract class PageObject {
     }
 
     public void selectFromDropdown(final WebElement dropdown,
-                                   final String visibleLabel) {
+            final String visibleLabel) {
         Select dropdownSelect = findSelectFor(dropdown);
         dropdownSelect.selectByVisibleText(visibleLabel);
     }
 
     public void selectMultipleItemsFromDropdown(final WebElement dropdown,
-                                                final String... selectedLabels) {
+            final String... selectedLabels) {
         for (String selectedLabel : selectedLabels) {
             String optionPath = String
                     .format("//option[.='%s']", selectedLabel);
@@ -325,13 +334,15 @@ public abstract class PageObject {
 
     public void shouldBeVisible(final WebElement field) {
         if (!userCanSee(field)) {
-            throw new AssertionError("The " + field + " element should be visible");
+            throw new AssertionError("The " + field
+                    + " element should be visible");
         }
     }
 
     /**
-     * Open the webdriver browser to the base URL, determined by the DefaultUrl annotation if present.
-     * If the DefaultUrl annotation is not present, the default base URL will be used.
+     * Open the webdriver browser to the base URL, determined by the DefaultUrl
+     * annotation if present. If the DefaultUrl annotation is not present, the
+     * default base URL will be used.
      */
     public void open() {
         String startingUrl = startFromUrlAnnotationOrBaseUrl();
@@ -339,44 +350,51 @@ public abstract class PageObject {
     }
 
     /**
-     * Open the webdriver browser using a paramaterized URL.
-     * Parameters are represented in the URL using {0}, {1}, etc.
+     * Open the webdriver browser using a paramaterized URL. Parameters are
+     * represented in the URL using {0}, {1}, etc.
      */
     public void open(final String... parameterValues) {
         String startingUrlTemplate = startFromUrlAnnotationOrBaseUrl();
-        String startingUrl = urlWithParametersSubstituted(startingUrlTemplate, parameterValues);
+        String startingUrl = urlWithParametersSubstituted(startingUrlTemplate,
+                parameterValues);
         getDriver().get(startingUrl);
     }
 
-    public static String[] withParameters(String... parameterValues) {
+    public static String[] withParameters(final String... parameterValues) {
         return parameterValues;
     }
 
-    public void open(final String urlTemplateName, final String[] parameterValues) {
+    public void open(final String urlTemplateName,
+            final String[] parameterValues) {
         String startingUrlTemplate = getNamedUrl(urlTemplateName);
-        String startingUrl = urlWithParametersSubstituted(startingUrlTemplate, parameterValues);
+        String startingUrl = urlWithParametersSubstituted(startingUrlTemplate,
+                parameterValues);
         getDriver().get(startingUrl);
     }
-
 
     public void clickOn(final WebElement webElement) {
         try {
             webElement.click();
         } catch (WebDriverException e) {
-            LOGGER.error("Click failed. This could be a flicking failure, so I'll wait 1 second and try again", e);
-            waitABit(1000);
+            LOGGER.error(
+                    "Click failed. This could be a flicking failure, so I'll wait 1 second and try again",
+                    e);
+            waitABit(ONE_SECOND);
         }
         webElement.click();
 
     }
+
     /**
-     * Returns true if at least one matching element is found on the page and is visible.
+     * Returns true if at least one matching element is found on the page and is
+     * visible.
      */
     public Boolean isElementVisible(final By byCriteria) {
         return getRenderedView().elementIsDisplayed(byCriteria);
     }
 
-    private String urlWithParametersSubstituted(final String template, final String[] parameterValues) {
+    private String urlWithParametersSubstituted(final String template,
+            final String[] parameterValues) {
 
         String url = template;
         for (int i = 0; i < parameterValues.length; i++) {
@@ -418,6 +436,7 @@ public abstract class PageObject {
                 }
             }
         }
-        throw new IllegalArgumentException("No URL named " + name + " was found in this class");
+        throw new IllegalArgumentException("No URL named " + name
+                + " was found in this class");
     }
 }

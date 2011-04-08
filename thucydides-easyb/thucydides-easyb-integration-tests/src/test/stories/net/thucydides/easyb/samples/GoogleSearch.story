@@ -54,10 +54,10 @@ scenario "Looking for dogs in Google", {
 scenario "Looking for dogs in Google and navigating to Wikipedia", {
    given "a browser open at the Google home page"
    when "the user searchs for 'Dogs'", {
-       steps.search_for "Dogs"
+      google_search.search_for "Dogs"
    }
    and "the user clicks on the Wikipedia entry", {
-       steps.click_on_search_result_with_title "Dog - Wikipedia, the free encyclopedia"
+      google_search.click_on_search_result_with_title "Dog - Wikipedia, the free encyclopedia"
    }
    then "the Dogs entry in Wikipedia should appear on the first page", {
    }

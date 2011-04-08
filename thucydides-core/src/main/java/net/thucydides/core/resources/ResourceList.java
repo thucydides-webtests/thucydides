@@ -71,9 +71,9 @@ public final class ResourceList {
             try {
                 zf = new ZipFile(file);
             } catch (final ZipException e) {
-                throw new Error(e);
+                throw new ResourceCopyingError("Could not open the JAR file", e);
             } catch (final IOException e) {
-                throw new Error(e);
+                throw new ResourceCopyingError("Could not read from the JAR file", e);
             }
             @SuppressWarnings("rawtypes")
             final Enumeration e = zf.entries();
@@ -89,7 +89,7 @@ public final class ResourceList {
             try {
                 zf.close();
             } catch (final IOException e1) {
-                throw new Error(e1);
+                throw new ResourceCopyingError("Couldn't close the zip file", e1);
             }
         }
         return retval;
@@ -112,7 +112,7 @@ public final class ResourceList {
                                 retval.add(fileName);
                             }
                         } catch (final IOException e) {
-                            throw new Error(e);
+                            throw new ResourceCopyingError("Could not read from the JAR file", e);
                         }
                     }
                 }

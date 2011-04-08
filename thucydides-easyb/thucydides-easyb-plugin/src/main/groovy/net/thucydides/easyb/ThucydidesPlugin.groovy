@@ -4,7 +4,7 @@ package net.thucydides.easyb;
 import groovy.lang.Binding;
 import net.thucydides.core.pages.Pages;
 
-
+import static net.thucydides.easyb.StepName.*;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 
@@ -24,8 +24,6 @@ public class ThucydidesPlugin extends BasePlugin {
      */
 
     public ThucydidesPlugin() {
-        println "instanciating plugin " + this
-        resetConfiguration();
         Object.mixin ThucydidesExtensions;
     }
 
@@ -50,23 +48,34 @@ public class ThucydidesPlugin extends BasePlugin {
     
     @Override
     public Object beforeStory(final Binding binding) {
-        println "before story"
-        println "Configuration: " + configuration;
-        println "Initializing pages with base URL " + getConfiguration().getDefaultBaseUrl()
 
         WebDriver driver = getWebdriverManager().getWebdriver();        
         binding.setVariable("driver", driver);
         binding.setVariable("thucydides", configuration);
 
-        Pages pages = new Pages(getWebdriverManager().getWebdriver());
-        pages.setDefaultBaseUrl(getConfiguration().getDefaultBaseUrl());
-        binding.setVariable("pages", pages);
-        pages.start();
-
+        Pages pages = initializePagesObject(binding);
+        initializeStepsLibraries(pages, binding);
 
         return super.beforeStory(binding);
     }
-    
+
+    private def initializePagesObject(Binding binding) {
+        Pages pages = new Pages(getWebdriverManager().getWebdriver());
+        pages.setDefaultBaseUrl(getConfiguration().getDefaultBaseUrl());
+        binding.setVariable("pages", pages);
+        pages.start()
+        return pages;
+    }
+
+
+    private def initializeStepsLibraries(Pages pages, Binding binding) {
+
+        configuration.registeredSteps.each { stepLibraryClass ->
+            def stepLibrary = stepLibraryClass.newInstance(pages)
+            binding.setVariable(nameOf(stepLibraryClass), stepLibrary)
+        }
+
+    }
 
     @Override
     public Object beforeScenario(final Binding binding) {
@@ -92,7 +101,6 @@ public class ThucydidesPlugin extends BasePlugin {
     }
 
     public PluginConfiguration resetConfiguration() {
-        println "resetting configuration"
         return PluginConfiguration.reset();
     }
 

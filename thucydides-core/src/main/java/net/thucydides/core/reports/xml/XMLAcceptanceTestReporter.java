@@ -64,8 +64,7 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
             input = new FileInputStream(reportFile);
             return (AcceptanceTestRun) xstream.fromXML(input);
         } catch (CannotResolveClassException e) {
-            throw new NotAThucydidesReportException("This file is not a thucydides report: "
-                    + reportFile);
+            throw new NotAThucydidesReportException("This file is not a thucydides report: " + reportFile, e);
         } finally {
             if (input != null) {
                 input.close();
