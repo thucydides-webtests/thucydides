@@ -14,7 +14,7 @@ public class InvalidManagedWebDriverFieldException extends RuntimeException {
         super(message);
     }
 
-    public InvalidManagedWebDriverFieldException(final String message, Throwable e) {
+    public InvalidManagedWebDriverFieldException(final String message, final Throwable e) {
         super(message, e);
     }
  

@@ -36,7 +36,7 @@ public class WebdriverManager {
      * 
      * @throws UnsupportedDriverException
      */
-    private void initializeDriver() {
+    private final void initializeDriver() {
         webdriver.set(newDriver());
     }
 

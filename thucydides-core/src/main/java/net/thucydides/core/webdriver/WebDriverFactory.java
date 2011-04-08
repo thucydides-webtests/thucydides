@@ -1,8 +1,12 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.pages.PageObject;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 
 /**
  * Provides an instance of a supported WebDriver.
@@ -13,6 +17,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
  *
  */
 public class WebDriverFactory {
+
+    private static final int TIMEOUT = 120;
 
     /***
      * Create a new WebDriver instance of a given type.
@@ -40,5 +46,12 @@ public class WebDriverFactory {
     protected WebDriver newFirefoxDriver() {
         return new FirefoxDriver();
     }
-    
+
+    /**
+     * Initialize a page object's fields using the specified WebDriver instance.
+     */
+    public static void initElementsWithAjaxSupport(Object pageObject, WebDriver driver) {
+        ElementLocatorFactory finder = new AjaxElementLocatorFactory(driver, TIMEOUT);
+        PageFactory.initElements(finder, driver);
+    }
 }

@@ -11,7 +11,7 @@ public class NotAThucydidesReportException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    public NotAThucydidesReportException(final String message, CannotResolveClassException e) {
+    public NotAThucydidesReportException(final String message, final Throwable e) {
         super(message, e);
     }
 

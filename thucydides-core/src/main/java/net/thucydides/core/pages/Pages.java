@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
@@ -12,14 +13,13 @@ import com.google.common.base.Preconditions;
  * The Pages object keeps track of what web pages a test visits, and helps with mapping pages to Page Objects.
  * A Pages object is associated with a WebDriver driver instance, so you need a Pages object for any
  * given WebDriver driver.
- * 
- * @author johnsmart
  *
+ * @author johnsmart
  */
 public class Pages {
 
     private final WebDriver driver;
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Pages.class);
 
     private String defaultBaseUrl;
@@ -35,13 +35,13 @@ public class Pages {
     public WebDriver getDriver() {
         return driver;
     }
-    
+
     /**
      * Opens a browser on the application home page, as defined by the base URL.
      */
-    public void start() {        
+    public void start() {
         Preconditions.checkNotNull(driver);
-        
+
         driver.get(getDefaultBaseUrl());
 
     }
@@ -56,7 +56,7 @@ public class Pages {
 
         return pageCandidate;
     }
-    
+
     public boolean isCurrentPageAt(final Class<? extends PageObject> pageObjectClass) {
         try {
             PageObject pageCandidate = getCurrentPageOfType(pageObjectClass);
@@ -68,10 +68,10 @@ public class Pages {
     }
 
 
-
     /**
      * Create a new Page Object of the given type.
-     * The Page Object must have a constructor 
+     * The Page Object must have a constructor
+     *
      * @param pageObjectClass
      * @return
      * @throws IllegalArgumentException
@@ -82,22 +82,31 @@ public class Pages {
             @SuppressWarnings("rawtypes")
             Class[] constructorArgs = new Class[1];
             constructorArgs[0] = WebDriver.class;
-            Constructor<? extends PageObject> constructor 
-                = (Constructor<? extends PageObject>) pageObjectClass.getConstructor(constructorArgs);
+            Constructor<? extends PageObject> constructor
+                    = (Constructor<? extends PageObject>) pageObjectClass.getConstructor(constructorArgs);
             currentPage = (PageObject) constructor.newInstance(driver);
-        } catch (Throwable e) {
-            LOGGER.info("Failed to instanciate page of type " + pageObjectClass, e);
+        } catch (NoSuchMethodException e) {
+            LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: " + pageObjectClass, e);
             thisIsNotThePageYourLookingFor(pageObjectClass);
-        }        
+        } catch (InstantiationException e) {
+            LOGGER.info("Failed to instantiate page of type " + pageObjectClass, e);
+            thisIsNotThePageYourLookingFor(pageObjectClass);
+        } catch (IllegalAccessException e) {
+            LOGGER.info("Could not access this page object type " + pageObjectClass, e);
+            thisIsNotThePageYourLookingFor(pageObjectClass);
+        } catch (InvocationTargetException e) {
+            LOGGER.info("Failed to instantiate page of type " + pageObjectClass, e);
+            thisIsNotThePageYourLookingFor(pageObjectClass);
+        }
         return currentPage;
     }
 
     private void thisIsNotThePageYourLookingFor(final Class<? extends PageObject> pageObjectClass) {
-        
+
         String errorDetails = "This is not the page you're looking for:\n"
-            + "I was looking for a page compatible with " + pageObjectClass + "\n"
-            + "I was at the URL " + driver.getCurrentUrl();
-        
+                + "I was looking for a page compatible with " + pageObjectClass + "\n"
+                + "I was at the URL " + driver.getCurrentUrl();
+
         throw new WrongPageError(errorDetails);
     }
 

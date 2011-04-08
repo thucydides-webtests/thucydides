@@ -12,6 +12,7 @@ import net.thucydides.core.annotations.At;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
 
 import org.openqa.selenium.By;
@@ -19,23 +20,19 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
-import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A base class representing a WebDriver page object.
- * 
+ *
  * @author johnsmart
  */
 public abstract class PageObject {
 
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 50;
 
-    private static final int TIMEOUT = 120;
     private static final int ONE_SECOND = 1000;
 
     private long waitForTimeout = WAIT_FOR_ELEMENT_PAUSE_LENGTH;
@@ -62,11 +59,9 @@ public abstract class PageObject {
     private String defaultBaseUrl;
 
     public PageObject(final WebDriver driver) {
-        ElementLocatorFactory finder = new AjaxElementLocatorFactory(driver,
-                TIMEOUT);
         this.driver = driver;
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
-        PageFactory.initElements(finder, this);
+        WebDriverFactory.initElementsWithAjaxSupport(this, driver);
         fetchMatchingPageExpressions();
     }
 
@@ -172,7 +167,7 @@ public abstract class PageObject {
     }
 
     private boolean urlIsCompatibleWithThisPattern(final String currentUrl,
-            final Pattern pattern) {
+                                                   final Pattern pattern) {
         return pattern.matcher(currentUrl).matches();
     }
 
@@ -199,7 +194,7 @@ public abstract class PageObject {
      * Waits for a given text to appear anywhere on the page.
      */
     public PageObject waitForTextToAppear(final WebElement element,
-            final String expectedText) {
+                                          final String expectedText) {
         getRenderedView().waitForText(element, expectedText);
         return this;
     }
@@ -212,7 +207,7 @@ public abstract class PageObject {
      * Waits for a given text to not be anywhere on the page.
      */
     public PageObject waitForTextToDisappear(final String expectedText,
-            final long timeout) {
+                                             final long timeout) {
         getRenderedView().waitForTextToDisappear(expectedText, timeout);
         return this;
     }
@@ -227,7 +222,7 @@ public abstract class PageObject {
     }
 
     public PageObject waitForAnyTextToAppear(final WebElement element,
-            final String... expectedText) {
+                                             final String... expectedText) {
         getRenderedView().waitForAnyTextToAppear(element, expectedText);
         return this;
     }
@@ -272,13 +267,13 @@ public abstract class PageObject {
     }
 
     public void selectFromDropdown(final WebElement dropdown,
-            final String visibleLabel) {
+                                   final String visibleLabel) {
         Select dropdownSelect = findSelectFor(dropdown);
         dropdownSelect.selectByVisibleText(visibleLabel);
     }
 
     public void selectMultipleItemsFromDropdown(final WebElement dropdown,
-            final String... selectedLabels) {
+                                                final String... selectedLabels) {
         for (String selectedLabel : selectedLabels) {
             String optionPath = String
                     .format("//option[.='%s']", selectedLabel);
@@ -365,7 +360,7 @@ public abstract class PageObject {
     }
 
     public void open(final String urlTemplateName,
-            final String[] parameterValues) {
+                     final String[] parameterValues) {
         String startingUrlTemplate = getNamedUrl(urlTemplateName);
         String startingUrl = urlWithParametersSubstituted(startingUrlTemplate,
                 parameterValues);
@@ -394,7 +389,7 @@ public abstract class PageObject {
     }
 
     private String urlWithParametersSubstituted(final String template,
-            final String[] parameterValues) {
+                                                final String[] parameterValues) {
 
         String url = template;
         for (int i = 0; i < parameterValues.length; i++) {

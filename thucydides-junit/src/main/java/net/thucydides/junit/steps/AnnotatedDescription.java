@@ -85,7 +85,7 @@ public class AnnotatedDescription {
 
 
     private String withNoArguments(final String methodName) {
-        int firstSpace = methodName.indexOf(":");
+        int firstSpace = methodName.indexOf(':');
         if (firstSpace > 0) {
             return methodName.substring(0, firstSpace);
         }

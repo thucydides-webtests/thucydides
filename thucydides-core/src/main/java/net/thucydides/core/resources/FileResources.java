@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * Utility class used to copy resources from a classpath to a target directory.
  */
-public class FileResources {
+public final class FileResources {
 
     private static final int BUFFER_SIZE = 4096;
 
