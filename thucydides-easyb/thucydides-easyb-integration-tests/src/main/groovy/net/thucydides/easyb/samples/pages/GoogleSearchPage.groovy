@@ -24,8 +24,9 @@ class GoogleSearchPage extends PageObject {
     def searchFor(String query) {
         searchQuery.clear()
         searchQuery.sendKeys(query)
-        searchButton.click()
+        clickOn(searchButton)
         waitForRenderedElements(By.id("pnnext"))
         waitABit 500
     }
+
 }
