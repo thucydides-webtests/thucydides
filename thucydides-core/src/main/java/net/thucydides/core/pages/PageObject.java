@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 
 import net.thucydides.core.annotations.At;
 import net.thucydides.core.annotations.DefaultUrl;
-import net.thucydides.core.annotations.NamedUrl;
-import net.thucydides.core.annotations.NamedUrls;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
 
@@ -422,16 +420,7 @@ public abstract class PageObject {
     }
 
     private String getNamedUrl(final String name) {
-        NamedUrls urlAnnotation = getClass().getAnnotation(NamedUrls.class);
-        if (urlAnnotation != null) {
-            NamedUrl[] namedUrlList = urlAnnotation.value();
-            for (NamedUrl namedUrl : namedUrlList) {
-                if (namedUrl.name().equals(name)) {
-                    return namedUrl.url();
-                }
-            }
-        }
-        throw new IllegalArgumentException("No URL named " + name
-                + " was found in this class");
+        NamedUrlSet namedUrlSet = new NamedUrlSet(this);
+        return namedUrlSet.getNamedUrl(name);
     }
 }
