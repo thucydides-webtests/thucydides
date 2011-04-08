@@ -371,7 +371,7 @@ public abstract class PageObject {
         try {
             webElement.click();
         } catch (WebDriverException e) {
-            LOGGER.error(
+            LOGGER.warn(
                     "Click failed. This could be a flicking failure, so I'll wait 1 second and try again",
                     e);
             waitABit(ONE_SECOND);
