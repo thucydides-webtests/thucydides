@@ -48,7 +48,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
         ThucydidesRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
         runner.subscribeReporter(mockReporter);
 
-        runner.run(new RunNotifier());;
+        runner.run(new RunNotifier());
 
         verify(mockReporter).generateReportFor(any(AcceptanceTestRun.class));
     }

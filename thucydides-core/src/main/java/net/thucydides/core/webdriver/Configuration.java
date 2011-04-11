@@ -111,7 +111,7 @@ public class Configuration {
     /**
      * The default reporters applicable for standard test runs.
      */
-    public Collection<? extends AcceptanceTestReporter> getDefaultReporters() {
+    public Collection<AcceptanceTestReporter> getDefaultReporters() {
         return ImmutableList.of(new XMLAcceptanceTestReporter(),
                                 new HtmlAcceptanceTestReporter());
     }

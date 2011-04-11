@@ -11,14 +11,15 @@ import net.thucydides.core.webdriver.WebdriverManager;
 import org.easyb.plugin.BasePlugin;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactory
+import net.thucydides.core.webdriver.Configuration;
 
 public class ThucydidesPlugin extends BasePlugin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThucydidesPlugin.class);
 
     private WebdriverManager webdriverManager;
-    
+
     /**
      * Retrieve the runner configuration from an external source.
      */

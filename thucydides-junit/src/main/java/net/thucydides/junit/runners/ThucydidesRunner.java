@@ -8,6 +8,7 @@ import java.util.List;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
@@ -72,6 +73,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThucydidesRunner.class);
 
+    private ReportService reportService;
+
     /**
      * The Field Reporter observes and records what happens during the execution of the test.
      * Once the test is over, the Field Reporter can provide the acceptance test outcome in the 
@@ -85,11 +88,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     /**
-     * Who needs to be notified when a test is done.
-     */
-    private List<AcceptanceTestReporter> subscribedReporters = new ArrayList<AcceptanceTestReporter>();
-    
-    /**
      * Creates a new test runner for WebDriver web tests.
      * 
      * @throws InitializationError
@@ -99,8 +97,11 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
         super(klass);
+        reportService = new ReportService(getConfiguration().getOutputDirectory(),
+                                          getConfiguration().getDefaultReporters());
         checkRequestedDriverType();
         TestCaseAnnotations.checkThatTestCaseIsCorrectlyAnnotated(klass);
+
         webDriverFactory = new WebDriverFactory();
     }
 
@@ -151,8 +152,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * done, and the reporter can decide what to do.
      */
     public void subscribeReporter(final AcceptanceTestReporter reporter) {
-        reporter.setOutputDirectory(getConfiguration().getOutputDirectory());
-        subscribedReporters.add(reporter);
+        reportService.subscribe(reporter);
     }
     
     /**
@@ -161,8 +161,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     @Override
     public void run(final RunNotifier notifier) {
         webdriverManager = new WebdriverManager(webDriverFactory);
-        
-        setupDefaultReporters();
 
         super.run(notifier);
 
@@ -179,10 +177,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private void setupDefaultReporters() {
-        subscribedReporters.addAll(getConfiguration().getDefaultReporters());
-    }
-
     /**
      * A test runner can generate reports via Reporter instances that subscribe
      * to the test runner. The test runner tells the reporter what directory to
@@ -195,29 +189,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * 
      */
     private void generateReportsFor(final List<AcceptanceTestRun> testRunResults) {
-        for (AcceptanceTestReporter reporter : getSubscribedReporters()) {
-            for(AcceptanceTestRun testRunResult : testRunResults) {
-                generateReportFor(testRunResult, reporter);
-            }
-        }
-    }
-
-    private void generateReportFor(final AcceptanceTestRun acceptanceTestRun,
-                                   final AcceptanceTestReporter reporter) {
-        try {
-            reporter.setOutputDirectory(getConfiguration().getOutputDirectory());
-            reporter.generateReportFor(acceptanceTestRun);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(
-                    "Failed to generate reports using " + reporter, e);
-        }
-    }
-
-    /**
-     * What reports is this test runner configured to generate?
-     */
-    public List<AcceptanceTestReporter> getSubscribedReporters() {
-        return ImmutableList.copyOf(subscribedReporters);
+        reportService.generateReportsFor(testRunResults);
     }
 
     /**

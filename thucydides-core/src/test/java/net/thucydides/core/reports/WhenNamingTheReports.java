@@ -4,10 +4,17 @@ import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 import static net.thucydides.core.model.ReportNamer.ReportType.XML;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.UserStory;
 
 import org.junit.Test;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.InitializationError;
+
+import java.io.IOException;
 
 public class WhenNamingTheReports {
 
@@ -77,4 +84,5 @@ public class WhenNamingTheReports {
         
         assertThat(reportName, is("a_user_story"));
     }
+
 }

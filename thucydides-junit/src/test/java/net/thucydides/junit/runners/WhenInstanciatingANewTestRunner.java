@@ -105,12 +105,12 @@ public class WhenInstanciatingANewTestRunner  extends AbstractTestStepRunnerTest
     @Test
     public void the_output_directory_can_be_defined_by_a_system_property() throws InitializationError {
 
-        WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class, mockBrowserFactory);
-        
-        System.setProperty("thucydides.outputDirectory", "target" + FILE_SEPARATOR 
+        System.setProperty("thucydides.outputDirectory", "target" + FILE_SEPARATOR
         											   + "reports" + FILE_SEPARATOR
         											   + "thucydides");
+
+        WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
+        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class, mockBrowserFactory);
 
         File outputDirectory = runner.getOutputDirectory();
         
