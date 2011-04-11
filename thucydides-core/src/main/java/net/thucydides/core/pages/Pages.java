@@ -86,7 +86,8 @@ public class Pages {
                     = (Constructor<? extends PageObject>) pageObjectClass.getConstructor(constructorArgs);
             currentPage = (PageObject) constructor.newInstance(driver);
         } catch (NoSuchMethodException e) {
-            LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: " + pageObjectClass, e);
+            LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: "
+                         + pageObjectClass, e);
             thisIsNotThePageYourLookingFor(pageObjectClass);
         } catch (InstantiationException e) {
             LOGGER.info("Failed to instantiate page of type " + pageObjectClass, e);

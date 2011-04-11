@@ -2,7 +2,6 @@ package net.thucydides.junit.runners;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import net.thucydides.core.model.AcceptanceTestRun;
@@ -26,7 +25,6 @@ import org.junit.runners.model.Statement;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
-import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

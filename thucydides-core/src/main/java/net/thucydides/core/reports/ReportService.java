@@ -23,7 +23,7 @@ public class ReportService {
      */
     private List<AcceptanceTestReporter> subscribedReporters;
 
-    public ReportService(File outputDirectory, Collection<AcceptanceTestReporter> subscribedReporters) {
+    public ReportService(final File outputDirectory, final Collection<AcceptanceTestReporter> subscribedReporters) {
         this.outputDirectory = outputDirectory;
         getSubscribedReporters().addAll(subscribedReporters);
     }

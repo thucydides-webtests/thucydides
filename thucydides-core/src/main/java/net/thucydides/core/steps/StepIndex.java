@@ -7,7 +7,6 @@ import java.util.List;
 
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepProvider;
-import net.thucydides.core.steps.ScenarioSteps;
 
 /**
  * The Step Index class is a way to allow the dynamic discovery of what test steps are available.

@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
 
@@ -41,32 +40,30 @@ public abstract class PageObject {
 
     private RenderedPageObjectView renderedView;
 
-    private String defaultBaseUrl;
+    private PageUrls pageUrls;
 
     public PageObject(final WebDriver driver) {
         this.driver = driver;
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
+
+        setupPageUrls();
 
         WebDriverFactory.initElementsWithAjaxSupport(this, driver);
 
         fetchMatchingPageExpressions();
     }
 
+    private void setupPageUrls() {
+        pageUrls = new PageUrls(this);
+    }
+
     public void setWaitForTimeout(final long waitForTimeout) {
         this.waitForTimeout = waitForTimeout;
     }
 
-    public void setDefaultBaseUrl(final String baseUrl) {
-        this.defaultBaseUrl = baseUrl;
-    }
-
-    public String getDefaultBaseUrl() {
-        if (defaultBaseUrl == null) {
-            return PageConfiguration.getCurrentConfiguration().getBaseUrl();
-        } else {
-            return defaultBaseUrl;
-        }
-    }
+//    public String getDefaultBaseUrl() {
+//        return pageUrls.getDefaultBaseUrl();
+//    }
 
     private RenderedPageObjectView getRenderedView() {
         if (renderedView == null) {
@@ -279,7 +276,7 @@ public abstract class PageObject {
      * default base URL will be used.
      */
     public void open() {
-        String startingUrl = startFromUrlAnnotationOrBaseUrl();
+        String startingUrl = pageUrls.getStartingUrl();
         getDriver().get(startingUrl);
     }
 
@@ -288,9 +285,7 @@ public abstract class PageObject {
      * represented in the URL using {0}, {1}, etc.
      */
     public void open(final String... parameterValues) {
-        String startingUrlTemplate = startFromUrlAnnotationOrBaseUrl();
-        String startingUrl = urlWithParametersSubstituted(startingUrlTemplate,
-                parameterValues);
+        String startingUrl = pageUrls.getStartingUrl(parameterValues);
         getDriver().get(startingUrl);
     }
 
@@ -300,9 +295,7 @@ public abstract class PageObject {
 
     public void open(final String urlTemplateName,
                      final String[] parameterValues) {
-        String startingUrlTemplate = getNamedUrl(urlTemplateName);
-        String startingUrl = urlWithParametersSubstituted(startingUrlTemplate,
-                parameterValues);
+        String startingUrl = pageUrls.getNamedUrl(urlTemplateName, parameterValues);
         getDriver().get(startingUrl);
     }
 
@@ -327,41 +320,12 @@ public abstract class PageObject {
         return getRenderedView().elementIsDisplayed(byCriteria);
     }
 
-    private String urlWithParametersSubstituted(final String template,
-                                                final String[] parameterValues) {
-
-        String url = template;
-        for (int i = 0; i < parameterValues.length; i++) {
-            String variable = String.format("{%d}", i + 1);
-            url = url.replace(variable, parameterValues[i]);
-        }
-        return addDefaultBaseUrlIfRelative(url);
-    }
-
-    private String startFromUrlAnnotationOrBaseUrl() {
-        DefaultUrl urlAnnotation = getClass().getAnnotation(DefaultUrl.class);
-        if (urlAnnotation != null) {
-            String annotatedBaseUrl = urlAnnotation.value();
-            return addDefaultBaseUrlIfRelative(annotatedBaseUrl);
-        }
-
-        return getDefaultBaseUrl();
-    }
-
-    private String addDefaultBaseUrlIfRelative(final String url) {
-        if (isARelativeUrl(url)) {
-            return getDefaultBaseUrl() + url;
-        } else {
-            return url;
-        }
-    }
-
-    private boolean isARelativeUrl(final String url) {
-        return url.startsWith("/");
-    }
 
     private String getNamedUrl(final String name) {
-        NamedUrlSet namedUrlSet = new NamedUrlSet(this);
-        return namedUrlSet.getNamedUrl(name);
+        return pageUrls.getNamedUrl(name);
+    }
+
+    public void setDefaultBaseUrl(String defaultBaseUrl) {
+        pageUrls.overrideDefaultBaseUrl(defaultBaseUrl);
     }
 }
