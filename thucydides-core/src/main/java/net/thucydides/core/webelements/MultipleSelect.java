@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * A convenience class to help handle multiple select fields.
+ */
 public class MultipleSelect {
     private final WebElement dropdownField;
 

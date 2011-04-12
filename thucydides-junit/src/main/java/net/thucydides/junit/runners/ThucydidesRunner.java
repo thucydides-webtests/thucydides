@@ -1,9 +1,5 @@
 package net.thucydides.junit.runners;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -11,11 +7,9 @@ import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
-
 import net.thucydides.junit.steps.ScenarioStepListener;
 import net.thucydides.junit.steps.StepAnnotations;
 import net.thucydides.junit.steps.StepFactory;
-
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -24,9 +18,12 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * A test runner for WebDriver-based web tests. This test runner initializes a
@@ -90,8 +87,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * 
      * @throws InitializationError
      *             if some JUnit-related initialization problem occurred
-     * @throws UnsupportedDriverException
-     *             if the requested driver type is not supported
      */
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
         super(klass);
@@ -108,7 +103,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * They can be defined as system values, or have sensible defaults.
      */
     protected Configuration getConfiguration() {
-        if (configuration == null) {
+        if (configuration == null) {                                                                                    ˜
             configuration = new Configuration();
         }
         return configuration;
