@@ -7,6 +7,8 @@ import org.openqa.selenium.WebDriver;
 import net.thucydides.core.pages.PageObject;
 import org.openqa.selenium.WebElement;
 
+import java.io.File;
+
 /**
  * An extension of the Thucydides PageObject class providing extra features for GWT apps.
  * 
@@ -43,6 +45,18 @@ public abstract class GwtPageObject extends PageObject {
     public FileToUpload uploadFileFromResourcePath(final String filename) {
         ClassLoader cldr = Thread.currentThread().getContextClassLoader();
         String uploadPath = cldr.getResource(filename).getFile();
+        return new FileToUpload(uploadPath);
+
+    }
+
+
+    /**
+     * Upload a file using a fluent interface.
+     * Files are assumed to be on the classpath, e.g. in the src/main/resources directory
+     */
+    public FileToUpload uploadFileFromFileSystem(final String filename) {
+        File fileToUpload= new File(filename);
+        String uploadPath = fileToUpload.getAbsolutePath();
         return new FileToUpload(uploadPath);
 
     }

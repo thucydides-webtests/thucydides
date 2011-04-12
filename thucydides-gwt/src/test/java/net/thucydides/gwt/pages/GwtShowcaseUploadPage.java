@@ -17,7 +17,11 @@ public class GwtShowcaseUploadPage extends GwtPageObject {
     }
 
     public void uploadFile(String filename) {
-        uploadFileFromResourcePath(filename).to(fileUploadField);
+        if (filename.startsWith("/")) {
+            uploadFileFromResourcePath(filename).to(fileUploadField);
+        } else {
+            uploadFileFromFileSystem(filename).to(fileUploadField);
+        }
         getButtonLabelled("Upload File").click();
     }
 
