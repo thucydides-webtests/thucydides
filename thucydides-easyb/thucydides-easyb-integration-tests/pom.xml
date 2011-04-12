@@ -4,11 +4,11 @@
     <parent>
         <artifactId>thucydides-easyb</artifactId>
         <groupId>net.thucydides.easyb</groupId>
-        <version>0.1.6-SNAPSHOT</version>
+        <version>0.1.6</version>
     </parent>
     <groupId>net.thucydides.easyb</groupId>
     <artifactId>thucydides-easyb-integration-tests</artifactId>
-    <version>0.1.6-SNAPSHOT</version>
+    <version>0.1.6</version>
     <name>thucydides-net.thucydides.easyb-integration-tests</name>
     <url>http://maven.apache.org</url>
     <properties>
