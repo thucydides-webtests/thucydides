@@ -40,15 +40,15 @@ public class Pages {
      * Opens a browser on the application home page, as defined by the base URL.
      */
     public void start() {
-        Preconditions.checkNotNull(driver);
+        Preconditions.checkNotNull(getDriver());
 
-        driver.get(getDefaultBaseUrl());
+        getDriver().get(getDefaultBaseUrl());
 
     }
 
     public PageObject currentPageAt(final Class<? extends PageObject> pageObjectClass) {
         PageObject pageCandidate = getCurrentPageOfType(pageObjectClass);
-        String currentUrl = driver.getCurrentUrl();
+        String currentUrl = getDriver().getCurrentUrl();
         if (!pageCandidate.compatibleWithUrl(currentUrl)) {
             thisIsNotThePageYourLookingFor(pageObjectClass);
         }
@@ -60,7 +60,7 @@ public class Pages {
     public boolean isCurrentPageAt(final Class<? extends PageObject> pageObjectClass) {
         try {
             PageObject pageCandidate = getCurrentPageOfType(pageObjectClass);
-            String currentUrl = driver.getCurrentUrl();
+            String currentUrl = getDriver().getCurrentUrl();
             return (pageCandidate.compatibleWithUrl(currentUrl));
         } catch (WrongPageError e) {
             return false;
@@ -89,13 +89,7 @@ public class Pages {
             LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: "
                          + pageObjectClass, e);
             thisIsNotThePageYourLookingFor(pageObjectClass);
-        } catch (InstantiationException e) {
-            LOGGER.info("Failed to instantiate page of type " + pageObjectClass, e);
-            thisIsNotThePageYourLookingFor(pageObjectClass);
-        } catch (IllegalAccessException e) {
-            LOGGER.info("Could not access this page object type " + pageObjectClass, e);
-            thisIsNotThePageYourLookingFor(pageObjectClass);
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             LOGGER.info("Failed to instantiate page of type " + pageObjectClass, e);
             thisIsNotThePageYourLookingFor(pageObjectClass);
         }
@@ -106,7 +100,7 @@ public class Pages {
 
         String errorDetails = "This is not the page you're looking for:\n"
                 + "I was looking for a page compatible with " + pageObjectClass + "\n"
-                + "I was at the URL " + driver.getCurrentUrl();
+                + "I was at the URL " + getDriver().getCurrentUrl();
 
         throw new WrongPageError(errorDetails);
     }

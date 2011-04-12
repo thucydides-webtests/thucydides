@@ -1,6 +1,9 @@
 package net.thucydides.core.pages;
 
+
 import static org.mockito.Mockito.verify;
+
+import net.thucydides.core.annotations.At;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 
 import org.junit.Before;
@@ -9,6 +12,10 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.*;
+import static org.mockito.Mockito.*;
+
 import org.openqa.selenium.WebDriver;
 
 public class WhenKeepingTrackOfVisitedPages {
@@ -49,5 +56,69 @@ public class WhenKeepingTrackOfVisitedPages {
         pages.start();
         
         verify(driver).get(systemDefinedBaseUrl);    
+    }
+
+    @Test
+    public void the_pages_object_knows_when_we_are_on_the_right_page() {
+
+        when(driver.getCurrentUrl()).thenReturn("http://www.apache.org");
+        final Pages pages = new Pages(driver);
+        pages.start();
+
+        assertThat(pages.isCurrentPageAt(ApacheHomePage.class), is(true));
+    }
+
+    @Test
+    public void the_pages_object_knows_when_we_are_not_on_the_right_page() {
+
+        when(driver.getCurrentUrl()).thenReturn("http://www.google.org");
+        final Pages pages = new Pages(driver);
+        pages.start();
+
+        assertThat(pages.isCurrentPageAt(ApacheHomePage.class), is(false));
+    }
+
+    @Test(expected = WrongPageError.class)
+    public void the_pages_object_throws_a_wrong_page_error_when_we_expect_the_wrong_page() {
+
+        when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
+        final Pages pages = new Pages(driver);
+        pages.start();
+
+        pages.currentPageAt(ApacheHomePage.class);
+    }
+
+
+    public final class InvalidHomePage extends PageObject {
+        public InvalidHomePage() {
+            super(null);
+        }
+    }
+
+    @Test(expected = WrongPageError.class)
+    public void the_pages_object_throws_a_wrong_page_error_when_the_page_object_is_invalid() {
+
+        when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
+        final Pages pages = new Pages(driver);
+        pages.start();
+
+        pages.currentPageAt(InvalidHomePage.class);
+    }
+
+    public final class ExplodingHomePage extends PageObject {
+        public ExplodingHomePage(final WebDriver driver) throws InstantiationException {
+            super(null);
+            throw new InstantiationException();
+        }
+    }
+
+    @Test(expected = WrongPageError.class)
+    public void the_pages_object_throws_a_wrong_page_error_when_the_page_object_cant_be_instanciated() {
+
+        when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
+        final Pages pages = new Pages(driver);
+        pages.start();
+
+        pages.currentPageAt(ExplodingHomePage.class);
     }
 }

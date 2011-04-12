@@ -1,12 +1,12 @@
 package net.thucydides.core.pages;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
 
+import net.thucydides.core.webelements.MultipleSelect;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -50,7 +50,6 @@ public abstract class PageObject {
 
         WebDriverFactory.initElementsWithAjaxSupport(this, driver);
 
-        fetchMatchingPageExpressions();
     }
 
     private void setupPageUrls() {
@@ -61,10 +60,6 @@ public abstract class PageObject {
         this.waitForTimeout = waitForTimeout;
     }
 
-//    public String getDefaultBaseUrl() {
-//        return pageUrls.getDefaultBaseUrl();
-//    }
-
     private RenderedPageObjectView getRenderedView() {
         if (renderedView == null) {
             renderedView = new RenderedPageObjectView(driver, waitForTimeout);
@@ -72,8 +67,11 @@ public abstract class PageObject {
         return renderedView;
     }
 
-    private void fetchMatchingPageExpressions() {
-        matchingPageExpressions = new MatchingPageExpressions(this);
+    private MatchingPageExpressions getMatchingPageExpressions() {
+        if (matchingPageExpressions == null) {
+            matchingPageExpressions = new MatchingPageExpressions(this);
+        }
+        return matchingPageExpressions;
     }
 
     public WebDriver getDriver() {
@@ -101,11 +99,11 @@ public abstract class PageObject {
     }
 
     private boolean matchUrlAgainstEachPattern(final String currentUrl) {
-        return matchingPageExpressions.matchUrlAgainstEachPattern(currentUrl);
+        return getMatchingPageExpressions().matchUrlAgainstEachPattern(currentUrl);
     }
 
     private boolean thereAreNoPatternsDefined() {
-        return matchingPageExpressions.isEmpty();
+        return getMatchingPageExpressions().isEmpty();
     }
 
     public PageObject waitForRenderedElements(final By byElementCriteria) {
@@ -218,28 +216,15 @@ public abstract class PageObject {
         }
     }
 
-    public Set<String> getSelectedOptionLabelsFrom(final WebElement dropdown) {
-        Set<String> selectedOptions = new HashSet<String>();
 
-        List<WebElement> options = dropdown.findElements(By.tagName("option"));
-        for (WebElement option : options) {
-            if (option.isSelected()) {
-                selectedOptions.add(option.getText());
-            }
-        }
-        return selectedOptions;
+    public Set<String> getSelectedOptionLabelsFrom(final WebElement dropdown) {
+        MultipleSelect multipleSelect = new MultipleSelect(dropdown);
+        return multipleSelect.getSelectedOptionLabels();
     }
 
     public Set<String> getSelectedOptionValuesFrom(final WebElement dropdown) {
-        Set<String> selectedOptions = new HashSet<String>();
-
-        List<WebElement> options = dropdown.findElements(By.tagName("option"));
-        for (WebElement option : options) {
-            if (option.isSelected()) {
-                selectedOptions.add(option.getValue());
-            }
-        }
-        return selectedOptions;
+        MultipleSelect multipleSelect = new MultipleSelect(dropdown);
+        return multipleSelect.getSelectedOptionValues();
     }
 
     public void setCheckbox(final WebElement field, final boolean value) {
@@ -320,12 +305,7 @@ public abstract class PageObject {
         return getRenderedView().elementIsDisplayed(byCriteria);
     }
 
-
-    private String getNamedUrl(final String name) {
-        return pageUrls.getNamedUrl(name);
-    }
-
-    public void setDefaultBaseUrl(String defaultBaseUrl) {
+    public void setDefaultBaseUrl(final String defaultBaseUrl) {
         pageUrls.overrideDefaultBaseUrl(defaultBaseUrl);
     }
 }

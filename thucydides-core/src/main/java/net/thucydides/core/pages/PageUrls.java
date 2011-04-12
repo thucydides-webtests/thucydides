@@ -87,7 +87,7 @@ class PageUrls {
     }
 
 
-    public void overrideDefaultBaseUrl(String defaultBaseUrl) {
+    public void overrideDefaultBaseUrl(final String defaultBaseUrl) {
         pageLevelDefaultBaseUrl = defaultBaseUrl;
     }
 }
