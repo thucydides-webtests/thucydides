@@ -103,7 +103,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * They can be defined as system values, or have sensible defaults.
      */
     protected Configuration getConfiguration() {
-        if (configuration == null) {                                                                                    ˜
+        if (configuration == null) {
             configuration = new Configuration();
         }
         return configuration;
