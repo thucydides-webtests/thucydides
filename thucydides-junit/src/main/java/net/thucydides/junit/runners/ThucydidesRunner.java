@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -176,10 +175,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * place the reports in. Then, at the end of the test, the test runner
      * notifies these reporters of the test outcomes. The reporter's job is to
      * process each test run outcome and do whatever is appropriate.
-     * 
-     * @throws IllegalArgumentException
-     * @throws IOException
-     * 
      */
     private void generateReportsFor(final List<AcceptanceTestRun> testRunResults) {
         reportService.generateReportsFor(testRunResults);
