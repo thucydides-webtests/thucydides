@@ -36,7 +36,8 @@ public class HtmlResourceCopier {
             if (fileResourceFromAJar(resourcePath)) {
                 fileResource.copyResourceTo(resourcePath, targetDirectory);
             } else if (fileResourceFromPath(resourcePath)) {
-                fileResource.copyResourceTo(resourcePath, targetDirectory);
+                fileResource.copyResourceTo(resourcePath,
+                                            targetDirectory);
             }
         }
     }
@@ -49,10 +50,10 @@ public class HtmlResourceCopier {
     }
 
     private boolean fileResourceFromPath(final String resourcePath) {
-        return (resourceIsFromAJar(resourcePath)
+        boolean res = (!resourceIsFromAJar(resourcePath)
                 && (thisIsNotTheRoot(resourcePath))
                 && (thisIsNotADirectory(resourcePath)));
-
+        return res;
     }
 
     private boolean thisIsNotADirectory(final String resourcePath) {

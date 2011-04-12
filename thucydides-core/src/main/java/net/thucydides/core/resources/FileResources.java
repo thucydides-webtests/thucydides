@@ -36,7 +36,6 @@ public final class FileResources {
         return directoryIn(relativePath);
     }
 
-
     public String stripLeadingSeparatorFrom(final String path) {
         if (path.startsWith("/") || path.startsWith("\\")) {
             return path.substring(1);
@@ -64,15 +63,14 @@ public final class FileResources {
         File destinationDirectory = targetDirectory;
 
         if (targetRelativeDirectory.length() > 0) {
-            destinationDirectory = new File(targetDirectory,
-                    targetRelativeDirectory);
+            destinationDirectory = new File(targetDirectory, targetRelativeDirectory);
         }
+
         if (new File(sourceResource).isDirectory()) {
             File fullTargetDirectory = new File(destinationDirectory, targetFile);
             fullTargetDirectory.mkdirs();
         } else {
-            copyFileFromClasspathToTargetDirectory(sourceResource,
-                    destinationDirectory);
+            copyFileFromClasspathToTargetDirectory(sourceResource, destinationDirectory);
         }
     }
 
