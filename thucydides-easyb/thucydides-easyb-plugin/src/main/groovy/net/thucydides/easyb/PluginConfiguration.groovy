@@ -4,6 +4,17 @@ import net.thucydides.core.steps.ScenarioSteps
 
 public class PluginConfiguration {
 
+    /**
+     * Use this property to define the output directory in which reports will be
+     * stored.
+     */
+    private static final String OUTPUT_DIRECTORY_PROPERTY = "thucydides.outputDirectory";
+
+    /**
+     * By default, reports will go here.
+     */
+    private static final String DEFAULT_OUTPUT_DIRECTORY = "target/thucydides";
+
     private static ThreadLocal<PluginConfiguration> configuration = new ThreadLocal<PluginConfiguration>();
 
     public static synchronized reset() {
@@ -42,6 +53,18 @@ public class PluginConfiguration {
 
     public String getDefaultBaseUrl() {
         return defaultBaseUrl;
+    }
+
+
+    /**
+     * Where should the reports go?
+     */
+    public File loadOutputDirectoryFromSystemProperties() {
+        String systemDefinedDirectory = System.getProperty(OUTPUT_DIRECTORY_PROPERTY);
+        if (systemDefinedDirectory == null) {
+            systemDefinedDirectory = DEFAULT_OUTPUT_DIRECTORY;
+        }
+        return new File(systemDefinedDirectory);
     }
 
 }
