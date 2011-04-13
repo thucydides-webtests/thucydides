@@ -46,10 +46,17 @@ public class WebdriverManager {
     public void closeDriver() {
         if (webdriver != null) {
             webdriver.quit();
+            webdriver = null;
         }
     }
 
     public WebDriver getWebdriver() {
+        return webdriver;
+    }
+
+    public WebDriver resetDriver() {
+        closeDriver();
+        webdriver = newDriver();
         return webdriver;
     }
 }    

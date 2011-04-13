@@ -11,6 +11,7 @@ class MockWebDriver implements WebDriver {
 
     def openedUrls = []
     def closed = false;
+    def closedCount = 0;
 
     void get(String url) {
         openedUrls << url
@@ -54,6 +55,11 @@ class MockWebDriver implements WebDriver {
 
     void close() {
         closed = true;
+        closedCount++;
+    }
+
+    def getClosedCount() {
+        return closedCount;
     }
 
     void quit() {

@@ -7,13 +7,16 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.openqa.selenium.WebDriver
+import org.mockito.Mock
 
 public class WhenUsingTheThucydidesEasybPlugin {
 
     ThucydidesPlugin plugin
     Binding binding
 
+
     class BrowserlessThucydidesPlugin extends ThucydidesPlugin {
+
         @Override
         protected WebDriverFactory getDefaultWebDriverFactory() {
             return new WebDriverFactory() {
@@ -22,6 +25,10 @@ public class WhenUsingTheThucydidesEasybPlugin {
                 }
 
             }
+        }
+
+        public getCloseCount() {
+            return closeCount;
         }
     }
 
@@ -114,6 +121,25 @@ public class WhenUsingTheThucydidesEasybPlugin {
         WebDriver driver = (WebDriver) binding.getVariable("driver");
 
         assert driver.wasClosed();
+        assert driver.closedCount == 1;
+    }
+
+    @Test
+    public void the_plugin_should_close_the_driver_at_the_end_of_the_scenario_if_requested() {
+
+        ThucydidesPlugin plugin = new BrowserlessThucydidesPlugin();
+        Binding binding = new Binding();
+        plugin.getConfiguration().use_new_broswer_for_each_scenario()
+
+        plugin.beforeStory(binding);
+        WebDriver driver = (WebDriver) binding.getVariable("driver");
+
+        runScenarios(plugin, binding);
+
+        plugin.afterStory(binding);
+
+        WebDriver finalDriver = (WebDriver) binding.getVariable("driver");
+        assert finalDriver != driver;
     }
 
 

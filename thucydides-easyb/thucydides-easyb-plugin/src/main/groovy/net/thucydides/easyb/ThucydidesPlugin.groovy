@@ -108,6 +108,10 @@ public class ThucydidesPlugin extends BasePlugin {
     @Override
     public Object beforeScenario(final Binding binding) {
         LOGGER.debug("Before scenario");
+
+        if (getConfiguration().isResetBrowserInEachScenario()) {
+            resetDriver(binding)
+        }
         return super.beforeScenario(binding);
     }
     
@@ -128,6 +132,10 @@ public class ThucydidesPlugin extends BasePlugin {
         driver.quit()
     }
 
+    private def resetDriver(Binding binding) {
+        WebDriver driver = getWebdriverManager().resetDriver();
+        binding.setVariable("driver", driver);
+    }
     /**
      * The configuration manages output directories and driver types.
      * They can be defined as system values, or have sensible defaults.

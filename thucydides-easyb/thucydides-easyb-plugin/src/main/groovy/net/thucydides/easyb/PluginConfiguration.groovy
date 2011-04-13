@@ -32,6 +32,8 @@ public class PluginConfiguration {
 
     def registeredSteps = [];
 
+    def resetBrowserInEachScenario = false
+
     /**
      * Define the base URL to be used for this story.
      */
@@ -55,6 +57,15 @@ public class PluginConfiguration {
         return defaultBaseUrl;
     }
 
+
+    public void use_new_broswer_for_each_scenario() {
+        println "Use new browser for each scenario"
+        resetBrowserInEachScenario = true;
+    }
+
+    public boolean isResetBrowserInEachScenario() {
+        return resetBrowserInEachScenario;
+    }
 
     /**
      * Where should the reports go?

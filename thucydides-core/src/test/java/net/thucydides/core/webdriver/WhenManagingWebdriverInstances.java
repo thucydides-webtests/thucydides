@@ -25,6 +25,9 @@ public class WhenManagingWebdriverInstances {
     @Mock
     private WebDriver webDriver;
 
+    @Mock
+    private WebDriver newWebDriver;
+
     private Configuration config;
     
     @Before
@@ -32,7 +35,9 @@ public class WhenManagingWebdriverInstances {
         MockitoAnnotations.initMocks(this);
         config = new Configuration();
         
-        when(factory.newInstanceOf(SupportedWebDriver.FIREFOX)).thenReturn(webDriver);
+        when(factory.newInstanceOf(SupportedWebDriver.FIREFOX))
+                    .thenReturn(webDriver)
+                    .thenReturn(newWebDriver);
     }
     
     @Test
@@ -88,5 +93,14 @@ public class WhenManagingWebdriverInstances {
         System.setProperty(Configuration.OUTPUT_DIRECTORY_PROPERTY, "out");
         
         assertThat(config.getOutputDirectory().getName(), is("out"));
+    }
+
+    @Test
+    public void the_client_can_reset_the_current_driver_to_create_a_fresh_one() {
+        WebdriverManager manager = new WebdriverManager(factory);
+
+        manager.resetDriver();
+
+        assertThat(manager.getWebdriver(), is(newWebDriver));
     }
 }

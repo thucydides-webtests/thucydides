@@ -122,6 +122,18 @@ public class WhenUsingTheThucydidesMixin {
         assert stepLibrary.pages != null
     }
 
+
+    @Test
+    public void the_plugin_can_be_configured_to_reset_the_webdriver_before_each_scenario() {
+
+        plugin.beforeStory(binding);
+
+        def story = new Object()
+        story.thucydides.use_new_broswer_for_each_scenario()
+
+        assert plugin.configuration.isResetBrowserInEachScenario() == true
+    }
+
     @Test
     public void the_plugin_configuration_can_be_updated_from_the_story() {
 
