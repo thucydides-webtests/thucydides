@@ -22,12 +22,12 @@ public class WebdriverManager {
     /**
      * A WebDriver instance is shared across all the tests executed by the runner in a given test run.
      */
-    private ThreadLocal<WebDriver> webdriver = new ThreadLocal<WebDriver>();
-
+    //private ThreadLocal<WebDriver> webdriver = new ThreadLocal<WebDriver>();
+    WebDriver webdriver;
     
     public WebdriverManager(final WebDriverFactory webDriverFactory) {
         this.webDriverFactory = webDriverFactory;
-        webdriver.set(newDriver());
+        webdriver = newDriver();
     }
 
     /**
@@ -44,13 +44,12 @@ public class WebdriverManager {
     }
     
     public void closeDriver() {
-        if ((webdriver != null) && (webdriver.get() != null)) {
-            webdriver.get().quit();
-            webdriver.remove();
+        if (webdriver != null) {
+            webdriver.quit();
         }
     }
 
     public WebDriver getWebdriver() {
-        return webdriver.get();
+        return webdriver;
     }
 }    

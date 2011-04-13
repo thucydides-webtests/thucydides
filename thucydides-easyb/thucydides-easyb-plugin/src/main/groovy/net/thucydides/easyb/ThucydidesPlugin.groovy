@@ -1,7 +1,6 @@
 package net.thucydides.easyb;
 
 
-import groovy.lang.Binding;
 import net.thucydides.core.pages.Pages;
 
 import static net.thucydides.easyb.StepName.*;
@@ -12,7 +11,7 @@ import org.easyb.plugin.BasePlugin;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory
-import net.thucydides.core.webdriver.Configuration
+
 import net.thucydides.core.reports.ReportService
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter
 import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter
@@ -52,7 +51,7 @@ public class ThucydidesPlugin extends BasePlugin {
     protected WebDriverFactory getDefaultWebDriverFactory() {
         return new WebDriverFactory();
     }
-    
+
     @Override
     public Object beforeStory(final Binding binding) {
 
@@ -76,11 +75,23 @@ public class ThucydidesPlugin extends BasePlugin {
     }
 
     def initializePagesObject(Binding binding) {
+        Pages pages = newPagesInstanceIn(binding);
+
+        openBrowserUsing(pages)
+
+        return pages;
+    }
+
+    private def openBrowserUsing(Pages pages) {
+        System.out.println "Opening page at " + pages.defaultBaseUrl
+        pages.start()
+    }
+
+    private Pages newPagesInstanceIn(Binding binding) {
         Pages pages = new Pages(getWebdriverManager().getWebdriver());
         pages.setDefaultBaseUrl(getConfiguration().getDefaultBaseUrl());
-        binding.setVariable("pages", pages);
-        pages.start()
-        return pages;
+        binding.setVariable("pages", pages)
+        return pages
     }
 
 

@@ -10,6 +10,12 @@ using "thucydides"
 thucydides.uses_default_base_url "http://www.google.com"
 thucydides.uses_steps_from GoogleSearchSteps
 
+
+before_each "user should be logged on", {
+    given "user is logged on", {
+        google_search.search_for("bunyips")
+    }
+}
 /**
  * In the simplest case, Thucydides is simply used to manage a WebDriver instance.
  * This instance is injected into the story context under the name of 'driver'

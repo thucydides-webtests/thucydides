@@ -42,7 +42,6 @@ public class Pages {
         Preconditions.checkNotNull(getDriver());
 
         getDriver().get(getDefaultBaseUrl());
-
     }
 
     public PageObject currentPageAt(final Class<? extends PageObject> pageObjectClass) {
