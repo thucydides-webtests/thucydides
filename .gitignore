@@ -13,3 +13,4 @@ velocity.log.1
 velocity.log
 *.iml
 pom.xml.versionsBackup
+build.log

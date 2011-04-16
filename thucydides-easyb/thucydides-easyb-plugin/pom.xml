@@ -40,11 +40,23 @@
             <version>1.1</version>
             <exclusions>
                 <exclusion>
+                    <groupId>org.easyb</groupId>
+                    <artifactId>easyb-composite-groovy</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.easyb</groupId>
+            <artifactId>easyb-composite-groovy</artifactId>
+            <version>1.1</version>
+            <exclusions>
+                <exclusion>
                     <groupId>org.codehaus.groovy</groupId>
                     <artifactId>groovy-all</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-core</artifactId>
