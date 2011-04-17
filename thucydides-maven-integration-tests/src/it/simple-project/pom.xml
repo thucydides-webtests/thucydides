@@ -19,7 +19,7 @@
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-junit</artifactId>
-            <version>0.1.4-SNAPSHOT</version>
+            <version>@project.version@</version>
             <scope>test</scope>
         </dependency>
         <dependency>
