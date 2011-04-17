@@ -43,6 +43,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-all</artifactId>
+                        <version>1.7.10</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <storyType>html</storyType>
                     <storyReport>target/easyb.html</storyReport>

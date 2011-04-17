@@ -18,6 +18,8 @@ import static org.mockito.Mockito.*;
 
 import org.openqa.selenium.WebDriver;
 
+import java.net.URL;
+
 public class WhenKeepingTrackOfVisitedPages {
 
     @Mock
@@ -38,12 +40,26 @@ public class WhenKeepingTrackOfVisitedPages {
         final Pages pages = new Pages(driver);
         pages.setDefaultBaseUrl(baseUrl);
 
-        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://www.google.com");
         pages.start();
         
         verify(driver).get(baseUrl);    
     }
-    
+
+
+    @Test
+    public void the_default_starting_point_url_can_refer_to_a_file_on_the_classpath() {
+
+        final String baseUrl = "classpath:static-site/index.html";
+        final Pages pages = new Pages(driver);
+        pages.setDefaultBaseUrl(baseUrl);
+
+        URL staticSiteUrl = Thread.currentThread().getContextClassLoader().getResource("static-site/index.html");
+
+        pages.start();
+
+        verify(driver).get(staticSiteUrl.toString());
+    }
+
     @Test
     public void the_default_starting_point_url_can_be_overriden_by_a_system_property() {
 

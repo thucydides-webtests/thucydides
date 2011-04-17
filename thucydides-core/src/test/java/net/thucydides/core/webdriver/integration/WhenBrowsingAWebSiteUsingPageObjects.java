@@ -3,12 +3,15 @@ package net.thucydides.core.webdriver.integration;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.util.Set;
 
+import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
 
+import net.thucydides.core.pages.Pages;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -30,10 +33,20 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         public IndexPage(WebDriver driver) {
             super(driver);
         }
-
-
     }
-    
+
+    @DefaultUrl("classpath:static-site/index.html")
+    public class IndexPageWithDefaultUrl extends PageObject {
+
+        public WebElement multiselect;
+
+        public WebElement checkbox;
+
+        public IndexPageWithDefaultUrl(WebDriver driver) {
+            super(driver);
+        }
+    }
+
     WebDriver driver;
     
     @Before
@@ -175,4 +188,14 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
         indexPage.waitForAllTextToAppear("Label that is not present", "Another label that is not present");
     }
+
+    @Test
+    public void the_page_can_be_read_from_a_file_on_the_classpath() {
+
+        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver);
+
+        assertThat(indexPage.getTitle(), is("Thucydides Test Site"));
+    }
+
+
 }

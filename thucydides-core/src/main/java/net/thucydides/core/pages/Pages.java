@@ -2,6 +2,7 @@ package net.thucydides.core.pages;
 
 import java.lang.reflect.Constructor;
 
+import net.thucydides.core.annotations.DefaultUrl;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class Pages {
     public void start() {
         Preconditions.checkNotNull(getDriver());
 
-        getDriver().get(getDefaultBaseUrl());
+        getDriver().get(getStartingUrl());
     }
 
     public PageObject currentPageAt(final Class<? extends PageObject> pageObjectClass) {
@@ -120,4 +121,9 @@ public class Pages {
     public void setDefaultBaseUrl(final String defaultBaseUrl) {
         this.defaultBaseUrl = defaultBaseUrl;
     }
+
+    public String getStartingUrl() {
+        return PageUrls.getUrlFrom(getDefaultBaseUrl());
+    }
+
 }

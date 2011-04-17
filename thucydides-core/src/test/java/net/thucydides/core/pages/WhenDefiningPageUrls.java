@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 
+import java.net.URL;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
@@ -156,6 +158,25 @@ public class WhenDefiningPageUrls {
     }
 
     @Test
+    public void when_the_default_url_is_defined_as_a_classpath_url_it_uses_an_absolute_path_from_the_classpath() {
+        PageWithDefaultUrlOnTheClasspath page = new PageWithDefaultUrlOnTheClasspath(webdriver);
+
+        URL staticSiteUrl = Thread.currentThread().getContextClassLoader().getResource("static-site/index.html");
+
+        page.open();
+
+        verify(webdriver).get(staticSiteUrl.toString());
+
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void if_a_classpath_url_is_not_found_an_exception_is_thrown() {
+        PageWithInvalidDefaultUrlOnTheClasspath page = new PageWithInvalidDefaultUrlOnTheClasspath(webdriver);
+
+        page.open();
+
+    }
+    @Test
     public void the_url_annotation_should_let_you_define_several_named_parameterized_urls() {
         PageObject page = new PageObjectWithMultipleNamedUrlDefinitions(webdriver);
         PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://myapp.mycompany.com");
@@ -173,4 +194,26 @@ public class WhenDefiningPageUrls {
         page.open("no.such.template", withParameters("ISSUE-1"));
     }
 
+    @Test
+    public void when_we_get_a_target_url_a_normal_url_is_left_unprocessed() {
+        String url = PageUrls.getUrlFrom("http://www.google.com");
+
+        assertThat(url, is("http://www.google.com"));
+    }
+
+    @Test
+    public void when_we_get_a_target_url_a_normal_https_url_is_left_unprocessed() {
+        String url = PageUrls.getUrlFrom("https://www.google.com");
+
+        assertThat(url, is("https://www.google.com"));
+    }
+
+    @Test
+    public void when_we_get_a_target_url_a_classpath_url_is_converted_to_a_file_url() {
+        String staticSiteUrl = Thread.currentThread().getContextClassLoader()
+                                                     .getResource("static-site/index.html").toString();
+        String url = PageUrls.getUrlFrom("classpath:static-site/index.html");
+
+        assertThat(url, is(staticSiteUrl));
+    }
 }

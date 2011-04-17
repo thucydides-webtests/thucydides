@@ -1,17 +1,22 @@
 package net.thucydides.core.pages;
 
+import com.sun.jndi.toolkit.url.UrlUtil;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
 
+import java.net.URL;
+
 /**
- * Manage the URLs associated with a page.
+ * Manage the URLs associated with a page
  * Urls can be associated with a page using annotations or via the default configuration properties.
  * The DefaultUrl annotation defines the default starting point for a page. If none is defined, the
  * system default URL is used.
  * The NamedUrl and NamedUrls annotations can be used to define query URLs, optionally with parameters.
  */
 class PageUrls {
+    private static final String CLASSPATH_URL_PREFIX = "classpath:";
+    private static final int CLASSPATH_URL_PREFIX_LENGTH = CLASSPATH_URL_PREFIX.length();
     private Object pageObject;
 
     private String pageLevelDefaultBaseUrl;
@@ -24,10 +29,38 @@ class PageUrls {
         DefaultUrl urlAnnotation = pageObject.getClass().getAnnotation(DefaultUrl.class);
         if (urlAnnotation != null) {
             String annotatedBaseUrl = urlAnnotation.value();
-            return addDefaultBaseUrlIfRelative(annotatedBaseUrl);
+            String startingUrl = getUrlFrom(annotatedBaseUrl);
+            return addDefaultBaseUrlIfRelative(startingUrl);
         } else {
             return getDefaultUrl();
         }
+    }
+
+    public static String getUrlFrom(String annotatedBaseUrl) {
+        if (annotatedBaseUrl == null) {
+            return null;
+        }
+
+        String classpathUrl = null;
+        if (annotatedBaseUrl.startsWith(CLASSPATH_URL_PREFIX)) {
+            URL baseUrl = obtainResourcePathFromClasspath(annotatedBaseUrl);
+            classpathUrl = baseUrl.toString();
+        }
+
+        if (classpathUrl != null) {
+            return classpathUrl;
+        } else {
+            return annotatedBaseUrl;
+        }
+    }
+
+    private static URL obtainResourcePathFromClasspath(String annotatedBaseUrl) {
+        String resourcePath = annotatedBaseUrl.substring(CLASSPATH_URL_PREFIX_LENGTH);
+        URL baseUrl = Thread.currentThread().getContextClassLoader().getResource(resourcePath);
+        if (baseUrl == null) {
+            throw new IllegalStateException("No matching web page could be found on the classpath for " + annotatedBaseUrl);
+        }
+        return baseUrl;
     }
 
     private String getDefaultUrl() {
