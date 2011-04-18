@@ -74,8 +74,6 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>1.7.10</version>
-            <type>pom</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.thucydides.easyb</groupId>
