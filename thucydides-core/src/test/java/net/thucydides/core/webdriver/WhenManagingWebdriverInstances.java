@@ -95,12 +95,4 @@ public class WhenManagingWebdriverInstances {
         assertThat(config.getOutputDirectory().getName(), is("out"));
     }
 
-    @Test
-    public void the_client_can_reset_the_current_driver_to_create_a_fresh_one() {
-        WebdriverManager manager = new WebdriverManager(factory);
-
-        manager.resetDriver();
-
-        assertThat(manager.getWebdriver(), is(newWebDriver));
-    }
 }

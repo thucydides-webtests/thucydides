@@ -1,14 +1,12 @@
 package net.thucydides.easyb.samples
 
-import org.openqa.selenium.By
 import net.thucydides.easyb.samples.pages.IndexPage
-import net.thucydides.easyb.samples.pages.GoogleSearchResultsPage
-import net.thucydides.easyb.samples.pages.GoogleSearchSteps;
+import net.thucydides.easyb.samples.pages.DemoSiteSteps;
 
 using "thucydides"
 
 thucydides.uses_default_base_url "classpath:demosite/index.html"
-thucydides.uses_steps_from GoogleSearchSteps
+thucydides.uses_steps_from DemoSiteSteps
 
 /**
  * Thucydides can manage pages for us.
@@ -22,7 +20,18 @@ scenario "Select entry in dropdown list", {
         indexPage.selectItem 'Label 2'
     }
     then "this option should be selected", {
-        indexPage.selectedItem.shouldBe '2'
+        indexPage.selectedValues.shouldHave '2'
+    }
+}
+
+scenario "Select entry in dropdown list using steps", {
+    given "we are on the Thucydides demo site again", {
+    }
+    when "the user fills in the form", {
+        demo_site.enter_values('Label 3', true)
+    }
+    then "the chosen options should be displayed", {
+        demo_site.should_have_selected_value '3'
     }
 }
 

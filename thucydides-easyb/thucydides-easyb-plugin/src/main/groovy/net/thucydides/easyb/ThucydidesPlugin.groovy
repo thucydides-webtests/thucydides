@@ -25,6 +25,8 @@ public class ThucydidesPlugin extends BasePlugin {
 
     private WebdriverManager webdriverManager;
 
+    private runningFirstScenario = true;
+
     def reportService;
 
     /**
@@ -83,7 +85,6 @@ public class ThucydidesPlugin extends BasePlugin {
     }
 
     private def openBrowserUsing(Pages pages) {
-        System.out.println "Opening page at " + pages.defaultBaseUrl
         pages.start()
     }
 
@@ -104,20 +105,26 @@ public class ThucydidesPlugin extends BasePlugin {
 
     }
 
-
     @Override
     public Object beforeScenario(final Binding binding) {
-        LOGGER.debug("Before scenario");
 
-        if (getConfiguration().isResetBrowserInEachScenario()) {
+        if (!runningFirstScenario && getConfiguration().isResetBrowserInEachScenario()) {
             resetDriver(binding)
         }
         return super.beforeScenario(binding);
     }
-    
+
+    @Override
+    public Object afterScenario(final Binding binding) {
+
+        runningFirstScenario = false;
+        return super.afterScenario(binding);
+    }
+
+
     @Override
     public Object afterStory(final Binding binding) {
-        LOGGER.debug("After scenario");
+        LOGGER.debug("After story");
 
         closeDriver(binding);
 
@@ -127,14 +134,12 @@ public class ThucydidesPlugin extends BasePlugin {
     }
 
     private def closeDriver(Binding binding) {
-        WebDriver driver = (WebDriver) binding.getVariable("driver");
-        driver.close();
-        driver.quit()
+        getWebdriverManager().closeDriver()
     }
 
     private def resetDriver(Binding binding) {
-        WebDriver driver = getWebdriverManager().resetDriver();
-        binding.setVariable("driver", driver);
+        Pages pages = binding.getVariable("pages")
+        pages.start()
     }
     /**
      * The configuration manages output directories and driver types.

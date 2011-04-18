@@ -58,7 +58,6 @@ public class WhenGeneratingAnHtmlReport {
         
         File cssDir = new File(outputDirectory, "css");
         File cssStylesheet = new File(cssDir, "core.css");
-        System.out.println("Checking for " + cssStylesheet);
         assertThat(cssStylesheet.exists(), is(true));
     }
 

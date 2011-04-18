@@ -45,8 +45,8 @@ public class WebdriverManager {
     
     public void closeDriver() {
         if (webdriver != null) {
+            webdriver.close();
             webdriver.quit();
-            webdriver = null;
         }
     }
 
@@ -54,9 +54,4 @@ public class WebdriverManager {
         return webdriver;
     }
 
-    public WebDriver resetDriver() {
-        closeDriver();
-        webdriver = newDriver();
-        return webdriver;
-    }
 }    

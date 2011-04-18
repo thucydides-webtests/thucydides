@@ -90,7 +90,6 @@ public class WhenUploadingFiles {
 
     private void writeTextToFile(String text, File uploadedFile) throws IOException {
         PrintWriter out = new PrintWriter(uploadedFile);
-        out.println(text);
         out.close();
     }
 

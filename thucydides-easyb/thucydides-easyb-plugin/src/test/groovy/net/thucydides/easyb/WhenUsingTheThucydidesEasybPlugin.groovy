@@ -8,6 +8,9 @@ import org.junit.Before
 import org.junit.Test
 import org.openqa.selenium.WebDriver
 import org.mockito.Mock
+import static org.mockito.Mockito.times
+import static org.mockito.Mockito.verify
+import org.mockito.Mockito
 
 public class WhenUsingTheThucydidesEasybPlugin {
 
@@ -32,6 +35,23 @@ public class WhenUsingTheThucydidesEasybPlugin {
         }
     }
 
+    class MockedThucydidesPlugin extends ThucydidesPlugin {
+
+        @Override
+        protected WebDriverFactory getDefaultWebDriverFactory() {
+            return new WebDriverFactory() {
+
+                protected WebDriver newFirefoxDriver() {
+                    return Mockito.mock(WebDriver.class);
+                }
+
+            }
+        }
+
+        public getCloseCount() {
+            return closeCount;
+        }
+    }
     @Before
     public void initMocks() {
         plugin = new BrowserlessThucydidesPlugin();
@@ -46,7 +66,6 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
     @Test
     public void the_plugin_should_answer_to_the_name_of_thucydides() {
-        println plugin.getName()
         assert plugin.name == "thucydides"
     }
 
@@ -55,6 +74,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
         WebDriverFactory factory = plugin.getDefaultWebDriverFactory();
         assert factory != null
     }
+
 
     @Test
     public void the_plugin_should_inject_a_webdriver_instance_into_the_story_context() {
@@ -116,6 +136,9 @@ public class WhenUsingTheThucydidesEasybPlugin {
     @Test
     public void the_plugin_should_close_the_driver_at_the_end_of_the_story() {
 
+        ThucydidesPlugin plugin = new BrowserlessThucydidesPlugin();
+        Binding binding = new Binding();
+
         runStories(plugin, binding);
 
         WebDriver driver = (WebDriver) binding.getVariable("driver");
@@ -127,10 +150,11 @@ public class WhenUsingTheThucydidesEasybPlugin {
     @Test
     public void the_plugin_should_close_the_driver_at_the_end_of_the_scenario_if_requested() {
 
-        ThucydidesPlugin plugin = new BrowserlessThucydidesPlugin();
+        ThucydidesPlugin plugin = new MockedThucydidesPlugin();
         Binding binding = new Binding();
-        plugin.getConfiguration().use_new_broswer_for_each_scenario()
 
+        plugin.getConfiguration().use_new_broswer_for_each_scenario()
+        plugin.getConfiguration().uses_default_base_url("http://www.google.com")
         plugin.beforeStory(binding);
         WebDriver driver = (WebDriver) binding.getVariable("driver");
 
@@ -138,8 +162,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
         plugin.afterStory(binding);
 
-        WebDriver finalDriver = (WebDriver) binding.getVariable("driver");
-        assert finalDriver != driver;
+        verify(driver, times(2)).get("http://www.google.com");
     }
 
 

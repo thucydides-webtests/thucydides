@@ -23,7 +23,7 @@ class IndexPage extends PageObject {
         this.selectFromDropdown(multiselect, option)
     }
 
-    def getSelectedItem() {
+    def getSelectedValues() {
         this.getSelectedOptionValuesFrom(multiselect)
     }
     def setCheckboxOption(boolean value) {

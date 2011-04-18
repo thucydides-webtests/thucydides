@@ -38,14 +38,11 @@ public class PluginConfiguration {
      * Define the base URL to be used for this story.
      */
     public void uses_default_base_url(String defaultBaseUrl) {
-        println "uses default base url of " + defaultBaseUrl;
         setDefaultBaseUrl(defaultBaseUrl);
     }
 
     public void uses_steps_from(Class<ScenarioSteps> stepsClass) {
-        println "Declaring step library $stepsClass"
         registeredSteps += stepsClass
-        println "Registered steps: $registeredSteps"
     }
 
 
@@ -59,7 +56,6 @@ public class PluginConfiguration {
 
 
     public void use_new_broswer_for_each_scenario() {
-        println "Use new browser for each scenario"
         resetBrowserInEachScenario = true;
     }
 
