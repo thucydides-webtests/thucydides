@@ -24,6 +24,7 @@
                     <settingsFile>src/it/settings.xml</settingsFile>
                     <postBuildHookScript>validate.groovy</postBuildHookScript>
                     <localRepositoryPath>target/repo</localRepositoryPath>
+                    <selectorScript>checkAssumptions.groovy</selectorScript>
                 </configuration>
                 <executions>
                     <execution>
