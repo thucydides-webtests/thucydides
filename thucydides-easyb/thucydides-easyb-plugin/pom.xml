@@ -4,11 +4,11 @@
     <parent>
         <artifactId>thucydides-easyb</artifactId>
         <groupId>net.thucydides.easyb</groupId>
-        <version>0.1.7-SNAPSHOT</version>
+        <version>0.1.7</version>
     </parent>
     <groupId>net.thucydides.easyb</groupId>
     <artifactId>thucydides-easyb-plugin</artifactId>
-    <version>0.1.7-SNAPSHOT</version>
+    <version>0.1.7</version>
     <name>Thucydides Easyb Plugin</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
