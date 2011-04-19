@@ -3,4 +3,5 @@
  * Running them during a release doesn't work. Not sure why.
  */
 def pomFile = new File("pom.xml").text
-assert pomFile.contains("SNAPSHOT")
+def exitValue = (pomFile.contains("SNAPSHOT") ? 0 : 1)
+System.exit exitValue
