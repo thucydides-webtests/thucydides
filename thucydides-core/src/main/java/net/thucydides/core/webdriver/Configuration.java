@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import com.google.common.collect.ImmutableList;
 
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
@@ -22,7 +23,7 @@ public class Configuration {
      * Use the 'webdriver.driver' property to tell Thucydides what browser to
      * run the tests in.
      */
-    public static final String WEBDRIVER_DRIVER = "webdriver.driver";
+    public static final String WEBDRIVER_DRIVER = ThucydidesSystemProperty.DRIVER.getPropertyName();
 
     /**
      * The default browser is Firefox.
@@ -33,13 +34,14 @@ public class Configuration {
      * Use this property to define the output directory in which reports will be
      * stored.
      */
-    public static final String OUTPUT_DIRECTORY_PROPERTY = "thucydides.outputDirectory";
+    public static final String OUTPUT_DIRECTORY_PROPERTY = ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName();
 
     /**
      * By default, reports will go here.
      */
     private static final String DEFAULT_OUTPUT_DIRECTORY = "target/thucydides";
-    
+
+    private static final String STEP_DELAY = ThucydidesSystemProperty.STEP_DELAY.getPropertyName();
     /**
      * HTML and XML reports will be generated in this directory.
      */
@@ -56,7 +58,7 @@ public class Configuration {
     /**
      * Where should the reports go?
      */
-    public File loadOutputDirectoryFromSystemProperties() {
+    public static File loadOutputDirectoryFromSystemProperties() {
         String systemDefinedDirectory = System.getProperty(OUTPUT_DIRECTORY_PROPERTY);
         if (systemDefinedDirectory == null) {
             systemDefinedDirectory = DEFAULT_OUTPUT_DIRECTORY;
@@ -64,7 +66,17 @@ public class Configuration {
         return new File(systemDefinedDirectory);
     }
 
-    
+    public static int getStepDelay() {
+        int stepDelay = 0;
+
+        String stepDelayValue = System.getProperty(ThucydidesSystemProperty.STEP_DELAY.getPropertyName());
+        if ((stepDelayValue != null) && (!stepDelayValue.isEmpty())) {
+            stepDelay = Integer.valueOf(stepDelayValue);
+        }
+        return stepDelay;
+
+    }
+
     public void setOutputDirectory(final File outputDirectory) {
         this.outputDirectory = outputDirectory;
     }
@@ -77,10 +89,8 @@ public class Configuration {
      * 
      */
     public File getOutputDirectory() {
-        if (outputDirectory == null) {
-            outputDirectory = loadOutputDirectoryFromSystemProperties();
-            outputDirectory.mkdirs();
-        }
+        outputDirectory = loadOutputDirectoryFromSystemProperties();
+        outputDirectory.mkdirs();
         return outputDirectory;
     }
 

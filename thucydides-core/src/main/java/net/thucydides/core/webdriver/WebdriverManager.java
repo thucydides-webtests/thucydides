@@ -22,8 +22,7 @@ public class WebdriverManager {
     /**
      * A WebDriver instance is shared across all the tests executed by the runner in a given test run.
      */
-    //private ThreadLocal<WebDriver> webdriver = new ThreadLocal<WebDriver>();
-    WebDriver webdriver;
+    private WebDriver webdriver;
     
     public WebdriverManager(final WebDriverFactory webDriverFactory) {
         this.webDriverFactory = webDriverFactory;

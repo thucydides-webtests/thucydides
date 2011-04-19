@@ -58,7 +58,8 @@ class PageUrls {
         String resourcePath = annotatedBaseUrl.substring(CLASSPATH_URL_PREFIX_LENGTH);
         URL baseUrl = Thread.currentThread().getContextClassLoader().getResource(resourcePath);
         if (baseUrl == null) {
-            throw new IllegalStateException("No matching web page could be found on the classpath for " + annotatedBaseUrl);
+            throw new IllegalStateException("No matching web page could be found on the classpath for "
+                                            + annotatedBaseUrl);
         }
         return baseUrl;
     }

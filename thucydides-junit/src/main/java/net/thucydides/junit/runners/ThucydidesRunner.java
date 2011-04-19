@@ -82,6 +82,13 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     /**
+     * Override the default step listener. Mainly for testing.
+     */
+    protected void setStepListener(final ScenarioStepListener stepListener) {
+        this.stepListener = stepListener;
+    }
+
+    /**
      * Creates a new test runner for WebDriver web tests.
      * 
      * @throws InitializationError
@@ -152,7 +159,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     @Override
     public void run(final RunNotifier notifier) {
-        webdriverManager = new WebdriverManager(webDriverFactory);
+        initWebdriverManager();
 
         super.run(notifier);
 
@@ -161,6 +168,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         generateReportsFor(getStepListener().getTestRunResults());
 
         notifyFailures();
+    }
+
+    protected void initWebdriverManager() {
+        webdriverManager = new WebdriverManager(webDriverFactory);
     }
 
     private void notifyFailures() {

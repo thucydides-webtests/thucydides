@@ -35,9 +35,8 @@ import org.slf4j.LoggerFactory;
  * Observations are recorded in an AcceptanceTestRun object. This includes
  * recording the names and results of each test, and taking and storing
  * screenshots at strategic points during the tests.
- * 
+ *
  * @author johnsmart
- * 
  */
 public class ScenarioStepListener extends RunListener {
 
@@ -109,7 +108,7 @@ public class ScenarioStepListener extends RunListener {
         }
         return currentAcceptanceTestRun;
     }
-     
+
     protected AcceptanceTestRun getNewCurrentAcceptanceTestRun() {
         currentAcceptanceTestRun = null;
         return getCurrentAcceptanceTestRun();
@@ -126,6 +125,7 @@ public class ScenarioStepListener extends RunListener {
         getCurrentTestStepFrom(description);
     }
 
+
     @Override
     public void testStarted(final Description description) throws Exception {
         AnnotatedDescription testDescription = new AnnotatedDescription(description);
@@ -141,11 +141,11 @@ public class ScenarioStepListener extends RunListener {
     public void testGroupStarted(final AnnotatedDescription testDescription) {
         getCurrentAcceptanceTestRun().startGroup(testDescription.getGroupName());
     }
-    
+
     private UserStory withUserStoryFrom(final Description description) {
         String name = NameConverter.humanize(description.getTestClass().getSimpleName());
         String code = userStoryCodeFromAnnotationIfPresentIn(description.getTestClass());
-        String source = description.getTestClass().getCanonicalName(); 
+        String source = description.getTestClass().getCanonicalName();
         return new UserStory(name, code, source);
     }
 
@@ -209,10 +209,26 @@ public class ScenarioStepListener extends RunListener {
             markCurrentTestAs(SUCCESS);
             takeScreenshotFor(description);
             recordCurrentTestStep(description);
+            pauseIfRequired();
         }
     }
 
-    
+    private void pauseIfRequired() {
+        int delay = Configuration.getStepDelay();
+        if (delay > 0) {
+            pauseTestRun(delay);
+        }
+    }
+
+    public void pauseTestRun(long delay) {
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            LOGGER.error("Wait interrupted", e);
+        }
+    }
+
+
     private void takeScreenshotFor(final Description description) throws IOException {
         File screenshot = grabScreenshotFileFor(aTestCalled(description));
         currentTestStep.setScreenshot(screenshot);
@@ -232,7 +248,7 @@ public class ScenarioStepListener extends RunListener {
     private void updateTestRunRequirementsBasedOn(final Description description) {
         AnnotatedDescription testDescription = new AnnotatedDescription(description);
         List<String> requirements = testDescription.getAnnotatedRequirements();
-        for(String requirement : requirements) {
+        for (String requirement : requirements) {
             getCurrentAcceptanceTestRun().testsRequirement(requirement);
         }
     }

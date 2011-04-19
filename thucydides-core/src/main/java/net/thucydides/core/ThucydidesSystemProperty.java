@@ -23,8 +23,18 @@ public enum ThucydidesSystemProperty {
      * Indicates a directory from which the resources for the HTML reports should be copied.
      * This directory currently needs to be provided in a JAR file.
      */
-    REPORT_RESOURCE_PATH("thucydides.report.resources");
-    
+    REPORT_RESOURCE_PATH("thucydides.report.resources"),
+
+    /**
+     * Where should reports be generated.
+     */
+    OUTPUT_DIRECTORY("thucydides.outputDirectory"),
+
+    /**
+     * Pause (in ms) between each test step.
+     */
+    STEP_DELAY("thucycides.step.delay");
+
     private String propertyName;
 
     private ThucydidesSystemProperty(final String propertyName) {

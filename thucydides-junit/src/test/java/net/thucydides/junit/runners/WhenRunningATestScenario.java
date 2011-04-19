@@ -3,9 +3,8 @@ package net.thucydides.junit.runners;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.hamcrest.MatcherAssert.*;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.util.List;
@@ -18,6 +17,7 @@ import net.thucydides.core.model.UserStory;
 import net.thucydides.junit.annotations.InvalidManagedPagesFieldException;
 import net.thucydides.junit.annotations.InvalidStepsFieldException;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
+import net.thucydides.junit.steps.ScenarioStepListener;
 import net.thucydides.samples.AnnotatedSingleTestScenario;
 import net.thucydides.samples.SamplePassingScenario;
 import net.thucydides.samples.SampleScenarioWithoutPages;
@@ -27,6 +27,7 @@ import net.thucydides.samples.SuccessfulSingleTestScenario;
 import net.thucydides.samples.TestScenarioWithGroups;
 import net.thucydides.samples.TestScenarioWithParameterizedSteps;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,7 +50,12 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         File temporaryDirectory = tempFolder.newFolder("screenshots");
         webDriverFactory = new TestableWebDriverFactory(temporaryDirectory);
     }
-    
+
+    @After
+    public void resetSystemProperties() {
+        System.setProperty("thucycides.step.delay", "");
+    }
+
     @Test    
     public void the_steps_maintain_a_browser_open_across_the_execution_of_all_the_steps() throws InitializationError  {
        
@@ -372,6 +378,43 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TakesScreenshot driver = (TakesScreenshot) webDriverFactory.getDriver();
         
         verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+
+    @Test
+    public void the_user_can_slow_down_the_execution_of_the_test_steps_using_an_external_parameter() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.initWebdriverManager();
+
+        ScenarioStepListener stepListener = runner.getStepListener();
+        ScenarioStepListener spy = spy(stepListener);
+
+        runner.setStepListener(spy);
+
+        System.setProperty("thucycides.step.delay", "250");
+
+        runner.run(new RunNotifier());
+
+        verify(spy, times(2)).pauseTestRun(250);
+    }
+
+    @Test
+    public void by_default_the_tests_are_not_slowed_down() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.initWebdriverManager();
+
+        ScenarioStepListener stepListener = runner.getStepListener();
+        ScenarioStepListener spy = spy(stepListener);
+
+        runner.setStepListener(spy);
+
+        runner.run(new RunNotifier());
+
+        verify(spy, never()).pauseTestRun(anyInt());
     }
 
     @Test(expected=InvalidStepsFieldException.class)
