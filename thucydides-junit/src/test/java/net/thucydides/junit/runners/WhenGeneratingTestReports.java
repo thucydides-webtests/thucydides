@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.ReportGenerationFailedError;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.samples.AnnotatedSingleTestScenario;
 
@@ -84,7 +85,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
         verify(reporter2).generateReportFor(any(AcceptanceTestRun.class));
     } 
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=ReportGenerationFailedError.class)
     public void the_test_should_fail_with_an_error_if_the_reporter_breaks()
             throws InitializationError, IOException {
 

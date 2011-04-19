@@ -7,12 +7,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class WhenUsingAReportService {
 
@@ -52,6 +53,21 @@ public class WhenUsingAReportService {
 
         ReportService reportService = new ReportService(outputDirectory, new ArrayList<AcceptanceTestReporter>());
 
+        reportService.subscribe(reporter);
+
+        reportService.generateReportsFor(testRunResults);
+
+        verify(reporter).setOutputDirectory(outputDirectory);
+    }
+
+    @Test(expected = ReportGenerationFailedError.class)
+    public void a_report_service_should_raise_an_error_if_report_generation_fails() throws Exception {
+        List<AcceptanceTestRun> testRunResults = new ArrayList<AcceptanceTestRun>();
+        testRunResults.add(acceptanceTestRun);
+
+        ReportService reportService = new ReportService(outputDirectory, new ArrayList<AcceptanceTestReporter>());
+
+        when(reporter.generateReportFor(acceptanceTestRun)).thenThrow(new IOException());
         reportService.subscribe(reporter);
 
         reportService.generateReportsFor(testRunResults);

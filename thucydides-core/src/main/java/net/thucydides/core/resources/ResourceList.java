@@ -58,10 +58,9 @@ public final class ResourceList {
     private static boolean isAJarFile(final File file) {
         if (file.isDirectory()) {
             return false;
-        } else if ((file.getName().endsWith(".jar")) || (file.getName().endsWith(".zip"))) {
-            return true;
+        } else {
+            return (file.getName().endsWith(".jar"));
         }
-        return false;
     }
 
     private static Collection<String> getResourcesFromJarFile(final File file, final Pattern pattern) {
@@ -70,8 +69,6 @@ public final class ResourceList {
             ZipFile zf;
             try {
                 zf = new ZipFile(file);
-            } catch (final ZipException e) {
-                throw new ResourceCopyingError("Could not open the JAR file", e);
             } catch (final IOException e) {
                 throw new ResourceCopyingError("Could not read from the JAR file", e);
             }

@@ -63,7 +63,7 @@ public class ReportService {
             reporter.setOutputDirectory(outputDirectory);
             reporter.generateReportFor(acceptanceTestRun);
         } catch (IOException e) {
-            throw new IllegalArgumentException(
+            throw new ReportGenerationFailedError(
                     "Failed to generate reports using " + reporter, e);
         }
     }
