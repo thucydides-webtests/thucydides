@@ -46,14 +46,25 @@ public class WhenReadingResourcesFromTheClasspath {
     public void should_transform_windows_source_path_into_relative_target_path() {
 
         String sourceResource = "C:\\Projects\\thucydides\\thucydides-report-resources\\target\\classes\\report-resources\\css\\core.css";
-        String resourceDirectory = "report-resources";
 
         String expectedTargetSubDirectory = "css";
         FileResources fileResource = FileResources.from("report-resources");
         String targetSubdirectory = fileResource.findTargetSubdirectoryFrom(sourceResource);
         assertThat(targetSubdirectory, is(expectedTargetSubDirectory));
-
     }
+
+    @Test
+    public void should_handle_a_nested_resource_directory() {
+
+        String sourceResource = "C:\\Projects\\thucydides\\thucydides-report-resources\\target\\classes\\report-resources\\css\\core.css";
+
+        String expectedTargetSubDirectory = "css";
+        FileResources fileResource = FileResources.from("classes\\report-resources");
+        String targetSubdirectory = fileResource.findTargetSubdirectoryFrom(sourceResource);
+        assertThat(targetSubdirectory, is(expectedTargetSubDirectory));
+    }
+
+
     @Test
     public void should_transform_unix_source_path_into_relative_target_path_without_subdirectory() {
 
@@ -64,6 +75,17 @@ public class WhenReadingResourcesFromTheClasspath {
         FileResources fileResource = FileResources.from("report-resources");
         assertThat(fileResource.findTargetSubdirectoryFrom(sourceResource), is(expectedTargetSubDirectory));
     }
+
+    @Test
+     public void should_handle_nested_subdirectories_in_unix() {
+
+         String sourceResource = "/Projects/thucydides/thucydides-report-resources/target/classes/report-resources/css/core.css";
+
+         String expectedTargetSubDirectory = "css";
+
+         FileResources fileResource = FileResources.from("classes/report-resources");
+         assertThat(fileResource.findTargetSubdirectoryFrom(sourceResource), is(expectedTargetSubDirectory));
+     }
 
     @Test
     public void should_transform_unix_source_path_into_relative_target_path() {

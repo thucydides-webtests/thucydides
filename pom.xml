@@ -238,17 +238,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>release</id>
-            <modules>
-                 <module>thucydides-report-resources</module>
-                 <module>thucydides-sample-alternative-resources</module>
-                 <module>thucydides-core</module>
-                 <module>thucydides-junit</module>
-                 <module>thucydides-maven-plugin</module>
-                 <module>thucydides-easyb</module>
-             </modules>
-        </profile>
     </profiles>
     <modules>
         <module>thucydides-report-resources</module>

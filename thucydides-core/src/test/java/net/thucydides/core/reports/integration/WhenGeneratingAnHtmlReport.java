@@ -15,6 +15,7 @@ import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 
+import net.thucydides.core.resources.FileResources;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -92,6 +93,20 @@ public class WhenGeneratingAnHtmlReport {
         assertThat(expectedCssStylesheet.exists(), is(true));
     }
 
+    @Test
+    public void the_resources_can_come_from_the_current_project() throws Exception {
+
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setMethodName("a_simple_test_case");
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        final String alternativeResourceDirectory = "localresourcelist";
+        reporter.setResourceDirectory(alternativeResourceDirectory);
+        reporter.generateReportFor(testRun);
+
+        File expectedCssStylesheet = new File(new File(outputDirectory,"css"), "localsample.css");
+        assertThat(expectedCssStylesheet.exists(), is(true));
+    }
 
     @Rule
     public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
@@ -174,6 +189,5 @@ public class WhenGeneratingAnHtmlReport {
         reporter.setOutputDirectory(new File("target/thucyidides"));
         reporter.generateReportFor(testRun);
     }
-    
 
 }

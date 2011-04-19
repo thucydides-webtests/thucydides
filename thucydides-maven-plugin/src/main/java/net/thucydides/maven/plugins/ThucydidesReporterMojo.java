@@ -32,6 +32,21 @@ public class ThucydidesReporterMojo extends AbstractMojo {
      */
     private File sourceDirectory;
 
+    private HtmlUserStoryTestReporter reporter = new HtmlUserStoryTestReporter();
+
+    protected void setOutputDirectory(final File outputDirectory) {
+        this.outputDirectory = outputDirectory;
+    }
+
+
+    protected void setSourceDirectory(final File sourceDirectory) {
+        this.sourceDirectory = sourceDirectory;
+    }
+
+    protected void setReporter(HtmlUserStoryTestReporter reporter) {
+        this.reporter = reporter;
+    }
+
     public void execute() throws MojoExecutionException {
         if (!outputDirectory.exists()) {
             outputDirectory.mkdirs();
@@ -45,9 +60,8 @@ public class ThucydidesReporterMojo extends AbstractMojo {
     }
 
     private void generateHtmlStoryReports() throws IOException {
-        HtmlUserStoryTestReporter reporter = new HtmlUserStoryTestReporter();
         reporter.setOutputDirectory(outputDirectory);        
         reporter.generateReportsForStoriesFrom(sourceDirectory);
     }
-    
+
 }

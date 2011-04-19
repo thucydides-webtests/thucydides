@@ -43,8 +43,8 @@ public class SaveWebdriverSystemPropertiesRule implements MethodRule {
 
         private void restorePropertyValueFor(final ThucydidesSystemProperty property) {
             String propertyName = property.getPropertyName();
-            String originalValue = ORIGINAL_WEB_DRIVER_PROPERTY_VALUES.get(propertyName);
-            if (originalValue != null) {                        
+            if (ORIGINAL_WEB_DRIVER_PROPERTY_VALUES.containsKey(propertyName)) {
+                String originalValue = ORIGINAL_WEB_DRIVER_PROPERTY_VALUES.get(propertyName);
                 System.setProperty(propertyName, originalValue);
             } else {
                 System.clearProperty(propertyName);
