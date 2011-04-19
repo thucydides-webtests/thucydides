@@ -23,6 +23,7 @@
                     <projectsDirectory>src/it</projectsDirectory>
                     <settingsFile>src/it/settings.xml</settingsFile>
                     <postBuildHookScript>validate.groovy</postBuildHookScript>
+                    <localRepositoryPath>target/repo</localRepositoryPath>
                 </configuration>
                 <executions>
                     <execution>
