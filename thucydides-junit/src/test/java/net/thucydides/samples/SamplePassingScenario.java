@@ -26,6 +26,7 @@ public class SamplePassingScenario {
     @Test
     @TestsRequirement("ABC")
     public void happy_day_scenario() {
+        pages.start();
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
         steps.stepThatIsPending();

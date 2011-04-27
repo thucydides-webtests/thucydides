@@ -56,7 +56,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
 
 
     @Test
-    public void the_runer_should_tell_the_reporter_what_directory_to_use()
+    public void the_runner_should_tell_the_reporter_what_directory_to_use()
             throws InitializationError, IOException {
         
         ThucydidesRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);

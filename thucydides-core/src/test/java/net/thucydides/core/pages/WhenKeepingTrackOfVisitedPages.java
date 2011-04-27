@@ -29,8 +29,9 @@ public class WhenKeepingTrackOfVisitedPages {
     public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
 
     @Before
-    public void initMocks() {
+    public void initMocksAndClearSystemwideDefaultUrl() {
         MockitoAnnotations.initMocks(this);
+        noSystemwideDefaultUrlIsDefined();
     }
     
     @Test
@@ -38,11 +39,16 @@ public class WhenKeepingTrackOfVisitedPages {
 
         final String baseUrl = "http://www.google.com";
         final Pages pages = new Pages(driver);
+
         pages.setDefaultBaseUrl(baseUrl);
 
         pages.start();
         
         verify(driver).get(baseUrl);    
+    }
+
+    private void noSystemwideDefaultUrlIsDefined() {
+        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl(null);
     }
 
 
@@ -129,7 +135,7 @@ public class WhenKeepingTrackOfVisitedPages {
     }
 
     @Test(expected = WrongPageError.class)
-    public void the_pages_object_throws_a_wrong_page_error_when_the_page_object_cant_be_instanciated() {
+    public void the_pages_object_throws_a_wrong_page_error_when_the_page_object_cant_be_instantiated() {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
         final Pages pages = new Pages(driver);

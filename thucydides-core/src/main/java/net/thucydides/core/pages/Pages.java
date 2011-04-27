@@ -108,11 +108,15 @@ public class Pages {
      * The default URL for this set of tests, or the system default URL if undefined.
      */
     public String getDefaultBaseUrl() {
-        if (defaultBaseUrl != null) {
-            return defaultBaseUrl;
-        } else {
-            return pageConfiguration.getBaseUrl();
+
+        String baseUrl = defaultBaseUrl;
+        if (PageConfiguration.getCurrentConfiguration().getBaseUrl() != null) {
+            baseUrl = PageConfiguration.getCurrentConfiguration().getBaseUrl();
         }
+        if (pageConfiguration.getBaseUrl() != null) {
+            baseUrl = pageConfiguration.getBaseUrl();
+        }
+        return baseUrl;
     }
 
     /**

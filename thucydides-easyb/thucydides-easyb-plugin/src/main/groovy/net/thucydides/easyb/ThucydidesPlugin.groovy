@@ -56,8 +56,7 @@ public class ThucydidesPlugin extends BasePlugin {
 
     @Override
     public Object beforeStory(final Binding binding) {
-
-        WebDriver driver = getWebdriverManager().getWebdriver();        
+        WebDriver driver = getWebdriverManager().getWebdriver();
         binding.setVariable("driver", driver);
         binding.setVariable("thucydides", configuration);
 

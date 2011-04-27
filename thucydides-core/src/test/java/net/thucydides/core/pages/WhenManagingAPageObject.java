@@ -10,8 +10,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.thucydides.core.annotations.At;
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.*;
@@ -30,6 +33,9 @@ public class WhenManagingAPageObject {
     @Mock
     WebElement mockButton;
     
+    @Rule
+    public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
@@ -51,7 +57,6 @@ public class WhenManagingAPageObject {
         protected Select findSelectFor(WebElement dropdownList) {
             return mockSelect;
         }
-
     }
 
     @Test
@@ -317,8 +322,9 @@ public class WhenManagingAPageObject {
         System.setProperty("webdriver.base.url","");
     }
 
+
     @Test
-    public void the_start_url_for_a_set_of_pages_can_be_overridden() {
+    public void the_start_url_for_a_page_can_be_overridden_by_the_system_default_url() {
         BasicPageObject page = new BasicPageObject(driver);
         PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://www.google.com");
 
@@ -326,7 +332,7 @@ public class WhenManagingAPageObject {
         pages.setDefaultBaseUrl("http://www.google.co.nz");
         pages.start();
 
-        verify(driver).get("http://www.google.co.nz");
+        verify(driver).get("http://www.google.com");
     }
 
 }

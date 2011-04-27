@@ -14,6 +14,7 @@ import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.samples.SampleFailingScenario;
+import net.thucydides.samples.SamplePassingScenario;
 import net.thucydides.samples.SampleScenarioWithUnannotatedWebDriver;
 
 import org.junit.Rule;
@@ -75,6 +76,19 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
                                              containsString(CHROME.toString())
                                              ));
         }
+    }
+
+    @Test
+    public void a_system_provided_url_should_override_the_default_url() throws InitializationError {
+
+        System.setProperty("webdriver.base.url", "http://www.wikipedia.com");
+        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
+        ThucydidesRunner runner = null;
+        runner = getTestRunnerUsing(SamplePassingScenario.class, mockBrowserFactory);
+        final RunNotifier notifier = new RunNotifier();
+        runner.run(notifier);
+
+        verify(mockBrowserFactory.getDriver()).get("http://www.wikipedia.com");
     }
     
     @Test(expected=InvalidManagedWebDriverFieldException.class)

@@ -8,6 +8,7 @@ using "thucydides"
 thucydides.uses_default_base_url "classpath:demosite/index.html"
 thucydides.uses_steps_from DemoSiteSteps
 
+tags "someTag"
 /**
  * Thucydides can manage pages for us.
  */
