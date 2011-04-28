@@ -48,6 +48,15 @@ public class AcceptanceTestRunConverter implements Converter {
     private static final String SCREENSHOT = "screenshot";
     private static final String DESCRIPTION = "description";
 
+    private String qualifier;
+
+    public AcceptanceTestRunConverter() {}
+
+    public AcceptanceTestRunConverter(String qualifier) {
+        this();
+        this.qualifier = qualifier;
+    }
+
     /**
      * Determines which classes this converter applies to.
      */
@@ -64,8 +73,8 @@ public class AcceptanceTestRunConverter implements Converter {
         AcceptanceTestRun testRun = (AcceptanceTestRun) value;
         Preconditions.checkNotNull(testRun, "The test run was null - WTF?");
 
-        writer.addAttribute(TITLE_FIELD, testRun.getTitle());
-        writer.addAttribute(NAME_FIELD, testRun.getMethodName());
+        writer.addAttribute(TITLE_FIELD, titleFrom(testRun));
+        writer.addAttribute(NAME_FIELD, nameFrom(testRun));
         writer.addAttribute(STEPS_FIELD, Integer.toString(testRun.countTestSteps()));
         writer.addAttribute(SUCCESSFUL_FIELD, Integer.toString(testRun.getSuccessCount()));
         writer.addAttribute(FAILURES_FIELD, Integer.toString(testRun.getFailureCount()));
@@ -80,8 +89,30 @@ public class AcceptanceTestRunConverter implements Converter {
         for (TestStep step : steps) {
             writeStepTo(writer, step);
         }
-
     }
+
+
+    private String titleFrom(AcceptanceTestRun testRun) {
+        if (qualifier == null) {
+            return testRun.getTitle();
+        } else {
+            return testRun.getTitle() + " [" + humanized(qualifier) + "]";
+        }
+    }
+
+    private String humanized(String qualifier) {
+        return qualifier.replaceAll("_","/");
+    }
+
+    private String nameFrom(AcceptanceTestRun testRun) {
+        if (qualifier == null) {
+            return testRun.getMethodName();
+        } else {
+            String qualifier_without_spaces = qualifier.replaceAll(" ","_");
+            return testRun.getMethodName() + "_" + qualifier_without_spaces;
+        }
+    }
+
 
     private void writeStepTo(final HierarchicalStreamWriter writer, final TestStep step) {
         if (step instanceof TestStepGroup) {

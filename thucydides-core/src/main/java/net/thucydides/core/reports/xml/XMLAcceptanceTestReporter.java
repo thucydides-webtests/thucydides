@@ -50,7 +50,7 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
 
         XStream xstream = new XStream();
         xstream.alias("acceptance-test-run", AcceptanceTestRun.class);
-        xstream.registerConverter(new AcceptanceTestRunConverter());
+        xstream.registerConverter(usingXmlConverter());
         String xmlContents = xstream.toXML(testRun);
 
         String reportFilename = reportFor(testRun);
@@ -59,6 +59,14 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
         FileUtils.writeStringToFile(report, xmlContents);
 
         return report;
+    }
+
+    private AcceptanceTestRunConverter usingXmlConverter() {
+        if (qualifier == null) {
+            return new AcceptanceTestRunConverter();
+        } else {
+            return new AcceptanceTestRunConverter(qualifier);
+        }
     }
 
     private String reportFor(AcceptanceTestRun testRun) {
@@ -75,7 +83,7 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
         try {
             XStream xstream = new XStream();
             xstream.alias("acceptance-test-run", AcceptanceTestRun.class);
-            xstream.registerConverter(new AcceptanceTestRunConverter());
+            xstream.registerConverter(usingXmlConverter());
             input = new FileInputStream(reportFile);
             return (AcceptanceTestRun) xstream.fromXML(input);
         } catch (CannotResolveClassException e) {

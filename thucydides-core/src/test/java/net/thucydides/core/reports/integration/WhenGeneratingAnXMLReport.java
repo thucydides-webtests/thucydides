@@ -54,7 +54,44 @@ public class WhenGeneratingAnXMLReport {
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
     }
+
+    @Test
+    public void should_generate_a_qualified_XML_report_for_an_acceptance_test_run_if_the_qualifier_is_specified()
+            throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        String expectedReport = "<acceptance-test-run title='A simple test case [qualifier]' name='a_simple_test_case_qualifier' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS'>\n"
+                + "    <description>step 1</description>\n"
+                + "  </test-step>\n" + "</acceptance-test-run>";
+
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        reporter.setQualifier("qualifier");
+        File xmlReport = reporter.generateReportFor(testRun);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }
     
+    @Test
+    public void should_generate_a_qualified_XML_report_with_formatted_parameters_if_the_qualifier_is_specified()
+            throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        String expectedReport = "<acceptance-test-run title='A simple test case [a/b]' name='a_simple_test_case_a_b' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS'>\n"
+                + "    <description>step 1</description>\n"
+                + "  </test-step>\n" + "</acceptance-test-run>";
+
+        testRun.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        reporter.setQualifier("a_b");
+        File xmlReport = reporter.generateReportFor(testRun);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }
+
+
     @Test
     public void should_include_the_requirements_if_present()
             throws Exception {
@@ -383,6 +420,29 @@ public class WhenGeneratingAnXMLReport {
 
         File xmlReport = reporter.generateReportFor(testRun);
         assertThat(xmlReport.getName(), is("a_user_story_a_simple_test_case_qualifier.xml"));
+
+    }
+
+
+    @Test
+    public void spaces_in_the_qualifer_should_be_converted_to_underscores_in_the_test_run_name()  throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setUserStory(new UserStory("A user story","US1", "UserStory"));
+
+        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        File screenshot = temporaryDirectory.newFile("step_1.png");
+        step1.setScreenshot(screenshot);
+        testRun.recordStep(step1);
+
+        reporter.setQualifier("a b c");
+
+        File xmlReport = reporter.generateReportFor(testRun);
+
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, containsString("name=\"a_simple_test_case_a_b_c\""));
+
+
 
     }
 
