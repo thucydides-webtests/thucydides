@@ -39,6 +39,12 @@ public class ReportService {
         getSubscribedReporters().add(reporter);
     }
 
+    public void useQualifier(final String qualifier) {
+        for (AcceptanceTestReporter reporter : getSubscribedReporters()) {
+            reporter.setQualifier(qualifier);
+        }
+    }
+
     /**
      * A test runner can generate reports via Reporter instances that subscribe
      * to the test runner. The test runner tells the reporter what directory to
@@ -61,7 +67,7 @@ public class ReportService {
                                    final AcceptanceTestReporter reporter) {
         try {
             reporter.setOutputDirectory(outputDirectory);
-            reporter.generateReportFor(acceptanceTestRun);
+            reporter.generateReportFor(acceptanceTestRun);//, withQualifier("-default"));
         } catch (IOException e) {
             throw new ReportGenerationFailedError(
                     "Failed to generate reports using " + reporter, e);

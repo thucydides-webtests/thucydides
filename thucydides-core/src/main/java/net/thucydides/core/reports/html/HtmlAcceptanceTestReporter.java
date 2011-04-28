@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.html;
 
 import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
+import static net.thucydides.core.model.ReportNamer.ReportType.XML;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,13 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
     private static final String DEFAULT_ACCEPTANCE_TEST_REPORT = "velocity/default.vm";
     
+    private String qualifier;
+
+
+    public void setQualifier(String qualifier) {
+        this.qualifier = qualifier;
+    }
+
     public HtmlAcceptanceTestReporter() {
         setTemplatePath(DEFAULT_ACCEPTANCE_TEST_REPORT);
     }
@@ -36,7 +44,15 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         copyResourcesToOutputDirectory();
 
-        String reportFilename = testRun.getReportName(HTML);
+        String reportFilename = reportFor(testRun);
         return writeReportToOutputDirectory(reportFilename, htmlContents);
+    }
+
+    private String reportFor(AcceptanceTestRun testRun) {
+        if (qualifier != null) {
+            return testRun.getReportName(HTML, qualifier);
+        } else {
+            return testRun.getReportName(HTML);
+        }
     }
 }

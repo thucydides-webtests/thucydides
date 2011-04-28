@@ -28,5 +28,10 @@ public interface AcceptanceTestReporter {
      * This can be on the file system or on the classpath
      */
     void setResourceDirectory(final String resourceDirectoryPath);
+
+    /**
+     * Optional. Used to distinguish the report generated from other similar reports.
+     */
+    void setQualifier(final String qualifier);
     
 }

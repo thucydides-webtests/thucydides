@@ -36,8 +36,6 @@ public class WhenGeneratingAnXMLReport {
         reporter = new XMLAcceptanceTestReporter();
         outputDirectory = temporaryDirectory.newFolder("temp");
         reporter.setOutputDirectory(outputDirectory);
-        startsWith("whatever");
-        
     }
 
     @Test
@@ -354,7 +352,40 @@ public class WhenGeneratingAnXMLReport {
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
     }
-    
+
+
+
+    @Test
+    public void should_have_a_meaningful_filename()  throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setUserStory(new UserStory("A user story","US1", "UserStory"));
+
+        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        File screenshot = temporaryDirectory.newFile("step_1.png");
+        step1.setScreenshot(screenshot);
+        testRun.recordStep(step1);
+
+        File xmlReport = reporter.generateReportFor(testRun);
+        assertThat(xmlReport.getName(), is("a_user_story_a_simple_test_case.xml"));
+    }
+
+    @Test
+    public void should_have_a_qualified_filename_if_qualifier_present()  throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setUserStory(new UserStory("A user story","US1", "UserStory"));
+
+        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        File screenshot = temporaryDirectory.newFile("step_1.png");
+        step1.setScreenshot(screenshot);
+        testRun.recordStep(step1);
+
+        reporter.setQualifier("qualifier");
+
+        File xmlReport = reporter.generateReportFor(testRun);
+        assertThat(xmlReport.getName(), is("a_user_story_a_simple_test_case_qualifier.xml"));
+
+    }
+
     @Test
     public void should_include_error_message_for_failing_test()
             throws Exception {

@@ -59,6 +59,29 @@ public class WhenNamingTheReports {
     }
 
     @Test
+    public void a_qualifier_can_be_provided_to_distinguish_html_reports_from_other_similar_reports() {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case: exception case");
+        testRun.setMethodName("a_simple_test_case");
+        testRun.setUserStory(new UserStory("A user story","US1","some.UserStory"));
+
+        String reportName = testRun.getReportName(HTML,"qualifier");
+
+        assertThat(reportName, is("a_user_story_a_simple_test_case_qualifier.html"));
+    }
+
+
+    @Test
+    public void a_qualifier_can_be_provided_to_distinguish_xml_reports_from_other_similar_reports() {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case: exception case");
+        testRun.setMethodName("a_simple_test_case");
+        testRun.setUserStory(new UserStory("A user story","US1","some.UserStory"));
+
+        String reportName = testRun.getReportName(XML,"qualifier");
+
+        assertThat(reportName, is("a_user_story_a_simple_test_case_qualifier.xml"));
+    }
+
+    @Test
     public void a_user_story_can_provide_its_own_html_report_name() {
         UserStory story = new UserStory("A user story", "US1", "UserStory1");
         

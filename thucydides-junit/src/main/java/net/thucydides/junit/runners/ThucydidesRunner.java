@@ -1,9 +1,12 @@
 package net.thucydides.junit.runners;
 
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
+import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
+import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
@@ -22,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -97,7 +101,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
         super(klass);
         reportService = new ReportService(getConfiguration().getOutputDirectory(),
-                                          getConfiguration().getDefaultReporters());
+                                          getDefaultReporters());
         checkRequestedDriverType();
         TestCaseAnnotations.checkThatTestCaseIsCorrectlyAnnotated(klass);
 
@@ -153,7 +157,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     public void subscribeReporter(final AcceptanceTestReporter reporter) {
         reportService.subscribe(reporter);
     }
-    
+
+    public void useQualifier(final String qualifier) {
+        reportService.useQualifier(qualifier);
+    }
     /**
      * Runs the tests in the acceptance test case.
      */
@@ -246,5 +253,13 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     public List<AcceptanceTestRun> getAcceptanceTestRuns() {
         return getStepListener().getTestRunResults();
+    }
+
+    /**
+     * The default reporters applicable for standard test runs.
+     */
+    protected Collection<AcceptanceTestReporter> getDefaultReporters() {
+        return ImmutableList.of(new XMLAcceptanceTestReporter(),
+                new HtmlAcceptanceTestReporter());
     }
 }

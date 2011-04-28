@@ -118,12 +118,4 @@ public class Configuration {
                 + SupportedWebDriver.listOfSupportedDrivers());
     }
 
-    /**
-     * The default reporters applicable for standard test runs.
-     */
-    public Collection<AcceptanceTestReporter> getDefaultReporters() {
-        return ImmutableList.of(new XMLAcceptanceTestReporter(),
-                                new HtmlAcceptanceTestReporter());
-    }
-
 }

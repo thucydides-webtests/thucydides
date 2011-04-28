@@ -2,9 +2,7 @@ package net.thucydides.core.resources;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -17,6 +15,7 @@ import java.util.zip.ZipFile;
  */
 public final class ResourceList {
 
+    private static final List<String> UNREQUIRED_FILES = Arrays.asList("pom.xml");
     /**
      * This is a utility class - don't instanciate.
      */
@@ -52,9 +51,20 @@ public final class ResourceList {
         } else {
             resources.addAll(getResourcesFromDirectory(file, pattern));
         }
-        return resources;
+        return removeUnnecessaryFilesFrom(resources);
     }
-    
+
+    private static Collection<String> removeUnnecessaryFilesFrom(Collection<String> resources) {
+        final Collection<String> cleanedResources = new ArrayList<String>();
+        for (String filepath : resources) {
+            String filename = new File(filepath).getName();
+            if (!UNREQUIRED_FILES.contains(filename)) {
+                cleanedResources.add(filepath);
+            }
+        }
+        return cleanedResources;
+    }
+
     private static boolean isAJarFile(final File file) {
         if (file.isDirectory()) {
             return false;

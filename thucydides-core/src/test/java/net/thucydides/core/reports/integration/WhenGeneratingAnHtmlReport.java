@@ -12,6 +12,8 @@ import java.io.File;
 
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.ConcreteTestStep;
+import net.thucydides.core.model.UserStory;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 
@@ -78,6 +80,37 @@ public class WhenGeneratingAnHtmlReport {
         assertThat(report.exists(), is(true));
     }
     
+    @Test
+    public void should_have_a_meaningful_filename()  throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setUserStory(new UserStory("A user story","US1", "UserStory"));
+
+        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        File screenshot = temporaryDirectory.newFile("step_1.png");
+        step1.setScreenshot(screenshot);
+        testRun.recordStep(step1);
+
+        File xmlReport = reporter.generateReportFor(testRun);
+        assertThat(xmlReport.getName(), is("a_user_story_a_simple_test_case.html"));
+    }
+
+    @Test
+    public void should_have_a_qualified_filename_if_qualifier_present()  throws Exception {
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        testRun.setUserStory(new UserStory("A user story","US1", "UserStory"));
+
+        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        File screenshot = temporaryDirectory.newFile("step_1.png");
+        step1.setScreenshot(screenshot);
+        testRun.recordStep(step1);
+
+        reporter.setQualifier("qualifier");
+
+        File xmlReport = reporter.generateReportFor(testRun);
+        assertThat(xmlReport.getName(), is("a_user_story_a_simple_test_case_qualifier.html"));
+
+    }
+
     @Test
     public void the_resources_can_come_from_a_different_location_in_a_jar_file() throws Exception {
 

@@ -21,6 +21,12 @@ public class WhenReadingResourcesFromTheClasspath {
     }
 
     @Test
+    public void should_exclude_trailing_pom_files() {
+        Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
+        Collection<String> resources = ResourceList.getResources(pattern);
+        assertThat(resources, not(hasItem(endsWith("pom.xml"))));
+    }
+    @Test
     public void should_return_a_list_of_resources_in_a_given_package() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
         Collection<String> resources = ResourceList.getResources(pattern);

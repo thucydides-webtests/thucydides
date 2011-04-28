@@ -28,6 +28,13 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XMLAcceptanceTestReporter.class);
 
+    private String qualifier;
+
+
+    public void setQualifier(String qualifier) {
+        this.qualifier = qualifier;
+    }
+
     /**
      * We don't need any resources for XML reports.
      */
@@ -46,12 +53,20 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
         xstream.registerConverter(new AcceptanceTestRunConverter());
         String xmlContents = xstream.toXML(testRun);
 
-        String reportFilename = testRun.getReportName(XML);
+        String reportFilename = reportFor(testRun);
         File report = new File(getOutputDirectory(), reportFilename);
         LOGGER.debug("Writing XML report to " + report.getAbsolutePath());
         FileUtils.writeStringToFile(report, xmlContents);
 
         return report;
+    }
+
+    private String reportFor(AcceptanceTestRun testRun) {
+        if (qualifier != null) {
+            return testRun.getReportName(XML, qualifier);
+        } else {
+            return testRun.getReportName(XML);
+        }
     }
 
     public AcceptanceTestRun loadReportFrom(final File reportFile) throws NotAThucydidesReportException, IOException {

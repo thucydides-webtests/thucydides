@@ -90,6 +90,15 @@ public class AcceptanceTestRun {
         return reportNamer.getNormalizedTestNameFor(this);
     }
 
+    public String getReportName(ReportNamer.ReportType type, String qualifier) {
+        ReportNamer reportNamer = new ReportNamer(type);
+        if (qualifier == null) {
+            return reportNamer.getNormalizedTestNameFor(this);
+        } else {
+            return reportNamer.getNormalizedTestNameFor(this, qualifier);
+        }
+    }
+
     public String getReportName() {
         return getReportName(ROOT);
     }
@@ -157,6 +166,7 @@ public class AcceptanceTestRun {
         TestStepGroup group = groupStack.peek();
         group.addTestStep(step);
     }
+
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {

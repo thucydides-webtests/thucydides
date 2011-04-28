@@ -1,5 +1,10 @@
 package net.thucydides.junit.runners;
 
+import com.google.common.collect.ImmutableList;
+import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.runners.Suite;
 
 import java.lang.annotation.ElementType;
@@ -8,6 +13,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +25,8 @@ import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
 public class ThucydidesParameterizedRunner extends Suite {
-	/**
+
+    /**
 	 * Annotation for a method which provides parameters to be injected into the
 	 * test class constructor by <code>Parameterized</code>
 	 */
@@ -76,25 +83,72 @@ public class ThucydidesParameterizedRunner extends Suite {
 		protected Statement classBlock(RunNotifier notifier) {
 			return childrenInvoker(notifier);
 		}
+
 	}
 
 	private final ArrayList<Runner> runners= new ArrayList<Runner>();
 
-	/**
+    /**
+     * Only used for testing.
+     */
+    public ThucydidesParameterizedRunner(Class<?> klass, WebDriverFactory webDriverFactory) throws Throwable {
+        super(klass, Collections.<Runner>emptyList());
+        List<Object[]> parametersList = getParametersList(getTestClass());
+        for (int i= 0; i < parametersList.size(); i++) {
+            Class testClass = getTestClass().getJavaClass();
+            ThucydidesRunner runner = new TestClassRunnerForParameters(testClass, parametersList, i);
+            runner.useQualifier(from(parametersList.get(i)));
+            overrideWebdriverFactoryIfProvided(runner, webDriverFactory);
+            runners.add(runner);
+        }
+    }
+
+    /**
+     * If the test class has a static method called
+     * @param testData
+     * @return
+     */
+    private String from(Object[] testData) {
+        StringBuffer testDataQualifier = new StringBuffer();
+        boolean firstEntry = true;
+        for(Object testDataValue : testData) {
+            if (!firstEntry) {
+                testDataQualifier.append("_");
+            }
+            testDataQualifier.append(testDataValue);
+            firstEntry = false;
+        }
+        return testDataQualifier.toString();
+    }
+
+
+
+    /**
 	 * Only called reflectively. Do not use programmatically.
 	 */
 	public ThucydidesParameterizedRunner(Class<?> klass) throws Throwable {
-		super(klass, Collections.<Runner>emptyList());
-		List<Object[]> parametersList = getParametersList(getTestClass());
-		for (int i= 0; i < parametersList.size(); i++)
-			runners.add(new TestClassRunnerForParameters(getTestClass().getJavaClass(),
-					parametersList, i));
+        this(klass, null);
 	}
+
+    private void overrideWebdriverFactoryIfProvided(ThucydidesRunner runner, WebDriverFactory webDriverFactory) {
+        if (webDriverFactory != null) {
+            runner.setWebDriverFactory(webDriverFactory);
+        }
+    }
+
 
 	@Override
 	protected List<Runner> getChildren() {
 		return runners;
 	}
+
+    public List<AcceptanceTestRun> getAcceptanceTestRuns() {
+        List<AcceptanceTestRun> testRuns = new ArrayList<AcceptanceTestRun>();
+        for (Runner runner : runners) {
+            testRuns.addAll(((ThucydidesRunner) runner).getAcceptanceTestRuns());
+        }
+        return testRuns;
+    }
 
 	@SuppressWarnings("unchecked")
 	private List<Object[]> getParametersList(TestClass klass)
