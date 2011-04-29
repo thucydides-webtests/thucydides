@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -94,10 +95,11 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
         runner.run(new RunNotifier());
 
-        File[] reports = outputDirectory.listFiles(new XMLFileFilter());
-        assertThat(reports[0].getName(), is("sample_data_driven_scenario_happy_day_scenario_a_1.xml"));
-        assertThat(reports[1].getName(), is("sample_data_driven_scenario_happy_day_scenario_b_2.xml"));
-        assertThat(reports[2].getName(), is("sample_data_driven_scenario_happy_day_scenario_c_3.xml"));
+        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
+        assertThat(reportFilenames, allOf(hasItem("sample_data_driven_scenario_happy_day_scenario_a_1.xml"),
+                hasItem("sample_data_driven_scenario_happy_day_scenario_b_2.xml"),
+                hasItem("sample_data_driven_scenario_happy_day_scenario_c_3.xml")));
+
     }
 
     @Test
@@ -114,18 +116,29 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
         runner.run(new RunNotifier());
 
-        File[] reports = outputDirectory.listFiles(new XMLFileFilter());
-        String report1Contents = stringContentsOf(reports[0]);
+        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
-        System.out.println(stringContentsOf(reports[0]));
-        assertThat(stringContentsOf(reports[0]), containsString("happy_day_scenario_a_1"));
-        assertThat(stringContentsOf(reports[1]), containsString("happy_day_scenario_b_2"));
-        assertThat(stringContentsOf(reports[2]), containsString("happy_day_scenario_c_3"));
+        assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
+        assertThat(reportContents, hasItem(containsString("Happy day scenario [b/2]")));
+        assertThat(reportContents, hasItem(containsString("Happy day scenario [c/3]")));
 
-        assertThat(stringContentsOf(reports[0]), containsString("Happy day scenario [a/1]"));
-        assertThat(stringContentsOf(reports[1]), containsString("Happy day scenario [b/2]"));
-        assertThat(stringContentsOf(reports[2]), containsString("Happy day scenario [c/3]"));
+    }
 
+    private List<String> filenamesOf(File[] files) {
+        List<String> filenames = new ArrayList<String>();
+        for(File file : files) {
+            filenames.add(file.getName());
+        }
+        return filenames;
+    }
+
+
+    private List<String> contentsOf(File[] files) throws IOException {
+        List<String> contents = new ArrayList<String>();
+        for(File file : files) {
+            contents.add(stringContentsOf(file));
+        }
+        return contents;
     }
 
     private String stringContentsOf(File reportFile) throws IOException {
@@ -147,9 +160,10 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         runner.run(new RunNotifier());
 
         File[] reports = outputDirectory.listFiles(new HTMLFileFilter());
-        assertThat(reports[0].getName(), is("sample_data_driven_scenario_happy_day_scenario_a_1.html"));
-        assertThat(reports[1].getName(), is("sample_data_driven_scenario_happy_day_scenario_b_2.html"));
-        assertThat(reports[2].getName(), is("sample_data_driven_scenario_happy_day_scenario_c_3.html"));
+        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new HTMLFileFilter()));
+        assertThat(reportFilenames, allOf(hasItem("sample_data_driven_scenario_happy_day_scenario_a_1.html"),
+                hasItem("sample_data_driven_scenario_happy_day_scenario_b_2.html"),
+                hasItem("sample_data_driven_scenario_happy_day_scenario_c_3.html")));
     }
 
 

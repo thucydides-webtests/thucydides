@@ -3,6 +3,10 @@ package net.thucydides.core.pages;
 import java.lang.reflect.Constructor;
 
 import net.thucydides.core.annotations.DefaultUrl;
+
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +90,7 @@ public class Pages {
             currentPage = (PageObject) constructor.newInstance(driver);
         } catch (NoSuchMethodException e) {
             LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: "
-                         + pageObjectClass, e);
+                    + pageObjectClass, e);
             thisIsNotThePageYourLookingFor(pageObjectClass);
         } catch (Exception e) {
             LOGGER.info("Failed to instantiate page of type " + pageObjectClass, e);
@@ -110,10 +114,10 @@ public class Pages {
     public String getDefaultBaseUrl() {
 
         String baseUrl = defaultBaseUrl;
-        if (PageConfiguration.getCurrentConfiguration().getBaseUrl() != null) {
+        if (isNotEmpty(PageConfiguration.getCurrentConfiguration().getBaseUrl())) {
             baseUrl = PageConfiguration.getCurrentConfiguration().getBaseUrl();
         }
-        if (pageConfiguration.getBaseUrl() != null) {
+        if (isNotEmpty(pageConfiguration.getBaseUrl())) {
             baseUrl = pageConfiguration.getBaseUrl();
         }
         return baseUrl;
