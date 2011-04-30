@@ -3,6 +3,17 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Thucydides Test Site</title>
+<script type="text/javascript">
+<!--
+    function toggle_visibility(id) {
+       var e = document.getElementById(id);
+       if(e.style.display == 'block')
+          e.style.display = 'none';
+       else
+          e.style.display = 'block';
+    }
+//-->
+</script>
 </head>
 <body>
 <h2>A visible title</h2>
@@ -19,6 +30,12 @@
         <option value="5">Label 5</option>
     </select>
     <input id="checkbox" type="checkbox" value="checkbox_value">
+
 </form>
+
+<div>
+<a href="#" onclick="toggle_visibility('toggledtext');">Click here to toggle visibility</a>
+<div id="toggledtext">Visible Text</div>
+</div>
 </body>
 </html>

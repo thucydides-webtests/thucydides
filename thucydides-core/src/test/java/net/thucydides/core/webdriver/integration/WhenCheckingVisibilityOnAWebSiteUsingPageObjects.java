@@ -64,6 +64,31 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         assertThat(indexPage.isElementVisible(By.xpath("//h2[.='An invisible title']")), is(false));
     }
 
+    @Test(expected = ElementNotDisplayedException.class)
+    public void should_fail_when_waiting_for_an_invisible_object() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.setWaitForTimeout(50);
+
+        indexPage.waitForRenderedElements(By.xpath("//h2[.='An invisible title']"));
+    }
+
+    @Test(expected = ElementNotDisplayedException.class)
+    public void fails_if_waiting_for_text_to_disappear_too_ling() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.setWaitForTimeout(50);
+
+        indexPage.waitForTextToDisappear("A visible title");
+    }
+
+    @Test(expected = ElementNotDisplayedException.class)
+    public void should_fail_when_waiting_for_an_undisplayed_text() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.setWaitForTimeout(50);
+
+        indexPage.waitForTextToAppear("This text never appears");
+    }
+
+
     @Test
     public void should_know_when_an_element_is_not_present_on_the_page() {
         IndexPage indexPage = new IndexPage(driver);
