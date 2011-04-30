@@ -82,9 +82,6 @@ public abstract class PageObject {
         return driver.getTitle();
     }
 
-    public void setDriver(final WebDriver driver) {
-        this.driver = driver;
-    }
 
     /**
      * Does this page object work for this URL? When matching a URL, we check

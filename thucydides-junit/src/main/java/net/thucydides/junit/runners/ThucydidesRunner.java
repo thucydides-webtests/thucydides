@@ -74,8 +74,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private ReportService reportService;
 
     /**
-     * The Field Reporter observes and records what happens during the execution of the test.
-     * Once the test is over, the Field Reporter can provide the acceptance test outcome in the 
+     * The Step Listener observes and records what happens during the execution of the test.
+     * Once the test is over, the Step Listener can provide the acceptance test outcome in the
      * form of an AcceptanceTestRun object.
      */
     public ScenarioStepListener getStepListener() {

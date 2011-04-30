@@ -2,6 +2,7 @@ package net.thucydides.core.webdriver.integration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
 
@@ -30,6 +31,8 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
         public WebElement checkbox;
         
+        public WebElement color;
+
         public IndexPage(WebDriver driver) {
             super(driver);
         }
@@ -92,11 +95,19 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     @Test
     public void should_select_values_in_multiple_select_lists_correctly() {
         IndexPage indexPage = new IndexPage(driver);
+
         indexPage.selectMultipleItemsFromDropdown(indexPage.multiselect,"Label 1", "Label 3");
         
         Set<String> selectedValues = indexPage.getSelectedOptionValuesFrom(indexPage.multiselect);
         assertThat(selectedValues.size(), is(2));
         assertThat(selectedValues, hasItems("1", "3"));
+    }
+
+    @Test
+    public void should_select_values_in_select() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.selectFromDropdown(indexPage.color, "Red");
+        assertThat(indexPage.getSelectedOptionValuesFrom(indexPage.color), hasItem("red"));
     }
     
     @Test
