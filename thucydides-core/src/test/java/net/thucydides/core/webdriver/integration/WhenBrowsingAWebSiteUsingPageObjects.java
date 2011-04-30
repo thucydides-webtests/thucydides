@@ -154,6 +154,21 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         indexPage.waitForTextToAppear("Label 1");
     }
         
+    @Test
+    public void should_know_when_an_element_is_visible() {
+        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(new FirefoxDriver());
+        indexPage.open();
+        assertThat(indexPage.isElementVisible(By.id("visible")), is(true));
+    }
+
+    @Test
+    public void should_know_when_an_element_is_invisible() {
+        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(new FirefoxDriver());
+        indexPage.open();
+        assertThat(indexPage.isElementVisible(By.id("invisible")), is(false));
+    }
+
+
     @Test(expected=ElementNotDisplayedException.class)
     public void should_fail_if_text_does_not_appear_on_a_page() {
         IndexPage indexPage = new IndexPage(driver);
