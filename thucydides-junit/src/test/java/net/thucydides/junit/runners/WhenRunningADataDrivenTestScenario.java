@@ -297,6 +297,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         assertThat(reports.length, is(3));
     }
 
+
     @Test
     public void a_data_driven_test_driver_should_open_one_browser_per_row_of_data() throws Throwable  {
        
@@ -310,7 +311,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
     private class HTMLFileFilter implements FilenameFilter {
         public boolean accept(File directory, String filename) {
-            return filename.endsWith(".html");
+            return filename.endsWith(".html") && !filename.startsWith("screenshot");
         }
     }
 
