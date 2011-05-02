@@ -1,13 +1,15 @@
 package net.thucydides.core.model;
 
 import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.*;
-
+import static org.hamcrest.Matchers.not;
 
 import org.junit.Assert;
 import org.junit.Before;

@@ -19,9 +19,10 @@ import org.junit.runners.model.Statement;
 public class SaveWebdriverSystemPropertiesRule implements MethodRule {
     
     private static final class RestorePropertiesStatement extends Statement {
-        private final Statement statement;
+        private transient final Statement statement;
 
         private RestorePropertiesStatement(final Statement statement) {
+            super();
             this.statement = statement;
         }
 

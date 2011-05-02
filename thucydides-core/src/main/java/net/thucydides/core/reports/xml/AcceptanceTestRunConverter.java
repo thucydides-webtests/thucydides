@@ -48,11 +48,11 @@ public class AcceptanceTestRunConverter implements Converter {
     private static final String SCREENSHOT = "screenshot";
     private static final String DESCRIPTION = "description";
 
-    private String qualifier;
+    private transient String qualifier;
 
     public AcceptanceTestRunConverter() {}
 
-    public AcceptanceTestRunConverter(String qualifier) {
+    public AcceptanceTestRunConverter(final String qualifier) {
         this();
         this.qualifier = qualifier;
     }
@@ -92,7 +92,7 @@ public class AcceptanceTestRunConverter implements Converter {
     }
 
 
-    private String titleFrom(AcceptanceTestRun testRun) {
+    private String titleFrom(final AcceptanceTestRun testRun) {
         if (qualifier == null) {
             return testRun.getTitle();
         } else {
@@ -100,11 +100,11 @@ public class AcceptanceTestRunConverter implements Converter {
         }
     }
 
-    private String humanized(String qualifier) {
+    private String humanized(final String qualifier) {
         return qualifier.replaceAll("_","/");
     }
 
-    private String nameFrom(AcceptanceTestRun testRun) {
+    private String nameFrom(final AcceptanceTestRun testRun) {
         if (qualifier == null) {
             return testRun.getMethodName();
         } else {

@@ -23,7 +23,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     private String qualifier;
 
 
-    public void setQualifier(String qualifier) {
+    public void setQualifier(final String qualifier) {
         this.qualifier = qualifier;
     }
 
@@ -47,7 +47,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         return writeReportToOutputDirectory(reportFilename, htmlContents);
     }
 
-    private String reportFor(AcceptanceTestRun testRun) {
+    private String reportFor(final AcceptanceTestRun testRun) {
         if (qualifier != null) {
             return testRun.getReportName(HTML, qualifier);
         } else {

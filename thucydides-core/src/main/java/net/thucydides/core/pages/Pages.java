@@ -19,13 +19,13 @@ import com.google.common.base.Preconditions;
  */
 public class Pages {
 
-    private final WebDriver driver;
+    private transient final WebDriver driver;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pages.class);
 
     private String defaultBaseUrl;
 
-    private PageConfiguration pageConfiguration;
+    private transient final PageConfiguration pageConfiguration;
 
 
     public Pages(final WebDriver driver) {
@@ -61,7 +61,7 @@ public class Pages {
         try {
             PageObject pageCandidate = getCurrentPageOfType(pageObjectClass);
             String currentUrl = getDriver().getCurrentUrl();
-            return (pageCandidate.compatibleWithUrl(currentUrl));
+            return pageCandidate.compatibleWithUrl(currentUrl);
         } catch (WrongPageError e) {
             return false;
         }

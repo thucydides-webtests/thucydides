@@ -17,12 +17,12 @@ public class WebdriverManager {
      * new web driver instances. It is designed to isolate the test runner from
      * the business of creating and managing WebDriver drivers.
      */
-    private WebDriverFactory webDriverFactory;
+    private final WebDriverFactory webDriverFactory;
 
     /**
      * A WebDriver instance is shared across all the tests executed by the runner in a given test run.
      */
-    private WebDriver webdriver;
+    private final WebDriver webdriver;
     
     public WebdriverManager(final WebDriverFactory webDriverFactory) {
         this.webDriverFactory = webDriverFactory;

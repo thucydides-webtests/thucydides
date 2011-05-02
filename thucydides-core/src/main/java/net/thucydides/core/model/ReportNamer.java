@@ -52,7 +52,7 @@ public class ReportNamer {
         return appendSuffixTo(userStory + testRun.getMethodName());
     }
 
-    public String getNormalizedTestNameFor(AcceptanceTestRun testRun, String qualifier) {
+    public String getNormalizedTestNameFor(final AcceptanceTestRun testRun, final String qualifier) {
         String userStory = "";
         if (testRun.getUserStory() != null) {
             userStory = NameConverter.underscore(testRun.getUserStory().getName()) + "_";

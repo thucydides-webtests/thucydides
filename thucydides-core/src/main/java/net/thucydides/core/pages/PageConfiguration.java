@@ -37,10 +37,10 @@ public class PageConfiguration {
      */
     public String getBaseUrl() {
         String systemDefinedBaseUrl = System.getProperty(BASE_URL.getPropertyName());
-        if (systemDefinedBaseUrl != null) {
-            return systemDefinedBaseUrl;
-        } else {
+        if (systemDefinedBaseUrl == null) {
             return defaultBaseUrl;
+        } else {
+            return systemDefinedBaseUrl;
         }
     }
 }

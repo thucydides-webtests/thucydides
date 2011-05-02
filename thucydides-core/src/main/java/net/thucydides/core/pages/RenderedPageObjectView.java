@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
  */
 class RenderedPageObjectView {
 
-    private final WebDriver driver;
-    private final long waitForTimeout;
+    private transient final WebDriver driver;
+    private transient final long waitForTimeout;
 
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 50;
 
@@ -126,7 +126,8 @@ class RenderedPageObjectView {
 
     public boolean userCanSee(final WebElement field) {
         if (RenderedWebElement.class.isAssignableFrom(field.getClass())) {
-            return ((RenderedWebElement) field).isDisplayed();
+            RenderedWebElement renderedField = (RenderedWebElement) field;
+            return renderedField.isDisplayed();
         } else {
             return false;
         }
@@ -251,7 +252,7 @@ class RenderedPageObjectView {
         }
     }
 
-    public void waitForAnyRenderedElementOf(By[] expectedElements) {
+    public void waitForAnyRenderedElementOf(final By[] expectedElements) {
         long end = System.currentTimeMillis() + waitForTimeout;
         boolean renderedElementFound = false;
         while (System.currentTimeMillis() < end) {
@@ -267,7 +268,7 @@ class RenderedPageObjectView {
         }
     }
 
-    private boolean anyElementRenderedIn(By[] expectedElements) {
+    private boolean anyElementRenderedIn(final By[] expectedElements) {
         boolean elementRendered = false;
         for (By expectedElement : expectedElements) {
             if (elementIsDisplayed(expectedElement)) {

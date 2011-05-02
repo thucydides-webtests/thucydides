@@ -115,10 +115,10 @@ public class UserStoryTestResults {
      * Does this set of test results correspond to a specified user story?
      */
     public boolean containsResultsFor(final UserStory aUserStory) {
-        if (getUserStory() != null) {
-            return getUserStory().equals(aUserStory);
-        } else {
+        if (getUserStory() == null) {
             return false;
+        } else {
+            return getUserStory().equals(aUserStory);
         }
     }
 }

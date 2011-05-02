@@ -28,10 +28,9 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XMLAcceptanceTestReporter.class);
 
-    private String qualifier;
+    private transient String qualifier;
 
-
-    public void setQualifier(String qualifier) {
+    public void setQualifier(final String qualifier) {
         this.qualifier = qualifier;
     }
 
@@ -69,11 +68,11 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
         }
     }
 
-    private String reportFor(AcceptanceTestRun testRun) {
-        if (qualifier != null) {
-            return testRun.getReportName(XML, qualifier);
-        } else {
+    private String reportFor(final AcceptanceTestRun testRun) {
+        if (qualifier == null) {
             return testRun.getReportName(XML);
+        } else {
+            return testRun.getReportName(XML, qualifier);
         }
     }
 

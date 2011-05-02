@@ -1,6 +1,5 @@
 package net.thucydides.junit.runners;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import org.junit.runners.model.RunnerScheduler;
 
@@ -23,7 +22,7 @@ class ParameterizedRunnerScheduler implements RunnerScheduler {
     private CompletionService<Void> completionService;
     private Queue<Future<Void>> tasks;
 
-    public ParameterizedRunnerScheduler(final Class klass, final int threadCount) {
+    public ParameterizedRunnerScheduler(final Class<?> klass, final int threadCount) {
 
 
         executorService = Executors.newFixedThreadPool(threadCount,
@@ -33,7 +32,7 @@ class ParameterizedRunnerScheduler implements RunnerScheduler {
     }
 
     protected Queue<Future<Void>> getTaskQueue() {
-        return new LinkedList(ImmutableList.copyOf(tasks));
+        return new LinkedList<Future<Void>>(ImmutableList.copyOf(tasks));
     }
 
     public void schedule(final Runnable childStatement) {

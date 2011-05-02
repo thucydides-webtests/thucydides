@@ -58,10 +58,10 @@ public class ConcreteTestStep extends TestStep {
     /**
      * Indicate that this step failed with a given error.
      */
-    public void failedWith(final String message, final Throwable e) {
+    public void failedWith(final String message, final Throwable cause) {
         this.result = TestResult.FAILURE;
         this.errorMessage = message;
-        this.cause = e;
+        this.cause = cause;
     }
     
     public String getErrorMessage() {
@@ -76,7 +76,7 @@ public class ConcreteTestStep extends TestStep {
         return htmlSource;
     }
 
-    public void setHtmlSource(File htmlSource) {
+    public void setHtmlSource(final File htmlSource) {
         this.htmlSource = htmlSource;
     }
 
