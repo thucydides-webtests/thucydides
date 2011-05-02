@@ -285,6 +285,7 @@ public class WhenManagingAPageObject {
     }
 
 
+
     @Test
     public void page_will_wait_for_any_of_several_rendered_elements() {
 
@@ -309,6 +310,27 @@ public class WhenManagingAPageObject {
         page.setWaitForTimeout(100);
         page.waitForAnyRenderedElementOf(By.id("element1"), By.id("element2"));
     }
+
+
+    @Test
+    public void page_can_wait_for_an_element_to_disappear() {
+
+        RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        elementDisappearsAfterADelay(renderedElement, By.id("element1"));
+        BasicPageObject page = new BasicPageObject(driver);
+        page.setWaitForTimeout(100);
+        page.waitForRenderedElementsToDisappear(By.id("element1"));
+    }
+
+    @Test
+    public void page_can_wait_for_an_element_to_disappear_if_element_is_not_initially_displayed() {
+
+        noElementIsRendered(By.id("element1"));
+        BasicPageObject page = new BasicPageObject(driver);
+        page.setWaitForTimeout(100);
+        page.waitForRenderedElementsToDisappear(By.id("element1"));
+    }
+
 
     private void noElementIsRendered(By criteria) {
         List<WebElement> emptyList = Arrays.asList();
@@ -340,6 +362,19 @@ public class WhenManagingAPageObject {
         when(driver.findElements(criteria)).thenReturn(emptyList)
                                            .thenReturn(listWithRenderedElement);
     }
+
+
+    private void elementDisappearsAfterADelay(RenderedWebElement renderedElement, By criteria) {
+        List<WebElement> emptyList = Arrays.asList();
+
+        when(renderedElement.isDisplayed()).thenReturn(true).thenReturn(false);
+        List<WebElement> listWithRenderedElement = Arrays.asList((WebElement) renderedElement);
+        when(driver.findElement(criteria)).thenReturn(renderedElement)
+                                           .thenThrow(new NoSuchElementException("No such element"));
+        when(driver.findElements(criteria)).thenReturn(listWithRenderedElement)
+                                           .thenReturn(emptyList);
+    }
+
 
     @Test
     public void page_object_should_know_when_a_field_is_visible() {
