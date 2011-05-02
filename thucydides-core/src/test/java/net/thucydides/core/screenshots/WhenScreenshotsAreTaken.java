@@ -40,7 +40,7 @@ public class WhenScreenshotsAreTaken {
         MockitoAnnotations.initMocks(this);
         photographer = new Photographer(driver, screenshotDirectory);        
     }
-    
+
     @Before
     public void prepareTemporaryFilesAndDirectories() throws IOException {
         screenshotDirectory = temporaryDirectory.newFolder("screenshots");
@@ -67,7 +67,7 @@ public class WhenScreenshotsAreTaken {
         
         assertThat(savedScreenshot.isFile(), is(true));
     }
-    
+
     @Test
     public void the_photographer_should_return_the_stored_screenshot_filename() throws IOException {
 

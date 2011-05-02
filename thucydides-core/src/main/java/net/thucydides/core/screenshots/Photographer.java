@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,11 @@ public class Photographer {
         return "screenshot-" + getMD5DigestFrom(prefix) + nextScreenshotNumber + ".png";
     }
 
+    private String nextScreenshotSourceName(final String prefix) {
+        long nextScreenshotNumber = nextScreenshotNumber() ;
+        return "screenshot-" + getMD5DigestFrom(prefix) + nextScreenshotNumber + ".html";
+    }
+
     private String getMD5DigestFrom(final String value) {
         byte[] messageDigest = digest.digest(value.getBytes());
         StringBuffer hexString = new StringBuffer();
@@ -74,8 +80,25 @@ public class Photographer {
         File screenshot = driver.getScreenshotAs(OutputType.FILE);
         File savedScreenshot = new File(targetDirectory, nextScreenshotName(prefix));
         FileUtils.copyFile(screenshot, savedScreenshot);
+
+        savePageSourceFor(savedScreenshot.getAbsolutePath());
         
         return savedScreenshot;
     }
 
+    private void savePageSourceFor(String screenshotFile) throws IOException {
+        if (driver instanceof WebDriver) {
+            WebDriver webdriver = (WebDriver) driver;
+            String pageSource = webdriver.getPageSource();
+
+            File savedSource = new File(sourceCodeFileFor(screenshotFile));
+            FileUtils.writeStringToFile(savedSource, pageSource);
+        }
+    }
+
+
+    private String sourceCodeFileFor(String screenshotFile) {
+        String rootFilename = screenshotFile.substring(0, screenshotFile.length() - 4);
+        return rootFilename + ".html";
+    }
 }
