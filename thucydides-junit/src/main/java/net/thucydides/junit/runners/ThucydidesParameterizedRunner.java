@@ -136,7 +136,7 @@ public class ThucydidesParameterizedRunner extends Suite {
     private void buildTestRunnersForEachDataSetUsing(final WebDriverFactory webDriverFactory) throws Throwable {
         List<Object[]> parametersList = getParametersList(getTestClass());
         for (int i= 0; i < parametersList.size(); i++) {
-            Class testClass = getTestClass().getJavaClass();
+            Class<?> testClass = getTestClass().getJavaClass();
             ThucydidesRunner runner = new TestClassRunnerForParameters(testClass, parametersList, i);
             runner.useQualifier(from(parametersList.get(i)));
             overrideWebdriverFactoryIfProvided(runner, webDriverFactory);
@@ -201,8 +201,9 @@ public class ThucydidesParameterizedRunner extends Suite {
 				.getAnnotatedMethods(TestData.class);
 		for (FrameworkMethod each : methods) {
 			int modifiers= each.getMethod().getModifiers();
-			if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers))
+			if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
 				return each;
+			}
 		}
 
 		throw new Exception("No public static parameters method on class "

@@ -1,15 +1,9 @@
 package net.thucydides.core.webdriver;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.Locale;
 
-import com.google.common.collect.ImmutableList;
-
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
-import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
 
 /**
  * Centralized configuration of the test runner. You can configure the output
@@ -41,7 +35,6 @@ public class Configuration {
      */
     private static final String DEFAULT_OUTPUT_DIRECTORY = "target/thucydides";
 
-    private static final String STEP_DELAY = ThucydidesSystemProperty.STEP_DELAY.getPropertyName();
     /**
      * HTML and XML reports will be generated in this directory.
      */

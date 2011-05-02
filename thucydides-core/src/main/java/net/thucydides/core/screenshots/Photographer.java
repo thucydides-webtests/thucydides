@@ -59,11 +59,6 @@ public class Photographer {
         return "screenshot-" + getMD5DigestFrom(prefix) + nextScreenshotNumber + ".png";
     }
 
-    private String nextScreenshotSourceName(final String prefix) {
-        long nextScreenshotNumber = nextScreenshotNumber() ;
-        return "screenshot-" + getMD5DigestFrom(prefix) + nextScreenshotNumber + ".html";
-    }
-
     private String getMD5DigestFrom(final String value) {
         byte[] messageDigest = digest.digest(value.getBytes());
         StringBuffer hexString = new StringBuffer();

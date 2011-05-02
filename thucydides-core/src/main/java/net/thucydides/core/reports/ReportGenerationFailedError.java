@@ -5,6 +5,8 @@ package net.thucydides.core.reports;
  */
 public class ReportGenerationFailedError extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     public ReportGenerationFailedError(final String message, final Throwable e) {
         super(message, e);
     }

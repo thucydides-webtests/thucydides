@@ -1,11 +1,8 @@
 package net.thucydides.core.pages;
 
-import java.lang.reflect.Constructor;
-
-import net.thucydides.core.annotations.DefaultUrl;
-
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static org.apache.commons.lang.StringUtils.isEmpty;
+
+import java.lang.reflect.Constructor;
 
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;

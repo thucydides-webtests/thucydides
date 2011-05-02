@@ -1,7 +1,6 @@
 package net.thucydides.core.reports.html;
 
 import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
-import static net.thucydides.core.model.ReportNamer.ReportType.XML;
 
 import java.io.File;
 import java.io.IOException;
