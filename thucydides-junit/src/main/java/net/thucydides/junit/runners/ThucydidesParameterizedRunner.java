@@ -50,13 +50,15 @@ public class ThucydidesParameterizedRunner extends Suite {
 			return getTestClass().getOnlyConstructor().newInstance(computeParams());
 		}
 
-		private Object[] computeParams() throws Exception {
+		private Object[] computeParams() throws Throwable {
 			try {
 				return fParameterList.get(fParameterSetNumber);
-			} catch (ClassCastException e) {
+			} catch (ClassCastException cause) {
 				throw new Exception(String.format(
 						"%s.%s() must return a Collection of arrays.",
-						getTestClass().getName(), getParametersMethod(getTestClass()).getName()));
+						getTestClass().getName(),
+                        getParametersMethod(getTestClass()).getName()),
+                        cause);
 			}
 		}
 
@@ -72,23 +74,24 @@ public class ThucydidesParameterizedRunner extends Suite {
 		}
 
 		@Override
-		protected void validateConstructor(List<Throwable> errors) {
+		protected void validateConstructor(final List<Throwable> errors) {
 			validateOnlyOneConstructor(errors);
 		}
 
 		@Override
-		protected Statement classBlock(RunNotifier notifier) {
+		protected Statement classBlock(final RunNotifier notifier) {
 			return childrenInvoker(notifier);
 		}
 
 	}
 
-	private final ArrayList<Runner> runners= new ArrayList<Runner>();
+	private final List<Runner> runners= new ArrayList<Runner>();
 
     /**
      * Only used for testing.
      */
-    public ThucydidesParameterizedRunner(Class<?> klass, WebDriverFactory webDriverFactory) throws Throwable {
+    public ThucydidesParameterizedRunner(final Class<?> klass,
+                                         final WebDriverFactory webDriverFactory) throws Throwable {
         super(klass, Collections.<Runner>emptyList());
         
         if (runTestsInParallelFor(klass)) {
@@ -102,11 +105,11 @@ public class ThucydidesParameterizedRunner extends Suite {
         setScheduler(new ParameterizedRunnerScheduler(klass, getThreadCountFor(klass)));
     }
 
-    protected boolean runTestsInParallelFor(Class<?> klass) {
+    protected boolean runTestsInParallelFor(final Class<?> klass) {
         return (klass.getAnnotation(Concurrent.class) != null);
     }
 
-    protected int getThreadCountFor(Class<?> klass) {
+    protected int getThreadCountFor(final Class<?> klass) {
         Concurrent concurrent = klass.getAnnotation(Concurrent.class);
         String threadValue = concurrent.threads();
         int threads =  (AVAILABLE_PROCESSORS * 2);
@@ -121,7 +124,7 @@ public class ThucydidesParameterizedRunner extends Suite {
         return threads;
     }
 
-    private int getRelativeThreadCount(String threadValue) {
+    private int getRelativeThreadCount(final String threadValue) {
         try {
             String threadCount = threadValue.substring(0,threadValue.length() - 1);
             return Integer.valueOf(threadCount) * AVAILABLE_PROCESSORS;
@@ -130,7 +133,7 @@ public class ThucydidesParameterizedRunner extends Suite {
         }
     }
 
-    private void buildTestRunnersForEachDataSetUsing(WebDriverFactory webDriverFactory) throws Throwable {
+    private void buildTestRunnersForEachDataSetUsing(final WebDriverFactory webDriverFactory) throws Throwable {
         List<Object[]> parametersList = getParametersList(getTestClass());
         for (int i= 0; i < parametersList.size(); i++) {
             Class testClass = getTestClass().getJavaClass();
@@ -146,7 +149,7 @@ public class ThucydidesParameterizedRunner extends Suite {
      * @param testData
      * @return
      */
-    private String from(Object[] testData) {
+    private String from(final Object[] testData) {
         StringBuffer testDataQualifier = new StringBuffer();
         boolean firstEntry = true;
         for(Object testDataValue : testData) {
@@ -164,11 +167,11 @@ public class ThucydidesParameterizedRunner extends Suite {
     /**
 	 * Only called reflectively. Do not use programmatically.
 	 */
-	public ThucydidesParameterizedRunner(Class<?> klass) throws Throwable {
+	public ThucydidesParameterizedRunner(final Class<?> klass) throws Throwable {
         this(klass, null);
 	}
 
-    private void overrideWebdriverFactoryIfProvided(ThucydidesRunner runner, WebDriverFactory webDriverFactory) {
+    private void overrideWebdriverFactoryIfProvided(final ThucydidesRunner runner,final  WebDriverFactory webDriverFactory) {
         if (webDriverFactory != null) {
             runner.setWebDriverFactory(webDriverFactory);
         }
@@ -189,14 +192,11 @@ public class ThucydidesParameterizedRunner extends Suite {
     }
 
 	@SuppressWarnings("unchecked")
-	private List<Object[]> getParametersList(TestClass klass)
-			throws Throwable {
-		return (List<Object[]>) getParametersMethod(klass).invokeExplosively(
-				null);
+	private List<Object[]> getParametersList(final TestClass klass) throws Throwable {
+		return (List<Object[]>) getParametersMethod(klass).invokeExplosively(null);
 	}
 
-	private FrameworkMethod getParametersMethod(TestClass testClass)
-			throws Exception {
+	private FrameworkMethod getParametersMethod(final TestClass testClass) throws Throwable {
 		List<FrameworkMethod> methods= testClass
 				.getAnnotatedMethods(TestData.class);
 		for (FrameworkMethod each : methods) {
