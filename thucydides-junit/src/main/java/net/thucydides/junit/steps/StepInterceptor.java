@@ -14,6 +14,8 @@ import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,6 +133,11 @@ public class StepInterceptor implements MethodInterceptor {
             error = e;
             stepExceptions.add(e);
             notifyFailureOf(method, args, e);
+            failureHasOccured = true;
+        } catch (WebDriverException exception) {
+            error = exception;
+            stepExceptions.add(exception);
+            notifyFailureOf(method, args, exception);
             failureHasOccured = true;
         }
         resultTally.logExecutedTest();

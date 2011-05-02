@@ -1,11 +1,12 @@
 package net.thucydides.junit.runners;
 
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.*;
+import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.junit.annotations.InvalidManagedPagesFieldException;
-import net.thucydides.junit.annotations.InvalidStepsFieldException;
+import net.thucydides.junit.annotations.*;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.junit.steps.ScenarioStepListener;
 import net.thucydides.samples.*;
@@ -15,16 +16,20 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -124,6 +129,113 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
     }
 
+    @Test
+    public void when_the_Concurrent_annotation_is_used_tests_should_be_run_in_parallel() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                            outputDirectory.getAbsolutePath());
+
+        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleParallelDataDrivenScenario.class,
+                                                                                 webDriverFactory);
+
+        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
+
+        runner.run(new RunNotifier());
+
+        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+
+        assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
+        assertThat(reportContents, hasItem(containsString("Happy day scenario [b/2]")));
+        assertThat(reportContents, hasItem(containsString("Happy day scenario [c/3]")));
+
+    }
+
+    @Test
+    public void the_Concurrent_annotation_indicates_that_tests_should_be_run_in_parallel() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleParallelDataDrivenScenario.class,
+                                                                                 webDriverFactory);
+
+        assertThat(runner.runTestsInParallelFor(SampleParallelDataDrivenScenario.class), is(true));
+        assertThat(runner.runTestsInParallelFor(SampleDataDrivenScenario.class), is(false));
+    }
+
+    @Test
+    public void by_default_the_number_of_threads_is_2_times_the_number_of_CPU_cores() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleParallelDataDrivenScenario.class,
+                                                                                 webDriverFactory);
+        int threadCount = runner.getThreadCountFor(SampleParallelDataDrivenScenario.class);
+
+        int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
+
+        assertThat(threadCount, is(AVAILABLE_PROCESSORS * 2));
+
+    }
+
+    @RunWith(ThucydidesParameterizedRunner.class)
+    @Concurrent(threads = "7")
+    public static final class ParallelDataDrivenScenarioWithSpecifiedThreadCountSample {
+        @ThucydidesParameterizedRunner.TestData
+        public static Collection testData() {
+                return Arrays.asList(new Object[][]{ });
+            }
+    }
+
+    @Test
+    public void the_number_of_threads_can_be_overridden_in_the_concurrent_annotation() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner
+                   = new ThucydidesParameterizedRunner(ParallelDataDrivenScenarioWithSpecifiedThreadCountSample.class,
+                                                       webDriverFactory);
+        int threadCount = runner.getThreadCountFor(ParallelDataDrivenScenarioWithSpecifiedThreadCountSample.class);
+
+        assertThat(threadCount, is(7));
+
+    }
+
+    @RunWith(ThucydidesParameterizedRunner.class)
+    @Concurrent(threads = "7x")
+    public static final class ParallelDataDrivenScenarioWithRelativeThreadCountSample {
+        @ThucydidesParameterizedRunner.TestData
+        public static Collection testData() {
+                return Arrays.asList(new Object[][]{ });
+            }
+    }
+
+    @Test
+    public void the_number_of_threads_can_be_overridden_in_the_concurrent_annotation_using_a_relative_value() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner
+                   = new ThucydidesParameterizedRunner(ParallelDataDrivenScenarioWithRelativeThreadCountSample.class,
+                                                       webDriverFactory);
+        int threadCount = runner.getThreadCountFor(ParallelDataDrivenScenarioWithRelativeThreadCountSample.class);
+
+        int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
+
+        assertThat(threadCount, is(7 * AVAILABLE_PROCESSORS));
+
+    }
+
+    @RunWith(ThucydidesParameterizedRunner.class)
+    @Concurrent(threads = "xxx")
+    public static final class ParallelDataDrivenScenarioWithInvalidThreadCountSample {
+        @ThucydidesParameterizedRunner.TestData
+        public static Collection testData() {
+                return Arrays.asList(new Object[][]{ });
+            }
+    }
+    @Test(expected = IllegalArgumentException.class)
+    public void if_the_thread_count_is_invalid_an_exception_should_be_thrown() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner
+                   = new ThucydidesParameterizedRunner(ParallelDataDrivenScenarioWithInvalidThreadCountSample.class,
+                                                       webDriverFactory);
+        int threadCount = runner.getThreadCountFor(ParallelDataDrivenScenarioWithInvalidThreadCountSample.class);
+
+    }
+
     private List<String> filenamesOf(File[] files) {
         List<String> filenames = new ArrayList<String>();
         for(File file : files) {
@@ -207,4 +319,5 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
             return filename.endsWith(".xml");
         }
     }
+
 }

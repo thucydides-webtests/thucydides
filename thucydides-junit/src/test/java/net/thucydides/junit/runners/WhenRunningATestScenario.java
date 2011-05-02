@@ -18,14 +18,7 @@ import net.thucydides.junit.annotations.InvalidManagedPagesFieldException;
 import net.thucydides.junit.annotations.InvalidStepsFieldException;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.junit.steps.ScenarioStepListener;
-import net.thucydides.samples.AnnotatedSingleTestScenario;
-import net.thucydides.samples.SamplePassingScenario;
-import net.thucydides.samples.SampleScenarioWithoutPages;
-import net.thucydides.samples.SampleScenarioWithoutSteps;
-import net.thucydides.samples.SingleTestScenario;
-import net.thucydides.samples.SuccessfulSingleTestScenario;
-import net.thucydides.samples.TestScenarioWithGroups;
-import net.thucydides.samples.TestScenarioWithParameterizedSteps;
+import net.thucydides.samples.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,6 +27,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
@@ -131,10 +125,28 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         assertThat(failingStep.getException(), is(AssertionError.class));
     }
 
+    @Test
+    public void when_a_test_throws_a_webdriver_exception_it_is_recorded_in_the_test_step() throws Exception  {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenarioWithWebdriverException.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runExpectingFailure(runner);
+
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+
+        List<TestStep> steps = testRun.getTestSteps();
+        ConcreteTestStep failingStep = (ConcreteTestStep) steps.get(4);
+        assertThat(failingStep.getException(), is(NoSuchElementException.class));
+    }
+
     private void runExpectingFailure(ThucydidesRunner runner) {
         boolean assertThrown = false;
         try {
             runner.run(new RunNotifier());
+        } catch(RuntimeException e) {
+           assertThrown = true;
         } catch(AssertionError e) {
            assertThrown = true;
         }

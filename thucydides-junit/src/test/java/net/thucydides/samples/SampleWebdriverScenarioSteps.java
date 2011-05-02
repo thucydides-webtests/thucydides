@@ -1,22 +1,22 @@
 package net.thucydides.samples;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.annotations.TestsRequirements;
-
 import org.junit.Ignore;
 import org.openqa.selenium.NoSuchElementException;
 
-public class SampleScenarioSteps extends ScenarioSteps {
-    
-    public SampleScenarioSteps(Pages pages) {
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+public class SampleWebdriverScenarioSteps extends ScenarioSteps {
+
+    public SampleWebdriverScenarioSteps(Pages pages) {
         super(pages);
     }
 
@@ -104,5 +104,10 @@ public class SampleScenarioSteps extends ScenarioSteps {
         String nullString = null;
         int thisShouldFail = nullString.length();
         
+    }
+
+    @Step
+    public void stepThatFailsWithWebdriverException() {
+        throw new NoSuchElementException("No such element");
     }
 }

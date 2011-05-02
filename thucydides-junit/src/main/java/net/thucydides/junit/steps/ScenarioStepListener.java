@@ -8,7 +8,6 @@ import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.util.NameConverter.underscore;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +48,7 @@ public class ScenarioStepListener extends RunListener {
 
     public ScenarioStepListener(final TakesScreenshot driver, final Configuration configuration) {
         acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
-
-        TakesScreenshot screenshotCapableDriver = (TakesScreenshot) driver;
-        photographer = new Photographer(screenshotCapableDriver, configuration.getOutputDirectory());
+        photographer = new Photographer(driver, configuration.getOutputDirectory());
 
     }
 
@@ -59,26 +56,31 @@ public class ScenarioStepListener extends RunListener {
         return acceptanceTestRuns;
     }
 
-    private void getCurrentTestStepFrom(final Description description) {
+    private void recordCurrentTestStep(final Description description) {
+        startNewTestStep();
+        addAnyTestedRequirementsIn(description);
+
+        String testName = AnnotatedDescription.from(description).getName();
+        currentTestStep.setDescription(testName);
+        currentTestStep.recordDuration();
+
+        getCurrentAcceptanceTestRun().recordStep(currentTestStep);
+        getCurrentAcceptanceTestRun().recordDuration();
+        finishTestStep();
+    }
+
+    private void startNewTestStep() {
         if (currentTestStep == null) {
             currentTestStep = new ConcreteTestStep();
         }
     }
 
-    private void recordCurrentTestStep(final Description description) {
-        getCurrentTestStepFrom(description);
-        addAnyTestedRequirementsIn(description);
-        AnnotatedDescription testDescription = new AnnotatedDescription(description);
-        String testName = testDescription.getName();
-        currentTestStep.setDescription(testName);
-        currentTestStep.recordDuration();
-        getCurrentAcceptanceTestRun().recordStep(currentTestStep);
-        getCurrentAcceptanceTestRun().recordDuration();
+    private void finishTestStep() {
         currentTestStep = null;
     }
 
     private void addAnyTestedRequirementsIn(final Description description) {
-        AnnotatedDescription testDescription = new AnnotatedDescription(description);
+        AnnotatedDescription testDescription = AnnotatedDescription.from(description);
         List<String> requirements = testDescription.getAnnotatedRequirements();
         if (!requirements.isEmpty()) {
             for (String requirement : requirements) {
@@ -109,32 +111,32 @@ public class ScenarioStepListener extends RunListener {
         return currentAcceptanceTestRun;
     }
 
-    protected AcceptanceTestRun getNewCurrentAcceptanceTestRun() {
+    protected void startNewCurrentAcceptanceTestRun() {
         currentAcceptanceTestRun = null;
-        return getCurrentAcceptanceTestRun();
+        getCurrentAcceptanceTestRun();
     }
 
     @Override
     public void testRunStarted(final Description description) throws Exception {
-        getNewCurrentAcceptanceTestRun();
+        startNewCurrentAcceptanceTestRun();
         getCurrentAcceptanceTestRun().setMethodName(description.getMethodName());
         getCurrentAcceptanceTestRun().setUserStory(withUserStoryFrom(description));
         acceptanceTestRuns.add(getCurrentAcceptanceTestRun());
         updateTestRunTitleBasedOn(description);
         updateTestRunRequirementsBasedOn(description);
-        getCurrentTestStepFrom(description);
+        startNewTestStep();
     }
 
 
     @Override
     public void testStarted(final Description description) throws Exception {
-        AnnotatedDescription testDescription = new AnnotatedDescription(description);
+        AnnotatedDescription testDescription = AnnotatedDescription.from(description);
 
         if (testDescription.isAGroup()) {
             testGroupStarted(testDescription);
         } else {
             super.testStarted(description);
-            getCurrentTestStepFrom(description);
+            startNewTestStep();
         }
     }
 
@@ -161,10 +163,10 @@ public class ScenarioStepListener extends RunListener {
     @Override
     public void testIgnored(final Description description) throws Exception {
 
-        getCurrentTestStepFrom(description);
+        startNewTestStep();
         markCurrentTestAs(IGNORED);
 
-        AnnotatedDescription testDescription = new AnnotatedDescription(description);
+        AnnotatedDescription testDescription = AnnotatedDescription.from(description);
         Method testMethod = testDescription.getTestMethod();
         if (TestStatus.of(testMethod).isPending()) {
             markCurrentTestAs(PENDING);
@@ -184,7 +186,7 @@ public class ScenarioStepListener extends RunListener {
     @Override
     public void testFailure(final Failure failure) throws Exception {
 
-        getCurrentTestStepFrom(failure.getDescription());
+        startNewTestStep();
         markCurrentTestAs(FAILURE);
         recordFailureDetailsInFailingTestStep(failure);
         takeScreenshotFor(failure.getDescription());
@@ -193,19 +195,19 @@ public class ScenarioStepListener extends RunListener {
 
     private void recordFailureDetailsInFailingTestStep(final Failure failure) {
         if (!currentTestStep.isAGroup()) {
-            ((ConcreteTestStep) currentTestStep).failedWith(failure.getMessage(), failure.getException());
+            currentTestStep.failedWith(failure.getMessage(), failure.getException());
         }
     }
 
     @Override
     public void testFinished(final Description description) throws Exception {
 
-        AnnotatedDescription testDescription = new AnnotatedDescription(description);
+        AnnotatedDescription testDescription = AnnotatedDescription.from(description);
 
         if (testDescription.isAGroup()) {
             getCurrentAcceptanceTestRun().endGroup();
         } else {
-            getCurrentTestStepFrom(description);
+            startNewTestStep();
             markCurrentTestAs(SUCCESS);
             takeScreenshotFor(description);
             recordCurrentTestStep(description);
@@ -229,7 +231,7 @@ public class ScenarioStepListener extends RunListener {
     }
 
 
-    private void takeScreenshotFor(final Description description) throws IOException {
+    private void takeScreenshotFor(final Description description) {
         File screenshot = grabScreenshotFileFor(aTestCalled(description));
         currentTestStep.setScreenshot(screenshot);
     }
@@ -240,13 +242,13 @@ public class ScenarioStepListener extends RunListener {
 
     private void updateTestRunTitleBasedOn(final Description description) {
         if (getCurrentAcceptanceTestRun().getTitle() == null) {
-            AnnotatedDescription testDescription = new AnnotatedDescription(description);
+            AnnotatedDescription testDescription = AnnotatedDescription.from(description);
             getCurrentAcceptanceTestRun().setTitle(testDescription.getTitle());
         }
     }
 
     private void updateTestRunRequirementsBasedOn(final Description description) {
-        AnnotatedDescription testDescription = new AnnotatedDescription(description);
+        AnnotatedDescription testDescription = AnnotatedDescription.from(description);
         List<String> requirements = testDescription.getAnnotatedRequirements();
         for (String requirement : requirements) {
             getCurrentAcceptanceTestRun().testsRequirement(requirement);

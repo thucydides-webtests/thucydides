@@ -1,10 +1,9 @@
 package net.thucydides.junit.runners;
 
-import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.junit.annotations.Concurrent;
+import org.apache.commons.lang.StringUtils;
 import org.junit.runners.Suite;
 
 import java.lang.annotation.ElementType;
@@ -12,19 +11,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestClass;
+import org.junit.runners.model.*;
 
 public class ThucydidesParameterizedRunner extends Suite {
+
+    private static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
 
     /**
 	 * Annotation for a method which provides parameters to be injected into the
@@ -93,6 +90,47 @@ public class ThucydidesParameterizedRunner extends Suite {
      */
     public ThucydidesParameterizedRunner(Class<?> klass, WebDriverFactory webDriverFactory) throws Throwable {
         super(klass, Collections.<Runner>emptyList());
+        
+        if (runTestsInParallelFor(klass)) {
+            scheduleParallelTestRunsFor(klass);
+        }
+
+        buildTestRunnersForEachDataSetUsing(webDriverFactory);
+    }
+
+    private void scheduleParallelTestRunsFor(final Class<?> klass) {
+        setScheduler(new ParameterizedRunnerScheduler(klass, getThreadCountFor(klass)));
+    }
+
+    protected boolean runTestsInParallelFor(Class<?> klass) {
+        return (klass.getAnnotation(Concurrent.class) != null);
+    }
+
+    protected int getThreadCountFor(Class<?> klass) {
+        Concurrent concurrent = klass.getAnnotation(Concurrent.class);
+        String threadValue = concurrent.threads();
+        int threads =  (AVAILABLE_PROCESSORS * 2);
+        if (StringUtils.isNotEmpty(threadValue)) {
+            if (StringUtils.isNumeric(threadValue)) {
+                threads = Integer.valueOf(threadValue);
+            } else if (threadValue.endsWith("x")) {
+                threads = getRelativeThreadCount(threadValue);
+            }
+
+        }
+        return threads;
+    }
+
+    private int getRelativeThreadCount(String threadValue) {
+        try {
+            String threadCount = threadValue.substring(0,threadValue.length() - 1);
+            return Integer.valueOf(threadCount) * AVAILABLE_PROCESSORS;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Illegal thread value: " + threadValue);
+        }
+    }
+
+    private void buildTestRunnersForEachDataSetUsing(WebDriverFactory webDriverFactory) throws Throwable {
         List<Object[]> parametersList = getParametersList(getTestClass());
         for (int i= 0; i < parametersList.size(); i++) {
             Class testClass = getTestClass().getJavaClass();

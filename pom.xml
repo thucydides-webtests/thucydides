@@ -77,6 +77,7 @@
                         <exclude>**/Abstract*.java</exclude>
                         <exclude>**/samples/*.java</exclude>
                         <exclude>**/Sample*.java</exclude>
+                        <exclude>**/*Sample.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

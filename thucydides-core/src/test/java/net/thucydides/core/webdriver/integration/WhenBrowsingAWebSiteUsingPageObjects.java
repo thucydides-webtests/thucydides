@@ -13,6 +13,7 @@ import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
 
 import net.thucydides.core.pages.Pages;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -51,11 +52,22 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     }
 
     WebDriver driver;
-    
+
+    IndexPage indexPage;
+
     @Before
-    public void open_local_static_site() {
+    public void openLocalStaticSite() {
         driver = new HtmlUnitDriver();
         openStaticTestSite(driver);
+        indexPage = new IndexPage(driver);
+        indexPage.setWaitForTimeout(100);
+    }
+
+    @After
+    public void closeDriver() {
+        if (driver != null) {
+            driver.close();
+        }
     }
 
     private void openStaticTestSite(WebDriver driver) {
@@ -66,25 +78,21 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     @Test
     public void should_find_page_title() {
-        IndexPage indexPage = new IndexPage(driver);
         assertThat(indexPage.getTitle(), is("Thucydides Test Site"));
     } 
 
     @Test
     public void should_find_text_contained_in_page() {
-        IndexPage indexPage = new IndexPage(driver);
         indexPage.shouldContainText("Some test pages");
     }
 
     @Test(expected=NoSuchElementException.class)
     public void should_not_find_text_not_contained_in_page() {
-        IndexPage indexPage = new IndexPage(driver);
         indexPage.shouldContainText("This text is not in the pages");
     }
     
     @Test
     public void should_select_in_multiple_select_lists_correctly() {
-        IndexPage indexPage = new IndexPage(driver);
         indexPage.selectMultipleItemsFromDropdown(indexPage.multiselect,"Label 1", "Label 3");
         
         Set<String> selectedLabels = indexPage.getSelectedOptionLabelsFrom(indexPage.multiselect);
@@ -94,7 +102,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     
     @Test
     public void should_select_values_in_multiple_select_lists_correctly() {
-        IndexPage indexPage = new IndexPage(driver);
 
         indexPage.selectMultipleItemsFromDropdown(indexPage.multiselect,"Label 1", "Label 3");
         
@@ -105,14 +112,12 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     @Test
     public void should_select_values_in_select() {
-        IndexPage indexPage = new IndexPage(driver);
         indexPage.selectFromDropdown(indexPage.color, "Red");
         assertThat(indexPage.getSelectedOptionValuesFrom(indexPage.color), hasItem("red"));
     }
     
     @Test
     public void ticking_an_empty_checkbox_should_set_the_value_to_true() {
-        IndexPage indexPage = new IndexPage(driver);
         indexPage.setCheckbox(indexPage.checkbox, true);
         
         assertThat(indexPage.checkbox.isSelected(), is(true));
@@ -120,7 +125,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     
     @Test
     public void ticking_a_set_checkbox_should_set_the_value_to_true() {
-        IndexPage indexPage = new IndexPage(driver);
         indexPage.checkbox.setSelected();
         
         indexPage.setCheckbox(indexPage.checkbox, true);
@@ -130,8 +134,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     
     @Test
     public void unticking_an_unset_checkbox_should_set_the_value_to_false() {
-        IndexPage indexPage = new IndexPage(driver);
-        
+
         indexPage.setCheckbox(indexPage.checkbox, false);
         
         assertThat(indexPage.checkbox.isSelected(), is(false));
@@ -139,7 +142,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     
     @Test
     public void unticking_a_set_checkbox_should_set_the_value_to_false() {
-        IndexPage indexPage = new IndexPage(driver);
         indexPage.checkbox.setSelected();
         
         indexPage.setCheckbox(indexPage.checkbox, false);
@@ -150,20 +152,22 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     
     @Test
     public void should_know_when_text_appears_on_a_page() {
-        IndexPage indexPage = new IndexPage(driver);
+
         indexPage.waitForTextToAppear("Label 1");
     }
         
     @Test
     public void should_know_when_an_element_is_visible() {
-        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(new FirefoxDriver());
+        driver = new FirefoxDriver();
+        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver);
         indexPage.open();
         assertThat(indexPage.isElementVisible(By.id("visible")), is(true));
     }
 
     @Test
     public void should_know_when_an_element_is_invisible() {
-        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(new FirefoxDriver());
+        driver = new FirefoxDriver();
+        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver);
         indexPage.open();
         assertThat(indexPage.isElementVisible(By.id("invisible")), is(false));
     }
@@ -171,47 +175,32 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     @Test(expected=ElementNotDisplayedException.class)
     public void should_fail_if_text_does_not_appear_on_a_page() {
-        IndexPage indexPage = new IndexPage(driver);
-        indexPage.setWaitForTimeout(100);
 
         indexPage.waitForTextToAppear("Label that is not present");
     }
     
     @Test
     public void should_know_when_one_of_several_texts_appears_on_a_page() {
-        IndexPage indexPage = new IndexPage(driver);
         indexPage.waitForAnyTextToAppear("Label 1", "Label that is not present");
     }
 
     @Test(expected=ElementNotDisplayedException.class)
     public void should_fail_if_the_requested_text_is_not_on_the_page() {
-        IndexPage indexPage = new IndexPage(driver);
-        indexPage.setWaitForTimeout(100);
-
         indexPage.waitForAnyTextToAppear("Label that is not present");
     }
 
     @Test
     public void should_know_when_all_of_a_set_of_texts_appears_on_a_page() {
-        IndexPage indexPage = new IndexPage(driver);
-        indexPage.setWaitForTimeout(100);
-
         indexPage.waitForAllTextToAppear("Label 1", "Label 2");
     }
 
     @Test(expected=ElementNotDisplayedException.class)
     public void should_fail_if_one_of_a_set_of_requested_texts_does_not_appear_on_a_page() {
-        IndexPage indexPage = new IndexPage(driver);
-        indexPage.setWaitForTimeout(100);
-
         indexPage.waitForAllTextToAppear("Label 1", "Label that is not present");
     }
 
     @Test(expected=ElementNotDisplayedException.class)
     public void should_fail_if_none_of_the_requested_texts_appear_on_a_page() {
-        IndexPage indexPage = new IndexPage(driver);
-        indexPage.setWaitForTimeout(100);
-
         indexPage.waitForAllTextToAppear("Label that is not present", "Another label that is not present");
     }
 
