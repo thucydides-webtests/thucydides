@@ -14,6 +14,7 @@ import java.util.List;
 public class ConcreteTestStep extends TestStep {
 
     private File screenshot;
+    private File htmlSource;
     private String screenshotPath;
     private TestResult result;
     private String errorMessage;
@@ -71,6 +72,13 @@ public class ConcreteTestStep extends TestStep {
         return screenshot;
     }
 
+    public File getHtmlSource() {
+        return htmlSource;
+    }
+
+    public void setHtmlSource(File htmlSource) {
+        this.htmlSource = htmlSource;
+    }
 
     public Throwable getException() {
         return cause;

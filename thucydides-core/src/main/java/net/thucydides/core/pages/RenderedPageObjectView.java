@@ -250,5 +250,31 @@ class RenderedPageObjectView {
                     + byElementCriteria);
         }
     }
-  
+
+    public void waitForAnyRenderedElementOf(By[] expectedElements) {
+        long end = System.currentTimeMillis() + waitForTimeout;
+        boolean renderedElementFound = false;
+        while (System.currentTimeMillis() < end) {
+            if (anyElementRenderedIn(expectedElements)) {
+                renderedElementFound = true;
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (!renderedElementFound) {
+            throw new ElementNotDisplayedException("None of the expected elements where displayed: '"
+                                                    + Arrays.toString(expectedElements) + "'");
+        }
+    }
+
+    private boolean anyElementRenderedIn(By[] expectedElements) {
+        boolean elementRendered = false;
+        for (By expectedElement : expectedElements) {
+            if (elementIsDisplayed(expectedElement)) {
+                elementRendered = true;
+                break;
+            }
+        }
+        return elementRendered;
+    }
 }

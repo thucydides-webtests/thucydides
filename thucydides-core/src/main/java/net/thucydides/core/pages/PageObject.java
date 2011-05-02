@@ -167,6 +167,11 @@ public abstract class PageObject {
         return this;
     }
 
+    public PageObject waitForAnyRenderedElementOf(By... expectedElements) {
+        getRenderedView().waitForAnyRenderedElementOf(expectedElements);
+        return this;
+    }
+
     protected void waitABit(final long timeInMilliseconds) {
         try {
             Thread.sleep(timeInMilliseconds);

@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class WhenScreenshotsAreTaken {
 
@@ -31,7 +32,7 @@ public class WhenScreenshotsAreTaken {
     private File screenshotTaken;
 
     @Mock
-    private TakesScreenshot driver;
+    private FirefoxDriver driver;
     
     private Photographer photographer;
     
@@ -51,12 +52,21 @@ public class WhenScreenshotsAreTaken {
     public void the_driver_should_capture_the_image() throws IOException {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
-        
         photographer.takeScreenshot("screenshot");
         
         verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());        
     }
     
+    @Test
+    public void the_driver_should_save_the_corresponding_source_code() throws IOException {
+
+        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        when(driver.getPageSource()).thenReturn("<html/>");
+        photographer.takeScreenshot("screenshot");
+
+        verify(driver,times(1)).getPageSource();
+    }
+
     @Test
     public void the_screenshot_should_be_stored_in_the_target_directory() throws IOException {
 
@@ -79,8 +89,24 @@ public class WhenScreenshotsAreTaken {
         
         assertThat(savedScreenshot.isFile(), is(true));
     }
-    
-    
+
+
+    @Test
+    public void the_photographer_should_provide_the_HTML_source_code_for_a_given_screenshot() throws IOException {
+
+        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        when(driver.getPageSource()).thenReturn("<html/>");
+
+        File screenshotFile = photographer.takeScreenshot("screenshot");
+
+        File htmlSource = photographer.getMatchingSourceCodeFor(screenshotFile);
+
+        assertThat(htmlSource.isFile(), is(true));
+    }
+
+
+
+
     @Test
     public void successive_screenshots_should_have_different_names() throws IOException {
 

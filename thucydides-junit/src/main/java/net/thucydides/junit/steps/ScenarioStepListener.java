@@ -234,6 +234,8 @@ public class ScenarioStepListener extends RunListener {
     private void takeScreenshotFor(final Description description) {
         File screenshot = grabScreenshotFileFor(aTestCalled(description));
         currentTestStep.setScreenshot(screenshot);
+        File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
+        currentTestStep.setHtmlSource(sourcecode);
     }
 
     protected String aTestCalled(final Description description) {

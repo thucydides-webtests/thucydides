@@ -67,15 +67,23 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
     @Test(expected = ElementNotDisplayedException.class)
     public void should_fail_when_waiting_for_an_invisible_object() {
         IndexPage indexPage = new IndexPage(driver);
-        indexPage.setWaitForTimeout(50);
+        indexPage.setWaitForTimeout(150);
 
         indexPage.waitForRenderedElements(By.xpath("//h2[.='An invisible title']"));
+
+    }
+
+    @Test
+    public void can_wait_for_one_of_several_elements_to_be_visible() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.setWaitForTimeout(150);
+        indexPage.waitForAnyRenderedElementOf(By.id("color"), By.id("taste"), By.id("sound"));
     }
 
     @Test(expected = ElementNotDisplayedException.class)
-    public void fails_if_waiting_for_text_to_disappear_too_ling() {
+    public void fails_if_waiting_for_text_to_disappear_too_long() {
         IndexPage indexPage = new IndexPage(driver);
-        indexPage.setWaitForTimeout(50);
+        indexPage.setWaitForTimeout(150);
 
         indexPage.waitForTextToDisappear("A visible title");
     }
@@ -83,7 +91,7 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
     @Test(expected = ElementNotDisplayedException.class)
     public void should_fail_when_waiting_for_an_undisplayed_text() {
         IndexPage indexPage = new IndexPage(driver);
-        indexPage.setWaitForTimeout(50);
+        indexPage.setWaitForTimeout(150);
 
         indexPage.waitForTextToAppear("This text never appears");
     }

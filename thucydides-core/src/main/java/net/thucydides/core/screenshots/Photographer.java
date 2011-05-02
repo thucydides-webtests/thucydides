@@ -87,7 +87,7 @@ public class Photographer {
     }
 
     private void savePageSourceFor(String screenshotFile) throws IOException {
-        if (driver instanceof WebDriver) {
+        if (WebDriver.class.isAssignableFrom(driver.getClass())) {
             WebDriver webdriver = (WebDriver) driver;
             String pageSource = webdriver.getPageSource();
 
@@ -100,5 +100,9 @@ public class Photographer {
     private String sourceCodeFileFor(String screenshotFile) {
         String rootFilename = screenshotFile.substring(0, screenshotFile.length() - 4);
         return rootFilename + ".html";
+    }
+
+    public File getMatchingSourceCodeFor(File screenshot) {
+        return new File(sourceCodeFileFor(screenshot.getAbsolutePath()));
     }
 }
