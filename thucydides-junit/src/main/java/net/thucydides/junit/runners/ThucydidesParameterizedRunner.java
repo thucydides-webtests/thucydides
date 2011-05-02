@@ -50,7 +50,7 @@ public class ThucydidesParameterizedRunner extends Suite {
 			return getTestClass().getOnlyConstructor().newInstance(computeParams());
 		}
 
-		private Object[] computeParams() throws Throwable {
+		private Object[] computeParams() throws Exception {
 			try {
 				return fParameterList.get(fParameterSetNumber);
 			} catch (ClassCastException cause) {
@@ -196,7 +196,7 @@ public class ThucydidesParameterizedRunner extends Suite {
 		return (List<Object[]>) getParametersMethod(klass).invokeExplosively(null);
 	}
 
-	private FrameworkMethod getParametersMethod(final TestClass testClass) throws Throwable {
+	private FrameworkMethod getParametersMethod(final TestClass testClass) throws Exception {
 		List<FrameworkMethod> methods= testClass
 				.getAnnotatedMethods(TestData.class);
 		for (FrameworkMethod each : methods) {
