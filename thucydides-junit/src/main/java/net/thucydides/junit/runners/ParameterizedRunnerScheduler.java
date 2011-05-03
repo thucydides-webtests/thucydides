@@ -56,12 +56,12 @@ class ParameterizedRunnerScheduler implements RunnerScheduler {
     }
 
     static final class NamedThreadFactory implements ThreadFactory {
-        static private final AtomicInteger poolNumber = new AtomicInteger(1);
+        private static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);
         private final AtomicInteger threadNumber = new AtomicInteger(1);
         private final ThreadGroup group;
 
         NamedThreadFactory(final String poolName) {
-            group = new ThreadGroup(poolName + "-" + poolNumber.getAndIncrement());
+            group = new ThreadGroup(poolName + "-" + POOL_NUMBER.getAndIncrement());
         }
 
         public Thread newThread(final Runnable r) {

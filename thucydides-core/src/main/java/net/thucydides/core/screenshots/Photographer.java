@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 public class Photographer {
 
     private static final int MESSAGE_DIGEST_MASK = 0xFF;
+    private static final int PNG_SUFFIX_LENGTH = ".png".length();
     private final TakesScreenshot driver;
     private final File targetDirectory;
     private final ScreenshotSequence screenshotSequence;
@@ -93,7 +94,7 @@ public class Photographer {
 
 
     private String sourceCodeFileFor(final String screenshotFile) {
-        String rootFilename = screenshotFile.substring(0, screenshotFile.length() - 4);
+        String rootFilename = screenshotFile.substring(0, screenshotFile.length() - PNG_SUFFIX_LENGTH);
         return rootFilename + ".html";
     }
 

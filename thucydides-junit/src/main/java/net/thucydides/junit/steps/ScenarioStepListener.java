@@ -222,7 +222,7 @@ public class ScenarioStepListener extends RunListener {
         }
     }
 
-    public void pauseTestRun(long delay) {
+    public void pauseTestRun(final long delay) {
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {

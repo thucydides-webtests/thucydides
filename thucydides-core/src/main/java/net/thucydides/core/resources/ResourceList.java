@@ -57,7 +57,7 @@ public final class ResourceList {
         return removeUnnecessaryFilesFrom(resources);
     }
 
-    private static Collection<String> removeUnnecessaryFilesFrom(Collection<String> resources) {
+    private static Collection<String> removeUnnecessaryFilesFrom(final Collection<String> resources) {
         final Collection<String> cleanedResources = new ArrayList<String>();
         for (String filepath : resources) {
             String filename = new File(filepath).getName();

@@ -167,7 +167,7 @@ public abstract class PageObject {
         return this;
     }
 
-    public PageObject waitForAnyRenderedElementOf(By... expectedElements) {
+    public PageObject waitForAnyRenderedElementOf(final By... expectedElements) {
         getRenderedView().waitForAnyRenderedElementOf(expectedElements);
         return this;
     }
@@ -250,10 +250,12 @@ public abstract class PageObject {
         return getRenderedView().userCanSee(field);
     }
 
+    /**
+     * Fail the test if this element is not displayed (rendered) on the screen.
+     */
     public void shouldBeVisible(final WebElement field) {
         if (!userCanSee(field)) {
-            throw new AssertionError("The " + field
-                    + " element should be visible");
+            throw new AssertionError("The " + field + " element should be visible");
         }
     }
 

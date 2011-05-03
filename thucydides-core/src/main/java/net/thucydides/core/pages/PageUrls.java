@@ -35,7 +35,7 @@ class PageUrls {
         }
     }
 
-    public static String getUrlFrom(String annotatedBaseUrl) {
+    public static String getUrlFrom(final String annotatedBaseUrl) {
         if (annotatedBaseUrl == null) {
             return null;
         }
@@ -53,7 +53,7 @@ class PageUrls {
         }
     }
 
-    private static URL obtainResourcePathFromClasspath(String annotatedBaseUrl) {
+    private static URL obtainResourcePathFromClasspath(final String annotatedBaseUrl) {
         String resourcePath = annotatedBaseUrl.substring(CLASSPATH_URL_PREFIX_LENGTH);
         URL baseUrl = Thread.currentThread().getContextClassLoader().getResource(resourcePath);
         if (baseUrl == null) {

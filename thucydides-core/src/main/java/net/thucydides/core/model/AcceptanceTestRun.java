@@ -90,7 +90,7 @@ public class AcceptanceTestRun {
         return reportNamer.getNormalizedTestNameFor(this);
     }
 
-    public String getReportName(ReportNamer.ReportType type, String qualifier) {
+    public String getReportName(final ReportNamer.ReportType type, final String qualifier) {
         ReportNamer reportNamer = new ReportNamer(type);
         if (qualifier == null) {
             return reportNamer.getNormalizedTestNameFor(this);
