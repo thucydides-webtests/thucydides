@@ -17,7 +17,10 @@ import java.util.List;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.*;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * Run a Thucydides test suite using a set of data.

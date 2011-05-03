@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 /**
  *
  */
-public class AnnotatedDescription {
+public final class AnnotatedDescription {
 
     private final Description description;
 

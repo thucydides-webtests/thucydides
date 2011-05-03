@@ -100,16 +100,16 @@ public class AcceptanceTestRunConverter implements Converter {
         }
     }
 
-    private String humanized(final String qualifier) {
-        return qualifier.replaceAll("_","/");
+    private String humanized(final String text) {
+        return text.replaceAll("_","/");
     }
 
     private String nameFrom(final AcceptanceTestRun testRun) {
         if (qualifier == null) {
             return testRun.getMethodName();
         } else {
-            String qualifier_without_spaces = qualifier.replaceAll(" ","_");
-            return testRun.getMethodName() + "_" + qualifier_without_spaces;
+            String qualifierWithoutSpaces = qualifier.replaceAll(" ","_");
+            return testRun.getMethodName() + "_" + qualifierWithoutSpaces;
         }
     }
 
