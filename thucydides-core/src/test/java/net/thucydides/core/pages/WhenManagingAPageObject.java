@@ -107,7 +107,7 @@ public class WhenManagingAPageObject {
         when(renderedElement.isDisplayed()).thenReturn(false).thenReturn(false).thenReturn(true);
 
         BasicPageObject page = new BasicPageObject(driver);
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(200);
         page.waitForRenderedElements(By.id("whatever"));
     }
 
@@ -164,7 +164,7 @@ public class WhenManagingAPageObject {
         List<WebElement> emptyList = Arrays.asList();
 
         when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList);
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(200);
         page.waitForAnyTextToAppear(searchedBlock, "hi there");
     }
 
@@ -178,7 +178,7 @@ public class WhenManagingAPageObject {
 
         when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList);
 
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(200);
         page.waitForAnyTextToAppear(searchedBlock, "hi there");
     }
 
@@ -242,7 +242,7 @@ public class WhenManagingAPageObject {
         when(driver.findElement(any(By.class))).thenThrow(new NoSuchElementException("No such element"));
 
         BasicPageObject page = new BasicPageObject(driver);
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(200);
         page.waitForRenderedElements(By.id("whatever"));
     }
 
@@ -255,7 +255,7 @@ public class WhenManagingAPageObject {
         when(renderedElement.isDisplayed()).thenReturn(false);
 
         BasicPageObject page = new BasicPageObject(driver);
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(200);
         page.waitForRenderedElements(By.id("whatever"));
     }
 
@@ -268,7 +268,7 @@ public class WhenManagingAPageObject {
         noElementIsRendered(By.id("element2"));
 
         BasicPageObject page = new BasicPageObject(driver);
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(200);
         page.waitForAnyRenderedElementOf(By.id("element1"), By.id("element2"));
     }
 
@@ -280,7 +280,7 @@ public class WhenManagingAPageObject {
         noElementIsRendered(By.id("element2"));
 
         BasicPageObject page = new BasicPageObject(driver);
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(200);
         page.waitForAnyRenderedElementOf(By.id("element1"), By.id("element2"));
     }
 
@@ -307,7 +307,7 @@ public class WhenManagingAPageObject {
 
 
         BasicPageObject page = new BasicPageObject(driver);
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(200);
         page.waitForAnyRenderedElementOf(By.id("element1"), By.id("element2"));
     }
 
@@ -318,7 +318,7 @@ public class WhenManagingAPageObject {
         RenderedWebElement renderedElement = mock(RenderedWebElement.class);
         elementDisappearsAfterADelay(renderedElement, By.id("element1"));
         BasicPageObject page = new BasicPageObject(driver);
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(200);
         page.waitForRenderedElementsToDisappear(By.id("element1"));
     }
 
@@ -327,7 +327,7 @@ public class WhenManagingAPageObject {
 
         noElementIsRendered(By.id("element1"));
         BasicPageObject page = new BasicPageObject(driver);
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(200);
         page.waitForRenderedElementsToDisappear(By.id("element1"));
     }
 

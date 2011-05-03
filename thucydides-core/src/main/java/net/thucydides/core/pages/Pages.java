@@ -19,13 +19,13 @@ import com.google.common.base.Preconditions;
  */
 public class Pages {
 
-    private transient final WebDriver driver;
+    private final transient WebDriver driver;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pages.class);
 
     private String defaultBaseUrl;
 
-    private transient final PageConfiguration pageConfiguration;
+    private final transient PageConfiguration pageConfiguration;
 
 
     public Pages(final WebDriver driver) {

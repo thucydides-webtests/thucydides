@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
  */
 class RenderedPageObjectView {
 
-    private transient final WebDriver driver;
-    private transient final long waitForTimeout;
+    private final transient WebDriver driver;
+    private final transient long waitForTimeout;
 
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 50;
 

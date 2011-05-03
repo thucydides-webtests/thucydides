@@ -19,6 +19,10 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.*;
 
+/**
+ * Run a Thucydides test suite using a set of data.
+ * Similar to the JUnit parameterized tests.
+ */
 public class ThucydidesParameterizedRunner extends Suite {
 
     private static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
@@ -128,8 +132,8 @@ public class ThucydidesParameterizedRunner extends Suite {
         try {
             String threadCount = threadValue.substring(0, threadValue.length() - 1);
             return Integer.valueOf(threadCount) * AVAILABLE_PROCESSORS;
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Illegal thread value: " + threadValue);
+        } catch (NumberFormatException cause) {
+            throw new IllegalArgumentException("Illegal thread value: " + threadValue, cause);
         }
     }
 
@@ -171,7 +175,8 @@ public class ThucydidesParameterizedRunner extends Suite {
         this(klass, null);
     }
 
-    private void overrideWebdriverFactoryIfProvided(final ThucydidesRunner runner, final WebDriverFactory webDriverFactory) {
+    private void overrideWebdriverFactoryIfProvided(final ThucydidesRunner runner,
+                                                    final WebDriverFactory webDriverFactory) {
         if (webDriverFactory != null) {
             runner.setWebDriverFactory(webDriverFactory);
         }

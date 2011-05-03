@@ -9,6 +9,7 @@ thucydides.uses_default_base_url "classpath:demosite/index.html"
 thucydides.uses_steps_from DemoSiteSteps
 
 tags "someTag"
+
 /**
  * Thucydides can manage pages for us.
  */
@@ -35,6 +36,19 @@ scenario "Select entry in dropdown list using steps", {
         demo_site.should_have_selected_value '3'
     }
 }
+
+ /*
+scenario "Triggering a failure", {
+    given "we are on the Thucydides demo site again", {
+    }
+    when "the ussr triggers an assertion error", {
+        demo_site.trigger_exception()
+    }
+    then "the broswer should still be closed", {
+    }
+}
+
+*/
 
 /**
 * Or you can break functional tests into steps and step groups.

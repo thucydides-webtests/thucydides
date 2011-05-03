@@ -43,7 +43,7 @@ public class ThucydidesReporterMojo extends AbstractMojo {
         this.sourceDirectory = sourceDirectory;
     }
 
-    protected void setReporter(HtmlUserStoryTestReporter reporter) {
+    protected void setReporter(final HtmlUserStoryTestReporter reporter) {
         this.reporter = reporter;
     }
 

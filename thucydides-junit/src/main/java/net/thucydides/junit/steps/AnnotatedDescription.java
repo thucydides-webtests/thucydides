@@ -27,7 +27,7 @@ public class AnnotatedDescription {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatedDescription.class);
 
-    public static AnnotatedDescription from(Description description) {
+    public static AnnotatedDescription from(final Description description) {
         return new AnnotatedDescription(description);
 
     }

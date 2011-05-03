@@ -46,4 +46,9 @@ class DemoSiteSteps extends ScenarioSteps {
         }
     }
 
+    @Step
+    def trigger_exception() {
+        assert true == false
+    }
+
 }
