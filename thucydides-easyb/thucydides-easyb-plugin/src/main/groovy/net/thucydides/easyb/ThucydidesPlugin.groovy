@@ -2,7 +2,7 @@ package net.thucydides.easyb;
 
 
 import net.thucydides.core.pages.Pages;
-
+import net.thucydides.core.steps.StepListener;
 import static net.thucydides.easyb.StepName.*;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
@@ -17,7 +17,13 @@ import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter
 import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter
 import com.google.common.collect.ImmutableList
 import net.thucydides.core.reports.AcceptanceTestReporter
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.AcceptanceTestRun
+import org.easyb.listener.ListenerFactory
+
+import net.thucydides.core.steps.StepFactory
+import net.thucydides.core.steps.BaseStepListener
+import net.thucydides.core.webdriver.Configuration
+import net.thucydides.core.steps.ExecutedStepDescription
 
 public class ThucydidesPlugin extends BasePlugin {
 
@@ -27,14 +33,20 @@ public class ThucydidesPlugin extends BasePlugin {
 
     private runningFirstScenario = true;
 
-    def reportService;
+    ReportService reportService;
+
+    StepFactory stepFactory;
+
+    StepListener stepListener;
+
+    Configuration systemConfiguration;
 
     /**
      * Retrieve the runner configuration from an external source.
      */
-
     public ThucydidesPlugin() {
         Object.mixin ThucydidesExtensions;
+        println "CREATING THUCYDIDES PLUGIN"
     }
 
 
@@ -45,33 +57,118 @@ public class ThucydidesPlugin extends BasePlugin {
 
     protected WebdriverManager getWebdriverManager() {
         if (webdriverManager == null) {
-            webdriverManager = new WebdriverManager(getDefaultWebDriverFactory());        
+            webdriverManager = new WebdriverManager(getDefaultWebDriverFactory());
         }
         return webdriverManager;
     }
-    
+
     protected WebDriverFactory getDefaultWebDriverFactory() {
         return new WebDriverFactory();
     }
 
     @Override
     public Object beforeStory(final Binding binding) {
+        LOGGER.debug "Before story"
         WebDriver driver = getWebdriverManager().getWebdriver();
         binding.setVariable("driver", driver);
         binding.setVariable("thucydides", configuration);
 
         Pages pages = initializePagesObject(binding);
+
+        initializeStepFactoryAndListeners(pages, driver)
+
         initializeStepsLibraries(pages, binding);
+
+        initializeReportService();
+
+        testRunStarted(binding);
 
         return super.beforeStory(binding);
     }
 
+    private def testRunStarted(def binding) {
+        def storyName = lookupStoryNameFrom(binding)
+        stepListener.testRunStarted(ExecutedStepDescription.withTitle(storyName))
+
+    }
+
+
+    def lookupStoryNameFrom(def binding) {
+        String storyName = null;
+        String sourceFile = binding.variables['sourceFile']
+        if (sourceFile != null) {
+            String sourceFilename = new File(sourceFile).name
+            def fileExtensionStart = sourceFilename.lastIndexOf(".")
+            storyName = sourceFilename.substring(0, fileExtensionStart);
+        }
+        return storyName;
+    }
+
+    private def initializeStepFactoryAndListeners(Pages pages, WebDriver driver) {
+        stepFactory = new StepFactory(pages)
+        stepListener = new BaseStepListener(driver, getSystemConfiguration().outputDirectory)
+        stepFactory.addListener(stepListener)
+
+        println "REGISTER THUCYDIDES LISTENER"
+        ListenerFactory.registerBuilder(new ThucydidesListenerBuilder(stepListener));
+    }
+
+    @Override
+    public Object beforeScenario(final Binding binding) {
+
+        if (!runningFirstScenario && getConfiguration().isResetBrowserInEachScenario()) {
+            resetDriver(binding)
+        }
+        return super.beforeScenario(binding);
+    }
+
+
+    @Override
+    Object beforeGiven(Binding binding) {
+        return super.beforeGiven(binding)
+    }
+
+    @Override
+    Object beforeWhen(Binding binding) {
+        return super.beforeWhen(binding)
+    }
+
+    @Override
+    Object beforeThen(Binding binding) {
+        return super.beforeThen(binding)
+    }
+
+
+    @Override
+    public Object afterScenario(final Binding binding) {
+        runningFirstScenario = false;
+        return super.afterScenario(binding);
+    }
+
+
+    @Override
+    public Object afterStory(final Binding binding) {
+
+        println "STORY DONE"
+
+        closeDriver(binding);
+
+        stepFactory.notifyStepFinished()
+
+        println "GENERATE REPORTS FOR " + stepListener.testRunResults
+        generateReportsFor(stepListener.testRunResults);
+
+        return super.afterStory(binding);
+    }
+
     def initializeReportService() {
-        reportService = new ReportService(getConfiguration().getOutputDirectory(),
-                                          getConfiguration().getDefaultReporters());
+
+        reportService = new ReportService(getSystemConfiguration().outputDirectory, getDefaultReporters());
     }
 
     def generateReportsFor(final List<AcceptanceTestRun> testRunResults) {
+        println "GENERATING REPORTS FOR $testRunResults"
+
         reportService.generateReportsFor(testRunResults);
     }
 
@@ -94,42 +191,19 @@ public class ThucydidesPlugin extends BasePlugin {
         return pages
     }
 
-
     def initializeStepsLibraries(Pages pages, Binding binding) {
 
+        def factory = new StepFactory(pages);
+
         configuration.registeredSteps.each { stepLibraryClass ->
-            def stepLibrary = stepLibraryClass.newInstance(pages)
+            def stepLibrary = proxyFor(stepLibraryClass)
             binding.setVariable(nameOf(stepLibraryClass), stepLibrary)
         }
 
     }
 
-    @Override
-    public Object beforeScenario(final Binding binding) {
-
-        if (!runningFirstScenario && getConfiguration().isResetBrowserInEachScenario()) {
-            resetDriver(binding)
-        }
-        return super.beforeScenario(binding);
-    }
-
-    @Override
-    public Object afterScenario(final Binding binding) {
-
-        runningFirstScenario = false;
-        return super.afterScenario(binding);
-    }
-
-
-    @Override
-    public Object afterStory(final Binding binding) {
-        LOGGER.debug("After story");
-
-        closeDriver(binding);
-
-        //generateReportsFor(getTestRunResults());
-
-        return super.afterStory(binding);
+    private def proxyFor(def stepLibraryClass) {
+        stepFactory.newSteps(stepLibraryClass)
     }
 
     private def closeDriver(Binding binding) {
@@ -140,10 +214,10 @@ public class ThucydidesPlugin extends BasePlugin {
         Pages pages = binding.getVariable("pages")
         pages.start()
     }
-    /**
-     * The configuration manages output directories and driver types.
-     * They can be defined as system values, or have sensible defaults.
-     */
+/**
+ * The configuration manages output directories and driver types.
+ * They can be defined as system values, or have sensible defaults.
+ */
     public PluginConfiguration getConfiguration() {
         return PluginConfiguration.getInstance();
     }
@@ -152,11 +226,23 @@ public class ThucydidesPlugin extends BasePlugin {
         return PluginConfiguration.reset();
     }
 
-    /**
-     * The default reporters applicable for standard test runs.
-     */
+/**
+ * The configuration manages output directories and driver types.
+ * They can be defined as system values, or have sensible defaults.
+ */
+    protected Configuration getSystemConfiguration() {
+        if (systemConfiguration == null) {
+            systemConfiguration = new Configuration();
+        }
+        return systemConfiguration;
+    }
+
+/**
+ * The default reporters applicable for standard test runs.
+ */
     public Collection<AcceptanceTestReporter> getDefaultReporters() {
         return ImmutableList.of(new XMLAcceptanceTestReporter(),
-                                new HtmlAcceptanceTestReporter());
+                new HtmlAcceptanceTestReporter());
     }
+
 }

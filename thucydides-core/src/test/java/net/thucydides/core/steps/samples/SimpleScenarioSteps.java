@@ -1,9 +1,10 @@
-package net.thucydides.core.steps;
+package net.thucydides.core.steps.samples;
 
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.WrongPageError;
+import net.thucydides.core.steps.ScenarioSteps;
 
 public class SimpleScenarioSteps extends ScenarioSteps {
     

@@ -241,6 +241,7 @@
         </profile>
     </profiles>
     <modules>
+        <module>thucydides-test-utils</module>
         <module>thucydides-report-resources</module>
         <module>thucydides-sample-alternative-resources</module>
         <module>thucydides-core</module>
@@ -248,5 +249,5 @@
         <module>thucydides-maven-plugin</module>
         <module>thucydides-maven-integration-tests</module>
         <module>thucydides-easyb</module>
-    </modules>
+  </modules>
 </project>

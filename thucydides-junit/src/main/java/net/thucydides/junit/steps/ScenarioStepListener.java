@@ -19,6 +19,7 @@ import net.thucydides.core.model.UserStory;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.junit.annotations.AnnotatedDescription;
 import net.thucydides.junit.annotations.UserStoryCode;
 import net.thucydides.junit.internals.TestStatus;
 

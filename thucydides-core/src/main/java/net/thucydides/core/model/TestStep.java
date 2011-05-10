@@ -30,10 +30,19 @@ public abstract class TestStep {
     private long duration;
     private long startTime;
     private Set<String> testedRequirement = new HashSet<String>();
-    
+    private TestResult result;
+
         
     public TestStep() {
         startTime = System.currentTimeMillis();
+    }
+
+
+    @Override
+    public String toString() {
+        return "TestStep{" +
+                "description='" + description + '\'' +
+                '}';
     }
 
     public TestStep(final String description) {

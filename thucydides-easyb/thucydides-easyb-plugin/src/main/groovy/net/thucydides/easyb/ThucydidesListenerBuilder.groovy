@@ -1,11 +1,18 @@
 package net.thucydides.easyb
 
-/**
- * Created by IntelliJ IDEA.
- * User: johnsmart
- * Date: 3/05/11
- * Time: 4:07 PM
- * To change this template use File | Settings | File Templates.
- */
-class ThucydidesListenerBuilder {
+import org.easyb.listener.ListenerBuilder
+import org.easyb.listener.ExecutionListener
+import net.thucydides.core.steps.StepListener
+
+class ThucydidesListenerBuilder implements ListenerBuilder{
+
+    private final ThucydidesExecutionListener executionListener;
+
+    ThucydidesListenerBuilder(StepListener stepListener) {
+        executionListener = new ThucydidesExecutionListener(stepListener);
+    }
+
+    ExecutionListener get() {
+        return executionListener;
+    }
 }

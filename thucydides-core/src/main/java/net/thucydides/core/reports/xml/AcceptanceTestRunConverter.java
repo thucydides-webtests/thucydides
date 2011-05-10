@@ -93,6 +93,7 @@ public class AcceptanceTestRunConverter implements Converter {
 
 
     private String titleFrom(final AcceptanceTestRun testRun) {
+        System.out.println("Printing test run with title " + testRun.getTitle());
         if (qualifier == null) {
             return testRun.getTitle();
         } else {
@@ -105,12 +106,16 @@ public class AcceptanceTestRunConverter implements Converter {
     }
 
     private String nameFrom(final AcceptanceTestRun testRun) {
+        String baseName = (testRun.getMethodName() != null) ? testRun.getMethodName() : testRun.getTitle();
+        String testRunName;
         if (qualifier == null) {
-            return testRun.getMethodName();
+            testRunName = baseName;
         } else {
             String qualifierWithoutSpaces = qualifier.replaceAll(" ","_");
-            return testRun.getMethodName() + "_" + qualifierWithoutSpaces;
+            testRunName = baseName + "_" + qualifierWithoutSpaces;
         }
+        System.out.println("Using name of " + testRunName);
+        return testRunName;
     }
 
 

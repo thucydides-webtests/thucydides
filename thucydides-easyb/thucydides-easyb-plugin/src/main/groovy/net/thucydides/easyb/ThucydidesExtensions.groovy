@@ -24,7 +24,7 @@ public class ThucydidesExtensions {
 
         Iterator providers = ServiceRegistry.lookupProviders(EasybPlugin, ClassLoader.getSystemClassLoader())
 
-        def registeredPlugin
+        def registeredPlugin = null
         providers.each { provider ->
             if (provider instanceof ThucydidesPlugin) {
                 registeredPlugin = provider;

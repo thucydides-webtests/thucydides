@@ -1,6 +1,6 @@
 package net.thucydides.core.reports.integration;
 
-import static net.thucydides.core.hamcrest.UserStoryMatchers.containsTestsForStory;
+import static net.thucydides.core.matchers.UserStoryMatchers.containsTestsForStory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 

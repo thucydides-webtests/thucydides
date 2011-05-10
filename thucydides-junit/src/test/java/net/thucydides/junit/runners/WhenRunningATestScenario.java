@@ -9,13 +9,13 @@ import static org.mockito.Mockito.*;
 import java.io.File;
 import java.util.List;
 
+import net.thucydides.core.annotations.InvalidStepsFieldException;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.UserStory;
 import net.thucydides.junit.annotations.InvalidManagedPagesFieldException;
-import net.thucydides.junit.annotations.InvalidStepsFieldException;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.junit.steps.ScenarioStepListener;
 import net.thucydides.samples.*;

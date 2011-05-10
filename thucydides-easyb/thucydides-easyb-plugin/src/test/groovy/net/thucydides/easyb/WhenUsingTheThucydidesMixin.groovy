@@ -68,7 +68,7 @@ public class WhenUsingTheThucydidesMixin {
 
         def stepLibrary = binding.getProperty("sample")
 
-        assert stepLibrary.class == SampleSteps
+        assert SampleSteps.isAssignableFrom(stepLibrary.class)
     }
 
     @Test
@@ -84,7 +84,7 @@ public class WhenUsingTheThucydidesMixin {
 
         def stepLibrary = binding.getProperty("more_sample")
 
-        assert stepLibrary.class == MoreSampleSteps
+        assert MoreSampleSteps.isAssignableFrom(stepLibrary.class)
     }
 
     @Test
@@ -102,8 +102,8 @@ public class WhenUsingTheThucydidesMixin {
         def stepLibrary = binding.getProperty("sample")
         def anotherStepLibrary = binding.getProperty("more_sample")
 
-        assert stepLibrary.class == SampleSteps
-        assert anotherStepLibrary.class == MoreSampleSteps
+        assert SampleSteps.isAssignableFrom(stepLibrary.class)
+        assert MoreSampleSteps.isAssignableFrom(anotherStepLibrary.class)
     }
 
     @Test

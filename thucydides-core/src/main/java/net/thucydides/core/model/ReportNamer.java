@@ -1,6 +1,7 @@
 package net.thucydides.core.model;
 
 import net.thucydides.core.util.NameConverter;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Determies the correct default name for test reports.
@@ -45,11 +46,27 @@ public class ReportNamer {
      * version should have no spaces and have the XML file suffix.
      */
     public String getNormalizedTestNameFor(final AcceptanceTestRun testRun) {
-        String userStory = "";
+        String testName = "";
         if (testRun.getUserStory() != null) {
-            userStory = NameConverter.underscore(testRun.getUserStory().getName()) + "_";
+            testName = NameConverter.underscore(testRun.getUserStory().getName());
         }
-        return appendSuffixTo(userStory + testRun.getMethodName());
+        testName = appendToIfNotNull(testName, testRun.getMethodName());
+        return appendSuffixTo(testName);
+    }
+
+    private String appendToIfNotNull(String baseString, String nextElement) {
+        String appendedString = baseString;
+        if (StringUtils.isNotEmpty(nextElement)) {
+            if (StringUtils.isNotEmpty(baseString)) {
+                appendedString = baseString + "_" + nextElement;
+            } else {
+                appendedString = nextElement;
+            }
+        } else {
+            appendedString = baseString;
+        }
+
+        return appendedString;
     }
 
     public String getNormalizedTestNameFor(final AcceptanceTestRun testRun, final String qualifier) {

@@ -11,6 +11,7 @@ import org.mockito.Mock
 import static org.mockito.Mockito.times
 import static org.mockito.Mockito.verify
 import org.mockito.Mockito
+import org.openqa.selenium.firefox.FirefoxDriver
 
 public class WhenUsingTheThucydidesEasybPlugin {
 
@@ -41,8 +42,8 @@ public class WhenUsingTheThucydidesEasybPlugin {
         protected WebDriverFactory getDefaultWebDriverFactory() {
             return new WebDriverFactory() {
 
-                protected WebDriver newFirefoxDriver() {
-                    return Mockito.mock(WebDriver.class);
+                protected FirefoxDriver newFirefoxDriver() {
+                    return Mockito.mock(FirefoxDriver.class);
                 }
 
             }

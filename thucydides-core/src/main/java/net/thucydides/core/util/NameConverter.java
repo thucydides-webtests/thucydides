@@ -22,6 +22,10 @@ public final class NameConverter {
      * Converts a class or method name into a human-readable sentence.
      */
     public static String humanize(final String name) {
+        if (name == null) {
+            return "";
+        }
+
         if (name.contains(" ") && !thereAreParametersIn(name)) {
             return name;
         } else if (thereAreParametersIn(name)){
@@ -62,7 +66,11 @@ public final class NameConverter {
      * Transform a camel-case word to underscored-version.
      */
     public static String underscore(final String name) {
-        return  name.replaceAll(" ", "_").toLowerCase(Locale.getDefault()).trim();
+        if (name != null) {
+            return  name.replaceAll(" ", "_").toLowerCase(Locale.getDefault()).trim();
+        } else {
+            return "";
+        }
     }
 
 }

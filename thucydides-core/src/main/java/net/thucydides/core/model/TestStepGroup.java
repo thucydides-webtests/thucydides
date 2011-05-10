@@ -15,6 +15,13 @@ import com.google.common.collect.ImmutableList;
 public class TestStepGroup extends TestStep {
 
     private List<TestStep> steps = new ArrayList<TestStep>();
+    private TestResult defaultResult;
+    /**
+     * Each test step has a result, indicating the outcome of this step.
+     */
+    public void setDefaultResult(final TestResult result) {
+        this.defaultResult = result;
+    }
 
     public TestStepGroup(final String description) {
         super(description);
@@ -25,9 +32,21 @@ public class TestStepGroup extends TestStep {
     }
 
     @Override
+    public String toString() {
+        return "TestStepGroup{" +
+                "description=" + getDescription() +
+                "steps=" + steps +
+                '}';
+    }
+
+    @Override
     public TestResult getResult() {
         TestResultList resultList = new TestResultList(getChildResults());
-        return resultList.getOverallResult();
+        if ((resultList.isEmpty() && (defaultResult != null))) {
+            return defaultResult;
+        } else {
+            return resultList.getOverallResult();
+        }
     }
 
     private List<TestResult> getChildResults() {

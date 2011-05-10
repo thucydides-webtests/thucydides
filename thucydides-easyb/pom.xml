@@ -30,4 +30,11 @@
             </plugin>
         </plugins>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-test-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -3,6 +3,7 @@ package net.thucydides.core.hamcrest;
 import java.io.IOException;
 
 import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.slf4j.Logger;
@@ -17,14 +18,17 @@ public class XMLIsSimilarMatcher extends TypeSafeMatcher<String> {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(XMLIsSimilarMatcher.class);
 
-    public XMLIsSimilarMatcher(String xmlDocument) {
+    public XMLIsSimilarMatcher(final String xmlDocument) {
         this.xmlDocument = xmlDocument;
     }
 
-    public boolean matchesSafely(String expectedXML) {
+    public boolean matchesSafely(final String expectedXML) {
         
         boolean xmlIsSimilar = true;
         try {
+            XMLUnit.setIgnoreAttributeOrder(true);
+            XMLUnit.setIgnoreComments(true);
+            XMLUnit.setIgnoreWhitespace(true);
             Diff difference = new Diff(xmlDocument,expectedXML);
             xmlIsSimilar = difference.similar();
             if (!xmlIsSimilar) {
@@ -40,13 +44,13 @@ public class XMLIsSimilarMatcher extends TypeSafeMatcher<String> {
         return xmlIsSimilar;
     }
 
-    private void recordErrorMessage(Diff difference) {
+    private void recordErrorMessage(final Diff difference) {
         StringBuffer buffer = new StringBuffer();
         buffer = difference.appendMessage(buffer);
         errorMessage = buffer.toString();
     }
 
-    public void describeTo(Description description) {
+    public void describeTo(final Description description) {
         description.appendText("an XML document equivalent to ").appendText(xmlDocument);
         if (errorMessage != null) {
             description.appendText("[").appendText(errorMessage).appendText("]");

@@ -6,8 +6,10 @@ import org.openqa.selenium.WebDriver.TargetLocator
 import org.openqa.selenium.WebDriver.Navigation
 import org.openqa.selenium.WebDriver.Options
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.TakesScreenshot
+import org.openqa.selenium.OutputType
 
-class MockWebDriver implements WebDriver {
+class MockWebDriver implements TakesScreenshot, WebDriver {
 
     def openedUrls = []
     def closed = false;
@@ -79,4 +81,7 @@ class MockWebDriver implements WebDriver {
         closed
     }
 
+    def <X> X getScreenshotAs(OutputType<X> target) {
+        return null
+    }
 }

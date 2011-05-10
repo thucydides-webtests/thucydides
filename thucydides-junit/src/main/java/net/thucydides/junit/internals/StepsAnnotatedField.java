@@ -4,9 +4,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.thucydides.core.annotations.InvalidStepsFieldException;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.steps.ScenarioSteps;
-import net.thucydides.junit.annotations.InvalidStepsFieldException;
 
 /**
  * Used to identify ScenarioSteps fields that need to be instantiated.

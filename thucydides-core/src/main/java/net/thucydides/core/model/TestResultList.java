@@ -19,23 +19,35 @@ public class TestResultList {
         this.testResults = testResults;
     }
 
+    public boolean isEmpty() {
+        return testResults.isEmpty();
+    }
+
     public TestResult getOverallResult() {
-            if (testResults.contains(FAILURE)) {
-                return FAILURE;
-            }
+        if (testResults.contains(FAILURE)) {
+            return FAILURE;
+        }
 
-            if (testResults.contains(PENDING)) {
-                return PENDING;
-            }
+        if (testResults.contains(PENDING)) {
+            return PENDING;
+        }
 
-            if (containsOnly(IGNORED)) {
-                return IGNORED;
-            }
+        if (containsOnly(IGNORED)) {
+            return IGNORED;
+        }
 
-            return SUCCESS;
+        return SUCCESS;
     }
 
     private boolean containsOnly(final TestResult value) {
+        if (testResults.isEmpty()) {
+            return false;
+        } else {
+            return containsOnlyType(value);
+        }
+    }
+
+    private boolean containsOnlyType(TestResult value) {
         for (TestResult result : testResults) {
             if (result != value) {
                 return false;

@@ -1,22 +1,18 @@
-package net.thucydides.junit.steps;
+package net.thucydides.junit.annotations;
 
-import static net.thucydides.core.util.NameConverter.humanize;
+import net.thucydides.core.annotations.Step;
+import net.thucydides.core.annotations.StepDescription;
+import net.thucydides.core.annotations.StepGroup;
+import org.junit.runner.Description;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepDescription;
-import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.junit.annotations.TestsRequirement;
-import net.thucydides.junit.annotations.TestsRequirements;
-import net.thucydides.junit.annotations.Title;
-
-import org.junit.runner.Description;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static net.thucydides.core.util.NameConverter.humanize;
 
 /**
  *

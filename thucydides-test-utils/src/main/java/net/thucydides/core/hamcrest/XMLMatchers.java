@@ -6,7 +6,7 @@ import org.hamcrest.Matcher;
 public class XMLMatchers {
 
     @Factory
-    public static Matcher<String> isSimilarTo( String expectedDocment ) {
+    public static Matcher<String> isSimilarTo(final String expectedDocment ) {
         return new XMLIsSimilarMatcher(expectedDocment);
     }
 }

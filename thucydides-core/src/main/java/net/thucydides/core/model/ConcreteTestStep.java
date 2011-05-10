@@ -19,7 +19,7 @@ public class ConcreteTestStep extends TestStep {
     private TestResult result;
     private String errorMessage;
     private Throwable cause;
-    
+
     public ConcreteTestStep() {
         super();
     }

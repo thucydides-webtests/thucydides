@@ -10,6 +10,7 @@ import java.util.List;
 
 import net.thucydides.core.annotations.StepProvider;
 
+import net.thucydides.core.steps.samples.SimpleScenarioSteps;
 import org.junit.Test;
 
 public class WhenDiscoveringTestSteps {

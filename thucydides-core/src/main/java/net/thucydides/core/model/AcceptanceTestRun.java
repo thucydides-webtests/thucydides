@@ -22,6 +22,8 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.thoughtworks.xstream.XStream;
+import net.thucydides.core.reports.xml.AcceptanceTestRunConverter;
 
 /**
  * Represents the results of an acceptance test (or "scenario") execution. This
@@ -74,6 +76,12 @@ public class AcceptanceTestRun {
         this.title = title;
     }
 
+    public String toXML() {
+        XStream xstream = new XStream();
+        xstream.alias("acceptance-test-run", AcceptanceTestRun.class);
+        xstream.registerConverter(new AcceptanceTestRunConverter());
+        return xstream.toXML(this);
+    }
     /**
      * An acceptance test run always has a title. The title should be something
      * like the name of the user story being tested, possibly with some
@@ -86,6 +94,7 @@ public class AcceptanceTestRun {
     }
 
     public String getReportName(final ReportNamer.ReportType type) {
+        System.out.println("Finding report name of type " + type);
         ReportNamer reportNamer = new ReportNamer(type);
         return reportNamer.getNormalizedTestNameFor(this);
     }
@@ -165,6 +174,14 @@ public class AcceptanceTestRun {
     private void addStepToCurrentGroup(final TestStep step) {
         TestStepGroup group = groupStack.peek();
         group.addTestStep(step);
+    }
+
+    public void setDefaultGroupResult(TestResult result) {
+        if (!groupStack.isEmpty()) {
+            TestStepGroup group = groupStack.peek();
+            group.setDefaultResult(result);
+        }
+
     }
 
 
@@ -259,7 +276,8 @@ public class AcceptanceTestRun {
 
     public void startGroup(final String description) {
         TestStepGroup newGroup = new TestStepGroup(description);
-        
+
+        System.out.println("Adding new group: " + newGroup);
         if (currentlyInGroup()) {
             addStepToCurrentGroup(newGroup);
         } else {
@@ -267,6 +285,8 @@ public class AcceptanceTestRun {
         }
         
         groupStack.push(newGroup);
+        System.out.println("Group stack: " + groupStack);
+
     }
 
     private boolean currentlyInGroup() {
