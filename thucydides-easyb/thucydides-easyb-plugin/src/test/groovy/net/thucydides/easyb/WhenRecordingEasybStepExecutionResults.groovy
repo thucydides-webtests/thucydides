@@ -24,7 +24,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when
 import net.thucydides.easyb.samples.SampleSteps
 import net.thucydides.easyb.samples.NestedScenarioSteps;
-import static net.thucydides.core.model.TestResult.*;
+import static net.thucydides.core.model.TestResult.*
+import static org.mockito.Mockito.times
+import static org.mockito.Mockito.verify
+import static org.mockito.Matchers.anyObject;
 
 /**
  * We record step execution results using a StepListener.
@@ -89,6 +92,18 @@ public class WhenRecordingEasybStepExecutionResults {
 
         AcceptanceTestRun testRun = results.get(0);
         assert testRun.stepCount == 2
+    }
+
+
+    @Test
+    public void screenshots_should_be_taken_after_each_step() {
+
+        SampleSteps steps = (SampleSteps) stepFactory.newSteps(SampleSteps.class);
+        stepListener.testRunStarted "Test Run"
+        steps.step1();
+        steps.step2();
+
+        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     @Test
@@ -247,6 +262,17 @@ public class WhenRecordingEasybStepExecutionResults {
         List<String> executedStepNames = namesFrom(topLevelStepGroup.getSteps());
 
         assertThat(executedStepNames, containsInOrder("step1", "step2", "step3"));
+    }
+
+    @Test
+    public void screenshots_should_be_taken_after_nested_steps() {
+
+        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
+        stepListener.testRunStarted "Test Run"
+        steps.step1();
+        steps.step2();
+
+        verify(driver, times(7)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     private AcceptanceTestRun firstTestResultRecordedIn(List<AcceptanceTestRun> testRunResults) {

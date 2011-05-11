@@ -13,9 +13,6 @@ import java.util.List;
  */
 public class ConcreteTestStep extends TestStep {
 
-    private File screenshot;
-    private File htmlSource;
-    private String screenshotPath;
     private TestResult result;
     private String errorMessage;
     private Throwable cause;
@@ -41,21 +38,6 @@ public class ConcreteTestStep extends TestStep {
     }
 
     /**
-     * Each test step can be associated with a screenshot.
-     */
-    public void setScreenshot(final File screenshot) {
-        this.screenshot = screenshot;
-    }
-    
-    public void setScreenshotPath(final String screenshotPath) {
-        this.screenshotPath = screenshotPath;
-    }
-    
-    public String getScreenshotPath() {
-        return screenshotPath;
-    }
-    
-    /**
      * Indicate that this step failed with a given error.
      */
     public void failedWith(final String message, final Throwable exception) {
@@ -66,18 +48,6 @@ public class ConcreteTestStep extends TestStep {
     
     public String getErrorMessage() {
         return errorMessage;
-    }
-    
-    public File getScreenshot() {
-        return screenshot;
-    }
-
-    public File getHtmlSource() {
-        return htmlSource;
-    }
-
-    public void setHtmlSource(final File htmlSource) {
-        this.htmlSource = htmlSource;
     }
 
     public Throwable getException() {

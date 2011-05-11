@@ -183,6 +183,14 @@ public class AcceptanceTestRun {
 
     }
 
+    public TestStepGroup getCurrentGroup() {
+        if (!groupStack.isEmpty()) {
+            return groupStack.peek();
+        } else {
+            return null;
+        }
+    }
+
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {

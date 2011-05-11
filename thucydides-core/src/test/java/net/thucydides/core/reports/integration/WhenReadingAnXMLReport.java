@@ -40,9 +40,8 @@ public class WhenReadingAnXMLReport {
     @Test
     public void should_load_acceptance_test_report_from_xml_file() throws Exception {
         String storedReportXML = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-                + "  <test-step result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS'  screenshot='step_1.png'> \n"
                 + "    <description>step 1</description>\n"
-                + "    <screenshot>step_1.png</screenshot>\n"
                 + "  </test-step>\n" 
                 + "</acceptance-test-run>";
 

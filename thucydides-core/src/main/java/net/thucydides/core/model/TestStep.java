@@ -6,6 +6,7 @@ import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +31,10 @@ public abstract class TestStep {
     private long duration;
     private long startTime;
     private Set<String> testedRequirement = new HashSet<String>();
-        
+    private String screenshotPath;
+    private File screenshot;
+    private File htmlSource;
+
     public TestStep() {
         startTime = System.currentTimeMillis();
     }
@@ -66,6 +70,33 @@ public abstract class TestStep {
 
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Each test step can be associated with a screenshot.
+     */
+    public void setScreenshot(final File screenshot) {
+        this.screenshot = screenshot;
+    }
+
+    public File getScreenshot() {
+        return screenshot;
+    }
+
+    public void setScreenshotPath(final String screenshotPath) {
+        this.screenshotPath = screenshotPath;
+    }
+
+    public String getScreenshotPath() {
+        return screenshotPath;
+    }
+
+    public File getHtmlSource() {
+        return htmlSource;
+    }
+
+    public void setHtmlSource(final File htmlSource) {
+        this.htmlSource = htmlSource;
     }
 
     public abstract TestResult getResult();

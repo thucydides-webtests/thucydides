@@ -1,8 +1,7 @@
 package net.thucydides.junit.runners;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
 import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
@@ -132,6 +131,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         runner.setWebDriverFactory(webDriverFactory);
 
         runExpectingFailure(runner);
+
 
         List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
         AcceptanceTestRun testRun = executedScenarios.get(0);

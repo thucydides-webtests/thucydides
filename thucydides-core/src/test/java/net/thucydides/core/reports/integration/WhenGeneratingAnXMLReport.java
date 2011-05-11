@@ -344,9 +344,8 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
         String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='2' successful='1' failures='1' skipped='0' ignored='0' pending='0' result='FAILURE'>\n"
-                + "  <test-step result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS' screenshot='step_1.png'>\n"
                 + "    <description>step 1</description>\n"
-                + "    <screenshot>step_1.png</screenshot>\n"
                 + "  </test-step>\n"
                 + "  <test-step result='FAILURE'>\n"
                 + "    <description>step 2</description>\n"
@@ -371,9 +370,8 @@ public class WhenGeneratingAnXMLReport {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
         String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
                 + "  <user-story name='A user story' code='US1' source='UserStory'/>\n"
-                + "  <test-step result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS' screenshot='step_1.png'>\n"
                 + "    <description>step 1</description>\n"
-                + "    <screenshot>step_1.png</screenshot>\n"
                 + "  </test-step>\n"
                 + "</acceptance-test-run>";
 

@@ -1,9 +1,6 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.model.ConcreteTestStep;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.UserStory;
+import net.thucydides.core.model.*;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.Configuration;
@@ -124,6 +121,21 @@ public class BaseStepListener implements StepListener {
 
     public void testGroupStarted(final ExecutedStepDescription description) {
         getCurrentAcceptanceTestRun().startGroup(description.getName());
+        takeScreenshotForCurrentGroup();
+    }
+
+    private void takeScreenshotForCurrentGroup() {
+        TestStepGroup currentGroup = getCurrentAcceptanceTestRun().getCurrentGroup();
+        takeScreenshotForGroup(currentGroup);
+    }
+
+    private void takeScreenshotForGroup(TestStepGroup group) {
+        if (group != null) {
+            File screenshot = grabScreenshotFileFor(group.getDescription());
+            group.setScreenshot(screenshot);
+            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
+            group.setHtmlSource(sourcecode);
+        }
     }
 
     private UserStory withUserStoryFromTestCaseIn(final ExecutedStepDescription description) {

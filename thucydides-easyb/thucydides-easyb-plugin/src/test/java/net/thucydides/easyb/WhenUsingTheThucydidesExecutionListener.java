@@ -1,26 +1,18 @@
 package net.thucydides.easyb;
 
 
-import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
-import net.thucydides.core.webdriver.WebDriverFactory;
 import org.easyb.domain.Behavior;
-import org.easyb.domain.Story;
 import org.easyb.result.Result;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
 import org.mockito.Mock;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import org.mockito.Mockito;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import net.thucydides.core.steps.StepListener;
 import org.mockito.MockitoAnnotations;
 import org.easyb.BehaviorStep;

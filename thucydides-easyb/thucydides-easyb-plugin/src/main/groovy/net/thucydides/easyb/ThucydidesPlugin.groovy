@@ -146,7 +146,6 @@ public class ThucydidesPlugin extends BasePlugin {
     @Override
     public Object afterStory(final Binding binding) {
 
-
         closeDriver(binding);
 
         stepFactory.notifyStepFinished()

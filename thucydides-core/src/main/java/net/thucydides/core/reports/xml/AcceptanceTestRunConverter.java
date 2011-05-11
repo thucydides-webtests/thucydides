@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.xml;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -45,7 +46,7 @@ public class AcceptanceTestRunConverter implements Converter {
     private static final String REQUIREMENT = "requirement";
     private static final String EXCEPTION = "exception";
     private static final String ERROR = "error";
-    private static final String SCREENSHOT = "screenshot";
+    private static final String SCREENSHOT_FIELD = "screenshot";
     private static final String DESCRIPTION = "description";
 
     private transient String qualifier;
@@ -121,6 +122,8 @@ public class AcceptanceTestRunConverter implements Converter {
         if (step instanceof TestStepGroup) {
             writer.startNode(TEST_GROUP);
             writer.addAttribute(NAME_FIELD, step.getDescription());
+            writeScreenshotIfPresent(writer, step);
+
             List<TestStep> nestedSteps = ((TestStepGroup) step).getSteps();
             for(TestStep nestedStep : nestedSteps) {
                 writeStepTo(writer, nestedStep);
@@ -130,10 +133,10 @@ public class AcceptanceTestRunConverter implements Converter {
             ConcreteTestStep concreteStep = (ConcreteTestStep) step;
             writer.startNode(TEST_STEP);
             writeResult(writer, concreteStep);
+            writeScreenshotIfPresent(writer, concreteStep);
             addRequirementsTo(writer, step.getTestedRequirements());
             writeDescription(writer, concreteStep);
             writeErrorForFailingTest(writer, concreteStep);
-            writeScreenshotIfPresent(writer, concreteStep);
             writer.endNode();
         }
     }
@@ -192,11 +195,9 @@ public class AcceptanceTestRunConverter implements Converter {
         writer.endNode();
     }
 
-    private void writeScreenshotIfPresent(final HierarchicalStreamWriter writer, final ConcreteTestStep step) {
+    private void writeScreenshotIfPresent(final HierarchicalStreamWriter writer, final TestStep step) {
         if (step.getScreenshot() != null) {
-            writer.startNode(SCREENSHOT);
-            writer.setValue(step.getScreenshot().getName());
-            writer.endNode();
+            writer.addAttribute(SCREENSHOT_FIELD, step.getScreenshot().getName());
         }
     }
 
@@ -281,7 +282,10 @@ public class AcceptanceTestRunConverter implements Converter {
         String testResultValue = reader.getAttribute(RESULT_FIELD);
         TestResult result = TestResult.valueOf(testResultValue);
         step.setResult(result);
-
+        String screenshot = reader.getAttribute(SCREENSHOT_FIELD);
+        if (screenshot != null) {
+            step.setScreenshotPath(screenshot);
+        }
         readTestStepChildren(reader, step);
 
         testRun.recordStep(step);
@@ -289,7 +293,9 @@ public class AcceptanceTestRunConverter implements Converter {
 
     private void readTestGroup(final HierarchicalStreamReader reader, final AcceptanceTestRun testRun) {
         String name = reader.getAttribute(NAME_FIELD);
+        String screenshot = reader.getAttribute(SCREENSHOT_FIELD);
         testRun.startGroup(name);
+        testRun.getCurrentGroup().setScreenshotPath(screenshot);
         readChildren(reader, testRun);
         testRun.endGroup();
     }
@@ -302,8 +308,6 @@ public class AcceptanceTestRunConverter implements Converter {
                 step.setDescription(reader.getValue());
             } else if (childNode.equals(REQUIREMENTS)) {
                 readTestStepRequirements(reader, step);
-            } else if (childNode.equals(SCREENSHOT)) {
-                step.setScreenshotPath(reader.getValue());
             }
             reader.moveUp();
         }
