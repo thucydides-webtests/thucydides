@@ -49,6 +49,7 @@ scenario "Select entry in dropdown list using steps", {
     }
 }
 
+/*
 scenario "Select entry in dropdown list using nested steps", {
     given "we are on the Thucydides demo site again", {
     }
@@ -59,7 +60,7 @@ scenario "Select entry in dropdown list using nested steps", {
         demo_site.should_have_selected_value '3'
     }
 }
-/*
+
 scenario "Select entry in dropdown list using steps", {
     given "we are on the Thucydides demo site again", {
     }

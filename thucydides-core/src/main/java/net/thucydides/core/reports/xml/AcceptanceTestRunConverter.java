@@ -93,7 +93,6 @@ public class AcceptanceTestRunConverter implements Converter {
 
 
     private String titleFrom(final AcceptanceTestRun testRun) {
-        System.out.println("Printing test run with title " + testRun.getTitle());
         if (qualifier == null) {
             return testRun.getTitle();
         } else {
@@ -114,7 +113,6 @@ public class AcceptanceTestRunConverter implements Converter {
             String qualifierWithoutSpaces = qualifier.replaceAll(" ","_");
             testRunName = baseName + "_" + qualifierWithoutSpaces;
         }
-        System.out.println("Using name of " + testRunName);
         return testRunName;
     }
 

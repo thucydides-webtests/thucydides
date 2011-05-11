@@ -60,7 +60,6 @@ class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
     }
 
     void gotResult(Result result) {
-        println "TEST RESULT " + result.status()
         if (result.status() == Result.FAILED) {
             ExecutedStepDescription description = ExecutedStepDescription.withTitle(result.cause.message)
             stepListener.stepFailed(new StepFailure(description, result.cause));

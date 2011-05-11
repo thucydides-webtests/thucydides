@@ -55,9 +55,7 @@ public class ReportService {
      */
     public void generateReportsFor(final List<AcceptanceTestRun> testRunResults) {
 
-        System.out.println("Generating reports for " + testRunResults);
         for (AcceptanceTestReporter reporter : getSubscribedReporters()) {
-            System.out.println("Generating report using " + testRunResults);
             for(AcceptanceTestRun testRunResult : testRunResults) {
                 generateReportFor(testRunResult, reporter);
             }

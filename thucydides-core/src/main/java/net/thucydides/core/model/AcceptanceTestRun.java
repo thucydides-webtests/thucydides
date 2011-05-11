@@ -94,7 +94,6 @@ public class AcceptanceTestRun {
     }
 
     public String getReportName(final ReportNamer.ReportType type) {
-        System.out.println("Finding report name of type " + type);
         ReportNamer reportNamer = new ReportNamer(type);
         return reportNamer.getNormalizedTestNameFor(this);
     }
@@ -277,7 +276,6 @@ public class AcceptanceTestRun {
     public void startGroup(final String description) {
         TestStepGroup newGroup = new TestStepGroup(description);
 
-        System.out.println("Adding new group: " + newGroup);
         if (currentlyInGroup()) {
             addStepToCurrentGroup(newGroup);
         } else {
@@ -285,7 +283,6 @@ public class AcceptanceTestRun {
         }
         
         groupStack.push(newGroup);
-        System.out.println("Group stack: " + groupStack);
 
     }
 

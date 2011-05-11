@@ -165,7 +165,6 @@ public class StepInterceptor implements MethodInterceptor {
     private void notifyTestFinishedFor(final Method method, final Object[] args) {
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
         for (StepListener listener : listeners) {
-            System.out.println("Step finished notification -> listener " + listener);
             listener.stepFinished(description);
         }
     }
@@ -238,7 +237,6 @@ public class StepInterceptor implements MethodInterceptor {
 
     private void notifyFinished(final Method method) throws Exception {
 
-        System.out.println("ALL STEPS FINISHED");
         for (StepListener listener : listeners) {
             listener.testRunFinished(resultTally);
         }

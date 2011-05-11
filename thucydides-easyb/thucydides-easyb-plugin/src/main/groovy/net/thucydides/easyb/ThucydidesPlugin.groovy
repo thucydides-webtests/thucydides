@@ -46,7 +46,6 @@ public class ThucydidesPlugin extends BasePlugin {
      */
     public ThucydidesPlugin() {
         Object.mixin ThucydidesExtensions;
-        println "CREATING THUCYDIDES PLUGIN"
     }
 
 
@@ -88,28 +87,26 @@ public class ThucydidesPlugin extends BasePlugin {
 
     private def testRunStarted(def binding) {
         def storyName = lookupStoryNameFrom(binding)
-        stepListener.testRunStarted(ExecutedStepDescription.withTitle(storyName))
-
+        stepListener.testRunStarted(storyName)
     }
 
 
     def lookupStoryNameFrom(def binding) {
-        String storyName = null;
         String sourceFile = binding.variables['sourceFile']
-        if (sourceFile != null) {
-            String sourceFilename = new File(sourceFile).name
-            def fileExtensionStart = sourceFilename.lastIndexOf(".")
-            storyName = sourceFilename.substring(0, fileExtensionStart);
+        if (sourceFile == null) {
+            throw new IllegalArgumentException("No easyb source file name found - are you using a recent version of easyb (1.1 or greater)?")
         }
-        return storyName;
+        String sourceFilename = new File(sourceFile).name
+        sourceFilename.substring(0, sourceFilename.lastIndexOf("."))
     }
 
     private def initializeStepFactoryAndListeners(Pages pages, WebDriver driver) {
         stepFactory = new StepFactory(pages)
-        stepListener = new BaseStepListener(driver, getSystemConfiguration().outputDirectory)
+        if (stepListener == null) {
+            stepListener = new BaseStepListener(driver, getSystemConfiguration().outputDirectory)
+        }
         stepFactory.addListener(stepListener)
 
-        println "REGISTER THUCYDIDES LISTENER"
         ListenerFactory.registerBuilder(new ThucydidesListenerBuilder(stepListener));
     }
 
@@ -149,13 +146,11 @@ public class ThucydidesPlugin extends BasePlugin {
     @Override
     public Object afterStory(final Binding binding) {
 
-        println "STORY DONE"
 
         closeDriver(binding);
 
         stepFactory.notifyStepFinished()
 
-        println "GENERATE REPORTS FOR " + stepListener.testRunResults
         generateReportsFor(stepListener.testRunResults);
 
         return super.afterStory(binding);
@@ -167,7 +162,6 @@ public class ThucydidesPlugin extends BasePlugin {
     }
 
     def generateReportsFor(final List<AcceptanceTestRun> testRunResults) {
-        println "GENERATING REPORTS FOR $testRunResults"
 
         reportService.generateReportsFor(testRunResults);
     }
@@ -199,7 +193,6 @@ public class ThucydidesPlugin extends BasePlugin {
             def stepLibrary = proxyFor(stepLibraryClass)
             binding.setVariable(nameOf(stepLibraryClass), stepLibrary)
         }
-
     }
 
     private def proxyFor(def stepLibraryClass) {
@@ -214,10 +207,10 @@ public class ThucydidesPlugin extends BasePlugin {
         Pages pages = binding.getVariable("pages")
         pages.start()
     }
-/**
- * The configuration manages output directories and driver types.
- * They can be defined as system values, or have sensible defaults.
- */
+    /**
+     * The configuration manages output directories and driver types.
+     * They can be defined as system values, or have sensible defaults.
+     */
     public PluginConfiguration getConfiguration() {
         return PluginConfiguration.getInstance();
     }
@@ -226,10 +219,10 @@ public class ThucydidesPlugin extends BasePlugin {
         return PluginConfiguration.reset();
     }
 
-/**
- * The configuration manages output directories and driver types.
- * They can be defined as system values, or have sensible defaults.
- */
+    /**
+     * The configuration manages output directories and driver types.
+     * They can be defined as system values, or have sensible defaults.
+     */
     protected Configuration getSystemConfiguration() {
         if (systemConfiguration == null) {
             systemConfiguration = new Configuration();
@@ -237,12 +230,11 @@ public class ThucydidesPlugin extends BasePlugin {
         return systemConfiguration;
     }
 
-/**
- * The default reporters applicable for standard test runs.
- */
+    /**
+     * The default reporters applicable for standard test runs.
+     */
     public Collection<AcceptanceTestReporter> getDefaultReporters() {
         return ImmutableList.of(new XMLAcceptanceTestReporter(),
-                new HtmlAcceptanceTestReporter());
+        new HtmlAcceptanceTestReporter());
     }
-
 }

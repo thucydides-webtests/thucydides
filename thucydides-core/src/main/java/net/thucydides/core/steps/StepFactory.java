@@ -68,7 +68,6 @@ public class StepFactory {
     }
 
     public void notifyStepFinished() {
-        System.out.println("FINISH STEPS");
         for(ScenarioSteps step : managedSteps) {
             step.done();
         }

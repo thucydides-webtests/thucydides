@@ -63,15 +63,4 @@ public class PluginConfiguration {
         return resetBrowserInEachScenario;
     }
 
-    /**
-     * Where should the reports go?
-     */
-    public File loadOutputDirectoryFromSystemProperties() {
-        String systemDefinedDirectory = System.getProperty(OUTPUT_DIRECTORY_PROPERTY);
-        if (systemDefinedDirectory == null) {
-            systemDefinedDirectory = DEFAULT_OUTPUT_DIRECTORY;
-        }
-        return new File(systemDefinedDirectory);
-    }
-
 }

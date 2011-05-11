@@ -1,7 +1,5 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.pages.Pages;
-
 import java.util.List;
 
 /**

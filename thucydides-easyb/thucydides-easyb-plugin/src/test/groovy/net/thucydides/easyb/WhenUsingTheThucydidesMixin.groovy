@@ -32,6 +32,7 @@ public class WhenUsingTheThucydidesMixin {
     public void initMocks() {
         plugin = new BrowserlessThucydidesPlugin();
         binding = new Binding();
+        binding.setVariable("sourceFile", "TestStory.story")
     }
 
     @Test

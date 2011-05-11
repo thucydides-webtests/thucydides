@@ -8,7 +8,6 @@ import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.Configuration;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,6 @@ public class BaseStepListener implements StepListener {
     }
 
     private void recordCurrentTestStep(final ExecutedStepDescription description) {
-        System.out.println("Recording current test step");
 
         startNewTestStep();
 
@@ -57,8 +55,6 @@ public class BaseStepListener implements StepListener {
 
         getCurrentAcceptanceTestRun().recordStep(currentTestStep);
         getCurrentAcceptanceTestRun().recordDuration();
-        System.out.println("CurrentAcceptanceTestRun step count: " + getCurrentAcceptanceTestRun().getStepCount());
-        System.out.println("acceptanceTestRuns: " + acceptanceTestRuns);
         finishTestStep();
     }
 
@@ -69,7 +65,6 @@ public class BaseStepListener implements StepListener {
     }
 
     private void finishTestStep() {
-        System.out.println("Acceptance test runs: " + acceptanceTestRuns);
         currentTestStep = null;
     }
 
@@ -105,7 +100,6 @@ public class BaseStepListener implements StepListener {
     }
 
     public void testRunStarted(final ExecutedStepDescription description) {
-        System.out.println("Starting test run " + description.getTitle());
         startNewCurrentAcceptanceTestRun();
         if (description.getTestMethod() != null) {
             getCurrentAcceptanceTestRun().setMethodName(description.getTestMethod().getName());
@@ -128,24 +122,17 @@ public class BaseStepListener implements StepListener {
         }
     }
 
-    private void setTestRunTitleFrom(ExecutedStepDescription description) {
-    }
-
     public void testGroupStarted(final ExecutedStepDescription description) {
-        System.out.println("Test Group Started for: " + description.getName());
         getCurrentAcceptanceTestRun().startGroup(description.getName());
     }
 
     private UserStory withUserStoryFromTestCaseIn(final ExecutedStepDescription description) {
-        System.out.println("Creating user story from unit test class" + description.getStepClass().getSimpleName());
         String name = NameConverter.humanize(description.getStepClass().getSimpleName());
         String source = description.getStepClass().getCanonicalName();
-        System.out.println("using canonical name " + description.getStepClass().getCanonicalName());
         return new UserStory(name, "", source);
     }
 
     private UserStory withUserStoryFrom(final ExecutedStepDescription description) {
-        System.out.println("Creating user story from easyb story" + description.getName());
         String name = NameConverter.humanize(description.getName());
         return new UserStory(name, "", "");
     }
@@ -158,11 +145,10 @@ public class BaseStepListener implements StepListener {
     }
 
     private void recordFailureDetailsInFailingTestStep(final StepFailure failure) {
-        if (!currentTestStep.isAGroup()) {
+        if ((currentTestStep != null) && (!currentTestStep.isAGroup())) {
             currentTestStep.failedWith(failure.getMessage(), failure.getException());
         }
     }
-
 
     private void pauseIfRequired() {
         int delay = Configuration.getStepDelay();
@@ -181,10 +167,12 @@ public class BaseStepListener implements StepListener {
 
 
     private void takeScreenshotFor(final ExecutedStepDescription description) {
-        File screenshot = grabScreenshotFileFor(aTestCalled(description));
-        currentTestStep.setScreenshot(screenshot);
-        File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-        currentTestStep.setHtmlSource(sourcecode);
+        if (currentTestStep != null) {
+            File screenshot = grabScreenshotFileFor(aTestCalled(description));
+            currentTestStep.setScreenshot(screenshot);
+            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
+            currentTestStep.setHtmlSource(sourcecode);
+        }
     }
 
     protected String aTestCalled(final ExecutedStepDescription description) {
@@ -201,12 +189,9 @@ public class BaseStepListener implements StepListener {
 
     public void stepFinished(ExecutedStepDescription description) {
 
-        System.out.println("STEP FINISHED (" + this + ")");
         if (description.isAGroup()) {
-            System.out.println(" - End group");
             getCurrentAcceptanceTestRun().endGroup();
         } else {
-            System.out.println(" - End step");
             if (testStepRunning()) {
                 markCurrentTestAs(SUCCESS);
                 takeScreenshotFor(description);
@@ -214,7 +199,6 @@ public class BaseStepListener implements StepListener {
             }
             pauseIfRequired();
         }
-        System.out.println("TEST REPORT AFTER STEP FINISHED: " + getCurrentAcceptanceTestRun().toXML());
     }
 
     public void stepGroupStarted(String description) {
@@ -229,7 +213,6 @@ public class BaseStepListener implements StepListener {
         ExecutedStepDescription copiedDescription = description.clone();
         copiedDescription.setAGroup(true);
         testGroupStarted(copiedDescription);
-        System.out.println("TEST REPORT AFTER GROUP STARTED: " + getCurrentAcceptanceTestRun().toXML());
     }
 
     public void stepGroupFinished() {
@@ -238,12 +221,10 @@ public class BaseStepListener implements StepListener {
     }
 
     public void stepSucceeded() {
-        System.out.println("STEP SUCCEEDED");
         markCurrentTestAs(SUCCESS);
     }
 
     public void stepFailed(StepFailure failure) {
-        System.out.println("STEP FAILED");
         markCurrentTestAs(FAILURE);
         recordFailureDetailsInFailingTestStep(failure);
         takeScreenshotFor(failure.getDescription());
@@ -251,7 +232,6 @@ public class BaseStepListener implements StepListener {
     }
 
     public void stepIgnored(ExecutedStepDescription description) {
-        System.out.println("STEP IGNORED");
         markCurrentTestAs(IGNORED);
 
         Method testMethod = description.getTestMethod();

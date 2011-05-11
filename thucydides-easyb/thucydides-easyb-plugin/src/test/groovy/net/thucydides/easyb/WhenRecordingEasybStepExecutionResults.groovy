@@ -30,6 +30,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when
 import net.thucydides.easyb.samples.SampleSteps
 import net.thucydides.easyb.samples.NestedScenarioSteps;
+import static net.thucydides.core.model.TestResult.*;
 
 /**
  * We record step execution results using a StepListener.
@@ -78,7 +79,7 @@ public class WhenRecordingEasybStepExecutionResults {
 
         List<AcceptanceTestRun> results = stepListener.getTestRunResults();
 
-        assertThat(results.size(), is(1));
+        assert results.size() == 1
     }
 
     @Test
@@ -93,7 +94,7 @@ public class WhenRecordingEasybStepExecutionResults {
         assertThat(results.size(), is(1));
 
         AcceptanceTestRun testRun = results.get(0);
-        assertThat(testRun.getStepCount(), is(2));
+        assert testRun.stepCount == 2
     }
 
     @Test
@@ -108,7 +109,38 @@ public class WhenRecordingEasybStepExecutionResults {
         assertThat(results.size(), is(1));
 
         AcceptanceTestRun testRun = results.get(0);
-        assertThat(testRun.getResult(), is(TestResult.SUCCESS));
+        assert testRun.result == SUCCESS
+    }
+
+    @Test
+    public void a_failing_step_should_record_the_failure() {
+
+        SampleSteps steps = (SampleSteps) stepFactory.newSteps(SampleSteps.class);
+        stepListener.testRunStarted "Test Run"
+        steps.step1();
+        steps.failingStep();
+
+        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        assertThat(results.size(), is(1));
+
+        AcceptanceTestRun testRun = results.get(0);
+        assert testRun.result == FAILURE
+    }
+
+    @Test
+    public void a_failing_step_should_record_the_failure_details_with_the_step() {
+
+        SampleSteps steps = (SampleSteps) stepFactory.newSteps(SampleSteps.class);
+        stepListener.testRunStarted "Test Run"
+        steps.step1();
+        steps.failingStep();
+
+        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        assertThat(results.size(), is(1));
+
+        AcceptanceTestRun testRun = results.get(0);
+        TestStep failingStep = testRun.testSteps[1]
+        assert failingStep.result == FAILURE
     }
 
     @Test
@@ -135,7 +167,8 @@ public class WhenRecordingEasybStepExecutionResults {
         steps.step1();
 
         List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        assertThat(results.size(), is(1));
+
+        assert results.size() == 1
 
     }
 

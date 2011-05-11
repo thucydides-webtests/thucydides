@@ -19,4 +19,8 @@ class SampleSteps extends ScenarioSteps {
     @Step
     def step3() {}
 
+    @Step
+    def failingStep() {
+        assert 1 == 2
+    }
 }

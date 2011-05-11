@@ -1,6 +1,5 @@
 package net.thucydides.core.steps;
 
-import org.junit.runner.Description;
 
 /**
  * Description and underlying cause behind a step failure.
