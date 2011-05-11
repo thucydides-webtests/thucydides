@@ -49,8 +49,8 @@ public class WhenUsingTheThucydidesExecutionListener {
 
         BehaviorStep story = new BehaviorStep(STORY, "A User Story");
         BehaviorStep scenario = new BehaviorStep(SCENARIO, "Test Scenario");
-        BehaviorStep and = new BehaviorStep(GIVEN, "a condition");
-        BehaviorStep given = new BehaviorStep(AND, "another condition");
+        BehaviorStep given = new BehaviorStep(GIVEN, "a condition");
+        BehaviorStep and = new BehaviorStep(AND, "another condition");
         BehaviorStep when = new BehaviorStep(WHEN, "an action");
         BehaviorStep then = new BehaviorStep(THEN, "an outcome");
 
@@ -194,4 +194,66 @@ public class WhenUsingTheThucydidesExecutionListener {
         verify(stepListener).stepIgnored(any(ExecutedStepDescription.class));
 
     }
+
+    @Test
+    public void failed_steps_are_marked_as_failing() {
+        BehaviorStep step = new BehaviorStep(SCENARIO, "Test Scenario");
+
+        executionListener.startStep(step);
+
+        Result failure = new Result(new Exception("Step failed"));
+        executionListener.gotResult(failure);
+
+        verify(stepListener).stepFailed(any(StepFailure.class));
+    }
+
+    @Test
+    public void steps_directly_following_a_failing_step_are_skipped() {
+        BehaviorStep scenario = new BehaviorStep(SCENARIO, "Test Scenario");
+        BehaviorStep given = new BehaviorStep(GIVEN, "a condition");
+        BehaviorStep when = new BehaviorStep(WHEN, "an action");
+        BehaviorStep then = new BehaviorStep(THEN, "an outcome");
+
+        executionListener.startStep(scenario);
+
+        executionListener.startStep(given);
+        Result failure = new Result(new Exception("Step failed"));
+        executionListener.gotResult(failure);
+        executionListener.stopStep();
+
+        executionListener.startStep(when);
+        Result succeeded = new Result(Result.SUCCEEDED);
+        executionListener.gotResult(succeeded);
+        executionListener.stopStep();
+
+        verify(stepListener).stepFailed(any(StepFailure.class));
+        verify(stepListener).stepIgnored(any(ExecutedStepDescription.class));
+    }
+
+    @Test
+    public void steps_in_a_new_scenario_following_a_failing_step_are_not_skipped() {
+        BehaviorStep scenario1 = new BehaviorStep(SCENARIO, "Test Scenario");
+        BehaviorStep scenario2 = new BehaviorStep(SCENARIO, "Test Scenario");
+        BehaviorStep given = new BehaviorStep(GIVEN, "a condition");
+        BehaviorStep when = new BehaviorStep(WHEN, "an action");
+
+        executionListener.startStep(scenario1);
+
+        executionListener.startStep(given);
+        Result failure = new Result(new Exception("Step failed"));
+        executionListener.gotResult(failure);
+        executionListener.stopStep();
+
+        executionListener.stopStep();
+
+        executionListener.startStep(scenario2);
+        executionListener.startStep(when);
+        Result succeeded = new Result(Result.SUCCEEDED);
+        executionListener.gotResult(succeeded);
+        executionListener.stopStep();
+
+        verify(stepListener).stepFailed(any(StepFailure.class));
+        verify(stepListener).stepSucceeded();
+    }
+
 }

@@ -235,14 +235,30 @@ public class BaseStepListener implements StepListener {
         markCurrentTestAs(IGNORED);
 
         Method testMethod = description.getTestMethod();
-        if (TestStatus.of(testMethod).isPending()) {
+        if (stepMethodIsPending(testMethod)) {
             markCurrentTestAs(PENDING);
-        } else if (TestStatus.of(testMethod).isIgnored()) {
+        } else if (stepMethodIsIgnored(testMethod)) {
             markCurrentTestAs(IGNORED);
         } else {
             markCurrentTestAs(SKIPPED);
         }
         recordCurrentTestStep(description);
+    }
+
+    private boolean stepMethodIsPending(Method testMethod) {
+        if (testMethod  != null) {
+            return TestStatus.of(testMethod).isPending();
+        } else {
+            return false;
+        }
+    }
+
+    private boolean stepMethodIsIgnored(Method testMethod) {
+        if (testMethod  != null) {
+            return TestStatus.of(testMethod).isIgnored();
+        } else {
+            return false;
+        }
     }
 
     public void testRunFinished(TestStepResult result) {

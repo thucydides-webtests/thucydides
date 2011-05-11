@@ -3,6 +3,7 @@ package net.thucydides.easyb.samples
 import net.thucydides.core.annotations.Step
 import net.thucydides.core.pages.Pages
 import net.thucydides.core.steps.ScenarioSteps
+import org.junit.Ignore
 
 class SampleSteps extends ScenarioSteps {
 
@@ -22,5 +23,10 @@ class SampleSteps extends ScenarioSteps {
     @Step
     def failingStep() {
         assert 1 == 2
+    }
+
+    @Ignore
+    @Step
+    def ignoredStep() {
     }
 }

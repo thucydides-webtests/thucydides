@@ -1,7 +1,6 @@
 package net.thucydides.easyb;
 
 import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.core.pages.Pages;
@@ -17,15 +16,10 @@ import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static net.thucydides.core.hamcrest.Matchers.containsInOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when
 import net.thucydides.easyb.samples.SampleSteps
@@ -56,13 +50,13 @@ public class WhenRecordingEasybStepExecutionResults {
     @Mock
     Pages pages;
 
+
     @Before
     public void createStepListenerAndFactory() throws IOException {
         MockitoAnnotations.initMocks(this);
         outputDirectory = temporaryFolder.newFolder("thucydides");
         screenshot = temporaryFolder.newFile("screenshot.jpg");
         stepListener = new BaseStepListener(driver, outputDirectory);
-        ThucydidesExecutionListener executionListener = new ThucydidesExecutionListener(stepListener);
 
         when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot);
 
@@ -91,7 +85,7 @@ public class WhenRecordingEasybStepExecutionResults {
         steps.step2();
 
         List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        assertThat(results.size(), is(1));
+        assert results.size() == 1
 
         AcceptanceTestRun testRun = results.get(0);
         assert testRun.stepCount == 2
@@ -106,7 +100,7 @@ public class WhenRecordingEasybStepExecutionResults {
         steps.step2();
 
         List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        assertThat(results.size(), is(1));
+        assert results.size() == 1
 
         AcceptanceTestRun testRun = results.get(0);
         assert testRun.result == SUCCESS
@@ -121,7 +115,7 @@ public class WhenRecordingEasybStepExecutionResults {
         steps.failingStep();
 
         List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        assertThat(results.size(), is(1));
+        assert results.size() == 1
 
         AcceptanceTestRun testRun = results.get(0);
         assert testRun.result == FAILURE
@@ -136,13 +130,58 @@ public class WhenRecordingEasybStepExecutionResults {
         steps.failingStep();
 
         List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        assertThat(results.size(), is(1));
+        assert results.size() == 1
 
         AcceptanceTestRun testRun = results.get(0);
-        TestStep failingStep = testRun.testSteps[1]
-        assert failingStep.result == FAILURE
+        assert testRun.testSteps[1].result == FAILURE
     }
 
+    @Test
+    public void ignored_tests_should_be_reported() {
+
+        SampleSteps steps = (SampleSteps) stepFactory.newSteps(SampleSteps.class);
+        stepListener.testRunStarted "Test Run"
+        steps.step1();
+        steps.ignoredStep();
+
+        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        assert results.size() == 1
+
+        AcceptanceTestRun testRun = results.get(0);
+        assert testRun.testSteps[1].result == IGNORED
+    }
+
+    @Test
+    public void steps_should_be_skipped_after_a_failure() {
+
+        SampleSteps steps = (SampleSteps) stepFactory.newSteps(SampleSteps.class);
+        stepListener.testRunStarted "Test Run"
+        steps.step1();
+        steps.failingStep();
+        steps.step2();
+
+        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        assert results.size() == 1
+
+        AcceptanceTestRun testRun = results.get(0);
+        assert testRun.testSteps[2].result == SKIPPED
+    }
+
+    @Test
+    public void steps_should_not_be_skipped_after_an_ignored_test() {
+
+        SampleSteps steps = (SampleSteps) stepFactory.newSteps(SampleSteps.class);
+        stepListener.testRunStarted "Test Run"
+        steps.step1();
+        steps.ignoredStep()
+        steps.step2();
+
+        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        assert results.size() == 1
+
+        AcceptanceTestRun testRun = results.get(0);
+        assert testRun.testSteps[2].result == SUCCESS
+    }
     @Test
     public void the_step_listener_should_record_each_step_executed_in_order() {
 
@@ -181,7 +220,7 @@ public class WhenRecordingEasybStepExecutionResults {
         steps.step2();
 
         List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        assertThat(results.size(), is(1));
+        assert results.size() == 1
 
         AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
         List<TestStep> executedSteps = testRun.getTestSteps();
@@ -199,7 +238,7 @@ public class WhenRecordingEasybStepExecutionResults {
         steps.step2();
 
         List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        assertThat(results.size(), is(1));
+        assert results.size() == 1
 
         AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
         List<TestStep> executedSteps = testRun.getTestSteps();
