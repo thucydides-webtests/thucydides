@@ -189,6 +189,48 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void pending_test_groups_should_be_reported() {
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+
+        stepListener.stepGroupStarted("pending group");
+        stepListener.updateCurrentStepStatus(TestResult.PENDING);
+
+        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        AcceptanceTestRun testRun = results.get(0);
+
+        assertThat(testRun.getTestSteps().get(0).getResult(), is(TestResult.PENDING));
+    }
+
+    @Test
+    public void ignored_test_groups_should_be_skipped() {
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+
+        stepListener.stepGroupStarted("ignored group");
+        stepListener.stepIgnored(ExecutedStepDescription.withTitle("Ignore this step"));
+
+        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        AcceptanceTestRun testRun = results.get(0);
+
+        assertThat(testRun.getTestSteps().get(0).getResult(), is(TestResult.SKIPPED));
+    }
+
+    @Test
+    public void succeeding_test_groups_should_be_marked_as_successful_by_default() {
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+
+        stepListener.stepGroupStarted("successful group");
+        stepListener.stepSucceeded();
+
+        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        AcceptanceTestRun testRun = results.get(0);
+
+        assertThat(testRun.getTestSteps().get(0).getResult(), is(TestResult.SUCCESS));
+    }
+
+    @Test
     public void steps_should_be_skipped_after_a_failure() {
 
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
@@ -276,6 +318,22 @@ public class WhenRecordingStepExecutionResults {
         List<String> executedStepNames = namesFrom(topLevelStepGroup.getSteps());
 
         assertThat(executedStepNames, containsInOrder("step1", "step2"));
+    }
+
+    @Test
+    public void starting_and_ending_a_group_without_steps_should_result_in_success() {
+        ExecutedStepDescription group = ExecutedStepDescription.withTitle("Main group");
+        group.setAGroup(true);
+
+        stepListener.stepStarted(group);
+        stepListener.updateCurrentStepStatus(TestResult.SUCCESS);
+        stepListener.stepFinished(group);
+
+        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testRun.getTestSteps();
+        TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
+
+        assertThat(topLevelStepGroup.getResult(), is(TestResult.SUCCESS));
     }
 
     @Test

@@ -28,14 +28,22 @@ public class WhenNamingTheReports {
     @Test
     public void the_report_filename_should_replace_spaces_with_underscores() {
 
-        
         AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
         testRun.setMethodName("a_simple_test_case");
         String reportName = testRun.getReportName(XML);
         
         assertThat(reportName, is("a_simple_test_case.xml"));
     }
-    
+
+    @Test
+    public void the_report_filename_should_be_determined_even_if_no_method_is_named() {
+
+        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
+        String reportName = testRun.getReportName(XML);
+
+        assertThat(reportName, is("a_simple_test_case.xml"));
+    }
+
     @Test
     public void the_html_report_filename_should_have_the_html_suffix() {
 

@@ -99,11 +99,6 @@ public class Photographer {
     }
 
     public File getMatchingSourceCodeFor(final File screenshot) {
-        System.out.println("Getting source code file for: " + screenshot);
-        if (screenshot != null) {
-            return new File(sourceCodeFileFor(screenshot.getAbsolutePath()));
-        } else {
-            return null;
-        }
+        return new File(sourceCodeFileFor(screenshot.getAbsolutePath()));
     }
 }

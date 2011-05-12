@@ -1,6 +1,7 @@
 package net.thucydides.core.steps;
 
 import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.annotations.StepGroup;
 import org.junit.Ignore;
 
 import java.lang.reflect.Method;
@@ -31,5 +32,10 @@ public final class TestStatus {
     public boolean isIgnored() {
         Ignore ignored = method.getAnnotation(Ignore.class);
         return (ignored != null);
+    }
+
+    public boolean isAStepGroup() {
+        StepGroup stepGroup = method.getAnnotation(StepGroup.class);
+        return (stepGroup != null);
     }
 }

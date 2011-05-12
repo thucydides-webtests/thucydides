@@ -26,7 +26,7 @@ public class UserStoryTestResults {
     
     private final String title;
     
-    private UserStory userStory;
+    private final UserStory userStory;
     
     /**
      * Create a new acceptance test run instance.
@@ -39,10 +39,6 @@ public class UserStoryTestResults {
 
     public UserStory getUserStory() {
         return userStory;
-    }
-    
-    public void setUserStory(final UserStory userStory) {
-        this.userStory = userStory;
     }
 
     public String getReportName(final ReportNamer.ReportType type) {
@@ -115,10 +111,6 @@ public class UserStoryTestResults {
      * Does this set of test results correspond to a specified user story?
      */
     public boolean containsResultsFor(final UserStory aUserStory) {
-        if (getUserStory() == null) {
-            return false;
-        } else {
-            return getUserStory().equals(aUserStory);
-        }
+        return getUserStory().equals(aUserStory);
     }
 }

@@ -31,7 +31,22 @@ public class WhenRecordingUserStoryTestResults {
 
         Assert.assertThat(story.equals(story), is(true));
     }
-    
+
+    static class SubclassedUserStory extends UserStory {
+
+        public SubclassedUserStory(final String name, final String code, final String source) {
+            super(name, code, source);
+        }
+    }
+
+    @Test
+    public void a_user_story_is_not_equal_to_instances_of_any_other_class() {
+        UserStory story = new UserStory("name 1", "code 1", "source 1");
+        UserStory story2 = new SubclassedUserStory("name 1", "code 1", "source 1");
+
+        Assert.assertThat(story.equals(story2), is(false));
+    }
+
     @Test
     public void user_stories_with_identical_field_values_are_equal() {
         UserStory story1 = new UserStory("name 1", "code 1", "source 1");
@@ -186,6 +201,16 @@ public class WhenRecordingUserStoryTestResults {
         Assert.assertThat(testResults.containsResultsFor(someStory), is(true));
     }
     
+    @Test
+    public void a_aggregate_test_result_set_knows_what_stories_it_contains_even_if_it_is_empty() {
+
+        UserStory someStory = new UserStory("name", "code", "source");
+        UserStoryTestResults testResults = new UserStoryTestResults(someStory);
+
+        testResults.recordTestRun(thatSucceedsCalled("Test Run"));
+
+        Assert.assertThat(testResults.containsResultsFor(someStory), is(true));
+    }
     @Test
     public void a_aggregate_test_result_set_matches_stories_by_field_values() {
 
