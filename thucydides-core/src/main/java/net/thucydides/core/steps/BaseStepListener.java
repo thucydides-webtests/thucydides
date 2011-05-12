@@ -44,12 +44,8 @@ public class BaseStepListener implements StepListener {
 
     private void recordCurrentTestStep(final ExecutedStepDescription description) {
 
-        startNewTestStep();
-
-        String testName = description.getName();
-        currentTestStep.setDescription(testName);
-        currentTestStep.recordDuration();
-
+        getCurrentStep().setDescription(description.getName());
+        getCurrentStep().recordDuration();
         getCurrentAcceptanceTestRun().recordStep(currentTestStep);
         getCurrentAcceptanceTestRun().recordDuration();
         finishTestStep();
@@ -109,7 +105,6 @@ public class BaseStepListener implements StepListener {
         setTitleIfNotAlreadySet();
 
         acceptanceTestRuns.add(getCurrentAcceptanceTestRun());
-        startNewTestStep();
     }
 
     private void setTitleIfNotAlreadySet() {
@@ -150,16 +145,20 @@ public class BaseStepListener implements StepListener {
     }
 
     private void markCurrentTestAs(final TestResult result) {
+
+        getCurrentStep().setResult(result);
+    }
+
+    private TestStep getCurrentStep() {
         if (currentTestStep != null) {
-            currentTestStep.setResult(result);
-            getCurrentAcceptanceTestRun().setDefaultGroupResult(result);
+            return currentTestStep;
+        } else {
+            return getCurrentAcceptanceTestRun().getCurrentGroup();
         }
     }
 
     private void recordFailureDetailsInFailingTestStep(final StepFailure failure) {
-        if ((currentTestStep != null) && (!currentTestStep.isAGroup())) {
-            currentTestStep.failedWith(failure.getMessage(), failure.getException());
-        }
+        getCurrentStep().failedWith(failure.getMessage(), failure.getException());
     }
 
     private void pauseIfRequired() {
@@ -179,12 +178,10 @@ public class BaseStepListener implements StepListener {
 
 
     private void takeScreenshotFor(final ExecutedStepDescription description) {
-        if (currentTestStep != null) {
-            File screenshot = grabScreenshotFileFor(aTestCalled(description));
-            currentTestStep.setScreenshot(screenshot);
-            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-            currentTestStep.setHtmlSource(sourcecode);
-        }
+        File screenshot = grabScreenshotFileFor(aTestCalled(description));
+        getCurrentStep().setScreenshot(screenshot);
+        File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
+        getCurrentStep().setHtmlSource(sourcecode);
     }
 
     protected String aTestCalled(final ExecutedStepDescription description) {
@@ -200,25 +197,18 @@ public class BaseStepListener implements StepListener {
     }
 
     public void stepFinished(ExecutedStepDescription description) {
-
         if (description.isAGroup()) {
             getCurrentAcceptanceTestRun().endGroup();
         } else {
-            if (testStepRunning()) {
-                markCurrentTestAs(SUCCESS);
-                takeScreenshotFor(description);
-                recordCurrentTestStep(description);
-            }
+            markCurrentTestAs(SUCCESS);
+            takeScreenshotFor(description);
+            recordCurrentTestStep(description);
             pauseIfRequired();
         }
     }
 
     public void stepGroupStarted(String description) {
         stepGroupStarted(ExecutedStepDescription.withTitle(description));
-    }
-
-    private boolean testStepRunning() {
-        return (currentTestStep != null);
     }
 
     public void stepGroupStarted(ExecutedStepDescription description) {
@@ -232,15 +222,44 @@ public class BaseStepListener implements StepListener {
         System.out.println("TEST REPORT AFTER END GROUP: " + getCurrentAcceptanceTestRun().toXML());
     }
 
+    public void stepGroupFinished(TestResult result) {
+        getCurrentAcceptanceTestRun().setDefaultGroupResult(result);
+        getCurrentAcceptanceTestRun().endGroup();
+        System.out.println("TEST REPORT AFTER END GROUP: " + getCurrentAcceptanceTestRun().toXML());
+    }
+
     public void stepSucceeded() {
         markCurrentTestAs(SUCCESS);
     }
+
+    /**
+     * Update the status of the current step (e.g to IGNORED or SKIPPED) without changing anything else.
+     */
+    public void updateCurrentStepStatus(TestResult result) {
+        if (currentTestStep == null) {
+            updateMostRecentStepStatus(result);
+        } else {
+            markCurrentTestAs(result);
+        }
+    }
+
+    private void updateMostRecentStepStatus(TestResult result) {
+        getCurrentAcceptanceTestRun().updateMostResultTestStepResult(result);
+    }
+
+    public void setCurrentDefaultStatusTo(TestResult result) {
+        getCurrentStep().setResult(result);
+        markCurrentTestAs(result);
+    }
+
 
     public void stepFailed(StepFailure failure) {
         markCurrentTestAs(FAILURE);
         recordFailureDetailsInFailingTestStep(failure);
         takeScreenshotFor(failure.getDescription());
-        recordCurrentTestStep(failure.getDescription());
+        if (currentTestStep != null) {
+            recordCurrentTestStep(failure.getDescription());
+        }
     }
 
     public void stepIgnored(ExecutedStepDescription description) {

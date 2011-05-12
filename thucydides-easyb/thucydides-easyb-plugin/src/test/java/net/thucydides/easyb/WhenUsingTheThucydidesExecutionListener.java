@@ -1,6 +1,7 @@
 package net.thucydides.easyb;
 
 
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import org.easyb.domain.Behavior;
@@ -88,7 +89,7 @@ public class WhenUsingTheThucydidesExecutionListener {
         executionListener.stopStep();
 
         verify(stepListener).stepGroupStarted("Test Scenario");
-        verify(stepListener).stepGroupFinished();
+        verify(stepListener).stepGroupFinished(TestResult.SUCCESS);
     }
 
     @Test
@@ -170,7 +171,7 @@ public class WhenUsingTheThucydidesExecutionListener {
         Result pending = new Result(Result.PENDING);
         executionListener.gotResult(pending);
 
-        verify(stepListener).stepIgnored(any(ExecutedStepDescription.class));
+        verify(stepListener).updateCurrentStepStatus(TestResult.PENDING);
 
     }
 
@@ -183,7 +184,7 @@ public class WhenUsingTheThucydidesExecutionListener {
         Result ignored = new Result(Result.IGNORED);
         executionListener.gotResult(ignored);
 
-        verify(stepListener).stepIgnored(any(ExecutedStepDescription.class));
+        verify(stepListener).updateCurrentStepStatus(TestResult.IGNORED);
 
     }
 
@@ -219,7 +220,7 @@ public class WhenUsingTheThucydidesExecutionListener {
         executionListener.stopStep();
 
         verify(stepListener).stepFailed(any(StepFailure.class));
-        verify(stepListener).stepIgnored(any(ExecutedStepDescription.class));
+        verify(stepListener).updateCurrentStepStatus(TestResult.IGNORED);
     }
 
     @Test

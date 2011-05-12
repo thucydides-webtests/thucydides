@@ -122,6 +122,7 @@ public class AcceptanceTestRunConverter implements Converter {
         if (step instanceof TestStepGroup) {
             writer.startNode(TEST_GROUP);
             writer.addAttribute(NAME_FIELD, step.getDescription());
+            writeResult(writer, step);
             writeScreenshotIfPresent(writer, step);
 
             List<TestStep> nestedSteps = ((TestStepGroup) step).getSteps();
@@ -294,8 +295,11 @@ public class AcceptanceTestRunConverter implements Converter {
     private void readTestGroup(final HierarchicalStreamReader reader, final AcceptanceTestRun testRun) {
         String name = reader.getAttribute(NAME_FIELD);
         String screenshot = reader.getAttribute(SCREENSHOT_FIELD);
+        String testResultValue = reader.getAttribute(RESULT_FIELD);
+        TestResult result = TestResult.valueOf(testResultValue);
         testRun.startGroup(name);
         testRun.getCurrentGroup().setScreenshotPath(screenshot);
+        testRun.getCurrentGroup().setResult(result);
         readChildren(reader, testRun);
         testRun.endGroup();
     }

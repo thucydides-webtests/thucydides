@@ -155,6 +155,12 @@ public class AcceptanceTestRun {
         return testResults.getOverallResult();
     }
 
+    public void updateMostResultTestStepResult(final TestResult result) {
+        if (testSteps.size() > 0) {
+            testSteps.get(testSteps.size() - 1).setResult(result);
+        }
+    }
+
 
     /**
      * Add a test step to this acceptance test.

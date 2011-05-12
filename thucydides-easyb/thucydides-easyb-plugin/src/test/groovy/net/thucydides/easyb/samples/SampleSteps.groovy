@@ -4,6 +4,7 @@ import net.thucydides.core.annotations.Step
 import net.thucydides.core.pages.Pages
 import net.thucydides.core.steps.ScenarioSteps
 import org.junit.Ignore
+import net.thucydides.core.annotations.Pending
 
 class SampleSteps extends ScenarioSteps {
 
@@ -28,5 +29,11 @@ class SampleSteps extends ScenarioSteps {
     @Ignore
     @Step
     def ignoredStep() {
+    }
+
+    @Pending
+    @Step
+    def pendingStep() {
+
     }
 }

@@ -22,7 +22,7 @@ scenario "Select entry in dropdown list", {
         indexPage.selectItem 'Label 2'
     }
     then "this option should be selected",{
-        //indexPage.selectedValues.shouldHave '3'
+        indexPage.selectedValues.shouldHave '3'
     }
     and "this step should be skipped", {
 

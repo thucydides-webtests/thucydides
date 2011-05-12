@@ -106,6 +106,16 @@ public class WhenRunningStepsThroughAScenarioProxy {
             getDriver().get("step3");
         }
 
+        @Step
+        public void step_with_parameter(String name){
+            getDriver().get("step_with_parameter");
+        }
+
+        @Step
+        public void step_with_parameters(String name, int age){
+            getDriver().get("step_with_parameters");
+        }
+
         @Ignore
         @Step
         public void ignored_step(){
@@ -172,6 +182,32 @@ public class WhenRunningStepsThroughAScenarioProxy {
         verify(driver).get("step1");
         verify(driver).get("step2");
         verify(driver).get("step3");
+    }
+
+    @Test
+    public void the_proxy_should_store_step_method_parameters() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        steps.step_with_parameter("Joe");
+
+        ArgumentCaptor<ExecutedStepDescription> argument = ArgumentCaptor.forClass(ExecutedStepDescription.class);
+
+        verify(listener).stepStarted(argument.capture());
+
+        assertThat(argument.getValue().getName(), is("step_with_parameter: <span class='single-parameter'>Joe</span>"));
+    }
+
+    @Test
+    public void the_proxy_should_store_multiple_step_method_parameters() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        steps.step_with_parameters("Joe", 10);
+
+        ArgumentCaptor<ExecutedStepDescription> argument = ArgumentCaptor.forClass(ExecutedStepDescription.class);
+
+        verify(listener).stepStarted(argument.capture());
+
+        assertThat(argument.getValue().getName(), is("step_with_parameters: <span class='parameters'>Joe, 10</span>"));
     }
 
     @Test
@@ -427,6 +463,15 @@ public class WhenRunningStepsThroughAScenarioProxy {
         verify(driver).get("nested.step2");
         verify(driver).get("nested.step3");
         verify(driver,never()).get("nested.ignored_step");
+    }
+
+    @Test
+    public void listeners_are_notified_at_the_end_of_a_test() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        factory.notifyStepFinished();
+
+        steps.done();
     }
 
 }

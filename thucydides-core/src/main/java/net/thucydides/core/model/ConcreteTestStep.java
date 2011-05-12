@@ -14,8 +14,6 @@ import java.util.List;
 public class ConcreteTestStep extends TestStep {
 
     private TestResult result;
-    private String errorMessage;
-    private Throwable cause;
 
     public ConcreteTestStep() {
         super();
@@ -37,22 +35,6 @@ public class ConcreteTestStep extends TestStep {
         return result;
     }
 
-    /**
-     * Indicate that this step failed with a given error.
-     */
-    public void failedWith(final String message, final Throwable exception) {
-        this.result = TestResult.FAILURE;
-        this.errorMessage = message;
-        this.cause = exception;
-    }
-    
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public Throwable getException() {
-        return cause;
-    }
 
     @Override
     public List<? extends TestStep> getFlattenedSteps() {

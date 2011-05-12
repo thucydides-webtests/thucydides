@@ -8,3 +8,7 @@ target
 *.log.*
 *.iml
 *.versionsBackup
+
+*.iws
+*.ipr
+out

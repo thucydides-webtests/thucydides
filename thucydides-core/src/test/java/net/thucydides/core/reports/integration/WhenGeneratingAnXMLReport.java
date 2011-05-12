@@ -239,7 +239,7 @@ public class WhenGeneratingAnXMLReport {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A nested test case");
         String expectedReport = 
                   "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='3' successful='3' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-                + "  <test-group name='Group 1'>\n"
+                + "  <test-group name='Group 1' result='SUCCESS'>\n"
                 + "    <test-step result='SUCCESS'>\n"
                 + "      <description>step 1</description>\n"
                 + "    </test-step>\n"
@@ -270,7 +270,7 @@ public class WhenGeneratingAnXMLReport {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A nested test case");
         String expectedReport = 
                   "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='5' successful='5' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-                + "  <test-group name='Group 1'>\n"
+                + "  <test-group name='Group 1' result='SUCCESS'>\n"
                 + "    <test-step result='SUCCESS'>\n"
                 + "      <description>step 1</description>\n"
                 + "    </test-step>\n"
@@ -280,7 +280,7 @@ public class WhenGeneratingAnXMLReport {
                 + "    <test-step result='SUCCESS'>\n"
                 + "      <description>step 3</description>\n"
                 + "    </test-step>\n"
-                + "    <test-group name='Group 1.1'>\n"
+                + "    <test-group name='Group 1.1' result='SUCCESS'>\n"
                 + "      <test-step result='SUCCESS'>\n"
                 + "        <description>step 4</description>\n"
                 + "      </test-step>\n"
@@ -313,9 +313,9 @@ public class WhenGeneratingAnXMLReport {
         AcceptanceTestRun testRun = new AcceptanceTestRun("A nested test case");
         String expectedReport = 
                   "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-                + "  <test-group name='Group 1'>\n"
-                + "    <test-group name='Group 1.1'>\n"
-                + "      <test-group name='Group 1.1.1'>\n"
+                + "  <test-group name='Group 1' result='SUCCESS'>\n"
+                + "    <test-group name='Group 1.1' result='SUCCESS'>\n"
+                + "      <test-group name='Group 1.1.1' result='SUCCESS'>\n"
                 + "        <test-step result='SUCCESS'>\n"
                 + "          <description>step 1</description>\n"
                 + "        </test-step>\n"

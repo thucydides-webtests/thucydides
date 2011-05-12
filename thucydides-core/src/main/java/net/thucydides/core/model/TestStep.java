@@ -34,6 +34,8 @@ public abstract class TestStep {
     private String screenshotPath;
     private File screenshot;
     private File htmlSource;
+    private String errorMessage;
+    private Throwable cause;
 
     public TestStep() {
         startTime = System.currentTimeMillis();
@@ -99,6 +101,8 @@ public abstract class TestStep {
         this.htmlSource = htmlSource;
     }
 
+    public abstract void setResult(final TestResult result);
+
     public abstract TestResult getResult();
 
     public Boolean isSuccessful() {
@@ -127,6 +131,23 @@ public abstract class TestStep {
 
     public long getDuration() {
         return duration;
+    }
+
+    /**
+     * Indicate that this step failed with a given error.
+     */
+    public void failedWith(final String message, final Throwable exception) {
+        setResult(TestResult.FAILURE);
+        this.errorMessage = message;
+        this.cause = exception;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public Throwable getException() {
+        return cause;
     }
 
     public abstract List<? extends TestStep> getFlattenedSteps();

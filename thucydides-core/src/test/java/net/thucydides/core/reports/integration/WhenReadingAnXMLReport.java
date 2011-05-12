@@ -63,9 +63,9 @@ public class WhenReadingAnXMLReport {
     public void should_load_acceptance_test_report_with_nested_groups_from_xml_file() throws Exception {
         String storedReportXML = 
             "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-            + "  <test-group name='Group 1'>\n"
-            + "    <test-group name='Group 1.1'>\n"
-            + "      <test-group name='Group 1.1.1'>\n"
+            + "  <test-group name='Group 1' result='SUCCESS'>\n"
+            + "    <test-group name='Group 1.1' result='SUCCESS'>\n"
+            + "      <test-group name='Group 1.1.1' result='SUCCESS'>\n"
             + "        <test-step result='SUCCESS'>\n"
             + "          <description>step 1</description>\n"
             + "        </test-step>\n"
@@ -83,7 +83,6 @@ public class WhenReadingAnXMLReport {
         
         TestStepGroup group1 = (TestStepGroup) testRun.getTestSteps().get(0);
         TestStepGroup group1_1 = (TestStepGroup) group1.getSteps().get(0);
-        TestStepGroup group1_1_1 = (TestStepGroup) group1_1.getSteps().get(0);
         assertThat(testRun.getTestSteps().size(), is(1));
     }
 
@@ -91,8 +90,8 @@ public class WhenReadingAnXMLReport {
     public void should_load_acceptance_test_report_with_simple_nested_groups_from_xml_file() throws Exception {
         String storedReportXML = 
             "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-            + "  <test-group name='Group 1'>\n"
-            + "    <test-group name='Group 1.1'>\n"
+            + "  <test-group name='Group 1' result='SUCCESS'>\n"
+            + "    <test-group name='Group 1.1' result='SUCCESS'>\n"
             + "      <test-step result='SUCCESS'>\n"
             + "        <description>step 1</description>\n"
             + "      </test-step>\n"

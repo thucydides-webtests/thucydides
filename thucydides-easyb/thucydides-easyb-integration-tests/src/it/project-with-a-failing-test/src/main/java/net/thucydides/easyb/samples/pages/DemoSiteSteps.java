@@ -3,6 +3,7 @@ package net.thucydides.easyb.samples.pages;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.easyb.samples.pages.NestedSteps;
 
 public class DemoSiteSteps extends ScenarioSteps {
 
@@ -10,11 +11,20 @@ public class DemoSiteSteps extends ScenarioSteps {
         super(pages);
     }
 
+    @Steps
+    NestedSteps nestedSteps;
+
     @Step
     public void enter_values(String selectValue, boolean checkboxValue) {
         IndexPage page = (IndexPage) getPages().currentPageAt(IndexPage.class);
         page.selectItem(selectValue);
         page.setCheckboxOption(checkboxValue);
+    }
+
+    @Step
+    public void call_nested_steps(String selectValue, boolean checkboxValue) {
+        nestedSteps.enter_values(selectValue, checkboxValue);
+        nestedSteps.should_display(selectValue);
     }
 
     @Step

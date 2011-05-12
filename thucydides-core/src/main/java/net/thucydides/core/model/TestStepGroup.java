@@ -19,6 +19,11 @@ public class TestStepGroup extends TestStep {
     /**
      * Each test step has a result, indicating the outcome of this step.
      */
+
+    public void setResult(TestResult result) {
+        setDefaultResult(result);
+    }
+
     public void setDefaultResult(final TestResult result) {
         this.defaultResult = result;
     }
@@ -42,10 +47,13 @@ public class TestStepGroup extends TestStep {
     @Override
     public TestResult getResult() {
         TestResultList resultList = new TestResultList(getChildResults());
-        if ((resultList.isEmpty() && (defaultResult != null))) {
+        if (!resultList.isEmpty()) {
+            return resultList.getOverallResult();
+        }
+        if (defaultResult != null) {
             return defaultResult;
         } else {
-            return resultList.getOverallResult();
+            return TestResult.SKIPPED;
         }
     }
 

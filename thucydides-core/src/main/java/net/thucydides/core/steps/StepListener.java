@@ -2,6 +2,7 @@ package net.thucydides.core.steps;
 
 
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestResult;
 
 import java.util.List;
 
@@ -32,41 +33,45 @@ public interface StepListener {
 	 * @param description the description of the test that is about to be run
 	 * (generally a class and method name)
 	 */
-	public void stepStarted(ExecutedStepDescription description);
+	void stepStarted(ExecutedStepDescription description);
 
     /**
      * Called when an test step has finished, whether the test succeeds or fails.
      * @param description the description of the test that just ran
      */
-    public void stepFinished(ExecutedStepDescription description);
+    void stepFinished(ExecutedStepDescription description);
 
     /**
      * Called when a test step group without a backing Java method (e.g. an easyb story) is about to be started.
      * @param description the description of the test group that is about to be run
      */
-    public void stepGroupStarted(String description);
+    void stepGroupStarted(String description);
 
     /**
      * Called when a test step group is about to be started.
      * @param description the description of the test group that is about to be run
      */
-    public void stepGroupStarted(ExecutedStepDescription description);
+    void stepGroupStarted(ExecutedStepDescription description);
 
     /**
      * Called when an test step group has finished.
      */
-    public void stepGroupFinished();
+    void stepGroupFinished();
 
+    /**
+     * Finish a test step group and define an overall default result.
+     */
+    void stepGroupFinished(TestResult result);
     /**
      * Mark a test step as having succeeded.
      */
-    public void stepSucceeded();
+    void stepSucceeded();
 
 	/**
 	 * Called when a test step fails.
 	 * @param failure describes the test that failed and the exception that was thrown
 	 */
-	public void stepFailed(StepFailure failure);
+    void stepFailed(StepFailure failure);
 
 	/**
 	 * Called when a step will not be run, generally because a test method is annotated
@@ -74,11 +79,16 @@ public interface StepListener {
 	 *
 	 * @param description describes the test that will not be run
 	 */
-	public void stepIgnored(ExecutedStepDescription description);
+     void stepIgnored(ExecutedStepDescription description);
 
     /**
      * A step listener should be able to return a set of test results at the end of the test run.
      */
     List<AcceptanceTestRun> getTestRunResults();
+
+    /**
+     * Update the status of the current step (e.g to IGNORED or SKIPPED) without changing anything else.
+     */
+    void updateCurrentStepStatus(TestResult result);
 
 }
