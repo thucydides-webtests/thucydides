@@ -63,6 +63,7 @@ public class BaseStepListener implements StepListener {
 
     private File grabScreenshotFileFor(final String testName) {
         String snapshotName = underscore(testName);
+        System.out.println("Taking screenshot for " + snapshotName);
         File screenshot = null;
         try {
             screenshot = getPhotographer().takeScreenshot(snapshotName);
@@ -126,10 +127,13 @@ public class BaseStepListener implements StepListener {
 
     private void takeScreenshotForGroup(TestStepGroup group) {
         if (group != null) {
+            System.out.println("Taking screenshot for group " + group.getDescription());
             File screenshot = grabScreenshotFileFor(group.getDescription());
             group.setScreenshot(screenshot);
-            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-            group.setHtmlSource(sourcecode);
+            if (screenshot != null) {
+                File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
+                group.setHtmlSource(sourcecode);
+            }
         }
     }
 
@@ -219,13 +223,11 @@ public class BaseStepListener implements StepListener {
 
     public void stepGroupFinished() {
         getCurrentAcceptanceTestRun().endGroup();
-        System.out.println("TEST REPORT AFTER END GROUP: " + getCurrentAcceptanceTestRun().toXML());
     }
 
     public void stepGroupFinished(TestResult result) {
         getCurrentAcceptanceTestRun().setDefaultGroupResult(result);
         getCurrentAcceptanceTestRun().endGroup();
-        System.out.println("TEST REPORT AFTER END GROUP: " + getCurrentAcceptanceTestRun().toXML());
     }
 
     public void stepSucceeded() {
