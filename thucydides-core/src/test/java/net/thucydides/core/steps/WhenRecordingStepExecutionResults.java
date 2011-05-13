@@ -1,9 +1,11 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.model.*;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
 import net.thucydides.core.steps.samples.NestedScenarioSteps;
+import net.thucydides.core.webdriver.Configuration;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -75,6 +77,63 @@ public class WhenRecordingStepExecutionResults {
         List<AcceptanceTestRun> results = stepListener.getTestRunResults();
 
         assertThat(results.size(), is(1));
+    }
+
+    @Test
+    public void the_executed_step_description_should_describe_a_named_executed_step_method() {
+        ExecutedStepDescription executedStepDescription
+                = new ExecutedStepDescription(FlatScenarioSteps.class,"step1");
+
+        assertThat(executedStepDescription.getTitle(), is("Step1"));
+    }
+
+    @Test
+    public void the_executed_step_description_should_return_a_human_readable_name() {
+        ExecutedStepDescription executedStepDescription
+                = new ExecutedStepDescription(FlatScenarioSteps.class,"stepWithLongName");
+
+        assertThat(executedStepDescription.getTitle(), is("Step with long name"));
+    }
+
+    @Test
+    public void the_executed_step_description_for_underscored_methods_should_return_a_human_readable_name() {
+        ExecutedStepDescription executedStepDescription
+                = new ExecutedStepDescription(FlatScenarioSteps.class,"step_with_long_name");
+
+        assertThat(executedStepDescription.getTitle(), is("Step with long name"));
+    }
+
+    @Test
+    public void the_executed_step_description_should_allow_a_step_without_a_test_class() {
+        ExecutedStepDescription executedStepDescription
+                = new ExecutedStepDescription("An easyb clause");
+
+        assertThat(executedStepDescription.getTitle(), is("An easyb clause"));
+    }
+
+    @Test
+    public void the_executed_step_description_should_return_the_corresponding_test_method() {
+        ExecutedStepDescription executedStepDescription
+                = new ExecutedStepDescription(FlatScenarioSteps.class,"stepWithLongName");
+
+        assertThat(executedStepDescription.getTestMethod().getName(), is("stepWithLongName"));
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void the_executed_step_description_should_fail_if_no_test_method_exists() {
+        ExecutedStepDescription executedStepDescription
+                = new ExecutedStepDescription(FlatScenarioSteps.class,"stepWithoutMethod");
+
+        executedStepDescription.getTestMethod();
+    }
+
+    @Test
+    public void the_executed_step_description_including_parameters_should_return_the_corresponding_test_method() {
+        ExecutedStepDescription executedStepDescription
+                = new ExecutedStepDescription(FlatScenarioSteps.class,"stepWithParameters: tom");
+
+        assertThat(executedStepDescription.getTestMethod().getName(), is("stepWithParameters"));
     }
 
     @Test
@@ -296,8 +355,45 @@ public class WhenRecordingStepExecutionResults {
 
         AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
         List<TestStep> executedSteps = testRun.getTestSteps();
-        assertThat(executedSteps.get(0), instanceOf(TestStepGroup.class));
-        assertThat(executedSteps.get(1), instanceOf(TestStepGroup.class));
+        assertThat(executedSteps.size(), is(2));
+
+        TestStepGroup stepGroup1 = (TestStepGroup) executedSteps.get(0);
+        List<String> executedStepNamesInGroup1 = namesFrom(stepGroup1.getSteps());
+        assertThat(executedStepNamesInGroup1, containsInOrder("step1", "step2", "step3"));
+
+
+        TestStepGroup stepGroup2 = (TestStepGroup) executedSteps.get(1);
+        List<String> executedStepNamesInGroup2 = namesFrom(stepGroup2.getSteps());
+        assertThat(executedStepNamesInGroup2, containsInOrder("step1", "step3"));
+
+        assertThat(testRun.getResult(), is(TestResult.SUCCESS));
+    }
+
+    @Test
+    public void steps_with_failing_nested_steps_should_record_the_step_failure() {
+
+        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
+        steps.step1();
+        steps.step_with_nested_failure();
+
+
+        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        assertThat(results.size(), is(1));
+
+        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testRun.getTestSteps();
+        assertThat(executedSteps.size(), is(2));
+
+        TestStepGroup stepGroup1 = (TestStepGroup) executedSteps.get(0);
+        List<String> executedStepNamesInGroup1 = namesFrom(stepGroup1.getSteps());
+        assertThat(executedStepNamesInGroup1, containsInOrder("step1", "step2", "step3"));
+
+
+        TestStepGroup stepGroup2 = (TestStepGroup) executedSteps.get(1);
+        List<String> executedStepNamesInGroup2 = namesFrom(stepGroup2.getSteps());
+        assertThat(executedStepNamesInGroup2, containsInOrder("step1", "failingStep"));
+
+        assertThat(testRun.getResult(), is(TestResult.FAILURE));
     }
 
 
@@ -334,6 +430,41 @@ public class WhenRecordingStepExecutionResults {
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
 
         assertThat(topLevelStepGroup.getResult(), is(TestResult.SUCCESS));
+    }
+
+    @Test
+    public void if_configured_should_pause_after_step() {
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+
+        System.setProperty(ThucydidesSystemProperty.STEP_DELAY.getPropertyName(), "100");
+
+        long startTime = System.currentTimeMillis();
+        stepListener.stepGroupStarted("Main group");
+        steps.step1();
+        stepListener.stepGroupFinished();
+        long stepDuration = System.currentTimeMillis() - startTime;
+
+        System.setProperty(ThucydidesSystemProperty.STEP_DELAY.getPropertyName(), "");
+
+        assertThat((int)stepDuration, greaterThanOrEqualTo(100));
+    }
+
+    @Test
+    public void if_configured_should_pause_after_step_group() {
+        ExecutedStepDescription group = ExecutedStepDescription.withTitle("Main group");
+        group.setAGroup(true);
+
+        System.setProperty(ThucydidesSystemProperty.STEP_DELAY.getPropertyName(), "100");
+
+        long startTime = System.currentTimeMillis();
+        stepListener.stepStarted(group);
+        stepListener.stepFinished(group);
+        long stepDuration = System.currentTimeMillis() - startTime;
+
+        System.setProperty(ThucydidesSystemProperty.STEP_DELAY.getPropertyName(), "");
+
+        assertThat((int)stepDuration, greaterThanOrEqualTo(100));
     }
 
     @Test
