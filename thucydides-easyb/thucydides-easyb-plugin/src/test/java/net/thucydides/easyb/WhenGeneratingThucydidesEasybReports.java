@@ -33,6 +33,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static org.easyb.util.BehaviorStepType.*;
@@ -99,6 +100,19 @@ public class WhenGeneratingThucydidesEasybReports {
 
         assertThat(testRun.getResult(), is(SUCCESS));
         assertThat(testRun.getTestSteps().size(), is(1));
+    }
+
+    @Test
+    public void the_report_service_should_assign_any_qualifiers_to_its_report_listeners() {
+
+        AcceptanceTestReporter mockReport = mock(AcceptanceTestReporter.class);
+
+        Collection<AcceptanceTestReporter> reports = Arrays.asList(mockReport);
+        ReportService reportService = new ReportService(outputDirectory,reports);
+
+        reportService.useQualifier("datavalue_1");
+
+        verify(mockReport).setQualifier("datavalue_1");
     }
 
     @Test

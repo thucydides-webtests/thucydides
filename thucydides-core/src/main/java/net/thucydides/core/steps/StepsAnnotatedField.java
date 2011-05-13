@@ -23,18 +23,6 @@ public class StepsAnnotatedField {
     /**
      * Find the first field in the class annotated with the <b>Managed</b> annotation.
      */
-    public static List<StepsAnnotatedField> findMandatoryAnnotatedFields(final Class<?> clazz) {
-
-        List<StepsAnnotatedField> annotatedFields = findOptionalAnnotatedFields(clazz);
-        if (annotatedFields.isEmpty()) {
-            throw new InvalidStepsFieldException(NO_ANNOTATED_FIELD_ERROR);
-        }
-        return annotatedFields;
-    }
-    
-    /**
-     * Find the first field in the class annotated with the <b>Managed</b> annotation.
-     */
     public static List<StepsAnnotatedField> findOptionalAnnotatedFields(final Class<?> clazz) {
 
         List<StepsAnnotatedField> annotatedFields = new ArrayList<StepsAnnotatedField>();

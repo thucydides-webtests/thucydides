@@ -37,4 +37,13 @@ public class FlatScenarioSteps extends ScenarioSteps {
     @Pending
     @Step
     public void pendingStep() {}
+
+    @Step
+    public void stepWithLongName() {}
+
+    @Step
+    public void stepWithParameters(String name) {}
+
+    @Step
+    public void step_with_long_name_and_underscores() {}
 }

@@ -52,9 +52,7 @@ public class BaseStepListener implements StepListener {
     }
 
     private void startNewTestStep() {
-        //if (currentTestStep == null) {
-            currentTestStep = new ConcreteTestStep();
-        //}
+        currentTestStep = new ConcreteTestStep();
     }
 
     private void finishTestStep() {
@@ -141,7 +139,11 @@ public class BaseStepListener implements StepListener {
     }
 
     private void markCurrentTestAs(final TestResult result) {
-        getCurrentStep().setResult(result);
+        if (getCurrentStep() != null) {
+            getCurrentStep().setResult(result);
+        } else {
+            System.out.println("WTF?!");
+        }
     }
 
     private TestStep getCurrentStep() {
@@ -198,8 +200,8 @@ public class BaseStepListener implements StepListener {
             markCurrentTestAs(SUCCESS);
             takeScreenshotFor(description);
             recordCurrentTestStep(description);
-            pauseIfRequired();
         }
+        pauseIfRequired();
     }
 
     public void stepGroupStarted(String description) {
