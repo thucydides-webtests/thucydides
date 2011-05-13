@@ -1,11 +1,10 @@
 package net.thucydides.core.reports.xml;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Set;
-
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestResult;
@@ -13,18 +12,15 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.core.model.UserStory;
 
-import com.google.common.base.Preconditions;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Set;
 
 /**
  * XStream converter used to generate the XML acceptance test report.
- * 
+ *
  * @author johnsmart
- * 
  */
 public class AcceptanceTestRunConverter implements Converter {
 
@@ -51,7 +47,8 @@ public class AcceptanceTestRunConverter implements Converter {
 
     private transient String qualifier;
 
-    public AcceptanceTestRunConverter() {}
+    public AcceptanceTestRunConverter() {
+    }
 
     public AcceptanceTestRunConverter(final String qualifier) {
         this();
@@ -70,7 +67,7 @@ public class AcceptanceTestRunConverter implements Converter {
      * Generate an XML report given an AcceptanceTestRun object.
      */
     public void marshal(final Object value, final HierarchicalStreamWriter writer,
-            final MarshallingContext context) {
+                        final MarshallingContext context) {
         AcceptanceTestRun testRun = (AcceptanceTestRun) value;
         Preconditions.checkNotNull(testRun, "The test run was null - WTF?");
 
@@ -102,7 +99,7 @@ public class AcceptanceTestRunConverter implements Converter {
     }
 
     private String humanized(final String text) {
-        return text.replaceAll("_","/");
+        return text.replaceAll("_", "/");
     }
 
     private String nameFrom(final AcceptanceTestRun testRun) {
@@ -111,7 +108,7 @@ public class AcceptanceTestRunConverter implements Converter {
         if (qualifier == null) {
             testRunName = baseName;
         } else {
-            String qualifierWithoutSpaces = qualifier.replaceAll(" ","_");
+            String qualifierWithoutSpaces = qualifier.replaceAll(" ", "_");
             testRunName = baseName + "_" + qualifierWithoutSpaces;
         }
         return testRunName;
@@ -126,7 +123,7 @@ public class AcceptanceTestRunConverter implements Converter {
             writeScreenshotIfPresent(writer, step);
 
             List<TestStep> nestedSteps = ((TestStepGroup) step).getSteps();
-            for(TestStep nestedStep : nestedSteps) {
+            for (TestStep nestedStep : nestedSteps) {
                 writeStepTo(writer, nestedStep);
             }
             writer.endNode();
@@ -172,7 +169,7 @@ public class AcceptanceTestRunConverter implements Converter {
     }
 
     private void writeErrorMessageAndException(final HierarchicalStreamWriter writer,
-            final ConcreteTestStep step) {
+                                               final ConcreteTestStep step) {
         if (step.getErrorMessage() != null) {
             writeErrorMessageNode(writer, step.getErrorMessage());
             if (step.getException() != null) {
@@ -190,7 +187,7 @@ public class AcceptanceTestRunConverter implements Converter {
     }
 
     private void writeErrorMessageNode(final HierarchicalStreamWriter writer,
-            final String errorMessage) {
+                                       final String errorMessage) {
         writer.startNode(ERROR);
         writer.setValue(errorMessage);
         writer.endNode();
@@ -216,7 +213,7 @@ public class AcceptanceTestRunConverter implements Converter {
      * Convert XML to an AcceptanceTestRun object. Not needed for now.
      */
     public Object unmarshal(final HierarchicalStreamReader reader,
-            final UnmarshallingContext context) {
+                            final UnmarshallingContext context) {
 
         AcceptanceTestRun testRun = new AcceptanceTestRun();
 
@@ -254,7 +251,7 @@ public class AcceptanceTestRunConverter implements Converter {
 
 
     private void readTestRunRequirements(final HierarchicalStreamReader reader,
-            final AcceptanceTestRun testRun) {
+                                         final AcceptanceTestRun testRun) {
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             String requirement = reader.getValue();

@@ -1,15 +1,12 @@
 package net.thucydides.core.model;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
  * A test step that is actually executed, as opposed to a grouping of test steps.
- * 
- * @author johnsmart
  *
+ * @author johnsmart
  */
 public class ConcreteTestStep extends TestStep {
 

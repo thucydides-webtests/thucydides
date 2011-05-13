@@ -19,20 +19,20 @@ public class StepFailure {
         this.cause = cause;
     }
 
-	/**
-	 * @return the raw description of the context of the failure.
-	 */
-	public ExecutedStepDescription getDescription() {
-		return description;
-	}
+    /**
+     * @return the raw description of the context of the failure.
+     */
+    public ExecutedStepDescription getDescription() {
+        return description;
+    }
 
-	/**
-	 * @return the exception thrown
-	 */
+    /**
+     * @return the exception thrown
+     */
 
-	public Throwable getException() {
-	    return cause;
-	}
+    public Throwable getException() {
+        return cause;
+    }
 
     public String getMessage() {
         return getException().getMessage();

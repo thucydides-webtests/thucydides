@@ -1,6 +1,11 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.model.*;
+import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.ConcreteTestStep;
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestStepGroup;
+import net.thucydides.core.model.UserStory;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.Configuration;
@@ -13,7 +18,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.thucydides.core.model.TestResult.*;
+import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.IGNORED;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SKIPPED;
+import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.util.NameConverter.underscore;
 
 /**
@@ -52,9 +61,7 @@ public class BaseStepListener implements StepListener {
     }
 
     private void startNewTestStep() {
-        //if (currentTestStep == null) {
-            currentTestStep = new ConcreteTestStep();
-        //}
+        currentTestStep = new ConcreteTestStep();
     }
 
     private void finishTestStep() {
@@ -120,7 +127,7 @@ public class BaseStepListener implements StepListener {
         takeScreenshotForGroup(currentGroup);
     }
 
-    private void takeScreenshotForGroup(TestStepGroup group) {
+    private void takeScreenshotForGroup(final TestStepGroup group) {
         File screenshot = grabScreenshotFileFor(group.getDescription());
         group.setScreenshot(screenshot);
         if (screenshot != null) {
@@ -191,7 +198,7 @@ public class BaseStepListener implements StepListener {
         }
     }
 
-    public void stepFinished(ExecutedStepDescription description) {
+    public void stepFinished(final ExecutedStepDescription description) {
         if (stepIsAGroup(description)) {
             getCurrentAcceptanceTestRun().endGroup();
         } else {
@@ -202,7 +209,7 @@ public class BaseStepListener implements StepListener {
         }
     }
 
-    public void stepGroupStarted(String description) {
+    public void stepGroupStarted(final String description) {
         stepGroupStarted(ExecutedStepDescription.withTitle(description));
     }
 
@@ -216,7 +223,7 @@ public class BaseStepListener implements StepListener {
         getCurrentAcceptanceTestRun().endGroup();
     }
 
-    public void stepGroupFinished(TestResult result) {
+    public void stepGroupFinished(final TestResult result) {
         getCurrentAcceptanceTestRun().setDefaultGroupResult(result);
         getCurrentAcceptanceTestRun().endGroup();
     }
@@ -228,7 +235,7 @@ public class BaseStepListener implements StepListener {
     /**
      * Update the status of the current step (e.g to IGNORED or SKIPPED) without changing anything else.
      */
-    public void updateCurrentStepStatus(TestResult result) {
+    public void updateCurrentStepStatus(final TestResult result) {
         if (currentTestStep == null) {
             updateMostRecentStepStatus(result);
         } else {
@@ -236,11 +243,11 @@ public class BaseStepListener implements StepListener {
         }
     }
 
-    private void updateMostRecentStepStatus(TestResult result) {
+    private void updateMostRecentStepStatus(final TestResult result) {
         getCurrentAcceptanceTestRun().updateMostResultTestStepResult(result);
     }
 
-    public void stepFailed(StepFailure failure) {
+    public void stepFailed(final StepFailure failure) {
         markCurrentTestAs(FAILURE);
         recordFailureDetailsInFailingTestStep(failure);
         takeScreenshotFor(failure.getDescription());
@@ -249,14 +256,14 @@ public class BaseStepListener implements StepListener {
         }
     }
 
-    private boolean stepIsAGroup(ExecutedStepDescription description) {
+    private boolean stepIsAGroup(final ExecutedStepDescription description) {
         if (description.isAGroup()) {
             return true;
         } else {
             return stepMethodIsAGroup(description.getTestMethod());
         }
     }
-    public void stepIgnored(ExecutedStepDescription description) {
+    public void stepIgnored(final ExecutedStepDescription description) {
         markCurrentTestAs(IGNORED);
 
         Method testMethod = description.getTestMethod();
@@ -272,7 +279,7 @@ public class BaseStepListener implements StepListener {
         }
     }
 
-    private boolean stepMethodIsPending(Method testMethod) {
+    private boolean stepMethodIsPending(final Method testMethod) {
         if (testMethod  != null) {
             return TestStatus.of(testMethod).isPending();
         } else {
@@ -280,7 +287,7 @@ public class BaseStepListener implements StepListener {
         }
     }
 
-    private boolean stepMethodIsIgnored(Method testMethod) {
+    private boolean stepMethodIsIgnored(final Method testMethod) {
         if (testMethod  != null) {
             return TestStatus.of(testMethod).isIgnored();
         } else {
@@ -288,7 +295,7 @@ public class BaseStepListener implements StepListener {
         }
     }
 
-    private boolean stepMethodIsAGroup(Method testMethod) {
+    private boolean stepMethodIsAGroup(final Method testMethod) {
         if (testMethod  != null) {
             return TestStatus.of(testMethod).isAStepGroup();
         } else {
@@ -296,7 +303,7 @@ public class BaseStepListener implements StepListener {
         }
     }
 
-    public void testRunFinished(TestStepResult result) {
+    public void testRunFinished(final TestStepResult result) {
     }
 
 }
