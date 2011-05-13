@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.xml;
 
+import com.google.common.base.Preconditions;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
