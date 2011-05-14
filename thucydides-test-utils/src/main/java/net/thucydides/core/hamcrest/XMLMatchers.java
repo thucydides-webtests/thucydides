@@ -3,6 +3,9 @@ package net.thucydides.core.hamcrest;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
+/**
+ * Hamcrest matchers to compare XML structure and content.
+ */
 public class XMLMatchers {
 
     @Factory

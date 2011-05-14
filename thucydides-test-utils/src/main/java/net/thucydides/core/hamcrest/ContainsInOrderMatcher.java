@@ -6,6 +6,9 @@ import org.hamcrest.TypeSafeMatcher;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Check that a list of strings contains specific strings in a specific order.
+ */
 public class ContainsInOrderMatcher extends TypeSafeMatcher<List<String>> {
 
     private List<String> values;

@@ -1,7 +1,5 @@
 package net.thucydides.core.hamcrest;
 
-import java.io.IOException;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.hamcrest.Description;
@@ -10,6 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import java.io.IOException;
+
+/**
+ * Compare XML structures.
+ */
 public class XMLIsSimilarMatcher extends TypeSafeMatcher<String> {
     
     private String xmlDocument;

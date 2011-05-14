@@ -5,6 +5,9 @@ import org.hamcrest.Matcher;
 
 import java.util.List;
 
+/**
+ * General-purpose Hamcrest matchers.
+ */
 public class Matchers {
 
     @Factory
