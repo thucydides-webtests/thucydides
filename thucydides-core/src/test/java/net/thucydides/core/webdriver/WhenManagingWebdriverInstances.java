@@ -95,16 +95,4 @@ public class WhenManagingWebdriverInstances {
         assertThat(config.getOutputDirectory().getName(), is("out"));
     }
 
-    @Test
-    public void the_step_delay_value_can_be_defined_in_a_system_property() {
-        System.setProperty("thucycides.step.delay", "1000");
-
-        assertThat(Configuration.getStepDelay(), is(1000));
-    }
-
-    @Test
-    public void there_is_no_step_delay_by_default() {
-        assertThat(Configuration.getStepDelay(), is(0));
-    }
-
 }

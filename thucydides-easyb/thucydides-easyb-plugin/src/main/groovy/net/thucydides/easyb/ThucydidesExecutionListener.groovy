@@ -1,20 +1,24 @@
 package net.thucydides.easyb
 
-import org.easyb.domain.Behavior
-import org.easyb.BehaviorStep
-import org.easyb.result.Result
-import static org.easyb.result.Result.*
-import org.easyb.result.ReportingTag
-import org.slf4j.LoggerFactory
-import org.slf4j.Logger
-import org.easyb.listener.ExecutionListenerAdaptor
-import net.thucydides.core.steps.StepListener
-
-import net.thucydides.core.steps.StepFailure
-import static org.easyb.util.BehaviorStepType.*;
-import static net.thucydides.core.steps.ExecutedStepDescription.withTitle
-import net.thucydides.core.model.TestStep
 import net.thucydides.core.model.TestResult
+import net.thucydides.core.steps.StepFailure
+import net.thucydides.core.steps.StepListener
+import org.easyb.BehaviorStep
+import org.easyb.domain.Behavior
+import org.easyb.listener.ExecutionListenerAdaptor
+import org.easyb.result.ReportingTag
+import org.easyb.result.Result
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import static net.thucydides.core.steps.ExecutedStepDescription.withTitle
+import static org.easyb.result.Result.FAILED
+import static org.easyb.result.Result.IGNORED
+import static org.easyb.result.Result.PENDING
+import static org.easyb.util.BehaviorStepType.AND
+import static org.easyb.util.BehaviorStepType.GIVEN
+import static org.easyb.util.BehaviorStepType.SCENARIO
+import static org.easyb.util.BehaviorStepType.THEN
+import static org.easyb.util.BehaviorStepType.WHEN
 
 class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
 

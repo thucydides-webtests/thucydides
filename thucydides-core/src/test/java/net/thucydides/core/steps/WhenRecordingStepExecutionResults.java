@@ -1,30 +1,35 @@
 package net.thucydides.core.steps;
 
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.model.*;
+import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.ConcreteTestStep;
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
 import net.thucydides.core.steps.samples.NestedScenarioSteps;
-import net.thucydides.core.webdriver.Configuration;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.firefox.FirefoxDriver;
-
-import static net.thucydides.core.hamcrest.Matchers.containsInOrder;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.*;
-
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.thucydides.core.hamcrest.Matchers.containsInOrder;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.times;
@@ -583,7 +588,33 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
-    public void screenshots_should_be_taken_after_nested_steps() {
+    public void screenshots_should_be_taken_after_steps() {
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step1();
+        steps.step2();
+
+        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+
+    @Test
+    public void screenshots_should_be_taken_after_groups_and_nested_steps() {
+
+        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
+        steps.step1();
+        steps.step2();
+
+        verify(driver, times(7)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+
+    @Ignore
+    @Test
+    public void should_fail_gracefully_if_the_screenshot_cannot_be_taken() throws IOException {
+
+        when(driver.getScreenshotAs(OutputType.FILE)).thenThrow(new WebDriverException("Screenshot could not be taken for some reason"));
+        when(driver.getPageSource()).thenReturn("<html/>");
 
         NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
         steps.step1();

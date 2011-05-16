@@ -17,9 +17,6 @@ public class StepsAnnotatedField {
 
     private Field field;
     
-    private static final String NO_ANNOTATED_FIELD_ERROR 
-        = "No ScenarioSteps field annotated with @Steps was found in the test case.";
-
     /**
      * Find the first field in the class annotated with the <b>Managed</b> annotation.
      */

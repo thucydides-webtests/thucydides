@@ -6,7 +6,7 @@ import net.thucydides.demo.steps.GoogleSearchSteps;
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.ManagedPages;
 import net.thucydides.junit.runners.ThucydidesRunner;
-
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -23,33 +23,29 @@ public class SearchingOnGoogleStory {
     @Steps
     public GoogleSearchSteps steps;
 
+    @Before
+    public void openBrowser() {
+        pages.start();
+    }
+
     @Test
     public void searching_for_cats_should_find_the_wikipedia_entry() {
-        pages.start();
         steps.open_home_page();
         steps.searchFor("cats");
         steps.resultListShouldContain("Cat - Wikipedia, the free encyclopedia");
-
-        steps.done();
-    }
+   }
     
     @Test
     public void searching_for_dogs_should_find_the_wikipedia_entry() {
-        pages.start();
         steps.open_home_page();
         steps.searchFor("dogs");
         steps.resultListShouldContain("Dog - Wikipedia, the free encyclopedia");
-
-        steps.done();
     }
     
     @Test
     public void searching_for_hamsters_should_find_the_wikipedia_entry() {
-        pages.start();
         steps.open_home_page();
         steps.searchFor("hamsters");
         steps.resultListShouldContain("Hamster - Wikipedia, the free encyclopedia");
-
-        steps.done();
     }
 }

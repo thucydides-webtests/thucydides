@@ -1,5 +1,17 @@
 package net.thucydides.core.screenshots;
 
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import java.io.File;
+import java.io.IOException;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -8,21 +20,6 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.io.IOException;
-
-import net.thucydides.core.screenshots.Photographer;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class WhenScreenshotsAreTaken {
 
@@ -103,9 +100,6 @@ public class WhenScreenshotsAreTaken {
 
         assertThat(htmlSource.isFile(), is(true));
     }
-
-
-
 
     @Test
     public void successive_screenshots_should_have_different_names() throws IOException {

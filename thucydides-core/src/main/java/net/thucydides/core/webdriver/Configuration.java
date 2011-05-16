@@ -1,9 +1,9 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.ThucydidesSystemProperty;
+
 import java.io.File;
 import java.util.Locale;
-
-import net.thucydides.core.ThucydidesSystemProperty;
 
 /**
  * Centralized configuration of the test runner. You can configure the output
@@ -68,6 +68,15 @@ public class Configuration {
         }
         return stepDelay;
 
+    }
+
+    public static boolean getUseUniqueBrowser() {
+        boolean uniqueBrowser = false;
+        String uniqueBrowserValue = System.getProperty(ThucydidesSystemProperty.UNIQUE_BROWSER.getPropertyName());
+        if (uniqueBrowserValue != null) {
+            uniqueBrowser = Boolean.valueOf(uniqueBrowserValue);
+        }
+        return uniqueBrowser;
     }
 
     public void setOutputDirectory(final File outputDirectory) {

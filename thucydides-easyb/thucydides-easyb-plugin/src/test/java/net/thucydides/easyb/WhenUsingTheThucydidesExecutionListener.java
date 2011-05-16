@@ -2,23 +2,26 @@ package net.thucydides.easyb;
 
 
 import net.thucydides.core.model.TestResult;
-import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
+import net.thucydides.core.steps.StepListener;
+import org.easyb.BehaviorStep;
 import org.easyb.domain.Behavior;
 import org.easyb.result.Result;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import static org.easyb.util.BehaviorStepType.AND;
+import static org.easyb.util.BehaviorStepType.BEFORE;
+import static org.easyb.util.BehaviorStepType.GIVEN;
+import static org.easyb.util.BehaviorStepType.SCENARIO;
+import static org.easyb.util.BehaviorStepType.STORY;
+import static org.easyb.util.BehaviorStepType.THEN;
+import static org.easyb.util.BehaviorStepType.WHEN;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-
-import net.thucydides.core.steps.StepListener;
-import org.mockito.MockitoAnnotations;
-import org.easyb.BehaviorStep;
-
-import static org.easyb.util.BehaviorStepType.*;
 
 public class WhenUsingTheThucydidesExecutionListener {
 

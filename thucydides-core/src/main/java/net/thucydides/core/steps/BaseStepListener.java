@@ -10,10 +10,12 @@ import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.Configuration;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +38,22 @@ import static net.thucydides.core.util.NameConverter.underscore;
 public class BaseStepListener implements StepListener {
 
     private final List<AcceptanceTestRun> acceptanceTestRuns;
-    private final Photographer photographer;
     private AcceptanceTestRun currentAcceptanceTestRun;
     private ConcreteTestStep currentTestStep;
+
+    private TakesScreenshot driver;
+    private File outputDirectory;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseStepListener.class);
 
     public BaseStepListener(final TakesScreenshot driver, final File outputDirectory) {
         acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
-        photographer = new Photographer(driver, outputDirectory);
+        this.outputDirectory = outputDirectory;
+        this.driver = driver;
+    }
+
+    public void setDriver(final TakesScreenshot driver) {
+        this.driver = driver;
     }
 
     public List<AcceptanceTestRun> getTestRunResults() {
@@ -73,14 +82,16 @@ public class BaseStepListener implements StepListener {
         File screenshot = null;
         try {
             screenshot = getPhotographer().takeScreenshot(snapshotName);
-        } catch (Exception e) {
-            LOGGER.error("Failed to save screenshot file", e);
+        //} catch (WebDriverException e) {
+        //    LOGGER.error("Failed to save screenshot file - stale step listener?");
+        } catch (IOException ioe) {
+            LOGGER.error("Failed to save screenshot file: IO error",ioe);
         }
         return screenshot;
     }
 
     public Photographer getPhotographer() {
-        return photographer;
+        return new Photographer(driver, outputDirectory);
     }
 
     protected AcceptanceTestRun getCurrentAcceptanceTestRun() {
@@ -150,8 +161,6 @@ public class BaseStepListener implements StepListener {
     private void markCurrentTestAs(final TestResult result) {
         if (getCurrentStep() != null) {
             getCurrentStep().setResult(result);
-        } else {
-            System.out.println("WTF?!");
         }
     }
 
@@ -186,8 +195,10 @@ public class BaseStepListener implements StepListener {
     private void takeScreenshotFor(final ExecutedStepDescription description) {
         File screenshot = grabScreenshotFileFor(aTestCalled(description));
         getCurrentStep().setScreenshot(screenshot);
-        File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-        getCurrentStep().setHtmlSource(sourcecode);
+        if (screenshot != null) {
+            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
+            getCurrentStep().setHtmlSource(sourcecode);
+        }
     }
 
     protected String aTestCalled(final ExecutedStepDescription description) {

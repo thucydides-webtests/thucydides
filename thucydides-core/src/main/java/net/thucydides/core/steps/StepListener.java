@@ -3,6 +3,7 @@ package net.thucydides.core.steps;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
+import org.openqa.selenium.TakesScreenshot;
 
 import java.util.List;
 
@@ -98,5 +99,10 @@ public interface StepListener {
      * Update the status of the current step (e.g to IGNORED or SKIPPED) without changing anything else.
      */
     void updateCurrentStepStatus(TestResult result);
+
+    /**
+     * Used to update the webdriver driver for screenshots if a listener is reused between scenarios.
+     */
+    public void setDriver(final TakesScreenshot driver);
 
 }

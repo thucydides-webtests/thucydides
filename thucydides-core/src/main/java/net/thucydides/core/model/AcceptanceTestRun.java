@@ -1,13 +1,10 @@
 package net.thucydides.core.model;
 
-import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.having;
-import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.select;
-import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SUCCESS;
+import ch.lambdaj.function.convert.Converter;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.thoughtworks.xstream.XStream;
+import net.thucydides.core.reports.xml.AcceptanceTestRunConverter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,14 +13,15 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
 
-
-import ch.lambdaj.function.convert.Converter;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.thoughtworks.xstream.XStream;
-import net.thucydides.core.reports.xml.AcceptanceTestRunConverter;
+import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.select;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
+import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SUCCESS;
 
 /**
  * Represents the results of an acceptance test (or "scenario") execution. This
@@ -124,7 +122,7 @@ public class AcceptanceTestRun {
     }
 
     public void testsRequirement(final String requirement) {
-        Preconditions.checkNotNull(requirement);
+        checkNotNull(requirement);
         testedRequirement.add(requirement);
     }
 
@@ -166,7 +164,7 @@ public class AcceptanceTestRun {
      * Add a test step to this acceptance test.
      */
     public void recordStep(final TestStep step) {
-        Preconditions.checkNotNull(step.getDescription(),
+        checkNotNull(step.getDescription(),
                 "The test step description was not defined.");
 
         if (groupStack.isEmpty()) {

@@ -25,28 +25,19 @@ public class AdvanceSearchingOnGoogleStory {
 
     @Test
     public void searching_for_cats_should_find_the_wikipedia_entry() {
-        pages.start();
         steps.open_google_and_search_for("cats");
         steps.resultListShouldContain("Cat - Wikipedia, the free encyclopedia");
-
-        steps.done();
     }
     
     @Test
     public void searching_for_dogs_should_find_the_wikipedia_entry() {
-        pages.start();
         steps.open_google_and_search_for("dogs");
         steps.resultListShouldContain("Dog - Wikipedia, the free encyclopedia");
-
-        steps.done();
     }
     
     @Test
     public void searching_for_hamsters_should_find_the_wikipedia_entry() {
-        pages.start();
         steps.open_google_and_search_for("hampsters");
         steps.resultListShouldContain("Hamster - Wikipedia, the free encyclopedia");
-
-        steps.done();
     }
 }

@@ -140,6 +140,51 @@ public class WhenUsingTheThucydidesEasybPlugin {
     }
 
     @Test
+    public void the_plugin_should_use_a_new_driver_for_each_story() {
+
+        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
+
+        runStories(plugin, binding);
+        WebDriver driver1 = (WebDriver) binding.getVariable("driver");
+
+        runStories(plugin, binding);
+        WebDriver driver2 = (WebDriver) binding.getVariable("driver");
+
+        assert (driver1 != driver2)
+    }
+
+    @Test
+    public void the_plugin_should_be_configurable_to_use_the_same_driver_for_all_stories() {
+        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz")
+        System.setProperty("thucydides.use.unique.browser","true")
+
+        runStories(plugin, binding)
+        WebDriver driver1 = (WebDriver) binding.getVariable("driver")
+
+        runStories(plugin, binding)
+        WebDriver driver2 = (WebDriver) binding.getVariable("driver")
+
+        System.setProperty("thucydides.use.unique.browser","false")
+
+        assert (driver1 == driver2)
+    }
+
+    @Test
+    public void the_plugin_should_tell_the_listeners_about_the_new_driver_for_each_story() {
+
+        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
+
+        runStories(plugin, binding);
+        WebDriver driver1 = (WebDriver) binding.getVariable("driver");
+        WebDriver stepListenerDriver1 = plugin.stepListener.driver
+
+        runStories(plugin, binding);
+        WebDriver stepListenerDriver2 = plugin.stepListener.driver
+
+        assert (stepListenerDriver1 != stepListenerDriver2)
+    }
+
+    @Test
     public void the_plugin_should_close_the_driver_at_the_end_of_the_story() {
 
         ThucydidesPlugin plugin = new BrowserlessThucydidesPlugin();
@@ -167,33 +212,6 @@ public class WhenUsingTheThucydidesEasybPlugin {
         plugin.afterStory(binding);
 
         verify(driver, times(2)).get("http://www.google.com");
-    }
-
-    @Test
-    public void the_plugin_should_obtain_the_user_story_name_from_the_easyb_source_file() {
-        
-        ThucydidesPlugin plugin = new MockedThucydidesPlugin();
-        Binding binding = new Binding();
-        binding.setVariable "sourceFile", "my/working/directory/EasybStory.story"
-        plugin.stepListener = mock(StepListener)
-
-        runStories(plugin, binding);
-        
-        verify(plugin.stepListener).testRunStarted("EasybStory")
-
-    }
-
-    @Test
-    public void the_plugin_should_also_work_with_easyb_stories_with_a_groovy_suffix() {
-        
-        ThucydidesPlugin plugin = new MockedThucydidesPlugin();
-        Binding binding = new Binding();
-        binding.setVariable "sourceFile", "my/working/directory/EasybStory.groovy"
-        plugin.stepListener = mock(StepListener)
-        
-        runStories(plugin, binding);
-        
-        verify(plugin.stepListener).testRunStarted("EasybStory")
     }
 
     @Rule

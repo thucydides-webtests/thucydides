@@ -33,7 +33,12 @@ public enum ThucydidesSystemProperty {
     /**
      * Pause (in ms) between each test step.
      */
-    STEP_DELAY("thucycides.step.delay");
+    STEP_DELAY("thucycides.step.delay"),
+
+    /**
+     * Use the same browser for all tests (the "Highlander" rule)
+     */
+    UNIQUE_BROWSER("thucydides.use.unique.browser");
 
     private String propertyName;
 
