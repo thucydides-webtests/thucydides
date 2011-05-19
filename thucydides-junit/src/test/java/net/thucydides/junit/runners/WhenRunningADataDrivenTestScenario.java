@@ -135,6 +135,8 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
         runner.run(new RunNotifier());
 
+        Thread.currentThread().sleep(1000);
+
         List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
         assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
