@@ -374,7 +374,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.done();
 
         ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
-        verify(listener).testRunFinished(argument.capture());
+        verify(listener).testFinished(argument.capture());
 
         assertThat(argument.getValue().getRunCount(), is(3));
     }
@@ -390,7 +390,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.done();
 
         ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
-        verify(listener).testRunFinished(argument.capture());
+        verify(listener).testFinished(argument.capture());
 
         assertThat(argument.getValue().getIgnoreCount(), is(1));
     }
@@ -406,7 +406,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.done();
 
         ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
-        verify(listener).testRunFinished(argument.capture());
+        verify(listener).testFinished(argument.capture());
 
         assertThat(argument.getValue().getIgnoreCount(), is(1));
     }
@@ -422,7 +422,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.done();
 
         ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
-        verify(listener).testRunFinished(argument.capture());
+        verify(listener).testFinished(argument.capture());
 
         assertThat(argument.getValue().getFailureCount(), is(1));
     }

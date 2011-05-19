@@ -1,18 +1,7 @@
 package net.thucydides.core.webdriver.integration;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.verify;
-
-import java.io.File;
-import java.util.Set;
-
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
-
-import net.thucydides.core.pages.Pages;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +12,14 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.interactions.ElementNotDisplayedException;
+
+import java.io.File;
+import java.util.Set;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
 
 public class WhenBrowsingAWebSiteUsingPageObjects {
 

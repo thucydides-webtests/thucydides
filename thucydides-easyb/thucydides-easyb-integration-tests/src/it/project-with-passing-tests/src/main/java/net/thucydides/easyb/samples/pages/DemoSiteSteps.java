@@ -1,6 +1,7 @@
 package net.thucydides.easyb.samples.pages;
 
 import net.thucydides.core.annotations.Step;
+import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
 
@@ -9,6 +10,9 @@ public class DemoSiteSteps extends ScenarioSteps {
     public DemoSiteSteps(Pages pages) {
         super(pages);
     }
+
+    @Steps
+    public NestedSteps nestedSteps;
 
     @Step
     public void enter_values(String selectValue, boolean checkboxValue) {
@@ -43,6 +47,13 @@ public class DemoSiteSteps extends ScenarioSteps {
         if (page.getSelectedValues().contains(selectValue)) {
             throw new AssertionError();
         }
+    }
+
+//    @StepGroup("Use nested steps")
+    @Step
+    public void use_nested_steps() {
+        nestedSteps.enter_values("Label 1", true);
+        nestedSteps.should_have_selected_value("1");
     }
 
 }

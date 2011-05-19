@@ -29,7 +29,9 @@ public class StepFactory {
     }
     
     public void addListener(final StepListener listener) {
-        listeners.add(listener);
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
     }
     
     private static final Class<?>[] CONSTRUCTOR_ARG_TYPES = {Pages.class};

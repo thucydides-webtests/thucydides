@@ -1,24 +1,23 @@
 package net.thucydides.junit.runners;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.samples.SingleTestScenarioWithSeveralBusinessRules;
 import net.thucydides.samples.SuccessfulSingleTestScenario;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.notification.RunNotifier;
+
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 
 public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends AbstractTestStepRunnerTest {
 

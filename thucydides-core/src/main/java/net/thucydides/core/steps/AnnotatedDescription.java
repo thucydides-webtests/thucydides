@@ -1,4 +1,4 @@
-package net.thucydides.junit.annotations;
+package net.thucydides.core.steps;
 
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepDescription;
@@ -6,7 +6,6 @@ import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Title;
-import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,15 +21,15 @@ import static net.thucydides.core.util.NameConverter.humanize;
  */
 public final class AnnotatedDescription {
 
-    private final Description description;
+    private final ExecutedStepDescription description;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatedDescription.class);
 
-    public static AnnotatedDescription from(final Description description) {
+    public static AnnotatedDescription from(final ExecutedStepDescription description) {
         return new AnnotatedDescription(description);
 
     }
-    private AnnotatedDescription(final Description description) {
+    private AnnotatedDescription(final ExecutedStepDescription description) {
         this.description = description;
     }
 
@@ -38,8 +37,10 @@ public final class AnnotatedDescription {
         List<String> requirements = new ArrayList<String>();
         try {
             Method testMethod = getTestMethod();
-            addRequirementFrom(requirements, testMethod);
-            addMultipleRequirementsFrom(requirements, testMethod);
+            if (testMethod != null) {
+                addRequirementFrom(requirements, testMethod);
+                addMultipleRequirementsFrom(requirements, testMethod);
+            }
         } catch (SecurityException e) {
             LOGGER.error("Could not access requirements annotation", e);
         }
@@ -83,7 +84,7 @@ public final class AnnotatedDescription {
     }
 
     public Method getTestMethod() {
-        return methodCalled(withNoArguments(description.getMethodName()), getTestClass());
+        return methodCalled(withNoArguments(description.getName()), getTestClass());
     }
 
 
@@ -96,17 +97,20 @@ public final class AnnotatedDescription {
     }
 
     private Class<?> getTestClass() {
-        return description.getTestClass();
+        return description.getStepClass();
     }
 
     private Method methodCalled(final String methodName, final Class<?> testClass) {
-        Method[] methods = testClass.getMethods();
-        for (Method method : methods) {
-            if (method.getName().equals(methodName)) {
-                return method;
+        if (testClass != null) {
+            Method[] methods = testClass.getMethods();
+            for (Method method : methods) {
+                if (method.getName().equals(methodName)) {
+                    return method;
+                }
             }
+            throw new IllegalArgumentException("No test method called " + methodName + " was found in " + testClass);
         }
-        throw new IllegalArgumentException("No test method called " + methodName + " was found in " + testClass);
+        return null;
     }
 
     public String getAnnotatedTitle() {
@@ -151,7 +155,7 @@ public final class AnnotatedDescription {
         if (annotationTitle != null) {
             return humanize(annotationTitle);
         } else {
-            String testMethodName = description.getMethodName();
+            String testMethodName = description.getName();
             return humanize(testMethodName);
         }
     }
@@ -161,7 +165,7 @@ public final class AnnotatedDescription {
      * Turns a classname into a human-readable title.
      */
     private String getHumanizedTestName() {
-        String testName = description.getMethodName();
+        String testName = description.getName();
         return humanize(testName);
     }
 

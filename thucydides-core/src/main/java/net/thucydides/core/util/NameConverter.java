@@ -1,10 +1,10 @@
 package net.thucydides.core.util;
 
+import org.apache.velocity.util.StringUtils;
+
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.velocity.util.StringUtils;
 
 /**
  * Utility class to convert test case and method names into human-readable form.
@@ -67,7 +67,16 @@ public final class NameConverter {
      */
     public static String underscore(final String name) {
         if (name != null) {
-            return  name.replaceAll(" ", "_").toLowerCase(Locale.getDefault()).trim();
+            return name.replaceAll(" ", "_")
+                    .replaceAll("<","_")
+                    .replaceAll(">","_")
+                    .replaceAll("'","_")
+                    .replaceAll(",","_")
+                    .replaceAll(":","_")
+                    .replaceAll("/","_")
+                    .replaceAll("\"","_")
+                    .replaceAll("=","_")
+                        .toLowerCase(Locale.getDefault()).trim();
         } else {
             return "";
         }

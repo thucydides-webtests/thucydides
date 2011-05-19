@@ -20,7 +20,7 @@ public enum SupportedWebDriver {
     CHROME;
 
     /**
-     * Convenience method listing the currently supported browsers.
+     * HTMLUnit - mainly for testing, as this driver does not support screenshots or much AJAX.
      */
     public static String listOfSupportedDrivers() {
         return Joiner.on(", ").join(SupportedWebDriver.values());

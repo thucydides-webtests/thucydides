@@ -238,7 +238,7 @@ public class StepInterceptor implements MethodInterceptor {
     private void notifyFinished(final Method method) throws Exception {
 
         for (StepListener listener : listeners) {
-            listener.testRunFinished(resultTally);
+            listener.testFinished(resultTally);
         }
     }
 

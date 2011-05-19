@@ -1,24 +1,24 @@
 package net.thucydides.junit.runners;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
-import java.io.File;
-import java.util.List;
-
 import net.thucydides.core.annotations.InvalidStepsFieldException;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.UserStory;
-import net.thucydides.junit.annotations.InvalidManagedPagesFieldException;
+import net.thucydides.core.steps.InvalidManagedPagesFieldException;
+import net.thucydides.core.webdriver.WebdriverManager;
+import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.steps.ScenarioStepListener;
-import net.thucydides.samples.*;
-
+import net.thucydides.samples.AnnotatedSingleTestScenario;
+import net.thucydides.samples.SamplePassingScenario;
+import net.thucydides.samples.SampleScenarioWithoutPages;
+import net.thucydides.samples.SampleScenarioWithoutSteps;
+import net.thucydides.samples.SingleTestScenario;
+import net.thucydides.samples.SingleTestScenarioWithWebdriverException;
+import net.thucydides.samples.SuccessfulSingleTestScenario;
+import net.thucydides.samples.TestScenarioWithGroups;
+import net.thucydides.samples.TestScenarioWithParameterizedSteps;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,40 +26,69 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import java.io.File;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
 
     TestableWebDriverFactory webDriverFactory;
 
+    @Mock
+    FirefoxDriver mockWebDriver;
+
+    @Mock
+    WebdriverManager webdriverManager;
+
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
     
     @Before
     public void initMocks() {
+        MockitoAnnotations.initMocks(this);
         File temporaryDirectory = tempFolder.newFolder("screenshots");
+
         webDriverFactory = new TestableWebDriverFactory(temporaryDirectory);
+        when(webdriverManager.getWebdriver()).thenReturn(mockWebDriver);
+
     }
 
     @After
     public void resetSystemProperties() {
         System.setProperty("thucycides.step.delay", "");
+        WebdriverProxyFactory.clearMockDriver();
     }
 
-    @Test    
-    public void the_steps_maintain_a_browser_open_across_the_execution_of_all_the_steps() throws InitializationError  {
-       
-        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenario.class);
-        runner.setWebDriverFactory(webDriverFactory);
-        runner.run(new RunNotifier());
 
-        assertThat(webDriverFactory.fireFoxOpenedCount(), is(1));
+    class TestableThucydidesRunner extends ThucydidesRunner {
+
+        public TestableThucydidesRunner(final Class<?> klass) throws InitializationError {
+            super(klass);
+        }
+
+        @Override
+        protected WebdriverManager getWebdriverManager() {
+            return webdriverManager;
+        }
     }
-    
-    
+
+
     @Test    
     public void the_test_runner_records_the_steps_as_they_are_executed() throws InitializationError  {
        
@@ -68,8 +97,29 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         runner.run(new RunNotifier());
         
         List<AcceptanceTestRun> executedSteps = runner.getAcceptanceTestRuns();
-        assertThat(executedSteps.size(), greaterThan(0));
-    }
+        assertThat(executedSteps.size(), is(3));
+        AcceptanceTestRun testRun1 = executedSteps.get(0);
+        AcceptanceTestRun testRun2 = executedSteps.get(1);
+        AcceptanceTestRun testRun3 = executedSteps.get(2);
+
+        UserStory userStory = testRun1.getUserStory();
+
+        assertThat(userStory.getName(), is("Sample passing scenario"));
+
+        assertThat(testRun1.getTitle(), is("Happy day scenario"));
+        assertThat(testRun1.getMethodName(), is("happy_day_scenario"));
+        assertThat(testRun1.getTestSteps().size(), is(4));
+
+        assertThat(testRun1.getUserStory(), is(userStory));
+        assertThat(testRun2.getTitle(), is("Edge case 1"));
+        assertThat(testRun2.getMethodName(), is("edge_case_1"));
+        assertThat(testRun2.getTestSteps().size(), is(3));
+
+        assertThat(testRun3.getUserStory(), is(userStory));
+        assertThat(testRun3.getTitle(), is("Edge case 2"));
+        assertThat(testRun3.getMethodName(), is("edge_case_2"));
+        assertThat(testRun3.getTestSteps().size(), is(2));
+     }
     
     @Test
     public void the_test_runner_skips_any_tests_after_a_failure() throws Exception  {
@@ -188,24 +238,32 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
     @Test    
     public void the_test_runner_records_each_step_of_the_test_scenario() throws InitializationError  {
-        ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
+
         List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
-        assertThat(executedScenarios.size(), greaterThan(0));
+        assertThat(executedScenarios.size(), is(3));
         
         AcceptanceTestRun testRun = executedScenarios.get(0);
         assertThat(testRun.getTestSteps().size(), is(4));
+
+        AcceptanceTestRun testRun2 = executedScenarios.get(1);
+        assertThat(testRun2.getTestSteps().size(), is(3));
+
+        AcceptanceTestRun testRun3 = executedScenarios.get(2);
+        assertThat(testRun3.getTestSteps().size(), is(2));
     }
-    
+
     @Test    
     public void the_test_runner_distinguishes_between_ignored_skipped_and_pending_steps() throws InitializationError  {
         ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
+
         runExpectingFailure(runner);
         
         List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
-        assertThat(executedScenarios.size(), greaterThan(0));
+        assertThat(executedScenarios.size(), is(1));
         AcceptanceTestRun testRun = executedScenarios.get(0);
         TestStep ignored = testRun.getTestSteps().get(1);
         TestStep pending = testRun.getTestSteps().get(2);
@@ -235,6 +293,9 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
     @Test    
     public void the_test_runner_should_store_screenshots_only_for_successful_and_failed_tests() throws InitializationError  {
+
+        WebdriverProxyFactory.useMockDriver(mockWebDriver);
+
         ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
         runExpectingFailure(runner);
@@ -244,12 +305,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestStep> steps = testRun.getTestSteps();
         assertThat(steps.size(), is(6));
-        assertThat(((ConcreteTestStep)steps.get(0)).getScreenshot(), is(notNullValue()));
-        assertThat(((ConcreteTestStep)steps.get(1)).getScreenshot(), is(nullValue()));
-        assertThat(((ConcreteTestStep)steps.get(2)).getScreenshot(), is(nullValue()));
-        assertThat(((ConcreteTestStep)steps.get(3)).getScreenshot(), is(notNullValue()));
-        assertThat(((ConcreteTestStep)steps.get(4)).getScreenshot(), is(notNullValue()));
-        assertThat(((ConcreteTestStep)steps.get(5)).getScreenshot(), is(nullValue()));
+        verify(mockWebDriver, times(3)).getScreenshotAs(OutputType.FILE);
         
     }
     
@@ -383,51 +439,16 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
     @Test
     public void test_runner_takes_a_screenshot_after_each_step() throws InitializationError {
-        ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
-        runner.setWebDriverFactory(webDriverFactory);
-        runner.run(new RunNotifier());
-        
-        TakesScreenshot driver = (TakesScreenshot) webDriverFactory.getDriver();
-        
-        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
-    }
 
-
-    @Test
-    public void the_user_can_slow_down_the_execution_of_the_test_steps_using_an_external_parameter() throws InitializationError {
+        WebdriverProxyFactory.useMockDriver(mockWebDriver);
 
         ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
-        runner.initWebdriverManager();
-
-        ScenarioStepListener stepListener = runner.getStepListener();
-        ScenarioStepListener spy = spy(stepListener);
-
-        runner.setStepListener(spy);
-
-        System.setProperty("thucycides.step.delay", "250");
-
         runner.run(new RunNotifier());
 
-        verify(spy, times(2)).pauseTestRun(250);
+        verify(mockWebDriver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
-    @Test
-    public void by_default_the_tests_are_not_slowed_down() throws InitializationError {
-
-        ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
-        runner.setWebDriverFactory(webDriverFactory);
-        runner.initWebdriverManager();
-
-        ScenarioStepListener stepListener = runner.getStepListener();
-        ScenarioStepListener spy = spy(stepListener);
-
-        runner.setStepListener(spy);
-
-        runner.run(new RunNotifier());
-
-        verify(spy, never()).pauseTestRun(anyInt());
-    }
 
     @Test(expected=InvalidStepsFieldException.class)
     public void the_test_scenario_must_have_a_steps_field() throws InitializationError  {

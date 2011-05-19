@@ -1,6 +1,8 @@
 package net.thucydides.easyb
 
 import net.thucydides.core.steps.ScenarioSteps
+import net.thucydides.core.webdriver.WebdriverProxyFactory
+import org.openqa.selenium.WebDriver
 
 public class PluginConfiguration {
 
@@ -39,6 +41,17 @@ public class PluginConfiguration {
      */
     public void uses_default_base_url(String defaultBaseUrl) {
         setDefaultBaseUrl(defaultBaseUrl);
+    }
+
+    /**
+     * Override the normal web driver instance to be used for testing purposes.
+     */
+    public void use_mock_driver(WebDriver webDriver) {
+        WebdriverProxyFactory.useMockDriver(webDriver);
+    }
+
+    public void stop_using_mock_driver() {
+        WebdriverProxyFactory.clearMockDriver()
     }
 
     public void uses_steps_from(Class<ScenarioSteps> stepsClass) {

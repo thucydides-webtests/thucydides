@@ -1,4 +1,4 @@
-package net.thucydides.junit.annotations;
+package net.thucydides.core.steps;
 
 /**
  * Thrown if no suitable WebDriver field with the @Managed annotation is found in a test.

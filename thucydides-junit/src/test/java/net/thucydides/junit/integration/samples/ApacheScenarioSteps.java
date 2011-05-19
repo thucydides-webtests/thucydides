@@ -2,10 +2,10 @@ package net.thucydides.junit.integration.samples;
 
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
-import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.WrongPageError;
-import net.thucydides.junit.annotations.TestsRequirement;
+import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.junit.integration.pages.ApacheHomePage;
 import net.thucydides.junit.integration.pages.ApacheProjectPage;
 
@@ -16,7 +16,7 @@ public class ApacheScenarioSteps extends ScenarioSteps {
     }
 
     @Step
-    @TestsRequirement("R123-1") 
+    @TestsRequirement("R123-1")
     public void clickOnProjects() throws WrongPageError {
         ApacheHomePage page = (ApacheHomePage) getPages().currentPageAt(ApacheHomePage.class);
         page.clickOnProjects();

@@ -61,6 +61,7 @@ public class ThucydidesPlugin extends BasePlugin {
         pages = newPagesInstanceIn(binding)
         initializeStepFactoryAndListeners()
         initializeReportService()
+
         pluginInitialized = true;
     }
 
@@ -94,16 +95,11 @@ public class ThucydidesPlugin extends BasePlugin {
         } else {
             initializePlugin(binding)
         }
-
-        stepListener.setDriver(getWebDriver())
-
         binding.setVariable("pages", pages)
         binding.setVariable("driver", getWebDriver());
         binding.setVariable("thucydides", configuration);
 
         initializeStepsLibraries(binding);
-
-        openBrowserUsing(pages);
 
         testRunStarted(binding);
 
@@ -128,7 +124,7 @@ public class ThucydidesPlugin extends BasePlugin {
     private def initializeStepFactoryAndListeners() {
 
         stepFactory = new StepFactory(pages)
-        stepListener = new BaseStepListener(getWebDriver(), getSystemConfiguration().outputDirectory)
+        stepListener = new BaseStepListener(getSystemConfiguration().outputDirectory, pages)
         stepFactory.addListener(stepListener)
 
         ThucydidesListenerBuilder.setCurrentStepListener(stepListener);
@@ -192,13 +188,12 @@ public class ThucydidesPlugin extends BasePlugin {
         reportService.generateReportsFor(testRunResults);
     }
 
-    private def openBrowserUsing(Pages pages) {
-        pages.start()
-    }
-
     private Pages newPagesInstanceIn(Binding binding) {
-        Pages pages = new Pages(getWebdriverManager().getWebdriver());
-        pages.setDefaultBaseUrl(getConfiguration().getDefaultBaseUrl());
+        Pages pages = new Pages()
+        pages.setDefaultBaseUrl(getConfiguration().getDefaultBaseUrl())
+        WebDriver driver = getWebDriver();
+        pages.setDriver(driver);
+        pages.notifyWhenDriverOpens()
         return pages
     }
 

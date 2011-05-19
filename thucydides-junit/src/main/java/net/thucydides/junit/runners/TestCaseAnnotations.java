@@ -1,9 +1,8 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.steps.PagesAnnotatedField;
+import net.thucydides.core.steps.StepsAnnotatedField;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
-import net.thucydides.junit.internals.PagesAnnotatedField;
-import net.thucydides.junit.internals.StepsAnnotatedField;
-
 import org.openqa.selenium.WebDriver;
 
 /**

@@ -1,15 +1,13 @@
 package net.thucydides.core.webdriver;
 
-import net.thucydides.core.webdriver.SupportedWebDriver;
-import net.thucydides.core.webdriver.WebDriverFactory;
-
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -54,16 +52,34 @@ public class WhenObtainingAWebdriverInstance {
     }
 
     @Test
+    public void the_factory_knows_what_class_the_chrome_driver_uses() {
+        Class driverClass = webDriverFactory.getClassFor(SupportedWebDriver.CHROME);
+        assertThat(driverClass.getName(), is(ChromeDriver.class.getName()));
+    }
+
+    @Test
     public void the_factory_works_with_firefox() {
         WebDriver driver = webDriverFactory.newInstanceOf(SupportedWebDriver.FIREFOX);
         assertThat(driver,instanceOf(FirefoxDriver.class));
     }
     
+    @Test
+     public void the_factory_knows_what_class_the_firefox_driver_uses() {
+         Class driverClass = webDriverFactory.getClassFor(SupportedWebDriver.FIREFOX);
+         assertThat(driverClass.getName(), is(FirefoxDriver.class.getName()));
+     }
+
     @Test(expected=IllegalArgumentException.class)
     public void the_driver_type_is_mandatory() {
         webDriverFactory.newInstanceOf(null);
     }
-    
+
+
+    @Test(expected=IllegalArgumentException.class)
+    public void the_driver_type_is_mandatory_to_obtain_the_driver_class_too() {
+        webDriverFactory.newInstanceOf(null);
+    }
+
     @Test
     public void the_factory_can_provide_a_list_of_supported_drivers() {
         String supportedDrivers = SupportedWebDriver.listOfSupportedDrivers();

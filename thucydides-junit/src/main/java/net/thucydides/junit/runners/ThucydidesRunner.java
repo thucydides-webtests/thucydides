@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.pages.Pages;
@@ -7,19 +8,17 @@ import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
+import net.thucydides.core.steps.StepAnnotations;
+import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
-import net.thucydides.junit.steps.ScenarioStepListener;
-import net.thucydides.junit.steps.StepAnnotations;
-import net.thucydides.junit.steps.StepFactory;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +61,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     /**
      * Special listener that keeps track of test step execution and results.
      */
-    private ScenarioStepListener stepListener;  
+    private JUnitStepListener stepListener;
     
     /**
      * Retrieve the runner configuration from an external source.
@@ -78,17 +77,28 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Once the test is over, the Step Listener can provide the acceptance test outcome in the
      * form of an AcceptanceTestRun object.
      */
-    public ScenarioStepListener getStepListener() {
+    public JUnitStepListener getStepListener() {
+
+        Preconditions.checkNotNull(pages);
+
         if (stepListener == null) {
-            stepListener = new ScenarioStepListener((TakesScreenshot) getDriver(), getConfiguration());
+            stepListener = new JUnitStepListener(getConfiguration().getOutputDirectory(), getPages());
         }
         return stepListener;
+    }
+
+
+    public Pages getPages() {
+        if (pages == null) {
+            pages = new Pages(getDriver());
+        }
+        return pages;
     }
 
     /**
      * Override the default step listener. Mainly for testing.
      */
-    protected void setStepListener(final ScenarioStepListener stepListener) {
+    protected void setStepListener(final JUnitStepListener stepListener) {
         this.stepListener = stepListener;
     }
 
@@ -100,11 +110,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
         super(klass);
-        reportService = new ReportService(getConfiguration().getOutputDirectory(),
-                                          getDefaultReporters());
         checkRequestedDriverType();
         TestCaseAnnotations.checkThatTestCaseIsCorrectlyAnnotated(klass);
 
+        initializeReportService();
         webDriverFactory = new WebDriverFactory();
     }
 
@@ -166,24 +175,55 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     @Override
     public void run(final RunNotifier notifier) {
-        initWebdriverManager();
-
+        WebDriver driver = initWebdriverManager();
+        Pages pages = initPagesObjectUsing(driver);
+        JUnitStepListener stepListener = initListenersUsing(pages);
+        notifier.addListener(stepListener);
+        initStepFactoryUsing(pages, stepListener);
         super.run(notifier);
 
-        webdriverManager.closeDriver();
-        
+        closeDriver();
         generateReportsFor(getStepListener().getTestRunResults());
-
         notifyFailures();
     }
 
-    protected void initWebdriverManager() {
+    private Pages initPagesObjectUsing(WebDriver driver) {
+        pages = new Pages(driver);
+        return pages;
+    }
+
+    private JUnitStepListener initListenersUsing(Pages pagesObject) {
+        stepListener = new JUnitStepListener(Configuration.loadOutputDirectoryFromSystemProperties(), pagesObject);
+        return stepListener;
+    }
+
+
+    private void initStepFactoryUsing(Pages pagesObject, JUnitStepListener listener) {
+        stepFactory = new StepFactory(pagesObject);
+        stepFactory.addListener(listener.getBaseStepListener());
+    }
+
+    private void closeDriver() {
+        getWebdriverManager().closeDriver();
+    }
+
+    protected WebdriverManager getWebdriverManager() {
+        return webdriverManager;
+    }
+
+    protected WebDriver initWebdriverManager() {
         webdriverManager = new WebdriverManager(webDriverFactory);
+        return webdriverManager.getWebdriver();
+    }
+
+    private void initializeReportService() {
+        reportService = new ReportService(getConfiguration().getOutputDirectory(),
+                                          getDefaultReporters());
     }
 
     private void notifyFailures() {
         if (stepFactory != null) {
-            stepFactory.notifyStepFailures();
+            stepFactory.notifyStepFinished();
         }
     }
 
@@ -207,7 +247,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         injectDriverInto(test);
         injectAnnotatedPagesObjectInto(test);
         injectScenarioStepsInto(test);
-        stepFactory.addListener(getStepListener());
+        stepFactory.addListener(getStepListener().getBaseStepListener());
         
         notifyTestStart(method);
         
@@ -235,20 +275,20 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
      */
     protected void injectScenarioStepsInto(final Object testCase) {
-       stepFactory = new StepFactory(pages);
        StepAnnotations.injectScenarioStepsInto(testCase, stepFactory);
+
     }
 
     /**
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
      */
     protected void injectAnnotatedPagesObjectInto(final Object testCase) {
-       pages = new Pages(getDriver());
-       StepAnnotations.injectAnnotatedPagesObjectInto(testCase, pages); 
+       getPages().notifyWhenDriverOpens();
+       StepAnnotations.injectAnnotatedPagesObjectInto(testCase, pages);
     }
 
     protected WebDriver getDriver() {
-        return webdriverManager.getWebdriver();
+        return getWebdriverManager().getWebdriver();
     }
 
     public List<AcceptanceTestRun> getAcceptanceTestRuns() {
@@ -262,4 +302,5 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return ImmutableList.of(new XMLAcceptanceTestReporter(),
                 new HtmlAcceptanceTestReporter());
     }
+
 }

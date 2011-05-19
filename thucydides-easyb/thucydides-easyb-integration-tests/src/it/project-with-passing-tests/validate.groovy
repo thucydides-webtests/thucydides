@@ -1,3 +1,4 @@
+println basedir
 easybReport = new File("${basedir}/target/easyb/easyb.html")
 assert easybReport.exists()
 

@@ -1,5 +1,7 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.pages.Pages;
+
 import java.util.List;
 
 /**
@@ -10,6 +12,14 @@ import java.util.List;
 public final class StepAnnotations {
     
     private StepAnnotations() {}
+
+    /**
+     * Instantiates the step scenario fields in a test case.
+     */
+    public static void injectScenarioStepsInto(final Object testCase, final StepFactory stepFactory) {
+        List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findMandatoryAnnotatedFields(testCase.getClass());
+        instanciateScenarioStepFields(testCase, stepFactory, stepsFields);
+     }
 
     /**
      * Instantiates the step scenario fields in a test case.
@@ -27,10 +37,21 @@ public final class StepAnnotations {
             final List<StepsAnnotatedField> stepsFields) {
         for(StepsAnnotatedField stepsField : stepsFields) {
                Class<? extends ScenarioSteps> scenarioStepsClass = stepsField.getFieldClass();
-               ScenarioSteps steps = (ScenarioSteps) stepFactory.newSteps(scenarioStepsClass);  
+               ScenarioSteps steps = (ScenarioSteps) stepFactory.newSteps(scenarioStepsClass, true);
                injectNestedScenarioStepsInto(steps, stepFactory, scenarioStepsClass);
                stepsField.setValue(testCaseOrSteps, steps);
            }
+    }
+
+    /**
+     * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
+     */
+    public static void injectAnnotatedPagesObjectInto(final Object testCase, final Pages pages) {
+       PagesAnnotatedField pagesField = PagesAnnotatedField.findFirstAnnotatedField(testCase.getClass());
+       if (pagesField != null) {
+           pages.setDefaultBaseUrl(pagesField.getDefaultBaseUrl());
+           pagesField.setValue(testCase, pages);
+       }
     }
 
 }

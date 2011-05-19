@@ -1,22 +1,20 @@
 package net.thucydides.easyb;
 
 
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.times
-import static org.mockito.Mockito.verify
-import static org.hamcrest.Matchers.*
 import net.thucydides.core.pages.Pages
 import net.thucydides.core.steps.StepListener
 import net.thucydides.core.webdriver.WebDriverFactory
-
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.mockito.Mockito
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.firefox.FirefoxDriver
+import static org.hamcrest.Matchers.containsString
+import static org.mockito.Mockito.mock
 
 public class WhenUsingTheThucydidesEasybPlugin {
 
@@ -58,17 +56,24 @@ public class WhenUsingTheThucydidesEasybPlugin {
             return closeCount;
         }
     }
+
+    MockWebDriver mockWebDriver;
+
     @Before
     public void initMocks() {
         plugin = new BrowserlessThucydidesPlugin();
         plugin.resetConfiguration();
         binding = new Binding();
         binding.setVariable("sourceFile", "TestStory.story")
+
+        mockWebDriver = new MockWebDriver();
+        plugin.getConfiguration().use_mock_driver mockWebDriver
     }
 
     @After
     public void clearSystemProperties() {
         System.setProperty("webdriver.base.url", "");
+        plugin.getConfiguration().stop_using_mock_driver();
     }
 
     @Test
@@ -121,11 +126,14 @@ public class WhenUsingTheThucydidesEasybPlugin {
     public void the_plugin_should_let_the_user_define_the_default_base_url() {
 
         plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
+
+
         runStories(plugin, binding);
 
-        WebDriver driver = (WebDriver) binding.getVariable("driver");
+        plugin.getConfiguration().stop_using_mock_driver()
 
-        driver.shouldHaveOpenedAt("http://www.google.co.nz")
+        mockWebDriver.shouldHaveOpenedAt("http://www.google.co.nz")
+
     }
 
     @Test
@@ -142,6 +150,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
     @Test
     public void the_plugin_should_use_a_new_driver_for_each_story() {
 
+        plugin.getConfiguration().stop_using_mock_driver()
         plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
 
         runStories(plugin, binding);
@@ -153,8 +162,10 @@ public class WhenUsingTheThucydidesEasybPlugin {
         assert (driver1 != driver2)
     }
 
+    @Ignore
     @Test
     public void the_plugin_should_be_configurable_to_use_the_same_driver_for_all_stories() {
+        plugin.getConfiguration().stop_using_mock_driver()
         plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz")
         System.setProperty("thucydides.use.unique.browser","true")
 
@@ -167,21 +178,6 @@ public class WhenUsingTheThucydidesEasybPlugin {
         System.setProperty("thucydides.use.unique.browser","false")
 
         assert (driver1 == driver2)
-    }
-
-    @Test
-    public void the_plugin_should_tell_the_listeners_about_the_new_driver_for_each_story() {
-
-        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
-
-        runStories(plugin, binding);
-        WebDriver driver1 = (WebDriver) binding.getVariable("driver");
-        WebDriver stepListenerDriver1 = plugin.stepListener.driver
-
-        runStories(plugin, binding);
-        WebDriver stepListenerDriver2 = plugin.stepListener.driver
-
-        assert (stepListenerDriver1 != stepListenerDriver2)
     }
 
     @Test
@@ -198,20 +194,16 @@ public class WhenUsingTheThucydidesEasybPlugin {
     }
 
     @Test
-    public void the_plugin_should_close_the_driver_at_the_end_of_the_scenario_if_requested() {
+    public void the_plugin_should_not_close_the_driver_at_the_end_of_the_story_if_using_a_single_browser() {
 
-        ThucydidesPlugin plugin = new MockedThucydidesPlugin();
+        ThucydidesPlugin plugin = new BrowserlessThucydidesPlugin();
 
-        plugin.getConfiguration().use_new_broswer_for_each_scenario()
-        plugin.getConfiguration().uses_default_base_url("http://www.google.com")
-        plugin.beforeStory(binding);
+        runStories(plugin, binding);
+
         WebDriver driver = (WebDriver) binding.getVariable("driver");
 
-        runScenarios(plugin, binding);
-
-        plugin.afterStory(binding);
-
-        verify(driver, times(2)).get("http://www.google.com");
+        assert driver.wasClosed();
+        assert driver.closedCount == 1;
     }
 
     @Rule
@@ -237,15 +229,37 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
     private void runScenarios(ThucydidesPlugin plugin, Binding binding) {
         plugin.beforeScenario(binding);
+
         plugin.beforeGiven(binding);
+        runWebTestsUsing(plugin);
+        plugin.afterGiven(binding);
+
         plugin.beforeWhen(binding);
+        runWebTestsUsing(plugin);
+        plugin.afterWhen(binding);
+
+        plugin.afterThen(binding);
+        runWebTestsUsing(plugin);
         plugin.beforeThen(binding);
+
         plugin.afterScenario(binding);
+
         plugin.beforeScenario(binding);
         plugin.beforeGiven(binding);
+        plugin.afterGiven(binding);
+
         plugin.beforeWhen(binding);
+        plugin.afterWhen(binding);
+
+        plugin.afterThen(binding);
         plugin.beforeThen(binding);
+
         plugin.afterScenario(binding);
+    }
+
+    def runWebTestsUsing(ThucydidesPlugin thucydidesPlugin) {
+        WebDriver driver = binding.getVariable("driver");
+        driver.get "http://www.google.com"
     }
 
 

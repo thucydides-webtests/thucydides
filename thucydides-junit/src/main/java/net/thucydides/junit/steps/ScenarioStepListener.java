@@ -1,17 +1,6 @@
 package net.thucydides.junit.steps;
 
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.IGNORED;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SKIPPED;
-import static net.thucydides.core.model.TestResult.SUCCESS;
-import static net.thucydides.core.util.NameConverter.underscore;
-
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
+import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestResult;
@@ -20,15 +9,25 @@ import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.junit.annotations.AnnotatedDescription;
-import net.thucydides.junit.annotations.UserStoryCode;
 import net.thucydides.junit.internals.TestStatus;
-
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
-import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.IGNORED;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SKIPPED;
+import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.util.NameConverter.underscore;
 
 /**
  * Observes the test run and stores test run details for later reporting.
@@ -47,7 +46,7 @@ public class ScenarioStepListener extends RunListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioStepListener.class);
 
-    public ScenarioStepListener(final TakesScreenshot driver, final Configuration configuration) {
+    public ScenarioStepListener(final WebDriver driver, final Configuration configuration) {
         acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
         photographer = new Photographer(driver, configuration.getOutputDirectory());
 

@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,6 +33,9 @@ public class WhenScreenshotsAreTaken {
     @Mock
     private FirefoxDriver driver;
     
+    @Mock
+    private HtmlUnitDriver htmlDriver;
+
     private Photographer photographer;
     
     @Before 
@@ -54,6 +59,16 @@ public class WhenScreenshotsAreTaken {
         verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());        
     }
     
+    @Test
+    public void should_not_take_a_snapshot_if_unsupported_by_the_driver() throws IOException {
+
+        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        Photographer photographer = new Photographer(htmlDriver, screenshotDirectory);
+        photographer.takeScreenshot("screenshot");
+
+        verify(driver,never()).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
     @Test
     public void the_driver_should_save_the_corresponding_source_code() throws IOException {
 

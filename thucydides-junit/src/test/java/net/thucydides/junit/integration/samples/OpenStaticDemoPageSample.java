@@ -1,14 +1,13 @@
 package net.thucydides.junit.integration.samples;
 
+import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
+import net.thucydides.core.annotations.TestsRequirement;
+import net.thucydides.core.annotations.Title;
+import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
-import net.thucydides.junit.annotations.ManagedPages;
-import net.thucydides.junit.annotations.UserStoryCode;
-import net.thucydides.junit.annotations.Title;
-import net.thucydides.junit.annotations.TestsRequirement;
 import net.thucydides.junit.runners.ThucydidesRunner;
-
 import net.thucydides.samples.DemoSiteSteps;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +33,7 @@ public class OpenStaticDemoPageSample {
         
     @Test
     @Title("The user opens the index page")
-    @TestsRequirement("R123") 
+    @TestsRequirement("R123")
     public void the_user_opens_the_page() {
         pages.start();
         steps.enter_values("Label 1", true);

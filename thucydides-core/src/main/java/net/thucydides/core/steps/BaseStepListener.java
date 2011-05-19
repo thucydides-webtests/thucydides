@@ -1,16 +1,21 @@
 package net.thucydides.core.steps;
 
+import com.google.common.collect.ImmutableList;
+import net.thucydides.core.annotations.Title;
+import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.core.model.UserStory;
+import net.thucydides.core.pages.Pages;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.Configuration;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriverException;
+import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.core.webdriver.WebdriverProxyFactory;
+import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static net.thucydides.core.model.TestResult.FAILURE;
@@ -37,40 +43,89 @@ import static net.thucydides.core.util.NameConverter.underscore;
  */
 public class BaseStepListener implements StepListener {
 
-    private final List<AcceptanceTestRun> acceptanceTestRuns;
+    private final Collection<AcceptanceTestRun> acceptanceTestRuns;
     private AcceptanceTestRun currentAcceptanceTestRun;
     private ConcreteTestStep currentTestStep;
 
-    private TakesScreenshot driver;
+    private WebDriver driver;
     private File outputDirectory;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseStepListener.class);
 
-    public BaseStepListener(final TakesScreenshot driver, final File outputDirectory) {
-        acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
+    public BaseStepListener(final File outputDirectory) {
+        this.acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
         this.outputDirectory = outputDirectory;
+    }
+
+    public BaseStepListener(final Class<? extends WebDriver> driverClass, final File outputDirectory) {
+        this(outputDirectory);
+        this.driver = WebdriverProxyFactory.proxyFor(driverClass);
+    }
+
+    public BaseStepListener(final File outputDirectory, final Pages pages) {
+        this(outputDirectory);
+        if (pages != null) {
+            setDriverUsingPagesDriverIfDefined(pages);
+        } else {
+            createNewDriver();
+        }
+    }
+
+    private void createNewDriver() {
+        Class<? extends WebDriver> driverClass = WebDriverFactory.getClassFor(Configuration.getDriverType());
+        setDriver(WebdriverProxyFactory.proxyFor(driverClass));
+    }
+
+    private void setDriverUsingPagesDriverIfDefined(final Pages pages) {
+        if (pages.getDriver() != null) {
+            setDriver(pages.getDriver());
+        } else {
+            createNewDriver();
+            pages.setDriver(getDriver());
+            pages.notifyWhenDriverOpens();
+        }
+    }
+
+    public void setPages(final Pages pages) {
+        if ((pages != null) && (driver != null)) {
+            pages.setDriver(driver);
+            pages.notifyWhenDriverOpens();
+        }
+
+    }
+
+    public void setDriver(final WebDriver driver) {
         this.driver = driver;
     }
 
-    public void setDriver(final TakesScreenshot driver) {
-        this.driver = driver;
+    public WebDriver getDriver() {
+        return driver;
     }
 
     public List<AcceptanceTestRun> getTestRunResults() {
-        return acceptanceTestRuns;
+        return ImmutableList.copyOf(acceptanceTestRuns);
     }
 
     private void recordCurrentTestStep(final ExecutedStepDescription description) {
+        if (currentTestStep != null) {
 
-        getCurrentStep().setDescription(description.getName());
-        getCurrentStep().recordDuration();
-        getCurrentAcceptanceTestRun().recordStep(currentTestStep);
-        getCurrentAcceptanceTestRun().recordDuration();
-        finishTestStep();
+            addAnyTestedRequirementsIn(description);
+
+            String testName = AnnotatedDescription.from(description).getName();
+            getCurrentStep().setDescription(testName);
+            getCurrentStep().recordDuration();
+
+            getCurrentAcceptanceTestRun().recordStep(currentTestStep);
+            getCurrentAcceptanceTestRun().recordDuration();
+
+            finishTestStep();
+        }
     }
 
-    private void startNewTestStep() {
+
+    private void startNewTestStep(ExecutedStepDescription description) {
         currentTestStep = new ConcreteTestStep();
+        currentTestStep.setDescription(description.getName());
     }
 
     private void finishTestStep() {
@@ -82,8 +137,6 @@ public class BaseStepListener implements StepListener {
         File screenshot = null;
         try {
             screenshot = getPhotographer().takeScreenshot(snapshotName);
-        //} catch (WebDriverException e) {
-        //    LOGGER.error("Failed to save screenshot file - stale step listener?");
         } catch (IOException ioe) {
             LOGGER.error("Failed to save screenshot file: IO error",ioe);
         }
@@ -92,6 +145,7 @@ public class BaseStepListener implements StepListener {
 
     public Photographer getPhotographer() {
         return new Photographer(driver, outputDirectory);
+
     }
 
     protected AcceptanceTestRun getCurrentAcceptanceTestRun() {
@@ -102,30 +156,79 @@ public class BaseStepListener implements StepListener {
     }
 
     protected void startNewCurrentAcceptanceTestRun() {
+        if (currentAcceptanceTestRun != null) {
+            acceptanceTestRuns.add(currentAcceptanceTestRun);
+        }
         currentAcceptanceTestRun = null;
         getCurrentAcceptanceTestRun();
     }
 
     public void testRunStarted(final String description) {
-        testRunStarted(ExecutedStepDescription.withTitle(description));
+        testStarted(ExecutedStepDescription.withTitle(description));
     }
 
-    public void testRunStarted(final ExecutedStepDescription description) {
+    public void testStarted(final ExecutedStepDescription description) {
         startNewCurrentAcceptanceTestRun();
         if (description.getTestMethod() != null) {
             getCurrentAcceptanceTestRun().setMethodName(description.getTestMethod().getName());
             getCurrentAcceptanceTestRun().setUserStory(withUserStoryFromTestCaseIn(description));
+            updateTestRunRequirementsBasedOn(description);
         } else {
             getCurrentAcceptanceTestRun().setUserStory(withUserStoryFrom(description));
         }
-        setTitleIfNotAlreadySet();
+
+        String annotatedTitle = testTitleFromAnnotationIfPresentIn(description);
+        if (annotatedTitle != null) {
+            getCurrentAcceptanceTestRun().setTitle(annotatedTitle);
+        } else {
+            setTitleIfNotAlreadySet();
+        }
+
+        // addAnyTestedRequirementsIn(description);
 
         acceptanceTestRuns.add(getCurrentAcceptanceTestRun());
     }
 
+    private void addAnyTestedRequirementsIn(final ExecutedStepDescription description) {
+        AnnotatedDescription testDescription = AnnotatedDescription.from(description);
+        List<String> requirements = testDescription.getAnnotatedRequirements();
+        for (String requirement : requirements) {
+            currentTestStep.testsRequirement(requirement);
+        }
+    }
+
+    private void updateTestRunRequirementsBasedOn(final ExecutedStepDescription description) {
+        AnnotatedDescription testDescription = AnnotatedDescription.from(description);
+        List<String> requirements = testDescription.getAnnotatedRequirements();
+        for (String requirement : requirements) {
+            getCurrentAcceptanceTestRun().testsRequirement(requirement);
+        }
+    }
+
     private void setTitleIfNotAlreadySet() {
-        String testRunTitle = getCurrentAcceptanceTestRun().getUserStory().getName();
+        String testRunTitle;
+        String methodName = getCurrentAcceptanceTestRun().getMethodName();
+
+        if (methodName != null) {
+            testRunTitle = NameConverter.humanize(methodName);
+        } else {
+            testRunTitle = getCurrentAcceptanceTestRun().getUserStory().getName();
+
+        }
         getCurrentAcceptanceTestRun().setTitle(testRunTitle);
+    }
+
+    private String testTitleFromAnnotationIfPresentIn(final ExecutedStepDescription description) {
+
+        Method testMethod = description.getTestMethod();
+
+        if (testMethod != null) {
+            Title testTitle = testMethod.getAnnotation(Title.class);
+            if (testTitle != null) {
+                return testTitle.value();
+            }
+        }
+        return null;
     }
 
     public void testGroupStarted(final ExecutedStepDescription description) {
@@ -150,12 +253,24 @@ public class BaseStepListener implements StepListener {
     private UserStory withUserStoryFromTestCaseIn(final ExecutedStepDescription description) {
         String name = NameConverter.humanize(description.getStepClass().getSimpleName());
         String source = description.getStepClass().getCanonicalName();
-        return new UserStory(name, "", source);
+        String userStoryCode = userStoryCodeFromAnnotationIfPresentIn(description.getStepClass());
+        return new UserStory(name, userStoryCode, source);
     }
 
     private UserStory withUserStoryFrom(final ExecutedStepDescription description) {
         String name = NameConverter.humanize(description.getName());
-        return new UserStory(name, "", "");
+        String userStoryCode = userStoryCodeFromAnnotationIfPresentIn(description.getStepClass());
+        return new UserStory(name, userStoryCode, "");
+    }
+
+    private String userStoryCodeFromAnnotationIfPresentIn(final Class<?> testClass) {
+        if (testClass != null) {
+            UserStoryCode userStoryAnnotation = testClass.getAnnotation(UserStoryCode.class);
+            if (userStoryAnnotation != null) {
+                return userStoryAnnotation.value();
+            }
+        }
+        return "";
     }
 
     private void markCurrentTestAs(final TestResult result) {
@@ -193,11 +308,14 @@ public class BaseStepListener implements StepListener {
 
 
     private void takeScreenshotFor(final ExecutedStepDescription description) {
-        File screenshot = grabScreenshotFileFor(aTestCalled(description));
-        getCurrentStep().setScreenshot(screenshot);
-        if (screenshot != null) {
-            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-            getCurrentStep().setHtmlSource(sourcecode);
+        if (getCurrentStep() != null) {
+            String testName = aTestCalled(description);
+            File screenshot = grabScreenshotFileFor(testName);
+            getCurrentStep().setScreenshot(screenshot);
+            if (screenshot != null) {
+                File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
+                getCurrentStep().setHtmlSource(sourcecode);
+            }
         }
     }
 
@@ -209,7 +327,7 @@ public class BaseStepListener implements StepListener {
         if (stepIsAGroup(description)) {
             testGroupStarted(description);
         } else {
-            startNewTestStep();
+            startNewTestStep(description);
         }
     }
 
@@ -272,11 +390,7 @@ public class BaseStepListener implements StepListener {
     }
 
     private boolean stepIsAGroup(final ExecutedStepDescription description) {
-        if (description.isAGroup()) {
-            return true;
-        } else {
-            return stepMethodIsAGroup(description.getTestMethod());
-        }
+        return description.isAGroup() || stepMethodIsAGroup(description.getTestMethod());
     }
     public void stepIgnored(final ExecutedStepDescription description) {
         markCurrentTestAs(IGNORED);
@@ -295,30 +409,19 @@ public class BaseStepListener implements StepListener {
     }
 
     private boolean stepMethodIsPending(final Method testMethod) {
-        if (testMethod  != null) {
-            return TestStatus.of(testMethod).isPending();
-        } else {
-            return false;
-        }
+        return testMethod != null && TestStatus.of(testMethod).isPending();
     }
 
     private boolean stepMethodIsIgnored(final Method testMethod) {
-        if (testMethod  != null) {
-            return TestStatus.of(testMethod).isIgnored();
-        } else {
-            return false;
-        }
+        return testMethod != null && TestStatus.of(testMethod).isIgnored();
     }
 
     private boolean stepMethodIsAGroup(final Method testMethod) {
-        if (testMethod  != null) {
-            return TestStatus.of(testMethod).isAStepGroup();
-        } else {
-            return false;
-        }
+        return testMethod != null && TestStatus.of(testMethod).isAStepGroup();
     }
 
-    public void testRunFinished(final TestStepResult result) {
+    public void testFinished(final TestStepResult result) {
+        currentAcceptanceTestRun = null;
     }
 
 }

@@ -3,7 +3,7 @@ package net.thucydides.core.steps;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.TestResult;
-import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface StepListener {
     /**
      * Start a test case made up of several test steps.
      */
-    void testRunStarted(final ExecutedStepDescription description);
+    void testStarted(final ExecutedStepDescription description);
 
     /**
      * Start a test run using a non-java test, e.g. an easyb story.
@@ -29,7 +29,7 @@ public interface StepListener {
      *
      * @param result the summary of the test run, including all the tests that failed
      */
-    void testRunFinished(TestStepResult result);
+    void testFinished(TestStepResult result);
 
     /**
      * Called when a test step is about to be started.
@@ -103,6 +103,10 @@ public interface StepListener {
     /**
      * Used to update the webdriver driver for screenshots if a listener is reused between scenarios.
      */
-    public void setDriver(final TakesScreenshot driver);
+    public void setDriver(final WebDriver driver);
 
+    /**
+     * The currently-used WebDriver instance for these tests.
+     */
+    WebDriver getDriver();
 }

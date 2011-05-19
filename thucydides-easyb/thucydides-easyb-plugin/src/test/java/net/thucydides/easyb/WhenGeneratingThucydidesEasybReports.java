@@ -2,17 +2,16 @@ package net.thucydides.easyb;
 
 
 import com.google.common.collect.ImmutableList;
-import junit.textui.TestRunner;
 import net.thucydides.core.model.AcceptanceTestRun;
-import static net.thucydides.core.model.TestResult.*;
-
 import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
-import net.thucydides.core.steps.*;
+import net.thucydides.core.steps.BaseStepListener;
+import net.thucydides.core.steps.StepFactory;
+import net.thucydides.core.steps.StepListener;
 import net.thucydides.easyb.samples.NestedScenarioSteps;
 import net.thucydides.easyb.samples.SampleSteps;
 import org.easyb.BehaviorStep;
@@ -24,10 +23,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -36,8 +31,23 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.easyb.util.BehaviorStepType.*;
-import static org.mockito.Mockito.*;
+import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SKIPPED;
+import static net.thucydides.core.model.TestResult.SUCCESS;
+import static org.easyb.util.BehaviorStepType.GIVEN;
+import static org.easyb.util.BehaviorStepType.SCENARIO;
+import static org.easyb.util.BehaviorStepType.STORY;
+import static org.easyb.util.BehaviorStepType.THEN;
+import static org.easyb.util.BehaviorStepType.WHEN;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class WhenGeneratingThucydidesEasybReports {
 
@@ -78,8 +88,9 @@ public class WhenGeneratingThucydidesEasybReports {
         MockitoAnnotations.initMocks(this);
         outputDirectory = temporaryFolder.newFolder("thucydides");
         screenshot = temporaryFolder.newFile("screenshot.jpg");
-        stepListener = new BaseStepListener(driver, outputDirectory);
+        stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
 
+        stepListener.setDriver(driver);
         when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot);
 
         stepFactory = new StepFactory(pages);

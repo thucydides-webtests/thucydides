@@ -1,14 +1,15 @@
 package net.thucydides.core.pages;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-
-import java.lang.reflect.Constructor;
-
+import com.google.common.base.Preconditions;
+import net.thucydides.core.webdriver.WebDriverFacade;
+import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.lang.reflect.Constructor;
+
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 /**
  * The Pages object keeps track of what web pages a test visits, and helps with mapping pages to Page Objects.
@@ -19,7 +20,7 @@ import com.google.common.base.Preconditions;
  */
 public class Pages {
 
-    private final transient WebDriver driver;
+    private transient WebDriver driver;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pages.class);
 
@@ -28,9 +29,17 @@ public class Pages {
     private final transient PageConfiguration pageConfiguration;
 
 
+    public Pages() {
+        this.pageConfiguration = new PageConfiguration();
+    }
+
     public Pages(final WebDriver driver) {
         this.driver = driver;
         this.pageConfiguration = new PageConfiguration();
+    }
+
+    public void setDriver(WebDriver driver) {
+        this.driver = driver;
     }
 
     public WebDriver getDriver() {
@@ -129,6 +138,18 @@ public class Pages {
 
     public String getStartingUrl() {
         return PageUrls.getUrlFrom(getDefaultBaseUrl());
+    }
+
+    public void notifyWhenDriverOpens() {
+        PagesEventListener eventListener = new PagesEventListener(this);
+        if ((getDriver() != null) && !usingProxiedWebDriver()) {
+            start();
+        }
+        WebdriverProxyFactory.registerListener(eventListener);
+    }
+
+    private boolean usingProxiedWebDriver() {
+        return (getDriver() instanceof WebDriverFacade);
     }
 
 }

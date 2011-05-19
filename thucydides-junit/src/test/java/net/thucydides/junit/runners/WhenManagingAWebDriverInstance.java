@@ -1,27 +1,34 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.core.webdriver.UnsupportedDriverException;
+import net.thucydides.core.webdriver.WebdriverProxyFactory;
+import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
+import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
+import net.thucydides.samples.SampleFailingScenario;
+import net.thucydides.samples.SamplePassingScenario;
+import net.thucydides.samples.SampleScenarioWithUnannotatedWebDriver;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.MethodRule;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.InitializationError;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.WebDriver;
+
 import static net.thucydides.core.webdriver.SupportedWebDriver.CHROME;
 import static net.thucydides.core.webdriver.SupportedWebDriver.FIREFOX;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
-import net.thucydides.core.webdriver.UnsupportedDriverException;
-import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
-import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.samples.SampleFailingScenario;
-import net.thucydides.samples.SamplePassingScenario;
-import net.thucydides.samples.SampleScenarioWithUnannotatedWebDriver;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.InitializationError;
 
 /**
  * Managing the WebDriver instance during a test run
@@ -36,25 +43,43 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Rule
     public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
 
+
+    @Mock
+    WebDriver mockWebDriver;
+
+    @Before
+    public void initMocks() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @After
+    public void cleanup() {
+        WebdriverProxyFactory.clearMockDriver();
+    }
+
     @Test
     public void the_driver_should_be_initialized_before_the_tests() throws InitializationError  {
+        WebdriverProxyFactory.useMockDriver(mockWebDriver);
+
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(SampleFailingScenario.class, mockBrowserFactory);
-        
+        ThucydidesRunner runner = getTestRunnerUsing(SamplePassingScenario.class, mockBrowserFactory);
+
         final RunNotifier notifier = new RunNotifier();
         runner.run(new RunNotifier());
-        
-        assertThat(mockBrowserFactory.createdFirefoxDrivers(), is(1));
+
+        assertThat(mockBrowserFactory.getDriver(), is(notNullValue()));
     }
 
     @Test
     public void the_driver_should_be_closed_after_the_tests() throws InitializationError {
+        WebdriverProxyFactory.useMockDriver(mockWebDriver);
+
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(SampleFailingScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(SamplePassingScenario.class, mockBrowserFactory);
         
         final RunNotifier notifier = new RunNotifier();
         runner.run(new RunNotifier());
-        verify(mockBrowserFactory.getDriver(), times(1)).quit();
+        verify(mockWebDriver).close();
     }
     
     @SuppressWarnings("unchecked")
@@ -81,6 +106,8 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Test
     public void a_system_provided_url_should_override_the_default_url() throws InitializationError {
 
+        WebdriverProxyFactory.useMockDriver(mockWebDriver);
+
         System.setProperty("webdriver.base.url", "http://www.wikipedia.com");
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
         ThucydidesRunner runner = null;
@@ -88,7 +115,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
         final RunNotifier notifier = new RunNotifier();
         runner.run(notifier);
 
-        verify(mockBrowserFactory.getDriver()).get("http://www.wikipedia.com");
+        verify(mockWebDriver,atLeast(1)).get("http://www.wikipedia.com");
     }
     
     @Test(expected=InvalidManagedWebDriverFieldException.class)

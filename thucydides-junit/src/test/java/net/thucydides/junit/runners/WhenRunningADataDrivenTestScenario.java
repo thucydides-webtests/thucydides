@@ -1,30 +1,22 @@
 package net.thucydides.junit.runners;
 
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
-import net.thucydides.core.model.*;
-import net.thucydides.core.pages.Pages;
+import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.junit.annotations.*;
+import net.thucydides.junit.annotations.Concurrent;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.junit.steps.ScenarioStepListener;
-import net.thucydides.samples.*;
+import net.thucydides.samples.SampleDataDrivenScenario;
+import net.thucydides.samples.SampleParallelDataDrivenScenario;
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.InitializationError;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,11 +25,11 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 
 public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTest {
 
@@ -296,18 +288,6 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         File[] reports = outputDirectory.listFiles(new HTMLFileFilter());
         assertThat(reports.length, is(3));
     }
-
-
-    @Test
-    public void a_data_driven_test_driver_should_open_one_browser_per_row_of_data() throws Throwable  {
-       
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
-                                                                                 webDriverFactory);
-        runner.run(new RunNotifier());
-
-        assertThat(webDriverFactory.fireFoxOpenedCount(), is(3));
-    }
-
 
     private class HTMLFileFilter implements FilenameFilter {
         public boolean accept(File directory, String filename) {

@@ -1,11 +1,9 @@
 package net.thucydides.junit.runners.mocks;
 
 import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.junit.runners.JUnitStepListener;
 import net.thucydides.junit.runners.ThucydidesRunner;
-import net.thucydides.junit.steps.ScenarioStepListener;
-
 import org.junit.runners.model.InitializationError;
-import org.openqa.selenium.TakesScreenshot;
 
 public class MockTestStepRunner extends ThucydidesRunner {
 
@@ -17,11 +15,8 @@ public class MockTestStepRunner extends ThucydidesRunner {
         setWebDriverFactory(factory);  
     }
 
-    public ScenarioStepListener getStepListener() {
-        if (mockedScenarioStepListener == null) {
-            mockedScenarioStepListener = new MockScenarioStepListener((TakesScreenshot) getDriver(), getConfiguration());
-        }
-        return mockedScenarioStepListener;
+    public JUnitStepListener getStepListener() {
+        return super.getStepListener();
     }
 
 }

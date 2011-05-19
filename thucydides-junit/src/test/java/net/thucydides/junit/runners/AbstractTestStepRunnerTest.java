@@ -16,6 +16,5 @@ public abstract class AbstractTestStepRunnerTest {
         ThucydidesRunner runner = new MockTestStepRunner(testClass, browserFactory);
         return runner;
     }
-       
     
 }

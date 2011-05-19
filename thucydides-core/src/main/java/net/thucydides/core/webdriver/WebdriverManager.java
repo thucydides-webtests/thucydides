@@ -39,7 +39,8 @@ public class WebdriverManager {
      */
     protected WebDriver newDriver() {
         SupportedWebDriver supportedDriverType = Configuration.getDriverType();
-        return webDriverFactory.newInstanceOf(supportedDriverType);
+        Class webDriverType = webDriverFactory.getClassFor(supportedDriverType);
+        return WebdriverProxyFactory.proxyFor(webDriverType);
     }
     
     public void closeDriver() {
@@ -52,5 +53,9 @@ public class WebdriverManager {
     public WebDriver getWebdriver() {
         return webdriver;
     }
+
+    public Class<? extends WebDriver> getWebDriverClass() {
+        return webDriverFactory.getClassFor(Configuration.getDriverType());
+     }
 
 }    

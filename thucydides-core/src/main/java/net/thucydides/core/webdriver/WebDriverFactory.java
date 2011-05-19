@@ -38,6 +38,18 @@ public class WebDriverFactory {
         }
     }
 
+    public static Class<? extends WebDriver> getClassFor(final SupportedWebDriver driverType)  {
+        switch (driverType) {
+            case FIREFOX:
+                return FirefoxDriver.class;
+            case CHROME:
+                return ChromeDriver.class;
+            default:
+                throw new IllegalArgumentException(driverType
+                          + " support hasn't been implemented yet - this is a bug.");
+        }
+    }
+
     protected WebDriver newChromeDriver() {
         return new ChromeDriver();
     }

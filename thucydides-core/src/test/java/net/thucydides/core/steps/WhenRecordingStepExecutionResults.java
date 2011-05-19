@@ -10,14 +10,12 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
 import net.thucydides.core.steps.samples.NestedScenarioSteps;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.File;
@@ -65,7 +63,8 @@ public class WhenRecordingStepExecutionResults {
         MockitoAnnotations.initMocks(this);
         outputDirectory = temporaryFolder.newFolder("thucydides");
         screenshot = temporaryFolder.newFile("screenshot.jpg");
-        stepListener = new BaseStepListener(driver, outputDirectory);
+        stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        stepListener.setDriver(driver);
         stepListener.testRunStarted("Test Run");
         when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot);
 
@@ -160,7 +159,7 @@ public class WhenRecordingStepExecutionResults {
 
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
 
-        stepListener.testRunStarted(ExecutedStepDescription.withTitle("Test Run"));
+        stepListener.testStarted(ExecutedStepDescription.withTitle("Test Run"));
         steps.step1();
         steps.step2();
 
@@ -170,14 +169,30 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void the_step_listener_should_be_informed_of_the_test_name_if_known() {
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+
+        ExecutedStepDescription.of(FlatScenarioSteps.class,"step1");
+        stepListener.testStarted(ExecutedStepDescription.of(FlatScenarioSteps.class,"step1"));
+        steps.step1();
+        steps.step2();
+
+        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        AcceptanceTestRun testRun = results.get(0);
+        assertThat(testRun.getTitle(), is("Test Run"));
+    }
+
+
+    @Test
     public void the_step_listener_records_the_test_method_name_if_available() {
 
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
 
         ExecutedStepDescription stepDescription = ExecutedStepDescription.of(FlatScenarioSteps.class, "step1");
 
-        stepListener = new BaseStepListener(driver, outputDirectory);
-        stepListener.testRunStarted(stepDescription);
+        stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        stepListener.testStarted(stepDescription);
 
         List<AcceptanceTestRun> results = stepListener.getTestRunResults();
         AcceptanceTestRun testRun = results.get(0);
@@ -333,7 +348,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestStep> executedSteps = testRun.getTestSteps();
         List<String> executedStepNames = namesFrom(executedSteps);
 
-        assertThat(executedStepNames, containsInOrder("step1", "step2"));
+        assertThat(executedStepNames, containsInOrder("Step1", "Step2"));
 
     }
 
@@ -364,12 +379,12 @@ public class WhenRecordingStepExecutionResults {
 
         TestStepGroup stepGroup1 = (TestStepGroup) executedSteps.get(0);
         List<String> executedStepNamesInGroup1 = namesFrom(stepGroup1.getSteps());
-        assertThat(executedStepNamesInGroup1, containsInOrder("step1", "step2", "step3"));
+        assertThat(executedStepNamesInGroup1, containsInOrder("Step1", "Step2", "Step3"));
 
 
         TestStepGroup stepGroup2 = (TestStepGroup) executedSteps.get(1);
         List<String> executedStepNamesInGroup2 = namesFrom(stepGroup2.getSteps());
-        assertThat(executedStepNamesInGroup2, containsInOrder("step1", "step3"));
+        assertThat(executedStepNamesInGroup2, containsInOrder("Step1", "Step3"));
 
         assertThat(testRun.getResult(), is(TestResult.SUCCESS));
     }
@@ -391,12 +406,12 @@ public class WhenRecordingStepExecutionResults {
 
         TestStepGroup stepGroup1 = (TestStepGroup) executedSteps.get(0);
         List<String> executedStepNamesInGroup1 = namesFrom(stepGroup1.getSteps());
-        assertThat(executedStepNamesInGroup1, containsInOrder("step1", "step2", "step3"));
+        assertThat(executedStepNamesInGroup1, containsInOrder("Step1", "Step2", "Step3"));
 
 
         TestStepGroup stepGroup2 = (TestStepGroup) executedSteps.get(1);
         List<String> executedStepNamesInGroup2 = namesFrom(stepGroup2.getSteps());
-        assertThat(executedStepNamesInGroup2, containsInOrder("step1", "failingStep"));
+        assertThat(executedStepNamesInGroup2, containsInOrder("Step1", "Failing step"));
 
         assertThat(testRun.getResult(), is(TestResult.FAILURE));
     }
@@ -418,7 +433,7 @@ public class WhenRecordingStepExecutionResults {
         assertThat(topLevelStepGroup.getDescription(), is("Main group"));
         List<String> executedStepNames = namesFrom(topLevelStepGroup.getSteps());
 
-        assertThat(executedStepNames, containsInOrder("step1", "step2"));
+        assertThat(executedStepNames, containsInOrder("Step1", "Step2"));
     }
 
     @Test
@@ -491,7 +506,7 @@ public class WhenRecordingStepExecutionResults {
         assertThat(topLevelStepGroup.getDescription(), is("Main group"));
         List<String> executedStepNames = namesFrom(topLevelStepGroup.getSteps());
 
-        assertThat(executedStepNames, containsInOrder("step1", "step2"));
+        assertThat(executedStepNames, containsInOrder("Step1", "Step2"));
     }
 
     @Test
@@ -552,7 +567,7 @@ public class WhenRecordingStepExecutionResults {
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
         List<String> executedStepNames = namesFrom(topLevelStepGroup.getSteps());
 
-        assertThat(executedStepNames, containsInOrder("step1", "step2", "step3"));
+        assertThat(executedStepNames, containsInOrder("Step1", "Step2", "Step3"));
     }
 
     @Test
@@ -607,22 +622,6 @@ public class WhenRecordingStepExecutionResults {
 
         verify(driver, times(7)).getScreenshotAs((OutputType<?>) anyObject());
     }
-
-
-    @Ignore
-    @Test
-    public void should_fail_gracefully_if_the_screenshot_cannot_be_taken() throws IOException {
-
-        when(driver.getScreenshotAs(OutputType.FILE)).thenThrow(new WebDriverException("Screenshot could not be taken for some reason"));
-        when(driver.getPageSource()).thenReturn("<html/>");
-
-        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
-        steps.step1();
-        steps.step2();
-
-        verify(driver, times(7)).getScreenshotAs((OutputType<?>) anyObject());
-    }
-
 
     private AcceptanceTestRun firstTestResultRecordedIn(List<AcceptanceTestRun> testRunResults) {
         return stepListener.getTestRunResults().get(0);

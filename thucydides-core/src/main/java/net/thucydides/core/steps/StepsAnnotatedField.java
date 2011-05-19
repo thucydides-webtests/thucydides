@@ -17,6 +17,21 @@ public class StepsAnnotatedField {
 
     private Field field;
     
+    private static final String NO_ANNOTATED_FIELD_ERROR
+        = "No ScenarioSteps field annotated with @Steps was found in the test case.";
+
+    /**
+     * Find the first field in the class annotated with the <b>Managed</b> annotation.
+     */
+    public static List<StepsAnnotatedField> findMandatoryAnnotatedFields(final Class<?> clazz) {
+
+        List<StepsAnnotatedField> annotatedFields = findOptionalAnnotatedFields(clazz);
+        if (annotatedFields.isEmpty()) {
+            throw new InvalidStepsFieldException(NO_ANNOTATED_FIELD_ERROR);
+        }
+        return annotatedFields;
+    }
+
     /**
      * Find the first field in the class annotated with the <b>Managed</b> annotation.
      */

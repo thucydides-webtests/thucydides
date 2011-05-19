@@ -1,12 +1,10 @@
-package net.thucydides.junit.internals;
+package net.thucydides.core.steps;
+
+import net.thucydides.core.annotations.ManagedPages;
+import net.thucydides.core.pages.Pages;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-
-import net.thucydides.core.pages.Pages;
-import net.thucydides.junit.annotations.InvalidManagedPagesFieldException;
-import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
-import net.thucydides.junit.annotations.ManagedPages;
 
 /**
  * The Pages object keeps track of the Page Objects used during the tests.

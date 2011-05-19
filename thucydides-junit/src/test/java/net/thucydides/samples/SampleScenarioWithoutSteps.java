@@ -1,10 +1,9 @@
 package net.thucydides.samples;
 
+import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
-import net.thucydides.junit.annotations.ManagedPages;
 import net.thucydides.junit.runners.ThucydidesRunner;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
