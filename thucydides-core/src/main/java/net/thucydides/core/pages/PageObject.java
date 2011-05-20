@@ -259,6 +259,11 @@ public abstract class PageObject {
         }
     }
 
+    public void shouldNotBeVisible(final WebElement field) {
+        if (userCanSee(field)) {
+            throw new AssertionError("The " + field + " element should not be visible");
+        }
+    }
     /**
      * Open the webdriver browser to the base URL, determined by the DefaultUrl
      * annotation if present. If the DefaultUrl annotation is not present, the
