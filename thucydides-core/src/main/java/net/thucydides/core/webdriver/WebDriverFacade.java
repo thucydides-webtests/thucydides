@@ -45,7 +45,6 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
         WebDriver newDriver = null;
         try {
             newDriver = driverClass.newInstance();
-            System.out.println("NEW DRIVER " + newDriver + "[" + this + "]");
         } catch (InstantiationException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IllegalAccessException e) {
@@ -103,14 +102,12 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public void close() {
         if (proxyInstanciated()) {
-            System.out.println("CLOSE DRIVER " + proxiedWebDriver + "[" + this + "]");
             getDriverInstance().close();
         }
     }
 
     public void quit() {
         if (proxyInstanciated()) {
-            System.out.println("QUIT DRIVER " + proxiedWebDriver + "[" + this + "]");
             getDriverInstance().quit();
         }
     }

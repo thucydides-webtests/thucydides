@@ -6,6 +6,7 @@ import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Title;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,7 @@ public final class AnnotatedDescription {
         return new AnnotatedDescription(description);
 
     }
+
     private AnnotatedDescription(final ExecutedStepDescription description) {
         this.description = description;
     }
@@ -66,7 +68,9 @@ public final class AnnotatedDescription {
         String annotatedDescription = null;
         try {
             Method testMethod = getTestMethod();
-            annotatedDescription = getNameFromTestDescriptionAnnotation(testMethod);
+            if (testMethod != null) {
+                annotatedDescription = getNameFromTestDescriptionAnnotation(testMethod);
+            }
         } catch (SecurityException e) {
             LOGGER.error("Could not access description annotation", e);
         }
@@ -125,8 +129,16 @@ public final class AnnotatedDescription {
 
     public String getAnnotatedStepName() {
         Method testMethod = getTestMethod();
+        if (testMethod != null) {
+            return getNameFromStepAnnotationIn(testMethod);
+        }
+        return null;
+    }
+
+    private String getNameFromStepAnnotationIn(Method testMethod) {
         Step step = (Step) testMethod.getAnnotation(Step.class);
-        if ((step != null) && (step.value().length() > 0)) {
+
+        if ((step != null) && (!StringUtils.isEmpty(step.value()))) {
             return step.value();
         }
         return null;

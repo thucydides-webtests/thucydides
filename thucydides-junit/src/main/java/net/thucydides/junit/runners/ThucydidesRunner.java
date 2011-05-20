@@ -31,13 +31,11 @@ import java.util.List;
  * A test runner for WebDriver-based web tests. This test runner initializes a
  * WebDriver instance before running the tests in their order of appearance. At
  * the end of the tests, it closes and quits the WebDriver instance.
- * 
+ * <p/>
  * The test runner will by default produce output in XML and HTML. This
  * can extended by subscribing more reporter implementations to the test runner.
- * 
- * 
+ *
  * @author johnsmart
- * 
  */
 public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
@@ -53,16 +51,16 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * This proxy notifies the test runner about individual step outcomes.
      */
     private StepFactory stepFactory;
-    
+
     private Pages pages;
- 
+
     private WebdriverManager webdriverManager;
-    
+
     /**
      * Special listener that keeps track of test step execution and results.
      */
     private JUnitStepListener stepListener;
-    
+
     /**
      * Retrieve the runner configuration from an external source.
      */
@@ -104,9 +102,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     /**
      * Creates a new test runner for WebDriver web tests.
-     * 
-     * @throws InitializationError
-     *             if some JUnit-related initialization problem occurred
+     *
+     * @throws InitializationError if some JUnit-related initialization problem occurred
      */
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
         super(klass);
@@ -130,12 +127,13 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     /**
      * Set the configuration for a test runner.
+     *
      * @param configuration
      */
     public void setConfiguration(final Configuration configuration) {
         this.configuration = configuration;
     }
-    
+
 
     /**
      * Ensure that the requested driver type is valid before we start the tests.
@@ -157,7 +155,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return getConfiguration().getOutputDirectory();
     }
 
-    
+
     /**
      * To generate reports, different AcceptanceTestReporter instances need to
      * subscribe to the listener. The listener will tell them when the test is
@@ -170,6 +168,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     public void useQualifier(final String qualifier) {
         reportService.useQualifier(qualifier);
     }
+
     /**
      * Runs the tests in the acceptance test case.
      */
@@ -180,6 +179,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         JUnitStepListener stepListener = initListenersUsing(pages);
         notifier.addListener(stepListener);
         initStepFactoryUsing(pages, stepListener);
+
         super.run(notifier);
 
         closeDriver();
@@ -218,7 +218,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private void initializeReportService() {
         reportService = new ReportService(getConfiguration().getOutputDirectory(),
-                                          getDefaultReporters());
+                getDefaultReporters());
     }
 
     private void notifyFailures() {
@@ -243,22 +243,27 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     @Override
     protected Statement methodInvoker(final FrameworkMethod method, final Object test) {
-        
+
+        noStepsHaveFailed();
         injectDriverInto(test);
         injectAnnotatedPagesObjectInto(test);
         injectScenarioStepsInto(test);
         stepFactory.addListener(getStepListener().getBaseStepListener());
-        
+
         notifyTestStart(method);
-        
+
         return super.methodInvoker(method, test);
     }
 
-    
+    private void noStepsHaveFailed() {
+        this.getStepListener().getBaseStepListener().noStepsHaveFailed();
+    }
+
+
     private void notifyTestStart(final FrameworkMethod method) {
         try {
             getStepListener().testRunStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(),
-                                                                          method.getName()));
+                    method.getName()));
         } catch (Exception e) {
             LOGGER.error("Failed to start test run", e);
         }
@@ -275,7 +280,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
      */
     protected void injectScenarioStepsInto(final Object testCase) {
-       StepAnnotations.injectScenarioStepsInto(testCase, stepFactory);
+        StepAnnotations.injectScenarioStepsInto(testCase, stepFactory);
 
     }
 
@@ -283,8 +288,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
      */
     protected void injectAnnotatedPagesObjectInto(final Object testCase) {
-       getPages().notifyWhenDriverOpens();
-       StepAnnotations.injectAnnotatedPagesObjectInto(testCase, pages);
+        getPages().notifyWhenDriverOpens();
+        StepAnnotations.injectAnnotatedPagesObjectInto(testCase, pages);
     }
 
     protected WebDriver getDriver() {

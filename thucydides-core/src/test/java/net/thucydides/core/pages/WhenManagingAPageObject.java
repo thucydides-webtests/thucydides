@@ -1,15 +1,5 @@
 package net.thucydides.core.pages;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import net.thucydides.core.annotations.At;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,9 +7,27 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.RenderedWebElement;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.ElementNotDisplayedException;
 import org.openqa.selenium.support.ui.Select;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class WhenManagingAPageObject {
 
@@ -394,6 +402,15 @@ public class WhenManagingAPageObject {
         when(field.isDisplayed()).thenReturn(false);
 
         page.shouldBeVisible(field);
+    }
+
+    @Test(expected=AssertionError.class)
+    public void should_be_not_visible_should_throw_an_assertion_if_element_is_visible() {
+        BasicPageObject page = new BasicPageObject(driver);
+        RenderedWebElement field = mock(RenderedWebElement.class);
+        when(field.isDisplayed()).thenReturn(true);
+
+        page.shouldNotBeVisible(field);
     }
 
     @Test

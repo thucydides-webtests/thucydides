@@ -52,9 +52,12 @@ public class BaseStepListener implements StepListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseStepListener.class);
 
+    private boolean aStepHasFailed;
+
     public BaseStepListener(final File outputDirectory) {
         this.acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
         this.outputDirectory = outputDirectory;
+        aStepHasFailed = false;
     }
 
     public BaseStepListener(final Class<? extends WebDriver> driverClass, final File outputDirectory) {
@@ -100,6 +103,14 @@ public class BaseStepListener implements StepListener {
 
     public WebDriver getDriver() {
         return driver;
+    }
+
+    public boolean aStepHasFailed() {
+        return aStepHasFailed;
+    }
+
+    public void noStepsHaveFailed() {
+        aStepHasFailed = false;
     }
 
     public List<AcceptanceTestRun> getTestRunResults() {
@@ -160,6 +171,7 @@ public class BaseStepListener implements StepListener {
             acceptanceTestRuns.add(currentAcceptanceTestRun);
         }
         currentAcceptanceTestRun = null;
+        aStepHasFailed = false;
         getCurrentAcceptanceTestRun();
     }
 
@@ -381,6 +393,10 @@ public class BaseStepListener implements StepListener {
     }
 
     public void stepFailed(final StepFailure failure) {
+        aStepHasFailed = true;
+        if (currentTestStep == null) {
+            startNewTestStep(failure.getDescription());
+        }
         markCurrentTestAs(FAILURE);
         recordFailureDetailsInFailingTestStep(failure);
         takeScreenshotFor(failure.getDescription());
@@ -392,15 +408,14 @@ public class BaseStepListener implements StepListener {
     private boolean stepIsAGroup(final ExecutedStepDescription description) {
         return description.isAGroup() || stepMethodIsAGroup(description.getTestMethod());
     }
-    public void stepIgnored(final ExecutedStepDescription description) {
-        markCurrentTestAs(IGNORED);
 
+    public void stepIgnored(final ExecutedStepDescription description) {
         Method testMethod = description.getTestMethod();
         if (stepMethodIsPending(testMethod)) {
             markCurrentTestAs(PENDING);
         } else if (stepMethodIsIgnored(testMethod)) {
             markCurrentTestAs(IGNORED);
-        } else {
+        } else if (aStepHasFailed()){
             markCurrentTestAs(SKIPPED);
         }
         if (currentTestStep != null) {

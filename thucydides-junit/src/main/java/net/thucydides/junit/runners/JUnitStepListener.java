@@ -51,6 +51,7 @@ public class JUnitStepListener extends RunListener {
 
     @Override
     public void testFailure(Failure failure) throws Exception {
+        System.out.println("TEST FAILED!!!!!");
         baseStepListener.stepFailed(new StepFailure(withTitle(failure.getMessage()), failure.getException()));
     }
 

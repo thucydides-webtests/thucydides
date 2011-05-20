@@ -33,6 +33,11 @@ public class NestedScenarioSteps extends ScenarioSteps {
     public void step3() throws WrongPageError {
     }
 
+    @Step
+    public void nestedFailingStep() {
+        innerSteps.failingStep();
+    }
+
     @StepGroup("Step with nested failure")
     public void step_with_nested_failure() throws WrongPageError {
         innerSteps.step1();

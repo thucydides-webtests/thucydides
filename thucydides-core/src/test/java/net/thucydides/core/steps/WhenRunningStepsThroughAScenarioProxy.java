@@ -350,21 +350,6 @@ public class WhenRunningStepsThroughAScenarioProxy {
     }
 
     @Test
-    public void the_proxy_should_skip_steps_following_a_step_failure() {
-        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
-
-        steps.step1();
-        steps.failing_step();
-        steps.step2();
-        steps.step3();
-
-        verify(driver).get("step1");
-        verify(driver).get("failing_step");
-        verify(driver, never()).get("step2");
-        verify(driver, never()).get("step3");
-    }
-
-    @Test
     public void the_proxy_records_the_total_number_of_test_steps_executed() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 

@@ -21,16 +21,7 @@ public class SamplePassingScenario {
     
     @Steps
     public SampleScenarioSteps steps;
-        
-    @Test
-    @TestsRequirement("ABC")
-    public void happy_day_scenario() {
-        steps.stepThatSucceeds();
-        steps.stepThatIsIgnored();
-        steps.stepThatIsPending();
-        steps.anotherStepThatSucceeds();
-    }
-    
+
     @Test
     @TestsRequirement("DEF")
     public void edge_case_1() {
@@ -39,6 +30,16 @@ public class SamplePassingScenario {
         steps.stepThatIsPending();
     }
     
+
+    @Test
+    @TestsRequirement("ABC")
+    public void happy_day_scenario() throws Throwable {
+        steps.stepThatSucceeds();
+        steps.stepThatIsIgnored();
+        steps.stepThatIsPending();
+        steps.anotherStepThatSucceeds();
+    }
+
     @Test
     public void edge_case_2() {
         steps.stepThatSucceeds();

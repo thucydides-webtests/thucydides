@@ -324,6 +324,20 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void steps_should_be_skipped_after_a_failure_in_a_nested_step() {
+
+        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
+        steps.step1();
+        steps.nestedFailingStep();
+        steps.step2();
+
+        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        AcceptanceTestRun testRun = results.get(0);
+
+        assertThat(testRun.getTestSteps().get(2).getResult(), is(TestResult.SKIPPED));
+    }
+
+    @Test
     public void steps_should_not_be_skipped_after_an_ignored_test() {
 
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);

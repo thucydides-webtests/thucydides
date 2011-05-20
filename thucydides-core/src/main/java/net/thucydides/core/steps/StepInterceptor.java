@@ -27,7 +27,6 @@ public class StepInterceptor implements MethodInterceptor {
     private final Class<? extends ScenarioSteps> testStepClass;
     private TestStepResult resultTally;
     private List<Throwable> stepExceptions;
-    private boolean failureHasOccured = false;
     private Throwable error = null;
     private final boolean throwFinalExceptions;
     private static final Logger LOGGER = LoggerFactory.getLogger(StepInterceptor.class);
@@ -37,7 +36,6 @@ public class StepInterceptor implements MethodInterceptor {
                            final boolean throwFinalExceptions) {
         this.testStepClass = testStepClass;
         this.listeners = listeners;
-        this.failureHasOccured = false;
         this.resultTally = new TestStepResult();
         this.stepExceptions = new ArrayList<Throwable>();
         this.throwFinalExceptions = throwFinalExceptions;
@@ -55,13 +53,13 @@ public class StepInterceptor implements MethodInterceptor {
 
         if (invokingLast(method)) {
             notifyFinished(method);
-            if (throwFinalExceptions) {
+            if (throwFinalExceptions ) {
                 ifAnErrorOccuredThrow(error);
             }
             return null;
         }
 
-        Object result;
+        Object result = null;
         if (isATestGroup(method)) {
             notifyGroupStarted(method, args);
             result = runTestGroupStep(obj, method, args, proxy);
@@ -76,24 +74,50 @@ public class StepInterceptor implements MethodInterceptor {
     private Object testStepResult(final Object obj, final Method method,
                                   final Object[] args, final MethodProxy proxy) throws Throwable {
 
-        if (!isATestStep(method)) {
-            return invokeMethod(obj, method, args, proxy);
+        if (!isATestStep(method) && !shouldSkip(method)) {
+            return runNormalMethod(obj, method, args, proxy);
         }
 
         notifyTestStarted(method, args);
 
-        if (isPending(method) || isIgnored(method)) {
-            notifyTestSkippedFor(method, args);
-            return null;
-        }
-
-        if (failureHasOccured) {
+        if (shouldSkip(method)) {
             notifyTestSkippedFor(method, args);
             return null;
         }
 
         return runTestStep(obj, method, args, proxy);
 
+    }
+
+    private boolean shouldSkip(Method method) {
+        return aPreviousStepHasFailed() ||  isPending(method) || isIgnored(method);
+    }
+
+    private boolean aPreviousStepHasFailed() {
+        boolean aPreviousStepHasFailed = false;
+        for (StepListener listener : listeners) {
+            if (listener.aStepHasFailed()) {
+                aPreviousStepHasFailed = true;
+            }
+        }
+        return aPreviousStepHasFailed;
+    }
+
+    private Object runNormalMethod(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+        LOGGER.info("Running test step " + getTestNameFrom(method, args, false));
+        Object result = null;
+        try {
+            result = invokeMethod(obj, method, args, proxy);
+        } catch (AssertionError assertionError) {
+            error = assertionError;
+            stepExceptions.add(assertionError);
+            notifyFailureOf(method, args, assertionError);
+        } catch (WebDriverException webdriverException) {
+            error = webdriverException;
+            stepExceptions.add(webdriverException);
+            notifyFailureOf(method, args, webdriverException);
+        }
+        return result;
     }
 
     private Object runTestGroupStep(final Object obj, final Method method,
@@ -135,18 +159,18 @@ public class StepInterceptor implements MethodInterceptor {
         Object result = null;
         try {
             result = proxy.invokeSuper(obj, args);
-            notifyTestFinishedFor(method, args);
-        } catch (AssertionError e) {
-            error = e;
-            stepExceptions.add(e);
-            notifyFailureOf(method, args, e);
-            failureHasOccured = true;
-        } catch (WebDriverException exception) {
-            error = exception;
-            stepExceptions.add(exception);
-            notifyFailureOf(method, args, exception);
-            failureHasOccured = true;
+        } catch (AssertionError assertionError) {
+            error = assertionError;
+            stepExceptions.add(assertionError);
+            notifyFailureOf(method, args, assertionError);
+        } catch (WebDriverException webdriverException) {
+            error = webdriverException;
+            stepExceptions.add(webdriverException);
+            notifyFailureOf(method, args, webdriverException);
         }
+
+        notifyTestFinishedFor(method, args);
+
         resultTally.logExecutedTest();
         LOGGER.info("Test step done: " + getTestNameFrom(method, args, false));
         return result;

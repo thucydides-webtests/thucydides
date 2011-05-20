@@ -11,6 +11,7 @@ import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.samples.AnnotatedSingleTestScenario;
+import net.thucydides.samples.SampleNoSuchElementExceptionScenario;
 import net.thucydides.samples.SamplePassingScenario;
 import net.thucydides.samples.SampleScenarioWithoutPages;
 import net.thucydides.samples.SampleScenarioWithoutSteps;
@@ -141,6 +142,29 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         assertThat(steps.get(4).isFailure(), is(true));
         assertThat(steps.get(5).isSkipped(), is(true));
     }
+
+
+    @Test
+    public void the_test_runner_skips_any_tests_after_a_webdriver_error() throws Exception  {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SampleNoSuchElementExceptionScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runExpectingFailure(runner);
+
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+
+        List<TestStep> steps = testRun.getTestSteps();
+        assertThat(steps.size(), is(6));
+        assertThat(steps.get(0).isSuccessful(), is(true));
+        assertThat(steps.get(1).isIgnored(), is(true));
+        assertThat(steps.get(2).isPending(), is(true));
+        assertThat(steps.get(3).isSuccessful(), is(true));
+        assertThat(steps.get(4).isFailure(), is(true));
+        assertThat(steps.get(5).isSkipped(), is(true));
+    }
+
 
     @Test
     public void when_a_test_fails_the_message_is_recorded_in_the_test_step() throws Exception  {

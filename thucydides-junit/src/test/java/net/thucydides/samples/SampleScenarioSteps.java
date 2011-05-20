@@ -9,6 +9,7 @@ import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.Ignore;
+import org.openqa.selenium.NoSuchElementException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -103,5 +104,9 @@ public class SampleScenarioSteps extends ScenarioSteps {
         String nullString = null;
         int thisShouldFail = nullString.length();
         
+    }
+
+    public void failsToFindElement() {
+        throw new NoSuchElementException("Could not find an element");
     }
 }

@@ -109,4 +109,15 @@ public interface StepListener {
      * The currently-used WebDriver instance for these tests.
      */
     WebDriver getDriver();
+
+    /**
+     *  Should return true if a step failure has been logged.
+     *  We need to share this information if multiple step libraries are used.
+     */
+    boolean aStepHasFailed();
+
+    /**
+     * Reset the step failure flag for a new test.
+     */
+    void noStepsHaveFailed();
 }
