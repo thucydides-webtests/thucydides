@@ -1,6 +1,5 @@
 package net.thucydides.junit.runners;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.pages.Pages;
@@ -77,28 +76,12 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * form of an AcceptanceTestRun object.
      */
     public JUnitStepListener getStepListener() {
-
-        Preconditions.checkNotNull(pages);
-
-        if (stepListener == null) {
-            stepListener = new JUnitStepListener(getConfiguration().getOutputDirectory(), getPages());
-        }
         return stepListener;
     }
 
 
     public Pages getPages() {
-        if (pages == null) {
-            pages = new Pages(getDriver());
-        }
         return pages;
-    }
-
-    /**
-     * Override the default step listener. Mainly for testing.
-     */
-    protected void setStepListener(final JUnitStepListener stepListener) {
-        this.stepListener = stepListener;
     }
 
     /**
@@ -125,16 +108,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         }
         return configuration;
     }
-
-    /**
-     * Set the configuration for a test runner.
-     *
-     * @param configuration
-     */
-    public void setConfiguration(final Configuration configuration) {
-        this.configuration = configuration;
-    }
-
 
     /**
      * Ensure that the requested driver type is valid before we start the tests.
@@ -223,9 +196,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private void notifyFailures() throws Error {
-        if (stepFactory != null) {
-            stepFactory.notifyStepFinished();
-        }
+        stepFactory.notifyStepFinished();
     }
 
     /**
