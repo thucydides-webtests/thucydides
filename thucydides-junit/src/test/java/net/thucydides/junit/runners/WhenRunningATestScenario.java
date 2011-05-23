@@ -18,6 +18,7 @@ import net.thucydides.samples.SampleScenarioWithoutSteps;
 import net.thucydides.samples.SingleTestScenario;
 import net.thucydides.samples.SingleTestScenarioWithWebdriverException;
 import net.thucydides.samples.SuccessfulSingleTestScenario;
+import net.thucydides.samples.TestIgnoredScenario;
 import net.thucydides.samples.TestScenarioWithGroups;
 import net.thucydides.samples.TestScenarioWithParameterizedSteps;
 import org.junit.After;
@@ -143,6 +144,22 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         assertThat(steps.get(4).isFailure(), is(true));
         assertThat(steps.get(5).isSkipped(), is(true));
     }
+
+    @Test
+    public void the_test_runner_skips_any_ignored_tests() throws Exception {
+
+        ThucydidesRunner runner = new ThucydidesRunner(TestIgnoredScenario.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runner.run(new RunNotifier());
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        AcceptanceTestRun testRun = executedScenarios.get(0);
+
+        List<TestStep> steps = testRun.getTestSteps();
+        assertThat(steps.size(), is(1));
+        assertThat(steps.get(0).isIgnored(), is(true));
+    }
+
 
 
     @Test

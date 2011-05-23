@@ -8,7 +8,6 @@ import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.TestStepResult;
 import org.junit.runner.Description;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
@@ -41,10 +40,6 @@ public class JUnitStepListener extends RunListener {
     }
 
     @Override
-    public void testStarted(Description description) throws Exception {
-    }
-
-    @Override
     public void testFinished(Description description) throws Exception {
         baseStepListener.testFinished(new TestStepResult());
     }
@@ -55,28 +50,12 @@ public class JUnitStepListener extends RunListener {
     }
 
     @Override
-    public void testAssumptionFailure(Failure failure) {
-        super.testAssumptionFailure(failure);
-    }
-
-    @Override
     public void testIgnored(Description description) throws Exception {
         baseStepListener.stepIgnored(withDescriptionFrom(description));
     }
 
-
-    @Override
-    public void testRunFinished(Result result) throws Exception {
-        super.testRunFinished(result);
-    }
-
     public List<AcceptanceTestRun> getTestRunResults() {
         return baseStepListener.getTestRunResults();
-    }
-
-    private ExecutedStepDescription executedDescriptionFromgetDescriptionFor(Description description) {
-        Class testClass = (Class<? extends ScenarioSteps>) description.getTestClass();
-        return ExecutedStepDescription.of(testClass, description.getMethodName());
     }
 
     public Throwable getError() {
