@@ -36,17 +36,17 @@ public class SampleFailingScenario {
         steps.stepThatFails();
         steps.stepThatShouldBeSkipped();
     }
-    
+
+    @Test
+    public void edge_case_2() {
+        steps.stepThatSucceeds();
+        steps.anotherStepThatSucceeds();
+    }
+
     @Test
     public void edge_case_1() {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();
         steps.stepThatIsPending();
-    }
-    
-    @Test
-    public void edge_case_2() {
-        steps.stepThatSucceeds();
-        steps.anotherStepThatSucceeds();
     }
 }

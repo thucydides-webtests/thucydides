@@ -13,6 +13,7 @@ import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
+import net.thucydides.junit.listeners.JUnitStepListener;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -221,7 +222,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
                 getDefaultReporters());
     }
 
-    private void notifyFailures() {
+    private void notifyFailures() throws Error {
         if (stepFactory != null) {
             stepFactory.notifyStepFinished();
         }
@@ -252,7 +253,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
         notifyTestStart(method);
 
-        return super.methodInvoker(method, test);
+        Statement baseStatement = super.methodInvoker(method, test);
+        return new ThucydidesStatement(baseStatement, stepListener.getBaseStepListener());
     }
 
     private void noStepsHaveFailed() {

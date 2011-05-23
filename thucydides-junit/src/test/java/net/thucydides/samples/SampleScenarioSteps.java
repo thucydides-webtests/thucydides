@@ -106,6 +106,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
         
     }
 
+    @Step
     public void failsToFindElement() {
         throw new NoSuchElementException("Could not find an element");
     }

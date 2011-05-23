@@ -25,7 +25,6 @@ scenario "Select entry in dropdown list", {
         indexPage.selectedValues.shouldHave '3'
     }
     and "this step should be skipped", {
-
     }
 }
 

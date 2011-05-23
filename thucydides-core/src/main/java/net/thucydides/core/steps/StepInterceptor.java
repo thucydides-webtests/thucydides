@@ -54,7 +54,7 @@ public class StepInterceptor implements MethodInterceptor {
         if (invokingLast(method)) {
             notifyFinished(method);
             if (throwFinalExceptions ) {
-                ifAnErrorOccuredThrow(error);
+                //ifAnErrorOccuredThrow(error);
             }
             return null;
         }

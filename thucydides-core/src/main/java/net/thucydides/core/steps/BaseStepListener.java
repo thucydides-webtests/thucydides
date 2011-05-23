@@ -53,11 +53,13 @@ public class BaseStepListener implements StepListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseStepListener.class);
 
     private boolean aStepHasFailed;
+    private Throwable stepError;
 
     public BaseStepListener(final File outputDirectory) {
         this.acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
         this.outputDirectory = outputDirectory;
         aStepHasFailed = false;
+        stepError = null;
     }
 
     public BaseStepListener(final Class<? extends WebDriver> driverClass, final File outputDirectory) {
@@ -111,6 +113,11 @@ public class BaseStepListener implements StepListener {
 
     public void noStepsHaveFailed() {
         aStepHasFailed = false;
+        stepError = null;
+    }
+
+    public Throwable getStepError() {
+        return stepError;
     }
 
     public List<AcceptanceTestRun> getTestRunResults() {
@@ -300,7 +307,9 @@ public class BaseStepListener implements StepListener {
     }
 
     private void recordFailureDetailsInFailingTestStep(final StepFailure failure) {
-        getCurrentStep().failedWith(failure.getMessage(), failure.getException());
+        if (currentTestStep != null) {
+          getCurrentStep().failedWith(failure.getMessage(), failure.getException());
+        }
     }
 
     private void pauseIfRequired() {
@@ -393,16 +402,22 @@ public class BaseStepListener implements StepListener {
     }
 
     public void stepFailed(final StepFailure failure) {
-        aStepHasFailed = true;
-        if (currentTestStep == null) {
-            startNewTestStep(failure.getDescription());
-        }
+        stepFailedWith(failure);
+
+//        if (currentTestStep == null) {
+//            startNewTestStep(failure.getDescription());
+//        }
         markCurrentTestAs(FAILURE);
         recordFailureDetailsInFailingTestStep(failure);
         takeScreenshotFor(failure.getDescription());
-        if (currentTestStep != null) {
+        if (currentTestStep != null) {                             // TODO: Remove this condition
             recordCurrentTestStep(failure.getDescription());
         }
+    }
+
+    private void stepFailedWith(StepFailure failure) {
+        aStepHasFailed = true;
+        stepError = failure.getException();
     }
 
     private boolean stepIsAGroup(final ExecutedStepDescription description) {

@@ -412,17 +412,6 @@ public class WhenRunningStepsThroughAScenarioProxy {
         assertThat(argument.getValue().getFailureCount(), is(1));
     }
 
-    @Test(expected = AssertionError.class)
-    public void the_proxy_throws_the_original_exception_if_configured() {
-        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class, true);
-
-        steps.step1();
-        steps.step2();
-        steps.step3();
-        steps.failing_step();
-        steps.done();
-    }
-
     @Test
     public void the_proxy_calls_nested_step_methods() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);

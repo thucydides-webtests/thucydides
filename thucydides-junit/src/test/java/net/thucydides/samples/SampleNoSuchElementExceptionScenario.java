@@ -23,16 +23,8 @@ public class SampleNoSuchElementExceptionScenario {
     public SampleScenarioSteps steps;
 
     @Test
-    @TestsRequirement("DEF")
-    public void edge_case_1() {
-        steps.stepThatSucceeds();
-        steps.anotherStepThatSucceeds();
-        steps.stepThatIsPending();
-    }
-    
-    @Test
     @TestsRequirement("ABC")
-    public void happy_day_scenario() {
+    public void failing_happy_day_scenario() {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
         steps.stepThatIsPending();
@@ -41,8 +33,26 @@ public class SampleNoSuchElementExceptionScenario {
         steps.stepThatShouldBeSkipped();
     }
 
+
     @Test
-    public void edge_case_2() {
+    @TestsRequirement("ABC")
+    public void successful_happy_day_scenario() {
+        steps.stepThatSucceeds();
+        steps.stepThatIsIgnored();
+        steps.stepThatIsPending();
+        steps.anotherStepThatSucceeds();
+    }
+
+    @Test
+    @TestsRequirement("DEF")
+    public void other_test_case_1() {
+        steps.stepThatSucceeds();
+        steps.anotherStepThatSucceeds();
+        steps.stepThatIsPending();
+    }
+
+    @Test
+    public void other_test_case_2() {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();
     }

@@ -120,4 +120,9 @@ public interface StepListener {
      * Reset the step failure flag for a new test.
      */
     void noStepsHaveFailed();
+
+    /**
+     * If a step failed, what was the error.
+     */
+    Throwable getStepError();
 }

@@ -1,4 +1,4 @@
-package net.thucydides.junit.runners;
+package net.thucydides.junit.listeners;
 
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.pages.Pages;
@@ -51,13 +51,12 @@ public class JUnitStepListener extends RunListener {
 
     @Override
     public void testFailure(Failure failure) throws Exception {
-        System.out.println("TEST FAILED!!!!!");
         baseStepListener.stepFailed(new StepFailure(withTitle(failure.getMessage()), failure.getException()));
     }
 
     @Override
     public void testAssumptionFailure(Failure failure) {
-        super.testAssumptionFailure(failure);    //To change body of overridden methods use File | Settings | File Templates.
+        super.testAssumptionFailure(failure);
     }
 
     @Override
@@ -80,5 +79,16 @@ public class JUnitStepListener extends RunListener {
         return ExecutedStepDescription.of(testClass, description.getMethodName());
     }
 
+    public Throwable getError() {
+        return baseStepListener.getStepError();
+    }
+
+    public boolean hasRecordedFailures() {
+        return baseStepListener.aStepHasFailed();
+    }
+
+    public void resetStepFailures() {
+        baseStepListener.noStepsHaveFailed();
+    }
 }
 

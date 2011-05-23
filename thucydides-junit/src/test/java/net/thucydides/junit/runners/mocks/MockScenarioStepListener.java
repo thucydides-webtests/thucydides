@@ -2,10 +2,7 @@ package net.thucydides.junit.runners.mocks;
 
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.screenshots.Photographer;
-import net.thucydides.core.webdriver.Configuration;
-import net.thucydides.junit.runners.JUnitStepListener;
-import net.thucydides.junit.steps.ScenarioStepListener;
-import org.openqa.selenium.WebDriver;
+import net.thucydides.junit.listeners.JUnitStepListener;
 
 import java.io.File;
 
