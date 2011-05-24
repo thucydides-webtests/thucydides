@@ -1,17 +1,16 @@
 package net.thucydides.core.steps;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
+import net.thucydides.core.annotations.StepProvider;
+import net.thucydides.core.steps.samples.SimpleScenarioSteps;
+import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thucydides.core.annotations.StepProvider;
-
-import net.thucydides.core.steps.samples.SimpleScenarioSteps;
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 
 public class WhenDiscoveringTestSteps {
 

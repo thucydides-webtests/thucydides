@@ -1,21 +1,14 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.annotations.InvalidStepsFieldException;
 import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepProvider;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.steps.samples.SimpleScenarioSteps;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 
 public class WhenUsingAnnotatedStepLibraries {
@@ -51,6 +44,14 @@ public class WhenUsingAnnotatedStepLibraries {
 
     }
 
+   class UserStoryWithNoSteps {
+
+        public List stepLibrary;
+
+        public StepLibrary unannotatedStepLibrary;
+
+    }
+
     @Test
     public void should_find_annotated_step_library() {
         List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findOptionalAnnotatedFields(UserStory.class);
@@ -65,5 +66,12 @@ public class WhenUsingAnnotatedStepLibraries {
 
         assertThat(stepsFields.isEmpty(), is(true));
     }
+
+
+    @Test(expected=InvalidStepsFieldException.class)
+    public void step_index_must_have_an_annotated_step_provided() {
+        List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findMandatoryAnnotatedFields(UserStoryWithNoSteps.class);
+    }
+
 
 }

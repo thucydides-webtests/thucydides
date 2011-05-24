@@ -107,6 +107,24 @@ public class WhenLoadingTestDataFromACSVFile {
     }
 
     @Test
+    public void should_ignore_unknown_headings_with_no_matching_columns() throws IOException {
+
+        File testDataFile = useTestDataIn("testdata.csv",
+                "name, address,        phone, unused",
+                "Bill, 10 main street, 123456789");
+
+        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+
+        List<Map<String,String>> loadedData = testdata.getData();
+        Map<String,String> row = loadedData.get(0);
+
+
+        assertThat(row.get("name"), is("Bill"));
+        assertThat(row.get("address"), is("10 main street"));
+        assertThat(row.get("phone"), is("123456789"));
+    }
+
+    @Test
     public void should_ignore_extra_columns_in_data_rows() throws IOException {
 
         File testDataFile = useTestDataIn("testdata.csv",

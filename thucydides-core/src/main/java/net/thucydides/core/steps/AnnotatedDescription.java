@@ -1,7 +1,6 @@
 package net.thucydides.core.steps;
 
 import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepDescription;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
@@ -18,7 +17,7 @@ import java.util.List;
 import static net.thucydides.core.util.NameConverter.humanize;
 
 /**
- *
+ *  Test steps and step groups can be described by various annotations.
  */
 public final class AnnotatedDescription {
 
@@ -37,15 +36,9 @@ public final class AnnotatedDescription {
 
     public List<String> getAnnotatedRequirements() {
         List<String> requirements = new ArrayList<String>();
-        try {
-            Method testMethod = getTestMethod();
-            if (testMethod != null) {
-                addRequirementFrom(requirements, testMethod);
-                addMultipleRequirementsFrom(requirements, testMethod);
-            }
-        } catch (SecurityException e) {
-            LOGGER.error("Could not access requirements annotation", e);
-        }
+        Method testMethod = getTestMethod();
+        addRequirementFrom(requirements, testMethod);
+        addMultipleRequirementsFrom(requirements, testMethod);
         return requirements;
     }
 
@@ -62,29 +55,6 @@ public final class AnnotatedDescription {
         if (testsRequirement != null) {
             requirements.add(testsRequirement.value());
         }
-    }
-
-    public String getAnnotatedDescription() {
-        String annotatedDescription = null;
-        try {
-            Method testMethod = getTestMethod();
-            if (testMethod != null) {
-                annotatedDescription = getNameFromTestDescriptionAnnotation(testMethod);
-            }
-        } catch (SecurityException e) {
-            LOGGER.error("Could not access description annotation", e);
-        }
-        return annotatedDescription;
-    }
-
-    private String getNameFromTestDescriptionAnnotation(final Method testMethod) {
-        StepDescription stepDescription = (StepDescription) testMethod
-                .getAnnotation(StepDescription.class);
-        String annotatedDescription = null;
-        if (stepDescription != null) {
-            annotatedDescription = stepDescription.value();
-        }
-        return annotatedDescription;
     }
 
     public Method getTestMethod() {
@@ -105,16 +75,20 @@ public final class AnnotatedDescription {
     }
 
     private Method methodCalled(final String methodName, final Class<?> testClass) {
+        Method methodFound = null;
+
         if (testClass != null) {
             Method[] methods = testClass.getMethods();
             for (Method method : methods) {
                 if (method.getName().equals(methodName)) {
-                    return method;
+                    methodFound = method;
                 }
             }
+        }
+        if (methodFound == null) {
             throw new IllegalArgumentException("No test method called " + methodName + " was found in " + testClass);
         }
-        return null;
+        return methodFound;
     }
 
     public String getAnnotatedTitle() {
@@ -127,12 +101,8 @@ public final class AnnotatedDescription {
         return null;
     }
 
-    public String getAnnotatedStepName() {
-        Method testMethod = getTestMethod();
-        if (testMethod != null) {
-            return getNameFromStepAnnotationIn(testMethod);
-        }
-        return null;
+    private String getAnnotatedStepName() {
+        return getNameFromStepAnnotationIn(getTestMethod());
     }
 
     private String getNameFromStepAnnotationIn(Method testMethod) {
@@ -145,58 +115,52 @@ public final class AnnotatedDescription {
     }
 
     public String getName() {
-        AnnotatedDescription testDescription = new AnnotatedDescription(description);
-        String annotatedTestName = getAnnotatedStepName();
-        String annotatedDescription = testDescription.getAnnotatedDescription();
-        if (annotatedTestName != null) {
-            return annotatedTestName;
-        } else if (annotatedDescription != null) {
-            return annotatedDescription;
+        if (noClassIsDefined()) {
+          return description.getName();
+        } else if (isAGroup()) {
+            return groupName();
         } else {
-            return getHumanizedTestName();
+            return stepName();
         }
     }
 
-    /**
-     * Turns a method into a human-readable title.
-     */
-    public String getTitle() {
+    private boolean noClassIsDefined() {
+        return description.getStepClass() == null;
+    }
 
-        AnnotatedDescription testDescription = new AnnotatedDescription(description);
-        String annotationTitle = testDescription.getAnnotatedTitle();
-        if (annotationTitle != null) {
-            return humanize(annotationTitle);
+    private String groupName() {
+        String annotatedGroupName = getGroupName();
+        if (!StringUtils.isEmpty(annotatedGroupName)) {
+            return annotatedGroupName;
         } else {
-            String testMethodName = description.getName();
-            return humanize(testMethodName);
+            return stepName();
         }
     }
 
+    private String stepName() {
+        String annotationTitle = getAnnotatedTitle();
+        if (!StringUtils.isEmpty(annotationTitle)) {
+            return annotationTitle;
+        }
 
-    /**
-     * Turns a classname into a human-readable title.
-     */
-    private String getHumanizedTestName() {
-        String testName = description.getName();
-        return humanize(testName);
+        String annotatedStepName = getAnnotatedStepName();
+        if (!StringUtils.isEmpty(annotatedStepName)) {
+            return annotatedStepName;
+        }
+
+        return humanize(description.getName());
     }
 
     public boolean isAGroup() {
 
         Method testMethod = getTestMethod();
         StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
-        if (testGroup != null) {
-            return true;
-        }
-        return false;
+        return (testGroup != null);
     }
 
-    public String getGroupName() {
+    private String getGroupName() {
         Method testMethod = getTestMethod();
         StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
-        if (testGroup != null) {
-            return testGroup.value();
-        }
-        return null;
+        return testGroup.value();
     }
 }

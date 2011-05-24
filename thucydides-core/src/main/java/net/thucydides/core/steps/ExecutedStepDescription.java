@@ -53,7 +53,7 @@ public class ExecutedStepDescription {
     }
 
     public static ExecutedStepDescription withTitle(final String name) {
-        return new ExecutedStepDescription(null, name);
+        return new ExecutedStepDescription(name);
     }
 
     public boolean isAGroup() {
