@@ -17,7 +17,6 @@ class ThucydidesListenerBuilder implements ListenerBuilder {
 
     ExecutionListener get() {
         exeuctionListenerMustHaveBeenAssigned();
-
         return getListener();
     }
 

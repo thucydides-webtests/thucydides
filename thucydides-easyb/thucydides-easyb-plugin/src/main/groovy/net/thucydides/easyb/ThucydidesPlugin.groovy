@@ -88,8 +88,6 @@ public class ThucydidesPlugin extends BasePlugin {
 
     @Override
     public Object beforeStory(final Binding binding) {
-        LOGGER.debug "Before story"
-
         if (pluginInitialized) {
             resetWebdriverManagerIfRequired()
         } else {
@@ -168,7 +166,6 @@ public class ThucydidesPlugin extends BasePlugin {
 
     @Override
     public Object afterStory(final Binding binding) {
-
         stepFactory.notifyStepFinished()
 
         generateReportsFor(stepListener.testRunResults);
@@ -177,6 +174,49 @@ public class ThucydidesPlugin extends BasePlugin {
 
         return super.afterStory(binding);
     }
+
+    @Override
+    Object afterGiven(Binding binding) {
+        if (stepListener.aStepHasFailed()) {
+            raiseError()
+        }
+    }
+
+    @Override
+    Object afterWhen(Binding binding) {
+        if (stepListener.aStepHasFailed()) {
+            raiseError()
+        }
+    }
+
+
+    @Override
+    Object afterThen(Binding binding) {
+        if (stepListener.aStepHasFailed()) {
+            raiseError()
+        }
+    }
+
+    private def raiseError() {
+        def error = stepListener.stepError
+        if (errorIsNew(error)) {
+            throw error
+        } else {
+            throw new AssertionError("Step skipped due to previous step failure")
+        }
+    }
+
+    def raisedErrors = []
+
+    boolean errorIsNew(Throwable error) {
+        if (raisedErrors.contains(error)) {
+            false
+        } else {
+            raisedErrors.add(error)
+            true
+        }
+    }
+
 
     def initializeReportService() {
 

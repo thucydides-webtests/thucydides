@@ -37,7 +37,7 @@ public class DemoSiteSteps extends ScenarioSteps {
     public void should_have_selected_value(String selectValue) {
         IndexPage page = (IndexPage) getPages().currentPageAt(IndexPage.class);
         if (!page.getSelectedValues().contains(selectValue)) {
-            throw new AssertionError("Value $selectValue not in $page.selectedValues");
+            throw new AssertionError("Value " + selectValue + " not in " + page.getSelectedValues());
         }
     }
 

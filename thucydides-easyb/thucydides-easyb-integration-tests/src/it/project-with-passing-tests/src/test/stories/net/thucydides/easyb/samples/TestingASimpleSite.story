@@ -70,13 +70,4 @@ scenario "Select entry in dropdown list using steps", {
     then "the chosen options should be displayed", {
         demo_site.should_have_selected_value '3'
     }
-    and "this should be skipped", {
-        demo_site.should_have_selected_value '4'
-    }
-    and "so should this one", {
-        demo_site.should_have_selected_value '3'
-    }
-    and "this one", {
-        demo_site.should_have_selected_value '3'
-    }
 }

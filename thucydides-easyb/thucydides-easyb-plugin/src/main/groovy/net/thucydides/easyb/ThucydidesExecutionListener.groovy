@@ -6,7 +6,6 @@ import net.thucydides.core.steps.StepListener
 import org.easyb.BehaviorStep
 import org.easyb.domain.Behavior
 import org.easyb.listener.ExecutionListenerAdaptor
-import org.easyb.result.ReportingTag
 import org.easyb.result.Result
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,11 +13,7 @@ import static net.thucydides.core.steps.ExecutedStepDescription.withTitle
 import static org.easyb.result.Result.FAILED
 import static org.easyb.result.Result.IGNORED
 import static org.easyb.result.Result.PENDING
-import static org.easyb.util.BehaviorStepType.AND
-import static org.easyb.util.BehaviorStepType.GIVEN
-import static org.easyb.util.BehaviorStepType.SCENARIO
-import static org.easyb.util.BehaviorStepType.THEN
-import static org.easyb.util.BehaviorStepType.WHEN
+import static org.easyb.util.BehaviorStepType.*
 
 class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
 
@@ -26,35 +21,38 @@ class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
 
     private final StepListener stepListener
 
-    private boolean stepFailureHasOccured
-
     ThucydidesExecutionListener(StepListener stepListener) {
         this.stepListener = stepListener
     }
 
     void startBehavior(Behavior behavior) {
-        stepFailureHasOccured = false
+        noStepsHaveFailed()
     }
 
+
+    private void noStepsHaveFailed() {
+        stepListener.noStepsHaveFailed();
+    }
+
+    @Override
     void startStep(BehaviorStep step) {
+        LOGGER.debug("THUCYDIDES STARTING STEP $step")
         switch (step.stepType) {
             case SCENARIO :
-                clearStepFailureFlag();
+                stepListener.noStepsHaveFailed()
+                String groupName = groupNameFrom(step);
+                stepListener.stepGroupStarted(groupName)
+                break;
 
             case [GIVEN, WHEN, THEN, AND] :
                 String groupName = groupNameFrom(step);
                 stepListener.stepGroupStarted(groupName)
-                if (stepFailureHasOccured) {
-                    step.ignore
-                }
+                break;
         }
     }
 
-    private def clearStepFailureFlag() {
-        stepFailureHasOccured = false;
-    }
-
     String groupNameFrom(BehaviorStep step) {
+
         switch (step.stepType) {
             case GIVEN :
                 return "Given $step.name"
@@ -73,33 +71,35 @@ class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
         }
     }
 
+    @Override
     void stopStep() {
-        if (!stepFailureHasOccured) {
+        if (noStepHasFailed()) {
             stepListener.stepGroupFinished(TestResult.SUCCESS)
         } else {
             stepListener.stepGroupFinished()
         }
     }
 
-    void describeStep(String step) {
+    def noStepHasFailed() {
+        !stepListener.aStepHasFailed();
     }
 
     void gotResult(Result result) {
-
-        if (stepFailureHasOccured) {
-            ignoreThisStep()
+        if (stepListener.aStepHasFailed()) {
+            skipThisStep()
         } else {
             notifyStepListenerUsingEasybResult(result)
         }
 
     }
 
+
+
     private def notifyStepListenerUsingEasybResult(Result result) {
 
         switch (result.status()) {
             case FAILED:
                 stepListener.stepFailed(new StepFailure(withTitle(result.cause.message), result.cause));
-                stepFailureHasOccured = true
                 break;
 
             case IGNORED:
@@ -116,14 +116,11 @@ class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
         }
     }
 
-    private def ignoreThisStep() {
-        stepListener.updateCurrentStepStatus(TestResult.IGNORED)
+    private void skipThisStep() {
+        stepListener.updateCurrentStepStatus(TestResult.SKIPPED)
     }
 
     void stopBehavior(BehaviorStep behaviorStep, Behavior behavior) {
-    }
-
-    void tag(ReportingTag reportingTag) {
     }
 
     void completeTesting() {

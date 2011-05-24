@@ -67,11 +67,12 @@ scenario "Select entry in dropdown list using steps", {
     when "the user fills in the form", {
         demo_site.enter_values('Label 3', true)
     }
+    and "another step is pending"
     then "the chosen options should be displayed", {
         demo_site.should_have_selected_value '3'
     }
     and "this should be skipped", {
-        demo_site.should_have_selected_value '4'
+        demo_site.should_have_selected_value '3'
     }
     and "so should this one", {
         demo_site.should_have_selected_value '3'
