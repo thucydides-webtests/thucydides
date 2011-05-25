@@ -1,4 +1,4 @@
-package net.thucydides.samples1;
+package net.thucydides.samples;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -76,7 +76,6 @@ public class SampleScenarioNestedSteps extends ScenarioSteps {
     public void groupOfStepsContainingAnError() {
         stepThatSucceeds();
         anotherStepThatSucceeds();
-        String nullString = null;
     }
 
 }

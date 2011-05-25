@@ -1,34 +1,26 @@
-package net.thucydides.samples2;
+package net.thucydides.samples;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
-import net.thucydides.core.annotations.TestsRequirement;
-import net.thucydides.core.annotations.TestsRequirements;
 
 import org.junit.Ignore;
 
-public class SampleScenarioSteps extends ScenarioSteps {
+public class SampleScenarioNestedSteps extends ScenarioSteps {
     
-    public SampleScenarioSteps(Pages pages) {
+    public SampleScenarioNestedSteps(Pages pages) {
         super(pages);
     }
 
-    @Steps
-    public SampleScenarioNestedSteps nestedSteps;
-    
     @Step
-    @TestsRequirement("LOW_LEVEL_BUSINESS_RULE")
     public void stepThatSucceeds() {
     }
 
     @Step
-    @TestsRequirements({"LOW_LEVEL_BUSINESS_RULE_1","LOW_LEVEL_BUSINESS_RULE_2"})
     public void anotherStepThatSucceeds() {
     }
 
@@ -43,16 +35,12 @@ public class SampleScenarioSteps extends ScenarioSteps {
 
     @Step
     public void stepFour(String option) {
+        String value = null;
+        value.length();
     }
     
     @Step
     public void stepThatShouldBeSkipped() {
-    }
-
-    @StepGroup("Nested group of steps")
-    public void stepThatCallsNestedSteps() {
-        nestedSteps.stepThatSucceeds();
-        nestedSteps.anotherStepThatSucceeds();
     }
 
     @Step
@@ -77,7 +65,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
     }
     
     @StepGroup("Group of steps")
-    public void groupOfStepsContainingAFailure() {
+    public void groupOfSteps() {
         stepThatSucceeds();
         stepThatFails();
         stepThatShouldBeSkipped();
@@ -98,7 +86,6 @@ public class SampleScenarioSteps extends ScenarioSteps {
         anotherStepThatSucceeds();
         String nullString = null;
         int thisShouldFail = nullString.length();
-        
     }
 
 }

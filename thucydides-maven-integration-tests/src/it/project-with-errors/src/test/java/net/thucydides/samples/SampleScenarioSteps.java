@@ -1,4 +1,4 @@
-package net.thucydides.samples3;
+package net.thucydides.samples;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -34,6 +34,11 @@ public class SampleScenarioSteps extends ScenarioSteps {
 
     @Step
     public void stepThree(String option) {
+    }
+
+    @Step
+    public void stepThatFails() {
+        assertThat(1, is(2));
     }
 
     @Step
@@ -74,6 +79,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
     @StepGroup("Group of steps")
     public void groupOfStepsContainingAFailure() {
         stepThatSucceeds();
+        stepThatFails();
         stepThatShouldBeSkipped();
         
     }
@@ -90,6 +96,8 @@ public class SampleScenarioSteps extends ScenarioSteps {
     public void groupOfStepsContainingAnError() {
         stepThatSucceeds();
         anotherStepThatSucceeds();
+        String nullString = null;
+        int thisShouldFail = nullString.length();
         
     }
 
