@@ -7,6 +7,7 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
@@ -144,5 +145,25 @@ public class WhenScreenshotsAreTaken {
         
         assertThat(screenshotFile, startsWith("screenshot"));
     }
-    
+
+    class DodgyPhotographer extends Photographer {
+        DodgyPhotographer(WebDriver driver, File targetDirectory) {
+            super(driver, targetDirectory);
+        }
+
+        @Override
+        protected File saveScreenshoot(String prefix, File screenshot) throws IOException {
+            throw new IOException();
+        }
+    }
+
+    @Test(expected = ScreenshotException.class)
+    public void a_screenshot_runtime_exception_should_be_thrown_if_something_goes_wrong() {
+
+        DodgyPhotographer dodgyPhotographer = new DodgyPhotographer(driver, screenshotDirectory);
+        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+
+        String screenshotFile = dodgyPhotographer.takeScreenshot("screenshot").getName();
+    }
+
 }

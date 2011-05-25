@@ -44,7 +44,7 @@ public class WhenUsingAWebDriverProxy {
 
     @Test
     public void the_webdriver_proxy_looks_and_feels_like_a_webdriver() {
-        WebDriver driver = (WebDriver) WebdriverProxyFactory.proxyFor(MockWebDriver.class);
+        WebDriver driver = (WebDriver) WebdriverProxyFactory.getFactory().proxyFor(MockWebDriver.class);
 
         assertThat(driver, is(notNullValue()));
         assertThat(WebDriver.class.isAssignableFrom(driver.getClass()), is(true));
@@ -52,7 +52,7 @@ public class WhenUsingAWebDriverProxy {
 
     @Test
     public void the_proxied_webdriver_should_be_accessible_if_required() {
-        WebDriver driver = (WebDriver) WebdriverProxyFactory.proxyFor(MockWebDriver.class);
+        WebDriver driver = (WebDriver) WebdriverProxyFactory.getFactory().proxyFor(MockWebDriver.class);
 
         MockWebDriver proxiedDriver = (MockWebDriver) ((WebDriverFacade) driver).getProxiedDriver();
 
@@ -209,7 +209,7 @@ public class WhenUsingAWebDriverProxy {
     public void when_a_listener_is_registered_the_webdriver_proxy_should_notify_the_listener_when_the_browser_is_opened() {
 
         WebDriverFacade webDriverFacade = new WebDriverFacade(MockWebDriver.class);
-        WebdriverProxyFactory.registerListener(eventListener);
+        WebdriverProxyFactory.getFactory().registerListener(eventListener);
 
         webDriverFacade.get("http://www.google.com");
 
@@ -219,18 +219,18 @@ public class WhenUsingAWebDriverProxy {
     @Test
     public void a_test_should_be_able_to_override_the_facade_with_a_mock_driver_for_a_pages_object() {
 
-        WebdriverProxyFactory.useMockDriver(mockFirefoxDriver);
+        WebdriverProxyFactory.getFactory().useMockDriver(mockFirefoxDriver);
 
         Pages pages = new Pages();
         WebDriverFacade webDriverFacade = new WebDriverFacade(MockWebDriver.class);
         pages.setDriver(webDriverFacade);
 
         PagesEventListener pagesEventListener = new PagesEventListener(pages);
-        WebdriverProxyFactory.registerListener(pagesEventListener);
+        WebdriverProxyFactory.getFactory().registerListener(pagesEventListener);
 
         webDriverFacade.get("http://www.google.com");
 
-        WebdriverProxyFactory.clearMockDriver();
+        WebdriverProxyFactory.getFactory().clearMockDriver();
 
         WebDriver proxiedWebDriver = ((WebDriverFacade) pages.getDriver()).getProxiedDriver();
         assertThat(proxiedWebDriver, is((WebDriver)mockFirefoxDriver));
@@ -244,7 +244,7 @@ public class WhenUsingAWebDriverProxy {
         pages.setDriver(webDriverFacade);
 
         PagesEventListener pagesEventListener = new PagesEventListener(pages);
-        WebdriverProxyFactory.registerListener(pagesEventListener);
+        WebdriverProxyFactory.getFactory().registerListener(pagesEventListener);
 
         webDriverFacade.get("http://www.google.com");
 

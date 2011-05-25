@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.core.pages.Pages;
 import org.junit.Test;
 
@@ -10,6 +11,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 public class WhenDescribingSteps {
 
+    @UserStoryCode("U2")
     class SampleTestSteps extends ScenarioSteps {
 
         public SampleTestSteps(final Pages pages) {

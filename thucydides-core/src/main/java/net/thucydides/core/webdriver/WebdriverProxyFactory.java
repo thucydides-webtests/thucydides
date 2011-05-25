@@ -9,13 +9,26 @@ import java.util.List;
  * Provides a proxy for a WebDriver instance.
  * The proxy lets you delay opening the browser until you really know you are going to use it.
  */
-public class WebdriverProxyFactory {
+public final class WebdriverProxyFactory {
 
-    private static ThreadLocal<WebDriver> mockDriverThreadLocal = new ThreadLocal<WebDriver>();
 
-    private static List<ThucydidesWebDriverEventListener> eventListeners = new ArrayList<ThucydidesWebDriverEventListener>();
+    private static ThreadLocal<WebdriverProxyFactory> factory = new ThreadLocal<WebdriverProxyFactory>();
 
-    public static WebDriver proxyFor(Class<? extends WebDriver> driverClass) {
+    private static List<ThucydidesWebDriverEventListener> eventListeners
+            = new ArrayList<ThucydidesWebDriverEventListener>();
+
+    private WebDriver mockDriver;
+
+    private WebdriverProxyFactory() {}
+
+    public static WebdriverProxyFactory getFactory() {
+        if (factory.get() == null) {
+            factory.set(new WebdriverProxyFactory());
+        }
+        return factory.get();
+    }
+
+    public WebDriver proxyFor(final Class<? extends WebDriver> driverClass) {
         if (usingMockDriver()) {
             return getMockDriver();
         } else {
@@ -23,31 +36,35 @@ public class WebdriverProxyFactory {
         }
     }
 
-    private static boolean usingMockDriver() {
+    private boolean usingMockDriver() {
         return (getMockDriver() != null);
     }
 
-    public static void registerListener(ThucydidesWebDriverEventListener eventListener) {
+    public void registerListener(final ThucydidesWebDriverEventListener eventListener) {
         eventListeners.add(eventListener);
     }
 
-    public static void notifyListenersOfWebdriverCreationIn(WebDriverFacade webDriverFacade) {
+    public void notifyListenersOfWebdriverCreationIn(final WebDriverFacade webDriverFacade) {
         for(ThucydidesWebDriverEventListener listener : eventListeners) {
             listener.driverCreatedIn(webDriverFacade);
         }
     }
 
-    public static void useMockDriver(WebDriver mockDriver) {
-        mockDriverThreadLocal.set(mockDriver);
+    public void useMockDriver(final WebDriver driver) {
+        this.mockDriver = driver;
     }
 
-    public static void clearMockDriver() {
-        mockDriverThreadLocal.remove();
+    public void clearMockDriver() {
+        mockDriver = null;
     }
 
-    protected static WebDriver getMockDriver() {
-        return mockDriverThreadLocal.get();
+    protected WebDriver getMockDriver() {
+        return mockDriver;
     }
 
 
+    public WebDriver proxyDriver() {
+        Class<? extends WebDriver> driverClass = WebDriverFactory.getClassFor(Configuration.getDriverType());
+        return proxyFor(driverClass);
+    }
 }

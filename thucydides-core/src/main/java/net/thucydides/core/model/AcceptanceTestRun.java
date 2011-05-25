@@ -179,7 +179,7 @@ public class AcceptanceTestRun {
         group.addTestStep(step);
     }
 
-    public void setDefaultGroupResult(TestResult result) {
+    public void setDefaultGroupResult(final TestResult result) {
         if (!groupStack.isEmpty()) {
             TestStepGroup group = groupStack.peek();
             group.setDefaultResult(result);
@@ -194,11 +194,6 @@ public class AcceptanceTestRun {
             return null;
         }
     }
-
-    public int compareTo(Object o) {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {

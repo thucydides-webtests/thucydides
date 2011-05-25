@@ -37,7 +37,7 @@ public final class StepAnnotations {
             final List<StepsAnnotatedField> stepsFields) {
         for(StepsAnnotatedField stepsField : stepsFields) {
                Class<? extends ScenarioSteps> scenarioStepsClass = stepsField.getFieldClass();
-               ScenarioSteps steps = (ScenarioSteps) stepFactory.newSteps(scenarioStepsClass, true);
+               ScenarioSteps steps = (ScenarioSteps) stepFactory.newSteps(scenarioStepsClass);
                injectNestedScenarioStepsInto(steps, stepFactory, scenarioStepsClass);
                stepsField.setValue(testCaseOrSteps, steps);
            }

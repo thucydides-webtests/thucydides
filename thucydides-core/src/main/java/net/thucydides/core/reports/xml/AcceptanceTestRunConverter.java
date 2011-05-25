@@ -104,7 +104,12 @@ public class AcceptanceTestRunConverter implements Converter {
     }
 
     private String nameFrom(final AcceptanceTestRun testRun) {
-        String baseName = (testRun.getMethodName() != null) ? testRun.getMethodName() : testRun.getTitle();
+        String baseName = null;
+        if (testRun.getMethodName() != null) {
+            baseName = testRun.getMethodName();
+        } else {
+            baseName = testRun.getTitle();
+        }
         String testRunName;
         if (qualifier == null) {
             testRunName = baseName;

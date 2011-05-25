@@ -19,14 +19,14 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     private WebDriver proxiedWebDriver;
 
-    public WebDriverFacade(Class<? extends WebDriver> driverClass) {
+    public WebDriverFacade(final Class<? extends WebDriver> driverClass) {
         this.driverClass = driverClass;
     }
 
     public WebDriver getProxiedDriver() {
         if (proxiedWebDriver == null) {
             proxiedWebDriver = newProxyDriver();
-            WebdriverProxyFactory.notifyListenersOfWebdriverCreationIn(this);
+            WebdriverProxyFactory.getFactory().notifyListenersOfWebdriverCreationIn(this);
         }
         return proxiedWebDriver;
     }
@@ -34,7 +34,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
     protected WebDriver newProxyDriver() {
         WebDriver newDriver = null;
         if (usingAMockDriver()) {
-            newDriver = WebdriverProxyFactory.getMockDriver();
+            newDriver = WebdriverProxyFactory.getFactory().getMockDriver();
         } else {
             newDriver = newDriverInstance();
         }
@@ -54,13 +54,10 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
     }
 
     private boolean usingAMockDriver() {
-        return (WebdriverProxyFactory.getMockDriver() != null);
+        return (WebdriverProxyFactory.getFactory().getMockDriver() != null);
     }
 
-
-
-
-    public <X> X getScreenshotAs(OutputType<X> target) throws WebDriverException {
+    public <X> X getScreenshotAs(final OutputType<X> target) throws WebDriverException {
         if (proxyInstanciated() && driverCanTakeScreenshots()) {
             return ((TakesScreenshot) getProxiedDriver()).getScreenshotAs(target);
         } else {
@@ -72,7 +69,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
         return (TakesScreenshot.class.isAssignableFrom(getProxiedDriver().getClass()));
     }
 
-    public void get(String url) {
+    public void get(final String url) {
         getProxiedDriver().get(url);
     }
 
@@ -84,11 +81,11 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
         return getProxiedDriver().getTitle();
     }
 
-    public List<WebElement> findElements(By by) {
+    public List<WebElement> findElements(final By by) {
         return getProxiedDriver().findElements(by);
     }
 
-    public WebElement findElement(By by) {
+    public WebElement findElement(final By by) {
         return getProxiedDriver().findElement(by);
     }
 

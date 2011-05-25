@@ -13,13 +13,13 @@ import java.util.List;
 
 class DataDrivenAnnotations {
 
-    public static DataDrivenAnnotations forClass(TestClass testClass) {
+    public static DataDrivenAnnotations forClass(final TestClass testClass) {
         return new DataDrivenAnnotations(testClass);
     }
 
     private final TestClass testClass;
 
-    DataDrivenAnnotations(TestClass testClass) {
+    DataDrivenAnnotations(final TestClass testClass) {
         this.testClass = testClass;
     }
 

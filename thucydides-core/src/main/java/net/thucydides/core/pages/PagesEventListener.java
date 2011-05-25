@@ -10,11 +10,11 @@ public class PagesEventListener implements ThucydidesWebDriverEventListener {
 
     private final Pages pages;
 
-    public PagesEventListener(Pages pages) {
+    public PagesEventListener(final Pages pages) {
         this.pages = pages;
     }
 
-    public void driverCreatedIn(WebDriver driver) {
+    public void driverCreatedIn(final WebDriver driver) {
         if (pages.getDriver() == driver) {
             pages.start();
         }

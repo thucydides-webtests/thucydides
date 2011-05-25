@@ -76,7 +76,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @After
     public void resetSystemProperties() {
         System.setProperty("thucycides.step.delay", "");
-        WebdriverProxyFactory.clearMockDriver();
+        WebdriverProxyFactory.getFactory().clearMockDriver();
     }
 
 
@@ -327,7 +327,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test
     public void the_test_runner_should_store_screenshots_only_for_successful_and_failed_tests() throws InitializationError {
 
-        WebdriverProxyFactory.useMockDriver(mockWebDriver);
+        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
 
         ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);
@@ -473,7 +473,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test
     public void test_runner_takes_a_screenshot_after_each_step() throws InitializationError {
 
-        WebdriverProxyFactory.useMockDriver(mockWebDriver);
+        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
 
         ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
         runner.setWebDriverFactory(webDriverFactory);

@@ -16,6 +16,9 @@ import java.util.List;
 
 import static net.thucydides.core.steps.ExecutedStepDescription.withTitle;
 
+/**
+ * Intercepts JUnit events and reports them to Thucydides.
+ */
 public class JUnitStepListener extends RunListener {
 
     private BaseStepListener baseStepListener;
@@ -29,28 +32,28 @@ public class JUnitStepListener extends RunListener {
     }
 
     @Override
-    public void testRunStarted(Description description) throws Exception {
+    public void testRunStarted(final Description description) throws Exception {
         baseStepListener.testStarted(withDescriptionFrom(description));
     }
 
-    private ExecutedStepDescription withDescriptionFrom(Description description) {
+    private ExecutedStepDescription withDescriptionFrom(final Description description) {
         Class<? extends ScenarioSteps> stepsClass = (Class<? extends ScenarioSteps>) description.getTestClass();
         return ExecutedStepDescription.of(stepsClass, description.getMethodName());
 
     }
 
     @Override
-    public void testFinished(Description description) throws Exception {
+    public void testFinished(final Description description) throws Exception {
         baseStepListener.testFinished(new TestStepResult());
     }
 
     @Override
-    public void testFailure(Failure failure) throws Exception {
+    public void testFailure(final Failure failure) throws Exception {
         baseStepListener.stepFailed(new StepFailure(withTitle(failure.getMessage()), failure.getException()));
     }
 
     @Override
-    public void testIgnored(Description description) throws Exception {
+    public void testIgnored(final Description description) throws Exception {
         baseStepListener.stepIgnored(withDescriptionFrom(description));
     }
 

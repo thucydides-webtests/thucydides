@@ -52,7 +52,7 @@ public class TestResultList {
         }
     }
 
-    private boolean containsOnlyType(TestResult value) {
+    private boolean containsOnlyType(final TestResult value) {
         for (TestResult result : testResults) {
             if (result != value) {
                 return false;

@@ -31,18 +31,18 @@ public class CSVTestDataSource implements TestDataSource {
         testData = loadTestDataFrom(getDataFileFor(path));
     }
 
-    private Reader getDataFileFor(String path) throws FileNotFoundException {
+    private Reader getDataFileFor(final String path) throws FileNotFoundException {
         if (isAClasspathResource(path)) {
             return new InputStreamReader(getClass().getClassLoader().getResourceAsStream(path));
         }
         return new FileReader(new File(path));
     }
 
-    private boolean isAClasspathResource(String path) {
+    private boolean isAClasspathResource(final String path) {
         return (!validFileSystemPath(path));
     }
 
-    private boolean validFileSystemPath(String path) {
+    private boolean validFileSystemPath(final String path) {
         File file = new File(path);
         return file.exists();
     }
@@ -84,10 +84,10 @@ public class CSVTestDataSource implements TestDataSource {
      * Returns the test data as a list of JavaBean instances.
      */
     public <T> List<T> getDataAsInstancesOf(final Class<T> clazz) {
-        List<Map<String, String>> testData = getData();
+        List<Map<String, String>> data = getData();
 
         List<T> resultsList = new ArrayList<T>();
-        for (Map<String, String> rowData : testData) {
+        for (Map<String, String> rowData : data) {
             resultsList.add(newInstanceFrom(clazz, rowData));
         }
         return resultsList;

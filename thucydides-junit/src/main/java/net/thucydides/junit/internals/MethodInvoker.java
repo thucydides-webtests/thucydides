@@ -3,6 +3,10 @@ package net.thucydides.junit.internals;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * A centralized way to invoke a method on a parameter.
+ * Raises an IllegalArgumentException if something goes wrong.
+ */
 public class MethodInvoker {
 
     private final Object target;
@@ -15,7 +19,7 @@ public class MethodInvoker {
         return new MethodInvoker(target);
     }
 
-    public Object run(final Method method, Object... parameters) {
+    public Object run(final Method method, final Object... parameters) {
         try {
             return invokeMethod(method, parameters);
         } catch (IllegalAccessException e) {
@@ -26,7 +30,7 @@ public class MethodInvoker {
 
     }
 
-    protected Object invokeMethod(Method method, Object[] parameters)
+    protected Object invokeMethod(final Method method, final Object[] parameters)
             throws IllegalAccessException, InvocationTargetException {
         return method.invoke(target, parameters);
     }

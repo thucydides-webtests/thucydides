@@ -38,7 +38,7 @@ public class Pages {
         this.pageConfiguration = new PageConfiguration();
     }
 
-    public void setDriver(WebDriver driver) {
+    public void setDriver(final WebDriver driver) {
         this.driver = driver;
     }
 
@@ -145,7 +145,7 @@ public class Pages {
         if ((getDriver() != null) && !usingProxiedWebDriver()) {
             start();
         }
-        WebdriverProxyFactory.registerListener(eventListener);
+        WebdriverProxyFactory.getFactory().registerListener(eventListener);
     }
 
     private boolean usingProxiedWebDriver() {

@@ -6,5 +6,5 @@ import org.openqa.selenium.WebDriver;
  * Listener class used to know when a new Webdriver instance has been created.
  */
 public interface ThucydidesWebDriverEventListener {
-    public void driverCreatedIn(WebDriver driver);
+    void driverCreatedIn(WebDriver driver);
 }

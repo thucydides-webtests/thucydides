@@ -22,7 +22,7 @@ public class ExecutedStepDescription {
 
     protected ExecutedStepDescription(final Class<? extends ScenarioSteps> stepsClass,
                                       final String name,
-                                      boolean isAGroup) {
+                                      final boolean isAGroup) {
         this.stepsClass = stepsClass;
         this.name = name;
         this.isAGroup = isAGroup;
@@ -60,7 +60,7 @@ public class ExecutedStepDescription {
         return isAGroup;
     }
 
-    public void setAGroup(boolean aGroup) {
+    public void setAGroup(final boolean aGroup) {
         isAGroup = aGroup;
     }
 

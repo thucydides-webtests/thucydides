@@ -14,7 +14,7 @@ public class InvalidStepsFieldException extends RuntimeException {
         super(message);
     }
 
-    public InvalidStepsFieldException(final String message, IllegalAccessException cause) {
+    public InvalidStepsFieldException(final String message, final IllegalAccessException cause) {
         super(message, cause);
     }
 }

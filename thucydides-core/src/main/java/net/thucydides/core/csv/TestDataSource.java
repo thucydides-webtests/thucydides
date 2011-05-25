@@ -8,7 +8,7 @@ import java.util.Map;
  * Test data can come from a number of sources, such as CSV files, Excel spreadsheet, arrays, etc.
  */
 public interface TestDataSource {
-    public List<Map<String, String>> getData();
+    List<Map<String, String>> getData();
 
     <T> List<T> getDataAsInstancesOf(Class<T> clazz);
 }

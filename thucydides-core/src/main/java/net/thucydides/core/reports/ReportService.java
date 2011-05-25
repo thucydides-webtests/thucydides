@@ -1,6 +1,9 @@
 package net.thucydides.core.reports;
 
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
+import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,6 +65,13 @@ public class ReportService {
         }
     }
 
+    /**
+     * The default reporters applicable for standard test runs.
+     */
+    public static Collection<AcceptanceTestReporter> getDefaultReporters() {
+        return ImmutableList.of(new XMLAcceptanceTestReporter(),
+                new HtmlAcceptanceTestReporter());
+    }
 
     private void generateReportFor(final AcceptanceTestRun acceptanceTestRun,
                                    final AcceptanceTestReporter reporter) {

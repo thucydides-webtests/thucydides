@@ -1,12 +1,9 @@
 package net.thucydides.junit.runners;
 
-import net.thucydides.junit.annotations.Qualifier;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-
-import java.util.List;
 
 class TestClassRunnerForInstanciatedTestCase extends ThucydidesRunner {
      private final int parameterSetNumber;

@@ -12,10 +12,10 @@ import org.junit.runners.model.Statement;
  */
 public class ThucydidesStatement extends Statement{
 
-    final private Statement statement;
-    final private StepListener listener;
+    private final Statement statement;
+    private final StepListener listener;
 
-    public ThucydidesStatement(final Statement statement, StepListener listener) {
+    public ThucydidesStatement(final Statement statement, final StepListener listener) {
         this.statement = statement;
         this.listener = listener;
     }

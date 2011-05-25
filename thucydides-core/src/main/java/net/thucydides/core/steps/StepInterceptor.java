@@ -28,24 +28,14 @@ public class StepInterceptor implements MethodInterceptor {
     private TestStepResult resultTally;
     private List<Throwable> stepExceptions;
     private Throwable error = null;
-    private final boolean throwFinalExceptions;
     private static final Logger LOGGER = LoggerFactory.getLogger(StepInterceptor.class);
 
     public StepInterceptor(final Class<? extends ScenarioSteps> testStepClass,
-                           final List<StepListener> listeners,
-                           final boolean throwFinalExceptions) {
+                           final List<StepListener> listeners) {
         this.testStepClass = testStepClass;
         this.listeners = listeners;
         this.resultTally = new TestStepResult();
         this.stepExceptions = new ArrayList<Throwable>();
-        this.throwFinalExceptions = throwFinalExceptions;
-    }
-
-    public StepInterceptor(final Class<? extends ScenarioSteps> testStepClass,
-                           final List<StepListener> listeners) {
-
-        this(testStepClass, listeners, false);
-
     }
 
     public Object intercept(final Object obj, final Method method,
@@ -53,9 +43,6 @@ public class StepInterceptor implements MethodInterceptor {
 
         if (invokingLast(method)) {
             notifyFinished(method);
-            if (throwFinalExceptions ) {
-                //ifAnErrorOccuredThrow(error);
-            }
             return null;
         }
 
@@ -89,7 +76,7 @@ public class StepInterceptor implements MethodInterceptor {
 
     }
 
-    private boolean shouldSkip(Method method) {
+    private boolean shouldSkip(final Method method) {
         return aPreviousStepHasFailed() ||  isPending(method) || isIgnored(method);
     }
 
@@ -103,7 +90,8 @@ public class StepInterceptor implements MethodInterceptor {
         return aPreviousStepHasFailed;
     }
 
-    private Object runNormalMethod(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+    private Object runNormalMethod(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
+            throws Throwable {
         LOGGER.info("Running test step " + getTestNameFrom(method, args, false));
         Object result = null;
         try {

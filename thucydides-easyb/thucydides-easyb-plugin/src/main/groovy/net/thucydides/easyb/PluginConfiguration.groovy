@@ -47,11 +47,11 @@ public class PluginConfiguration {
      * Override the normal web driver instance to be used for testing purposes.
      */
     public void use_mock_driver(WebDriver webDriver) {
-        WebdriverProxyFactory.useMockDriver(webDriver);
+        WebdriverProxyFactory.getFactory().useMockDriver(webDriver);
     }
 
     public void stop_using_mock_driver() {
-        WebdriverProxyFactory.clearMockDriver()
+        WebdriverProxyFactory.getFactory().clearMockDriver()
     }
 
     public void uses_steps_from(Class<ScenarioSteps> stepsClass) {

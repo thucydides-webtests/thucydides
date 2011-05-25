@@ -1,11 +1,14 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Title;
+import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.core.pages.Pages;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,6 +19,7 @@ import static org.hamcrest.Matchers.is;
 
 public class WhenDescribingStepsUsingAnnotations {
 
+    @UserStoryCode("U2")
     class SampleTestSteps extends ScenarioSteps {
 
         public SampleTestSteps(final Pages pages) {
@@ -24,6 +28,14 @@ public class WhenDescribingStepsUsingAnnotations {
 
         @Step
         public void a_step() {}
+
+        @Step
+        @Pending
+        public void a_pending_step() {}
+
+        @Step
+        @Ignore
+        public void an_ignored_step() {}
 
         @Title("A step with an annotation")
         @Step
@@ -96,6 +108,52 @@ public class WhenDescribingStepsUsingAnnotations {
     }
 
     @Test
+    public void should_identify_pending_steps() {
+        ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_pending_step");
+
+        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+
+        assertThat(annotatedDescription.isPending(), is(true));
+    }
+
+    @Test
+    public void should_identify_non_pending_steps() {
+        ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step");
+
+        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+
+        assertThat(annotatedDescription.isPending(), is(false));
+    }
+
+    @Test
+    public void should_identify_ignored_steps() {
+        ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "an_ignored_step");
+
+        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+
+        assertThat(annotatedDescription.isIgnored(), is(true));
+    }
+
+
+    @Test
+    public void should_identify_user_story_code() {
+        ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step");
+
+        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+
+        assertThat(annotatedDescription.getUserStoryCode(), is("U2"));
+    }
+
+    @Test
+    public void should_identify_unignored_steps() {
+        ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step");
+
+        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+
+        assertThat(annotatedDescription.isIgnored(), is(false));
+    }
+
+    @Test
     public void should_let_the_user_indicate_what_requirement_is_being_tested_by_a_step() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step_testing_a_requirement");
 
@@ -159,5 +217,4 @@ public class WhenDescribingStepsUsingAnnotations {
 
         assertThat(annotatedDescription.getName(), is("a step with no class"));
     }
-
 }

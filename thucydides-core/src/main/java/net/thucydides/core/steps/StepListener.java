@@ -103,7 +103,7 @@ public interface StepListener {
     /**
      * Used to update the webdriver driver for screenshots if a listener is reused between scenarios.
      */
-    public void setDriver(final WebDriver driver);
+    void setDriver(final WebDriver driver);
 
     /**
      * The currently-used WebDriver instance for these tests.

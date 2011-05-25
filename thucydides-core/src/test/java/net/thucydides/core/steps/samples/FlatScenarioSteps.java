@@ -3,7 +3,6 @@ package net.thucydides.core.steps.samples;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.pages.WrongPageError;
 import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.Ignore;
 
@@ -14,19 +13,19 @@ public class FlatScenarioSteps extends ScenarioSteps {
     }
 
     @Step
-    public void step1() throws WrongPageError {
+    public void step1(){
     }
     
     @Step
-    public void step2() throws WrongPageError {
+    public void step2() {
     }
 
     @Step
-    public void step3() throws WrongPageError {
+    public void step3() {
     }
 
     @Step
-    public void failingStep() throws WrongPageError {
+    public void failingStep() {
         throw new AssertionError("Step failed");
     }
 

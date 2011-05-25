@@ -71,18 +71,26 @@ public class Photographer {
     /**
      * Take a screenshot of the current browser and store it in the output directory.
      */
-    public File takeScreenshot(final String prefix) throws IOException {
+    public File takeScreenshot(final String prefix) throws ScreenshotException {
         if (driverCanTakeSnapehots()) {
             File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             if (screenshot != null) {
-                File savedScreenshot = new File(targetDirectory, nextScreenshotName(prefix));
-                FileUtils.copyFile(screenshot, savedScreenshot);
-                savePageSourceFor(savedScreenshot.getAbsolutePath());
-                return savedScreenshot;
+                try {
+                    return saveScreenshoot(prefix, screenshot);
+                } catch (IOException e) {
+                    throw new ScreenshotException("Screenshot could not be saved", e);
+                }
             }
         }
         return null;
 
+    }
+
+    protected File saveScreenshoot(String prefix, File screenshot) throws IOException{
+        File savedScreenshot = new File(targetDirectory, nextScreenshotName(prefix));
+        FileUtils.copyFile(screenshot, savedScreenshot);
+        savePageSourceFor(savedScreenshot.getAbsolutePath());
+        return savedScreenshot;
     }
 
     private boolean driverCanTakeSnapehots() {

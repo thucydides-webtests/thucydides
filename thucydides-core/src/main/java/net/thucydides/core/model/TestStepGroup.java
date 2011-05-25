@@ -1,10 +1,9 @@
 package net.thucydides.core.model;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.List;
-
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Test steps can be organized in groups.
@@ -20,7 +19,7 @@ public class TestStepGroup extends TestStep {
      * Each test step has a result, indicating the outcome of this step.
      */
 
-    public void setResult(TestResult result) {
+    public void setResult(final TestResult result) {
         setDefaultResult(result);
     }
 

@@ -5,6 +5,7 @@ import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Title;
+import net.thucydides.core.annotations.UserStoryCode;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,9 @@ public final class AnnotatedDescription {
         return methodCalled(withNoArguments(description.getName()), getTestClass());
     }
 
+    public Method getTestMethodIfPresent() {
+        return findMethodCalled(withNoArguments(description.getName()), getTestClass());
+    }
 
     private String withNoArguments(final String methodName) {
         int firstSpace = methodName.indexOf(':');
@@ -75,6 +79,14 @@ public final class AnnotatedDescription {
     }
 
     private Method methodCalled(final String methodName, final Class<?> testClass) {
+        Method methodFound = findMethodCalled(methodName, testClass);
+        if (methodFound == null) {
+            throw new IllegalArgumentException("No test method called " + methodName + " was found in " + testClass);
+        }
+        return methodFound;
+    }
+
+    private Method findMethodCalled(final String methodName, final Class<?> testClass) {
         Method methodFound = null;
 
         if (testClass != null) {
@@ -84,9 +96,6 @@ public final class AnnotatedDescription {
                     methodFound = method;
                 }
             }
-        }
-        if (methodFound == null) {
-            throw new IllegalArgumentException("No test method called " + methodName + " was found in " + testClass);
         }
         return methodFound;
     }
@@ -101,11 +110,19 @@ public final class AnnotatedDescription {
         return null;
     }
 
+    public String getOptionalAnnotatedTitle() {
+        if (this.getTestClass() != null) {
+            return getAnnotatedTitle();
+        } else {
+            return null;
+        }
+    }
+
     private String getAnnotatedStepName() {
         return getNameFromStepAnnotationIn(getTestMethod());
     }
 
-    private String getNameFromStepAnnotationIn(Method testMethod) {
+    private String getNameFromStepAnnotationIn(final Method testMethod) {
         Step step = (Step) testMethod.getAnnotation(Step.class);
 
         if ((step != null) && (!StringUtils.isEmpty(step.value()))) {
@@ -153,14 +170,38 @@ public final class AnnotatedDescription {
 
     public boolean isAGroup() {
 
-        Method testMethod = getTestMethod();
-        StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
-        return (testGroup != null);
+        Method testMethod = getTestMethodIfPresent();
+        if (testMethod != null) {
+            StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
+            return (testGroup != null);
+        } else {
+            return false;
+        }
     }
 
     private String getGroupName() {
-        Method testMethod = getTestMethod();
+        Method testMethod = getTestMethodIfPresent();
         StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
         return testGroup.value();
+    }
+
+    public boolean isPending() {
+        Method testMethod = getTestMethodIfPresent();
+        return testMethod != null && TestStatus.of(testMethod).isPending();
+    }
+
+    public boolean isIgnored() {
+        Method testMethod = getTestMethodIfPresent();
+        return testMethod != null && TestStatus.of(testMethod).isIgnored();
+    }
+
+    public String getUserStoryCode() {
+        if (description.getStepClass() != null) {
+            UserStoryCode userStoryAnnotation = description.getStepClass().getAnnotation(UserStoryCode.class);
+            if (userStoryAnnotation != null) {
+                return userStoryAnnotation.value();
+            }
+        }
+        return "";
     }
 }

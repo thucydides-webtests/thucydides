@@ -54,12 +54,12 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
 
     @After
     public void cleanup() {
-        WebdriverProxyFactory.clearMockDriver();
+        WebdriverProxyFactory.getFactory().clearMockDriver();
     }
 
     @Test
     public void the_driver_should_be_initialized_before_the_tests() throws InitializationError  {
-        WebdriverProxyFactory.useMockDriver(mockWebDriver);
+        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
 
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
         ThucydidesRunner runner = getTestRunnerUsing(SamplePassingScenario.class, mockBrowserFactory);
@@ -72,7 +72,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
 
     @Test
     public void the_driver_should_be_closed_after_the_tests() throws InitializationError {
-        WebdriverProxyFactory.useMockDriver(mockWebDriver);
+        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
 
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
         ThucydidesRunner runner = getTestRunnerUsing(SamplePassingScenario.class, mockBrowserFactory);
@@ -106,7 +106,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Test
     public void a_system_provided_url_should_override_the_default_url() throws InitializationError {
 
-        WebdriverProxyFactory.useMockDriver(mockWebDriver);
+        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
 
         System.setProperty("webdriver.base.url", "http://www.wikipedia.com");
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();

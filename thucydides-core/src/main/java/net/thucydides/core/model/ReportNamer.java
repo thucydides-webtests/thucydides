@@ -54,7 +54,7 @@ public class ReportNamer {
         return appendSuffixTo(testName);
     }
 
-    private String appendToIfNotNull(String baseString, String nextElement) {
+    private String appendToIfNotNull(final String baseString, final String nextElement) {
         String appendedString = baseString;
         if (StringUtils.isNotEmpty(nextElement)) {
             if (StringUtils.isNotEmpty(baseString)) {

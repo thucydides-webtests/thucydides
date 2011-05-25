@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class SaveWebdriverSystemPropertiesRule implements MethodRule {
 
-    private class RestorePropertiesStatement extends Statement {
+    private final class RestorePropertiesStatement extends Statement {
         private final Statement statement;
         private final Map<String,String> originalValues;
 

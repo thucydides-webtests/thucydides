@@ -1,12 +1,9 @@
 package net.thucydides.junit.runners;
 
-import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
-import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
-import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
 import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.webdriver.Configuration;
@@ -149,10 +146,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     @Override
     public void run(final RunNotifier notifier) {
         WebDriver driver = initWebdriverManager();
-        Pages pages = initPagesObjectUsing(driver);
-        JUnitStepListener stepListener = initListenersUsing(pages);
-        notifier.addListener(stepListener);
-        initStepFactoryUsing(pages, stepListener);
+        Pages newPages = initPagesObjectUsing(driver);
+        JUnitStepListener newStepListener = initListenersUsing(newPages);
+        notifier.addListener(newStepListener);
+        initStepFactoryUsing(newPages, newStepListener);
 
         super.run(notifier);
 
@@ -161,18 +158,18 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         notifyFailures();
     }
 
-    private Pages initPagesObjectUsing(WebDriver driver) {
+    private Pages initPagesObjectUsing(final WebDriver driver) {
         pages = new Pages(driver);
         return pages;
     }
 
-    private JUnitStepListener initListenersUsing(Pages pagesObject) {
+    private JUnitStepListener initListenersUsing(final Pages pagesObject) {
         stepListener = new JUnitStepListener(Configuration.loadOutputDirectoryFromSystemProperties(), pagesObject);
         return stepListener;
     }
 
 
-    private void initStepFactoryUsing(Pages pagesObject, JUnitStepListener listener) {
+    private void initStepFactoryUsing(final Pages pagesObject, final JUnitStepListener listener) {
         stepFactory = new StepFactory(pagesObject);
         stepFactory.addListener(listener.getBaseStepListener());
     }
@@ -195,7 +192,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
                 getDefaultReporters());
     }
 
-    private void notifyFailures() throws Error {
+    private void notifyFailures() {
         stepFactory.notifyStepFinished();
     }
 
@@ -277,8 +274,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * The default reporters applicable for standard test runs.
      */
     protected Collection<AcceptanceTestReporter> getDefaultReporters() {
-        return ImmutableList.of(new XMLAcceptanceTestReporter(),
-                new HtmlAcceptanceTestReporter());
+        return ReportService.getDefaultReporters();
     }
 
 }
