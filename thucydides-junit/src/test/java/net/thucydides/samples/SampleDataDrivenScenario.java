@@ -4,8 +4,8 @@ import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
+import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.runners.ThucydidesParameterizedRunner;
-import net.thucydides.junit.runners.ThucydidesParameterizedRunner.TestData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -15,6 +15,7 @@ import java.util.Collection;
 
 @RunWith(ThucydidesParameterizedRunner.class)
 public class SampleDataDrivenScenario {
+
 
     @TestData
     public static Collection testData() {

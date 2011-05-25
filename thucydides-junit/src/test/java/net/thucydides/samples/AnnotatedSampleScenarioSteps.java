@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepDescription;
 import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.pages.Pages;
 
@@ -16,8 +15,7 @@ public class AnnotatedSampleScenarioSteps extends ScenarioSteps {
         super(pages);
     }
 
-    @Step
-    @StepDescription("A step that succeeds indeed!")
+    @Step("A step that succeeds indeed!")
     public void stepThatSucceeds() {
     }
 

@@ -48,9 +48,6 @@ class ParameterizedRunnerScheduler implements RunnerScheduler {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
-            while (!tasks.isEmpty()) {
-                tasks.poll().cancel(true);
-            }
             executorService.shutdownNow();
         }
     }

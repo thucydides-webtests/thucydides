@@ -246,7 +246,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.
      */
     protected void injectDriverInto(final Object testCase) {
-        TestCaseAnnotations.injectDriverInto(testCase, getDriver());
+        TestCaseAnnotations.forTestCase(testCase).injectDriver(getDriver());
     }
 
     /**

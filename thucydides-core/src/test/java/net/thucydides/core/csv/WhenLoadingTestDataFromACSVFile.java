@@ -52,7 +52,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone",
                 "Bill, 10 main street, 123456789");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Map<String,String>> loadedData = testdata.getData();
         assertThat(loadedData, is(notNullValue()));
@@ -62,7 +62,7 @@ public class WhenLoadingTestDataFromACSVFile {
     @Test
     public void should_be_able_to_load_test_data_from_the_classpath() throws IOException {
 
-        TestData testdata = new CSVTestData("testdata/test.csv");
+        TestDataSource testdata = new CSVTestDataSource("testdata/test.csv");
 
         List<Map<String,String>> loadedData = testdata.getData();
         assertThat(loadedData, is(notNullValue()));
@@ -77,7 +77,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone",
                 "Bill, 10 main street, 123456789");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Map<String,String>> loadedData = testdata.getData();
         Map<String,String> row = loadedData.get(0);
@@ -95,7 +95,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone, unused",
                 "Bill, 10 main street, 123456789,   extra data here");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Map<String,String>> loadedData = testdata.getData();
         Map<String,String> row = loadedData.get(0);
@@ -113,7 +113,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone, unused",
                 "Bill, 10 main street, 123456789");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Map<String,String>> loadedData = testdata.getData();
         Map<String,String> row = loadedData.get(0);
@@ -131,7 +131,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone",
                 "Bill, 10 main street, 123456789,   extra data here");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Map<String,String>> loadedData = testdata.getData();
         Map<String,String> row = loadedData.get(0);
@@ -149,7 +149,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "Bill, 10 main street, 123456789",
                 "Tim,  12 main street, 123456700");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Map<String,String>> loadedData = testdata.getData();
 
@@ -170,7 +170,7 @@ public class WhenLoadingTestDataFromACSVFile {
     public void should_load_nothing_if_no_data_is_present() throws IOException {
         File testDataFile = useTestDataIn("testdata.csv", "");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Map<String,String>> loadedData = testdata.getData();
         assertThat(loadedData.size(), is(0));
@@ -181,7 +181,7 @@ public class WhenLoadingTestDataFromACSVFile {
         File testDataFile = useTestDataIn("testdata.csv",
                                           "name, address,        phone");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Map<String,String>> loadedData = testdata.getData();
         assertThat(loadedData.size(), is(0));
@@ -193,7 +193,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone",
                 "Bill, 10 main street, 123456789");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Person> loadedData = testdata.getDataAsInstancesOf(Person.class);
         assertThat(loadedData.size(), is(1));
@@ -206,7 +206,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "Bill, 10 main street, 123456789",
                 "Tim,  12 main street, 123456700");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Person> loadedData = testdata.getDataAsInstancesOf(Person.class);
         assertThat(loadedData.size(), is(2));
@@ -218,7 +218,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone",
                 "Bill, 10 main street, 123456789");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Person> loadedData = testdata.getDataAsInstancesOf(Person.class);
         Person person = loadedData.get(0);
@@ -233,7 +233,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone",
                 "Bill, , 123456789");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Person> loadedData = testdata.getDataAsInstancesOf(Person.class);
         Person person = loadedData.get(0);
@@ -246,7 +246,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone, unknown",
                 "Bill, 10 main street, 123456789, whatever");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Person> loadedData = testdata.getDataAsInstancesOf(Person.class);
         Person person = loadedData.get(0);
@@ -262,7 +262,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "NAME, ADDRESS,        PHONE",
                 "Bill, 10 main street, 123456789");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Person> loadedData = testdata.getDataAsInstancesOf(Person.class);
         Person person = loadedData.get(0);
@@ -278,16 +278,16 @@ public class WhenLoadingTestDataFromACSVFile {
                 "NAME, ADDRESS,        PHONE, DATE OF BIRTH",
                 "Bill, 10 main street, 123456789, 10/10/1980");
 
-        TestData testdata = new CSVTestData(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
 
         List<Person> loadedData = testdata.getDataAsInstancesOf(Person.class);
         Person person = loadedData.get(0);
         assertThat(person.getDateOfBirth(), is("10/10/1980"));
     }
 
-    class CSVTestDataThrowsInstantiationException extends CSVTestData {
+    class CSVTestDataSourceThrowsInstantiationException extends CSVTestDataSource {
 
-        public CSVTestDataThrowsInstantiationException(String sourceFile) throws IOException {
+        public CSVTestDataSourceThrowsInstantiationException(String sourceFile) throws IOException {
             super(sourceFile);
         }
 
@@ -303,14 +303,14 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone, unknown",
                 "Bill, 10 main street, 123456789, whatever");
 
-        TestData testdata = new CSVTestDataThrowsInstantiationException(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSourceThrowsInstantiationException(testDataFile.getAbsolutePath());
 
         List<Person> loadedData = testdata.getDataAsInstancesOf(Person.class);
     }
 
-    class CSVTestDataThrowsIllegalAccessException extends CSVTestData {
+    class CSVTestDataSourceThrowsIllegalAccessException extends CSVTestDataSource {
 
-        public CSVTestDataThrowsIllegalAccessException(String sourceFile) throws IOException {
+        public CSVTestDataSourceThrowsIllegalAccessException(String sourceFile) throws IOException {
             super(sourceFile);
         }
 
@@ -326,15 +326,15 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone",
                 "Bill, 10 main street, 123456789");
 
-        TestData testdata = new CSVTestDataThrowsIllegalAccessException(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSourceThrowsIllegalAccessException(testDataFile.getAbsolutePath());
 
         List<Person> loadedData = testdata.getDataAsInstancesOf(Person.class);
     }
 
 
-    class CSVTestDataThrowsIllegalAccessExceptionOnPropertySet extends CSVTestData {
+    class CSVTestDataSourceThrowsIllegalAccessExceptionOnPropertySet extends CSVTestDataSource {
 
-        public CSVTestDataThrowsIllegalAccessExceptionOnPropertySet(String sourceFile) throws IOException {
+        public CSVTestDataSourceThrowsIllegalAccessExceptionOnPropertySet(String sourceFile) throws IOException {
             super(sourceFile);
         }
 
@@ -350,7 +350,7 @@ public class WhenLoadingTestDataFromACSVFile {
                 "name, address,        phone",
                 "Bill, 10 main street, 123456789");
 
-        TestData testdata = new CSVTestDataThrowsIllegalAccessExceptionOnPropertySet(testDataFile.getAbsolutePath());
+        TestDataSource testdata = new CSVTestDataSourceThrowsIllegalAccessExceptionOnPropertySet(testDataFile.getAbsolutePath());
 
         testdata.getDataAsInstancesOf(Person.class);
     }

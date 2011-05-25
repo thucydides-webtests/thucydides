@@ -5,7 +5,9 @@ import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.junit.annotations.Concurrent;
+import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
+import net.thucydides.samples.SampleCSVDataDrivenScenario;
 import net.thucydides.samples.SampleDataDrivenScenario;
 import net.thucydides.samples.SampleParallelDataDrivenScenario;
 import org.apache.commons.io.FileUtils;
@@ -62,6 +64,19 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
     }
 
     @Test
+    public void a_data_driven_test_should_also_be_able_to_use_data_from_a_CSV_file() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,
+                                                                                 webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+
+        assertThat(executedScenarios.size(), is(2));
+    }
+
+
+    @Test
     public void a_separate_xml_report_should_be_generated_from_each_row_of_data() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
@@ -77,6 +92,24 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
         File[] reports = outputDirectory.listFiles(new XMLFileFilter());
         assertThat(reports.length, is(3));
+    }
+
+    @Test
+    public void a_separate_xml_report_should_be_generated_from_each_row_of_data_in_a_CSV_file() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                            outputDirectory.getAbsolutePath());
+
+        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,
+                                                                                 webDriverFactory);
+
+        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
+
+        runner.run(new RunNotifier());
+
+        File[] reports = outputDirectory.listFiles(new XMLFileFilter());
+        assertThat(reports.length, is(2));
     }
 
     @Test
@@ -101,6 +134,26 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
     }
 
     @Test
+    public void xml_report_names_should_reflect_the_test_data_from_the_csv_file() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                            outputDirectory.getAbsolutePath());
+
+        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,
+                                                                                 webDriverFactory);
+
+        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
+
+        runner.run(new RunNotifier());
+
+        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
+        assertThat(reportFilenames, allOf(hasItem("sample_c_s_v_data_driven_scenario_data_driven_test_Jack_Black.xml"),
+                hasItem("sample_c_s_v_data_driven_scenario_data_driven_test_Joe_Smith.xml")));
+
+    }
+
+    @Test
     public void xml_report_contents_should_reflect_the_test_data() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
@@ -119,6 +172,27 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
         assertThat(reportContents, hasItem(containsString("Happy day scenario [b/2]")));
         assertThat(reportContents, hasItem(containsString("Happy day scenario [c/3]")));
+
+    }
+
+    @Test
+    public void xml_report_contents_should_reflect_the_test_data_from_the_csv_file() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                            outputDirectory.getAbsolutePath());
+
+        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,
+                                                                                 webDriverFactory);
+
+        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
+
+        runner.run(new RunNotifier());
+
+        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+
+         assertThat(reportContents, hasItem(containsString("Jack Black")));
+         assertThat(reportContents, hasItem(containsString("Joe Smith")));
 
     }
 
@@ -174,7 +248,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
     @RunWith(ThucydidesParameterizedRunner.class)
     @Concurrent(threads = "7")
     public static final class ParallelDataDrivenScenarioWithSpecifiedThreadCountSample {
-        @ThucydidesParameterizedRunner.TestData
+        @TestData
         public static Collection testData() {
                 return Arrays.asList(new Object[][]{ });
             }
@@ -195,7 +269,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
     @RunWith(ThucydidesParameterizedRunner.class)
     @Concurrent(threads = "7x")
     public static final class ParallelDataDrivenScenarioWithRelativeThreadCountSample {
-        @ThucydidesParameterizedRunner.TestData
+        @TestData
         public static Collection testData() {
                 return Arrays.asList(new Object[][]{ });
             }
@@ -218,7 +292,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
     @RunWith(ThucydidesParameterizedRunner.class)
     @Concurrent(threads = "xxx")
     public static final class ParallelDataDrivenScenarioWithInvalidThreadCountSample {
-        @ThucydidesParameterizedRunner.TestData
+        @TestData
         public static Collection testData() {
                 return Arrays.asList(new Object[][]{ });
             }

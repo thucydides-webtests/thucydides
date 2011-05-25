@@ -21,13 +21,13 @@ import java.util.Set;
 /**
  * Test data from a CSV file.
  */
-public class CSVTestData implements TestData {
+public class CSVTestDataSource implements TestDataSource {
 
     private final List<Map<String, String>> testData;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CSVTestData.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CSVTestDataSource.class);
 
-    public CSVTestData(final String path) throws IOException {
+    public CSVTestDataSource(final String path) throws IOException {
         testData = loadTestDataFrom(getDataFileFor(path));
     }
 
