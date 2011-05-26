@@ -1,16 +1,14 @@
 package net.thucydides.core.reports.html;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
+import com.google.common.base.Preconditions;
+import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.reports.AcceptanceTestReporter;
+import org.apache.velocity.VelocityContext;
 
 import java.io.File;
 import java.io.IOException;
 
-import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.reports.AcceptanceTestReporter;
-
-import org.apache.velocity.VelocityContext;
-
-import com.google.common.base.Preconditions;
+import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 
 /**
  * Generates acceptance test results in XML form.
@@ -30,6 +28,11 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     public HtmlAcceptanceTestReporter() {
         setTemplatePath(DEFAULT_ACCEPTANCE_TEST_REPORT);
     }
+
+    public String getName() {
+        return "html";
+    }
+
     /**
      * Generate an XML report for a given test run.
      */

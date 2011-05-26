@@ -1,6 +1,7 @@
 package net.thucydides.core.reports;
 
 import net.thucydides.core.model.AcceptanceTestRun;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -9,11 +10,16 @@ import org.mockito.MockitoAnnotations;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class WhenUsingAReportService {
 
@@ -74,4 +80,22 @@ public class WhenUsingAReportService {
 
         verify(reporter).setOutputDirectory(outputDirectory);
     }
+
+    @Test
+    public void default_reporters_should_include_xml_and_html() {
+        List reporters = ReportService.getDefaultReporters();
+        assertThat(reporters.size(), is(2));
+
+        Matcher calledXml = hasProperty("name", is("xml"));
+        Matcher calledHtml = hasProperty("name", is("html"));
+        assertThat(reporters, allOf(hasItem(calledXml), hasItem(calledHtml)));
+    }
+
+    @Test
+    public void new_reporters_should_be_instantiated_at_each_request() {
+        List reporters = ReportService.getDefaultReporters();
+        List reporters2 = ReportService.getDefaultReporters();
+        assertThat(reporters, is(not(reporters2)));
+    }
+
 }

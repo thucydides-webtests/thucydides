@@ -1,22 +1,20 @@
 package net.thucydides.core.reports.xml;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.XML;
+import com.google.common.base.Preconditions;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.mapper.CannotResolveClassException;
+import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.reports.AcceptanceTestReporter;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.reports.AcceptanceTestReporter;
-
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.mapper.CannotResolveClassException;
+import static net.thucydides.core.model.ReportNamer.ReportType.XML;
 
 /**
  * Generates acceptance test results in XML form.
@@ -38,6 +36,10 @@ public class XMLAcceptanceTestReporter implements AcceptanceTestReporter {
      * We don't need any resources for XML reports.
      */
     public void setResourceDirectory(final String resourceDirectoryPath) {
+    }
+
+    public String getName() {
+        return "xml";
     }
 
     /**

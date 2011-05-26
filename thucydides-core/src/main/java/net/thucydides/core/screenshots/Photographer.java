@@ -71,7 +71,7 @@ public class Photographer {
     /**
      * Take a screenshot of the current browser and store it in the output directory.
      */
-    public File takeScreenshot(final String prefix) throws ScreenshotException {
+    public File takeScreenshot(final String prefix) {
         if (driverCanTakeSnapehots()) {
             File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             if (screenshot != null) {
@@ -86,7 +86,7 @@ public class Photographer {
 
     }
 
-    protected File saveScreenshoot(String prefix, File screenshot) throws IOException{
+    protected File saveScreenshoot(final String prefix, final File screenshot) throws IOException{
         File savedScreenshot = new File(targetDirectory, nextScreenshotName(prefix));
         FileUtils.copyFile(screenshot, savedScreenshot);
         savePageSourceFor(savedScreenshot.getAbsolutePath());

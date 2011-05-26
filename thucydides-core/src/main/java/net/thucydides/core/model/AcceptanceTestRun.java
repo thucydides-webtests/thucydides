@@ -3,8 +3,6 @@ package net.thucydides.core.model;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.thoughtworks.xstream.XStream;
-import net.thucydides.core.reports.xml.AcceptanceTestRunConverter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -74,12 +72,6 @@ public class AcceptanceTestRun {
         this.title = title;
     }
 
-    public String toXML() {
-        XStream xstream = new XStream();
-        xstream.alias("acceptance-test-run", AcceptanceTestRun.class);
-        xstream.registerConverter(new AcceptanceTestRunConverter());
-        return xstream.toXML(this);
-    }
     /**
      * An acceptance test run always has a title. The title should be something
      * like the name of the user story being tested, possibly with some
@@ -311,23 +303,5 @@ public class AcceptanceTestRun {
     public Integer countTestSteps() {
         return getNestedTestSteps().size();
     }
-
-/*
-     public TestResult getResultForGroup(final String group) {
-
-        TestResultList testResults = new TestResultList(getTestResultsInGroup(group));
-        return testResults.getOverallResult();
-    }
-
-    private List<TestResult> getTestResultsInGroup(final String group) {
-        List<TestResult> results = new ArrayList<TestResult>();
-        for(TestStep step : getTestSteps()) {
-            if (step.isInGroup(group)) {
-                results.add(step.getResult());
-            }
-        }
-        return results;
-    }
-    */
 
 }

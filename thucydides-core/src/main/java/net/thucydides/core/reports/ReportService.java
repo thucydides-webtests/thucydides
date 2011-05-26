@@ -1,14 +1,13 @@
 package net.thucydides.core.reports;
 
-import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
-import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
+import sun.misc.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -20,6 +19,8 @@ public class ReportService {
      * Where will the reports go?
      */
     private File outputDirectory;
+
+   // private static List<AcceptanceTestReporter> reporters;
 
     /**
      * Who needs to be notified when a test is done.
@@ -68,16 +69,22 @@ public class ReportService {
     /**
      * The default reporters applicable for standard test runs.
      */
-    public static Collection<AcceptanceTestReporter> getDefaultReporters() {
-        return ImmutableList.of(new XMLAcceptanceTestReporter(),
-                new HtmlAcceptanceTestReporter());
+    public static List<AcceptanceTestReporter> getDefaultReporters() {
+        List<AcceptanceTestReporter> reporters = new ArrayList<AcceptanceTestReporter>();
+
+        Iterator reporterImplementations = Service.providers(AcceptanceTestReporter.class);
+
+        while (reporterImplementations.hasNext()) {
+            reporters.add((AcceptanceTestReporter)reporterImplementations.next());
+        }
+        return reporters;
     }
 
     private void generateReportFor(final AcceptanceTestRun acceptanceTestRun,
                                    final AcceptanceTestReporter reporter) {
         try {
             reporter.setOutputDirectory(outputDirectory);
-            reporter.generateReportFor(acceptanceTestRun);//, withQualifier("-default"));
+            reporter.generateReportFor(acceptanceTestRun);
         } catch (IOException e) {
             throw new ReportGenerationFailedError(
                     "Failed to generate reports using " + reporter, e);

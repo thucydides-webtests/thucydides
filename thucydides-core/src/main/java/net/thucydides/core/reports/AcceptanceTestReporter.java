@@ -1,9 +1,9 @@
 package net.thucydides.core.reports;
 
+import net.thucydides.core.model.AcceptanceTestRun;
+
 import java.io.File;
 import java.io.IOException;
-
-import net.thucydides.core.model.AcceptanceTestRun;
 
 /**
  * Generates a report based on a set of acceptance test results.
@@ -13,6 +13,10 @@ import net.thucydides.core.model.AcceptanceTestRun;
  */
 public interface AcceptanceTestReporter {
 
+    /**
+     * A name used to identify a given reporter.
+     */
+    String getName();
     /**
      * Generate reports for a given acceptance test run.
      */

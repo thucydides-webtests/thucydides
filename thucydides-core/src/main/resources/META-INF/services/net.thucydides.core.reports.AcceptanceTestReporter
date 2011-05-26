@@ -1,0 +1,3 @@
+net.thucydides.core.reports.xml.XMLAcceptanceTestReporter
+net.thucydides.core.reports.html.HtmlAcceptanceTestReporter
+
