@@ -8,8 +8,6 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -235,4 +233,24 @@ public class WhenFindingTestDataInADataDrivenTest {
         DataDrivenScenarioWithWronlyTypedQualifier testCase = new DataDrivenScenarioWithWronlyTypedQualifier();
         QualifierFinder.forTestCase(testCase).getQualifier();
     }
+
+    @UseTestDataFrom(value="test-data/simple-semicolon-data.csv", separator=';')
+    final static class CSVDataDrivenTestScenarioUsingSemiColons {}
+
+    @Test
+    public void should_load_test_class_instances_using_semicolons() throws IOException {
+        TestClass testClass = new TestClass(CSVDataDrivenTestScenarioUsingSemiColons.class);
+        List<PersonTestScenario> testScenarios
+                = DataDrivenAnnotations.forClass(testClass).getDataAsInstancesOf(PersonTestScenario.class);
+
+        assertThat(testScenarios.size(), is(2));
+        assertThat(testScenarios.get(0).getName(), is("Joe Smith"));
+        assertThat(testScenarios.get(0).getAddress(), is("10 Main Street, Smithville"));
+        assertThat(testScenarios.get(1).getName(), is("Jack Black"));
+        assertThat(testScenarios.get(1).getAddress(), is("1 Main Street, Smithville"));
+    }
+
+
+
+
 }

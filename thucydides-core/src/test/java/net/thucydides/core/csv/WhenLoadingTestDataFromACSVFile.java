@@ -107,6 +107,24 @@ public class WhenLoadingTestDataFromACSVFile {
     }
 
     @Test
+    public void should_allow_non_comma_separators_to_be_used() throws IOException {
+
+        File testDataFile = useTestDataIn("testdata.csv",
+                "name; address;        phone",
+                "Bill; 10 main street, BillVille; 123456789");
+
+        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath(),';');
+
+        List<Map<String,String>> loadedData = testdata.getData();
+        Map<String,String> row = loadedData.get(0);
+
+
+        assertThat(row.get("name"), is("Bill"));
+        assertThat(row.get("address"), is("10 main street, BillVille"));
+        assertThat(row.get("phone"), is("123456789"));
+    }
+
+    @Test
     public void should_ignore_unknown_headings_with_no_matching_columns() throws IOException {
 
         File testDataFile = useTestDataIn("testdata.csv",

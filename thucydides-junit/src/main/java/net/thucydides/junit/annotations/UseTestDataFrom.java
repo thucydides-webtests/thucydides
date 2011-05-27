@@ -14,5 +14,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface UseTestDataFrom {
-    String value();
+   String value();
+   char separator() default ',';
 }

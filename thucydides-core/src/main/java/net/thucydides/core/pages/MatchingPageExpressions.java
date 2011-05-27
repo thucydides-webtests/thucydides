@@ -82,8 +82,7 @@ public class MatchingPageExpressions {
             patternWithExpandedMacros = patternWithExpandedMacros.replaceAll(
                     macro, expanded);
         }
-        patternWithExpandedMacros = patternWithExpandedMacros + OPTIONAL_PARAMS;
-        return patternWithExpandedMacros;
+        return patternWithExpandedMacros + OPTIONAL_PARAMS;
     }
 
 }

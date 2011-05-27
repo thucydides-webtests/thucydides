@@ -22,15 +22,21 @@ import java.util.Set;
  * Test data from a CSV file.
  */
 public class CSVTestDataSource implements TestDataSource {
-
+    
     private final List<Map<String, String>> testData;
-
+    private final char separator;
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVTestDataSource.class);
 
-    public CSVTestDataSource(final String path) throws IOException {
+    public CSVTestDataSource(final String path, char separator) throws IOException {
+        this.separator = separator;
         testData = loadTestDataFrom(getDataFileFor(path));
     }
 
+    public CSVTestDataSource(final String path) throws IOException {
+        this(path, CSVReader.DEFAULT_SEPARATOR);
+    }    
+    
     private Reader getDataFileFor(final String path) throws FileNotFoundException {
         if (isAClasspathResource(path)) {
             return new InputStreamReader(getClass().getClassLoader().getResourceAsStream(path));
@@ -49,7 +55,7 @@ public class CSVTestDataSource implements TestDataSource {
 
     protected List<Map<String, String>> loadTestDataFrom(final Reader testDataReader) throws IOException {
 
-        CSVReader reader = new CSVReader(testDataReader);
+        CSVReader reader = new CSVReader(testDataReader, separator);
         List<String[]> rows = reader.readAll();
 
         List<Map<String, String>> loadedData = new ArrayList<Map<String, String>>();

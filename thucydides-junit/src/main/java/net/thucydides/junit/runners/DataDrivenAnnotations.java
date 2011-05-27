@@ -49,12 +49,11 @@ class DataDrivenAnnotations {
     }
 
     private String findTestDataSource() {
-        UseTestDataFrom useTestDataFrom = testClass.getJavaClass().getAnnotation(UseTestDataFrom.class);
-        if (useTestDataFrom != null) {
-            return useTestDataFrom.value();
-        } else {
-            return null;
-        }
+        return findUseTestDataFromAnnotation().value();
+    }
+
+    private UseTestDataFrom findUseTestDataFromAnnotation() {
+        return testClass.getJavaClass().getAnnotation(UseTestDataFrom.class);
     }
 
     public boolean hasTestDataDefined() {
@@ -62,11 +61,15 @@ class DataDrivenAnnotations {
     }
 
     public boolean hasTestDataSourceDefined() {
-        return (findTestDataSource() != null);
+        return (findUseTestDataFromAnnotation() != null) && (findTestDataSource() != null);
     }
 
     public <T> List<T> getDataAsInstancesOf(final Class<T> clazz) throws IOException {
-        TestDataSource testdata = new CSVTestDataSource(findTestDataSource());
+        TestDataSource testdata = new CSVTestDataSource(findTestDataSource(), findTestDataSeparator());
         return testdata.getDataAsInstancesOf(clazz);
+    }
+
+    private char findTestDataSeparator() {
+        return findUseTestDataFromAnnotation().separator();
     }
 }

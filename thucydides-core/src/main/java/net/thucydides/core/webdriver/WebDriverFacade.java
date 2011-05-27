@@ -4,7 +4,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
@@ -57,7 +56,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
         return (WebdriverProxyFactory.getFactory().getMockDriver() != null);
     }
 
-    public <X> X getScreenshotAs(final OutputType<X> target) throws WebDriverException {
+    public <X> X getScreenshotAs(final OutputType<X> target) {
         if (proxyInstanciated() && driverCanTakeScreenshots()) {
             return ((TakesScreenshot) getProxiedDriver()).getScreenshotAs(target);
         } else {

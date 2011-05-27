@@ -11,11 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 @RunWith(ThucydidesParameterizedRunner.class)
-@UseTestDataFrom("test-data/simple-data.csv")
+@UseTestDataFrom(value="test-data/simple-data.csv")
 public class SampleCSVDataDrivenScenario {
 
     private String name;
