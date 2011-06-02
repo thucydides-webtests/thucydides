@@ -9,10 +9,14 @@ import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(ThucydidesRunner.class)
 public class SamplePassingScenario {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamplePassingScenario.class);
+
     @Managed
     public WebDriver webdriver;
 
@@ -23,21 +27,20 @@ public class SamplePassingScenario {
     public SampleScenarioSteps steps;
 
     @Test
-    @TestsRequirement("DEF")
-    public void edge_case_1() {
-        steps.stepThatSucceeds();
-        steps.anotherStepThatSucceeds();
-        steps.stepThatIsPending();
-    }
-    
-
-    @Test
     @TestsRequirement("ABC")
     public void happy_day_scenario() throws Throwable {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
         steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
+    }
+
+    @Test
+    @TestsRequirement("DEF")
+    public void edge_case_1() {
+        steps.stepThatSucceeds();
+        steps.anotherStepThatSucceeds();
+        steps.stepThatIsPending();
     }
 
     @Test

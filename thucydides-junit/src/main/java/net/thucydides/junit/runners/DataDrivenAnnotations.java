@@ -72,4 +72,9 @@ class DataDrivenAnnotations {
     private char findTestDataSeparator() {
         return findUseTestDataFromAnnotation().separator();
     }
+
+    public boolean hasTestSpecificTestDataDefined() {
+        throw new UnsupportedOperationException("Not implemented yet");
+
+    }
 }

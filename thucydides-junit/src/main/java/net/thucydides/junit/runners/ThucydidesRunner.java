@@ -5,6 +5,7 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.steps.StepAnnotations;
+import net.thucydides.core.steps.StepData;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -218,11 +219,16 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         injectAnnotatedPagesObjectInto(test);
         injectScenarioStepsInto(test);
         stepFactory.addListener(getStepListener().getBaseStepListener());
+        useStepFactoryForDataDrivenSteps();
 
         notifyTestStart(method);
 
         Statement baseStatement = super.methodInvoker(method, test);
         return new ThucydidesStatement(baseStatement, stepListener.getBaseStepListener());
+    }
+
+    private void useStepFactoryForDataDrivenSteps() {
+        StepData.setDefaultStepFactory(stepFactory);
     }
 
     private void noStepsHaveFailed() {

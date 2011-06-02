@@ -250,7 +250,4 @@ public class WhenFindingTestDataInADataDrivenTest {
         assertThat(testScenarios.get(1).getAddress(), is("1 Main Street, Smithville"));
     }
 
-
-
-
 }

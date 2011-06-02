@@ -41,7 +41,7 @@ public class StepFactory {
      * This is actually a proxy that allows reporting and screenshots to
      * be performed at each step.
      */
-    public ScenarioSteps newSteps(final Class<? extends ScenarioSteps> scenarioStepsClass) {
+    public <T extends ScenarioSteps> T newSteps(final Class<T> scenarioStepsClass) {
         Enhancer e = new Enhancer();
         e.setSuperclass(scenarioStepsClass);
         StepInterceptor stepInterceptor = new StepInterceptor(scenarioStepsClass, listeners);
@@ -49,7 +49,7 @@ public class StepFactory {
         
         Object[] arguments = new Object[1];
         arguments[0] = pages;
-        ScenarioSteps steps = (ScenarioSteps) e.create(CONSTRUCTOR_ARG_TYPES, arguments);
+        T steps = (T) e.create(CONSTRUCTOR_ARG_TYPES, arguments);
 
         instanciateAnyNestedStepLibrariesIn(steps, scenarioStepsClass);
 

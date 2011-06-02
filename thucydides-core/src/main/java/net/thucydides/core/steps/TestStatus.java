@@ -33,9 +33,4 @@ public final class TestStatus {
         Ignore ignored = method.getAnnotation(Ignore.class);
         return (ignored != null);
     }
-
-    public boolean isAStepGroup() {
-        StepGroup stepGroup = method.getAnnotation(StepGroup.class);
-        return (stepGroup != null);
-    }
 }

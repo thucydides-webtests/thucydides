@@ -115,9 +115,11 @@ public class StepInterceptor implements MethodInterceptor {
         Object result = null;
         try {
             result = proxy.invokeSuper(obj, args);
-        } catch (AssertionError e) {
-            if (!stepExceptions.contains(e)) {
-                throw e;
+        } catch (AssertionError assertionError) {
+            if (!stepExceptions.contains(assertionError)) {
+                error = assertionError;
+                stepExceptions.add(assertionError);
+                notifyFailureOf(method, args, assertionError);
             }
         }
         return result;
@@ -226,13 +228,6 @@ public class StepInterceptor implements MethodInterceptor {
         }
 
         resultTally.logIgnoredTest();
-    }
-
-    private void ifAnErrorOccuredThrow(final Throwable theError)
-            throws Throwable {
-        if (theError != null) {
-            throw theError;
-        }
     }
 
     private void notifyFailureOf(final Method method, final Object[] args,

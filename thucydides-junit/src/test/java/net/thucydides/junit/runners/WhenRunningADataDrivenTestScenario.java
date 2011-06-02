@@ -1,15 +1,22 @@
 package net.thucydides.junit.runners;
 
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.annotations.ManagedPages;
+import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestStep;
+import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.junit.annotations.Concurrent;
+import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.samples.SampleCSVDataDrivenScenario;
 import net.thucydides.samples.SampleDataDrivenScenario;
 import net.thucydides.samples.SampleParallelDataDrivenScenario;
+import net.thucydides.samples.SamplePassingScenarioWithTestSpecificData;
+import net.thucydides.samples.SampleScenarioSteps;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -18,6 +25,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
+import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -27,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static net.thucydides.core.steps.StepData.withTestDataFrom;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -86,8 +95,6 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
                                                                                  webDriverFactory);
 
-        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
-
         runner.run(new RunNotifier());
 
         File[] reports = outputDirectory.listFiles(new XMLFileFilter());
@@ -104,8 +111,6 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,
                                                                                  webDriverFactory);
 
-        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
-
         runner.run(new RunNotifier());
 
         File[] reports = outputDirectory.listFiles(new XMLFileFilter());
@@ -121,8 +126,6 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
         ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
                                                                                  webDriverFactory);
-
-        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
 
         runner.run(new RunNotifier());
 
@@ -143,8 +146,6 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,
                                                                                  webDriverFactory);
 
-        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
-
         runner.run(new RunNotifier());
 
         List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
@@ -162,8 +163,6 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
         ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
                                                                                  webDriverFactory);
-
-        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
 
         runner.run(new RunNotifier());
 
@@ -185,16 +184,100 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,
                                                                                  webDriverFactory);
 
-        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
-
         runner.run(new RunNotifier());
 
         List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
          assertThat(reportContents, hasItem(containsString("Jack Black")));
          assertThat(reportContents, hasItem(containsString("Joe Smith")));
+    }
+
+
+    @Test
+    public void when_test_data_is_provided_for_a_step_a_single_test_should_be_executed() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                            outputDirectory.getAbsolutePath());
+
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioWithTestSpecificData.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runner.run(new RunNotifier());
+
+        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+        assertThat(reportContents.size(), is(1));
+    }
+
+    @RunWith(ThucydidesRunner.class)
+    public static class ScenarioWithTestSpecificData {
+
+        @Managed
+        public WebDriver webdriver;
+
+        @ManagedPages(defaultUrl = "http://www.google.com")
+        public Pages pages;
+
+        @Steps
+        public SampleScenarioSteps steps;
+
+
+        @Test
+        public void happy_day_scenario() throws Throwable {
+            withTestDataFrom("test-data/simple-data.csv").run(steps).data_driven_test_step();
+        }
+    }
+
+
+    @Test
+    public void when_test_data_is_provided_for_a_step_then_a_step_should_be_reported_for_each_data_row() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                            outputDirectory.getAbsolutePath());
+
+        ThucydidesRunner runner = new ThucydidesRunner(ScenarioWithTestSpecificData.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runner.run(new RunNotifier());
+
+        List<AcceptanceTestRun> executedSteps = runner.getAcceptanceTestRuns();
+        assertThat(executedSteps.size(), is(1));
+        AcceptanceTestRun testRun1 = executedSteps.get(0);
+
+        List<TestStep> dataDrivenSteps = testRun1.getTestSteps();
+        assertThat(dataDrivenSteps.size(), is(2));
 
     }
+
+    @Test
+    public void test_step_data_should_appear_in_the_step_titles() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                            outputDirectory.getAbsolutePath());
+
+        ThucydidesRunner runner = new ThucydidesRunner(ScenarioWithTestSpecificData.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runner.run(new RunNotifier());
+
+        List<AcceptanceTestRun> executedSteps = runner.getAcceptanceTestRuns();
+        AcceptanceTestRun testRun1 = executedSteps.get(0);
+        List<TestStep> dataDrivenSteps = testRun1.getTestSteps();
+
+        TestStep step1 = dataDrivenSteps.get(0);
+        TestStep setNameStep1 = step1.getFlattenedSteps().get(0);
+        TestStep step2 = dataDrivenSteps.get(1);
+        TestStep setNameStep2 = step2.getFlattenedSteps().get(0);
+
+        assertThat(setNameStep1.getDescription(), containsString("Joe Smith"));
+        assertThat(setNameStep2.getDescription(), containsString("Jack Black"));
+
+
+    }
+
+
 
     @Test
     @Ignore

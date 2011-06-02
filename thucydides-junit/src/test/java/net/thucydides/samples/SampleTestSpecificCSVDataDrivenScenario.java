@@ -5,7 +5,6 @@ import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.Qualifier;
-import net.thucydides.junit.annotations.UseTestDataFrom;
 import net.thucydides.junit.runners.ThucydidesParameterizedRunner;
 import org.junit.After;
 import org.junit.Before;
@@ -14,14 +13,13 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesParameterizedRunner.class)
-@UseTestDataFrom(value="test-data/simple-data.csv")
-public class SampleCSVDataDrivenScenario {
+public class SampleTestSpecificCSVDataDrivenScenario {
 
     private String name;
     private String age;
     private String address;
 
-    public SampleCSVDataDrivenScenario() {
+    public SampleTestSpecificCSVDataDrivenScenario() {
     }
 
     @Qualifier
@@ -50,6 +48,11 @@ public class SampleCSVDataDrivenScenario {
 
     @Test
     public void data_driven_test() {
+        System.out.println(getName() + "/" + getAge() + "/" + getAddress());
+    }
+
+    @Test
+    public void another_data_driven_test() {
         System.out.println(getName() + "/" + getAge() + "/" + getAddress());
     }
 

@@ -310,7 +310,7 @@ public class WhenLoadingTestDataFromACSVFile {
         }
 
         @Override
-        protected <T> T newInstanceOf(Class<T> clazz) throws InstantiationException, IllegalAccessException {
+        protected <T> T newInstanceOf(Class<T> clazz, Object... constructorArgs) throws InstantiationException, IllegalAccessException {
             throw new InstantiationException("Oh nose!");
         }
     }
@@ -323,7 +323,7 @@ public class WhenLoadingTestDataFromACSVFile {
 
         TestDataSource testdata = new CSVTestDataSourceThrowsInstantiationException(testDataFile.getAbsolutePath());
 
-        List<Person> loadedData = testdata.getDataAsInstancesOf(Person.class);
+        testdata.getDataAsInstancesOf(Person.class);
     }
 
     class CSVTestDataSourceThrowsIllegalAccessException extends CSVTestDataSource {
@@ -333,7 +333,7 @@ public class WhenLoadingTestDataFromACSVFile {
         }
 
         @Override
-        protected <T> T newInstanceOf(Class<T> clazz) throws InstantiationException, IllegalAccessException {
+        protected <T> T newInstanceOf(Class<T> clazz, Object... constructorArgs) throws InstantiationException, IllegalAccessException {
             throw new IllegalAccessException("Oh nose!");
         }
     }
@@ -346,7 +346,7 @@ public class WhenLoadingTestDataFromACSVFile {
 
         TestDataSource testdata = new CSVTestDataSourceThrowsIllegalAccessException(testDataFile.getAbsolutePath());
 
-        List<Person> loadedData = testdata.getDataAsInstancesOf(Person.class);
+        testdata.getDataAsInstancesOf(Person.class);
     }
 
 

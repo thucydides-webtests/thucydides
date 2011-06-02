@@ -4,27 +4,21 @@ import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Concurrent;
 import org.apache.commons.lang.StringUtils;
+import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.runner.Runner;
-
 /**
  * Run a Thucydides test suite using a set of data.
- * Similar to the JUnit parameterized tests.
+ * Similar to the JUnit parameterized tests, but better ;-).
+ *
  */
 public class ThucydidesParameterizedRunner extends Suite {
 
     private static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
-
-/*
-        TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
-        List<PersonTestScenario> loadedData = testdata.getDataAsInstancesOf(PersonTestScenario.class);
-
- */
 
     private final List<Runner> runners = new ArrayList<Runner>();
 
@@ -45,6 +39,10 @@ public class ThucydidesParameterizedRunner extends Suite {
         } else if (testClassAnnotations.hasTestDataSourceDefined()) {
             buildTestRunnersFromADataSourceUsing(webDriverFactory);
         }
+    }
+
+    private void buildTestRunnersWithTestSpecificDataSetsUsing(WebDriverFactory webDriverFactory) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     private void scheduleParallelTestRunsFor(final Class<?> klass) {

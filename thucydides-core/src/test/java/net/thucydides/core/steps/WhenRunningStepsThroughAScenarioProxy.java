@@ -12,6 +12,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -19,6 +20,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class WhenRunningStepsThroughAScenarioProxy {
 
@@ -91,6 +93,11 @@ public class WhenRunningStepsThroughAScenarioProxy {
             step3();
         }
 
+        @StepGroup
+        public void step_group_with_failure(){
+            throw new AssertionError("Oh bother!");
+        }
+
         @Step
         public void step1(){
             getDriver().get("step1");
@@ -132,6 +139,30 @@ public class WhenRunningStepsThroughAScenarioProxy {
         public void failing_step() {
             getDriver().get("failing_step");
             throw new AssertionError("Oops!");
+        }
+
+        @Step
+        public void failing_web_step() {
+            getDriver().get("failing_step");
+            throw new WebDriverException("Oops!");
+        }
+
+        @Step
+        public void step_with_failing_ordinary_method() {
+            failing_ordinary_method();
+        }
+
+        @Step
+        public void step_with_failing_web_method() {
+            failing_ordinary_web_method();
+        }
+
+        public void failing_ordinary_method() {
+            throw new AssertionError("Oops!");
+        }
+
+        public void failing_ordinary_web_method() {
+            throw new WebDriverException("Oops!");
         }
 
         @Step
@@ -291,6 +322,34 @@ public class WhenRunningStepsThroughAScenarioProxy {
     }
 
     @Test
+    public void the_proxy_should_skip_tests_after_a_failure() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        steps.step1();
+        steps.failing_step();
+        steps.step3();
+
+        verify(driver).get("step1");
+        verify(driver, never()).get("step4");
+
+    }
+
+    @Test
+    public void the_proxy_should_skip_tests_if_a_listener_signals_a_previous_failure() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        when(listener.aStepHasFailed()).thenReturn(true);
+        steps.step1();
+        steps.step2();
+        steps.step3();
+
+        verify(driver, never()).get("step1");
+        verify(driver, never()).get("step2");
+        verify(driver, never()).get("step3");
+
+    }
+
+    @Test
     public void the_proxy_should_skip_pending_tests() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
@@ -344,6 +403,107 @@ public class WhenRunningStepsThroughAScenarioProxy {
         assertThat(argument.getValue().getDescription().getStepClass().getName(), is(SimpleTestScenarioSteps.class.getName()));
         assertThat(argument.getValue().getDescription().getName(), is("failing_step"));
         assertThat(argument.getValue().getException().getClass().getName(), is(AssertionError.class.getName()));
+
+        verify(listener, times(1)).stepFailed(any(StepFailure.class));
+
+    }
+
+
+    @Test
+    public void the_proxy_should_notify_listeners_when_a_failure_occurs_in_a_group() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        steps.step_group_with_failure();
+
+        verify(listener, times(1)).stepFailed(any(StepFailure.class));
+    }
+
+    @Test
+    public void the_proxy_should_notify_listeners_with_a_description_and_a_cause_when_a_failure_occurs_in_a_group() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        steps.step_group_with_failure();
+
+        ArgumentCaptor<StepFailure> argument = ArgumentCaptor.forClass(StepFailure.class);
+        verify(listener).stepFailed(argument.capture());
+        assertThat(argument.getValue().getDescription().getStepClass().getName(), is(SimpleTestScenarioSteps.class.getName()));
+        assertThat(argument.getValue().getDescription().getName(), is("step_group_with_failure"));
+        assertThat(argument.getValue().getException().getClass().getName(), is(AssertionError.class.getName()));
+
+        verify(listener, times(1)).stepFailed(any(StepFailure.class));
+
+    }
+
+    @Test
+    public void the_proxy_should_notify_listeners_when_a_web_step_fails() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        steps.failing_web_step();
+
+        verify(listener, times(1)).stepFailed(any(StepFailure.class));
+    }
+
+    @Test
+    public void the_proxy_should_notify_listeners_with_a_description_and_a_cause_when_a_web_step_fails() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        steps.failing_web_step();
+
+        ArgumentCaptor<StepFailure> argument = ArgumentCaptor.forClass(StepFailure.class);
+        verify(listener).stepFailed(argument.capture());
+        assertThat(argument.getValue().getDescription().getStepClass().getName(), is(SimpleTestScenarioSteps.class.getName()));
+        assertThat(argument.getValue().getDescription().getName(), is("failing_web_step"));
+        assertThat(argument.getValue().getException().getClass().getName(), is(WebDriverException.class.getName()));
+
+        verify(listener, times(1)).stepFailed(any(StepFailure.class));
+
+    }
+
+    @Test
+    public void the_proxy_should_notify_listeners_when_a_method_that_is_not_a_step_fails() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        steps.step_with_failing_ordinary_method();
+
+        verify(listener, times(1)).stepFailed(any(StepFailure.class));
+    }
+
+    @Test
+    public void the_proxy_should_notify_listeners_with_a_description_and_a_cause_when_a_non_step_fails() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        steps.step_with_failing_ordinary_method();
+
+        ArgumentCaptor<StepFailure> argument = ArgumentCaptor.forClass(StepFailure.class);
+        verify(listener).stepFailed(argument.capture());
+        assertThat(argument.getValue().getDescription().getStepClass().getName(), is(SimpleTestScenarioSteps.class.getName()));
+        assertThat(argument.getValue().getDescription().getName(), is("failing_ordinary_method"));
+        assertThat(argument.getValue().getException().getClass().getName(), is(AssertionError.class.getName()));
+
+        verify(listener, times(1)).stepFailed(any(StepFailure.class));
+
+    }
+
+    @Test
+    public void the_proxy_should_notify_listeners_when_a_web_method_that_is_not_a_step_fails() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        steps.step_with_failing_web_method();
+
+        verify(listener, times(1)).stepFailed(any(StepFailure.class));
+    }
+
+    @Test
+    public void the_proxy_should_notify_listeners_with_a_description_and_a_cause_when_a_web_non_step_fails() {
+        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
+
+        steps.step_with_failing_web_method();
+
+        ArgumentCaptor<StepFailure> argument = ArgumentCaptor.forClass(StepFailure.class);
+        verify(listener).stepFailed(argument.capture());
+        assertThat(argument.getValue().getDescription().getStepClass().getName(), is(SimpleTestScenarioSteps.class.getName()));
+        assertThat(argument.getValue().getDescription().getName(), is("failing_ordinary_web_method"));
+        assertThat(argument.getValue().getException().getClass().getName(), is(WebDriverException.class.getName()));
 
         verify(listener, times(1)).stepFailed(any(StepFailure.class));
 

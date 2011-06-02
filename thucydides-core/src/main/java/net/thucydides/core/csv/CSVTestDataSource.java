@@ -1,6 +1,8 @@
 package net.thucydides.core.csv;
 
 import au.com.bytecode.opencsv.CSVReader;
+import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.steps.StepFactory;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,18 +92,30 @@ public class CSVTestDataSource implements TestDataSource {
     /**
      * Returns the test data as a list of JavaBean instances.
      */
-    public <T> List<T> getDataAsInstancesOf(final Class<T> clazz) {
+    public <T> List<T> getDataAsInstancesOf(final Class<T> clazz, Object... constructorArgs) {
         List<Map<String, String>> data = getData();
 
         List<T> resultsList = new ArrayList<T>();
         for (Map<String, String> rowData : data) {
-            resultsList.add(newInstanceFrom(clazz, rowData));
+            resultsList.add(newInstanceFrom(clazz, rowData, constructorArgs));
         }
         return resultsList;
     }
 
-    private <T> T newInstanceFrom(final Class<T> clazz, final Map<String,String> rowData) {
-        T newObject = createNewInstanceOf(clazz);
+    public <T extends ScenarioSteps> List<T> getInstanciatedInstancesFrom(Class<T> clazz, StepFactory factory) {
+        List<Map<String, String>> data = getData();
+
+        List<T> resultsList = new ArrayList<T>();
+        for (Map<String, String> rowData : data) {
+            resultsList.add(newInstanceFrom(clazz, factory, rowData));
+        }
+        return resultsList;
+    }
+
+    private <T extends ScenarioSteps> T newInstanceFrom(final Class<T> clazz,
+                                                        final StepFactory factory,
+                                                        final Map<String,String> rowData) {
+        T newObject = (T) factory.newSteps(clazz);
 
         Set<String> propertyNames = rowData.keySet();
         for (String columnHeading : propertyNames) {
@@ -112,9 +127,24 @@ public class CSVTestDataSource implements TestDataSource {
         return newObject;
     }
 
-    private <T> T createNewInstanceOf(final Class<T> clazz) {
+    private <T> T newInstanceFrom(final Class<T> clazz,
+                                  final Map<String,String> rowData,
+                                  final Object... constructorArgs) {
+        T newObject = createNewInstanceOf(clazz, constructorArgs);
+
+        Set<String> propertyNames = rowData.keySet();
+        for (String columnHeading : propertyNames) {
+            String value = rowData.get(columnHeading);
+
+            String property = FieldName.from(columnHeading).inNormalizedForm();
+            assignPropertyValue(newObject, property, value);
+        }
+        return newObject;
+    }
+
+    private <T> T createNewInstanceOf(final Class<T> clazz, final Object... constructorArgs) {
         try {
-            return newInstanceOf(clazz);
+            return newInstanceOf(clazz, constructorArgs);
         } catch (Exception e) {
             LOGGER.error("Could not create test data bean", e);
             throw new FailedToInitializeTestData("Could not create test data beans", e);
@@ -141,8 +171,38 @@ public class CSVTestDataSource implements TestDataSource {
         PropertyUtils.setProperty(newObject, property, value);
     }
 
-    protected <T> T newInstanceOf(final Class<T> clazz) throws InstantiationException,  
-                                                               IllegalAccessException {
-        return clazz.newInstance();
+    protected <T> T newInstanceOf(final Class<T> clazz,
+                                  final Object... constructorArgs)
+                                    throws InstantiationException, IllegalAccessException, InvocationTargetException {
+
+        if (thereIsADefaultConstructorFor(clazz)) {
+            return clazz.newInstance();
+        } else {
+            return invokeConstructorFor(clazz, constructorArgs);
+        }
+    }
+
+    private <T> T invokeConstructorFor(final Class<T> clazz, final Object[] constructorArgs)
+                                    throws InvocationTargetException, IllegalAccessException, InstantiationException {
+
+        Constructor[] constructors = clazz.getDeclaredConstructors();
+
+        for(Constructor constructor : constructors) {
+            if (constructor.getParameterTypes().length == constructorArgs.length) {
+                return (T) constructor.newInstance(constructorArgs);
+            }
+        }
+        throw new IllegalStateException("No matching constructor found for " + clazz + " and " + constructorArgs);
+    }
+
+    private <T> boolean thereIsADefaultConstructorFor(final Class<T> clazz) {
+
+        Constructor[] constructors = clazz.getDeclaredConstructors();
+        for(Constructor constructor : constructors) {
+            if (constructor.getParameterTypes().length == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }

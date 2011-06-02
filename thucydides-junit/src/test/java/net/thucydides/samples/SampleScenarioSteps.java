@@ -8,14 +8,19 @@ import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Ignore;
 import org.openqa.selenium.NoSuchElementException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class SampleScenarioSteps extends ScenarioSteps {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThucydidesRunner.class);
+
     public SampleScenarioSteps(Pages pages) {
         super(pages);
     }
@@ -110,4 +115,49 @@ public class SampleScenarioSteps extends ScenarioSteps {
     public void failsToFindElement() {
         throw new NoSuchElementException("Could not find an element");
     }
+
+    public String name;
+    public String age;
+    public String address;
+
+    public String getName() {
+        return name;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    @StepGroup
+    public void data_driven_test_step() {
+        enter_name_and_age(name, age);
+        enter_address(address);
+    }
+
+    @Step
+    public void enter_address(String address) {
+    }
+
+    @Step
+    public void enter_name_and_age(String name, String age) {
+
+    }
+
 }

@@ -1,5 +1,8 @@
 package net.thucydides.core.csv;
 
+import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.steps.StepFactory;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,5 +13,8 @@ import java.util.Map;
 public interface TestDataSource {
     List<Map<String, String>> getData();
 
-    <T> List<T> getDataAsInstancesOf(Class<T> clazz);
+    <T> List<T> getDataAsInstancesOf(Class<T> clazz, Object... constructorArgs);
+
+    <T extends ScenarioSteps> List<T> getInstanciatedInstancesFrom(Class<T> clazz, StepFactory factory);
+
 }
