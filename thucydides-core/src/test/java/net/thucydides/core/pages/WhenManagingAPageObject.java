@@ -65,6 +65,7 @@ public class WhenManagingAPageObject {
         protected Select findSelectFor(WebElement dropdownList) {
             return mockSelect;
         }
+
     }
 
     @Test
@@ -162,6 +163,7 @@ public class WhenManagingAPageObject {
 
         page.waitForAnyTextToAppear(searchedBlock, "hi there");
     }
+
 
     @Test(expected=ElementNotDisplayedException.class)
     public void page_will_fail_if_single_text_fails_to_appear_in_an_element_if_requested() {
@@ -469,4 +471,42 @@ public class WhenManagingAPageObject {
         verify(driver).get("http://www.google.com");
     }
 
+
+    @Test
+    public void page_should_detect_if_a_web_element_contains_a_string() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement searchedBlock = mock(WebElement.class);
+        when(searchedBlock.getText()).thenReturn("red green blue");
+
+        assertThat(page.containsTextInElement(searchedBlock, "red"), is(true));
+    }
+
+    @Test
+    public void page_should_detect_if_a_web_element_does_not_contain_a_string() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement searchedBlock = mock(WebElement.class);
+        when(searchedBlock.getText()).thenReturn("red green blue");
+
+        assertThat(page.containsTextInElement(searchedBlock, "orange"), is(false));
+    }
+
+    @Test(expected=NoSuchElementException.class)
+    public void should_contain_text_in_element_should_throw_an_assertion_if_text_is_not_visible() {
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement searchedBlock = mock(WebElement.class);
+        when(searchedBlock.getText()).thenReturn("red green blue");
+
+        page.shouldContainTextInElement(searchedBlock, "orange");
+    }
+
+    @Test
+    public void should_contain_text_in_web_element_should_do_nothing_if_text_is_present() {
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement searchedBlock = mock(WebElement.class);
+        when(searchedBlock.getText()).thenReturn("red green blue");
+
+        page.shouldContainTextInElement(searchedBlock, "red");
+    }
 }

@@ -1,11 +1,7 @@
 package net.thucydides.core.pages;
 
-import java.util.List;
-import java.util.Set;
-
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
-
 import net.thucydides.core.webelements.MultipleSelect;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -15,6 +11,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * A base class representing a WebDriver page object.
@@ -191,6 +190,21 @@ public abstract class PageObject {
         if (!containsText(textValue)) {
             String errorMessage = String.format(
                     "The text '%s' was not found in the page", textValue);
+            throw new NoSuchElementException(errorMessage);
+        }
+    }
+
+    /**
+     * Does the specified web element contain a given text value. Useful for dropdowns and so on.
+     */
+    public boolean containsTextInElement(final WebElement webElement, final String value) {
+        return webElement.getText().contains(value);
+    }
+
+    public void shouldContainTextInElement(final WebElement webElement, final String textValue) {
+        if (!containsTextInElement(webElement, textValue)) {
+            String errorMessage = String.format(
+                    "The text '%s' was not found in the web element %s", textValue, webElement);
             throw new NoSuchElementException(errorMessage);
         }
     }

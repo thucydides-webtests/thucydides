@@ -1,20 +1,19 @@
 package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.pages.PageObject;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.interactions.ElementNotDisplayedException;
 
 import java.io.File;
-import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
 public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
@@ -104,4 +103,21 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         assertThat(indexPage.isElementVisible(By.xpath("//h2[.='Non-existant title']")), is(false));
     }
     
+    @Test
+    public void should_detect_if_a_web_element_contains_a_string() {
+        IndexPage indexPage = new IndexPage(driver);
+        assertThat(indexPage.containsTextInElement(indexPage.multiselect, "Label 1"), is(true));
+    }
+
+    @Test
+    public void should_detect_if_a_web_element_does_not_contain_a_string() {
+        IndexPage indexPage = new IndexPage(driver);
+        assertThat(indexPage.containsTextInElement(indexPage.multiselect, "Red"), is(false));
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void should_fail_assert_if_a_web_element_does_not_contain_a_string() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.shouldContainTextInElement(indexPage.multiselect, "Red");
+    }
 }

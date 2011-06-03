@@ -12,16 +12,28 @@
        else
           e.style.display = 'block';
     }
+    
+    function loadElementsSelect() {
+        var elementSelect = document.demo.elements.options;
+        elementSelect[0] = new Option('Earth',1);
+        elementSelect[1] = new Option('Air',2);
+        elementSelect[2] = new Option('Fire',3);
+        elementSelect[3] = new Option('Water',4);
+    }
+    
+    function loadElementsSelectAfterDelay() {
+        setTimeout("loadElementsSelect()", 1000);
+    }
 //-->
 </script>
 </head>
-<body>
+<body onLoad="loadElementsSelectAfterDelay()">
 <h2 id="visible">A visible title</h2>
 <div style="visibility:hidden;">
     <h2 id="invisible">An invisible title</h2>
 </div>
 <p>Some test pages for the Thucydides tests</p>
-<form action="index.html">
+<form name="demo" action="index.html">
     <select id="multiselect" multiple="true">
         <option value="1">Label 1</option>
         <option value="2">Label 2</option>
@@ -37,6 +49,9 @@
     </select>
 
     <input id="checkbox" type="checkbox" value="checkbox_value">
+
+    <select id="elements">
+    </select>
 
 </form>
 
