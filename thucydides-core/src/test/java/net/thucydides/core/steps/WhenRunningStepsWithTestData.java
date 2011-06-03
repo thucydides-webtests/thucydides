@@ -2,6 +2,7 @@ package net.thucydides.core.steps;
 
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
+import net.thucydides.core.csv.FailedToInitializeTestData;
 import net.thucydides.core.pages.Pages;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,35 +66,35 @@ public class WhenRunningStepsWithTestData {
         }
 
         @StepGroup
-        public void step_group1(){
+        public void step_group1() {
             step1();
             step2();
         }
 
         @StepGroup
-        public void name_and_dob(){
+        public void name_and_dob() {
             step1();
             step3();
         }
 
 
         @Step
-        public void step1(){
+        public void step1() {
             getDriver().get(name);
         }
 
         @Step
-        public void step2(){
+        public void step2() {
             getDriver().get(address);
         }
 
         @Step
-        public void step3(){
+        public void step3() {
             getDriver().get(dateOfBirth);
         }
 
         @Step
-        public void fail_sometimes(){
+        public void fail_sometimes() {
             getDriver().get(name);
             if (name.equals("Joe")) {
                 throw new AssertionError("Bad name");
@@ -103,7 +104,7 @@ public class WhenRunningStepsWithTestData {
     }
 
 
-        static class DifferentTestSteps extends ScenarioSteps {
+    static class DifferentTestSteps extends ScenarioSteps {
 
         private String name;
         private String address;
@@ -112,16 +113,8 @@ public class WhenRunningStepsWithTestData {
             super(pages);
         }
 
-        public String getName() {
-            return name;
-        }
-
         public void setName(String name) {
             this.name = name;
-        }
-
-        public String getAddress() {
-            return address;
         }
 
         public void setAddress(String address) {
@@ -129,15 +122,55 @@ public class WhenRunningStepsWithTestData {
         }
 
         @Step
-        public void nameStep(){
+        public void nameStep() {
             getDriver().get(name);
         }
 
         @Step
-        public void addressStep(){
+        public void addressStep() {
             getDriver().get(address);
         }
+    }
 
+
+    public static class TestStepsWithNoSetters extends ScenarioSteps {
+
+        public String name;
+        public String address;
+
+        public TestStepsWithNoSetters(Pages pages) {
+            super(pages);
+        }
+
+        @Step
+        public void nameStep() {
+            getDriver().get(name);
+        }
+
+        @Step
+        public void addressStep() {
+            getDriver().get(address);
+        }
+    }
+
+    public static class TestStepsWithNoSettersAndInaccessibleFields extends ScenarioSteps {
+
+        private String name;
+        private String address;
+
+        public TestStepsWithNoSettersAndInaccessibleFields(Pages pages) {
+            super(pages);
+        }
+
+        @Step
+        public void nameStep() {
+            getDriver().get(name);
+        }
+
+        @Step
+        public void addressStep() {
+            getDriver().get(address);
+        }
     }
 
     @Before
@@ -268,5 +301,27 @@ public class WhenRunningStepsWithTestData {
     }
 
 
+    @Test
+    public void should_be_able_to_use_a_step_library_with_public_fields_and_no_setters() throws IOException {
+        TestStepsWithNoSetters steps = (TestStepsWithNoSetters) factory.newSteps(TestStepsWithNoSetters.class);
+
+        setDefaultStepFactory(factory);
+
+        withTestDataFrom("testdata/test.csv").run(steps).nameStep();
+
+        verify(driver).get("Bill");
+        verify(driver).get("Joe");
+        verify(driver).get("Mary");
+    }
+
+    @Test(expected=FailedToInitializeTestData.class)
+    public void should_throw_exception_if_no_fields_are_set() throws IOException {
+        TestStepsWithNoSettersAndInaccessibleFields steps
+                = (TestStepsWithNoSettersAndInaccessibleFields) factory.newSteps(TestStepsWithNoSettersAndInaccessibleFields.class);
+
+        setDefaultStepFactory(factory);
+
+        withTestDataFrom("testdata/test.csv").run(steps).nameStep();
+    }
 
 }

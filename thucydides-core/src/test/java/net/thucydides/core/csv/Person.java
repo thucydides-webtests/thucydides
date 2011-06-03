@@ -7,6 +7,18 @@ public class Person {
     private String phone;
     private String dateOfBirth;
 
+    public String nickname;
+
+    public Person() {
+    }
+
+    public Person(String name, String address, String phone, String dateOfBirth) {
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public String getName() {
         return name;
     }

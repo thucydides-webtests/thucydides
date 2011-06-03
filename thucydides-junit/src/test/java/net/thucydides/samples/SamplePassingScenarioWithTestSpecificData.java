@@ -8,15 +8,11 @@ import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static net.thucydides.core.steps.StepData.withTestDataFrom;
 
 @RunWith(ThucydidesRunner.class)
 public class SamplePassingScenarioWithTestSpecificData {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamplePassingScenarioWithTestSpecificData.class);
 
     @Managed
     public WebDriver webdriver;
@@ -25,7 +21,7 @@ public class SamplePassingScenarioWithTestSpecificData {
     public Pages pages;
     
     @Steps
-    public SampleScenarioSteps steps;
+    public SampleDataDrivenSteps steps;
 
 
     @Test

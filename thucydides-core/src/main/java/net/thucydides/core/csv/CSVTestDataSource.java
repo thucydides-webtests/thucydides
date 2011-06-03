@@ -3,7 +3,6 @@ package net.thucydides.core.csv;
 import au.com.bytecode.opencsv.CSVReader;
 import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.steps.StepFactory;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +12,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,11 +25,11 @@ public class CSVTestDataSource implements TestDataSource {
     
     private final List<Map<String, String>> testData;
     private final char separator;
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVTestDataSource.class);
 
-    public CSVTestDataSource(final String path, char separator) throws IOException {
-        this.separator = separator;
+    public CSVTestDataSource(final String path, final char separatorValue) throws IOException {
+        this.separator = separatorValue;
         testData = loadTestDataFrom(getDataFileFor(path));
     }
 
@@ -71,7 +68,7 @@ public class CSVTestDataSource implements TestDataSource {
         return loadedData;
     }
 
-    private Map dataEntryFrom(final String[] titleRow, final String[] dataRow) {
+    private Map<String, String> dataEntryFrom(final String[] titleRow, final String[] dataRow) {
         Map<String, String> dataset = new HashMap<String, String>();
 
         for (int column = 0; column < titleRow.length; column++) {
@@ -92,7 +89,7 @@ public class CSVTestDataSource implements TestDataSource {
     /**
      * Returns the test data as a list of JavaBean instances.
      */
-    public <T> List<T> getDataAsInstancesOf(final Class<T> clazz, Object... constructorArgs) {
+    public <T> List<T> getDataAsInstancesOf(final Class<T> clazz, final Object... constructorArgs) {
         List<Map<String, String>> data = getData();
 
         List<T> resultsList = new ArrayList<T>();
@@ -102,7 +99,8 @@ public class CSVTestDataSource implements TestDataSource {
         return resultsList;
     }
 
-    public <T extends ScenarioSteps> List<T> getInstanciatedInstancesFrom(Class<T> clazz, StepFactory factory) {
+    public <T extends ScenarioSteps> List<T> getInstanciatedInstancesFrom(final Class<T> clazz,
+                                                                          final StepFactory factory) {
         List<Map<String, String>> data = getData();
 
         List<T> resultsList = new ArrayList<T>();
@@ -112,97 +110,61 @@ public class CSVTestDataSource implements TestDataSource {
         return resultsList;
     }
 
-    private <T extends ScenarioSteps> T newInstanceFrom(final Class<T> clazz,
-                                                        final StepFactory factory,
-                                                        final Map<String,String> rowData) {
-        T newObject = (T) factory.newSteps(clazz);
-
-        Set<String> propertyNames = rowData.keySet();
-        for (String columnHeading : propertyNames) {
-            String value = rowData.get(columnHeading);
-
-            String property = FieldName.from(columnHeading).inNormalizedForm();
-            assignPropertyValue(newObject, property, value);
-        }
-        return newObject;
-    }
-
     private <T> T newInstanceFrom(final Class<T> clazz,
                                   final Map<String,String> rowData,
                                   final Object... constructorArgs) {
+
         T newObject = createNewInstanceOf(clazz, constructorArgs);
-
-        Set<String> propertyNames = rowData.keySet();
-        for (String columnHeading : propertyNames) {
-            String value = rowData.get(columnHeading);
-
-            String property = FieldName.from(columnHeading).inNormalizedForm();
-            assignPropertyValue(newObject, property, value);
-        }
+        assignPropertiesFromTestData(clazz, rowData, newObject);
         return newObject;
     }
 
-    private <T> T createNewInstanceOf(final Class<T> clazz, final Object... constructorArgs) {
+    private <T extends ScenarioSteps> T newInstanceFrom(final Class<T> clazz,
+                                                        final StepFactory factory,
+                                                        final Map<String,String> rowData) {
+        T newObject = factory.newSteps(clazz);
+        assignPropertiesFromTestData(clazz, rowData, newObject);
+        return newObject;
+    }
+
+    private <T> void assignPropertiesFromTestData(final Class<T> clazz,
+                                                  final Map<String, String> rowData,
+                                                  final T newObject) {
+        Set<String> propertyNames = rowData.keySet();
+
+        boolean validPropertyFound = false;
+        for (String columnHeading : propertyNames) {
+            String value = rowData.get(columnHeading);
+            String property = FieldName.from(columnHeading).inNormalizedForm();
+
+            if (assignPropertyValue(newObject, property, value)) {
+                validPropertyFound = true;
+            }
+        }
+        if (!validPropertyFound) {
+            throw new FailedToInitializeTestData("No properties or public fields matching the data columns were found "
+                                                 + "or could be assigned for the class " + clazz.getName()
+                                                 + "using test data: " + rowData);
+        }
+    }
+
+    protected <T> T createNewInstanceOf(final Class<T> clazz, final Object... constructorArgs) {
         try {
-            return newInstanceOf(clazz, constructorArgs);
+            return InstanceBuilder.newInstanceOf(clazz, constructorArgs);
         } catch (Exception e) {
             LOGGER.error("Could not create test data bean", e);
             throw new FailedToInitializeTestData("Could not create test data beans", e);
         }
     }
 
-    private <T> void assignPropertyValue(final T newObject, final String property, final String value) {
+    protected <T> boolean assignPropertyValue(final T newObject, final String property, final String value) {
+        boolean valueWasAssigned = true;
         try {
-            setPropertyValue(newObject, property, value);
-
-        } catch (NoSuchMethodException e) {
-            LOGGER.info("Skipping unknown field");
-        } catch (Exception e) {
-            LOGGER.error("Could not create test data bean", e);
-            throw new FailedToInitializeTestData("Could not create test data beans", e);
+            InstanceBuilder.inObject(newObject).setPropertyValue(property, value);
+        } catch (FailedToInitializeTestData e) {
+            valueWasAssigned = false;
         }
+        return valueWasAssigned;
     }
 
-    protected <T> void setPropertyValue(final T newObject, 
-                                        final String property, 
-                                        final String value) throws IllegalAccessException, 
-                                                                   InvocationTargetException, 
-                                                                   NoSuchMethodException {
-        PropertyUtils.setProperty(newObject, property, value);
-    }
-
-    protected <T> T newInstanceOf(final Class<T> clazz,
-                                  final Object... constructorArgs)
-                                    throws InstantiationException, IllegalAccessException, InvocationTargetException {
-
-        if (thereIsADefaultConstructorFor(clazz)) {
-            return clazz.newInstance();
-        } else {
-            return invokeConstructorFor(clazz, constructorArgs);
-        }
-    }
-
-    private <T> T invokeConstructorFor(final Class<T> clazz, final Object[] constructorArgs)
-                                    throws InvocationTargetException, IllegalAccessException, InstantiationException {
-
-        Constructor[] constructors = clazz.getDeclaredConstructors();
-
-        for(Constructor constructor : constructors) {
-            if (constructor.getParameterTypes().length == constructorArgs.length) {
-                return (T) constructor.newInstance(constructorArgs);
-            }
-        }
-        throw new IllegalStateException("No matching constructor found for " + clazz + " and " + constructorArgs);
-    }
-
-    private <T> boolean thereIsADefaultConstructorFor(final Class<T> clazz) {
-
-        Constructor[] constructors = clazz.getDeclaredConstructors();
-        for(Constructor constructor : constructors) {
-            if (constructor.getParameterTypes().length == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

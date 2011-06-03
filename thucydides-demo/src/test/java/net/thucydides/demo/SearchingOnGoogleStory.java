@@ -1,12 +1,11 @@
 package net.thucydides.demo;
 
+import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.demo.steps.GoogleSearchSteps;
 import net.thucydides.junit.annotations.Managed;
-import net.thucydides.junit.annotations.ManagedPages;
 import net.thucydides.junit.runners.ThucydidesRunner;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -22,11 +21,6 @@ public class SearchingOnGoogleStory {
     
     @Steps
     public GoogleSearchSteps steps;
-
-    @Before
-    public void openBrowser() {
-        pages.start();
-    }
 
     @Test
     public void searching_for_cats_should_find_the_wikipedia_entry() {

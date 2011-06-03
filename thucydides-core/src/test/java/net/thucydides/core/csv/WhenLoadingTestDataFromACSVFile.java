@@ -9,7 +9,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -303,73 +302,4 @@ public class WhenLoadingTestDataFromACSVFile {
         assertThat(person.getDateOfBirth(), is("10/10/1980"));
     }
 
-    class CSVTestDataSourceThrowsInstantiationException extends CSVTestDataSource {
-
-        public CSVTestDataSourceThrowsInstantiationException(String sourceFile) throws IOException {
-            super(sourceFile);
-        }
-
-        @Override
-        protected <T> T newInstanceOf(Class<T> clazz, Object... constructorArgs) throws InstantiationException, IllegalAccessException {
-            throw new InstantiationException("Oh nose!");
-        }
-    }
-
-    @Test(expected = FailedToInitializeTestData.class)
-    public void caller_should_be_notified_if_test_data_cannot_be_instantiated() throws IOException {
-        File testDataFile = useTestDataIn("testdata.csv",
-                "name, address,        phone, unknown",
-                "Bill, 10 main street, 123456789, whatever");
-
-        TestDataSource testdata = new CSVTestDataSourceThrowsInstantiationException(testDataFile.getAbsolutePath());
-
-        testdata.getDataAsInstancesOf(Person.class);
-    }
-
-    class CSVTestDataSourceThrowsIllegalAccessException extends CSVTestDataSource {
-
-        public CSVTestDataSourceThrowsIllegalAccessException(String sourceFile) throws IOException {
-            super(sourceFile);
-        }
-
-        @Override
-        protected <T> T newInstanceOf(Class<T> clazz, Object... constructorArgs) throws InstantiationException, IllegalAccessException {
-            throw new IllegalAccessException("Oh nose!");
-        }
-    }
-
-    @Test(expected = FailedToInitializeTestData.class)
-    public void caller_should_be_notified_if_test_data_cannot_be_accessed() throws IOException {
-        File testDataFile = useTestDataIn("testdata.csv",
-                "name, address,        phone",
-                "Bill, 10 main street, 123456789");
-
-        TestDataSource testdata = new CSVTestDataSourceThrowsIllegalAccessException(testDataFile.getAbsolutePath());
-
-        testdata.getDataAsInstancesOf(Person.class);
-    }
-
-
-    class CSVTestDataSourceThrowsIllegalAccessExceptionOnPropertySet extends CSVTestDataSource {
-
-        public CSVTestDataSourceThrowsIllegalAccessExceptionOnPropertySet(String sourceFile) throws IOException {
-            super(sourceFile);
-        }
-
-        @Override
-        protected <T> void setPropertyValue(T newObject, String property, String value) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-            throw new IllegalAccessException();
-        }
-    }
-
-    @Test(expected = FailedToInitializeTestData.class)
-    public void caller_should_be_notified_if_bean_property_cannot_be_initialized() throws IOException {
-        File testDataFile = useTestDataIn("testdata.csv",
-                "name, address,        phone",
-                "Bill, 10 main street, 123456789");
-
-        TestDataSource testdata = new CSVTestDataSourceThrowsIllegalAccessExceptionOnPropertySet(testDataFile.getAbsolutePath());
-
-        testdata.getDataAsInstancesOf(Person.class);
-    }
 }
