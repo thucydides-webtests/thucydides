@@ -5,6 +5,11 @@
 <title>Thucydides Test Site</title>
 <script type="text/javascript">
 <!--
+
+    function initFields() {
+        document.demo.lastname.focus()
+    }
+
     function toggle_visibility(id) {
        var e = document.getElementById(id);
        if(e.style.display == 'block')
@@ -27,13 +32,15 @@
 //-->
 </script>
 </head>
-<body onLoad="loadElementsSelectAfterDelay()">
+<body onLoad="initFields()">
 <h2 id="visible">A visible title</h2>
 <div style="visibility:hidden;">
     <h2 id="invisible">An invisible title</h2>
 </div>
 <p>Some test pages for the Thucydides tests</p>
 <form name="demo" action="index.html">
+    <input name="firstname"/>
+    <input name="lastname"/>
     <select id="multiselect" multiple="true">
         <option value="1">Label 1</option>
         <option value="2">Label 2</option>

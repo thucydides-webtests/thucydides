@@ -3,14 +3,44 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Thucydides Test Site</title>
+<script type="text/javascript">
+<!--
+
+    function initFields() {
+        document.demo.lastname.focus()
+    }
+
+    function toggle_visibility(id) {
+       var e = document.getElementById(id);
+       if(e.style.display == 'block')
+          e.style.display = 'none';
+       else
+          e.style.display = 'block';
+    }
+    
+    function loadElementsSelect() {
+        var elementSelect = document.demo.elements.options;
+        elementSelect[0] = new Option('Earth',1);
+        elementSelect[1] = new Option('Air',2);
+        elementSelect[2] = new Option('Fire',3);
+        elementSelect[3] = new Option('Water',4);
+    }
+    
+    function loadElementsSelectAfterDelay() {
+        setTimeout("loadElementsSelect()", 1000);
+    }
+//-->
+</script>
 </head>
-<body>
-<h2>A visible title</h2>
+<body onLoad="initFields()">
+<h2 id="visible">A visible title</h2>
 <div style="visibility:hidden;">
-    <h2>An invisible title</h2>
+    <h2 id="invisible">An invisible title</h2>
 </div>
 <p>Some test pages for the Thucydides tests</p>
-<form action="index.html">
+<form name="demo" action="index.html">
+    <input name="firstname"/>
+    <input name="lastname"/>
     <select id="multiselect" multiple="true">
         <option value="1">Label 1</option>
         <option value="2">Label 2</option>
@@ -18,6 +48,23 @@
         <option value="4">Label 4</option>
         <option value="5">Label 5</option>
     </select>
+
+    <select id="color">
+        <option value="red">Red</option>
+        <option value="blue">Blue</option>
+        <option value="green">Green</option>
+    </select>
+
+    <input id="checkbox" type="checkbox" value="checkbox_value">
+
+    <select id="elements">
+    </select>
+
 </form>
+
+<div>
+<a href="#" onclick="toggle_visibility('toggledtext');">Click here to toggle visibility</a>
+<div id="toggledtext">Visible Text</div>
+</div>
 </body>
 </html>

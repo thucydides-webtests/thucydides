@@ -1,11 +1,13 @@
 package net.thucydides.core.pages;
 
+import com.thoughtworks.selenium.Selenium;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
 import net.thucydides.core.webelements.MultipleSelect;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -321,8 +323,7 @@ public abstract class PageObject {
     }
 
     /**
-     * Returns true if at least one matching element is found on the page and is
-     * visible.
+     * Returns true if at least one matching element is found on the page and is visible.
      */
     public Boolean isElementVisible(final By byCriteria) {
         return getRenderedView().elementIsDisplayed(byCriteria);
@@ -331,4 +332,14 @@ public abstract class PageObject {
     public void setDefaultBaseUrl(final String defaultBaseUrl) {
         pageUrls.overrideDefaultBaseUrl(defaultBaseUrl);
     }
+
+    /**
+     * Returns true if the specified element has the focus.
+     */
+    public boolean hasFocus(final WebElement webElement) {
+        Selenium selenium = new WebDriverBackedSelenium(driver , driver.getCurrentUrl());
+        String activeElement = selenium.getEval("window.document.activeElement");
+        return webElement.toString().equals(activeElement);
+    }
+
 }
