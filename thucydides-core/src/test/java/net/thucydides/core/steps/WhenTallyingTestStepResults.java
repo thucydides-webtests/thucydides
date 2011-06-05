@@ -1,15 +1,12 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.annotations.StepProvider;
-import net.thucydides.core.steps.samples.SimpleScenarioSteps;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -24,6 +21,9 @@ public class WhenTallyingTestStepResults {
 
     @Mock
     StepFailure stepFailure2;
+
+    @Mock
+    File outputDirectory;
 
     @Before
     public void initMocks() {
@@ -87,4 +87,31 @@ public class WhenTallyingTestStepResults {
 
         assertThat(testStepResult.wasSuccessful(), is(false));
     }
+
+    @Test
+    public void no_tests_should_have_initially_failed() {
+        BaseStepListener baseStepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+
+        assertThat(baseStepListener.aStepHasFailed(), is(false));
+    }
+
+    @Test
+    public void should_keep_track_of_when_a_test_has_failed() {
+        BaseStepListener baseStepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+
+        baseStepListener.stepFailed(stepFailure1);
+        assertThat(baseStepListener.aStepHasFailed(), is(true));
+    }
+
+    @Test
+    public void test_failures_should_be_reset_at_the_start_of_each_test_case() {
+        BaseStepListener baseStepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+
+        baseStepListener.stepFailed(stepFailure1);
+        assertThat(baseStepListener.aStepHasFailed(), is(true));
+
+        baseStepListener.noStepsHaveFailed();
+        assertThat(baseStepListener.aStepHasFailed(), is(false));
+    }
+
 }

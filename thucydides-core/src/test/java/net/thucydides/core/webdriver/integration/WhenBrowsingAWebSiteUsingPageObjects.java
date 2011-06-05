@@ -108,6 +108,22 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     }
 
     @Test
+    public void should_return_selected_value_in_select() {
+
+        indexPage.selectMultipleItemsFromDropdown(indexPage.multiselect,"Label 2");
+        String selectedValue = indexPage.getSelectedValueFrom(indexPage.multiselect);
+        assertThat(selectedValue, is("2"));
+    }
+
+    @Test
+    public void should_return_selected_label_in_select() {
+
+        indexPage.selectMultipleItemsFromDropdown(indexPage.multiselect,"Label 2");
+        String selectedLabel = indexPage.getSelectedLabelFrom(indexPage.multiselect);
+        assertThat(selectedLabel, is("Label 2"));
+    }
+
+    @Test
     public void should_select_values_in_select() {
         indexPage.selectFromDropdown(indexPage.color, "Red");
         assertThat(indexPage.getSelectedOptionValuesFrom(indexPage.color), hasItem("red"));

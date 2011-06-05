@@ -49,30 +49,37 @@ public class BaseStepListener implements StepListener {
  
     private boolean aStepHasFailed;
     private Throwable stepError;
- 
-    public BaseStepListener(final File outputDirectory) {
+
+    private WebdriverProxyFactory proxyFactory;
+
+    private BaseStepListener(final File outputDirectory) {
+        this.proxyFactory = WebdriverProxyFactory.getFactory();
         this.acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
         this.outputDirectory = outputDirectory;
         aStepHasFailed = false;
         stepError = null;
     }
+
+    protected WebdriverProxyFactory getProxyFactory() {
+        return proxyFactory;
+    }
  
     public BaseStepListener(final Class<? extends WebDriver> driverClass, final File outputDirectory) {
         this(outputDirectory);
-        this.driver = WebdriverProxyFactory.getFactory().proxyFor(driverClass);
+        this.driver = getProxyFactory().proxyFor(driverClass);
     }
  
     public BaseStepListener(final File outputDirectory, final Pages pages) {
-        this(outputDirectory);
-        if (pages != null) {
-            setDriverUsingPagesDriverIfDefined(pages);
-        } else {
-            createNewDriver();
-        }
+         this(outputDirectory);
+         if (pages != null) {
+             setDriverUsingPagesDriverIfDefined(pages);
+         } else {
+             createNewDriver();
+         }
     }
  
     private void createNewDriver() {
-        setDriver(WebdriverProxyFactory.getFactory().proxyDriver());
+        setDriver(getProxyFactory().proxyDriver());
     }
  
     private void setDriverUsingPagesDriverIfDefined(final Pages pages) {
@@ -84,15 +91,7 @@ public class BaseStepListener implements StepListener {
             pages.notifyWhenDriverOpens();
         }
     }
- 
-    public void setPages(final Pages pages) {
-        if ((pages != null) && (driver != null)) {
-            pages.setDriver(driver);
-            pages.notifyWhenDriverOpens();
-        }
- 
-    }
- 
+
     public void setDriver(final WebDriver driver) {
         this.driver = driver;
     }

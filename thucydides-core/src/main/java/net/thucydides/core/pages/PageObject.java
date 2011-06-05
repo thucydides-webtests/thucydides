@@ -1,16 +1,15 @@
 package net.thucydides.core.pages;
 
 import com.thoughtworks.selenium.Selenium;
+import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
-import net.thucydides.core.webelements.MultipleSelect;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -223,37 +222,35 @@ public abstract class PageObject {
 
     public void selectFromDropdown(final WebElement dropdown,
                                    final String visibleLabel) {
-        Select dropdownSelect = findSelectFor(dropdown);
-        dropdownSelect.selectByVisibleText(visibleLabel);
+
+        Dropdown.forWebElement(dropdown).select(visibleLabel);
     }
 
     public void selectMultipleItemsFromDropdown(final WebElement dropdown,
                                                 final String... selectedLabels) {
-        for (String selectedLabel : selectedLabels) {
-            String optionPath = String.format("//option[.='%s']", selectedLabel);
-            WebElement option = dropdown.findElement(By.xpath(optionPath));
-            option.click();
-        }
+        Dropdown.forWebElement(dropdown).selectMultipleItems(selectedLabels);
     }
 
 
     public Set<String> getSelectedOptionLabelsFrom(final WebElement dropdown) {
-        MultipleSelect multipleSelect = new MultipleSelect(dropdown);
-        return multipleSelect.getSelectedOptionLabels();
+        return Dropdown.forWebElement(dropdown).getSelectedOptionLabels();
     }
 
     public Set<String> getSelectedOptionValuesFrom(final WebElement dropdown) {
-        MultipleSelect multipleSelect = new MultipleSelect(dropdown);
-        return multipleSelect.getSelectedOptionValues();
+        return Dropdown.forWebElement(dropdown).getSelectedOptionValues();
+    }
+
+    public String getSelectedValueFrom(final WebElement dropdown) {
+        return Dropdown.forWebElement(dropdown).getSelectedValue();
+    }
+
+    public String getSelectedLabelFrom(final WebElement dropdown) {
+        return Dropdown.forWebElement(dropdown).getSelectedLabel();
     }
 
     public void setCheckbox(final WebElement field, final boolean value) {
         Checkbox checkbox = new Checkbox(field);
         checkbox.setChecked(value);
-    }
-
-    protected Select findSelectFor(final WebElement dropdownList) {
-        return new Select(dropdownList);
     }
 
     /**

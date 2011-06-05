@@ -35,10 +35,6 @@ public class WhenManagingAPageObject {
     WebDriver driver;
 
     @Mock
-    Select mockSelect;
-
-
-    @Mock
     WebElement mockButton;
     
     @Rule
@@ -59,11 +55,6 @@ public class WhenManagingAPageObject {
 
         protected WebElement getButton() {
             return mockButton;
-        }
-        
-        @Override
-        protected Select findSelectFor(WebElement dropdownList) {
-            return mockSelect;
         }
 
     }
@@ -252,16 +243,6 @@ public class WhenManagingAPageObject {
 
         verify(field).clear();
         verify(field).sendKeys("some value");
-    }
-
-    @Test
-    public void picking_a_value_in_a_dropdown_picks_by_visible_text() {
-        WebElement field = mock(WebElement.class);
-        BasicPageObject page = new BasicPageObject(driver);
-
-        page.selectFromDropdown(field, "Visible label");
-
-        verify(mockSelect).selectByVisibleText("Visible label");
     }
 
     @Test(expected=NoSuchElementException.class)
