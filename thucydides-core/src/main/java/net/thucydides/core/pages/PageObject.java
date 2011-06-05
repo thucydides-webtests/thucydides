@@ -43,6 +43,8 @@ public abstract class PageObject {
 
     private PageUrls pageUrls;
 
+    private InternalClock clock = new InternalClock();
+
     public PageObject(final WebDriver driver) {
         this.driver = driver;
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
@@ -61,11 +63,15 @@ public abstract class PageObject {
         this.waitForTimeout = waitForTimeout;
     }
 
-    private RenderedPageObjectView getRenderedView() {
+    protected RenderedPageObjectView getRenderedView() {
         if (renderedView == null) {
             renderedView = new RenderedPageObjectView(driver, waitForTimeout);
         }
         return renderedView;
+    }
+
+    protected InternalClock getClock() {
+        return clock;
     }
 
     private MatchingPageExpressions getMatchingPageExpressions() {
@@ -174,11 +180,7 @@ public abstract class PageObject {
     }
 
     protected void waitABit(final long timeInMilliseconds) {
-        try {
-            Thread.sleep(timeInMilliseconds);
-        } catch (InterruptedException e) {
-            LOGGER.error("Wait interrupted", e);
-        }
+        getClock().pauseFor(timeInMilliseconds);
     }
 
     public List<WebElement> thenReturnElementList(final By byListCriteria) {

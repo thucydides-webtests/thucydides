@@ -1,30 +1,37 @@
 package net.thucydides.core.pages;
 
 
-import static org.mockito.Mockito.verify;
-
-import net.thucydides.core.annotations.At;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
-
+import net.thucydides.core.webdriver.WebDriverFacade;
+import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.*;
-import static org.mockito.Mockito.*;
-
 import org.openqa.selenium.WebDriver;
 
 import java.net.URL;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class WhenKeepingTrackOfVisitedPages {
 
     @Mock
     WebDriver driver;
     
+    @Mock
+    WebDriverFacade driverProxy;
+
+    @Mock
+    WebdriverProxyFactory proxyFactory;
+
     @Rule
     public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
 
@@ -143,4 +150,54 @@ public class WhenKeepingTrackOfVisitedPages {
 
         pages.currentPageAt(ExplodingHomePage.class);
     }
+
+    public class PageObjectWithNoDriverConstructor extends PageObject {
+
+        public PageObjectWithNoDriverConstructor() {
+            super(null);
+        }
+    }
+
+    @Test(expected = WrongPageError.class)
+    public void the_pages_object_throws_a_wrong_page_error_when_the_page_object_doesnt_have_a_webdriver_constructor() {
+
+        when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
+        final Pages pages = new Pages(driver);
+        pages.currentPageAt(PageObjectWithNoDriverConstructor.class);
+    }
+
+    @Test
+    public void should_open_initial_page_when_driver_opens() {
+        Pages pages = new Pages(driver);
+        pages.setDefaultBaseUrl("http://www.google.com");
+        pages.notifyWhenDriverOpens();
+
+        verify(driver).get("http://www.google.com");
+
+    }
+
+    @Test
+    public void should_not_open_initial_page_when_driver_opens_if_using_a_proxied_driver() {
+        Pages pages = new Pages(driverProxy);
+        pages.setDefaultBaseUrl("http://www.google.com");
+        pages.notifyWhenDriverOpens();
+
+        verify(driver, never()).get("http://www.google.com");
+    }
+
+    @Test
+    public void should_register_proxy_drivers_when_driver_opens() {
+        Pages pages = new Pages(driverProxy) {
+            @Override
+            protected WebdriverProxyFactory getProxyFactory() {
+                return proxyFactory;
+            }
+        };
+        pages.setDefaultBaseUrl("http://www.google.com");
+        pages.notifyWhenDriverOpens();
+
+        verify(proxyFactory).registerListener(any(PagesEventListener.class));
+    }
+
+
 }

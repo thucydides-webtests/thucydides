@@ -28,14 +28,16 @@ public class Pages {
 
     private final transient PageConfiguration pageConfiguration;
 
+    private WebdriverProxyFactory proxyFactory;
 
     public Pages() {
         this.pageConfiguration = new PageConfiguration();
+        proxyFactory = WebdriverProxyFactory.getFactory();
     }
 
     public Pages(final WebDriver driver) {
+        this();
         this.driver = driver;
-        this.pageConfiguration = new PageConfiguration();
     }
 
     public void setDriver(final WebDriver driver) {
@@ -44,6 +46,10 @@ public class Pages {
 
     public WebDriver getDriver() {
         return driver;
+    }
+
+    protected WebdriverProxyFactory getProxyFactory() {
+        return proxyFactory;
     }
 
     /**
@@ -145,7 +151,7 @@ public class Pages {
         if ((getDriver() != null) && !usingProxiedWebDriver()) {
             start();
         }
-        WebdriverProxyFactory.getFactory().registerListener(eventListener);
+        getProxyFactory().registerListener(eventListener);
     }
 
     private boolean usingProxiedWebDriver() {

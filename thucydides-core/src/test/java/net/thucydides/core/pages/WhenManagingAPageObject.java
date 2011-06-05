@@ -93,6 +93,24 @@ public class WhenManagingAPageObject {
         page.waitForRenderedElements(By.id("whatever"));
     }
 
+
+    @Test
+    public void thenReturnElementList_will_return_the_list_of_matching_elements() {
+
+        RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        List<WebElement> renderedElements = new ArrayList<WebElement>();
+        renderedElements.add(renderedElement);
+
+        when(driver.findElement(any(By.class))).thenReturn(renderedElement);
+        when(driver.findElements(any(By.class))).thenReturn(renderedElements);
+
+        BasicPageObject page = new BasicPageObject(driver);
+        List<WebElement> elementList = page.thenReturnElementList(By.className("whatever"));
+
+        assertThat(elementList, is(renderedElements));
+    }
+
+
     @Test
     public void page_will_wait_for_rendered_element_to_disappear() {
 
@@ -416,12 +434,33 @@ public class WhenManagingAPageObject {
     }
 
     @Test
+    public void should_be_not_visible_should_do_nothing_if_element_is_not_visible() {
+        BasicPageObject page = new BasicPageObject(driver);
+        RenderedWebElement field = mock(RenderedWebElement.class);
+        when(field.isDisplayed()).thenReturn(false);
+
+        page.shouldNotBeVisible(field);
+    }
+
+    @Test
     public void should_be_visible_should_do_nothing_if_element_is_visible() {
         BasicPageObject page = new BasicPageObject(driver);
         RenderedWebElement field = mock(RenderedWebElement.class);
-        when(field.isDisplayed()).thenReturn(true);
 
+        when(field.isDisplayed()).thenReturn(true);
         page.shouldBeVisible(field);
+    }
+
+    @Test
+    public void should_be_visible_should_handle_changing_field_state() {
+        BasicPageObject page = new BasicPageObject(driver);
+        RenderedWebElement field = mock(RenderedWebElement.class);
+
+        when(field.isDisplayed()).thenReturn(true);
+        page.shouldBeVisible(field);
+
+        when(field.isDisplayed()).thenReturn(false);
+        page.shouldNotBeVisible(field);
     }
 
     @Test
@@ -509,4 +548,5 @@ public class WhenManagingAPageObject {
 
         page.shouldContainTextInElement(searchedBlock, "red");
     }
+
 }

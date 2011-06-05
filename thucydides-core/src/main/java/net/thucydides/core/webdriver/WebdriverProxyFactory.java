@@ -9,7 +9,7 @@ import java.util.List;
  * Provides a proxy for a WebDriver instance.
  * The proxy lets you delay opening the browser until you really know you are going to use it.
  */
-public final class WebdriverProxyFactory {
+public class WebdriverProxyFactory {
 
 
     private static ThreadLocal<WebdriverProxyFactory> factory = new ThreadLocal<WebdriverProxyFactory>();
