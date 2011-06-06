@@ -44,9 +44,9 @@ public class WebdriverManager {
     }
     
     public void closeDriver() {
-        if (webdriver != null) {
-            webdriver.close();
-            webdriver.quit();
+        if (getWebdriver() != null) {
+            getWebdriver().close();
+            getWebdriver().quit();
         }
     }
 

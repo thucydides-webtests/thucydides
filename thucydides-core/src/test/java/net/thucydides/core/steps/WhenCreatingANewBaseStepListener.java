@@ -13,6 +13,8 @@ import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.verify;
 
 public class WhenCreatingANewBaseStepListener {
@@ -38,7 +40,7 @@ public class WhenCreatingANewBaseStepListener {
 
         @Override
         protected WebdriverProxyFactory getProxyFactory() {
-            return proxyFactory;    //To change body of overridden methods use File | Settings | File Templates.
+            return proxyFactory;
         }
     }
 
@@ -49,7 +51,7 @@ public class WhenCreatingANewBaseStepListener {
 
     @Test
     public void should_create_a_new_proxy_driver_using_the_specified_driver_class() {
-        BaseStepListener baseStepListener = new TestableBaseStepListener(FirefoxDriver.class, outputDirectory);
+        new TestableBaseStepListener(FirefoxDriver.class, outputDirectory);
 
         verify(proxyFactory).proxyFor(FirefoxDriver.class);
     }
@@ -60,6 +62,22 @@ public class WhenCreatingANewBaseStepListener {
         BaseStepListener baseStepListener = new BaseStepListener(outputDirectory, pages);
 
         assertThat(baseStepListener.getDriver(), is(pages.getDriver()));
+    }
+
+    @Test
+    public void when_the_pages_object_has_no_driver_one_should_be_created() {
+        Pages pages = new Pages(null);
+        BaseStepListener baseStepListener = new BaseStepListener(outputDirectory, pages);
+
+        assertThat(pages.getDriver(), is(not(nullValue())));
+        assertThat(baseStepListener.getDriver(), is(pages.getDriver()));
+    }
+
+    @Test
+    public void when_the_pages_is_null_a_new_driver_should_be_created() {
+        BaseStepListener baseStepListener = new BaseStepListener(outputDirectory, null);
+
+        assertThat(baseStepListener.getDriver(), is(not(nullValue())));
     }
 
     @Test

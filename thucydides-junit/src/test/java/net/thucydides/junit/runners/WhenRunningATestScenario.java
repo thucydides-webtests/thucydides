@@ -7,6 +7,7 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.UserStory;
 import net.thucydides.core.steps.InvalidManagedPagesFieldException;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
@@ -33,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.File;
@@ -495,6 +497,29 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithoutPages.class);
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
+    }
+
+    class TestableWebdriverManager extends WebdriverManager {
+
+        TestableWebdriverManager(WebDriverFactory webDriverFactory) {
+            super(webDriverFactory);
+        }
+
+        @Override
+        public WebDriver getWebdriver() {
+            return mockWebDriver;
+        }
+    };
+
+    @Test
+    public void the_manager_should_close_the_webdriver_if_defined() {
+        WebdriverManager manager = new TestableWebdriverManager(webDriverFactory);
+
+        manager.closeDriver();
+
+        verify(mockWebDriver).close();
+        verify(mockWebDriver).quit();
+
     }
 
 }

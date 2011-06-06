@@ -7,6 +7,7 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.core.model.UserStory;
+import net.thucydides.core.pages.InternalClock;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.util.NameConverter;
@@ -49,12 +50,14 @@ public class BaseStepListener implements StepListener {
  
     private boolean aStepHasFailed;
     private Throwable stepError;
+    private InternalClock clock;
 
     private WebdriverProxyFactory proxyFactory;
 
     private BaseStepListener(final File outputDirectory) {
         this.proxyFactory = WebdriverProxyFactory.getFactory();
         this.acceptanceTestRuns = new ArrayList<AcceptanceTestRun>();
+        this.clock = new InternalClock();
         this.outputDirectory = outputDirectory;
         aStepHasFailed = false;
         stepError = null;
@@ -64,6 +67,10 @@ public class BaseStepListener implements StepListener {
         return proxyFactory;
     }
  
+    protected InternalClock getClock() {
+        return clock;
+    }
+
     public BaseStepListener(final Class<? extends WebDriver> driverClass, final File outputDirectory) {
         this(outputDirectory);
         this.driver = getProxyFactory().proxyFor(driverClass);
@@ -279,18 +286,9 @@ public class BaseStepListener implements StepListener {
     private void pauseIfRequired() {
         int delay = Configuration.getStepDelay();
         if (delay > 0) {
-            pauseTestRun(delay);
+            getClock().pauseFor(delay);
         }
     }
- 
-    public void pauseTestRun(final long delay) {
-        try {
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            LOGGER.error("Wait interrupted", e);
-        }
-    }
- 
  
     private void takeScreenshotFor(final ExecutedStepDescription description) {
         if (getCurrentStep() != null) {
