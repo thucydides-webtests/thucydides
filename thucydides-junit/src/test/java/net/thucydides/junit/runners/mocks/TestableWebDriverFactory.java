@@ -1,19 +1,18 @@
 package net.thucydides.junit.runners.mocks;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.io.IOException;
-
 import net.thucydides.core.webdriver.WebDriverFactory;
-
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * A mock web driver factory for tests.
@@ -74,25 +73,27 @@ public class TestableWebDriverFactory extends WebDriverFactory {
     }
     
     @Override
-    protected WebDriver newChromeDriver() {
-        chromeCount++;
-        return (WebDriver) getChromeDriver();
+    protected WebDriver newWebdriverInstance(Class<? extends WebDriver> webdriverClass) {
+        if (webdriverClass == FirefoxDriver.class) {
+            firefoxCount++;
+            return super.newWebdriverInstance(webdriverClass);
+        } else if (webdriverClass == ChromeDriver.class) {
+            chromeCount++;
+            return super.newWebdriverInstance(webdriverClass);
+        } else {
+            throw new AssertionError("Unsupported webdriver class " + webdriverClass);
+        }
     }
+
 
     public int fireFoxOpenedCount() {
         return firefoxCount;
     }
-    
-    @Override
-    protected WebDriver newFirefoxDriver() {
-        firefoxCount++;
-        return (WebDriver) getFirefoxDriver();
-    }
-        
+
     public int createdFirefoxDrivers() {
         return firefoxCount;
     }
-    
+
     public int createdChromeDrivers() {
         return chromeCount;
     }

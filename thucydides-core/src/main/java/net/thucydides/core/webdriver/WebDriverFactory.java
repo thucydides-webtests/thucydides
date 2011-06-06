@@ -1,8 +1,6 @@
 package net.thucydides.core.webdriver;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
@@ -26,36 +24,20 @@ public class WebDriverFactory {
         if (driverType == null) {
             throw new IllegalArgumentException("Driver type cannot be null");
         }
-        
-        switch (driverType) {
-            case FIREFOX:
-                return newFirefoxDriver();
-            case CHROME:
-                return newChromeDriver();
-            default:
-                throw new IllegalArgumentException(driverType 
-                          + " support hasn't been implemented yet - this is a bug.");
-        }
+
+        return newWebdriverInstance(driverType.getWebdriverClass());
     }
 
     public static Class<? extends WebDriver> getClassFor(final SupportedWebDriver driverType)  {
-        switch (driverType) {
-            case FIREFOX:
-                return FirefoxDriver.class;
-            case CHROME:
-                return ChromeDriver.class;
-            default:
-                throw new IllegalArgumentException(driverType
-                          + " support hasn't been implemented yet - this is a bug.");
+        return driverType.getWebdriverClass();
+    }
+
+    protected WebDriver newWebdriverInstance(Class<? extends WebDriver> webdriverClass) {
+        try {
+            return webdriverClass.newInstance();
+        } catch (Exception e) {
+            throw new UnsupportedDriverException("Could not instantiate " + webdriverClass);
         }
-    }
-
-    protected WebDriver newChromeDriver() {
-        return new ChromeDriver();
-    }
-
-    protected WebDriver newFirefoxDriver() {
-        return new FirefoxDriver();
     }
 
     /**

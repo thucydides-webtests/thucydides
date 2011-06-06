@@ -81,8 +81,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
         runner.run(new RunNotifier());
         verify(mockWebDriver).close();
     }
-    
-    @SuppressWarnings("unchecked")
+
     @Test
     public void when_an_unsupported_driver_is_used_an_error_is_raised() throws InitializationError {
 

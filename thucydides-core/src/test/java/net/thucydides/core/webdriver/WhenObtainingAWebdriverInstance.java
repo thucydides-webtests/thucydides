@@ -33,18 +33,46 @@ public class WhenObtainingAWebdriverInstance {
     }
     
     private class TestableWebDriverFactory extends WebDriverFactory {
-        @Override
-        protected WebDriver newChromeDriver() {
-            return chromeDriver;
-        }
 
         @Override
-        protected WebDriver newFirefoxDriver() {
-            return firefoxDriver;
+        protected WebDriver newWebdriverInstance(Class<? extends WebDriver> webdriverClass) {
+            if (webdriverClass == FirefoxDriver.class) {
+                return firefoxDriver;
+            } else if (webdriverClass == ChromeDriver.class) {
+                return chromeDriver;
+            } else {
+                throw new AssertionError("Unsupported webdriver class " + webdriverClass);
+            }
         }
-
     }
-    
+
+    class InvalidWebDriverClass extends FirefoxDriver {
+        InvalidWebDriverClass() throws IllegalAccessException {
+            throw new IllegalAccessException();
+        }
+    }
+
+    @Test(expected = UnsupportedDriverException.class)
+    public void should_refuse_to_instanciate_an_illegal_driver_class() {
+        WebDriverFactory factory = new WebDriverFactory();
+
+        factory.newWebdriverInstance(InvalidWebDriverClass.class);
+    }
+
+    class InstantiationExceptionWebDriverClass extends FirefoxDriver {
+        InstantiationExceptionWebDriverClass() throws InstantiationException {
+            throw new InstantiationException();
+        }
+    }
+
+    @Test(expected = UnsupportedDriverException.class)
+    public void should_refuse_to_instanciate_an_invalid_driver_class() {
+        WebDriverFactory factory = new WebDriverFactory();
+
+        factory.newWebdriverInstance(InstantiationExceptionWebDriverClass.class);
+    }
+
+
     @Test
     public void the_factory_works_with_chrome() {
         WebDriver driver = webDriverFactory.newInstanceOf(SupportedWebDriver.CHROME);

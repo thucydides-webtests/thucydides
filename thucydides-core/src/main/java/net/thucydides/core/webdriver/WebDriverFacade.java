@@ -44,10 +44,8 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
         WebDriver newDriver = null;
         try {
             newDriver = driverClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (Exception e) {
+            throw new UnsupportedDriverException("Could not instantiate " + driverClass);
         }
         return newDriver;
     }

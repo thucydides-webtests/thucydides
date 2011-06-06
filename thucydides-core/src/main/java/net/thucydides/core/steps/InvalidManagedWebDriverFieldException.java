@@ -10,10 +10,6 @@ public class InvalidManagedWebDriverFieldException extends RuntimeException {
 
     private static final long serialVersionUID = -7552399074205295160L;
 
-    public InvalidManagedWebDriverFieldException(final String message) {
-        super(message);
-    }
-
     public InvalidManagedWebDriverFieldException(final String message, final Throwable e) {
         super(message, e);
     }

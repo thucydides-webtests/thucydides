@@ -1,6 +1,9 @@
 package net.thucydides.core.webdriver;
 
 import com.google.common.base.Joiner;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 /**
  * The list of supported web drivers.
@@ -12,13 +15,22 @@ public enum SupportedWebDriver {
     /**
      * Firefox WebDriver driver.
      */
-    FIREFOX, 
+    FIREFOX(FirefoxDriver.class),
     
     /**
      * Chrome  WebDriver driver.
      */
-    CHROME;
+    CHROME(ChromeDriver.class);
 
+    private final Class<? extends WebDriver> webdriverClass;
+
+    private SupportedWebDriver(Class<? extends WebDriver> webdriverClass) {
+        this.webdriverClass = webdriverClass;
+    }
+
+    public Class<? extends WebDriver> getWebdriverClass() {
+        return webdriverClass;
+    }
     /**
      * HTMLUnit - mainly for testing, as this driver does not support screenshots or much AJAX.
      */

@@ -511,15 +511,23 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         }
     };
 
+    class WebdriverManagerWithNoDriver extends WebdriverManager {
+
+        WebdriverManagerWithNoDriver(WebDriverFactory webDriverFactory) {
+            super(webDriverFactory);
+        }
+
+        @Override
+        public WebDriver getWebdriver() {
+            return null;
+        }
+    };
+
     @Test
-    public void the_manager_should_close_the_webdriver_if_defined() {
+    public void the_manager_should_ignore_close_if_the_webdriver_if_not_defined() {
         WebdriverManager manager = new TestableWebdriverManager(webDriverFactory);
 
         manager.closeDriver();
-
-        verify(mockWebDriver).close();
-        verify(mockWebDriver).quit();
-
     }
 
 }

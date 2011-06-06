@@ -2,6 +2,7 @@ package net.thucydides.core.pages;
 
 
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.net.URL;
 
@@ -197,6 +199,19 @@ public class WhenKeepingTrackOfVisitedPages {
         pages.notifyWhenDriverOpens();
 
         verify(proxyFactory).registerListener(any(PagesEventListener.class));
+    }
+
+
+    class InvalidWebDriverClass extends FirefoxDriver {
+        InvalidWebDriverClass() throws IllegalAccessException {
+            throw new IllegalAccessException();
+        }
+    }
+
+    @Test(expected = UnsupportedDriverException.class)
+    public void should_throw_exception_if_invalid_driver_used() {
+        WebDriverFacade facade = new WebDriverFacade(InvalidWebDriverClass.class);
+        facade.getProxiedDriver();
     }
 
 
