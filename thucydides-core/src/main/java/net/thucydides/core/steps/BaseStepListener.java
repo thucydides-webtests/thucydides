@@ -121,7 +121,7 @@ public class BaseStepListener implements StepListener {
         return stepError;
     }
  
-    public List<TestOutcome> getTestRunResults() {
+    public List<TestOutcome> getTestOutcomes() {
         return ImmutableList.copyOf(testOutcomes);
     }
  
@@ -168,6 +168,7 @@ public class BaseStepListener implements StepListener {
     }
  
     protected void startNewTestOutcomeFor(final String testName, final Story story) {
+        LOGGER.debug("startNewTestOutcomeFor {}", testName);
         this.testedStory = story;
         currentTestOutcome = TestOutcome.forTestInStory(testName, testedStory, testClass);
         testOutcomes.add(currentTestOutcome);
@@ -212,22 +213,11 @@ public class BaseStepListener implements StepListener {
         return (storyFrom(testClass) != null);
     }
 
-//    public void testStarted(final ExecutedTestDescription description) {
     public void testStarted(String testName) {
+        LOGGER.debug("Starting test: {}", testName);
         startNewTestOutcomeFor(testName, testedStory);
         getCurrentTestOutcome().setMethodName(testName);
     }
- 
-//        String annotatedTitle = AnnotatedStepDescription.from(description).getOptionalAnnotatedTitle();
-//
-//        if (annotatedTitle != null) {
-//            getCurrentTestOutcome().setTitle(annotatedTitle);
-//        } else {
-//            setTitleIfNotAlreadySet(description);
-//        }
- 
-//        addAnyTestedRequirementsIn(description);
-//    }
  
     private void addAnyTestedRequirementsIn(final ExecutedStepDescription description) {
         AnnotatedStepDescription testStepDescription = AnnotatedStepDescription.from(description);
@@ -236,32 +226,6 @@ public class BaseStepListener implements StepListener {
             currentTestStep.testsRequirement(requirement);
         }
     }
- 
-    private void updateTestRunRequirementsBasedOn(final ExecutedStepDescription description) {
-        AnnotatedStepDescription testStepDescription = AnnotatedStepDescription.from(description);
-        List<String> requirements = testStepDescription.getAnnotatedRequirements();
-        for (String requirement : requirements) {
-            getCurrentTestOutcome().testsRequirement(requirement);
-        }
-    }
- 
-//    private void setTitleIfNotAlreadySet(final ExecutedStepDescription description) {
-//        String testRunTitle = null;
-//        String methodName = getCurrentTestOutcome().getMethodName();
-//        Story userStory = getCurrentTestOutcome().getUserStory();
-//
-//        if (description.getName() != null) {
-//            testRunTitle = description.getName();
-//        } else if (methodName != null) {
-//            testRunTitle = NameConverter.humanize(methodName);
-//        } if (userStory != null) {
-//            testRunTitle = userStory.getName();
-//
-//        }
-//        if (testRunTitle != null) {
-//            getCurrentTestOutcome().setTitle(testRunTitle);
-//        }
-//    }
 
     public void testGroupStarted(final ExecutedStepDescription description) {
         getCurrentTestOutcome().startGroup(description.getName());
@@ -447,6 +411,7 @@ public class BaseStepListener implements StepListener {
 
  
     public void testFinished(final TestStepResult result) {
+        LOGGER.debug("testFinished: ", result);
         currentTestOutcome = null;
     }
  

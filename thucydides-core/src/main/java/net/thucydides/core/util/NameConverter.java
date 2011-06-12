@@ -66,7 +66,7 @@ public final class NameConverter {
         return stripArgumentsFrom(stripIndexesFrom(methodName));
     }
 
-    private static String stripArgumentsFrom(final String methodName)  {
+    public static String stripArgumentsFrom(final String methodName)  {
         int firstArgument = methodName.indexOf(':');
         if (firstArgument > 0) {
             return methodName.substring(0, firstArgument);
@@ -75,7 +75,7 @@ public final class NameConverter {
         }
     }
 
-    private static String stripIndexesFrom(final String methodName)  {
+    public static String stripIndexesFrom(final String methodName)  {
         int firstBracket = methodName.indexOf('[');
         if (firstBracket > 0) {
             return methodName.substring(0, firstBracket);

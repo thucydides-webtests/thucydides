@@ -62,6 +62,10 @@ public class TestOutcome {
         startTime = System.currentTimeMillis();
     }
 
+    public long getStartTime() {
+        return startTime;
+    }
+
     /**
      * The title is immutable once set. For convenience, you can create a test
      * run directly with a title using this constructor.
@@ -129,7 +133,7 @@ public class TestOutcome {
         if (annotatedTitle != null) {
             return annotatedTitle;
         }
-        return NameConverter.humanize(methodName);
+        return NameConverter.humanize(withNoArguments(methodName));
     }
 
     private String getAnnotatedTitleFor(final String methodName) {

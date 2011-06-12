@@ -3,6 +3,8 @@ package net.thucydides.core.model;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang.StringUtils;
 
+import static net.thucydides.core.util.NameConverter.withNoArguments;
+
 /**
  * Determies the correct default name for test reports.
  * @author johnsmart
@@ -51,7 +53,7 @@ public class ReportNamer {
             testName = NameConverter.underscore(testOutcome.getUserStory().getName());
         }
         String scenarioName = NameConverter.underscore(testOutcome.getMethodName());
-        testName = appendToIfNotNull(testName, scenarioName);
+        testName = withNoArguments(appendToIfNotNull(testName, scenarioName));
         return appendSuffixTo(testName);
     }
 
@@ -76,7 +78,7 @@ public class ReportNamer {
             userStory = NameConverter.underscore(testOutcome.getUserStory().getName()) + "_";
         }
         String normalizedQualifier = qualifier.replaceAll(" ", "_");
-        return appendSuffixTo(userStory + testOutcome.getMethodName() + "_" + normalizedQualifier);
+        return appendSuffixTo(userStory + withNoArguments(testOutcome.getMethodName()) + "_" + normalizedQualifier);
     }
 
     public String getNormalizedTestNameFor(final Story userStory) {

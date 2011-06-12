@@ -107,7 +107,7 @@ public class WhenGeneratingThucydidesEasybReports {
 
         run_story_with_one_scenario();
 
-        TestOutcome testOutcome = stepListener.getTestRunResults().get(0);
+        TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
         assertThat(testOutcome.getResult(), is(SUCCESS));
         assertThat(testOutcome.getTestSteps().size(), is(1));
@@ -131,7 +131,7 @@ public class WhenGeneratingThucydidesEasybReports {
 
         run_story_with_nested_steps();
 
-        TestOutcome testOutcome = stepListener.getTestRunResults().get(0);
+        TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
         assertThat(testOutcome.getResult(), is(SUCCESS));
         TestStepGroup scenario = (TestStepGroup) testOutcome.getTestSteps().get(0);
@@ -149,9 +149,9 @@ public class WhenGeneratingThucydidesEasybReports {
 
         run_story_with_nested_steps();
 
-        TestOutcome testOutcome = stepListener.getTestRunResults().get(0);
+        TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
-        reportService.generateReportsFor(stepListener.getTestRunResults());
+        reportService.generateReportsFor(stepListener.getTestOutcomes());
     }
 
     @Test
@@ -159,9 +159,9 @@ public class WhenGeneratingThucydidesEasybReports {
 
         run_story_with_one_scenario();
 
-        TestOutcome testOutcome = stepListener.getTestRunResults().get(0);
+        TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
-        reportService.generateReportsFor(stepListener.getTestRunResults());
+        reportService.generateReportsFor(stepListener.getTestOutcomes());
 
     }
 
@@ -175,7 +175,7 @@ public class WhenGeneratingThucydidesEasybReports {
 
         run_story_with_a_failing_scenario();
 
-        TestOutcome testOutcome = stepListener.getTestRunResults().get(0);
+        TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
         assertThat(testOutcome.getResult(), is(FAILURE));
     }
@@ -186,9 +186,9 @@ public class WhenGeneratingThucydidesEasybReports {
 
         run_story_with_a_failing_scenario();
 
-        TestOutcome testOutcome = stepListener.getTestRunResults().get(0);
+        TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
-        reportService.generateReportsFor(stepListener.getTestRunResults());
+        reportService.generateReportsFor(stepListener.getTestOutcomes());
 
     }
 
@@ -197,7 +197,7 @@ public class WhenGeneratingThucydidesEasybReports {
 
         run_story_with_a_failing_scenario();
 
-        TestOutcome testOutcome = stepListener.getTestRunResults().get(0);
+        TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
         TestStepGroup scenario = (TestStepGroup) testOutcome.getTestSteps().get(0);
         TestStepGroup given = (TestStepGroup) scenario.getSteps().get(0);
@@ -211,7 +211,7 @@ public class WhenGeneratingThucydidesEasybReports {
 
         run_story_with_a_failing_easyb_clause();
 
-        TestOutcome testOutcome = stepListener.getTestRunResults().get(0);
+        TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
         TestStepGroup scenario = (TestStepGroup) testOutcome.getTestSteps().get(0);
         TestStepGroup given = (TestStepGroup) scenario.getSteps().get(0);
@@ -229,7 +229,7 @@ public class WhenGeneratingThucydidesEasybReports {
 
         run_story_with_a_pending_scenario();
 
-        TestOutcome testOutcome = stepListener.getTestRunResults().get(0);
+        TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
         assertThat(testOutcome.getResult(), is(PENDING));
     }
@@ -239,7 +239,7 @@ public class WhenGeneratingThucydidesEasybReports {
 
         run_story_with_one_scenario();
 
-        TestOutcome testOutcome = stepListener.getTestRunResults().get(0);
+        TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
         verify(driver, times(3)).getScreenshotAs((OutputType<?>) anyObject());
     }

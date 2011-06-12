@@ -145,8 +145,15 @@ public class ThucydidesParameterizedRunner extends Suite {
 
     public List<TestOutcome> getTestOutcomes() {
         List<TestOutcome> testOutcomes = new ArrayList<TestOutcome>();
+
+        testOutcomes.addAll( ((ThucydidesRunner) runners.get(0)).getTestOutcomes());
         for (Runner runner : runners) {
-            testOutcomes.addAll(((ThucydidesRunner) runner).getTestOutcomes());
+            for(TestOutcome testOutcome : ((ThucydidesRunner) runner).getTestOutcomes()) {
+                if (!testOutcomes.contains(testOutcome)) {
+                    testOutcomes.add(testOutcome);
+                }
+            }
+            //testOutcomes.addAll(((ThucydidesRunner) runner).getTestOutcomes());
         }
         return testOutcomes;
     }

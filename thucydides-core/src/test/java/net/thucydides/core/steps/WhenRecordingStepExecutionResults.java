@@ -109,7 +109,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         Story story = results.get(0).getUserStory();
         assertThat(story.getUserStoryClass().getName(), is(MyStory.class.getName()));
     }
@@ -125,7 +125,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         Story story = results.get(0).getUserStory();
         assertThat(story.getUserStoryClass().getName(), is(MyTestCaseWithoutAStory.class.getName()));
     }
@@ -139,7 +139,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         Story story = results.get(0).getUserStory();
         assertThat(story.getUserStoryClass().getName(), is(MyStory.class.getName()));
     }
@@ -154,7 +154,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome outcome = results.get(0);
         assertThat(outcome.getTestSteps().size(), is(2));
     }
@@ -177,7 +177,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         ApplicationFeature feature = results.get(0).getFeature();
         assertThat(feature.getFeatureClass().getName(), is(MyFeature.class.getName()));
     }
@@ -192,7 +192,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         ApplicationFeature feature = results.get(0).getFeature();
         assertThat(feature.getName(), is("My feature"));
     }
@@ -206,7 +206,7 @@ public class WhenRecordingStepExecutionResults {
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
         steps.step_one();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
 
         assertThat(results.size(), is(1));
     }
@@ -278,7 +278,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
 
         TestOutcome testOutcome = results.get(0);
@@ -296,7 +296,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
         assertThat(testOutcome.getTitle(), is("App should work"));
     }
@@ -311,7 +311,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
         assertThat(testOutcome.getTitle(), is("App should work"));
     }
@@ -324,7 +324,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
         assertThat(testOutcome.getMethodName(), is("app_should_work"));
     }
@@ -339,7 +339,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
 
         TestOutcome testOutcome = results.get(0);
@@ -357,7 +357,7 @@ public class WhenRecordingStepExecutionResults {
         steps.failingStep();
 
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
         assertThat(testOutcome.getResult(), is(TestResult.FAILURE));
     }
@@ -372,7 +372,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.failingStep();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
         assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.FAILURE));
@@ -390,7 +390,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.ignoredStep();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
         assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.IGNORED));
@@ -406,7 +406,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.pendingStep();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
         assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.PENDING));
@@ -423,7 +423,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.stepGroupStarted("pending group");
         stepListener.updateCurrentStepStatus(TestResult.PENDING);
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
         assertThat(testOutcome.getTestSteps().get(0).getResult(), is(TestResult.PENDING));
@@ -440,7 +440,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.stepGroupStarted("ignored group");
         stepListener.stepIgnored(ExecutedStepDescription.withTitle("Ignore this step"));
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
         assertThat(testOutcome.getTestSteps().get(0).getResult(), is(TestResult.SKIPPED));
@@ -457,7 +457,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.stepGroupStarted("successful group");
         stepListener.stepSucceeded();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
         assertThat(testOutcome.getTestSteps().get(0).getResult(), is(TestResult.SUCCESS));
@@ -474,7 +474,7 @@ public class WhenRecordingStepExecutionResults {
         steps.failingStep();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
         assertThat(testOutcome.getTestSteps().get(2).getResult(), is(TestResult.SKIPPED));
@@ -491,7 +491,7 @@ public class WhenRecordingStepExecutionResults {
         steps.nestedFailingStep();
         steps.step2();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
         assertThat(testOutcome.getTestSteps().get(2).getResult(), is(TestResult.SKIPPED));
@@ -508,7 +508,7 @@ public class WhenRecordingStepExecutionResults {
         steps.ignoredStep();
         steps.step_two();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
         assertThat(testOutcome.getTestSteps().get(2).getResult(), is(TestResult.SUCCESS));
@@ -524,7 +524,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestOutcomes());
         List<TestStep> executedSteps = testOutcome.getTestSteps();
         List<String> executedStepNames = namesFrom(executedSteps);
 
@@ -541,7 +541,7 @@ public class WhenRecordingStepExecutionResults {
         NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
         steps.step1();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
 
         TestOutcome outcome = results.get(0);
@@ -559,10 +559,10 @@ public class WhenRecordingStepExecutionResults {
         steps.step1();
         steps.step2();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
 
-        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestOutcomes());
         List<TestStep> executedSteps = testOutcome.getTestSteps();
         assertThat(executedSteps.size(), is(2));
 
@@ -589,10 +589,10 @@ public class WhenRecordingStepExecutionResults {
         steps.step_with_nested_failure();
 
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
 
-        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestOutcomes());
         List<TestStep> executedSteps = testOutcome.getTestSteps();
         assertThat(executedSteps.size(), is(2));
 
@@ -621,7 +621,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_two();
         stepListener.stepGroupFinished();
 
-        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestOutcomes());
         List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
 
@@ -643,7 +643,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.updateCurrentStepStatus(TestResult.SUCCESS);
         stepListener.stepFinished(group);
 
-        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestOutcomes());
         List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
 
@@ -706,7 +706,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_two();
         stepListener.stepGroupFinished();
 
-        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestOutcomes());
         List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
 
@@ -726,7 +726,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.stepGroupStarted("Main group");
         stepListener.stepGroupFinished(TestResult.SUCCESS);
 
-        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestOutcomes());
         List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
 
@@ -743,7 +743,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_two();
 
         stepListener.updateCurrentStepStatus(TestResult.SKIPPED);
-        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestOutcomes());
         List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStep step2 = executedSteps.get(1);
 
@@ -760,7 +760,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.stepGroupStarted("New group");
         stepListener.updateCurrentStepStatus(TestResult.PENDING);
 
-        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestOutcomes());
         List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStep stepGroup = executedSteps.get(0);
 
@@ -777,10 +777,10 @@ public class WhenRecordingStepExecutionResults {
         steps.step1();
         steps.step2();
 
-        List<TestOutcome> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
 
-        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestOutcomes());
         List<TestStep> executedSteps = testOutcome.getTestSteps();
 
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
@@ -849,7 +849,7 @@ public class WhenRecordingStepExecutionResults {
     }
 
     private TestOutcome firstTestResultRecordedIn(List<TestOutcome> testOutcomeResults) {
-        return stepListener.getTestRunResults().get(0);
+        return stepListener.getTestOutcomes().get(0);
     }
 
     private List<String> namesFrom(List<TestStep> testSteps) {

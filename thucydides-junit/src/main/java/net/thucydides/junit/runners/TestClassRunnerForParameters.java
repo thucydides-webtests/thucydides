@@ -1,5 +1,8 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.pages.Pages;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.junit.listeners.JUnitStepListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -8,16 +11,25 @@ import org.junit.runners.model.Statement;
 import java.util.List;
 
    class TestClassRunnerForParameters extends ThucydidesRunner {
-        private final int fParameterSetNumber;
-        private final List<Object[]> fParameterList;
+        private final int parameterSetNumber;
+        private final List<Object[]> parameterList;
 
         TestClassRunnerForParameters(final Class<?> type,
                                      final List<Object[]> parameterList,
                                      final int i) throws InitializationError {
             super(type);
-            fParameterList = parameterList;
-            fParameterSetNumber = i;
+            this.parameterList = parameterList;
+            parameterSetNumber = i;
         }
+
+       @Override
+       protected JUnitStepListener initListenersUsing(final Pages pagesObject) {
+           System.out.println("TestClassRunnerForParameters initListeners for " + parameterSetNumber);
+           setStepListener(new ParameterizedJUnitStepListener(Configuration.loadOutputDirectoryFromSystemProperties(),
+                                                              pagesObject,
+                                                              parameterSetNumber));
+           return getStepListener();
+       }
 
         @Override
         public Object createTest() throws Exception {
@@ -26,7 +38,7 @@ import java.util.List;
 
         private Object[] computeParams() throws Exception {
             try {
-                return fParameterList.get(fParameterSetNumber);
+                return parameterList.get(parameterSetNumber);
             } catch (ClassCastException cause) {
                 throw new Exception(String.format(
                         "%s.%s() must return a Collection of arrays.",
@@ -38,13 +50,13 @@ import java.util.List;
 
         @Override
         protected String getName() {
-            String firstParameter = fParameterList.get(fParameterSetNumber)[0].toString();
+            String firstParameter = parameterList.get(parameterSetNumber)[0].toString();
             return String.format("[%s]", firstParameter);
         }
 
         @Override
         protected String testName(final FrameworkMethod method) {
-            return String.format("%s[%s]", method.getName(), fParameterSetNumber);
+            return String.format("%s[%s]", method.getName(), parameterSetNumber);
         }
 
         @Override

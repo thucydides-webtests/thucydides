@@ -106,7 +106,7 @@ public interface StepListener {
     /**
      * A step listener should be able to return a set of test results at the end of the test run.
      */
-    List<TestOutcome> getTestRunResults();
+    List<TestOutcome> getTestOutcomes();
 
     /**
      * Update the status of the current step (e.g to IGNORED or SKIPPED) without changing anything else.

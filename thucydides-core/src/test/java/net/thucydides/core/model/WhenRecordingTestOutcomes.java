@@ -559,5 +559,18 @@ public class WhenRecordingTestOutcomes {
 
     }
 
+    @Test
+    public void should_get_report_filename_from_the_story_name_and_method_name() {
+        testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
+
+        assertThat(testOutcome.getReportName(), is("a_user_story_should_do_that"));
+    }
+
+    @Test
+    public void parametrized_test_report_names_should_strip_any_indexes() {
+        testOutcome = TestOutcome.forTest("should_do_that[0]", TestScenarioWithRequirements.class);
+
+        assertThat(testOutcome.getReportName(), is("a_user_story_should_do_that"));
+    }
 
 }

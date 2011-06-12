@@ -76,6 +76,9 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return stepListener;
     }
 
+    protected void setStepListener(final JUnitStepListener stepListener) {
+        this.stepListener = stepListener;
+    }
 
     public Pages getPages() {
         return pages;
@@ -154,7 +157,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         super.run(notifier);
 
         closeDriver();
-        generateReportsFor(getStepListener().getTestRunResults());
+        generateReportsFor(getStepListener().getTestOutcomes());
         notifyFailures();
     }
 
@@ -163,8 +166,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return pages;
     }
 
-    private JUnitStepListener initListenersUsing(final Pages pagesObject) {
-        stepListener = new JUnitStepListener(Configuration.loadOutputDirectoryFromSystemProperties(), pagesObject);
+    protected JUnitStepListener initListenersUsing(final Pages pagesObject) {
+        setStepListener(new JUnitStepListener(Configuration.loadOutputDirectoryFromSystemProperties(), pagesObject));
         return stepListener;
     }
 
@@ -261,7 +264,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     public List<TestOutcome> getTestOutcomes() {
-        return getStepListener().getTestRunResults();
+        return getStepListener().getTestOutcomes();
     }
 
     /**

@@ -180,7 +180,7 @@ public class ThucydidesPlugin extends BasePlugin {
     public Object afterStory(final Binding binding) {
         stepFactory.notifyStepFinished()
 
-        generateReportsFor(stepListener.testRunResults);
+        generateReportsFor(stepListener.getTestOutcomes);
 
         closeDriver(binding);
 

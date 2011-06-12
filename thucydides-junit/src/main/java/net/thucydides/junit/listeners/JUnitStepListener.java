@@ -10,6 +10,8 @@ import net.thucydides.core.steps.TestStepResult;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
@@ -21,11 +23,14 @@ import static net.thucydides.core.steps.ExecutedStepDescription.withTitle;
  */
 public class JUnitStepListener extends RunListener {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JUnitStepListener.class);
+
     private BaseStepListener baseStepListener;
 
     private boolean initialTest = true;
 
     public JUnitStepListener(final File outputDirectory, final Pages pages) {
+        System.out.println("New JUnitStepListener created: " + this);
         baseStepListener = new BaseStepListener(outputDirectory, pages);
     }
 
@@ -35,11 +40,15 @@ public class JUnitStepListener extends RunListener {
 
     @Override
     public void testStarted(final Description description) throws Exception {
+
+        LOGGER.debug("Junit notification: test started for {}", description.getMethodName());
+        System.out.println("Junit notification: test started for " + description.getMethodName() + "(" + this + ")");
         if (initialTest) {
             baseStepListener.testRunStartedFor(description.getTestClass());
             initialTest = false;
         }
-        baseStepListener.testStarted(description.getMethodName());
+        String methodName = description.getMethodName(); // NameConverter.withNoArguments(description.getMethodName());
+        baseStepListener.testStarted(methodName);
     }
 
     private ExecutedStepDescription withDescriptionFrom(final Description description) {
@@ -50,6 +59,7 @@ public class JUnitStepListener extends RunListener {
 
     @Override
     public void testFinished(final Description description) throws Exception {
+        LOGGER.debug("Junit notification: test finished for {}", description.getMethodName());
         baseStepListener.testFinished(new TestStepResult());
     }
 
@@ -63,8 +73,8 @@ public class JUnitStepListener extends RunListener {
         baseStepListener.stepIgnored(withDescriptionFrom(description));
     }
 
-    public List<TestOutcome> getTestRunResults() {
-        return baseStepListener.getTestRunResults();
+    public List<TestOutcome> getTestOutcomes() {
+        return baseStepListener.getTestOutcomes();
     }
 
     public Throwable getError() {
