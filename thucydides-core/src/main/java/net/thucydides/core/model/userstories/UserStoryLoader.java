@@ -1,4 +1,12 @@
-package net.thucydides.core.model.loaders;
+package net.thucydides.core.model.userstories;
+
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.UserStoryTestResults;
+import net.thucydides.core.reports.xml.NotAThucydidesReportException;
+import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -6,15 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.model.UserStory;
-import net.thucydides.core.model.UserStoryTestResults;
-import net.thucydides.core.reports.xml.NotAThucydidesReportException;
-import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Loads a list of user stories from a given directory.
@@ -39,15 +38,15 @@ public class UserStoryLoader {
 
         List<UserStoryTestResults> userStories = new ArrayList<UserStoryTestResults>();
         
-        XMLAcceptanceTestReporter acceptanceTestReporter = new XMLAcceptanceTestReporter();
+        XMLTestOutcomeReporter testOutcomeReporter = new XMLTestOutcomeReporter();
 
         File[] reportFiles = getAllXMLFilesFrom(reportDirectory);
 
         for (File reportFile : reportFiles) {
             try {
-                AcceptanceTestRun testRun = acceptanceTestReporter.loadReportFrom(reportFile);
-                UserStoryTestResults userStoryResults = userStoryResultsFor(testRun, userStories);
-                userStoryResults.recordTestRun(testRun);
+                TestOutcome testOutcome = testOutcomeReporter.loadReportFrom(reportFile);
+                UserStoryTestResults userStoryResults = userStoryResultsFor(testOutcome, userStories);
+                userStoryResults.recordTestRun(testOutcome);
             } catch (NotAThucydidesReportException e) {
                 LOGGER.info("Skipping XML file - not a Thucydides report: " + reportFile);
             }
@@ -57,9 +56,9 @@ public class UserStoryLoader {
     }
 
     
-    private UserStoryTestResults userStoryResultsFor(final AcceptanceTestRun testRun, 
+    private UserStoryTestResults userStoryResultsFor(final TestOutcome testOutcome,
                                                      final List<UserStoryTestResults> userStoryResults) {
-        UserStory userStory = testRun.getUserStory();
+        Story userStory = testOutcome.getUserStory();
         for (UserStoryTestResults userStoryResult : userStoryResults) {
             if (userStoryResult.containsResultsFor(userStory)) {
                 return userStoryResult;

@@ -3,9 +3,11 @@ package net.thucydides.core.steps.samples;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.pages.WrongPageError;
 import net.thucydides.core.steps.ScenarioSteps;
 
+/**
+ * Some sample test steps, used for demonstration and testing purposes.
+ */
 public class SimpleScenarioSteps extends ScenarioSteps {
     
     public SimpleScenarioSteps(Pages pages) {
@@ -13,21 +15,21 @@ public class SimpleScenarioSteps extends ScenarioSteps {
     }
 
     @Step
-    public void clickOnProjects() throws WrongPageError {
+    public void clickOnProjects() {
     }
     
     @Step
-    public void clickOnCategories() throws WrongPageError {
+    public void clickOnCategories() {
     }
 
     @Step
-    public void clickOnInexistantLink() throws WrongPageError {
+    public void clickOnInexistantLink() {
     }
 
     @Step
-    public void clickOnProjectAndCheckTitle() throws WrongPageError {
+    public void clickOnProjectAndCheckTitle() {
     }
 
     @Step @Pending
-    public void notImplementedYet() throws WrongPageError {}
+    public void notImplementedYet() {}
 }

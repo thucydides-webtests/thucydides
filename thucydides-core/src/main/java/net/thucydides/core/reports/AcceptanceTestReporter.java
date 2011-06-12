@@ -1,6 +1,6 @@
 package net.thucydides.core.reports;
 
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestOutcome;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ public interface AcceptanceTestReporter {
     /**
      * Generate reports for a given acceptance test run.
      */
-    File generateReportFor(final AcceptanceTestRun testRun) throws IOException;
+    File generateReportFor(final TestOutcome testOutcome) throws IOException;
     
     /**
      * Define the output directory in which the reports will be written.

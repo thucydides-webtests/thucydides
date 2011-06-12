@@ -1,6 +1,6 @@
 package net.thucydides.core.reports;
 
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestOutcome;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class WhenUsingAReportService {
     AcceptanceTestReporter reporter;
 
     @Mock
-    AcceptanceTestRun acceptanceTestRun;
+    TestOutcome testOutcome;
 
     @Before
     public void initMocks() {
@@ -39,44 +39,44 @@ public class WhenUsingAReportService {
 
     @Test
     public void a_report_service_should_generate_reports_for_each_subscribed_reporter() throws Exception {
-        List<AcceptanceTestRun> testRunResults = new ArrayList<AcceptanceTestRun>();
-        testRunResults.add(acceptanceTestRun);
+        List<TestOutcome> testOutcomeResults = new ArrayList<TestOutcome>();
+        testOutcomeResults.add(testOutcome);
 
         ReportService reportService = new ReportService(outputDirectory, new ArrayList<AcceptanceTestReporter>());
 
         reportService.subscribe(reporter);
 
-        reportService.generateReportsFor(testRunResults);
+        reportService.generateReportsFor(testOutcomeResults);
 
-        verify(reporter).generateReportFor(acceptanceTestRun);
+        verify(reporter).generateReportFor(testOutcome);
     }
 
 
     @Test
     public void a_report_service_uses_the_provided_output_directory_for_all_reports() throws Exception {
-        List<AcceptanceTestRun> testRunResults = new ArrayList<AcceptanceTestRun>();
-        testRunResults.add(acceptanceTestRun);
+        List<TestOutcome> testOutcomeResults = new ArrayList<TestOutcome>();
+        testOutcomeResults.add(testOutcome);
 
         ReportService reportService = new ReportService(outputDirectory, new ArrayList<AcceptanceTestReporter>());
 
         reportService.subscribe(reporter);
 
-        reportService.generateReportsFor(testRunResults);
+        reportService.generateReportsFor(testOutcomeResults);
 
         verify(reporter).setOutputDirectory(outputDirectory);
     }
 
     @Test(expected = ReportGenerationFailedError.class)
     public void a_report_service_should_raise_an_error_if_report_generation_fails() throws Exception {
-        List<AcceptanceTestRun> testRunResults = new ArrayList<AcceptanceTestRun>();
-        testRunResults.add(acceptanceTestRun);
+        List<TestOutcome> testOutcomeResults = new ArrayList<TestOutcome>();
+        testOutcomeResults.add(testOutcome);
 
         ReportService reportService = new ReportService(outputDirectory, new ArrayList<AcceptanceTestReporter>());
 
-        when(reporter.generateReportFor(acceptanceTestRun)).thenThrow(new IOException());
+        when(reporter.generateReportFor(testOutcome)).thenThrow(new IOException());
         reportService.subscribe(reporter);
 
-        reportService.generateReportsFor(testRunResults);
+        reportService.generateReportsFor(testOutcomeResults);
 
         verify(reporter).setOutputDirectory(outputDirectory);
     }

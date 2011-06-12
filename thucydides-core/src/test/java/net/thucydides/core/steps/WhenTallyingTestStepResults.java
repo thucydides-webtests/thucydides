@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.annotations.TestsStory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -95,23 +96,34 @@ public class WhenTallyingTestStepResults {
         assertThat(baseStepListener.aStepHasFailed(), is(false));
     }
 
+    class MyStory {}
+
+    @TestsStory(MyStory.class)
+    class MyTestCase {
+        public void app_should_work() {}
+    }
+
     @Test
     public void should_keep_track_of_when_a_test_has_failed() {
-        BaseStepListener baseStepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
-        baseStepListener.stepFailed(stepFailure1);
-        assertThat(baseStepListener.aStepHasFailed(), is(true));
+        stepListener.stepFailed(stepFailure1);
+        assertThat(stepListener.aStepHasFailed(), is(true));
     }
 
     @Test
     public void test_failures_should_be_reset_at_the_start_of_each_test_case() {
-        BaseStepListener baseStepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
-        baseStepListener.stepFailed(stepFailure1);
-        assertThat(baseStepListener.aStepHasFailed(), is(true));
+        stepListener.stepFailed(stepFailure1);
+        assertThat(stepListener.aStepHasFailed(), is(true));
 
-        baseStepListener.noStepsHaveFailed();
-        assertThat(baseStepListener.aStepHasFailed(), is(false));
+        stepListener.noStepsHaveFailed();
+        assertThat(stepListener.aStepHasFailed(), is(false));
     }
 
 }

@@ -13,15 +13,15 @@ public class FlatScenarioSteps extends ScenarioSteps {
     }
 
     @Step
-    public void step1(){
+    public void step_one(){
     }
     
     @Step
-    public void step2() {
+    public void step_two() {
     }
 
     @Step
-    public void step3() {
+    public void step_three() {
     }
 
     @Step

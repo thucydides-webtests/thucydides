@@ -1,28 +1,28 @@
 package net.thucydides.core.model;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
-
 import org.junit.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 
 public class WhenAssociatingTestedRequirementsWithTestRuns {
 
     @Test
     public void a_test_run_can_test_a_requirment() {
-        AcceptanceTestRun testRun = new AcceptanceTestRun("Sample");
-        testRun.testsRequirement("ABC");
+        TestOutcome testOutcome = new TestOutcome("Sample");
+        testOutcome.testsRequirement("ABC");
         
-        assertThat(testRun.getTestedRequirements(), hasItem("ABC"));
+        assertThat(testOutcome.getTestedRequirements(), hasItem("ABC"));
     }
     
     @Test
     public void a_test_run_can_test_several_requirments() {
-        AcceptanceTestRun testRun = new AcceptanceTestRun("Sample");
-        testRun.testsRequirement("ABC");
-        testRun.testsRequirement("DEF");
+        TestOutcome testOutcome = new TestOutcome("Sample");
+        testOutcome.testsRequirement("ABC");
+        testOutcome.testsRequirement("DEF");
         
-        assertThat(testRun.getTestedRequirements(), hasItems("ABC", "DEF"));
+        assertThat(testOutcome.getTestedRequirements(), hasItems("ABC", "DEF"));
     }
     
     @Test
@@ -35,9 +35,9 @@ public class WhenAssociatingTestedRequirementsWithTestRuns {
 
     @Test
     public void a_test_run_should_test_its_requirments_and_those_of_its_steps() {
-        AcceptanceTestRun testRun = new AcceptanceTestRun("Sample");
-        testRun.testsRequirement("A");
-        testRun.testsRequirement("B");
+        TestOutcome testOutcome = new TestOutcome("Sample");
+        testOutcome.testsRequirement("A");
+        testOutcome.testsRequirement("B");
         
         ConcreteTestStep step1 = new ConcreteTestStep("Step 1");
         step1.setResult(TestResult.SUCCESS);
@@ -47,9 +47,9 @@ public class WhenAssociatingTestedRequirementsWithTestRuns {
         step2.setResult(TestResult.SUCCESS);
         step2.testsRequirement("D");
 
-        testRun.recordStep(step1);
-        testRun.recordStep(step2);
-        assertThat(testRun.getAllTestedRequirements(), hasItems("A", "B", "C", "D"));
+        testOutcome.recordStep(step1);
+        testOutcome.recordStep(step2);
+        assertThat(testOutcome.getAllTestedRequirements(), hasItems("A", "B", "C", "D"));
     }
     
 

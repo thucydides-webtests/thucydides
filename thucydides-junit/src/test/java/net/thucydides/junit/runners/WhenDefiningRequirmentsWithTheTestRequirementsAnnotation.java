@@ -1,6 +1,6 @@
 package net.thucydides.junit.runners;
 
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
@@ -39,10 +39,10 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
-        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();        
-        AcceptanceTestRun testRun = executedScenarios.get(0);
+        List<TestOutcome> executedScenarios = runner.getTestOutcomes();
+        TestOutcome testOutcome = executedScenarios.get(0);
         
-        assertThat(testRun.getTestedRequirements(), hasItem("SOME_BUSINESS_RULE"));
+        assertThat(testOutcome.getTestedRequirements(), hasItem("SOME_BUSINESS_RULE"));
 
     }    
     
@@ -52,11 +52,11 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
-        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();        
-        AcceptanceTestRun testRun = executedScenarios.get(0);
+        List<TestOutcome> executedScenarios = runner.getTestOutcomes();
+        TestOutcome testOutcome = executedScenarios.get(0);
         
-        assertThat(testRun.getTestedRequirements(), hasItem("SOME_BUSINESS_RULE_1"));
-        assertThat(testRun.getTestedRequirements(), hasItem("SOME_BUSINESS_RULE_2"));
+        assertThat(testOutcome.getTestedRequirements(), hasItem("SOME_BUSINESS_RULE_1"));
+        assertThat(testOutcome.getTestedRequirements(), hasItem("SOME_BUSINESS_RULE_2"));
 
     }    
 
@@ -67,9 +67,9 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
-        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();        
-        AcceptanceTestRun testRun = executedScenarios.get(0);
-        List<TestStep> steps = testRun.getTestSteps();
+        List<TestOutcome> executedScenarios = runner.getTestOutcomes();
+        TestOutcome testOutcome = executedScenarios.get(0);
+        List<TestStep> steps = testOutcome.getTestSteps();
         ConcreteTestStep step1 = (ConcreteTestStep) steps.get(0);
         
         assertThat(step1.getTestedRequirements(), hasItem("LOW_LEVEL_BUSINESS_RULE"));
@@ -82,9 +82,9 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
-        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();        
-        AcceptanceTestRun testRun = executedScenarios.get(0);
-        List<TestStep> steps = testRun.getTestSteps();
+        List<TestOutcome> executedScenarios = runner.getTestOutcomes();
+        TestOutcome testOutcome = executedScenarios.get(0);
+        List<TestStep> steps = testOutcome.getTestSteps();
         ConcreteTestStep step2 = (ConcreteTestStep) steps.get(3);
         
         assertThat(step2.getTestedRequirements(), hasItem("LOW_LEVEL_BUSINESS_RULE_1"));
@@ -98,9 +98,9 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
         runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
-        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();        
-        AcceptanceTestRun testRun = executedScenarios.get(0);        
-        Set<String> allTestedRequirements = testRun.getAllTestedRequirements();
+        List<TestOutcome> executedScenarios = runner.getTestOutcomes();
+        TestOutcome testOutcome = executedScenarios.get(0);
+        Set<String> allTestedRequirements = testOutcome.getAllTestedRequirements();
         assertThat(allTestedRequirements, hasItem("SOME_BUSINESS_RULE"));
         assertThat(allTestedRequirements, hasItem("LOW_LEVEL_BUSINESS_RULE"));
         assertThat(allTestedRequirements, hasItem("LOW_LEVEL_BUSINESS_RULE_1"));

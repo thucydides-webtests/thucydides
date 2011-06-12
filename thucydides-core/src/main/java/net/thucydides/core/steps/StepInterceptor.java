@@ -29,6 +29,7 @@ public class StepInterceptor implements MethodInterceptor {
     private List<Throwable> stepExceptions;
     private Throwable error = null;
     private static final Logger LOGGER = LoggerFactory.getLogger(StepInterceptor.class);
+    private boolean isFirstTest = true;
 
     public StepInterceptor(final Class<? extends ScenarioSteps> testStepClass,
                            final List<StepListener> listeners) {
@@ -36,6 +37,7 @@ public class StepInterceptor implements MethodInterceptor {
         this.listeners = listeners;
         this.resultTally = new TestStepResult();
         this.stepExceptions = new ArrayList<Throwable>();
+        this.isFirstTest = true;
     }
 
     public Object intercept(final Object obj, final Method method,
@@ -65,7 +67,7 @@ public class StepInterceptor implements MethodInterceptor {
             return runNormalMethod(obj, method, args, proxy);
         }
 
-        notifyTestStarted(method, args);
+        notifyStepStarted(method, args);
 
         if (shouldSkip(method)) {
             notifyTestSkippedFor(method, args);
@@ -265,7 +267,16 @@ public class StepInterceptor implements MethodInterceptor {
         }
     }
 
+
     private void notifyTestStarted(final Method method, final Object[] args) {
+
+        ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
+        for (StepListener listener : listeners) {
+            listener.testStarted(method.getName());
+        }
+    }
+
+    private void notifyStepStarted(final Method method, final Object[] args) {
 
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
         for (StepListener listener : listeners) {

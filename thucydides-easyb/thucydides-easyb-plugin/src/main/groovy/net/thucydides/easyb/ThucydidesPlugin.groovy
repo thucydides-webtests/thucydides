@@ -2,12 +2,13 @@ package net.thucydides.easyb;
 
 
 import com.google.common.collect.ImmutableList
-import net.thucydides.core.model.AcceptanceTestRun
+import net.thucydides.core.model.Story
+import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.pages.Pages
 import net.thucydides.core.reports.AcceptanceTestReporter
 import net.thucydides.core.reports.ReportService
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter
-import net.thucydides.core.reports.xml.XMLAcceptanceTestReporter
+import net.thucydides.core.reports.xml.XMLTestOutcomeReporter
 import net.thucydides.core.steps.BaseStepListener
 import net.thucydides.core.steps.StepFactory
 import net.thucydides.core.steps.StepListener
@@ -106,8 +107,11 @@ public class ThucydidesPlugin extends BasePlugin {
 
     private def testRunStarted(def binding) {
         def storyName = lookupStoryNameFrom(binding)
-        stepListener.testRunStarted(storyName)
+        def storyFile = lookupStoryFileFrom(binding)
+        Story story = Story.withId(storyFile, storyName);
+        stepListener.testRunStartedFor(story);
     }
+
 
 
     def lookupStoryNameFrom(def binding) {
@@ -117,6 +121,14 @@ public class ThucydidesPlugin extends BasePlugin {
         }
         String sourceFilename = new File(sourceFile).name
         sourceFilename.substring(0, sourceFilename.lastIndexOf("."))
+    }
+
+    def lookupStoryFileFrom(def binding) {
+        String sourceFile = binding.variables['sourceFile']
+        if (sourceFile == null) {
+            throw new IllegalArgumentException("No easyb source file name found - are you using a recent version of easyb (1.1 or greater)?")
+        }
+        return sourceFile;
     }
 
     private def initializeStepFactoryAndListeners() {
@@ -223,7 +235,7 @@ public class ThucydidesPlugin extends BasePlugin {
         reportService = new ReportService(getSystemConfiguration().outputDirectory, getDefaultReporters());
     }
 
-    def generateReportsFor(final List<AcceptanceTestRun> testRunResults) {
+    def generateReportsFor(final List<TestOutcome> testRunResults) {
 
         reportService.generateReportsFor(testRunResults);
     }
@@ -286,7 +298,7 @@ public class ThucydidesPlugin extends BasePlugin {
      * The default reporters applicable for standard test runs.
      */
     public Collection<AcceptanceTestReporter> getDefaultReporters() {
-        return ImmutableList.of(new XMLAcceptanceTestReporter(),
+        return ImmutableList.of(new XMLTestOutcomeReporter(),
         new HtmlAcceptanceTestReporter());
     }
 }

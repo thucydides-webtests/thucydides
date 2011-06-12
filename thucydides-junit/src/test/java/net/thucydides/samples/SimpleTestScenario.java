@@ -12,7 +12,6 @@ import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
 @UserStoryCode("US01")
-@TestsFeature(GreenGizmos.class)
 public class SimpleTestScenario {
     
     @Managed

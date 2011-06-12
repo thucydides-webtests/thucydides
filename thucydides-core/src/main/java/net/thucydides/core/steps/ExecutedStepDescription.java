@@ -3,6 +3,7 @@ package net.thucydides.core.steps;
 import java.lang.reflect.Method;
 
 import static net.thucydides.core.util.NameConverter.humanize;
+import static net.thucydides.core.util.NameConverter.withNoArguments;
 
 /**
  * A description of a step executed during a Thucydides step run.
@@ -20,6 +21,7 @@ public class ExecutedStepDescription {
         this.name = name;
     }
 
+
     protected ExecutedStepDescription(final Class<? extends ScenarioSteps> stepsClass,
                                       final String name,
                                       final boolean isAGroup) {
@@ -28,14 +30,15 @@ public class ExecutedStepDescription {
         this.isAGroup = isAGroup;
     }
 
-    public ExecutedStepDescription clone() {
-        return new ExecutedStepDescription(stepsClass, name, isAGroup);
-    }
-
     protected ExecutedStepDescription(final String name) {
         this.stepsClass = null;
         this.name = name;
     }
+
+    public ExecutedStepDescription clone() {
+        return new ExecutedStepDescription(stepsClass, name, isAGroup);
+    }
+
     /**
      * The class of the step library being executed.
      */
@@ -43,10 +46,14 @@ public class ExecutedStepDescription {
         return stepsClass;
     }
 
+
     public String getName() {
         return name;
     }
 
+    /**
+     * We might not have the test class provided (e.g. at the end of a test).
+     */
     public static ExecutedStepDescription of(final Class<? extends ScenarioSteps> stepsClass,
                                              final String name) {
         return new ExecutedStepDescription(stepsClass, name);
@@ -72,14 +79,6 @@ public class ExecutedStepDescription {
         }
     }
 
-
-    private String withNoArguments(final String methodName) {
-        int firstSpace = methodName.indexOf(':');
-        if (firstSpace > 0) {
-            return methodName.substring(0, firstSpace);
-        }
-        return methodName;
-    }
 
     private Method methodCalled(final String methodName, final Class<?> testClass) {
         Method[] methods = testClass.getMethods();

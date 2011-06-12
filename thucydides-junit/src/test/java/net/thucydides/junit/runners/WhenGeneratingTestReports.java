@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportGenerationFailedError;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
@@ -51,7 +51,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
 
         runner.run(new RunNotifier());
 
-        verify(mockReporter).generateReportFor(any(AcceptanceTestRun.class));
+        verify(mockReporter).generateReportFor(any(TestOutcome.class));
     }
 
 
@@ -81,8 +81,8 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
 
         runner.run(new RunNotifier());
 
-        verify(reporter1).generateReportFor(any(AcceptanceTestRun.class));
-        verify(reporter2).generateReportFor(any(AcceptanceTestRun.class));
+        verify(reporter1).generateReportFor(any(TestOutcome.class));
+        verify(reporter2).generateReportFor(any(TestOutcome.class));
     } 
     
     @Test(expected=ReportGenerationFailedError.class)
@@ -91,7 +91,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
 
         ThucydidesRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
 
-        when(mockReporter.generateReportFor(any(AcceptanceTestRun.class))).thenThrow(new IOException());
+        when(mockReporter.generateReportFor(any(TestOutcome.class))).thenThrow(new IOException());
         
         runner.subscribeReporter(mockReporter);
         runner.run(new RunNotifier());

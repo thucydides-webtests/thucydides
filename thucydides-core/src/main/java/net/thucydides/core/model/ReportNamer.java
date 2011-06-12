@@ -45,12 +45,13 @@ public class ReportNamer {
      * Return a filesystem-friendly version of the test case name. The filesytem
      * version should have no spaces and have the XML file suffix.
      */
-    public String getNormalizedTestNameFor(final AcceptanceTestRun testRun) {
+    public String getNormalizedTestNameFor(final TestOutcome testOutcome) {
         String testName = "";
-        if (testRun.getUserStory() != null) {
-            testName = NameConverter.underscore(testRun.getUserStory().getName());
+        if (testOutcome.getUserStory() != null) {
+            testName = NameConverter.underscore(testOutcome.getUserStory().getName());
         }
-        testName = appendToIfNotNull(testName, testRun.getMethodName());
+        String scenarioName = NameConverter.underscore(testOutcome.getMethodName());
+        testName = appendToIfNotNull(testName, scenarioName);
         return appendSuffixTo(testName);
     }
 
@@ -69,16 +70,16 @@ public class ReportNamer {
         return appendedString;
     }
 
-    public String getNormalizedTestNameFor(final AcceptanceTestRun testRun, final String qualifier) {
+    public String getNormalizedTestNameFor(final TestOutcome testOutcome, final String qualifier) {
         String userStory = "";
-        if (testRun.getUserStory() != null) {
-            userStory = NameConverter.underscore(testRun.getUserStory().getName()) + "_";
+        if (testOutcome.getUserStory() != null) {
+            userStory = NameConverter.underscore(testOutcome.getUserStory().getName()) + "_";
         }
         String normalizedQualifier = qualifier.replaceAll(" ", "_");
-        return appendSuffixTo(userStory + testRun.getMethodName() + "_" + normalizedQualifier);
+        return appendSuffixTo(userStory + testOutcome.getMethodName() + "_" + normalizedQualifier);
     }
 
-    public String getNormalizedTestNameFor(final UserStory userStory) {
+    public String getNormalizedTestNameFor(final Story userStory) {
         String testNameWithUnderscores = NameConverter.underscore(userStory.getName());
         return appendSuffixTo(testNameWithUnderscores);
     }

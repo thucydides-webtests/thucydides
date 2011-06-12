@@ -1,20 +1,19 @@
 package net.thucydides.core.reports.html;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
+import net.thucydides.core.model.UserStoriesResultSet;
+import net.thucydides.core.model.UserStoryTestResults;
+import net.thucydides.core.model.userstories.UserStoryLoader;
+import net.thucydides.core.reports.UserStoryTestReporter;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import net.thucydides.core.model.UserStoryTestResults;
-import net.thucydides.core.model.UserStoriesResultSet;
-import net.thucydides.core.model.loaders.UserStoryLoader;
-import net.thucydides.core.reports.UserStoryTestReporter;
-
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 
 /**
  * Generates an aggregate acceptance test report in XML form. Reads all the
@@ -41,10 +40,12 @@ public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStory
         
         LOGGER.info("Generating report for user story "
                     + userStoryTestResults.getTitle() + " to " + getOutputDirectory());
-        
+
+        System.out.println("userStoryTestResults outcome count = " + userStoryTestResults.getTestOutcomes().size());
         VelocityContext context = new VelocityContext();
         context.put("story", userStoryTestResults);
         String htmlContents = mergeVelocityTemplate(context);
+        System.out.println("htmlContents = " + htmlContents);
 
         copyResourcesToOutputDirectory();
 

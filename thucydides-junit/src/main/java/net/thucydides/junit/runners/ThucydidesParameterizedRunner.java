@@ -1,6 +1,6 @@
 package net.thucydides.junit.runners;
 
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Concurrent;
 import org.apache.commons.lang.StringUtils;
@@ -143,12 +143,12 @@ public class ThucydidesParameterizedRunner extends Suite {
         return runners;
     }
 
-    public List<AcceptanceTestRun> getAcceptanceTestRuns() {
-        List<AcceptanceTestRun> testRuns = new ArrayList<AcceptanceTestRun>();
+    public List<TestOutcome> getTestOutcomes() {
+        List<TestOutcome> testOutcomes = new ArrayList<TestOutcome>();
         for (Runner runner : runners) {
-            testRuns.addAll(((ThucydidesRunner) runner).getAcceptanceTestRuns());
+            testOutcomes.addAll(((ThucydidesRunner) runner).getTestOutcomes());
         }
-        return testRuns;
+        return testOutcomes;
     }
 
 }

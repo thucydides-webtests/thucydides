@@ -1,6 +1,6 @@
 package net.thucydides.core.matchers;
 
-import net.thucydides.core.model.UserStory;
+import net.thucydides.core.model.Story;
 import net.thucydides.core.model.UserStoryTestResults;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
@@ -9,9 +9,9 @@ import java.util.List;
 
 public class ContainsUserStoryMatcher extends TypeSafeMatcher<List<UserStoryTestResults>> {
     
-    private UserStory userStory;
+    private Story userStory;
     
-    public ContainsUserStoryMatcher(UserStory userStory) {
+    public ContainsUserStoryMatcher(Story userStory) {
         this.userStory = userStory;
     }
 

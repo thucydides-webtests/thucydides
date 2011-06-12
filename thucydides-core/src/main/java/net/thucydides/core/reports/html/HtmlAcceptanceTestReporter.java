@@ -1,7 +1,7 @@
 package net.thucydides.core.reports.html;
 
 import com.google.common.base.Preconditions;
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import org.apache.velocity.VelocityContext;
 
@@ -36,25 +36,25 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     /**
      * Generate an XML report for a given test run.
      */
-    public File generateReportFor(final AcceptanceTestRun testRun) throws IOException {
+    public File generateReportFor(final TestOutcome testOutcome) throws IOException {
 
         Preconditions.checkNotNull(getOutputDirectory());
 
         VelocityContext context = new VelocityContext();
-        context.put("testrun", testRun);
+        context.put("testrun", testOutcome);
         String htmlContents = mergeVelocityTemplate(context);
 
         copyResourcesToOutputDirectory();
 
-        String reportFilename = reportFor(testRun);
+        String reportFilename = reportFor(testOutcome);
         return writeReportToOutputDirectory(reportFilename, htmlContents);
     }
 
-    private String reportFor(final AcceptanceTestRun testRun) {
+    private String reportFor(final TestOutcome testOutcome) {
         if (qualifier != null) {
-            return testRun.getReportName(HTML, qualifier);
+            return testOutcome.getReportName(HTML, qualifier);
         } else {
-            return testRun.getReportName(HTML);
+            return testOutcome.getReportName(HTML);
         }
     }
 }

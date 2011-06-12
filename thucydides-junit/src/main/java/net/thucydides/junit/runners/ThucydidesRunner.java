@@ -1,6 +1,6 @@
 package net.thucydides.junit.runners;
 
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
@@ -11,7 +11,6 @@ import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.junit.listeners.JUnitStepListener;
-import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -71,7 +70,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     /**
      * The Step Listener observes and records what happens during the execution of the test.
      * Once the test is over, the Step Listener can provide the acceptance test outcome in the
-     * form of an AcceptanceTestRun object.
+     * form of an TestOutcome object.
      */
     public JUnitStepListener getStepListener() {
         return stepListener;
@@ -204,8 +203,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * notifies these reporters of the test outcomes. The reporter's job is to
      * process each test run outcome and do whatever is appropriate.
      */
-    private void generateReportsFor(final List<AcceptanceTestRun> testRunResults) {
-        reportService.generateReportsFor(testRunResults);
+    private void generateReportsFor(final List<TestOutcome> testOutcomeResults) {
+        reportService.generateReportsFor(testOutcomeResults);
     }
 
     /**
@@ -221,8 +220,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         stepFactory.addListener(getStepListener().getBaseStepListener());
         useStepFactoryForDataDrivenSteps();
 
-        notifyTestStart(method);
-
         Statement baseStatement = super.methodInvoker(method, test);
         return new ThucydidesStatement(baseStatement, stepListener.getBaseStepListener());
     }
@@ -235,15 +232,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this.getStepListener().getBaseStepListener().noStepsHaveFailed();
     }
 
-
-    private void notifyTestStart(final FrameworkMethod method) {
-        try {
-            getStepListener().testRunStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(),
-                    method.getName()));
-        } catch (Exception e) {
-            LOGGER.error("Failed to start test run", e);
-        }
-    }
 
     /**
      * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.
@@ -272,7 +260,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return getWebdriverManager().getWebdriver();
     }
 
-    public List<AcceptanceTestRun> getAcceptanceTestRuns() {
+    public List<TestOutcome> getTestOutcomes() {
         return getStepListener().getTestRunResults();
     }
 

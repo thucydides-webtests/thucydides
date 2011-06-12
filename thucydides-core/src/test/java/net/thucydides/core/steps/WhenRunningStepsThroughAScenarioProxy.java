@@ -4,6 +4,7 @@ import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Steps;
+import net.thucydides.core.annotations.TestsStory;
 import net.thucydides.core.pages.Pages;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -41,17 +42,17 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         @Step
         public void step1(){
-            getDriver().get("nested.step1");
+            getDriver().get("nested.step_one");
         }
 
         @Step
         public void step2(){
-            getDriver().get("nested.step2");
+            getDriver().get("nested.step_two");
         }
 
         @Step
         public void step3(){
-            getDriver().get("nested.step3");
+            getDriver().get("nested.step_three");
         }
 
         @Ignore
@@ -73,7 +74,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
          @Step
          public void step1(){
-             getDriver().get("nested.nested.step1");
+             getDriver().get("nested.nested.step_one");
          }
     }
 
@@ -88,7 +89,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         @StepGroup("Step group 1")
         public void step_group1(){
-            step1();
+            step_one();
             step2();
             step3();
         }
@@ -99,18 +100,18 @@ public class WhenRunningStepsThroughAScenarioProxy {
         }
 
         @Step
-        public void step1(){
-            getDriver().get("step1");
+        public void step_one(){
+            getDriver().get("step_one");
         }
 
         @Step
         public void step2(){
-            getDriver().get("step2");
+            getDriver().get("step_two");
         }
 
         @Step
         public void step3(){
-            getDriver().get("step3");
+            getDriver().get("step_three");
         }
 
         @Step
@@ -206,13 +207,13 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_should_execute_steps_transparently() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        steps.step_one();
         steps.step2();
         steps.step3();
 
-        verify(driver).get("step1");
-        verify(driver).get("step2");
-        verify(driver).get("step3");
+        verify(driver).get("step_one");
+        verify(driver).get("step_two");
+        verify(driver).get("step_three");
     }
 
     @Test
@@ -245,11 +246,18 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_should_notify_listeners_when_tests_are_starting() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        steps.step_one();
         steps.step2();
         steps.step3();
 
         verify(listener, times(3)).stepStarted(any(ExecutedStepDescription.class));
+    }
+
+    class AStory {}
+
+    @TestsStory(AStory.class)
+    class ATestCase {
+        public void app_should_work() {}
     }
 
     @Test
@@ -258,11 +266,14 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        listener.testRunStartedFor(ATestCase.class);
+        listener.testStarted("app_should_work");
+
+        steps.step_one();
 
         verify(listener).stepStarted(argument.capture());
         assertThat(argument.getValue().getStepClass().getName(), is(SimpleTestScenarioSteps.class.getName()));
-        assertThat(argument.getValue().getName(), is("step1"));
+        assertThat(argument.getValue().getName(), is("step_one"));
     }
 
 
@@ -272,7 +283,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        steps.step_one();
         steps.step2();
         steps.step3();
 
@@ -285,11 +296,11 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        steps.step_one();
 
         verify(listener).stepFinished(argument.capture());
         assertThat(argument.getValue().getStepClass().getName(), is(SimpleTestScenarioSteps.class.getName()));
-        assertThat(argument.getValue().getName(), is("step1"));
+        assertThat(argument.getValue().getName(), is("step_one"));
     }
 
 
@@ -311,13 +322,13 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_should_skip_ignored_tests() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        steps.step_one();
         steps.ignored_step();
         steps.step3();
 
-        verify(driver).get("step1");
+        verify(driver).get("step_one");
         verify(driver, never()).get("ignored_step");
-        verify(driver).get("step3");
+        verify(driver).get("step_three");
 
     }
 
@@ -325,11 +336,11 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_should_skip_tests_after_a_failure() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        steps.step_one();
         steps.failing_step();
         steps.step3();
 
-        verify(driver).get("step1");
+        verify(driver).get("step_one");
         verify(driver, never()).get("step4");
 
     }
@@ -339,13 +350,13 @@ public class WhenRunningStepsThroughAScenarioProxy {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
         when(listener.aStepHasFailed()).thenReturn(true);
-        steps.step1();
+        steps.step_one();
         steps.step2();
         steps.step3();
 
-        verify(driver, never()).get("step1");
-        verify(driver, never()).get("step2");
-        verify(driver, never()).get("step3");
+        verify(driver, never()).get("step_one");
+        verify(driver, never()).get("step_two");
+        verify(driver, never()).get("step_three");
 
     }
 
@@ -353,13 +364,13 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_should_skip_pending_tests() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        steps.step_one();
         steps.ignored_step();
         steps.step3();
 
-        verify(driver).get("step1");
+        verify(driver).get("step_one");
         verify(driver, never()).get("pending_step");
-        verify(driver).get("step3");
+        verify(driver).get("step_three");
 
     }
 
@@ -513,7 +524,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_records_the_total_number_of_test_steps_executed() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        steps.step_one();
         steps.step2();
         steps.step3();
         steps.done();
@@ -528,7 +539,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_records_the_number_of_ignored_test_steps() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        steps.step_one();
         steps.step2();
         steps.step3();
         steps.ignored_step();
@@ -544,7 +555,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_records_the_number_of_pending_test_steps() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        steps.step_one();
         steps.step2();
         steps.step3();
         steps.pending_step();
@@ -560,7 +571,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_records_the_number_of_failing_test_steps() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.newSteps(SimpleTestScenarioSteps.class);
 
-        steps.step1();
+        steps.step_one();
         steps.step2();
         steps.step3();
         steps.failing_step();
@@ -579,10 +590,10 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.nested_steps();
 
         verify(driver).get("nested_steps");
-        verify(driver).get("nested.step1");
-        verify(driver).get("nested.step2");
-        verify(driver).get("nested.step3");
-        verify(driver).get("nested.nested.step1");
+        verify(driver).get("nested.step_one");
+        verify(driver).get("nested.step_two");
+        verify(driver).get("nested.step_three");
+        verify(driver).get("nested.nested.step_one");
     }
 
     @Test
@@ -593,9 +604,9 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.done();
 
         verify(driver).get("nested_steps_with_ignored_steps");
-        verify(driver).get("nested.step1");
-        verify(driver).get("nested.step2");
-        verify(driver).get("nested.step3");
+        verify(driver).get("nested.step_one");
+        verify(driver).get("nested.step_two");
+        verify(driver).get("nested.step_three");
         verify(driver,never()).get("nested.ignored_step");
     }
 

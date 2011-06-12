@@ -18,15 +18,15 @@ public class NestedScenarioSteps extends ScenarioSteps {
 
     @StepGroup("Step group 1")
     public void step1() throws WrongPageError {
-        innerSteps.step1();
-        innerSteps.step2();
-        innerSteps.step3();
+        innerSteps.step_one();
+        innerSteps.step_two();
+        innerSteps.step_three();
     }
     
     @StepGroup("Step group 2")
     public void step2() throws WrongPageError {
-        innerSteps.step1();
-        innerSteps.step3();
+        innerSteps.step_one();
+        innerSteps.step_three();
     }
 
     @Step
@@ -40,7 +40,7 @@ public class NestedScenarioSteps extends ScenarioSteps {
 
     @StepGroup("Step with nested failure")
     public void step_with_nested_failure() throws WrongPageError {
-        innerSteps.step1();
+        innerSteps.step_one();
         innerSteps.failingStep();
     }
 

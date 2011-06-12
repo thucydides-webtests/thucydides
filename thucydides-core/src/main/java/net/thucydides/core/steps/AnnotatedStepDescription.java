@@ -20,18 +20,18 @@ import static net.thucydides.core.util.NameConverter.humanize;
 /**
  *  Test steps and step groups can be described by various annotations.
  */
-public final class AnnotatedDescription {
+public final class AnnotatedStepDescription {
 
     private final ExecutedStepDescription description;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatedDescription.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatedStepDescription.class);
 
-    public static AnnotatedDescription from(final ExecutedStepDescription description) {
-        return new AnnotatedDescription(description);
+    public static AnnotatedStepDescription from(final ExecutedStepDescription description) {
+        return new AnnotatedStepDescription(description);
 
     }
 
-    private AnnotatedDescription(final ExecutedStepDescription description) {
+    private AnnotatedStepDescription(final ExecutedStepDescription description) {
         this.description = description;
     }
 

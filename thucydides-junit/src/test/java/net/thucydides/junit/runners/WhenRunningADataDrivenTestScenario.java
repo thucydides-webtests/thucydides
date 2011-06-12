@@ -4,7 +4,7 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -67,7 +67,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
                                                                                  webDriverFactory);
         runner.run(new RunNotifier());
 
-        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        List<TestOutcome> executedScenarios = runner.getTestOutcomes();
 
         assertThat(executedScenarios.size(), is(3));
     }
@@ -79,7 +79,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
                                                                                  webDriverFactory);
         runner.run(new RunNotifier());
 
-        List<AcceptanceTestRun> executedScenarios = runner.getAcceptanceTestRuns();
+        List<TestOutcome> executedScenarios = runner.getTestOutcomes();
 
         assertThat(executedScenarios.size(), is(2));
     }
@@ -241,11 +241,11 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
         runner.run(new RunNotifier());
 
-        List<AcceptanceTestRun> executedSteps = runner.getAcceptanceTestRuns();
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(1));
-        AcceptanceTestRun testRun1 = executedSteps.get(0);
+        TestOutcome testOutcome1 = executedSteps.get(0);
 
-        List<TestStep> dataDrivenSteps = testRun1.getTestSteps();
+        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
         assertThat(dataDrivenSteps.size(), is(2));
 
     }
@@ -262,9 +262,9 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
         runner.run(new RunNotifier());
 
-        List<AcceptanceTestRun> executedSteps = runner.getAcceptanceTestRuns();
-        AcceptanceTestRun testRun1 = executedSteps.get(0);
-        List<TestStep> dataDrivenSteps = testRun1.getTestSteps();
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        TestOutcome testOutcome1 = executedSteps.get(0);
+        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
 
         TestStep step1 = dataDrivenSteps.get(0);
         TestStep setNameStep1 = step1.getFlattenedSteps().get(0);

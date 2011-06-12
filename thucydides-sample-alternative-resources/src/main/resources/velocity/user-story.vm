@@ -99,27 +99,27 @@ a:active {
 </table>
 </div>
 
-#foreach($testRun in $story.testRuns)
-    #if ($testRun.result == "FAILURE")
+#foreach($testOutcome in $story.testOutcomes)
+    #if ($testOutcome.result == "FAILURE")
         #set( $testrun_outcome_icon = "fail.png" )
-    #elseif ($testRun.result == "SUCCESS")
+    #elseif ($testOutcome.result == "SUCCESS")
         #set( $testrun_outcome_icon = "success.png" )
-    #elseif ($testRun.result == "PENDING")
+    #elseif ($testOutcome.result == "PENDING")
         #set( $testrun_outcome_icon = "pending.png" )
     #else
         #set( $testrun_outcome_icon = "ignor.png" )
     #end
     <div class="tableraw">
       <table border="0" height="40" width="980" >
-      <tr class="test-$testRun.result">
+      <tr class="test-$testOutcome.result">
         <td width="35"><img src="images/$testrun_outcome_icon" class="outcome-icon"/></td>
-        <td width="%" class="bluetext"><a href="${testRun.reportName}.html">$testRun.title</a></td>
-        <td width="80" class="lightgreentext">$testRun.stepCount</td>
-        <td width="80" class="redtext">$testRun.failureCount</td>
-        <td width="80" class="bluetext">$testRun.pendingCount</td>
-        <td width="80" class="bluetext">$testRun.skippedCount</td>
-        <td width="80" class="bluetext">$testRun.ignoredCount</td>
-        <td width="95" class="lightgreentext">$testRun.duration ms</td>
+        <td width="%" class="bluetext"><a href="${testOutcome.reportName}.html">$testOutcome.title</a></td>
+        <td width="80" class="lightgreentext">$testOutcome.stepCount</td>
+        <td width="80" class="redtext">$testOutcome.failureCount</td>
+        <td width="80" class="bluetext">$testOutcome.pendingCount</td>
+        <td width="80" class="bluetext">$testOutcome.skippedCount</td>
+        <td width="80" class="bluetext">$testOutcome.ignoredCount</td>
+        <td width="95" class="lightgreentext">$testOutcome.duration ms</td>
       </tr>
       </table>
     </div>

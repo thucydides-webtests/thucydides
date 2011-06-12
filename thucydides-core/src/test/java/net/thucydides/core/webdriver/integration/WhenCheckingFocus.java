@@ -1,12 +1,10 @@
 package net.thucydides.core.webdriver.integration;
 
-import com.thoughtworks.selenium.Selenium;
 import net.thucydides.core.pages.PageObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 

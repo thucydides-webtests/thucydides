@@ -1,55 +1,58 @@
 package net.thucydides.core.reports;
 
+import net.thucydides.core.annotations.TestsStory;
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TestOutcome;
+import org.junit.Test;
+
 import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 import static net.thucydides.core.model.ReportNamer.ReportType.XML;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-
-import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.model.UserStory;
-
-import org.junit.Test;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.InitializationError;
-
-import java.io.IOException;
 
 public class WhenNamingTheReports {
 
+
+    class AUserStory {};
+
+    @TestsStory(AUserStory.class)
+    class SomeTestScenario {
+        public void a_simple_test_case() {};
+        public void should_do_this() {};
+        public void should_do_that() {};
+    }
+
+
     @Test
     public void the_report_filename_should_be_based_on_the_test_case_name() {
-        AcceptanceTestRun testRun = new AcceptanceTestRun("ASimpleTestCase");
-        testRun.setMethodName("a_simple_test_case");
-        assertThat(testRun.getReportName(), is("a_simple_test_case"));
+        TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+        assertThat(testOutcome.getReportName(), is("a_user_story_a_simple_test_case"));
     }
     
     @Test
     public void the_report_filename_should_replace_spaces_with_underscores() {
 
-        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
-        testRun.setMethodName("a_simple_test_case");
-        String reportName = testRun.getReportName(XML);
+        TestOutcome testOutcome = TestOutcome.forTestInStory("A simple test case", Story.from(AUserStory.class));
+        String reportName = testOutcome.getReportName(XML);
         
-        assertThat(reportName, is("a_simple_test_case.xml"));
+        assertThat(reportName, is("a_user_story_a_simple_test_case.xml"));
     }
 
     @Test
     public void the_report_filename_should_be_determined_even_if_no_method_is_named() {
 
-        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case");
-        String reportName = testRun.getReportName(XML);
+        TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+        String reportName = testOutcome.getReportName(XML);
 
-        assertThat(reportName, is("a_simple_test_case.xml"));
+        assertThat(reportName, is("a_user_story_a_simple_test_case.xml"));
     }
 
     @Test
     public void the_html_report_filename_should_have_the_html_suffix() {
 
-        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case: exception case");
-        testRun.setMethodName("a_simple_test_case");
-        String reportName = testRun.getReportName(HTML);
+        TestOutcome testOutcome = new TestOutcome("A simple test case: exception case");
+        testOutcome.setMethodName("a_simple_test_case");
+        String reportName = testOutcome.getReportName(HTML);
         
         assertThat(reportName, is("a_simple_test_case.html"));
     }
@@ -57,41 +60,36 @@ public class WhenNamingTheReports {
     @Test
     public void the_html_report_filename_should_refer_to_the_user_story_name_if_present() {
 
-        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case: exception case");
-        testRun.setMethodName("a_simple_test_case");
-        testRun.setUserStory(new UserStory("A user story","US1","some.UserStory"));
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
-        String reportName = testRun.getReportName(HTML);
+        String reportName = testOutcome.getReportName(HTML);
         
-        assertThat(reportName, is("a_user_story_a_simple_test_case.html"));
+        assertThat(reportName, is("a_user_story_should_do_this.html"));
     }
 
     @Test
     public void a_qualifier_can_be_provided_to_distinguish_html_reports_from_other_similar_reports() {
-        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case: exception case");
-        testRun.setMethodName("a_simple_test_case");
-        testRun.setUserStory(new UserStory("A user story","US1","some.UserStory"));
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
-        String reportName = testRun.getReportName(HTML,"qualifier");
+        String reportName = testOutcome.getReportName(HTML,"qualifier");
 
-        assertThat(reportName, is("a_user_story_a_simple_test_case_qualifier.html"));
+        assertThat(reportName, is("a_user_story_should_do_this_qualifier.html"));
     }
 
 
     @Test
     public void a_qualifier_can_be_provided_to_distinguish_xml_reports_from_other_similar_reports() {
-        AcceptanceTestRun testRun = new AcceptanceTestRun("A simple test case: exception case");
-        testRun.setMethodName("a_simple_test_case");
-        testRun.setUserStory(new UserStory("A user story","US1","some.UserStory"));
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
-        String reportName = testRun.getReportName(XML,"qualifier");
+        String reportName = testOutcome.getReportName(XML,"qualifier");
 
-        assertThat(reportName, is("a_user_story_a_simple_test_case_qualifier.xml"));
+        assertThat(reportName, is("a_user_story_should_do_this_qualifier.xml"));
     }
+
 
     @Test
     public void a_user_story_can_provide_its_own_html_report_name() {
-        UserStory story = new UserStory("A user story", "US1", "UserStory1");
+        Story story = Story.from(AUserStory.class);
         
         String reportName = story.getReportName(HTML);
         
@@ -100,7 +98,7 @@ public class WhenNamingTheReports {
 
     @Test
     public void a_user_story_can_provide_its_own_xml_report_name() {
-        UserStory story = new UserStory("A user story", "US1", "UserStory1");
+        Story story = Story.from(AUserStory.class);
         
         String reportName = story.getReportName(XML);
         
@@ -109,7 +107,7 @@ public class WhenNamingTheReports {
 
     @Test
     public void a_user_story_can_provide_its_own_base_report_name() {
-        UserStory story = new UserStory("A user story", "US1", "UserStory1");
+        Story story = Story.from(AUserStory.class);
         
         String reportName = story.getReportName();
         

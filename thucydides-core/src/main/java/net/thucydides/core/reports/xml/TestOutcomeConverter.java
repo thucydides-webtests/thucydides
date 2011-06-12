@@ -6,12 +6,13 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import net.thucydides.core.model.AcceptanceTestRun;
 import net.thucydides.core.model.ConcreteTestStep;
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestStepGroup;
-import net.thucydides.core.model.UserStory;
+import net.thucydides.core.model.features.ApplicationFeature;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -23,10 +24,11 @@ import java.util.Set;
  *
  * @author johnsmart
  */
-public class AcceptanceTestRunConverter implements Converter {
+public class TestOutcomeConverter implements Converter {
 
     private static final String TITLE_FIELD = "title";
     private static final String NAME_FIELD = "name";
+    private static final String ID_FIELD = "id";
     private static final String STEPS_FIELD = "steps";
     private static final String SUCCESSFUL_FIELD = "successful";
     private static final String FAILURES_FIELD = "failures";
@@ -37,8 +39,7 @@ public class AcceptanceTestRunConverter implements Converter {
     private static final String TEST_GROUP = "test-group";
     private static final String TEST_STEP = "test-step";
     private static final String USER_STORY = "user-story";
-    private static final String CODE_FIELD = "code";
-    private static final String SOURCE_FIELD = "source";
+    private static final String FEATURE = "feature";
     private static final String REQUIREMENTS = "requirements";
     private static final String REQUIREMENT = "requirement";
     private static final String EXCEPTION = "exception";
@@ -48,10 +49,10 @@ public class AcceptanceTestRunConverter implements Converter {
 
     private transient String qualifier;
 
-    public AcceptanceTestRunConverter() {
+    public TestOutcomeConverter() {
     }
 
-    public AcceptanceTestRunConverter(final String qualifier) {
+    public TestOutcomeConverter(final String qualifier) {
         this();
         this.qualifier = qualifier;
     }
@@ -61,41 +62,41 @@ public class AcceptanceTestRunConverter implements Converter {
      */
     @SuppressWarnings("rawtypes")
     public boolean canConvert(final Class clazz) {
-        return AcceptanceTestRun.class.isAssignableFrom(clazz);
+        return TestOutcome.class.isAssignableFrom(clazz);
     }
 
     /**
-     * Generate an XML report given an AcceptanceTestRun object.
+     * Generate an XML report given an TestOutcome object.
      */
     public void marshal(final Object value, final HierarchicalStreamWriter writer,
                         final MarshallingContext context) {
-        AcceptanceTestRun testRun = (AcceptanceTestRun) value;
-        Preconditions.checkNotNull(testRun, "The test run was null - WTF?");
+        TestOutcome testOutcome = (TestOutcome) value;
+        Preconditions.checkNotNull(testOutcome, "The test run was null - WTF?");
 
-        writer.addAttribute(TITLE_FIELD, titleFrom(testRun));
-        writer.addAttribute(NAME_FIELD, nameFrom(testRun));
-        writer.addAttribute(STEPS_FIELD, Integer.toString(testRun.countTestSteps()));
-        writer.addAttribute(SUCCESSFUL_FIELD, Integer.toString(testRun.getSuccessCount()));
-        writer.addAttribute(FAILURES_FIELD, Integer.toString(testRun.getFailureCount()));
-        writer.addAttribute(SKIPPED_FIELD, Integer.toString(testRun.getSkippedCount()));
-        writer.addAttribute(IGNORED_FIELD, Integer.toString(testRun.getIgnoredCount()));
-        writer.addAttribute(PENDING_FIELD, Integer.toString(testRun.getPendingCount()));
-        writer.addAttribute(RESULT_FIELD, testRun.getResult().toString());
-        addUserStoryTo(writer, testRun.getUserStory());
-        addRequirementsTo(writer, testRun.getTestedRequirements());
+        writer.addAttribute(TITLE_FIELD, titleFrom(testOutcome));
+        writer.addAttribute(NAME_FIELD, nameFrom(testOutcome));
+        writer.addAttribute(STEPS_FIELD, Integer.toString(testOutcome.countTestSteps()));
+        writer.addAttribute(SUCCESSFUL_FIELD, Integer.toString(testOutcome.getSuccessCount()));
+        writer.addAttribute(FAILURES_FIELD, Integer.toString(testOutcome.getFailureCount()));
+        writer.addAttribute(SKIPPED_FIELD, Integer.toString(testOutcome.getSkippedCount()));
+        writer.addAttribute(IGNORED_FIELD, Integer.toString(testOutcome.getIgnoredCount()));
+        writer.addAttribute(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
+        writer.addAttribute(RESULT_FIELD, testOutcome.getResult().toString());
+        addUserStoryTo(writer, testOutcome.getUserStory());
+        addRequirementsTo(writer, testOutcome.getTestedRequirements());
 
-        List<TestStep> steps = testRun.getTestSteps();
+        List<TestStep> steps = testOutcome.getTestSteps();
         for (TestStep step : steps) {
             writeStepTo(writer, step);
         }
     }
 
 
-    private String titleFrom(final AcceptanceTestRun testRun) {
+    private String titleFrom(final TestOutcome testOutcome) {
         if (qualifier == null) {
-            return testRun.getTitle();
+            return testOutcome.getTitle();
         } else {
-            return testRun.getTitle() + " [" + humanized(qualifier) + "]";
+            return testOutcome.getTitle() + " [" + humanized(qualifier) + "]";
         }
     }
 
@@ -103,12 +104,12 @@ public class AcceptanceTestRunConverter implements Converter {
         return text.replaceAll("_", "/");
     }
 
-    private String nameFrom(final AcceptanceTestRun testRun) {
+    private String nameFrom(final TestOutcome testOutcome) {
         String baseName = null;
-        if (testRun.getMethodName() != null) {
-            baseName = testRun.getMethodName();
+        if (testOutcome.getMethodName() != null) {
+            baseName = testOutcome.getMethodName();
         } else {
-            baseName = testRun.getTitle();
+            baseName = testOutcome.getTitle();
         }
         String testRunName;
         if (qualifier == null) {
@@ -145,14 +146,24 @@ public class AcceptanceTestRunConverter implements Converter {
         }
     }
 
-    private void addUserStoryTo(final HierarchicalStreamWriter writer, final UserStory userStory) {
+    private void addUserStoryTo(final HierarchicalStreamWriter writer, final Story userStory) {
         if (userStory != null) {
             writer.startNode(USER_STORY);
+            writer.addAttribute(ID_FIELD, userStory.getId());
             writer.addAttribute(NAME_FIELD, userStory.getName());
-            writer.addAttribute(CODE_FIELD, userStory.getCode());
-            writer.addAttribute(SOURCE_FIELD, userStory.getSource());
+            if (userStory.getFeatureClass() != null) {
+                writeFeatureNode(writer, userStory);
+            }
             writer.endNode();
         }
+    }
+
+    private void writeFeatureNode(HierarchicalStreamWriter writer, Story userStory) {
+        ApplicationFeature feature = ApplicationFeature.from(userStory.getFeatureClass());
+        writer.startNode(FEATURE);
+        writer.addAttribute(ID_FIELD, feature.getId());
+        writer.addAttribute(NAME_FIELD, feature.getName());
+        writer.endNode();
     }
 
     private void addRequirementsTo(final HierarchicalStreamWriter writer, final Set<String> set) {
@@ -216,31 +227,29 @@ public class AcceptanceTestRunConverter implements Converter {
     }
 
     /**
-     * Convert XML to an AcceptanceTestRun object. Not needed for now.
+     * Convert XML to an TestOutcome object. Not needed for now.
      */
     public Object unmarshal(final HierarchicalStreamReader reader,
                             final UnmarshallingContext context) {
 
-        AcceptanceTestRun testRun = new AcceptanceTestRun();
-
-        testRun.setTitle(reader.getAttribute(TITLE_FIELD));
-        testRun.setMethodName(reader.getAttribute(NAME_FIELD));
-        readChildren(reader, testRun);
-        return testRun;
+        TestOutcome testOutcome = new TestOutcome();
+        testOutcome.setMethodName(reader.getAttribute(NAME_FIELD));
+        readChildren(reader, testOutcome);
+        return testOutcome;
     }
 
-    private void readChildren(final HierarchicalStreamReader reader, final AcceptanceTestRun testRun) {
+    private void readChildren(final HierarchicalStreamReader reader, final TestOutcome testOutcome) {
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             String childNode = reader.getNodeName();
             if (childNode.equals(TEST_STEP)) {
-                readTestStep(reader, testRun);
+                readTestStep(reader, testOutcome);
             } else if (childNode.equals(TEST_GROUP)) {
-                readTestGroup(reader, testRun);
+                readTestGroup(reader, testOutcome);
             } else if (childNode.equals(REQUIREMENTS)) {
-                readTestRunRequirements(reader, testRun);
+                readTestRunRequirements(reader, testOutcome);
             } else if (childNode.equals(USER_STORY)) {
-                readUserStory(reader, testRun);
+                readUserStory(reader, testOutcome);
             }
             reader.moveUp();
         }
@@ -248,20 +257,43 @@ public class AcceptanceTestRunConverter implements Converter {
 
 
     private void readUserStory(final HierarchicalStreamReader reader,
-                               final AcceptanceTestRun testRun) {
+                               final TestOutcome testOutcome) {
+
+        String storyId = reader.getAttribute(ID_FIELD);
         String storyName = reader.getAttribute(NAME_FIELD);
-        String storyCode = reader.getAttribute(CODE_FIELD);
-        String storySource = reader.getAttribute(SOURCE_FIELD);
-        testRun.setUserStory(new UserStory(storyName, storyCode, storySource));
+        ApplicationFeature feature = null;
+
+        if (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String childNode = reader.getNodeName();
+            if (childNode.equals(FEATURE)) {
+                feature = readFeature(reader);
+            }
+            reader.moveUp();
+        }
+        Story story = null;
+        if (feature == null) {
+            story = Story.withId(storyId, storyName);
+        } else {
+            story = Story.withId(storyId, storyName, feature.getId(), feature.getName());
+        }
+        testOutcome.setUserStory(story);
+    }
+
+    private ApplicationFeature readFeature(final HierarchicalStreamReader reader) {
+
+        String featureId = reader.getAttribute(ID_FIELD);
+        String featureName = reader.getAttribute(NAME_FIELD);
+        return new ApplicationFeature(featureId, featureName);
     }
 
 
     private void readTestRunRequirements(final HierarchicalStreamReader reader,
-                                         final AcceptanceTestRun testRun) {
+                                         final TestOutcome testOutcome) {
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             String requirement = reader.getValue();
-            testRun.testsRequirement(requirement);
+            testOutcome.testsRequirement(requirement);
             reader.moveUp();
         }
     }
@@ -281,7 +313,7 @@ public class AcceptanceTestRunConverter implements Converter {
      * <screenshot>the_customer_navigates_to_the_metro_masthead_site2
      * .png</screenshot> </test-step>
      */
-    private void readTestStep(final HierarchicalStreamReader reader, final AcceptanceTestRun testRun) {
+    private void readTestStep(final HierarchicalStreamReader reader, final TestOutcome testOutcome) {
         ConcreteTestStep step = new ConcreteTestStep();
         String testResultValue = reader.getAttribute(RESULT_FIELD);
         TestResult result = TestResult.valueOf(testResultValue);
@@ -292,19 +324,19 @@ public class AcceptanceTestRunConverter implements Converter {
         }
         readTestStepChildren(reader, step);
 
-        testRun.recordStep(step);
+        testOutcome.recordStep(step);
     }
 
-    private void readTestGroup(final HierarchicalStreamReader reader, final AcceptanceTestRun testRun) {
+    private void readTestGroup(final HierarchicalStreamReader reader, final TestOutcome testOutcome) {
         String name = reader.getAttribute(NAME_FIELD);
         String screenshot = reader.getAttribute(SCREENSHOT_FIELD);
         String testResultValue = reader.getAttribute(RESULT_FIELD);
         TestResult result = TestResult.valueOf(testResultValue);
-        testRun.startGroup(name);
-        testRun.getCurrentGroup().setScreenshotPath(screenshot);
-        testRun.getCurrentGroup().setResult(result);
-        readChildren(reader, testRun);
-        testRun.endGroup();
+        testOutcome.startGroup(name);
+        testOutcome.getCurrentGroup().setScreenshotPath(screenshot);
+        testOutcome.getCurrentGroup().setResult(result);
+        readChildren(reader, testOutcome);
+        testOutcome.endGroup();
     }
 
     private void readTestStepChildren(final HierarchicalStreamReader reader, final ConcreteTestStep step) {

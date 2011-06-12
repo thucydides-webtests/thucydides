@@ -60,6 +60,8 @@ public class WhenDescribingSteps {
         assertThat(description.isAGroup(), is(false));
     }
 
+    class ATestCase {}
+
     @Test
     public void a_step_can_be_defined_as_a_group() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step_group", true);

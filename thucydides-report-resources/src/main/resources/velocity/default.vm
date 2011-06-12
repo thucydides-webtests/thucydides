@@ -49,7 +49,7 @@ a:active {
     	<div class="middlebg">
     	  <div style="height:30px;"><span class="bluetext"><a href="stories.html" class="bluetext">Home</a></span> / <span class="bluetext"><a href="#" class="bluetext">Features</a></span> /
     	    <span class="bluetext"><a href="stories.html">Stories</a></span> /
-          <span class="bluetext"><a href="${testrun.userStory.reportName}.html" class="bluetext">${testrun.userStory.name}</a></span></div>
+          <span class="bluetext"><a href="${testrun.story.reportName}.html" class="bluetext">${testrun.story.name}</a></span></div>
    	  </div>
       <div class="rightbg"></div>   
     </div>

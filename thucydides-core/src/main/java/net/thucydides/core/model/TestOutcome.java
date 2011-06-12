@@ -1,9 +1,15 @@
 package net.thucydides.core.model;
 
 import ch.lambdaj.function.convert.Converter;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import net.thucydides.core.annotations.Title;
+import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.steps.TestDescription;
+import net.thucydides.core.util.NameConverter;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,23 +26,24 @@ import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.util.NameConverter.withNoArguments;
 
 /**
- * Represents the results of an acceptance test (or "scenario") execution. This
+ * Represents the results of a test (or "scenario") execution. This
  * includes the narrative steps taken during the test, screenshots at each step,
- * the results of each step, and the overall result. An Acceptance test scenario
- * can be associated with a UserStory using the UserStory annotation.
+ * the results of each step, and the overall result. A test scenario
+ * can be associated with a user story using the UserStory annotation.
  * 
  * @author johnsmart
  * 
  */
-public class AcceptanceTestRun {
-
-    private String title;
+public class TestOutcome {
 
     private String methodName;
     
-    private UserStory userStory;
+    private Story userStory;
+
+    private Class testCase;
 
     private long duration;
 
@@ -51,7 +58,7 @@ public class AcceptanceTestRun {
     /**
      * Create a new acceptance test run instance.
      */
-    public AcceptanceTestRun() {
+    public TestOutcome() {
         startTime = System.currentTimeMillis();
     }
 
@@ -59,28 +66,96 @@ public class AcceptanceTestRun {
      * The title is immutable once set. For convenience, you can create a test
      * run directly with a title using this constructor.
      */
-    public AcceptanceTestRun(final String title) {
+    public TestOutcome(final String methodName) {
         this();
-        this.title = title;
-        this.methodName = normalizedFormOf(title);
+        this.methodName = methodName;
     }
 
     /**
-     * The test case title.
+     * A test outcome should relate to a particular test class or user story class.
      */
-    public void setTitle(final String title) {
-        this.title = title;
+    protected TestOutcome(final String scenarioName, final Story story, final Class<?> testCase) {
+        this(scenarioName);
+        this.testCase = testCase;
+        recordRequirementsTestedBy(testCase, scenarioName);
+
+        setUserStory(story);
     }
 
     /**
-     * An acceptance test run always has a title. The title should be something
-     * like the name of the user story being tested, possibly with some
-     * precisions if several test cases test the same user story. If the test
-     * cases are written using a BDD style, the name can be derived directly
-     * from the test case name.
+     * A test outcome should relate to a particular test class or user story class.
      */
+    protected TestOutcome(final String scenarioName, final Class<?> testCase) {
+        this(scenarioName);
+        this.testCase = testCase;
+        recordRequirementsTestedBy(testCase, scenarioName);
+
+        initializeStoryFrom(testCase);
+
+    }
+
+    private void initializeStoryFrom(final Class<?> testCase) {
+        Story story = Story.from(Story.testedInTestCase(testCase));
+        setUserStory(story);
+    }
+
+    private void recordRequirementsTestedBy(final Class<?> testCase, final String scenarioName) {
+
+        TestDescription testDescription = new TestDescription(testCase, scenarioName);
+        if (testDescription.methodExists()) {
+            testedRequirement.addAll(testDescription.getAnnotatedRequirements());
+        }
+
+    }
+
+    /**
+     * Create a new test outcome instance for a given test class or user story.
+     */
+
+    public static TestOutcome forTest(final String testName, final Class<?> testCase) {
+        return new TestOutcome(testName, testCase);
+    }
+
+    public static TestOutcome forTestInStory(final String testName, final Story story) {
+        return new TestOutcome(testName, story, null);
+    }
+
+    public static TestOutcome forTestInStory(final String testName, final Story story, final Class<?> testClass) {
+        return new TestOutcome(testName, story, testClass);
+    }
+
     public String getTitle() {
-        return title;
+        String annotatedTitle = getAnnotatedTitleFor(methodName);
+        if (annotatedTitle != null) {
+            return annotatedTitle;
+        }
+        return NameConverter.humanize(methodName);
+    }
+
+    private String getAnnotatedTitleFor(final String methodName) {
+        String annotatedTitle = null;
+        if (testCase != null) {
+            try {
+                String baseMethodName = withNoArguments(methodName);
+                Method testMethod = testCase.getMethod(baseMethodName);
+                Title titleAnnotation = testMethod.getAnnotation(Title.class);
+                if (titleAnnotation != null) {
+                    annotatedTitle = titleAnnotation.value();
+                }
+            } catch (NoSuchMethodException e) {
+                // No matching method found in the test case - that would be odd
+                throw new IllegalArgumentException("No method called " + methodName + " was found in " + testCase);
+            }
+        }
+        return annotatedTitle;
+    }
+
+    public String getStoryTitle() {
+        return getTitleFrom(userStory);
+    }
+
+    private String getTitleFrom(final Story userStory) {
+        return userStory.getName();
     }
 
     public String getReportName(final ReportNamer.ReportType type) {
@@ -187,6 +262,27 @@ public class AcceptanceTestRun {
         }
     }
 
+    /**
+     * Get the feature that includes the user story tested by this test.
+     * If no user story is defined, no feature can be returned, so the method returns null.
+     * If a user story has been defined without a class (for example, one that has been reloaded),
+     * the feature will be built using the feature name and id in the user story.
+     */
+    public ApplicationFeature getFeature() {
+        if (getUserStory() != null) {
+            return obtainFeatureFromUserStory();
+        }
+        return null;
+    }
+
+    private ApplicationFeature obtainFeatureFromUserStory() {
+        if (getUserStory().getFeatureClass() != null) {
+            return ApplicationFeature.from(getUserStory().getFeatureClass());
+        } else {
+            return new ApplicationFeature(getUserStory().getFeatureId(), getUserStory().getFeatureName());
+        }
+    }
+
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {
             return step.getResult();
@@ -256,11 +352,16 @@ public class AcceptanceTestRun {
         return allTestedRequirements;
     }
 
-    public void setUserStory(final UserStory userStory) {
+    /**
+     * Associate a user story with this test outcome.
+     * Once a user story is set for a given test outcome, it should not be changed.
+     */
+    public void setUserStory(final Story userStory) {
+        Preconditions.checkState(this.userStory == null);
         this.userStory = userStory;
     }
 
-    public UserStory getUserStory() {
+    public Story getUserStory() {
         return userStory;
     }
 

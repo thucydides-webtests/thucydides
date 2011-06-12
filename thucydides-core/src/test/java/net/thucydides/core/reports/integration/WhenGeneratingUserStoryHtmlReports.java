@@ -1,5 +1,22 @@
 package net.thucydides.core.reports.integration;
 
+import net.thucydides.core.annotations.Feature;
+import net.thucydides.core.annotations.TestsStory;
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.UserStoryTestResults;
+import net.thucydides.core.reports.UserStoryTestReporter;
+import net.thucydides.core.reports.html.HtmlUserStoryTestReporter;
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
 import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
@@ -7,33 +24,39 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
-import net.thucydides.core.model.AcceptanceTestRun;
-import net.thucydides.core.model.UserStory;
-import net.thucydides.core.model.UserStoryTestResults;
-import net.thucydides.core.reports.UserStoryTestReporter;
-import net.thucydides.core.reports.html.HtmlUserStoryTestReporter;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 public class WhenGeneratingUserStoryHtmlReports {
 
     @Rule
     public TemporaryFolder temporaryDirectory = new TemporaryFolder();
 
-    private UserStory userStory = new UserStory("A User Story", "", "");
+    private Story userStory = Story.from(AUserStory.class);
     private UserStoryTestResults userStoryTestResults;
 
     private UserStoryTestReporter reporter;
 
     private File outputDirectory;
+
+
+    class AUserStory {};
+
+    @TestsStory(AUserStory.class)
+    class SomeTestScenario {
+        public void a_simple_test_case() {};
+        public void should_do_this() {};
+        public void should_do_that() {};
+        public void should_also_do_this() {};
+    }
+
+    @Feature
+    class AFeature {
+        class AUserStoryInAFeature {};
+    }
+
+    @TestsStory(AFeature.AUserStoryInAFeature.class)
+    class SomeTestScenarioInAFeature {
+        public void should_do_this() {};
+        public void should_do_that() {};
+    }
 
     @Before
     public void setupTestReporter() {
@@ -42,9 +65,9 @@ public class WhenGeneratingUserStoryHtmlReports {
         reporter.setOutputDirectory(outputDirectory);
 
         userStoryTestResults = new UserStoryTestResults(userStory);
-        userStoryTestResults.recordTestRun(thatFailsCalled("Test Run 1"));
-        userStoryTestResults.recordTestRun(thatSucceedsCalled("Test Run 2"));
-        userStoryTestResults.recordTestRun(thatFailsCalled("Test Run 3"));
+        userStoryTestResults.recordTestRun(thatFailsCalled("should_do_this"));
+        userStoryTestResults.recordTestRun(thatSucceedsCalled("should_do_that"));
+        userStoryTestResults.recordTestRun(thatFailsCalled("should_also_do_this"));
     }
 
     @Test
@@ -63,16 +86,16 @@ public class WhenGeneratingUserStoryHtmlReports {
     public void aggregate_report_should_contain_the_user_story_name_as_a_title() throws Exception {
         File userStoryReport = reporter.generateReportFor(userStoryTestResults);
         String reportText = getStringFrom(userStoryReport);
-        assertThat(reportText, containsString("A User Story"));
+        assertThat(reportText, containsString("A user story"));
     }
 
     @Test
     public void aggregate_report_should_contain_links_to_the_test_runs() throws Exception {
         File userStoryReport = reporter.generateReportFor(userStoryTestResults);
         String reportText = getStringFrom(userStoryReport);
-        assertThat(reportText, containsString("href=\"a_user_story_test_run_1.html\""));
-        assertThat(reportText, containsString("href=\"a_user_story_test_run_2.html\""));
-        assertThat(reportText, containsString("href=\"a_user_story_test_run_3.html\""));
+        assertThat(reportText, containsString("href=\"a_user_story_should_do_this.html\""));
+        assertThat(reportText, containsString("href=\"a_user_story_should_do_that.html\""));
+        assertThat(reportText, containsString("href=\"a_user_story_should_also_do_this.html\""));
     }
 
     @Test
@@ -82,17 +105,14 @@ public class WhenGeneratingUserStoryHtmlReports {
         File sourceDirectory = new File("src/test/resources/multiple-user-story-reports");
         reporter.generateReportsForStoriesFrom(sourceDirectory);
 
-        File expectedStoryReport1 = new File(outputDirectory, "a_user_story.html");
+        File expectedStoryReport1 = new File(outputDirectory, "a_user_story_in_a_feature.html");
         assertThat(expectedStoryReport1.exists(), is(true));
         
-        File expectedStoryReport2 = new File(outputDirectory, "another_user_story.html");
+        File expectedStoryReport2 = new File(outputDirectory, "another_user_story_in_a_feature.html");
         assertThat(expectedStoryReport2.exists(), is(true));
         
         File expectedStoryReport3 = new File(outputDirectory, "yet_another_user_story.html");
         assertThat(expectedStoryReport3.exists(), is(true));
-
-        String reportText = getStringFrom(expectedStoryReport3);
-        assertThat(reportText, containsString("A third acceptance test run"));
     }
     
     @Test
@@ -130,30 +150,26 @@ public class WhenGeneratingUserStoryHtmlReports {
     public void aggregate_failing_story_should_display_test_titles() throws Exception {
         File userStoryReport = reporter.generateReportFor(userStoryTestResults);
         String reportText = getStringFrom(userStoryReport);
-        assertThat(reportText, containsString("Test Run 1"));
-        assertThat(reportText, containsString("Test Run 2"));
-        assertThat(reportText, containsString("Test Run 3"));
+        assertThat(reportText, containsString("A user story"));
     }
 
     private String getStringFrom(File reportFile) throws IOException {
         return FileUtils.readFileToString(reportFile);
     }
     
-    private AcceptanceTestRun thatFailsCalled(String title) {
-        AcceptanceTestRun testRun = new AcceptanceTestRun(title);
-        testRun.recordStep(successfulTestStepCalled("Step 1"));
-        testRun.recordStep(failingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
-        testRun.recordStep(skippedTestStepCalled("Step 3"));
-        testRun.setUserStory(userStory);
-        return testRun;
+    private TestOutcome thatFailsCalled(String testName) {
+        TestOutcome testOutcome = TestOutcome.forTest(testName, SomeTestScenario.class);
+        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(failingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(skippedTestStepCalled("Step 3"));
+        return testOutcome;
     }
 
-    private AcceptanceTestRun thatSucceedsCalled(String title) {
-        AcceptanceTestRun testRun = new AcceptanceTestRun(title);
-        testRun.recordStep(successfulTestStepCalled("Step 1"));
-        testRun.recordStep(successfulTestStepCalled("Step 2"));
-        testRun.setUserStory(userStory);
-        return testRun;
+    private TestOutcome thatSucceedsCalled(String testName) {
+        TestOutcome testOutcome = TestOutcome.forTest(testName, SomeTestScenario.class);
+        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        return testOutcome;
     }
 
 }

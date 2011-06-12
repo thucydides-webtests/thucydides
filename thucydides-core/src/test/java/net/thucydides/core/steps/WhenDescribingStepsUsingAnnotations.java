@@ -65,27 +65,27 @@ public class WhenDescribingStepsUsingAnnotations {
     public void the_default_step_name_should_be_a_human_readable_version_of_the_method_name() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.getName(), is("A step"));
+        assertThat(annotatedStepDescription.getName(), is("A step"));
     }
 
     @Test
     public void a_step_can_be_annotated_to_provide_a_more_readable_name() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "an_annotated_step");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.getName(), is("A step with an annotation"));
+        assertThat(annotatedStepDescription.getName(), is("A step with an annotation"));
     }
 
     @Test
     public void a_title_annotation_can_also_be_used_to_provide_a_more_readable_name() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "an_annotated_step_with_a_title");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.getName(), is("A step with an annotation"));
+        assertThat(annotatedStepDescription.getName(), is("A step with an annotation"));
     }
 
 
@@ -93,45 +93,45 @@ public class WhenDescribingStepsUsingAnnotations {
     public void a_step_group_name_should_be_a_human_readable_version_of_the_method_name() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step_group");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.getName(), is("A step group"));
+        assertThat(annotatedStepDescription.getName(), is("A step group"));
     }
 
     @Test
     public void a_step_group_can_be_annotated_to_provide_a_more_readable_name() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "an_annotated_step_group");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.getName(), is("A step group with an annotation"));
+        assertThat(annotatedStepDescription.getName(), is("A step group with an annotation"));
     }
 
     @Test
     public void should_identify_pending_steps() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_pending_step");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.isPending(), is(true));
+        assertThat(annotatedStepDescription.isPending(), is(true));
     }
 
     @Test
     public void should_identify_non_pending_steps() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.isPending(), is(false));
+        assertThat(annotatedStepDescription.isPending(), is(false));
     }
 
     @Test
     public void should_identify_ignored_steps() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "an_ignored_step");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.isIgnored(), is(true));
+        assertThat(annotatedStepDescription.isIgnored(), is(true));
     }
 
 
@@ -139,45 +139,45 @@ public class WhenDescribingStepsUsingAnnotations {
     public void should_identify_user_story_code() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.getUserStoryCode(), is("U2"));
+        assertThat(annotatedStepDescription.getUserStoryCode(), is("U2"));
     }
 
     @Test
     public void should_identify_unignored_steps() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.isIgnored(), is(false));
+        assertThat(annotatedStepDescription.isIgnored(), is(false));
     }
 
     @Test
     public void should_let_the_user_indicate_what_requirement_is_being_tested_by_a_step() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step_testing_a_requirement");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.getAnnotatedRequirements(), hasItem("REQ-1"));
+        assertThat(annotatedStepDescription.getAnnotatedRequirements(), hasItem("REQ-1"));
     }
 
     @Test
     public void should_let_the_user_indicate_multiple_requirements() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step_testing_several_requirements");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.getAnnotatedRequirements(), hasItems("REQ-1", "REQ-2"));
+        assertThat(annotatedStepDescription.getAnnotatedRequirements(), hasItems("REQ-1", "REQ-2"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void should_throw_an_exception_if_no_matching_step_exists() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step_that_does_not_exist");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        annotatedDescription.getName();
+        annotatedStepDescription.getName();
 
     }
 
@@ -185,9 +185,9 @@ public class WhenDescribingStepsUsingAnnotations {
     public void should_throw_an_exception_if_you_ask_for_a_method_where_no_matching_step_exists() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step_that_does_not_exist");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        annotatedDescription.getTestMethod();
+        annotatedStepDescription.getTestMethod();
 
     }
 
@@ -195,26 +195,26 @@ public class WhenDescribingStepsUsingAnnotations {
     public void the_description_should_return_the_corresponding_step_method() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.getTestMethod().getName(), is("a_step"));
+        assertThat(annotatedStepDescription.getTestMethod().getName(), is("a_step"));
     }
 
     @Test
     public void the_description_should_return_the_corresponding_step_method_with_parameters() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step_with_parameters: Joe");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.getTestMethod().getName(), is("a_step_with_parameters"));
+        assertThat(annotatedStepDescription.getTestMethod().getName(), is("a_step_with_parameters"));
     }
 
     @Test
     public void should_find_the_specified_title_if_no_class_is_specified() {
         ExecutedStepDescription description = ExecutedStepDescription.withTitle("a step with no class");
 
-        AnnotatedDescription annotatedDescription = AnnotatedDescription.from(description);
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
 
-        assertThat(annotatedDescription.getName(), is("a step with no class"));
+        assertThat(annotatedStepDescription.getName(), is("a step with no class"));
     }
 }

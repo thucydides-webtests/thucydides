@@ -1,6 +1,8 @@
 package net.thucydides.junit.listeners;
 
+import net.thucydides.core.annotations.TestsStory;
 import net.thucydides.core.pages.Pages;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -26,22 +28,37 @@ public class WhenListeningForTestEvents {
     Pages pages;
 
 
+    class MyStory {}
+
+    @TestsStory(MyStory.class)
+    final static class MyTestCase {
+        public void app_should_work() {}
+    }
+
 
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
     }
 
+    private JUnitStepListener listener;
+
+    @Before
+    public void setupListener() throws Exception {
+        listener = new JUnitStepListener(outputDirectory, pages);
+
+        listener.testRunStarted(Description.createSuiteDescription(MyTestCase.class));
+        listener.testStarted(Description.createTestDescription(MyTestCase.class,"app_should_work"));
+
+    }
+
     @Test
     public void there_should_be_no_failing_steps_at_the_start_of_the_test() throws Exception {
-        JUnitStepListener listener = new JUnitStepListener(outputDirectory, pages);
-
         assertThat(listener.hasRecordedFailures(), is(false));
     }
 
 
     @Test
     public void a_junit_listener_should_keep_track_of_failed_test_steps() throws Exception {
-        JUnitStepListener listener = new JUnitStepListener(outputDirectory, pages);
 
         Failure failure = new Failure(failureDescription, new AssertionError());
 
@@ -52,7 +69,6 @@ public class WhenListeningForTestEvents {
 
     @Test
     public void a_junit_listener_should_keep_track_of_failure_exceptions() throws Exception {
-        JUnitStepListener listener = new JUnitStepListener(outputDirectory, pages);
 
         Throwable cause = new AssertionError();
         Failure failure = new Failure(failureDescription, cause);
@@ -64,7 +80,6 @@ public class WhenListeningForTestEvents {
 
     @Test
     public void any_failing_test_steps_should_be_cleared_at_the_start_of_each_new_test() throws Exception {
-        JUnitStepListener listener = new JUnitStepListener(outputDirectory, pages);
 
         Failure failure = new Failure(failureDescription, new AssertionError());
 
@@ -79,7 +94,6 @@ public class WhenListeningForTestEvents {
 
     @Test
     public void any_failing_exceptions_should_be_cleared_at_the_start_of_each_new_test() throws Exception {
-        JUnitStepListener listener = new JUnitStepListener(outputDirectory, pages);
 
         Failure failure = new Failure(failureDescription, new AssertionError());
 

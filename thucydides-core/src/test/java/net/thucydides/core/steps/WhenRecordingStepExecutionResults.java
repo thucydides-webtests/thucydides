@@ -1,11 +1,15 @@
 package net.thucydides.core.steps;
 
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.annotations.Feature;
+import net.thucydides.core.annotations.TestsStory;
 import net.thucydides.core.model.ConcreteTestStep;
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestStepGroup;
+import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
 import net.thucydides.core.steps.samples.NestedScenarioSteps;
@@ -58,6 +62,19 @@ public class WhenRecordingStepExecutionResults {
     @Mock
     Pages pages;
 
+    class AStory {}
+
+    @TestsStory(AStory.class)
+    class ATestCase {
+        public void app_should_work() {}
+    }
+
+    class AStepLibrary extends ScenarioSteps {
+        AStepLibrary(Pages pages) {
+            super(pages);
+        }
+    }
+
     @Before
     public void createStepListenerAndFactory() throws IOException {
         MockitoAnnotations.initMocks(this);
@@ -65,20 +82,131 @@ public class WhenRecordingStepExecutionResults {
         screenshot = temporaryFolder.newFile("screenshot.jpg");
         stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
         stepListener.setDriver(driver);
-        stepListener.testRunStarted("Test Run");
         when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot);
 
         stepFactory = new StepFactory(pages);
         stepFactory.addListener(stepListener);
     }
 
+    class MyStory {}
+
+    @TestsStory(MyStory.class)
+    class MyTestCase {
+        public void app_should_work() {}
+    }
+
+    class MyTestCaseWithoutAStory {
+        public void app_should_work() {}
+    }
+
+    @Test
+    public void before_starting_a_test_run_you_need_to_specify_what_user_story_is_being_tested() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        Story story = results.get(0).getUserStory();
+        assertThat(story.getUserStoryClass().getName(), is(MyStory.class.getName()));
+    }
+
+
+    @Test
+    public void if_no_user_story_is_specified_the_test_case_name_should_be_used_instead() {
+
+        stepListener.testRunStartedFor(MyTestCaseWithoutAStory.class);
+        stepListener.testStarted("app_should_work");
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        Story story = results.get(0).getUserStory();
+        assertThat(story.getUserStoryClass().getName(), is(MyTestCaseWithoutAStory.class.getName()));
+    }
+
+    @Test
+    public void you_can_also_specify_the_story_class_directly() {
+        stepListener.testRunStartedFor(MyStory.class);
+        stepListener.testStarted("app_should_work");
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        Story story = results.get(0).getUserStory();
+        assertThat(story.getUserStoryClass().getName(), is(MyStory.class.getName()));
+    }
+
+    @Test
+    public void the_test_result_should_store_a_story_with_steps_for_each_executed_step() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome outcome = results.get(0);
+        assertThat(outcome.getTestSteps().size(), is(2));
+    }
+
+    @Feature
+    class MyFeature {
+        class MyStoryInAFeature {}
+    }
+
+    @TestsStory(MyFeature.MyStoryInAFeature.class)
+    class MyTestCaseForAFeature {}
+
+    @Test
+    public void the_test_result_should_record_the_tested_feature() {
+
+        stepListener.testRunStartedFor(MyTestCaseForAFeature.class);
+        stepListener.testStarted("app_should_work");
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        ApplicationFeature feature = results.get(0).getFeature();
+        assertThat(feature.getFeatureClass().getName(), is(MyFeature.class.getName()));
+    }
+
+    @Test
+    public void the_name_of_the_tested_feature_should_match_the_feature_class() {
+
+        stepListener.testRunStartedFor(MyTestCaseForAFeature.class);
+        stepListener.testStarted("app_should_work");
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        ApplicationFeature feature = results.get(0).getFeature();
+        assertThat(feature.getName(), is("My feature"));
+    }
+
     @Test
     public void to_use_a_step_listener_you_need_to_instantiate_a_step_library_using_the_step_factory() {
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+
+        List<TestOutcome> results = stepListener.getTestRunResults();
 
         assertThat(results.size(), is(1));
     }
@@ -86,9 +214,9 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_executed_step_description_should_describe_a_named_executed_step_method() {
         ExecutedStepDescription executedStepDescription
-                = new ExecutedStepDescription(FlatScenarioSteps.class,"step1");
+                = new ExecutedStepDescription(FlatScenarioSteps.class,"step_one");
 
-        assertThat(executedStepDescription.getTitle(), is("Step1"));
+        assertThat(executedStepDescription.getTitle(), is("Step one"));
     }
 
     @Test
@@ -143,315 +271,371 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_step_listener_should_record_each_step_called() {
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
-        steps.step2();
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+
+        List<TestOutcome> results = stepListener.getTestRunResults();
         assertThat(results.size(), is(1));
 
-        AcceptanceTestRun testRun = results.get(0);
-        assertThat(testRun.getStepCount(), is(2));
+        TestOutcome testOutcome = results.get(0);
+        assertThat(testOutcome.getStepCount(), is(2));
     }
 
     @Test
-    public void the_step_listener_should_be_informed_of_the_story_name() {
+    public void the_test_outcome_title_should_come_from_the_user_story() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
 
-        stepListener.testStarted(ExecutedStepDescription.withTitle("Test Run"));
-        steps.step1();
-        steps.step2();
+        steps.step_one();
+        steps.step_two();
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
-        assertThat(testRun.getTitle(), is("Test Run"));
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
+        assertThat(testOutcome.getTitle(), is("App should work"));
     }
 
     @Test
-    public void the_step_listener_should_be_informed_of_the_test_name_if_known() {
+    public void when_the_user_story_is_undefined_the_test_outcome_title_should_come_from_the_test_case() {
+
+        stepListener.testRunStartedFor(MyTestCaseWithoutAStory.class);
+        stepListener.testStarted("app_should_work");
 
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
 
-        ExecutedStepDescription.of(FlatScenarioSteps.class,"step1");
-        stepListener.testStarted(ExecutedStepDescription.of(FlatScenarioSteps.class,"step1"));
-        steps.step1();
-        steps.step2();
-
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
-        assertThat(testRun.getTitle(), is("Test Run"));
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
+        assertThat(testOutcome.getTitle(), is("App should work"));
     }
-
 
     @Test
     public void the_step_listener_records_the_test_method_name_if_available() {
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-
-        ExecutedStepDescription stepDescription = ExecutedStepDescription.of(FlatScenarioSteps.class, "step1");
-
         stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
-        stepListener.testStarted(stepDescription);
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
-        assertThat(testRun.getMethodName(), is("step1"));
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
+        assertThat(testOutcome.getMethodName(), is("app_should_work"));
     }
 
     @Test
     public void the_step_listener_should_record_the_overall_test_result() {
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
-        steps.step2();
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+
+        List<TestOutcome> results = stepListener.getTestRunResults();
         assertThat(results.size(), is(1));
 
-        AcceptanceTestRun testRun = results.get(0);
-        assertThat(testRun.getResult(), is(TestResult.SUCCESS));
+        TestOutcome testOutcome = results.get(0);
+        assertThat(testOutcome.getResult(), is(TestResult.SUCCESS));
     }
 
     @Test
     public void a_failing_step_should_record_the_failure() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
+        steps.step_one();
         steps.failingStep();
 
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
-        assertThat(testRun.getResult(), is(TestResult.FAILURE));
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
+        assertThat(testOutcome.getResult(), is(TestResult.FAILURE));
     }
 
     @Test
     public void a_failing_step_should_record_the_failure_details_with_the_step() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
+        steps.step_one();
         steps.failingStep();
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
 
-        assertThat(testRun.getTestSteps().get(1).getResult(), is(TestResult.FAILURE));
-        assertThat(testRun.getTestSteps().get(1).getException(), instanceOf(AssertionError.class));
-        assertThat(testRun.getTestSteps().get(1).getErrorMessage(), is("Step failed"));
+        assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.FAILURE));
+        assertThat(testOutcome.getTestSteps().get(1).getException(), instanceOf(AssertionError.class));
+        assertThat(testOutcome.getTestSteps().get(1).getErrorMessage(), is("Step failed"));
     }
 
     @Test
     public void ignored_tests_should_be_reported() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
+        steps.step_one();
         steps.ignoredStep();
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
 
-        assertThat(testRun.getTestSteps().get(1).getResult(), is(TestResult.IGNORED));
+        assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.IGNORED));
     }
 
     @Test
     public void pending_tests_should_be_reported() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
+        steps.step_one();
         steps.pendingStep();
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
 
-        assertThat(testRun.getTestSteps().get(1).getResult(), is(TestResult.PENDING));
+        assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.PENDING));
     }
 
     @Test
     public void pending_test_groups_should_be_reported() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("pending group");
         stepListener.updateCurrentStepStatus(TestResult.PENDING);
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
 
-        assertThat(testRun.getTestSteps().get(0).getResult(), is(TestResult.PENDING));
+        assertThat(testOutcome.getTestSteps().get(0).getResult(), is(TestResult.PENDING));
     }
 
     @Test
     public void ignored_test_groups_should_be_skipped() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("ignored group");
         stepListener.stepIgnored(ExecutedStepDescription.withTitle("Ignore this step"));
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
 
-        assertThat(testRun.getTestSteps().get(0).getResult(), is(TestResult.SKIPPED));
+        assertThat(testOutcome.getTestSteps().get(0).getResult(), is(TestResult.SKIPPED));
     }
 
     @Test
     public void succeeding_test_groups_should_be_marked_as_successful_by_default() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("successful group");
         stepListener.stepSucceeded();
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
 
-        assertThat(testRun.getTestSteps().get(0).getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome.getTestSteps().get(0).getResult(), is(TestResult.SUCCESS));
     }
 
     @Test
     public void steps_should_be_skipped_after_a_failure() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
+        steps.step_one();
         steps.failingStep();
-        steps.step2();
+        steps.step_two();
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
 
-        assertThat(testRun.getTestSteps().get(2).getResult(), is(TestResult.SKIPPED));
+        assertThat(testOutcome.getTestSteps().get(2).getResult(), is(TestResult.SKIPPED));
     }
 
     @Test
     public void steps_should_be_skipped_after_a_failure_in_a_nested_step() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
         NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
         steps.step1();
         steps.nestedFailingStep();
         steps.step2();
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
 
-        assertThat(testRun.getTestSteps().get(2).getResult(), is(TestResult.SKIPPED));
+        assertThat(testOutcome.getTestSteps().get(2).getResult(), is(TestResult.SKIPPED));
     }
 
     @Test
     public void steps_should_not_be_skipped_after_an_ignored_test() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
+        steps.step_one();
         steps.ignoredStep();
-        steps.step2();
+        steps.step_two();
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
-        AcceptanceTestRun testRun = results.get(0);
+        List<TestOutcome> results = stepListener.getTestRunResults();
+        TestOutcome testOutcome = results.get(0);
 
-        assertThat(testRun.getTestSteps().get(2).getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome.getTestSteps().get(2).getResult(), is(TestResult.SUCCESS));
     }
 
     @Test
     public void the_step_listener_should_record_each_step_executed_in_order() {
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
-        steps.step2();
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
-        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
-        List<TestStep> executedSteps = testRun.getTestSteps();
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testOutcome.getTestSteps();
         List<String> executedStepNames = namesFrom(executedSteps);
 
-        assertThat(executedStepNames, containsInOrder("Step1", "Step2"));
+        assertThat(executedStepNames, containsInOrder("Step one", "Step two"));
 
     }
 
     @Test
     public void any_nested_steps_should_also_be_executed() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
         steps.step1();
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestRunResults();
         assertThat(results.size(), is(1));
+
+        TestOutcome outcome = results.get(0);
+        assertThat(outcome.getTestSteps().size(), is(1));
 
     }
 
     @Test
     public void steps_with_nested_steps_should_be_recorded_as_step_groups() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
         steps.step1();
         steps.step2();
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestRunResults();
         assertThat(results.size(), is(1));
 
-        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
-        List<TestStep> executedSteps = testRun.getTestSteps();
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testOutcome.getTestSteps();
         assertThat(executedSteps.size(), is(2));
 
         TestStepGroup stepGroup1 = (TestStepGroup) executedSteps.get(0);
         List<String> executedStepNamesInGroup1 = namesFrom(stepGroup1.getSteps());
-        assertThat(executedStepNamesInGroup1, containsInOrder("Step1", "Step2", "Step3"));
+        assertThat(executedStepNamesInGroup1, containsInOrder("Step one", "Step two", "Step three"));
 
 
         TestStepGroup stepGroup2 = (TestStepGroup) executedSteps.get(1);
         List<String> executedStepNamesInGroup2 = namesFrom(stepGroup2.getSteps());
-        assertThat(executedStepNamesInGroup2, containsInOrder("Step1", "Step3"));
+        assertThat(executedStepNamesInGroup2, containsInOrder("Step one", "Step three"));
 
-        assertThat(testRun.getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome.getResult(), is(TestResult.SUCCESS));
     }
 
     @Test
     public void steps_with_failing_nested_steps_should_record_the_step_failure() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
 
         NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
         steps.step1();
         steps.step_with_nested_failure();
 
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestRunResults();
         assertThat(results.size(), is(1));
 
-        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
-        List<TestStep> executedSteps = testRun.getTestSteps();
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testOutcome.getTestSteps();
         assertThat(executedSteps.size(), is(2));
 
         TestStepGroup stepGroup1 = (TestStepGroup) executedSteps.get(0);
         List<String> executedStepNamesInGroup1 = namesFrom(stepGroup1.getSteps());
-        assertThat(executedStepNamesInGroup1, containsInOrder("Step1", "Step2", "Step3"));
+        assertThat(executedStepNamesInGroup1, containsInOrder("Step one", "Step two", "Step three"));
 
 
         TestStepGroup stepGroup2 = (TestStepGroup) executedSteps.get(1);
         List<String> executedStepNamesInGroup2 = namesFrom(stepGroup2.getSteps());
-        assertThat(executedStepNamesInGroup2, containsInOrder("Step1", "Failing step"));
+        assertThat(executedStepNamesInGroup2, containsInOrder("Step one", "Failing step"));
 
-        assertThat(testRun.getResult(), is(TestResult.FAILURE));
+        assertThat(testOutcome.getResult(), is(TestResult.FAILURE));
     }
 
 
     @Test
     public void starting_a_group_should_create_a_new_group_step() {
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("Main group");
-        steps.step1();
-        steps.step2();
+        steps.step_one();
+        steps.step_two();
         stepListener.stepGroupFinished();
 
-        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
-        List<TestStep> executedSteps = testRun.getTestSteps();
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
 
         assertThat(topLevelStepGroup.getDescription(), is("Main group"));
         List<String> executedStepNames = namesFrom(topLevelStepGroup.getSteps());
 
-        assertThat(executedStepNames, containsInOrder("Step1", "Step2"));
+        assertThat(executedStepNames, containsInOrder("Step one", "Step two"));
     }
 
     @Test
     public void starting_and_ending_a_group_without_steps_should_result_in_success() {
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         ExecutedStepDescription group = ExecutedStepDescription.withTitle("Main group");
         group.setAGroup(true);
 
@@ -459,8 +643,8 @@ public class WhenRecordingStepExecutionResults {
         stepListener.updateCurrentStepStatus(TestResult.SUCCESS);
         stepListener.stepFinished(group);
 
-        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
-        List<TestStep> executedSteps = testRun.getTestSteps();
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
 
         assertThat(topLevelStepGroup.getResult(), is(TestResult.SUCCESS));
@@ -469,13 +653,16 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void if_configured_should_pause_after_step() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
 
         System.setProperty(ThucydidesSystemProperty.STEP_DELAY.getPropertyName(), "100");
 
         long startTime = System.currentTimeMillis();
         stepListener.stepGroupStarted("Main group");
-        steps.step1();
+        steps.step_one();
         stepListener.stepGroupFinished();
         long stepDuration = System.currentTimeMillis() - startTime;
 
@@ -486,6 +673,9 @@ public class WhenRecordingStepExecutionResults {
 
     @Test
     public void if_configured_should_pause_after_step_group() {
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         ExecutedStepDescription group = ExecutedStepDescription.withTitle("Main group");
         group.setAGroup(true);
 
@@ -503,35 +693,41 @@ public class WhenRecordingStepExecutionResults {
 
     @Test
     public void starting_a_group_using_an_execution_step_object_should_create_a_new_group_step() {
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
 
         ExecutedStepDescription group = ExecutedStepDescription.withTitle("Main group");
         group.setAGroup(true);
 
         stepListener.stepGroupStarted(group);
-        steps.step1();
-        steps.step2();
+        steps.step_one();
+        steps.step_two();
         stepListener.stepGroupFinished();
 
-        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
-        List<TestStep> executedSteps = testRun.getTestSteps();
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
 
         assertThat(topLevelStepGroup.getDescription(), is("Main group"));
         List<String> executedStepNames = namesFrom(topLevelStepGroup.getSteps());
 
-        assertThat(executedStepNames, containsInOrder("Step1", "Step2"));
+        assertThat(executedStepNames, containsInOrder("Step one", "Step two"));
     }
 
     @Test
     public void a_group_should_be_able_to_have_its_own_result() {
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("Main group");
         stepListener.stepGroupFinished(TestResult.SUCCESS);
 
-        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
-        List<TestStep> executedSteps = testRun.getTestSteps();
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
 
         assertThat(topLevelStepGroup.getResult(), is(TestResult.SUCCESS));
@@ -539,13 +735,16 @@ public class WhenRecordingStepExecutionResults {
 
     @Test
     public void a_step_result_can_be_updated_after_the_step_execution() {
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
-        steps.step2();
+        steps.step_one();
+        steps.step_two();
 
         stepListener.updateCurrentStepStatus(TestResult.SKIPPED);
-        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
-        List<TestStep> executedSteps = testRun.getTestSteps();
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStep step2 = executedSteps.get(1);
 
         assertThat(step2.getResult(), is(TestResult.SKIPPED));
@@ -553,13 +752,16 @@ public class WhenRecordingStepExecutionResults {
 
     @Test
     public void a_step_group_result_can_be_updated_after_the_step_execution() {
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("New group");
         stepListener.updateCurrentStepStatus(TestResult.PENDING);
 
-        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
-        List<TestStep> executedSteps = testRun.getTestSteps();
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testOutcome.getTestSteps();
         TestStep stepGroup = executedSteps.get(0);
 
         assertThat(stepGroup.getResult(), is(TestResult.PENDING));
@@ -568,20 +770,23 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void nested_steps_should_be_recorded_inside_step_groups() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
         steps.step1();
         steps.step2();
 
-        List<AcceptanceTestRun> results = stepListener.getTestRunResults();
+        List<TestOutcome> results = stepListener.getTestRunResults();
         assertThat(results.size(), is(1));
 
-        AcceptanceTestRun testRun = firstTestResultRecordedIn(stepListener.getTestRunResults());
-        List<TestStep> executedSteps = testRun.getTestSteps();
+        TestOutcome testOutcome = firstTestResultRecordedIn(stepListener.getTestRunResults());
+        List<TestStep> executedSteps = testOutcome.getTestSteps();
 
         TestStepGroup topLevelStepGroup = (TestStepGroup) executedSteps.get(0);
         List<String> executedStepNames = namesFrom(topLevelStepGroup.getSteps());
 
-        assertThat(executedStepNames, containsInOrder("Step1", "Step2", "Step3"));
+        assertThat(executedStepNames, containsInOrder("Step one", "Step two", "Step three"));
     }
 
     @Test
@@ -619,9 +824,12 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void screenshots_should_be_taken_after_steps() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
-        steps.step1();
-        steps.step2();
+        steps.step_one();
+        steps.step_two();
 
         verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
     }
@@ -630,6 +838,9 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void screenshots_should_be_taken_after_groups_and_nested_steps() {
 
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
         NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
         steps.step1();
         steps.step2();
@@ -637,7 +848,7 @@ public class WhenRecordingStepExecutionResults {
         verify(driver, times(7)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
-    private AcceptanceTestRun firstTestResultRecordedIn(List<AcceptanceTestRun> testRunResults) {
+    private TestOutcome firstTestResultRecordedIn(List<TestOutcome> testOutcomeResults) {
         return stepListener.getTestRunResults().get(0);
     }
 

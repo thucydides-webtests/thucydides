@@ -150,14 +150,14 @@
                                         <li>
                                             <div><img src="images/${story_outcome_icon}" class="summary-icon"/><span class="${story.result}-text">$story.title</span></div>
                                             <ul>
-                                                #foreach($testRun in $story.testRuns)
-                                                    #if ($testRun.result == "FAILURE")
+                                                #foreach($testOutcome in $story.testOutcomes)
+                                                    #if ($testOutcome.result == "FAILURE")
                                                         #set( $outcome_icon = "fail.png" )
                                                         #set( $outcome_text = "failing-color" )
-                                                    #elseif ($testRun.result == "SUCCESS")
+                                                    #elseif ($testOutcome.result == "SUCCESS")
                                                         #set( $outcome_icon = "success.png" )
                                                         #set( $outcome_text = "success-color" )
-                                                    #elseif ($testRun.result == "PENDING")
+                                                    #elseif ($testOutcome.result == "PENDING")
                                                         #set( $outcome_icon = "pending.png" )
                                                         #set( $outcome_text = "pending-color" )
                                                     #else
@@ -165,7 +165,7 @@
                                                         #set( $outcome_text = "ignore-color" )
                                                     #end
 
-                                                    <li><img src="images/${outcome_icon}" class="summary-icon"/><a href="${testRun.reportName}.html" class="${testRun.result}-item-text">$testRun.title</a></li>
+                                                    <li><img src="images/${outcome_icon}" class="summary-icon"/><a href="${testOutcome.reportName}.html" class="${testOutcome.result}-item-text">$testOutcome.title</a></li>
                                                 #end
                                             </ul>
                                         </li>

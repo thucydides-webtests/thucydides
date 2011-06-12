@@ -1,6 +1,6 @@
 package net.thucydides.core.reports;
 
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestOutcome;
 import sun.misc.Service;
 
 import java.io.File;
@@ -57,11 +57,11 @@ public class ReportService {
      * process each test run outcome and do whatever is appropriate.
      *
      */
-    public void generateReportsFor(final List<AcceptanceTestRun> testRunResults) {
+    public void generateReportsFor(final List<TestOutcome> testOutcomeResults) {
 
         for (AcceptanceTestReporter reporter : getSubscribedReporters()) {
-            for(AcceptanceTestRun testRunResult : testRunResults) {
-                generateReportFor(testRunResult, reporter);
+            for(TestOutcome testOutcomeResult : testOutcomeResults) {
+                generateReportFor(testOutcomeResult, reporter);
             }
         }
     }
@@ -80,11 +80,11 @@ public class ReportService {
         return reporters;
     }
 
-    private void generateReportFor(final AcceptanceTestRun acceptanceTestRun,
+    private void generateReportFor(final TestOutcome testOutcome,
                                    final AcceptanceTestReporter reporter) {
         try {
             reporter.setOutputDirectory(outputDirectory);
-            reporter.generateReportFor(acceptanceTestRun);
+            reporter.generateReportFor(testOutcome);
         } catch (IOException e) {
             throw new ReportGenerationFailedError(
                     "Failed to generate reports using " + reporter, e);

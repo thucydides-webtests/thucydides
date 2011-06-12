@@ -1,6 +1,6 @@
 package net.thucydides.junit.listeners;
 
-import net.thucydides.core.model.AcceptanceTestRun;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.ExecutedStepDescription;
@@ -23,6 +23,8 @@ public class JUnitStepListener extends RunListener {
 
     private BaseStepListener baseStepListener;
 
+    private boolean initialTest = true;
+
     public JUnitStepListener(final File outputDirectory, final Pages pages) {
         baseStepListener = new BaseStepListener(outputDirectory, pages);
     }
@@ -32,8 +34,12 @@ public class JUnitStepListener extends RunListener {
     }
 
     @Override
-    public void testRunStarted(final Description description) throws Exception {
-        baseStepListener.testStarted(withDescriptionFrom(description));
+    public void testStarted(final Description description) throws Exception {
+        if (initialTest) {
+            baseStepListener.testRunStartedFor(description.getTestClass());
+            initialTest = false;
+        }
+        baseStepListener.testStarted(description.getMethodName());
     }
 
     private ExecutedStepDescription withDescriptionFrom(final Description description) {
@@ -57,7 +63,7 @@ public class JUnitStepListener extends RunListener {
         baseStepListener.stepIgnored(withDescriptionFrom(description));
     }
 
-    public List<AcceptanceTestRun> getTestRunResults() {
+    public List<TestOutcome> getTestRunResults() {
         return baseStepListener.getTestRunResults();
     }
 
