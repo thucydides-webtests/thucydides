@@ -105,6 +105,8 @@ public class ThucydidesPlugin extends BasePlugin {
         return super.beforeStory(binding);
     }
 
+
+
     private def testRunStarted(def binding) {
         def storyName = lookupStoryNameFrom(binding)
         def storyFile = lookupStoryFileFrom(binding)
@@ -149,6 +151,7 @@ public class ThucydidesPlugin extends BasePlugin {
         if (!runningFirstScenario && getConfiguration().isResetBrowserInEachScenario()) {
             resetDriver(binding)
         }
+        stepListener.testStarted(binding.variables['stepName'])
         return super.beforeScenario(binding);
     }
 
@@ -180,7 +183,7 @@ public class ThucydidesPlugin extends BasePlugin {
     public Object afterStory(final Binding binding) {
         stepFactory.notifyStepFinished()
 
-        generateReportsFor(stepListener.getTestOutcomes);
+        generateReportsFor(stepListener.testOutcomes);
 
         closeDriver(binding);
 
@@ -262,9 +265,9 @@ public class ThucydidesPlugin extends BasePlugin {
     }
 
     private def closeDriver(Binding binding) {
-        if (!useUniqueBrowser()) {
-            getWebdriverManager().closeDriver()
-        }
+//        if (!useUniqueBrowser()) {
+        getWebdriverManager().closeDriver()
+//        }
     }
 
     private def resetDriver(Binding binding) {

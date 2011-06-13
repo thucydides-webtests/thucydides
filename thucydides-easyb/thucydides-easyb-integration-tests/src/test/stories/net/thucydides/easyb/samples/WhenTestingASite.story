@@ -15,7 +15,7 @@ tags "someTag"
 /**
  * Thucydides can manage pages for us.
  */
-
+       /*
 scenario "Select entry in dropdown list", {
     given "we are on the Thucydides demo site", {
         indexPage = pages.currentPageAt(IndexPage)
@@ -39,12 +39,16 @@ scenario "Select entry in dropdown list again", {
         indexPage.selectedValues.shouldHave '1'
     }
 }
-
+       */
 scenario "Select entry in dropdown list using steps", {
     given "we are on the Thucydides demo site again", {
     }
     when "the user fills in the form", {
+        try {
          demo_site.enter_values('Label 3', true)
+        } catch(Exception e) {
+            e.printStackTrace()
+        }
     }
     then "the chosen options should be displayed", {
         demo_site.should_have_selected_value('3')
@@ -63,7 +67,7 @@ scenario "Select entry in dropdown list using nested steps", {
     }
 }
 
-scenario "Select entry in dropdown list using steps", {
+scenario "Select another entry in dropdown list using steps", {
     given "we are on the Thucydides demo site again", {
     }
     when "the user fills in the form", {

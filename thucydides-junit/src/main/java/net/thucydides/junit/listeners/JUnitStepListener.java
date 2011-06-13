@@ -30,7 +30,6 @@ public class JUnitStepListener extends RunListener {
     private boolean initialTest = true;
 
     public JUnitStepListener(final File outputDirectory, final Pages pages) {
-        System.out.println("New JUnitStepListener created: " + this);
         baseStepListener = new BaseStepListener(outputDirectory, pages);
     }
 
@@ -42,7 +41,6 @@ public class JUnitStepListener extends RunListener {
     public void testStarted(final Description description) throws Exception {
 
         LOGGER.debug("Junit notification: test started for {}", description.getMethodName());
-        System.out.println("Junit notification: test started for " + description.getMethodName() + "(" + this + ")");
         if (initialTest) {
             baseStepListener.testRunStartedFor(description.getTestClass());
             initialTest = false;

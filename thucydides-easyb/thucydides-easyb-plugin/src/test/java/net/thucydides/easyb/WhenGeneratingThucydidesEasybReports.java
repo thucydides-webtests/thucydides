@@ -2,6 +2,7 @@ package net.thucydides.easyb;
 
 
 import com.google.common.collect.ImmutableList;
+import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.core.pages.Pages;
@@ -134,7 +135,8 @@ public class WhenGeneratingThucydidesEasybReports {
         TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
         assertThat(testOutcome.getResult(), is(SUCCESS));
-        TestStepGroup scenario = (TestStepGroup) testOutcome.getTestSteps().get(0);
+        TestStepGroup story = (TestStepGroup) testOutcome.getTestSteps().get(0);
+        TestStepGroup scenario = (TestStepGroup) story.getSteps().get(0);
         TestStepGroup given = (TestStepGroup) scenario.getSteps().get(0);
 
         assertThat(given.getSteps().size(), is(2));
@@ -199,7 +201,8 @@ public class WhenGeneratingThucydidesEasybReports {
 
         TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
-        TestStepGroup scenario = (TestStepGroup) testOutcome.getTestSteps().get(0);
+        TestStepGroup story = (TestStepGroup) testOutcome.getTestSteps().get(0);
+        TestStepGroup scenario = (TestStepGroup) story.getSteps().get(0);
         TestStepGroup given = (TestStepGroup) scenario.getSteps().get(0);
 
         assertThat(given.getSteps().size(), is(3));
@@ -213,7 +216,8 @@ public class WhenGeneratingThucydidesEasybReports {
 
         TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
-        TestStepGroup scenario = (TestStepGroup) testOutcome.getTestSteps().get(0);
+        TestStepGroup story = (TestStepGroup) testOutcome.getTestSteps().get(0);
+        TestStepGroup scenario = (TestStepGroup) story.getSteps().get(0);
         TestStepGroup given = (TestStepGroup) scenario.getSteps().get(0);
         TestStepGroup when = (TestStepGroup) scenario.getSteps().get(1);
         TestStepGroup then = (TestStepGroup) scenario.getSteps().get(2);
@@ -241,7 +245,7 @@ public class WhenGeneratingThucydidesEasybReports {
 
         TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
-        verify(driver, times(3)).getScreenshotAs((OutputType<?>) anyObject());
+        verify(driver, times(1)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
 
@@ -249,7 +253,7 @@ public class WhenGeneratingThucydidesEasybReports {
     private void run_story_with_one_scenario() {
         SampleSteps steps = (SampleSteps) stepFactory.newSteps(SampleSteps.class);
 
-        stepListener.testRunStarted("Test Run");
+        stepListener.testRunStartedFor(Story.withId("storyId","Story name"));
         executionListener.startBehavior(behavior);
         executionListener.startStep(story);
         executionListener.startStep(scenario);
@@ -265,7 +269,7 @@ public class WhenGeneratingThucydidesEasybReports {
     private void run_story_with_nested_steps() {
         NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
 
-        stepListener.testRunStarted("Test Run");
+        stepListener.testRunStartedFor(Story.withId("storyId","Story name"));
         executionListener.startBehavior(behavior);
         executionListener.startStep(story);
         executionListener.startStep(scenario);
@@ -282,7 +286,7 @@ public class WhenGeneratingThucydidesEasybReports {
     private void run_story_with_a_failing_scenario() {
         SampleSteps steps = (SampleSteps) stepFactory.newSteps(SampleSteps.class);
 
-        stepListener.testRunStarted("Test Run");
+        stepListener.testRunStartedFor(Story.withId("storyId","Story name"));
         executionListener.startBehavior(behavior);
         executionListener.startStep(story);
         executionListener.startStep(scenario);
@@ -300,7 +304,7 @@ public class WhenGeneratingThucydidesEasybReports {
     private void run_story_with_a_failing_easyb_clause() {
         SampleSteps steps = (SampleSteps) stepFactory.newSteps(SampleSteps.class);
 
-        stepListener.testRunStarted("Test Run");
+        stepListener.testRunStartedFor(Story.withId("storyId","Story name"));
         executionListener.startBehavior(behavior);
         executionListener.startStep(story);
         executionListener.startStep(scenario);
@@ -321,7 +325,7 @@ public class WhenGeneratingThucydidesEasybReports {
     private void run_story_with_a_pending_scenario() {
         SampleSteps steps = (SampleSteps) stepFactory.newSteps(SampleSteps.class);
 
-        stepListener.testRunStarted("Test Run");
+        stepListener.testRunStartedFor(Story.withId("storyId","Story name"));
         executionListener.startBehavior(behavior);
         executionListener.startStep(story);
         executionListener.startStep(scenario);

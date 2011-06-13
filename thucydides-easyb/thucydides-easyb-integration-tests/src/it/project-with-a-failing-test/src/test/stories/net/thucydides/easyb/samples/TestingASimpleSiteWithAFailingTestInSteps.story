@@ -42,7 +42,7 @@ scenario "Select entry in dropdown list using steps", {
     given "we are on the Thucydides demo site again", {
     }
     when "the user fills in the form", {
-        demo_site.call_nested_steps('Label 3', true)
+        demo_site.use_nested_steps()
     }
     then "the chosen options should be displayed", {
         demo_site.should_have_selected_value '3'

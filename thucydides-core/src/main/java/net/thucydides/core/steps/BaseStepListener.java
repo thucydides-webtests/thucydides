@@ -228,11 +228,13 @@ public class BaseStepListener implements StepListener {
     }
 
     public void testGroupStarted(final ExecutedStepDescription description) {
-        getCurrentTestOutcome().startGroup(description.getName());
         if (getCurrentTestOutcome() == null) {
             startNewTestOutcomeFor(description.getName(), testedStory);
+            getCurrentTestOutcome().startGroup(description.getName());
+        } else {
+            getCurrentTestOutcome().startGroup(description.getName());
         }
-        takeScreenshotForCurrentGroup();
+        //takeScreenshotForCurrentGroup();
     }
  
     private void takeScreenshotForCurrentGroup() {
@@ -322,12 +324,16 @@ public class BaseStepListener implements StepListener {
     }
  
     public void stepGroupFinished() {
-        getCurrentTestOutcome().endGroup();
+        if (currentTestOutcome != null) {
+            getCurrentTestOutcome().endGroup();
+        }
     }
  
     public void stepGroupFinished(final TestResult result) {
-        getCurrentTestOutcome().setDefaultGroupResult(result);
-        getCurrentTestOutcome().endGroup();
+        if (getCurrentTestOutcome() != null) {
+            getCurrentTestOutcome().setDefaultGroupResult(result);
+            getCurrentTestOutcome().endGroup();
+        }
     }
  
     public void stepSucceeded() {

@@ -836,7 +836,7 @@ public class WhenRecordingStepExecutionResults {
 
 
     @Test
-    public void screenshots_should_be_taken_after_groups_and_nested_steps() {
+    public void screenshots_should_be_taken_after_nested_steps() {
 
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
@@ -845,7 +845,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step1();
         steps.step2();
 
-        verify(driver, times(7)).getScreenshotAs((OutputType<?>) anyObject());
+        verify(driver, times(5)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     private TestOutcome firstTestResultRecordedIn(List<TestOutcome> testOutcomeResults) {

@@ -156,6 +156,7 @@ public class WhenUsingAWebDriverProxy {
 
     @Test
     public void the_webdriver_proxy_should_handle_quit_if_a_proxied_driver_exists() {
+        webDriverFacade.get("http://www.google.com");
         webDriverFacade.quit();
         verify(mockFirefoxDriver).quit();
     }
@@ -163,12 +164,14 @@ public class WhenUsingAWebDriverProxy {
     @Test
     public void the_webdriver_proxy_should_not_call_quit_if_a_proxied_driver_doesnt_exist() {
         WebDriverFacade webDriverFacade = new TestableWebDriverFacade(mockFirefoxDriver, false);
+        webDriverFacade.get("http://www.google.com");
         webDriverFacade.quit();
         verify(mockFirefoxDriver, never()).quit();
     }
 
     @Test
     public void the_webdriver_proxy_should_handle_close_if_a_proxied_driver_exists() {
+        webDriverFacade.get("http://www.google.com");
         webDriverFacade.close();
         verify(mockFirefoxDriver).close();
     }
@@ -176,6 +179,7 @@ public class WhenUsingAWebDriverProxy {
     @Test
     public void the_webdriver_proxy_should_not_call_close_if_a_proxied_driver_doesnt_exist() {
         WebDriverFacade webDriverFacade = new TestableWebDriverFacade(mockFirefoxDriver, false);
+        webDriverFacade.get("http://www.google.com");
         webDriverFacade.close();
         verify(mockFirefoxDriver, never()).close();
     }

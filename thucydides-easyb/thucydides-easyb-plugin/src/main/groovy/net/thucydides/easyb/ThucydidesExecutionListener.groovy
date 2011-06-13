@@ -1,5 +1,6 @@
 package net.thucydides.easyb
 
+import net.thucydides.core.model.Story
 import net.thucydides.core.model.TestResult
 import net.thucydides.core.steps.StepFailure
 import net.thucydides.core.steps.StepListener
@@ -13,7 +14,12 @@ import static net.thucydides.core.steps.ExecutedStepDescription.withTitle
 import static org.easyb.result.Result.FAILED
 import static org.easyb.result.Result.IGNORED
 import static org.easyb.result.Result.PENDING
-import static org.easyb.util.BehaviorStepType.*
+import static org.easyb.util.BehaviorStepType.AND
+import static org.easyb.util.BehaviorStepType.GIVEN
+import static org.easyb.util.BehaviorStepType.SCENARIO
+import static org.easyb.util.BehaviorStepType.STORY
+import static org.easyb.util.BehaviorStepType.THEN
+import static org.easyb.util.BehaviorStepType.WHEN
 
 class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
 
@@ -38,6 +44,9 @@ class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
     void startStep(BehaviorStep step) {
         LOGGER.debug("THUCYDIDES STARTING STEP $step")
         switch (step.stepType) {
+            case STORY:
+                Story story = Story.withId("a","b")
+                stepListener.testRunStartedFor(story)
             case SCENARIO :
                 stepListener.noStepsHaveFailed()
                 String groupName = groupNameFrom(step);
