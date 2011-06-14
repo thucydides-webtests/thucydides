@@ -3,7 +3,7 @@ package net.thucydides.maven.plugins;
 import java.io.File;
 import java.io.IOException;
 
-import net.thucydides.core.reports.html.HtmlUserStoryTestReporter;
+import net.thucydides.core.reports.html.HtmlStoryReporter;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,7 +32,7 @@ public class ThucydidesReporterMojo extends AbstractMojo {
      */
     private File sourceDirectory;
 
-    private HtmlUserStoryTestReporter reporter = new HtmlUserStoryTestReporter();
+    private HtmlStoryReporter reporter = new HtmlStoryReporter();
 
     protected void setOutputDirectory(final File outputDirectory) {
         this.outputDirectory = outputDirectory;
@@ -43,7 +43,7 @@ public class ThucydidesReporterMojo extends AbstractMojo {
         this.sourceDirectory = sourceDirectory;
     }
 
-    protected void setReporter(final HtmlUserStoryTestReporter reporter) {
+    protected void setReporter(final HtmlStoryReporter reporter) {
         this.reporter = reporter;
     }
 

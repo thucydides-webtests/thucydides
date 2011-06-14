@@ -20,15 +20,15 @@ import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
  * reports from the output directory and generates an aggregate report
  * summarizing the results.
  */
-public class HtmlUserStoryTestReporter extends HtmlReporter implements UserStoryTestReporter {
+public class HtmlStoryReporter extends HtmlReporter implements UserStoryTestReporter {
 
     private static final String DEFAULT_USER_STORY_TEMPLATE = "velocity/user-story.vm";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlUserStoryTestReporter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlStoryReporter.class);
     private static final String STORIES_TEMPLATE_PATH = "velocity/stories.vm";
     private static final String HOME_TEMPLATE_PATH = "velocity/home.vm";
 
-    public HtmlUserStoryTestReporter() {
+    public HtmlStoryReporter() {
         setTemplatePath(DEFAULT_USER_STORY_TEMPLATE);
     }
     
