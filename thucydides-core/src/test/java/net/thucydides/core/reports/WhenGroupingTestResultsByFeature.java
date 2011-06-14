@@ -92,7 +92,7 @@ public class WhenGroupingTestResultsByFeature {
 
     @Test
     public void features_should_be_retrieved_from_the_user_stories() throws IOException {
-        when(mockUserStoryLoader.loadStoriesFrom(reportDirectory)).thenReturn(stories);
+        when(mockUserStoryLoader.loadFrom(reportDirectory)).thenReturn(stories);
 
         List<FeatureResults> features = loader.loadFrom(reportDirectory);
 
@@ -104,7 +104,7 @@ public class WhenGroupingTestResultsByFeature {
 
     @Test
     public void should_know_number_of_stories_of_a_feature() throws IOException {
-        when(mockUserStoryLoader.loadStoriesFrom(reportDirectory)).thenReturn(stories);
+        when(mockUserStoryLoader.loadFrom(reportDirectory)).thenReturn(stories);
 
         List<FeatureResults> features = loader.loadFrom(reportDirectory);
 
@@ -118,7 +118,7 @@ public class WhenGroupingTestResultsByFeature {
 
     @Test
     public void should_know_number_of_tests_of_a_feature() throws IOException {
-        when(mockUserStoryLoader.loadStoriesFrom(reportDirectory)).thenReturn(stories);
+        when(mockUserStoryLoader.loadFrom(reportDirectory)).thenReturn(stories);
 
         List<FeatureResults> features = loader.loadFrom(reportDirectory);
 
@@ -132,7 +132,7 @@ public class WhenGroupingTestResultsByFeature {
 
     @Test
     public void should_know_number_of_tests_in_the_stories_of_a_feature() throws IOException {
-        when(mockUserStoryLoader.loadStoriesFrom(reportDirectory)).thenReturn(stories);
+        when(mockUserStoryLoader.loadFrom(reportDirectory)).thenReturn(stories);
 
         List<FeatureResults> features = loader.loadFrom(reportDirectory);
 
@@ -146,7 +146,7 @@ public class WhenGroupingTestResultsByFeature {
 
     @Test
     public void should_know_number_of_passing_tests_in_the_stories_of_a_feature() throws IOException {
-        when(mockUserStoryLoader.loadStoriesFrom(reportDirectory)).thenReturn(stories);
+        when(mockUserStoryLoader.loadFrom(reportDirectory)).thenReturn(stories);
 
         List<FeatureResults> features = loader.loadFrom(reportDirectory);
 
@@ -160,7 +160,7 @@ public class WhenGroupingTestResultsByFeature {
 
     @Test
     public void should_know_number_of_failing_tests_in_the_stories_of_a_feature() throws IOException {
-        when(mockUserStoryLoader.loadStoriesFrom(reportDirectory)).thenReturn(stories);
+        when(mockUserStoryLoader.loadFrom(reportDirectory)).thenReturn(stories);
 
         List<FeatureResults> features = loader.loadFrom(reportDirectory);
 
@@ -174,7 +174,7 @@ public class WhenGroupingTestResultsByFeature {
 
     @Test
     public void should_know_number_of_pending_tests_in_the_stories_of_a_feature() throws IOException {
-        when(mockUserStoryLoader.loadStoriesFrom(reportDirectory)).thenReturn(stories);
+        when(mockUserStoryLoader.loadFrom(reportDirectory)).thenReturn(stories);
 
         List<FeatureResults> features = loader.loadFrom(reportDirectory);
 
@@ -187,7 +187,7 @@ public class WhenGroupingTestResultsByFeature {
 
     @Test
     public void should_know_number_of_steps_in_the_stories_of_a_feature() throws IOException {
-        when(mockUserStoryLoader.loadStoriesFrom(reportDirectory)).thenReturn(stories);
+        when(mockUserStoryLoader.loadFrom(reportDirectory)).thenReturn(stories);
 
         List<FeatureResults> features = loader.loadFrom(reportDirectory);
 

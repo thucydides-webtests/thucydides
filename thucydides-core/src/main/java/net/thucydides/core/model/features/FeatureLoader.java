@@ -31,7 +31,7 @@ public class FeatureLoader {
     public List<FeatureResults> loadFrom(final File resultsDirectory) throws IOException {
         List<FeatureResults> results = new ArrayList<FeatureResults>();
 
-        List<StoryTestResults> stories = getUserStoriesLoader().loadStoriesFrom(resultsDirectory);
+        List<StoryTestResults> stories = getUserStoriesLoader().loadFrom(resultsDirectory);
         for(StoryTestResults storyResult : stories) {
             updateFeatureResults(results, storyResult);
         }

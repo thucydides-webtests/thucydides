@@ -1,12 +1,11 @@
 package net.thucydides.maven.plugins;
 
-import java.io.File;
-import java.io.IOException;
-
-import net.thucydides.core.reports.html.HtmlStoryReporter;
-
+import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Generate aggregate XML acceptance test reports.
@@ -32,7 +31,7 @@ public class ThucydidesReporterMojo extends AbstractMojo {
      */
     private File sourceDirectory;
 
-    private HtmlStoryReporter reporter = new HtmlStoryReporter();
+    private HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter();
 
     protected void setOutputDirectory(final File outputDirectory) {
         this.outputDirectory = outputDirectory;
@@ -43,7 +42,7 @@ public class ThucydidesReporterMojo extends AbstractMojo {
         this.sourceDirectory = sourceDirectory;
     }
 
-    protected void setReporter(final HtmlStoryReporter reporter) {
+    protected void setReporter(final HtmlAggregateStoryReporter reporter) {
         this.reporter = reporter;
     }
 

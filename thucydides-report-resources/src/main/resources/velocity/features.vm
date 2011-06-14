@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Stories</title>
+    <script type="text/javascript" src="scripts/jquery.js"></script>
+    <style>
+        #accordion {
+            list-style: none;
+            padding: 0 0 0 0;
+            width: 600px;
+        }
+
+        #accordion div {
+            display: block;
+            margin: 1px;
+            cursor: pointer;
+            padding: 5 5 5 7px;
+            list-style: circle;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+        }
+
+        #accordion ul {
+            list-style: none;
+            padding: 0 0 0 0;
+        }
+
+        #accordion ul {
+            display: none;
+        }
+
+        #accordion ul li {
+            font-weight: normal;
+            cursor: auto;
+            padding: 7px 0 0 7px;
+        }
+
+        #accordion a {
+            text-decoration: none;
+        }
+
+        #accordion a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <style type="text/css">
+        <!--
+        @import url("css/core.css");
+        -->
+    </style>
+    <link href="css/core.css" rel="stylesheet" type="text/css"/>
+    <style type="text/css">a:link {
+        text-decoration: none;
+    }
+
+    a:visited {
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+
+    a:active {
+        text-decoration: none;
+    }
+    </style>
+</head>
+
+<body>
+<div id="topheader">
+    <div id="topbanner">
+        <div id="menu">
+            <table border="0">
+                <tr>
+                    <td><a href="home.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>
+                    <td><a href="features.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a></td>
+                    <td><a href="stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a></td>
+                </tr>
+            </table>
+        </div>
+        <div id="logo"><a href="Home.html"><img src="images/logo.jpg" width="265" height="96" border="0"/></a></div>
+    </div>
+</div>
+
+<div class="middlecontent">
+    <div id="contenttop">
+        <div class="leftbg"></div>
+        <div class="middlebg">
+            <div style="height:30px;"><span class="bluetext"><a href="home.html">Home</a></span> / <span class="lightgreentext"><a
+                    href="features.html" class="lightgreentext">Features</a></span></div>
+        </div>
+        <div class="rightbg"></div>
+    </div>
+    <div class="clr"></div>
+    <div id="contentbody">
+        <div class="titlebar">
+            <div class="leftbgm"></div>
+            <div class="middlebgm"><span class="orangetext">Features</span></div>
+            <div class="rightbgm"></div>
+        </div>
+    </div>
+    <div class="clr"></div>
+    <div id="beforetable"></div>
+    <div id="contenttilttle">
+        <div class="topb"><img src="images/topm.jpg"/></div>
+        <div class="middlb">
+            <div class="table">
+                <div class="toptableraw">
+                    <table width="980" height="50" border="0">
+                        <tr>
+                            <td width="10">&nbsp;</td>
+                            <td width="600" class="bluetext">Features</td>
+                            <td width="100" class="greentext">Stories</td>
+                            <td width="100" class="greentext">Total tests</td>
+                            <td width="100" class="greentext">Failed tests</td>
+                            <td width="100" class="greentext">Pending tests</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="tableraw">
+                    <table border="0" height="40" width="980">
+                        #foreach($featureResult in $features)
+                        <tr>
+                            <td width="10">&nbsp;</td>
+                            <td class="greentext">${featureResult.feature.name}</td>
+                            <td width="100" class="bluetext">$featureResult.totalStories</td>
+                            <td width="100" class="bluetext">$featureResult.totalTests</td>
+                            <td width="100" class="redtext">$featureResult.failingTests</td>
+                            <td width="100" class="lightgreentext">$featureResult.pendingTests</td>
+                        </tr>
+                        #end
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottomb"><img src="images/bottomm.jpg"/></div>
+    </div>
+</div>
+<div id="beforefooter"></div>
+<div id="bottomfooter"></div>
+
+</body>
+</html>
+<SCRIPT>
+    $("#accordion > li > div").click(function() {
+
+        if (false == $(this).next().is(':visible')) {
+            $('#accordion ul').slideUp(300);
+        }
+        $(this).next().slideToggle(300);
+    });
+
+    $('#accordion ul:eq(0)').show();
+
+</SCRIPT>

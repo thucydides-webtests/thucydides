@@ -27,7 +27,7 @@ public class WhenLoadingTestRunResultsIntoAUserStoryTestResults {
     @Test
     public void should_load_the_test_results_into_user_stories() throws IOException {
         
-        List<StoryTestResults> stories = loader.loadStoriesFrom(new File("src/test/resources/single-user-story-reports"));
+        List<StoryTestResults> stories = loader.loadFrom(new File("src/test/resources/single-user-story-reports"));
         assertThat(stories.size(), is(1));
         
         StoryTestResults singleStory = stories.get(0);
@@ -37,7 +37,7 @@ public class WhenLoadingTestRunResultsIntoAUserStoryTestResults {
     @Test
     public void should_load_multiple_user_stories_if_test_runs_have_more_than_one() throws IOException {
         
-        List<StoryTestResults> stories = loader.loadStoriesFrom(new File("src/test/resources/multiple-user-story-reports"));
+        List<StoryTestResults> stories = loader.loadFrom(new File("src/test/resources/multiple-user-story-reports"));
         assertThat(stories.size(), is(4));
         
         Story userStory1 = Story.withId("net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.AUserStoryInAFeature", "A user story in a feature");

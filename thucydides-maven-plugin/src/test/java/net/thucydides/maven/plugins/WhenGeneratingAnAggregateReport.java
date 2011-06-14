@@ -1,6 +1,6 @@
 package net.thucydides.maven.plugins;
 
-import net.thucydides.core.reports.html.HtmlStoryReporter;
+import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class WhenGeneratingAnAggregateReport {
     File sourceDirectory;
 
     @Mock
-    HtmlStoryReporter reporter;
+    HtmlAggregateStoryReporter reporter;
 
     @Before
     public void setupPlugin() {

@@ -34,7 +34,7 @@ public class UserStoryLoader {
      * Test results will be split across user stories if the user stories are specified in the 
      * test run XML files.
      */
-    public List<StoryTestResults> loadStoriesFrom(final File reportDirectory) throws IOException {
+    public List<StoryTestResults> loadFrom(final File reportDirectory) throws IOException {
 
         List<StoryTestResults> stories = new ArrayList<StoryTestResults>();
         

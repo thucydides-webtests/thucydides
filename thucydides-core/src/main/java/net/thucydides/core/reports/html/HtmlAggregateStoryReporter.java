@@ -1,7 +1,9 @@
 package net.thucydides.core.reports.html;
 
+import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.UserStoriesResultSet;
+import net.thucydides.core.model.features.FeatureLoader;
 import net.thucydides.core.model.userstories.UserStoryLoader;
 import net.thucydides.core.reports.UserStoryTestReporter;
 import org.apache.velocity.Template;
@@ -20,16 +22,21 @@ import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
  * reports from the output directory and generates an aggregate report
  * summarizing the results.
  */
-public class HtmlStoryReporter extends HtmlReporter implements UserStoryTestReporter {
+public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStoryTestReporter {
 
     private static final String DEFAULT_USER_STORY_TEMPLATE = "velocity/user-story.vm";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlStoryReporter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlAggregateStoryReporter.class);
     private static final String STORIES_TEMPLATE_PATH = "velocity/stories.vm";
+    private static final String FEATURES_TEMPLATE_PATH = "velocity/features.vm";
     private static final String HOME_TEMPLATE_PATH = "velocity/home.vm";
+    private FeatureLoader featureLoader;
+    private UserStoryLoader storyLoader;
 
-    public HtmlStoryReporter() {
+    public HtmlAggregateStoryReporter() {
         setTemplatePath(DEFAULT_USER_STORY_TEMPLATE);
+        storyLoader = new UserStoryLoader();
+        featureLoader = new FeatureLoader();
     }
     
     /**
@@ -54,25 +61,45 @@ public class HtmlStoryReporter extends HtmlReporter implements UserStoryTestRepo
     }
 
     public void generateReportsForStoriesFrom(final File sourceDirectory) throws IOException {
-        UserStoryLoader loader = new UserStoryLoader();
-        List<StoryTestResults> storyResults = loader.loadStoriesFrom(sourceDirectory);
-        
+        List<StoryTestResults> storyResults = loadStoryResultsFrom(sourceDirectory);
+        List<FeatureResults> featureResults = loadFeatureResultsFrom(sourceDirectory);
+
         copyResourcesToOutputDirectory();
 
         for(StoryTestResults storyTestResults : storyResults) {
             generateReportFor(storyTestResults);
         }
 
-        generateStoriesReportFor(storyResults);
+        generateAggregateReportFor(storyResults, featureResults);
     }
 
-    private void generateStoriesReportFor(final List<StoryTestResults> storyResults) throws IOException {
+    private List<StoryTestResults> loadStoryResultsFrom(final File sourceDirectory) throws IOException {
+        return storyLoader.loadFrom(sourceDirectory);
+    }
+
+    private List<FeatureResults> loadFeatureResultsFrom(final File sourceDirectory) throws IOException {
+        return featureLoader.loadFrom(sourceDirectory);
+    }
+
+    private void generateAggregateReportFor(final List<StoryTestResults> storyResults,
+                                            final List<FeatureResults> featureResults) throws IOException {
         LOGGER.info("Generating summary report for user stories to "+ getOutputDirectory());
 
         copyResourcesToOutputDirectory();
 
         generateStoriesReport(storyResults);
+        generateFeatureReport(featureResults);
         generateReportHomePage(storyResults);
+    }
+
+    private void generateFeatureReport(final List<FeatureResults> featureResults) throws IOException {
+        VelocityContext context = new VelocityContext();
+        context.put("features", featureResults);
+        Template featuresTemplate = getTemplateManager().getTemplateFrom(FEATURES_TEMPLATE_PATH);
+        LOGGER.debug("Generating features page");
+        String htmlContents = mergeVelocityTemplate(featuresTemplate, context);
+        LOGGER.debug("Writing features page");
+        writeReportToOutputDirectory("features.html", htmlContents);
     }
 
     private void generateStoriesReport(final List<StoryTestResults> storyResults) throws IOException {

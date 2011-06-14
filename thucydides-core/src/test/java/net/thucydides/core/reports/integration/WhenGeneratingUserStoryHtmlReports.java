@@ -6,7 +6,7 @@ import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.reports.UserStoryTestReporter;
-import net.thucydides.core.reports.html.HtmlStoryReporter;
+import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -60,7 +60,7 @@ public class WhenGeneratingUserStoryHtmlReports {
 
     @Before
     public void setupTestReporter() {
-        reporter = new HtmlStoryReporter();
+        reporter = new HtmlAggregateStoryReporter();
         outputDirectory = temporaryDirectory.newFolder("temp");
         reporter.setOutputDirectory(outputDirectory);
 
@@ -100,7 +100,7 @@ public class WhenGeneratingUserStoryHtmlReports {
 
     @Test
     public void can_generate_aggregate_reports_from_xml_files_in_a_directory() throws Exception {
-        HtmlStoryReporter reporter = new HtmlStoryReporter();
+        HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter();
         reporter.setOutputDirectory(outputDirectory);  
         File sourceDirectory = new File("src/test/resources/multiple-user-story-reports");
         reporter.generateReportsForStoriesFrom(sourceDirectory);
@@ -117,7 +117,7 @@ public class WhenGeneratingUserStoryHtmlReports {
     
     @Test
     public void should_generate_stories_html_report() throws Exception {
-        HtmlStoryReporter reporter = new HtmlStoryReporter();
+        HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter();
         reporter.setOutputDirectory(outputDirectory);  
         File sourceDirectory = new File("src/test/resources/multiple-user-story-reports");
         reporter.generateReportsForStoriesFrom(sourceDirectory);
@@ -127,7 +127,7 @@ public class WhenGeneratingUserStoryHtmlReports {
 
     @Test
     public void should_copy_resources_to_target_directory() throws Exception {
-        HtmlStoryReporter reporter = new HtmlStoryReporter();
+        HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter();
         reporter.setOutputDirectory(outputDirectory);
 
         URL dir = Thread.currentThread().getContextClassLoader().getResource("multiple-user-story-reports");
