@@ -1,7 +1,6 @@
 package net.thucydides.core.model;
 
 import net.thucydides.core.annotations.Feature;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,6 +9,7 @@ import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 public class WhenRecordingUserStoryTestResults {
 
     private Story userStory;
-    private UserStoryTestResults userStoryTestResults;
+    private StoryTestResults storyTestResults;
 
     @Feature
     class WidgetFeature {
@@ -30,7 +30,7 @@ public class WhenRecordingUserStoryTestResults {
     @Before
     public void init() {
         userStory = Story.from(WidgetFeature.PurchaseNewWidget.class);
-        userStoryTestResults = new UserStoryTestResults(userStory);
+        storyTestResults = new StoryTestResults(userStory);
     }
 
     static class SubclassedUserStory extends Story {
@@ -45,7 +45,7 @@ public class WhenRecordingUserStoryTestResults {
         Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
         Story story2 = new SubclassedUserStory(WidgetFeature.PurchaseNewWidget.class);
 
-        Assert.assertThat(story.equals(story2), is(false));
+        assertThat(story.equals(story2), is(false));
     }
 
     @Test
@@ -53,8 +53,8 @@ public class WhenRecordingUserStoryTestResults {
         Story story1 = Story.from(WidgetFeature.PurchaseNewWidget.class);
         Story story2 = Story.from(WidgetFeature.PurchaseNewWidget.class);
 
-        Assert.assertThat(story1.equals(story2), is(true));
-        Assert.assertThat(story1.hashCode(), is(equalTo(story2.hashCode())));
+        assertThat(story1.equals(story2), is(true));
+        assertThat(story1.hashCode(), is(equalTo(story2.hashCode())));
     }
     
     @Test
@@ -64,11 +64,11 @@ public class WhenRecordingUserStoryTestResults {
         TestOutcome testOutcome1 = thatFailsFor(story1);
         TestOutcome testOutcome2 = thatSucceedsFor(story2);
 
-        userStoryTestResults.recordTestRun(testOutcome1);
-        userStoryTestResults.recordTestRun(testOutcome2);
+        storyTestResults.recordTestRun(testOutcome1);
+        storyTestResults.recordTestRun(testOutcome2);
 
-        Assert.assertThat(userStoryTestResults.getTotal(), is(2));
-        Assert.assertThat(userStoryTestResults.getTestOutcomes(), allOf(hasItem(testOutcome1), hasItem(testOutcome2)));
+        assertThat(storyTestResults.getTotal(), is(2));
+        assertThat(storyTestResults.getTestOutcomes(), allOf(hasItem(testOutcome1), hasItem(testOutcome2)));
     }
     
     @Test
@@ -78,10 +78,10 @@ public class WhenRecordingUserStoryTestResults {
         TestOutcome testOutcome1 = thatSucceedsFor(story1);
         TestOutcome testOutcome2 = thatSucceedsFor(story2);
 
-        userStoryTestResults.recordTestRun(testOutcome1);
-        userStoryTestResults.recordTestRun(testOutcome2);
+        storyTestResults.recordTestRun(testOutcome1);
+        storyTestResults.recordTestRun(testOutcome2);
 
-        Assert.assertThat(userStoryTestResults.getResult(), is(TestResult.SUCCESS));
+        assertThat(storyTestResults.getResult(), is(TestResult.SUCCESS));
     }
 
     
@@ -92,10 +92,10 @@ public class WhenRecordingUserStoryTestResults {
         TestOutcome testOutcome1 = thatSucceedsFor(story1);
         TestOutcome testOutcome2 = thatFailsFor(story2);
 
-        userStoryTestResults.recordTestRun(testOutcome1);
-        userStoryTestResults.recordTestRun(testOutcome2);
+        storyTestResults.recordTestRun(testOutcome1);
+        storyTestResults.recordTestRun(testOutcome2);
 
-        Assert.assertThat(userStoryTestResults.getResult(), is(TestResult.FAILURE));
+        assertThat(storyTestResults.getResult(), is(TestResult.FAILURE));
     }
 
     @Test
@@ -105,10 +105,10 @@ public class WhenRecordingUserStoryTestResults {
         TestOutcome testOutcome1 = thatSucceedsFor(story1);
         TestOutcome testOutcome2 = thatIsPendingFor(story2);
 
-        userStoryTestResults.recordTestRun(testOutcome1);
-        userStoryTestResults.recordTestRun(testOutcome2);
+        storyTestResults.recordTestRun(testOutcome1);
+        storyTestResults.recordTestRun(testOutcome2);
 
-        Assert.assertThat(userStoryTestResults.getResult(), is(TestResult.PENDING));
+        assertThat(storyTestResults.getResult(), is(TestResult.PENDING));
     }
 
     @Test
@@ -116,10 +116,10 @@ public class WhenRecordingUserStoryTestResults {
         TestOutcome testOutcome1 = thatIsIgnoredCalled("Test Run 2");
         TestOutcome testOutcome2 = thatIsIgnoredCalled("Test Run 2");
 
-        userStoryTestResults.recordTestRun(testOutcome1);
-        userStoryTestResults.recordTestRun(testOutcome2);
+        storyTestResults.recordTestRun(testOutcome1);
+        storyTestResults.recordTestRun(testOutcome2);
 
-        Assert.assertThat(userStoryTestResults.getResult(), is(TestResult.IGNORED));
+        assertThat(storyTestResults.getResult(), is(TestResult.IGNORED));
     }
 
     @Test
@@ -130,65 +130,65 @@ public class WhenRecordingUserStoryTestResults {
         TestOutcome testOutcome1 = thatFailsFor(story1);
         TestOutcome testOutcome2 = thatFailsFor(story2);
 
-        userStoryTestResults.recordTestRun(testOutcome1);
-        userStoryTestResults.recordTestRun(testOutcome2);
+        storyTestResults.recordTestRun(testOutcome1);
+        storyTestResults.recordTestRun(testOutcome2);
 
-        Assert.assertThat(userStoryTestResults.getFailureCount(), is(2));
+        assertThat(storyTestResults.getFailureCount(), is(2));
     }
 
     @Test
     public void an_aggregate_test_result_should_count_the_number_of_successful_test_runs() {
 
-        userStoryTestResults.recordTestRun(thatFailsFor(userStory));
-        userStoryTestResults.recordTestRun(thatSucceedsFor(userStory));
-        userStoryTestResults.recordTestRun(thatFailsFor(userStory));
+        storyTestResults.recordTestRun(thatFailsFor(userStory));
+        storyTestResults.recordTestRun(thatSucceedsFor(userStory));
+        storyTestResults.recordTestRun(thatFailsFor(userStory));
 
-        Assert.assertThat(userStoryTestResults.getFailureCount(), is(2));
-        Assert.assertThat(userStoryTestResults.getSuccessCount(), is(1));
+        assertThat(storyTestResults.getFailureCount(), is(2));
+        assertThat(storyTestResults.getSuccessCount(), is(1));
     }
 
     @Test
     public void an_aggregate_test_result_should_count_the_number_of_pending_test_runs() {
 
-        userStoryTestResults.recordTestRun(thatFailsFor(userStory));
-        userStoryTestResults.recordTestRun(thatSucceedsFor(userStory));
-        userStoryTestResults.recordTestRun(thatIsPendingFor(userStory));
-        userStoryTestResults.recordTestRun(thatIsPendingFor(userStory));
-        userStoryTestResults.recordTestRun(thatIsPendingFor(userStory));
+        storyTestResults.recordTestRun(thatFailsFor(userStory));
+        storyTestResults.recordTestRun(thatSucceedsFor(userStory));
+        storyTestResults.recordTestRun(thatIsPendingFor(userStory));
+        storyTestResults.recordTestRun(thatIsPendingFor(userStory));
+        storyTestResults.recordTestRun(thatIsPendingFor(userStory));
 
-        Assert.assertThat(userStoryTestResults.getPendingCount(), is(3));
+        assertThat(storyTestResults.getPendingCount(), is(3));
     }
     
     @Test
     public void a_aggregate_test_result_set_knows_what_stories_it_contains() {
 
         Story someStory = Story.from(WidgetFeature.PurchaseNewWidget.class);
-        UserStoryTestResults testResults = new UserStoryTestResults(someStory);
+        StoryTestResults testResults = new StoryTestResults(someStory);
 
         testResults.recordTestRun(thatSucceedsFor(userStory));
 
-        Assert.assertThat(testResults.containsResultsFor(someStory), is(true));
+        assertThat(testResults.containsResultsFor(someStory), is(true));
     }
     
     @Test
     public void a_aggregate_test_result_set_knows_what_stories_it_contains_even_if_it_is_empty() {
 
         Story someStory = Story.from(WidgetFeature.PurchaseNewWidget.class);
-        UserStoryTestResults testResults = new UserStoryTestResults(someStory);
+        StoryTestResults testResults = new StoryTestResults(someStory);
 
         testResults.recordTestRun(thatSucceedsFor(userStory));
 
-        Assert.assertThat(testResults.containsResultsFor(someStory), is(true));
+        assertThat(testResults.containsResultsFor(someStory), is(true));
     }
     @Test
     public void a_aggregate_test_result_set_matches_stories_by_field_values() {
 
         Story someStory = Story.from(WidgetFeature.PurchaseNewWidget.class);
-        UserStoryTestResults testResults = new UserStoryTestResults(someStory);
+        StoryTestResults testResults = new StoryTestResults(someStory);
         
         testResults.recordTestRun(thatSucceedsFor(userStory));
         
-        Assert.assertThat(testResults.containsResultsFor(someStory), is(true));
+        assertThat(testResults.containsResultsFor(someStory), is(true));
     }
     
     @Test
@@ -197,11 +197,22 @@ public class WhenRecordingUserStoryTestResults {
         Story someStory1 = Story.from(WidgetFeature.PurchaseNewWidget.class);
         Story someStory2 = Story.from(WidgetFeature.DisplayWidgets.class);
 
-        UserStoryTestResults testResults = new UserStoryTestResults(someStory1);
+        StoryTestResults testResults = new StoryTestResults(someStory1);
         
         testResults.recordTestRun(thatSucceedsFor(userStory));
 
-        Assert.assertThat(testResults.containsResultsFor(someStory2), is(false));
+        assertThat(testResults.containsResultsFor(someStory2), is(false));
+    }
+
+    @Test
+    public void a_story_should_know_the_total_number_of_steps_it_contains() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults testResults = new StoryTestResults(story);
+
+        testResults.recordTestRun(thatFailsFor(userStory));
+        testResults.recordTestRun(thatSucceedsFor(userStory));
+
+        assertThat(testResults.getStepCount(), is(5));
     }
     
     private TestOutcome thatFailsFor(Story story) {

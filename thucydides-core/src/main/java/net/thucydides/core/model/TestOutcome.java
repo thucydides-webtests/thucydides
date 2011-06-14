@@ -280,11 +280,7 @@ public class TestOutcome {
     }
 
     private ApplicationFeature obtainFeatureFromUserStory() {
-        if (getUserStory().getFeatureClass() != null) {
-            return ApplicationFeature.from(getUserStory().getFeatureClass());
-        } else {
-            return new ApplicationFeature(getUserStory().getFeatureId(), getUserStory().getFeatureName());
-        }
+        return getUserStory().getFeature();
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {

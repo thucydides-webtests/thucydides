@@ -4,7 +4,7 @@ import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.TestsStory;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.UserStoryTestResults;
+import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.reports.UserStoryTestReporter;
 import net.thucydides.core.reports.html.HtmlUserStoryTestReporter;
 import org.apache.commons.io.FileUtils;
@@ -30,7 +30,7 @@ public class WhenGeneratingUserStoryHtmlReports {
     public TemporaryFolder temporaryDirectory = new TemporaryFolder();
 
     private Story userStory = Story.from(AUserStory.class);
-    private UserStoryTestResults userStoryTestResults;
+    private StoryTestResults storyTestResults;
 
     private UserStoryTestReporter reporter;
 
@@ -64,34 +64,34 @@ public class WhenGeneratingUserStoryHtmlReports {
         outputDirectory = temporaryDirectory.newFolder("temp");
         reporter.setOutputDirectory(outputDirectory);
 
-        userStoryTestResults = new UserStoryTestResults(userStory);
-        userStoryTestResults.recordTestRun(thatFailsCalled("should_do_this"));
-        userStoryTestResults.recordTestRun(thatSucceedsCalled("should_do_that"));
-        userStoryTestResults.recordTestRun(thatFailsCalled("should_also_do_this"));
+        storyTestResults = new StoryTestResults(userStory);
+        storyTestResults.recordTestRun(thatFailsCalled("should_do_this"));
+        storyTestResults.recordTestRun(thatSucceedsCalled("should_do_that"));
+        storyTestResults.recordTestRun(thatFailsCalled("should_also_do_this"));
     }
 
     @Test
     public void should_write_aggregate_reports_to_output_directory() throws Exception {
-        File userStoryReport = reporter.generateReportFor(userStoryTestResults);
+        File userStoryReport = reporter.generateReportFor(storyTestResults);
         assertThat(userStoryReport.exists(), is(true));
     }
 
     @Test
     public void should_write_aggregate_report_to_a_file_named_after_the_user_story() throws Exception {
-        File userStoryReport = reporter.generateReportFor(userStoryTestResults);
+        File userStoryReport = reporter.generateReportFor(storyTestResults);
         assertThat(userStoryReport.getName(), is("a_user_story.html"));
     }
 
     @Test
     public void aggregate_report_should_contain_the_user_story_name_as_a_title() throws Exception {
-        File userStoryReport = reporter.generateReportFor(userStoryTestResults);
+        File userStoryReport = reporter.generateReportFor(storyTestResults);
         String reportText = getStringFrom(userStoryReport);
         assertThat(reportText, containsString("A user story"));
     }
 
     @Test
     public void aggregate_report_should_contain_links_to_the_test_runs() throws Exception {
-        File userStoryReport = reporter.generateReportFor(userStoryTestResults);
+        File userStoryReport = reporter.generateReportFor(storyTestResults);
         String reportText = getStringFrom(userStoryReport);
         assertThat(reportText, containsString("href=\"a_user_story_should_do_this.html\""));
         assertThat(reportText, containsString("href=\"a_user_story_should_do_that.html\""));
@@ -141,14 +141,14 @@ public class WhenGeneratingUserStoryHtmlReports {
 
     @Test
     public void aggregate_failing_story_should_display_failing_icon() throws Exception {
-        File userStoryReport = reporter.generateReportFor(userStoryTestResults);
+        File userStoryReport = reporter.generateReportFor(storyTestResults);
         String reportText = getStringFrom(userStoryReport);
         assertThat(reportText, containsString("fail.png"));
     }
 
     @Test
     public void aggregate_failing_story_should_display_test_titles() throws Exception {
-        File userStoryReport = reporter.generateReportFor(userStoryTestResults);
+        File userStoryReport = reporter.generateReportFor(storyTestResults);
         String reportText = getStringFrom(userStoryReport);
         assertThat(reportText, containsString("A user story"));
     }

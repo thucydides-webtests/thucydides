@@ -86,4 +86,49 @@ public class ApplicationFeature {
             return featureId;
         }
     }
+
+    public boolean classesAreEqual(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ApplicationFeature)) return false;
+
+        ApplicationFeature that = (ApplicationFeature) o;
+
+        if (featureClass != null ? !featureClass.equals(that.featureClass) : that.featureClass != null) return false;
+
+        return true;
+    }
+
+    public boolean idAndNameAreEqual(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ApplicationFeature)) return false;
+
+        ApplicationFeature that = (ApplicationFeature) o;
+
+        if (featureId != null ? !featureId.equals(that.featureId) : that.featureId != null) return false;
+        if (featureName != null ? !featureName.equals(that.featureName) : that.featureName != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ApplicationFeature)) return false;
+
+        ApplicationFeature that = (ApplicationFeature) o;
+
+        if (this.featureClass != null) {
+            return classesAreEqual(that);
+        } else {
+            return idAndNameAreEqual(that);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int result = featureClass != null ? featureClass.hashCode() : 0;
+        result = 31 * result + (featureId != null ? featureId.hashCode() : 0);
+        result = 31 * result + (featureName != null ? featureName.hashCode() : 0);
+        return result;
+    }
 }

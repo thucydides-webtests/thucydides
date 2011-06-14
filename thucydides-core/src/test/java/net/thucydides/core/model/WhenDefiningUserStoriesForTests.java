@@ -101,4 +101,11 @@ public class WhenDefiningUserStoriesForTests {
         assertThat(story1, is(story2));
     }
 
+
+    @Test
+    public void a_story_should_know_what_feature_it_belongs_to() {
+        Story story = Story.from(MyUserStories.PurchaseNewWidget.class);
+
+    }
+
 }

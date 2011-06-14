@@ -1,13 +1,13 @@
 package net.thucydides.core.matchers;
 
 import net.thucydides.core.model.Story;
-import net.thucydides.core.model.UserStoryTestResults;
+import net.thucydides.core.model.StoryTestResults;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
 import java.util.List;
 
-public class ContainsUserStoryMatcher extends TypeSafeMatcher<List<UserStoryTestResults>> {
+public class ContainsUserStoryMatcher extends TypeSafeMatcher<List<StoryTestResults>> {
     
     private Story userStory;
     
@@ -15,9 +15,9 @@ public class ContainsUserStoryMatcher extends TypeSafeMatcher<List<UserStoryTest
         this.userStory = userStory;
     }
 
-    public boolean matchesSafely(List<UserStoryTestResults> userStories) {        
-        for(UserStoryTestResults userStoryResults : userStories) {
-            if (userStoryResults.containsResultsFor(userStory)) {
+    public boolean matchesSafely(List<StoryTestResults> stories) {
+        for(StoryTestResults storyResults : stories) {
+            if (storyResults.containsResultsFor(userStory)) {
                 return true;
             }
         }

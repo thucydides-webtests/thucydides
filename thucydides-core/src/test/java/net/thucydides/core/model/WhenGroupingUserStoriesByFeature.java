@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 class SimpleTestCase {};
@@ -19,6 +20,13 @@ public class WhenGroupingUserStoriesByFeature {
          class PurchaseNewWidget{};
          class SearchWidgets{};
          class DisplayWidgets{};
+    }
+
+    @Feature
+    class GizmoFeature {
+         class PurchaseNewGizmo{};
+         class SearchGizmos{};
+         class DisplayGizmos{};
     }
 
     class MyApp {
@@ -91,12 +99,54 @@ public class WhenGroupingUserStoriesByFeature {
     }
 
     @Test
-    public void a_user_story_can_return_the_name_of_its_feature_class() {
+    public void features_referring_to_the_same_feature_class_are_identical() {
+        ApplicationFeature feature1 = ApplicationFeature.from(WidgetFeature.class);
+        ApplicationFeature feature2 = ApplicationFeature.from(WidgetFeature.class);
+
+        assertThat(feature1, is(feature2));
+    }
+
+    @Test
+    public void features_referring_to_different_feature_classes_are_different() {
+        ApplicationFeature feature1 = ApplicationFeature.from(WidgetFeature.class);
+        ApplicationFeature feature2 = ApplicationFeature.from(GizmoFeature.class);
+
+        assertThat(feature1, is(not(feature2)));
+    }
+
+    @Test
+    public void features_referring_to_the_same_feature_id_and_name_are_identical() {
+        ApplicationFeature feature1 = new ApplicationFeature("id","name");
+        ApplicationFeature feature2 = new ApplicationFeature("id","name");
+
+        assertThat(feature1, is(feature2));
+    }
+
+    @Test
+    public void features_referring_to_different_feature_id_and_names_are_different() {
+        ApplicationFeature feature1 = new ApplicationFeature("id","name");
+        ApplicationFeature feature2 = new ApplicationFeature("id2","name2");
+
+        assertThat(feature1, is(not(feature2)));
+    }
+
+    @Test
+    public void a_user_story_can_return_the_corresponding_feature_class() {
         Class<?> userStoryClass = WidgetFeature.PurchaseNewWidget.class;
 
         Story story = Story.from(userStoryClass);
+        ApplicationFeature feature = ApplicationFeature.from(WidgetFeature.class);
 
-        assertThat(story.getFeatureId(), is(WidgetFeature.class.getCanonicalName()));
+        assertThat(story.getFeature(), is(feature));
+    }
+
+    @Test
+    public void a_user_story_can_return_the_corresponding_feature_class_using_id_and_name() {
+        Story story = new Story("story.class","AStory", "feature.class","AFeature");
+
+        ApplicationFeature feature = new ApplicationFeature("feature.class","AFeature");
+
+        assertThat(story.getFeature(), is(feature));
     }
 
 }

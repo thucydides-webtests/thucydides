@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
+import static ch.lambdaj.Lambda.sum;
 import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 
 /**
@@ -19,36 +21,36 @@ import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
  * @author johnsmart
  * 
  */
-public class UserStoryTestResults {
+public class StoryTestResults {
 
     private List<TestOutcome> testOutcomes;
     
     private final String title;
     
-    private final Story userStory;
+    private final Story story;
     
     /**
      * Create a new acceptance test run instance.
      */
-    public UserStoryTestResults(final Story userStory) {
+    public StoryTestResults(final Story story) {
         testOutcomes = new ArrayList<TestOutcome>();
-        this.title = userStory.getName();
-        this.userStory = userStory;
+        this.title = story.getName();
+        this.story = story;
     }
 
-    public Story getUserStory() {
-        return userStory;
+    public Story getStory() {
+        return story;
     }
 
     public String getReportName(final ReportNamer.ReportType type) {
         ReportNamer reportNamer = new ReportNamer(type);
-        return reportNamer.getNormalizedTestNameFor(getUserStory());
+        return reportNamer.getNormalizedTestNameFor(getStory());
     }
 
     public String getReportName() {
         return getReportName(ROOT);
     }
-    
+
     /**
      * Add a test run result to the aggregate set of results.
      */
@@ -78,7 +80,7 @@ public class UserStoryTestResults {
         return select(testOutcomes, having(on(TestOutcome.class).isSuccess())).size();
     }
 
-    public Integer getPendingCount() {
+    public int getPendingCount() {
         return select(testOutcomes, having(on(TestOutcome.class).isPending())).size();
     }
 
@@ -88,6 +90,10 @@ public class UserStoryTestResults {
 
     public String getTitle() {
         return title;
+    }
+
+    public int getStepCount() {
+        return (Integer) sum(extract(testOutcomes, on(TestOutcome.class).getTestSteps().size()));
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestOutcome, TestResult> {
@@ -110,6 +116,6 @@ public class UserStoryTestResults {
      * Does this set of test results correspond to a specified user story?
      */
     public boolean containsResultsFor(final Story aUserStory) {
-        return getUserStory().equals(aUserStory);
+        return getStory().equals(aUserStory);
     }
 }

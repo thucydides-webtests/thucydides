@@ -9,13 +9,13 @@ import java.util.List;
  */
 public class UserStoriesResultSet {
 
-    private final List<UserStoryTestResults> stories;
+    private final List<StoryTestResults> stories;
 
-    public UserStoriesResultSet(final List<UserStoryTestResults> stories) {
+    public UserStoriesResultSet(final List<StoryTestResults> stories) {
         this.stories = stories;
     }
 
-    public List<UserStoryTestResults> getStories() {
+    public List<StoryTestResults> getStories() {
         return ImmutableList.copyOf(stories);
     }
 
@@ -25,7 +25,7 @@ public class UserStoriesResultSet {
 
     public int getAcceptanceTestCount() {
         int count = 0;
-        for(UserStoryTestResults story : stories) {
+        for(StoryTestResults story : stories) {
             count += story.getTotal();
         }
         return count;
@@ -33,7 +33,7 @@ public class UserStoriesResultSet {
 
     public int getSuccessCount() {
         int count = 0;
-        for(UserStoryTestResults story : stories) {
+        for(StoryTestResults story : stories) {
             count += story.getSuccessCount();
         }
         return count;
@@ -41,7 +41,7 @@ public class UserStoriesResultSet {
 
     public int getFailureCount() {
         int count = 0;
-        for(UserStoryTestResults story : stories) {
+        for(StoryTestResults story : stories) {
             count += story.getFailureCount();
         }
         return count;
@@ -49,7 +49,7 @@ public class UserStoriesResultSet {
 
     public int getPendingCount() {
         int count = 0;
-        for(UserStoryTestResults story : stories) {
+        for(StoryTestResults story : stories) {
             count += story.getPendingCount();
         }
         return count;

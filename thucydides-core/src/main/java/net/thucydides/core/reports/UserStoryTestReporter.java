@@ -3,7 +3,7 @@ package net.thucydides.core.reports;
 import java.io.File;
 import java.io.IOException;
 
-import net.thucydides.core.model.UserStoryTestResults;
+import net.thucydides.core.model.StoryTestResults;
 
 /**
  * Generates an aggregate acceptance test report for each user story.
@@ -27,5 +27,5 @@ public interface UserStoryTestReporter {
 
     void setOutputDirectory(final File outputDirectory);
 
-    File generateReportFor(UserStoryTestResults userStoryTestResults) throws IOException;
+    File generateReportFor(StoryTestResults storyTestResults) throws IOException;
 }

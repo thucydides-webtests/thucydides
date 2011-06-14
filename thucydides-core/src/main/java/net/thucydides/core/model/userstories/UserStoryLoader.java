@@ -2,7 +2,7 @@ package net.thucydides.core.model.userstories;
 
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.UserStoryTestResults;
+import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.reports.xml.NotAThucydidesReportException;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
 import org.slf4j.Logger;
@@ -34,9 +34,9 @@ public class UserStoryLoader {
      * Test results will be split across user stories if the user stories are specified in the 
      * test run XML files.
      */
-    public List<UserStoryTestResults> loadStoriesFrom(final File reportDirectory) throws IOException {
+    public List<StoryTestResults> loadStoriesFrom(final File reportDirectory) throws IOException {
 
-        List<UserStoryTestResults> userStories = new ArrayList<UserStoryTestResults>();
+        List<StoryTestResults> stories = new ArrayList<StoryTestResults>();
         
         XMLTestOutcomeReporter testOutcomeReporter = new XMLTestOutcomeReporter();
 
@@ -45,28 +45,28 @@ public class UserStoryLoader {
         for (File reportFile : reportFiles) {
             try {
                 TestOutcome testOutcome = testOutcomeReporter.loadReportFrom(reportFile);
-                UserStoryTestResults userStoryResults = userStoryResultsFor(testOutcome, userStories);
-                userStoryResults.recordTestRun(testOutcome);
+                StoryTestResults storyResults = userStoryResultsFor(testOutcome, stories);
+                storyResults.recordTestRun(testOutcome);
             } catch (NotAThucydidesReportException e) {
                 LOGGER.info("Skipping XML file - not a Thucydides report: " + reportFile);
             }
         }
         
-        return userStories;
+        return stories;
     }
 
     
-    private UserStoryTestResults userStoryResultsFor(final TestOutcome testOutcome,
-                                                     final List<UserStoryTestResults> userStoryResults) {
+    private StoryTestResults userStoryResultsFor(final TestOutcome testOutcome,
+                                                     final List<StoryTestResults> storyResults) {
         Story userStory = testOutcome.getUserStory();
-        for (UserStoryTestResults userStoryResult : userStoryResults) {
-            if (userStoryResult.containsResultsFor(userStory)) {
-                return userStoryResult;
+        for (StoryTestResults storyResult : storyResults) {
+            if (storyResult.containsResultsFor(userStory)) {
+                return storyResult;
             }
         }
-        UserStoryTestResults userStoryTestResults = new UserStoryTestResults(userStory);
-        userStoryResults.add(userStoryTestResults);
-        return userStoryTestResults;
+        StoryTestResults storyTestResults = new StoryTestResults(userStory);
+        storyResults.add(storyTestResults);
+        return storyTestResults;
     }
 
 
