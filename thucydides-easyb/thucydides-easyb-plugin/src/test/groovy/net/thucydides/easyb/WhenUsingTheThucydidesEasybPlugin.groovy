@@ -137,6 +137,21 @@ public class WhenUsingTheThucydidesEasybPlugin {
     }
 
     @Test
+    public void the_user_should_be_able_to_override_the_default_base_url_using_a_system_property() {
+
+        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
+
+        System.setProperty("webdriver.base.url","http://www.wikipedia.org")
+        runStories(plugin, binding);
+
+        plugin.getConfiguration().stop_using_mock_driver()
+
+        mockWebDriver.shouldHaveOpenedAt("http://www.wikipedia.org")
+
+    }
+
+
+    @Test
     public void the_plugin_should_open_the_browser_to_the_system_defined_default_url() {
 
         System.setProperty("webdriver.base.url", "http://www.google.com");

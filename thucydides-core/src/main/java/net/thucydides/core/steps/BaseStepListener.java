@@ -116,7 +116,12 @@ public class BaseStepListener implements StepListener {
         aStepHasFailed = false;
         stepError = null;
     }
- 
+
+    public boolean isDataDriven() {
+        return DataDrivenStep.inProgress();
+    }
+
+
     public Throwable getStepError() {
         return stepError;
     }

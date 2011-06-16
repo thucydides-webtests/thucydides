@@ -32,7 +32,6 @@ public class WhenGeneratingAnHtmlReport {
 
     private File outputDirectory;
 
-    // TODO: check the output more throroughly
     class AUserStory {};
 
     @TestsStory(AUserStory.class)

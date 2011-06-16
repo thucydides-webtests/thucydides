@@ -29,6 +29,9 @@ var Log = {
 function init() {
     //init data
     var json = {
+        "data": {},
+        "id": "root",
+        "name": "Application",
         "children": [
             {
                 "id": "Feature1",
@@ -173,10 +176,7 @@ function init() {
                     }
                 ]
             }
-        ],
-        "data": {},
-        "id": "root",
-        "name": "Application"
+        ]
     };
     //end
     //init TreeMap

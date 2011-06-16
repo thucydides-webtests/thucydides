@@ -82,7 +82,7 @@ public class WhenFindingTestDataInADataDrivenTest {
         List<PersonTestScenario> testScenarios
                 = DataDrivenAnnotations.forClass(testClass).getDataAsInstancesOf(PersonTestScenario.class);
 
-        assertThat(testScenarios.size(), is(2));
+        assertThat(testScenarios.size(), is(3));
         assertThat(testScenarios.get(0).getName(), is("Joe Smith"));
         assertThat(testScenarios.get(1).getName(), is("Jack Black"));
     }

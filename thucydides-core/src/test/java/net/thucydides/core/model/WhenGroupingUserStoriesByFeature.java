@@ -149,4 +149,12 @@ public class WhenGroupingUserStoriesByFeature {
         assertThat(story.getFeature(), is(feature));
     }
 
+    @Test
+    public void if_the_feature_name_and_class_are_null_the_features_name_should_be_blank() {
+        ApplicationFeature feature = new ApplicationFeature("id",null);
+
+        assertThat(feature.getName(), is(""));
+    }
+
+
 }

@@ -5,6 +5,7 @@ import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -81,7 +82,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
 
-        assertThat(executedScenarios.size(), is(2));
+        assertThat(executedScenarios.size(), is(3));
     }
 
 
@@ -114,7 +115,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         runner.run(new RunNotifier());
 
         File[] reports = outputDirectory.listFiles(new XMLFileFilter());
-        assertThat(reports.length, is(2));
+        assertThat(reports.length, is(3));
     }
 
     @Test
@@ -209,6 +210,73 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         assertThat(reportContents.size(), is(1));
     }
 
+    @Test
+    public void when_a_step_fails_for_a_row_the_other_rows_should_be_executed() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                            outputDirectory.getAbsolutePath());
+
+        ThucydidesRunner runner = new ThucydidesRunner(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(1));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+
+        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
+        assertThat(dataDrivenSteps.size(), is(3));
+
+    }
+
+    @Test
+    public void when_a_step_fails_for_a_row_the_other_rows_should_not_be_skipped() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                            outputDirectory.getAbsolutePath());
+
+        ThucydidesRunner runner = new ThucydidesRunner(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(1));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+
+        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
+        assertThat(dataDrivenSteps.size(), is(3));
+        assertThat(dataDrivenSteps.get(1).getResult(), is(TestResult.FAILURE));
+        assertThat(dataDrivenSteps.get(2).getResult(), is(TestResult.SUCCESS));
+
+    }
+
+    @Ignore("Come back to this one")
+    @Test
+    public void when_a_step_fails_with_an_error_for_a_row_the_other_rows_should_be_executed() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                            outputDirectory.getAbsolutePath());
+
+        ThucydidesRunner runner = new ThucydidesRunner(ScenarioWithTestSpecificDataAndABreakingTestSample.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(1));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+
+        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
+        assertThat(dataDrivenSteps.size(), is(3));
+        assertThat(dataDrivenSteps.get(1).getResult(), is(TestResult.FAILURE));
+        assertThat(dataDrivenSteps.get(2).getResult(), is(TestResult.SUCCESS));
+    }
+
     @RunWith(ThucydidesRunner.class)
     public static class ScenarioWithTestSpecificData {
 
@@ -229,6 +297,44 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
     }
 
 
+    @RunWith(ThucydidesRunner.class)
+    public static class ScenarioWithTestSpecificDataAndAFailingTestSample {
+
+        @Managed
+        public WebDriver webdriver;
+
+        @ManagedPages(defaultUrl = "http://www.google.com")
+        public Pages pages;
+
+        @Steps
+        public SampleScenarioSteps steps;
+
+
+        @Test
+        public void happy_day_scenario() throws Throwable {
+            withTestDataFrom("test-data/simple-data.csv").run(steps).data_driven_test_step_that_fails();
+        }
+    }
+
+    @RunWith(ThucydidesRunner.class)
+    public static class ScenarioWithTestSpecificDataAndABreakingTestSample {
+
+        @Managed
+        public WebDriver webdriver;
+
+        @ManagedPages(defaultUrl = "http://www.google.com")
+        public Pages pages;
+
+        @Steps
+        public SampleScenarioSteps steps;
+
+
+        @Test
+        public void happy_day_scenario() throws Throwable {
+            withTestDataFrom("test-data/simple-data.csv").run(steps).data_driven_test_step_that_breaks();
+        }
+    }
+
     @Test
     public void when_test_data_is_provided_for_a_step_then_a_step_should_be_reported_for_each_data_row() throws Throwable  {
 
@@ -246,7 +352,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         TestOutcome testOutcome1 = executedSteps.get(0);
 
         List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
-        assertThat(dataDrivenSteps.size(), is(2));
+        assertThat(dataDrivenSteps.size(), is(3));
 
     }
 

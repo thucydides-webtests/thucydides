@@ -6,6 +6,7 @@ import net.thucydides.core.model.UserStoriesResultSet;
 import net.thucydides.core.model.features.FeatureLoader;
 import net.thucydides.core.model.userstories.UserStoryLoader;
 import net.thucydides.core.reports.UserStoryTestReporter;
+import net.thucydides.core.reports.json.JSONResultTree;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlAggregateStoryReporter.class);
     private static final String STORIES_TEMPLATE_PATH = "velocity/stories.vm";
     private static final String FEATURES_TEMPLATE_PATH = "velocity/features.vm";
+    private static final String COVERAGE_DATA_TEMPLATE_PATH = "velocity/coverage.vm";
     private static final String HOME_TEMPLATE_PATH = "velocity/home.vm";
     private FeatureLoader featureLoader;
     private UserStoryLoader storyLoader;
@@ -138,5 +140,23 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         String htmlContents = mergeVelocityTemplate(storyTemplate, context);
         LOGGER.debug("Writing stories page");
         writeReportToOutputDirectory("home.html", htmlContents);
+        LOGGER.debug("Generating coverage data");
+        generateCoverageData(featureResults);
     }
+
+    private void generateCoverageData(final List<FeatureResults> featureResults) throws IOException {
+        VelocityContext context = new VelocityContext();
+
+        JSONResultTree resultTree = new JSONResultTree();
+        for(FeatureResults feature : featureResults) {
+            resultTree.addFeature(feature);
+        }
+
+        context.put("coverageData", resultTree.toJSON());
+
+        Template coverageTemplate = getTemplateManager().getTemplateFrom(COVERAGE_DATA_TEMPLATE_PATH);
+        String javascriptCoverageData = mergeVelocityTemplate(coverageTemplate, context);
+        writeReportToOutputDirectory("coverage.js", javascriptCoverageData);
+    }
+
 }

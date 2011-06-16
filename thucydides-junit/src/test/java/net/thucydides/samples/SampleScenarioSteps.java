@@ -10,12 +10,14 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Ignore;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 
 public class SampleScenarioSteps extends ScenarioSteps {
     
@@ -149,6 +151,19 @@ public class SampleScenarioSteps extends ScenarioSteps {
     public void data_driven_test_step() {
         enter_name_and_age(name, age);
         enter_address(address);
+    }
+
+    @Step
+    public void data_driven_test_step_that_fails() {
+        assertThat(Integer.parseInt(age), is(lessThan(35)));
+    }
+
+
+    public void data_driven_test_step_that_breaks() {
+        LOGGER.info("Testing with data name=" +name +", age=" + age);
+        if (Integer.parseInt(age) > 35) {
+            throw new ElementNotVisibleException("A webdriver issue");
+        }
     }
 
     @Step

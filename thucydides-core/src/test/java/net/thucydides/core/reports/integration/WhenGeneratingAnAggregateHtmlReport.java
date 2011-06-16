@@ -82,6 +82,33 @@ public class WhenGeneratingAnAggregateHtmlReport {
 
     }
 
+    @Test
+    public void report_dashboard_should_have_links_to_the_stories() throws Exception {
+
+        File sourceDirectory = new File("src/test/resources/featured-user-story-reports");
+        reporter.generateReportsForStoriesFrom(sourceDirectory);
+
+        File featureReport = new File(outputDirectory,"features.html");
+
+        String featureReportContents = getStringFrom(featureReport);
+
+        assertThat(featureReportContents, containsString("<a href=\"stories_a_feature.html\""));
+        assertThat(featureReportContents, containsString("<a href=\"stories_another_feature.html\""));
+        assertThat(featureReportContents, containsString("<a href=\"stories_another_different_feature.html\""));
+
+    }
+
+    @Test
+    public void should_generate_functional_coverage_data() throws Exception {
+
+        File sourceDirectory = new File("src/test/resources/featured-user-story-reports");
+        reporter.generateReportsForStoriesFrom(sourceDirectory);
+
+        File coverageData = new File(outputDirectory,"coverage.js");
+        assertThat(coverageData.exists(), is(true));
+    }
+
+
     private String getStringFrom(File reportFile) throws IOException {
         return FileUtils.readFileToString(reportFile);
     }

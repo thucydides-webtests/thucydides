@@ -138,4 +138,12 @@ public interface StepListener {
      * If a step failed, what was the error.
      */
     Throwable getStepError();
+
+    /**
+     * Should return true if the current test is running a data-driven step.
+     * In data-driven steps, steps following a failing step should be executed.
+     * @return
+     */
+    boolean isDataDriven();
+
 }

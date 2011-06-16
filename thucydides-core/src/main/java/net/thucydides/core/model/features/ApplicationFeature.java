@@ -76,14 +76,30 @@ public class ApplicationFeature {
      * This name is usually a human-readable version of the class name, or the name provided in the ApplicationFeature annotation.
      */
     protected String getFeatureName() {
-        return NameConverter.humanize(getFeatureClass().getSimpleName());
+        return NameConverter.humanize(simpleClassName());
     }
 
     public String getId() {
         if (featureId == null) {
-            return featureClass.getCanonicalName();
+            return canonicalClassName();
         } else {
             return featureId;
+        }
+    }
+
+    private String simpleClassName() {
+        if (getFeatureClass() != null) {
+            return getFeatureClass().getSimpleName();
+        } else {
+            return "";
+        }
+    }
+
+    private String canonicalClassName() {
+        if (getFeatureClass() != null) {
+            return getFeatureClass().getCanonicalName();
+        } else {
+            return "";
         }
     }
 

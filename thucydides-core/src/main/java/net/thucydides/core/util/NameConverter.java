@@ -22,7 +22,7 @@ public final class NameConverter {
      * Converts a class or method name into a human-readable sentence.
      */
     public static String humanize(final String name) {
-        if (name == null) {
+        if ((name == null) || (name.trim().length() == 0)) {
             return "";
         }
 

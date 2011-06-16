@@ -18,8 +18,11 @@ public class FeatureResults {
 
     private List<StoryTestResults> storyTestResultsList;
 
+    private ReportNamer namer;
+
     public FeatureResults(final ApplicationFeature feature) {
         this.feature = feature;
+        this.namer = new ReportNamer(ReportNamer.ReportType.HTML);
         storyTestResultsList = new ArrayList<StoryTestResults>();
     }
 
@@ -32,23 +35,23 @@ public class FeatureResults {
     }
 
     public Integer getTotalTests() {
-        return (Integer) sum(extract(storyTestResultsList, on(StoryTestResults.class).getTotal()));
+        return sum(extract(storyTestResultsList, on(StoryTestResults.class).getTotal())).intValue();
     }
 
     public Integer getPassingTests() {
-        return (Integer) sum(extract(storyTestResultsList, on(StoryTestResults.class).getSuccessCount()));
+        return sum(extract(storyTestResultsList, on(StoryTestResults.class).getSuccessCount())).intValue();
     }
 
     public Integer getFailingTests() {
-        return (Integer) sum(extract(storyTestResultsList, on(StoryTestResults.class).getFailureCount()));
+        return sum(extract(storyTestResultsList, on(StoryTestResults.class).getFailureCount())).intValue();
     }
 
     public Integer getPendingTests() {
-        return (Integer) sum(extract(storyTestResultsList, on(StoryTestResults.class).getPendingCount()));
+        return sum(extract(storyTestResultsList, on(StoryTestResults.class).getPendingCount())).intValue();
     }
 
     public Integer getTotalSteps() {
-        return (Integer) sum(extract(storyTestResultsList, on(StoryTestResults.class).getStepCount()));
+        return sum(extract(storyTestResultsList, on(StoryTestResults.class).getStepCount())).intValue();
     }
 
     public Integer getTotalStories() {
@@ -60,7 +63,6 @@ public class FeatureResults {
     }
 
     public String getStoryReportName() {
-        ReportNamer namer = new ReportNamer(ReportNamer.ReportType.HTML);
         return "stories_" + namer.getNormalizedTestNameFor(feature);
     }
 }

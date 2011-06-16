@@ -29,7 +29,6 @@ public class StepInterceptor implements MethodInterceptor {
     private List<Throwable> stepExceptions;
     private Throwable error = null;
     private static final Logger LOGGER = LoggerFactory.getLogger(StepInterceptor.class);
-    private boolean isFirstTest = true;
 
     public StepInterceptor(final Class<? extends ScenarioSteps> testStepClass,
                            final List<StepListener> listeners) {
@@ -37,7 +36,6 @@ public class StepInterceptor implements MethodInterceptor {
         this.listeners = listeners;
         this.resultTally = new TestStepResult();
         this.stepExceptions = new ArrayList<Throwable>();
-        this.isFirstTest = true;
     }
 
     public Object intercept(final Object obj, final Method method,
@@ -85,7 +83,7 @@ public class StepInterceptor implements MethodInterceptor {
     private boolean aPreviousStepHasFailed() {
         boolean aPreviousStepHasFailed = false;
         for (StepListener listener : listeners) {
-            if (listener.aStepHasFailed()) {
+            if (listener.aStepHasFailed() && !listener.isDataDriven()) {
                 aPreviousStepHasFailed = true;
             }
         }
