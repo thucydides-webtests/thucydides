@@ -26,9 +26,23 @@
         text-decoration: none;
     }
     </style>
+
+	<!-- CSS Files -->
+	<link type="text/css" href="jit/css/base.css" rel="stylesheet" />
+	<link type="text/css" href="jit/css/Treemap.css" rel="stylesheet" />
+
+	<!--[if IE]><script language="javascript" type="text/javascript" src="jit/Extras/excanvas.js"></script><![endif]-->
+
+	<!-- JIT Library File -->
+	<script language="javascript" type="text/javascript" src="jit/jit.js"></script>
+
+	<!-- Example File -->
+	<script language="javascript" type="text/javascript" src="functional-coverage.js"></script>
+
+
 </head>
 
-<body>
+<body onload="init();">
 <div id="topheader">
     <div id="topbanner">
         <div id="menu">
@@ -57,11 +71,11 @@
     </div>
     <div class="clr"></div>
 
-    <!--/* starts secont table*/-->
+    <!--/* starts second table*/-->
     <div id="contentbody">
         <div class="titlebar">
             <div class="leftbgm"></div>
-            <div class="middlebgm"><span class="orangetext"><a href="stories.html">Stories</a></span></div>
+            <div class="middlebgm"><span class="orangetext">Overview</span></div>
             <div class="rightbgm"></div>
         </div>
     </div>
@@ -73,39 +87,7 @@
             <div class="table">
                 <div class="middlb">
                     <div class="table">
-                        <div class="toptableraw">
-                            <table width="980" height="50" border="0">
-                                <tr>
-                                    <td width="122">&nbsp;</td>
-                                    <td width="198" class="greentext">Stories</td>
-                                    <td width="198" class="greentext">Test Cases</td>
-                                    <td width="198" class="greentext">Succeeded</td>
-                                    <td width="198" class="greentext">Failed</td>
-                                    <td width="242" class="greentext">Pending</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="tableraw">
-                            <table border="0" width="980" height="40">
-                                <tr>
-                                    <td width="122">&nbsp;</td>
-                                    <td width="198" class="bluetext">$stories.storyCount</td>
-                                    <td width="198" class="bluetext">$stories.acceptanceTestCount</td>
-                                    <td width="242"><span class="lightgreentext"><img src="images/tick.png" width="16"
-                                                                                      height="16"
-                                                                                      style="padding:00px 3px 00px 00px;"/>$stories.successCount</span>
-                                    </td>
-                                    <td width="198"><span class="redtext"><span class="lightgreentext"><img
-                                            src="images/cross.png" width="16" height="16"
-                                            style="padding:00px 3px 00px 00px;"/></span>$stories.failureCount</span>
-                                    </td>
-                                    <td width="242"><span class="lightgreentext"><img src="images/pending.png" width="16"
-                                                                                      height="16"
-                                                                                      style="padding:00px 3px 00px 00px;"/>$stories.pendingCount</span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                        <div id="infovis"></div> 
                     </div>
                 </div>
             </div>

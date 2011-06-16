@@ -1,14 +1,14 @@
 package net.thucydides.samples;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.pages.Pages;
-
+import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.Ignore;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class SampleScenarioNestedSteps extends ScenarioSteps {
     
@@ -16,15 +16,15 @@ public class SampleScenarioNestedSteps extends ScenarioSteps {
         super(pages);
     }
 
-    @Step
+    @Pending @Step
     public void stepThatSucceeds() {
     }
 
-    @Step
+    @Pending @Step
     public void anotherStepThatSucceeds() {
     }
 
-    @Step
+    @Pending @Step
     public void stepThree(String option) {
     }
 

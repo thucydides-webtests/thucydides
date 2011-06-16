@@ -1,5 +1,6 @@
 package net.thucydides.core.model;
 
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.features.ApplicationFeature;
 
 import java.util.ArrayList;
@@ -52,5 +53,14 @@ public class FeatureResults {
 
     public Integer getTotalStories() {
         return storyTestResultsList.size();
+    }
+
+    public List<StoryTestResults> getStoryResults() {
+        return ImmutableList.copyOf(storyTestResultsList);
+    }
+
+    public String getStoryReportName() {
+        ReportNamer namer = new ReportNamer(ReportNamer.ReportType.HTML);
+        return "stories_" + namer.getNormalizedTestNameFor(feature);
     }
 }

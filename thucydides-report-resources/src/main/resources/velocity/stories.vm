@@ -100,7 +100,7 @@
     <div id="contentbody">
         <div class="titlebar">
             <div class="leftbgm"></div>
-            <div class="middlebgm"><span class="orangetext">Stories</span></div>
+            <div class="middlebgm"><span class="orangetext">Stories - ${storyContext}</span></div>
             <div class="rightbgm"></div>
         </div>
     </div>

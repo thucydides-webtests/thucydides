@@ -1,6 +1,7 @@
 package net.thucydides.samples;
 
 import net.thucydides.core.annotations.Steps;
+import net.thucydides.core.annotations.TestsStory;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.UserStoryCode;
@@ -12,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-@UserStoryCode("US01")
 public class SampleTestScenarioForAnotherUserStory {
     
     @Managed
@@ -23,7 +23,8 @@ public class SampleTestScenarioForAnotherUserStory {
     
     @Steps
     public SampleScenarioSteps steps;
-        
+
+    @TestsStory(AnotherUserStory.class)
     @Test
     public void happy_day_scenario() {
 		steps.stepThatSucceeds();
@@ -33,6 +34,7 @@ public class SampleTestScenarioForAnotherUserStory {
         steps.stepFour("c");
     }    
 
+    @TestsStory(AnotherUserStory.class)
     @Test
     public void another_successful_scenario() {
 		steps.stepThatSucceeds();

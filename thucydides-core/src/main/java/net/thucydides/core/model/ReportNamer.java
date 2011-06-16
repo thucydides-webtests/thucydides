@@ -1,5 +1,6 @@
 package net.thucydides.core.model;
 
+import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang.StringUtils;
 
@@ -83,6 +84,11 @@ public class ReportNamer {
 
     public String getNormalizedTestNameFor(final Story userStory) {
         String testNameWithUnderscores = NameConverter.underscore(userStory.getName());
+        return appendSuffixTo(testNameWithUnderscores);
+    }
+
+    public String getNormalizedTestNameFor(final ApplicationFeature feature) {
+        String testNameWithUnderscores = NameConverter.underscore(feature.getName());
         return appendSuffixTo(testNameWithUnderscores);
     }
 

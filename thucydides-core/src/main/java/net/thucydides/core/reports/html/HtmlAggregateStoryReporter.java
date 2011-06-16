@@ -48,11 +48,9 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         LOGGER.info("Generating report for user story "
                     + storyTestResults.getTitle() + " to " + getOutputDirectory());
 
-        System.out.println("storyTestResults outcome count = " + storyTestResults.getTestOutcomes().size());
         VelocityContext context = new VelocityContext();
         context.put("story", storyTestResults);
         String htmlContents = mergeVelocityTemplate(context);
-        System.out.println("htmlContents = " + htmlContents);
 
         copyResourcesToOutputDirectory();
 
@@ -89,7 +87,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         generateStoriesReport(storyResults);
         generateFeatureReport(featureResults);
-        generateReportHomePage(storyResults);
+        generateReportHomePage(storyResults, featureResults);
     }
 
     private void generateFeatureReport(final List<FeatureResults> featureResults) throws IOException {
@@ -100,11 +98,29 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         String htmlContents = mergeVelocityTemplate(featuresTemplate, context);
         LOGGER.debug("Writing features page");
         writeReportToOutputDirectory("features.html", htmlContents);
+
+        for(FeatureResults feature : featureResults) {
+            generateStoryReportForFeature(feature);
+        }
+    }
+
+    private void generateStoryReportForFeature(FeatureResults feature) throws IOException {
+        VelocityContext context = new VelocityContext();
+
+        context.put("stories", feature.getStoryResults());
+        context.put("storyContext", feature.getFeature().getName() );
+        Template storyTemplate = getTemplateManager().getTemplateFrom(STORIES_TEMPLATE_PATH);
+        LOGGER.debug("Generating stories page");
+        String htmlContents = mergeVelocityTemplate(storyTemplate, context);
+        LOGGER.debug("Writing stories page");
+        String filename = feature.getStoryReportName();
+        writeReportToOutputDirectory(filename, htmlContents);
     }
 
     private void generateStoriesReport(final List<StoryTestResults> storyResults) throws IOException {
         VelocityContext context = new VelocityContext();
         context.put("stories", storyResults);
+        context.put("storyContext", "All stories");
         Template storyTemplate = getTemplateManager().getTemplateFrom(STORIES_TEMPLATE_PATH);
         LOGGER.debug("Generating stories page");
         String htmlContents = mergeVelocityTemplate(storyTemplate, context);
@@ -112,9 +128,11 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         writeReportToOutputDirectory("stories.html", htmlContents);
     }
 
-    private void generateReportHomePage(final List<StoryTestResults> storyResults) throws IOException {
+    private void generateReportHomePage(final List<StoryTestResults> storyResults,
+                                        final List<FeatureResults> featureResults) throws IOException {
         VelocityContext context = new VelocityContext();
         context.put("stories", new UserStoriesResultSet(storyResults));
+        context.put("features", featureResults);
         Template storyTemplate = getTemplateManager().getTemplateFrom(HOME_TEMPLATE_PATH);
         LOGGER.debug("Generating home page");
         String htmlContents = mergeVelocityTemplate(storyTemplate, context);

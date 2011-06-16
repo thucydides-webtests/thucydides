@@ -128,7 +128,7 @@
                         #foreach($featureResult in $features)
                         <tr>
                             <td width="10">&nbsp;</td>
-                            <td class="greentext">${featureResult.feature.name}</td>
+                            <td class="greentext"><a href="${featureResult.storyReportName}">${featureResult.feature.name}</a></td>
                             <td width="100" class="bluetext">$featureResult.totalStories</td>
                             <td width="100" class="bluetext">$featureResult.totalTests</td>
                             <td width="100" class="redtext">$featureResult.failingTests</td>
