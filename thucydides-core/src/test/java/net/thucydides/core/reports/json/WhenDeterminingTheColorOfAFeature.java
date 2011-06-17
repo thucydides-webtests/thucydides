@@ -67,6 +67,14 @@ public class WhenDeterminingTheColorOfAFeature {
     }
 
     @Test
+    public void a_completely_pending_feature_should_be_blue() {
+        FeatureResults feature = mockFeatureResults(WidgetFeature.class,100, 10, 20, 0,20,0);
+        Color color = colorScheme.colorFor(feature);
+
+        assertThat(color, is(Color.BLUE));
+    }
+
+    @Test
     public void a_completely_passing_feature_should_be_green() {
         FeatureResults feature = mockFeatureResults(WidgetFeature.class,100, 10, 20, 20,0,0);
         Color color = colorScheme.colorFor(feature);
@@ -74,6 +82,12 @@ public class WhenDeterminingTheColorOfAFeature {
         assertThat(color, is(Color.GREEN));
     }
 
+    @Test
+    public void should_be_able_to_convert_a_color_to_hex() {
+        assertThat(ColorScheme.rgbFormatOf(Color.RED), is("#ff0000"));
+        assertThat(ColorScheme.rgbFormatOf(Color.GREEN), is("#00ff00"));
+        assertThat(ColorScheme.rgbFormatOf(Color.BLUE), is("#0000ff"));
+    }
 
     private FeatureResults mockFeatureResults(Class<?> featureClass,
                                               Integer stepCount,

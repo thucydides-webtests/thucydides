@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.json;
 
 import net.thucydides.core.model.FeatureResults;
+import net.thucydides.core.model.StoryTestResults;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +49,7 @@ public class JSONTreeNode {
         return children;
     }
 
-    public void addFeature(FeatureResults feature) {
+    public void addFeature(final FeatureResults feature) {
         JSONTreeNode featureNode = new JSONTreeNode(feature.getFeature().getId(),
                                                     feature.getFeature().getName(),
                                                     colorScheme);
@@ -61,7 +62,31 @@ public class JSONTreeNode {
         featureNode.getData().put("failing", feature.getFailingTests());
         featureNode.getData().put("steps", feature.getTotalSteps());
 
+        featureNode.children.addAll(getStoryNotesFor(feature));
+
         children.add(featureNode);
+
+    }
+
+    private List<JSONTreeNode> getStoryNotesFor(final FeatureResults feature) {
+        List<JSONTreeNode> stories = new ArrayList<JSONTreeNode>();
+
+        for (StoryTestResults storyResult : feature.getStoryResults()) {
+            JSONTreeNode storyNode = new JSONTreeNode(storyResult.getStory().getId(),
+                                                      storyResult.getStory().getName(),
+                                                      colorScheme);
+
+            storyNode.getData().put("$area", storyResult.getStepCount());
+            storyNode.getData().put("$color", rgbFormatOf(colorScheme.colorFor(storyResult)));
+            storyNode.getData().put("tests", storyResult.getTotal());
+            storyNode.getData().put("passing", storyResult.getSuccessCount());
+            storyNode.getData().put("pending", storyResult.getPendingCount());
+            storyNode.getData().put("failing", storyResult.getFailureCount());
+            storyNode.getData().put("steps", storyResult.getStepCount());
+
+            stories.add(storyNode);
+        }
+        return stories;
 
     }
 

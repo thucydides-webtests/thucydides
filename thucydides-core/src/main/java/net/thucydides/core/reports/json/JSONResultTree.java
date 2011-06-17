@@ -18,8 +18,7 @@ public class JSONResultTree {
         JSONSerializer serializer = new JSONSerializer();
         return serializer.exclude("*.class")
                          .exclude("*.colorScheme")
-                         .include("children")
-                         .serialize(root);
+                         .deepSerialize(root);
     }
 
     public void addFeature(FeatureResults feature) {

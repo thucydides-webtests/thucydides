@@ -2,8 +2,13 @@ package net.thucydides.core.reports.json;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.model.FeatureResults;
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.features.ApplicationFeature;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -20,16 +25,19 @@ class WidgetFeature {
 
 @Feature
 class GizmoFeature {
-     class PurchaseNewGizmo{};
-     class SearchGizmos{};
-     class DisplayGizmos{};
+    class PurchaseNewGizmo{};
+    class SearchGizmos{};
+    class DisplayGizmos{};
+    class SaveGizmos{};
 }
 
 @Feature
 class WozitFeature {
-     class PurchaseNewWozit{};
-     class SearchWozits{};
-     class DisplayWozitss{};
+    class PurchaseNewWozit{};
+    class SearchWozits{};
+    class DisplayWozitss{};
+    class SaveWozitss{};
+    class OrderWozitss{};
 }
 
 
@@ -96,7 +104,7 @@ public class WhenStoringTestResultsAsAJSONStructure {
     }
 
     @Test
-    public void should_add_features() {
+    public void should_be_able_to_add_features() {
         JSONResultTree resultTree = new JSONResultTree();
 
         FeatureResults widgetFeature = featureResultsFor(WidgetFeature.class);
@@ -111,6 +119,22 @@ public class WhenStoringTestResultsAsAJSONStructure {
         assertThat(json, containsString("\"name\":\"Widget feature\""));
         assertThat(json, containsString("\"id\":\"net.thucydides.core.reports.json.GizmoFeature\""));
         assertThat(json, containsString("\"name\":\"Gizmo feature\""));
+
+    }
+
+    @Test
+    public void should_be_able_to_add_user_stories() {
+        JSONResultTree resultTree = new JSONResultTree();
+
+        prepareFeatureResults();
+        resultTree.addFeature(widgetFeature);
+        resultTree.addFeature(gizmoFeature);
+
+        String json = resultTree.toJSON();
+        System.out.println(json);
+
+        assertThat(json, containsString("\"id\":\"net.thucydides.core.reports.json.WidgetFeature.PurchaseNewWidget\""));
+        assertThat(json, containsString("\"name\":\"Purchase new widget\""));
 
     }
 
@@ -132,9 +156,9 @@ public class WhenStoringTestResultsAsAJSONStructure {
         String json = resultTree.toJSON();
         System.out.println(json);
 
-        assertThat(json, containsString("\"$area\":100"));
+        assertThat(json, containsString("\"$area\":90"));
+        assertThat(json, containsString("\"$area\":120"));
         assertThat(json, containsString("\"$area\":150"));
-        assertThat(json, containsString("\"$area\":250"));
     }
 
     @Test
@@ -150,9 +174,9 @@ public class WhenStoringTestResultsAsAJSONStructure {
         String json = resultTree.toJSON();
         System.out.println(json);
 
-        assertThat(json, containsString("\"steps\":10"));
-        assertThat(json, containsString("\"steps\":15"));
-        assertThat(json, containsString("\"steps\":25"));
+        assertThat(json, containsString("\"steps\":90"));
+        assertThat(json, containsString("\"steps\":120"));
+        assertThat(json, containsString("\"steps\":150"));
     }
 
     @Test
@@ -168,9 +192,9 @@ public class WhenStoringTestResultsAsAJSONStructure {
         String json = resultTree.toJSON();
         System.out.println(json);
 
-        assertThat(json, containsString("\"stories\":10"));
-        assertThat(json, containsString("\"stories\":15"));
-        assertThat(json, containsString("\"stories\":25"));
+        assertThat(json, containsString("\"stories\":3"));
+        assertThat(json, containsString("\"stories\":4"));
+        assertThat(json, containsString("\"stories\":5"));
     }
 
     @Test
@@ -186,8 +210,8 @@ public class WhenStoringTestResultsAsAJSONStructure {
         String json = resultTree.toJSON();
         System.out.println(json);
 
-        assertThat(json, containsString("\"tests\":20"));
         assertThat(json, containsString("\"tests\":30"));
+        assertThat(json, containsString("\"tests\":40"));
         assertThat(json, containsString("\"tests\":50"));
     }
 
@@ -204,8 +228,6 @@ public class WhenStoringTestResultsAsAJSONStructure {
         String json = resultTree.toJSON();
         System.out.println(json);
 
-        assertThat(json, containsString("\"passing\":15"));
-        assertThat(json, containsString("\"passing\":20"));
         assertThat(json, containsString("\"passing\":30"));
     }
 
@@ -270,9 +292,16 @@ public class WhenStoringTestResultsAsAJSONStructure {
     }
 
     private void prepareFeatureResults() {
-        widgetFeature = mockFeatureResults(WidgetFeature.class, 100, 10, 20, 20, 0, 0);
-        gizmoFeature = mockFeatureResults(GizmoFeature.class,   150, 15, 30, 0, 0, 30);
-        wozitFeature = mockFeatureResults(WozitFeature.class,   250, 25, 50, 0, 50, 0);
+
+        List<StoryTestResults> widgetStoryResults = new ArrayList<StoryTestResults>();
+        widgetStoryResults.add(mockStoryTestResults(WidgetFeature.PurchaseNewWidget.class, 30, 10, 10, 0, 0));
+        widgetStoryResults.add(mockStoryTestResults(WidgetFeature.SearchWidgets.class, 30, 10, 10, 0, 0));
+        widgetStoryResults.add(mockStoryTestResults(WidgetFeature.DisplayWidgets.class, 30, 10, 10, 0, 0));
+
+        widgetFeature = mockFeatureResults(WidgetFeature.class, widgetStoryResults, 90, 3, 30, 30, 0, 0);
+
+        gizmoFeature = mockFeatureResults(GizmoFeature.class,   120, 4, 40, 0, 0, 40);
+        wozitFeature = mockFeatureResults(WozitFeature.class,   150, 5, 50, 0, 50, 0);
     }
 
     private FeatureResults mockFeatureResults(Class<?> featureClass,
@@ -293,5 +322,40 @@ public class WhenStoringTestResultsAsAJSONStructure {
         return feature;
     }
 
+    private FeatureResults mockFeatureResults(Class<?> featureClass,
+                                              List<StoryTestResults> storyResults,
+                                              Integer stepCount,
+                                              Integer storyCount,
+                                              Integer testCount,
+                                              Integer passingCount,
+                                              Integer pendingCount,
+                                              Integer failingCount) {
+        FeatureResults feature = mock(FeatureResults.class);
+        when(feature.getFeature()).thenReturn(ApplicationFeature.from(featureClass));
+        when(feature.getTotalSteps()).thenReturn(stepCount);
+        when(feature.getTotalStories()).thenReturn(storyCount);
+        when(feature.getTotalTests()).thenReturn(testCount);
+        when(feature.getPassingTests()).thenReturn(passingCount);
+        when(feature.getPendingTests()).thenReturn(pendingCount);
+        when(feature.getFailingTests()).thenReturn(failingCount);
+        when(feature.getStoryResults()).thenReturn(storyResults);
+        return feature;
+    }
+
+    private StoryTestResults mockStoryTestResults(Class<?> storyClass,
+                                              Integer stepCount,
+                                              Integer testCount,
+                                              Integer passingCount,
+                                              Integer pendingCount,
+                                              Integer failingCount) {
+        StoryTestResults story = mock(StoryTestResults.class);
+        when(story.getStory()).thenReturn(Story.from(storyClass));
+        when(story.getStepCount()).thenReturn(stepCount);
+        when(story.getTotal()).thenReturn(testCount);
+        when(story.getSuccessCount()).thenReturn(passingCount);
+        when(story.getFailureCount()).thenReturn(failingCount);
+        when(story.getPendingCount()).thenReturn(pendingCount);
+        return story;
+    }
 
 }
