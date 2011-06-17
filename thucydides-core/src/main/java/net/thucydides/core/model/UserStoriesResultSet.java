@@ -1,7 +1,5 @@
 package net.thucydides.core.model;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.List;
 
 /**
@@ -15,15 +13,12 @@ public class UserStoriesResultSet {
         this.stories = stories;
     }
 
-    public List<StoryTestResults> getStories() {
-        return ImmutableList.copyOf(stories);
-    }
-
     public int getStoryCount() {
         return stories.size();
     }
 
-    public int getAcceptanceTestCount() {
+    public int getTotalTestCount() {
+
         int count = 0;
         for(StoryTestResults story : stories) {
             count += story.getTotal();
@@ -32,6 +27,7 @@ public class UserStoriesResultSet {
     }
 
     public int getSuccessCount() {
+
         int count = 0;
         for(StoryTestResults story : stories) {
             count += story.getSuccessCount();

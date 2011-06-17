@@ -4,6 +4,8 @@ import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.StoryTestResults;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.features.ApplicationFeature;
 import org.junit.Test;
 
@@ -355,7 +357,30 @@ public class WhenStoringTestResultsAsAJSONStructure {
         when(story.getSuccessCount()).thenReturn(passingCount);
         when(story.getFailureCount()).thenReturn(failingCount);
         when(story.getPendingCount()).thenReturn(pendingCount);
+        List<TestOutcome> outcomes = mockSomeTestOutcomes(passingCount,pendingCount,failingCount);
+        when(story.getTestOutcomes()).thenReturn(outcomes);
         return story;
     }
+
+    private List<TestOutcome> mockSomeTestOutcomes(int passingCount, int pendingCount, int failingCount) {
+
+        List<TestOutcome> outcomes = new ArrayList<TestOutcome>();
+        addOutomesOfType(passingCount, outcomes, TestResult.SUCCESS);
+        addOutomesOfType(pendingCount, outcomes, TestResult.PENDING);
+        addOutomesOfType(failingCount, outcomes, TestResult.FAILURE);
+
+        return outcomes;
+    }
+
+    private void addOutomesOfType(int count, List<TestOutcome> outcomes, TestResult result) {
+        for(int i = 0; i < count; i++) {
+            TestOutcome outcome = mock(TestOutcome.class);
+            when(outcome.getTitle()).thenReturn("test_method" + result + "_" + count);
+            when(outcome.getTitle()).thenReturn("Test " + result + " " + count);
+            when(outcome.getResult()).thenReturn(result);
+            outcomes.add(outcome);
+        }
+    }
+
 
 }

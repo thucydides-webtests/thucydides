@@ -2,6 +2,7 @@ package net.thucydides.core.reports.json;
 
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
+import net.thucydides.core.model.TestOutcome;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,13 +63,13 @@ public class JSONTreeNode {
         featureNode.getData().put("failing", feature.getFailingTests());
         featureNode.getData().put("steps", feature.getTotalSteps());
 
-        featureNode.children.addAll(getStoryNotesFor(feature));
+        featureNode.children.addAll(getStoryNodesFor(feature));
 
         children.add(featureNode);
 
     }
 
-    private List<JSONTreeNode> getStoryNotesFor(final FeatureResults feature) {
+    private List<JSONTreeNode> getStoryNodesFor(final FeatureResults feature) {
         List<JSONTreeNode> stories = new ArrayList<JSONTreeNode>();
 
         for (StoryTestResults storyResult : feature.getStoryResults()) {
@@ -84,14 +85,29 @@ public class JSONTreeNode {
             storyNode.getData().put("failing", storyResult.getFailureCount());
             storyNode.getData().put("steps", storyResult.getStepCount());
 
+            storyNode.children.addAll(getTestOutcomeNodesFor(storyResult));
+
             stories.add(storyNode);
         }
         return stories;
 
     }
 
-    private String colorFor(FeatureResults feature) {
-        return "#ff0000";
+    private List<JSONTreeNode> getTestOutcomeNodesFor(final StoryTestResults storyTestResults) {
+        List<JSONTreeNode> outcomes = new ArrayList<JSONTreeNode>();
+
+        for (TestOutcome outcome : storyTestResults.getTestOutcomes()) {
+            JSONTreeNode node = new JSONTreeNode(outcome.getMethodName(),
+                                                      outcome.getTitle(),
+                                                      colorScheme);
+
+            node.getData().put("$area", outcome.countTestSteps());
+            node.getData().put("$color", rgbFormatOf(colorScheme.colorFor(outcome)));
+            node.getData().put("result", outcome.getResult());
+            node.getData().put("steps", outcome.countTestSteps());
+            outcomes.add(node);
+        }
+        return outcomes;
     }
 
 }
