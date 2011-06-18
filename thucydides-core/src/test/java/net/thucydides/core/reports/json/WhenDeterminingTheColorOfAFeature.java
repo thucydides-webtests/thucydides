@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.awt.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -91,6 +92,14 @@ public class WhenDeterminingTheColorOfAFeature {
          Color color = colorScheme.colorFor(story);
 
          assertThat(color, is(Color.RED));
+     }
+
+     @Test
+     public void test_failures_are_weighted_to_show_more_strongly() {
+         StoryTestResults story = mockStory(20, 10,0,10);
+         Color color = colorScheme.colorFor(story);
+
+         assertThat(color.getRed(), greaterThan(color.getGreen()));
      }
 
      @Test

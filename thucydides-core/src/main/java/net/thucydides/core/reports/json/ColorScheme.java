@@ -13,6 +13,9 @@ import java.awt.*;
 public class ColorScheme {
 
     private static final int MAX_COLOR_RANGE = 255;
+    private static final double FAILURE_EXTRA_WEIGHT = 0.5;
+    private static final double SUCCESS_EXTRA_WEIGHT = 0.0;
+    private static final double PENDING_EXTRA_WEIGHT = 0.0;
 
     /**
      * What color should a given feature be?
@@ -42,12 +45,22 @@ public class ColorScheme {
         int green = 0;
         int blue = 0;
         if (totalTests > 0) {
-            red = failingTests * MAX_COLOR_RANGE / totalTests;
-            green = passingTests * MAX_COLOR_RANGE / totalTests;
-            blue = pendingTests * MAX_COLOR_RANGE / totalTests;
+            red = weightedValue(failingTests * MAX_COLOR_RANGE / totalTests, FAILURE_EXTRA_WEIGHT);
+            green = weightedValue(passingTests * MAX_COLOR_RANGE / totalTests, SUCCESS_EXTRA_WEIGHT);
+            blue = weightedValue(pendingTests * MAX_COLOR_RANGE / totalTests, PENDING_EXTRA_WEIGHT);
         }
 
         return new Color(red, green, blue);
+    }
+
+    private int weightedValue(final int value, double extraWeight) {
+        if ((value > 0) && (extraWeight > 0.0)) {
+            int minimumValue = (int) (1 + MAX_COLOR_RANGE * (1 - extraWeight));
+            int delta = (int) (value * extraWeight);
+            return minimumValue + delta;
+        } else {
+            return value;
+        }
     }
 
     /**
