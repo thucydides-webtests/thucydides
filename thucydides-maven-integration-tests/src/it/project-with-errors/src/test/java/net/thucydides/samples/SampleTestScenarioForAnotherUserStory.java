@@ -1,10 +1,9 @@
 package net.thucydides.samples;
 
 import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.annotations.TestsStory;
+import net.thucydides.core.annotations.Story;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.annotations.ManagedPages;
-import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.junit.annotations.Managed;
 
@@ -24,7 +23,7 @@ public class SampleTestScenarioForAnotherUserStory {
     @Steps
     public SampleScenarioSteps steps;
 
-    @TestsStory(AnotherUserStory.class)
+    @Story(AnotherUserStory.class)
     @Test
     public void happy_day_scenario() {
 		steps.stepThatSucceeds();
@@ -34,7 +33,7 @@ public class SampleTestScenarioForAnotherUserStory {
         steps.stepFour("c");
     }    
 
-    @TestsStory(AnotherUserStory.class)
+    @Story(AnotherUserStory.class)
     @Test
     public void another_successful_scenario() {
 		steps.stepThatSucceeds();

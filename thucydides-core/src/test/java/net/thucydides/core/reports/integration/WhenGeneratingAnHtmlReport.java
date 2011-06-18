@@ -1,7 +1,7 @@
 package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.annotations.Feature;
-import net.thucydides.core.annotations.TestsStory;
+import net.thucydides.core.annotations.Story;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestOutcome;
@@ -34,7 +34,7 @@ public class WhenGeneratingAnHtmlReport {
 
     class AUserStory {};
 
-    @TestsStory(AUserStory.class)
+    @Story(AUserStory.class)
     class SomeTestScenario {
         public void a_simple_test_case() {};
         public void should_do_this() {};
@@ -46,7 +46,7 @@ public class WhenGeneratingAnHtmlReport {
         class AUserStoryInAFeature {};
     }
 
-    @TestsStory(AFeature.AUserStoryInAFeature.class)
+    @Story(AFeature.AUserStoryInAFeature.class)
     class SomeTestScenarioInAFeature {
         public void should_do_this() {};
         public void should_do_that() {};

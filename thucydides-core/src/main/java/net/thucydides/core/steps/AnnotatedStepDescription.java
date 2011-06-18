@@ -38,8 +38,10 @@ public final class AnnotatedStepDescription {
     public List<String> getAnnotatedRequirements() {
         List<String> requirements = new ArrayList<String>();
         Method testMethod = getTestMethod();
-        addRequirementFrom(requirements, testMethod);
-        addMultipleRequirementsFrom(requirements, testMethod);
+        if (testMethod != null) {
+            addRequirementFrom(requirements, testMethod);
+            addMultipleRequirementsFrom(requirements, testMethod);
+        }
         return requirements;
     }
 
@@ -59,7 +61,11 @@ public final class AnnotatedStepDescription {
     }
 
     public Method getTestMethod() {
-        return methodCalled(withNoArguments(description.getName()), getTestClass());
+        if (getTestClass() != null) {
+            return methodCalled(withNoArguments(description.getName()), getTestClass());
+        } else {
+            return null;
+        }
     }
 
     public Method getTestMethodIfPresent() {

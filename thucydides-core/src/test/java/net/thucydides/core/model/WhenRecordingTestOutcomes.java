@@ -2,7 +2,7 @@ package net.thucydides.core.model;
 
 import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
-import net.thucydides.core.annotations.TestsStory;
+import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.Title;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,13 +33,13 @@ public class WhenRecordingTestOutcomes {
 
     class AUserStory {};
 
-    @TestsStory(AUserStory.class)
+    @net.thucydides.core.annotations.Story(AUserStory.class)
     class SomeTestScenario {
         public void should_do_this() {};
         public void should_do_that() {};
     }
 
-    @TestsStory(AUserStory.class)
+    @Story(AUserStory.class)
     class SomeAnnotatedTestScenario {
         @Title("Really should do this!")
         public void should_do_this() {};
@@ -80,7 +80,7 @@ public class WhenRecordingTestOutcomes {
      */
     @Test
     public void a_test_outcome_title_should_be_the_method_name_if_no_test_class_is_defined() {
-        Story story = Story.from(AUserStory.class);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
 
         TestOutcome outcome = TestOutcome.forTestInStory("Some scenario", story);
 
@@ -170,6 +170,12 @@ public class WhenRecordingTestOutcomes {
         assertThat(testOutcome.getResult(), is(PENDING));
     }
     
+    @Test
+    public void the_acceptance_test_case_is_pending_if_has_no_steps() {
+
+        assertThat(testOutcome.getResult(), is(PENDING));
+    }
+
     @Test
     public void the_acceptance_test_case_is_failing_if_there_is_a_failure_even_with_pending_test_cases() {
 
@@ -511,7 +517,7 @@ public class WhenRecordingTestOutcomes {
 
     @Test
     public void an_acceptance_test_relates_to_a_user_story() {
-        Story story = Story.from(MyApp.MyUserStory.class);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyApp.MyUserStory.class);
         TestOutcome testOutcome = TestOutcome.forTestInStory("some_test", story);
 
         assertThat(testOutcome.getUserStory().getName(), is("My user story"));
@@ -519,7 +525,7 @@ public class WhenRecordingTestOutcomes {
     
     @Test
     public void an_acceptance_test_records_the_original_story_class() {
-        Story story = Story.from(MyApp.MyUserStory.class);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyApp.MyUserStory.class);
         TestOutcome testOutcome = TestOutcome.forTestInStory("some_test", story);
         assertThat(testOutcome.getUserStory().getUserStoryClass().getName(), is(MyApp.MyUserStory.class.getName()));
     }
@@ -532,7 +538,7 @@ public class WhenRecordingTestOutcomes {
         assertThat(testOutcome.getDuration(), is(lessThan(100L)));
     }
 
-    @TestsStory(AUserStory.class)
+    @Story(AUserStory.class)
     class TestScenarioWithRequirements {
         @TestsRequirement("SOME_BUSINESS_RULE_1")
         public void should_do_this() {};

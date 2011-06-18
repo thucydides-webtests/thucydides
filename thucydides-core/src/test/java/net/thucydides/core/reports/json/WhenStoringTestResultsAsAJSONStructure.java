@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -23,6 +24,8 @@ class WidgetFeature {
      class PurchaseNewWidget{};
      class SearchWidgets{};
      class DisplayWidgets{};
+     class SaveWidgets {};
+     class DeleteWidgets {};
 }
 
 @Feature
@@ -293,12 +296,36 @@ public class WhenStoringTestResultsAsAJSONStructure {
 
     }
 
+    @Test
+    public void the_count_of_executed_tests_in_a_feature_should_include_only_passing_and_failing_tests() {
+
+        prepareFeatureResults();
+
+
+        JSONTreeNode treeNode = new JSONTreeNode("widgets", "Widgets", new ColorScheme());
+
+        assertThat(treeNode.totalExecutedTestsIn(widgetFeature), is(51));
+    }
+
+    @Test
+    public void the_count_of_executed_test_steps_in_a_feature_should_include_only_steps_inpassing_and_failing_tests() {
+
+        prepareFeatureResults();
+
+
+        JSONTreeNode treeNode = new JSONTreeNode("widgets", "Widgets", new ColorScheme());
+
+        assertThat(treeNode.totalStepsInExecutedTestsIn(widgetFeature), is(153));
+    }
+
     private void prepareFeatureResults() {
 
         List<StoryTestResults> widgetStoryResults = new ArrayList<StoryTestResults>();
         widgetStoryResults.add(mockStoryTestResults(WidgetFeature.PurchaseNewWidget.class, 30, 10, 10, 0, 0));
-        widgetStoryResults.add(mockStoryTestResults(WidgetFeature.SearchWidgets.class, 30, 10, 10, 0, 0));
-        widgetStoryResults.add(mockStoryTestResults(WidgetFeature.DisplayWidgets.class, 30, 10, 10, 0, 0));
+        widgetStoryResults.add(mockStoryTestResults(WidgetFeature.SearchWidgets.class,     30, 10, 10, 0, 0));
+        widgetStoryResults.add(mockStoryTestResults(WidgetFeature.DisplayWidgets.class,    30, 10, 10, 0, 0));
+        widgetStoryResults.add(mockStoryTestResults(WidgetFeature.SaveWidgets.class,       30, 10, 5,  3, 2));
+        widgetStoryResults.add(mockStoryTestResults(WidgetFeature.DeleteWidgets.class,     60, 20, 10, 6, 4));
 
         widgetFeature = mockFeatureResults(WidgetFeature.class, widgetStoryResults, 90, 3, 30, 30, 0, 0);
 
@@ -378,6 +405,20 @@ public class WhenStoringTestResultsAsAJSONStructure {
             when(outcome.getTitle()).thenReturn("test_method" + result + "_" + count);
             when(outcome.getTitle()).thenReturn("Test " + result + " " + count);
             when(outcome.getResult()).thenReturn(result);
+            when(outcome.getStepCount()).thenReturn(3);
+            if (result == TestResult.FAILURE) {
+                when(outcome.isFailure()).thenReturn(true);
+                when(outcome.isSuccess()).thenReturn(false);
+                when(outcome.isPending()).thenReturn(false);
+            } else if (result == TestResult.SUCCESS) {
+                when(outcome.isFailure()).thenReturn(false);
+                when(outcome.isSuccess()).thenReturn(true);
+                when(outcome.isPending()).thenReturn(false);
+            } else if (result == TestResult.PENDING) {
+                when(outcome.isFailure()).thenReturn(false);
+                when(outcome.isSuccess()).thenReturn(false);
+                when(outcome.isPending()).thenReturn(true);
+            }
             outcomes.add(outcome);
         }
     }

@@ -61,8 +61,12 @@ public class Pages {
         getDriver().get(getStartingUrl());
     }
 
-    public PageObject currentPageAt(final Class<? extends PageObject> pageObjectClass) {
-        PageObject pageCandidate = getCurrentPageOfType(pageObjectClass);
+    public <T extends PageObject> T get(final Class<T> pageObjectClass) {
+        return currentPageAt(pageObjectClass);
+    }
+
+    public <T extends PageObject> T currentPageAt(final Class<T> pageObjectClass) {
+        T pageCandidate = (T) getCurrentPageOfType(pageObjectClass);
         String currentUrl = getDriver().getCurrentUrl();
         if (!pageCandidate.compatibleWithUrl(currentUrl)) {
             thisIsNotThePageYourLookingFor(pageObjectClass);

@@ -2,7 +2,6 @@ package net.thucydides.core.model;
 
 
 import net.thucydides.core.annotations.Feature;
-import net.thucydides.core.annotations.TestsStory;
 import net.thucydides.core.model.features.ApplicationFeature;
 import org.junit.Test;
 
@@ -35,13 +34,13 @@ public class WhenGroupingUserStoriesByFeature {
          class DisplayWidgets{};
     }
 
-    @TestsStory(WidgetFeature.PurchaseNewWidget.class)
+    @net.thucydides.core.annotations.Story(WidgetFeature.PurchaseNewWidget.class)
     class WhenUserPurchasesNewWidgetsTestCase {
         public void shouldDoThis(){}
         public void shouldDoThat(){}
     }
 
-    @TestsStory(WidgetFeature.PurchaseNewWidget.class)
+    @net.thucydides.core.annotations.Story(WidgetFeature.PurchaseNewWidget.class)
     class WhenUserPurchasesLotsOfNewWidgetsTestCase {
         public void shouldDoSomethingElse(){}
     }
@@ -50,7 +49,7 @@ public class WhenGroupingUserStoriesByFeature {
     public void a_user_story_can_belong_to_a_feature() {
         Class<?> userStoryClass = WidgetFeature.PurchaseNewWidget.class;
 
-        Story story = Story.from(userStoryClass);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(userStoryClass);
         Class<?> featureClass = story.getFeatureClass();
         assertThat(featureClass.getName(), is(WidgetFeature.class.getName()));
     }
@@ -59,7 +58,7 @@ public class WhenGroupingUserStoriesByFeature {
     public void a_user_story_does_not_have_to_belong_to_a_feature() {
         Class<?> userStoryClass = SimpleTestCase.class;
 
-        Story story = Story.from(userStoryClass);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(userStoryClass);
         Class<?> featureClass = story.getFeatureClass();
         assertThat(featureClass, is(nullValue()));
     }
@@ -84,7 +83,7 @@ public class WhenGroupingUserStoriesByFeature {
     public void a_user_story_can_be_nested_in_a_class_that_is_not_a_feature() {
         Class<?> userStoryClass = MyApp.PurchaseNewWidget.class;
 
-        Story story = Story.from(userStoryClass);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(userStoryClass);
         Class<?> featureClass = story.getFeatureClass();
         assertThat(featureClass, is(nullValue()));
     }
@@ -93,7 +92,7 @@ public class WhenGroupingUserStoriesByFeature {
     public void a_user_story_can_return_the_name_of_its_feature() {
         Class<?> userStoryClass = WidgetFeature.PurchaseNewWidget.class;
 
-        Story story = Story.from(userStoryClass);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(userStoryClass);
 
         assertThat(story.getFeatureName(), is("Widget feature"));
     }
@@ -134,7 +133,7 @@ public class WhenGroupingUserStoriesByFeature {
     public void a_user_story_can_return_the_corresponding_feature_class() {
         Class<?> userStoryClass = WidgetFeature.PurchaseNewWidget.class;
 
-        Story story = Story.from(userStoryClass);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(userStoryClass);
         ApplicationFeature feature = ApplicationFeature.from(WidgetFeature.class);
 
         assertThat(story.getFeature(), is(feature));
@@ -142,7 +141,7 @@ public class WhenGroupingUserStoriesByFeature {
 
     @Test
     public void a_user_story_can_return_the_corresponding_feature_class_using_id_and_name() {
-        Story story = new Story("story.class","AStory", "feature.class","AFeature");
+        net.thucydides.core.model.Story story = new net.thucydides.core.model.Story("story.class","AStory", "feature.class","AFeature");
 
         ApplicationFeature feature = new ApplicationFeature("feature.class","AFeature");
 

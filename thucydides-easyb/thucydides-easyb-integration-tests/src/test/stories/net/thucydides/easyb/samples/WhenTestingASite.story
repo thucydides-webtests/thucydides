@@ -18,7 +18,7 @@ tags "someTag"
        /*
 scenario "Select entry in dropdown list", {
     given "we are on the Thucydides demo site", {
-        indexPage = pages.currentPageAt(IndexPage)
+        indexPage = pages.currentPageAt(UploadPage)
     }
     when "the user selects the 'Label 2' option", {
        indexPage.selectItem 'Label 2'
@@ -30,7 +30,7 @@ scenario "Select entry in dropdown list", {
 
 scenario "Select entry in dropdown list again", {
     given "we are still on the Thucydides demo site", {
-        indexPage = pages.currentPageAt(IndexPage)
+        indexPage = pages.currentPageAt(UploadPage)
     }
     when "the user selects the 'Label 1' option", {
         indexPage.selectItem 'Label 1'

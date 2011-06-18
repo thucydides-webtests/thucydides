@@ -1,7 +1,6 @@
 package net.thucydides.core.reports;
 
-import net.thucydides.core.annotations.TestsStory;
-import net.thucydides.core.model.Story;
+import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.TestOutcome;
 import org.junit.Test;
 
@@ -15,7 +14,7 @@ public class WhenNamingTheReports {
 
     class AUserStory {};
 
-    @TestsStory(AUserStory.class)
+    @Story(AUserStory.class)
     class SomeTestScenario {
         public void a_simple_test_case() {};
         public void should_do_this() {};
@@ -32,7 +31,7 @@ public class WhenNamingTheReports {
     @Test
     public void the_report_filename_should_replace_spaces_with_underscores() {
 
-        TestOutcome testOutcome = TestOutcome.forTestInStory("A simple test case", Story.from(AUserStory.class));
+        TestOutcome testOutcome = TestOutcome.forTestInStory("A simple test case", net.thucydides.core.model.Story.from(AUserStory.class));
         String reportName = testOutcome.getReportName(XML);
         
         assertThat(reportName, is("a_user_story_a_simple_test_case.xml"));
@@ -89,7 +88,7 @@ public class WhenNamingTheReports {
 
     @Test
     public void a_user_story_can_provide_its_own_html_report_name() {
-        Story story = Story.from(AUserStory.class);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
         
         String reportName = story.getReportName(HTML);
         
@@ -98,7 +97,7 @@ public class WhenNamingTheReports {
 
     @Test
     public void a_user_story_can_provide_its_own_xml_report_name() {
-        Story story = Story.from(AUserStory.class);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
         
         String reportName = story.getReportName(XML);
         
@@ -107,7 +106,7 @@ public class WhenNamingTheReports {
 
     @Test
     public void a_user_story_can_provide_its_own_base_report_name() {
-        Story story = Story.from(AUserStory.class);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
         
         String reportName = story.getReportName();
         

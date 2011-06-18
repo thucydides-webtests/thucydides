@@ -4,7 +4,7 @@ import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.annotations.TestsStory;
+import net.thucydides.core.annotations.Story;
 import net.thucydides.core.pages.Pages;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -255,7 +255,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
     class AStory {}
 
-    @TestsStory(AStory.class)
+    @Story(AStory.class)
     class ATestCase {
         public void app_should_work() {}
     }

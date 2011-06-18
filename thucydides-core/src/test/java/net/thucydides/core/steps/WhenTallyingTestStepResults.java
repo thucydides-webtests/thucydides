@@ -1,6 +1,6 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.annotations.TestsStory;
+import net.thucydides.core.annotations.Story;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -12,6 +12,7 @@ import java.io.File;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 
 public class WhenTallyingTestStepResults {
 
@@ -24,12 +25,19 @@ public class WhenTallyingTestStepResults {
     StepFailure stepFailure2;
 
     @Mock
+    ExecutedStepDescription description;
+
+    @Mock
     File outputDirectory;
 
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
         testStepResult = new TestStepResult();
+        when(description.getName()).thenReturn("Some test");
+
+        when(stepFailure1.getDescription()).thenReturn(description);
+        when(stepFailure2.getDescription()).thenReturn(description);
     }
 
     @Test
@@ -98,7 +106,7 @@ public class WhenTallyingTestStepResults {
 
     class MyStory {}
 
-    @TestsStory(MyStory.class)
+    @Story(MyStory.class)
     class MyTestCase {
         public void app_should_work() {}
     }

@@ -1,20 +1,22 @@
 package net.thucydides.samples;
 
 import net.thucydides.core.annotations.ManagedPages;
+import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.annotations.TestsRequirement;
-import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(ThucydidesRunner.class)
-@UserStoryCode("US01")
-public class SingleTestScenario {
+public class SamplePassingScenarioWithPendingTests {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamplePassingScenarioWithPendingTests.class);
+
     @Managed
     public WebDriver webdriver;
 
@@ -23,15 +25,23 @@ public class SingleTestScenario {
     
     @Steps
     public SampleScenarioSteps steps;
-        
+
     @Test
-    @TestsRequirement("SOME_BUSINESS_RULE")
-    public void happy_day_scenario() {
+    public void happy_day_scenario() throws Throwable {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
-        steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
-        steps.stepThatFails();
-        steps.stepThatShouldBeSkipped();
+    }
+
+    @Pending @Test
+    public void edge_case_1() {
+        steps.stepThatSucceeds();
+        steps.anotherStepThatSucceeds();
+    }
+
+    @Pending @Test
+    public void edge_case_2() {
+        steps.stepThatSucceeds();
+        steps.anotherStepThatSucceeds();
     }
 }

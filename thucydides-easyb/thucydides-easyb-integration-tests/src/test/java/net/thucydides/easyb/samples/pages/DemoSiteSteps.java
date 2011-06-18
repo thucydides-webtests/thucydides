@@ -16,26 +16,26 @@ public class DemoSiteSteps extends ScenarioSteps {
 
     @Step
     public void enter_values(String selectValue, boolean checkboxValue) {
-        IndexPage page = (IndexPage) getPages().currentPageAt(IndexPage.class);
+        IndexPage page = getPages().get(IndexPage.class);
         page.selectItem(selectValue);
         page.setCheckboxOption(checkboxValue);
     }
 
     @Step
     public void fields_should_be_displayed() {
-        IndexPage page = (IndexPage) getPages().currentPageAt(IndexPage.class);
+        IndexPage page = getPages().currentPageAt(IndexPage.class);
         page.shouldBeVisible(page.multiselect);
     }
 
     @Step
     public void should_display(String selectValue) {
-        IndexPage page = (IndexPage) getPages().currentPageAt(IndexPage.class);
+        IndexPage page = getPages().currentPageAt(IndexPage.class);
         page.shouldContainText(selectValue);
     }
 
     @Step
     public void should_have_selected_value(String selectValue) {
-        IndexPage page = (IndexPage) getPages().currentPageAt(IndexPage.class);
+        IndexPage page = getPages().currentPageAt(IndexPage.class);
         if (!page.getSelectedValues().contains(selectValue)) {
             throw new AssertionError("Value " + selectValue + " not in " + page.getSelectedValues());
         }
@@ -43,7 +43,7 @@ public class DemoSiteSteps extends ScenarioSteps {
 
     @Step
     public void should_not_have_selected_value(String selectValue) {
-        IndexPage page = (IndexPage) getPages().currentPageAt(IndexPage.class);
+        IndexPage page = getPages().currentPageAt(IndexPage.class);
         if (page.getSelectedValues().contains(selectValue)) {
             throw new AssertionError();
         }

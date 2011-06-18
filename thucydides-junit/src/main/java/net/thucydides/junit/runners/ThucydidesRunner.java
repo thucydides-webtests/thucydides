@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -11,6 +12,7 @@ import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.junit.listeners.JUnitStepListener;
+import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -208,6 +210,17 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     private void generateReportsFor(final List<TestOutcome> testOutcomeResults) {
         reportService.generateReportsFor(testOutcomeResults);
+    }
+
+
+    @Override
+    protected void runChild(FrameworkMethod method, RunNotifier notifier) {
+		Description description= describeChild(method);
+		if (method.getAnnotation(Pending.class) != null) {
+			notifier.fireTestIgnored(description);
+		} else {
+            super.runChild(method, notifier);
+		}
     }
 
     /**

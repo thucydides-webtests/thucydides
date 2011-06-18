@@ -2,9 +2,8 @@ package net.thucydides.core.steps;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Feature;
-import net.thucydides.core.annotations.TestsStory;
+import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.ConcreteTestStep;
-import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
@@ -64,7 +63,7 @@ public class WhenRecordingStepExecutionResults {
 
     class AStory {}
 
-    @TestsStory(AStory.class)
+    @Story(AStory.class)
     class ATestCase {
         public void app_should_work() {}
     }
@@ -90,7 +89,7 @@ public class WhenRecordingStepExecutionResults {
 
     class MyStory {}
 
-    @TestsStory(MyStory.class)
+    @Story(MyStory.class)
     class MyTestCase {
         public void app_should_work() {}
     }
@@ -110,7 +109,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_two();
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
-        Story story = results.get(0).getUserStory();
+        net.thucydides.core.model.Story story = results.get(0).getUserStory();
         assertThat(story.getUserStoryClass().getName(), is(MyStory.class.getName()));
     }
 
@@ -126,7 +125,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_two();
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
-        Story story = results.get(0).getUserStory();
+        net.thucydides.core.model.Story story = results.get(0).getUserStory();
         assertThat(story.getUserStoryClass().getName(), is(MyTestCaseWithoutAStory.class.getName()));
     }
 
@@ -140,7 +139,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_two();
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
-        Story story = results.get(0).getUserStory();
+        net.thucydides.core.model.Story story = results.get(0).getUserStory();
         assertThat(story.getUserStoryClass().getName(), is(MyStory.class.getName()));
     }
 
@@ -164,7 +163,7 @@ public class WhenRecordingStepExecutionResults {
         class MyStoryInAFeature {}
     }
 
-    @TestsStory(MyFeature.MyStoryInAFeature.class)
+    @Story(MyFeature.MyStoryInAFeature.class)
     class MyTestCaseForAFeature {}
 
     @Test

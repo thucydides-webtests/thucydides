@@ -25,6 +25,10 @@ public class TestResultList {
     }
 
     public TestResult getOverallResult() {
+        if (testResults.isEmpty()) {
+            return PENDING;
+        }
+
         if (testResults.contains(FAILURE)) {
             return FAILURE;
         }

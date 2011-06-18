@@ -1,8 +1,7 @@
 package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.annotations.Feature;
-import net.thucydides.core.annotations.TestsStory;
-import net.thucydides.core.model.Story;
+import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.reports.UserStoryTestReporter;
@@ -29,7 +28,7 @@ public class WhenGeneratingUserStoryHtmlReports {
     @Rule
     public TemporaryFolder temporaryDirectory = new TemporaryFolder();
 
-    private Story userStory = Story.from(AUserStory.class);
+    private net.thucydides.core.model.Story userStory = net.thucydides.core.model.Story.from(AUserStory.class);
     private StoryTestResults storyTestResults;
 
     private UserStoryTestReporter reporter;
@@ -39,7 +38,7 @@ public class WhenGeneratingUserStoryHtmlReports {
 
     class AUserStory {};
 
-    @TestsStory(AUserStory.class)
+    @Story(AUserStory.class)
     class SomeTestScenario {
         public void a_simple_test_case() {};
         public void should_do_this() {};
@@ -52,7 +51,7 @@ public class WhenGeneratingUserStoryHtmlReports {
         class AUserStoryInAFeature {};
     }
 
-    @TestsStory(AFeature.AUserStoryInAFeature.class)
+    @Story(AFeature.AUserStoryInAFeature.class)
     class SomeTestScenarioInAFeature {
         public void should_do_this() {};
         public void should_do_that() {};

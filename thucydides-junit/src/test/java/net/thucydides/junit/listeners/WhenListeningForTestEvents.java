@@ -1,6 +1,6 @@
 package net.thucydides.junit.listeners;
 
-import net.thucydides.core.annotations.TestsStory;
+import net.thucydides.core.annotations.Story;
 import net.thucydides.core.pages.Pages;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,6 @@ import static org.hamcrest.Matchers.nullValue;
 
 public class WhenListeningForTestEvents {
 
-
     @Mock
     Description failureDescription;
 
@@ -27,15 +26,18 @@ public class WhenListeningForTestEvents {
     @Mock
     Pages pages;
 
+    class SampleFailingScenario {
+        public void failingTest() {}
+    }
 
     class MyStory {}
 
-    @TestsStory(MyStory.class)
+    @Story(MyStory.class)
     final static class MyTestCase {
         public void app_should_work() {}
     }
 
-
+    @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
     }
@@ -60,7 +62,7 @@ public class WhenListeningForTestEvents {
     @Test
     public void a_junit_listener_should_keep_track_of_failed_test_steps() throws Exception {
 
-        Failure failure = new Failure(failureDescription, new AssertionError());
+        Failure failure = new Failure(failureDescription, new AssertionError("Test failed."));
 
         listener.testFailure(failure);
 
@@ -70,7 +72,7 @@ public class WhenListeningForTestEvents {
     @Test
     public void a_junit_listener_should_keep_track_of_failure_exceptions() throws Exception {
 
-        Throwable cause = new AssertionError();
+        Throwable cause = new AssertionError("Test failed");
         Failure failure = new Failure(failureDescription, cause);
 
         listener.testFailure(failure);
@@ -81,7 +83,7 @@ public class WhenListeningForTestEvents {
     @Test
     public void any_failing_test_steps_should_be_cleared_at_the_start_of_each_new_test() throws Exception {
 
-        Failure failure = new Failure(failureDescription, new AssertionError());
+        Failure failure = new Failure(failureDescription, new AssertionError("Test failed"));
 
         listener.testFailure(failure);
 
@@ -95,7 +97,7 @@ public class WhenListeningForTestEvents {
     @Test
     public void any_failing_exceptions_should_be_cleared_at_the_start_of_each_new_test() throws Exception {
 
-        Failure failure = new Failure(failureDescription, new AssertionError());
+        Failure failure = new Failure(failureDescription, new AssertionError("Test failed"));
 
         listener.testFailure(failure);
 

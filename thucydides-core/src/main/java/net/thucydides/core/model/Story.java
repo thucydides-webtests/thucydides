@@ -1,7 +1,6 @@
 package net.thucydides.core.model;
 
 import net.thucydides.core.annotations.Feature;
-import net.thucydides.core.annotations.TestsStory;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.NameConverter;
 
@@ -130,11 +129,11 @@ public class Story {
 
     /**
      * Returns the class representing the story that is tested by a given test class
-     * This is indicated by the TestsStory annotation.
+     * This is indicated by the Story annotation.
      * @return
      */
     public static Class<?> testedInTestCase(Class<?> testClass) {
-        TestsStory story = testClass.getAnnotation(TestsStory.class);
+        net.thucydides.core.annotations.Story story = testClass.getAnnotation(net.thucydides.core.annotations.Story.class);
         if (story != null) {
             return story.value();
         } else {

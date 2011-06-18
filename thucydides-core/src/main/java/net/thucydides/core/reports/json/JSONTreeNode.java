@@ -3,6 +3,7 @@ package net.thucydides.core.reports.json;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class JSONTreeNode {
 
     private final ColorScheme colorScheme;
 
-    public JSONTreeNode(String id, String name, ColorScheme colorScheme) {
+    public JSONTreeNode(final String id, final String name, final ColorScheme colorScheme) {
         this.id = id;
         this.name = name;
         this.colorScheme = colorScheme;
@@ -52,8 +53,8 @@ public class JSONTreeNode {
 
     public void addFeature(final FeatureResults feature) {
         JSONTreeNode featureNode = new JSONTreeNode(feature.getFeature().getId(),
-                                                    feature.getFeature().getName(),
-                                                    colorScheme);
+                feature.getFeature().getName(),
+                colorScheme);
         featureNode.getData().put("$area", feature.getTotalSteps());
         featureNode.getData().put("$color", rgbFormatOf(colorScheme.colorFor(feature)));
         featureNode.getData().put("stories", feature.getTotalStories());
@@ -74,8 +75,8 @@ public class JSONTreeNode {
 
         for (StoryTestResults storyResult : feature.getStoryResults()) {
             JSONTreeNode storyNode = new JSONTreeNode(storyResult.getStory().getId(),
-                                                      storyResult.getStory().getName(),
-                                                      colorScheme);
+                    storyResult.getStory().getName(),
+                    colorScheme);
 
             storyNode.getData().put("$area", storyResult.getStepCount());
             storyNode.getData().put("$color", rgbFormatOf(colorScheme.colorFor(storyResult)));
@@ -85,7 +86,7 @@ public class JSONTreeNode {
             storyNode.getData().put("failing", storyResult.getFailureCount());
             storyNode.getData().put("steps", storyResult.getStepCount());
 
-            storyNode.children.addAll(getTestOutcomeNodesFor(storyResult));
+            storyNode.children.addAll(getTestOutcomeNodesFor(storyResult, averageTestSizeIn(feature)));
 
             stories.add(storyNode);
         }
@@ -93,21 +94,81 @@ public class JSONTreeNode {
 
     }
 
-    private List<JSONTreeNode> getTestOutcomeNodesFor(final StoryTestResults storyTestResults) {
+    private int averageTestSizeIn(final FeatureResults feature) {
+        int totalExecutedSteps = totalStepsInExecutedTestsIn(feature);
+        int totalExecutedTests = totalExecutedTestsIn(feature);
+        if (totalExecutedTests > 0) {
+            return totalExecutedSteps / totalExecutedTests;
+        } else {
+            return 1;
+        }
+    }
+
+    protected int totalExecutedTestsIn(final FeatureResults feature) {
+        int testTally = 0;
+
+        List<StoryTestResults> storyTestResults = feature.getStoryResults();
+        for (StoryTestResults testResults : storyTestResults) {
+            List<TestOutcome> outcomes = testResults.getTestOutcomes();
+            for(TestOutcome outcome : outcomes) {
+                if (outcome.isFailure() || outcome.isSuccess()) {
+                    testTally++;
+                }
+            }
+
+        }
+        return testTally;
+    }
+
+    protected int totalStepsInExecutedTestsIn(final FeatureResults feature) {
+        int stepTally = 0;
+
+        List<StoryTestResults> storyTestResults = feature.getStoryResults();
+        for (StoryTestResults testResults : storyTestResults) {
+            List<TestOutcome> outcomes = testResults.getTestOutcomes();
+            for(TestOutcome outcome : outcomes) {
+                if (outcome.isFailure() || outcome.isSuccess()) {
+                    stepTally += outcome.getStepCount();
+                }
+            }
+
+        }
+        return stepTally;
+    }
+
+    private List<JSONTreeNode> getTestOutcomeNodesFor(final StoryTestResults storyTestResults,
+                                                      final int sizeOfPendingOrSkippedTests) {
         List<JSONTreeNode> outcomes = new ArrayList<JSONTreeNode>();
 
         for (TestOutcome outcome : storyTestResults.getTestOutcomes()) {
             JSONTreeNode node = new JSONTreeNode(outcome.getMethodName(),
-                                                      outcome.getTitle(),
-                                                      colorScheme);
+                    outcome.getTitle(),
+                    colorScheme);
 
-            node.getData().put("$area", outcome.countTestSteps());
+            int nodeArea = findTestArea(sizeOfPendingOrSkippedTests, outcome);
+            node.getData().put("$area", nodeArea);
             node.getData().put("$color", rgbFormatOf(colorScheme.colorFor(outcome)));
             node.getData().put("result", outcome.getResult());
             node.getData().put("steps", outcome.countTestSteps());
             outcomes.add(node);
         }
         return outcomes;
+    }
+
+    private int findTestArea(final int sizeOfPendingOrSkippedTests, final TestOutcome outcome) {
+        int nodeArea;
+        if (testWasSkipped(outcome)) {
+            nodeArea = sizeOfPendingOrSkippedTests;
+        } else {
+            nodeArea = outcome.countTestSteps();
+        }
+        return nodeArea;
+    }
+
+    private boolean testWasSkipped(final TestOutcome outcome) {
+        return (outcome.isPending()
+                || (outcome.getResult() == TestResult.IGNORED)
+                || (outcome.getResult() == TestResult.SKIPPED));
     }
 
 }

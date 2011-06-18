@@ -6,7 +6,6 @@ import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
-import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.core.pages.InternalClock;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.screenshots.Photographer;
@@ -218,12 +217,12 @@ public class BaseStepListener implements StepListener {
         return (storyFrom(testClass) != null);
     }
 
-    public void testStarted(String testName) {
+    public void testStarted(final String testName) {
         LOGGER.debug("Starting test: {}", testName);
         startNewTestOutcomeFor(testName, testedStory);
         getCurrentTestOutcome().setMethodName(testName);
     }
- 
+
     private void addAnyTestedRequirementsIn(final ExecutedStepDescription description) {
         AnnotatedStepDescription testStepDescription = AnnotatedStepDescription.from(description);
         List<String> requirements = testStepDescription.getAnnotatedRequirements();
@@ -241,27 +240,36 @@ public class BaseStepListener implements StepListener {
         }
         //takeScreenshotForCurrentGroup();
     }
- 
-    private void takeScreenshotForCurrentGroup() {
-        TestStepGroup currentGroup = getCurrentTestOutcome().getCurrentGroup();
-        takeScreenshotForGroup(currentGroup);
-    }
- 
-    private void takeScreenshotForGroup(final TestStepGroup group) {
-        File screenshot = grabScreenshotFileFor(group.getDescription());
-        group.setScreenshot(screenshot);
-        if (screenshot != null) {
-            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-            group.setHtmlSource(sourcecode);
+
+//    private void takeScreenshotForCurrentGroup() {
+//        TestStepGroup currentGroup = getCurrentTestOutcome().getCurrentGroup();
+//        takeScreenshotForGroup(currentGroup);
+//    }
+//
+//    private void takeScreenshotForGroup(final TestStepGroup group) {
+//        File screenshot = grabScreenshotFileFor(group.getDescription());
+//        group.setScreenshot(screenshot);
+//        if (screenshot != null) {
+//            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
+//            group.setHtmlSource(sourcecode);
+//        }
+//    }
+
+    private void markCurrentTestAs(final TestResult result) {
+        if (failureOccursBeforeAnyStepsHaveBeenExecuted(result)) {
+            stepStarted(ExecutedStepDescription.withTitle("undefined"));
+        }
+
+        if (getCurrentStep() != null) {
+            getCurrentStep().setResult(result);
+        } else if ((result == FAILURE) && (getTestOutcomes().isEmpty())) {
+            startNewTestStep(ExecutedStepDescription.withTitle("undefined"));
         }
     }
 
-    private void markCurrentTestAs(final TestResult result) {
-        if (getCurrentStep() != null) {
-            getCurrentStep().setResult(result);
-        }
+    private boolean failureOccursBeforeAnyStepsHaveBeenExecuted(final TestResult result) {
+        return ((result == FAILURE) && (getCurrentStep() == null) && (getCurrentTestOutcome().getStepCount() == 0));
     }
- 
     private TestStep getCurrentStep() {
         if (currentTestStep != null) {
             return currentTestStep;

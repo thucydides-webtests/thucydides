@@ -1,7 +1,7 @@
 package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.annotations.Feature;
-import net.thucydides.core.annotations.TestsStory;
+import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
@@ -40,7 +40,7 @@ public class WhenGeneratingAnXMLReport {
 
     class AUserStory {};
 
-    @TestsStory(AUserStory.class)
+    @Story(AUserStory.class)
     class SomeTestScenario {
         public void a_simple_test_case() {};
         public void should_do_this() {};
@@ -52,7 +52,7 @@ public class WhenGeneratingAnXMLReport {
         class AUserStoryInAFeature {};
     }
 
-    @TestsStory(AFeature.AUserStoryInAFeature.class)
+    @Story(AFeature.AUserStoryInAFeature.class)
     class SomeTestScenarioInAFeature {
         public void should_do_this() {};
         public void should_do_that() {};
@@ -286,7 +286,7 @@ public class WhenGeneratingAnXMLReport {
     }
 
 
-    @TestsStory(AUserStory.class)
+    @Story(AUserStory.class)
     class SomeNestedTestScenario {
         public void a_nested_test_case() {};
         public void should_do_this() {};

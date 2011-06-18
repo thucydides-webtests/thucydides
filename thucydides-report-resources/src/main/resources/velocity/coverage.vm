@@ -76,7 +76,7 @@ function init() {
                             html += "Tests: " + data.tests + "<br/>";
                         }
                         if (data.passing) {
-                            html += "&nbsp;&nbsp;-&nbsp;Pending: " + data.passing + "<br/>";
+                            html += "&nbsp;&nbsp;-&nbsp;Passing: " + data.passing + "<br/>";
                         }
                         if (data.pending) {
                             html += "&nbsp;&nbsp;-&nbsp;Pending: " + data.pending + "<br/>";

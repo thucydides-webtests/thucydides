@@ -24,7 +24,7 @@ public interface StepListener {
     /**
      * Start a test run using a test case or a user story.
      * For JUnit tests, the test case should be provided. The test case should be annotated with the
-     * TestsStory annotation to indicate what user story it tests. Otherwise, the test case itself will
+     * Story annotation to indicate what user story it tests. Otherwise, the test case itself will
      * be treated as a user story.
      * For easyb stories, the story class can be provided directly.
      */

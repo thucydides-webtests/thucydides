@@ -2,6 +2,7 @@ package net.thucydides.core.pages;
 
 import com.thoughtworks.selenium.Selenium;
 import net.thucydides.core.pages.components.Dropdown;
+import net.thucydides.core.pages.components.FileToUpload;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
 import org.openqa.selenium.By;
@@ -13,6 +14,7 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -52,6 +54,10 @@ public abstract class PageObject {
 
         WebDriverFactory.initElementsWithAjaxSupport(this, driver);
 
+    }
+
+    public FileToUpload upload(final String filename) {
+        return new FileToUpload(filename);
     }
 
     private void setupPageUrls() {

@@ -152,6 +152,7 @@ public class StepInterceptor implements MethodInterceptor {
         } catch (AssertionError assertionError) {
             error = assertionError;
             stepExceptions.add(assertionError);
+            LOGGER.debug("Addertion error caught - notifying of failure " + assertionError);
             notifyFailureOf(method, args, assertionError);
         } catch (WebDriverException webdriverException) {
             error = webdriverException;
