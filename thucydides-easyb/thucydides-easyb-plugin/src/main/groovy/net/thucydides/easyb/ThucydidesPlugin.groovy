@@ -108,9 +108,16 @@ public class ThucydidesPlugin extends BasePlugin {
 
 
     private def testRunStarted(def binding) {
-        def storyName = lookupStoryNameFrom(binding)
-        def storyFile = lookupStoryFileFrom(binding)
-        Story story = Story.withId(storyFile, storyName);
+        def storyClass = configuration.storyClass
+        def story
+        if (storyClass) {
+           story = Story.from(storyClass)
+        } else {
+            def storyName = lookupStoryNameFrom(binding)
+            def storyFile = lookupStoryFileFrom(binding)
+            story = Story.withId(storyFile, storyName)
+        }
+
         stepListener.testRunStartedFor(story);
     }
 
@@ -143,8 +150,6 @@ public class ThucydidesPlugin extends BasePlugin {
         ListenerFactory.registerBuilder(new ThucydidesListenerBuilder());
     }
 
-
-
     @Override
     public Object beforeScenario(final Binding binding) {
 
@@ -154,23 +159,6 @@ public class ThucydidesPlugin extends BasePlugin {
         stepListener.testStarted(binding.variables['stepName'])
         return super.beforeScenario(binding);
     }
-
-
-    @Override
-    Object beforeGiven(Binding binding) {
-        return super.beforeGiven(binding)
-    }
-
-    @Override
-    Object beforeWhen(Binding binding) {
-        return super.beforeWhen(binding)
-    }
-
-    @Override
-    Object beforeThen(Binding binding) {
-        return super.beforeThen(binding)
-    }
-
 
     @Override
     public Object afterScenario(final Binding binding) {

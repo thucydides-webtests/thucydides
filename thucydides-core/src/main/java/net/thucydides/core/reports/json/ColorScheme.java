@@ -3,6 +3,7 @@ package net.thucydides.core.reports.json;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestStep;
 
 import java.awt.*;
 
@@ -97,5 +98,21 @@ public class ColorScheme {
                 return Color.ORANGE;
         }
         throw new IllegalArgumentException("Unsupported test outcome: " + outcome.getResult());
+    }
+
+    public Color colorFor(final TestStep step) {
+        switch(step.getResult()) {
+            case SUCCESS:
+                return Color.GREEN;
+            case FAILURE:
+                return Color.RED;
+            case PENDING:
+                return Color.BLUE;
+            case SKIPPED:
+                return Color.GRAY;
+            case IGNORED:
+                return Color.ORANGE;
+        }
+        throw new IllegalArgumentException("Unsupported test step result: " + step.getResult());
     }
 }

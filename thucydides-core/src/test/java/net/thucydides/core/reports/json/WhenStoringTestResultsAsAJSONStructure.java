@@ -2,6 +2,7 @@ package net.thucydides.core.reports.json;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.model.FeatureResults;
+import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
@@ -66,7 +67,6 @@ public class WhenStoringTestResultsAsAJSONStructure {
         JSONResultTree resultTree = new JSONResultTree();
 
         String json = resultTree.toJSON();
-        System.out.println(json);
 
         assertThat(json, not(containsString("\"class\":")));
     }
@@ -76,7 +76,6 @@ public class WhenStoringTestResultsAsAJSONStructure {
         JSONResultTree resultTree = new JSONResultTree();
 
         String json = resultTree.toJSON();
-        System.out.println(json);
 
         assertThat(json, not(containsString("\"colorScheme\":")));
     }
@@ -118,7 +117,6 @@ public class WhenStoringTestResultsAsAJSONStructure {
         resultTree.addFeature(gizmoFeature);
 
         String json = resultTree.toJSON();
-        System.out.println(json);
 
         assertThat(json, containsString("\"id\":\"net.thucydides.core.reports.json.WidgetFeature\""));
         assertThat(json, containsString("\"name\":\"Widget feature\""));
@@ -136,7 +134,6 @@ public class WhenStoringTestResultsAsAJSONStructure {
         resultTree.addFeature(gizmoFeature);
 
         String json = resultTree.toJSON();
-        System.out.println(json);
 
         assertThat(json, containsString("\"id\":\"net.thucydides.core.reports.json.WidgetFeature.PurchaseNewWidget\""));
         assertThat(json, containsString("\"name\":\"Purchase new widget\""));
@@ -159,7 +156,6 @@ public class WhenStoringTestResultsAsAJSONStructure {
         resultTree.addFeature(wozitFeature);
 
         String json = resultTree.toJSON();
-        System.out.println(json);
 
         assertThat(json, containsString("\"$area\":90"));
         assertThat(json, containsString("\"$area\":120"));
@@ -177,7 +173,6 @@ public class WhenStoringTestResultsAsAJSONStructure {
         resultTree.addFeature(wozitFeature);
 
         String json = resultTree.toJSON();
-        System.out.println(json);
 
         assertThat(json, containsString("\"steps\":90"));
         assertThat(json, containsString("\"steps\":120"));
@@ -195,7 +190,6 @@ public class WhenStoringTestResultsAsAJSONStructure {
         resultTree.addFeature(wozitFeature);
 
         String json = resultTree.toJSON();
-        System.out.println(json);
 
         assertThat(json, containsString("\"stories\":3"));
         assertThat(json, containsString("\"stories\":4"));
@@ -213,7 +207,6 @@ public class WhenStoringTestResultsAsAJSONStructure {
         resultTree.addFeature(wozitFeature);
 
         String json = resultTree.toJSON();
-        System.out.println(json);
 
         assertThat(json, containsString("\"tests\":30"));
         assertThat(json, containsString("\"tests\":40"));
@@ -231,7 +224,6 @@ public class WhenStoringTestResultsAsAJSONStructure {
         resultTree.addFeature(wozitFeature);
 
         String json = resultTree.toJSON();
-        System.out.println(json);
 
         assertThat(json, containsString("\"passing\":30"));
     }
@@ -278,6 +270,22 @@ public class WhenStoringTestResultsAsAJSONStructure {
         String json = resultTree.toJSON();
 
         assertThat(json, containsString("\"$color\":\"#ff0000\""));
+
+    }
+
+
+    @Test
+    public void stories_should_contain_the_name_of_the_corresponding_report_page() {
+        JSONResultTree resultTree = new JSONResultTree();
+
+        prepareFeatureResults();
+
+        resultTree.addFeature(widgetFeature);
+        resultTree.addFeature(gizmoFeature);
+
+        String json = resultTree.toJSON();
+
+        assertThat(json, containsString("\"report\":\"story-report.html\""));
 
     }
 
@@ -406,6 +414,7 @@ public class WhenStoringTestResultsAsAJSONStructure {
             when(outcome.getTitle()).thenReturn("Test " + result + " " + count);
             when(outcome.getResult()).thenReturn(result);
             when(outcome.getStepCount()).thenReturn(3);
+            when(outcome.getReportName(ReportNamer.ReportType.HTML)).thenReturn("story-report.html");
             if (result == TestResult.FAILURE) {
                 when(outcome.isFailure()).thenReturn(true);
                 when(outcome.isSuccess()).thenReturn(false);

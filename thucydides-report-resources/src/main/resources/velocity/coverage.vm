@@ -49,7 +49,14 @@ function init() {
                 Events: {
                     enable: true,
                     onClick: function(node) {
-                        if (node) tm.enter(node);
+                        if (node) {
+                            var data = node.data;
+                            if (data.report) {
+                               window.document.location = data.report
+                            } else {
+                                tm.enter(node);
+                            }
+                        }
                     },
                     onRightClick: function() {
                         tm.out();

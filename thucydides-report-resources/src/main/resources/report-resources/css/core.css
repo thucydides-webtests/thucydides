@@ -62,6 +62,13 @@ width:1024px; /*IE6 hack*/
 /*border: 1px solid #FF0000;*/
 }
 
+.screenshot {
+    border-bottom: solid #2b65ec 2px;
+    border-top: solid #6b90da 1px;
+    border-left: solid #6b90da 1px;
+    border-right: solid #2b65ec 2px;
+}
+
 .leftbg
 {
 background-image:url(../images/top-left.jpg);

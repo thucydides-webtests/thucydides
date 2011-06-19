@@ -32,6 +32,8 @@ public class PluginConfiguration {
 
     def defaultBaseUrl;
 
+    def storyClass;
+
     def registeredSteps = [];
 
     def resetBrowserInEachScenario = false
@@ -58,6 +60,9 @@ public class PluginConfiguration {
         registeredSteps += stepsClass
     }
 
+    public void tests_story(Class<?> story) {
+        storyClass = story;
+    }
 
     public void setDefaultBaseUrl(String defaultBaseUrl) {
         this.defaultBaseUrl = defaultBaseUrl;
