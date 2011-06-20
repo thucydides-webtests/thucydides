@@ -6,12 +6,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.interactions.ElementNotDisplayedException;
 
 import java.io.File;
 import java.util.Set;
@@ -186,7 +186,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     }
 
 
-    @Test(expected=ElementNotDisplayedException.class)
+    @Test(expected=ElementNotVisibleException.class)
     public void should_fail_if_text_does_not_appear_on_a_page() {
 
         indexPage.waitForTextToAppear("Label that is not present");
@@ -197,7 +197,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         indexPage.waitForAnyTextToAppear("Label 1", "Label that is not present");
     }
 
-    @Test(expected=ElementNotDisplayedException.class)
+    @Test(expected=ElementNotVisibleException.class)
     public void should_fail_if_the_requested_text_is_not_on_the_page() {
         indexPage.waitForAnyTextToAppear("Label that is not present");
     }
@@ -207,12 +207,12 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         indexPage.waitForAllTextToAppear("Label 1", "Label 2");
     }
 
-    @Test(expected=ElementNotDisplayedException.class)
+    @Test(expected=ElementNotVisibleException.class)
     public void should_fail_if_one_of_a_set_of_requested_texts_does_not_appear_on_a_page() {
         indexPage.waitForAllTextToAppear("Label 1", "Label that is not present");
     }
 
-    @Test(expected=ElementNotDisplayedException.class)
+    @Test(expected=ElementNotVisibleException.class)
     public void should_fail_if_none_of_the_requested_texts_appear_on_a_page() {
         indexPage.waitForAllTextToAppear("Label that is not present", "Another label that is not present");
     }

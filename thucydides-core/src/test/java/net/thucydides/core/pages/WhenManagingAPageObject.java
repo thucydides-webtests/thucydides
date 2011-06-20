@@ -8,13 +8,12 @@ import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.RenderedWebElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.ElementNotDisplayedException;
-import org.openqa.selenium.support.ui.Select;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -174,7 +173,7 @@ public class WhenManagingAPageObject {
     }
 
 
-    @Test(expected=ElementNotDisplayedException.class)
+    @Test(expected=ElementNotVisibleException.class)
     public void page_will_fail_if_single_text_fails_to_appear_in_an_element_if_requested() {
 
         BasicPageObject page = new BasicPageObject(driver);
@@ -187,7 +186,7 @@ public class WhenManagingAPageObject {
         page.waitForAnyTextToAppear(searchedBlock, "hi there");
     }
 
-    @Test(expected=ElementNotDisplayedException.class)
+    @Test(expected=ElementNotVisibleException.class)
     public void page_will_fail_if_text_fails_to_appear_in_an_element_if_requested() {
 
         BasicPageObject page = new BasicPageObject(driver);
@@ -256,7 +255,7 @@ public class WhenManagingAPageObject {
     }
 
 
-    @Test(expected=ElementNotDisplayedException.class)
+    @Test(expected=ElementNotVisibleException.class)
     public void page_will_throw_exception_if_waiting_for_rendered_element_is_not_visible() {
 
         RenderedWebElement renderedElement = mock(RenderedWebElement.class);
@@ -281,7 +280,7 @@ public class WhenManagingAPageObject {
         page.waitForAnyRenderedElementOf(By.id("element1"), By.id("element2"));
     }
 
-    @Test(expected=ElementNotDisplayedException.class)
+    @Test(expected=ElementNotVisibleException.class)
     public void page_will_fail_for_any_of_several_rendered_elements_if_element_is_displayed_but_not_rendered() {
 
         RenderedWebElement renderedElement = mock(RenderedWebElement.class);
@@ -308,7 +307,7 @@ public class WhenManagingAPageObject {
     }
 
 
-    @Test(expected = ElementNotDisplayedException.class)
+    @Test(expected = ElementNotVisibleException.class)
     public void page_will_fail_if_none_of_the_several_rendered_elements_are_present() {
 
         noElementIsRendered(By.id("element1"));

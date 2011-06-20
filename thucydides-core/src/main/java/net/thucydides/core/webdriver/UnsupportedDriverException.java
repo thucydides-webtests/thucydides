@@ -13,10 +13,13 @@ public class UnsupportedDriverException extends RuntimeException {
 
     private static final long serialVersionUID = -6037729905488938123L;
 
+    public UnsupportedDriverException(final String message) {
+        super(message);
+    }
     /**
      * Give some details about this very rare error.
      */
-    public UnsupportedDriverException(final String message) {
-        super(message);
+    public UnsupportedDriverException(final String message, Throwable cause) {
+        super(message, cause);
     }
 }

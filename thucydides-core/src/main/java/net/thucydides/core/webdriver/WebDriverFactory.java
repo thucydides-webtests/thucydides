@@ -35,8 +35,8 @@ public class WebDriverFactory {
     protected WebDriver newWebdriverInstance(Class<? extends WebDriver> webdriverClass) {
         try {
             return webdriverClass.newInstance();
-        } catch (Exception e) {
-            throw new UnsupportedDriverException("Could not instantiate " + webdriverClass);
+        } catch (Exception cause) {
+            throw new UnsupportedDriverException("Could not instantiate " + webdriverClass, cause);
         }
     }
 

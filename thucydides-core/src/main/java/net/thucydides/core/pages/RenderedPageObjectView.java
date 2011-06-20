@@ -1,17 +1,16 @@
 package net.thucydides.core.pages;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.RenderedWebElement;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.ElementNotDisplayedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A page view that handles checking and waiting for element visibility.
@@ -45,7 +44,7 @@ class RenderedPageObjectView {
 
     private void checkThatElementIsDisplayed(final By byElementCriteria) {
         if (!elementIsDisplayed(byElementCriteria)) {
-            throw new ElementNotDisplayedException("Element not displayed: "
+            throw new ElementNotVisibleException("Element not displayed: "
                     + byElementCriteria);
         }
     }
@@ -57,7 +56,7 @@ class RenderedPageObjectView {
             if (matchingElements.isEmpty()) {
                 return false;
             }            
-            RenderedWebElement renderedElement  = (RenderedWebElement) matchingElements.get(0);
+            WebElement renderedElement  = matchingElements.get(0);
             isDisplayed = renderedElement.isDisplayed();
         } catch (NoSuchElementException noSuchElement) {
             LOGGER.trace("No such element " + noSuchElement);
@@ -86,7 +85,7 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (!containsText(expectedText)) {
-            throw new ElementNotDisplayedException(
+            throw new ElementNotVisibleException(
                     "Expected text was not displayed: '" + expectedText + "'");
         }
     }
@@ -100,7 +99,7 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (!containsText(element, expectedText)) {
-            throw new ElementNotDisplayedException(
+            throw new ElementNotVisibleException(
                     "Expected text was not displayed: '" + expectedText + "'");
         }
     }
@@ -125,12 +124,7 @@ class RenderedPageObjectView {
     }
 
     public boolean userCanSee(final WebElement field) {
-        if (RenderedWebElement.class.isAssignableFrom(field.getClass())) {
-            RenderedWebElement renderedField = (RenderedWebElement) field;
-            return renderedField.isDisplayed();
-        } else {
-            return false;
-        }
+        return field.isDisplayed();
     }
 
     public void waitForTextToDisappear(final String expectedText, final long timeout) {
@@ -142,7 +136,7 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (containsText(expectedText)) {
-            throw new ElementNotDisplayedException("Text was still displayed after timeout: '" + expectedText + "'");
+            throw new ElementNotVisibleException("Text was still displayed after timeout: '" + expectedText + "'");
         }
     }
 
@@ -155,7 +149,7 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (!pageContains(expectedTexts)) {
-            throw new ElementNotDisplayedException("Expected text was not displayed: Was expecting any of '"
+            throw new ElementNotVisibleException("Expected text was not displayed: Was expecting any of '"
                       + Arrays.toString(expectedTexts));
         }
     }
@@ -169,7 +163,7 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (!elementContains(element, expectedText)) {
-            throw new ElementNotDisplayedException("Expected text was not displayed: '"
+            throw new ElementNotVisibleException("Expected text was not displayed: '"
                                                     + Arrays.toString(expectedText) + "'");
         }
         
@@ -210,7 +204,7 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (!allTextsFound) {
-            throw new ElementNotDisplayedException("Expected text was not displayed: was expecting all of "
+            throw new ElementNotVisibleException("Expected text was not displayed: was expecting all of "
                                                     + printableFormOf(requestedTexts));
         }
     }
@@ -247,7 +241,7 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (elementIsDisplayed(byElementCriteria)) {
-            throw new ElementNotDisplayedException("Element should not be displayed displayed: "
+            throw new ElementNotVisibleException("Element should not be displayed displayed: "
                     + byElementCriteria);
         }
     }
@@ -263,7 +257,7 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (!renderedElementFound) {
-            throw new ElementNotDisplayedException("None of the expected elements where displayed: '"
+            throw new ElementNotVisibleException("None of the expected elements where displayed: '"
                                                     + Arrays.toString(expectedElements) + "'");
         }
     }

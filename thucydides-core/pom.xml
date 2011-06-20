@@ -11,7 +11,7 @@
     <artifactId>thucydides-core</artifactId>
     <name>thucydides-core</name>
     <properties>
-        <selenium.version>2.0b1</selenium.version>
+        <selenium.version>2.0rc2</selenium.version>
         <root.package>net.thucydides.core</root.package>
     </properties>
     <dependencies>
@@ -19,6 +19,7 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium</artifactId>
             <version>${selenium.version}</version>
+            <type>pom</type>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
