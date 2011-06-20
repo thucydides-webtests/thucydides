@@ -11,6 +11,12 @@ import org.junit.Test;
 
 import java.awt.*;
 
+import static java.awt.Color.BLACK;
+import static java.awt.Color.BLUE;
+import static java.awt.Color.GRAY;
+import static java.awt.Color.GREEN;
+import static java.awt.Color.ORANGE;
+import static java.awt.Color.RED;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -59,7 +65,7 @@ public class WhenDeterminingTheColorOfAFeature {
         FeatureResults feature = mockFeatureResults(WidgetFeature.class,100, 10, 0, 0,0,0);
         Color color = colorScheme.colorFor(feature);
 
-        assertThat(color, is(Color.BLACK));
+        assertThat(color, is(BLACK));
     }
 
     @Test
@@ -67,7 +73,7 @@ public class WhenDeterminingTheColorOfAFeature {
         FeatureResults feature = mockFeatureResults(WidgetFeature.class,100, 10, 20, 0,0,20);
         Color color = colorScheme.colorFor(feature);
 
-        assertThat(color, is(Color.RED));
+        assertThat(color, is(RED));
     }
 
     @Test
@@ -75,7 +81,7 @@ public class WhenDeterminingTheColorOfAFeature {
         FeatureResults feature = mockFeatureResults(WidgetFeature.class,100, 10, 20, 0,20,0);
         Color color = colorScheme.colorFor(feature);
 
-        assertThat(color, is(Color.BLUE));
+        assertThat(color, is(BLUE));
     }
 
     @Test
@@ -83,7 +89,7 @@ public class WhenDeterminingTheColorOfAFeature {
         FeatureResults feature = mockFeatureResults(WidgetFeature.class,100, 10, 20, 20,0,0);
         Color color = colorScheme.colorFor(feature);
 
-        assertThat(color, is(Color.GREEN));
+        assertThat(color, is(GREEN));
     }
 
     @Test
@@ -91,7 +97,7 @@ public class WhenDeterminingTheColorOfAFeature {
          StoryTestResults story = mockStory(20, 0,0,20);
          Color color = colorScheme.colorFor(story);
 
-         assertThat(color, is(Color.RED));
+         assertThat(color, is(RED));
      }
 
      @Test
@@ -107,7 +113,7 @@ public class WhenDeterminingTheColorOfAFeature {
          StoryTestResults story = mockStory(20, 0, 20, 0);
          Color color = colorScheme.colorFor(story);
 
-         assertThat(color, is(Color.BLUE));
+         assertThat(color, is(BLUE));
      }
 
      @Test
@@ -115,15 +121,15 @@ public class WhenDeterminingTheColorOfAFeature {
          StoryTestResults story = mockStory(20, 20, 0, 0);
          Color color = colorScheme.colorFor(story);
 
-         assertThat(color, is(Color.GREEN));
+         assertThat(color, is(GREEN));
      }
 
     @Test
-    public void a_successful_test_outcome_should_be_green() {
+    public void a_successful_test_outcome_should_be_pink() {
         TestOutcome outcome = mockTestOutcome(10, TestResult.SUCCESS);
         Color color = colorScheme.colorFor(outcome);
 
-        assertThat(color, is(Color.GREEN));
+        assertThat(color, is(GREEN));
     }
 
     @Test
@@ -131,7 +137,7 @@ public class WhenDeterminingTheColorOfAFeature {
         TestOutcome outcome = mockTestOutcome(10, TestResult.PENDING);
         Color color = colorScheme.colorFor(outcome);
 
-        assertThat(color, is(Color.BLUE));
+        assertThat(color, is(BLUE));
     }
 
     @Test
@@ -139,7 +145,7 @@ public class WhenDeterminingTheColorOfAFeature {
         TestOutcome outcome = mockTestOutcome(10, TestResult.SKIPPED);
         Color color = colorScheme.colorFor(outcome);
 
-        assertThat(color, is(Color.GRAY));
+        assertThat(color, is(GRAY));
     }
 
     @Test
@@ -147,7 +153,7 @@ public class WhenDeterminingTheColorOfAFeature {
         TestOutcome outcome = mockTestOutcome(10, TestResult.IGNORED);
         Color color = colorScheme.colorFor(outcome);
 
-        assertThat(color, is(Color.ORANGE));
+        assertThat(color, is(ORANGE));
     }
 
     @Test

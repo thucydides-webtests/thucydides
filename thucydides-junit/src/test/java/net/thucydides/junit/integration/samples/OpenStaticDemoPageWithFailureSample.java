@@ -2,9 +2,6 @@ package net.thucydides.junit.integration.samples;
 
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.annotations.TestsRequirement;
-import net.thucydides.core.annotations.Title;
-import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.runners.ThucydidesRunner;
@@ -19,8 +16,7 @@ import org.openqa.selenium.WebDriver;
  *
  */
 @RunWith(ThucydidesRunner.class)
-@UserStoryCode("US101")
-public class OpenStaticDemoPageSample {
+public class OpenStaticDemoPageWithFailureSample {
 
     @Managed
     public WebDriver webdriver;
@@ -32,20 +28,23 @@ public class OpenStaticDemoPageSample {
     public DemoSiteSteps steps;
         
     @Test
-    @Title("The user opens the index page")
-    @TestsRequirement("R123")
     public void the_user_opens_the_page() {
-        pages.start();
         steps.enter_values("Label 1", true);
+        steps.should_have_selected_value("Label 2");
+        steps.do_something();
     }    
     
     @Test
-    @Title("The user enters different values.")
     public void the_user_opens_another_page() {
-        pages.start();
         steps.enter_values("Label 2", true);
-        steps.do_something();
-    }    
+        steps.do_something_else();
+    }
+
+    @Test
+    public void the_user_opens_a_third_page() {
+        steps.enter_values("Label 3", true);
+        steps.do_something_else();
+    }
 
 
 }

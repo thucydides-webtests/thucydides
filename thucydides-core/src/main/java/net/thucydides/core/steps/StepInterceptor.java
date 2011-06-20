@@ -5,7 +5,7 @@ import net.sf.cglib.proxy.MethodProxy;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
-import org.junit.Ignore;
+import net.thucydides.core.webdriver.WebdriverAssertionError;import org.junit.Ignore;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,8 +156,9 @@ public class StepInterceptor implements MethodInterceptor {
             notifyFailureOf(method, args, assertionError);
         } catch (WebDriverException webdriverException) {
             error = webdriverException;
-            stepExceptions.add(webdriverException);
-            notifyFailureOf(method, args, webdriverException);
+            AssertionError webdriverAssertionError = new WebdriverAssertionError(error.getMessage(), error);
+            stepExceptions.add(webdriverAssertionError);
+            notifyFailureOf(method, args, webdriverAssertionError);
         }
 
         notifyTestFinishedFor(method, args);

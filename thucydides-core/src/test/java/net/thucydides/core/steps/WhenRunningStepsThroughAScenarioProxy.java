@@ -6,6 +6,7 @@ import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -464,7 +465,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         verify(listener).stepFailed(argument.capture());
         assertThat(argument.getValue().getDescription().getStepClass().getName(), is(SimpleTestScenarioSteps.class.getName()));
         assertThat(argument.getValue().getDescription().getName(), is("failing_web_step"));
-        assertThat(argument.getValue().getException().getClass().getName(), is(WebDriverException.class.getName()));
+        assertThat(argument.getValue().getException().getClass().getName(), is(WebdriverAssertionError.class.getName()));
 
         verify(listener, times(1)).stepFailed(any(StepFailure.class));
 

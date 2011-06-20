@@ -8,8 +8,10 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.steps.InvalidManagedPagesFieldException;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.core.webdriver.WebdriverAssertionError;
 import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
+import net.thucydides.junit.integration.samples.OpenStaticDemoPageWithFailureSample;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.samples.AnnotatedSingleTestScenario;
 import net.thucydides.samples.SampleFailingScenarioWithEmptyTests;
@@ -36,7 +38,6 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -185,6 +186,27 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         assertThat(testOutcome3.getResult(), is(TestResult.PENDING));
     }
 
+
+    @Test
+    public void tests_should_be_run_even_after_a_webdriver_error() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(OpenStaticDemoPageWithFailureSample.class);
+        runner.setWebDriverFactory(webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(3));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+        TestOutcome testOutcome2 = executedSteps.get(1);
+        TestOutcome testOutcome3 = executedSteps.get(2);
+
+        assertThat(testOutcome1.getResult(), is(TestResult.FAILURE));
+        assertThat(testOutcome2.getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome3.getResult(), is(TestResult.SUCCESS));
+    }
+
+
+
     @Test
     public void failing_tests_with_no_steps_should_still_record_the_error() throws InitializationError {
 
@@ -302,7 +324,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestStep> steps = testOutcome.getTestSteps();
         ConcreteTestStep failingStep = (ConcreteTestStep) steps.get(4);
-        assertThat(failingStep.getException(), is(NoSuchElementException.class));
+        assertThat(failingStep.getException(), is(WebdriverAssertionError.class));
     }
 
     @Test

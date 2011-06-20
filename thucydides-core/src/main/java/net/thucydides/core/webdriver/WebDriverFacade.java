@@ -4,7 +4,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
@@ -17,6 +20,8 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
     private final Class<? extends WebDriver> driverClass;
 
     private WebDriver proxiedWebDriver;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebDriverFacade.class);
 
     public WebDriverFacade(final Class<? extends WebDriver> driverClass) {
         this.driverClass = driverClass;
@@ -56,10 +61,13 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public <X> X getScreenshotAs(final OutputType<X> target) {
         if (proxyInstanciated() && driverCanTakeScreenshots()) {
-            return ((TakesScreenshot) getProxiedDriver()).getScreenshotAs(target);
-        } else {
-            return null;
+            try {
+                return ((TakesScreenshot) getProxiedDriver()).getScreenshotAs(target);
+            } catch (WebDriverException e) {
+                LOGGER.error("Failed to take screenshot - driver closed already?", e);
+            }
         }
+        return null;
     }
 
     private boolean driverCanTakeScreenshots() {
