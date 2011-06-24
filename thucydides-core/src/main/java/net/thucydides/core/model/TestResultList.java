@@ -1,5 +1,7 @@
 package net.thucydides.core.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static net.thucydides.core.model.TestResult.FAILURE;
@@ -10,12 +12,11 @@ import static net.thucydides.core.model.TestResult.SUCCESS;
 
 /**
  * A list of test results, used to determine the overall test result.
- *
  */
 public class TestResultList {
 
     private final List<TestResult> testResults;
-    
+
     public TestResultList(final List<TestResult> testResults) {
         this.testResults = testResults;
     }
@@ -45,10 +46,13 @@ public class TestResultList {
             return SKIPPED;
         }
 
-        return SUCCESS;
+        if (containsOnly(SUCCESS, IGNORED, SKIPPED)) {
+            return SUCCESS;
+        }
+        return PENDING;
     }
 
-    private boolean containsOnly(final TestResult value) {
+    private boolean containsOnly(final TestResult... value) {
         if (testResults.isEmpty()) {
             return false;
         } else {
@@ -56,9 +60,10 @@ public class TestResultList {
         }
     }
 
-    private boolean containsOnlyType(final TestResult value) {
+    private boolean containsOnlyType(final TestResult... values) {
+        List<TestResult> authorizedTypes = Arrays.asList(values);
         for (TestResult result : testResults) {
-            if (result != value) {
+            if (!authorizedTypes.contains(result)) {
                 return false;
             }
         }

@@ -3,6 +3,7 @@ package net.thucydides.core.steps;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
@@ -13,6 +14,7 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
 import net.thucydides.core.steps.samples.NestedScenarioSteps;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -33,6 +35,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,6 +53,9 @@ public class WhenRecordingStepExecutionResults {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    @Rule
+    public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
 
     File outputDirectory;
 
@@ -428,6 +434,7 @@ public class WhenRecordingStepExecutionResults {
         assertThat(testOutcome.getTestSteps().get(0).getResult(), is(TestResult.PENDING));
     }
 
+    @Ignore("Not implemented properly yet")
     @Test
     public void ignored_test_groups_should_be_skipped() {
 
@@ -798,10 +805,10 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
-    public void the_result_of_a_step_group_with_an_undefined_result_is_skipped() {
+    public void the_result_of_a_step_group_with_an_undefined_result_is_pending() {
         TestStepGroup group = new TestStepGroup("Test Group");
 
-        assertThat(group.getResult(), is(TestResult.SKIPPED));
+        assertThat(group.getResult(), is(TestResult.PENDING));
 
     }
 
@@ -831,6 +838,38 @@ public class WhenRecordingStepExecutionResults {
         steps.step_two();
 
         verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+    @Test
+    public void screenshots_should_not_be_taken_after_steps_if_screenshots_disabled() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
+        System.setProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "true");
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+
+        verify(driver, never()).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+
+    @Test
+    public void screenshots_should_still_be_taken_after_failing_steps_if_screenshots_disabled() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
+        System.setProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "true");
+
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+        steps.failingStep();
+
+        verify(driver, times(1)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
 

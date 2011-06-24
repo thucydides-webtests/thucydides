@@ -41,6 +41,11 @@ public class SampleScenarioSteps extends ScenarioSteps {
     }
 
     @Step
+    public void stepThatUsesABrowser() {
+        getDriver().get("http://www.wikipedia.org");
+    }
+
+    @Step
     public void stepThree(String option) {
     }
 

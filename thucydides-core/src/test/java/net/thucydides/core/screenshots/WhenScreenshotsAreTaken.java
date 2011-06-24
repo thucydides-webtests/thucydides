@@ -28,6 +28,7 @@ public class WhenScreenshotsAreTaken {
 
     @Rule
     public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+
     private File screenshotDirectory;
     private File screenshotTaken;
 
@@ -50,6 +51,7 @@ public class WhenScreenshotsAreTaken {
         screenshotDirectory = temporaryDirectory.newFolder("screenshots");
         screenshotTaken = temporaryDirectory.newFile("screenshot.png");
     }
+
     
     @Test
     public void the_driver_should_capture_the_image() throws IOException {
@@ -59,7 +61,8 @@ public class WhenScreenshotsAreTaken {
         
         verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());        
     }
-    
+
+
     @Test
     public void should_not_take_a_snapshot_if_unsupported_by_the_driver() throws IOException {
 

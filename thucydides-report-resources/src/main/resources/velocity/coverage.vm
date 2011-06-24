@@ -36,7 +36,7 @@ function init() {
                 //where to inject the visualization
                 injectInto: 'infovis',
                 //parent box title heights
-                titleHeight: 15,
+                titleHeight: 20,
                 //enable animations
                 animate: animate,
                 //box offsets

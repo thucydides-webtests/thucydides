@@ -67,4 +67,10 @@ public class WebdriverProxyFactory {
         Class<? extends WebDriver> driverClass = WebDriverFactory.getClassFor(Configuration.getDriverType());
         return proxyFor(driverClass);
     }
+
+    public static void resetDriver(WebDriver driver) {
+        if (driver instanceof WebDriverFacade) {
+            ((WebDriverFacade) driver).reset();
+        }
+    }
 }

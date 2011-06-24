@@ -22,21 +22,13 @@ import static org.hamcrest.Matchers.hasItem;
 public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends AbstractTestStepRunnerTest {
 
 
-    TestableWebDriverFactory webDriverFactory;
-
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
     @Before
     public void initMocks() {
-        File temporaryDirectory = tempFolder.newFolder("screenshots");
-        webDriverFactory = new TestableWebDriverFactory(temporaryDirectory);
     }
     
     @Test
     public void the_TestsRequirement_annotation_can_associated_a_business_rule_to_a_test() throws Exception {
         ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
-        runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
@@ -49,7 +41,6 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
     @Test
     public void the_TestsRequirement_annotation_can_associated_several_business_rules_to_a_test() throws Exception {
         ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenarioWithSeveralBusinessRules.class);
-        runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
@@ -64,7 +55,6 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
     @Test
     public void the_TestsRequirement_annotation_can_associated_a_business_rule_to_a_test_step() throws Exception {
         ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
-        runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
@@ -79,7 +69,6 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
     @Test
     public void the_TestsRequirement_annotation_can_associated_multiple_business_rules_to_a_test_step() throws Exception {
         ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
-        runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
@@ -95,7 +84,6 @@ public class WhenDefiningRequirmentsWithTheTestRequirementsAnnotation extends Ab
     @Test
     public void the_test_run_can_calculate_all_the_tested_business_rules_in_a_test_run() throws Exception {
         ThucydidesRunner runner = new ThucydidesRunner(SuccessfulSingleTestScenario.class);
-        runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();

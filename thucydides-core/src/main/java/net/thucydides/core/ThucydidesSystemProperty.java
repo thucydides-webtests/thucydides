@@ -31,6 +31,17 @@ public enum ThucydidesSystemProperty {
     OUTPUT_DIRECTORY("thucydides.outputDirectory"),
 
     /**
+     * Should Thucydides only store screenshots for failing steps?
+     * This can save disk space and speed up the tests somewhat. Useful for data-driven testing.
+     */
+    ONLY_SAVE_FAILING_SCREENSHOTS("thucydides.only.save.failing.screenshots"),
+
+    /**
+     * Restart the browser every so often during data-driven tests.
+     */
+    RESTART_BROWSER_FREQUENCY("thucydides.restart.browser.frequency"),
+
+    /**
      * Pause (in ms) between each test step.
      */
     STEP_DELAY("thucycides.step.delay"),
@@ -49,5 +60,4 @@ public enum ThucydidesSystemProperty {
     public String getPropertyName() {
         return propertyName;
     }
-
 }

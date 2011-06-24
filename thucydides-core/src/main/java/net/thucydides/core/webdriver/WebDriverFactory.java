@@ -47,4 +47,12 @@ public class WebDriverFactory {
         ElementLocatorFactory finder = new AjaxElementLocatorFactory(driver, TIMEOUT);
         PageFactory.initElements(finder, pageObject);
     }
+
+    /**
+     * For data-driven tests, it can be useful to restart some browsers (e.g. Firefox) periodically.
+     */
+    public void restartBrowser() {
+
+
+    }
 }

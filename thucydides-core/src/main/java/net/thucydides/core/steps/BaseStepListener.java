@@ -1,6 +1,7 @@
 package net.thucydides.core.steps;
 
 import com.google.common.collect.ImmutableList;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
@@ -9,6 +10,7 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.core.pages.InternalClock;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.openqa.selenium.WebDriver;
@@ -291,18 +293,31 @@ public class BaseStepListener implements StepListener {
         }
     }
  
-    private void takeScreenshotFor(final ExecutedStepDescription description) {
-        if (getCurrentStep() != null) {
-            String testName = aTestCalled(description);
-            File screenshot = grabScreenshotFileFor(testName);
-            getCurrentStep().setScreenshot(screenshot);
-            if (screenshot != null) {
-                File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-                getCurrentStep().setHtmlSource(sourcecode);
+    private void takeScreenshotFor(final ExecutedStepDescription description, TestResult result) {
+        if ((getCurrentStep() != null) && (shouldTakeScreenshotFor(result))) {
+            try {
+                String testName = aTestCalled(description);
+                File screenshot = grabScreenshotFileFor(testName);
+                getCurrentStep().setScreenshot(screenshot);
+                if (screenshot != null) {
+                    File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
+                    getCurrentStep().setHtmlSource(sourcecode);
+                }
+            } catch (ScreenshotException e) {
+                LOGGER.warn("Failed to take screenshot", e);
             }
         }
     }
- 
+
+    private boolean shouldTakeScreenshotFor(final TestResult result) {
+        String onlySaveFailures = System.getProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "false");
+        Boolean onlySaveFailureScreenshots = Boolean.valueOf(onlySaveFailures);
+        if (onlySaveFailureScreenshots && result != FAILURE) {
+            return false;
+        }
+        return true;
+    }
+
     protected String aTestCalled(final ExecutedStepDescription description) {
         return description.getName();
     }
@@ -320,12 +335,14 @@ public class BaseStepListener implements StepListener {
             getCurrentTestOutcome().endGroup();
         } else {
             markCurrentTestAs(SUCCESS);
-            takeScreenshotFor(description);
+            takeScreenshotFor(description, SUCCESS);
             recordCurrentTestStep(description);
         }
         pauseIfRequired();
     }
- 
+
+
+
     public void stepGroupStarted(final String description) {
         stepGroupStarted(ExecutedStepDescription.withTitle(description));
     }
@@ -373,7 +390,7 @@ public class BaseStepListener implements StepListener {
 
         markCurrentTestAs(FAILURE);
         recordFailureDetailsInFailingTestStep(failure);
-        takeScreenshotFor(failure.getDescription());
+        takeScreenshotFor(failure.getDescription(), FAILURE);
         if (currentTestStep != null) {
             recordCurrentTestStep(failure.getDescription());
         }
@@ -397,6 +414,8 @@ public class BaseStepListener implements StepListener {
         } else if (AnnotatedStepDescription.from(description).isIgnored()) {
             ignoreStepMethodWith(description);
         } else if (aStepHasFailed()){
+            markCurrentTestAs(SKIPPED);
+        } else {
             markCurrentTestAs(SKIPPED);
         }
         if (currentTestStep != null) {

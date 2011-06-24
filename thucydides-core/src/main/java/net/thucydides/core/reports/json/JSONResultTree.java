@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.json;
 
 import flexjson.JSONSerializer;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.FeatureResults;
 
 public class JSONResultTree {
@@ -10,7 +11,7 @@ public class JSONResultTree {
     private ColorScheme colorScheme;
 
     public JSONResultTree() {
-        colorScheme = new ColorScheme();
+        colorScheme = Injectors.getInjector().getInstance(ColorScheme.class);
         root = new JSONTreeNode("root", "Application", getColorScheme());
     }
 

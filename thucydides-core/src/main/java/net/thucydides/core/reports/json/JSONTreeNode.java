@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
-import static net.thucydides.core.reports.json.ColorScheme.rgbFormatOf;
+import static net.thucydides.core.reports.json.RGBColorScheme.rgbFormatOf;
 
 /**
  * Used to store data in JSON form to be displayed on the report dashboard.

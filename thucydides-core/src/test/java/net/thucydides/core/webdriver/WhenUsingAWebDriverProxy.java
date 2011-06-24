@@ -95,6 +95,26 @@ public class WhenUsingAWebDriverProxy {
     }
 
     @Test
+    public void the_webdriver_proxy_should_quit_driver_when_reset() {
+        webDriverFacade.get("http://www.google.com");
+        WebDriver originalDriver = webDriverFacade.getDriverInstance();
+
+        webDriverFacade.reset();
+
+        verify(mockFirefoxDriver).quit();
+    }
+
+    @Test
+    public void the_webdriver_proxy_should_remove_proxied_driver_when_reset() {
+        webDriverFacade.get("http://www.google.com");
+        WebDriver originalDriver = webDriverFacade.getDriverInstance();
+
+        webDriverFacade.reset();
+
+        assertThat(webDriverFacade.proxiedWebDriver, is(nullValue()));
+    }
+
+    @Test
     public void the_webdriver_proxy_should_handle_find_element() {
         webDriverFacade.findElement(By.id("q"));
         verify(mockFirefoxDriver).findElement(By.id("q"));

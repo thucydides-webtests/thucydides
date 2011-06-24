@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +80,8 @@ public class Photographer {
                     return saveScreenshoot(prefix, screenshot);
                 } catch (IOException e) {
                     throw new ScreenshotException("Screenshot could not be saved", e);
+                } catch(WebDriverException e) {
+                    throw new ScreenshotException("Screenshot could not be saved", e);
                 }
             }
         }
@@ -122,4 +125,5 @@ public class Photographer {
     public File getMatchingSourceCodeFor(final File screenshot) {
         return new File(sourceCodeFileFor(screenshot.getAbsolutePath()));
     }
+
 }

@@ -9,10 +9,10 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Concurrent;
 import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.TestData;
-import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.samples.SampleCSVDataDrivenScenario;
 import net.thucydides.samples.SampleDataDrivenScenario;
 import net.thucydides.samples.SampleParallelDataDrivenScenario;
@@ -26,6 +26,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 
 import java.io.File;
@@ -43,11 +45,11 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTest {
 
-
-    TestableWebDriverFactory webDriverFactory;
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
@@ -55,10 +57,13 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
     @Rule
     public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
 
+    @Mock
+    WebDriverFactory webDriverFactory;
+
     @Before
     public void initMocks() {
         File temporaryDirectory = tempFolder.newFolder("screenshots");
-        webDriverFactory = new TestableWebDriverFactory(temporaryDirectory);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
@@ -70,7 +75,17 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
 
-        assertThat(executedScenarios.size(), is(3));
+        assertThat(executedScenarios.size(), is(10));
+    }
+
+    @Test
+    public void by_default_the_same_browser_instance_should_be_used_throughout() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
+                                                                                 webDriverFactory);
+        runner.run(new RunNotifier());
+
+        verify(webDriverFactory, never()).restartBrowser();
     }
 
     @Test
@@ -99,7 +114,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         runner.run(new RunNotifier());
 
         File[] reports = outputDirectory.listFiles(new XMLFileFilter());
-        assertThat(reports.length, is(3));
+        assertThat(reports.length, is(10));
     }
 
     @Test
@@ -383,8 +398,6 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
     }
 
-
-
     @Test
     @Ignore
     // TODO: work out why this test fails intermediatesly
@@ -554,7 +567,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
         runner.run(new RunNotifier());
 
         File[] reports = outputDirectory.listFiles(new HTMLFileFilter());
-        assertThat(reports.length, is(3));
+        assertThat(reports.length, is(10));
     }
 
     private class HTMLFileFilter implements FilenameFilter {

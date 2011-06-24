@@ -19,7 +19,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     private final Class<? extends WebDriver> driverClass;
 
-    private WebDriver proxiedWebDriver;
+    protected WebDriver proxiedWebDriver;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebDriverFacade.class);
 
@@ -33,6 +33,23 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
             WebdriverProxyFactory.getFactory().notifyListenersOfWebdriverCreationIn(this);
         }
         return proxiedWebDriver;
+    }
+
+    public void reset() {
+        if (proxiedWebDriver != null) {
+            forcedQuit();
+        }
+        proxiedWebDriver = null;
+
+    }
+
+    private void forcedQuit() {
+        try {
+            getDriverInstance().quit();
+            proxiedWebDriver = null;
+        } catch (WebDriverException e) {
+            LOGGER.warn("Closing a driver that was already closed",e);
+        }
     }
 
     protected WebDriver newProxyDriver() {
@@ -111,6 +128,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
     public void quit() {
         if (proxyInstanciated()) {
             getDriverInstance().quit();
+            proxiedWebDriver = null;
         }
     }
 

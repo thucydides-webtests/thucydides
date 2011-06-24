@@ -52,7 +52,7 @@ public class TestStepGroup extends TestStep {
         if (defaultResult != null) {
             return defaultResult;
         } else {
-            return TestResult.SKIPPED;
+            return TestResult.PENDING;
         }
     }
 

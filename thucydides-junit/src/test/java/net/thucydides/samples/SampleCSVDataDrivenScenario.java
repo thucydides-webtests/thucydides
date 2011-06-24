@@ -15,6 +15,7 @@ import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesParameterizedRunner.class)
 @UseTestDataFrom(value="test-data/simple-data.csv")
+//@BatchSize(10)
 public class SampleCSVDataDrivenScenario {
 
     private String name;

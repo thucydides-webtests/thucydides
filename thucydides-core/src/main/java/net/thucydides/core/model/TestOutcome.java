@@ -33,14 +33,13 @@ import static net.thucydides.core.util.NameConverter.withNoArguments;
  * includes the narrative steps taken during the test, screenshots at each step,
  * the results of each step, and the overall result. A test scenario
  * can be associated with a user story using the UserStory annotation.
- * 
+ *
  * @author johnsmart
- * 
  */
 public class TestOutcome {
 
     private String methodName;
-    
+
     private Story userStory;
 
     private Class testCase;
@@ -48,13 +47,13 @@ public class TestOutcome {
     private long duration;
 
     private long startTime;
-    
+
     private Set<String> testedRequirement = new HashSet<String>();
 
     private final List<TestStep> testSteps = new ArrayList<TestStep>();
 
     private final Stack<TestStepGroup> groupStack = new Stack<TestStepGroup>();
-    
+
     /**
      * Create a new acceptance test run instance.
      */
@@ -139,20 +138,31 @@ public class TestOutcome {
     private String getAnnotatedTitleFor(final String methodName) {
         String annotatedTitle = null;
         if (testCase != null) {
-            try {
-                String baseMethodName = withNoArguments(methodName);
-                Method testMethod = testCase.getMethod(baseMethodName);
+            if (currentTestCaseHasMethodCalled(methodName)) {
+                Method testMethod = getMethodCalled(methodName);
                 Title titleAnnotation = testMethod.getAnnotation(Title.class);
                 if (titleAnnotation != null) {
                     annotatedTitle = titleAnnotation.value();
                 }
-            } catch (NoSuchMethodException e) {
-                // No matching method found in the test case - that would be odd
-                throw new IllegalArgumentException("No method called " + methodName + " was found in " + testCase);
             }
         }
         return annotatedTitle;
     }
+
+    private boolean currentTestCaseHasMethodCalled(final String methodName) {
+        return (getMethodCalled(methodName) != null);
+
+    }
+
+    private Method getMethodCalled(final String methodName) {
+        String baseMethodName = withNoArguments(methodName);
+        try {
+            return testCase.getMethod(baseMethodName);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
+
 
     public String getStoryTitle() {
         return getTitleFrom(userStory);
@@ -179,15 +189,15 @@ public class TestOutcome {
     public String getReportName() {
         return getReportName(ROOT);
     }
-    
+
     public void setMethodName(final String methodName) {
         this.methodName = methodName;
     }
-    
+
     public String getMethodName() {
         return methodName;
     }
-    
+
     private String normalizedFormOf(final String name) {
         return name.replaceAll("\\s", "_").toLowerCase(Locale.getDefault());
     }
@@ -209,8 +219,7 @@ public class TestOutcome {
     public List<TestStep> getTestSteps() {
         return ImmutableList.copyOf(testSteps);
     }
-    
-    
+
 
     /**
      * The outcome of the acceptance test, based on the outcome of the test
@@ -283,11 +292,12 @@ public class TestOutcome {
         return getUserStory().getFeature();
     }
 
-    private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
-        public TestResult convert(final TestStep step) {
-            return step.getResult();
-        }
+private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
+    public TestResult convert(final TestStep step) {
+        return step.getResult();
     }
+
+}
 
     private List<TestResult> getCurrentTestResults() {
         return convert(testSteps, new ExtractTestResultsConverter());
@@ -304,7 +314,7 @@ public class TestOutcome {
 
     private List<TestStep> getNestedTestSteps() {
         List<TestStep> allNestedTestSteps = new ArrayList<TestStep>();
-        
+
         for (TestStep testStep : testSteps) {
             allNestedTestSteps.addAll(testStep.getFlattenedSteps());
         }
@@ -385,7 +395,7 @@ public class TestOutcome {
         } else {
             testSteps.add(newGroup);
         }
-        
+
         groupStack.push(newGroup);
 
     }

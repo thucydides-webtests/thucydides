@@ -17,6 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -60,6 +61,13 @@ public class WhenStoringTestResultsAsAJSONStructure {
 
         String json = resultTree.toJSON();
         assertThat(json, containsString("\"id\":\"root\""));
+    }
+
+    @Test
+    public void the_result_tree_should_instanciate_a_color_schema_object() {
+        JSONResultTree resultTree = new JSONResultTree();
+
+        assertThat(resultTree.getColorScheme(), is(notNullValue()));
     }
 
     @Test
@@ -310,7 +318,7 @@ public class WhenStoringTestResultsAsAJSONStructure {
         prepareFeatureResults();
 
 
-        JSONTreeNode treeNode = new JSONTreeNode("widgets", "Widgets", new ColorScheme());
+        JSONTreeNode treeNode = new JSONTreeNode("widgets", "Widgets", new RGBColorScheme());
 
         assertThat(treeNode.totalExecutedTestsIn(widgetFeature), is(51));
     }
@@ -321,7 +329,7 @@ public class WhenStoringTestResultsAsAJSONStructure {
         prepareFeatureResults();
 
 
-        JSONTreeNode treeNode = new JSONTreeNode("widgets", "Widgets", new ColorScheme());
+        JSONTreeNode treeNode = new JSONTreeNode("widgets", "Widgets", new RGBColorScheme());
 
         assertThat(treeNode.totalStepsInExecutedTestsIn(widgetFeature), is(153));
     }

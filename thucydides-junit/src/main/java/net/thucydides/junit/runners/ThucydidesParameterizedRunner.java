@@ -153,7 +153,6 @@ public class ThucydidesParameterizedRunner extends Suite {
                     testOutcomes.add(testOutcome);
                 }
             }
-            //testOutcomes.addAll(((ThucydidesRunner) runner).getTestOutcomes());
         }
         return testOutcomes;
     }

@@ -1,26 +1,24 @@
 package net.thucydides.junit.runners;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.io.IOException;
-
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportGenerationFailedError;
-import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.samples.AnnotatedSingleTestScenario;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.io.File;
+import java.io.IOException;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Managing the WebDriver instance during a test run The instance should be
@@ -34,19 +32,16 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
 
     @Mock
     AcceptanceTestReporter mockReporter;
-    
-    TestableWebDriverFactory mockBrowserFactory;
-    
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        mockBrowserFactory = new TestableWebDriverFactory();
     }
     
     @Test
     public void a_test_reporter_can_subscribe_to_the_runner() throws InitializationError, IOException {
         
-        ThucydidesRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(AnnotatedSingleTestScenario.class);
         runner.subscribeReporter(mockReporter);
 
         runner.run(new RunNotifier());
@@ -59,7 +54,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
     public void the_runner_should_tell_the_reporter_what_directory_to_use()
             throws InitializationError, IOException {
         
-        ThucydidesRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(AnnotatedSingleTestScenario.class);
         runner.subscribeReporter(mockReporter);
 
         runner.run(new RunNotifier());
@@ -71,7 +66,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
     public void multiple_test_reporters_can_subscribe_to_the_runner()
             throws InitializationError, IOException {
 
-        ThucydidesRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(AnnotatedSingleTestScenario.class);
         
         AcceptanceTestReporter reporter1 = mock(AcceptanceTestReporter.class);
         AcceptanceTestReporter reporter2 = mock(AcceptanceTestReporter.class);
@@ -89,7 +84,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
     public void the_test_should_fail_with_an_error_if_the_reporter_breaks()
             throws InitializationError, IOException {
 
-        ThucydidesRunner runner = getTestRunnerUsing(AnnotatedSingleTestScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(AnnotatedSingleTestScenario.class);
 
         when(mockReporter.generateReportFor(any(TestOutcome.class))).thenThrow(new IOException());
         

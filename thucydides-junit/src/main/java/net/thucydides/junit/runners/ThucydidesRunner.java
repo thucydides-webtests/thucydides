@@ -11,6 +11,7 @@ import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
+import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import net.thucydides.junit.listeners.JUnitStepListener;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -215,12 +216,25 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
+
+        resetBroswerFromTimeToTime();
 		Description description= describeChild(method);
 		if (method.getAnnotation(Pending.class) != null) {
 			notifier.fireTestIgnored(description);
 		} else {
             super.runChild(method, notifier);
 		}
+    }
+
+    protected boolean restartBrowserBeforeTest() {
+        return false;
+    }
+
+    protected void resetBroswerFromTimeToTime() {
+        if (restartBrowserBeforeTest()) {
+            LOGGER.info("Restarting browser");
+            WebdriverProxyFactory.resetDriver(getDriver());
+        }
     }
 
     /**

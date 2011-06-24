@@ -1,6 +1,5 @@
 package net.thucydides.core.pages;
 
-import com.google.common.base.Preconditions;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.openqa.selenium.WebDriver;
@@ -56,8 +55,6 @@ public class Pages {
      * Opens a browser on the application home page, as defined by the base URL.
      */
     public void start() {
-        Preconditions.checkNotNull(getDriver());
-
         getDriver().get(getStartingUrl());
     }
 
