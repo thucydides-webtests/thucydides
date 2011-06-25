@@ -2,6 +2,7 @@ package net.thucydides.core.model;
 
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
+import static org.apache.commons.lang.StringUtils.capitalize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,10 @@ public class StoryTestResults {
         testOutcomes = new ArrayList<TestOutcome>();
         this.title = story.getName();
         this.story = story;
+    }
+
+    public long getDuration() {
+        return sum(testOutcomes, on(TestOutcome.class).getDuration());
     }
 
     public Story getStory() {
@@ -89,7 +94,7 @@ public class StoryTestResults {
     }
 
     public String getTitle() {
-        return title;
+        return capitalize(title);
     }
 
     public int getStepCount() {

@@ -23,8 +23,8 @@ public class WhenDeterminingTheColorOfAFeatureUsingHSB extends AbstractColorSche
 
     ColorScheme colorScheme;
 
-    private static final Color PALE_YELLOW_GREEN = new Color(185,255,115);
-    private static final Color VERY_PALE_YELLOW = new Color(255,255,230);
+    private static final Color PALE_YELLOW_GREEN = new Color(143,255,32);
+    private static final Color PALE_YELLOW = new Color(255,255,64);
     private static final Color ORANGE_RED = new Color(255,170,0);
 
     @Before
@@ -69,7 +69,7 @@ public class WhenDeterminingTheColorOfAFeatureUsingHSB extends AbstractColorSche
         FeatureResults feature = mockFeatureResults(WidgetFeature.class,100, 10, 20, 0,20,0);
         Color color = colorScheme.colorFor(feature);
 
-        assertThat(color, is(VERY_PALE_YELLOW));
+        assertThat(color, is(PALE_YELLOW));
     }
 
 
@@ -94,7 +94,7 @@ public class WhenDeterminingTheColorOfAFeatureUsingHSB extends AbstractColorSche
         StoryTestResults story = mockStory(20, 0, 20, 0);
         Color color = colorScheme.colorFor(story);
 
-        assertThat(color, is(VERY_PALE_YELLOW));
+        assertThat(color, is(PALE_YELLOW));
     }
 
     @Test

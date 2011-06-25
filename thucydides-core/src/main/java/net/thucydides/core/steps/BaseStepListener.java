@@ -167,9 +167,6 @@ public class BaseStepListener implements StepListener {
     }
  
     protected TestOutcome getCurrentTestOutcome() {
-//        if (currentTestOutcome == null) {
-//            currentTestOutcome = new TestOutcome();
-//        }
         return currentTestOutcome;
     }
  
@@ -179,12 +176,6 @@ public class BaseStepListener implements StepListener {
         currentTestOutcome = TestOutcome.forTestInStory(testName, testedStory, testClass);
         testOutcomes.add(currentTestOutcome);
         aStepHasFailed = false;
-    }
-
-    @Deprecated
-    public void testRunStarted(final String scenarioName) {
-        //startNewTestOutcomeFor(scenarioName, testedStory);
-        //testStarted(ExecutedStepDescription.withTitle(description));
     }
 
     public void testRunStartedFor(final Class<?> testClass) {

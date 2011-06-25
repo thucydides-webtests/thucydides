@@ -14,14 +14,6 @@ import java.util.List;
 public interface StepListener {
 
     /**
-     * Start a test run using a non-java test, e.g. an easyb story.
-     *
-     * @param description
-     * @deprecated Should be replaced with a method that also specifies a story class
-     */
-    void testRunStarted(final String description);
-
-    /**
      * Start a test run using a test case or a user story.
      * For JUnit tests, the test case should be provided. The test case should be annotated with the
      * Story annotation to indicate what user story it tests. Otherwise, the test case itself will

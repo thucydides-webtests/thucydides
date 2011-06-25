@@ -2,6 +2,7 @@ package net.thucydides.core.model;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.util.EqualsUtils;
 import net.thucydides.core.util.NameConverter;
 
 import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
@@ -100,7 +101,7 @@ public class Story {
         }
         Story that = (Story) obj;
 
-        return (qualifiedStoryClassName.equals(that.qualifiedStoryClassName));// EqualsUtils.areEqual(this.qualifiedStoryClassName, that.qualifiedStoryClassName);
+        return EqualsUtils.areEqual(this.qualifiedStoryClassName, that.qualifiedStoryClassName);
     }
 
     /**

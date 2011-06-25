@@ -21,6 +21,7 @@ import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
+import static ch.lambdaj.Lambda.sum;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 import static net.thucydides.core.model.TestResult.FAILURE;
@@ -384,7 +385,11 @@ private static class ExtractTestResultsConverter implements Converter<TestStep, 
     }
 
     public long getDuration() {
-        return duration;
+        if ((duration == 0) && (testSteps != null) && (testSteps.size() > 0)) {
+            return sum(testSteps, on(TestStep.class).getDuration());
+        } else {
+            return duration;
+        }
     }
 
     public void startGroup(final String description) {

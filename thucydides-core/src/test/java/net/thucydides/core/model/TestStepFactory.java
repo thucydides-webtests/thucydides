@@ -35,6 +35,7 @@ public class TestStepFactory {
     public static TestStep createNewTestStep(String description, TestResult result) {
         ConcreteTestStep step = new ConcreteTestStep(description);
         step.setResult(result);
+        step.setDuration(100);
         return step;
     }
     

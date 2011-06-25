@@ -118,8 +118,8 @@ float:left; width:1008px;
 }
 
 .test-case-title {
-    margin: 4px;
-    font-family:euphemia, verdana, sans-serif; font-size:24px; color: #88a717; font-weight:bold; font-size-adjust:inherit;
+    margin: 2px;
+    font-family:euphemia, verdana, sans-serif; font-size:18px; color: #88a717; font-style:italic; font-weight:normal; font-size-adjust:inherit;
 }
 
 .test-case-duration {
@@ -181,7 +181,7 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #fd3e03;
 }
 .greentext
 {
-font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-weight:bold;
+font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-weight:normal;
 }
 
 .textmiddle
@@ -261,13 +261,13 @@ height:16px; width:16px;
 
 
 .top-level-step {
-    font-family:euphemia, verdana, sans-serif; font-size:16px; color: #0d78ae; font-weight: bold;
+    font-family:euphemia, verdana, sans-serif; font-size:15px; color: #0d78ae; font-weight: normal;
 }
 .nested-group-step {
-    font-family:euphemia, verdana, sans-serif; font-size:16px; font-style:italic; color: #0d78ae;
+    font-family:euphemia, verdana, sans-serif; font-size:14px; font-style:italic; color: #0d78ae;
 }
 .nested-step {
-    font-family:euphemia, verdana, sans-serif; font-size:16px; font-style:italic; color: #0d78ae;
+    font-family:euphemia, verdana, sans-serif; font-size:14px; font-style:italic; color: #0d78ae;
 }
 
 .top-level-icon {

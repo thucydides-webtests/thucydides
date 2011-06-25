@@ -22,6 +22,7 @@ public class HSBColorScheme implements ColorScheme {
     private final static float GREEN_HUE = 0.333333333F;
     private final static float proportionOfPassingTestsAsGreenHue =  0.333333333F;
     private final static float MAX_BRIGHTNESS = 1.0F;
+    private final static float MINIMUM_SATURATION = 0.75F;
 
     /**
      * What color should a given feature be?
@@ -67,7 +68,7 @@ public class HSBColorScheme implements ColorScheme {
             hue = calculateHueBetween(YELLOW_HUE, GREEN_HUE, YELLOW_HUE, passingTests, pendingTests);
         }
 
-        float saturation = inverseOf(pendingToTotalTests(pendingTests, totalTests), 0.10);
+        float saturation = inverseOf(pendingToTotalTests(pendingTests, totalTests), MINIMUM_SATURATION);
         float brightness = MAX_BRIGHTNESS;
 
         return new Color(Color.HSBtoRGB(hue, saturation, brightness));
@@ -81,7 +82,6 @@ public class HSBColorScheme implements ColorScheme {
             float totalCount = mainCount + complementaryCount;
             float deltaColor = endColor - startColor;
             return startColor + (((float) mainCount) / totalCount) * deltaColor;
-            // return (float) ((passingTests * 1.0) / (failingTests + passingTests)) * proportionOfPassingTestsAsGreenHue;
         }
     }
 

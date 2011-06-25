@@ -160,6 +160,17 @@ public class WhenRecordingUserStoryTestResults {
     }
     
     @Test
+    public void an_aggregate_test_result_should_count_total_duration() {
+
+        storyTestResults.recordTestRun(thatSucceedsFor(userStory));
+        storyTestResults.recordTestRun(thatSucceedsFor(userStory));
+        storyTestResults.recordTestRun(thatSucceedsFor(userStory));
+
+        assertThat(storyTestResults.getDuration(), is(600L));
+    }
+
+
+    @Test
     public void a_aggregate_test_result_set_knows_what_stories_it_contains() {
 
         Story someStory = Story.from(WidgetFeature.PurchaseNewWidget.class);

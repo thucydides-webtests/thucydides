@@ -82,6 +82,7 @@ public class WhenAggregatingStoryResults {
         when(story.getFailureCount()).thenReturn(failingCount);
         when(story.getPendingCount()).thenReturn(pendingCount);
 
+
         List<TestOutcome> mockOutcomes = mockSomeTestOutcomes(passingCount,pendingCount,failingCount);
 
         when(story.getTestOutcomes()).thenReturn(mockOutcomes);

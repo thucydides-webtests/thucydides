@@ -39,6 +39,10 @@ public class Pages {
         this.driver = driver;
     }
 
+    public PageConfiguration getPageConfiguration() {
+        return pageConfiguration;
+    }
+
     public void setDriver(final WebDriver driver) {
         this.driver = driver;
     }

@@ -71,7 +71,7 @@ a:active {
                     <tr>
                         <td width="25"><img class="story-outcome-icon" src="images/$outcome_icon" width="25" height="25" /></td>
                         <td width="%"><span class="test-case-title"><span class="$outcome_text">$story.title</span></span></td>
-                        <td width="75"><span class="test-case-duration"><span class="greentext">TODO ms</span></span></td>
+                        <td width="75"><span class="test-case-duration"><span class="greentext">$story.duration ms</span></span></td>
                     </tr>
                 </table>
             </div>
