@@ -104,6 +104,24 @@ class RenderedPageObjectView {
         }
     }
 
+    public void waitForTitle(final String expectedTitle) {
+        long end = System.currentTimeMillis() + waitForTimeout;
+        while (System.currentTimeMillis() < end) {
+            if (titleIs(expectedTitle)) {
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (!titleIs(expectedTitle)) {
+            throw new ElementNotVisibleException(
+                    "Expected title was not displayed: '" + expectedTitle + "'");
+        }
+    }
+
+    private boolean titleIs(final String expectedTitle) {
+        return ((driver.getTitle() != null) && (driver.getTitle().equals(expectedTitle)));
+    }
+
     public boolean containsText(final String textValue) {
         String textInBody = String.format("//body[contains(.,\"%s\")]",
                 textValue);
@@ -137,6 +155,33 @@ class RenderedPageObjectView {
         }
         if (containsText(expectedText)) {
             throw new ElementNotVisibleException("Text was still displayed after timeout: '" + expectedText + "'");
+        }
+    }
+
+    public void waitForTextToDisappear(final String expectedText) {
+        long end = System.currentTimeMillis() + waitForTimeout;
+        while (System.currentTimeMillis() < end) {
+            if (!containsText(expectedText)) {
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (containsText(expectedText)) {
+            throw new ElementNotVisibleException("Text was still displayed after timeout: '" + expectedText + "'");
+        }
+    }
+
+
+    public void waitForTitleToDisappear(final String expectedTitle) {
+        long end = System.currentTimeMillis() + waitForTimeout;
+        while (System.currentTimeMillis() < end) {
+            if (!titleIs(expectedTitle)) {
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (titleIs(expectedTitle)) {
+            throw new ElementNotVisibleException("Title was still displayed after timeout: '" + expectedTitle + "'");
         }
     }
 

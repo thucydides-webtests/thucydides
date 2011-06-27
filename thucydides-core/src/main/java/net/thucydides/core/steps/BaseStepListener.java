@@ -172,6 +172,7 @@ public class BaseStepListener implements StepListener {
  
     protected void startNewTestOutcomeFor(final String testName, final Story story) {
         LOGGER.debug("startNewTestOutcomeFor {}", testName);
+
         this.testedStory = story;
         currentTestOutcome = TestOutcome.forTestInStory(testName, testedStory, testClass);
         testOutcomes.add(currentTestOutcome);

@@ -143,6 +143,24 @@ public class WhenManagingAPageObject {
     }
 
     @Test
+    public void page_will_wait_for_title_to_appear_if_requested() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        when(driver.getTitle()).thenReturn("waiting..").thenReturn("a title");
+
+        page.waitForTitleToAppear("a title");
+    }
+
+    @Test
+    public void page_will_wait_for_title_to_disappear_if_requested() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        when(driver.getTitle()).thenReturn("a title").thenReturn("all gone");
+
+        page.waitForTitleToDisappear("a title");
+    }
+
+    @Test
     public void page_will_wait_for_text_to_appear_in_element_if_requested() {
 
         BasicPageObject page = new BasicPageObject(driver);

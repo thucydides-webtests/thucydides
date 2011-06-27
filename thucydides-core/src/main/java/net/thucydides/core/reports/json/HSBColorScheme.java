@@ -18,8 +18,9 @@ public class HSBColorScheme implements ColorScheme {
 
     private static final int MAX_COLOR_RANGE = 255;
     private final static float RED_HUE = 0.0F;
+    private final static float ORANGE_HUE = 0.083333333F;
     private final static float YELLOW_HUE = 0.166666666F;
-    private final static float GREEN_HUE = 0.333333333F;
+    private final static float GREEN_HUE =  0.333333333F;
     private final static float proportionOfPassingTestsAsGreenHue =  0.333333333F;
     private final static float MAX_BRIGHTNESS = 1.0F;
     private final static float MINIMUM_SATURATION = 0.75F;
@@ -62,9 +63,14 @@ public class HSBColorScheme implements ColorScheme {
                                               final int pendingTests) {
         float hue = 0.0f;
 
-        if (failingTests > 0) {
+        if ((failingTests > 0) && (passingTests > 0)){
             hue = weightedHue(calculateHueBetween(RED_HUE, GREEN_HUE, YELLOW_HUE, passingTests, failingTests));
-        } else {
+        } else if ((failingTests > 0) && (pendingTests > 0)) {
+            hue = weightedHue(calculateHueBetween(RED_HUE, YELLOW_HUE, ORANGE_HUE, pendingTests, failingTests));
+        } else if (failingTests > 0) {
+            hue = RED_HUE;
+        }
+        else {
             hue = calculateHueBetween(YELLOW_HUE, GREEN_HUE, YELLOW_HUE, passingTests, pendingTests);
         }
 

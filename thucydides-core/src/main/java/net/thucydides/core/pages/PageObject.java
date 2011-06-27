@@ -134,6 +134,16 @@ public abstract class PageObject {
         return this;
     }
 
+    public PageObject waitForTitleToAppear(final String expectedTitle) {
+        getRenderedView().waitForTitle(expectedTitle);
+        return this;
+    }
+
+    public PageObject waitForTitleToDisappear(final String expectedTitle) {
+        getRenderedView().waitForTitleToDisappear(expectedTitle);
+        return this;
+    }
+
     /**
      * Waits for a given text to appear anywhere on the page.
      */

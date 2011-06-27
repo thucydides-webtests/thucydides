@@ -25,7 +25,9 @@ public class WhenDeterminingTheColorOfAFeatureUsingHSB extends AbstractColorSche
 
     private static final Color PALE_YELLOW_GREEN = new Color(143,255,32);
     private static final Color PALE_YELLOW = new Color(255,255,64);
-    private static final Color ORANGE_RED = new Color(255,170,0);
+    private static final Color LIGHT_ORANGE = new Color(255,170,0);
+    private static final Color LIGHT_ORANGE_YELLOW = new Color(255,184,61);
+    private static final Color DARK_ORANGE = new Color(255,48,48);
 
     @Before
     public void createColorScheme() {
@@ -57,11 +59,19 @@ public class WhenDeterminingTheColorOfAFeatureUsingHSB extends AbstractColorSche
     }
 
     @Test
-    public void a_feature_with_some_failing_tests_should_be_skewed_towards_red() {
+    public void a_mostly_pending_feature_with_a_failing_tests_should_be_orange() {
         FeatureResults feature = mockFeatureResults(WidgetFeature.class,100, 10, 20, 10,0,10);
         Color color = colorScheme.colorFor(feature);
 
-        assertThat(color, is(ORANGE_RED));
+        assertThat(color, is(LIGHT_ORANGE));
+    }
+
+    @Test
+    public void a_pending_feature_with_a_failing_tests_should_be_orange_yellow() {
+        FeatureResults feature = mockFeatureResults(WidgetFeature.class,100, 10, 20, 0,19,1);
+        Color color = colorScheme.colorFor(feature);
+
+        assertThat(color, is(LIGHT_ORANGE_YELLOW));
     }
 
     @Test
