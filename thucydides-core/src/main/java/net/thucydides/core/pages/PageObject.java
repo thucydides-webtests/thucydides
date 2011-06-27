@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
 import com.thoughtworks.selenium.Selenium;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -15,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
@@ -301,8 +304,50 @@ public abstract class PageObject {
      * default base URL will be used.
      */
     public void open() {
-        String startingUrl = pageUrls.getStartingUrl();
+        String startingUrl = updateUrlWithBaseUrlIfDefined(pageUrls.getStartingUrl());
         getDriver().get(startingUrl);
+    }
+
+    public String updateUrlWithBaseUrlIfDefined(final String startingUrl) {
+        String baseUrl = System.getProperty(ThucydidesSystemProperty.BASE_URL.getPropertyName());
+        if (baseUrl != null) {
+            return replaceHost(startingUrl, baseUrl); 
+        } else {
+            return startingUrl;
+        }
+    }
+
+    private String replaceHost(final String starting, final String base) {
+
+        String updatedUrl = starting;
+
+        try {
+            URL startingUrl = new URL(starting);
+            URL baseUrl = new URL(base);
+
+            String startingHostComponent = hostComponentFrom(startingUrl.getProtocol(),
+                                                             startingUrl.getHost(),
+                                                             startingUrl.getPort());
+            String baseHostComponent = hostComponentFrom(baseUrl.getProtocol(),
+                                                             baseUrl.getHost(),
+                                                             baseUrl.getPort());
+            updatedUrl = starting.replaceFirst(startingHostComponent, baseHostComponent);
+        } catch (MalformedURLException e) {
+            LOGGER.error("Failed to analyse default page URL", e);
+        }
+
+        return updatedUrl;
+    }
+
+    private String hostComponentFrom(final String protocol, final String host, final int port) {
+        StringBuffer hostComponent = new StringBuffer(protocol);
+        hostComponent.append("://");
+        hostComponent.append(host);
+        if (port > 0) {
+            hostComponent.append(":");
+            hostComponent.append(port);
+        }
+        return hostComponent.toString();
     }
 
     /**

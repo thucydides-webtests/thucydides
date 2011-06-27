@@ -3,7 +3,10 @@ package net.thucydides.core.pages;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -22,7 +25,10 @@ public class WhenDefiningPageUrls {
 
     @Mock
     WebDriver webdriver;
-    
+
+    @Rule
+    public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
@@ -35,6 +41,20 @@ public class WhenDefiningPageUrls {
         }
     }
     
+    @DefaultUrl("http://test.myapp.org/somepage")
+    final class PageObjectWithFullUrlAndPageDefinition extends PageObject {
+        public PageObjectWithFullUrlAndPageDefinition(WebDriver driver) {
+            super(driver);
+        }
+    }
+
+    @DefaultUrl("http://test.myapp.org:9000/somepage")
+    final class PageObjectWithFullUrlAndPageAndPortDefinition extends PageObject {
+        public PageObjectWithFullUrlAndPageAndPortDefinition(WebDriver driver) {
+            super(driver);
+        }
+    }
+
     @Test
     public void the_url_annotation_should_determine_where_the_page_will_open_to() {
         PageObject page = new PageObjectWithFullUrlDefinition(webdriver);
@@ -48,6 +68,42 @@ public class WhenDefiningPageUrls {
         public PageObjectWithNoUrlDefinition(WebDriver driver) {
             super(driver);
         }
+    }
+
+    @Test
+    public void the_webdriver_base_url_system_property_should_not_override_pages() {
+        PageObject page = new PageObjectWithFullUrlAndPageDefinition(webdriver);
+        System.setProperty("webdriver.base.url","http://staging.myapp.org");
+        page.open();
+
+        verify(webdriver).get("http://staging.myapp.org/somepage");
+    }
+
+    @Test
+    public void the_webdriver_base_url_system_property_should_override_protocol() {
+        PageObject page = new PageObjectWithFullUrlAndPageDefinition(webdriver);
+        System.setProperty("webdriver.base.url","https://staging.myapp.org");
+        page.open();
+
+        verify(webdriver).get("https://staging.myapp.org/somepage");
+    }
+
+    @Test
+    public void the_webdriver_base_url_system_property_should_override_ports() {
+        PageObject page = new PageObjectWithFullUrlAndPageAndPortDefinition(webdriver);
+        System.setProperty("webdriver.base.url","https://staging.myapp.org:8888");
+        page.open();
+
+        verify(webdriver).get("https://staging.myapp.org:8888/somepage");
+    }
+
+    @Test
+    public void the_base_url_is_overrided_by_the_webdriver_base_url_system_property() {
+        PageObject page = new PageObjectWithFullUrlDefinition(webdriver);
+        System.setProperty("webdriver.base.url","http://www.wikipedia.org");
+        page.open();
+
+        verify(webdriver).get("http://www.wikipedia.org");
     }
 
     @Test
