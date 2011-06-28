@@ -4,8 +4,6 @@ import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
-import org.apache.bcel.generic.FLOAD;
-import org.openqa.selenium.htmlunit.HtmlUnitWebElement;
 
 import java.awt.*;
 import static java.awt.Color.BLACK;
@@ -24,6 +22,27 @@ public class HSBColorScheme implements ColorScheme {
     private final static float proportionOfPassingTestsAsGreenHue =  0.333333333F;
     private final static float MAX_BRIGHTNESS = 1.0F;
     private final static float MINIMUM_SATURATION = 0.75F;
+
+    /**
+     * Utility method to format a color to HTML RGB color format (e.g. #FF0000 for Color.red).
+     * @param color The color.
+     * @return the HTML RGB color string.
+     */
+    public static String rgbFormatOf(final Color color) {
+        String redByte = convertToByte(color.getRed());
+        String greenByte = convertToByte(color.getGreen());
+        String blueByte = convertToByte(color.getBlue());
+        return "#" + redByte + greenByte + blueByte;
+    }
+
+    private static String convertToByte(final int colorByte) {
+        if (colorByte < 16) {
+            return "0" + Integer.toHexString(colorByte);
+        } else {
+            return Integer.toHexString(colorByte);
+        }
+    }
+
 
     /**
      * What color should a given feature be?

@@ -5,6 +5,7 @@ import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.features.ApplicationFeature;
 
 import static org.mockito.Mockito.mock;
@@ -66,6 +67,12 @@ public class AbstractColorSchemeTest {
         when(story.getPendingCount()).thenReturn(pendingCount);
         when(story.getFailureCount()).thenReturn(failingCount);
         return story;
+    }
+
+    protected TestStep mockTestStep(TestResult result) {
+        TestStep step = mock(TestStep.class);
+        when(step.getResult()).thenReturn(result);
+        return step;
     }
 
     protected TestOutcome mockTestOutcome(int stepCount, TestResult result) {

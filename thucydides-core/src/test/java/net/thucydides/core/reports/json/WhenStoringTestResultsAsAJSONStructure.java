@@ -318,7 +318,7 @@ public class WhenStoringTestResultsAsAJSONStructure {
         prepareFeatureResults();
 
 
-        JSONTreeNode treeNode = new JSONTreeNode("widgets", "Widgets", new RGBColorScheme());
+        JSONTreeNode treeNode = new JSONTreeNode("widgets", "Widgets", new HSBColorScheme());
 
         assertThat(treeNode.totalExecutedTestsIn(widgetFeature), is(51));
     }
@@ -329,7 +329,7 @@ public class WhenStoringTestResultsAsAJSONStructure {
         prepareFeatureResults();
 
 
-        JSONTreeNode treeNode = new JSONTreeNode("widgets", "Widgets", new RGBColorScheme());
+        JSONTreeNode treeNode = new JSONTreeNode("widgets", "Widgets", new HSBColorScheme());
 
         assertThat(treeNode.totalStepsInExecutedTestsIn(widgetFeature), is(153));
     }

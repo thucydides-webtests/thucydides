@@ -10,7 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.RenderedWebElement;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -70,7 +70,7 @@ public class WhenManagingAPageObject {
     @Test
     public void page_will_wait_for_rendered_element_if_it_is_already_present() {
 
-        RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        WebElement renderedElement = mock(WebElement.class);
         List<WebElement> renderedElements = new ArrayList<WebElement>();
         renderedElements.add(renderedElement);
 
@@ -87,7 +87,7 @@ public class WhenManagingAPageObject {
     @Test
     public void thenReturnElementList_will_return_the_list_of_matching_elements() {
 
-        RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        WebElement renderedElement = mock(WebElement.class);
         List<WebElement> renderedElements = new ArrayList<WebElement>();
         renderedElements.add(renderedElement);
 
@@ -115,7 +115,7 @@ public class WhenManagingAPageObject {
     @Test
     public void page_will_wait_for_rendered_element_if_it_is_not_already_present() {
 
-        RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        WebElement renderedElement = mock(WebElement.class);
         List<WebElement> renderedElements = new ArrayList<WebElement>();
         renderedElements.add(renderedElement);
 
@@ -276,7 +276,7 @@ public class WhenManagingAPageObject {
     @Test(expected=ElementNotVisibleException.class)
     public void page_will_throw_exception_if_waiting_for_rendered_element_is_not_visible() {
 
-        RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        WebElement renderedElement = mock(WebElement.class);
         when(driver.findElement(any(By.class))).thenReturn(renderedElement);
         when(renderedElement.isDisplayed()).thenReturn(false);
 
@@ -289,7 +289,7 @@ public class WhenManagingAPageObject {
     @Test
     public void page_will_succeed_for_any_of_several_rendered_elements() {
 
-        RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        WebElement renderedElement = mock(WebElement.class);
         elementIsRendered(renderedElement, By.id("element1"));
         noElementIsRendered(By.id("element2"));
 
@@ -301,7 +301,7 @@ public class WhenManagingAPageObject {
     @Test(expected=ElementNotVisibleException.class)
     public void page_will_fail_for_any_of_several_rendered_elements_if_element_is_displayed_but_not_rendered() {
 
-        RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        WebElement renderedElement = mock(WebElement.class);
         elementIsDisplayedButNotRendered(renderedElement, By.id("element1"));
         noElementIsRendered(By.id("element2"));
 
@@ -315,7 +315,7 @@ public class WhenManagingAPageObject {
     @Test
     public void page_will_wait_for_any_of_several_rendered_elements() {
 
-        RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        WebElement renderedElement = mock(WebElement.class);
         elementIsRenderedWithDelay(renderedElement, By.id("element1"));
         noElementIsRendered(By.id("element2"));
 
@@ -341,7 +341,7 @@ public class WhenManagingAPageObject {
     @Test
     public void page_can_wait_for_an_element_to_disappear() {
 
-        RenderedWebElement renderedElement = mock(RenderedWebElement.class);
+        WebElement renderedElement = mock(WebElement.class);
         elementDisappearsAfterADelay(renderedElement, By.id("element1"));
         BasicPageObject page = new BasicPageObject(driver);
         page.setWaitForTimeout(200);
@@ -364,21 +364,21 @@ public class WhenManagingAPageObject {
         when(driver.findElements(criteria)).thenReturn(emptyList);
     }
 
-    private void elementIsRendered(RenderedWebElement renderedElement, By criteria) {
+    private void elementIsRendered(WebElement renderedElement, By criteria) {
         when(renderedElement.isDisplayed()).thenReturn(true);
         List<WebElement> listWithRenderedElement = Arrays.asList((WebElement) renderedElement);
         when(driver.findElement(criteria)).thenReturn(renderedElement);
         when(driver.findElements(criteria)).thenReturn(listWithRenderedElement);
     }
 
-    private void elementIsDisplayedButNotRendered(RenderedWebElement renderedElement, By criteria) {
+    private void elementIsDisplayedButNotRendered(WebElement renderedElement, By criteria) {
         when(renderedElement.isDisplayed()).thenReturn(false);
         List<WebElement> listWithRenderedElement = Arrays.asList((WebElement) renderedElement);
         when(driver.findElement(criteria)).thenReturn(renderedElement);
         when(driver.findElements(criteria)).thenReturn(listWithRenderedElement);
     }
 
-    private void elementIsRenderedWithDelay(RenderedWebElement renderedElement, By criteria) {
+    private void elementIsRenderedWithDelay(WebElement renderedElement, By criteria) {
         List<WebElement> emptyList = Arrays.asList();
 
         when(renderedElement.isDisplayed()).thenReturn(false).thenReturn(true);
@@ -390,7 +390,7 @@ public class WhenManagingAPageObject {
     }
 
 
-    private void elementDisappearsAfterADelay(RenderedWebElement renderedElement, By criteria) {
+    private void elementDisappearsAfterADelay(WebElement renderedElement, By criteria) {
         List<WebElement> emptyList = Arrays.asList();
 
         when(renderedElement.isDisplayed()).thenReturn(true).thenReturn(false);
@@ -405,7 +405,7 @@ public class WhenManagingAPageObject {
     @Test
     public void page_object_should_know_when_a_field_is_visible() {
         BasicPageObject page = new BasicPageObject(driver);
-        RenderedWebElement field = mock(RenderedWebElement.class);
+        WebElement field = mock(WebElement.class);
 
         page.userCanSee(field);
 
@@ -416,7 +416,7 @@ public class WhenManagingAPageObject {
     @Test(expected=AssertionError.class)
     public void should_be_visible_should_throw_an_assertion_if_element_is_not_visible() {
         BasicPageObject page = new BasicPageObject(driver);
-        RenderedWebElement field = mock(RenderedWebElement.class);
+        WebElement field = mock(WebElement.class);
         when(field.isDisplayed()).thenReturn(false);
 
         page.shouldBeVisible(field);
@@ -425,7 +425,7 @@ public class WhenManagingAPageObject {
     @Test(expected=AssertionError.class)
     public void should_be_not_visible_should_throw_an_assertion_if_element_is_visible() {
         BasicPageObject page = new BasicPageObject(driver);
-        RenderedWebElement field = mock(RenderedWebElement.class);
+        WebElement field = mock(WebElement.class);
         when(field.isDisplayed()).thenReturn(true);
 
         page.shouldNotBeVisible(field);
@@ -434,7 +434,7 @@ public class WhenManagingAPageObject {
     @Test
     public void should_be_not_visible_should_do_nothing_if_element_is_not_visible() {
         BasicPageObject page = new BasicPageObject(driver);
-        RenderedWebElement field = mock(RenderedWebElement.class);
+        WebElement field = mock(WebElement.class);
         when(field.isDisplayed()).thenReturn(false);
 
         page.shouldNotBeVisible(field);
@@ -443,7 +443,7 @@ public class WhenManagingAPageObject {
     @Test
     public void should_be_visible_should_do_nothing_if_element_is_visible() {
         BasicPageObject page = new BasicPageObject(driver);
-        RenderedWebElement field = mock(RenderedWebElement.class);
+        WebElement field = mock(WebElement.class);
 
         when(field.isDisplayed()).thenReturn(true);
         page.shouldBeVisible(field);
@@ -452,7 +452,7 @@ public class WhenManagingAPageObject {
     @Test
     public void should_be_visible_should_handle_changing_field_state() {
         BasicPageObject page = new BasicPageObject(driver);
-        RenderedWebElement field = mock(RenderedWebElement.class);
+        WebElement field = mock(WebElement.class);
 
         when(field.isDisplayed()).thenReturn(true);
         page.shouldBeVisible(field);

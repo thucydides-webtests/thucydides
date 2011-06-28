@@ -98,11 +98,18 @@ public class WhenGroupingUserStoriesByFeature {
     }
 
     @Test
+    public void a_feature_is_equal_to_itself() {
+        ApplicationFeature feature = ApplicationFeature.from(WidgetFeature.class);
+        assertThat(feature, is(feature));
+    }
+
+    @Test
     public void features_referring_to_the_same_feature_class_are_identical() {
         ApplicationFeature feature1 = ApplicationFeature.from(WidgetFeature.class);
         ApplicationFeature feature2 = ApplicationFeature.from(WidgetFeature.class);
 
         assertThat(feature1, is(feature2));
+        assertThat(feature1.hashCode(), is(feature2.hashCode()));
     }
 
     @Test
@@ -111,6 +118,7 @@ public class WhenGroupingUserStoriesByFeature {
         ApplicationFeature feature2 = ApplicationFeature.from(GizmoFeature.class);
 
         assertThat(feature1, is(not(feature2)));
+        assertThat(feature1.hashCode(), is(not(feature2.hashCode())));
     }
 
     @Test
@@ -119,6 +127,7 @@ public class WhenGroupingUserStoriesByFeature {
         ApplicationFeature feature2 = new ApplicationFeature("id","name");
 
         assertThat(feature1, is(feature2));
+        assertThat(feature1.hashCode(), is(feature2.hashCode()));
     }
 
     @Test
@@ -127,6 +136,7 @@ public class WhenGroupingUserStoriesByFeature {
         ApplicationFeature feature2 = new ApplicationFeature("id2","name2");
 
         assertThat(feature1, is(not(feature2)));
+        assertThat(feature1.hashCode(), is(not(feature2.hashCode())));
     }
 
     @Test
@@ -150,7 +160,7 @@ public class WhenGroupingUserStoriesByFeature {
 
     @Test
     public void if_the_feature_name_and_class_are_null_the_features_name_should_be_blank() {
-        ApplicationFeature feature = new ApplicationFeature("id",null);
+        ApplicationFeature feature = new ApplicationFeature("id","");
 
         assertThat(feature.getName(), is(""));
     }

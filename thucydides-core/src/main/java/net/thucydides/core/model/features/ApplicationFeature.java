@@ -1,5 +1,6 @@
 package net.thucydides.core.model.features;
 
+import com.google.common.base.Preconditions;
 import net.thucydides.core.util.NameConverter;
 
 /**
@@ -34,6 +35,8 @@ public class ApplicationFeature {
     private final String featureName;
 
     public ApplicationFeature(final String featureId, final String featureName) {
+        Preconditions.checkNotNull(featureId);
+        Preconditions.checkNotNull(featureName);
         this.featureClass = null;
         this.featureId = featureId;
         this.featureName = featureName;
@@ -42,6 +45,7 @@ public class ApplicationFeature {
     }
 
     protected ApplicationFeature(final Class<?> featureClass) {
+        Preconditions.checkNotNull(featureClass);
         this.featureClass = featureClass;
         this.featureId = null;
         this.featureName = null;
@@ -96,11 +100,7 @@ public class ApplicationFeature {
     }
 
     private String canonicalClassName() {
-        if (getFeatureClass() != null) {
-            return getFeatureClass().getCanonicalName();
-        } else {
-            return "";
-        }
+        return getFeatureClass().getCanonicalName();
     }
 
     public boolean classesAreEqual(Object o) {

@@ -124,6 +124,36 @@ public class WhenDeterminingTheColorOfAFeatureUsingHSB extends AbstractColorSche
     }
 
     @Test
+    public void a_successful_test_step_should_be_green() {
+        Color color = colorScheme.colorFor(mockTestStep(TestResult.SUCCESS));
+        assertThat(color, is(GREEN));
+    }
+
+    @Test
+    public void a_failing_test_step_should_be_red() {
+        Color color = colorScheme.colorFor(mockTestStep(TestResult.FAILURE));
+        assertThat(color, is(RED));
+    }
+
+    @Test
+    public void a_pending_test_step_should_be_yellow() {
+        Color color = colorScheme.colorFor(mockTestStep(TestResult.PENDING));
+        assertThat(color, is(YELLOW));
+    }
+
+    @Test
+    public void a_skipped_test_step_should_be_grey() {
+        Color color = colorScheme.colorFor(mockTestStep(TestResult.SKIPPED));
+        assertThat(color, is(GRAY));
+    }
+
+    @Test
+    public void an_ignored_test_step_should_be_orange() {
+        Color color = colorScheme.colorFor(mockTestStep(TestResult.IGNORED));
+        assertThat(color, is(ORANGE));
+    }
+
+    @Test
     public void a_successful_test_outcome_should_be_green() {
         TestOutcome outcome = mockTestOutcome(10, TestResult.SUCCESS);
         Color color = colorScheme.colorFor(outcome);

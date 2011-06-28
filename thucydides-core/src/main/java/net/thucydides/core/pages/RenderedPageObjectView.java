@@ -158,20 +158,6 @@ class RenderedPageObjectView {
         }
     }
 
-    public void waitForTextToDisappear(final String expectedText) {
-        long end = System.currentTimeMillis() + waitForTimeout;
-        while (System.currentTimeMillis() < end) {
-            if (!containsText(expectedText)) {
-                break;
-            }
-            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
-        }
-        if (containsText(expectedText)) {
-            throw new ElementNotVisibleException("Text was still displayed after timeout: '" + expectedText + "'");
-        }
-    }
-
-
     public void waitForTitleToDisappear(final String expectedTitle) {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {

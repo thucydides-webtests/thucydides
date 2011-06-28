@@ -33,7 +33,7 @@ public class StepsAnnotatedField {
     }
 
     /**
-     * Find the first field in the class annotated with the <b>Managed</b> annotation.
+     * Find the fields in the class annotated with the <b>Step</b> annotation.
      */
     public static List<StepsAnnotatedField> findOptionalAnnotatedFields(final Class<?> clazz) {
 

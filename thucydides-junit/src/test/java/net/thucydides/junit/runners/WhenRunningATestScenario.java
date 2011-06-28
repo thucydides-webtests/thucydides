@@ -20,6 +20,7 @@ import net.thucydides.samples.SamplePassingScenarioWithEmptyTests;
 import net.thucydides.samples.SamplePassingScenarioWithIgnoredTests;
 import net.thucydides.samples.SamplePassingScenarioWithPendingTests;
 import net.thucydides.samples.SampleScenarioWithoutPages;
+import net.thucydides.samples.SampleScenarioWithoutStepAnnotations;
 import net.thucydides.samples.SampleScenarioWithoutSteps;
 import net.thucydides.samples.SingleTestScenario;
 import net.thucydides.samples.SingleTestScenarioWithWebdriverException;
@@ -29,6 +30,7 @@ import net.thucydides.samples.TestScenarioWithGroups;
 import net.thucydides.samples.TestScenarioWithParameterizedSteps;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -540,12 +542,18 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         verify(mockWebDriver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
+    @Test
+    public void the_test_scenario_does_not_need_a_steps_field() throws InitializationError {
+        ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithoutStepAnnotations.class);
+        runner.run(new RunNotifier());
+    }
 
-    @Test(expected = InvalidStepsFieldException.class)
-    public void the_test_scenario_must_have_a_steps_field() throws InitializationError {
+    @Test
+    public void the_test_scenario_does_not_need_steps() throws InitializationError {
         ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithoutSteps.class);
         runner.run(new RunNotifier());
     }
+
 
     @Test(expected = InvalidManagedPagesFieldException.class)
     public void the_test_scenario_must_have_a_pages_field() throws InitializationError {

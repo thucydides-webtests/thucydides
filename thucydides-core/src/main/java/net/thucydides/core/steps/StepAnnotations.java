@@ -17,7 +17,7 @@ public final class StepAnnotations {
      * Instantiates the step scenario fields in a test case.
      */
     public static void injectScenarioStepsInto(final Object testCase, final StepFactory stepFactory) {
-        List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findMandatoryAnnotatedFields(testCase.getClass());
+        List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findOptionalAnnotatedFields(testCase.getClass());
         instanciateScenarioStepFields(testCase, stepFactory, stepsFields);
      }
 

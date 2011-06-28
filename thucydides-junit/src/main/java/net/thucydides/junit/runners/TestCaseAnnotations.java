@@ -24,7 +24,6 @@ public final class TestCaseAnnotations {
 
     public static void checkThatTestCaseIsCorrectlyAnnotated(final Class<?> testClass) {
         checkThatManagedFieldIsDefined(testClass);
-        checkThatStepsFieldIsDefined(testClass);
         checkThatPagesFieldIsDefined(testClass);
     }
     /**
@@ -32,13 +31,6 @@ public final class TestCaseAnnotations {
      */
     private static void checkThatManagedFieldIsDefined(final Class<?> testClass) {
         ManagedWebDriverAnnotatedField.findFirstAnnotatedField(testClass);
-    }
-
-    /**
-     * There must be a ScenarioSteps field in the test case annotated with the Steps annotation.
-     */
-    private static void checkThatStepsFieldIsDefined(final Class<?> testClass) {
-        StepsAnnotatedField.findMandatoryAnnotatedFields(testClass);
     }
 
     /**
