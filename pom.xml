@@ -37,9 +37,9 @@
     </ciManagement>
     <inceptionYear>2011</inceptionYear>
     <scm>
-        <connection>scm:git:git@github.com:wakaleo/thucydides.git</connection>
-        <developerConnection>scm:git:git@github.com:wakaleo/thucydides.git</developerConnection>
-        <url>scm:git:git@github.com:wakaleo/thucydides.git</url>
+        <connection>scm:git:git@github.com:thucydides-webtests/thucydides.git</connection>
+        <developerConnection>scm:git:git@github.com:thucydides-webtests/thucydides.git</developerConnection>
+        <url>scm:git:git@github.com:thucydides-webtests/thucydides.git</url>
     </scm>
     <developers>
         <developer>
