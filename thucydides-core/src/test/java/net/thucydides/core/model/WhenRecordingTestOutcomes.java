@@ -4,6 +4,8 @@ import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.Title;
+import net.thucydides.core.pages.Pages;
+import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +28,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 public class WhenRecordingTestOutcomes {
 
@@ -577,6 +580,21 @@ public class WhenRecordingTestOutcomes {
         testOutcome = TestOutcome.forTest("should_do_that[0]", TestScenarioWithRequirements.class);
 
         assertThat(testOutcome.getReportName(), is("a_user_story_should_do_that"));
+    }
+
+    class SimpleScenarioSteps extends ScenarioSteps {
+
+        public SimpleScenarioSteps(final Pages pages) {
+            super(pages);
+        }
+    }
+
+    @Test
+    public void scenario_steps_should_have_a_sensible_toString() {
+        Pages pages = mock(Pages.class);
+        SimpleScenarioSteps steps = new SimpleScenarioSteps(pages);
+
+        assertThat(steps.toString(), is("SimpleScenarioSteps"));
     }
 
 }

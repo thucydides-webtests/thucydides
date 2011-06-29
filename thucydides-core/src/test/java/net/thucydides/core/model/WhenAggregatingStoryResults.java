@@ -9,6 +9,9 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +35,24 @@ public class WhenAggregatingStoryResults {
         storyResults.add(mockStoryTestResults(WidgetFeature.SearchWidgets.class, 30, 10, 5, 3, 2));
         storyResults.add(mockStoryTestResults(WidgetFeature.DisplayWidgets.class, 30, 10, 5, 3, 2));
 
+    }
+
+    @Test
+    public void a_story_can_have_an_associated_feature_class() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        assertThat(story.getFeature().getFeatureClass().getName(), is(WidgetFeature.class.getName()));
+    }
+
+    @Test
+    public void a_story_can_have_an_associated_feature_by_id() {
+        Story story = Story.withId("storyId","storyName","featureId","featureName");
+        assertThat(story.getFeature(), is(notNullValue()));
+    }
+
+    @Test
+    public void a_story_does_not_have_to_have_an_associated_feature() {
+        Story story = Story.withId("storyId","storyName");
+        assertThat(story.getFeature(), is(nullValue()));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import com.google.common.collect.Lists;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import net.thucydides.core.annotations.Pending;
@@ -10,8 +11,10 @@ import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,7 +24,7 @@ import java.util.List;
  *
  * @author johnsmart
  */
-public class StepInterceptor implements MethodInterceptor {
+public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private final List<StepListener> listeners;
     private final Class<? extends ScenarioSteps> testStepClass;
@@ -47,7 +50,9 @@ public class StepInterceptor implements MethodInterceptor {
         }
 
         Object result = null;
-        if (isATestGroup(method)) {
+        if (baseClassMethod(method)) {
+            return runNormalMethod(obj, method, args, proxy);
+        } else if (isATestGroup(method)) {
             notifyGroupStarted(method, args);
             result = runTestGroupStep(obj, method, args, proxy);
             notifyGroupFinished(method, args);
@@ -56,6 +61,20 @@ public class StepInterceptor implements MethodInterceptor {
         }
         return result;
 
+    }
+
+    private final List<String> OBJECT_METHODS
+       = Arrays.asList("toString",
+            "equals",
+            "hashcode",
+            "clone",
+            "notify",
+            "notifyAll",
+            "wait",
+            "finalize");
+
+    private boolean baseClassMethod(final Method method) {
+        return (OBJECT_METHODS.contains(method.getName()));
     }
 
     private Object testStepResult(final Object obj, final Method method,
@@ -100,7 +119,8 @@ public class StepInterceptor implements MethodInterceptor {
             error = assertionError;
             stepExceptions.add(assertionError);
             notifyFailureOf(method, args, assertionError);
-        } catch (WebDriverException webdriverException) {
+        }
+        catch (WebDriverException webdriverException) {
             error = webdriverException;
             stepExceptions.add(webdriverException);
             notifyFailureOf(method, args, webdriverException);

@@ -139,8 +139,10 @@ public class BaseStepListener implements StepListener {
             String testName = AnnotatedStepDescription.from(description).getName();
             getCurrentStep().setDescription(testName);
             getCurrentStep().recordDuration();
-            getCurrentTestOutcome().recordStep(currentTestStep);
-            getCurrentTestOutcome().recordDuration();
+            if (getCurrentTestOutcome() != null) {
+                getCurrentTestOutcome().recordStep(currentTestStep);
+                getCurrentTestOutcome().recordDuration();
+            }
  
             finishTestStep();
         }

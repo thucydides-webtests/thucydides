@@ -6,6 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -17,7 +18,7 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
  *
  * @author johnsmart
  */
-public class Pages {
+public class Pages implements Serializable {
 
     private transient WebDriver driver;
 
@@ -68,9 +69,11 @@ public class Pages {
 
     public <T extends PageObject> T currentPageAt(final Class<T> pageObjectClass) {
         T pageCandidate = (T) getCurrentPageOfType(pageObjectClass);
-        String currentUrl = getDriver().getCurrentUrl();
-        if (!pageCandidate.compatibleWithUrl(currentUrl)) {
-            thisIsNotThePageYourLookingFor(pageObjectClass);
+        if (!pageCandidate.matchesAnyUrl()) {
+            String currentUrl = getDriver().getCurrentUrl();
+            if (!pageCandidate.compatibleWithUrl(currentUrl)) {
+                thisIsNotThePageYourLookingFor(pageObjectClass);
+            }
         }
         pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
 

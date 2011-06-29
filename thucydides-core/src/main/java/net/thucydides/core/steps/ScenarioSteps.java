@@ -6,13 +6,15 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
+
 /**
  * A set of reusable steps for use in an acceptance test suite.
  * A step corresponds to an action taken during a web test - clicking on a button or a link,
  * for example. Steps may be reused across more than one test, and may take parameters.
  *
  */
-public class ScenarioSteps {
+public class ScenarioSteps implements Serializable {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioSteps.class);
 
@@ -41,6 +43,12 @@ public class ScenarioSteps {
             LOGGER.warn("Wait a bit method was interrupted.", e);
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
+
     /**
      * Marks the last step in a requirements test.
      * Used internally to trigger JUnit listener events at the end of a test case.

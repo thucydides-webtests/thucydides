@@ -32,7 +32,19 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
             proxiedWebDriver = newProxyDriver();
             WebdriverProxyFactory.getFactory().notifyListenersOfWebdriverCreationIn(this);
         }
+        ensureValidDriver();
         return proxiedWebDriver;
+    }
+
+    /**
+     * Workaround for Webdriver issue 1438 (http://code.google.com/p/selenium/issues/detail?id=1438)
+     */
+    private void ensureValidDriver() {
+        try {
+            proxiedWebDriver.getCurrentUrl();
+        } catch (WebDriverException e) {
+            proxiedWebDriver.switchTo().defaultContent();
+        }
     }
 
     public void reset() {

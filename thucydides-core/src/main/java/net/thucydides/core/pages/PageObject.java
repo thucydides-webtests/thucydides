@@ -98,6 +98,10 @@ public abstract class PageObject {
     }
 
 
+    protected boolean matchesAnyUrl() {
+        return thereAreNoPatternsDefined();
+    }
+
     /**
      * Does this page object work for this URL? When matching a URL, we check
      * with and without trailing slashes

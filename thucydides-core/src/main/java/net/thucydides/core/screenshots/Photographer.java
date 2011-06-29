@@ -108,11 +108,15 @@ public class Photographer {
 
     private void savePageSourceFor(final String screenshotFile) throws IOException {
         if (WebDriver.class.isAssignableFrom(driver.getClass())) {
-            WebDriver webdriver = (WebDriver) driver;
-            String pageSource = webdriver.getPageSource();
+            try {
+                WebDriver webdriver = (WebDriver) driver;
+                String pageSource = webdriver.getPageSource();
 
-            File savedSource = new File(sourceCodeFileFor(screenshotFile));
-            FileUtils.writeStringToFile(savedSource, pageSource);
+                File savedSource = new File(sourceCodeFileFor(screenshotFile));
+                FileUtils.writeStringToFile(savedSource, pageSource);
+            } catch(WebDriverException e) {
+                LOGGER.warn("Failed to save screen source code",e);
+            }
         }
     }
 

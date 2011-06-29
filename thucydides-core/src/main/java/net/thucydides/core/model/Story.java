@@ -174,8 +174,10 @@ public class Story {
     public ApplicationFeature getFeature() {
         if (getFeatureClass() != null) {
             return ApplicationFeature.from(getFeatureClass());
-        } else {
+        } else if (getFeatureId() != null) {
             return new ApplicationFeature(getFeatureId(), getFeatureName());
+        } else {
+            return null;
         }
     }
 }

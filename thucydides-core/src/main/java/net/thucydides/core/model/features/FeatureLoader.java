@@ -41,8 +41,10 @@ public class FeatureLoader {
 
     private void updateFeatureResults(final List<FeatureResults> results, final StoryTestResults storyResult) {
         ApplicationFeature feature = storyResult.getStory().getFeature();
-        FeatureResults featureResults = featureResultsFor(feature, results);
-        featureResults.recordStoryResults(storyResult);
+        if (feature != null) {
+            FeatureResults featureResults = featureResultsFor(feature, results);
+            featureResults.recordStoryResults(storyResult);
+        }
     }
 
     private FeatureResults featureResultsFor(final ApplicationFeature feature, final List<FeatureResults> results) {
