@@ -4,7 +4,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.2.3-SNAPSHOT</version>
+        <version>0.2.4-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-core</artifactId>
@@ -19,13 +19,17 @@
             <artifactId>selenium</artifactId>
             <version>${selenium.version}</version>
             <type>pom</type>
-            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <artifactId>testng</artifactId>
                     <groupId>org.testng</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+            <version>2.0rc3</version>
         </dependency>
         <dependency>
             <groupId>net.sf.opencsv</groupId>
