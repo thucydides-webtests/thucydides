@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -9,6 +10,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
@@ -111,7 +115,9 @@ public class WhenObtainingAWebdriverInstance {
     @Test
     public void the_factory_can_provide_a_list_of_supported_drivers() {
         String supportedDrivers = SupportedWebDriver.listOfSupportedDrivers();
-        assertThat(supportedDrivers, is("FIREFOX, CHROME"));
+        assertThat(supportedDrivers, allOf(containsString("FIREFOX"), containsString("CHROME")));
     }
-    
+
+
+
 }

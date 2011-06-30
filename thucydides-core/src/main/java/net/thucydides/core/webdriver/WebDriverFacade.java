@@ -93,7 +93,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
             try {
                 return ((TakesScreenshot) getProxiedDriver()).getScreenshotAs(target);
             } catch (WebDriverException e) {
-                LOGGER.error("Failed to take screenshot - driver closed already?", e);
+                LOGGER.warn("Failed to take screenshot - driver closed already?", e);
             }
         }
         return null;
@@ -139,7 +139,11 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public void quit() {
         if (proxyInstanciated()) {
-            getDriverInstance().quit();
+            try {
+                getDriverInstance().quit();
+            } catch (WebDriverException e) {
+                LOGGER.warn("Error while quitting the driver - is this IE?");
+            }
             proxiedWebDriver = null;
         }
     }

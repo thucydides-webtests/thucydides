@@ -4,6 +4,7 @@ import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.samples.SuccessfulSingleTestScenario;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
@@ -64,10 +65,10 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
 
 
     @Test
-    public void iexplored_is_not_currently_a_supported_driver()
+    public void opera_is_not_currently_a_supported_driver()
             throws InitializationError {
         try {
-            System.setProperty("webdriver.driver", "iexplorer");
+            System.setProperty("webdriver.driver", "opera");
 
             WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
             ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class, mockBrowserFactory);
@@ -76,7 +77,7 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
 
             fail("Should have thrown UnsupportedDriverException");
         } catch (UnsupportedDriverException e) {
-            assertThat(e.getMessage(), containsString("iexplorer is not a supported browser. Supported driver values are:"));
+            assertThat(e.getMessage(), containsString("opera is not a supported browser. Supported driver values are:"));
         }
     }
 

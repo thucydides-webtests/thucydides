@@ -5,6 +5,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,8 @@ public class TestableWebDriverFactory extends WebDriverFactory {
     private File screenshotFile;
     private int firefoxCount = 0;
     private int chromeCount = 0;
-    
+    private int iexplorerCount = 0;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TestableWebDriverFactory.class);
 
     public TestableWebDriverFactory() {
@@ -79,6 +81,9 @@ public class TestableWebDriverFactory extends WebDriverFactory {
             return super.newWebdriverInstance(webdriverClass);
         } else if (webdriverClass == ChromeDriver.class) {
             chromeCount++;
+            return super.newWebdriverInstance(webdriverClass);
+        } else if (webdriverClass == InternetExplorerDriver.class) {
+            iexplorerCount++;
             return super.newWebdriverInstance(webdriverClass);
         } else {
             throw new AssertionError("Unsupported webdriver class " + webdriverClass);

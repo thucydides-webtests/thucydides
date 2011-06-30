@@ -2,6 +2,7 @@ package net.thucydides.core.webdriver;
 
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
@@ -56,6 +57,7 @@ public class WhenManagingWebdriverInstances {
         assertThat(driverClass.getName(), is(ChromeDriver.class.getName()));
     }
 
+    @Ignore("Adding experminental support for iexplorer")
     @Test(expected=UnsupportedDriverException.class)
     public void iexplorer_is_not_supported() {
 

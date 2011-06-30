@@ -22,7 +22,9 @@ public class WhenInstanciatingANewDriver {
 
     @After
     public void closeDriver() {
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
     
     @Test
@@ -36,4 +38,13 @@ public class WhenInstanciatingANewDriver {
          driver = webDriverFactory.newInstanceOf(SupportedWebDriver.CHROME);
          assertThat(driver.toString(), containsString("ChromeDriver"));
     }
+
+    @Test
+    public void should_support_creating_an_internet_explorer_driver() {
+        if (System.getProperty("os.name").contains("windows")) {
+             driver = webDriverFactory.newInstanceOf(SupportedWebDriver.IEXPLORER);
+             assertThat(driver.toString(), containsString("InternetExplorer"));
+        }
+    }
+
 }

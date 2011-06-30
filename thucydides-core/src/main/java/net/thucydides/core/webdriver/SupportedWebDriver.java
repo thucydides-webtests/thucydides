@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 
 /**
  * The list of supported web drivers.
@@ -20,7 +21,12 @@ public enum SupportedWebDriver {
     /**
      * Chrome  WebDriver driver.
      */
-    CHROME(ChromeDriver.class);
+    CHROME(ChromeDriver.class),
+
+    /**
+     * Not sure about this one...
+     */
+    IEXPLORER(InternetExplorerDriver.class);
 
     private final Class<? extends WebDriver> webdriverClass;
 
