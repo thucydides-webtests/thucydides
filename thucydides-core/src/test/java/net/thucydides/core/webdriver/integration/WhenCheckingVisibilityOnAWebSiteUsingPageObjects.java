@@ -57,10 +57,25 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
     }
 
     @Test
+    public void should_know_when_an_element_is_visible_on_the_page_using_should_be() {
+        IndexPage indexPage = new IndexPage(driver);
+
+        indexPage.shouldBeVisible(By.xpath("//h2[.='A visible title']"));
+    }
+
+
+    @Test
     public void should_know_when_an_element_is_present_but_not_visible_on_the_page() {
         IndexPage indexPage = new IndexPage(driver);
 
         assertThat(indexPage.isElementVisible(By.xpath("//h2[.='An invisible title']")), is(false));
+    }
+
+    @Test
+    public void should_know_when_an_element_is_present_but_not_visible_on_the_page_using_should_be() {
+        IndexPage indexPage = new IndexPage(driver);
+
+        indexPage.shouldNotBeVisible(By.xpath("//h2[.='An invisible title']"));
     }
 
     @Test(expected = ElementNotVisibleException.class)

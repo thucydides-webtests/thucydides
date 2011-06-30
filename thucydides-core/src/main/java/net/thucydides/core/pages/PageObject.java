@@ -297,11 +297,22 @@ public abstract class PageObject {
         }
     }
 
+    public void shouldBeVisible(final By byCriteria) {
+        WebElement element = getDriver().findElement(byCriteria);
+        shouldBeVisible(element);
+    }
+
     public void shouldNotBeVisible(final WebElement field) {
         if (userCanSee(field)) {
             throw new AssertionError("The " + field + " element should not be visible");
         }
     }
+
+    public void shouldNotBeVisible(final By byCriteria) {
+        WebElement element = getDriver().findElement(byCriteria);
+        shouldNotBeVisible(element);
+    }
+
     /**
      * Open the webdriver browser to the base URL, determined by the DefaultUrl
      * annotation if present. If the DefaultUrl annotation is not present, the
