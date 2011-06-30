@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -135,7 +136,7 @@ public class WhenUsingAWebDriverProxy {
     @Test
     public void the_webdriver_proxy_should_handle_get_current_url() {
         webDriverFacade.getCurrentUrl();
-        verify(mockFirefoxDriver).getCurrentUrl();
+        verify(mockFirefoxDriver, atLeast(1)).getCurrentUrl();
     }
 
     @Test
