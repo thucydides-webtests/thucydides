@@ -25,6 +25,11 @@ public class Configuration {
     public static final String DEFAULT_WEBDRIVER_DRIVER = "firefox";
 
     /**
+     * Default timeout when waiting for AJAX elements in pages, in milliseconds.
+     */
+    public static final int DEFAULT_ELEMENT_TIMEOUT_SECONDS = 5;
+
+    /**
      * Use this property to define the output directory in which reports will be
      * stored.
      */
@@ -67,6 +72,17 @@ public class Configuration {
             stepDelay = Integer.valueOf(stepDelayValue);
         }
         return stepDelay;
+
+    }
+
+    public static int getElementTimeout() {
+        int elementTimeout = DEFAULT_ELEMENT_TIMEOUT_SECONDS;
+
+        String stepDelayValue = System.getProperty(ThucydidesSystemProperty.ELEMENT_TIMEOUT.getPropertyName());
+        if ((stepDelayValue != null) && (!stepDelayValue.isEmpty())) {
+            elementTimeout = Integer.valueOf(stepDelayValue);
+        }
+        return elementTimeout;
 
     }
 

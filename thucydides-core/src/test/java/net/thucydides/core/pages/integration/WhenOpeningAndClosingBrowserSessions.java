@@ -49,7 +49,7 @@ public class WhenOpeningAndClosingBrowserSessions {
     public void the_proxy_should_open_a_new_browser_instance_when_a_page_is_opened() {
         assertThat(webDriver.getProxied(), is(nullValue()));
 
-        webDriver.get("http://www.google.com");
+        webDriver.get("about:blank");
 
         assertThat(webDriver.getProxied(), is(notNullValue()));
 
@@ -57,7 +57,7 @@ public class WhenOpeningAndClosingBrowserSessions {
 
     @Test
     public void the_proxy_should_shutdown_the_browser_instance_when_requested() {
-        webDriver.get("http://www.google.com");
+        webDriver.get("about:blank");
 
         assertThat(webDriver.getProxied(), is(notNullValue()));
 
@@ -68,12 +68,12 @@ public class WhenOpeningAndClosingBrowserSessions {
 
     @Test
     public void the_proxy_should_open_a_new_browser_after_shutdown_when_requested() {
-        webDriver.get("http://www.google.com");
+        webDriver.get("about:blank");
         webDriver.quit();
 
         assertThat(webDriver.getProxied(), is(nullValue()));
 
-        webDriver.get("http://www.google.com");
+        webDriver.get("about:blank");
 
         assertThat(webDriver.getProxied(), is(notNullValue()));
 
@@ -81,7 +81,7 @@ public class WhenOpeningAndClosingBrowserSessions {
 
     @Test
     public void quitting_a_shutdown_browser_should_have_no_effect() {
-        webDriver.get("http://www.google.com");
+        webDriver.get("about:blank");
         webDriver.quit();
 
         assertThat(webDriver.getProxied(), is(nullValue()));
@@ -94,7 +94,7 @@ public class WhenOpeningAndClosingBrowserSessions {
 
     @Test
     public void resetting_the_proxy_should_close_the_current_broswer() {
-        webDriver.get("http://www.google.com");
+        webDriver.get("about:blank");
         WebDriver driver1 = webDriver.getProxied();
 
         webDriver.reset();
@@ -105,11 +105,11 @@ public class WhenOpeningAndClosingBrowserSessions {
 
     @Test
      public void resetting_the_proxy_should_open_a_fresh_broswer() {
-         webDriver.get("http://www.google.com");
+         webDriver.get("about:blank");
          WebDriver driver1 = webDriver.getProxied();
 
          webDriver.reset();
-         webDriver.get("http://www.google.com");
+         webDriver.get("about:blank");
 
          assertThat(webDriver.getProxied(), is(not(driver1)));
 

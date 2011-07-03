@@ -141,10 +141,6 @@ class RenderedPageObjectView {
         return true;
     }
 
-    public boolean userCanSee(final WebElement field) {
-        return field.isDisplayed();
-    }
-
     public void waitForTextToDisappear(final String expectedText, final long timeout) {
         long end = System.currentTimeMillis() + timeout;
         while (System.currentTimeMillis() < end) {

@@ -402,17 +402,6 @@ public class WhenManagingAPageObject {
     }
 
 
-    @Test
-    public void page_object_should_know_when_a_field_is_visible() {
-        BasicPageObject page = new BasicPageObject(driver);
-        WebElement field = mock(WebElement.class);
-
-        page.userCanSee(field);
-
-        verify(field).isDisplayed();
-
-    }
-
     @Test(expected=AssertionError.class)
     public void should_be_visible_should_throw_an_assertion_if_element_is_not_visible() {
         BasicPageObject page = new BasicPageObject(driver);
@@ -529,7 +518,7 @@ public class WhenManagingAPageObject {
         assertThat(page.containsTextInElement(searchedBlock, "orange"), is(false));
     }
 
-    @Test(expected=NoSuchElementException.class)
+    @Test(expected=AssertionError.class)
     public void should_contain_text_in_element_should_throw_an_assertion_if_text_is_not_visible() {
         BasicPageObject page = new BasicPageObject(driver);
         WebElement searchedBlock = mock(WebElement.class);
@@ -545,6 +534,15 @@ public class WhenManagingAPageObject {
         when(searchedBlock.getText()).thenReturn("red green blue");
 
         page.shouldContainTextInElement(searchedBlock, "red");
+    }
+
+    @Test
+    public void should_not_contain_text_in_web_element_should_do_nothing_if_text_is_not_present() {
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement searchedBlock = mock(WebElement.class);
+        when(searchedBlock.getText()).thenReturn("red green blue");
+
+        page.shouldNotContainTextInElement(searchedBlock, "orange");
     }
 
 }

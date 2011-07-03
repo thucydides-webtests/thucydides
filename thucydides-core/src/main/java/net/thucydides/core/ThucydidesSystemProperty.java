@@ -47,6 +47,11 @@ public enum ThucydidesSystemProperty {
     STEP_DELAY("thucycides.step.delay"),
 
     /**
+     * How long should the driver wait for elements not immediately visible.
+     */
+    ELEMENT_TIMEOUT("thucydides.timeout"),
+
+    /**
      * Use the same browser for all tests (the "Highlander" rule)
      */
     UNIQUE_BROWSER("thucydides.use.unique.browser");

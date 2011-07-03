@@ -1,6 +1,5 @@
 package net.thucydides.core.pages;
 
-import com.thoughtworks.selenium.Selenium;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
@@ -9,13 +8,11 @@ import net.thucydides.core.webelements.Checkbox;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -28,7 +25,7 @@ import java.util.Set;
  */
 public abstract class PageObject {
 
-    private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 50;
+    private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 5;
 
     private static final int ONE_SECOND = 1000;
 
@@ -222,17 +219,29 @@ public abstract class PageObject {
 
     /**
      * Does the specified web element contain a given text value. Useful for dropdowns and so on.
+     * @deprecated use element(webElement).containsText(textValue)
      */
-    public boolean containsTextInElement(final WebElement webElement, final String value) {
-        return webElement.getText().contains(value);
+    @Deprecated
+    public boolean containsTextInElement(final WebElement webElement, final String textValue) {
+        return element(webElement).containsText(textValue);
     }
 
+    /*
+     * Check that the element contains a given text.
+     * @deprecated use element(webElement).shouldContainText(textValue)
+     */
+    @Deprecated
     public void shouldContainTextInElement(final WebElement webElement, final String textValue) {
-        if (!containsTextInElement(webElement, textValue)) {
-            String errorMessage = String.format(
-                    "The text '%s' was not found in the web element %s", textValue, webElement);
-            throw new NoSuchElementException(errorMessage);
-        }
+        element(webElement).shouldContainText(textValue);
+    }
+
+    /*
+     * Check that the element does not contain a given text.
+     * @deprecated use element(webElement).shouldNotContainText(textValue)
+     */
+    @Deprecated
+    public void shouldNotContainTextInElement(final WebElement webElement, final String textValue) {
+        element(webElement).shouldNotContainText(textValue);
     }
 
     /**
@@ -284,17 +293,11 @@ public abstract class PageObject {
 
     }
 
-    public boolean userCanSee(final WebElement field) {
-        return getRenderedView().userCanSee(field);
-    }
-
     /**
      * Fail the test if this element is not displayed (rendered) on the screen.
      */
     public void shouldBeVisible(final WebElement field) {
-        if (!userCanSee(field)) {
-            throw new AssertionError("The " + field + " element should be visible");
-        }
+        element(field).shouldBeVisible();
     }
 
     public void shouldBeVisible(final By byCriteria) {
@@ -303,9 +306,7 @@ public abstract class PageObject {
     }
 
     public void shouldNotBeVisible(final WebElement field) {
-        if (userCanSee(field)) {
-            throw new AssertionError("The " + field + " element should not be visible");
-        }
+        element(field).shouldNotBeVisible();
     }
 
     public void shouldNotBeVisible(final By byCriteria) {
@@ -410,11 +411,18 @@ public abstract class PageObject {
 
     /**
      * Returns true if the specified element has the focus.
+     * @deprecated Use element(webElement).hasFocus() instead
      */
     public boolean hasFocus(final WebElement webElement) {
-        Selenium selenium = new WebDriverBackedSelenium(driver , driver.getCurrentUrl());
-        String activeElement = selenium.getEval("window.document.activeElement");
-        return webElement.toString().equals(activeElement);
+        return element(webElement).hasFocus();
     }
+
+    /**
+     * Provides a fluent API for querying web elements.
+     */
+    public WebElementFacade element(WebElement webElement) {
+        return new WebElementFacade(driver, webElement);
+    }
+
 
 }

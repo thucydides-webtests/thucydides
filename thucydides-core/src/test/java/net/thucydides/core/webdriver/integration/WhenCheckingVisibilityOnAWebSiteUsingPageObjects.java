@@ -130,7 +130,7 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         assertThat(indexPage.containsTextInElement(indexPage.multiselect, "Red"), is(false));
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = AssertionError.class)
     public void should_fail_assert_if_a_web_element_does_not_contain_a_string() {
         IndexPage indexPage = new IndexPage(driver);
         indexPage.shouldContainTextInElement(indexPage.multiselect, "Red");
