@@ -109,6 +109,29 @@ public class WhenKeepingTrackOfVisitedPages {
         assertThat(pages.isCurrentPageAt(ApacheHomePage.class), is(false));
     }
 
+    @Test
+    public void the_get_method_is_shorthand_for_currentPageAt() {
+
+        when(driver.getCurrentUrl()).thenReturn("http://www.apache.org");
+        final Pages pages = new Pages(driver);
+        pages.start();
+
+        assertThat(pages.get(ApacheHomePage.class).getClass().getName(),
+                    is(ApacheHomePage.class.getName()));
+    }
+
+    @Test
+    public void the_getAt_method_is_Groovy_shorthand_for_currentPageAt() {
+
+        when(driver.getCurrentUrl()).thenReturn("http://www.apache.org");
+        final Pages pages = new Pages(driver);
+        pages.start();
+
+        assertThat(pages.getAt(ApacheHomePage.class).getClass().getName(),
+                    is(ApacheHomePage.class.getName()));
+    }
+
+
     @Test(expected = WrongPageError.class)
     public void the_pages_object_throws_a_wrong_page_error_when_we_expect_the_wrong_page() {
 

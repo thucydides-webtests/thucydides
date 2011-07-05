@@ -3,6 +3,7 @@ package net.thucydides.core.pages;
 import com.thoughtworks.selenium.Selenium;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.WebDriverFacade;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
@@ -95,7 +96,9 @@ public class WebElementFacade {
      * Does this element currently have the focus.
      */
     public boolean hasFocus() {
-        Selenium selenium = new WebDriverBackedSelenium(driver , driver.getCurrentUrl());
+        WebDriverFacade driverFacade = (WebDriverFacade) driver;
+        WebDriver proxiedDriver = driverFacade.getProxiedDriver();
+        Selenium selenium = new WebDriverBackedSelenium(proxiedDriver , proxiedDriver.getCurrentUrl());
         String activeElement = selenium.getEval("window.document.activeElement");
         return webElement.toString().equals(activeElement);
     }

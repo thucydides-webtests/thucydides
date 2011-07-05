@@ -63,6 +63,10 @@ public class Pages implements Serializable {
         getDriver().get(getStartingUrl());
     }
 
+    public <T extends PageObject> T getAt(final Class<T> pageObjectClass) {
+        return currentPageAt(pageObjectClass);
+    }
+
     public <T extends PageObject> T get(final Class<T> pageObjectClass) {
         return currentPageAt(pageObjectClass);
     }

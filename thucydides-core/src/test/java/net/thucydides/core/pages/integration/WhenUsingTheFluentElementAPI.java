@@ -5,6 +5,7 @@ import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.WebElementFacade;
+import net.thucydides.core.webdriver.WebDriverFacade;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -31,7 +32,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @BeforeClass
     public static void initDriver() {
-        driver = new FirefoxDriver();
+        driver = new WebDriverFacade(FirefoxDriver.class);
     }
 
     @AfterClass
@@ -44,6 +45,9 @@ public class WhenUsingTheFluentElementAPI {
 
         @FindBy(name="firstname")
         protected WebElement firstName;
+
+        @FindBy(name="lastname")
+        protected WebElement lastName;
 
         @FindBy(name="hiddenfield")
         protected WebElement hiddenField;
@@ -178,6 +182,20 @@ public class WhenUsingTheFluentElementAPI {
         StaticSitePage page = new StaticSitePage(driver);
         page.open();
         page.element(page.colors).shouldNotContainText("Red");
+    }
+
+    @Test
+    public void should_detect_focus_on_input_fields() {
+        StaticSitePage page = new StaticSitePage(driver);
+        page.open();
+        assertThat(page.element(page.lastName).hasFocus(), is(true));
+    }
+
+    @Test
+    public void should_detect_lack_of_focus_on_input_fields() {
+        StaticSitePage page = new StaticSitePage(driver);
+        page.open();
+        assertThat(page.element(page.firstName).hasFocus(), is(false));
     }
 
 }
