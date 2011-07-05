@@ -180,6 +180,38 @@ public class WhenDefiningPageUrls {
     }
 
 
+    @DefaultUrl("http://jira.mycompany.org")
+    @NamedUrls(
+      {
+        @NamedUrl(name = "open.issue", url = "/issues/{1}")
+      }
+    )
+    final class PageObjectWithDefaultUrlAndNamedParameterizedRelativeUrlDefinition extends PageObject {
+        public PageObjectWithDefaultUrlAndNamedParameterizedRelativeUrlDefinition(WebDriver driver) {
+            super(driver);
+        }
+    }
+
+
+    @Test
+    public void the_webdriver_base_url_system_property_should_not_override_pages_with_parameters() {
+        PageObject page = new PageObjectWithDefaultUrlAndNamedParameterizedRelativeUrlDefinition(webdriver);
+        System.setProperty("webdriver.base.url","http://staging.mycompany.org");
+        page.open("open.issue", withParameters("ISSUE-1"));
+
+        verify(webdriver).get("http://staging.mycompany.org/issues/ISSUE-1");
+    }
+
+
+    @Test
+    public void the_url_annotation_should_let_you_define_a_named_parameterized_url_relative_to_the_default_url() {
+        PageObject page = new PageObjectWithDefaultUrlAndNamedParameterizedRelativeUrlDefinition(webdriver);
+        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl(null);
+        page.open("open.issue", withParameters("ISSUE-1"));
+
+        verify(webdriver).get("http://jira.mycompany.org/issues/ISSUE-1");
+    }
+
     @NamedUrls(
       {
         @NamedUrl(name = "open.issue", url = "/issues/{1}")

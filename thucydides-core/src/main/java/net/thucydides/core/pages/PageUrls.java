@@ -35,6 +35,15 @@ class PageUrls {
         }
     }
 
+    public String getDeclaredDefaultUrl() {
+        String annotatedBaseUrl = null;
+        DefaultUrl urlAnnotation = pageObject.getClass().getAnnotation(DefaultUrl.class);
+        if (urlAnnotation != null) {
+            annotatedBaseUrl = urlAnnotation.value();
+        }
+        return annotatedBaseUrl;
+    }
+
     public static String getUrlFrom(final String annotatedBaseUrl) {
         if (annotatedBaseUrl == null) {
             return null;
@@ -109,10 +118,14 @@ class PageUrls {
 
     private String addDefaultBaseUrlIfRelative(final String url) {
         if (isARelativeUrl(url)) {
-            return getDefaultUrl() + url;
-        } else {
-            return url;
+            if (getDefaultUrl() != null) {
+                return getDefaultUrl() + url;
+            }
+            if (getDeclaredDefaultUrl() != null) {
+                return getDeclaredDefaultUrl() + url;
+            }
         }
+        return url;
     }
 
     private boolean isARelativeUrl(final String url) {
