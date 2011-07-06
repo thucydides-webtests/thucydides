@@ -225,5 +225,4 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         assertThat(indexPage.getTitle(), is("Thucydides Test Site"));
     }
 
-
 }

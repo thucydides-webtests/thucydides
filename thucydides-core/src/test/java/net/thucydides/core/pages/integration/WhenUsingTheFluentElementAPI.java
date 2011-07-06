@@ -198,4 +198,22 @@ public class WhenUsingTheFluentElementAPI {
         assertThat(page.element(page.firstName).hasFocus(), is(false));
     }
 
+    @Test
+    public void should_evaluate_javascript_within_browser() {
+        StaticSitePage page = new StaticSitePage(driver);
+        page.open();
+        String result = (String) page.evaluateJavascript("return document.title");
+        assertThat(result, is("Thucydides Test Site"));
+    }
+
+    @Test
+    public void should_execute_javascript_within_browser() {
+        StaticSitePage page = new StaticSitePage(driver);
+        page.open();
+        assertThat(page.element(page.firstName).hasFocus(), is(false));
+        page.evaluateJavascript("document.getElementById('firstname').focus()");
+        assertThat(page.element(page.firstName).hasFocus(), is(true));
+    }
+
+
 }

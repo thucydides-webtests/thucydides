@@ -1,17 +1,22 @@
 package net.thucydides.core.pages;
 
+import com.thoughtworks.selenium.Selenium;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
+import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.tools.tree.ReturnStatement;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -424,5 +429,10 @@ public abstract class PageObject {
         return new WebElementFacade(driver, webElement);
     }
 
+    public Object evaluateJavascript(final String script) {
+        WebDriverFacade driverFacade = (WebDriverFacade) driver;
+        JavascriptExecutor js = (JavascriptExecutor) driverFacade.getProxiedDriver();
+        return js.executeScript(script);
+    }
 
 }
