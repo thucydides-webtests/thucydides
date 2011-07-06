@@ -42,7 +42,7 @@ function init() {
                 //box offsets
                 offset: 1,
 
-                levelsToShow: 1,
+                levelsToShow: 2,
 
                 cushion: useGradients,
                 //Attach left and right click events
