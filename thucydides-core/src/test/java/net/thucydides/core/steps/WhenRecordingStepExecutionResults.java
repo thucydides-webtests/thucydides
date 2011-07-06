@@ -883,7 +883,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step1();
         steps.step2();
 
-        verify(driver, times(5)).getScreenshotAs((OutputType<?>) anyObject());
+        verify(driver, times(7)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     private TestOutcome firstTestResultRecordedIn(List<TestOutcome> testOutcomeResults) {

@@ -7,6 +7,7 @@ import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestStepGroup;
 import net.thucydides.core.pages.InternalClock;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.screenshots.Photographer;
@@ -234,22 +235,22 @@ public class BaseStepListener implements StepListener {
         } else {
             getCurrentTestOutcome().startGroup(description.getName());
         }
-        //takeScreenshotForCurrentGroup();
+        takeScreenshotForCurrentGroup();
     }
 
-//    private void takeScreenshotForCurrentGroup() {
-//        TestStepGroup currentGroup = getCurrentTestOutcome().getCurrentGroup();
-//        takeScreenshotForGroup(currentGroup);
-//    }
-//
-//    private void takeScreenshotForGroup(final TestStepGroup group) {
-//        File screenshot = grabScreenshotFileFor(group.getDescription());
-//        group.setScreenshot(screenshot);
-//        if (screenshot != null) {
-//            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-//            group.setHtmlSource(sourcecode);
-//        }
-//    }
+    private void takeScreenshotForCurrentGroup() {
+        TestStepGroup currentGroup = getCurrentTestOutcome().getCurrentGroup();
+        takeScreenshotForGroup(currentGroup);
+    }
+
+    private void takeScreenshotForGroup(final TestStepGroup group) {
+        File screenshot = grabScreenshotFileFor(group.getDescription());
+        group.setScreenshot(screenshot);
+        if (screenshot != null) {
+            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
+            group.setHtmlSource(sourcecode);
+        }
+    }
 
     private void markCurrentTestAs(final TestResult result) {
         if (failureOccursBeforeAnyStepsHaveBeenExecuted(result)) {
@@ -326,6 +327,7 @@ public class BaseStepListener implements StepListener {
  
     public void stepFinished(final ExecutedStepDescription description) {
         if (stepIsAGroup(description)) {
+            takeScreenshotForCurrentGroup();
             getCurrentTestOutcome().endGroup();
         } else {
             markCurrentTestAs(SUCCESS);
