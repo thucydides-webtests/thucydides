@@ -1,6 +1,5 @@
 package net.thucydides.core.pages;
 
-import com.thoughtworks.selenium.Selenium;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
@@ -11,12 +10,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.tools.tree.ReturnStatement;
 
 import java.net.MalformedURLException;
 import java.net.URL;
