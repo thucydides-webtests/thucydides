@@ -52,7 +52,7 @@ public class Dropdown {
     }
 
     public String getSelectedValue() {
-        return selectField.getFirstSelectedOption().getValue();
+        return selectField.getFirstSelectedOption().getAttribute("value");
     }
 
     public String getSelectedLabel() {

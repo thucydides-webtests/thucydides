@@ -8,6 +8,8 @@
 
     function initFields() {
         document.demo.lastname.focus()
+        hide('city')
+        displayFieldsAfterDelay();
     }
 
     function toggle_visibility(id) {
@@ -17,7 +19,21 @@
        else
           e.style.display = 'block';
     }
-    
+
+    function hide(id) {
+       var e = document.getElementById(id);
+       e.style.display = 'none';
+    }
+
+    function show(id) {
+        var e = document.getElementById(id);
+       e.style.display = 'block';
+    }
+
+    function displayCityField() {
+        show('city')
+    }
+
     function loadElementsSelect() {
         var elementSelect = document.demo.elements.options;
         elementSelect[0] = new Option('Earth',1);
@@ -26,8 +42,9 @@
         elementSelect[3] = new Option('Water',4);
     }
     
-    function loadElementsSelectAfterDelay() {
+    function displayFieldsAfterDelay() {
         setTimeout("loadElementsSelect()", 1000);
+        setTimeout("displayCityField()", 1000);
     }
 //-->
 </script>
@@ -39,8 +56,9 @@
 </div>
 <p>Some test pages for the Thucydides tests</p>
 <form name="demo" action="index.html">
-    <input name="firstname" id="firstname"/>
+    <input name="firstname" id="firstname" value="<enter first name>"/>
     <input name="lastname" id="lastname"/>
+    <input name="city" id="city"/>
     <input name="hiddenfield" type="hidden"/>
     <select id="multiselect" multiple="true">
         <option value="1">Label 1</option>
@@ -57,6 +75,8 @@
     </select>
 
     <input id="checkbox" type="checkbox" value="checkbox_value">
+
+    <input id="readonlyField" type="input" value="readonly_value" disabled=true>
 
     <select id="elements">
     </select>

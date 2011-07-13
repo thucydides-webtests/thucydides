@@ -4,11 +4,14 @@ import com.thoughtworks.selenium.Selenium;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
+import java.security.Key;
 import java.util.concurrent.TimeUnit;
 
 import static net.thucydides.core.webdriver.Configuration.*;
@@ -96,11 +99,9 @@ public class WebElementFacade {
      * Does this element currently have the focus.
      */
     public boolean hasFocus() {
-        WebDriverFacade driverFacade = (WebDriverFacade) driver;
-        WebDriver proxiedDriver = driverFacade.getProxiedDriver();
-        Selenium selenium = new WebDriverBackedSelenium(proxiedDriver , proxiedDriver.getCurrentUrl());
-        String activeElement = selenium.getEval("window.document.activeElement");
-        return webElement.toString().equals(activeElement);
+        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
+        WebElement activeElement = (WebElement) js.executeScript("return window.document.activeElement");
+        return webElement.equals(activeElement);
     }
 
     /**
@@ -132,5 +133,80 @@ public class WebElementFacade {
                     "The text '%s' was not found in the web element", textValue);
             throw new AssertionError(errorMessage);
         }
+    }
+
+    public void shouldBeEnabled() {
+        if (!isEnabled()) {
+            String errorMessage = String.format(
+                    "Field '%s' should be enabled", webElement);
+            throw new AssertionError(errorMessage);
+        }
+    }
+
+    public boolean isEnabled() {
+        return webElement.isEnabled();
+    }
+
+    public void shouldNotBeEnabled() {
+        if (isEnabled()) {
+            String errorMessage = String.format(
+                    "Field '%s' should not be enabled", webElement);
+            throw new AssertionError(errorMessage);
+        }
+    }
+
+    /**
+     * Type a value into a field, making sure that the field is empty first.
+     * @param value
+     */
+    public void type(final String value) {
+        webElement.clear();
+        webElement.sendKeys(value);
+    }
+
+    /**
+     * Type a value into a field and then press Enter, making sure that the field is empty first.
+     * @param value
+     */
+    public void typeAndEnter(final String value) {
+        webElement.clear();
+        webElement.sendKeys(value, Keys.ENTER);
+    }
+
+    /**
+     * Type a value into a field and then press TAB, making sure that the field is empty first.
+     * @param value
+     */
+    public void typeAndTab(final String value) {
+        webElement.clear();
+        webElement.sendKeys(value, Keys.TAB);
+        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
+        js.executeScript("window.document.activeElement.blur()");
+
+    }
+
+    public void selectByVisibleText(final String label) {
+        Select select = new Select(webElement);
+        select.selectByVisibleText(label);
+    }
+
+    public String getSelectedVisibleTextValue() {
+        Select select = new Select(webElement);
+        return select.getFirstSelectedOption().getText();
+    }
+
+    public void selectByValue(String value) {
+        Select select = new Select(webElement);
+        select.selectByValue(value);
+    }
+
+    public String getSelectedValue() {
+        Select select = new Select(webElement);
+        return select.getFirstSelectedOption().getAttribute("value");
+    }
+
+    public void selectByIndex(int indexValue) {
+        Select select = new Select(webElement);
+        select.selectByIndex(indexValue);
     }
 }

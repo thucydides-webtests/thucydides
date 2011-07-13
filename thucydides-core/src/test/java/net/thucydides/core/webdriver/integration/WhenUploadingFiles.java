@@ -61,7 +61,7 @@ public class WhenUploadingFiles {
 
         uploadPage.uploadFile("uploads/readme.txt");
 
-        assertThat(uploadPage.uploadField.getValue(), containsString("readme.txt"));
+        assertThat(uploadPage.uploadField.getAttribute("value"), containsString("readme.txt"));
 
     }
 
@@ -105,7 +105,7 @@ public class WhenUploadingFiles {
 
         uploadPage.uploadFile("target/upload.txt");
 
-        assertThat(uploadPage.uploadField.getValue(), containsString("upload.txt"));
+        assertThat(uploadPage.uploadField.getAttribute("value"), containsString("upload.txt"));
     }
 
     private void writeTextToFile(String text, File uploadedFile) throws IOException {

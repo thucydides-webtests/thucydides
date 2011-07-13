@@ -35,7 +35,7 @@ public class MultipleSelect {
         List<WebElement> options = dropdownField.findElements(By.tagName("option"));
         for (WebElement option : options) {
             if (option.isSelected()) {
-                selectedOptions.add(option.getValue());
+                selectedOptions.add(option.getAttribute("value"));
             }
         }
         return selectedOptions;

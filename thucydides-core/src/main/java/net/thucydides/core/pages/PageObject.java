@@ -427,8 +427,7 @@ public abstract class PageObject {
     }
 
     public Object evaluateJavascript(final String script) {
-        WebDriverFacade driverFacade = (WebDriverFacade) driver;
-        JavascriptExecutor js = (JavascriptExecutor) driverFacade.getProxiedDriver();
+        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
         return js.executeScript(script);
     }
 
