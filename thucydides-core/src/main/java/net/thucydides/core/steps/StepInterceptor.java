@@ -1,21 +1,22 @@
 package net.thucydides.core.steps;
 
-import com.google.common.collect.Lists;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
-import net.thucydides.core.annotations.Pending;
-import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.webdriver.WebdriverAssertionError;import org.junit.Ignore;
-import org.openqa.selenium.WebDriverException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
+import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.annotations.Step;
+import net.thucydides.core.annotations.StepGroup;
+import net.thucydides.core.webdriver.WebdriverAssertionError;
+
+import org.junit.Ignore;
+import org.openqa.selenium.WebDriverException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Listen to step results and publish notification messages.
@@ -26,6 +27,7 @@ import java.util.List;
  */
 public class StepInterceptor implements MethodInterceptor, Serializable {
 
+    private static final long serialVersionUID = 1L;
     private final List<StepListener> listeners;
     private final Class<? extends ScenarioSteps> testStepClass;
     private TestStepResult resultTally;
@@ -284,15 +286,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             throws Exception {
         for (StepListener listener : listeners) {
             listener.stepGroupFinished();
-        }
-    }
-
-
-    private void notifyTestStarted(final Method method, final Object[] args) {
-
-        ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
-        for (StepListener listener : listeners) {
-            listener.testStarted(method.getName());
         }
     }
 

@@ -1,8 +1,5 @@
 package net.thucydides.core.reports;
 
-import net.thucydides.core.model.TestOutcome;
-import sun.misc.Service;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,9 +7,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import net.thucydides.core.model.TestOutcome;
+import sun.misc.Service;
+
 /**
  * Generates different Thucydides reports in a given output directory.
  */
+@SuppressWarnings("restriction")
 public class ReportService {
 
     /**
@@ -72,7 +73,7 @@ public class ReportService {
     public static List<AcceptanceTestReporter> getDefaultReporters() {
         List<AcceptanceTestReporter> reporters = new ArrayList<AcceptanceTestReporter>();
 
-        Iterator reporterImplementations = Service.providers(AcceptanceTestReporter.class);
+        Iterator<?> reporterImplementations = Service.providers(AcceptanceTestReporter.class);
 
         while (reporterImplementations.hasNext()) {
             reporters.add((AcceptanceTestReporter)reporterImplementations.next());

@@ -5,6 +5,9 @@ package net.thucydides.core.steps;
  * This would be strange: a low-level error, probably due to a bug in the Thucydides core.
  */
 public class TestMethodNotFoundException extends RuntimeException {
+
+    private static final long serialVersionUID = 1L;
+
     public TestMethodNotFoundException(String message) {
         super(message);
     }

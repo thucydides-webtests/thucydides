@@ -20,6 +20,8 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
  */
 public class Pages implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private transient WebDriver driver;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pages.class);
@@ -105,15 +107,16 @@ public class Pages implements Serializable {
      * @return
      * @throws IllegalArgumentException
      */
-    private PageObject getCurrentPageOfType(final Class<? extends PageObject> pageObjectClass) {
-        PageObject currentPage = null;
+    @SuppressWarnings("unchecked")
+    private <T extends PageObject> T getCurrentPageOfType(final Class<T> pageObjectClass) {
+        T currentPage = null;
         try {
             @SuppressWarnings("rawtypes")
             Class[] constructorArgs = new Class[1];
             constructorArgs[0] = WebDriver.class;
             Constructor<? extends PageObject> constructor
                     = (Constructor<? extends PageObject>) pageObjectClass.getConstructor(constructorArgs);
-            currentPage = (PageObject) constructor.newInstance(driver);
+            currentPage = (T) constructor.newInstance(driver);
         } catch (NoSuchMethodException e) {
             LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: "
                     + pageObjectClass, e);

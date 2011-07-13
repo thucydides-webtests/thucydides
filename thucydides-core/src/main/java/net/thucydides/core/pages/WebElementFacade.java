@@ -1,20 +1,10 @@
 package net.thucydides.core.pages;
 
-import com.thoughtworks.selenium.Selenium;
-import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.webdriver.Configuration;
-import net.thucydides.core.webdriver.WebDriverFacade;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-
-import java.security.Key;
-import java.util.concurrent.TimeUnit;
-
-import static net.thucydides.core.webdriver.Configuration.*;
 
 /**
  * A proxy class for a web element, providing some more methods.

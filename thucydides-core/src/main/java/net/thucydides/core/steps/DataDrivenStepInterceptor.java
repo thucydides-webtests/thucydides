@@ -1,12 +1,10 @@
 package net.thucydides.core.steps;
 
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Method;
 import java.util.List;
+
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 
 /**
  * Invoke a step multiple times, each time initialized with a different set of test data.
@@ -14,8 +12,6 @@ import java.util.List;
 public class DataDrivenStepInterceptor implements MethodInterceptor {
 
     private List<? extends ScenarioSteps> instantiatedSteps;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataDrivenStepInterceptor.class);
 
     public DataDrivenStepInterceptor(List<? extends ScenarioSteps> instantiatedSteps) {
         this.instantiatedSteps = instantiatedSteps;

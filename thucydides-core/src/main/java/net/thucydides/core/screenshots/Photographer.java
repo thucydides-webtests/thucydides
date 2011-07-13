@@ -98,6 +98,7 @@ public class Photographer {
 
     private boolean driverCanTakeSnapehots() {
         try {
+            @SuppressWarnings("unused")
             TakesScreenshot screenshotTaker = (TakesScreenshot) driver;
             return true;
         } catch (ClassCastException e) {

@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class WebdriverProxyFactory implements Serializable {
 
+    private static final long serialVersionUID = 1L;
 
     private static ThreadLocal<WebdriverProxyFactory> factory = new ThreadLocal<WebdriverProxyFactory>();
 

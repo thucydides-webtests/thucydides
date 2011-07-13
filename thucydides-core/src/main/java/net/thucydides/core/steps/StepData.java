@@ -16,7 +16,7 @@ public final class StepData {
     private char separator = ',';
     private StepFactory factory;
 
-    private static final ThreadLocal<StepFactory> factoryThreadLocal = new ThreadLocal();
+    private static final ThreadLocal<StepFactory> factoryThreadLocal = new ThreadLocal<StepFactory>();
 
     public StepData(final String testDataSource) {
         this.testDataSource = testDataSource;
@@ -26,6 +26,7 @@ public final class StepData {
         return new StepData(testDataSource);
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends ScenarioSteps> T run(final T steps) throws IOException {
 
         useDefaultStepFactoryIfUnassigned();

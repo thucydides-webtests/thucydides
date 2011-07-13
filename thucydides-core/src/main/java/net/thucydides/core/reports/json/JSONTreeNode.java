@@ -1,19 +1,17 @@
 package net.thucydides.core.reports.json;
 
-import net.thucydides.core.model.FeatureResults;
-import net.thucydides.core.model.StoryTestResults;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
+import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
+import static net.thucydides.core.reports.json.HSBColorScheme.rgbFormatOf;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
-import static net.thucydides.core.reports.json.HSBColorScheme.rgbFormatOf;
+import net.thucydides.core.model.FeatureResults;
+import net.thucydides.core.model.StoryTestResults;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 
 /**
  * Used to store data in JSON form to be displayed on the report dashboard.
@@ -161,22 +159,6 @@ public class JSONTreeNode {
             outcomes.add(node);
         }
         return outcomes;
-    }
-
-    private Collection<? extends JSONTreeNode> getTestStepNodesFor(List<TestStep> testSteps) {
-        List<JSONTreeNode> stepNodes = new ArrayList<JSONTreeNode>();
-
-        for (TestStep step : testSteps) {
-            JSONTreeNode node = new JSONTreeNode(step.getDescription(),
-                                                 step.getDescription(),
-                                                 colorScheme);
-
-            node.getData().put("$area", 100);
-            node.getData().put("$color", rgbFormatOf(colorScheme.colorFor(step)));
-            node.getData().put("result", step.getResult());
-            stepNodes.add(node);
-        }
-        return stepNodes;
     }
 
     private int findTestArea(final int sizeOfPendingOrSkippedTests, final TestOutcome outcome) {

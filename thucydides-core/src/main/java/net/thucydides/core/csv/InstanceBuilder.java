@@ -29,6 +29,7 @@ public final class InstanceBuilder {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T invokeConstructorFor(final Class<T> clazz, final Object[] constructorArgs)
                                     throws InvocationTargetException, IllegalAccessException, InstantiationException {
 
@@ -45,8 +46,8 @@ public final class InstanceBuilder {
 
     private static <T> boolean thereIsADefaultConstructorFor(final Class<T> clazz) {
 
-        Constructor[] constructors = clazz.getDeclaredConstructors();
-        for(Constructor constructor : constructors) {
+        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+        for(Constructor<?> constructor : constructors) {
             if (constructor.getParameterTypes().length == 0) {
                 return true;
             }

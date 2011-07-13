@@ -41,6 +41,7 @@ public class StepFactory {
      * This is actually a proxy that allows reporting and screenshots to
      * be performed at each step.
      */
+    @SuppressWarnings("unchecked")
     public <T extends ScenarioSteps> T newSteps(final Class<T> scenarioStepsClass) {
         Enhancer e = new Enhancer();
         e.setSuperclass(scenarioStepsClass);

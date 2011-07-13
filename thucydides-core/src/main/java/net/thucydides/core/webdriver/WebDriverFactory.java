@@ -1,7 +1,11 @@
 package net.thucydides.core.webdriver;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+
 import net.thucydides.core.pages.WebElementFacade;
-import org.omg.CORBA.TIMEOUT;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -9,15 +13,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocator;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.Annotations;
-import org.openqa.selenium.support.pagefactory.DefaultElementLocator;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
-
-import javax.xml.transform.Templates;
-import java.lang.reflect.Field;
-import java.sql.Driver;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Provides an instance of a supported WebDriver.

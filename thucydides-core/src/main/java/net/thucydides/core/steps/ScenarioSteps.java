@@ -16,6 +16,8 @@ import java.io.Serializable;
  */
 public class ScenarioSteps implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioSteps.class);
 
     private Pages pages;

@@ -43,7 +43,7 @@ public class BaseStepListener implements StepListener {
     private final Collection<TestOutcome> testOutcomes;
     private TestOutcome currentTestOutcome;
     private Story testedStory;
-    private Class testClass;
+    private Class<?> testClass;
     private ConcreteTestStep currentTestStep;
  
     private WebDriver driver;

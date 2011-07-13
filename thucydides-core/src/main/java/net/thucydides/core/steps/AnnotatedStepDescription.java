@@ -1,21 +1,20 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.annotations.TestsRequirement;
-import net.thucydides.core.annotations.TestsRequirements;
-import net.thucydides.core.annotations.Title;
-import net.thucydides.core.annotations.UserStoryCode;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static net.thucydides.core.util.NameConverter.humanize;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static net.thucydides.core.util.NameConverter.humanize;
+import net.thucydides.core.annotations.Step;
+import net.thucydides.core.annotations.StepGroup;
+import net.thucydides.core.annotations.TestsRequirement;
+import net.thucydides.core.annotations.TestsRequirements;
+import net.thucydides.core.annotations.Title;
+import net.thucydides.core.annotations.UserStoryCode;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  *  Test steps and step groups can be described by various annotations.
@@ -23,9 +22,7 @@ import static net.thucydides.core.util.NameConverter.humanize;
 public final class AnnotatedStepDescription {
 
     private final ExecutedStepDescription description;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatedStepDescription.class);
-
+    
     public static AnnotatedStepDescription from(final ExecutedStepDescription description) {
         return new AnnotatedStepDescription(description);
 

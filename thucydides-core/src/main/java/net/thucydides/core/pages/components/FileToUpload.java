@@ -41,7 +41,6 @@ public class FileToUpload {
     }
 
     private boolean isAFullWindowsPath(final String filename) {
-        boolean res = pattern.matcher(filename).matches();
         return pattern.matcher(filename).find();
     }
 

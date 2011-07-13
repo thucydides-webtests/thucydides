@@ -14,7 +14,6 @@ import static java.awt.Color.BLACK;
  */
 public class HSBColorScheme implements ColorScheme {
 
-    private static final int MAX_COLOR_RANGE = 255;
     private final static float RED_HUE = 0.0F;
     private final static float ORANGE_HUE = 0.083333333F;
     private final static float YELLOW_HUE = 0.166666666F;

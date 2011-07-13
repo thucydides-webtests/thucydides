@@ -1,22 +1,5 @@
 package net.thucydides.core.model;
 
-import ch.lambdaj.function.convert.Converter;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import net.thucydides.core.annotations.Title;
-import net.thucydides.core.model.features.ApplicationFeature;
-import net.thucydides.core.steps.TestDescription;
-import net.thucydides.core.util.NameConverter;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.Stack;
-
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
@@ -28,6 +11,23 @@ import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
+
+import net.thucydides.core.annotations.Title;
+import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.steps.TestDescription;
+import net.thucydides.core.util.NameConverter;
+import ch.lambdaj.function.convert.Converter;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Represents the results of a test (or "scenario") execution. This
@@ -43,7 +43,7 @@ public class TestOutcome {
 
     private Story userStory;
 
-    private Class testCase;
+    private Class<?> testCase;
 
     private long duration;
 
@@ -197,10 +197,6 @@ public class TestOutcome {
 
     public String getMethodName() {
         return methodName;
-    }
-
-    private String normalizedFormOf(final String name) {
-        return name.replaceAll("\\s", "_").toLowerCase(Locale.getDefault());
     }
 
     public void testsRequirement(final String requirement) {

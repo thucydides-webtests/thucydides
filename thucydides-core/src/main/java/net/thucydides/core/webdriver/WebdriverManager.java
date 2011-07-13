@@ -13,19 +13,11 @@ import org.openqa.selenium.WebDriver;
 public class WebdriverManager {
 
     /**
-     * Creates new browser instances. The Browser Factory's job is to provide
-     * new web driver instances. It is designed to isolate the test runner from
-     * the business of creating and managing WebDriver drivers.
-     */
-    private final WebDriverFactory webDriverFactory;
-
-    /**
      * A WebDriver instance is shared across all the tests executed by the runner in a given test run.
      */
     private final WebDriver webdriver;
     
     public WebdriverManager(final WebDriverFactory webDriverFactory) {
-        this.webDriverFactory = webDriverFactory;
         webdriver = newDriver();
     }
 
@@ -39,7 +31,7 @@ public class WebdriverManager {
      */
     protected WebDriver newDriver() {
         SupportedWebDriver supportedDriverType = Configuration.getDriverType();
-        Class webDriverType = webDriverFactory.getClassFor(supportedDriverType);
+        Class<? extends WebDriver> webDriverType = WebDriverFactory.getClassFor(supportedDriverType);
         return WebdriverProxyFactory.getFactory().proxyFor(webDriverType);
     }
     
@@ -55,7 +47,7 @@ public class WebdriverManager {
     }
 
     public Class<? extends WebDriver> getWebDriverClass() {
-        return webDriverFactory.getClassFor(Configuration.getDriverType());
+        return WebDriverFactory.getClassFor(Configuration.getDriverType());
      }
 
 }    
