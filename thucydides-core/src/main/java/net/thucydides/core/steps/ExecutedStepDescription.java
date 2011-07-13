@@ -9,7 +9,7 @@ import static net.thucydides.core.util.NameConverter.withNoArguments;
  * A description of a step executed during a Thucydides step run.
  * Used in the reporting to generate user-readable names for the executed steps.
  */
-public class ExecutedStepDescription {
+public class ExecutedStepDescription implements Cloneable {
 
     private final Class<? extends ScenarioSteps> stepsClass;
     private final String name;

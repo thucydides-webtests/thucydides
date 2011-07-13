@@ -2,14 +2,16 @@ package net.thucydides.core.steps;
 
 import com.google.common.collect.ImmutableList;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Result of a test step or sequence of test steps.
  */
-public class TestStepResult {
+public class TestStepResult implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private List<StepFailure> failures = new ArrayList<StepFailure>();
     private int ignored = 0;
     private int run = 0;

@@ -409,8 +409,6 @@ public class BaseStepListener implements StepListener {
             markCurrentTestAs(PENDING);
         } else if (AnnotatedStepDescription.from(description).isIgnored()) {
             ignoreStepMethodWith(description);
-        } else if (aStepHasFailed()){
-            markCurrentTestAs(SKIPPED);
         } else {
             markCurrentTestAs(SKIPPED);
         }
