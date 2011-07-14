@@ -46,6 +46,14 @@ public class DemoSiteSteps extends ScenarioSteps {
     }
 
     @Step
+    public void should_have_no_selected_value() {
+        IndexPage page = (IndexPage) getPages().currentPageAt(IndexPage.class);
+        if (page.getSelectedValues().size() > 0) {
+            throw new AssertionError("Should have no selected value but got " + page.getSelectedValues());
+        }
+    }
+
+    @Step
     public void do_something() {}
 
     @Step

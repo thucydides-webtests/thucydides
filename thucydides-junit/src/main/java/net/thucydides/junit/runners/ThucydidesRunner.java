@@ -227,7 +227,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     protected boolean restartBrowserBeforeTest() {
-        return false;
+        return true;
     }
 
     protected void resetBroswerFromTimeToTime() {

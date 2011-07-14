@@ -35,17 +35,20 @@ public class OpenStaticDemoPageSample {
     @Title("The user opens the index page")
     @TestsRequirement("R123")
     public void the_user_opens_the_page() {
-        pages.start();
-        steps.enter_values("Label 1", true);
+        steps.should_have_no_selected_value();
+        steps.should_not_have_selected_value("");
+        steps.enter_values("Label 2", true);
+        steps.should_have_selected_value("2");
     }    
     
     @Test
     @Title("The user enters different values.")
     public void the_user_opens_another_page() {
-        pages.start();
-        steps.enter_values("Label 2", true);
+        steps.should_have_no_selected_value();
+        steps.enter_values("Label 3", true);
         steps.do_something();
-    }    
+        steps.should_have_selected_value("3");
+    }
 
 
 }
