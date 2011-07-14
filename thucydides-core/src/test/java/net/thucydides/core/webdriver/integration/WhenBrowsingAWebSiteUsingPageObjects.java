@@ -4,6 +4,7 @@ import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
@@ -31,8 +32,8 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         
         public WebElement color;
 
-        public IndexPage(WebDriver driver) {
-            super(driver);
+        public IndexPage(WebDriver driver, int timeout) {
+            super(driver, timeout);
         }
     }
 
@@ -43,20 +44,26 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
         public WebElement checkbox;
 
-        public IndexPageWithDefaultUrl(WebDriver driver) {
-            super(driver);
+        public IndexPageWithDefaultUrl(WebDriver driver, int timeout) {
+            super(driver, 1);
         }
     }
 
     WebDriver driver;
+    static WebDriver firefoxDriver;
 
     IndexPage indexPage;
+
+    @BeforeClass
+    public static void openFirefox() {
+        firefoxDriver = new FirefoxDriver();
+    }
 
     @Before
     public void openLocalStaticSite() {
         driver = new HtmlUnitDriver();
         openStaticTestSite(driver);
-        indexPage = new IndexPage(driver);
+        indexPage = new IndexPage(driver, 1);
         indexPage.setWaitForTimeout(100);
     }
 
@@ -171,16 +178,16 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         
     @Test
     public void should_know_when_an_element_is_visible() {
-        driver = new FirefoxDriver();
-        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver);
+//        driver = new FirefoxDriver();
+        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(firefoxDriver, 1);
         indexPage.open();
         assertThat(indexPage.isElementVisible(By.id("visible")), is(true));
     }
 
     @Test
     public void should_know_when_an_element_is_invisible() {
-        driver = new FirefoxDriver();
-        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver);
+//        driver = new FirefoxDriver();
+        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(firefoxDriver, 1);
         indexPage.open();
         assertThat(indexPage.isElementVisible(By.id("invisible")), is(false));
     }
@@ -220,7 +227,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     @Test
     public void the_page_can_be_read_from_a_file_on_the_classpath() {
 
-        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver);
+        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver, 1);
 
         assertThat(indexPage.getTitle(), is("Thucydides Test Site"));
     }

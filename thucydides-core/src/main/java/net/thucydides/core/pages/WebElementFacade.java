@@ -1,10 +1,12 @@
 package net.thucydides.core.pages;
 
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+
 
 /**
  * A proxy class for a web element, providing some more methods.
@@ -13,10 +15,17 @@ public class WebElementFacade {
 
     private final WebElement webElement;
     private final WebDriver driver;
+    private final long timeoutInMilliseconds;
+    private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 100;
+    private InternalClock clock;
 
-    public WebElementFacade(final WebDriver driver, final WebElement webElement) {
+    public WebElementFacade(final WebDriver driver,
+                            final WebElement webElement,
+                            final long timeoutInMilliseconds) {
         this.driver = driver;
         this.webElement = webElement;
+        this.timeoutInMilliseconds = timeoutInMilliseconds;
+        this.clock = new InternalClock();
     }
 
     /**
@@ -224,6 +233,34 @@ public class WebElementFacade {
             String errorMessage = String.format(
                     "Field should not be present");
             throw new AssertionError(errorMessage);
+        }
+    }
+
+    public void waitUntilVisible() {
+        long end = System.currentTimeMillis() + timeoutInMilliseconds;
+        while (System.currentTimeMillis() < end) {
+            if (isCurrentlyVisible()) {
+                break;
+            }
+            clock.pauseFor(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (!isCurrentlyVisible()) {
+            throw new ElementNotVisibleException(
+                    "Expected element was not displayed");
+        }
+    }
+
+    public void waitUntilNotVisible() {
+        long end = System.currentTimeMillis() + timeoutInMilliseconds;
+        while (System.currentTimeMillis() < end) {
+            if (!isCurrentlyVisible()) {
+                break;
+            }
+            clock.pauseFor(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (isCurrentlyVisible()) {
+            throw new ElementNotVisibleException(
+                    "Expected hidden element was displayed");
         }
     }
 }

@@ -47,6 +47,16 @@ public abstract class PageObject {
 
     private InternalClock clock = new InternalClock();
 
+    public PageObject(final WebDriver driver, final int ajaxTimeout) {
+        this.driver = driver;
+        this.waitForTimeout = ajaxTimeout;
+
+        setupPageUrls();
+
+        WebDriverFactory.initElementsWithAjaxSupport(this, driver, ajaxTimeout);
+
+    }
+
     public PageObject(final WebDriver driver) {
         this.driver = driver;
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
@@ -427,7 +437,7 @@ public abstract class PageObject {
      * Provides a fluent API for querying web elements.
      */
     public WebElementFacade element(WebElement webElement) {
-        return new WebElementFacade(driver, webElement);
+        return new WebElementFacade(driver, webElement, waitForTimeout);
     }
 
     public Object evaluateJavascript(final String script) {

@@ -17,6 +17,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.FindBy;
 
+import javax.sound.midi.VoiceStatus;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -29,7 +31,7 @@ public class WhenUsingTheFluentElementAPI {
     @BeforeClass
     public static void initDriver() {
         driver = new WebDriverFacade(FirefoxDriver.class);
-        page = new StaticSitePage(driver);
+        page = new StaticSitePage(driver, 1);
         page.setWaitForTimeout(100);
         page.open();
     }
@@ -51,6 +53,9 @@ public class WhenUsingTheFluentElementAPI {
         @FindBy(name="city")
         protected WebElement city;
 
+        @FindBy(name="country")
+        private WebElement country;
+
         @FindBy(name="hiddenfield")
         protected WebElement hiddenField;
 
@@ -66,8 +71,8 @@ public class WhenUsingTheFluentElementAPI {
         @FindBy(name="fieldDoesNotExist")
         protected WebElement fieldDoesNotExist;
 
-        public StaticSitePage(WebDriver driver) {
-            super(driver);
+        public StaticSitePage(WebDriver driver, int timeout) {
+            super(driver, timeout);
         }
 
         public void setFirstName(String value) {
@@ -83,6 +88,9 @@ public class WhenUsingTheFluentElementAPI {
         }
         public void hiddenFieldShouldNotBePresent() {
             element(hiddenField).shouldNotBePresent();
+        }
+        public void fieldDoesNotExistShouldContainText(String value) {
+            element(fieldDoesNotExist).shouldContainText(value);
         }
     }
 
@@ -240,7 +248,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test(expected = NoSuchElementException.class)
     public void should_contain_text_throws_exception_if_element_does_not_exist() {
-        page.element(page.fieldDoesNotExist).shouldContainText("Magenta");
+        page.fieldDoesNotExistShouldContainText("Magenta");
     }
 
     @Test
@@ -277,7 +285,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_execute_javascript_within_browser() {
-        StaticSitePage page = new StaticSitePage(driver);
+        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
         assertThat(page.element(page.firstName).hasFocus(), is(false));
         page.evaluateJavascript("document.getElementById('firstname').focus()");
@@ -286,7 +294,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_clear_field_before_entering_text() {
-        StaticSitePage page = new StaticSitePage(driver);
+        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
@@ -298,7 +306,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_optionally_type_enter_after_entering_text() {
-        StaticSitePage page = new StaticSitePage(driver);
+        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
@@ -311,7 +319,7 @@ public class WhenUsingTheFluentElementAPI {
     @Ignore("WebDriver doesn't like tabs at the moment")
     @Test
     public void should_optionally_type_tab_after_entering_text() {
-        StaticSitePage page = new StaticSitePage(driver);
+        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
@@ -323,7 +331,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_wait_for_field_to_appear_before_entering_data() {
-        StaticSitePage page = new StaticSitePage(driver);
+        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         assertThat(page.element(page.city).isCurrentlyVisible(), is(false));
@@ -334,8 +342,51 @@ public class WhenUsingTheFluentElementAPI {
     }
 
     @Test
+    public void should_wait_for_field_to_appear() {
+        StaticSitePage page = new StaticSitePage(driver, 1000);
+        page.open();
+
+        assertThat(page.element(page.city).isCurrentlyVisible(), is(false));
+        page.element(page.city).waitUntilVisible();
+
+        assertThat(page.element(page.city).isCurrentlyVisible(), is(true));
+    }
+
+    @Test(expected = ElementNotVisibleException.class)
+    public void should_throw_expection_if_waiting_for_field_that_does_not_appear() {
+        //StaticSitePage page = new StaticSitePage(driver);
+        page.setWaitForTimeout(100);
+        page.open();
+
+        assertThat(page.element(page.hiddenField).isCurrentlyVisible(), is(false));
+
+        page.element(page.hiddenField).waitUntilVisible();
+    }
+
+    @Test
+    public void should_wait_for_field_to_disappear() {
+        StaticSitePage page = new StaticSitePage(driver, 1000);
+        page.open();
+
+        assertThat(page.element(page.country).isCurrentlyVisible(), is(true));
+        page.element(page.country).waitUntilNotVisible();
+
+        assertThat(page.element(page.country).isCurrentlyVisible(), is(false));
+    }
+
+    @Test(expected = ElementNotVisibleException.class)
+    public void should_throw_exception_if_waiting_for_field_tbat_does_not_disappear() {
+        //StaticSitePage page = new StaticSitePage(driver);
+        page.setWaitForTimeout(100);
+        page.open();
+
+        assertThat(page.element(page.firstName).isCurrentlyVisible(), is(true));
+        page.element(page.firstName).waitUntilNotVisible();
+    }
+
+    @Test
     public void should_select_dropdown_by_visible_text() {
-        StaticSitePage page = new StaticSitePage(driver);
+        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         page.element(page.colors).selectByVisibleText("Blue");
@@ -344,7 +395,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_select_dropdown_by_value() {
-        StaticSitePage page = new StaticSitePage(driver);
+        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         page.element(page.colors).selectByValue("blue");
@@ -353,7 +404,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_select_dropdown_by_index_value() {
-        StaticSitePage page = new StaticSitePage(driver);
+        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         page.element(page.colors).selectByIndex(2);

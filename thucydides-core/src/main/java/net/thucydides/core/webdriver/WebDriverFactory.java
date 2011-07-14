@@ -115,7 +115,11 @@ public class WebDriverFactory {
     public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver) {
         ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, Configuration.getElementTimeout());
         PageFactory.initElements(finder, pageObject);
+    }
 
+    public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver, int timeout) {
+        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, timeout);
+        PageFactory.initElements(finder, pageObject);
     }
 
     /**
