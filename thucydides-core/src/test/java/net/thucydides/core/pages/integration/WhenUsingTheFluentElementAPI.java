@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -54,6 +56,8 @@ public class WhenUsingTheFluentElementAPI {
 
         protected WebElement readonlyField;
 
+        protected WebElement doesNotExist;
+
         @FindBy(id="color")
         protected WebElement colors;
 
@@ -68,6 +72,17 @@ public class WhenUsingTheFluentElementAPI {
 
         public void setFirstName(String value) {
             element(firstName).type(value);
+        }
+
+        public void fieldDoesNotExistShouldNotBePresent() {
+            element(fieldDoesNotExist).shouldNotBePresent();
+        }
+
+        public void fieldDoesNotExistShouldBePresent() {
+            element(fieldDoesNotExist).shouldBePresent();
+        }
+        public void hiddenFieldShouldNotBePresent() {
+            element(hiddenField).shouldNotBePresent();
         }
     }
 
@@ -84,6 +99,63 @@ public class WhenUsingTheFluentElementAPI {
     public void should_report_if_element_is_not_visible() {
         assertThat(page.element(page.hiddenField).isVisible(), is(false));
     }
+
+    @Test
+    public void should_report_if_element_is_present() {
+        assertThat(page.element(page.firstName).isPresent(), is(true));
+    }
+
+    @Test
+    public void should_report_if_element_is_present_but_not_visible() {
+        assertThat(page.element(page.hiddenField).isPresent(), is(true));
+    }
+
+    @Test
+    public void should_report_if_element_is_not_present() {
+        assertThat(page.element(page.fieldDoesNotExist).isPresent(), is(false));
+    }
+
+    @Test
+     public void should_pass_if_expected_element_is_present() {
+         page.element(page.firstName).shouldBePresent();
+     }
+
+     @Test
+     public void should_pass_if_expected__if_element_is_present_but_not_visible() {
+         page.element(page.hiddenField).shouldBePresent();
+     }
+
+
+     @Test(expected = AssertionError.class)
+     public void should_throw_exception_if_element_is_not_present() {
+         page.fieldDoesNotExistShouldBePresent();
+     }
+
+    @Test
+    public void should_pass_if_unexpected_element_is_not_present() {
+        page.fieldDoesNotExistShouldNotBePresent();
+    }
+
+    @Test(expected = AssertionError.class)
+    public void should_throw_exception_if_unexpected_element_is_present() {
+        page.hiddenFieldShouldNotBePresent();
+    }
+
+    @Test
+    public void should_wait_for_hidden_elements() {
+        page.waitForRenderedElementsToBePresent(By.name("hiddenfield"));
+    }
+
+    @Test
+    public void wait_for_hidden_elements_should_work_for_visible_elements() {
+        page.waitForRenderedElementsToBePresent(By.name("firstname"));
+    }
+
+    @Test(expected = ElementNotVisibleException.class)
+    public void wait_for_hidden_elements_should_fail_for_missing_elements() {
+        page.waitForRenderedElementsToBePresent(By.name("noSuchField"));
+    }
+
 
     @Test
     public void should_report_element_as_not_visible_if_not_present() {

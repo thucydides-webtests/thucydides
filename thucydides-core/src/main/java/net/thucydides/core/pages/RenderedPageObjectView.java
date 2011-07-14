@@ -30,6 +30,9 @@ class RenderedPageObjectView {
         this.waitForTimeout = waitForTimeout;
     }
 
+    /**
+     * This method will wait until an element is present and visible on the screen.
+     */
     public void waitFor(final By byElementCriteria) {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
@@ -42,11 +45,45 @@ class RenderedPageObjectView {
         checkThatElementIsDisplayed(byElementCriteria);
     }
 
+    /**
+     * This method will wait until an element is present on the screen, though not necessarily visible.
+     */
+    public void waitForPresenceOf(final By byElementCriteria) {
+        long end = System.currentTimeMillis() + waitForTimeout;
+        while (System.currentTimeMillis() < end) {
+            if (elementIsPresent(byElementCriteria)) {
+                break;
+            }
+            waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        checkThatElementIsPresent(byElementCriteria);
+    }
+
     private void checkThatElementIsDisplayed(final By byElementCriteria) {
         if (!elementIsDisplayed(byElementCriteria)) {
             throw new ElementNotVisibleException("Element not displayed: "
                     + byElementCriteria);
         }
+    }
+
+    private void checkThatElementIsPresent(final By byElementCriteria) {
+        if (!elementIsPresent(byElementCriteria)) {
+            throw new ElementNotVisibleException("Element not present: "
+                    + byElementCriteria);
+        }
+    }
+
+    public boolean elementIsPresent(final By byElementCriteria) {
+        boolean isDisplayed = true;
+        try {
+            List<WebElement> matchingElements = driver.findElements(byElementCriteria);
+            if (matchingElements.isEmpty()) {
+                return false;
+            }
+        } catch (NoSuchElementException noSuchElement) {
+            LOGGER.trace("No such element " + noSuchElement);
+        }
+        return isDisplayed;
     }
 
     public boolean elementIsDisplayed(final By byElementCriteria) {

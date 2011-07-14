@@ -125,6 +125,11 @@ public abstract class PageObject {
         return this;
     }
 
+    public PageObject waitForRenderedElementsToBePresent(final By byElementCriteria) {
+        getRenderedView().waitForPresenceOf(byElementCriteria);
+        return this;
+    }
+
     public PageObject waitForRenderedElementsToDisappear(
             final By byElementCriteria) {
         getRenderedView().waitForElementsToDisappear(byElementCriteria);

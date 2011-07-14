@@ -199,4 +199,31 @@ public class WebElementFacade {
         Select select = new Select(webElement);
         select.selectByIndex(indexValue);
     }
+
+    public boolean isPresent() {
+        try {
+            return webElement.isDisplayed() || !webElement.isDisplayed() ;
+        } catch (NoSuchElementException e) {
+            if (e.getCause().getMessage().contains("Element is not usable")) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public void shouldBePresent() {
+        if (!isPresent()) {
+            String errorMessage = String.format(
+                    "Field should be present");
+            throw new AssertionError(errorMessage);
+        }
+    }
+
+    public void shouldNotBePresent() {
+        if (isPresent()) {
+            String errorMessage = String.format(
+                    "Field should not be present");
+            throw new AssertionError(errorMessage);
+        }
+    }
 }
