@@ -294,7 +294,6 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_clear_field_before_entering_text() {
-        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
@@ -306,7 +305,6 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_optionally_type_enter_after_entering_text() {
-        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
@@ -319,7 +317,6 @@ public class WhenUsingTheFluentElementAPI {
     @Ignore("WebDriver doesn't like tabs at the moment")
     @Test
     public void should_optionally_type_tab_after_entering_text() {
-        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
@@ -331,7 +328,6 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_wait_for_field_to_appear_before_entering_data() {
-        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         assertThat(page.element(page.city).isCurrentlyVisible(), is(false));
