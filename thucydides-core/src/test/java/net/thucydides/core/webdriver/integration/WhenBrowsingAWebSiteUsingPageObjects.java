@@ -151,7 +151,9 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     
     @Test
     public void ticking_a_set_checkbox_should_set_the_value_to_true() {
-        indexPage.checkbox.setSelected();
+        if (indexPage.checkbox.isSelected()) {
+            indexPage.checkbox.click();
+        }
         
         indexPage.setCheckbox(indexPage.checkbox, true);
         
@@ -168,7 +170,9 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     
     @Test
     public void unticking_a_set_checkbox_should_set_the_value_to_false() {
-        indexPage.checkbox.setSelected();
+        if (indexPage.checkbox.isSelected()) {
+            indexPage.checkbox.click();
+        }
         
         indexPage.setCheckbox(indexPage.checkbox, false);
         

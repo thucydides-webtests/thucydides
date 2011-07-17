@@ -7,6 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
+import java.security.Key;
+
 
 /**
  * A proxy class for a web element, providing some more methods.
@@ -178,9 +180,8 @@ public class WebElementFacade {
      */
     public void typeAndTab(final String value) {
         webElement.clear();
-        webElement.sendKeys(value, Keys.TAB);
-        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
-        js.executeScript("window.document.activeElement.blur()");
+        webElement.sendKeys(value);
+        webElement.sendKeys(Keys.TAB);
 
     }
 
