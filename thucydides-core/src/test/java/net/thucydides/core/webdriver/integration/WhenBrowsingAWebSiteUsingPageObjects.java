@@ -3,6 +3,7 @@ package net.thucydides.core.webdriver.integration;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -72,6 +73,11 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         if (driver != null) {
             driver.close();
         }
+    }
+
+    @AfterClass
+    public static void shutdownFirefox() {
+        firefoxDriver.quit();
     }
 
     private void openStaticTestSite(WebDriver driver) {

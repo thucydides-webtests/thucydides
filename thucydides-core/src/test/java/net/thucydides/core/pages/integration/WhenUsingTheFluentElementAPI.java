@@ -68,6 +68,8 @@ public class WhenUsingTheFluentElementAPI {
 
         protected WebElement elements;
 
+        protected WebElement grid;
+
         @FindBy(name="fieldDoesNotExist")
         protected WebElement fieldDoesNotExist;
 
@@ -241,6 +243,11 @@ public class WhenUsingTheFluentElementAPI {
         page.element(page.colors).shouldContainText("Red");
     }
 
+    @Test
+    public void should_contain_text_also_works_with_non_form_elements() {
+        page.element(page.grid).shouldContainText("joe");
+    }
+
     @Test(expected = AssertionError.class)
     public void should_contain_text_throws_exception_if_field_does_not_contain_text() {
         page.element(page.colors).shouldContainText("Magenta");
@@ -285,7 +292,6 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_execute_javascript_within_browser() {
-        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
         assertThat(page.element(page.firstName).hasFocus(), is(false));
         page.evaluateJavascript("document.getElementById('firstname').focus()");
@@ -350,7 +356,6 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test(expected = ElementNotVisibleException.class)
     public void should_throw_expection_if_waiting_for_field_that_does_not_appear() {
-        //StaticSitePage page = new StaticSitePage(driver);
         page.setWaitForTimeout(100);
         page.open();
 
@@ -372,7 +377,6 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test(expected = ElementNotVisibleException.class)
     public void should_throw_exception_if_waiting_for_field_tbat_does_not_disappear() {
-        //StaticSitePage page = new StaticSitePage(driver);
         page.setWaitForTimeout(100);
         page.open();
 
@@ -382,7 +386,6 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_select_dropdown_by_visible_text() {
-        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         page.element(page.colors).selectByVisibleText("Blue");
@@ -391,7 +394,6 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_select_dropdown_by_value() {
-        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         page.element(page.colors).selectByValue("blue");
@@ -400,11 +402,20 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_select_dropdown_by_index_value() {
-        //StaticSitePage page = new StaticSitePage(driver);
         page.open();
 
         page.element(page.colors).selectByIndex(2);
         assertThat(page.element(page.colors).getSelectedValue(), is("green"));
+    }
+
+    @Test
+    public void should_detect_text_contained_in_a_web_element() {
+        assertThat(page.element(page.grid).containsText("joe"), is(true));
+    }
+
+    @Test
+    public void should_detect_text_not_contained_in_a_web_element() {
+        assertThat(page.element(page.grid).containsText("red"), is(false));
     }
 
 }
