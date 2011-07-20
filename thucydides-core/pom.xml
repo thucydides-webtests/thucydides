@@ -10,21 +10,14 @@
     <artifactId>thucydides-core</artifactId>
     <name>thucydides-core</name>
     <properties>
-        <selenium.version>2.0rc2</selenium.version>
+        <selenium.version>2.1.0</selenium.version>
         <root.package>net.thucydides.core</root.package>
     </properties>
     <dependencies>
-        <dependency>
+         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium</artifactId>
+            <artifactId>selenium-server</artifactId>
             <version>${selenium.version}</version>
-            <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <artifactId>testng</artifactId>
-                    <groupId>org.testng</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
           <dependency>
             <groupId>net.sf.opencsv</groupId>
