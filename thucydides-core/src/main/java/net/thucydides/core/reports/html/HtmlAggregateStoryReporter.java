@@ -7,7 +7,6 @@ import net.thucydides.core.model.features.FeatureLoader;
 import net.thucydides.core.model.userstories.UserStoryLoader;
 import net.thucydides.core.reports.UserStoryTestReporter;
 import net.thucydides.core.reports.json.JSONResultTree;
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private UserStoryLoader storyLoader;
 
     public HtmlAggregateStoryReporter() {
-        setTemplatePath(DEFAULT_USER_STORY_TEMPLATE);
         storyLoader = new UserStoryLoader();
         featureLoader = new FeatureLoader();
     }
@@ -52,7 +50,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         VelocityContext context = new VelocityContext();
         context.put("story", storyTestResults);
-        String htmlContents = mergeVelocityTemplate(context);
+        String htmlContents = mergeTemplate(DEFAULT_USER_STORY_TEMPLATE).usingContext(context);
 
         copyResourcesToOutputDirectory();
 
@@ -95,10 +93,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private void generateFeatureReport(final List<FeatureResults> featureResults) throws IOException {
         VelocityContext context = new VelocityContext();
         context.put("features", featureResults);
-        Template featuresTemplate = getTemplateManager().getTemplateFrom(FEATURES_TEMPLATE_PATH);
-        LOGGER.debug("Generating features page");
-        String htmlContents = mergeVelocityTemplate(featuresTemplate, context);
-        LOGGER.debug("Writing features page");
+        String htmlContents = mergeTemplate(FEATURES_TEMPLATE_PATH).usingContext(context);
         writeReportToOutputDirectory("features.html", htmlContents);
 
         for(FeatureResults feature : featureResults) {
@@ -111,9 +106,8 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         context.put("stories", feature.getStoryResults());
         context.put("storyContext", feature.getFeature().getName() );
-        Template storyTemplate = getTemplateManager().getTemplateFrom(STORIES_TEMPLATE_PATH);
         LOGGER.debug("Generating stories page");
-        String htmlContents = mergeVelocityTemplate(storyTemplate, context);
+        String htmlContents = mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(context);
         LOGGER.debug("Writing stories page");
         String filename = feature.getStoryReportName();
         writeReportToOutputDirectory(filename, htmlContents);
@@ -123,9 +117,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         VelocityContext context = new VelocityContext();
         context.put("stories", storyResults);
         context.put("storyContext", "All stories");
-        Template storyTemplate = getTemplateManager().getTemplateFrom(STORIES_TEMPLATE_PATH);
-        LOGGER.debug("Generating stories page");
-        String htmlContents = mergeVelocityTemplate(storyTemplate, context);
+        String htmlContents = mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(context);
         LOGGER.debug("Writing stories page");
         writeReportToOutputDirectory("stories.html", htmlContents);
     }
@@ -135,9 +127,8 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         VelocityContext context = new VelocityContext();
         context.put("stories", new UserStoriesResultSet(storyResults));
         context.put("features", featureResults);
-        Template storyTemplate = getTemplateManager().getTemplateFrom(HOME_TEMPLATE_PATH);
         LOGGER.debug("Generating home page");
-        String htmlContents = mergeVelocityTemplate(storyTemplate, context);
+        String htmlContents = mergeTemplate(HOME_TEMPLATE_PATH).usingContext(context);
         LOGGER.debug("Writing stories page");
         writeReportToOutputDirectory("home.html", htmlContents);
         LOGGER.debug("Generating coverage data");
@@ -154,8 +145,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         context.put("coverageData", resultTree.toJSON());
 
-        Template coverageTemplate = getTemplateManager().getTemplateFrom(COVERAGE_DATA_TEMPLATE_PATH);
-        String javascriptCoverageData = mergeVelocityTemplate(coverageTemplate, context);
+        String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
         writeReportToOutputDirectory("coverage.js", javascriptCoverageData);
     }
 

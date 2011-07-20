@@ -93,6 +93,23 @@ public abstract class TestStep {
         return screenshotPath;
     }
 
+    public String getScreenshotPage() {
+        if (screenshot != null) {
+            return "screenshot_" + withoutType(screenshot.getName()) + ".html";
+        } else {
+            return "";
+        }
+    }
+
+    private String withoutType(final String screenshot) {
+        int dot = screenshot.lastIndexOf('.');
+        if (dot > 0) {
+            return screenshot.substring(0, dot);
+        } else {
+            return screenshot;
+        }
+    }
+
     public File getHtmlSource() {
         return htmlSource;
     }

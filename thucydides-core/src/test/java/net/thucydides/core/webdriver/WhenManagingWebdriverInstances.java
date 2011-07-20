@@ -57,13 +57,6 @@ public class WhenManagingWebdriverInstances {
         assertThat(driverClass.getName(), is(ChromeDriver.class.getName()));
     }
 
-    @Ignore("Adding experminental support for iexplorer")
-    @Test(expected=UnsupportedDriverException.class)
-    public void iexplorer_is_not_supported() {
-
-        System.setProperty(Configuration.WEBDRIVER_DRIVER, "iexplorer");
-        new WebdriverManager(factory);        
-    }
 
 
     @Test

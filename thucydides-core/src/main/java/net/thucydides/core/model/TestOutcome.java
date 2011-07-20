@@ -1,5 +1,21 @@
 package net.thucydides.core.model;
 
+import ch.lambdaj.function.convert.Converter;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import net.thucydides.core.annotations.Title;
+import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.steps.TestDescription;
+import net.thucydides.core.util.NameConverter;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
+
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
@@ -11,23 +27,6 @@ import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
-
-import net.thucydides.core.annotations.Title;
-import net.thucydides.core.model.features.ApplicationFeature;
-import net.thucydides.core.steps.TestDescription;
-import net.thucydides.core.util.NameConverter;
-import ch.lambdaj.function.convert.Converter;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Represents the results of a test (or "scenario") execution. This
@@ -60,10 +59,6 @@ public class TestOutcome {
      */
     public TestOutcome() {
         startTime = System.currentTimeMillis();
-    }
-
-    public long getStartTime() {
-        return startTime;
     }
 
     /**
@@ -191,6 +186,10 @@ public class TestOutcome {
         return getReportName(ROOT);
     }
 
+    public String getScreenshotReportName() {
+        return getReportName(ROOT) + "_screenshots";
+    }
+
     public void setMethodName(final String methodName) {
         this.methodName = methodName;
     }
@@ -217,6 +216,32 @@ public class TestOutcome {
         return ImmutableList.copyOf(testSteps);
     }
 
+    public List<Screenshot> getScreenshots() {
+
+        List<Screenshot> screenshots = new ArrayList<Screenshot>();
+        List<TestStep> testSteps = getFlattenedTestSteps();
+
+
+        for(TestStep currentStep : testSteps) {
+            if (currentStep.getScreenshot() != null) {
+                screenshots.add(new Screenshot(currentStep.getScreenshot().getName(),
+                                               currentStep.getDescription()));
+            }
+        }
+
+        return ImmutableList.copyOf(screenshots);
+    }
+
+    public List<TestStep> getFlattenedTestSteps() {
+        List<TestStep> flattenedTestSteps = new ArrayList<TestStep>();
+        for (TestStep step : getTestSteps()) {
+            flattenedTestSteps.add(step);
+            if (step.isAGroup()) {
+                flattenedTestSteps.addAll(step.getFlattenedSteps());
+            }
+        }
+        return ImmutableList.copyOf(flattenedTestSteps);
+    }
 
     /**
      * The outcome of the acceptance test, based on the outcome of the test

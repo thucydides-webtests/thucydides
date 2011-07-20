@@ -572,7 +572,7 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
 
     private class HTMLFileFilter implements FilenameFilter {
         public boolean accept(File directory, String filename) {
-            return filename.endsWith(".html") && !filename.startsWith("screenshot");
+            return filename.endsWith(".html") && !filename.endsWith("screenshots.html");
         }
     }
 

@@ -136,6 +136,19 @@ public class WhenMatchingUrlsToPages {
         assertThat(page.compatibleWithUrl("http://maven.apache.org/somethingelse"), is(false));
     }
 
+    @At(urls={"#HOST/app/action/login.form"})
+    final class GenericInternalPageWithWildcard extends PageObject {
+        public GenericInternalPageWithWildcard(WebDriver driver) {
+            super(driver);
+        }
+    }
+
+    @Test
+    public void should_allow_a_server_independent_page_definition_using_wildcards() {
+        PageObject page = new GenericInternalPageWithWildcard(webdriver);
+        assertThat(page.compatibleWithUrl("http://my.app.org/app/action/login.form?some=parameters"), is(true));
+    }
+
     @Test
     public void should_match_simple_urls_with_parameters() {
         PageObject page = new PageWithUrlDefinitions(webdriver);

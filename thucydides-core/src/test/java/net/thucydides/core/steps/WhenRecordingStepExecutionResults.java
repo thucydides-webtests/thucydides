@@ -841,6 +841,25 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void screenshots_should_have_corresponding_html_pages() {
+
+        TestStep step = new ConcreteTestStep();
+        step.setDescription("step");
+        step.setScreenshot(new File("step.png"));
+
+        assertThat(step.getScreenshotPage(), is("screenshot_step.html"));
+    }
+
+    @Test
+    public void if_there_is_no_screenshot_the_html_page_reference_is_empty() {
+
+        TestStep step = new ConcreteTestStep();
+        step.setDescription("step");
+
+        assertThat(step.getScreenshotPage(), is(""));
+    }
+
+    @Test
     public void screenshots_should_not_be_taken_after_steps_if_screenshots_disabled() {
 
         stepListener.testRunStartedFor(MyTestCase.class);

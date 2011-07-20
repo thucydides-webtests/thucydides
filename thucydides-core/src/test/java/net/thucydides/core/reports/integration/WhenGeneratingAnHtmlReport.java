@@ -7,6 +7,8 @@ import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
+import net.thucydides.core.resources.FileResources;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,6 +16,8 @@ import org.junit.rules.MethodRule;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
@@ -21,6 +25,8 @@ import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class WhenGeneratingAnHtmlReport {
@@ -111,6 +117,133 @@ public class WhenGeneratingAnHtmlReport {
         File xmlReport = reporter.generateReportFor(testOutcome);
         assertThat(xmlReport.getName(), is("a_user_story_should_do_this.html"));
     }
+
+    @Test
+    public void screenshots_should_have_a_separate_html_report()  throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        File screenshot = temporaryDirectory.newFile("step_1.png");
+        step1.setScreenshot(screenshot);
+        testOutcome.recordStep(step1);
+
+        reporter.generateReportFor(testOutcome);
+
+        File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_screenshots.html");
+        assertThat(screenshotReport.exists(), is(true));
+
+    }
+
+    @Test
+    public void the_screenshots_report_should_contain_a_link_to_each_screenshot_image()  throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("search_for_cats", SomeTestScenario.class);
+
+        recordStepWithScreenshot(testOutcome, "Search cats on Google", "google_page_1.png");
+        recordStepWithScreenshot(testOutcome, "View the results", "google_page_2.png");
+        recordStepWithScreenshot(testOutcome, "Display a resulting page", "google_page_3.png");
+
+        reporter.generateReportFor(testOutcome);
+
+        File screenshotReport = new File(outputDirectory, "a_user_story_search_for_cats_screenshots.html");
+        String reportContents = FileUtils.readFileToString(screenshotReport);
+        assertThat(reportContents, allOf(containsString("src=\"google_page_1.png\""),
+                containsString("src=\"google_page_2.png\""),
+                containsString("src=\"google_page_3.png\"")));
+        System.out.println(outputDirectory);
+    }
+
+    @Test
+    public void the_screenshots_report_should_contain_captions_with_the_step_descriptions()  throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        recordStepWithScreenshot(testOutcome, "Search cats on Google", "google_page_1.png");
+        recordStepWithScreenshot(testOutcome, "View the results", "google_page_2.png");
+        recordStepWithScreenshot(testOutcome, "Display a resulting page", "google_page_3.png");
+
+        reporter.generateReportFor(testOutcome);
+
+        File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_screenshots.html");
+        String reportContents = FileUtils.readFileToString(screenshotReport);
+        assertThat(reportContents, allOf(containsString("title=\"Search cats on Google\""),
+                containsString("title=\"View the results\""),
+                containsString("title=\"Display a resulting page\"")));
+    }
+
+    @Test
+    public void the_screenshots_report_should_contain_the_overall_test_description()  throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        recordStepWithScreenshot(testOutcome, "Search cats on Google", "google_page_1.png");
+        recordStepWithScreenshot(testOutcome, "View the results", "google_page_2.png");
+        recordStepWithScreenshot(testOutcome, "Display a resulting page", "google_page_3.png");
+
+        reporter.generateReportFor(testOutcome);
+
+        File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_screenshots.html");
+        String reportContents = FileUtils.readFileToString(screenshotReport);
+        assertThat(reportContents, containsString("Should do this"));
+    }
+
+    @Test
+    public void the_screenshots_report_should_contain_a_link_back_to_the_test_results()  throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        recordStepWithScreenshot(testOutcome, "Search cats on Google", "google_page_1.png");
+        recordStepWithScreenshot(testOutcome, "View the results", "google_page_2.png");
+        recordStepWithScreenshot(testOutcome, "Display a resulting page", "google_page_3.png");
+
+        reporter.generateReportFor(testOutcome);
+
+        File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_screenshots.html");
+        String reportContents = FileUtils.readFileToString(screenshotReport);
+        assertThat(reportContents, containsString("<a href=\"a_user_story_should_do_this.html\""));
+    }
+
+    private void recordStepWithScreenshot(TestOutcome testOutcome, String stepName, String screenshot) throws IOException {
+        String screenshotResource = "/screenshots/" + screenshot;
+        URL sourcePath = getClass().getResource(screenshotResource);
+        File sourceFile = new File(sourcePath.getPath());
+        FileUtils.copyFileToDirectory(sourceFile, outputDirectory);
+
+        ConcreteTestStep step = TestStepFactory.successfulTestStepCalled(stepName);
+        step.setScreenshot(new File(outputDirectory, screenshot));
+        testOutcome.recordStep(step);
+    }
+
+    @Test
+    public void screenshot_html_should_mention_the_step_name()  throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        File screenshot = temporaryDirectory.newFile("step_1.png");
+        step1.setScreenshot(screenshot);
+        testOutcome.recordStep(step1);
+
+        reporter.generateReportFor(testOutcome);
+
+        File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_screenshots.html");
+        String reportContents = FileUtils.readFileToString(screenshotReport);
+        assertThat(reportContents, containsString("step 1"));
+
+    }
+
+
+    @Test
+    public void report_html_should_contain_a_link_to_the_screenshots_report()  throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        File screenshot = temporaryDirectory.newFile("step_1.png");
+        step1.setScreenshot(screenshot);
+        testOutcome.recordStep(step1);
+
+        reporter.generateReportFor(testOutcome);
+
+        File testReport = new File(outputDirectory, "a_user_story_should_do_this.html");
+        String reportContents = FileUtils.readFileToString(testReport);
+        assertThat(reportContents, containsString("<a href=\"a_user_story_should_do_this_screenshots.html\">"));
+    }
+
 
     @Test
     public void should_have_a_qualified_filename_if_qualifier_present()  throws Exception {

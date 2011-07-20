@@ -26,26 +26,12 @@ public abstract class HtmlReporter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlReporter.class);
 
-    private String templatePath;
-    
     public HtmlReporter() {
         super();
     }
 
-    public Template getTemplate() {
-        return templateManager.getTemplateFrom(getTemplatePath());        
-    }
-
     protected TemplateManager getTemplateManager() {
         return templateManager;
-    }
-    
-    public String getTemplatePath() {
-        return templatePath;
-    }
-    
-    public void setTemplatePath(final String templatePath) {
-        this.templatePath = templatePath;
     }
 
     /**
@@ -86,23 +72,6 @@ public abstract class HtmlReporter {
     }
 
     /**
-     * Merge a velocity template using a provided velocity context.
-     */
-    protected String mergeVelocityTemplate(final Template template, final VelocityContext context) {
-        String htmlContents = "";
-        StringWriter sw = new StringWriter();
-        template.merge(context, sw);
-        htmlContents = sw.toString();
-        return htmlContents;
-    }
-    /**
-     * Merge a velocity template using a provided velocity context.
-     */
-    protected String mergeVelocityTemplate(final VelocityContext context) {
-        return mergeVelocityTemplate(getTemplate(), context);
-    }
-
-    /**
      * Write the actual HTML report to a file with the specified name in the output directory.
      */
     protected File writeReportToOutputDirectory(final String reportFilename, 
@@ -111,6 +80,25 @@ public abstract class HtmlReporter {
         FileUtils.writeStringToFile(report, htmlContents);
         LOGGER.debug("Writing HTML report to " + report.getAbsolutePath());
         return report;
+    }
+
+    protected Merger mergeTemplate(final String templateFile) {
+        return new Merger(templateFile);
+    }
+
+    protected class Merger {
+        final String templateFile;
+
+        public Merger(final String templateFile) {
+            this.templateFile = templateFile;
+        }
+
+        public String usingContext(final VelocityContext context) {
+            Template template = templateManager.getTemplateFrom(templateFile);
+            StringWriter sw = new StringWriter();
+            template.merge(context, sw);
+            return sw.toString();
+        }
     }
 
 }

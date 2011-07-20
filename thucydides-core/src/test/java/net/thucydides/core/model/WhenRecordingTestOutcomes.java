@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static net.thucydides.core.matchers.ThucydidesMatchers.hasFilenames;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -128,6 +129,31 @@ public class WhenRecordingTestOutcomes {
         assertThat(testOutcome.isSuccess(), is(true));
     }
  
+    @Test
+    public void should_list_screenshots_in_steps() {
+        testOutcome.recordStep(successfulTestStepCalled("step_1"));
+        testOutcome.recordStep(successfulTestStepCalled("step_2"));
+        testOutcome.recordStep(successfulTestStepCalled("step_3"));
+
+        assertThat(testOutcome.getScreenshots(), hasFilenames("step_1.png", "step_2.png", "step_3.png"));
+    }
+
+    @Test
+    public void should_list_screenshots_in_nested_steps() {
+        testOutcome.recordStep(successfulTestStepCalled("step_0"));
+        testOutcome.startGroup("A group");
+        testOutcome.recordStep(successfulTestStepCalled("step_1"));
+        testOutcome.recordStep(successfulTestStepCalled("step_2"));
+        testOutcome.recordStep(successfulTestStepCalled("step_3"));
+        testOutcome.startGroup("Another group");
+        testOutcome.recordStep(successfulTestStepCalled("step_4"));
+        testOutcome.recordStep(successfulTestStepCalled("step_5"));
+        testOutcome.endGroup();
+        testOutcome.endGroup();
+
+        assertThat(testOutcome.getScreenshots(), hasFilenames("step_1.png","step_2.png","step_3.png","step_4.png","step_5.png"));
+    }
+
     @Test
     public void the_acceptance_test_case_is_a_failure_if_one_test_has_failed() {
 
@@ -525,6 +551,16 @@ public class WhenRecordingTestOutcomes {
 
         assertThat(testOutcome.getUserStory().getName(), is("My user story"));
     }
+
+    @Test
+    public void an_acceptance_test_title_is_the_title_of_the_user_story() {
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyApp.MyUserStory.class);
+        TestOutcome testOutcome = TestOutcome.forTestInStory("some_test", story);
+
+        assertThat(testOutcome.getStoryTitle(), is("My user story"));
+    }
+
+
     
     @Test
     public void an_acceptance_test_records_the_original_story_class() {
@@ -573,6 +609,13 @@ public class WhenRecordingTestOutcomes {
         testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
 
         assertThat(testOutcome.getReportName(), is("a_user_story_should_do_that"));
+    }
+
+    @Test
+    public void there_should_be_one_screenshots_report_per_story_report() {
+        testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
+
+        assertThat(testOutcome.getScreenshotReportName(), is("a_user_story_should_do_that_screenshots"));
     }
 
     @Test

@@ -1,5 +1,7 @@
 package net.thucydides.core.model;
 
+import java.io.File;
+
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -34,6 +36,8 @@ public class TestStepFactory {
     }
     public static TestStep createNewTestStep(String description, TestResult result) {
         ConcreteTestStep step = new ConcreteTestStep(description);
+        step.setScreenshot(new File(description + ".png"));
+        step.setScreenshotPath(description + ".png");
         step.setResult(result);
         step.setDuration(100);
         return step;
