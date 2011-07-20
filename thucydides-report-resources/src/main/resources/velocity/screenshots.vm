@@ -109,8 +109,6 @@
     <div id="beforetable"></div>
     <div id="contenttilttle">
 
-     <div style="height:40px;">&nbsp;</div>
-
 	 <div class="slider-wrapper theme-default">
 		<div id="slider">
             #foreach($screenshot in $screenshots)

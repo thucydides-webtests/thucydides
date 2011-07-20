@@ -14,6 +14,7 @@ Author URI: http://dev7studios.com
     -webkit-box-shadow: 0px 1px 5px 0px #4a4a4a;
     -moz-box-shadow: 0px 1px 5px 0px #4a4a4a;
     box-shadow: 0px 1px 5px 0px #4a4a4a;
+    top: 65px;
 }
 .theme-default .nivoSlider img {
 	position:absolute;
@@ -29,8 +30,8 @@ Author URI: http://dev7studios.com
 .theme-default .nivo-controlNav {
 	position:absolute;
 	left:50%;
-	top:-50px;
-    margin-left:-40px; /* Tweak this to center bullets */
+	top:-70px;
+    margin-left:-490px; /* Tweak this to center bullets */
 }
 .theme-default .nivo-controlNav a {
 	display:block;
@@ -57,11 +58,11 @@ Author URI: http://dev7studios.com
 .theme-default a.nivo-nextNav {
     background-position:100% 50%;
 	right:-25px;
-    top: 0px;
+    top: 20px;
 }
 .theme-default a.nivo-prevNav {
 	left:-25px;
-    top: 0px;
+    top: 20px;
 }
 
 .theme-default .nivo-caption {
