@@ -110,7 +110,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -126,7 +126,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCaseWithoutAStory.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -140,7 +140,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyStory.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -155,7 +155,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -178,7 +178,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCaseForAFeature.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -193,7 +193,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCaseForAFeature.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -208,7 +208,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
@@ -279,7 +279,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -296,7 +296,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
         steps.step_one();
         steps.step_two();
@@ -312,7 +312,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCaseWithoutAStory.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -340,7 +340,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -357,7 +357,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.failingStep();
 
@@ -373,7 +373,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.failingStep();
 
@@ -391,7 +391,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.ignoredStep();
 
@@ -407,7 +407,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.pendingStep();
 
@@ -423,7 +423,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("pending group");
         stepListener.updateCurrentStepStatus(TestResult.PENDING);
@@ -441,7 +441,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("ignored group");
         stepListener.stepIgnored(ExecutedStepDescription.withTitle("Ignore this step"));
@@ -458,7 +458,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("successful group");
         stepListener.stepSucceeded();
@@ -475,7 +475,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.failingStep();
         steps.step_two();
@@ -492,7 +492,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
+        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.getStepLibraryFor(NestedScenarioSteps.class);
         steps.step1();
         steps.nestedFailingStep();
         steps.step2();
@@ -509,7 +509,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.ignoredStep();
         steps.step_two();
@@ -526,7 +526,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -544,7 +544,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
+        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.getStepLibraryFor(NestedScenarioSteps.class);
         steps.step1();
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
@@ -561,7 +561,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
+        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.getStepLibraryFor(NestedScenarioSteps.class);
         steps.step1();
         steps.step2();
 
@@ -590,7 +590,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
+        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.getStepLibraryFor(NestedScenarioSteps.class);
         steps.step1();
         steps.step_with_nested_failure();
 
@@ -620,7 +620,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("Main group");
         steps.step_one();
@@ -662,7 +662,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
         System.setProperty(ThucydidesSystemProperty.STEP_DELAY.getPropertyName(), "100");
 
@@ -702,7 +702,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
         ExecutedStepDescription group = ExecutedStepDescription.withTitle("Main group");
         group.setAGroup(true);
@@ -727,7 +727,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("Main group");
         stepListener.stepGroupFinished(TestResult.SUCCESS);
@@ -744,7 +744,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -761,7 +761,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
         stepListener.stepGroupStarted("New group");
         stepListener.updateCurrentStepStatus(TestResult.PENDING);
@@ -779,7 +779,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
+        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.getStepLibraryFor(NestedScenarioSteps.class);
         steps.step1();
         steps.step2();
 
@@ -833,7 +833,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -867,7 +867,7 @@ public class WhenRecordingStepExecutionResults {
 
         System.setProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "true");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
 
@@ -883,7 +883,7 @@ public class WhenRecordingStepExecutionResults {
 
         System.setProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "true");
 
-        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.newSteps(FlatScenarioSteps.class);
+        FlatScenarioSteps steps = (FlatScenarioSteps) stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.step_two();
         steps.failingStep();
@@ -898,7 +898,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener.testRunStartedFor(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.newSteps(NestedScenarioSteps.class);
+        NestedScenarioSteps steps = (NestedScenarioSteps) stepFactory.getStepLibraryFor(NestedScenarioSteps.class);
         steps.step1();
         steps.step2();
 

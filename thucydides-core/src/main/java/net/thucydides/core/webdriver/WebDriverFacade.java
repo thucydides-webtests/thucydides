@@ -79,7 +79,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
         try {
             newDriver = driverClass.newInstance();
         } catch (Exception e) {
-            throw new UnsupportedDriverException("Could not instantiate " + driverClass);
+            throw new UnsupportedDriverException("Could not instantiate " + driverClass, e);
         }
         return newDriver;
     }

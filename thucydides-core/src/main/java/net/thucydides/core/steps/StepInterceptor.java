@@ -51,9 +51,9 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             return null;
         }
 
-        Object result = null;
+        Object result;
         if (baseClassMethod(method)) {
-            return runNormalMethod(obj, method, args, proxy);
+            result = runNormalMethod(obj, method, args, proxy);
         } else if (isATestGroup(method)) {
             notifyGroupStarted(method, args);
             result = runTestGroupStep(obj, method, args, proxy);
@@ -221,7 +221,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private String testNameWithArguments(final Method method,
                                          final Object[] args, final boolean addMarkup) {
-        StringBuffer testName = new StringBuffer(method.getName());
+        StringBuilder testName = new StringBuilder(method.getName());
         testName.append(": ");
         if (addMarkup) {
             if (args.length == 1) {

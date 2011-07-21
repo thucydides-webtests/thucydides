@@ -80,6 +80,7 @@ public class WhenRunningStepsWithTestData {
 
         @Step
         public void step1() {
+            System.out.println("step1 with " + name);
             getDriver().get(name);
         }
 
@@ -185,7 +186,7 @@ public class WhenRunningStepsWithTestData {
     @Test
     public void should_invoke_step_method_for_each_row_in_the_csv_file() throws IOException {
 
-        TestSteps steps = (TestSteps) factory.newSteps(TestSteps.class);
+        TestSteps steps = (TestSteps) factory.getStepLibraryFor(TestSteps.class);
 
         withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).step1();
 
@@ -195,7 +196,7 @@ public class WhenRunningStepsWithTestData {
     @Test
     public void should_pass_test_data_into_invoked_methods() throws IOException {
 
-        TestSteps steps = (TestSteps) factory.newSteps(TestSteps.class);
+        TestSteps steps = (TestSteps) factory.getStepLibraryFor(TestSteps.class);
 
         withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).step1();
 
@@ -207,7 +208,7 @@ public class WhenRunningStepsWithTestData {
     @Test
     public void should_execute_all_tests_even_if_one_of_the_steps_fails() throws IOException {
 
-        TestSteps steps = (TestSteps) factory.newSteps(TestSteps.class);
+        TestSteps steps = (TestSteps) factory.getStepLibraryFor(TestSteps.class);
 
         withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).fail_sometimes();
 
@@ -219,7 +220,7 @@ public class WhenRunningStepsWithTestData {
     @Test
     public void should_notify_listeners_if_one_of_the_steps_fails() throws IOException {
 
-        TestSteps steps = (TestSteps) factory.newSteps(TestSteps.class);
+        TestSteps steps = (TestSteps) factory.getStepLibraryFor(TestSteps.class);
 
         withTestDataFrom("testdata/test.csv")
                 .usingFactory(factory)
@@ -232,7 +233,7 @@ public class WhenRunningStepsWithTestData {
     @Test
     public void should_be_able_to_define_a_default_factory_before_the_step() throws IOException {
 
-        TestSteps steps = (TestSteps) factory.newSteps(TestSteps.class);
+        TestSteps steps = (TestSteps) factory.getStepLibraryFor(TestSteps.class);
 
         setDefaultStepFactory(factory);
 
@@ -247,7 +248,7 @@ public class WhenRunningStepsWithTestData {
     @Test
     public void should_be_able_to_define_a_default_test_step_class_before_the_step() throws IOException {
 
-        TestSteps steps = (TestSteps) factory.newSteps(TestSteps.class);
+        TestSteps steps = (TestSteps) factory.getStepLibraryFor(TestSteps.class);
 
         withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).step1();
 
@@ -259,7 +260,7 @@ public class WhenRunningStepsWithTestData {
     @Test
     public void should_be_able_to_define_default_factory_and_test_step_class_before_the_step() throws IOException {
 
-        TestSteps steps = (TestSteps) factory.newSteps(TestSteps.class);
+        TestSteps steps = (TestSteps) factory.getStepLibraryFor(TestSteps.class);
 
         setDefaultStepFactory(factory);
 
@@ -273,7 +274,7 @@ public class WhenRunningStepsWithTestData {
     @Test
     public void should_be_able_to_use_test_data_with_semicolons() throws IOException {
 
-        TestSteps steps = (TestSteps) factory.newSteps(TestSteps.class);
+        TestSteps steps = (TestSteps) factory.getStepLibraryFor(TestSteps.class);
 
         setDefaultStepFactory(factory);
 
@@ -287,8 +288,8 @@ public class WhenRunningStepsWithTestData {
     @Test
     public void should_be_able_to_use_different_step_libraries_in_the_same_test() throws IOException {
 
-        TestSteps steps = (TestSteps) factory.newSteps(TestSteps.class);
-        DifferentTestSteps differentSteps = (DifferentTestSteps) factory.newSteps(DifferentTestSteps.class);
+        TestSteps steps = (TestSteps) factory.getStepLibraryFor(TestSteps.class);
+        DifferentTestSteps differentSteps = (DifferentTestSteps) factory.getStepLibraryFor(DifferentTestSteps.class);
 
         setDefaultStepFactory(factory);
 
@@ -303,7 +304,7 @@ public class WhenRunningStepsWithTestData {
 
     @Test
     public void should_be_able_to_use_a_step_library_with_public_fields_and_no_setters() throws IOException {
-        TestStepsWithNoSetters steps = (TestStepsWithNoSetters) factory.newSteps(TestStepsWithNoSetters.class);
+        TestStepsWithNoSetters steps = (TestStepsWithNoSetters) factory.getStepLibraryFor(TestStepsWithNoSetters.class);
 
         setDefaultStepFactory(factory);
 
@@ -317,7 +318,7 @@ public class WhenRunningStepsWithTestData {
     @Test(expected=FailedToInitializeTestData.class)
     public void should_throw_exception_if_no_fields_are_set() throws IOException {
         TestStepsWithNoSettersAndInaccessibleFields steps
-                = (TestStepsWithNoSettersAndInaccessibleFields) factory.newSteps(TestStepsWithNoSettersAndInaccessibleFields.class);
+                = (TestStepsWithNoSettersAndInaccessibleFields) factory.getStepLibraryFor(TestStepsWithNoSettersAndInaccessibleFields.class);
 
         setDefaultStepFactory(factory);
 

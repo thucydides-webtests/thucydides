@@ -83,6 +83,15 @@ public class StepsAnnotatedField {
         }
     }
 
+    public boolean isInstantiated(final Object testCase) {
+        try {
+            Object fieldValue = field.get(testCase);
+            return (fieldValue != null);
+        } catch (IllegalAccessException e) {
+            throw new InvalidStepsFieldException("Could not access or set @Steps field: " + field, e);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public Class<? extends ScenarioSteps> getFieldClass() {
         return (Class<? extends ScenarioSteps>) field.getType();

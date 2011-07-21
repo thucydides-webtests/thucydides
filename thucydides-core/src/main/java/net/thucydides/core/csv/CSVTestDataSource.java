@@ -122,7 +122,7 @@ public class CSVTestDataSource implements TestDataSource {
     private <T extends ScenarioSteps> T newInstanceFrom(final Class<T> clazz,
                                                         final StepFactory factory,
                                                         final Map<String,String> rowData) {
-        T newObject = factory.newSteps(clazz);
+        T newObject = factory.getUniqueStepLibraryFor(clazz);
         assignPropertiesFromTestData(clazz, rowData, newObject);
         return newObject;
     }
