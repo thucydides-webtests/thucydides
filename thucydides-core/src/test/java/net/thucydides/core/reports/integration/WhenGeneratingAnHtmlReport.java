@@ -146,10 +146,9 @@ public class WhenGeneratingAnHtmlReport {
 
         File screenshotReport = new File(outputDirectory, "a_user_story_search_for_cats_screenshots.html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
-        assertThat(reportContents, allOf(containsString("src=\"google_page_1.png\""),
-                containsString("src=\"google_page_2.png\""),
-                containsString("src=\"google_page_3.png\"")));
-        System.out.println(outputDirectory);
+        assertThat(reportContents, allOf(containsString("src=\"scaled_google_page_1.png\""),
+                                        containsString("src=\"scaled_google_page_2.png\""),
+                                        containsString("src=\"scaled_google_page_3.png\"")));
     }
 
     @Test

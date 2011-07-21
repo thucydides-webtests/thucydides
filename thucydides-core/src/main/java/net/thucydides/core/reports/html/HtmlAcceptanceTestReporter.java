@@ -1,15 +1,23 @@
 package net.thucydides.core.reports.html;
 
 import com.google.common.base.Preconditions;
+import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import org.apache.velocity.VelocityContext;
 
+import javax.swing.text.IconView;
+
+import static ch.lambdaj.Lambda.max;
+
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.on;
 import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 
 /**
@@ -58,7 +66,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         Preconditions.checkNotNull(getOutputDirectory());
 
-        List<Screenshot> screenshots = testOutcome.getScreenshots();
+        List<Screenshot> screenshots = expandScreenshots(testOutcome.getScreenshots());
 
         String screenshotReport = withoutType(testOutcome.getReportName() + "_screenshots") + ".html";
 
@@ -68,6 +76,64 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_SCREENSHOT).usingContext(context);
         writeReportToOutputDirectory(screenshotReport, htmlContents);
 
+    }
+
+    private List<Screenshot> expandScreenshots(List<Screenshot> screenshots) throws IOException {
+        List<Screenshot> expandScreenshotList = new ArrayList<Screenshot>();
+
+        int maxWidth = maxScreenshotWidthIn(screenshots);
+        int maxHeight = maxScreenshotHeightIn(screenshots);
+
+        for(Screenshot screenshot : screenshots) {
+            File screenshotFile = new File(getOutputDirectory(), screenshot.getFilename());
+            if (screenshotFile.exists()) {
+                ResizableImage scaledImage = ResizableImage.loadFrom(screenshotFile).rescaleCanvas(maxWidth, maxHeight);
+                File scaledFile = new File(getOutputDirectory(), "scaled_" + screenshot.getFilename());
+                scaledImage.saveTo(scaledFile);
+                expandScreenshotList.add(new Screenshot(scaledFile.getName(),screenshot.getDescription()));
+            } else {
+                expandScreenshotList.add(screenshot);
+            }
+        }
+        return expandScreenshotList;
+    }
+
+    private int maxScreenshotWidthIn(List<Screenshot> screenshots) throws IOException {
+        int maxWidth = 0;
+        for (Screenshot screenshot : screenshots) {
+            File screenshotFile = new File(getOutputDirectory(),screenshot.getFilename());
+            if (screenshotFile.exists()) {
+                maxWidth = maxWidthOf(maxWidth, screenshotFile);
+            }
+        }
+        return maxWidth;
+    }
+
+    private int maxWidthOf(int maxWidth, File screenshotFile) throws IOException {
+        int width = ResizableImage.loadFrom(screenshotFile).getWitdh();
+        if (width > maxWidth) {
+            maxWidth = width;
+        }
+        return maxWidth;
+    }
+
+    private int maxScreenshotHeightIn(List<Screenshot> screenshots) throws IOException {
+        int maxHeight = 0;
+        for (Screenshot screenshot : screenshots) {
+            File screenshotFile = new File(getOutputDirectory(),screenshot.getFilename());
+            if (screenshotFile.exists()) {
+                maxHeight = maxHeightOf(maxHeight, screenshotFile);
+            }
+        }
+        return maxHeight;
+    }
+
+    private int maxHeightOf(int maxHeight, File screenshotFile) throws IOException {
+        int height = ResizableImage.loadFrom(screenshotFile).getHeight();
+        if (height > maxHeight) {
+            maxHeight = height;
+        }
+        return maxHeight;
     }
 
     private String withoutType(final String screenshot) {
