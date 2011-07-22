@@ -35,6 +35,8 @@ public class Configuration {
      */
     public static final String OUTPUT_DIRECTORY_PROPERTY = ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName();
 
+    public static final String UNTRUSTED_CERTIFICATES = ThucydidesSystemProperty.UNTRUSTED_CERTIFICATES.getPropertyName();
+
     /**
      * By default, reports will go here.
      */

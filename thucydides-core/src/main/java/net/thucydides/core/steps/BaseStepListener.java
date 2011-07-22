@@ -267,6 +267,7 @@ public class BaseStepListener implements StepListener {
     private boolean failureOccursBeforeAnyStepsHaveBeenExecuted(final TestResult result) {
         return ((result == FAILURE) && (getCurrentStep() == null) && (getCurrentTestOutcome().getStepCount() == 0));
     }
+
     private TestStep getCurrentStep() {
         if (currentTestStep != null) {
             return currentTestStep;

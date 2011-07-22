@@ -1,12 +1,16 @@
 package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.annotations.DefaultUrl;
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.pages.PageObject;
+import net.thucydides.core.webdriver.Configuration;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.MethodRule;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
@@ -49,6 +53,9 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
             super(driver, 1);
         }
     }
+
+    @Rule
+    public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
 
     WebDriver driver;
     static WebDriver firefoxDriver;
@@ -236,6 +243,17 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     @Test
     public void the_page_can_be_read_from_a_file_on_the_classpath() {
+
+        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver, 1);
+
+        assertThat(indexPage.getTitle(), is("Thucydides Test Site"));
+    }
+
+    @Test
+    public void the_page_can_be_opened_using_an_unsecure_certificates_compatible_profile() {
+
+        System.setProperty(Configuration.WEBDRIVER_DRIVER, "firefox");
+        System.setProperty(Configuration.UNTRUSTED_CERTIFICATES, "true");
 
         IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver, 1);
 

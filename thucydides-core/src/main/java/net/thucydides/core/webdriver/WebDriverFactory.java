@@ -1,14 +1,18 @@
 package net.thucydides.core.webdriver;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.pages.WebElementFacade;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocator;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
@@ -26,6 +30,12 @@ import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
  */
 public class WebDriverFactory {
 
+    private FirefoxFactory firefoxFactory = new FirefoxFactory();
+
+
+    protected FirefoxFactory getFirefoxFactory() {
+        return firefoxFactory;
+    }
     /***
      * Create a new WebDriver instance of a given type.
      */
@@ -43,10 +53,22 @@ public class WebDriverFactory {
 
     protected WebDriver newWebdriverInstance(Class<? extends WebDriver> webdriverClass) {
         try {
-            return webdriverClass.newInstance();
+            if (acceptUntrustedCertificatesForFirefox()) {
+                return untrustedCertificateProfileDriver();
+            }else {
+                return webdriverClass.newInstance();
+            }
         } catch (Exception cause) {
             throw new UnsupportedDriverException("Could not instantiate " + webdriverClass, cause);
         }
+    }
+
+    private WebDriver untrustedCertificateProfileDriver() {
+        return getFirefoxFactory().newUntrustedCertificateCompatibleDriver();
+    }
+
+    private boolean acceptUntrustedCertificatesForFirefox() {
+        return (ThucydidesSystemProperty.getBooleanValue(ThucydidesSystemProperty.UNTRUSTED_CERTIFICATES));
     }
 
 
