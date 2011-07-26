@@ -34,7 +34,6 @@ public class WhenResizingAScreenshot {
     public void should_be_able_to_determine_the_maximum_dimensions_from_a_set_of_screenshots() throws IOException {
 
         File screenshotFile = screenshotFileFrom("/screenshots/google_page_1.png");
-        Screenshot screenshot1 = new Screenshot(screenshotFile.getPath(), "");
 
         int expectedWidth = 1200;
         int expectedHeight = 788;

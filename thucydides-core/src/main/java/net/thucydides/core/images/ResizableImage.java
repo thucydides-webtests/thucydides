@@ -4,8 +4,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 
@@ -27,10 +25,6 @@ public class ResizableImage {
 
     public int getHeight() {
         return image.getHeight();
-    }
-
-    public BufferedImage getImage() {
-        return image;
     }
 
     public ResizableImage rescaleCanvas(final int width, final int height) {
