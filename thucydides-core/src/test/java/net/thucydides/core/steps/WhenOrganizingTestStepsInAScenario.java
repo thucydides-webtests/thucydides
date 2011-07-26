@@ -29,7 +29,6 @@ public class WhenOrganizingTestStepsInAScenario {
         
         @Step
         public void step3(){}
-        
     }
     
     @Mock
@@ -49,6 +48,13 @@ public class WhenOrganizingTestStepsInAScenario {
         
         SimpleTestScenarioSteps steps = new SimpleTestScenarioSteps(pages);        
         assertThat(steps.getPages(), is(pages));
+    }
+
+    @Test
+    public void the_pages_method_can_also_be_used_to_obtain_the_Pages_library() {
+
+        SimpleTestScenarioSteps steps = new SimpleTestScenarioSteps(pages);
+        assertThat(steps.pages(), is(pages));
     }
 
     @Test

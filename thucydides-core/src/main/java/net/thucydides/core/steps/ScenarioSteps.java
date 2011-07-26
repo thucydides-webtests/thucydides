@@ -34,6 +34,11 @@ public class ScenarioSteps implements Serializable {
         return pages;
     }
 
+    public Pages pages() {
+        return getPages();
+    }
+
+
     /**
      * Pause the test to wait for the page to display completely.
      * This is not normally recommended practice, but is useful from time to time.
