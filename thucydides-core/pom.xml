@@ -10,7 +10,7 @@
     <artifactId>thucydides-core</artifactId>
     <name>thucydides-core</name>
     <properties>
-        <selenium.version>2.1.0</selenium.version>
+        <selenium.version>2.2.0</selenium.version>
         <root.package>net.thucydides.core</root.package>
     </properties>
     <dependencies>
