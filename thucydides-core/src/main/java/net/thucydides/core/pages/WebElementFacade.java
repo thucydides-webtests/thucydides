@@ -47,10 +47,20 @@ public class WebElementFacade {
      * Is this web element present and visible on the screen
      * This method will not throw an exception if the element is not on the screen at all.
      * The method will fail immediately if the element is not visible on the screen.
+     * There is a little black magic going on here - the web element class will detect if it is being called
+     * by a method called "isCurrently*" and, if so, fail immediately without waiting as it would normally do.
      */
     public boolean isCurrentlyVisible() {
         try {
             return webElement.isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public boolean isCurrentlyEnabled() {
+        try {
+            return webElement.isEnabled();
         } catch (NoSuchElementException e) {
             return false;
         }
@@ -262,6 +272,42 @@ public class WebElementFacade {
         if (isCurrentlyVisible()) {
             throw new ElementNotVisibleException(
                     "Expected hidden element was displayed");
+        }
+    }
+
+    public String getValue() {
+        return webElement.getAttribute("value");
+    }
+
+    public String getText() {
+        return webElement.getText();
+    }
+
+    public void waitUntilEnabled() {
+        long end = System.currentTimeMillis() + timeoutInMilliseconds;
+        while (System.currentTimeMillis() < end) {
+            if (isCurrentlyEnabled()) {
+                break;
+            }
+            clock.pauseFor(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (!isCurrentlyEnabled()) {
+            throw new ElementNotVisibleException(
+                    "Expected element was not enabled");
+        }
+    }
+
+    public void waitUntilDisabled() {
+        long end = System.currentTimeMillis() + timeoutInMilliseconds;
+        while (System.currentTimeMillis() < end) {
+            if (!isCurrentlyEnabled()) {
+                break;
+            }
+            clock.pauseFor(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
+        }
+        if (isCurrentlyEnabled()) {
+            throw new ElementNotVisibleException(
+                    "Expected disabled element was enabled");
         }
     }
 }

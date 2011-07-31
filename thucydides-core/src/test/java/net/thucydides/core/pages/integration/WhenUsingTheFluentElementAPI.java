@@ -63,6 +63,12 @@ public class WhenUsingTheFluentElementAPI {
 
         protected WebElement doesNotExist;
 
+        protected WebElement textField;
+
+        protected WebElement buttonThatIsInitiallyDisabled;
+
+        protected WebElement buttonThatIsInitiallyEnabled;
+
         @FindBy(id="color")
         protected WebElement colors;
 
@@ -290,6 +296,17 @@ public class WhenUsingTheFluentElementAPI {
         assertThat(result, is("Thucydides Test Site"));
     }
 
+
+    @Test
+    public void should_obtain_text_value_from_input() {
+        assertThat(page.element(page.firstName).getValue(), is("<enter first name>"));
+    }
+
+    @Test
+    public void should_obtain_text_value_from_text_area() {
+        assertThat(page.element(page.textField).getText(), is("text value"));
+    }
+
     @Test
     public void should_execute_javascript_within_browser() {
         page.open();
@@ -354,6 +371,30 @@ public class WhenUsingTheFluentElementAPI {
         assertThat(page.element(page.city).isCurrentlyVisible(), is(true));
     }
 
+    @Test
+    public void should_wait_for_field_to_be_enabled() throws InterruptedException {
+        StaticSitePage page = new StaticSitePage(driver, 1000);
+        page.open();
+
+        assertThat(page.element(page.buttonThatIsInitiallyDisabled).isCurrentlyEnabled(), is(false));
+
+        page.element(page.buttonThatIsInitiallyDisabled).waitUntilEnabled();
+
+        assertThat(page.element(page.buttonThatIsInitiallyDisabled).isCurrentlyEnabled(), is(true));
+    }
+
+    @Test
+    public void should_wait_for_field_to_be_disabled() throws InterruptedException {
+        StaticSitePage page = new StaticSitePage(driver, 1000);
+        page.open();
+
+        assertThat(page.element(page.buttonThatIsInitiallyEnabled).isCurrentlyEnabled(), is(true));
+
+        page.element(page.buttonThatIsInitiallyEnabled).waitUntilDisabled();
+
+        assertThat(page.element(page.buttonThatIsInitiallyEnabled).isCurrentlyEnabled(), is(false));
+    }
+
     @Test(expected = ElementNotVisibleException.class)
     public void should_throw_expection_if_waiting_for_field_that_does_not_appear() {
         page.setWaitForTimeout(100);
@@ -366,7 +407,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_wait_for_field_to_disappear() {
-        StaticSitePage page = new StaticSitePage(driver, 1000);
+        StaticSitePage page = new StaticSitePage(driver, 2000);
         page.open();
 
         assertThat(page.element(page.country).isCurrentlyVisible(), is(true));
