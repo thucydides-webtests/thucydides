@@ -30,7 +30,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final String STORIES_TEMPLATE_PATH = "velocity/stories.vm";
     private static final String FEATURES_TEMPLATE_PATH = "velocity/features.vm";
     private static final String COVERAGE_DATA_TEMPLATE_PATH = "velocity/coverage.vm";
-    private static final String HOME_TEMPLATE_PATH = "velocity/home.vm";
+    private static final String HOME_TEMPLATE_PATH = "velocity/index.vm";
     private FeatureLoader featureLoader;
     private UserStoryLoader storyLoader;
 
