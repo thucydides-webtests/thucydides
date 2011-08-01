@@ -1,6 +1,7 @@
 package net.thucydides.junit.runners;
 
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
@@ -11,7 +12,6 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Concurrent;
-import net.thucydides.junit.annotations.Managed;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.samples.SampleCSVDataDrivenScenario;
 import net.thucydides.samples.SampleDataDrivenScenario;

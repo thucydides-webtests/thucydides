@@ -1,12 +1,13 @@
-package net.thucydides.junit.internals;
+package net.thucydides.core.annotations;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import net.thucydides.core.annotations.AnnotatedFields;
-
-import net.thucydides.core.annotations.InvalidManagedWebDriverFieldException;
-import net.thucydides.core.annotations.Managed;
+import com.sun.xml.internal.ws.model.FieldSignature;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -28,7 +29,7 @@ public class ManagedWebDriverAnnotatedField {
     public static ManagedWebDriverAnnotatedField findFirstAnnotatedField(final Class<?> testClass) {
 
 
-        for (Field field : AnnotatedFields.of(testClass).allFields()) {
+        for (Field field :  AnnotatedFields.of(testClass).allFields()) {
             if (isFieldAnnotated(field)) {
                 return new ManagedWebDriverAnnotatedField(field);
             }
