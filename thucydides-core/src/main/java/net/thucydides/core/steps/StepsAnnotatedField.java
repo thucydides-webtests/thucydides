@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.annotations.AnnotatedFields;
 import net.thucydides.core.annotations.InvalidStepsFieldException;
 import net.thucydides.core.annotations.Steps;
 
@@ -38,7 +39,7 @@ public class StepsAnnotatedField {
     public static List<StepsAnnotatedField> findOptionalAnnotatedFields(final Class<?> clazz) {
 
         List<StepsAnnotatedField> annotatedFields = new ArrayList<StepsAnnotatedField>();
-        for (Field field : clazz.getDeclaredFields()) {
+        for (Field field : AnnotatedFields.of(clazz).allFields()) {
             if (fieldIsAnnotated(field)) {
                 annotatedFields.add( new StepsAnnotatedField(field));
             }
@@ -77,6 +78,7 @@ public class StepsAnnotatedField {
 
     public void setValue(final Object testCase, final ScenarioSteps steps) {
         try {
+            field.setAccessible(true);
             field.set(testCase, steps);
         } catch (IllegalAccessException e) {
             throw new InvalidStepsFieldException("Could not access or set @Steps field: " + field, e);
@@ -85,6 +87,7 @@ public class StepsAnnotatedField {
 
     public boolean isInstantiated(final Object testCase) {
         try {
+            field.setAccessible(true);
             Object fieldValue = field.get(testCase);
             return (fieldValue != null);
         } catch (IllegalAccessException e) {

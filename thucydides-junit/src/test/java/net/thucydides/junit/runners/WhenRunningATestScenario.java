@@ -16,6 +16,8 @@ import net.thucydides.samples.AnnotatedSingleTestScenario;
 import net.thucydides.samples.SampleFailingScenarioWithEmptyTests;
 import net.thucydides.samples.SampleNoSuchElementExceptionScenario;
 import net.thucydides.samples.SamplePassingScenario;
+import net.thucydides.samples.SamplePassingScenarioWithFieldsInParent;
+import net.thucydides.samples.SamplePassingScenarioWithPrivateFields;
 import net.thucydides.samples.SamplePassingScenarioWithEmptyTests;
 import net.thucydides.samples.SamplePassingScenarioWithIgnoredTests;
 import net.thucydides.samples.SamplePassingScenarioWithPendingTests;
@@ -123,6 +125,67 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         assertThat(testOutcome3.getTestSteps().size(), is(2));
     }
 
+    @Test
+    public void private_annotated_fields_should_be_allowed() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioWithPrivateFields.class);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(3));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+        TestOutcome testOutcome2 = executedSteps.get(1);
+        TestOutcome testOutcome3 = executedSteps.get(2);
+
+        Story userStory = testOutcome1.getUserStory();
+
+        assertThat(userStory.getName(), is("Sample passing scenario with private fields"));
+
+        assertThat(testOutcome1.getTitle(), is("Happy day scenario"));
+        assertThat(testOutcome1.getMethodName(), is("happy_day_scenario"));
+        assertThat(testOutcome1.getTestSteps().size(), is(4));
+
+        assertThat(testOutcome1.getUserStory(), is(userStory));
+        assertThat(testOutcome2.getTitle(), is("Edge case 1"));
+        assertThat(testOutcome2.getMethodName(), is("edge_case_1"));
+        assertThat(testOutcome2.getTestSteps().size(), is(3));
+
+        assertThat(testOutcome3.getUserStory(), is(userStory));
+        assertThat(testOutcome3.getTitle(), is("Edge case 2"));
+        assertThat(testOutcome3.getMethodName(), is("edge_case_2"));
+        assertThat(testOutcome3.getTestSteps().size(), is(2));
+    }
+
+    @Test
+    public void annotated_fields_should_be_allowed_in_parent_classes() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioWithFieldsInParent.class);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(3));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+        TestOutcome testOutcome2 = executedSteps.get(1);
+        TestOutcome testOutcome3 = executedSteps.get(2);
+
+        Story userStory = testOutcome1.getUserStory();
+
+        assertThat(userStory.getName(), is("Sample passing scenario with fields in parent"));
+
+        assertThat(testOutcome1.getTitle(), is("Happy day scenario"));
+        assertThat(testOutcome1.getMethodName(), is("happy_day_scenario"));
+        assertThat(testOutcome1.getTestSteps().size(), is(4));
+
+        assertThat(testOutcome1.getUserStory(), is(userStory));
+        assertThat(testOutcome2.getTitle(), is("Edge case 1"));
+        assertThat(testOutcome2.getMethodName(), is("edge_case_1"));
+        assertThat(testOutcome2.getTestSteps().size(), is(3));
+
+        assertThat(testOutcome3.getUserStory(), is(userStory));
+        assertThat(testOutcome3.getTitle(), is("Edge case 2"));
+        assertThat(testOutcome3.getMethodName(), is("edge_case_2"));
+        assertThat(testOutcome3.getTestSteps().size(), is(2));
+    }
     @Test
     public void tests_marked_as_pending_should_be_skipped() throws InitializationError {
 

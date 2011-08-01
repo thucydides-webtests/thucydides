@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.thucydides.core.annotations.AnnotatedFields;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepProvider;
 
@@ -83,8 +84,7 @@ public abstract class StepIndex {
     }
 
     private Field getStepProviderField() {
-        Field[] fields = this.getClass().getDeclaredFields();
-        for (Field field : fields) {
+        for (Field field : AnnotatedFields.of(this.getClass()).allFields()) {
             if (field.isAnnotationPresent(StepProvider.class)) {
                 return field;
             }

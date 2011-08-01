@@ -3,6 +3,7 @@ package net.thucydides.junit.internals;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
+import net.thucydides.core.annotations.AnnotatedFields;
 import net.thucydides.junit.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.junit.annotations.Managed;
 
@@ -26,7 +27,8 @@ public class ManagedWebDriverAnnotatedField {
      */
     public static ManagedWebDriverAnnotatedField findFirstAnnotatedField(final Class<?> testClass) {
 
-        for (Field field : testClass.getDeclaredFields()) {
+
+        for (Field field : AnnotatedFields.of(testClass).allFields()) {
             if (isFieldAnnotated(field)) {
                 return new ManagedWebDriverAnnotatedField(field);
             }
@@ -60,6 +62,7 @@ public class ManagedWebDriverAnnotatedField {
 
     public void setValue(final Object testCase, final WebDriver manageDriver) {
         try {
+            field.setAccessible(true);
             field.set(testCase, manageDriver);
         } catch (IllegalAccessException e) {
             throw new InvalidManagedWebDriverFieldException("Could not access or set web driver field: " 
