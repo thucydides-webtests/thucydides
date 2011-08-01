@@ -77,13 +77,13 @@
         <div id="menu">
             <table border="0">
                 <tr>
-                    <td><a href="home.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>
+                    <td><a href="index.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>
                     <td><a href="features.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a></td>
                     <td><a href="stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a></td>
                 </tr>
             </table>
         </div>
-        <div id="logo"><a href="Home.html"><img src="images/logo.jpg" width="265" height="96" border="0"/></a></div>
+        <div id="logo"><a href="index.html"><img src="images/logo.jpg" width="265" height="96" border="0"/></a></div>
     </div>
 </div>
 

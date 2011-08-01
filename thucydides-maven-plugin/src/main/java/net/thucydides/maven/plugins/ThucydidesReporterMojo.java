@@ -31,6 +31,13 @@ public class ThucydidesReporterMojo extends AbstractMojo {
      */
     private File sourceDirectory;
 
+    /**
+     * URL of the issue tracking system to be used to generate links for issue numbers.
+     *
+     * @parameter
+     */
+    private String issueTrackerUrl;
+
     private HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter();
 
     protected void setOutputDirectory(final File outputDirectory) {
@@ -59,7 +66,8 @@ public class ThucydidesReporterMojo extends AbstractMojo {
     }
 
     private void generateHtmlStoryReports() throws IOException {
-        reporter.setOutputDirectory(outputDirectory);        
+        reporter.setOutputDirectory(outputDirectory);
+        reporter.setIssueTrackerUrl(issueTrackerUrl);
         reporter.generateReportsForStoriesFrom(sourceDirectory);
     }
 

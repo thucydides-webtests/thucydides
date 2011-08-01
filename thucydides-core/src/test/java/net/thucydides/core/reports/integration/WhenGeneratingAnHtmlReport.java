@@ -29,41 +29,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-public class WhenGeneratingAnHtmlReport {
-
-    @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
-
-    private AcceptanceTestReporter reporter;
-
-    private File outputDirectory;
-
-    class AUserStory {};
-
-    @Story(AUserStory.class)
-    class SomeTestScenario {
-        public void a_simple_test_case() {};
-        public void should_do_this() {};
-        public void should_do_that() {};
-    }
-
-    @Feature
-    class AFeature {
-        class AUserStoryInAFeature {};
-    }
-
-    @Story(AFeature.AUserStoryInAFeature.class)
-    class SomeTestScenarioInAFeature {
-        public void should_do_this() {};
-        public void should_do_that() {};
-    }
-
-    @Before
-    public void setupTestReporter() {
-        reporter = new HtmlAcceptanceTestReporter();
-        outputDirectory = temporaryDirectory.newFolder("target/thucydides");
-        reporter.setOutputDirectory(outputDirectory);
-    }
+public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
     @Test
     public void should_generate_an_HTML_report_for_an_acceptance_test_run() throws Exception {
@@ -196,17 +162,6 @@ public class WhenGeneratingAnHtmlReport {
         File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_screenshots.html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
         assertThat(reportContents, containsString("<a href=\"a_user_story_should_do_this.html\""));
-    }
-
-    private void recordStepWithScreenshot(TestOutcome testOutcome, String stepName, String screenshot) throws IOException {
-        String screenshotResource = "/screenshots/" + screenshot;
-        URL sourcePath = getClass().getResource(screenshotResource);
-        File sourceFile = new File(sourcePath.getPath());
-        FileUtils.copyFileToDirectory(sourceFile, outputDirectory);
-
-        ConcreteTestStep step = TestStepFactory.successfulTestStepCalled(stepName);
-        step.setScreenshot(new File(outputDirectory, screenshot));
-        testOutcome.recordStep(step);
     }
 
     @Test
