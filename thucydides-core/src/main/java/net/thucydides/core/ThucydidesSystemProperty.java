@@ -60,7 +60,14 @@ public enum ThucydidesSystemProperty {
     /**
      * Use the same browser for all tests (the "Highlander" rule)
      */
-    UNIQUE_BROWSER("thucydides.use.unique.browser");
+    UNIQUE_BROWSER("thucydides.use.unique.browser"),
+
+    /**
+     *  Base URL for the issue tracking system to be referred to in the reports.
+     *  If defined, any issues quoted in the form #1234 will be linked to the relevent
+     *  issue in the issue tracking system. Works with JIRA, Trac etc.
+     */
+    ISSUE_TRACKER_URL("thucydides.issue.tracker.url");
 
     private String propertyName;
 
@@ -85,4 +92,11 @@ public enum ThucydidesSystemProperty {
         return System.getProperty(property.getPropertyName(), defaultValue);
     }
 
+    public static String getValue(final ThucydidesSystemProperty property) {
+        return System.getProperty(property.getPropertyName());
+    }
+
+    public static void setValue(ThucydidesSystemProperty issueTrackerUrl, String value) {
+        System.setProperty(issueTrackerUrl.getPropertyName(), value);
+    }
 }

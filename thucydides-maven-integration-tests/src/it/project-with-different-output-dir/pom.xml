@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.thucydides.maven.plugins.samples</groupId>
-    <artifactId>simple-project</artifactId>
+    <artifactId>project-with-different-output-dir</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <name>Test Thucydides Reporter Mojo</name>

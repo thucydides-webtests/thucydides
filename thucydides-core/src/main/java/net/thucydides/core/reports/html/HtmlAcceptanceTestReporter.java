@@ -1,23 +1,20 @@
 package net.thucydides.core.reports.html;
 
 import com.google.common.base.Preconditions;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import org.apache.velocity.VelocityContext;
 
-import javax.swing.text.IconView;
-
 import static ch.lambdaj.Lambda.max;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ch.lambdaj.Lambda.on;
 import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 
 /**
@@ -51,7 +48,8 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         Preconditions.checkNotNull(getOutputDirectory());
 
         VelocityContext context = new VelocityContext();
-        context.put("testrun", testOutcome);
+        addTestOutcomeToContext(testOutcome, context);
+        addFormatterToContext(context);
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_REPORT).usingContext(context);
 
         copyResourcesToOutputDirectory();
@@ -60,6 +58,15 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         String reportFilename = reportFor(testOutcome);
         return writeReportToOutputDirectory(reportFilename, htmlContents);
+    }
+
+    private void addTestOutcomeToContext(TestOutcome testOutcome, VelocityContext context) {
+        context.put("testrun", testOutcome);
+    }
+
+    private void addFormatterToContext(VelocityContext context) {
+        Formatter formatter = new Formatter(ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL));
+        context.put("formatter", formatter);
     }
 
     private void generateScreenshotReportsFor(final TestOutcome testOutcome) throws IOException {

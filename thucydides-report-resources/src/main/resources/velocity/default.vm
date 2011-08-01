@@ -93,7 +93,7 @@
                 <tr>
                     <td width="25"><img class="story-outcome-icon" src="images/$outcome_icon" width="25" height="25"/>
                     </td>
-                    <td width="%"><span class="test-case-title"><span class="$outcome_text">$testrun.Title</span></span>
+                    <td width="%"><span class="test-case-title"><span class="$outcome_text">$formatter.addLinks( $testrun.Title )</span></span>
                     </td>
                     <td width="100"><span class="test-case-duration"><span class="greentext">$testrun.duration ms</span></span>
                     </td>

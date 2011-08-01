@@ -13,7 +13,7 @@ import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
 @UserStoryCode("US02")
-public class SampleTestScenarioWithGroups {
+public class SampleTestScenario {
     
     @Managed
     public WebDriver webdriver;
@@ -23,7 +23,7 @@ public class SampleTestScenarioWithGroups {
     
     @Steps
     public SampleScenarioSteps steps;
-        
+
     @Test
     public void happy_day_scenario() {
         steps.anotherGroupOfSteps();

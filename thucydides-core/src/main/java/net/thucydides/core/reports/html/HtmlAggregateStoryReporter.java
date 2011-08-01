@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.html;
 
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.UserStoriesResultSet;
@@ -33,6 +34,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final String HOME_TEMPLATE_PATH = "velocity/index.vm";
     private FeatureLoader featureLoader;
     private UserStoryLoader storyLoader;
+    private String issueTrackerUrl;
 
     public HtmlAggregateStoryReporter() {
         storyLoader = new UserStoryLoader();
@@ -50,12 +52,18 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         VelocityContext context = new VelocityContext();
         context.put("story", storyTestResults);
+        addFormatterToContext(context);
         String htmlContents = mergeTemplate(DEFAULT_USER_STORY_TEMPLATE).usingContext(context);
 
         copyResourcesToOutputDirectory();
 
         String reportFilename = storyTestResults.getReportName(HTML);
         return writeReportToOutputDirectory(reportFilename, htmlContents);
+    }
+
+    private void addFormatterToContext(VelocityContext context) {
+        Formatter formatter = new Formatter(ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL));
+        context.put("formatter", formatter);
     }
 
     public void generateReportsForStoriesFrom(final File sourceDirectory) throws IOException {
@@ -92,6 +100,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     private void generateFeatureReport(final List<FeatureResults> featureResults) throws IOException {
         VelocityContext context = new VelocityContext();
+        addFormatterToContext(context);
         context.put("features", featureResults);
         String htmlContents = mergeTemplate(FEATURES_TEMPLATE_PATH).usingContext(context);
         writeReportToOutputDirectory("features.html", htmlContents);
@@ -106,6 +115,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         context.put("stories", feature.getStoryResults());
         context.put("storyContext", feature.getFeature().getName() );
+        addFormatterToContext(context);
         LOGGER.debug("Generating stories page");
         String htmlContents = mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(context);
         LOGGER.debug("Writing stories page");
@@ -117,6 +127,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         VelocityContext context = new VelocityContext();
         context.put("stories", storyResults);
         context.put("storyContext", "All stories");
+        addFormatterToContext(context);
         String htmlContents = mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(context);
         LOGGER.debug("Writing stories page");
         writeReportToOutputDirectory("stories.html", htmlContents);
@@ -127,10 +138,11 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         VelocityContext context = new VelocityContext();
         context.put("stories", new UserStoriesResultSet(storyResults));
         context.put("features", featureResults);
+        addFormatterToContext(context);
         LOGGER.debug("Generating home page");
         String htmlContents = mergeTemplate(HOME_TEMPLATE_PATH).usingContext(context);
         LOGGER.debug("Writing stories page");
-        writeReportToOutputDirectory("home.html", htmlContents);
+        writeReportToOutputDirectory("index.html", htmlContents);
         LOGGER.debug("Generating coverage data");
         generateCoverageData(featureResults);
     }
@@ -144,9 +156,16 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         }
 
         context.put("coverageData", resultTree.toJSON());
+        addFormatterToContext(context);
 
         String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
         writeReportToOutputDirectory("coverage.js", javascriptCoverageData);
     }
 
+    public void setIssueTrackerUrl(String issueTrackerUrl) {
+        this.issueTrackerUrl = issueTrackerUrl;
+        if (issueTrackerUrl != null) {
+            ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, issueTrackerUrl);
+        }
+    }
 }

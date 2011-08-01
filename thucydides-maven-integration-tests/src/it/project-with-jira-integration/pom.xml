@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.thucydides.maven.plugins.samples</groupId>
-    <artifactId>project-with-errors</artifactId>
+    <artifactId>project-with-jira-integration</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <name>Test Thucydides Reporter Mojo</name>
@@ -23,11 +23,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.6.1</version>
-            <type>pom</type>
-            <scope>compile</scope>
+        	<groupId>org.slf4j</groupId>
+        	<artifactId>slf4j-simple</artifactId>
+        	<version>1.6.1</version>
+        	<type>pom</type>
+        	<scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -51,13 +51,22 @@
                         <include>**/Sample*.java</include>
                         <include>**/*Test.java</include>
                     </includes>
+                    <systemPropertyVariables>
+                        <thucydides.issue.tracker.url>${jira.issues}</thucydides.issue.tracker.url>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>net.thucydides.maven.plugins</groupId>
                 <artifactId>maven-thucydides-plugin</artifactId>
                 <version>@project.version@</version>
+                <configuration>
+                    <issueTrackerUrl>${jira.issues}</issueTrackerUrl>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+    <properties>
+        <jira.issues>http://my.jira.server/browse/MYPROJECT-</jira.issues>
+    </properties>
 </project>
