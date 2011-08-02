@@ -67,6 +67,6 @@
         </plugins>
     </build>
     <properties>
-        <jira.issues>http://my.jira.server/browse/MYPROJECT-</jira.issues>
+        <jira.issues>http://my.jira.server/browse/MYPROJECT-{0}</jira.issues>
     </properties>
 </project>

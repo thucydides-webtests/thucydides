@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.html;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -11,13 +12,12 @@ import java.util.regex.Pattern;
  */
 public class Formatter {
 
-    private final String issueTrackerUrl;
-
     private final Pattern issueNumberPattern = Pattern.compile("#\\d+");
-    private final String issueUrlFormat = "%s%s";
-    private final String issueLinkFormat = "<a href=\"%s\">%s</a>";
-    public Formatter(final String issueTrackerUrl) {
-        this.issueTrackerUrl = issueTrackerUrl;
+    private final String issueUrlFormat;
+    private final String issueLinkFormat = "<a href=\"{0}\">{1}</a>";
+
+    public Formatter(final String issueUrlFormat) {
+        this.issueUrlFormat = issueUrlFormat;
     }
 
 
@@ -34,7 +34,7 @@ public class Formatter {
 
     public String addLinks(final String value) {
         String formattedValue = value;
-        if (issueTrackerUrl != null) {
+        if (issueUrlFormat != null) {
             formattedValue = insertIssueTrackingUrls(value);
         }
         return formattedValue;
@@ -44,8 +44,8 @@ public class Formatter {
         String formattedValue = value;
         List<String> issues = issuesIn(value);
         for(String issue : issues) {
-            String issueUrl = String.format(issueUrlFormat, issueTrackerUrl, stripLeadingHashFrom(issue));
-            String issueLink = String.format(issueLinkFormat, issueUrl, issue);
+            String issueUrl = MessageFormat.format(issueUrlFormat, stripLeadingHashFrom(issue));
+            String issueLink = MessageFormat.format(issueLinkFormat, issueUrl, issue);
             formattedValue = formattedValue.replaceAll(issue, issueLink);
         }
         return formattedValue;

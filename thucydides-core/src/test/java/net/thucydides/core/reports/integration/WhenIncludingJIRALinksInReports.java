@@ -43,7 +43,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
     @Test
     public void a_jira_issue_number_should_be_converted_to_URLs_when_a_jira_base_url_is_provided()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", JIRAAnnotatedTestScenario.class);
-        ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, "http://my.issue.tracker/");
+        ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, "http://my.issue.tracker/{0}");
 
         recordSimpleTest(testOutcome);
 
@@ -57,7 +57,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
     @Test
     public void jira_issue_numbers_should_be_converted_to_URLs_when_a_jira_base_url_is_provided()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this_too", JIRAAnnotatedTestScenario.class);
-        ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, "http://my.issue.tracker/");
+        ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, "http://my.issue.tracker/{0}");
 
         recordSimpleTest(testOutcome);
 

@@ -13,20 +13,20 @@ public class WhenFormatingForHTML {
 
     @Test
     public void should_include_issue_tracking_link() {
-        Formatter formatter = new Formatter("http://my.issue.tracker/");
+        Formatter formatter = new Formatter("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
 
-        String formattedValue = formatter.addLinks("A scenario with about issue #123");
+        String formattedValue = formatter.addLinks("Fixes issue #123");
 
-        assertThat(formattedValue, is("A scenario with about issue <a href=\"http://my.issue.tracker/123\">#123</a>"));
+        assertThat(formattedValue, is("Fixes issue <a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">#123</a>"));
     }
 
     @Test
     public void should_include_multiple_issue_tracking_links() {
-        Formatter formatter = new Formatter("http://my.issue.tracker/");
+        Formatter formatter = new Formatter("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
 
         String formattedValue = formatter.addLinks("A scenario with about issues #123 and #456");
 
-        assertThat(formattedValue, is("A scenario with about issues <a href=\"http://my.issue.tracker/123\">#123</a> and <a href=\"http://my.issue.tracker/456\">#456</a>"));
+        assertThat(formattedValue, is("A scenario with about issues <a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">#123</a> and <a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-456\">#456</a>"));
     }
 
     @Test

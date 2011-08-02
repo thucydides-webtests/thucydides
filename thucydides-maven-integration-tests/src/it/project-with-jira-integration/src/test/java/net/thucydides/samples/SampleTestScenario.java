@@ -5,7 +5,7 @@ import net.thucydides.core.annotations.Title;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.UserStoryCode;
-import net.thucydides.junit.annotations.Managed;
+import net.thucydides.core.annotations.Managed;
 import net.thucydides.junit.runners.ThucydidesRunner;
 
 import org.junit.Test;
