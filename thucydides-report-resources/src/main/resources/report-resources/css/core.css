@@ -100,17 +100,23 @@ clear:both;
 .leftbgm
 {
 background-image:url(../images/middle-left.jpg);
-width:9px; height:39px;
+width:9px; height:79px;
 float:left;
 }
 
 .middlebgm
 {
 background-image:url(../images/middle.jpg);
-height:39px; background-repeat:repeat-x;
+height:79px;
 float:left; width:1008px;
 }
 
+.rightbgm
+{
+background-image:url(../images/middle-right.jpg);
+width:7px; height:79px;
+float:left; 
+}
 
 .story-outcome-icon 
 {
@@ -141,13 +147,6 @@ float:left; width:1008px;
 
 .test-PENDING {
     background-color: #e5f2eb;
-}
-
-.rightbgm
-{
-background-image:url(../images/middle-right.jpg);
-width:7px; height:39px;
-float:left; 
 }
 
 .bluetext
