@@ -234,6 +234,7 @@ public class TestOutcomeConverter implements Converter {
 
         TestOutcome testOutcome = new TestOutcome();
         testOutcome.setMethodName(reader.getAttribute(NAME_FIELD));
+        testOutcome.setTitle(reader.getAttribute(TITLE_FIELD));
         readChildren(reader, testOutcome);
         return testOutcome;
     }

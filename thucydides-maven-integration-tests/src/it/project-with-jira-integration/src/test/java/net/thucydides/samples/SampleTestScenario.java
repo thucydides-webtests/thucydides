@@ -24,7 +24,7 @@ public class SampleTestScenario {
     @Steps
     public SampleScenarioSteps steps;
 
-    @Title("Fixes issues #123 and #456")
+    @Title("Happy day scenario - fixes issues #123 and #456")
     @Test
     public void happy_day_scenario() {
         steps.anotherGroupOfSteps();

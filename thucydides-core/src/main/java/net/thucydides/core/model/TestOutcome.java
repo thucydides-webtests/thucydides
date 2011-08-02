@@ -40,6 +40,8 @@ public class TestOutcome {
 
     private String methodName;
 
+    private String storedTitle;
+
     private Story userStory;
 
     private Class<?> testCase;
@@ -124,6 +126,14 @@ public class TestOutcome {
     }
 
     public String getTitle() {
+        if (storedTitle == null) {
+            return buildTitle();
+        } else {
+            return storedTitle;
+        }
+    }
+
+    private String buildTitle() {
         String annotatedTitle = getAnnotatedTitleFor(methodName);
         if (annotatedTitle != null) {
             return annotatedTitle;
@@ -314,7 +324,11 @@ public class TestOutcome {
         return getUserStory().getFeature();
     }
 
-private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
+    public void setTitle(final String title) {
+        this.storedTitle = title;
+    }
+
+    private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
     public TestResult convert(final TestStep step) {
         return step.getResult();
     }
