@@ -1,11 +1,9 @@
-package net.thucydides.junit.integration.samples;
+package net.thucydides.junit.integration;
 
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.Title;
-import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.samples.DemoSiteSteps;
@@ -19,7 +17,7 @@ import org.openqa.selenium.WebDriver;
  *
  */
 @RunWith(ThucydidesRunner.class)
-public class OpenStaticDemoPageSample {
+public class OpenStaticDemoPageWithSamePageScenario {
 
     @Managed
     public WebDriver webdriver;
@@ -40,14 +38,14 @@ public class OpenStaticDemoPageSample {
     @Title("The user selects a value")
     public void the_user_selects_a_value() {
         steps.enter_values("Label 2", true);
-        steps.should_have_selected_value("2");
+        steps.onSamePage(DemoSiteSteps.class).should_have_selected_value("2");
     }
 
     @Test
     @Title("The user enters different values.")
     public void the_user_opens_another_page() {
         steps.enter_values("Label 3", true);
-        steps.do_something();
-        steps.should_have_selected_value("3");
+        steps.onSamePage(DemoSiteSteps.class).do_something();
+        steps.onSamePage(DemoSiteSteps.class).should_have_selected_value("3");
     }
 }

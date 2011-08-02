@@ -18,6 +18,7 @@ import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -198,7 +199,56 @@ public class WhenKeepingTrackOfVisitedPages {
         pages.notifyWhenDriverOpens();
 
         verify(driver).get("http://www.google.com");
+    }
 
+    static final class GooglePage extends PageObject {
+
+        public GooglePage(final WebDriver driver) {
+            super(driver);
+        }
+    }
+
+    static final class SomeOtherPage extends PageObject {
+
+        public SomeOtherPage(final WebDriver driver) {
+            super(driver);
+        }
+    }
+
+    @Test
+    public void should_requery_driver_for_each_page_request() {
+        when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
+        Pages pages = new Pages(driver);
+        pages.setDefaultBaseUrl("http://www.google.com");
+
+        GooglePage page1 = pages.get(GooglePage.class);
+        GooglePage page2 = pages.get(GooglePage.class);
+        assertThat(page2, is(not(page1)));
+    }
+
+    @Test
+    public void should_use_the_same_page_object_if_we_indicate_that_are_on_the_same_unchanged_page() {
+        when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
+        Pages pages = new Pages(driver);
+        pages.setDefaultBaseUrl("http://www.google.com");
+
+        GooglePage page1 = pages.get(GooglePage.class);
+        pages.onSamePage();
+        GooglePage page2 = pages.get(GooglePage.class);
+        assertThat(page2, is(page1));
+    }
+
+    @Test
+    public void should_use_a_new_page_object_if_we_indicate_that_are_on_the_same_unchanged_page_but_we_are_not() {
+        when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
+        Pages pages = new Pages(driver);
+        pages.setDefaultBaseUrl("http://www.google.com");
+
+        GooglePage page1 = pages.get(GooglePage.class);
+        pages.get(SomeOtherPage.class);
+        pages.onSamePage();
+        GooglePage page2 = pages.get(GooglePage.class);
+        assertThat(page2, is(not(page1)));
     }
 
     @Test

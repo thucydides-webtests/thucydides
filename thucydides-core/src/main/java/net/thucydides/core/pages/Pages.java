@@ -32,6 +32,8 @@ public class Pages implements Serializable {
 
     private WebdriverProxyFactory proxyFactory;
 
+    private transient boolean usePreviousPage = false;
+
     public Pages() {
         this.pageConfiguration = new PageConfiguration();
         proxyFactory = WebdriverProxyFactory.getFactory();
@@ -65,27 +67,60 @@ public class Pages implements Serializable {
         getDriver().get(getStartingUrl());
     }
 
+    PageObject currentPage = null;
+
     public <T extends PageObject> T getAt(final Class<T> pageObjectClass) {
         return currentPageAt(pageObjectClass);
     }
 
     public <T extends PageObject> T get(final Class<T> pageObjectClass) {
-        T pageCandidate = (T) getCurrentPageOfType(pageObjectClass);
-        pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
-        return pageCandidate;
+        T nextPage = null;
+        if (shouldUsePreviousPage(pageObjectClass)) {
+            nextPage = (T) currentPage;
+        } else {
+            T pageCandidate = (T) getCurrentPageOfType(pageObjectClass);
+            pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
+            cacheCurrentPage(pageCandidate);
+            nextPage = pageCandidate;
+        }
+        usePreviousPage = false;
+        return nextPage;
     }
 
     public <T extends PageObject> T currentPageAt(final Class<T> pageObjectClass) {
-        T pageCandidate = (T) getCurrentPageOfType(pageObjectClass);
-        if (!pageCandidate.matchesAnyUrl()) {
-            String currentUrl = getDriver().getCurrentUrl();
-            if (!pageCandidate.compatibleWithUrl(currentUrl)) {
-                thisIsNotThePageYourLookingFor(pageObjectClass);
+        T nextPage = null;
+        if (shouldUsePreviousPage(pageObjectClass)) {
+            nextPage = (T) currentPage;
+        } else {
+            T pageCandidate = (T) getCurrentPageOfType(pageObjectClass);
+            if (!pageCandidate.matchesAnyUrl()) {
+                String currentUrl = getDriver().getCurrentUrl();
+                if (!pageCandidate.compatibleWithUrl(currentUrl)) {
+                    thisIsNotThePageYourLookingFor(pageObjectClass);
+                }
             }
+            pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
+            cacheCurrentPage(pageCandidate);
+            nextPage = pageCandidate;
         }
-        pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
+        usePreviousPage = false;
+        return nextPage;
+    }
 
-        return pageCandidate;
+    private <T extends PageObject> boolean shouldUsePreviousPage(final Class<T> pageObjectClass) {
+        if (!usePreviousPage) {
+            return false;
+        } else {
+            return currentPageIsSameTypeAs(pageObjectClass);
+        }
+    }
+
+    private void cacheCurrentPage(PageObject newPage) {
+        this.currentPage = newPage;
+    }
+
+    private <T extends PageObject> boolean currentPageIsSameTypeAs(Class<T> pageObjectClass) {
+        return (currentPage != null) && (currentPage.getClass().equals(pageObjectClass));
     }
 
     public boolean isCurrentPageAt(final Class<? extends PageObject> pageObjectClass) {
@@ -175,4 +210,8 @@ public class Pages implements Serializable {
         return (getDriver() instanceof WebDriverFacade);
     }
 
+    public Pages onSamePage() {
+        usePreviousPage = true;
+        return this;
+    }
 }

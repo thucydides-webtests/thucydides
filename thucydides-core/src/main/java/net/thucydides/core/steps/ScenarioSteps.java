@@ -38,6 +38,10 @@ public class ScenarioSteps implements Serializable {
         return getPages();
     }
 
+    public <T extends ScenarioSteps> T onSamePage(Class<T> stepsType) {
+        getPages().onSamePage();
+        return (T) stepsType.cast(this);
+    }
 
     /**
      * Pause the test to wait for the page to display completely.
