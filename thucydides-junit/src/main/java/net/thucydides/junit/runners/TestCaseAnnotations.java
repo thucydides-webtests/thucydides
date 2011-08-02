@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.steps.PagesAnnotatedField;
 import net.thucydides.core.steps.StepsAnnotatedField;
 import net.thucydides.junit.internals.ManagedWebDriverAnnotatedField;
@@ -49,6 +50,16 @@ public final class TestCaseAnnotations {
                 .findFirstAnnotatedField(testCase.getClass());
 
         webDriverField.setValue(testCase, driver);
+    }
+
+    /**
+     * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.
+     */
+    public boolean isUniqueSession() {
+        ManagedWebDriverAnnotatedField webDriverField = ManagedWebDriverAnnotatedField
+                .findFirstAnnotatedField(testCase.getClass());
+
+        return webDriverField.isUniqueSession();
     }
 
 }

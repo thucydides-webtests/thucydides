@@ -19,10 +19,9 @@ import org.openqa.selenium.WebDriver;
  *
  */
 @RunWith(ThucydidesRunner.class)
-@UserStoryCode("US101")
 public class OpenStaticDemoPageSample {
 
-    @Managed
+    @Managed(uniqueSession=true)
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "classpath:static-site/index.html")
@@ -33,22 +32,22 @@ public class OpenStaticDemoPageSample {
         
     @Test
     @Title("The user opens the index page")
-    @TestsRequirement("R123")
     public void the_user_opens_the_page() {
-        steps.should_have_no_selected_value();
-        steps.should_not_have_selected_value("");
-        steps.enter_values("Label 2", true);
-        steps.should_have_selected_value("2");
+        steps.should_display("A visible title");
     }    
     
     @Test
+    @Title("The user selects a value")
+    public void the_user_selects_a_value() {
+        steps.enter_values("Label 2", true);
+        steps.should_have_selected_value("2");
+    }
+
+    @Test
     @Title("The user enters different values.")
     public void the_user_opens_another_page() {
-        steps.should_have_no_selected_value();
         steps.enter_values("Label 3", true);
         steps.do_something();
         steps.should_have_selected_value("3");
     }
-
-
 }

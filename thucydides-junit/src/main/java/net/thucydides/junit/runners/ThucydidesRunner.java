@@ -70,6 +70,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private ReportService reportService;
 
+    private boolean uniqueSession;
+
     /**
      * The Step Listener observes and records what happens during the execution of the test.
      * Once the test is over, the Step Listener can provide the acceptance test outcome in the
@@ -227,7 +229,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     protected boolean restartBrowserBeforeTest() {
-        return true;
+        return !uniqueSession;
     }
 
     protected void resetBroswerFromTimeToTime() {
@@ -247,6 +249,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         injectDriverInto(test);
         injectAnnotatedPagesObjectInto(test);
         injectScenarioStepsInto(test);
+        uniqueSession = TestCaseAnnotations.forTestCase(test).isUniqueSession();
         stepFactory.addListener(getStepListener().getBaseStepListener());
         useStepFactoryForDataDrivenSteps();
 

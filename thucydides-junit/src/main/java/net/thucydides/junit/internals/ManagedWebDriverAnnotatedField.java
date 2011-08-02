@@ -70,4 +70,8 @@ public class ManagedWebDriverAnnotatedField {
                          + " - is this field public?", e);
         }
     }
+
+    public boolean isUniqueSession() {
+        return field.getAnnotation(Managed.class).uniqueSession();
+    }
 }

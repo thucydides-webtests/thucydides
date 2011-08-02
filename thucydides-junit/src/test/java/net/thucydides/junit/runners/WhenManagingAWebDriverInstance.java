@@ -3,10 +3,12 @@ package net.thucydides.junit.runners;
 import net.thucydides.core.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
+import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.samples.SampleFailingScenario;
 import net.thucydides.samples.SamplePassingScenario;
+import net.thucydides.samples.SamplePassingScenarioWithSingleBrowser;
 import net.thucydides.samples.SampleScenarioWithUnannotatedWebDriver;
 import org.junit.After;
 import org.junit.Before;
@@ -28,6 +30,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -45,7 +49,10 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
 
 
     @Mock
-    WebDriver mockWebDriver;
+    WebDriverFacade mockWebDriver;
+
+    @Mock
+    WebDriver mockRealWebDriver;
 
     @Before
     public void initMocks() {
@@ -69,6 +76,33 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
 
         assertThat(mockBrowserFactory.getDriver(), is(notNullValue()));
     }
+
+    @Test
+    public void the_driver_should_be_reset_after_each_test() throws InitializationError {
+        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
+
+        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
+        ThucydidesRunner runner = getTestRunnerUsing(SamplePassingScenario.class, mockBrowserFactory);
+
+        final RunNotifier notifier = new RunNotifier();
+        runner.run(new RunNotifier());
+
+        verify(mockWebDriver,times(3)).reset();
+    }
+
+    @Test
+    public void the_driver_should_only_be_reset_once_at_the_start_for_unique_session_tests() throws InitializationError {
+        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
+
+        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
+        ThucydidesRunner runner = getTestRunnerUsing(SamplePassingScenarioWithSingleBrowser.class, mockBrowserFactory);
+
+        final RunNotifier notifier = new RunNotifier();
+        runner.run(new RunNotifier());
+
+        verify(mockWebDriver,times(1)).reset();
+    }
+
 
     @Test
     public void the_driver_should_be_closed_after_the_tests() throws InitializationError {
@@ -105,7 +139,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Test
     public void a_system_provided_url_should_override_the_default_url() throws InitializationError {
 
-        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
+        WebdriverProxyFactory.getFactory().useMockDriver(mockRealWebDriver);
 
         System.setProperty("webdriver.base.url", "http://www.wikipedia.com");
         TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
@@ -114,7 +148,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
         final RunNotifier notifier = new RunNotifier();
         runner.run(notifier);
 
-        verify(mockWebDriver,atLeast(1)).get("http://www.wikipedia.com");
+        verify(mockRealWebDriver,atLeast(1)).get("http://www.wikipedia.com");
     }
     
     @Test(expected=InvalidManagedWebDriverFieldException.class)

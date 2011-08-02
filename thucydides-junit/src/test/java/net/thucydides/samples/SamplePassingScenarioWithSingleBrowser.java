@@ -3,6 +3,7 @@ package net.thucydides.samples;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
+import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
@@ -12,22 +13,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(ThucydidesRunner.class)
-public class SampleWikipediaPassingScenario {
+public class SamplePassingScenarioWithSingleBrowser {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(SampleWikipediaPassingScenario.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamplePassingScenarioWithSingleBrowser.class);
 
     @Managed(uniqueSession=true)
     public WebDriver webdriver;
 
-    @ManagedPages(defaultUrl = "http://www.wikipedia.org")
+    @ManagedPages(defaultUrl = "http://www.google.com")
     public Pages pages;
     
     @Steps
     public SampleScenarioSteps steps;
 
     @Test
+    @TestsRequirement("ABC")
     public void happy_day_scenario() throws Throwable {
-        steps.stepThatUsesABrowser();
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
         steps.stepThatIsPending();
@@ -35,8 +36,8 @@ public class SampleWikipediaPassingScenario {
     }
 
     @Test
+    @TestsRequirement("DEF")
     public void edge_case_1() {
-        steps.stepThatUsesABrowser();
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();
         steps.stepThatIsPending();
@@ -44,7 +45,6 @@ public class SampleWikipediaPassingScenario {
 
     @Test
     public void edge_case_2() {
-        steps.stepThatUsesABrowser();
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();
     }
