@@ -12,7 +12,7 @@ import static java.awt.Color.BLACK;
 /**
  *  Determine what color boxes should be in the feature/story/scenario treemap.
  */
-public class HSBColorScheme implements ColorScheme {
+public class RelativeSizeColorScheme implements ColorScheme {
 
     private final static float RED_HUE = 0.0F;
     private final static float ORANGE_HUE = 0.083333333F;

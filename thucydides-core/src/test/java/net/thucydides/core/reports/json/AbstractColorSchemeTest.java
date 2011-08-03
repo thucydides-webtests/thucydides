@@ -49,6 +49,7 @@ public class AbstractColorSchemeTest {
         FeatureResults feature = mock(FeatureResults.class);
         when(feature.getFeature()).thenReturn(ApplicationFeature.from(featureClass));
         when(feature.getTotalSteps()).thenReturn(stepCount);
+        when(feature.countStepsInSuccessfulTests()).thenReturn(passingCount * 5);
         when(feature.getTotalStories()).thenReturn(storyCount);
         when(feature.getTotalTests()).thenReturn(testCount);
         when(feature.getPassingTests()).thenReturn(passingCount);
@@ -64,6 +65,8 @@ public class AbstractColorSchemeTest {
         StoryTestResults story = mock(StoryTestResults.class);
         when(story.getTotal()).thenReturn(testCount);
         when(story.getSuccessCount()).thenReturn(passingCount);
+        when(story.getStepCount()).thenReturn(testCount * 5);
+        when(story.countStepsInSuccessfulTests()).thenReturn(passingCount * 5);
         when(story.getPendingCount()).thenReturn(pendingCount);
         when(story.getFailureCount()).thenReturn(failingCount);
         return story;
@@ -81,4 +84,13 @@ public class AbstractColorSchemeTest {
         when(outcome.getStepCount()).thenReturn(stepCount);
         return outcome;
     }
+
+    protected TestOutcome mockTestOutcome(int stepCount, int successCount, TestResult result) {
+        TestOutcome outcome = mock(TestOutcome.class);
+        when(outcome.getResult()).thenReturn(result);
+        when(outcome.getStepCount()).thenReturn(stepCount);
+        when(outcome.getSuccessCount()).thenReturn(successCount);
+        return outcome;
+    }
+
 }

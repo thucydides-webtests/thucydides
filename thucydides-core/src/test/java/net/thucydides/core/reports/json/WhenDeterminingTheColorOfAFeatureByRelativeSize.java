@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 
-public class WhenDeterminingTheColorOfAFeatureUsingHSB extends AbstractColorSchemeTest {
+public class WhenDeterminingTheColorOfAFeatureByRelativeSize extends AbstractColorSchemeTest {
 
     ColorScheme colorScheme;
 
@@ -31,7 +31,7 @@ public class WhenDeterminingTheColorOfAFeatureUsingHSB extends AbstractColorSche
 
     @Before
     public void createColorScheme() {
-        colorScheme = new HSBColorScheme();
+        colorScheme = new RelativeSizeColorScheme();
     }
 
     @Test

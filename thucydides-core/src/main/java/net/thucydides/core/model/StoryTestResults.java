@@ -85,6 +85,14 @@ public class StoryTestResults {
         return select(testOutcomes, having(on(TestOutcome.class).isSuccess())).size();
     }
 
+    /**
+     * How many test cases contain only successful or ignored tests.
+     */
+    public int countStepsInSuccessfulTests() {
+        List<TestOutcome> successfulTests = select(testOutcomes, having(on(TestOutcome.class).isSuccess()));
+        return (successfulTests.isEmpty()) ? 0 : sum(successfulTests, on(TestOutcome.class).getStepCount());
+    }
+
     public int getPendingCount() {
         return select(testOutcomes, having(on(TestOutcome.class).isPending())).size();
     }

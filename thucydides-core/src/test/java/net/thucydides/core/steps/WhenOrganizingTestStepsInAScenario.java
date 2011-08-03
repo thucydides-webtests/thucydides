@@ -63,7 +63,6 @@ public class WhenOrganizingTestStepsInAScenario {
         steps.step1();
         steps.step2();
         steps.step3();
-        steps.done();
     }
 
     

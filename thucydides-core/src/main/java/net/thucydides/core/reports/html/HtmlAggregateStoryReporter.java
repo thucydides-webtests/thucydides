@@ -8,6 +8,7 @@ import net.thucydides.core.model.features.FeatureLoader;
 import net.thucydides.core.model.userstories.UserStoryLoader;
 import net.thucydides.core.reports.UserStoryTestReporter;
 import net.thucydides.core.reports.json.JSONResultTree;
+import net.thucydides.core.reports.json.JSONProgressResultTree;
 import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,9 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final String STORIES_TEMPLATE_PATH = "velocity/stories.vm";
     private static final String FEATURES_TEMPLATE_PATH = "velocity/features.vm";
     private static final String COVERAGE_DATA_TEMPLATE_PATH = "velocity/coverage.vm";
+    private static final String PROGRESS_DATA_TEMPLATE_PATH = "velocity/progress.vm";
     private static final String HOME_TEMPLATE_PATH = "velocity/index.vm";
+    private static final String DASHBOARD_TEMPLATE_PATH = "velocity/dashboard.vm";
     private FeatureLoader featureLoader;
     private UserStoryLoader storyLoader;
     private String issueTrackerUrl;
@@ -139,12 +142,21 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         context.put("stories", new UserStoriesResultSet(storyResults));
         context.put("features", featureResults);
         addFormatterToContext(context);
-        LOGGER.debug("Generating home page");
-        String htmlContents = mergeTemplate(HOME_TEMPLATE_PATH).usingContext(context);
-        LOGGER.debug("Writing stories page");
-        writeReportToOutputDirectory("index.html", htmlContents);
+
+        LOGGER.debug("Generating report pages");
+        generateReportPage(context, HOME_TEMPLATE_PATH, "index.html");
+        generateReportPage(context, DASHBOARD_TEMPLATE_PATH, "dashboard.html");
+
         LOGGER.debug("Generating coverage data");
         generateCoverageData(featureResults);
+        generateProgressData(featureResults);
+    }
+
+    private void generateReportPage(final VelocityContext context,
+                                    final String template,
+                                    final String outputFile) throws IOException {
+        String htmlContents = mergeTemplate(template).usingContext(context);
+        writeReportToOutputDirectory(outputFile, htmlContents);
     }
 
     private void generateCoverageData(final List<FeatureResults> featureResults) throws IOException {
@@ -160,6 +172,21 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
         writeReportToOutputDirectory("coverage.js", javascriptCoverageData);
+    }
+
+    private void generateProgressData(final List<FeatureResults> featureResults) throws IOException {
+        VelocityContext context = new VelocityContext();
+
+        JSONProgressResultTree resultTree = new JSONProgressResultTree();
+        for(FeatureResults feature : featureResults) {
+            resultTree.addFeature(feature);
+        }
+
+        context.put("progressData", resultTree.toJSON());
+        addFormatterToContext(context);
+
+        String javascriptCoverageData = mergeTemplate(PROGRESS_DATA_TEMPLATE_PATH).usingContext(context);
+        writeReportToOutputDirectory("progress.js", javascriptCoverageData);
     }
 
     public void setIssueTrackerUrl(String issueTrackerUrl) {

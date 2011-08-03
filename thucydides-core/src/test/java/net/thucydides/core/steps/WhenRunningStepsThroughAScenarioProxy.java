@@ -528,6 +528,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.step_one();
         steps.step2();
         steps.step3();
+
         steps.done();
 
         ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);

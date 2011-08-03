@@ -186,7 +186,7 @@ function init() {
                 //parent box title heights
                 titleHeight: 15,
                 //enable animations
-                animate: animate,
+                //animate: animate,
                 //box offsets
                 offset: 1,
 

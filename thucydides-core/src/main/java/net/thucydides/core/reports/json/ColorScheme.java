@@ -8,11 +8,7 @@ import net.thucydides.core.model.TestStep;
 import java.awt.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: johnsmart
- * Date: 23/06/11
- * Time: 2:30 PM
- * To change this template use File | Settings | File Templates.
+ * Color scheme to be applied to a treemap.
  */
 public interface ColorScheme {
     Color colorFor(FeatureResults feature);

@@ -45,8 +45,8 @@ a:active {
     	<div class="middlebg">
     	  <div style="height:30px;"><span class="bluetext"><a href="Home.html" class="bluetext">Home</a></span> / <span class="bluetext"><a href="Features.html" class="bluetext">Features</a></span> / 
     	    <span class="bluetext">Gizmos</span> /
-          <span class="bluetext"><a href="${testrun.story.reportName}.html" class="bluetext">${testrun.story.name}</a></span></div>
-   	  </div>
+            <span class="bluetext"><a href="${testrun.story.reportName}.html" class="bluetext">${testrun.story.name}</a></span></div>
+   	      </div>
     	<div class="rightbg"></div>   
     </div>
     <div class="clr"></div>

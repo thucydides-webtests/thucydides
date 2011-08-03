@@ -226,6 +226,18 @@ public class WhenRecordingUserStoryTestResults {
         assertThat(testResults.getStepCount(), is(5));
     }
     
+    @Test
+    public void a_story_should_know_the_total_number_of_steps_belonging_to_passing_tests_that_it_contains() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults testResults = new StoryTestResults(story);
+
+        testResults.recordTestRun(thatFailsFor(userStory));
+        testResults.recordTestRun(thatSucceedsFor(userStory));
+        testResults.recordTestRun(thatSucceedsFor(userStory));
+
+        assertThat(testResults.countStepsInSuccessfulTests(), is(4));
+    }
+
     private TestOutcome thatFailsFor(Story story) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         testOutcome.recordStep(successfulTestStepCalled("Step 1"));

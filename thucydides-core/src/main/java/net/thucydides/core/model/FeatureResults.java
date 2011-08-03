@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sum;
 
 /**
@@ -64,5 +66,12 @@ public class FeatureResults {
 
     public String getStoryReportName() {
         return "stories_" + namer.getNormalizedTestNameFor(feature);
+    }
+
+    public int countStepsInSuccessfulTests() {
+        if (storyTestResultsList.size() == 0) {
+            return 0;
+        }
+        return sum(storyTestResultsList, on(StoryTestResults.class).countStepsInSuccessfulTests());
     }
 }

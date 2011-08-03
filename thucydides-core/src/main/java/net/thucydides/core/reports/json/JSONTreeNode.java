@@ -1,7 +1,7 @@
 package net.thucydides.core.reports.json;
 
 import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
-import static net.thucydides.core.reports.json.HSBColorScheme.rgbFormatOf;
+import static net.thucydides.core.reports.json.RelativeSizeColorScheme.rgbFormatOf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,10 +65,20 @@ public class JSONTreeNode {
         featureNode.getData().put("failing", feature.getFailingTests());
         featureNode.getData().put("steps", feature.getTotalSteps());
 
+        int progress = getProgressFor(feature);
+        featureNode.getData().put("progress", progress);
+
         featureNode.children.addAll(getStoryNodesFor(feature));
 
         children.add(featureNode);
 
+    }
+
+    private int getProgressFor(FeatureResults feature) {
+        if (feature.getTotalSteps() == 0) {
+            return 0;
+        }
+        return (int) feature.countStepsInSuccessfulTests() * 100 / feature.getTotalSteps();
     }
 
     private List<JSONTreeNode> getStoryNodesFor(final FeatureResults feature) {
@@ -87,12 +97,22 @@ public class JSONTreeNode {
             storyNode.getData().put("failing", storyResult.getFailureCount());
             storyNode.getData().put("steps", storyResult.getStepCount());
 
+            int progress = getProgressFor(storyResult);
+            storyNode.getData().put("progress", progress);
+
             storyNode.children.addAll(getTestOutcomeNodesFor(storyResult, averageTestSizeIn(feature)));
 
             stories.add(storyNode);
         }
         return stories;
 
+    }
+
+    private int getProgressFor(StoryTestResults storyResult) {
+        if (storyResult.getStepCount() == 0) {
+            return 0;
+        }
+        return (int) storyResult.countStepsInSuccessfulTests() * 100 / storyResult.getStepCount();
     }
 
     private int averageTestSizeIn(final FeatureResults feature) {
