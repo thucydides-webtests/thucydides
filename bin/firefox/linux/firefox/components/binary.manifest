@@ -1,0 +1,5 @@
+binary-component libmozgnome.so
+binary-component libdbusservice.so
+binary-component libxpcomsample.so
+binary-component libnkgnomevfs.so
+binary-component libbrowsercomps.so
