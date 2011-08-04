@@ -55,7 +55,13 @@ public class ProgressColorScheme implements ColorScheme {
     }
 
     public Color colorFor(final TestOutcome outcome) {
-        return colorForResults(outcome.getStepCount(), outcome.getSuccessCount());
+//        return colorForResults(outcome.getStepCount(), outcome.getSuccessCount());
+        switch(outcome.getResult()) {
+            case SUCCESS:
+                return BRIGHT_BLUE;
+            default:
+                return PALE_BLUE;
+        }
     }
 
     public Color colorFor(final TestStep step) {

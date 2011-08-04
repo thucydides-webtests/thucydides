@@ -81,10 +81,10 @@ public class WhenDeterminingTheColorOfAFeatureByDegreeOfCompleteness extends Abs
 
     @Test
     public void a_test_outcome_with_some_passing_tests_should_be_medium_blue() {
-        TestOutcome outcome = mockTestOutcome(10, 5, TestResult.SUCCESS);
+        TestOutcome outcome = mockTestOutcome(10, 10, TestResult.SUCCESS);
         Color color = colorScheme.colorFor(outcome);
 
-        assertThat(color, is(MEDIUM_BLUE));
+        assertThat(color, is(BRIGHT_BLUE));
     }
 
      @Test
