@@ -3,13 +3,13 @@ package net.thucydides.junit.runners;
 import net.thucydides.core.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
-import net.thucydides.core.webdriver.WebDriverFacade;
-import net.thucydides.core.webdriver.WebdriverProxyFactory;
-import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
-import net.thucydides.samples.SampleFailingScenario;
+import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.core.webdriver.WebdriverInstanceFactory;
+import net.thucydides.samples.MultipleTestScenario;
+import net.thucydides.samples.MultipleTestScenarioWithUniqueSession;
 import net.thucydides.samples.SamplePassingScenario;
-import net.thucydides.samples.SamplePassingScenarioWithSingleBrowser;
 import net.thucydides.samples.SampleScenarioWithUnannotatedWebDriver;
+import net.thucydides.samples.SingleTestScenario;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,17 +20,17 @@ import org.junit.runners.model.InitializationError;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static net.thucydides.core.webdriver.SupportedWebDriver.CHROME;
 import static net.thucydides.core.webdriver.SupportedWebDriver.FIREFOX;
+import static net.thucydides.core.webdriver.SupportedWebDriver.IEXPLORER;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -48,90 +48,88 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
 
 
-    @Mock
-    WebDriverFacade mockWebDriver;
-
-    @Mock
-    WebDriver mockRealWebDriver;
-
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
     }
 
-    @After
-    public void cleanup() {
-        WebdriverProxyFactory.getFactory().clearMockDriver();
+    WebdriverInstanceFactory webdriverInstanceFactory;
+
+    @Mock
+    FirefoxDriver firefoxDriver;
+
+    WebDriverFactory webDriverFactory;
+
+    @Before
+    public void createATestableDriverFactory() throws Exception {
+        MockitoAnnotations.initMocks(this);
+
+        webdriverInstanceFactory = new WebdriverInstanceFactory() {
+            @Override
+            public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass) throws IllegalAccessException, InstantiationException {
+                return firefoxDriver;
+            }
+        };
+
+        webDriverFactory = new WebDriverFactory(webdriverInstanceFactory);
+
     }
+
 
     @Test
     public void the_driver_should_be_initialized_before_the_tests() throws InitializationError  {
-        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
 
-        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(SamplePassingScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenario.class, webDriverFactory);
 
-        final RunNotifier notifier = new RunNotifier();
         runner.run(new RunNotifier());
 
-        assertThat(mockBrowserFactory.getDriver(), is(notNullValue()));
+        assertThat(firefoxDriver, is(notNullValue()));
     }
 
     @Test
     public void the_driver_should_be_reset_after_each_test() throws InitializationError {
-        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
 
-        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(SamplePassingScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(MultipleTestScenario.class, webDriverFactory);
 
-        final RunNotifier notifier = new RunNotifier();
         runner.run(new RunNotifier());
 
-        verify(mockWebDriver,times(3)).reset();
+        verify(firefoxDriver,times(3)).quit();
     }
 
     @Test
     public void the_driver_should_only_be_reset_once_at_the_start_for_unique_session_tests() throws InitializationError {
-        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
 
-        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(SamplePassingScenarioWithSingleBrowser.class, mockBrowserFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(MultipleTestScenarioWithUniqueSession.class, webDriverFactory);
 
-        final RunNotifier notifier = new RunNotifier();
         runner.run(new RunNotifier());
 
-        verify(mockWebDriver,times(1)).reset();
+        verify(firefoxDriver,times(1)).quit();
     }
 
 
     @Test
     public void the_driver_should_be_closed_after_the_tests() throws InitializationError {
-        WebdriverProxyFactory.getFactory().useMockDriver(mockWebDriver);
 
-        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(SamplePassingScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
         
-        final RunNotifier notifier = new RunNotifier();
         runner.run(new RunNotifier());
-        verify(mockWebDriver).close();
+        verify(firefoxDriver).close();
     }
 
     @Test
     public void when_an_unsupported_driver_is_used_an_error_is_raised() throws InitializationError {
 
         System.setProperty("webdriver.driver", "htmlunit");      
-        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = null;
         try {
-            runner = getTestRunnerUsing(SampleFailingScenario.class, mockBrowserFactory);
-            final RunNotifier notifier = new RunNotifier();
-            runner.run(notifier);
+            ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
+            runner.run(new RunNotifier());
             fail();
         } catch (UnsupportedDriverException e) {
             assertThat(e.getMessage(), allOf(containsString("htmlunit is not a supported browser"),
                                              containsString("Supported driver values are: "),
                                              containsString(FIREFOX.toString()),
-                                             containsString(CHROME.toString())
+                                                containsString(CHROME.toString()),
+                                                containsString(IEXPLORER.toString())
                                              ));
         }
     }
@@ -139,24 +137,19 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Test
     public void a_system_provided_url_should_override_the_default_url() throws InitializationError {
 
-        WebdriverProxyFactory.getFactory().useMockDriver(mockRealWebDriver);
-
         System.setProperty("webdriver.base.url", "http://www.wikipedia.com");
-        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = null;
-        runner = getTestRunnerUsing(SamplePassingScenario.class, mockBrowserFactory);
-        final RunNotifier notifier = new RunNotifier();
-        runner.run(notifier);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
 
-        verify(mockRealWebDriver,atLeast(1)).get("http://www.wikipedia.com");
+        runner.run(new RunNotifier());
+
+        verify(firefoxDriver).get("http://www.wikipedia.com");
     }
     
     @Test(expected=InvalidManagedWebDriverFieldException.class)
     public void when_no_annotated_field_is_found_an_exception_is_thrown() throws InitializationError {
 
-        TestableWebDriverFactory mockBrowserFactory = new TestableWebDriverFactory();
-        ThucydidesRunner runner = getTestRunnerUsing(SampleScenarioWithUnannotatedWebDriver.class, mockBrowserFactory);
-        
+        ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithUnannotatedWebDriver.class, webDriverFactory);
+
         runner.run(new RunNotifier());
     }    
 }

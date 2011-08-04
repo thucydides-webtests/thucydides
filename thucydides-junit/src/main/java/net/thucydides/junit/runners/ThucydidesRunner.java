@@ -95,14 +95,18 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * @throws InitializationError if some JUnit-related initialization problem occurred
      */
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
+        this(klass, new WebDriverFactory());
+    }
+
+    public ThucydidesRunner(final Class<?> klass,
+                            final WebDriverFactory webDriverFactory) throws InitializationError {
         super(klass);
         checkRequestedDriverType();
         TestCaseAnnotations.checkThatTestCaseIsCorrectlyAnnotated(klass);
 
         initializeReportService();
-        webDriverFactory = new WebDriverFactory();
+        this.webDriverFactory = webDriverFactory;
     }
-
     /**
      * The configuration manages output directories and driver types.
      * They can be defined as system values, or have sensible defaults.

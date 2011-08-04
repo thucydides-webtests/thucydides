@@ -195,7 +195,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         
     @Test
     public void should_know_when_an_element_is_visible() {
-//        driver = new FirefoxDriver();
         IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(firefoxDriver, 1);
         indexPage.open();
         assertThat(indexPage.isElementVisible(By.id("visible")), is(true));
@@ -203,7 +202,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     @Test
     public void should_know_when_an_element_is_invisible() {
-//        driver = new FirefoxDriver();
         IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(firefoxDriver, 1);
         indexPage.open();
         assertThat(indexPage.isElementVisible(By.id("invisible")), is(false));

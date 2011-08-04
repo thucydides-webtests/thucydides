@@ -19,9 +19,16 @@ public class WebdriverProxyFactory implements Serializable {
     private static List<ThucydidesWebDriverEventListener> eventListeners
             = new ArrayList<ThucydidesWebDriverEventListener>();
 
-    private WebDriver mockDriver;
+    private WebDriverFactory webDriverFactory;
 
-    private WebdriverProxyFactory() {}
+    private WebdriverProxyFactory() {
+        webDriverFactory = new WebDriverFactory();
+    }
+
+
+    protected void setWebDriverFactory(final WebDriverFactory webDriverFactory) {
+        this.webDriverFactory = webDriverFactory;
+    }
 
     public static WebdriverProxyFactory getFactory() {
         if (factory.get() == null) {
@@ -31,15 +38,12 @@ public class WebdriverProxyFactory implements Serializable {
     }
 
     public WebDriver proxyFor(final Class<? extends WebDriver> driverClass) {
-        if (usingMockDriver()) {
-            return getMockDriver();
-        } else {
-            return new WebDriverFacade(driverClass);
-        }
+       return proxyFor(driverClass, new WebDriverFactory());
     }
 
-    private boolean usingMockDriver() {
-        return (getMockDriver() != null);
+    public WebDriver proxyFor(final Class<? extends WebDriver> driverClass,
+                              final WebDriverFactory webDriverFactory) {
+        return new WebDriverFacade(driverClass, webDriverFactory);
     }
 
     public void registerListener(final ThucydidesWebDriverEventListener eventListener) {
@@ -52,22 +56,9 @@ public class WebdriverProxyFactory implements Serializable {
         }
     }
 
-    public void useMockDriver(final WebDriver driver) {
-        this.mockDriver = driver;
-    }
-
-    public void clearMockDriver() {
-        mockDriver = null;
-    }
-
-    protected WebDriver getMockDriver() {
-        return mockDriver;
-    }
-
-
     public WebDriver proxyDriver() {
         Class<? extends WebDriver> driverClass = WebDriverFactory.getClassFor(Configuration.getDriverType());
-        return proxyFor(driverClass);
+        return proxyFor(driverClass, webDriverFactory);
     }
 
     public static void resetDriver(WebDriver driver) {

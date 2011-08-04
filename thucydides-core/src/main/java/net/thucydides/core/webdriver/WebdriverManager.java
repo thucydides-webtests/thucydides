@@ -16,8 +16,11 @@ public class WebdriverManager {
      * A WebDriver instance is shared across all the tests executed by the runner in a given test run.
      */
     private final WebDriver webdriver;
-    
+
+    private final WebDriverFactory webDriverFactory;
+
     public WebdriverManager(final WebDriverFactory webDriverFactory) {
+        this.webDriverFactory = webDriverFactory;
         webdriver = newDriver();
     }
 
@@ -32,7 +35,7 @@ public class WebdriverManager {
     protected WebDriver newDriver() {
         SupportedWebDriver supportedDriverType = Configuration.getDriverType();
         Class<? extends WebDriver> webDriverType = WebDriverFactory.getClassFor(supportedDriverType);
-        return WebdriverProxyFactory.getFactory().proxyFor(webDriverType);
+        return WebdriverProxyFactory.getFactory().proxyFor(webDriverType, webDriverFactory);
     }
     
     public void closeDriver() {

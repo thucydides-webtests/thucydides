@@ -79,16 +79,6 @@ public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTe
     }
 
     @Test
-    public void by_default_the_same_browser_instance_should_be_used_throughout() throws Throwable  {
-
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
-                                                                                 webDriverFactory);
-        runner.run(new RunNotifier());
-
-        verify(webDriverFactory, never()).restartBrowser();
-    }
-
-    @Test
     public void a_data_driven_test_should_also_be_able_to_use_data_from_a_CSV_file() throws Throwable  {
 
         ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,

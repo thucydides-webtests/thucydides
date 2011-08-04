@@ -3,7 +3,6 @@ package net.thucydides.junit.runners;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestStep;
-import net.thucydides.junit.runners.mocks.TestableWebDriverFactory;
 import net.thucydides.samples.SingleTestScenarioWithSeveralBusinessRules;
 import net.thucydides.samples.SuccessfulSingleTestScenario;
 import org.junit.Before;

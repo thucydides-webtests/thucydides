@@ -1,24 +1,13 @@
 package net.thucydides.core.webdriver;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.pages.WebElementFacade;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.pagefactory.AjaxElementLocator;
-import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
-import org.openqa.selenium.support.pagefactory.Annotations;
-import org.openqa.selenium.support.pagefactory.ElementLocator;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Provides an instance of a supported WebDriver.
@@ -30,12 +19,17 @@ import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
  */
 public class WebDriverFactory {
 
-    private FirefoxFactory firefoxFactory = new FirefoxFactory();
+    private final WebdriverInstanceFactory webdriverInstanceFactory;
 
 
-    protected FirefoxFactory getFirefoxFactory() {
-        return firefoxFactory;
+    public WebDriverFactory() {
+        this.webdriverInstanceFactory = new WebdriverInstanceFactory();
     }
+
+    public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory) {
+        this.webdriverInstanceFactory = webdriverInstanceFactory;
+    }
+
     /***
      * Create a new WebDriver instance of a given type.
      */
@@ -51,86 +45,30 @@ public class WebDriverFactory {
         return driverType.getWebdriverClass();
     }
 
-    protected WebDriver newWebdriverInstance(Class<? extends WebDriver> webdriverClass) {
+    protected WebDriver newWebdriverInstance(final Class<? extends WebDriver> webdriverClass) {
         try {
             if (acceptUntrustedCertificatesForFirefox()) {
-                return untrustedCertificateProfileDriver();
-            }else {
-                return webdriverClass.newInstance();
+                return untrustedCertificateProfileDriver(webdriverClass);
+            } else {
+                return webdriverInstanceFactory.newInstanceOf(webdriverClass);
             }
         } catch (Exception cause) {
             throw new UnsupportedDriverException("Could not instantiate " + webdriverClass, cause);
         }
     }
 
-    private WebDriver untrustedCertificateProfileDriver() {
-        return getFirefoxFactory().newUntrustedCertificateCompatibleDriver();
+    private WebDriver untrustedCertificateProfileDriver(final Class<? extends WebDriver> webdriverClass)
+                                      throws InvocationTargetException, NoSuchMethodException,
+                                             InstantiationException, IllegalAccessException {
+        FirefoxProfile profile = new FirefoxProfile();
+        profile.setAssumeUntrustedCertificateIssuer(true);
+        return webdriverInstanceFactory.newInstanceOf(webdriverClass, profile);
     }
 
     private boolean acceptUntrustedCertificatesForFirefox() {
         return (ThucydidesSystemProperty.getBooleanValue(ThucydidesSystemProperty.UNTRUSTED_CERTIFICATES));
     }
 
-
-    static class DisplayedElementLocator extends AjaxElementLocator {
-
-        private static final List<String> QUICK_METHODS = Arrays.asList("isCurrentlyVisible");
-        private static final List<String> QUICK_CLASSES = Arrays.asList(WebElementFacade.class.getName());
-
-        private final Field field;
-        private final WebDriver driver;
-
-        DisplayedElementLocator(WebDriver driver, Field field, int timeOutInSeconds) {
-            super(driver, field, timeOutInSeconds);
-            this.field = field;
-            this.driver = driver;
-        }
-
-        @Override
-        public WebElement findElement() {
-            if (shouldFindElementImmediately()) {
-                return findElementImmediately();
-            } else {
-                return super.findElement();
-            }
-        }
-
-        private boolean shouldFindElementImmediately() {
-            for(StackTraceElement elt : Thread.currentThread().getStackTrace()){
-                if (QUICK_METHODS.contains(elt.getMethodName())
-                    &&  QUICK_CLASSES.contains(elt.getClassName())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public WebElement findElementImmediately() {
-            Annotations annotations = new Annotations(field);
-            By by = annotations.buildBy();
-            return driver.findElement(by);
-        }
-
-        @Override
-        protected boolean isElementUsable(WebElement element) {
-            return element.isDisplayed();
-        }
-    }
-
-    static class DisplayedElementLocatorFactory extends AjaxElementLocatorFactory {
-        private final WebDriver driver;
-        private final int timeOutInSeconds;
-        public DisplayedElementLocatorFactory(WebDriver driver, int timeOutInSeconds) {
-            super(driver, timeOutInSeconds);
-            this.driver = driver;
-            this.timeOutInSeconds = timeOutInSeconds;
-        }
-
-        @Override
-        public ElementLocator createLocator(Field field) {
-            return new DisplayedElementLocator(driver, field, timeOutInSeconds);    //To change body of overridden methods use File | Settings | File Templates.
-        }
-    }
     /**
      * Initialize a page object's fields using the specified WebDriver instance.
      */
@@ -144,9 +82,4 @@ public class WebDriverFactory {
         PageFactory.initElements(finder, pageObject);
     }
 
-    /**
-     * For data-driven tests, it can be useful to restart some browsers (e.g. Firefox) periodically.
-     */
-    public void restartBrowser() {
-    }
 }

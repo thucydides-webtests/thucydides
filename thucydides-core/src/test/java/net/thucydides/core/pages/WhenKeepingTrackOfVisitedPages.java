@@ -4,6 +4,7 @@ package net.thucydides.core.pages;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFacade;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.junit.Before;
 import org.junit.Rule;
@@ -283,7 +284,7 @@ public class WhenKeepingTrackOfVisitedPages {
 
     @Test(expected = UnsupportedDriverException.class)
     public void should_throw_exception_if_invalid_driver_used() {
-        WebDriverFacade facade = new WebDriverFacade(InvalidWebDriverClass.class);
+        WebDriverFacade facade = new WebDriverFacade(InvalidWebDriverClass.class, new WebDriverFactory());
         facade.getProxiedDriver();
     }
 

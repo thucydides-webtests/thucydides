@@ -19,12 +19,16 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     private final Class<? extends WebDriver> driverClass;
 
+    private final WebDriverFactory webDriverFactory;
+
     protected WebDriver proxiedWebDriver;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebDriverFacade.class);
 
-    public WebDriverFacade(final Class<? extends WebDriver> driverClass) {
+    public WebDriverFacade(final Class<? extends WebDriver> driverClass,
+                           final WebDriverFactory webDriverFactory) {
         this.driverClass = driverClass;
+        this.webDriverFactory = webDriverFactory;
     }
 
     public WebDriver getProxiedDriver() {
@@ -65,27 +69,15 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
     }
 
     protected WebDriver newProxyDriver() {
-        WebDriver newDriver = null;
-        if (usingAMockDriver()) {
-            newDriver = WebdriverProxyFactory.getFactory().getMockDriver();
-        } else {
-            newDriver = newDriverInstance();
-        }
-        return newDriver;
+        return newDriverInstance();
     }
 
     private WebDriver newDriverInstance() {
-        WebDriver newDriver = null;
         try {
-            newDriver = driverClass.newInstance();
+            return webDriverFactory.newWebdriverInstance(driverClass);
         } catch (Exception e) {
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, e);
         }
-        return newDriver;
-    }
-
-    private boolean usingAMockDriver() {
-        return (WebdriverProxyFactory.getFactory().getMockDriver() != null);
     }
 
     public <X> X getScreenshotAs(final OutputType<X> target) {

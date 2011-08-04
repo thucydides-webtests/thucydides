@@ -4,6 +4,7 @@ package net.thucydides.core.pages.integration;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.webdriver.WebDriverFacade;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,7 +31,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @BeforeClass
     public static void initDriver() {
-        driver = new WebDriverFacade(FirefoxDriver.class);
+        driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
         page = new StaticSitePage(driver, 1);
         page.setWaitForTimeout(100);
         page.open();
