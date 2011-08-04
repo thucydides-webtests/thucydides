@@ -229,11 +229,12 @@ public class BaseStepListener implements StepListener {
     }
 
     public void testGroupStarted(final ExecutedStepDescription description) {
+    	String testName = AnnotatedStepDescription.from(description).getName();
         if (getCurrentTestOutcome() == null) {
             startNewTestOutcomeFor(description.getName(), testedStory);
-            getCurrentTestOutcome().startGroup(description.getName());
+            getCurrentTestOutcome().startGroup(testName);
         } else {
-            getCurrentTestOutcome().startGroup(description.getName());
+            getCurrentTestOutcome().startGroup(testName);
         }
         takeScreenshotForCurrentGroup();
     }
