@@ -292,6 +292,8 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     private void notifyStepStarted(final Method method, final Object[] args) {
 
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
+        StepEventBus.getEventBus().stepStarted(description);
+
         for (StepListener listener : listeners) {
             listener.stepStarted(description);
         }
