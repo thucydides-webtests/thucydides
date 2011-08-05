@@ -4,11 +4,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.3.1-SNAPSHOT</version>
+        <version>0.3.1</version>
     </parent>
     <groupId>net.thucydides.maven.plugins</groupId>
     <artifactId>thucydides-maven-integration-tests</artifactId>
-    <version>0.3.1-SNAPSHOT</version>
+    <version>0.3.1</version>
     <name>Thucydides maven plugin integration tests</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>net.thucydides.maven.plugins</groupId>
             <artifactId>maven-thucydides-plugin</artifactId>
-            <version>0.3.1-SNAPSHOT</version>
+            <version>0.3.1</version>
             <type>maven-plugin</type>
             <scope>compile</scope>
         </dependency>
