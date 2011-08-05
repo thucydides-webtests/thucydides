@@ -100,9 +100,9 @@
     <div class="clr"></div>
     <div id="contentbody">
         <div class="titlebar">
-            <div class="leftbgm"></div>
-            <div class="middlebgm"><span class="orangetext">Stories - <a href="${testOutcome.reportName}.html">${testOutcome.title}</a></span></div>
-            <div class="rightbgm"></div>
+            <div class="tall_leftbgm"></div>
+            <div class="tall_middlebgm"><span class="orangetext">Stories - <a href="${testOutcome.reportName}.html">${testOutcome.title}</a></span></div>
+            <div class="tall_rightbgm"></div>
         </div>
     </div>
     <div class="clr"></div>
