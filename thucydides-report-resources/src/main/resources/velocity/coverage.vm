@@ -103,6 +103,18 @@ function init() {
                 onCreateLabel: function(domElement, node) {
                     domElement.innerHTML = node.name;
                     var style = domElement.style;
+
+  					if (node.id == 'root' ) {
+	                	style.color = '#ffffff';
+					}
+					if (node.data.progress) {
+						if (node.data.progress > 50) {
+							style.color = '#ffffff';
+						} else {
+							style.color = '#000000';
+						}
+					}
+
                     style.display = '';
                     style.border = '1px solid transparent';
                     domElement.onmouseover = function() {

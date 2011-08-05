@@ -9,6 +9,7 @@
         @import url("css/core.css");
         -->
     </style>
+    <link rel="shortcut icon" href="favicon.ico" >
     <link href="css/core.css" rel="stylesheet" type="text/css"/>
     <style type="text/css">a:link {
         text-decoration: none;
@@ -61,14 +62,15 @@
 			effect:'fade',
 			animSpeed:200,
 			directionNavHide:false,  
-			manualAdvance:true
+			manualAdvance:true,
+			keyboardNav:true
 		});
 	});
 	</script>
 	
 </head>
 
-<body onload="init();">
+<body>
 <div id="topheader">
     <div id="topbanner">
         <div id="menu">

@@ -57,6 +57,7 @@ public class JSONTreeNode {
                 feature.getFeature().getName(),
                 colorScheme);
         featureNode.getData().put("$area", feature.getTotalSteps());
+        featureNode.getData().put("type", "feature");
         featureNode.getData().put("$color", rgbFormatOf(colorScheme.colorFor(feature)));
         featureNode.getData().put("stories", feature.getTotalStories());
         featureNode.getData().put("tests", feature.getTotalTests());
@@ -90,6 +91,7 @@ public class JSONTreeNode {
                     colorScheme);
 
             storyNode.getData().put("$area", storyResult.getStepCount());
+            storyNode.getData().put("type", "story");
             storyNode.getData().put("$color", rgbFormatOf(colorScheme.colorFor(storyResult)));
             storyNode.getData().put("tests", storyResult.getTotal());
             storyNode.getData().put("passing", storyResult.getSuccessCount());
@@ -168,6 +170,7 @@ public class JSONTreeNode {
 
             int nodeArea = findTestArea(sizeOfPendingOrSkippedTests, outcome);
             node.getData().put("$area", nodeArea);
+            node.getData().put("type", "test");
             node.getData().put("$color", rgbFormatOf(colorScheme.colorFor(outcome)));
             node.getData().put("result", outcome.getResult());
             node.getData().put("steps", outcome.countTestSteps());

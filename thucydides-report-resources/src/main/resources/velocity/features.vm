@@ -4,6 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Stories</title>
+    <link rel="shortcut icon" href="favicon.ico" >
     <script type="text/javascript" src="scripts/jquery.js"></script>
     <style>
         #accordion {

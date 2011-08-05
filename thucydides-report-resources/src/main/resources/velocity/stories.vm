@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Stories</title>
     <script type="text/javascript" src="scripts/jquery.js"></script>
+    <link rel="shortcut icon" href="favicon.ico" >
     <style>
         #accordion {
             list-style: none;

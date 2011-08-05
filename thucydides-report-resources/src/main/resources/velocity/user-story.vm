@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Stories</title>
+<link rel="shortcut icon" href="favicon.ico" >
 <style type="text/css">
 <!--
 @import url("css/core.css");
@@ -29,13 +30,13 @@ a:active {
       <div id="menu">
       <table border="0">
       <tr>
-        <td><a href="Home.html"><img src="images/menu_h.png" width="105" height="28" border="0" /></a></td>
+        <td><a href="index.html"><img src="images/menu_h.png" width="105" height="28" border="0" /></a></td>
         <td><a href="Features.html"><img src="images/menu_f.png" width="105" height="28" border="0" /></a></td>
         <td><a href="Stories.html"><img src="images/menu_s.png" width="105" height="28" border="0" /></a></td>
       </tr>
     </table>
     </div>
-    <div id="logo"><a href="Home.html"><img src="images/logo.jpg" width="265" height="96" border="0" /></a></div>
+    <div id="logo"><a href="index.html"><img src="images/logo.jpg" width="265" height="96" border="0" /></a></div>
   </div>
 </div>
     

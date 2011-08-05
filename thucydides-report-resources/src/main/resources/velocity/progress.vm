@@ -79,6 +79,10 @@ function init() {
                             html = "<div class=\"percentage-progress\">"
                                        + node.data.progress
                                        + "%</div>";
+						} else if (node.data.result == 'SUCCESS') {
+                            html = "<div class=\"percentage-progress\">DONE</div>";
+						} else {
+                            html = "<div class=\"percentage-progress\">" + node.data.result + "</div>";
 						}
                         html += "<div class=\"tip-title\">" + node.name
                                 + "</div><div class=\"tip-text\">";
@@ -109,6 +113,22 @@ function init() {
                 onCreateLabel: function(domElement, node) {
                     domElement.innerHTML = node.name;
                     var style = domElement.style;
+
+  					if (node.id == 'root' ) {
+	                	style.color = '#ffffff';
+					} else if (node.data.type == 'test') {
+						if (node.data.result == 'SUCCESS') {
+							style.color = '#ffffff';
+						}
+					}
+					if (node.data.progress) {
+						if (node.data.progress > 50) {
+							style.color = '#ffffff';
+						} else {
+							style.color = '#000000';
+						}
+					}
+
                     style.display = '';
                     style.border = '1px solid transparent';
                     domElement.onmouseover = function() {

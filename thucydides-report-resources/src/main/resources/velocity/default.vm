@@ -4,6 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>$testrun.Title</title>
+    <link rel="shortcut icon" href="favicon.ico" >
     <style type="text/css">
         <!--
         @import url("core.css");
@@ -38,7 +39,7 @@
         <div id="menu">
             <table border="0">
                 <tr>
-                    <td><a href="Home.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>
+                    <td><a href="index.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>
                     <td><a href="Features.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a>
                     </td>
                     <td><a href="Stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a>
@@ -46,7 +47,7 @@
                 </tr>
             </table>
         </div>
-        <div id="logo"><a href="Home.html"><img src="images/logo.jpg" width="265" height="96" border="0"/></a></div>
+        <div id="logo"><a href="index.html"><img src="images/logo.jpg" width="265" height="96" border="0"/></a></div>
     </div>
 </div>
 ## END OF HEADER
@@ -55,15 +56,15 @@
 ## BREADCRUMBS
 
 <div id="contenttop">
-    <div class="tallleftbg"></div>
-    <div class="tallmiddlebg">
+    <div class="leftbg"></div>
+    <div class="middlebg">
         <div style="height:30px;"><span class="bluetext"><a href="stories.html" class="bluetext">Home</a></span> / <span
                 class="bluetext"><a href="#" class="bluetext">Features</a></span> /
             <span class="bluetext"><a href="stories.html">Stories</a></span> /
             <span class="bluetext"><a href="${testrun.userStory.reportName}.html"
                                       class="bluetext">$testrun.userStory.name</a></span></div>
     </div>
-    <div class="tallrightbg"></div>
+    <div class="rightbg"></div>
 </div>
 ## END OF BREADCRUMBS
 
@@ -87,8 +88,8 @@
 
 <div id="contentbody">
     <div class="titlebar">
-        <div class="leftbgm"></div>
-        <div class="middlebgm">
+        <div class="tall_leftbgm"></div>
+        <div class="tall_middlebgm">
             <table width="1005">
                 <tr>
                     <td width="25"><img class="story-outcome-icon" src="images/$outcome_icon" width="25" height="25"/>
@@ -100,7 +101,7 @@
                 </tr>
             </table>
         </div>
-        <div class="rightbgm"></div>
+        <div class="tall_rightbgm"></div>
     </div>
 </div>
 
