@@ -2,6 +2,7 @@ package net.thucydides.core.steps.samples;
 
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
+import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.Ignore;
@@ -45,4 +46,15 @@ public class FlatScenarioSteps extends ScenarioSteps {
 
     @Step
     public void step_with_long_name_and_underscores() {}
+
+    @StepGroup("Annotated step group title")
+    public void a_step_group() {
+         stepWithLongName();
+        step_with_long_name_and_underscores();
+    }
+
+    public void a_plain_step_group() {
+         stepWithLongName();
+        step_with_long_name_and_underscores();
+    }
 }

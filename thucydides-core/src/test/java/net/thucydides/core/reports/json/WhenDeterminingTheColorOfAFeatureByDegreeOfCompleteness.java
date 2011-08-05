@@ -19,8 +19,8 @@ public class WhenDeterminingTheColorOfAFeatureByDegreeOfCompleteness extends Abs
     ColorScheme colorScheme;
 
     private static final Color PALE_BLUE = ProgressColorScheme.PALE_BLUE;
-    private static final Color BRIGHT_BLUE = ProgressColorScheme.BRIGHT_BLUE;
-    private static final Color MEDIUM_BLUE = new Color(117,193,255);
+    private static final Color DONE_BLUE = ProgressColorScheme.DONE_BLUE;
+    private static final Color MEDIUM_BLUE = new Color(115,171,255);
 
     @Before
     public void createColorScheme() {
@@ -30,7 +30,7 @@ public class WhenDeterminingTheColorOfAFeatureByDegreeOfCompleteness extends Abs
     @Test
     public void a_successful_test_step_should_be_bright_blue() {
         Color color = colorScheme.colorFor(mockTestStep(TestResult.SUCCESS));
-        assertThat(color, is(BRIGHT_BLUE));
+        assertThat(color, is(DONE_BLUE));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class WhenDeterminingTheColorOfAFeatureByDegreeOfCompleteness extends Abs
     }
 
     @Test
-    public void a_test_outcome_with_no_passing_should_be_page_blue() {
+    public void a_test_outcome_with_ignored_tests_should_be_page_blue() {
         Color color = colorScheme.colorFor(mockTestStep(TestResult.IGNORED));
         assertThat(color, is(PALE_BLUE));
     }
@@ -72,19 +72,11 @@ public class WhenDeterminingTheColorOfAFeatureByDegreeOfCompleteness extends Abs
     }
 
     @Test
-    public void a_test_outcome_with_all_passing_tests_should_be_bright_blue() {
+    public void a_test_outcome_with_all_passing_tests_should_be_dark_blue() {
         TestOutcome outcome = mockTestOutcome(10, 10, TestResult.SUCCESS);
         Color color = colorScheme.colorFor(outcome);
 
-        assertThat(color, is(BRIGHT_BLUE));
-    }
-
-    @Test
-    public void a_test_outcome_with_some_passing_tests_should_be_medium_blue() {
-        TestOutcome outcome = mockTestOutcome(10, 10, TestResult.SUCCESS);
-        Color color = colorScheme.colorFor(outcome);
-
-        assertThat(color, is(BRIGHT_BLUE));
+        assertThat(color, is(DONE_BLUE));
     }
 
      @Test
@@ -100,7 +92,7 @@ public class WhenDeterminingTheColorOfAFeatureByDegreeOfCompleteness extends Abs
         StoryTestResults story = mockStory(20, 20,0,0);
         Color color = colorScheme.colorFor(story);
 
-        assertThat(color, is(BRIGHT_BLUE));
+        assertThat(color, is(DONE_BLUE));
     }
 
     @Test
@@ -133,11 +125,11 @@ public class WhenDeterminingTheColorOfAFeatureByDegreeOfCompleteness extends Abs
         FeatureResults feature = mockFeatureResults(WidgetFeature.class,500, 10, 100, 100,0,0);
         Color color = colorScheme.colorFor(feature);
 
-        assertThat(color, is(BRIGHT_BLUE));
+        assertThat(color, is(DONE_BLUE));
     }
 
     @Test
-    public void a_feature_with_some_passing_tests_should_be_bright_blue() {
+    public void a_feature_with_some_passing_tests_should_be_medium_blue() {
         FeatureResults feature = mockFeatureResults(WidgetFeature.class,500, 10, 100, 50,0,0);
         Color color = colorScheme.colorFor(feature);
 

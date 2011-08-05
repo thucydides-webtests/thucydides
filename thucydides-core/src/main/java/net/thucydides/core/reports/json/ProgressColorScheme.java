@@ -4,6 +4,7 @@ import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
+import org.openqa.selenium.io.Zip;
 
 import java.awt.*;
 
@@ -15,14 +16,14 @@ import static java.awt.Color.BLACK;
  */
 public class ProgressColorScheme implements ColorScheme {
 
-    public static final Color PALE_BLUE = new Color(235,246,255);
-    public static final Color BRIGHT_BLUE = new Color(0,140,255);
+    public static final Color PALE_BLUE = new Color(230,240,255);
+    public static final Color DONE_BLUE = new Color(0,35,255);
 
-    private final static float FIXED_HUE = 0.575F;
+    private final static float FIXED_HUE = 0.6F;
     private final static float FIXED_BRIGHTNESS = 1.0F;
 
-    private static final float MINIMUM_SATURATION = 0.08f;
-    private static final float MEDIUM_SATURATION  = 0.54f;
+    private static final float MINIMUM_SATURATION = 0.1f;
+    private static final float MEDIUM_SATURATION  = 0.6f;
     private static final float MAXIMUM_SATURATION = 1.0f;
 
     /**
@@ -42,7 +43,11 @@ public class ProgressColorScheme implements ColorScheme {
     private Color colorForResults(final int totalTestSteps,
                                   final int totalStepsInPassingTests) {
 
-        return calculateColorFromTestCount(totalTestSteps, totalStepsInPassingTests);
+        if (totalStepsInPassingTests == totalTestSteps) {
+            return DONE_BLUE;
+        } else {
+            return calculateColorFromTestCount(totalTestSteps, totalStepsInPassingTests);
+        }
     }
 
     private Color calculateColorFromTestCount(final int totalTestSteps,
@@ -55,10 +60,9 @@ public class ProgressColorScheme implements ColorScheme {
     }
 
     public Color colorFor(final TestOutcome outcome) {
-//        return colorForResults(outcome.getStepCount(), outcome.getSuccessCount());
         switch(outcome.getResult()) {
             case SUCCESS:
-                return BRIGHT_BLUE;
+                return DONE_BLUE;
             default:
                 return PALE_BLUE;
         }
@@ -67,7 +71,7 @@ public class ProgressColorScheme implements ColorScheme {
     public Color colorFor(final TestStep step) {
         switch(step.getResult()) {
             case SUCCESS:
-                return BRIGHT_BLUE;
+                return DONE_BLUE;
             default:
                 return PALE_BLUE;
         }
