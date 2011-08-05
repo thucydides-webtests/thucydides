@@ -453,6 +453,40 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void a_test_group_with_an_annotated_title_should_record_the_title() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
+        ExecutedStepDescription group = ExecutedStepDescription.of(FlatScenarioSteps.class,"a_step_group");
+
+        stepListener.stepGroupStarted(group);
+        stepListener.stepSucceeded();
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        TestOutcome testOutcome = results.get(0);
+
+        assertThat(testOutcome.getTestSteps().get(0).getDescription(), is("Annotated step group title"));
+    }
+
+    @Test
+    public void a_test_group_without_an_annotated_title_should_record_the_humanized_group_name() {
+
+        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
+        ExecutedStepDescription group = ExecutedStepDescription.of(FlatScenarioSteps.class,"a_plain_step_group");
+
+        stepListener.stepGroupStarted(group);
+        stepListener.stepSucceeded();
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        TestOutcome testOutcome = results.get(0);
+
+        assertThat(testOutcome.getTestSteps().get(0).getDescription(), is("A plain step group"));
+    }
+
+    @Test
     public void succeeding_test_groups_should_be_marked_as_successful_by_default() {
 
         stepListener.testRunStartedFor(MyTestCase.class);
@@ -468,7 +502,6 @@ public class WhenRecordingStepExecutionResults {
 
         assertThat(testOutcome.getTestSteps().get(0).getResult(), is(TestResult.SUCCESS));
     }
-
     @Test
     public void steps_should_be_skipped_after_a_failure() {
 
