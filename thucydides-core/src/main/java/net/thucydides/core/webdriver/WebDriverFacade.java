@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.steps.StepEventBus;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -40,6 +41,9 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
         return proxiedWebDriver;
     }
 
+    private boolean isEnabled() {
+        return !StepEventBus.getEventBus().suspendWebdriverCalls();
+    }
     /**
      * Workaround for Webdriver issue 1438 (http://code.google.com/p/selenium/issues/detail?id=1438)
      */
@@ -96,26 +100,38 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
     }
 
     public void get(final String url) {
+        if (!isEnabled()) return;
+
         getProxiedDriver().get(url);
     }
 
     public String getCurrentUrl() {
+        if (!isEnabled()) return null;
+
         return getProxiedDriver().getCurrentUrl();
     }
 
     public String getTitle() {
+        if (!isEnabled()) return null;
+
         return getProxiedDriver().getTitle();
     }
 
     public List<WebElement> findElements(final By by) {
+        if (!isEnabled()) return null;
+
         return getProxiedDriver().findElements(by);
     }
 
     public WebElement findElement(final By by) {
+        if (!isEnabled()) return null;
+
         return getProxiedDriver().findElement(by);
     }
 
     public String getPageSource() {
+        if (!isEnabled()) return null;
+
         return getProxiedDriver().getPageSource();
     }
 
@@ -145,22 +161,32 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
     }
 
     public Set<String> getWindowHandles() {
+        if (!isEnabled()) return null;
+
         return getProxiedDriver().getWindowHandles();
     }
 
     public String getWindowHandle() {
+        if (!isEnabled()) return null;
+
         return getProxiedDriver().getWindowHandle();
     }
 
     public TargetLocator switchTo() {
+        if (!isEnabled()) return null;
+
         return getProxiedDriver().switchTo();
     }
 
     public Navigation navigate() {
+        if (!isEnabled()) return null;
+
         return getProxiedDriver().navigate();
     }
 
     public Options manage() {
+        if (!isEnabled()) return null;
+
         return getProxiedDriver().manage();
     }
 }

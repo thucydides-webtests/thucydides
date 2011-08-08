@@ -6,6 +6,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.steps.InvalidManagedPagesFieldException;
+import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
@@ -62,13 +63,9 @@ import static org.mockito.Mockito.when;
 public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
 
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        File temporaryDirectory = tempFolder.newFolder("screenshots");
     }
 
     @After
@@ -95,6 +92,8 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         };
 
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory);
+
+        StepEventBus.getEventBus().clear();
 
     }
 
@@ -244,7 +243,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
 
     @Test
-    public void tests_should_be_run_even_after_a_webdriver_error() throws InitializationError {
+    public void tests_should_be_run_after_a_webdriver_error() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(OpenStaticDemoPageWithFailureSample.class);
         runner.run(new RunNotifier());

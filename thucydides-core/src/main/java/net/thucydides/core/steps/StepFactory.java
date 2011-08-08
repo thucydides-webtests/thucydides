@@ -32,7 +32,7 @@ public class StepFactory {
         this.pages = pages;
     }
     
-    public void addListener(final StepListener listener) {
+    private void addListener(final StepListener listener) {
         if (!listeners.contains(listener)) {
             listeners.add(listener);
         }

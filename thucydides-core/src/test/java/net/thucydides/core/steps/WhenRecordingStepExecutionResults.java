@@ -91,6 +91,8 @@ public class WhenRecordingStepExecutionResults {
 
         stepFactory = new StepFactory(pages);
         stepFactory.addListener(stepListener);
+
+        StepEventBus.getEventBus().clear();
     }
 
     class MyStory {}

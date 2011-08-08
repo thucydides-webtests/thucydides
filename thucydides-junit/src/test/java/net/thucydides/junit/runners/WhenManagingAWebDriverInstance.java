@@ -2,6 +2,7 @@ package net.thucydides.junit.runners;
 
 import net.thucydides.core.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
@@ -72,6 +73,8 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
         };
 
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory);
+
+        StepEventBus.getEventBus().clear();
 
     }
 

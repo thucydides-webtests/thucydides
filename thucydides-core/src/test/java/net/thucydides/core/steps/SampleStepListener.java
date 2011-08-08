@@ -36,7 +36,7 @@ public class SampleStepListener implements StepListener {
     }
 
     public void testStarted(String description) {
-        buffer.append("TEST: " + description).append("\n");
+        buffer.append("TEST " + description).append("\n");
         push();
     }
 
@@ -46,13 +46,21 @@ public class SampleStepListener implements StepListener {
     }
 
     public void stepStarted(ExecutedStepDescription description) {
-        buffer.append(leftPad("STEP STARTED:" + description.getName(),currentIndent)).append("\n");
+        writeIndent(buffer);
+        buffer.append(description.getName()).append("\n");
         push();
+    }
+
+    private void writeIndent(StringBuffer buffer) {
+        for(int i = 0; i < currentIndent; i++) {
+            buffer.append("-");
+        }
     }
 
     public void stepFinished(ExecutedStepDescription description) {
         pop();
-        buffer.append(leftPad("STEP DONE:" + description.getName(),currentIndent)).append("\n");
+        writeIndent(buffer);
+        buffer.append(description.getName() + " done").append("\n");
     }
 
     public void stepGroupStarted(String description) {
@@ -71,9 +79,15 @@ public class SampleStepListener implements StepListener {
     }
 
     public void stepFailed(StepFailure failure) {
+        pop();
+        writeIndent(buffer);
+        buffer.append("--> STEP FAILED").append("\n");
     }
 
     public void stepIgnored(ExecutedStepDescription description) {
+        pop();
+        writeIndent(buffer);
+        buffer.append("--> STEP IGNORED").append("\n");
     }
 
     public List<TestOutcome> getTestOutcomes() {

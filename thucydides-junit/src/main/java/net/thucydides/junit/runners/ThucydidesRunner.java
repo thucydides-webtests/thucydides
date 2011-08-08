@@ -7,6 +7,7 @@ import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepData;
+import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -224,12 +225,17 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 
         resetBroswerFromTimeToTime();
+        clearEventBus();
 		Description description= describeChild(method);
 		if (method.getAnnotation(Pending.class) != null) {
 			notifier.fireTestIgnored(description);
 		} else {
             super.runChild(method, notifier);
 		}
+    }
+
+    private void clearEventBus() {
+        StepEventBus.getEventBus().clear();
     }
 
     protected boolean restartBrowserBeforeTest() {

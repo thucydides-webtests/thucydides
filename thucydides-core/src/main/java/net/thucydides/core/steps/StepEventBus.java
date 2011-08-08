@@ -22,28 +22,61 @@ public class StepEventBus {
 
     private Stack<String> stepStack = new Stack<String>();
 
+    private boolean stepFailed;
+
     public void registerListener(final StepListener listener) {
         registeredListeners.add(listener);
     }
 
-    public void stepStarted(final ExecutedStepDescription executedStepDescription) {
-        stepStack.push(executedStepDescription.getName());
-
-        for(StepListener stepListener : registeredListeners) {
-            stepListener.stepStarted(executedStepDescription);
-        }
-    }
-
     public void testStarted(final String testName) {
+
+        clear();
 
         for(StepListener stepListener : registeredListeners) {
             stepListener.testStarted(testName);
         }
     }
 
+    public void clear() {
+        stepStack.clear();
+        stepFailed = false;
+    }
+
     public void testFinished() {
         for(StepListener stepListener : registeredListeners) {
             stepListener.testFinished(new TestStepResult());
+        }
+        clear();
+    }
+
+    private void pushStep(String stepName) {
+        stepStack.push(stepName);
+    }
+
+    private void popStep() {
+        stepStack.pop();
+        if (stepStack.isEmpty()) {
+            clearStepFailures();
+        }
+    }
+
+    private void clearStepFailures() {
+        stepFailed = false;
+    }
+
+    public boolean aStepInTheCurrentTestHasFailed() {
+        return stepFailed;
+    }
+
+    public boolean isCurrentTestDataDriven() {
+        return DataDrivenStep.inProgress();
+    }
+
+    public void stepStarted(final ExecutedStepDescription executedStepDescription) {
+
+        pushStep(executedStepDescription.getName());
+        for(StepListener stepListener : registeredListeners) {
+            stepListener.stepStarted(executedStepDescription);
         }
     }
 
@@ -51,5 +84,28 @@ public class StepEventBus {
         for(StepListener stepListener : registeredListeners) {
             stepListener.stepFinished(description);
         }
+        popStep();
+    }
+
+    public void stepFailed(final StepFailure failure) {
+
+        for(StepListener stepListener : registeredListeners) {
+            stepListener.stepFailed(failure);
+        }
+        stepFailed = true;
+    }
+
+    public void stepIgnored(ExecutedStepDescription description) {
+        for(StepListener stepListener : registeredListeners) {
+            stepListener.stepIgnored(description);
+        }
+    }
+
+    public void dropListener(final StepListener stepListener) {
+        registeredListeners.remove(stepListener);
+    }
+
+    public boolean suspendWebdriverCalls() {
+        return false;// return aStepInTheCurrentTestHasFailed();
     }
 }
