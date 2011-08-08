@@ -82,7 +82,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     private Object testStepResult(final Object obj, final Method method,
                                   final Object[] args, final MethodProxy proxy) throws Throwable {
 
-        if (!isATestStep(method) && !shouldSkip(method)) {
+        if (!isATestStep(method)) {
             return runNormalMethod(obj, method, args, proxy);
         }
 
