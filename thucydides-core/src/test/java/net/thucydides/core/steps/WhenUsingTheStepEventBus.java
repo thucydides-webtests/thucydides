@@ -6,6 +6,7 @@ import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.csv.Person;
+import net.thucydides.core.model.Story;
 import net.thucydides.core.pages.Pages;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -45,11 +46,25 @@ public class WhenUsingTheStepEventBus {
         }
     }
 
+    static class SampleTestScenario {
+
+        @Steps
+        SimpleTestScenarioSteps steps;
+
+        public void sampleTest() {
+            steps.step1();
+            steps.step2();
+            steps.step3();
+        }
+    }
+
     @Mock
     WebDriver driver;
 
     @Mock
     StepListener listener;
+
+    SampleStepListener sampleStepListener;
 
     private StepFactory factory;
 
@@ -58,6 +73,8 @@ public class WhenUsingTheStepEventBus {
         MockitoAnnotations.initMocks(this);
 
         factory = new StepFactory(new Pages(driver));
+
+        sampleStepListener = new SampleStepListener();
     }
 
     @Test
@@ -84,6 +101,18 @@ public class WhenUsingTheStepEventBus {
         verify(listener).stepStarted(any(ExecutedStepDescription.class));
     }
 
+    @Test
+    public void should_record_when_a_test_starts_and_finishes() {
+        SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
+
+        StepEventBus.getEventBus().registerListener(sampleStepListener);
+
+        StepEventBus.getEventBus().testStarted("a_test");
+        steps.step1();
+        StepEventBus.getEventBus().testFinished();
+
+        System.out.println(sampleStepListener.toString());
+    }
 
     @Test
     public void should_notify_listeners_when_a_step_starts() {

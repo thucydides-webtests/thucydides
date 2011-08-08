@@ -183,7 +183,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             notifyFailureOf(method, args, webdriverAssertionError);
         }
 
-        notifyTestFinishedFor(method, args);
+        notifyStepFinishedFor(method, args);
 
         resultTally.logExecutedTest();
         LOGGER.info("Test step done: " + getTestNameFrom(method, args, false));
@@ -200,11 +200,13 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         return (pendingAnnotation != null);
     }
 
-    private void notifyTestFinishedFor(final Method method, final Object[] args) {
+    private void notifyStepFinishedFor(final Method method, final Object[] args) {
+
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
         for (StepListener listener : listeners) {
             listener.stepFinished(description);
         }
+        StepEventBus.getEventBus().stepFinished(description);
     }
 
     private String getTestNameFrom(final Method method, final Object[] args) {
@@ -298,6 +300,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             listener.stepStarted(description);
         }
     }
+
 
     private boolean invokingLast(final Method method) {
         return (method.getName().equals("done") || (method.getName()
