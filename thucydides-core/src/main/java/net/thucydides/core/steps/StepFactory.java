@@ -16,9 +16,7 @@ import java.util.Map;
 public class StepFactory {
 
     private final Pages pages;
-    
-    private final List<StepListener> listeners = new ArrayList<StepListener>();
-    
+
     private final List<ScenarioSteps> managedSteps = new ArrayList<ScenarioSteps>();
 
     private final Map<Class<? extends ScenarioSteps>, ScenarioSteps> index
@@ -31,13 +29,7 @@ public class StepFactory {
     public StepFactory(final Pages pages) {
         this.pages = pages;
     }
-    
-    private void addListener(final StepListener listener) {
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
-        }
-    }
-    
+
     private static final Class<?>[] CONSTRUCTOR_ARG_TYPES = {Pages.class};
     
     /**
@@ -94,7 +86,7 @@ public class StepFactory {
     private <T extends ScenarioSteps> T createProxyStepLibrary(Class<T> scenarioStepsClass) {
         Enhancer e = new Enhancer();
         e.setSuperclass(scenarioStepsClass);
-        StepInterceptor stepInterceptor = new StepInterceptor(scenarioStepsClass, listeners);
+        StepInterceptor stepInterceptor = new StepInterceptor(scenarioStepsClass);
         e.setCallback(stepInterceptor);
 
         Object[] arguments = new Object[1];

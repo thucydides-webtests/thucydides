@@ -13,6 +13,7 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
 import net.thucydides.core.steps.samples.NestedScenarioSteps;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -90,9 +91,15 @@ public class WhenRecordingStepExecutionResults {
         when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot);
 
         stepFactory = new StepFactory(pages);
-        stepFactory.addListener(stepListener);
 
         StepEventBus.getEventBus().clear();
+        StepEventBus.getEventBus().registerListener(stepListener);
+    }
+
+    @After
+    public void cleanupStepEventBus() {
+        StepEventBus.getEventBus().clear();
+        StepEventBus.getEventBus().dropListener(stepListener);
     }
 
     class MyStory {}
@@ -937,7 +944,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step1();
         steps.step2();
 
-        verify(driver, times(7)).getScreenshotAs((OutputType<?>) anyObject());
+        verify(driver, times(9)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     private TestOutcome firstTestResultRecordedIn(List<TestOutcome> testOutcomeResults) {

@@ -20,7 +20,10 @@ public class StepEventBus {
 
     private List<StepListener> registeredListeners = new ArrayList<StepListener>();
 
+    private TestStepResult resultTally;
+
     private Stack<String> stepStack = new Stack<String>();
+    private Stack<Boolean> webdriverSuspensions = new Stack<Boolean>();
 
     private boolean stepFailed;
 
@@ -40,11 +43,12 @@ public class StepEventBus {
     public void clear() {
         stepStack.clear();
         stepFailed = false;
+        this.resultTally = new TestStepResult();
     }
 
     public void testFinished() {
         for(StepListener stepListener : registeredListeners) {
-            stepListener.testFinished(new TestStepResult());
+            stepListener.testFinished(resultTally);
         }
         clear();
     }
@@ -81,6 +85,7 @@ public class StepEventBus {
     }
 
     public void stepFinished(final ExecutedStepDescription description) {
+        resultTally.logExecutedTest();
         for(StepListener stepListener : registeredListeners) {
             stepListener.stepFinished(description);
         }
@@ -89,6 +94,8 @@ public class StepEventBus {
 
     public void stepFailed(final StepFailure failure) {
 
+        resultTally.logFailure(failure);
+
         for(StepListener stepListener : registeredListeners) {
             stepListener.stepFailed(failure);
         }
@@ -96,6 +103,9 @@ public class StepEventBus {
     }
 
     public void stepIgnored(ExecutedStepDescription description) {
+
+        resultTally.logIgnoredTest();
+
         for(StepListener stepListener : registeredListeners) {
             stepListener.stepIgnored(description);
         }
@@ -105,7 +115,15 @@ public class StepEventBus {
         registeredListeners.remove(stepListener);
     }
 
-    public boolean suspendWebdriverCalls() {
-        return false;// return aStepInTheCurrentTestHasFailed();
+    public boolean webdriverCallsAreSuspended() {
+        return aStepInTheCurrentTestHasFailed() || !webdriverSuspensions.isEmpty();
+    }
+
+    public void reenableWebdriverCalls() {
+        webdriverSuspensions.pop();
+    }
+
+    public void temporarilySuspendWebdriverCalls() {
+        webdriverSuspensions.push(true);
     }
 }

@@ -11,18 +11,18 @@ import static net.thucydides.core.util.NameConverter.withNoArguments;
  */
 public class ExecutedStepDescription implements Cloneable {
 
-    private final Class<? extends ScenarioSteps> stepsClass;
+    private final Class<? extends Object> stepsClass;
     private final String name;
     private boolean isAGroup;
 
-    protected ExecutedStepDescription(final Class<? extends ScenarioSteps> stepsClass,
+    protected ExecutedStepDescription(final Class<? extends Object> stepsClass,
                                       final String name) {
         this.stepsClass = stepsClass;
         this.name = name;
     }
 
 
-    protected ExecutedStepDescription(final Class<? extends ScenarioSteps> stepsClass,
+    protected ExecutedStepDescription(final Class<? extends Object> stepsClass,
                                       final String name,
                                       final boolean isAGroup) {
         this.stepsClass = stepsClass;
@@ -42,7 +42,7 @@ public class ExecutedStepDescription implements Cloneable {
     /**
      * The class of the step library being executed.
      */
-    public Class<? extends ScenarioSteps> getStepClass() {
+    public Class<? extends Object> getStepClass() {
         return stepsClass;
     }
 
@@ -54,7 +54,7 @@ public class ExecutedStepDescription implements Cloneable {
     /**
      * We might not have the test class provided (e.g. at the end of a test).
      */
-    public static ExecutedStepDescription of(final Class<? extends ScenarioSteps> stepsClass,
+    public static ExecutedStepDescription of(final Class<? extends Object> stepsClass,
                                              final String name) {
         return new ExecutedStepDescription(stepsClass, name);
     }

@@ -42,7 +42,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
     }
 
     private boolean isEnabled() {
-        return !StepEventBus.getEventBus().suspendWebdriverCalls();
+        return !StepEventBus.getEventBus().webdriverCallsAreSuspended();
     }
     /**
      * Workaround for Webdriver issue 1438 (http://code.google.com/p/selenium/issues/detail?id=1438)

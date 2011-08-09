@@ -401,6 +401,37 @@ public class WhenGeneratingAnXMLReport {
         assertThat(generatedReportText, isSimilarTo(expectedReport));
     }    
     
+    @Test
+    public void should_record_minimal_nested_test_steps_as_nested_structures()
+            throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+        String expectedReport =
+                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
+                + "  <test-group name='Group 1' result='SUCCESS'>\n"
+                + "    <test-group name='Group 1.1' result='SUCCESS'>\n"
+                + "      <test-group name='Group 1.1.1' result='SUCCESS'>\n"
+                + "        <test-step result='SUCCESS'>\n"
+                + "          <description>step 1</description>\n"
+                + "        </test-step>\n"
+                + "      </test-group>\n"
+                + "    </test-group>\n"
+                + "  </test-group>\n"
+                + "</acceptance-test-run>";
+
+        testOutcome.startGroup("Group 1");
+        testOutcome.startGroup("Group 1.1");
+        testOutcome.startGroup("Group 1.1.1");
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+        testOutcome.endGroup();
+        testOutcome.endGroup();
+        testOutcome.endGroup();
+
+        File xmlReport = reporter.generateReportFor(testOutcome);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }
 
     @Test
     public void should_include_the_name_of_any_screenshots_where_present()

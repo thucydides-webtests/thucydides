@@ -1,5 +1,6 @@
 package net.thucydides.core.screenshots;
 
+import net.thucydides.core.steps.StepEventBus;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -75,7 +76,7 @@ public class Photographer {
     public File takeScreenshot(final String prefix) {
         if (driverCanTakeSnapehots()) {
             File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-            if (screenshot != null) {
+            if ((screenshot != null) && (screenshot.exists())) {
                 try {
                     return saveScreenshoot(prefix, screenshot);
                 } catch (IOException e) {

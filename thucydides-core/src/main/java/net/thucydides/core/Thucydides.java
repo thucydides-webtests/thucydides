@@ -4,6 +4,7 @@ import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.StepAnnotations;
+import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.webdriver.Configuration;
@@ -35,7 +36,7 @@ public class Thucydides {
 
         initPagesObjectUsing(getDriver());
         initStepListener();
-        initStepFactoryUsing(getPages(), getStepListener());
+        initStepFactoryUsing(getPages());
 
         injectDriverInto(testCase);
         injectAnnotatedPagesObjectInto(testCase);
@@ -50,6 +51,8 @@ public class Thucydides {
         listener.getTestOutcomes();
 
         stepListenerThreadLocal.set(listener);
+
+        StepEventBus.getEventBus().registerListener(getStepListener());
     }
 
     private static void setupWebDriverFactory() {
@@ -60,11 +63,8 @@ public class Thucydides {
         pagesThreadLocal.set(new Pages(driver));
     }
 
-    private static void initStepFactoryUsing(final Pages pagesObject, StepListener listener) {
-        StepFactory stepFactory = new StepFactory(pagesObject);
+    private static void initStepFactoryUsing(final Pages pagesObject) {
         stepFactoryThreadLocal.set(new StepFactory(pagesObject));
-
-        stepFactory.addListener(listener);
     }
 
     /**

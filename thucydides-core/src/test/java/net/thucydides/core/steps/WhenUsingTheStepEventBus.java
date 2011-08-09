@@ -1,6 +1,7 @@
 package net.thucydides.core.steps;
 
 import com.sun.jdi.event.StepEvent;
+import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
@@ -28,6 +29,9 @@ import static org.mockito.Mockito.verify;
 public class WhenUsingTheStepEventBus {
 
     static class SimpleTestScenarioSteps extends ScenarioSteps {
+
+        @Managed
+        WebDriver driver;
 
         public SimpleTestScenarioSteps(Pages pages) {
             super(pages);
@@ -75,6 +79,26 @@ public class WhenUsingTheStepEventBus {
         public void step8(){
             step1();
             failingStep();
+            step4();
+        }
+
+        @Step
+        public void nested_steps(){
+            step1();
+            nested_steps1();
+            step4();
+        }
+
+        @Step
+        public void nested_steps1(){
+            step1();
+            nested_steps2();
+            step4();
+        }
+
+        @Step
+        public void nested_steps2(){
+            step1();
             step4();
         }
 
@@ -149,9 +173,11 @@ public class WhenUsingTheStepEventBus {
     public void should_execute_steps_transparently() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
+        StepEventBus.getEventBus().testStarted("some_test");
         steps.step1();
         steps.step2();
         steps.step3();
+        StepEventBus.getEventBus().testFinished();
 
         verify(driver).get("step_one");
         verify(driver).get("step_two");
@@ -171,7 +197,9 @@ public class WhenUsingTheStepEventBus {
     public void should_notify_listeners_when_a_step_starts() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
+        StepEventBus.getEventBus().testStarted("some_test");
         steps.step1();
+        StepEventBus.getEventBus().testFinished();
 
         ArgumentCaptor<ExecutedStepDescription> argument = ArgumentCaptor.forClass(ExecutedStepDescription.class);
 
@@ -219,6 +247,51 @@ public class WhenUsingTheStepEventBus {
 
     @Test
     public void should_record_groups_as_nested_test_steps() {
+        SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
+
+        StepEventBus.getEventBus().testStarted("a_test");
+        steps.nested_steps();
+        StepEventBus.getEventBus().testFinished();
+
+        String expectedSteps =
+                  "TEST a_test\n"
+                          + "-nested_steps\n"
+                          + "--step1\n"
+                          + "--step1 done\n"
+                          + "--nested_steps1\n"
+                          + "---step1\n"
+                          + "---step1 done\n"
+                          + "---nested_steps2\n"
+                          + "----step1\n"
+                          + "----step1 done\n"
+                          + "----step4\n"
+                          + "-----step5\n"
+                          + "-----step5 done\n"
+                          + "-----step6\n"
+                          + "-----step6 done\n"
+                          + "----step4 done\n"
+                          + "---nested_steps2 done\n"
+                          + "---step4\n"
+                          + "----step5\n"
+                          + "----step5 done\n"
+                          + "----step6\n"
+                          + "----step6 done\n"
+                          + "---step4 done\n"
+                          + "--nested_steps1 done\n"
+                          + "--step4\n"
+                          + "---step5\n"
+                          + "---step5 done\n"
+                          + "---step6\n"
+                          + "---step6 done\n"
+                          + "--step4 done\n"
+                          + "-nested_steps done\n"
+                          + "TEST DONE\n";
+
+        assertThat(sampleStepListener.toString(), is(expectedSteps));
+    }
+
+    @Test
+    public void should_record_deeply_nested_test_steps() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
         StepEventBus.getEventBus().testStarted("a_test");

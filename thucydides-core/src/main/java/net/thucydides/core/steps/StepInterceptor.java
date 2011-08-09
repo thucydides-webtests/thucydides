@@ -28,28 +28,18 @@ import org.slf4j.LoggerFactory;
 public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private final List<StepListener> listeners;
-    private final Class<? extends ScenarioSteps> testStepClass;
-    private TestStepResult resultTally;
+    private final Class<? extends Object> testStepClass;
     private List<Throwable> stepExceptions;
     private Throwable error = null;
     private static final Logger LOGGER = LoggerFactory.getLogger(StepInterceptor.class);
 
-    public StepInterceptor(final Class<? extends ScenarioSteps> testStepClass,
-                           final List<StepListener> listeners) {
+    public StepInterceptor(final Class<? extends Object> testStepClass) {
         this.testStepClass = testStepClass;
-        this.listeners = listeners;
-        this.resultTally = new TestStepResult();
         this.stepExceptions = new ArrayList<Throwable>();
     }
 
     public Object intercept(final Object obj, final Method method,
                             final Object[] args, final MethodProxy proxy) throws Throwable {
-
-        if (invokingLast(method)) {
-            notifyFinished(method);
-            return null;
-        }
 
         Object result;
         if (baseClassMethod(method)) {
@@ -101,18 +91,25 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     private Object runSkippedMethod(Object obj, Method method, Object[] args, MethodProxy proxy) {
         LOGGER.info("Running test step " + getTestNameFrom(method, args, false));
         Object result = null;
+        StepEventBus.getEventBus().temporarilySuspendWebdriverCalls();
         try {
             result = invokeMethod(obj, method, args, proxy);
         } catch (Throwable anyException) {
             // Ignore any exceptions or failures for skipped tests
         }
+        StepEventBus.getEventBus().reenableWebdriverCalls();
         return result;
     }
 
     Object appropriateReturnObject(final Object returnedValue, final Object obj, final Method method) {
         if (returnedValue != null) {
             return returnedValue;
+        } else {
+            return appropriateReturnObject(obj, method);
         }
+    }
+
+    Object appropriateReturnObject(final Object obj, final Method method) {
         if (method.getReturnType().isAssignableFrom(obj.getClass())) {
             return obj;
         } else {
@@ -126,11 +123,11 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private boolean aPreviousStepHasFailed() {
         boolean aPreviousStepHasFailed = false;
-        for (StepListener listener : listeners) {
-            if (listener.aStepHasFailed() && !listener.isDataDriven()) {
-                aPreviousStepHasFailed = true;
-            }
-        }
+//        for (StepListener listener : listeners) {
+//            if (listener.aStepHasFailed() && !listener.isDataDriven()) {
+//                aPreviousStepHasFailed = true;
+//            }
+//        }
 
         if (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed()
                 && !StepEventBus.getEventBus().isCurrentTestDataDriven()) {
@@ -205,7 +202,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             stepExceptions.add(assertionError);
             LOGGER.debug("Addertion error caught - notifying of failure " + assertionError);
             notifyFailureOf(method, args, assertionError);
-            return appropriateReturnObject(null, obj, method);
+            return appropriateReturnObject(obj, method);
         } catch (WebDriverException webdriverException) {
             error = webdriverException;
             AssertionError webdriverAssertionError = new WebdriverAssertionError(error.getMessage(), error);
@@ -215,7 +212,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
         notifyStepFinishedFor(method, args);
 
-        resultTally.logExecutedTest();
         LOGGER.info("Test step done: " + getTestNameFrom(method, args, false));
         return result;
     }
@@ -234,10 +230,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
         StepEventBus.getEventBus().stepFinished(description);
-
-        for (StepListener listener : listeners) {
-            listener.stepFinished(description);
-        }
     }
 
     private String getTestNameFrom(final Method method, final Object[] args) {
@@ -281,12 +273,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             throws Exception {
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
         StepEventBus.getEventBus().stepIgnored(description);
-
-        for (StepListener listener : listeners) {
-            listener.stepIgnored(description);
-        }
-
-        resultTally.logIgnoredTest();
     }
 
     private void notifyFailureOf(final Method method, final Object[] args,
@@ -295,18 +281,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
         StepFailure failure = new StepFailure(description, cause);
         StepEventBus.getEventBus().stepFailed(failure);
-
-        for (StepListener listener : listeners) {
-            listener.stepFailed(failure);
-        }
-        resultTally.logFailure(failure);
-    }
-
-    private void notifyFinished(final Method method) throws Exception {
-
-        for (StepListener listener : listeners) {
-            listener.testFinished(resultTally);
-        }
     }
 
     private void notifyGroupStarted(final Method method, final Object[] args)
@@ -314,17 +288,10 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
         StepEventBus.getEventBus().stepStarted(description);
-
-        for (StepListener listener : listeners) {
-            listener.stepGroupStarted(description);
-        }
     }
 
     private void notifyGroupFinished(final Method method, final Object[] args)
             throws Exception {
-        for (StepListener listener : listeners) {
-            listener.stepGroupFinished();
-        }
 
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
         StepEventBus.getEventBus().stepFinished(description);
@@ -334,16 +301,5 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
         StepEventBus.getEventBus().stepStarted(description);
-
-        for (StepListener listener : listeners) {
-            listener.stepStarted(description);
-        }
     }
-
-
-    private boolean invokingLast(final Method method) {
-        return (method.getName().equals("done") || (method.getName()
-                .equals("finalize")));
-    }
-
 }

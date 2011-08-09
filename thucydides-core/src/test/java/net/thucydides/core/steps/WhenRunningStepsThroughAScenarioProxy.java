@@ -7,6 +7,7 @@ import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -201,9 +202,14 @@ public class WhenRunningStepsThroughAScenarioProxy {
         MockitoAnnotations.initMocks(this);
 
         factory = new StepFactory(new Pages(driver));
-        factory.addListener(listener);
 
         StepEventBus.getEventBus().clear();
+        StepEventBus.getEventBus().registerListener(listener);
+    }
+
+    @After
+    public void deregisterListener() {
+        StepEventBus.getEventBus().dropListener(listener);
     }
 
     @Test
@@ -315,15 +321,12 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         steps.step_group1();
 
-        verify(listener).stepGroupStarted(any(ExecutedStepDescription.class));
-        verify(listener, times(3)).stepStarted(any(ExecutedStepDescription.class));
-        verify(listener, times(3)).stepFinished(any(ExecutedStepDescription.class));
-        verify(listener).stepGroupFinished();
+        verify(listener, times(4)).stepStarted(any(ExecutedStepDescription.class));
+        verify(listener, times(4)).stepFinished(any(ExecutedStepDescription.class));
     }
 
-    @Ignore("Now the proxy executes ignored steps but should not call webdriver")
     @Test
-    public void the_proxy_should_skip_ignored_tests() {
+    public void the_proxy_should_execute_ignored_steps_but_disable_webdriver() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
         steps.step_one();
@@ -331,7 +334,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.step3();
 
         verify(driver).get("step_one");
-        verify(driver, never()).get("ignored_step");
+        verify(driver).get("ignored_step");
         verify(driver).get("step_three");
 
     }
@@ -346,22 +349,6 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         verify(driver).get("step_one");
         verify(driver, never()).get("step4");
-
-    }
-
-    @Ignore("Now the proxy executes ignored steps but should not call webdriver")
-    @Test
-    public void the_proxy_should_skip_tests_if_a_listener_signals_a_previous_failure() {
-        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
-
-        when(listener.aStepHasFailed()).thenReturn(true);
-        steps.step_one();
-        steps.step2();
-        steps.step3();
-
-        verify(driver, never()).get("step_one");
-        verify(driver, never()).get("step_two");
-        verify(driver, never()).get("step_three");
 
     }
 
@@ -529,15 +516,17 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_records_the_total_number_of_test_steps_executed() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
+        StepEventBus.getEventBus().testStarted("SimpleTestScenarioSteps");
         steps.step_one();
         steps.step2();
         steps.step3();
 
-        steps.done();
+        StepEventBus.getEventBus().testFinished();
 
         ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
         verify(listener).testFinished(argument.capture());
 
+        TestStepResult result = argument.getValue();
         assertThat(argument.getValue().getRunCount(), is(3));
     }
 
@@ -545,11 +534,13 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_records_the_number_of_ignored_test_steps() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
+        StepEventBus.getEventBus().testStarted("SimpleTestScenarioSteps");
         steps.step_one();
         steps.step2();
         steps.step3();
         steps.ignored_step();
-        steps.done();
+
+        StepEventBus.getEventBus().testFinished();
 
         ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
         verify(listener).testFinished(argument.capture());
@@ -561,11 +552,13 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_records_the_number_of_pending_test_steps() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
+        StepEventBus.getEventBus().testStarted("SimpleTestScenarioSteps");
         steps.step_one();
         steps.step2();
         steps.step3();
         steps.pending_step();
-        steps.done();
+
+        StepEventBus.getEventBus().testFinished();
 
         ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
         verify(listener).testFinished(argument.capture());
@@ -577,11 +570,13 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_records_the_number_of_failing_test_steps() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
+        StepEventBus.getEventBus().testStarted("SimpleTestScenarioSteps");
         steps.step_one();
         steps.step2();
         steps.step3();
         steps.failing_step();
-        steps.done();
+
+        StepEventBus.getEventBus().testFinished();
 
         ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
         verify(listener).testFinished(argument.capture());
@@ -593,6 +588,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
     public void the_proxy_calls_nested_step_methods() {
         SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
+        StepEventBus.getEventBus().testStarted("SimpleTestScenarioSteps");
         steps.nested_steps();
 
         verify(driver).get("nested_steps");
@@ -600,30 +596,6 @@ public class WhenRunningStepsThroughAScenarioProxy {
         verify(driver).get("nested.step_two");
         verify(driver).get("nested.step_three");
         verify(driver).get("nested.nested.step_one");
-    }
-
-    @Ignore("Now the proxy executes ignored steps but should not call webdriver")
-    @Test
-    public void the_proxy_skiped_ignored_nested_steps() {
-        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
-
-        steps.nested_steps_with_ignored_steps();
-        steps.done();
-
-        verify(driver).get("nested_steps_with_ignored_steps");
-        verify(driver).get("nested.step_one");
-        verify(driver).get("nested.step_two");
-        verify(driver).get("nested.step_three");
-        verify(driver,never()).get("nested.ignored_step");
-    }
-
-    @Test
-    public void listeners_are_notified_at_the_end_of_a_test() {
-        SimpleTestScenarioSteps steps = (SimpleTestScenarioSteps) factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
-
-        factory.notifyStepFinished();
-
-        steps.done();
     }
 
 }

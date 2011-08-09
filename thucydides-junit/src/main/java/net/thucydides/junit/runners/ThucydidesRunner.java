@@ -162,13 +162,16 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         Pages newPages = initPagesObjectUsing(driver);
         JUnitStepListener newStepListener = initListenersUsing(newPages);
         notifier.addListener(newStepListener);
-        initStepFactoryUsing(newPages, newStepListener);
+        StepEventBus.getEventBus().registerListener(getStepListener().getBaseStepListener());
+
+        initStepFactoryUsing(newPages);
 
         super.run(notifier);
 
         closeDriver();
         generateReportsFor(getStepListener().getTestOutcomes());
         notifyFailures();
+        StepEventBus.getEventBus().dropListener(getStepListener().getBaseStepListener());
     }
 
     private Pages initPagesObjectUsing(final WebDriver driver) {
@@ -182,9 +185,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
 
-    private void initStepFactoryUsing(final Pages pagesObject, final JUnitStepListener listener) {
+    private void initStepFactoryUsing(final Pages pagesObject) {
         stepFactory = new StepFactory(pagesObject);
-        stepFactory.addListener(listener.getBaseStepListener());
     }
 
     private void closeDriver() {
@@ -260,7 +262,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         injectAnnotatedPagesObjectInto(test);
         injectScenarioStepsInto(test);
         uniqueSession = TestCaseAnnotations.forTestCase(test).isUniqueSession();
-        stepFactory.addListener(getStepListener().getBaseStepListener());
+
         useStepFactoryForDataDrivenSteps();
 
         Statement baseStatement = super.methodInvoker(method, test);
