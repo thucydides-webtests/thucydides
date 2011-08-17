@@ -9,8 +9,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
 import static net.thucydides.core.matchers.ThucydidesMatchers.containsApplicationFeature;
@@ -67,14 +65,13 @@ public class WhenLoadingTestResultsByFeature {
     }
 
     @Test
-    @Ignore
     public void should_know_number_of_stories_of_a_feature() throws IOException {
 
         List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/multiple-user-story-reports"));
 
-        FeatureResults aFeatureResult = features.get(0);
-        FeatureResults anotherFeatureResult = features.get(1);
-        FeatureResults anotherDifferentFeatureResult = features.get(2);
+        FeatureResults aFeatureResult = featureResultsForFeature(features, "A feature");
+        FeatureResults anotherFeatureResult = featureResultsForFeature(features, "Another feature");
+        FeatureResults anotherDifferentFeatureResult = featureResultsForFeature(features, "Another different feature");
 
         assertThat(aFeatureResult.getTotalStories(), is(2));
         assertThat(anotherFeatureResult.getTotalStories(), is(1));
@@ -82,15 +79,23 @@ public class WhenLoadingTestResultsByFeature {
 
     }
 
-    @Ignore
+    private FeatureResults featureResultsForFeature(List<FeatureResults> features, String featureName) {
+        for(FeatureResults featureResults : features) {
+            if (featureName.equals(featureResults.getFeature().getName())) {
+                return featureResults;
+            }
+        }
+        return null;
+    }
+
     @Test
     public void should_know_number_of_passing_tests_in_the_stories_of_a_feature() throws IOException {
 
         List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/multiple-user-story-reports"));
 
-        FeatureResults aFeatureResult = features.get(0);
-        FeatureResults anotherFeatureResult = features.get(1);
-        FeatureResults anotherDifferentFeatureResult = features.get(2);
+        FeatureResults aFeatureResult = featureResultsForFeature(features, "A feature");
+        FeatureResults anotherFeatureResult = featureResultsForFeature(features, "Another feature");
+        FeatureResults anotherDifferentFeatureResult = featureResultsForFeature(features, "Another different feature");
 
         assertThat(aFeatureResult.getPassingTests(), is(2));
         assertThat(anotherFeatureResult.getPassingTests(), is(0));
@@ -102,9 +107,9 @@ public class WhenLoadingTestResultsByFeature {
     public void should_know_number_of_failing_tests_in_the_stories_of_a_feature() throws IOException {
         List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/featured-user-story-reports"));
 
-        FeatureResults aFeatureResult = features.get(0);
-        FeatureResults anotherFeatureResult = features.get(1);
-        FeatureResults anotherDifferentFeatureResult = features.get(2);
+        FeatureResults aFeatureResult = featureResultsForFeature(features, "A feature");
+        FeatureResults anotherFeatureResult = featureResultsForFeature(features, "Another feature");
+        FeatureResults anotherDifferentFeatureResult = featureResultsForFeature(features, "Another different feature");
 
         assertThat(aFeatureResult.getFailingTests(), is(0));
         assertThat(anotherFeatureResult.getFailingTests(), is(1));
@@ -116,9 +121,9 @@ public class WhenLoadingTestResultsByFeature {
     public void should_know_number_of_pending_tests_in_the_stories_of_a_feature() throws IOException {
         List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/featured-user-story-reports"));
 
-        FeatureResults aFeatureResult = features.get(0);
-        FeatureResults anotherFeatureResult = features.get(1);
-        FeatureResults anotherDifferentFeatureResult = features.get(2);
+        FeatureResults aFeatureResult = featureResultsForFeature(features, "A feature");
+        FeatureResults anotherFeatureResult = featureResultsForFeature(features, "Another feature");
+        FeatureResults anotherDifferentFeatureResult = featureResultsForFeature(features, "Another different feature");
 
         assertThat(aFeatureResult.getPendingTests(), is(1));
         assertThat(anotherFeatureResult.getPendingTests(), is(0));
@@ -127,13 +132,12 @@ public class WhenLoadingTestResultsByFeature {
 
 
     @Test
-    @Ignore
     public void should_know_number_of_steps_in_the_stories_of_a_feature() throws IOException {
         List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/featured-user-story-reports"));
 
-        FeatureResults aFeatureResult = features.get(0);
-        FeatureResults anotherFeatureResult = features.get(1);
-        FeatureResults anotherDifferentFeatureResult = features.get(2);
+        FeatureResults aFeatureResult = featureResultsForFeature(features, "A feature");
+        FeatureResults anotherFeatureResult = featureResultsForFeature(features, "Another feature");
+        FeatureResults anotherDifferentFeatureResult = featureResultsForFeature(features, "Another different feature");
 
         assertThat(aFeatureResult.getTotalSteps(), is(17));
         assertThat(anotherFeatureResult.getTotalSteps(), is(6));
