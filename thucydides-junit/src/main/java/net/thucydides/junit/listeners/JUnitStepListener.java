@@ -93,5 +93,6 @@ public class JUnitStepListener extends RunListener {
 
 	public void close() {
 		StepEventBus.getEventBus().dropListener(baseStepListener);
+
 	}
 }
