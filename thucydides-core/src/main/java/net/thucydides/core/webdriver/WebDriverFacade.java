@@ -1,6 +1,10 @@
 package net.thucydides.core.webdriver;
 
+import java.util.List;
+import java.util.Set;
+
 import net.thucydides.core.steps.StepEventBus;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -9,9 +13,6 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * A proxy class for webdriver instances, designed to prevent the browser being opened unnecessarily.

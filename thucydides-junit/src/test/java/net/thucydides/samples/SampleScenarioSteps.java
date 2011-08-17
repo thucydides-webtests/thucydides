@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 
+@SuppressWarnings("serial")
 public class SampleScenarioSteps extends ScenarioSteps {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ThucydidesRunner.class);
@@ -93,7 +94,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
     public void stepWithTwoParameters(String value, int number) {
     }
     
-    @StepGroup("Group of steps")
+    @Step
     public void groupOfStepsContainingAFailure() {
         stepThatSucceeds();
         stepThatFails();
@@ -101,7 +102,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
         
     }
 
-    @StepGroup("Another group of steps")
+    @Step
     public void anotherGroupOfSteps() {
         stepThatSucceeds();
         anotherStepThatSucceeds();
@@ -109,7 +110,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
         
     }
 
-    @StepGroup("Group of steps")
+    @Step
     public void groupOfStepsContainingAnError() {
         stepThatSucceeds();
         anotherStepThatSucceeds();

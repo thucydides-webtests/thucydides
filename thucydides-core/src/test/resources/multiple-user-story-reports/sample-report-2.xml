@@ -6,9 +6,6 @@
     <requirement>12</requirement>
   </requirements>
   <test-step result="SUCCESS">
-    <requirements>
-      <requirement>123</requirement>
-    </requirements>
     <description>The customer navigates from metro jobs link.</description>
     <screenshot>the_customer_navigates_from_metro_jobs_link1.png</screenshot>
   </test-step>

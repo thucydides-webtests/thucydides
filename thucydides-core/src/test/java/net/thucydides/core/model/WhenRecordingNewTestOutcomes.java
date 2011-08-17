@@ -1,17 +1,16 @@
 package net.thucydides.core.model;
 
-import net.thucydides.core.annotations.TestsRequirement;
-import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.Title;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
 import static net.thucydides.core.matchers.ThucydidesMatchers.hasFilenames;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
@@ -31,13 +30,13 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
-public class WhenRecordingTestOutcomes {
+public class WhenRecordingNewTestOutcomes {
 
     TestOutcome testOutcome;
 
     class AUserStory {};
 
-    @net.thucydides.core.annotations.Story(AUserStory.class)
+    @Story(AUserStory.class)
     class SomeTestScenario {
         public void should_do_this() {};
         public void should_do_that() {};
@@ -79,6 +78,20 @@ public class WhenRecordingTestOutcomes {
         assertThat(outcome.getTitle(), is("Really should do this!"));
     }
 
+    @Test
+    public void a_test_outcome_title_can_be_overriden_manually() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+        outcome.setTitle("My custom title");
+        assertThat(outcome.getTitle(), is("My custom title"));
+    }
+
+    @Test
+    public void a_test_outcome_title_can_be_overriden_manually_even_with_an_annotation() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenario.class);
+        outcome.setTitle("My custom title");
+        assertThat(outcome.getTitle(), is("My custom title"));
+    }
+
     /**
      * Case for easyb integration, where we use a Story class directly.
      */
@@ -93,32 +106,69 @@ public class WhenRecordingTestOutcomes {
 
 
     @Test
-    public void the_acceptance_test_run_should_record_test_steps() {
+    public void should_record_simple_test_steps() {
 
         assertThat(testOutcome.getTestSteps().size(), is(0));
 
         testOutcome.recordStep(successfulTestStepCalled("The user opens the Google search page"));
-        testOutcome.recordStep(successfulTestStepCalled("The searchs for Cats"));
-        
-        assertThat(testOutcome.getTestSteps().size(), is(2));
+        testOutcome.recordStep(successfulTestStepCalled("The user searches for Cats"));
+
+        assertThat(testOutcome.getTestSteps().toString(),
+                   is("[The user opens the Google search page, The user searches for Cats]"));
     }
 
-    
+    @Test
+    public void should_record_nested_test_steps() {
+
+        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1"));
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.2"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+
+        assertThat(testOutcome.getTestSteps().toString(),
+                   is("[Step 1, Step 2 [Step 2.1, Step 2.2], Step 3]"));
+    }
+
+    @Test
+    public void should_record_deeply_nested_test_steps() {
+
+        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1.1"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.2"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.2"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+
+        assertThat(testOutcome.getTestSteps().toString(),
+                   is("[Step 1, Step 2 [Step 2.1 [Step 2.1.1 [Step 2.1.1.1], Step 2.1.2], Step 2.2], Step 3]"));
+    }
+
     @Test
     public void the_returned_test_steps_list_should_be_read_only() {
         testOutcome.recordStep(successfulTestStepCalled("The user opens the Google search page"));
 
         List<TestStep> testSteps = testOutcome.getTestSteps();
-        assertThat(testSteps.size(), is(1));
+        assertThat(testOutcome.toString(), is("The user opens the Google search page"));
 
         try {
-            testSteps.add(new ConcreteTestStep("The user opens the Google search page"));
+            testSteps.add(new TestStep("Some other step"));
             fail("An UnsupportedOperationException exception should have been thrown");
         } catch (UnsupportedOperationException e) {
-            assertThat(testOutcome.getTestSteps().size(), is(1));
+            assertThat(testOutcome.toString(),  is("The user opens the Google search page"));
         }
     }
-    
+
     @Test
     public void the_acceptance_test_case_is_successful_if_all_the_tests_are_successful() {
         testOutcome.recordStep(successfulTestStepCalled("Step 1"));
@@ -128,7 +178,8 @@ public class WhenRecordingTestOutcomes {
         assertThat(testOutcome.getResult(), is(SUCCESS));
         assertThat(testOutcome.isSuccess(), is(true));
     }
- 
+
+
     @Test
     public void should_list_screenshots_in_steps() {
         testOutcome.recordStep(successfulTestStepCalled("step_1"));
@@ -140,18 +191,25 @@ public class WhenRecordingTestOutcomes {
 
     @Test
     public void should_list_screenshots_in_nested_steps() {
-        testOutcome.recordStep(successfulTestStepCalled("step_0"));
-        testOutcome.startGroup("A group");
         testOutcome.recordStep(successfulTestStepCalled("step_1"));
         testOutcome.recordStep(successfulTestStepCalled("step_2"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("step_2.1"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("step_2.1.1"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("step_2.1.1.1"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("step_2.1.2"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("step_2.2"));
+        testOutcome.endGroup();
         testOutcome.recordStep(successfulTestStepCalled("step_3"));
-        testOutcome.startGroup("Another group");
-        testOutcome.recordStep(successfulTestStepCalled("step_4"));
-        testOutcome.recordStep(successfulTestStepCalled("step_5"));
-        testOutcome.endGroup();
-        testOutcome.endGroup();
 
-        assertThat(testOutcome.getScreenshots(), hasFilenames("step_1.png","step_2.png","step_3.png","step_4.png","step_5.png"));
+        List<String> screenshots = extract(testOutcome.getScreenshots(), on(Screenshot.class).getFilename());
+        assertThat(screenshots, hasItems("step_1.png","step_2.png","step_2.1.png",
+                                         "step_2.1.1.png","step_2.1.1.1.png",
+                                         "step_2.1.2.png", "step_2.2.png", "step_3.png"));
     }
 
     @Test
@@ -173,7 +231,7 @@ public class WhenRecordingTestOutcomes {
         testOutcome.recordStep(skippedTestStepCalled("Step 3"));
 
 
-        ConcreteTestStep failingStep = (ConcreteTestStep) testOutcome.getTestSteps().get(1);
+        TestStep failingStep = testOutcome.getTestSteps().get(1);
         assertThat(failingStep.getErrorMessage(), is("Oh bother!"));
     }
 
@@ -198,7 +256,7 @@ public class WhenRecordingTestOutcomes {
 
         assertThat(testOutcome.getResult(), is(PENDING));
     }
-    
+
     @Test
     public void the_acceptance_test_case_is_pending_if_has_no_steps() {
 
@@ -262,7 +320,7 @@ public class WhenRecordingTestOutcomes {
 
         assertThat(testOutcome.getResult(), is(SUCCESS));
     }
-    
+
     @Test
     public void the_model_should_provide_the_number_of_successful_test_steps() {
 
@@ -284,7 +342,7 @@ public class WhenRecordingTestOutcomes {
 
         assertThat(testOutcome.getSuccessCount(), is(2));
     }
-  
+
     @Test
     public void the_model_should_provide_the_number_of_failed_test_steps() {
 
@@ -345,7 +403,7 @@ public class WhenRecordingTestOutcomes {
 
         assertThat(testOutcome.getPendingCount(), is(3));
     }
-    
+
 
     @Test
     public void a_test_run_with_only_successful_tests_is_successful() {
@@ -359,23 +417,26 @@ public class WhenRecordingTestOutcomes {
 
     @Test
     public void an_acceptance_test_run_can_contain_steps_nested_in_step_groups() {
-        testOutcome.startGroup("A group");
+        testOutcome.recordStep(successfulTestStepCalled("A Group"));
+        testOutcome.startGroup();
         testOutcome.recordStep(successfulTestStepCalled("Step 1"));
         testOutcome.recordStep(successfulTestStepCalled("Step 2"));
         testOutcome.recordStep(successfulTestStepCalled("Step 3"));
         testOutcome.endGroup();
-        
+
         assertThat(testOutcome.getTestSteps().size(), is(1));
     }
 
 
     private void createNestedTestSteps() {
         testOutcome.recordStep(successfulTestStepCalled("Step 0"));
-        testOutcome.startGroup("A group");
+        testOutcome.recordStep(successfulTestStepCalled("A group"));
+        testOutcome.startGroup();
         testOutcome.recordStep(successfulTestStepCalled("Step 1"));
         testOutcome.recordStep(successfulTestStepCalled("Step 2"));
         testOutcome.recordStep(successfulTestStepCalled("Step 3"));
-        testOutcome.startGroup("Another group");
+        testOutcome.recordStep(successfulTestStepCalled("Another group"));
+        testOutcome.startGroup();
         testOutcome.recordStep(successfulTestStepCalled("Step 4"));
         testOutcome.recordStep(successfulTestStepCalled("Step 5"));
         testOutcome.endGroup();
@@ -387,7 +448,7 @@ public class WhenRecordingTestOutcomes {
         createNestedTestSteps();
         assertThat(testOutcome.getTestSteps().size(), is(2));
     }
-    
+
     @Test
     public void when_test_steps_are_nested_step_count_should_include_all_steps() {
         createNestedTestSteps();
@@ -403,40 +464,42 @@ public class WhenRecordingTestOutcomes {
     @Test
     public void an_acceptance_test_run_can_count_all_the_failing_nested_test_steps() {
         createNestedTestRun();
-        
+
         assertThat(testOutcome.getFailureCount(), is(3));
     }
 
     @Test
     public void an_acceptance_test_run_can_count_all_the_pending_nested_test_steps() {
         createNestedTestRun();
-        
+
         assertThat(testOutcome.getPendingCount(), is(4));
     }
-    
+
     @Test
     public void an_acceptance_test_run_can_count_all_the_ignored_nested_test_steps() {
         createNestedTestRun();
-        
+
         assertThat(testOutcome.getIgnoredCount(), is(1));
     }
 
     @Test
     public void an_acceptance_test_run_can_count_all_the_skipped_test_steps() {
         createNestedTestRun();
-        
+
         assertThat(testOutcome.getSkippedCount(), is(1));
     }
 
     private void createNestedTestRun() {
         testOutcome.recordStep(successfulTestStepCalled("Step 0"));
-        testOutcome.startGroup("A group");
+        testOutcome.recordStep(successfulTestStepCalled("A group"));
+        testOutcome.startGroup();
         testOutcome.recordStep(successfulTestStepCalled("Step 1"));
         testOutcome.recordStep(successfulTestStepCalled("Step 2"));
         testOutcome.recordStep(successfulTestStepCalled("Step 3"));
         testOutcome.recordStep(failingTestStepCalled("Step 7", new AssertionError("Oh bother!")));
         testOutcome.recordStep(pendingTestStepCalled("Step 10"));
-        testOutcome.startGroup("Another group");
+        testOutcome.recordStep(successfulTestStepCalled("Another group"));
+        testOutcome.startGroup();
         testOutcome.recordStep(successfulTestStepCalled("Step 4"));
         testOutcome.recordStep(successfulTestStepCalled("Step 5"));
         testOutcome.recordStep(ignoredTestStepCalled("Step 6"));
@@ -453,7 +516,8 @@ public class WhenRecordingTestOutcomes {
     @Test
     public void a_test_group_with_only_successful_tests_is_successful() {
 
-        testOutcome.startGroup("A group");
+        testOutcome.recordStep(successfulTestStepCalled("A group"));
+        testOutcome.startGroup();
         testOutcome.recordStep(successfulTestStepCalled("Step 1"));
         testOutcome.recordStep(successfulTestStepCalled("Step 2"));
         testOutcome.recordStep(successfulTestStepCalled("Step 3"));
@@ -480,7 +544,7 @@ public class WhenRecordingTestOutcomes {
         assertThat(aGroup.getResult(), is(TestResult.FAILURE));
     }
 
-    
+
     @Test
     public void a_test_group_with_a_pending_test_is_pending() {
 
@@ -494,7 +558,7 @@ public class WhenRecordingTestOutcomes {
         TestStep aGroup = testOutcome.getTestSteps().get(0);
         assertThat(aGroup.getResult(), is(TestResult.PENDING));
     }
-    
+
     @Test
     public void a_test_group_with_only_ignored_tests_is_ignored() {
 
@@ -520,7 +584,7 @@ public class WhenRecordingTestOutcomes {
         testOutcome.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testOutcome.endGroup();
         testOutcome.endGroup();
-        
+
         assertThat(testOutcome.getResult(), is(TestResult.FAILURE));
     }
 
@@ -535,7 +599,7 @@ public class WhenRecordingTestOutcomes {
         testOutcome.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testOutcome.endGroup();
         testOutcome.endGroup();
-       
+
         TestStep aGroup = testOutcome.getTestSteps().get(0);
         assertThat(aGroup.getResult(), is(TestResult.FAILURE));
     }
@@ -561,7 +625,7 @@ public class WhenRecordingTestOutcomes {
     }
 
 
-    
+
     @Test
     public void an_acceptance_test_records_the_original_story_class() {
         net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyApp.MyUserStory.class);
@@ -577,53 +641,53 @@ public class WhenRecordingTestOutcomes {
         assertThat(testOutcome.getDuration(), is(lessThan(100L)));
     }
 
-    @Story(AUserStory.class)
-    class TestScenarioWithRequirements {
-        @TestsRequirement("SOME_BUSINESS_RULE_1")
-        public void should_do_this() {};
-        @TestsRequirements({"SOME_BUSINESS_RULE_1","SOME_BUSINESS_RULE_2"})
-        public void should_do_that() {};
-    }
-
-    @Test
-    public void should_automatically_record_a_requirement_declared_for_the_test() {
-
-        testOutcome = TestOutcome.forTest("should_do_this", TestScenarioWithRequirements.class);
-
-        Assert.assertThat(testOutcome.getAllTestedRequirements(), hasItem("SOME_BUSINESS_RULE_1"));
-
-    }
-
-    @Test
-    public void should_automatically_record_all_requirements_declared_for_the_test() {
-
-        testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
-
-        Assert.assertThat(testOutcome.getAllTestedRequirements(),
-                          hasItems("SOME_BUSINESS_RULE_1", "SOME_BUSINESS_RULE_2"));
-
-    }
-
-    @Test
-    public void should_get_report_filename_from_the_story_name_and_method_name() {
-        testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
-
-        assertThat(testOutcome.getReportName(), is("a_user_story_should_do_that"));
-    }
-
-    @Test
-    public void there_should_be_one_screenshots_report_per_story_report() {
-        testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
-
-        assertThat(testOutcome.getScreenshotReportName(), is("a_user_story_should_do_that_screenshots"));
-    }
-
-    @Test
-    public void parametrized_test_report_names_should_strip_any_indexes() {
-        testOutcome = TestOutcome.forTest("should_do_that[0]", TestScenarioWithRequirements.class);
-
-        assertThat(testOutcome.getReportName(), is("a_user_story_should_do_that"));
-    }
+//    @Story(AUserStory.class)
+//    class TestScenarioWithRequirements {
+//        @TestsRequirement("SOME_BUSINESS_RULE_1")
+//        public void should_do_this() {};
+//        @TestsRequirements({"SOME_BUSINESS_RULE_1","SOME_BUSINESS_RULE_2"})
+//        public void should_do_that() {};
+//    }
+//
+//    @Test
+//    public void should_automatically_record_a_requirement_declared_for_the_test() {
+//
+//        testOutcome = TestOutcome.forTest("should_do_this", TestScenarioWithRequirements.class);
+//
+//        Assert.assertThat(testOutcome.getAllTestedRequirements(), hasItem("SOME_BUSINESS_RULE_1"));
+//
+//    }
+//
+//    @Test
+//    public void should_automatically_record_all_requirements_declared_for_the_test() {
+//
+//        testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
+//
+//        Assert.assertThat(testOutcome.getAllTestedRequirements(),
+//                          hasItems("SOME_BUSINESS_RULE_1", "SOME_BUSINESS_RULE_2"));
+//
+//    }
+//
+//    @Test
+//    public void should_get_report_filename_from_the_story_name_and_method_name() {
+//        testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
+//
+//        assertThat(testOutcome.getReportName(), is("a_user_story_should_do_that"));
+//    }
+//
+//    @Test
+//    public void there_should_be_one_screenshots_report_per_story_report() {
+//        testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
+//
+//        assertThat(testOutcome.getScreenshotReportName(), is("a_user_story_should_do_that_screenshots"));
+//    }
+//
+//    @Test
+//    public void parametrized_test_report_names_should_strip_any_indexes() {
+//        testOutcome = TestOutcome.forTest("should_do_that[0]", TestScenarioWithRequirements.class);
+//
+//        assertThat(testOutcome.getReportName(), is("a_user_story_should_do_that"));
+//    }
 
     class SimpleScenarioSteps extends ScenarioSteps {
 

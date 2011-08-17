@@ -2,8 +2,8 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
-import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.StoryTestResults;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.UserStoryTestReporter;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.commons.io.FileUtils;

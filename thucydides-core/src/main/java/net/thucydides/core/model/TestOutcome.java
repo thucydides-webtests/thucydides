@@ -1,32 +1,30 @@
 package net.thucydides.core.model;
 
-import ch.lambdaj.function.convert.Converter;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import net.thucydides.core.annotations.Title;
-import net.thucydides.core.model.features.ApplicationFeature;
-import net.thucydides.core.steps.TestDescription;
-import net.thucydides.core.util.NameConverter;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
-
 import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.join;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sum;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+import net.thucydides.core.annotations.TestAnnotations;
+import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.util.NameConverter;
+import ch.lambdaj.function.convert.Converter;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Represents the results of a test (or "scenario") execution. This
@@ -38,137 +36,137 @@ import static net.thucydides.core.util.NameConverter.withNoArguments;
  */
 public class TestOutcome {
 
-    private String methodName;
+    /**
+     * The name of the method implementing this test.
+     */
+    private final String methodName;
+
+    /**
+     *  The class containing the test method, if the test is implemented in a Java class.
+     */
+    private final Class<?> testCase;
+
+    /**
+     * The list of steps recorded in this test execution.
+     * Each step can contain other nested steps.
+     */
+    private final List<TestStep> testSteps = new ArrayList<TestStep>();
+
+    /**
+     * A test can be linked to the user story it tests using the Story annotation.
+     */
+    private Story userStory;
 
     private String storedTitle;
 
-    private Story userStory;
-
-    private Class<?> testCase;
-
     private long duration;
 
-    private long startTime;
+    private final long startTime;
 
-    private Set<String> testedRequirement = new HashSet<String>();
-
-    private final List<TestStep> testSteps = new ArrayList<TestStep>();
-
-    private final Stack<TestStepGroup> groupStack = new Stack<TestStepGroup>();
+    private Throwable testFailureCause;
 
     /**
-     * Create a new acceptance test run instance.
+     * Used to determine what result should be returned if there are no steps in this test.
      */
-    public TestOutcome() {
-        startTime = System.currentTimeMillis();
-    }
+    private TestResult annotatedResult = null;
+    /**
+     * Keeps track of step groups.
+     * If not empty, the top of the stack contains the step corresponding to the current step group - new steps should
+     * be added here.
+     */
+    private Stack<TestStep> groupStack = new Stack<TestStep>();
 
     /**
      * The title is immutable once set. For convenience, you can create a test
      * run directly with a title using this constructor.
      */
     public TestOutcome(final String methodName) {
-        this();
+        this(methodName, null);
+    }
+
+    public TestOutcome(final String methodName, final Class<?> testCase) {
+        startTime = System.currentTimeMillis();
         this.methodName = methodName;
-    }
-
-    /**
-     * A test outcome should relate to a particular test class or user story class.
-     */
-    protected TestOutcome(final String scenarioName, final Story story, final Class<?> testCase) {
-        this(scenarioName);
         this.testCase = testCase;
-        recordRequirementsTestedBy(testCase, scenarioName);
-
-        setUserStory(story);
-    }
-
-    /**
-     * A test outcome should relate to a particular test class or user story class.
-     */
-    protected TestOutcome(final String scenarioName, final Class<?> testCase) {
-        this(scenarioName);
-        this.testCase = testCase;
-        recordRequirementsTestedBy(testCase, scenarioName);
-
-        initializeStoryFrom(testCase);
-
-    }
-
-    private void initializeStoryFrom(final Class<?> testCase) {
-        Story story = Story.from(Story.testedInTestCase(testCase));
-        setUserStory(story);
-    }
-
-    private void recordRequirementsTestedBy(final Class<?> testCase, final String scenarioName) {
-
-        TestDescription testDescription = new TestDescription(testCase, scenarioName);
-        if (testDescription.methodExists()) {
-            testedRequirement.addAll(testDescription.getAnnotatedRequirements());
+        if (testCase != null) {
+            initializeStoryFrom(testCase);
         }
+    }
 
+    /**
+     * A test outcome should relate to a particular test class or user story class.
+     */
+    protected TestOutcome(final String methodName, final Class<?> testCase, final Story userStory) {
+        startTime = System.currentTimeMillis();
+        this.methodName = methodName;
+        this.testCase = testCase;
+        this.userStory = userStory;
     }
 
     /**
      * Create a new test outcome instance for a given test class or user story.
      */
 
-    public static TestOutcome forTest(final String testName, final Class<?> testCase) {
-        return new TestOutcome(testName, testCase);
+    public static TestOutcome forTest(final String methodName, final Class<?> testCase) {
+        return new TestOutcome(methodName, testCase);
+    }
+
+    private void initializeStoryFrom(final Class<?> testCase) {
+        Story story;
+        if (Story.testedInTestCase(testCase) != null) {
+            story = Story.from(Story.testedInTestCase(testCase));
+        } else {
+            story = Story.from(testCase);
+        }
+        setUserStory(story);
+    }
+
+    /**
+     * @return The name of the Java method implementing this test, if the test is implemented in Java.
+     */
+    public String getMethodName() {
+        return methodName;
     }
 
     public static TestOutcome forTestInStory(final String testName, final Story story) {
-        return new TestOutcome(testName, story, null);
+        return new TestOutcome(testName, null, story);
     }
 
     public static TestOutcome forTestInStory(final String testName, final Story story, final Class<?> testClass) {
-        return new TestOutcome(testName, story, testClass);
+        if (story == null) {
+            return new TestOutcome(testName, testClass);
+        } else {
+            return new TestOutcome(testName, testClass, story);
+        }
     }
 
+
+    @Override
+    public String toString() {
+        return join(extract(testSteps, on(TestStep.class).toString()));
+    }
+
+    /**
+     * Return the human-readable name for this test.
+     * This is derived from the test name for tests using a Java implementation, or can also be defined using
+     * the Title annotation.
+     * @return the human-readable name for this test.
+     */
     public String getTitle() {
         if (storedTitle == null) {
-            return buildTitle();
+            return obtainTitleFromAnnotationOrMethodName();
         } else {
             return storedTitle;
         }
     }
 
-    private String buildTitle() {
-        String annotatedTitle = getAnnotatedTitleFor(methodName);
+    private String obtainTitleFromAnnotationOrMethodName() {
+        String annotatedTitle = TestAnnotations.forClass(testCase).getAnnotatedTitleForMethod(methodName);
         if (annotatedTitle != null) {
             return annotatedTitle;
         }
         return NameConverter.humanize(withNoArguments(methodName));
     }
-
-    private String getAnnotatedTitleFor(final String methodName) {
-        String annotatedTitle = null;
-        if (testCase != null) {
-            if (currentTestCaseHasMethodCalled(methodName)) {
-                Method testMethod = getMethodCalled(methodName);
-                Title titleAnnotation = testMethod.getAnnotation(Title.class);
-                if (titleAnnotation != null) {
-                    annotatedTitle = titleAnnotation.value();
-                }
-            }
-        }
-        return annotatedTitle;
-    }
-
-    private boolean currentTestCaseHasMethodCalled(final String methodName) {
-        return (getMethodCalled(methodName) != null);
-
-    }
-
-    private Method getMethodCalled(final String methodName) {
-        String baseMethodName = withNoArguments(methodName);
-        try {
-            return testCase.getMethod(baseMethodName);
-        } catch (NoSuchMethodException e) {
-            return null;
-        }
-    }
-
 
     public String getStoryTitle() {
         return getTitleFrom(userStory);
@@ -200,23 +198,6 @@ public class TestOutcome {
         return getReportName(ROOT) + "_screenshots";
     }
 
-    public void setMethodName(final String methodName) {
-        this.methodName = methodName;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void testsRequirement(final String requirement) {
-        checkNotNull(requirement);
-        testedRequirement.add(requirement);
-    }
-
-    public Set<String> getTestedRequirements() {
-        return ImmutableSet.copyOf(testedRequirement);
-    }
-
     /**
      * An acceptance test is made up of a series of steps. Each step is in fact
      * a small test, which follows on from the previous one. The outcome of the
@@ -227,10 +208,8 @@ public class TestOutcome {
     }
 
     public List<Screenshot> getScreenshots() {
-
         List<Screenshot> screenshots = new ArrayList<Screenshot>();
         List<TestStep> testSteps = getFlattenedTestSteps();
-
 
         for(TestStep currentStep : testSteps) {
             if (currentStep.getScreenshot() != null) {
@@ -253,24 +232,39 @@ public class TestOutcome {
         return ImmutableList.copyOf(flattenedTestSteps);
     }
 
+    public List<TestStep> getLeafTestSteps() {
+        List<TestStep> leafTestSteps = new ArrayList<TestStep>();
+        for (TestStep step : getTestSteps()) {
+            if (step.isAGroup()) {
+                leafTestSteps.addAll(step.getLeafTestSteps());
+            } else {
+                leafTestSteps.add(step);
+            }
+
+        }
+        return ImmutableList.copyOf(leafTestSteps);
+    }
+
     /**
      * The outcome of the acceptance test, based on the outcome of the test
      * steps. If any steps fail, the test as a whole is considered a failure. If
      * any steps are pending, the test as a whole is considered pending. If all
      * of the steps are ignored, the test will be considered 'ignored'. If all
      * of the tests succeed except the ignored tests, the test is a success.
+     * The test result can also be overridden using the 'setResult()' method.
      */
     public TestResult getResult() {
+        if (testFailureCause != null) {
+            return FAILURE;
+        }
+
+        if (annotatedResult != null) {
+            return annotatedResult;
+        }
+
         TestResultList testResults = new TestResultList(getCurrentTestResults());
         return testResults.getOverallResult();
     }
-
-    public void updateMostResultTestStepResult(final TestResult result) {
-        if (testSteps.size() > 0) {
-            testSteps.get(testSteps.size() - 1).setResult(result);
-        }
-    }
-
 
     /**
      * Add a test step to this acceptance test.
@@ -278,33 +272,19 @@ public class TestOutcome {
     public void recordStep(final TestStep step) {
         checkNotNull(step.getDescription(),
                 "The test step description was not defined.");
-
-        if (groupStack.isEmpty()) {
+        if (inGroup()) {
+            getCurrentStepGroup().addChildStep(step);
+        } else {
             testSteps.add(step);
-        } else {
-            addStepToCurrentGroup(step);
         }
     }
 
-    private void addStepToCurrentGroup(final TestStep step) {
-        TestStepGroup group = groupStack.peek();
-        group.addTestStep(step);
+    private TestStep getCurrentStepGroup() {
+        return groupStack.peek();
     }
 
-    public void setDefaultGroupResult(final TestResult result) {
-        if (!groupStack.isEmpty()) {
-            TestStepGroup group = groupStack.peek();
-            group.setDefaultResult(result);
-        }
-
-    }
-
-    public TestStepGroup getCurrentGroup() {
-        if (!groupStack.isEmpty()) {
-            return groupStack.peek();
-        } else {
-            return null;
-        }
+    private boolean inGroup() {
+        return !groupStack.empty();
     }
 
     /**
@@ -328,15 +308,85 @@ public class TestOutcome {
         this.storedTitle = title;
     }
 
-    private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
-    public TestResult convert(final TestStep step) {
-        return step.getResult();
-    }
-
-}
-
     private List<TestResult> getCurrentTestResults() {
         return convert(testSteps, new ExtractTestResultsConverter());
+    }
+
+    /**
+     * Creates a new step with this name and immediately turns it into a step group.
+     * TODO: Review where this is used, as it is mainly for backward compatibility.
+     */
+    @Deprecated
+    public void startGroup(final String groupName) {
+        recordStep(new TestStep(groupName));
+        startGroup();
+    }
+
+
+    /**
+     * Turns the current step into a group. Subsequent steps will be added as children of the current step.
+     */
+    public void startGroup() {
+        checkState(!testSteps.isEmpty());
+
+        groupStack.push(getCurrentStep());
+    }
+
+    /**
+     * Finish the current group. Subsequent steps will be added after the current step.
+     */
+    public void endGroup() {
+        groupStack.pop();
+    }
+
+    /**
+     * The current step is the last step in the step list, or the last step in the children of the current step group.
+     */
+    public TestStep getCurrentStep() {
+        checkState(!testSteps.isEmpty());
+
+        if (!inGroup()) {
+            return lastStepIn(testSteps);
+        } else {
+            TestStep currentStepGroup = groupStack.peek();
+            if (currentStepGroup.hasChildren()) {
+                return lastStepIn(currentStepGroup.getChildren());
+            } else {
+                return currentStepGroup;
+            }
+        }
+
+    }
+
+    private TestStep lastStepIn(final List<TestStep> testSteps) {
+        return testSteps.get(testSteps.size() - 1);
+    }
+
+    public TestStep getCurrentGroup() {
+        checkState(inGroup());
+        return groupStack.peek();
+    }
+
+    public void setUserStory(Story story) {
+        this.userStory = story;
+    }
+
+    public void setTestFailureCause(Throwable cause) {
+        this.testFailureCause = cause;
+    }
+
+    public Throwable getTestFailureCause() {
+        return this.testFailureCause;
+    }
+
+    public void setAnnotatedResult(final TestResult annotatedResult) {
+        this.annotatedResult = annotatedResult;
+    }
+
+    private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
+        public TestResult convert(final TestStep step) {
+            return step.getResult();
+        }
     }
 
     public Integer getStepCount() {
@@ -344,39 +394,29 @@ public class TestOutcome {
     }
 
     public Integer getSuccessCount() {
-        List<TestStep> allTestSteps = getNestedTestSteps();
+        List<TestStep> allTestSteps = getLeafTestSteps();
         return select(allTestSteps, having(on(TestStep.class).isSuccessful())).size();
     }
 
-    private List<TestStep> getNestedTestSteps() {
-        List<TestStep> allNestedTestSteps = new ArrayList<TestStep>();
-
-        for (TestStep testStep : testSteps) {
-            allNestedTestSteps.addAll(testStep.getFlattenedSteps());
-        }
-        return allNestedTestSteps;
-    }
-
     public Integer getFailureCount() {
-        List<TestStep> allTestSteps = getNestedTestSteps();
+        List<TestStep> allTestSteps = getLeafTestSteps();
         return select(allTestSteps, having(on(TestStep.class).isFailure())).size();
     }
 
     public Integer getIgnoredCount() {
-        List<TestStep> allTestSteps = getNestedTestSteps();
+        List<TestStep> allTestSteps = getLeafTestSteps();
         return select(allTestSteps, having(on(TestStep.class).isIgnored())).size();
     }
 
     public Integer getSkippedCount() {
-        List<TestStep> allTestSteps = getNestedTestSteps();
+        List<TestStep> allTestSteps = getLeafTestSteps();
         return select(allTestSteps, having(on(TestStep.class).isSkipped())).size();
     }
 
     public Integer getPendingCount() {
-        List<TestStep> allTestSteps = getNestedTestSteps();
+        List<TestStep> allTestSteps = getLeafTestSteps();
         return select(allTestSteps, having(on(TestStep.class).isPending())).size();
     }
-
     public Boolean isSuccess() {
         return (getResult() == SUCCESS);
     }
@@ -387,24 +427,6 @@ public class TestOutcome {
 
     public Boolean isPending() {
         return (getResult() == PENDING);
-    }
-
-    public Set<String> getAllTestedRequirements() {
-        Set<String> allTestedRequirements = new HashSet<String>();
-        allTestedRequirements.addAll(getTestedRequirements());
-        for (TestStep step : getTestSteps()) {
-            allTestedRequirements.addAll(step.getTestedRequirements());
-        }
-        return allTestedRequirements;
-    }
-
-    /**
-     * Associate a user story with this test outcome.
-     * Once a user story is set for a given test outcome, it should not be changed.
-     */
-    public void setUserStory(final Story userStory) {
-        Preconditions.checkState(this.userStory == null);
-        this.userStory = userStory;
     }
 
     public Story getUserStory() {
@@ -427,32 +449,20 @@ public class TestOutcome {
         }
     }
 
-    public void startGroup(final String description) {
-        TestStepGroup newGroup = new TestStepGroup(description);
-
-        if (currentlyInGroup()) {
-            addStepToCurrentGroup(newGroup);
-        } else {
-            testSteps.add(newGroup);
-        }
-
-        groupStack.push(newGroup);
-
-    }
-
-    private boolean currentlyInGroup() {
-        return !groupStack.isEmpty();
-    }
-
-    public void endGroup() {
-        if (!groupStack.isEmpty()) {
-            TestStepGroup group = groupStack.pop();
-            group.recordDuration();
-        }
-    }
-
     public Integer countTestSteps() {
-        return getNestedTestSteps().size();
+        return countLeafStepsIn(testSteps);
+    }
+
+    private Integer countLeafStepsIn(List<TestStep> testSteps) {
+        int leafCount = 0;
+        for(TestStep step : testSteps) {
+            if (step.isAGroup()) {
+                leafCount += countLeafStepsIn(step.getChildren());
+            } else {
+                leafCount++;
+            }
+        }
+        return leafCount;
     }
 
 }

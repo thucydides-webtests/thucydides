@@ -3,11 +3,8 @@ package net.thucydides.core.reports.integration;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.Title;
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.TestOutcome;
 import org.apache.commons.io.FileUtils;
-import org.json.HTTP;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.File;

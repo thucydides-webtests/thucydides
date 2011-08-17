@@ -1,12 +1,12 @@
 package net.thucydides.core.steps;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.thucydides.core.pages.Pages;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.sf.cglib.proxy.Enhancer;
+import net.thucydides.core.pages.Pages;
 
 /**
  * Produces an instance of a set of requirement steps for use in the acceptance tests.
@@ -37,17 +37,14 @@ public class StepFactory {
      * This is actually a proxy that allows reporting and screenshots to
      * be performed at each step.
      */
-    @SuppressWarnings("unchecked")
     public <T extends ScenarioSteps> T getStepLibraryFor(final Class<T> scenarioStepsClass) {
         if (isStepLibraryInstantiatedFor(scenarioStepsClass)) {
             return getManagedStepLibraryFor(scenarioStepsClass);
         } else {
             return instantiateNewStepLibraryFor(scenarioStepsClass);
         }
-
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends ScenarioSteps> T getUniqueStepLibraryFor(final Class<T> scenarioStepsClass) {
         return instantiateUniqueStepLibraryFor(scenarioStepsClass);
     }
@@ -57,7 +54,8 @@ public class StepFactory {
     }
 
 
-    private <T extends ScenarioSteps> T getManagedStepLibraryFor(Class<T> scenarioStepsClass) {
+    @SuppressWarnings("unchecked")
+	private <T extends ScenarioSteps> T getManagedStepLibraryFor(Class<T> scenarioStepsClass) {
         return (T) index.get(scenarioStepsClass);
     }
 
@@ -83,7 +81,8 @@ public class StepFactory {
         return steps;
     }
 
-    private <T extends ScenarioSteps> T createProxyStepLibrary(Class<T> scenarioStepsClass) {
+    @SuppressWarnings("unchecked")
+	private <T extends ScenarioSteps> T createProxyStepLibrary(Class<T> scenarioStepsClass) {
         Enhancer e = new Enhancer();
         e.setSuperclass(scenarioStepsClass);
         StepInterceptor stepInterceptor = new StepInterceptor(scenarioStepsClass);

@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.awt.*;
 
-import static java.awt.Color.BLUE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 

@@ -1,12 +1,12 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.annotations.AnnotatedFields;
-import net.thucydides.core.annotations.InvalidStepsFieldException;
-import net.thucydides.core.annotations.Steps;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.thucydides.core.annotations.AnnotatedFields;
+import net.thucydides.core.annotations.InvalidStepsFieldException;
+import net.thucydides.core.annotations.Steps;
 
 /**
  * Used to identify ScenarioSteps fields that need to be instantiated.

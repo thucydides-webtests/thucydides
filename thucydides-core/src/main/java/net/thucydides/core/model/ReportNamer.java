@@ -1,10 +1,10 @@
 package net.thucydides.core.model;
 
+import static net.thucydides.core.util.NameConverter.withNoArguments;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.NameConverter;
-import org.apache.commons.lang.StringUtils;
 
-import static net.thucydides.core.util.NameConverter.withNoArguments;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Determies the correct default name for test reports.

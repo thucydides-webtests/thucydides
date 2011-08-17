@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Object that encapsulates system clock operations.
  */
-public class InternalClock {
+public class InternalSystemClock implements SystemClock {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InternalClock.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InternalSystemClock.class);
 
     /**
      * Pause execution for the requested delay.

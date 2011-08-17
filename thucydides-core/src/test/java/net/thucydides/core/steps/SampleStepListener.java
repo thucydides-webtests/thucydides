@@ -20,7 +20,7 @@ public class SampleStepListener implements StepListener {
         return buffer.toString();
     }
 
-    public void testRunStartedFor(Class<?> storyClass) {
+    public void testSuiteStarted(Class<?> storyClass) {
         push();
     }
 
@@ -30,9 +30,6 @@ public class SampleStepListener implements StepListener {
 
     private void pop() {
         currentIndent--;
-    }
-
-    public void testRunStartedFor(Story story) {
     }
 
     public void testStarted(String description) {
@@ -61,21 +58,6 @@ public class SampleStepListener implements StepListener {
         pop();
         writeIndent(buffer);
         buffer.append(description.getName() + " done").append("\n");
-    }
-
-    public void stepGroupStarted(String description) {
-    }
-
-    public void stepGroupStarted(ExecutedStepDescription description) {
-    }
-
-    public void stepGroupFinished() {
-    }
-
-    public void stepGroupFinished(TestResult result) {
-    }
-
-    public void stepSucceeded() {
     }
 
     public void stepFailed(StepFailure failure) {
@@ -111,11 +93,15 @@ public class SampleStepListener implements StepListener {
     public void noStepsHaveFailed() {
     }
 
-    public Throwable getStepError() {
+    public Throwable getTestFailureCause() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public boolean isDataDriven() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    public void testFailed(Throwable cause) {
+        buffer.append("--> TEST FAILED").append("\n");
+    }
+
+    public void testIgnored() {
+        buffer.append("--> TEST IGNORED").append("\n");
     }
 }

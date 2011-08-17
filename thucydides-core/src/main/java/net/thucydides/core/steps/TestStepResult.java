@@ -1,10 +1,10 @@
 package net.thucydides.core.steps;
 
-import com.google.common.collect.ImmutableList;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Result of a test step or sequence of test steps.

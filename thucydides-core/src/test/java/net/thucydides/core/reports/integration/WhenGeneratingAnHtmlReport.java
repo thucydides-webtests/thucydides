@@ -1,23 +1,14 @@
 package net.thucydides.core.reports.integration;
 
-import net.thucydides.core.annotations.Feature;
-import net.thucydides.core.annotations.Story;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
-import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
-import net.thucydides.core.resources.FileResources;
+import net.thucydides.core.model.TestStep;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 
 import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
@@ -34,8 +25,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     @Test
     public void should_generate_an_HTML_report_for_an_acceptance_test_run() throws Exception {
 
-        TestOutcome testOutcome = new TestOutcome("A simple test case");
-        testOutcome.setMethodName("a_simple_test_case");
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         File htmlReport = reporter.generateReportFor(testOutcome);
@@ -45,8 +35,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
     @Test
     public void css_stylesheets_should_also_be_copied_to_the_output_directory() throws Exception {
-        TestOutcome testOutcome = new TestOutcome("A simple test case");
-        testOutcome.setMethodName("a_simple_test_case");
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
         reporter.generateReportFor(testOutcome);
         
@@ -58,8 +47,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     @Test
     public void the_report_file_and_the_resources_should_be_together() throws Exception {
 
-        TestOutcome testOutcome = new TestOutcome("A simple test case");
-        testOutcome.setMethodName("a_simple_test_case");
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         reporter.generateReportFor(testOutcome);
@@ -75,7 +63,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     public void should_have_a_meaningful_filename()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
-        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
@@ -88,7 +76,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     public void screenshots_should_have_a_separate_html_report()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
-        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
@@ -168,7 +156,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     public void screenshot_html_should_mention_the_step_name()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
-        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
@@ -186,7 +174,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     public void report_html_should_contain_a_link_to_the_screenshots_report()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
-        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
@@ -203,7 +191,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     public void should_have_a_qualified_filename_if_qualifier_present()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
-        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
@@ -219,7 +207,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     public void spaces_in_the_qualifier_are_converted_to_underscores_for_the_report_name()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
-        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
@@ -235,8 +223,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     @Test
     public void the_resources_can_come_from_a_different_location_in_a_jar_file() throws Exception {
 
-        TestOutcome testOutcome = new TestOutcome("A simple test case");
-        testOutcome.setMethodName("a_simple_test_case");
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         final String alternativeResourceDirectory = "alt-report-resources";
@@ -250,8 +237,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     @Test
     public void the_resources_can_come_from_the_current_project() throws Exception {
 
-        TestOutcome testOutcome = new TestOutcome("A simple test case");
-        testOutcome.setMethodName("a_simple_test_case");
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         final String alternativeResourceDirectory = "localresourcelist";
@@ -268,8 +254,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     @Test
     public void a_different_resource_location_can_be_specified_by_using_a_system_property() throws Exception {
 
-        TestOutcome testOutcome = new TestOutcome("A simple test case");
-        testOutcome.setMethodName("a_simple_test_case");
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         System.setProperty("thucydides.report.resources", "alt-report-resources");
@@ -282,8 +267,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     @Test
     public void when_an_alternative_resource_directory_is_used_the_default_stylesheet_is_not_copied() throws Exception {
 
-        TestOutcome testOutcome = new TestOutcome("A simple test case");
-        testOutcome.setMethodName("a_simple_test_case");
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         final String alternativeResourceDirectory = "alt-report-resources";
@@ -298,8 +282,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     @Test
     public void the_report_should_list_test_groups_as_headings_in_the_table() throws Exception {
 
-        TestOutcome testOutcome = new TestOutcome("A simple test case with groups");
-        testOutcome.setMethodName("a_simple_test_case_with_groups");
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
 
         testOutcome.recordStep(successfulTestStepCalled("Step 0"));
         testOutcome.startGroup("A group");
@@ -331,8 +314,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     @Test
     public void a_sample_report_should_be_generated_in_the_target_directory() throws Exception {
 
-        TestOutcome testOutcome = new TestOutcome("A simple test case");
-        testOutcome.setMethodName("a_simple_test_case");
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 2"));
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 3"));

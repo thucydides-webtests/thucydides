@@ -1,6 +1,7 @@
 package net.thucydides.core.annotations;
 
 import net.thucydides.core.steps.PagesAnnotatedField;
+
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -48,5 +49,4 @@ public final class TestCaseAnnotations {
 
         webDriverField.setValue(testCase, driver);
     }
-
 }

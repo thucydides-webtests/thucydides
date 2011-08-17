@@ -3,7 +3,6 @@ package net.thucydides.samples;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
@@ -23,7 +22,6 @@ public class SampleNoSuchElementExceptionScenario {
     public SampleScenarioSteps steps;
 
     @Test
-    @TestsRequirement("ABC")
     public void failing_happy_day_scenario() {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
@@ -35,7 +33,6 @@ public class SampleNoSuchElementExceptionScenario {
 
 
     @Test
-    @TestsRequirement("ABC")
     public void successful_happy_day_scenario() {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
@@ -44,7 +41,6 @@ public class SampleNoSuchElementExceptionScenario {
     }
 
     @Test
-    @TestsRequirement("DEF")
     public void other_test_case_1() {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();

@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-@UserStoryCode("US02")
 public class SampleTestScenario {
     
     @Managed
@@ -32,8 +31,7 @@ public class SampleTestScenario {
     }    
 
     @Test
-    public void failing_scenario() {
-        steps.groupOfStepsContainingAFailure();
+    public void working_scenario() {
         steps.anotherGroupOfSteps();
         steps.stepThatSucceeds();
     }    

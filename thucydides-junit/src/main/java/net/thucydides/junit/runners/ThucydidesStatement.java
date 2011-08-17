@@ -24,7 +24,7 @@ public class ThucydidesStatement extends Statement{
     public void evaluate() throws Throwable {
         statement.evaluate();
         if (listener.aStepHasFailed()) {
-            throw listener.getStepError();
+            throw listener.getTestFailureCause();
         }
     }
 }

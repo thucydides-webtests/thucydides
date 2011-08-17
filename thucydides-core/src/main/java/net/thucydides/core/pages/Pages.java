@@ -1,15 +1,16 @@
 package net.thucydides.core.pages;
 
-import net.thucydides.core.webdriver.WebDriverFacade;
-import net.thucydides.core.webdriver.WebdriverProxyFactory;
-import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import net.thucydides.core.webdriver.WebDriverFacade;
+import net.thucydides.core.webdriver.WebdriverProxyFactory;
+
+import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Pages object keeps track of what web pages a test visits, and helps with mapping pages to Page Objects.
@@ -63,7 +64,7 @@ public class Pages implements Serializable {
     /**
      * Opens a browser on the application home page, as defined by the base URL.
      */
-    public void start() {
+    protected void start() {
         getDriver().get(getStartingUrl());
     }
 
@@ -73,7 +74,8 @@ public class Pages implements Serializable {
         return currentPageAt(pageObjectClass);
     }
 
-    public <T extends PageObject> T get(final Class<T> pageObjectClass) {
+    @SuppressWarnings("unchecked")
+	public <T extends PageObject> T get(final Class<T> pageObjectClass) {
         T nextPage = null;
         if (shouldUsePreviousPage(pageObjectClass)) {
             nextPage = (T) currentPage;
@@ -87,6 +89,7 @@ public class Pages implements Serializable {
         return nextPage;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends PageObject> T currentPageAt(final Class<T> pageObjectClass) {
         T nextPage = null;
         if (shouldUsePreviousPage(pageObjectClass)) {

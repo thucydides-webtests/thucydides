@@ -1,15 +1,16 @@
 package net.thucydides.core.webdriver;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+
 import net.thucydides.core.pages.WebElementFacade;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocator;
 import org.openqa.selenium.support.pagefactory.Annotations;
-
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
 
 class DisplayedElementLocator extends AjaxElementLocator {
 

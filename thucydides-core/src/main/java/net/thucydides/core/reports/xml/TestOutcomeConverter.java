@@ -1,23 +1,22 @@
 package net.thucydides.core.reports.xml;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Set;
+
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.features.ApplicationFeature;
+
 import com.google.common.base.Preconditions;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import net.thucydides.core.model.ConcreteTestStep;
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
-import net.thucydides.core.model.TestStepGroup;
-import net.thucydides.core.model.features.ApplicationFeature;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Set;
 
 /**
  * XStream converter used to generate the XML acceptance test report.
@@ -83,7 +82,7 @@ public class TestOutcomeConverter implements Converter {
         writer.addAttribute(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
         writer.addAttribute(RESULT_FIELD, testOutcome.getResult().toString());
         addUserStoryTo(writer, testOutcome.getUserStory());
-        addRequirementsTo(writer, testOutcome.getTestedRequirements());
+        //addRequirementsTo(writer, testOutcome.getTestedRequirements());
 
         List<TestStep> steps = testOutcome.getTestSteps();
         for (TestStep step : steps) {
@@ -105,7 +104,7 @@ public class TestOutcomeConverter implements Converter {
     }
 
     private String nameFrom(final TestOutcome testOutcome) {
-        String baseName = null;
+        String baseName;
         if (testOutcome.getMethodName() != null) {
             baseName = testOutcome.getMethodName();
         } else {
@@ -123,25 +122,24 @@ public class TestOutcomeConverter implements Converter {
 
 
     private void writeStepTo(final HierarchicalStreamWriter writer, final TestStep step) {
-        if (step instanceof TestStepGroup) {
+        if (step.isAGroup()) {
             writer.startNode(TEST_GROUP);
             writer.addAttribute(NAME_FIELD, step.getDescription());
             writeResult(writer, step);
             writeScreenshotIfPresent(writer, step);
 
-            List<TestStep> nestedSteps = ((TestStepGroup) step).getSteps();
+            List<TestStep> nestedSteps = step.getChildren();
             for (TestStep nestedStep : nestedSteps) {
                 writeStepTo(writer, nestedStep);
             }
             writer.endNode();
         } else {
-            ConcreteTestStep concreteStep = (ConcreteTestStep) step;
             writer.startNode(TEST_STEP);
-            writeResult(writer, concreteStep);
-            writeScreenshotIfPresent(writer, concreteStep);
+            writeResult(writer, step);
+            writeScreenshotIfPresent(writer, step);
             addRequirementsTo(writer, step.getTestedRequirements());
-            writeDescription(writer, concreteStep);
-            writeErrorForFailingTest(writer, concreteStep);
+            writeDescription(writer, step);
+            writeErrorForFailingTest(writer, step);
             writer.endNode();
         }
     }
@@ -178,7 +176,7 @@ public class TestOutcomeConverter implements Converter {
         }
     }
 
-    private void writeErrorForFailingTest(final HierarchicalStreamWriter writer, final ConcreteTestStep step) {
+    private void writeErrorForFailingTest(final HierarchicalStreamWriter writer, final TestStep step) {
         if (step.isFailure()) {
             writeErrorMessageAndException(writer, step);
         }
@@ -186,7 +184,7 @@ public class TestOutcomeConverter implements Converter {
     }
 
     private void writeErrorMessageAndException(final HierarchicalStreamWriter writer,
-                                               final ConcreteTestStep step) {
+                                               final TestStep step) {
         if (step.getErrorMessage() != null) {
             writeErrorMessageNode(writer, step.getErrorMessage());
             if (step.getException() != null) {
@@ -232,8 +230,8 @@ public class TestOutcomeConverter implements Converter {
     public Object unmarshal(final HierarchicalStreamReader reader,
                             final UnmarshallingContext context) {
 
-        TestOutcome testOutcome = new TestOutcome();
-        testOutcome.setMethodName(reader.getAttribute(NAME_FIELD));
+        String methodName = reader.getAttribute(NAME_FIELD);
+        TestOutcome testOutcome = new TestOutcome(methodName);
         testOutcome.setTitle(reader.getAttribute(TITLE_FIELD));
         readChildren(reader, testOutcome);
         return testOutcome;
@@ -272,7 +270,7 @@ public class TestOutcomeConverter implements Converter {
             }
             reader.moveUp();
         }
-        Story story = null;
+        Story story;
         if (feature == null) {
             story = Story.withId(storyId, storyName);
         } else {
@@ -291,12 +289,12 @@ public class TestOutcomeConverter implements Converter {
 
     private void readTestRunRequirements(final HierarchicalStreamReader reader,
                                          final TestOutcome testOutcome) {
-        while (reader.hasMoreChildren()) {
-            reader.moveDown();
-            String requirement = reader.getValue();
-            testOutcome.testsRequirement(requirement);
-            reader.moveUp();
-        }
+//        while (reader.hasMoreChildren()) {
+//            reader.moveDown();
+//            String requirement = reader.getValue();
+//            testOutcome.testsRequirement(requirement);
+//            reader.moveUp();
+//        }
     }
 
     private void readTestStepRequirements(final HierarchicalStreamReader reader, final TestStep step) {
@@ -315,7 +313,7 @@ public class TestOutcomeConverter implements Converter {
      * .png</screenshot> </test-step>
      */
     private void readTestStep(final HierarchicalStreamReader reader, final TestOutcome testOutcome) {
-        ConcreteTestStep step = new ConcreteTestStep();
+        TestStep step = new TestStep();
         String testResultValue = reader.getAttribute(RESULT_FIELD);
         TestResult result = TestResult.valueOf(testResultValue);
         step.setResult(result);
@@ -333,14 +331,15 @@ public class TestOutcomeConverter implements Converter {
         String screenshot = reader.getAttribute(SCREENSHOT_FIELD);
         String testResultValue = reader.getAttribute(RESULT_FIELD);
         TestResult result = TestResult.valueOf(testResultValue);
-        testOutcome.startGroup(name);
+        testOutcome.recordStep(new TestStep(name));
+        testOutcome.startGroup();
         testOutcome.getCurrentGroup().setScreenshotPath(screenshot);
         testOutcome.getCurrentGroup().setResult(result);
         readChildren(reader, testOutcome);
         testOutcome.endGroup();
     }
 
-    private void readTestStepChildren(final HierarchicalStreamReader reader, final ConcreteTestStep step) {
+    private void readTestStepChildren(final HierarchicalStreamReader reader, final TestStep step) {
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             String childNode = reader.getNodeName();

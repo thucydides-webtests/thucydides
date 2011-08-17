@@ -1,11 +1,11 @@
 package net.thucydides.core.steps;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+
 import net.thucydides.core.annotations.AnnotatedFields;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.pages.Pages;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 
 /**
  * The Pages object keeps track of the Page Objects used during the tests.

@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-@UserStoryCode("US01")
 public class SampleTestScenarioForAnotherUserStory {
     
     @Managed
@@ -25,7 +24,7 @@ public class SampleTestScenarioForAnotherUserStory {
     public SampleScenarioSteps steps;
         
     @Test
-    public void happy_day_scenario() {
+    public void another_happy_day_scenario() {
 		steps.stepThatSucceeds();
 		steps.anotherStepThatSucceeds();
         steps.stepThatCallsNestedSteps();
@@ -34,7 +33,7 @@ public class SampleTestScenarioForAnotherUserStory {
     }    
 
     @Test
-    public void another_successful_scenario() {
+    public void successful_scenario() {
 		steps.stepThatSucceeds();
 		steps.anotherStepThatSucceeds();
         steps.anotherGroupOfSteps();

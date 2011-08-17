@@ -9,7 +9,7 @@ public class WhenManagingTheInternalClock {
 
     @Test
     public void should_pause_for_requested_delay() {
-        InternalClock clock = new InternalClock();
+        InternalSystemClock clock = new InternalSystemClock();
 
         long startTime = System.currentTimeMillis();
         clock.pauseFor(50);
@@ -19,7 +19,7 @@ public class WhenManagingTheInternalClock {
 
     @Test(expected = RuntimeException.class)
     public void should_throw_runtime_exception_if_something_goes_wrong() {
-        InternalClock clock = new InternalClock() {
+        InternalSystemClock clock = new InternalSystemClock() {
             @Override
             protected void sleepFor(long timeInMilliseconds) throws InterruptedException {
                 throw new InterruptedException();

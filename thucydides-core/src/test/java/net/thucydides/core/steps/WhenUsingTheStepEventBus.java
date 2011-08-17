@@ -1,34 +1,28 @@
 package net.thucydides.core.steps;
 
-import com.sun.jdi.event.StepEvent;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.csv.Person;
-import net.thucydides.core.model.Story;
 import net.thucydides.core.pages.Pages;
+
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
 
 public class WhenUsingTheStepEventBus {
 
-    static class SimpleTestScenarioSteps extends ScenarioSteps {
+    @SuppressWarnings("serial")
+	static class SimpleTestScenarioSteps extends ScenarioSteps {
 
         @Managed
         WebDriver driver;
@@ -83,6 +77,13 @@ public class WhenUsingTheStepEventBus {
         }
 
         @Step
+        public void step9(){
+            step1();
+            pendingStep();
+            step4();
+        }
+
+        @Step
         public void nested_steps(){
             step1();
             nested_steps1();
@@ -108,6 +109,10 @@ public class WhenUsingTheStepEventBus {
             assertThat(true, is(false));
         }
 
+        @Pending
+        @Step
+        public void pendingStep(){}
+
         @Step
         public SimpleTestScenarioSteps stepThatReturnsAStep() {
             return this;
@@ -126,7 +131,7 @@ public class WhenUsingTheStepEventBus {
             step3();
 
         }
-    }
+    }    
 
     static class SampleTestScenario {
 
@@ -158,6 +163,7 @@ public class WhenUsingTheStepEventBus {
 
         sampleStepListener = new SampleStepListener();
 
+        StepEventBus.getEventBus().clear();
         StepEventBus.getEventBus().registerListener(listener);
         StepEventBus.getEventBus().registerListener(sampleStepListener);
 
@@ -188,6 +194,7 @@ public class WhenUsingTheStepEventBus {
     public void the_step_event_bus_can_be_used_to_sent_notification_events_about_steps() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
+        StepEventBus.getEventBus().testStarted("some_test");
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
 
         verify(listener).stepStarted(any(ExecutedStepDescription.class));
@@ -293,7 +300,6 @@ public class WhenUsingTheStepEventBus {
     @Test
     public void should_record_deeply_nested_test_steps() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
-
         StepEventBus.getEventBus().testStarted("a_test");
         steps.legacyStepGroup();
         StepEventBus.getEventBus().testFinished();
@@ -332,6 +338,26 @@ public class WhenUsingTheStepEventBus {
     }
 
     @Test
+    public void should_record_pending_steps() {
+        SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
+
+        StepEventBus.getEventBus().testStarted("a_test");
+        steps.step1();
+        steps.pendingStep();
+        StepEventBus.getEventBus().testFinished();
+
+        String expectedSteps =
+                  "TEST a_test\n"
+                          + "-step1\n"
+                          + "-step1 done\n"
+                          + "-pendingStep\n"
+                          + "---> STEP IGNORED\n"
+                          + "TEST DONE\n";
+        assertThat(sampleStepListener.toString(), is(expectedSteps));
+    }
+
+
+    @Test
     public void should_record_nested_step_failures() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
@@ -356,6 +382,39 @@ public class WhenUsingTheStepEventBus {
                           + "-----> STEP IGNORED\n"
                           + "----> STEP IGNORED\n"
                           + "-step8 done\n"
+                          + "TEST DONE\n";
+
+        System.out.println(sampleStepListener.toString());
+        assertThat(sampleStepListener.toString(), is(expectedSteps));
+
+
+    }
+
+    @Test
+    public void should_record_nested_pending_steps() {
+        SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
+
+        StepEventBus.getEventBus().testStarted("a_test");
+        steps.step1();
+        steps.step9();
+        StepEventBus.getEventBus().testFinished();
+
+        String expectedSteps =
+                  "TEST a_test\n"
+                          + "-step1\n"
+                          + "-step1 done\n"
+                          + "-step9\n"
+                          + "--step1\n"
+                          + "--step1 done\n"
+                          + "--pendingStep\n"
+                          + "----> STEP IGNORED\n"
+                          + "--step4\n"
+                          + "---step5\n"
+                          + "---step5 done\n"
+                          + "---step6\n"
+                          + "---step6 done\n"
+                          + "--step4 done\n"
+                          + "-step9 done\n"
                           + "TEST DONE\n";
 
         System.out.println(sampleStepListener.toString());
@@ -474,6 +533,42 @@ public class WhenUsingTheStepEventBus {
                           + "-stepThatReturnsAStep\n"
                           + "---> STEP IGNORED\n"
                           + "TEST DONE\n";
+        assertThat(sampleStepListener.toString(), is(expectedSteps));
+    }
+
+    @Test
+    public void when_an_entier_test_is_pending_all_the_contained_steps_are_skipped() {
+        SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
+
+        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testPending();
+        steps.step1();
+        steps.step2();
+        steps.step3();
+        StepEventBus.getEventBus().testFinished();
+
+        String expectedSteps =
+                "TEST a_test\n"
+                    + "-step1\n"
+                    + "---> STEP IGNORED\n"
+                    + "-step2\n"
+                    + "---> STEP IGNORED\n"
+                    + "-step3\n"
+                    + "---> STEP IGNORED\n"
+                    + "TEST DONE\n";
+        assertThat(sampleStepListener.toString(), is(expectedSteps));
+    }
+
+    @Test
+    public void when_an_entier_test_is_ignored_the_test_is_marked_as_ignored() {
+        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testIgnored();
+        StepEventBus.getEventBus().testFinished();
+
+        String expectedSteps =
+                "TEST a_test\n"
+                    + "--> TEST IGNORED\n"
+                    + "TEST DONE\n";
         assertThat(sampleStepListener.toString(), is(expectedSteps));
     }
 

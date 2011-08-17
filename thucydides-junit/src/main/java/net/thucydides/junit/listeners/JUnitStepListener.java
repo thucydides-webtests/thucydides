@@ -3,11 +3,9 @@ package net.thucydides.junit.listeners;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.BaseStepListener;
-import net.thucydides.core.steps.ExecutedStepDescription;
-import net.thucydides.core.steps.ScenarioSteps;
-import net.thucydides.core.steps.StepFailure;
-import net.thucydides.core.steps.TestStepResult;
+import net.thucydides.core.steps.StepEventBus;
 import org.junit.runner.Description;
+import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.slf4j.Logger;
@@ -16,75 +14,84 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.List;
 
-import static net.thucydides.core.steps.ExecutedStepDescription.withTitle;
-
 /**
  * Intercepts JUnit events and reports them to Thucydides.
  */
 public class JUnitStepListener extends RunListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JUnitStepListener.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(JUnitStepListener.class);
 
-    private BaseStepListener baseStepListener;
+	private BaseStepListener baseStepListener;
 
-    private boolean initialTest = true;
+	public JUnitStepListener(final File outputDirectory, final Pages pages) {
+		baseStepListener = new BaseStepListener(outputDirectory, pages);
+		StepEventBus.getEventBus().registerListener(baseStepListener);
+	}
 
-    public JUnitStepListener(final File outputDirectory, final Pages pages) {
-        baseStepListener = new BaseStepListener(outputDirectory, pages);
-    }
+	public BaseStepListener getBaseStepListener() {
+		return baseStepListener;
+	}
 
-    public BaseStepListener getBaseStepListener() {
-        return baseStepListener;
-    }
+	@Override
+	public void testRunStarted(Description description) throws Exception {
+		super.testRunStarted(description);
 
-    @Override
-    public void testStarted(final Description description) throws Exception {
+	}
 
-        LOGGER.debug("Junit notification: test started for {}", description.getMethodName());
-        if (initialTest) {
-            baseStepListener.testRunStartedFor(description.getTestClass());
-            initialTest = false;
-        }
-        String methodName = description.getMethodName(); // NameConverter.withNoArguments(description.getMethodName());
-        baseStepListener.testStarted(methodName);
-    }
+	@Override
+	public void testRunFinished(Result result) throws Exception {
+		super.testRunFinished(result);
+	}
 
-    private ExecutedStepDescription withDescriptionFrom(final Description description) {
-        Class<? extends ScenarioSteps> stepsClass = (Class<? extends ScenarioSteps>) description.getTestClass();
-        return ExecutedStepDescription.of(stepsClass, description.getMethodName());
+	private boolean firstTest = true;
 
-    }
+	/**
+	 * Called when a test starts. We also need to start the test suite the first
+	 * time, as the testRunStarted() method is not invoked for some reason.
+	 */
+	@Override
+	public void testStarted(final Description description) {
+		LOGGER.debug("Junit notification: test started for {}", description.getMethodName());
 
-    @Override
-    public void testFinished(final Description description) throws Exception {
-        LOGGER.debug("Junit notification: test finished for {}", description.getMethodName());
-        baseStepListener.testFinished(new TestStepResult());
-    }
+		StepEventBus.getEventBus().clear();
+		if (firstTest) {
+			StepEventBus.getEventBus().testSuiteStarted(description.getTestClass());
+			firstTest = false;
+		}
+		StepEventBus.getEventBus().testStarted(description.getMethodName());
 
-    @Override
-    public void testFailure(final Failure failure) throws Exception {
-        baseStepListener.stepFailed(new StepFailure(withTitle(failure.getMessage()), failure.getException()));
-    }
+	}
 
-    @Override
-    public void testIgnored(final Description description) throws Exception {
-        baseStepListener.stepIgnored(withDescriptionFrom(description));
-    }
+	@Override
+	public void testFinished(final Description description) throws Exception {
+		LOGGER.debug("Junit notification: test finished for {}",
+				description.getMethodName());
+	}
 
-    public List<TestOutcome> getTestOutcomes() {
-        return baseStepListener.getTestOutcomes();
-    }
+	@Override
+	public void testFailure(final Failure failure) throws Exception {
+		StepEventBus.getEventBus().testFailed(failure.getException());
+	}
 
-    public Throwable getError() {
-        return baseStepListener.getStepError();
-    }
+	@Override
+	public void testIgnored(final Description description) throws Exception {
+		StepEventBus.getEventBus().testIgnored();
+	}
 
-    public boolean hasRecordedFailures() {
-        return baseStepListener.aStepHasFailed();
-    }
+	public List<TestOutcome> getTestOutcomes() {
+		return baseStepListener.getTestOutcomes();
+	}
 
-    public void resetStepFailures() {
-        baseStepListener.noStepsHaveFailed();
-    }
+	public Throwable getError() {
+		return baseStepListener.getTestFailureCause();
+	}
+
+	public boolean hasRecordedFailures() {
+		return baseStepListener.aStepHasFailed();
+	}
+
+	public void close() {
+		StepEventBus.getEventBus().dropListener(baseStepListener);
+	}
 }
-

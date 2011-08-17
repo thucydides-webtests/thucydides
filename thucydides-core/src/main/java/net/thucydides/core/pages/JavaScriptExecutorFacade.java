@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
 import net.thucydides.core.webdriver.WebDriverFacade;
+
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 

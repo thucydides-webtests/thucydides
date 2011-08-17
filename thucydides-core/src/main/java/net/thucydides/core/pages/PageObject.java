@@ -45,7 +45,7 @@ public abstract class PageObject {
 
     private PageUrls pageUrls;
 
-    private InternalClock clock = new InternalClock();
+    private InternalSystemClock clock = new InternalSystemClock();
 
     public PageObject(final WebDriver driver, final int ajaxTimeout) {
         this.driver = driver;
@@ -86,7 +86,7 @@ public abstract class PageObject {
         return renderedView;
     }
 
-    protected InternalClock getClock() {
+    protected InternalSystemClock getClock() {
         return clock;
     }
 

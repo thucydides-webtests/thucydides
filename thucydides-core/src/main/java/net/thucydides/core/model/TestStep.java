@@ -1,5 +1,8 @@
 package net.thucydides.core.model;
 
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.join;
+import static ch.lambdaj.Lambda.on;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -7,12 +10,14 @@ import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.internal.ImmutableList;
 
 /**
  * An acceptance test run is made up of test steps.
@@ -25,7 +30,7 @@ import com.google.common.collect.ImmutableSet;
  * @author johnsmart
  *
  */
-public abstract class TestStep {
+public class TestStep {
 
     private String description;    
     private long duration;
@@ -36,6 +41,9 @@ public abstract class TestStep {
     private File htmlSource;
     private String errorMessage;
     private Throwable cause;
+    private TestResult result;
+
+    private List<TestStep> children = new ArrayList<TestStep>();
 
     public TestStep() {
         startTime = System.currentTimeMillis();
@@ -44,9 +52,12 @@ public abstract class TestStep {
 
     @Override
     public String toString() {
-        return "TestStep{" +
-                "description='" + description + '\'' +
-                '}';
+        if (!hasChildren()) {
+            return description;
+        } else {
+            String childDescriptions = join(extract(children, on(TestStep.class).toString()));
+            return description + " [" + childDescriptions + "]";
+        }
     }
 
     public TestStep(final String description) {
@@ -74,6 +85,9 @@ public abstract class TestStep {
         return description;
     }
 
+    public List<TestStep> getChildren() {
+        return ImmutableList.copyOf(children);
+    }
     /**
      * Each test step can be associated with a screenshot.
      */
@@ -118,9 +132,44 @@ public abstract class TestStep {
         this.htmlSource = htmlSource;
     }
 
-    public abstract void setResult(final TestResult result);
+    /**
+     * Each test step has a result, indicating the outcome of this step.
+     */
+    public void setResult(final TestResult result) {
+        this.result = result;
+    }
 
-    public abstract TestResult getResult();
+    public TestResult getResult() {
+        if (isAGroup() && !groupResultOverridesChildren()) {
+            return getResultFromChildren();
+        } else {
+            return result;
+        }
+    }
+
+    private boolean groupResultOverridesChildren() {
+        return ((result == SKIPPED) || (result == IGNORED) || (result == PENDING));
+    }
+
+    private TestResult getResultFromChildren() {
+        TestResultList resultList = new TestResultList(getChildResults());
+        if (!resultList.isEmpty()) {
+            return resultList.getOverallResult();
+        }
+        if (result != null) {
+            return result;
+        } else {
+            return TestResult.PENDING;
+        }
+    }
+
+    private List<TestResult> getChildResults() {
+        List<TestResult> results = new ArrayList<TestResult>();
+        for (TestStep step : getChildren()) {
+            results.add(step.getResult());
+        }
+        return results;
+    }
 
     public Boolean isSuccessful() {
         return getResult() == SUCCESS;
@@ -167,8 +216,38 @@ public abstract class TestStep {
         return cause;
     }
 
-    public abstract List<? extends TestStep> getFlattenedSteps();
+    public List<? extends TestStep> getFlattenedSteps() {
+        List<TestStep> flattenedSteps = new ArrayList<TestStep>();
+        for(TestStep child : getChildren()) {
+            flattenedSteps.add(child);
+            if (child.isAGroup()) {
+                flattenedSteps.addAll(child.getFlattenedSteps());
+            }
+        }
+        return flattenedSteps;
+    }
     
-    public abstract boolean isAGroup();
+    public boolean isAGroup() {
+        return hasChildren();
+    }
 
+    public void addChildStep(final TestStep step) {
+        children.add(step);
+    }
+
+    public boolean hasChildren() {
+        return !children.isEmpty();
+    }
+
+    public Collection<? extends TestStep> getLeafTestSteps() {
+        List<TestStep> leafSteps = new ArrayList<TestStep>();
+        for(TestStep child : getChildren()) {
+            if (child.isAGroup()) {
+                leafSteps.addAll(child.getLeafTestSteps());
+            } else {
+                leafSteps.add(child);
+            }
+        }
+        return leafSteps;
+    }
 }

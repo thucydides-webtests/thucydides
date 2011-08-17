@@ -1,12 +1,5 @@
 package net.thucydides.core.model;
 
-import ch.lambdaj.function.convert.Converter;
-import com.google.common.collect.ImmutableList;
-import static org.apache.commons.lang.StringUtils.capitalize;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.having;
@@ -14,6 +7,14 @@ import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sum;
 import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
+import static org.apache.commons.lang.StringUtils.capitalize;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import ch.lambdaj.function.convert.Converter;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * A collection of test results, corresponding to a the acceptance tests for a single user story.
@@ -90,7 +91,12 @@ public class StoryTestResults {
      */
     public int countStepsInSuccessfulTests() {
         List<TestOutcome> successfulTests = select(testOutcomes, having(on(TestOutcome.class).isSuccess()));
-        return (successfulTests.isEmpty()) ? 0 : sum(successfulTests, on(TestOutcome.class).getStepCount());
+        try {
+            return (successfulTests.isEmpty()) ? 0 : sum(successfulTests, on(TestOutcome.class).getStepCount());
+        } catch(Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     public int getPendingCount() {

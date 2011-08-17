@@ -40,11 +40,7 @@ public class ThucydidesParameterizedRunner extends Suite {
             buildTestRunnersFromADataSourceUsing(webDriverFactory);
         }
     }
-
-    private void buildTestRunnersWithTestSpecificDataSetsUsing(WebDriverFactory webDriverFactory) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
+    
     private void scheduleParallelTestRunsFor(final Class<?> klass) {
         setScheduler(new ParameterizedRunnerScheduler(klass, getThreadCountFor(klass)));
     }
@@ -90,10 +86,10 @@ public class ThucydidesParameterizedRunner extends Suite {
 
     private void buildTestRunnersFromADataSourceUsing(final WebDriverFactory webDriverFactory) throws Throwable {
 
-        List testClasses = getTestAnnotations().getDataAsInstancesOf(getTestClass().getJavaClass());
+        List<?> testCases = getTestAnnotations().getDataAsInstancesOf(getTestClass().getJavaClass());
 
-        for (int i = 0; i < testClasses.size(); i++) {
-            Object testCase = testClasses.get(i);
+        for (int i = 0; i < testCases.size(); i++) {
+            Object testCase = testCases.get(i);
             ThucydidesRunner runner = new TestClassRunnerForInstanciatedTestCase(testCase, i);
             runner.useQualifier(getQualifierFor(testCase));
             overrideWebdriverFactoryIfProvided(runner, webDriverFactory);

@@ -1,6 +1,5 @@
 package net.thucydides.junit.runners;
 
-import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
@@ -11,25 +10,7 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
-import net.thucydides.junit.integration.samples.OpenStaticDemoPageWithFailureSample;
-import net.thucydides.samples.AnnotatedSingleTestScenario;
-import net.thucydides.samples.SampleFailingScenarioWithEmptyTests;
-import net.thucydides.samples.SampleNoSuchElementExceptionScenario;
-import net.thucydides.samples.SamplePassingScenario;
-import net.thucydides.samples.SamplePassingScenarioWithFieldsInParent;
-import net.thucydides.samples.SamplePassingScenarioWithPrivateFields;
-import net.thucydides.samples.SamplePassingScenarioWithEmptyTests;
-import net.thucydides.samples.SamplePassingScenarioWithIgnoredTests;
-import net.thucydides.samples.SamplePassingScenarioWithPendingTests;
-import net.thucydides.samples.SampleScenarioWithoutPages;
-import net.thucydides.samples.SampleScenarioWithoutStepAnnotations;
-import net.thucydides.samples.SampleScenarioWithoutSteps;
-import net.thucydides.samples.SingleTestScenario;
-import net.thucydides.samples.SingleTestScenarioWithWebdriverException;
-import net.thucydides.samples.SuccessfulSingleTestScenario;
-import net.thucydides.samples.TestIgnoredScenario;
-import net.thucydides.samples.TestScenarioWithGroups;
-import net.thucydides.samples.TestScenarioWithParameterizedSteps;
+import net.thucydides.samples.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -45,23 +26,26 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItemInArray;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
-
 
     @Before
     public void initMocks() {
@@ -77,6 +61,9 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
     @Mock
     FirefoxDriver firefoxDriver;
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     WebDriverFactory webDriverFactory;
 
@@ -109,20 +96,14 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome2 = executedSteps.get(1);
         TestOutcome testOutcome3 = executedSteps.get(2);
 
-        Story userStory = testOutcome1.getUserStory();
-
-        assertThat(userStory.getName(), is("Sample passing scenario"));
-
         assertThat(testOutcome1.getTitle(), is("Happy day scenario"));
         assertThat(testOutcome1.getMethodName(), is("happy_day_scenario"));
         assertThat(testOutcome1.getTestSteps().size(), is(4));
 
-        assertThat(testOutcome1.getUserStory(), is(userStory));
         assertThat(testOutcome2.getTitle(), is("Edge case 1"));
         assertThat(testOutcome2.getMethodName(), is("edge_case_1"));
         assertThat(testOutcome2.getTestSteps().size(), is(3));
 
-        assertThat(testOutcome3.getUserStory(), is(userStory));
         assertThat(testOutcome3.getTitle(), is("Edge case 2"));
         assertThat(testOutcome3.getMethodName(), is("edge_case_2"));
         assertThat(testOutcome3.getTestSteps().size(), is(2));
@@ -140,20 +121,14 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome2 = executedSteps.get(1);
         TestOutcome testOutcome3 = executedSteps.get(2);
 
-        Story userStory = testOutcome1.getUserStory();
-
-        assertThat(userStory.getName(), is("Sample passing scenario with private fields"));
-
         assertThat(testOutcome1.getTitle(), is("Happy day scenario"));
         assertThat(testOutcome1.getMethodName(), is("happy_day_scenario"));
         assertThat(testOutcome1.getTestSteps().size(), is(4));
 
-        assertThat(testOutcome1.getUserStory(), is(userStory));
         assertThat(testOutcome2.getTitle(), is("Edge case 1"));
         assertThat(testOutcome2.getMethodName(), is("edge_case_1"));
         assertThat(testOutcome2.getTestSteps().size(), is(3));
 
-        assertThat(testOutcome3.getUserStory(), is(userStory));
         assertThat(testOutcome3.getTitle(), is("Edge case 2"));
         assertThat(testOutcome3.getMethodName(), is("edge_case_2"));
         assertThat(testOutcome3.getTestSteps().size(), is(2));
@@ -171,26 +146,20 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome2 = executedSteps.get(1);
         TestOutcome testOutcome3 = executedSteps.get(2);
 
-        Story userStory = testOutcome1.getUserStory();
-
-        assertThat(userStory.getName(), is("Sample passing scenario with fields in parent"));
-
         assertThat(testOutcome1.getTitle(), is("Happy day scenario"));
         assertThat(testOutcome1.getMethodName(), is("happy_day_scenario"));
         assertThat(testOutcome1.getTestSteps().size(), is(4));
 
-        assertThat(testOutcome1.getUserStory(), is(userStory));
         assertThat(testOutcome2.getTitle(), is("Edge case 1"));
         assertThat(testOutcome2.getMethodName(), is("edge_case_1"));
         assertThat(testOutcome2.getTestSteps().size(), is(3));
 
-        assertThat(testOutcome3.getUserStory(), is(userStory));
         assertThat(testOutcome3.getTitle(), is("Edge case 2"));
         assertThat(testOutcome3.getMethodName(), is("edge_case_2"));
         assertThat(testOutcome3.getTestSteps().size(), is(2));
     }
     @Test
-    public void tests_marked_as_pending_should_be_skipped() throws InitializationError {
+    public void tests_marked_as_pending_should_be_pending() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioWithPendingTests.class, webDriverFactory);
         runner.setWebDriverFactory(webDriverFactory);
@@ -243,9 +212,26 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
 
     @Test
+    public void tests_should_be_run_after_an_assertion_error() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(MockOpenStaticDemoPageWithFailureSample.class);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(3));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+        TestOutcome testOutcome2 = executedSteps.get(1);
+        TestOutcome testOutcome3 = executedSteps.get(2);
+
+        assertThat(testOutcome1.getResult(), is(TestResult.FAILURE));
+        assertThat(testOutcome2.getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome3.getResult(), is(TestResult.SUCCESS));
+    }
+
+    @Test
     public void tests_should_be_run_after_a_webdriver_error() throws InitializationError {
 
-        ThucydidesRunner runner = new ThucydidesRunner(OpenStaticDemoPageWithFailureSample.class);
+        ThucydidesRunner runner = new ThucydidesRunner(MockOpenPageWithWebdriverErrorSample.class);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
@@ -269,8 +255,8 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(1));
-        assertThat(executedSteps.get(0).getStepCount(), is(1));
         assertThat(executedSteps.get(0).getResult(), is(TestResult.FAILURE));
+        assertThat(executedSteps.get(0).getTestFailureCause().getMessage(), is("Failure without any steps."));
     }
 
     @Test
@@ -301,10 +287,9 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         runner.run(new RunNotifier());
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
         TestOutcome testOutcome = executedScenarios.get(0);
-
-        List<TestStep> steps = testOutcome.getTestSteps();
-        assertThat(steps.size(), is(1));
-        assertThat(steps.get(0).isIgnored(), is(true));
+        
+        assertThat(testOutcome.getResult(), is(TestResult.IGNORED));
+        assertThat(testOutcome.getTestSteps().size(), is(0));
     }
 
 
@@ -341,7 +326,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        ConcreteTestStep failingStep = (ConcreteTestStep) steps.get(5);
+        TestStep failingStep = (TestStep) steps.get(5);
         assertThat(failingStep.getErrorMessage(), allOf(containsString("Expected: is <2>"), containsString("got: <1>")));
     }
 
@@ -356,7 +341,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        ConcreteTestStep failingStep = (ConcreteTestStep) steps.get(5);
+        TestStep failingStep = (TestStep) steps.get(5);
         assertThat(failingStep.getException(), is(AssertionError.class));
     }
 
@@ -371,7 +356,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        ConcreteTestStep failingStep = (ConcreteTestStep) steps.get(4);
+        TestStep failingStep = (TestStep) steps.get(4);
         assertThat(failingStep.getException(), is(WebdriverAssertionError.class));
     }
 
@@ -509,9 +494,6 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         Story userStory = testOutcome.getUserStory();
 
         assertThat(userStory.getName(), is("Successful single test scenario"));
-        // TODO: Fix
-        //assertThat(userStory.getSource(), is("net.thucydides.samples.SuccessfulSingleTestScenario"));
-        //assertThat(userStory.getCode(), is("US01"));
     }
 
     @Test
@@ -621,6 +603,127 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         WebdriverManager manager = new WebdriverManager(webDriverFactory);
 
         manager.closeDriver();
+    }
+
+    class TestableThucydidesRunner extends ThucydidesRunner {
+
+        private final File testOutputDirectory;
+
+        public TestableThucydidesRunner(final Class<?> klass, File outputDirectory) throws InitializationError {
+            super(klass);
+            testOutputDirectory = outputDirectory;
+        }
+
+        public TestableThucydidesRunner(Class<?> klass,
+                                        WebDriverFactory webDriverFactory,
+                                        File outputDirectory) throws InitializationError {
+            super(klass, webDriverFactory);
+            testOutputDirectory = outputDirectory;
+        }
+
+        @Override
+        public File getOutputDirectory() {
+            return testOutputDirectory;
+        }
+    }
+
+    @Test
+    public void xml_test_results_are_written_to_the_output_directory() throws InitializationError {
+
+        File outputDirectory = temporaryFolder.newFolder("output");
+
+        ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingScenario.class,
+                                                               webDriverFactory,
+                                                               outputDirectory);
+        runner.run(new RunNotifier());
+
+        List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new XMLFileFilter()));
+        assertThat(generatedXMLReports.size(), is(3));
+        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_edge_case_1.xml",
+                                                 "sample_passing_scenario_edge_case_2.xml",
+                                                 "sample_passing_scenario_happy_day_scenario.xml"));
+
+
+    }
+
+    @Test
+    public void xml_test_results_for_multiple_stories_are_written_to_the_output_directory() throws InitializationError {
+
+        File outputDirectory = temporaryFolder.newFolder("output");
+
+        new TestableThucydidesRunner(SamplePassingScenario.class,
+                                       webDriverFactory,
+                                       outputDirectory).run(new RunNotifier());
+
+        new TestableThucydidesRunner(SampleFailingScenario.class,
+                                       webDriverFactory,
+                                       outputDirectory).run(new RunNotifier());
+
+        List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new XMLFileFilter()));
+        assertThat(generatedXMLReports.size(), is(6));
+        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_edge_case_1.xml",
+                                                 "sample_passing_scenario_edge_case_2.xml",
+                                                 "sample_passing_scenario_happy_day_scenario.xml",
+                                                 "sample_failing_scenario_edge_case_1.xml",
+                                                 "sample_failing_scenario_edge_case_2.xml",
+                                                 "sample_failing_scenario_happy_day_scenario.xml"));
+    }
+
+    @Test
+    public void xml_test_results_for_multiple_successful_stories_are_written_to_the_output_directory() throws InitializationError {
+
+        File outputDirectory = temporaryFolder.newFolder("output");
+
+        new TestableThucydidesRunner(SamplePassingScenario.class,
+                                       webDriverFactory,
+                                       outputDirectory).run(new RunNotifier());
+
+        new TestableThucydidesRunner(AnotherSamplePassingScenario.class,
+                                       webDriverFactory,
+                                       outputDirectory).run(new RunNotifier());
+
+        List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new XMLFileFilter()));
+        assertThat(generatedXMLReports.size(), is(6));
+        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_edge_case_1.xml",
+                                                 "sample_passing_scenario_edge_case_2.xml",
+                                                 "sample_passing_scenario_happy_day_scenario.xml",
+                                                 "another_sample_passing_scenario_edge_case_1.xml",
+                                                 "another_sample_passing_scenario_edge_case_2.xml",
+                                                 "another_sample_passing_scenario_happy_day_scenario.xml"));
+    }
+
+    @Test
+    public void html_test_results_are_written_to_the_output_directory() throws InitializationError {
+
+        File outputDirectory = temporaryFolder.newFolder("output");
+
+        ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingScenario.class,
+                                                               webDriverFactory,
+                                                               outputDirectory);
+        runner.run(new RunNotifier());
+
+        List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new HTMLFileFilter()));
+        assertThat(generatedXMLReports.size(), is(6));
+        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_edge_case_1.html",
+                                                 "sample_passing_scenario_edge_case_1_screenshots.html",
+                                                 "sample_passing_scenario_edge_case_2.html",
+                                                 "sample_passing_scenario_edge_case_2_screenshots.html",
+                                                 "sample_passing_scenario_happy_day_scenario.html",
+                                                 "sample_passing_scenario_happy_day_scenario_screenshots.html"));
+
+
+    }
+
+    private class XMLFileFilter implements FilenameFilter {
+        public boolean accept(File file, String filename) {
+            return filename.endsWith(".xml");
+        }
+    }
+
+    private class HTMLFileFilter implements FilenameFilter {
+        public boolean accept(File file, String filename) {
+            return filename.endsWith(".html");
+        }
     }
 
 }

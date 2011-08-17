@@ -1,12 +1,12 @@
 package net.thucydides.core.pages.components;
 
-import org.apache.commons.lang.StringUtils;
-import org.openqa.selenium.WebElement;
-
 import java.io.File;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+import org.openqa.selenium.WebElement;
 
 /**
  * A class that helps upload a file to an HTML form in using a fluent API.

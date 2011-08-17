@@ -2,21 +2,19 @@ package net.thucydides.core.annotations;
 
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class AnnotatedFields {
 
-    private final Class clazz;
+    private final Class<?> clazz;
 
-    public static AnnotatedFields of(final Class testClass) {
+    public static AnnotatedFields of(final Class<?> testClass) {
         return new AnnotatedFields(testClass);
     }
 
-    private AnnotatedFields(Class clazz) {
+    private AnnotatedFields(Class<?> clazz) {
         this.clazz = clazz;
     }
 

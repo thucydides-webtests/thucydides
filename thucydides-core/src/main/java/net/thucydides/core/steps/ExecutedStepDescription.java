@@ -1,9 +1,9 @@
 package net.thucydides.core.steps;
 
-import java.lang.reflect.Method;
-
 import static net.thucydides.core.util.NameConverter.humanize;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
+
+import java.lang.reflect.Method;
 
 /**
  * A description of a step executed during a Thucydides step run.

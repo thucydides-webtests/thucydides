@@ -1,10 +1,10 @@
 package net.thucydides.core.webdriver;
 
-import org.openqa.selenium.WebDriver;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.openqa.selenium.WebDriver;
 
 /**
  * Provides a proxy for a WebDriver instance.

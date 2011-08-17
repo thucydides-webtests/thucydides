@@ -1,10 +1,11 @@
 package net.thucydides.core.webdriver;
 
-import com.google.common.base.Joiner;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+
+import com.google.common.base.Joiner;
 
 /**
  * The list of supported web drivers.

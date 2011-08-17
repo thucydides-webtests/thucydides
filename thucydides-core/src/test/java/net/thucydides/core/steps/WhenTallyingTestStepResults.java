@@ -3,6 +3,7 @@ package net.thucydides.core.steps;
 import net.thucydides.core.annotations.Story;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.notification.Failure;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -37,7 +38,9 @@ public class WhenTallyingTestStepResults {
         when(description.getName()).thenReturn("Some test");
 
         when(stepFailure1.getDescription()).thenReturn(description);
+        when(stepFailure1.getException()).thenReturn(new AssertionError("Oops!"));
         when(stepFailure2.getDescription()).thenReturn(description);
+        when(stepFailure2.getException()).thenReturn(new AssertionError("Oops!"));
     }
 
     @Test
@@ -114,23 +117,31 @@ public class WhenTallyingTestStepResults {
     @Test
     public void should_keep_track_of_when_a_test_has_failed() {
         BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
-        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testSuiteStarted(MyTestCase.class);
         stepListener.testStarted("app_should_work");
 
-        stepListener.stepFailed(stepFailure1);
+        stepListener.stepStarted(ExecutedStepDescription.withTitle("A test"));
+
+        StepFailure failure = new StepFailure(ExecutedStepDescription.withTitle("Oops!"), new AssertionError());
+        stepListener.stepFailed(failure);
         assertThat(stepListener.aStepHasFailed(), is(true));
     }
 
     @Test
     public void test_failures_should_be_reset_at_the_start_of_each_test_case() {
         BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
-        stepListener.testRunStartedFor(MyTestCase.class);
+        stepListener.testSuiteStarted(MyTestCase.class);
         stepListener.testStarted("app_should_work");
+        stepListener.stepStarted(ExecutedStepDescription.withTitle("A test"));
 
-        stepListener.stepFailed(stepFailure1);
+        StepFailure failure = new StepFailure(ExecutedStepDescription.withTitle("Oops!"), new AssertionError());
+
+        stepListener.stepFailed(failure);
         assertThat(stepListener.aStepHasFailed(), is(true));
 
-        stepListener.noStepsHaveFailed();
+        stepListener.testFinished(new TestStepResult());
+        stepListener.testStarted("app_should_still_work");
+
         assertThat(stepListener.aStepHasFailed(), is(false));
     }
 

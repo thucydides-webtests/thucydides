@@ -14,6 +14,7 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import net.thucydides.junit.listeners.JUnitStepListener;
+
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
+import org.junit.Ignore;
 
 /**
  * A test runner for WebDriver-based web tests. This test runner initializes a
@@ -46,31 +48,23 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * the business of creating and managing WebDriver drivers.
      */
     private WebDriverFactory webDriverFactory;
-
     /**
      * Provides a proxy of the ScenarioSteps object used to invoke the test steps.
      * This proxy notifies the test runner about individual step outcomes.
      */
     private StepFactory stepFactory;
-
     private Pages pages;
-
     private WebdriverManager webdriverManager;
-
     /**
      * Special listener that keeps track of test step execution and results.
      */
     private JUnitStepListener stepListener;
-
     /**
      * Retrieve the runner configuration from an external source.
      */
     private Configuration configuration;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ThucydidesRunner.class);
-
     private ReportService reportService;
-
     private boolean uniqueSession;
 
     /**
@@ -100,14 +94,14 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     public ThucydidesRunner(final Class<?> klass,
-                            final WebDriverFactory webDriverFactory) throws InitializationError {
+            final WebDriverFactory webDriverFactory) throws InitializationError {
         super(klass);
         checkRequestedDriverType();
         TestCaseAnnotations.checkThatTestCaseIsCorrectlyAnnotated(klass);
 
-        initializeReportService();
         this.webDriverFactory = webDriverFactory;
     }
+
     /**
      * The configuration manages output directories and driver types.
      * They can be defined as system values, or have sensible defaults.
@@ -139,18 +133,17 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return getConfiguration().getOutputDirectory();
     }
 
-
     /**
      * To generate reports, different AcceptanceTestReporter instances need to
      * subscribe to the listener. The listener will tell them when the test is
      * done, and the reporter can decide what to do.
      */
     public void subscribeReporter(final AcceptanceTestReporter reporter) {
-        reportService.subscribe(reporter);
+        getReportService().subscribe(reporter);
     }
 
     public void useQualifier(final String qualifier) {
-        reportService.useQualifier(qualifier);
+        getReportService().useQualifier(qualifier);
     }
 
     /**
@@ -159,19 +152,23 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     @Override
     public void run(final RunNotifier notifier) {
         WebDriver driver = initWebdriverManager();
+        initStepEventBus();
         Pages newPages = initPagesObjectUsing(driver);
-        JUnitStepListener newStepListener = initListenersUsing(newPages);
-        notifier.addListener(newStepListener);
-        StepEventBus.getEventBus().registerListener(getStepListener().getBaseStepListener());
+        initListenersUsing(newPages);
+        notifier.addListener(stepListener);
 
         initStepFactoryUsing(newPages);
 
         super.run(notifier);
 
         closeDriver();
-        generateReportsFor(getStepListener().getTestOutcomes());
+        stepListener.close();
+        generateReportsFor(stepListener.getTestOutcomes());
         notifyFailures();
-        StepEventBus.getEventBus().dropListener(getStepListener().getBaseStepListener());
+    }
+
+    private void initStepEventBus() {
+        StepEventBus.getEventBus().clear();
     }
 
     private Pages initPagesObjectUsing(final WebDriver driver) {
@@ -183,7 +180,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         setStepListener(new JUnitStepListener(Configuration.loadOutputDirectoryFromSystemProperties(), pagesObject));
         return stepListener;
     }
-
 
     private void initStepFactoryUsing(final Pages pagesObject) {
         stepFactory = new StepFactory(pagesObject);
@@ -202,9 +198,11 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return webdriverManager.getWebdriver();
     }
 
-    private void initializeReportService() {
-        reportService = new ReportService(getConfiguration().getOutputDirectory(),
-                getDefaultReporters());
+    private ReportService getReportService() {
+        if (reportService == null) {
+            reportService = new ReportService(getOutputDirectory(), getDefaultReporters());
+        }
+        return reportService;
     }
 
     private void notifyFailures() {
@@ -219,25 +217,46 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * process each test run outcome and do whatever is appropriate.
      */
     private void generateReportsFor(final List<TestOutcome> testOutcomeResults) {
-        reportService.generateReportsFor(testOutcomeResults);
+        getReportService().generateReportsFor(testOutcomeResults);
     }
-
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 
+        LOGGER.info("Executing test: {}", method.getName());
         resetBroswerFromTimeToTime();
-        clearEventBus();
-		Description description= describeChild(method);
-		if (method.getAnnotation(Pending.class) != null) {
-			notifier.fireTestIgnored(description);
-		} else {
+        processTestMethodAnnotationsFor(method);
+        try {
             super.runChild(method, notifier);
-		}
+        } finally {
+            StepEventBus.getEventBus().testFinished();
+        }
     }
 
-    private void clearEventBus() {
-        StepEventBus.getEventBus().clear();
+    /**
+     * Process any Thucydides annotations in the test class.
+     * Ignored tests will just be skipped by JUnit - we need to ensure
+     * that they are included in the Thucydides reports
+     * If a test method is pending, all the steps should be skipped. 
+     * @param method 
+     */
+    private void processTestMethodAnnotationsFor(FrameworkMethod method) {
+        if (isPending(method)) {
+            StepEventBus.getEventBus().testPending();
+        }
+        if (isIgnored(method)) {
+        	stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
+            StepEventBus.getEventBus().testIgnored();
+        }
+    }
+    
+
+    private boolean isPending(FrameworkMethod method) {
+        return method.getAnnotation(Pending.class) != null;
+    }
+
+    private boolean isIgnored(FrameworkMethod method) {
+        return method.getAnnotation(Ignore.class) != null;
     }
 
     protected boolean restartBrowserBeforeTest() {
@@ -257,7 +276,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     @Override
     protected Statement methodInvoker(final FrameworkMethod method, final Object test) {
 
-        noStepsHaveFailed();
         injectDriverInto(test);
         injectAnnotatedPagesObjectInto(test);
         injectScenarioStepsInto(test);
@@ -272,11 +290,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private void useStepFactoryForDataDrivenSteps() {
         StepData.setDefaultStepFactory(stepFactory);
     }
-
-    private void noStepsHaveFailed() {
-        this.getStepListener().getBaseStepListener().noStepsHaveFailed();
-    }
-
 
     /**
      * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.
@@ -315,5 +328,4 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     protected Collection<AcceptanceTestReporter> getDefaultReporters() {
         return ReportService.getDefaultReporters();
     }
-
 }

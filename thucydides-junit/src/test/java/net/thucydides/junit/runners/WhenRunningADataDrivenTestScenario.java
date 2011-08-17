@@ -45,11 +45,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
-public class WhenRunningADataDrivenTestScenario extends AbstractTestStepRunnerTest {
-
+public class WhenRunningADataDrivenTestScenario {
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();

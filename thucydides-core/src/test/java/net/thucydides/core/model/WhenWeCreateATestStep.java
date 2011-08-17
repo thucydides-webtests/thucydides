@@ -20,13 +20,13 @@ public class WhenWeCreateATestStep {
     
     @Test
     public void the_test_step_has_a_description() {
-        ConcreteTestStep step = new ConcreteTestStep("a narrative description");
+        TestStep step = new TestStep("a narrative description");
         assertThat(step.getDescription(), is("a narrative description"));
     }
     
     @Test
     public void the_test_step_can_have_an_illustration() throws IOException {
-        ConcreteTestStep step = new ConcreteTestStep("a narrative description");
+        TestStep step = new TestStep("a narrative description");
       
         File screenshot = temporaryFolder.newFile("screenshot.png");
         step.setScreenshot(screenshot);
@@ -36,7 +36,7 @@ public class WhenWeCreateATestStep {
     
     @Test
     public void when_a_step_fails_the_error_message_can_be_recorded() throws IOException {
-        ConcreteTestStep step = new ConcreteTestStep("a narrative description");
+        TestStep step = new TestStep("a narrative description");
       
         step.setResult(TestResult.FAILURE);
         Exception e = new IllegalStateException();
@@ -46,7 +46,7 @@ public class WhenWeCreateATestStep {
     
     @Test
     public void when_a_step_fails_the_stack_trace_is_also_recorded() throws IOException {
-        ConcreteTestStep step = new ConcreteTestStep("a narrative description");
+        TestStep step = new TestStep("a narrative description");
       
         step.setResult(TestResult.FAILURE);
         Throwable e = new IllegalStateException();
@@ -56,7 +56,7 @@ public class WhenWeCreateATestStep {
     
     @Test
     public void we_can_record_the_lifetime_of_a_test_step() throws InterruptedException {
-        ConcreteTestStep step = new ConcreteTestStep("a narrative description");
+        TestStep step = new TestStep("a narrative description");
         Thread.sleep(10);
         step.recordDuration();        
         assertThat(step.getDuration(), is(greaterThanOrEqualTo(10L)));

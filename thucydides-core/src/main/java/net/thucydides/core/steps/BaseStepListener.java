@@ -1,84 +1,103 @@
 package net.thucydides.core.steps;
 
-import com.google.common.collect.ImmutableList;
-import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.model.ConcreteTestStep;
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
-import net.thucydides.core.model.TestStepGroup;
-import net.thucydides.core.pages.InternalClock;
-import net.thucydides.core.pages.Pages;
-import net.thucydides.core.screenshots.Photographer;
-import net.thucydides.core.screenshots.ScreenshotException;
-import net.thucydides.core.webdriver.Configuration;
-import net.thucydides.core.webdriver.WebdriverProxyFactory;
-import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.util.NameConverter.underscore;
- 
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.annotations.TestAnnotations;
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStep;
+import net.thucydides.core.pages.Pages;
+import net.thucydides.core.pages.SystemClock;
+import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.screenshots.ScreenshotException;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.WebdriverProxyFactory;
+
+import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+
 /**
  * Observes the test run and stores test run details for later reporting.
  * Observations are recorded in an TestOutcome object. This includes
  * recording the names and results of each test, and taking and storing
  * screenshots at strategic points during the tests.
- *
- * @author johnsmart
  */
 public class BaseStepListener implements StepListener {
- 
-    private final Collection<TestOutcome> testOutcomes;
-    private TestOutcome currentTestOutcome;
-    private Story testedStory;
-    private Class<?> testClass;
-    private ConcreteTestStep currentTestStep;
- 
-    private WebDriver driver;
-    private File outputDirectory;
- 
+
+    /**
+     * Used to build the test outcome structure as the test step results come in.
+     */
+    private final List<TestOutcome> testOutcomes;
+
+    /**
+     * Keeps track of what steps have been started but not finished, in order to structure nested steps.
+     */
+    private final Stack<TestStep> currentTestStack;
+
+    /**
+     * Keeps track of the current step group, if any.
+     */
+    private final Stack<TestStep> currentGroupStack;
+
+    /**
+     * Clock used to pause test execution.
+     */
+    private final SystemClock clock;
+
+    /**
+     * The Java class (if any) containing the tests.
+     */
+    private Class<?> testSuite;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseStepListener.class);
- 
-    private boolean aStepHasFailed;
-    private Throwable stepError;
-    private InternalClock clock;
+
+    private WebDriver driver;
+
+    private File outputDirectory;
 
     private WebdriverProxyFactory proxyFactory;
 
     private BaseStepListener(final File outputDirectory) {
         this.proxyFactory = WebdriverProxyFactory.getFactory();
         this.testOutcomes = new ArrayList<TestOutcome>();
-        this.clock = new InternalClock();
+        this.currentTestStack = new Stack<TestStep>();
+        this.currentGroupStack = new Stack<TestStep>();
         this.outputDirectory = outputDirectory;
-        aStepHasFailed = false;
-        stepError = null;
+        this.clock = Injectors.getInjector().getInstance(SystemClock.class);
     }
 
-    protected WebdriverProxyFactory getProxyFactory() {
-        return proxyFactory;
-    }
- 
-    protected InternalClock getClock() {
-        return clock;
-    }
-
+    /**
+     * Create a step listener with a given web driver type.
+     * @param driverClass a driver of this type will be used
+     * @param outputDirectory reports and screenshots are generated here
+     */
     public BaseStepListener(final Class<? extends WebDriver> driverClass, final File outputDirectory) {
         this(outputDirectory);
         this.driver = getProxyFactory().proxyFor(driverClass);
     }
- 
+
+    /**
+     * Create a step listener using the driver from a given page factory.
+     * If the pages factory is null, a new driver will be created based on the default system values.
+     * @param outputDirectory reports and screenshots are generated here
+     * @param pages a pages factory.
+     */
     public BaseStepListener(final File outputDirectory, final Pages pages) {
          this(outputDirectory);
          if (pages != null) {
@@ -87,11 +106,11 @@ public class BaseStepListener implements StepListener {
              createNewDriver();
          }
     }
- 
+
     private void createNewDriver() {
         setDriver(getProxyFactory().proxyDriver());
     }
- 
+
     private void setDriverUsingPagesDriverIfDefined(final Pages pages) {
         if (pages.getDriver() != null) {
             setDriver(pages.getDriver());
@@ -102,194 +121,171 @@ public class BaseStepListener implements StepListener {
         }
     }
 
-    public void setDriver(final WebDriver driver) {
-        this.driver = driver;
-    }
- 
-    public WebDriver getDriver() {
-        return driver;
-    }
- 
-    public boolean aStepHasFailed() {
-        return aStepHasFailed;
-    }
- 
-    public void noStepsHaveFailed() {
-        aStepHasFailed = false;
-        stepError = null;
+    protected WebdriverProxyFactory getProxyFactory() {
+        return proxyFactory;
     }
 
-    public boolean isDataDriven() {
-        return DataDrivenStep.inProgress();
-    }
-
-
-    public Throwable getStepError() {
-        return stepError;
-    }
- 
-    public List<TestOutcome> getTestOutcomes() {
-        return ImmutableList.copyOf(testOutcomes);
-    }
- 
-    private void recordCurrentTestStep(final ExecutedStepDescription description) {
-        if (currentTestStep != null) {
- 
-            addAnyTestedRequirementsIn(description);
- 
-            String testName = AnnotatedStepDescription.from(description).getName();
-            getCurrentStep().setDescription(testName);
-            getCurrentStep().recordDuration();
-            if (getCurrentTestOutcome() != null) {
-                getCurrentTestOutcome().recordStep(currentTestStep);
-                getCurrentTestOutcome().recordDuration();
-            }
- 
-            finishTestStep();
-        }
-    }
- 
- 
-    private void startNewTestStep(final ExecutedStepDescription description) {
-        currentTestStep = new ConcreteTestStep();
-        currentTestStep.setDescription(description.getName());
-    }
- 
-    private void finishTestStep() {
-        currentTestStep = null;
-    }
- 
-    private File grabScreenshotFileFor(final String testName) {
-        String snapshotName = underscore(testName);
-        return getPhotographer().takeScreenshot(snapshotName);
-    }
- 
-    public Photographer getPhotographer() {
-        return new Photographer(driver, outputDirectory);
- 
-    }
- 
     protected TestOutcome getCurrentTestOutcome() {
-        return currentTestOutcome;
-    }
- 
-    protected void startNewTestOutcomeFor(final String testName, final Story story) {
-        LOGGER.debug("startNewTestOutcomeFor {}", testName);
-
-        this.testedStory = story;
-        currentTestOutcome = TestOutcome.forTestInStory(testName, testedStory, testClass);
-        testOutcomes.add(currentTestOutcome);
-        aStepHasFailed = false;
+        Preconditions.checkState(!testOutcomes.isEmpty());
+        return testOutcomes.get(testOutcomes.size() - 1);
     }
 
-    public void testRunStartedFor(final Class<?> testClass) {
-        this.testClass = testClass;
-        Story story = findStoryFrom(testClass);
-        testRunStartedFor(story);
+    protected SystemClock getClock() {
+        return clock;
     }
 
-    private Story findStoryFrom(Class<?> testClass) {
-        Story story = null;
-        if (storyIsDefinedIn(testClass)) {
-            story = storyFrom(testClass);
-        } else {
-            story = Story.from(testClass);
+    /**
+     * A test suite (containing a series of tests) starts.
+     * @param startedTestSuite the class implementing the test suite (e.g. a JUnit test case)
+     */
+    public void testSuiteStarted(final Class<?> startedTestSuite) {
+        LOGGER.debug("testSuiteStarted for " + startedTestSuite);
+        testSuite = startedTestSuite;
+    }
+
+    /**
+     * An individual test starts.
+     * @param testMethod the name of the test method in the test suite class.
+     */
+    public void testStarted(final String testMethod) {
+        LOGGER.debug("test started: " + testMethod);
+        testOutcomes.add(TestOutcome.forTest(testMethod, testSuite));
+        setAnnotatedResult(testMethod);
+    }
+
+    private void setAnnotatedResult(String testMethod) {
+        if (TestAnnotations.forClass(testSuite).isIgnored(testMethod)) {
+            getCurrentTestOutcome().setAnnotatedResult(IGNORED);
         }
-        return story;
-    }
-
-    public void testRunStartedFor(final Story story) {
-        this.testedStory = story;
-    }
-
-    private Story storyFrom(final Class<?> testClass) {
-        Class<?> testedStoryClass = Story.testedInTestCase(testClass);
-        if (testedStoryClass != null) {
-            return Story.from(testedStoryClass);
-        }
-        return null;
-    }
-
-    private boolean storyIsDefinedIn(final Class<?> testClass) {
-        return (storyFrom(testClass) != null);
-    }
-
-    public void testStarted(final String testName) {
-        LOGGER.debug("Starting test: {}", testName);
-        startNewTestOutcomeFor(testName, testedStory);
-        getCurrentTestOutcome().setMethodName(testName);
-    }
-
-    private void addAnyTestedRequirementsIn(final ExecutedStepDescription description) {
-        AnnotatedStepDescription testStepDescription = AnnotatedStepDescription.from(description);
-        List<String> requirements = testStepDescription.getAnnotatedRequirements();
-        for (String requirement : requirements) {
-            currentTestStep.testsRequirement(requirement);
+        if (TestAnnotations.forClass(testSuite).isPending(testMethod)) {
+            getCurrentTestOutcome().setAnnotatedResult(PENDING);
         }
     }
 
-    public void testGroupStarted(final ExecutedStepDescription description) {
-    	String testName = AnnotatedStepDescription.from(description).getName();
-        if (getCurrentTestOutcome() == null) {
-            startNewTestOutcomeFor(description.getName(), testedStory);
-            getCurrentTestOutcome().startGroup(testName);
-        } else {
-            getCurrentTestOutcome().startGroup(testName);
-        }
-        takeScreenshotForCurrentGroup();
+    /**
+     * A test has finished.
+     * @param result the summary of the test run, including all the tests that failed
+     */
+    public void testFinished(final TestStepResult result) {
+        System.out.println("test finished: " + result);
+        currentTestStack.clear();
     }
 
-    private void takeScreenshotForCurrentGroup() {
-        TestStepGroup currentGroup = getCurrentTestOutcome().getCurrentGroup();
-        takeScreenshotForGroup(currentGroup);
+    /**
+     * A step within a test is called.
+     * This step might be nested in another step, in which case the original step becomes a group of steps.
+     * @param description the description of the test that is about to be run
+     */
+    public void stepStarted(final ExecutedStepDescription description) {
+        LOGGER.debug("step started: " + description);
+        String stepName = AnnotatedStepDescription.from(description).getName();
+        TestStep step = new TestStep(stepName);
+
+        startNewGroupIfNested();
+        setDefaultResultFromAnnotations(step, description);
+
+        currentTestStack.push(step);
+
+        getCurrentTestOutcome().recordStep(step);
     }
 
-    private void takeScreenshotForGroup(final TestStepGroup group) {
-        File screenshot = grabScreenshotFileFor(group.getDescription());
-        group.setScreenshot(screenshot);
-        if (screenshot != null) {
-            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-            group.setHtmlSource(sourcecode);
+    private void setDefaultResultFromAnnotations(final TestStep step, final ExecutedStepDescription description) {
+        if (TestAnnotations.isPending(description.getTestMethod())) {
+            step.setResult(TestResult.PENDING);
+        }
+        if (TestAnnotations.isIgnored(description.getTestMethod())) {
+            step.setResult(TestResult.SKIPPED);
         }
     }
 
-    private void markCurrentTestAs(final TestResult result) {
-        if (failureOccursBeforeAnyStepsHaveBeenExecuted(result)) {
-            stepStarted(ExecutedStepDescription.withTitle("undefined"));
-        }
-
-        if (getCurrentStep() != null) {
-            getCurrentStep().setResult(result);
-        } else if ((result == FAILURE) && (getTestOutcomes().isEmpty())) {
-            startNewTestStep(ExecutedStepDescription.withTitle("undefined"));
+    private void startNewGroupIfNested() {
+        if (thereAreUnfinishedSteps()) {
+            if (getCurrentStep() != getCurrentGroup()) {
+                startNewGroup();
+            }
         }
     }
 
-    private boolean failureOccursBeforeAnyStepsHaveBeenExecuted(final TestResult result) {
-        return ((result == FAILURE) && (getCurrentStep() == null) && (getCurrentTestOutcome().getStepCount() == 0));
+    private void startNewGroup() {
+        getCurrentTestOutcome().startGroup();
+        currentGroupStack.push(getCurrentStep());
     }
 
     private TestStep getCurrentStep() {
-        if (currentTestStep != null) {
-            return currentTestStep;
+        return currentTestStack.peek();
+    }
+
+    private TestStep getCurrentGroup() {
+        if (currentGroupStack.isEmpty()) {
+            return null;
         } else {
-            return getCurrentTestOutcome().getCurrentGroup();
+            return currentGroupStack.peek();
         }
     }
- 
-    private void recordFailureDetailsInFailingTestStep(final StepFailure failure) {
-        if (currentTestStep != null) {
-          getCurrentStep().failedWith(failure.getMessage(), failure.getException());
-        }
+
+    private boolean thereAreUnfinishedSteps() {
+        return !currentTestStack.isEmpty();
     }
- 
+
+    public void stepFinished(ExecutedStepDescription description) {
+        LOGGER.debug("step finished: " + description);
+        takeScreenshotFor(description, SUCCESS);
+        currentStepDone();
+        markCurrentTestAs(SUCCESS);
+        pauseIfRequired();
+    }
+
+    private void finishGroup() {
+        currentGroupStack.pop();
+        getCurrentTestOutcome().endGroup();
+    }
+
     private void pauseIfRequired() {
         int delay = Configuration.getStepDelay();
         if (delay > 0) {
             getClock().pauseFor(delay);
         }
     }
- 
+
+    private void markCurrentTestAs(final TestResult result) {
+        getCurrentTestOutcome().getCurrentStep().setResult(result);
+    }
+
+    public void stepFailed(StepFailure failure) {
+        LOGGER.debug("step failed: " + failure);
+        takeScreenshotFor(failure.getDescription(), FAILURE);
+        getCurrentTestOutcome().setTestFailureCause(failure.getException());
+        markCurrentTestAs(FAILURE);
+        recordFailureDetailsInFailingTestStep(failure);
+        currentStepDone();
+    }
+
+    private void recordFailureDetailsInFailingTestStep(final StepFailure failure) {
+        getCurrentStep().failedWith(failure.getMessage(), failure.getException());
+    }
+
+    public void stepIgnored(ExecutedStepDescription description) {
+        LOGGER.debug("step ignored: " + description);
+        if (TestAnnotations.isPending(description.getTestMethod())) {
+            markCurrentTestAs(PENDING);
+        } else if (aStepHasFailed()) {
+            markCurrentTestAs(SKIPPED);
+        } else {
+            markCurrentTestAs(IGNORED);
+        }
+        currentStepDone();
+    }
+
+    private void currentStepDone() {
+        TestStep finishedStep =  currentTestStack.pop();
+
+        if (finishedStep == getCurrentGroup()) {
+            finishGroup();
+        }
+
+    }
+
+
     private void takeScreenshotFor(final ExecutedStepDescription description, TestResult result) {
         if ((getCurrentStep() != null) && (shouldTakeScreenshotFor(result))) {
             try {
@@ -306,147 +302,53 @@ public class BaseStepListener implements StepListener {
         }
     }
 
+    private File grabScreenshotFileFor(final String testName) {
+        String snapshotName = underscore(testName);
+        return getPhotographer().takeScreenshot(snapshotName);
+    }
+
+    public Photographer getPhotographer() {
+        return new Photographer(driver, outputDirectory);
+
+    }
+
     private boolean shouldTakeScreenshotFor(final TestResult result) {
         String onlySaveFailures = System.getProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "false");
         Boolean onlySaveFailureScreenshots = Boolean.valueOf(onlySaveFailures);
-        if (onlySaveFailureScreenshots && result != FAILURE) {
-            return false;
-        }
-        return true;
+        return !(onlySaveFailureScreenshots && result != FAILURE);
     }
 
     protected String aTestCalled(final ExecutedStepDescription description) {
         return description.getName();
     }
- 
-    public void stepStarted(final ExecutedStepDescription description) {
-        if (stepIsAGroup(description)) {
-            testGroupStarted(description);
-        } else {
-            startNewTestStep(description);
-        }
-    }
- 
-    public void stepFinished(final ExecutedStepDescription description) {
-        if (stepIsAGroup(description)) {
-            takeScreenshotForCurrentGroup();
-            getCurrentTestOutcome().endGroup();
-        } else {
-            markCurrentTestAs(SUCCESS);
-            takeScreenshotFor(description, SUCCESS);
-            recordCurrentTestStep(description);
-        }
-        pauseIfRequired();
+
+    public List<TestOutcome> getTestOutcomes() {
+        return ImmutableList.copyOf(testOutcomes);
     }
 
 
-
-    public void stepGroupStarted(final String description) {
-        stepGroupStarted(ExecutedStepDescription.withTitle(description));
-    }
- 
-    public void stepGroupStarted(final ExecutedStepDescription description) {
-        ExecutedStepDescription copiedDescription = description.clone();
-        copiedDescription.setAGroup(true);
-        testGroupStarted(copiedDescription);
-    }
- 
-    public void stepGroupFinished() {
-        if (currentTestOutcome != null) {
-            getCurrentTestOutcome().endGroup();
-        }
-    }
- 
-    public void stepGroupFinished(final TestResult result) {
-        if (getCurrentTestOutcome() != null) {
-            getCurrentTestOutcome().setDefaultGroupResult(result);
-            getCurrentTestOutcome().endGroup();
-        }
-    }
- 
-    public void stepSucceeded() {
-        markCurrentTestAs(SUCCESS);
-    }
- 
-    /**
-     * Update the status of the current step (e.g to IGNORED or SKIPPED) without changing anything else.
-     */
-    public void updateCurrentStepStatus(final TestResult result) {
-        if (currentTestStep == null) {
-            updateMostRecentStepStatus(result);
-        } else {
-            markCurrentTestAs(result);
-        }
-    }
- 
-    private void updateMostRecentStepStatus(final TestResult result) {
-        getCurrentTestOutcome().updateMostResultTestStepResult(result);
-    }
- 
-    public void stepFailed(final StepFailure failure) {
-        stepFailedWith(failure);
-
-        markCurrentTestAs(FAILURE);
-        recordFailureDetailsInFailingTestStep(failure);
-        takeScreenshotFor(failure.getDescription(), FAILURE);
-        if (currentTestStep != null) {
-            recordCurrentTestStep(failure.getDescription());
-        }
+    public void setDriver(final WebDriver driver) {
+        this.driver = driver;
     }
 
-    private void stepFailedWith(final StepFailure failure) {
-        aStepHasFailed = true;
-        stepError = failure.getException();
-    }
- 
-    private boolean stepIsAGroup(final ExecutedStepDescription description) {
-        return (description.isAGroup() || AnnotatedStepDescription.from(description).isAGroup());
+    public WebDriver getDriver() {
+        return driver;
     }
 
-    public void stepIgnored(final ExecutedStepDescription description) {
-
-        ensureThatTestHasStartedFor(description);
-
-        if (AnnotatedStepDescription.from(description).isPending()) {
-            markCurrentTestAs(PENDING);
-        } else if (AnnotatedStepDescription.from(description).isIgnored()) {
-            ignoreStepMethodWith(description);
-        } else {
-            markCurrentTestAs(SKIPPED);
-        }
-        if (currentTestStep != null) {
-            recordCurrentTestStep(description);
-        }
+    public boolean aStepHasFailed() {
+        return (!getTestOutcomes().isEmpty()) && (getCurrentTestOutcome().getTestFailureCause() != null);
     }
 
-    private void ensureThatTestHasStartedFor(final ExecutedStepDescription description) {
-        if (testRunNotStartedYet()) {
-            testRunStartedFor(description.getStepClass());
-        }
-        if (testNotStartedYet()) {
-            testStarted(description.getName());
-        }
+    public Throwable getTestFailureCause() {
+        return getCurrentTestOutcome().getTestFailureCause();
     }
 
-    private boolean testRunNotStartedYet() {
-        return (testedStory == null);
+    public void testFailed(final Throwable cause) {
+        getCurrentTestOutcome().setTestFailureCause(cause);
     }
 
-    private boolean testNotStartedYet() {
-        return (currentTestStep == null);
+    public void testIgnored() {
+        getCurrentTestOutcome().setAnnotatedResult(IGNORED);
     }
 
-    private void ignoreStepMethodWith(final ExecutedStepDescription description) {
-        if (currentTestStep == null) {
-            startNewTestStep(description);
-        }
-        markCurrentTestAs(IGNORED);
-    }
-
- 
-    public void testFinished(final TestStepResult result) {
-        LOGGER.debug("testFinished: ", result);
-        currentTestOutcome = null;
-    }
- 
 }

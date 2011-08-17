@@ -13,6 +13,9 @@ import net.thucydides.core.annotations.TestsRequirements;
 
 import org.junit.Ignore;
 
+import javax.sound.midi.VoiceStatus;
+import java.lang.AssertionError;
+
 public class SampleScenarioSteps extends ScenarioSteps {
     
     public SampleScenarioSteps(Pages pages) {
@@ -66,13 +69,18 @@ public class SampleScenarioSteps extends ScenarioSteps {
     @Step
     public void stepWithAParameter(String value) {
     }
-    
+
+    @Step
+    public void stepThatFails() {
+        throw new AssertionError("Oops!");
+    }
+
     @Step
     public void stepWithTwoParameters(String value, int number) {
     }
     
     @StepGroup("Group of steps")
-    public void groupOfStepsContainingAFailure() {
+    public void groupOfSteps() {
         stepThatSucceeds();
         stepThatShouldBeSkipped();
         
@@ -87,7 +95,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
     }
 
     @StepGroup("Group of steps")
-    public void groupOfStepsContainingAnError() {
+    public void yetAnotherGroupOfSteps() {
         stepThatSucceeds();
         anotherStepThatSucceeds();
         

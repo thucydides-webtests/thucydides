@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 @RunWith(ThucydidesRunner.class)
 public class SamplePassingScenario {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamplePassingScenario.class);
-
     @Managed
     public WebDriver webdriver;
 
@@ -27,7 +25,6 @@ public class SamplePassingScenario {
     public SampleScenarioSteps steps;
 
     @Test
-    @TestsRequirement("ABC")
     public void happy_day_scenario() throws Throwable {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
@@ -36,7 +33,6 @@ public class SamplePassingScenario {
     }
 
     @Test
-    @TestsRequirement("DEF")
     public void edge_case_1() {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();

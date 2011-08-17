@@ -23,17 +23,18 @@ import org.slf4j.LoggerFactory;
  * The step interceptor is designed to work on a given test case or user story.
  * It logs test step results so that they can be reported on at the end of the test case.
  *
+ * TODO: Remove the stepExceptions variable
  * @author johnsmart
  */
 public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private final Class<? extends Object> testStepClass;
+    private final Class<?> testStepClass;
     private List<Throwable> stepExceptions;
     private Throwable error = null;
     private static final Logger LOGGER = LoggerFactory.getLogger(StepInterceptor.class);
 
-    public StepInterceptor(final Class<? extends Object> testStepClass) {
+    public StepInterceptor(final Class<?> testStepClass) {
         this.testStepClass = testStepClass;
         this.stepExceptions = new ArrayList<Throwable>();
     }
@@ -44,10 +45,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         Object result;
         if (baseClassMethod(method)) {
             result = runNormalMethod(obj, method, args, proxy);
-        } else if (isATestGroup(method)) {
-            notifyGroupStarted(method, args);
-            result = runTestGroupStep(obj, method, args, proxy);
-            notifyGroupFinished(method, args);
         } else {
             result = testStepResult(obj, method, args, proxy);
         }
@@ -95,7 +92,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         try {
             result = invokeMethod(obj, method, args, proxy);
         } catch (Throwable anyException) {
-            // Ignore any exceptions or failures for skipped tests
+            LOGGER.trace("Ignoring exception thrown during a skipped test", anyException);
         }
         StepEventBus.getEventBus().reenableWebdriverCalls();
         return result;
@@ -117,18 +114,16 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         }
     }
 
-    private boolean shouldSkip(final Method method) {
-        return aPreviousStepHasFailed() ||  isPending(method) || isIgnored(method);
+    private boolean shouldSkip(final Method step) {
+        return aPreviousStepHasFailed() ||  testIsPending() || isPending(step) || isIgnored(step);
+    }
+
+    private boolean testIsPending() {
+        return StepEventBus.getEventBus().currentTestIsPending();
     }
 
     private boolean aPreviousStepHasFailed() {
         boolean aPreviousStepHasFailed = false;
-//        for (StepListener listener : listeners) {
-//            if (listener.aStepHasFailed() && !listener.isDataDriven()) {
-//                aPreviousStepHasFailed = true;
-//            }
-//        }
-
         if (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed()
                 && !StepEventBus.getEventBus().isCurrentTestDataDriven()) {
             aPreviousStepHasFailed = true;
@@ -146,49 +141,30 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         } catch (AssertionError assertionError) {
             error = assertionError;
             stepExceptions.add(assertionError);
-            notifyFailureOf(method, args, assertionError);
+            notifyOfTestFailure(method, args, assertionError);
         }
         catch (WebDriverException webdriverException) {
             error = webdriverException;
             stepExceptions.add(webdriverException);
-            notifyFailureOf(method, args, webdriverException);
+            notifyOfTestFailure(method, args, webdriverException);
         }
         return result;
-    }
-
-    private Object runTestGroupStep(final Object obj, final Method method,
-                                    final Object[] args, final MethodProxy proxy) throws Throwable {
-
-        LOGGER.info("Running test step group " + getTestNameFrom(method, args, false));
-        Object result = null;
-        try {
-            result = proxy.invokeSuper(obj, args);
-        } catch (AssertionError assertionError) {
-            if (!stepExceptions.contains(assertionError)) {
-                error = assertionError;
-                stepExceptions.add(assertionError);
-                notifyFailureOf(method, args, assertionError);
-            }
-        }
-        return result;
-    }
-
-    private boolean isATestGroup(final Method method) {
-        return (getTestGroupAnnotationFor(method) != null);
     }
 
     private StepGroup getTestGroupAnnotationFor(final Method method) {
         return method.getAnnotation(StepGroup.class);
     }
 
+    private Step getTestAnnotationFor(final Method method) {
+        return method.getAnnotation(Step.class);
+    }
+
     private boolean isATestStep(final Method method) {
-        Step stepAnnotation = method.getAnnotation(Step.class);
-        return (stepAnnotation != null);
+        return (getTestAnnotationFor(method) != null) || (getTestGroupAnnotationFor(method) != null);
     }
 
     private boolean isIgnored(final Method method) {
-        Ignore ignoreAnnotation = method.getAnnotation(Ignore.class);
-        return (ignoreAnnotation != null);
+        return (method.getAnnotation(Ignore.class) != null);
     }
 
     private Object runTestStep(final Object obj, final Method method,
@@ -197,20 +173,19 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         Object result = null;
         try {
             result = proxy.invokeSuper(obj, args);
+            notifyStepFinishedFor(method, args);
         } catch (AssertionError assertionError) {
             error = assertionError;
             stepExceptions.add(assertionError);
             LOGGER.debug("Addertion error caught - notifying of failure " + assertionError);
-            notifyFailureOf(method, args, assertionError);
+            notifyOfStepFailure(method, args, assertionError);
             return appropriateReturnObject(obj, method);
         } catch (WebDriverException webdriverException) {
             error = webdriverException;
             AssertionError webdriverAssertionError = new WebdriverAssertionError(error.getMessage(), error);
             stepExceptions.add(webdriverAssertionError);
-            notifyFailureOf(method, args, webdriverAssertionError);
+            notifyOfStepFailure(method, args, webdriverAssertionError);
         }
-
-        notifyStepFinishedFor(method, args);
 
         LOGGER.info("Test step done: " + getTestNameFrom(method, args, false));
         return result;
@@ -275,26 +250,17 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         StepEventBus.getEventBus().stepIgnored(description);
     }
 
-    private void notifyFailureOf(final Method method, final Object[] args,
-                                 final Throwable cause) throws Exception {
+    private void notifyOfStepFailure(final Method method, final Object[] args,
+                                     final Throwable cause) throws Exception {
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
 
         StepFailure failure = new StepFailure(description, cause);
         StepEventBus.getEventBus().stepFailed(failure);
     }
 
-    private void notifyGroupStarted(final Method method, final Object[] args)
-            throws Exception {
-
-        ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
-        StepEventBus.getEventBus().stepStarted(description);
-    }
-
-    private void notifyGroupFinished(final Method method, final Object[] args)
-            throws Exception {
-
-        ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
-        StepEventBus.getEventBus().stepFinished(description);
+    private void notifyOfTestFailure(final Method method, final Object[] args,
+                                     final Throwable cause) throws Exception {
+        StepEventBus.getEventBus().testFailed(cause);
     }
 
     private void notifyStepStarted(final Method method, final Object[] args) {

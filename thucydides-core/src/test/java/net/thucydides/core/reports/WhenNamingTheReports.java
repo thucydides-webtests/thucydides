@@ -49,8 +49,7 @@ public class WhenNamingTheReports {
     @Test
     public void the_html_report_filename_should_have_the_html_suffix() {
 
-        TestOutcome testOutcome = new TestOutcome("A simple test case: exception case");
-        testOutcome.setMethodName("a_simple_test_case");
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         String reportName = testOutcome.getReportName(HTML);
         
         assertThat(reportName, is("a_simple_test_case.html"));

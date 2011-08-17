@@ -3,8 +3,8 @@ package net.thucydides.core.reports.integration;
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
-import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 import org.apache.commons.io.FileUtils;
@@ -39,13 +39,15 @@ public class AbstractReportGenerationTest {
         reporter.setOutputDirectory(outputDirectory);
     }
 
-    protected void recordStepWithScreenshot(TestOutcome testOutcome, String stepName, String screenshot) throws IOException {
+    protected void recordStepWithScreenshot(final TestOutcome testOutcome,
+                                            final String stepName,
+                                            final String screenshot) throws IOException {
         String screenshotResource = "/screenshots/" + screenshot;
         URL sourcePath = this.getClass().getResource(screenshotResource);
         File sourceFile = new File(sourcePath.getPath());
         FileUtils.copyFileToDirectory(sourceFile, outputDirectory);
 
-        ConcreteTestStep step = TestStepFactory.successfulTestStepCalled(stepName);
+        TestStep step = TestStepFactory.successfulTestStepCalled(stepName);
         step.setScreenshot(new File(outputDirectory, screenshot));
         testOutcome.recordStep(step);
     }

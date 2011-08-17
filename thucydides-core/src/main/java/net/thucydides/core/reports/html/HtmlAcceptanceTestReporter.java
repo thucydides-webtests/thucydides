@@ -1,21 +1,21 @@
 package net.thucydides.core.reports.html;
 
-import com.google.common.base.Preconditions;
-import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.images.ResizableImage;
-import net.thucydides.core.model.Screenshot;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.reports.AcceptanceTestReporter;
-import org.apache.velocity.VelocityContext;
-
-import static ch.lambdaj.Lambda.max;
+import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
+import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.images.ResizableImage;
+import net.thucydides.core.model.Screenshot;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.AcceptanceTestReporter;
+
+import org.apache.velocity.VelocityContext;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Generates acceptance test results in XML form.

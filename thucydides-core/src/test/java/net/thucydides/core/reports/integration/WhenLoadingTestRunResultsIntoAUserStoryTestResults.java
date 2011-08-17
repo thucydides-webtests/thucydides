@@ -48,5 +48,11 @@ public class WhenLoadingTestRunResultsIntoAUserStoryTestResults {
         assertThat(stories, containsTestsForStory(userStory3));
     }    
     
-    
+    @Test
+    public void should_load_real_world_test_results_into_user_stories() throws IOException {
+
+        List<StoryTestResults> stories = loader.loadFrom(new File("src/test/resources/samplereports"));
+        assertThat(stories.size(), is(2));
+    }
+
 }

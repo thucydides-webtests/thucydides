@@ -1,13 +1,13 @@
 package net.thucydides.core.webdriver;
 
+import java.lang.reflect.InvocationTargetException;
+
 import net.thucydides.core.ThucydidesSystemProperty;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Provides an instance of a supported WebDriver.

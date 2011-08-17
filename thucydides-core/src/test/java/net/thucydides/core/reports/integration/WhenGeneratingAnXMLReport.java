@@ -2,11 +2,11 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
-import net.thucydides.core.model.ConcreteTestStep;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
+import net.thucydides.core.steps.BaseStepListener;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -56,6 +56,12 @@ public class WhenGeneratingAnXMLReport {
     class SomeTestScenarioInAFeature {
         public void should_do_this() {};
         public void should_do_that() {};
+    }
+
+    class ATestScenarioWithoutAStory {
+        public void should_do_this() {};
+        public void should_do_that() {};
+        public void and_should_do_that() {};
     }
 
     @Test
@@ -140,56 +146,6 @@ public class WhenGeneratingAnXMLReport {
         assertThat(generatedReportText, isSimilarTo(expectedReport));
     }
 
-
-    @Test
-    public void should_include_the_requirements_if_present() throws Exception {
-        TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-        
-        String expectedReport = 
-        "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1'"
-        + " failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-        + "  <requirements>\n"
-        + "    <requirement>ABC</requirement>\n"
-        + "  </requirements>\n"
-        + "  <test-step result='SUCCESS'>\n"
-        + "    <description>step 1</description>\n"
-        + "  </test-step>\n" 
-        + "</acceptance-test-run>";
-
-        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
-        testOutcome.testsRequirement("ABC");
-        File xmlReport = reporter.generateReportFor(testOutcome);
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
-    }    
-
-    @Test
-    public void should_cater_for_multiple_requirements_if_present()
-            throws Exception {
-        TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-        
-        String expectedReport = 
-        "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1'"
-        + " failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-        + "  <requirements>\n"
-        + "    <requirement>ABC</requirement>\n"
-        + "    <requirement>DEF</requirement>\n"
-        + "  </requirements>\n"
-        + "  <test-step result='SUCCESS'>\n"
-        + "    <description>step 1</description>\n"
-        + "  </test-step>\n" + "</acceptance-test-run>";
-
-        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
-        testOutcome.testsRequirement("ABC");
-        testOutcome.testsRequirement("DEF");
-        File xmlReport = reporter.generateReportFor(testOutcome);
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
-    }      
     
     @Test
     public void should_allow_requirements_in_steps() throws Exception {
@@ -219,8 +175,7 @@ public class WhenGeneratingAnXMLReport {
     @Test
     public void should_generate_an_XML_report_with_a_name_based_on_the_test_run_title()
             throws Exception {
-        TestOutcome testOutcome = new TestOutcome("A simple test case");
-        testOutcome.setMethodName("a_simple_test_case");
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         File xmlReport = reporter.generateReportFor(testOutcome);
 
         assertThat(xmlReport.getName(), is("a_simple_test_case.xml"));
@@ -448,7 +403,7 @@ public class WhenGeneratingAnXMLReport {
 
         File screenshot = temporaryDirectory.newFile("step_1.png");
 
-        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
         testOutcome.recordStep(TestStepFactory.failingTestStepCalled("step 2"));
@@ -464,7 +419,7 @@ public class WhenGeneratingAnXMLReport {
     public void should_have_a_meaningful_filename()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
 
-        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
@@ -477,7 +432,7 @@ public class WhenGeneratingAnXMLReport {
     public void should_have_a_qualified_filename_if_qualifier_present()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
 
-        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
@@ -494,7 +449,7 @@ public class WhenGeneratingAnXMLReport {
     public void spaces_in_the_qualifer_should_be_converted_to_underscores_in_the_test_run_name()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
 
-        ConcreteTestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
@@ -516,7 +471,7 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
 
-        ConcreteTestStep step = TestStepFactory.failingTestStepCalled("step 1");
+        TestStep step = TestStepFactory.failingTestStepCalled("step 1");
         step.failedWith("Oh nose!", new IllegalArgumentException());
 
         testOutcome.recordStep(step);
@@ -532,7 +487,7 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
 
-        ConcreteTestStep step = TestStepFactory.failingTestStepCalled("step 1");
+        TestStep step = TestStepFactory.failingTestStepCalled("step 1");
         step.failedWith("Oh nose!", new IllegalArgumentException());
 
         testOutcome.recordStep(step);
@@ -542,7 +497,7 @@ public class WhenGeneratingAnXMLReport {
 
         assertThat(generatedReportText, containsString("<exception>java.lang.IllegalArgumentException"));
     }
-    
+
     private String getStringFrom(File reportFile) throws IOException {
         return FileUtils.readFileToString(reportFile);
     }

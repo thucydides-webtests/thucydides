@@ -30,12 +30,12 @@ public class TestStepFactory {
     }
 
     public static TestStep createNewTestStep(String description, TestResult result, AssertionError assertionError) {
-        ConcreteTestStep step = new ConcreteTestStep(description);
+        TestStep step = new TestStep(description);
         step.failedWith(assertionError.getMessage(), assertionError);
         return step;
     }
     public static TestStep createNewTestStep(String description, TestResult result) {
-        ConcreteTestStep step = new ConcreteTestStep(description);
+        TestStep step = new TestStep(description);
         step.setScreenshot(new File(description + ".png"));
         step.setScreenshotPath(description + ".png");
         step.setResult(result);

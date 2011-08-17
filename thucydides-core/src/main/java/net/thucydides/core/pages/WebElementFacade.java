@@ -7,8 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-import java.security.Key;
-
 
 /**
  * A proxy class for a web element, providing some more methods.
@@ -19,7 +17,7 @@ public class WebElementFacade {
     private final WebDriver driver;
     private final long timeoutInMilliseconds;
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 100;
-    private InternalClock clock;
+    private InternalSystemClock clock;
 
     public WebElementFacade(final WebDriver driver,
                             final WebElement webElement,
@@ -27,7 +25,7 @@ public class WebElementFacade {
         this.driver = driver;
         this.webElement = webElement;
         this.timeoutInMilliseconds = timeoutInMilliseconds;
-        this.clock = new InternalClock();
+        this.clock = new InternalSystemClock();
     }
 
     /**

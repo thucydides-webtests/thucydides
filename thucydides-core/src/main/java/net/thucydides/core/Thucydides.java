@@ -1,5 +1,7 @@
 package net.thucydides.core;
 
+import java.io.File;
+
 import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.BaseStepListener;
@@ -10,9 +12,8 @@ import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
-import org.openqa.selenium.WebDriver;
 
-import java.io.File;
+import org.openqa.selenium.WebDriver;
 
 /**
  * A utility class that provides services to initialize web testing and reporting-related fields in arbitrary objects.
@@ -142,10 +143,6 @@ public class Thucydides {
 
     private static void setupWebdriverManager(WebdriverManager webdriverManager) {
         webdriverManagerThreadLocal.set(webdriverManager);
-    }
-
-    private static WebDriver getWebDriver() {
-        return getWebdriverManager().getWebdriver();
     }
 
     public static StepListener getStepListener() {

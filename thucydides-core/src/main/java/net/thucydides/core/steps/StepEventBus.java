@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * A simple event bus for Step-related notifications.
+ * An event bus for Step-related notifications.
+ * Use this to integrate Thucydides listeners with testing tools.
+ * You create a listener (e.g. an instance of BaseStepListener, or your own), register it using
+ * 'registerListener', and then
  */
 public class StepEventBus {
 
@@ -27,6 +30,8 @@ public class StepEventBus {
 
     private boolean stepFailed;
 
+    private boolean pendingTest;
+
     public void registerListener(final StepListener listener) {
         registeredListeners.add(listener);
     }
@@ -40,15 +45,29 @@ public class StepEventBus {
         }
     }
 
+    public void testSuiteStarted(final Class<?> testClass) {
+        for(StepListener stepListener : registeredListeners) {
+            stepListener.testSuiteStarted(testClass);
+        }
+    }
+
     public void clear() {
         stepStack.clear();
         stepFailed = false;
+        pendingTest = false;
         this.resultTally = new TestStepResult();
+    }
+
+    private TestStepResult getResultTally() {
+        if (resultTally == null) {
+            resultTally = new TestStepResult();
+        }
+        return resultTally;
     }
 
     public void testFinished() {
         for(StepListener stepListener : registeredListeners) {
-            stepListener.testFinished(resultTally);
+            stepListener.testFinished(getResultTally());
         }
         clear();
     }
@@ -85,7 +104,7 @@ public class StepEventBus {
     }
 
     public void stepFinished(final ExecutedStepDescription description) {
-        resultTally.logExecutedTest();
+        getResultTally().logExecutedTest();
         for(StepListener stepListener : registeredListeners) {
             stepListener.stepFinished(description);
         }
@@ -94,7 +113,7 @@ public class StepEventBus {
 
     public void stepFailed(final StepFailure failure) {
 
-        resultTally.logFailure(failure);
+        getResultTally().logFailure(failure);
 
         for(StepListener stepListener : registeredListeners) {
             stepListener.stepFailed(failure);
@@ -104,7 +123,7 @@ public class StepEventBus {
 
     public void stepIgnored(ExecutedStepDescription description) {
 
-        resultTally.logIgnoredTest();
+        getResultTally().logIgnoredTest();
 
         for(StepListener stepListener : registeredListeners) {
             stepListener.stepIgnored(description);
@@ -125,5 +144,33 @@ public class StepEventBus {
 
     public void temporarilySuspendWebdriverCalls() {
         webdriverSuspensions.push(true);
+    }
+
+    /**
+     * The test failed, but not during the execution of a step.
+     * @param cause the underlying cause of the failure.
+     */
+    public void testFailed(final Throwable cause) {
+        for(StepListener stepListener : registeredListeners) {
+            stepListener.testFailed(cause);
+        }
+    }
+
+    /**
+     * Mark the current test method as pending.
+     * The test will stil be executed to record the steps, but any webdriver calls will be skipped.
+     */
+    public void testPending() {
+        pendingTest = true;
+    }
+
+    public boolean currentTestIsPending() {
+        return pendingTest;
+    }
+
+    public void testIgnored() {
+        for(StepListener stepListener : registeredListeners) {
+            stepListener.testIgnored();
+        }
     }
 }

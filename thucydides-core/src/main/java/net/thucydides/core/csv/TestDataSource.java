@@ -1,10 +1,10 @@
 package net.thucydides.core.csv;
 
-import net.thucydides.core.steps.ScenarioSteps;
-import net.thucydides.core.steps.StepFactory;
-
 import java.util.List;
 import java.util.Map;
+
+import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.steps.StepFactory;
 
 /**
  * A set of test data used in parameterized web tests.

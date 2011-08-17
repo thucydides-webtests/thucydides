@@ -1,5 +1,11 @@
 package net.thucydides.core.reports.html;
 
+import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
@@ -7,17 +13,12 @@ import net.thucydides.core.model.UserStoriesResultSet;
 import net.thucydides.core.model.features.FeatureLoader;
 import net.thucydides.core.model.userstories.UserStoryLoader;
 import net.thucydides.core.reports.UserStoryTestReporter;
-import net.thucydides.core.reports.json.JSONResultTree;
 import net.thucydides.core.reports.json.JSONProgressResultTree;
+import net.thucydides.core.reports.json.JSONResultTree;
+
 import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 
 /**
  * Generates an aggregate acceptance test report in XML form. Reads all the
@@ -37,7 +38,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final String DASHBOARD_TEMPLATE_PATH = "velocity/dashboard.vm";
     private FeatureLoader featureLoader;
     private UserStoryLoader storyLoader;
-    private String issueTrackerUrl;
+	private String issueTrackerUrl;
 
     public HtmlAggregateStoryReporter() {
         storyLoader = new UserStoryLoader();
