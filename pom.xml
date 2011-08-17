@@ -101,6 +101,12 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
+                            <excludes>
+                                <exclude>**/Abstract*.java</exclude>
+                                <exclude>**/samples/*.java</exclude>
+                                <exclude>**/Sample*.java</exclude>
+                                <exclude>**/*Sample.java</exclude>
+                            </excludes>
                             <includes>
                                 <include>%regex[.*integration.*Story.*]</include>
                                 <include>%regex[.*integration.*When.*]</include>
@@ -227,11 +233,16 @@
                     <plugin>
                         <groupId>com.atlassian.maven.plugins</groupId>
                         <artifactId>maven-clover2-plugin</artifactId>
-                        <version>3.0.4</version>
+                        <version>3.0.2</version>
                         <configuration>
                             <licenseLocation>${user.home}/Resources/clover.license.txt</licenseLocation>
+                            <excludes>
+                                <exclude>**/samples/*.java</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
+
+
                 </plugins>
             </build>
         </profile>
