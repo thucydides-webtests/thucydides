@@ -189,6 +189,11 @@ public class WhenUsingTheFluentElementAPI {
         page.element(page.fieldDoesNotExist).shouldBeCurrentlyVisible();
     }
 
+    @Test
+    public void should_check_element_as_visible_quickly_if_not_present_right_now() {
+        page.element(page.firstName).shouldBeCurrentlyVisible();
+    }
+
     @Test(expected = AssertionError.class)
     public void should_throw_expection_if_required_element_is_not_present() {
         page.element(page.fieldDoesNotExist).shouldBeVisible();
@@ -204,6 +209,10 @@ public class WhenUsingTheFluentElementAPI {
         page.element(page.firstName).shouldNotBeCurrentlyVisible();
     }
 
+    @Test
+    public void should_check_element_as_invisible_quickly_if_present_right_now() {
+        page.element(page.hiddenField).shouldNotBeCurrentlyVisible();
+    }
 
     @Test(expected = AssertionError.class)
     public void should_throw_expection_if_required_element_is_not_visible() {
@@ -228,6 +237,11 @@ public class WhenUsingTheFluentElementAPI {
     @Test(expected = AssertionError.class)
     public void should_throw_exception_if_enabled_field_should_be_disabled() {
         page.element(page.firstName).shouldNotBeEnabled();
+    }
+
+    @Test
+    public void should_work_if_disabled_field_is_bot_enabled() {
+        page.element(page.readonlyField).shouldNotBeEnabled();
     }
 
     @Test(expected = AssertionError.class)
@@ -384,6 +398,33 @@ public class WhenUsingTheFluentElementAPI {
         assertThat(page.element(page.buttonThatIsInitiallyDisabled).isCurrentlyEnabled(), is(true));
     }
 
+    @Test(expected = ElementNotVisibleException.class)
+    public void should_fail_if_wait_for_field_to_be_enabled_never_happens() throws InterruptedException {
+        StaticSitePage page = new StaticSitePage(driver, 1000);
+        page.setWaitForTimeout(100);
+        page.open();
+
+        page.element(page.readonlyField).waitUntilEnabled();
+    }
+
+    @Test(expected = ElementNotVisibleException.class)
+    public void should_fail_if_wait_for_field_to_be_disabled_never_happens() throws InterruptedException {
+        StaticSitePage page = new StaticSitePage(driver, 1000);
+        page.setWaitForTimeout(100);
+        page.open();
+
+        page.element(page.firstName).waitUntilDisabled();
+    }
+
+    @Test
+    public void is_currently_enabled_should_be_false_for_an_inexistant_element() throws InterruptedException {
+        StaticSitePage page = new StaticSitePage(driver, 1000);
+        page.setWaitForTimeout(100);
+        page.open();
+
+        assertThat(page.element(page.fieldDoesNotExist).isCurrentlyEnabled(), is(false));
+    }
+
     @Test
     public void should_wait_for_field_to_be_disabled() throws InterruptedException {
         StaticSitePage page = new StaticSitePage(driver, 1000);
@@ -404,6 +445,14 @@ public class WhenUsingTheFluentElementAPI {
         assertThat(page.element(page.hiddenField).isCurrentlyVisible(), is(false));
 
         page.element(page.hiddenField).waitUntilVisible();
+    }
+
+    @Test
+    public void should_pass_immediately_if_waiting_for_field_that_is_present() {
+        page.setWaitForTimeout(100);
+        page.open();
+
+        page.element(page.firstName).waitUntilVisible();
     }
 
     @Test

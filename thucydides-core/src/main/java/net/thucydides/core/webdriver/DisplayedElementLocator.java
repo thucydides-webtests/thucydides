@@ -14,7 +14,7 @@ import org.openqa.selenium.support.pagefactory.Annotations;
 
 class DisplayedElementLocator extends AjaxElementLocator {
 
-    private static final List<String> QUICK_METHODS = Arrays.asList("isCurrentlyVisible");
+    private static final List<String> QUICK_METHODS = Arrays.asList("isCurrentlyVisible", "isCurrentlyEnabled");
     private static final List<String> QUICK_CLASSES = Arrays.asList(WebElementFacade.class.getName());
 
     private final Field field;
