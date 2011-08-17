@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 import static net.thucydides.core.matchers.ThucydidesMatchers.containsApplicationFeature;
@@ -24,17 +26,21 @@ public class WhenLoadingTestResultsByFeature {
         loader = new FeatureLoader();
     }
 
+    private File directoryInClasspathCalled(final String resourceName) {
+        return new File(getClass().getResource(resourceName).getPath());
+    }
+
     @Test
     public void should_load_the_test_results_into_a_set_of_features() throws IOException {
-        
-        List<FeatureResults> features = loader.loadFrom(new File("src/test/resources/single-user-story-reports"));
+
+        List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/single-user-story-reports"));
         assertThat(features.size(), is(1));
     }
 
     @Test
     public void should_load_the_test_results_from_several_stories_into_a_set_of_features() throws IOException {
 
-        List<FeatureResults> features = loader.loadFrom(new File("src/test/resources/multiple-user-story-reports"));
+        List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/multiple-user-story-reports"));
         assertThat(features.size(), is(3));
     }
 
@@ -50,7 +56,7 @@ public class WhenLoadingTestResultsByFeature {
         ApplicationFeature anotherDifferentFeature = new ApplicationFeature("net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AnotherDifferentFeature",
                                                                   "Another different feature");
 
-        List<FeatureResults> features = loader.loadFrom(new File("src/test/resources/multiple-user-story-reports"));
+        List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/multiple-user-story-reports"));
 
         assertThat(features.size(), is(3));
         assertThat(features, containsApplicationFeature(aFeature));
@@ -62,7 +68,7 @@ public class WhenLoadingTestResultsByFeature {
     @Test
     public void should_know_number_of_stories_of_a_feature() throws IOException {
 
-        List<FeatureResults> features = loader.loadFrom(new File("src/test/resources/multiple-user-story-reports"));
+        List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/multiple-user-story-reports"));
 
         FeatureResults aFeatureResult = features.get(0);
         FeatureResults anotherFeatureResult = features.get(1);
@@ -77,7 +83,7 @@ public class WhenLoadingTestResultsByFeature {
     @Test
     public void should_know_number_of_passing_tests_in_the_stories_of_a_feature() throws IOException {
 
-        List<FeatureResults> features = loader.loadFrom(new File("src/test/resources/featured-user-story-reports"));
+        List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/multiple-user-story-reports"));
 
         FeatureResults aFeatureResult = features.get(0);
         FeatureResults anotherFeatureResult = features.get(1);
@@ -91,7 +97,7 @@ public class WhenLoadingTestResultsByFeature {
 
     @Test
     public void should_know_number_of_failing_tests_in_the_stories_of_a_feature() throws IOException {
-        List<FeatureResults> features = loader.loadFrom(new File("src/test/resources/featured-user-story-reports"));
+        List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/featured-user-story-reports"));
 
         FeatureResults aFeatureResult = features.get(0);
         FeatureResults anotherFeatureResult = features.get(1);
@@ -105,7 +111,7 @@ public class WhenLoadingTestResultsByFeature {
 
     @Test
     public void should_know_number_of_pending_tests_in_the_stories_of_a_feature() throws IOException {
-        List<FeatureResults> features = loader.loadFrom(new File("src/test/resources/featured-user-story-reports"));
+        List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/featured-user-story-reports"));
 
         FeatureResults aFeatureResult = features.get(0);
         FeatureResults anotherFeatureResult = features.get(1);
@@ -119,7 +125,7 @@ public class WhenLoadingTestResultsByFeature {
 
     @Test
     public void should_know_number_of_steps_in_the_stories_of_a_feature() throws IOException {
-        List<FeatureResults> features = loader.loadFrom(new File("src/test/resources/featured-user-story-reports"));
+        List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/featured-user-story-reports"));
 
         FeatureResults aFeatureResult = features.get(0);
         FeatureResults anotherFeatureResult = features.get(1);
