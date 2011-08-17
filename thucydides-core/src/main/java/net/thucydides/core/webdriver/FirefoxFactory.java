@@ -7,7 +7,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 public class FirefoxFactory {
     public WebDriver newUntrustedCertificateCompatibleDriver() {
         FirefoxProfile profile = new FirefoxProfile();
-        profile.setAssumeUntrustedCertificateIssuer(true);
+        profile.setAssumeUntrustedCertificateIssuer(false);
         return new FirefoxDriver(profile);
     }
 }
