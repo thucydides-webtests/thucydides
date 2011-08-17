@@ -132,15 +132,6 @@ public class TestOutcome {
         return new TestOutcome(testName, null, story);
     }
 
-    public static TestOutcome forTestInStory(final String testName, final Story story, final Class<?> testClass) {
-        if (story == null) {
-            return new TestOutcome(testName, testClass);
-        } else {
-            return new TestOutcome(testName, testClass, story);
-        }
-    }
-
-
     @Override
     public String toString() {
         return join(extract(testSteps, on(TestStep.class).toString()));
@@ -349,11 +340,7 @@ public class TestOutcome {
             return lastStepIn(testSteps);
         } else {
             TestStep currentStepGroup = groupStack.peek();
-            if (currentStepGroup.hasChildren()) {
-                return lastStepIn(currentStepGroup.getChildren());
-            } else {
-                return currentStepGroup;
-            }
+            return lastStepIn(currentStepGroup.getChildren());
         }
 
     }

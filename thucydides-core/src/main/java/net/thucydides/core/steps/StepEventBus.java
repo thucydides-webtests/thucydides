@@ -56,6 +56,7 @@ public class StepEventBus {
         stepFailed = false;
         pendingTest = false;
         this.resultTally = new TestStepResult();
+        webdriverSuspensions.clear();
     }
 
     private TestStepResult getResultTally() {

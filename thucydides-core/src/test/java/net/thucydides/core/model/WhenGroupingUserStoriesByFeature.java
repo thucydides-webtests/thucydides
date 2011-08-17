@@ -80,6 +80,18 @@ public class WhenGroupingUserStoriesByFeature {
     }
 
     @Test
+    public void the_feature_name_is_by_default_the_human_readable_form_of_the_feature_class() {
+        ApplicationFeature feature = ApplicationFeature.from(WidgetFeature.class);
+        assertThat(feature.getName(), is("Widget feature"));
+    }
+
+    @Test
+    public void the_feature_name_can_be_ovverriden() {
+        ApplicationFeature feature = new ApplicationFeature(WidgetFeature.class.getCanonicalName(), "My special widget feature");
+        assertThat(feature.getName(), is("My special widget feature"));
+    }
+
+    @Test
     public void a_user_story_can_be_nested_in_a_class_that_is_not_a_feature() {
         Class<?> userStoryClass = MyApp.PurchaseNewWidget.class;
 
@@ -164,6 +176,7 @@ public class WhenGroupingUserStoriesByFeature {
 
         assertThat(feature.getName(), is(""));
     }
+
 
 
 }

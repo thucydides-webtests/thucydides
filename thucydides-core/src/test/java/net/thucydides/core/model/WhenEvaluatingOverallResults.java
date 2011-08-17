@@ -37,6 +37,8 @@ public class WhenEvaluatingOverallResults {
                 { Arrays.asList(FAILURE, IGNORED),          FAILURE },
                 { Arrays.asList(FAILURE, PENDING),          FAILURE },
                 { Arrays.asList(IGNORED),                   IGNORED },
+                { Arrays.asList(SKIPPED),                   SKIPPED },
+                { Arrays.asList(IGNORED, FAILURE,SKIPPED),  FAILURE },
                 { Arrays.asList(IGNORED, IGNORED),          IGNORED },
                 { Arrays.asList(IGNORED, PENDING),          PENDING },
                 { Arrays.asList(PENDING),                   PENDING },

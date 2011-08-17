@@ -51,15 +51,7 @@ public class TestResultList {
         return PENDING;
     }
 
-    private boolean containsOnly(final TestResult... value) {
-        if (testResults.isEmpty()) {
-            return false;
-        } else {
-            return containsOnlyType(value);
-        }
-    }
-
-    private boolean containsOnlyType(final TestResult... values) {
+    private boolean containsOnly(final TestResult... values) {
         List<TestResult> authorizedTypes = Arrays.asList(values);
         for (TestResult result : testResults) {
             if (!authorizedTypes.contains(result)) {

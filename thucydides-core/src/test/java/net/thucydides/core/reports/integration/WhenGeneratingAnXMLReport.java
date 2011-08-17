@@ -146,32 +146,7 @@ public class WhenGeneratingAnXMLReport {
         assertThat(generatedReportText, isSimilarTo(expectedReport));
     }
 
-    
-    @Test
-    public void should_allow_requirements_in_steps() throws Exception {
-        TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-        
-        String expectedReport = 
-        "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1'"
-        + " failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-        + "  <test-step result='SUCCESS'>\n"
-        + "    <requirements>\n"
-        + "      <requirement>ABC</requirement>\n"
-        + "      <requirement>DEF</requirement>\n"
-        + "    </requirements>\n"
-        + "    <description>step 1</description>\n"
-        + "  </test-step>\n" + "</acceptance-test-run>";
 
-        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        step1.testsRequirement("ABC");
-        step1.testsRequirement("DEF");
-        testOutcome.recordStep(step1);
-        File xmlReport = reporter.generateReportFor(testOutcome);
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
-    }          
     @Test
     public void should_generate_an_XML_report_with_a_name_based_on_the_test_run_title()
             throws Exception {

@@ -74,6 +74,14 @@ public class WhenNamingTheReports {
         assertThat(reportName, is("a_user_story_should_do_this_qualifier.html"));
     }
 
+    @Test
+    public void when_no_qualifier_is_provided_the_normal_report_name_is_used() {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        String reportName = testOutcome.getReportName(HTML);
+
+        assertThat(reportName, is("a_user_story_should_do_this.html"));
+    }
 
     @Test
     public void a_qualifier_can_be_provided_to_distinguish_xml_reports_from_other_similar_reports() {
