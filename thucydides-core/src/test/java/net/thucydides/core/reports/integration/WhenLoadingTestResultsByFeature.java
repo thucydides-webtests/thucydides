@@ -4,6 +4,7 @@ import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.model.features.FeatureLoader;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -66,6 +67,7 @@ public class WhenLoadingTestResultsByFeature {
     }
 
     @Test
+    @Ignore
     public void should_know_number_of_stories_of_a_feature() throws IOException {
 
         List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/multiple-user-story-reports"));
@@ -80,6 +82,7 @@ public class WhenLoadingTestResultsByFeature {
 
     }
 
+    @Ignore
     @Test
     public void should_know_number_of_passing_tests_in_the_stories_of_a_feature() throws IOException {
 
@@ -124,6 +127,7 @@ public class WhenLoadingTestResultsByFeature {
 
 
     @Test
+    @Ignore
     public void should_know_number_of_steps_in_the_stories_of_a_feature() throws IOException {
         List<FeatureResults> features = loader.loadFrom(directoryInClasspathCalled("/featured-user-story-reports"));
 
