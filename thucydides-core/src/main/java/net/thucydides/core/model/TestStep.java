@@ -35,7 +35,6 @@ public class TestStep {
     private String description;    
     private long duration;
     private long startTime;
-    private Set<String> testedRequirement = new HashSet<String>();
     private String screenshotPath;
     private File screenshot;
     private File htmlSource;
@@ -63,14 +62,6 @@ public class TestStep {
     public TestStep(final String description) {
         this();
         this.description = description;
-    }
-
-    public void testsRequirement(final String requirement) {
-        testedRequirement.add(requirement);
-    }
-    
-    public Set<String> getTestedRequirements() {
-        return ImmutableSet.copyOf(testedRequirement);
     }
 
     public void recordDuration() {
@@ -117,11 +108,7 @@ public class TestStep {
 
     private String withoutType(final String screenshot) {
         int dot = screenshot.lastIndexOf('.');
-        if (dot > 0) {
-            return screenshot.substring(0, dot);
-        } else {
-            return screenshot;
-        }
+        return screenshot.substring(0, dot);
     }
 
     public File getHtmlSource() {
@@ -143,7 +130,15 @@ public class TestStep {
         if (isAGroup() && !groupResultOverridesChildren()) {
             return getResultFromChildren();
         } else {
+            return getResultFromThisStep();
+        }
+    }
+
+    private TestResult getResultFromThisStep() {
+        if (result != null) {
             return result;
+        } else {
+            return TestResult.PENDING;
         }
     }
 
@@ -153,14 +148,7 @@ public class TestStep {
 
     private TestResult getResultFromChildren() {
         TestResultList resultList = new TestResultList(getChildResults());
-        if (!resultList.isEmpty()) {
-            return resultList.getOverallResult();
-        }
-        if (result != null) {
-            return result;
-        } else {
-            return TestResult.PENDING;
-        }
+        return resultList.getOverallResult();
     }
 
     private List<TestResult> getChildResults() {

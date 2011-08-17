@@ -30,10 +30,6 @@ public abstract class HtmlReporter {
         super();
     }
 
-    protected TemplateManager getTemplateManager() {
-        return templateManager;
-    }
-
     /**
      * HTML reports will be generated here.
      */

@@ -100,9 +100,7 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
         } catch (CannotResolveClassException e) {
             throw new NotAThucydidesReportException("This file is not a thucydides report: " + reportFile, e);
         } finally {
-            if (input != null) {
-                input.close();
-            }
+            input.close();
         }
     }
 

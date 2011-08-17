@@ -63,4 +63,77 @@ public class WhenWeCreateATestStep {
         assertThat(step.getDuration(), is(lessThan(100L)));
     }
     
+    @Test
+    public void a_test_result_can_be_defined_for_a_step() throws InterruptedException {
+        TestStep step = new TestStep("a narrative description");
+        step.setResult(TestResult.SUCCESS);
+
+        assertThat(step.getResult(), is(TestResult.SUCCESS));
+    }
+
+    @Test
+    public void a_test_step_with_empty_child_steps_is_pending() throws InterruptedException {
+        TestStep step = new TestStep("a narrative description");
+        step.addChildStep(new TestStep("child step 1"));
+        step.addChildStep(new TestStep("child step 2"));
+        step.addChildStep(new TestStep("child step 3"));
+
+        assertThat(step.getResult(), is(TestResult.PENDING));
+    }
+
+    @Test
+    public void an_empty_step_is_pending() throws InterruptedException {
+        TestStep step = new TestStep("a narrative description");
+        assertThat(step.getResult(), is(TestResult.PENDING));
+    }
+
+    @Test
+    public void a_test_step_with_successful_child_steps_is_successful() throws InterruptedException {
+        TestStep step = new TestStep("a narrative description");
+        step.addChildStep(successfulTestStepCalled("child step 1"));
+        step.addChildStep(successfulTestStepCalled("child step 2"));
+        step.addChildStep(successfulTestStepCalled("child step 3"));
+
+        assertThat(step.getResult(), is(TestResult.SUCCESS));
+    }
+
+    @Test
+    public void an_ignored_test_step_with_successful_child_steps_is_still_ignored() throws InterruptedException {
+        TestStep step = new TestStep("a narrative description");
+        step.setResult(TestResult.IGNORED);
+        step.addChildStep(successfulTestStepCalled("child step 1"));
+        step.addChildStep(successfulTestStepCalled("child step 2"));
+        step.addChildStep(successfulTestStepCalled("child step 3"));
+
+        assertThat(step.getResult(), is(TestResult.IGNORED));
+    }
+
+    @Test
+    public void a_skipped_test_step_with_successful_child_steps_is_still_ignored() throws InterruptedException {
+        TestStep step = new TestStep("a narrative description");
+        step.setResult(TestResult.SKIPPED);
+        step.addChildStep(successfulTestStepCalled("child step 1"));
+        step.addChildStep(successfulTestStepCalled("child step 2"));
+        step.addChildStep(successfulTestStepCalled("child step 3"));
+
+        assertThat(step.getResult(), is(TestResult.SKIPPED));
+    }
+
+    @Test
+    public void a_pending_test_step_with_successful_child_steps_is_still_pending() throws InterruptedException {
+        TestStep step = new TestStep("a narrative description");
+        step.setResult(TestResult.PENDING);
+        step.addChildStep(successfulTestStepCalled("child step 1"));
+        step.addChildStep(successfulTestStepCalled("child step 2"));
+        step.addChildStep(successfulTestStepCalled("child step 3"));
+
+        assertThat(step.getResult(), is(TestResult.PENDING));
+    }
+
+    private TestStep successfulTestStepCalled(String stepName) {
+        TestStep step = new TestStep(stepName);
+        step.setResult(TestResult.SUCCESS);
+        return step;
+    }
+
 }
