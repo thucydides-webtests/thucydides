@@ -72,6 +72,12 @@ public class SampleStepListener implements StepListener {
         buffer.append("--> STEP IGNORED").append("\n");
     }
 
+    public void stepPending() {
+        pop();
+        writeIndent(buffer);
+        buffer.append("--> STEP PENDING").append("\n");
+    }
+
     public List<TestOutcome> getTestOutcomes() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }

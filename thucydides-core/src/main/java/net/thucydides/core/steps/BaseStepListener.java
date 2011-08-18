@@ -231,7 +231,7 @@ public class BaseStepListener implements StepListener {
         LOGGER.debug("step finished: " + description);
         takeScreenshotFor(description, SUCCESS);
         currentStepDone();
-        markCurrentTestAs(SUCCESS);
+        markCurrentStepAs(SUCCESS);
         pauseIfRequired();
     }
 
@@ -247,7 +247,7 @@ public class BaseStepListener implements StepListener {
         }
     }
 
-    private void markCurrentTestAs(final TestResult result) {
+    private void markCurrentStepAs(final TestResult result) {
         getCurrentTestOutcome().getCurrentStep().setResult(result);
     }
 
@@ -255,7 +255,7 @@ public class BaseStepListener implements StepListener {
         LOGGER.debug("step failed: " + failure);
         takeScreenshotFor(failure.getDescription(), FAILURE);
         getCurrentTestOutcome().setTestFailureCause(failure.getException());
-        markCurrentTestAs(FAILURE);
+        markCurrentStepAs(FAILURE);
         recordFailureDetailsInFailingTestStep(failure);
         currentStepDone();
     }
@@ -267,13 +267,18 @@ public class BaseStepListener implements StepListener {
     public void stepIgnored(ExecutedStepDescription description) {
         LOGGER.debug("step ignored: " + description);
         if (TestAnnotations.isPending(description.getTestMethod())) {
-            markCurrentTestAs(PENDING);
+            markCurrentStepAs(PENDING);
         } else if (aStepHasFailed()) {
-            markCurrentTestAs(SKIPPED);
+            markCurrentStepAs(SKIPPED);
         } else {
-            markCurrentTestAs(IGNORED);
+            markCurrentStepAs(IGNORED);
         }
         currentStepDone();
+    }
+
+    public void stepPending() {
+        LOGGER.debug("step pending");
+        markCurrentStepAs(PENDING);
     }
 
     private void currentStepDone() {

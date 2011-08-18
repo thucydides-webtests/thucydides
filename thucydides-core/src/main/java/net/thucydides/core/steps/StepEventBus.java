@@ -131,6 +131,15 @@ public class StepEventBus {
         }
     }
 
+    public void stepPending() {
+
+        getResultTally().logIgnoredTest();
+
+        for(StepListener stepListener : registeredListeners) {
+            stepListener.stepPending();
+        }
+    }
+
     public void dropListener(final StepListener stepListener) {
         registeredListeners.remove(stepListener);
     }

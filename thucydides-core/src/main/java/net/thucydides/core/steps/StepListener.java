@@ -64,6 +64,11 @@ public interface StepListener {
     void stepIgnored(ExecutedStepDescription description);
 
     /**
+     * The step is marked as pending
+     */
+    void stepPending();
+
+    /**
      * A step listener should be able to return a set of test results at the end of the test run.
      */
     List<TestOutcome> getTestOutcomes();

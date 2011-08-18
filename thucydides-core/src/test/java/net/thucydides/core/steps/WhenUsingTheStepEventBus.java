@@ -560,6 +560,19 @@ public class WhenUsingTheStepEventBus {
     }
 
     @Test
+    public void a_step_can_be_marked_pending() {
+        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().stepPending();
+        StepEventBus.getEventBus().testFinished();
+
+        String expectedSteps =
+                "TEST a_test\n"
+                    + "--> STEP PENDING\n"
+                    + "TEST DONE\n";
+        assertThat(sampleStepListener.toString(), is(expectedSteps));
+    }
+
+    @Test
     public void when_an_entier_test_is_ignored_the_test_is_marked_as_ignored() {
         StepEventBus.getEventBus().testStarted("a_test");
         StepEventBus.getEventBus().testIgnored();
