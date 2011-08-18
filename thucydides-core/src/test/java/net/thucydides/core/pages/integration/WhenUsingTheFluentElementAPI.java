@@ -301,6 +301,11 @@ public class WhenUsingTheFluentElementAPI {
     }
 
     @Test
+    public void should_detect_focus_on_input_fields_using_page_API() {
+        assertThat(page.hasFocus(page.lastName), is(true));
+    }
+
+    @Test
     public void should_detect_lack_of_focus_on_input_fields() {
         assertThat(page.element(page.firstName).hasFocus(), is(false));
     }

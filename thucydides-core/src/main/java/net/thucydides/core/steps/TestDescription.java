@@ -104,12 +104,4 @@ public class TestDescription {
             requirements.add(testsRequirement.value());
         }
     }
-
-    public boolean methodExists() {
-        if (getTestClass() != null) {
-            return (methodCalled(withNoArguments(methodName), getTestClass()) != null);
-        } else {
-            return false;
-        }
-    }
 }

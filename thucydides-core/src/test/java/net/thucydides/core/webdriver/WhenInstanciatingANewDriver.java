@@ -35,6 +35,9 @@ public class WhenInstanciatingANewDriver {
     @Mock
     InternetExplorerDriver ieDriver;
 
+    @Mock
+    FirefoxProfile profile;
+
     @Before
     public void createATestableDriverFactory() throws Exception {
         MockitoAnnotations.initMocks(this);

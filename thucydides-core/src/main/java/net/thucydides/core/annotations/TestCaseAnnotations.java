@@ -20,25 +20,6 @@ public final class TestCaseAnnotations {
     public static TestCaseAnnotations forTestCase(final Object testCase) {
         return new TestCaseAnnotations(testCase);
     }
-
-    public static void checkThatTestCaseIsCorrectlyAnnotated(final Class<?> testClass) {
-        checkThatManagedFieldIsDefined(testClass);
-        checkThatPagesFieldIsDefined(testClass);
-    }
-    /**
-     * There must be a WebDriver field in the test case annotated with the Managed annotation.
-     */
-    private static void checkThatManagedFieldIsDefined(final Class<?> testClass) {
-        ManagedWebDriverAnnotatedField.findFirstAnnotatedField(testClass);
-    }
-
-    /**
-     * There must be a Pages field in the test case annotated with the ManagedPages annotation.
-     */
-    private static void checkThatPagesFieldIsDefined(final Class<?> testClass) {
-        PagesAnnotatedField.findFirstAnnotatedField(testClass);
-    }
-
     
     /**
      * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.

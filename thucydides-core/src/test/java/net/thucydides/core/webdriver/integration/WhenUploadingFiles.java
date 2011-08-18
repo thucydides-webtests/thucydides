@@ -65,6 +65,15 @@ public class WhenUploadingFiles {
 
     }
 
+    @Test
+    public void should_upload_a_file_from_the_classpath() {
+        UploadPage uploadPage = new UploadPage(driver);
+
+        uploadPage.uploadFile("/uploads/readme.txt");
+
+        assertThat(uploadPage.uploadField.getAttribute("value"), containsString("readme.txt"));
+
+    }
 
 
     @Test
