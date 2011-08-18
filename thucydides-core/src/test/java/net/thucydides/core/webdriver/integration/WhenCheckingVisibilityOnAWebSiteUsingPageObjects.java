@@ -42,18 +42,42 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         driver.quit();
     }
 
-    private static void openStaticTestSite(WebDriver driver) {
-        File baseDir = new File(System.getProperty("user.dir"));
-        File testSite = new File(baseDir,"src/test/resources/static-site/index.html");
-        driver.get("file://" + testSite.getAbsolutePath());
+    private static File fileInClasspathCalled(final String resourceName) {
+        return new File(Thread.currentThread().getContextClassLoader().getResource(resourceName).getPath());
     }
 
+    private static void openStaticTestSite(WebDriver driver) {
+        File testSite = fileInClasspathCalled("static-site/index.html");
+        driver.get("file://" + testSite.getAbsolutePath());
+
+    }
+
+    @Test
+    public void should_succeed_immediately_if_title_is_as_expected() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.waitForTitleToAppear("Thucydides Test Site");
+    }
+
+    @Test(expected = ElementNotVisibleException.class)
+    public void should_fail_if_title_is_as_expected() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.setWaitForTimeout(100);
+        indexPage.waitForTitleToAppear("Wrong title");
+    }
 
     @Test
     public void should_know_when_an_element_is_visible_on_the_page() {
         IndexPage indexPage = new IndexPage(driver);
 
         assertThat(indexPage.isElementVisible(By.xpath("//h2[.='A visible title']")), is(true));
+    }
+
+    @Test
+    public void should_succeed_when_waiting_for_an_element_that_is_already_visible_on_the_page() {
+        IndexPage indexPage = new IndexPage(driver);
+
+        indexPage.setWaitForTimeout(100);
+        indexPage.waitForRenderedElements(By.xpath("//h2[.='A visible title']"));
     }
 
     @Test
@@ -102,12 +126,21 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         indexPage.waitForTextToDisappear("A visible title");
     }
 
+
     @Test(expected = ElementNotVisibleException.class)
     public void should_fail_when_waiting_for_an_undisplayed_text() {
         IndexPage indexPage = new IndexPage(driver);
         indexPage.setWaitForTimeout(150);
 
         indexPage.waitForTextToAppear("This text never appears");
+    }
+
+    @Test
+    public void should_succeed_when_waiting_for_displayed_text() {
+        IndexPage indexPage = new IndexPage(driver);
+        indexPage.setWaitForTimeout(150);
+
+        indexPage.waitForTextToAppear("A visible title");
     }
 
 

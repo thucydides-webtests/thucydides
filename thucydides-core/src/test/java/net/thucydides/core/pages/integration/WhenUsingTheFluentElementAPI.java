@@ -417,6 +417,14 @@ public class WhenUsingTheFluentElementAPI {
     }
 
     @Test
+    public void should_pass_immediately_if_wait_for_field_to_be_disabled_is_already_disabled() throws InterruptedException {
+        StaticSitePage page = new StaticSitePage(driver, 1000);
+        page.setWaitForTimeout(100);
+        page.open();
+
+        page.element(page.readonlyField).waitUntilDisabled();
+    }
+    @Test
     public void is_currently_enabled_should_be_false_for_an_inexistant_element() throws InterruptedException {
         StaticSitePage page = new StaticSitePage(driver, 1000);
         page.setWaitForTimeout(100);
