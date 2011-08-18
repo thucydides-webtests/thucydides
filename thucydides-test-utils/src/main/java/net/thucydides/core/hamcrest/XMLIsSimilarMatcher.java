@@ -1,5 +1,6 @@
 package net.thucydides.core.hamcrest;
 
+import com.sun.xml.internal.ws.util.StringUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.hamcrest.Description;
@@ -28,15 +29,13 @@ public class XMLIsSimilarMatcher extends TypeSafeMatcher<String> {
     public boolean matchesSafely(final String expectedXML) {
         
         boolean xmlIsSimilar = true;
+        Diff difference = null;
         try {
             XMLUnit.setIgnoreAttributeOrder(true);
             XMLUnit.setIgnoreComments(true);
             XMLUnit.setIgnoreWhitespace(true);
-            Diff difference = new Diff(xmlDocument,expectedXML);
+            difference = new Diff(xmlDocument,expectedXML);
             xmlIsSimilar = difference.similar();
-            if (!xmlIsSimilar) {
-                recordErrorMessage(difference);
-            }
         } catch (SAXException e) {
             xmlIsSimilar = false; 
             LOGGER.info(e.getMessage());
@@ -44,18 +43,23 @@ public class XMLIsSimilarMatcher extends TypeSafeMatcher<String> {
             xmlIsSimilar = false; 
             LOGGER.info(e.getMessage());
         }
+        if (!xmlIsSimilar) {
+            recordErrorMessage(difference);
+        }
         return xmlIsSimilar;
     }
 
     private void recordErrorMessage(final Diff difference) {
         StringBuffer buffer = new StringBuffer();
-        buffer = difference.appendMessage(buffer);
+        if (difference != null) {
+            buffer = difference.appendMessage(buffer);
+        }
         errorMessage = buffer.toString();
     }
 
     public void describeTo(final Description description) {
         description.appendText("an XML document equivalent to ").appendText(xmlDocument);
-        if (errorMessage != null) {
+        if ((errorMessage != null) && (!errorMessage.isEmpty())){
             description.appendText("[").appendText(errorMessage).appendText("]");
         }
     }

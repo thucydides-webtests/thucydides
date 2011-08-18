@@ -112,7 +112,27 @@ public class WhenGroupingUserStoriesByFeature {
     @Test
     public void a_feature_is_equal_to_itself() {
         ApplicationFeature feature = ApplicationFeature.from(WidgetFeature.class);
-        assertThat(feature, is(feature));
+        assertThat(feature.equals(feature), is(true));
+    }
+
+    class SubvertedFeature extends ApplicationFeature {
+        protected SubvertedFeature(final Class<?> featureClass) {
+            super(featureClass);
+        }
+    };
+
+    @Test
+    public void a_feature_can_be_equal_to_another_subclassed_feature_instance() {
+        ApplicationFeature feature = ApplicationFeature.from(WidgetFeature.class);
+        SubvertedFeature subvertedFeature = new SubvertedFeature(WidgetFeature.class);
+        assertThat(feature.equals(subvertedFeature), is(true));
+    }
+
+    @Test
+    public void a_feature_can_only_be_equal_to_another_feature_instance() {
+        ApplicationFeature feature = ApplicationFeature.from(WidgetFeature.class);
+        Object notAFeature = new Object();
+        assertThat(feature.equals(notAFeature), is(false));
     }
 
     @Test
@@ -169,14 +189,4 @@ public class WhenGroupingUserStoriesByFeature {
 
         assertThat(story.getFeature(), is(feature));
     }
-
-    @Test
-    public void if_the_feature_name_and_class_are_null_the_features_name_should_be_blank() {
-        ApplicationFeature feature = new ApplicationFeature("id","");
-
-        assertThat(feature.getName(), is(""));
-    }
-
-
-
 }

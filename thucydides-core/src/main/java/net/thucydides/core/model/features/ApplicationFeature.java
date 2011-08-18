@@ -93,11 +93,7 @@ public class ApplicationFeature {
     }
 
     private String simpleClassName() {
-        if (getFeatureClass() != null) {
-            return getFeatureClass().getSimpleName();
-        } else {
-            return "";
-        }
+        return getFeatureClass().getSimpleName();
     }
 
     private String canonicalClassName() {

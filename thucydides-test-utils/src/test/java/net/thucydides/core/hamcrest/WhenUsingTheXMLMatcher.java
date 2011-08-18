@@ -1,12 +1,20 @@
 package net.thucydides.core.hamcrest;
 
+import org.hamcrest.BaseDescription;
+import org.hamcrest.Description;
+import org.hamcrest.SelfDescribing;
+import org.hamcrest.StringDescription;
 import org.junit.Test;
 
 import java.util.Arrays;
 
 import static net.thucydides.core.hamcrest.XMLMatchers.isSimilarTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class WhenUsingTheXMLMatcher {
 
@@ -43,4 +51,33 @@ public class WhenUsingTheXMLMatcher {
         String anotherXmlDocument = "<sale>  <item code='a'>Item A</item></sale>";
         assertThat(anXmlDocument, isSimilarTo(anotherXmlDocument));
     }
+
+    @Test
+    public void should_display_expected_xml_document_when_failing() {
+
+        String anXmlDocument = "<sale><item code='a'>Item A</item></sale>";
+
+        XMLIsSimilarMatcher matcher = new XMLIsSimilarMatcher(anXmlDocument);
+        Description description = new StringDescription();
+        matcher.describeTo(description);
+
+        assertThat(description.toString(), is("an XML document equivalent to <sale><item code='a'>Item A</item></sale>"));
+    }
+
+    @Test
+    public void should_display_the_error_message_if_available() {
+
+        String anXmlDocument = "<sale><item code='a'>Item A</item></sale>";
+        String aDifferentXmlDocument = "<loan><item code='a'>Item A</item></loan>";
+
+        XMLIsSimilarMatcher matcher = new XMLIsSimilarMatcher(anXmlDocument);
+        matcher.matchesSafely(aDifferentXmlDocument);
+        Description description = new StringDescription();
+        matcher.describeTo(description);
+
+        assertThat(description.toString(), containsString("an XML document equivalent to <sale><item code='a'>Item A</item></sale>"));
+        assertThat(description.toString(), containsString("[different]"));
+
+    }
+
 }

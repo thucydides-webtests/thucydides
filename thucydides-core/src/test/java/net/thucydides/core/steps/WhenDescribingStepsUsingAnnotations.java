@@ -134,16 +134,6 @@ public class WhenDescribingStepsUsingAnnotations {
         assertThat(annotatedStepDescription.isIgnored(), is(true));
     }
 
-
-    @Test
-    public void should_identify_user_story_code() {
-        ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step");
-
-        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
-
-        assertThat(annotatedStepDescription.getUserStoryCode(), is("U2"));
-    }
-
     @Test
     public void should_identify_unignored_steps() {
         ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_step");

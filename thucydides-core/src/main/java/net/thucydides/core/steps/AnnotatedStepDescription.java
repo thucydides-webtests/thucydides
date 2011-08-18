@@ -106,19 +106,11 @@ public final class AnnotatedStepDescription {
     public String getAnnotatedTitle() {
 
         Method testMethod = getTestMethod();
-        Title title = (Title) testMethod.getAnnotation(Title.class);
+        Title title = testMethod.getAnnotation(Title.class);
         if (title != null) {
             return title.value();
         }
         return null;
-    }
-
-    public String getOptionalAnnotatedTitle() {
-        if (this.getTestClass() != null) {
-            return getAnnotatedTitle();
-        } else {
-            return null;
-        }
     }
 
     private String getAnnotatedStepName() {
@@ -126,7 +118,7 @@ public final class AnnotatedStepDescription {
     }
 
     private String getNameFromStepAnnotationIn(final Method testMethod) {
-        Step step = (Step) testMethod.getAnnotation(Step.class);
+        Step step = testMethod.getAnnotation(Step.class);
 
         if ((step != null) && (!StringUtils.isEmpty(step.value()))) {
             return step.value();
@@ -196,15 +188,5 @@ public final class AnnotatedStepDescription {
     public boolean isIgnored() {
         Method testMethod = getTestMethodIfPresent();
         return testMethod != null && TestStatus.of(testMethod).isIgnored();
-    }
-
-    public String getUserStoryCode() {
-        if (description.getStepClass() != null) {
-            UserStoryCode userStoryAnnotation = description.getStepClass().getAnnotation(UserStoryCode.class);
-            if (userStoryAnnotation != null) {
-                return userStoryAnnotation.value();
-            }
-        }
-        return "";
     }
 }

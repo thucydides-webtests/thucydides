@@ -25,10 +25,6 @@ public class TestResultList {
     }
 
     public TestResult getOverallResult() {
-        if (testResults.isEmpty()) {
-            return PENDING;
-        }
-
         if (testResults.contains(FAILURE)) {
             return FAILURE;
         }
@@ -52,12 +48,17 @@ public class TestResultList {
     }
 
     private boolean containsOnly(final TestResult... values) {
+        if (isEmpty()) {
+            return false;
+        }
+
         List<TestResult> authorizedTypes = Arrays.asList(values);
         for (TestResult result : testResults) {
             if (!authorizedTypes.contains(result)) {
                 return false;
             }
         }
+
         return true;
     }
 
