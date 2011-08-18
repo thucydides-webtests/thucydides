@@ -1,6 +1,5 @@
 package net.thucydides.core.hamcrest;
 
-import com.sun.xml.internal.ws.util.StringUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.hamcrest.Description;
