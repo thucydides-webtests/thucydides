@@ -93,11 +93,14 @@ class RenderedPageObjectView {
             if (matchingElements.isEmpty()) {
                 return false;
             }            
-            WebElement renderedElement  = matchingElements.get(0);
-            isDisplayed = renderedElement.isDisplayed();
+            return matchingElements.get(0).isDisplayed();
         } catch (NoSuchElementException noSuchElement) {
             LOGGER.trace("No such element " + noSuchElement);
-        }
+			return false;
+		} catch (StaleElementReferenceException se) {
+			LOGGER.trace("Element no longer attached to the DOM " + se);
+			return false;
+		}
         return isDisplayed;
     }
 
