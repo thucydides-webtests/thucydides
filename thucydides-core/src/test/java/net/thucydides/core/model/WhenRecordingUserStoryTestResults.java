@@ -41,6 +41,18 @@ public class WhenRecordingUserStoryTestResults {
     }
 
     @Test
+    public void root_report_name_should_be_based_on_story_name() {
+        String reportName = storyTestResults.getReportName();
+        assertThat(reportName, is("purchase_new_widget"));
+    }
+
+    @Test
+    public void html_report_name_should_be_based_on_story_name_with_html_suffix() {
+        String reportName = storyTestResults.getReportName(ReportNamer.ReportType.HTML);
+        assertThat(reportName, is("purchase_new_widget.html"));
+    }
+
+    @Test
     public void a_user_story_is_not_equal_to_instances_of_any_other_class() {
         Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
         Story story2 = new SubclassedUserStory(WidgetFeature.PurchaseNewWidget.class);

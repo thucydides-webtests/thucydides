@@ -101,13 +101,9 @@ public class RelativeSizeColorScheme implements ColorScheme {
 
     private float calculateHueBetween(final float startColor, final float endColor, final float zeroColor,
                                       final int mainCount, final int complementaryCount) {
-        if (mainCount + complementaryCount == 0) {
-            return zeroColor;
-        } else {
-            float totalCount = mainCount + complementaryCount;
-            float deltaColor = endColor - startColor;
-            return startColor + (((float) mainCount) / totalCount) * deltaColor;
-        }
+        float totalCount = mainCount + complementaryCount;
+        float deltaColor = endColor - startColor;
+        return startColor + (((float) mainCount) / totalCount) * deltaColor;
     }
 
     private float inverseOf(final double pendingToTotalTests, final double minimumValue) {

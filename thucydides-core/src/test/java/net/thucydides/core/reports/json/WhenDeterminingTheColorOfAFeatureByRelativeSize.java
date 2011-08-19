@@ -27,7 +27,6 @@ public class WhenDeterminingTheColorOfAFeatureByRelativeSize extends AbstractCol
     private static final Color PALE_YELLOW = new Color(255,255,64);
     private static final Color LIGHT_ORANGE = new Color(255,170,0);
     private static final Color LIGHT_ORANGE_YELLOW = new Color(255,184,61);
-    private static final Color DARK_ORANGE = new Color(255,48,48);
 
     @Before
     public void createColorScheme() {

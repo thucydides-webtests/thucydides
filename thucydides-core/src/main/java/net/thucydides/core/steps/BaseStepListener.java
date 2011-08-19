@@ -267,18 +267,20 @@ public class BaseStepListener implements StepListener {
     public void stepIgnored(ExecutedStepDescription description) {
         LOGGER.debug("step ignored: " + description);
         if (TestAnnotations.isPending(description.getTestMethod())) {
-            markCurrentStepAs(PENDING);
+            stepPending();
         } else if (aStepHasFailed()) {
             markCurrentStepAs(SKIPPED);
+            currentStepDone();
         } else {
             markCurrentStepAs(IGNORED);
+            currentStepDone();
         }
-        currentStepDone();
     }
 
     public void stepPending() {
         LOGGER.debug("step pending");
         markCurrentStepAs(PENDING);
+        currentStepDone();
     }
 
     private void currentStepDone() {

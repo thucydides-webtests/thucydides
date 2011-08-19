@@ -197,8 +197,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     }
 
     private boolean isPending(final Method method) {
-        Pending pendingAnnotation = method.getAnnotation(Pending.class);
-        return (pendingAnnotation != null);
+        return (method.getAnnotation(Pending.class) != null);
     }
 
     private void notifyStepFinishedFor(final Method method, final Object[] args) {
@@ -247,7 +246,12 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     private void notifyTestSkippedFor(final Method method, final Object[] args)
             throws Exception {
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
-        StepEventBus.getEventBus().stepIgnored(description);
+
+        if (isPending(method)) {
+            StepEventBus.getEventBus().stepPending();
+        } else {
+            StepEventBus.getEventBus().stepIgnored(description);
+        }
     }
 
     private void notifyOfStepFailure(final Method method, final Object[] args,

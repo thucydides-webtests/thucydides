@@ -377,12 +377,12 @@ public class WhenRunningStepsThroughAScenarioProxy {
     }
 
     @Test
-    public void the_proxy_should_notify_listeners_of_pending_tests_as_skipped() {
+    public void the_proxy_should_notify_listeners_of_pending_tests_as_pending() {
         SimpleTestScenarioSteps steps =  factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
         steps.pending_step();
 
-        verify(listener, times(1)).stepIgnored(any(ExecutedStepDescription.class));
+        verify(listener, times(1)).stepPending();
 
     }
 

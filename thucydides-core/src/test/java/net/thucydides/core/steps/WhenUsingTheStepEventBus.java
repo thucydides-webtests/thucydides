@@ -351,7 +351,7 @@ public class WhenUsingTheStepEventBus {
                           + "-step1\n"
                           + "-step1 done\n"
                           + "-pendingStep\n"
-                          + "---> STEP IGNORED\n"
+                          + "---> STEP PENDING\n"
                           + "TEST DONE\n";
         assertThat(sampleStepListener.toString(), is(expectedSteps));
     }
@@ -407,7 +407,7 @@ public class WhenUsingTheStepEventBus {
                           + "--step1\n"
                           + "--step1 done\n"
                           + "--pendingStep\n"
-                          + "----> STEP IGNORED\n"
+                          + "----> STEP PENDING\n"
                           + "--step4\n"
                           + "---step5\n"
                           + "---step5 done\n"

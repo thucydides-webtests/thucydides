@@ -94,7 +94,6 @@ public class StoryTestResults {
         try {
             return (successfulTests.isEmpty()) ? 0 : sum(successfulTests, on(TestOutcome.class).getStepCount());
         } catch(Exception e) {
-            e.printStackTrace();
             return 0;
         }
     }
