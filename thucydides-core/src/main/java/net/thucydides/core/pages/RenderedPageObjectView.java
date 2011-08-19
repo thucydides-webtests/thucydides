@@ -7,6 +7,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -87,18 +88,19 @@ class RenderedPageObjectView {
     }
 
     public boolean elementIsDisplayed(final By byElementCriteria) {
-        boolean isDisplayed = false;
         try {
             List<WebElement> matchingElements = driver.findElements(byElementCriteria);
             if (matchingElements.isEmpty()) {
                 return false;
             }            
-            WebElement renderedElement  = matchingElements.get(0);
-            isDisplayed = renderedElement.isDisplayed();
+            return matchingElements.get(0).isDisplayed();
         } catch (NoSuchElementException noSuchElement) {
             LOGGER.trace("No such element " + noSuchElement);
-        }
-        return isDisplayed;
+			return false;
+		} catch (StaleElementReferenceException se) {
+			LOGGER.trace("Element no longer attached to the DOM " + se);
+			return false;
+		}
     }
 
     private void checkThatElementAppeared(final By byElementCriteria) {

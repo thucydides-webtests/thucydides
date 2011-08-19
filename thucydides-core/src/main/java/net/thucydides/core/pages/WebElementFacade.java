@@ -3,6 +3,7 @@ package net.thucydides.core.pages;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -38,8 +39,10 @@ public class WebElementFacade {
             return webElement.isDisplayed();
         } catch (NoSuchElementException e) {
             return false;
-        }
-    }
+		} catch (StaleElementReferenceException se) {
+			return false;
+		}
+}
 
     /**
      * Is this web element present and visible on the screen
@@ -49,17 +52,15 @@ public class WebElementFacade {
      * by a method called "isCurrently*" and, if so, fail immediately without waiting as it would normally do.
      */
     public boolean isCurrentlyVisible() {
-        try {
-            return webElement.isDisplayed();
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        return isVisible();
     }
 
     public boolean isCurrentlyEnabled() {
         try {
             return webElement.isEnabled();
         } catch (NoSuchElementException e) {
+            return false;
+        } catch (StaleElementReferenceException se) {
             return false;
         }
     }

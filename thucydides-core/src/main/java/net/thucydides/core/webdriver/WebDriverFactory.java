@@ -61,7 +61,7 @@ public class WebDriverFactory {
                                       throws InvocationTargetException, NoSuchMethodException,
                                              InstantiationException, IllegalAccessException {
         FirefoxProfile profile = new FirefoxProfile();
-        profile.setAssumeUntrustedCertificateIssuer(true);
+        profile.setAssumeUntrustedCertificateIssuer(false);
         return webdriverInstanceFactory.newInstanceOf(webdriverClass, profile);
     }
 
