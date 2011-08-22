@@ -522,4 +522,13 @@ public class WhenUsingTheFluentElementAPI {
         assertThat(page.element(page.grid).containsText("red"), is(false));
     }
 
+    @Test
+    public void should_obtain_text_value_from_text_area_using_getTextValue() {
+        assertThat(page.element(page.textField).getTextValue(), is("text value"));
+    }
+
+     @Test
+    public void should_obtain_text_value_from_input_using_getTextValue() {
+        assertThat(page.element(page.firstName).getTextValue(), is("<enter first name>"));
+    }
 }

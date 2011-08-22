@@ -309,4 +309,17 @@ public class WebElementFacade {
                     "Expected disabled element was enabled");
         }
     }
+
+    public String getTextValue(){
+        if(!getText().isEmpty())
+        {
+            return webElement.getText();
+        }
+        if (!getValue().isEmpty())
+        {
+            return getValue();
+        }
+        return "";
+    }
+
 }
