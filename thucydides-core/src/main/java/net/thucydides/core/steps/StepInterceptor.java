@@ -250,7 +250,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         if (isPending(method)) {
             StepEventBus.getEventBus().stepPending();
         } else {
-            StepEventBus.getEventBus().stepIgnored(description);
+            StepEventBus.getEventBus().stepIgnored();
         }
     }
 

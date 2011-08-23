@@ -132,6 +132,10 @@ public class TestOutcome {
         return new TestOutcome(testName, null, story);
     }
 
+    public static TestOutcome forTestInStory(final String testName, final Class<?> testCase, final Story story) {
+        return new TestOutcome(testName, testCase, story);
+    }
+
     @Override
     public String toString() {
         return join(extract(testSteps, on(TestStep.class).toString()));

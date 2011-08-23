@@ -296,7 +296,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.step2();
         steps.step3();
 
-        verify(listener, times(3)).stepFinished(any(ExecutedStepDescription.class));
+        verify(listener, times(3)).stepFinished();
     }
 
     @Test
@@ -307,9 +307,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         steps.step_one();
 
-        verify(listener).stepFinished(argument.capture());
-        assertThat(argument.getValue().getStepClass().getName(), is(SimpleTestScenarioSteps.class.getName()));
-        assertThat(argument.getValue().getName(), is("step_one"));
+        verify(listener).stepFinished();
     }
 
 
@@ -322,7 +320,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.step_group1();
 
         verify(listener, times(4)).stepStarted(any(ExecutedStepDescription.class));
-        verify(listener, times(4)).stepFinished(any(ExecutedStepDescription.class));
+        verify(listener, times(4)).stepFinished();
     }
 
     @Test
@@ -372,7 +370,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         steps.ignored_step();
 
-        verify(listener, times(1)).stepIgnored(any(ExecutedStepDescription.class));
+        verify(listener, times(1)).stepIgnored();
 
     }
 

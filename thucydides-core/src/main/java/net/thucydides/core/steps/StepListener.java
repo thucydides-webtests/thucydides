@@ -3,6 +3,7 @@ package net.thucydides.core.steps;
 
 import java.util.List;
 
+import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 
 import org.openqa.selenium.WebDriver;
@@ -20,6 +21,11 @@ public interface StepListener {
      * For easyb stories, the story class can be provided directly.
      */
     void testSuiteStarted(final Class<?> storyClass);
+
+    /**
+     * Start a test run using a specific story, without a corresponding Java class.
+     */
+    void testSuiteStarted(final Story story);
 
     /**
      * A test with a given name has started.
@@ -42,13 +48,6 @@ public interface StepListener {
     void stepStarted(ExecutedStepDescription description);
 
     /**
-     * Called when an test step has finished, whether the test succeeds or fails.
-     *
-     * @param description the description of the test that just ran
-     */
-    void stepFinished(ExecutedStepDescription description);
-
-    /**
      * Called when a test step fails.
      *
      * @param failure describes the test that failed and the exception that was thrown
@@ -58,15 +57,18 @@ public interface StepListener {
     /**
      * Called when a step will not be run, generally because a test method is annotated
      * with {@link org.junit.Ignore}.
-     *
-     * @param description describes the test that will not be run
      */
-    void stepIgnored(ExecutedStepDescription description);
+    void stepIgnored();
 
     /**
-     * The step is marked as pending
+     * The step is marked as pending.
      */
     void stepPending();
+
+    /**
+     * Called when an test step has finished successfully
+     */
+    void stepFinished();
 
     /**
      * A step listener should be able to return a set of test results at the end of the test run.

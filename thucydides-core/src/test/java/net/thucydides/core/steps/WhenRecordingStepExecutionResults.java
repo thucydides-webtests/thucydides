@@ -176,6 +176,30 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void the_listener_should_record_the_tested_story_without_a_class() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyStory.class);
+        StepEventBus.getEventBus().testStarted("app should work");
+
+        StepEventBus.getEventBus().testFinished();
+
+        TestOutcome outcome = stepListener.getTestOutcomes().get(0);
+        assertThat(outcome.getUserStory().getName(), is("My story"));
+    }
+
+    @Test
+    public void the_listener_should_record_the_tested_story_instance_without_a_class() {
+
+        StepEventBus.getEventBus().testSuiteStarted(net.thucydides.core.model.Story.from(MyStory.class));
+        StepEventBus.getEventBus().testStarted("app should work");
+
+        StepEventBus.getEventBus().testFinished();
+
+        TestOutcome outcome = stepListener.getTestOutcomes().get(0);
+        assertThat(outcome.getUserStory().getName(), is("My story"));
+    }
+
+    @Test
     public void if_no_user_story_is_specified_the_test_case_name_should_be_used_instead() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCaseWithoutAStory.class);

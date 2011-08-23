@@ -3,6 +3,7 @@ package net.thucydides.core.webdriver.integration;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -23,21 +24,28 @@ public class WhenInstanciatingANewFirefoxDriver {
 
     WebdriverInstanceFactory webdriverInstanceFactory;
 
+    WebDriver driver;
+
     @Before
     public void createFactory() {
         webdriverInstanceFactory = new WebdriverInstanceFactory();
     }
 
+    @After
+    public void closeFirefox() {
+        driver.quit();
+    }
+
     @Test
     public void should_support_creating_a_firefox_driver() throws Exception {
-         WebDriver driver = webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class);
+         driver = webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class);
          assertThat(driver, instanceOf(FirefoxDriver.class));
     }
 
     @Test
     public void should_support_creating_a_firefox_driver_with_a_profile() throws Exception {
         FirefoxProfile profile = new FirefoxProfile();
-        WebDriver driver = webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class, profile);
+        driver = webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class, profile);
         assertThat(driver, instanceOf(FirefoxDriver.class));
     }
 }

@@ -1,5 +1,7 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.model.Story;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -48,6 +50,12 @@ public class StepEventBus {
     public void testSuiteStarted(final Class<?> testClass) {
         for(StepListener stepListener : registeredListeners) {
             stepListener.testSuiteStarted(testClass);
+        }
+    }
+
+    public void testSuiteStarted(final Story story) {
+        for(StepListener stepListener : registeredListeners) {
+            stepListener.testSuiteStarted(story);
         }
     }
 
@@ -107,7 +115,7 @@ public class StepEventBus {
     public void stepFinished(final ExecutedStepDescription description) {
         getResultTally().logExecutedTest();
         for(StepListener stepListener : registeredListeners) {
-            stepListener.stepFinished(description);
+            stepListener.stepFinished();
         }
         popStep();
     }
@@ -122,12 +130,12 @@ public class StepEventBus {
         stepFailed = true;
     }
 
-    public void stepIgnored(ExecutedStepDescription description) {
+    public void stepIgnored() {
 
         getResultTally().logIgnoredTest();
 
         for(StepListener stepListener : registeredListeners) {
-            stepListener.stepIgnored(description);
+            stepListener.stepIgnored();
         }
     }
 

@@ -24,6 +24,10 @@ public class SampleStepListener implements StepListener {
         push();
     }
 
+    public void testSuiteStarted(Story story) {
+        push();
+    }
+
     private void push() {
         currentIndent++;
     }
@@ -54,10 +58,10 @@ public class SampleStepListener implements StepListener {
         }
     }
 
-    public void stepFinished(ExecutedStepDescription description) {
+    public void stepFinished() {
         pop();
         writeIndent(buffer);
-        buffer.append(description.getName() + " done").append("\n");
+        buffer.append("--> STEP DONE").append("\n");
     }
 
     public void stepFailed(StepFailure failure) {
@@ -66,7 +70,7 @@ public class SampleStepListener implements StepListener {
         buffer.append("--> STEP FAILED").append("\n");
     }
 
-    public void stepIgnored(ExecutedStepDescription description) {
+    public void stepIgnored() {
         pop();
         writeIndent(buffer);
         buffer.append("--> STEP IGNORED").append("\n");

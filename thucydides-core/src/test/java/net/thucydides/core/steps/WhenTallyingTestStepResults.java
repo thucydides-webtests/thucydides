@@ -115,6 +115,31 @@ public class WhenTallyingTestStepResults {
     }
 
     @Test
+    public void a_test_suite_can_be_started_directly_using_a_story_class() {
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        stepListener.testSuiteStarted(MyStory.class);
+        stepListener.testStarted("app_should_work");
+        assertThat(stepListener.getCurrentTestOutcome().getUserStory().getName(), is("My story"));
+    }
+
+    @Test
+    public void a_test_suite_can_be_started_directly_using_a_story_class_without_a_test_class() {
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        stepListener.testSuiteStarted(MyStory.class);
+        stepListener.testStarted("the app should work");
+        assertThat(stepListener.getCurrentTestOutcome().getUserStory().getName(), is("My story"));
+    }
+
+    @Test
+    public void a_test_suite_can_be_started_directly_using_a_story_instance_without_a_test_class() {
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyStory.class);
+        stepListener.testSuiteStarted(story);
+        stepListener.testStarted("the app should work");
+        assertThat(stepListener.getCurrentTestOutcome().getUserStory().getName(), is("My story"));
+    }
+
+    @Test
     public void should_keep_track_of_when_a_test_has_failed() {
         BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
         stepListener.testSuiteStarted(MyTestCase.class);

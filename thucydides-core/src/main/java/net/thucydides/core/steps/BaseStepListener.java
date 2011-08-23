@@ -15,6 +15,7 @@ import java.util.Stack;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
@@ -72,6 +73,8 @@ public class BaseStepListener implements StepListener {
     private File outputDirectory;
 
     private WebdriverProxyFactory proxyFactory;
+
+    private Story testedStory;
 
     private BaseStepListener(final File outputDirectory) {
         this.proxyFactory = WebdriverProxyFactory.getFactory();
@@ -141,7 +144,33 @@ public class BaseStepListener implements StepListener {
     public void testSuiteStarted(final Class<?> startedTestSuite) {
         LOGGER.debug("testSuiteStarted for " + startedTestSuite);
         testSuite = startedTestSuite;
+        testedStory = findStoryFrom(startedTestSuite);
     }
+
+    public void testSuiteStarted(final Story story) {
+        testSuite = null;
+        testedStory = story;
+    }
+
+    private Story findStoryFrom(Class<?> testClass) {
+        if (storyIsDefinedIn(testClass)) {
+            return storyFrom(testClass);
+        } else {
+            return Story.from(testClass);
+        }
+    }
+
+    private Story storyFrom(final Class<?> testClass) {
+        Class<?> testedStoryClass = Story.testedInTestCase(testClass);
+        if (testedStoryClass != null) {
+            return Story.from(testedStoryClass);
+        }
+        return null;
+    }
+
+    private boolean storyIsDefinedIn(final Class<?> testClass) {
+         return (storyFrom(testClass) != null);
+   }
 
     /**
      * An individual test starts.
@@ -149,7 +178,7 @@ public class BaseStepListener implements StepListener {
      */
     public void testStarted(final String testMethod) {
         LOGGER.debug("test started: " + testMethod);
-        testOutcomes.add(TestOutcome.forTest(testMethod, testSuite));
+        testOutcomes.add(TestOutcome.forTestInStory(testMethod, testSuite, testedStory));
         setAnnotatedResult(testMethod);
     }
 
@@ -227,9 +256,11 @@ public class BaseStepListener implements StepListener {
         return !currentTestStack.isEmpty();
     }
 
-    public void stepFinished(ExecutedStepDescription description) {
-        LOGGER.debug("step finished: " + description);
-        takeScreenshotFor(description, SUCCESS);
+//    public void stepFinished(ExecutedStepDescription description) {
+    public void stepFinished() {
+        LOGGER.debug("step finished");
+
+        takeScreenshotFor(SUCCESS);
         currentStepDone();
         markCurrentStepAs(SUCCESS);
         pauseIfRequired();
@@ -253,7 +284,7 @@ public class BaseStepListener implements StepListener {
 
     public void stepFailed(StepFailure failure) {
         LOGGER.debug("step failed: " + failure);
-        takeScreenshotFor(failure.getDescription(), FAILURE);
+        takeScreenshotFor(FAILURE);
         getCurrentTestOutcome().setTestFailureCause(failure.getException());
         markCurrentStepAs(FAILURE);
         recordFailureDetailsInFailingTestStep(failure);
@@ -264,11 +295,9 @@ public class BaseStepListener implements StepListener {
         getCurrentStep().failedWith(failure.getMessage(), failure.getException());
     }
 
-    public void stepIgnored(ExecutedStepDescription description) {
-        LOGGER.debug("step ignored: " + description);
-        if (TestAnnotations.isPending(description.getTestMethod())) {
-            stepPending();
-        } else if (aStepHasFailed()) {
+    public void stepIgnored() {
+        LOGGER.debug("step ignored");
+        if (aStepHasFailed()) {
             markCurrentStepAs(SKIPPED);
             currentStepDone();
         } else {
@@ -293,11 +322,11 @@ public class BaseStepListener implements StepListener {
     }
 
 
-    private void takeScreenshotFor(final ExecutedStepDescription description, TestResult result) {
+    private void takeScreenshotFor(TestResult result) {
         if ((getCurrentStep() != null) && (shouldTakeScreenshotFor(result))) {
             try {
-                String testName = aTestCalled(description);
-                File screenshot = grabScreenshotFileFor(testName);
+                String stepDescription = getCurrentTestOutcome().getCurrentStep().getDescription();
+                File screenshot = grabScreenshotFileFor(stepDescription);
                 getCurrentStep().setScreenshot(screenshot);
                 if (screenshot != null) {
                     File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
@@ -323,10 +352,6 @@ public class BaseStepListener implements StepListener {
         String onlySaveFailures = System.getProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "false");
         Boolean onlySaveFailureScreenshots = Boolean.valueOf(onlySaveFailures);
         return !(onlySaveFailureScreenshots && result != FAILURE);
-    }
-
-    protected String aTestCalled(final ExecutedStepDescription description) {
-        return description.getName();
     }
 
     public List<TestOutcome> getTestOutcomes() {
@@ -357,5 +382,4 @@ public class BaseStepListener implements StepListener {
     public void testIgnored() {
         getCurrentTestOutcome().setAnnotatedResult(IGNORED);
     }
-
 }
