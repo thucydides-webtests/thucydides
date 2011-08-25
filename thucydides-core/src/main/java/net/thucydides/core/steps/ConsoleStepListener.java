@@ -19,14 +19,6 @@ public class ConsoleStepListener extends BaseStepListener {
         return buffer.toString();
     }
 
-    public void testSuiteStarted(Class<?> storyClass) {
-        push();
-    }
-
-    public void testSuiteStarted(Story story) {
-        push();
-    }
-
     private void push() {
         currentIndent++;
     }

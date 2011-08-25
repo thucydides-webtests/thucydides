@@ -94,8 +94,13 @@ public class WhenUploadingFiles {
     }
 
     @Test
+    public void should_recognize_a_unix_path() {
+        assertThat(FileToUpload.isAFullWindowsPath("C:\\Projects\\somefile.pdf"), is(true));
+    }
+
+    @Test
     public void should_recognize_a_complex_windows_path() {
-        assertThat(FileToUpload.isAFullWindowsPath("C:\\Users\\Joe Bloggs\\Documents\\somefile.pdf"), is(true));
+        assertThat(FileToUpload.isAFullWindowsPath("/home/myuser/target/test-classes/documentUpload/somefile.pdf"), is(false));
     }
 
     @Test
