@@ -160,6 +160,16 @@ public class WhenManagingAPageObject {
         page.waitForTitleToDisappear("a title");
     }
 
+    @Test(expected = ElementNotVisibleException.class)
+    public void page_will_wait_for_title_to_disappear_should_fail_if_title_doesnt_dissapear() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        page.setWaitForTimeout(100);
+        when(driver.getTitle()).thenReturn("a title");
+
+        page.waitForTitleToDisappear("a title");
+    }
+
     @Test
     public void page_will_wait_for_text_to_appear_in_element_if_requested() {
 
