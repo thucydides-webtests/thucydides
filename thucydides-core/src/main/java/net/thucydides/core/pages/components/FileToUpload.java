@@ -67,7 +67,7 @@ public class FileToUpload {
     }
 
     private String windowsNative(final String fileToUpload) {
-        String bareFilename = fileToUpload.substring(1);
+        String bareFilename = (fileToUpload.charAt(0) == '/') ? fileToUpload.substring(1) : fileToUpload;
         return StringUtils.replace(bareFilename,"/","\\");
     }
 

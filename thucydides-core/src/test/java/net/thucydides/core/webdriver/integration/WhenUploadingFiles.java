@@ -77,15 +77,33 @@ public class WhenUploadingFiles {
     }
 
     @Test
-    public void should_leave_a_unix_java_path_alone() {
+    public void should_leave_a_unix_java_path_alone_when_running_on_unix() {
         String unixPath = "/home/myuser/target/test-classes/documentUpload/somefile.pdf";
+        if (!runningOnWindows()) {
+            WebElement field = mock(WebElement.class);
 
-        WebElement field = mock(WebElement.class);
+            FileToUpload fileToUpload = new FileToUpload(unixPath);
+            fileToUpload.to(field);
 
-        FileToUpload fileToUpload = new FileToUpload(unixPath);
-        fileToUpload.to(field);
+            verify(field).sendKeys(unixPath);
+        }
+    }
 
-        verify(field).sendKeys(unixPath);
+    @Test
+    public void should_leave_a_windows_java_path_alone_when_running_on_windows() {
+        String windowsPath = "C:\\Users\\Joe Blogs\\Documents\\somefile.pdf";
+        if (runningOnWindows()) {
+            WebElement field = mock(WebElement.class);
+
+            FileToUpload fileToUpload = new FileToUpload(windowsPath);
+            fileToUpload.to(field);
+
+            verify(field).sendKeys(windowsPath);
+        }
+    }
+
+    private boolean runningOnWindows() {
+        return System.getProperty("os.name").contains("Windows");
     }
 
     @Test
