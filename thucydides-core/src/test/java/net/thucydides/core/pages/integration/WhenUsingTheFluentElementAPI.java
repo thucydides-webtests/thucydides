@@ -77,6 +77,8 @@ public class WhenUsingTheFluentElementAPI {
 
         protected WebElement grid;
 
+        protected WebElement emptylist;
+
         @FindBy(name="fieldDoesNotExist")
         protected WebElement fieldDoesNotExist;
 
@@ -543,6 +545,6 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_return_empty_string_from_other_element_using_getTextValue() {
-        assertThat(page.element(page.elements).getTextValue(), is(""));
+        assertThat(page.element(page.emptylist).getTextValue(), is(""));
     }
 }

@@ -2,17 +2,17 @@ package net.thucydides.core.steps;
 
 
 import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
-import java.util.List;
-
-public class ConsoleStepListener implements StepListener {
+public class ConsoleStepListener extends BaseStepListener {
 
     private final StringBuffer buffer = new StringBuffer();
 
     int currentIndent = 0;
+
+    public ConsoleStepListener() {
+        super(FirefoxDriver.class, null);
+    }
 
     @Override
     public String toString() {
@@ -81,30 +81,6 @@ public class ConsoleStepListener implements StepListener {
         buffer.append("--> STEP PENDING").append("\n");
     }
 
-    public List<TestOutcome> getTestOutcomes() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void updateCurrentStepStatus(TestResult result) {
-    }
-
-    public void setDriver(WebDriver driver) {
-    }
-
-    public WebDriver getDriver() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public boolean aStepHasFailed() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void noStepsHaveFailed() {
-    }
-
-    public Throwable getTestFailureCause() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     public void testFailed(Throwable cause) {
         buffer.append("--> TEST FAILED").append("\n");
