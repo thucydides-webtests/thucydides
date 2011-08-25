@@ -1,5 +1,6 @@
 package net.thucydides.core.pages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
@@ -191,7 +192,11 @@ public class WebElementFacade {
         webElement.clear();
         webElement.sendKeys(value);
         webElement.sendKeys(Keys.TAB);
+    }
 
+    public void setWindowFocus() {
+        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
+        js.executeScript("window.focus()");
     }
 
     public void selectByVisibleText(final String label) {

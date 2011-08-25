@@ -24,10 +24,12 @@ import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,7 +75,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         webdriverInstanceFactory = new WebdriverInstanceFactory() {
             @Override
-            public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass) throws IllegalAccessException, InstantiationException {
+            public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass, FirefoxProfile profile) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
                 return firefoxDriver;
             }
         };

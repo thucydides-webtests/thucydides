@@ -3,6 +3,7 @@ package net.thucydides.core.webdriver;
 import java.io.File;
 import java.util.Locale;
 
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 
 /**
@@ -35,7 +36,17 @@ public class Configuration {
      */
     public static final String OUTPUT_DIRECTORY_PROPERTY = ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName();
 
-    public static final String UNTRUSTED_CERTIFICATES = ThucydidesSystemProperty.UNTRUSTED_CERTIFICATES.getPropertyName();
+    /**
+     * By default, when accepting untrusted SSL certificates, assume that these certificates will come from an
+     * untrusted issuer or will be self signed. Due to limitation within Firefox, it is easy to find out if the
+     * certificate has expired or does not match the host it was served for, but hard to find out if the issuer of
+     * the certificate is untrusted. By default, it is assumed that the certificates were not be issued from a trusted
+     * CA. If you are receive an "untrusted site" prompt on Firefox when using a certificate that was issued by valid
+     * issuer, but has expired or is being served served for a different host (e.g. production certificate served in
+     * a testing environment) set this to false.
+     */
+    public static final String ASSUME_UNTRUSTED_CERTIFICATE_ISSUER
+            = ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER.getPropertyName();
 
     /**
      * By default, reports will go here.

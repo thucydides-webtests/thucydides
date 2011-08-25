@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +41,9 @@ public class WhenManagingWebdriverInstances {
     @Mock
     InternetExplorerDriver ieDriver;
 
+    @Mock
+    FirefoxProfile firefoxProfile;
+
     WebdriverManager webdriverManager;
 
     WebDriverFactory factory;
@@ -50,7 +54,12 @@ public class WhenManagingWebdriverInstances {
         when(webdriverInstanceFactory.newInstanceOf(InternetExplorerDriver.class)).thenReturn(ieDriver);
         when(webdriverInstanceFactory.newInstanceOf(eq(FirefoxDriver.class), any(FirefoxProfile.class))).thenReturn(firefoxDriver);
 
-        factory = new WebDriverFactory(webdriverInstanceFactory);
+        factory = new WebDriverFactory(webdriverInstanceFactory) {
+            @Override
+            protected FirefoxProfile createNewFirefoxProfile() {
+                return firefoxProfile;
+            }
+        };
 
         webdriverManager = new WebdriverManager(factory);
     }
@@ -84,42 +93,43 @@ public class WhenManagingWebdriverInstances {
     }
     
     @Test
-    public void a_firefox_instance_will_use_a_profile_compatible_with_untrusted_certificates_if_requested() throws Exception {
+    public void a_firefox_instance_will_not_assume_untrusted_certificates_if_requested() throws Exception {
 
         System.setProperty(Configuration.WEBDRIVER_DRIVER, "firefox");
-        System.setProperty(Configuration.UNTRUSTED_CERTIFICATES, "true");
+        System.setProperty(Configuration.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER, "false");
 
         WebdriverManager webdriverManager = new WebdriverManager(factory);
 
         WebDriver driver = webdriverManager.getWebdriver();
         driver.get("http://www.google.com");
 
-        verify(webdriverInstanceFactory).newInstanceOf(eq(FirefoxDriver.class), any(FirefoxProfile.class));
+        verify(firefoxProfile).setAssumeUntrustedCertificateIssuer(false);
     }
 
     @Test
-    public void a_firefox_instance_will_use_a_normal_profile_if_requested() throws Exception {
+    public void a_firefox_instance_will_assume_untrusted_certificates_by_default() throws Exception {
 
         System.setProperty(Configuration.WEBDRIVER_DRIVER, "firefox");
-        System.setProperty(Configuration.UNTRUSTED_CERTIFICATES, "false");
 
         WebdriverManager webdriverManager = new WebdriverManager(factory);
 
         WebDriver driver = webdriverManager.getWebdriver();
         driver.get("http://www.google.com");
 
-        verify(webdriverInstanceFactory).newInstanceOf(FirefoxDriver.class);
+        verify(firefoxProfile, never()).setAssumeUntrustedCertificateIssuer(false);
     }
 
     @Test
-    public void a_firefox_instance_will_use_a_normal_profile_by_default() throws Exception {
+    public void a_firefox_instance_will_accept_untrusted_certificates_by_default() throws Exception {
 
         System.setProperty(Configuration.WEBDRIVER_DRIVER, "firefox");
 
-        WebDriver driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
-        driver.quit();
+        WebdriverManager webdriverManager = new WebdriverManager(factory);
 
-        verify(webdriverInstanceFactory).newInstanceOf(FirefoxDriver.class);
+        WebDriver driver = webdriverManager.getWebdriver();
+        driver.get("http://www.google.com");
+
+        verify(firefoxProfile,never()).setAcceptUntrustedCertificates(false);
     }
 
     @Test

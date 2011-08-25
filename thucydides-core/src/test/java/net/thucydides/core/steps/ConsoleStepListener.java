@@ -4,7 +4,6 @@ package net.thucydides.core.steps;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
-import static org.apache.commons.lang.StringUtils.leftPad;
 import org.openqa.selenium.WebDriver;
 
 import java.util.List;

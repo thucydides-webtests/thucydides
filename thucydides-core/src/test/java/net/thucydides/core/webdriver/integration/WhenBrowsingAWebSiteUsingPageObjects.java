@@ -251,7 +251,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     public void the_page_can_be_opened_using_an_unsecure_certificates_compatible_profile() {
 
         System.setProperty(Configuration.WEBDRIVER_DRIVER, "firefox");
-        System.setProperty(Configuration.UNTRUSTED_CERTIFICATES, "true");
+        System.setProperty(Configuration.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER, "true");
 
         IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver, 1);
 

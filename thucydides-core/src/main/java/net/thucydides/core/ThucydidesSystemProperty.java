@@ -52,10 +52,10 @@ public enum ThucydidesSystemProperty {
     ELEMENT_TIMEOUT("thucydides.timeout"),
 
     /**
-     * For Firefox, use a profile with the AssumeUntrustedCertificateIssuer property set.
-     * This will allow Firefox to use secured web sites with invalid certificates.
+     * Don't accept sites using untrusted certificates.
+     * By default, Thucydides accepts untrusted certificates - use this to change this behaviour.
      */
-    UNTRUSTED_CERTIFICATES("untrusted.certificates"),
+    ASSUME_UNTRUSTED_CERTIFICATE_ISSUER("refuse.untrusted.certificates"),
 
     /**
      * Use the same browser for all tests (the "Highlander" rule)
@@ -79,13 +79,17 @@ public enum ThucydidesSystemProperty {
         return propertyName;
     }
 
-    public static boolean getBooleanValue(final ThucydidesSystemProperty property) {
+    public static boolean getBooleanValue(final ThucydidesSystemProperty property, final boolean defaultValue) {
         String value = System.getProperty(property.getPropertyName());
         if (value != null) {
             return Boolean.valueOf(value);
         } else {
-            return false;
+            return defaultValue;
         }
+    }
+
+    public static boolean getBooleanValue(final ThucydidesSystemProperty property) {
+        return getBooleanValue(property, false);
     }
 
     public static String getValue(final ThucydidesSystemProperty property, final String defaultValue) {

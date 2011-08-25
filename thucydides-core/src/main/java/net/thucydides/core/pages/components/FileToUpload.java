@@ -9,14 +9,13 @@ import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.WebElement;
 
 /**
- * A class that helps upload a file to an HTML form in using a fluent API.
+ * A class Wthat helps upload a file to an HTML form in using a fluent API.
  */
 public class FileToUpload {
     private final String filename;
-    private final Pattern windowsPath = Pattern.compile("/[A-Z]:.*");
-    static final String WINDOWS_PATH_PATTERN = "^/?[A-Z]:.*";
+    static final String WINDOWS_PATH_PATTERN = "^[A-Z]:\\\\.*";
 
-    Pattern pattern = Pattern.compile(WINDOWS_PATH_PATTERN);
+    private static Pattern fullWindowsPath = Pattern.compile(WINDOWS_PATH_PATTERN);
 
     public FileToUpload(final String filename) {
         if (isOnTheClasspath(filename)) {
@@ -40,8 +39,8 @@ public class FileToUpload {
         return cldr.getResource(filename);
     }
 
-    private boolean isAFullWindowsPath(final String filename) {
-        return pattern.matcher(filename).find();
+    public static boolean isAFullWindowsPath(final String filename) {
+        return fullWindowsPath.matcher(filename).find();
     }
 
     private String getFileFromResourcePath(final String filename) {
@@ -60,7 +59,7 @@ public class FileToUpload {
 
 
     private String osSpecificPathOf(final String fileToUpload) {
-        if (isAWindows(fileToUpload)) {
+        if (isAFullWindowsPath(fileToUpload)) {
             return windowsNative(fileToUpload);
         } else {
             return fileToUpload;
@@ -72,9 +71,5 @@ public class FileToUpload {
         return StringUtils.replace(bareFilename,"/","\\");
     }
 
-    private boolean isAWindows(final String fileToUpload) {
-        Matcher matcher = windowsPath.matcher(fileToUpload);
-        return matcher.matches();
-    }
 }
 

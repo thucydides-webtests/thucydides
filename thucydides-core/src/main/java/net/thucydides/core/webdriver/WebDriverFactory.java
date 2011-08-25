@@ -1,10 +1,9 @@
 package net.thucydides.core.webdriver;
 
-import java.lang.reflect.InvocationTargetException;
-
 import net.thucydides.core.ThucydidesSystemProperty;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
@@ -45,28 +44,37 @@ public class WebDriverFactory {
         return driverType.getWebdriverClass();
     }
 
-    protected WebDriver newWebdriverInstance(final Class<? extends WebDriver> webdriverClass) {
+    protected WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {
-            if (acceptUntrustedCertificatesForFirefox()) {
-                return untrustedCertificateProfileDriver(webdriverClass);
+            if (isAFirefoxDriver(driverClass)) {
+               return webdriverInstanceFactory.newInstanceOf(driverClass, buildFirefoxProfile());
             } else {
-                return webdriverInstanceFactory.newInstanceOf(webdriverClass);
+                return webdriverInstanceFactory.newInstanceOf(driverClass);
             }
         } catch (Exception cause) {
-            throw new UnsupportedDriverException("Could not instantiate " + webdriverClass, cause);
+            throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
         }
     }
 
-    private WebDriver untrustedCertificateProfileDriver(final Class<? extends WebDriver> webdriverClass)
-                                      throws InvocationTargetException, NoSuchMethodException,
-                                             InstantiationException, IllegalAccessException {
-        FirefoxProfile profile = new FirefoxProfile();
-        profile.setAssumeUntrustedCertificateIssuer(false);
-        return webdriverInstanceFactory.newInstanceOf(webdriverClass, profile);
+    private boolean isAFirefoxDriver(Class<? extends WebDriver> driverClass) {
+        return (FirefoxDriver.class.isAssignableFrom(driverClass));
     }
 
-    private boolean acceptUntrustedCertificatesForFirefox() {
-        return (ThucydidesSystemProperty.getBooleanValue(ThucydidesSystemProperty.UNTRUSTED_CERTIFICATES));
+    protected FirefoxProfile createNewFirefoxProfile() {
+        return new FirefoxProfile();
+    }
+
+    private FirefoxProfile buildFirefoxProfile() {
+        FirefoxProfile profile = createNewFirefoxProfile();
+        if (dontAssumeUntrustedCertificateIssuer()) {
+            profile.setAssumeUntrustedCertificateIssuer(false);
+        }
+        return profile;
+    }
+
+    private boolean dontAssumeUntrustedCertificateIssuer() {
+        return !(ThucydidesSystemProperty.getBooleanValue(ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER,
+                                                          true));
     }
 
     /**

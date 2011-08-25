@@ -22,6 +22,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+
+import java.lang.reflect.InvocationTargetException;
 
 import static net.thucydides.core.webdriver.SupportedWebDriver.CHROME;
 import static net.thucydides.core.webdriver.SupportedWebDriver.FIREFOX;
@@ -66,8 +69,9 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
         MockitoAnnotations.initMocks(this);
 
         webdriverInstanceFactory = new WebdriverInstanceFactory() {
+
             @Override
-            public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass) throws IllegalAccessException, InstantiationException {
+            public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass, FirefoxProfile profile) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
                 return firefoxDriver;
             }
         };

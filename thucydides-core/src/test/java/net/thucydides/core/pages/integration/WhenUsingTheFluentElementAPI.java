@@ -392,6 +392,15 @@ public class WhenUsingTheFluentElementAPI {
     }
 
     @Test
+    public void should_succeed_if_waiting_for_an_existing_field_to_appear() {
+        StaticSitePage page = new StaticSitePage(driver, 1000);
+        page.open();
+
+        assertThat(page.element(page.country).isCurrentlyVisible(), is(true));
+        page.element(page.country).waitUntilVisible();
+    }
+
+    @Test
     public void should_wait_for_field_to_be_enabled() throws InterruptedException {
         StaticSitePage page = new StaticSitePage(driver, 1000);
         page.open();
@@ -525,5 +534,15 @@ public class WhenUsingTheFluentElementAPI {
     @Test
     public void should_obtain_text_value_from_text_area_using_getTextValue() {
         assertThat(page.element(page.textField).getTextValue(), is("text value"));
+    }
+
+    @Test
+    public void should_obtain_text_value_from_input_using_getTextValue() {
+        assertThat(page.element(page.firstName).getTextValue(), is("<enter first name>"));
+    }
+
+    @Test
+    public void should_return_empty_string_from_other_element_using_getTextValue() {
+        assertThat(page.element(page.elements).getTextValue(), is(""));
     }
 }
