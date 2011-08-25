@@ -3,6 +3,7 @@ package net.thucydides.core.webdriver;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.PagesEventListener;
 import net.thucydides.core.steps.StepEventBus;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -20,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.any;
@@ -67,6 +69,12 @@ public class WhenUsingAWebDriverProxy {
         initWendriverManager();
         StepEventBus.getEventBus().clear();
         webDriverFacade = (WebDriverFacade) webdriverManager.getWebdriver();
+        WebdriverProxyFactory.getFactory().clearMockDriver();
+    }
+
+    @After
+    public void clearMocks() {
+        WebdriverProxyFactory.getFactory().clearMockDriver();
     }
 
     @Test
@@ -311,6 +319,38 @@ public class WhenUsingAWebDriverProxy {
         verify(firefoxDriver).findElement(By.id("q"));
         verify(firefoxDriver).getScreenshotAs(OutputType.FILE);
 
+    }
+
+    @Test
+    public void proxy_should_allow_a_mock_driver_instead_of_a_real_one_for_testing() {
+
+
+        WebdriverProxyFactory proxyFactory = WebdriverProxyFactory.getFactory();
+
+        proxyFactory.useMockDriver(firefoxDriver);
+
+        WebDriver driver = proxyFactory.proxyFor(FirefoxDriver.class);
+
+        assertThat(driver, is((WebDriver)firefoxDriver));
+    }
+
+    @Test
+    public void proxy_should_allow_a_temporary_mock_driver_instead_of_a_real_one_for_testing() {
+
+
+        WebdriverProxyFactory proxyFactory = WebdriverProxyFactory.getFactory();
+
+        proxyFactory.useMockDriver(firefoxDriver);
+
+        WebDriver driver = proxyFactory.proxyFor(FirefoxDriver.class);
+
+        assertThat(driver, is((WebDriver)firefoxDriver));
+
+        proxyFactory.clearMockDriver();
+
+        driver = proxyFactory.proxyFor(FirefoxDriver.class);
+
+        assertThat(driver, is(not((WebDriver)firefoxDriver)));
     }
 
     @Mock

@@ -1,6 +1,7 @@
 package net.thucydides.core.steps;
 
 import net.thucydides.core.model.Story;
+import org.omg.IOP.ComponentIdHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +35,9 @@ public class StepEventBus {
 
     private boolean pendingTest;
 
-    public void registerListener(final StepListener listener) {
+    public StepEventBus registerListener(final StepListener listener) {
         registeredListeners.add(listener);
+        return this;
     }
 
     public void testStarted(final String testName) {
@@ -60,11 +62,16 @@ public class StepEventBus {
     }
 
     public void clear() {
+
         stepStack.clear();
-        stepFailed = false;
-        pendingTest = false;
+        clearStepFailures();
+        currentTestIsNotPending();
         this.resultTally = new TestStepResult();
         webdriverSuspensions.clear();
+    }
+
+    private void currentTestIsNotPending() {
+        pendingTest = false;
     }
 
     private TestStepResult getResultTally() {
@@ -87,9 +94,6 @@ public class StepEventBus {
 
     private void popStep() {
         stepStack.pop();
-        if (stepStack.isEmpty()) {
-            clearStepFailures();
-        }
     }
 
     private void clearStepFailures() {
@@ -107,21 +111,27 @@ public class StepEventBus {
     public void stepStarted(final ExecutedStepDescription executedStepDescription) {
 
         pushStep(executedStepDescription.getName());
+
         for(StepListener stepListener : registeredListeners) {
             stepListener.stepStarted(executedStepDescription);
         }
     }
 
-    public void stepFinished(final ExecutedStepDescription description) {
+    public void stepFinished() {
+        stepDone();
         getResultTally().logExecutedTest();
         for(StepListener stepListener : registeredListeners) {
             stepListener.stepFinished();
         }
+    }
+
+    private void stepDone() {
         popStep();
     }
 
     public void stepFailed(final StepFailure failure) {
 
+        stepDone();
         getResultTally().logFailure(failure);
 
         for(StepListener stepListener : registeredListeners) {
@@ -132,6 +142,7 @@ public class StepEventBus {
 
     public void stepIgnored() {
 
+        stepDone();
         getResultTally().logIgnoredTest();
 
         for(StepListener stepListener : registeredListeners) {
@@ -141,6 +152,7 @@ public class StepEventBus {
 
     public void stepPending() {
 
+        stepDone();
         getResultTally().logIgnoredTest();
 
         for(StepListener stepListener : registeredListeners) {
@@ -150,6 +162,10 @@ public class StepEventBus {
 
     public void dropListener(final StepListener stepListener) {
         registeredListeners.remove(stepListener);
+    }
+
+    public void dropAllListeners() {
+        registeredListeners.clear();
     }
 
     public boolean webdriverCallsAreSuspended() {
@@ -190,5 +206,9 @@ public class StepEventBus {
         for(StepListener stepListener : registeredListeners) {
             stepListener.testIgnored();
         }
+    }
+
+    public boolean areStepsRunning() {
+        return !stepStack.isEmpty();
     }
 }

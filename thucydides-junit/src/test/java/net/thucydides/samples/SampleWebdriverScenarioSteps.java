@@ -110,4 +110,11 @@ public class SampleWebdriverScenarioSteps extends ScenarioSteps {
     public void stepThatFailsWithWebdriverException() {
         throw new NoSuchElementException("No such element");
     }
+
+    @Step
+    public void stepThatFailsWithRuntimeException() {
+        throw new IllegalArgumentException("Something nasty went wrong");
+    }
+
+
 }

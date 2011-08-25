@@ -185,6 +185,11 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             AssertionError webdriverAssertionError = new WebdriverAssertionError(error.getMessage(), error);
             stepExceptions.add(webdriverAssertionError);
             notifyOfStepFailure(method, args, webdriverAssertionError);
+        } catch (Throwable generalException) {
+            error = generalException;
+            AssertionError essertionError = new WebdriverAssertionError(error.getMessage(), error);
+            stepExceptions.add(essertionError);
+            notifyOfStepFailure(method, args, essertionError);
         }
 
         LOGGER.info("Test step done: " + getTestNameFrom(method, args, false));
@@ -201,9 +206,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     }
 
     private void notifyStepFinishedFor(final Method method, final Object[] args) {
-
-        ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
-        StepEventBus.getEventBus().stepFinished(description);
+        StepEventBus.getEventBus().stepFinished();
     }
 
     private String getTestNameFrom(final Method method, final Object[] args) {

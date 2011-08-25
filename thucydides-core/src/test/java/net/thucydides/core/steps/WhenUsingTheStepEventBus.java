@@ -151,7 +151,7 @@ public class WhenUsingTheStepEventBus {
     @Mock
     StepListener listener;
 
-    SampleStepListener sampleStepListener;
+    ConsoleStepListener consoleStepListener;
 
     private StepFactory factory;
 
@@ -161,19 +161,20 @@ public class WhenUsingTheStepEventBus {
 
         factory = new StepFactory(new Pages(driver));
 
-        sampleStepListener = new SampleStepListener();
+        consoleStepListener = new ConsoleStepListener();
 
         StepEventBus.getEventBus().clear();
         StepEventBus.getEventBus().registerListener(listener);
-        StepEventBus.getEventBus().registerListener(sampleStepListener);
+        StepEventBus.getEventBus().registerListener(consoleStepListener);
 
     }
 
     @After
     public void clearListener() {
-        StepEventBus.getEventBus().dropListener(sampleStepListener);
+        StepEventBus.getEventBus().dropListener(consoleStepListener);
         StepEventBus.getEventBus().dropListener(listener);
     }
+
 
     @Test
     public void should_execute_steps_transparently() {
@@ -228,7 +229,7 @@ public class WhenUsingTheStepEventBus {
                 + "-step1\n"
                 + "---> STEP DONE\n"
                 + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
 
@@ -249,7 +250,7 @@ public class WhenUsingTheStepEventBus {
                           + "----> STEP DONE\n"
                           + "---> STEP DONE\n"
                           + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
     @Test
@@ -294,7 +295,7 @@ public class WhenUsingTheStepEventBus {
                           + "---> STEP DONE\n"
                           + "TEST DONE\n";
 
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
     @Test
@@ -315,7 +316,7 @@ public class WhenUsingTheStepEventBus {
                           + "----> STEP DONE\n"
                           + "---> STEP DONE\n"
                           + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
     @Test
@@ -334,7 +335,7 @@ public class WhenUsingTheStepEventBus {
                           + "-failingStep\n"
                           + "---> STEP FAILED\n"
                           + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
     @Test
@@ -353,7 +354,7 @@ public class WhenUsingTheStepEventBus {
                           + "-pendingStep\n"
                           + "---> STEP PENDING\n"
                           + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
 
@@ -384,8 +385,8 @@ public class WhenUsingTheStepEventBus {
                           + "---> STEP DONE\n"
                           + "TEST DONE\n";
 
-        System.out.println(sampleStepListener.toString());
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        System.out.println(consoleStepListener.toString());
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
 
 
     }
@@ -417,8 +418,8 @@ public class WhenUsingTheStepEventBus {
                           + "---> STEP DONE\n"
                           + "TEST DONE\n";
 
-        System.out.println(sampleStepListener.toString());
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        System.out.println(consoleStepListener.toString());
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
 
 
     }
@@ -445,7 +446,7 @@ public class WhenUsingTheStepEventBus {
                           + "----> STEP IGNORED\n"
                           + "---> STEP DONE\n"
                           + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
     @Test
@@ -470,7 +471,7 @@ public class WhenUsingTheStepEventBus {
                           + "----> STEP IGNORED\n"
                           + "---> STEP DONE\n"
                           + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
     @Test
@@ -495,7 +496,7 @@ public class WhenUsingTheStepEventBus {
                           + "----> STEP IGNORED\n"
                           + "---> STEP DONE\n"
                           + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
     @Test
@@ -515,7 +516,7 @@ public class WhenUsingTheStepEventBus {
                           + "-stepThatReturnsAStep\n"
                           + "---> STEP DONE\n"
                           + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
     @Test
@@ -533,7 +534,7 @@ public class WhenUsingTheStepEventBus {
                           + "-stepThatReturnsAStep\n"
                           + "---> STEP IGNORED\n"
                           + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
     @Test
@@ -556,20 +557,22 @@ public class WhenUsingTheStepEventBus {
                     + "-step3\n"
                     + "---> STEP IGNORED\n"
                     + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
     @Test
     public void a_step_can_be_marked_pending() {
         StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
         StepEventBus.getEventBus().stepPending();
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
                 "TEST a_test\n"
-                    + "--> STEP PENDING\n"
+                    + "-a step\n"
+                    + "---> STEP PENDING\n"
                     + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
     @Test
@@ -582,7 +585,66 @@ public class WhenUsingTheStepEventBus {
                 "TEST a_test\n"
                     + "--> TEST IGNORED\n"
                     + "TEST DONE\n";
-        assertThat(sampleStepListener.toString(), is(expectedSteps));
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
+
+    @Test
+    public void should_clear_all_listeners_when_requested() {
+        StepEventBus.getEventBus().dropAllListeners();
+
+        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
+        StepEventBus.getEventBus().stepPending();
+        StepEventBus.getEventBus().testFinished();
+
+        assertThat(consoleStepListener.toString(), is(""));
+    }
+
+    @Test
+    public void shouldIndicateWhenATestIsRunning() {
+
+        StepEventBus.getEventBus().dropAllListeners();
+
+        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
+
+        assertThat(StepEventBus.getEventBus().areStepsRunning(), is(true));
+    }
+
+    @Test
+    public void shouldIndicateWhenALongerTestIsRunning() {
+
+        StepEventBus.getEventBus().dropAllListeners();
+
+        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testPending();
+
+        StepEventBus.getEventBus().testStarted("another_test");
+
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
+
+        assertThat(StepEventBus.getEventBus().areStepsRunning(), is(true));
+    }
+
+    @Test
+    public void shouldIndicateWhenATestIsRunningHasNotStarted() {
+
+        StepEventBus.getEventBus().dropAllListeners();
+
+        assertThat(StepEventBus.getEventBus().areStepsRunning(), is(false));
+    }
+
+    @Test
+    public void shouldIndicateWhenATestHasFinished() {
+
+        StepEventBus.getEventBus().dropAllListeners();
+
+        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
+        StepEventBus.getEventBus().testFinished();
+
+        assertThat(StepEventBus.getEventBus().areStepsRunning(), is(false));
+    }
+
 
 }

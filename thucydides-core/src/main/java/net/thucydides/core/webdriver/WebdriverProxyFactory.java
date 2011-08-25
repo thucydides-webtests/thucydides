@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.openqa.selenium.WebDriver;
 
+import javax.sound.midi.VoiceStatus;
+
 /**
  * Provides a proxy for a WebDriver instance.
  * The proxy lets you delay opening the browser until you really know you are going to use it.
@@ -21,13 +23,10 @@ public class WebdriverProxyFactory implements Serializable {
 
     private WebDriverFactory webDriverFactory;
 
+    private WebDriver mockDriver;
+
     private WebdriverProxyFactory() {
         webDriverFactory = new WebDriverFactory();
-    }
-
-
-    protected void setWebDriverFactory(final WebDriverFactory webDriverFactory) {
-        this.webDriverFactory = webDriverFactory;
     }
 
     public static WebdriverProxyFactory getFactory() {
@@ -43,7 +42,11 @@ public class WebdriverProxyFactory implements Serializable {
 
     public WebDriver proxyFor(final Class<? extends WebDriver> driverClass,
                               final WebDriverFactory webDriverFactory) {
-        return new WebDriverFacade(driverClass, webDriverFactory);
+        if (mockDriver != null) {
+            return mockDriver;
+        } else {
+            return new WebDriverFacade(driverClass, webDriverFactory);
+        }
     }
 
     public void registerListener(final ThucydidesWebDriverEventListener eventListener) {
@@ -61,9 +64,17 @@ public class WebdriverProxyFactory implements Serializable {
         return proxyFor(driverClass, webDriverFactory);
     }
 
-    public static void resetDriver(WebDriver driver) {
+    public static void resetDriver(final WebDriver driver) {
         if (driver instanceof WebDriverFacade) {
             ((WebDriverFacade) driver).reset();
         }
+    }
+
+    public void useMockDriver(final WebDriver mockDriver) {
+        this.mockDriver = mockDriver;
+    }
+
+    public void clearMockDriver() {
+        this.mockDriver = null;
     }
 }

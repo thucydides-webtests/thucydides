@@ -361,6 +361,21 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
+    public void when_a_test_throws_a_runtime_exception_it_is_recorded_in_the_test_step() throws Exception {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenarioWithRuntimeException.class);
+
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedScenarios = runner.getTestOutcomes();
+        TestOutcome testOutcome = executedScenarios.get(0);
+
+        List<TestStep> steps = testOutcome.getTestSteps();
+        TestStep failingStep = (TestStep) steps.get(4);
+        assertThat(failingStep.getException(), is(WebdriverAssertionError.class));
+    }
+
+    @Test
     public void the_test_runner_should_notify_test_failures() throws Exception {
 
         ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);

@@ -822,7 +822,6 @@ public class WhenRecordingStepExecutionResults {
 
         verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
     }
-
     @Test
     public void screenshots_should_have_corresponding_html_pages() {
 

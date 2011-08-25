@@ -49,7 +49,7 @@ public class BaseStepListener implements StepListener {
     /**
      * Keeps track of what steps have been started but not finished, in order to structure nested steps.
      */
-    private final Stack<TestStep> currentTestStack;
+    private final Stack<TestStep> currentStepStack;
 
     /**
      * Keeps track of the current step group, if any.
@@ -79,7 +79,7 @@ public class BaseStepListener implements StepListener {
     private BaseStepListener(final File outputDirectory) {
         this.proxyFactory = WebdriverProxyFactory.getFactory();
         this.testOutcomes = new ArrayList<TestOutcome>();
-        this.currentTestStack = new Stack<TestStep>();
+        this.currentStepStack = new Stack<TestStep>();
         this.currentGroupStack = new Stack<TestStep>();
         this.outputDirectory = outputDirectory;
         this.clock = Injectors.getInjector().getInstance(SystemClock.class);
@@ -196,8 +196,7 @@ public class BaseStepListener implements StepListener {
      * @param result the summary of the test run, including all the tests that failed
      */
     public void testFinished(final TestStepResult result) {
-        System.out.println("test finished: " + result);
-        currentTestStack.clear();
+        currentStepStack.clear();
     }
 
     /**
@@ -213,8 +212,7 @@ public class BaseStepListener implements StepListener {
         startNewGroupIfNested();
         setDefaultResultFromAnnotations(step, description);
 
-        currentTestStack.push(step);
-
+        currentStepStack.push(step);
         getCurrentTestOutcome().recordStep(step);
     }
 
@@ -241,7 +239,7 @@ public class BaseStepListener implements StepListener {
     }
 
     private TestStep getCurrentStep() {
-        return currentTestStack.peek();
+        return currentStepStack.peek();
     }
 
     private TestStep getCurrentGroup() {
@@ -253,10 +251,9 @@ public class BaseStepListener implements StepListener {
     }
 
     private boolean thereAreUnfinishedSteps() {
-        return !currentTestStack.isEmpty();
+        return !currentStepStack.isEmpty();
     }
 
-//    public void stepFinished(ExecutedStepDescription description) {
     public void stepFinished() {
         LOGGER.debug("step finished");
 
@@ -313,17 +310,18 @@ public class BaseStepListener implements StepListener {
     }
 
     private void currentStepDone() {
-        TestStep finishedStep =  currentTestStack.pop();
+        TestStep finishedStep =  currentStepStack.pop();
 
         if (finishedStep == getCurrentGroup()) {
             finishGroup();
         }
-
     }
 
-
+    private boolean currentStepExists() {
+        return !currentStepStack.isEmpty();
+    }
     private void takeScreenshotFor(TestResult result) {
-        if ((getCurrentStep() != null) && (shouldTakeScreenshotFor(result))) {
+        if ((currentStepExists()) && (shouldTakeScreenshotFor(result))) {
             try {
                 String stepDescription = getCurrentTestOutcome().getCurrentStep().getDescription();
                 File screenshot = grabScreenshotFileFor(stepDescription);

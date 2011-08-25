@@ -9,7 +9,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.util.List;
 
-public class SampleStepListener implements StepListener {
+public class ConsoleStepListener implements StepListener {
 
     private final StringBuffer buffer = new StringBuffer();
 
