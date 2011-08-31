@@ -856,6 +856,34 @@ public class WhenRecordingStepExecutionResults {
         verify(driver, never()).getScreenshotAs((OutputType<?>) anyObject());
     }
 
+    @Test
+    public void screenshots_should_not_be_taken_for_pending_steps() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps =  stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.pendingStep();
+        StepEventBus.getEventBus().testFinished();
+
+        verify(driver, never()).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+
+    @Test
+    public void screenshots_should_not_be_taken_for_pending_steps_among_implemented_stepd() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps =  stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.pendingStep();
+        steps.step_two();
+        StepEventBus.getEventBus().testFinished();
+
+        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
+    }
 
     @Test
     public void screenshots_should_still_be_taken_after_failing_steps_if_screenshots_disabled() {

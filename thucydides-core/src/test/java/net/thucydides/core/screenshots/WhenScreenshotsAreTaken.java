@@ -166,7 +166,7 @@ public class WhenScreenshotsAreTaken {
         DodgyPhotographer dodgyPhotographer = new DodgyPhotographer(driver, screenshotDirectory);
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
 
-        String screenshotFile = dodgyPhotographer.takeScreenshot("screenshot").getName();
+        dodgyPhotographer.takeScreenshot("screenshot").getName();
     }
 
 }

@@ -1,6 +1,6 @@
-htmlReport = new File("${basedir}/target/thucydides/index.html")
+htmlReport = new File("${basedir}/target/site/thucydides/index.html")
 assert htmlReport.exists()
 
-storiesReport = new File("${basedir}/target/thucydides/stories.html")
+storiesReport = new File("${basedir}/target/site/thucydides/stories.html")
 assert storiesReport.exists()
 

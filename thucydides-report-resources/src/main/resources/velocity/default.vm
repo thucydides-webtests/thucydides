@@ -129,7 +129,7 @@
                 #step_details($step, $level)
                 #if( $step.isAGroup() )
                     #set( $level = $level + 1)
-                    #foreach($nestedStep in $step.steps)
+                    #foreach($nestedStep in $step.children)
                         #step($nestedStep)
                     #end
                     #set( $level = $level - 1)

@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 
 public class WhenGeneratingAnAggregateReport {
 
-    ThucydidesReporterMojo plugin;
+    ThucydidesAggregatorMojo plugin;
 
     @Mock
     File outputDirectory;
@@ -31,7 +31,7 @@ public class WhenGeneratingAnAggregateReport {
 
         MockitoAnnotations.initMocks(this);
 
-        plugin = new ThucydidesReporterMojo();
+        plugin = new ThucydidesAggregatorMojo();
         plugin.setOutputDirectory(outputDirectory);
         plugin.setSourceDirectory(sourceDirectory);
         plugin.setReporter(reporter);

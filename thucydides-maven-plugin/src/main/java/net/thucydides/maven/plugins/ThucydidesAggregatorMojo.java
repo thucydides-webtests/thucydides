@@ -14,11 +14,11 @@ import java.io.IOException;
  * @requiresReports true
  * @phase verify
  */
-public class ThucydidesReporterMojo extends AbstractMojo {
+public class ThucydidesAggregatorMojo extends AbstractMojo {
     /**
      * Aggregate reports are generated here
      * 
-     * @parameter expression="${project.build.directory}/thucydides"
+     * @parameter expression="${project.build.directory}/site/thucydides"
      * @required
      */
     private File outputDirectory;
@@ -26,7 +26,7 @@ public class ThucydidesReporterMojo extends AbstractMojo {
     /**
      * Thucydides test reports are read from here
      * 
-     * @parameter expression="${project.build.directory}/thucydides"
+     * @parameter expression="${project.build.directory}/site/thucydides"
      * @required
      */
     private File sourceDirectory;

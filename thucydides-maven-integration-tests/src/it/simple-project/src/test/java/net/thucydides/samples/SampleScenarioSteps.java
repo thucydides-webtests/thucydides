@@ -8,12 +8,9 @@ import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
-import net.thucydides.core.annotations.TestsRequirement;
-import net.thucydides.core.annotations.TestsRequirements;
 
 import org.junit.Ignore;
 
-import javax.sound.midi.VoiceStatus;
 import java.lang.AssertionError;
 
 public class SampleScenarioSteps extends ScenarioSteps {
@@ -26,12 +23,10 @@ public class SampleScenarioSteps extends ScenarioSteps {
     public SampleScenarioNestedSteps nestedSteps;
     
     @Step
-    @TestsRequirement("LOW_LEVEL_BUSINESS_RULE")
     public void stepThatSucceeds() {
     }
 
     @Step
-    @TestsRequirements({"LOW_LEVEL_BUSINESS_RULE_1","LOW_LEVEL_BUSINESS_RULE_2"})
     public void anotherStepThatSucceeds() {
     }
 

@@ -31,7 +31,7 @@ public class WhenReadingAnXMLReport {
     public void setupTestReporter() {
         outcomeReporter = new XMLTestOutcomeReporter();
 
-        outputDirectory = temporaryDirectory.newFolder("target/thucydides");
+        outputDirectory = temporaryDirectory.newFolder("target/site/thucydides");
 
         outcomeReporter.setOutputDirectory(outputDirectory);
     }

@@ -10,11 +10,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.FindBy;
 
@@ -23,24 +25,11 @@ import javax.sound.midi.VoiceStatus;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class WhenUsingTheFluentElementAPI {
+public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     static WebDriver driver;
 
     static StaticSitePage page;
-
-    @BeforeClass
-    public static void initDriver() {
-        driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
-        page = new StaticSitePage(driver, 1);
-        page.setWaitForTimeout(100);
-        page.open();
-    }
-
-    @AfterClass
-    public static void closeBrowser() {
-        driver.quit();
-    }
 
     @DefaultUrl("classpath:static-site/index.html")
     public static final class StaticSitePage extends PageObject {
@@ -107,6 +96,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Before
     public void openStaticPage() {
+        page.open();
     }
 
     @Test
@@ -359,7 +349,6 @@ public class WhenUsingTheFluentElementAPI {
         assertThat(page.firstName.getAttribute("value"), is("joe"));
     }
 
-    @Ignore("WebDriver doesn't like tabs at the moment")
     @Test
     public void should_optionally_type_tab_after_entering_text() {
         page.open();

@@ -12,6 +12,7 @@ import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.UserStoriesResultSet;
 import net.thucydides.core.model.features.FeatureLoader;
 import net.thucydides.core.model.userstories.UserStoryLoader;
+import net.thucydides.core.reports.ThucydidesReportData;
 import net.thucydides.core.reports.UserStoryTestReporter;
 import net.thucydides.core.reports.json.JSONProgressResultTree;
 import net.thucydides.core.reports.json.JSONResultTree;
@@ -70,7 +71,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         context.put("formatter", formatter);
     }
 
-    public void generateReportsForStoriesFrom(final File sourceDirectory) throws IOException {
+    public ThucydidesReportData generateReportsForStoriesFrom(final File sourceDirectory) throws IOException {
         List<StoryTestResults> storyResults = loadStoryResultsFrom(sourceDirectory);
         List<FeatureResults> featureResults = loadFeatureResultsFrom(sourceDirectory);
 
@@ -81,6 +82,8 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         }
 
         generateAggregateReportFor(storyResults, featureResults);
+
+        return new ThucydidesReportData(featureResults, storyResults);
     }
 
     private List<StoryTestResults> loadStoryResultsFrom(final File sourceDirectory) throws IOException {

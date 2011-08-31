@@ -51,7 +51,7 @@ public class Configuration {
     /**
      * By default, reports will go here.
      */
-    private static final String DEFAULT_OUTPUT_DIRECTORY = "target/thucydides";
+    private static final String DEFAULT_OUTPUT_DIRECTORY = "target/site/thucydides";
 
     /**
      * HTML and XML reports will be generated in this directory.
@@ -114,7 +114,7 @@ public class Configuration {
 
     /**
      * The output directory is where the test runner writes the XML and HTML
-     * reports to. By default, it will be in 'target/thucydides', but you can
+     * reports to. By default, it will be in 'target/site/thucydides', but you can
      * override this value either programmatically or by providing a value in
      * the <b>thucydides.output.dir</b> system property.
      * 

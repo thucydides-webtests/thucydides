@@ -26,7 +26,7 @@ public class WhenGeneratingAnAggregateHtmlReport {
     @Before
     public void setupTestReporter() {
         reporter = new HtmlAggregateStoryReporter();
-        outputDirectory = temporaryDirectory.newFolder("target/thucydides");
+        outputDirectory = temporaryDirectory.newFolder("target/site/thucydides");
         reporter.setOutputDirectory(outputDirectory);
         System.out.println("Writing reports to " + outputDirectory);
     }

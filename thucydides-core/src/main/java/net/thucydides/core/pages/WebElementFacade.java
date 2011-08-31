@@ -190,8 +190,7 @@ public class WebElementFacade {
      */
     public void typeAndTab(final String value) {
         webElement.clear();
-        webElement.sendKeys(value);
-        webElement.sendKeys(Keys.TAB);
+        webElement.sendKeys(value + Keys.TAB);
     }
 
     public void setWindowFocus() {

@@ -35,7 +35,7 @@ public class AbstractReportGenerationTest {
     @Before
     public void setupTestReporter() {
         reporter = new HtmlAcceptanceTestReporter();
-        outputDirectory = temporaryDirectory.newFolder("target/thucydides");
+        outputDirectory = temporaryDirectory.newFolder("target/site/thucydides");
         reporter.setOutputDirectory(outputDirectory);
     }
 
