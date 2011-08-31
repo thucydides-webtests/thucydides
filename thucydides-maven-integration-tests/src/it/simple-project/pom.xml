@@ -10,8 +10,8 @@
     <name>Test Thucydides Reporter Mojo</name>
 
     <properties>
-        <!--<thucydides.version>@project.version@</thucydides.version>-->
-        <thucydides.version>0.3.3-SNAPSHOT</thucydides.version>
+        <thucydides.version>@project.version@</thucydides.version>
+        <!--<thucydides.version>0.3.3-SNAPSHOT</thucydides.version>-->
     </properties>
 
     <dependencies>
@@ -64,13 +64,49 @@
             </plugin>
         </plugins>
     </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>net.thucydides.maven.plugins</groupId>
-                <artifactId>maven-thucydides-plugin</artifactId>
-                <version>${thucydides.version}</version>
-            </plugin>
-        </plugins>
-    </reporting>
+    <profiles>
+        <profile>
+            <id>maven2</id>
+            <activation>
+                <file>
+                    <missing>${basedir}</missing>
+                </file>
+            </activation>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>net.thucydides.maven.plugins</groupId>
+                        <artifactId>maven-thucydides-plugin</artifactId>
+                        <version>${thucydides.version}</version>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+        <profile>
+            <id>maven3</id>
+            <activation>
+                <file>
+                    <exists>${basedir}</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <version>3.0-beta-3</version>
+                        <configuration>
+                            <reportPlugins>
+                                <plugin>
+                                    <groupId>net.thucydides.maven.plugins</groupId>
+                                    <artifactId>maven-thucydides-plugin</artifactId>
+                                    <version>${thucydides.version}</version>
+                                </plugin>
+                            </reportPlugins>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
