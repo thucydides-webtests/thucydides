@@ -155,6 +155,48 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     @Test
+    public void should_count_test_steps() {
+
+        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1.1"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.2"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.2"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+
+        assertThat(testOutcome.getStepCount(), is(3));
+    }
+
+    @Test
+    public void should_count_deeply_nested_test_steps() {
+
+        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1.1"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.2"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 2.2"));
+        testOutcome.endGroup();
+        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+
+        assertThat(testOutcome.getNestedStepCount(), is(8));
+    }
+
+    @Test
     public void the_returned_test_steps_list_should_be_read_only() {
         testOutcome.recordStep(successfulTestStepCalled("The user opens the Google search page"));
 

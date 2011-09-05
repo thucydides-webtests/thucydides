@@ -13,6 +13,10 @@ public class TestStepFactory {
         return createNewTestStep(description, SUCCESS);
     }
     
+    public static TestStep successfulNestedTestStepCalled(String description) {
+        return createNewNestedTestSteps(description, SUCCESS);
+    }
+
     public static TestStep failingTestStepCalled(String description, AssertionError assertionError) {
         return createNewTestStep(description, FAILURE, assertionError);
     }
@@ -34,6 +38,7 @@ public class TestStepFactory {
         step.failedWith(assertionError.getMessage(), assertionError);
         return step;
     }
+
     public static TestStep createNewTestStep(String description, TestResult result) {
         TestStep step = new TestStep(description);
         step.setScreenshot(new File(description + ".png"));
@@ -41,6 +46,29 @@ public class TestStepFactory {
         step.setResult(result);
         step.setDuration(100);
         return step;
+
     }
     
+
+    public static TestStep createNewNestedTestSteps(String description, TestResult result) {
+        TestStep step =  new TestStep(description);
+        TestStep child1 = new TestStep(description);
+        TestStep child2 = new TestStep(description);
+
+        child1.setScreenshot(new File(description + ".png"));
+        child1.setScreenshotPath(description + ".png");
+        child1.setResult(result);
+        child1.setDuration(100);
+
+        child2.setScreenshot(new File(description + ".png"));
+        child2.setScreenshotPath(description + ".png");
+        child2.setResult(result);
+        child2.setDuration(100);
+
+        step.addChildStep(child1);
+        step.addChildStep(child2);
+
+        return step;
+    }
+
 }

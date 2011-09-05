@@ -55,6 +55,23 @@ public class FeatureResults {
         return sum(extract(storyTestResultsList, on(StoryTestResults.class).getStepCount())).intValue();
     }
 
+    public Integer getEstimatedTotalSteps() {
+        return sum(extract(storyTestResultsList, on(StoryTestResults.class).getEstimatedTotalStepCount())).intValue();
+    }
+
+    public double getCoverage() {
+        if (getEstimatedTotalSteps() == 0) {
+            return 0.0;
+        }
+
+        int coveredStepCount = 0;
+        for(StoryTestResults story : storyTestResultsList) {
+            double storyCoverage = story.getCoverage();
+            coveredStepCount += (story.getCoverage() * story.getEstimatedTotalStepCount());
+        }
+        return ((double) coveredStepCount) / getEstimatedTotalSteps();
+    }
+
     public Integer getTotalStories() {
         return storyTestResultsList.size();
     }
@@ -72,5 +89,9 @@ public class FeatureResults {
             return 0;
         }
         return sum(storyTestResultsList, on(StoryTestResults.class).countStepsInSuccessfulTests());
+    }
+
+    public Double getPercentCoverage() {
+        return getCoverage() * 100;
     }
 }

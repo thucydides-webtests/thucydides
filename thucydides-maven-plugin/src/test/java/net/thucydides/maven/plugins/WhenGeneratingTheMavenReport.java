@@ -95,4 +95,15 @@ public class WhenGeneratingTheMavenReport {
         assertThat(htmlReport, containsString("<a href=\"thucydides/sell_widgets_online.html\">Sell widgets online</a>"));
     }
 
+    @Test
+    public void the_maven_report_should_contain_story_coverage() throws Exception {
+
+        plugin.executeReport(Locale.getDefault());
+        String htmlReport = writer.toString();
+
+        System.out.println(htmlReport);
+        assertThat(htmlReport, containsString("Step Coverage"));
+        assertThat(htmlReport, containsString("50.0%"));
+    }
+
 }

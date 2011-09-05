@@ -5,7 +5,9 @@ import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.reports.ThucydidesReportData;
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributes;
 
+import java.text.Format;
 import java.util.List;
 
 /**
@@ -47,6 +49,18 @@ public class ThucydidesHTMLReportGenerator {
         sink.link_();
         sink.sectionTitle2_();
 
+        sink.sectionTitle2();
+        sink.link("thucydides/features.html");
+        sink.rawText("Features");
+        sink.link_();
+        sink.sectionTitle2_();
+
+        sink.sectionTitle2();
+        sink.link("thucydides/stories.html");
+        sink.rawText("Stories");
+        sink.link_();
+        sink.sectionTitle2_();
+
         sink.section1_();
     }
 
@@ -61,6 +75,7 @@ public class ThucydidesHTMLReportGenerator {
         tableHeader(sink, "Passing stories");
         tableHeader(sink, "Pending stories");
         tableHeader(sink, "Failing stories");
+        tableHeader(sink, "Coverage");
         sink.tableRow_();
 
         List<FeatureResults> featureResults = reportData.getFeatureResults();
@@ -72,6 +87,10 @@ public class ThucydidesHTMLReportGenerator {
             tableCell(sink, featureResult.getPassingTests().toString());
             tableCell(sink, featureResult.getPendingTests().toString());
             tableCell(sink, featureResult.getFailingTests().toString());
+
+            String percentageCoverage = String.format("%.1f%%",featureResult.getCoverage() * 100);
+            tableCell(sink, percentageCoverage);
+
             sink.tableRow_();
         }
         sink.table_();
@@ -89,6 +108,7 @@ public class ThucydidesHTMLReportGenerator {
         tableHeader(sink, "Passing tests");
         tableHeader(sink, "Pending tests");
         tableHeader(sink, "Failing tests");
+        tableHeader(sink, "Step Coverage");
         sink.tableRow_();
 
         List<StoryTestResults> storyResults = reportData.getStoryResults();
@@ -100,6 +120,10 @@ public class ThucydidesHTMLReportGenerator {
             tableCell(sink, Integer.toString(storyResult.getSuccessCount()));
             tableCell(sink, Integer.toString(storyResult.getPendingCount()));
             tableCell(sink, Integer.toString(storyResult.getFailureCount()));
+
+
+            String percentageCoverage = String.format("%.1f%%",storyResult.getCoverage() * 100);
+            tableCell(sink, percentageCoverage);
             sink.tableRow_();
         }
         sink.table_();

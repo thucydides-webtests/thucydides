@@ -557,4 +557,26 @@ margin-left: 50px;
     font-weight: bold;
 }
 
+div.percentgraph {
+    background-color: #F00000;
+    height: 1.3em;
+    margin: 0;
+    padding: 0;
+    border: thin solid gray;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 80%;
+}
+
+div.percentgraph div.greenbar {
+    background-color: #00F000;
+    height: 1.3em;
+    margin: 0;
+    padding: 0;
+}
+
+.coveragevalue
+{
+	font-family:euphemia, verdana, sans-serif; font-size:12px; color:black;
+	margin-left: 30px;
 }

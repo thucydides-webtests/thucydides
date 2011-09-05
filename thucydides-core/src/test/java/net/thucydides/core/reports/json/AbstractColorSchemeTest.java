@@ -81,14 +81,14 @@ public class AbstractColorSchemeTest {
     protected TestOutcome mockTestOutcome(int stepCount, TestResult result) {
         TestOutcome outcome = mock(TestOutcome.class);
         when(outcome.getResult()).thenReturn(result);
-        when(outcome.getStepCount()).thenReturn(stepCount);
+        when(outcome.getNestedStepCount()).thenReturn(stepCount);
         return outcome;
     }
 
     protected TestOutcome mockTestOutcome(int stepCount, int successCount, TestResult result) {
         TestOutcome outcome = mock(TestOutcome.class);
         when(outcome.getResult()).thenReturn(result);
-        when(outcome.getStepCount()).thenReturn(stepCount);
+        when(outcome.getNestedStepCount()).thenReturn(stepCount);
         when(outcome.getSuccessCount()).thenReturn(successCount);
         return outcome;
     }

@@ -384,6 +384,10 @@ public class TestOutcome {
         return testSteps.size();
     }
 
+    public Integer getNestedStepCount() {
+        return getFlattenedTestSteps().size();
+    }
+
     public Integer getSuccessCount() {
         List<TestStep> allTestSteps = getLeafTestSteps();
         return select(allTestSteps, having(on(TestStep.class).isSuccessful())).size();

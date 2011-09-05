@@ -63,6 +63,12 @@ public enum ThucydidesSystemProperty {
     UNIQUE_BROWSER("thucydides.use.unique.browser"),
 
     /**
+     * The estimated number of steps in a pending scenario.
+     * This is used for stories where no scenarios have been defined.
+     */
+    ESTIMATED_AVERAGE_STEP_COUNT("thucydides.estimated.average.step.count"),
+
+    /**
      *  Base URL for the issue tracking system to be referred to in the reports.
      *  If defined, any issues quoted in the form #1234 will be linked to the relevent
      *  issue in the issue tracking system. Works with JIRA, Trac etc.
@@ -88,12 +94,17 @@ public enum ThucydidesSystemProperty {
         }
     }
 
-    public static boolean getBooleanValue(final ThucydidesSystemProperty property) {
-        return getBooleanValue(property, false);
-    }
-
     public static String getValue(final ThucydidesSystemProperty property, final String defaultValue) {
         return System.getProperty(property.getPropertyName(), defaultValue);
+    }
+
+    public static Integer getIntegerValue(final ThucydidesSystemProperty property, final Integer defaultValue) {
+        String value = System.getProperty(property.getPropertyName());
+        if (value != null) {
+            return Integer.valueOf(value);
+        } else {
+            return defaultValue;
+        }
     }
 
     public static String getValue(final ThucydidesSystemProperty property) {

@@ -151,7 +151,7 @@ public class JSONTreeNode {
             List<TestOutcome> outcomes = testResults.getTestOutcomes();
             for(TestOutcome outcome : outcomes) {
                 if (outcome.isFailure() || outcome.isSuccess()) {
-                    stepTally += outcome.getStepCount();
+                    stepTally += outcome.getNestedStepCount();
                 }
             }
 

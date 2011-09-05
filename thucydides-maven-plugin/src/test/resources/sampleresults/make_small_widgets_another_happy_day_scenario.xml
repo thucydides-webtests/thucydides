@@ -9,8 +9,8 @@
     <test-step result="SUCCESS">
       <description>Another step that succeeds</description>
     </test-step>
-    <test-step result="PENDING">
-      <description>Step that is pending</description>
+    <test-step result="SUCCESS">
+      <description>Step that worked</description>
     </test-step>
   </test-group>
   <test-step result="SUCCESS">

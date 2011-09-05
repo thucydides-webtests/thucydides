@@ -8,6 +8,7 @@ import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.successfulNestedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -237,7 +238,17 @@ public class WhenRecordingUserStoryTestResults {
 
         assertThat(testResults.getStepCount(), is(5));
     }
-    
+
+    @Test
+    public void a_story_should_know_the_total_number_of_nested_steps_it_contains() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults testResults = new StoryTestResults(story);
+
+        testResults.recordTestRun(thatSucceedsWithNestedStepsFor(userStory));
+
+        assertThat(testResults.getStepCount(), is(5));
+    }
+
     @Test
     public void a_story_should_know_the_total_number_of_steps_belonging_to_passing_tests_that_it_contains() {
         Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
@@ -265,6 +276,14 @@ public class WhenRecordingUserStoryTestResults {
         return testOutcome;
     }
     
+    private TestOutcome thatSucceedsWithNestedStepsFor(Story story) {
+        TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
+        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(successfulNestedTestStepCalled("Step 3"));
+        return testOutcome;
+    }
+
     private TestOutcome thatIsPendingFor(Story story) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         testOutcome.recordStep(successfulTestStepCalled("Step 1"));

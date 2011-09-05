@@ -421,7 +421,7 @@ public class WhenStoringTestResultsAsAJSONStructure {
             when(outcome.getTitle()).thenReturn("test_method" + result + "_" + count);
             when(outcome.getTitle()).thenReturn("Test " + result + " " + count);
             when(outcome.getResult()).thenReturn(result);
-            when(outcome.getStepCount()).thenReturn(3);
+            when(outcome.getNestedStepCount()).thenReturn(3);
             when(outcome.getReportName(ReportNamer.ReportType.HTML)).thenReturn("story-report.html");
             if (result == TestResult.FAILURE) {
                 when(outcome.isFailure()).thenReturn(true);

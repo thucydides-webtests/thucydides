@@ -15,6 +15,7 @@ import java.util.List;
 import ch.lambdaj.function.convert.Converter;
 
 import com.google.common.collect.ImmutableList;
+import net.thucydides.core.ThucydidesSystemProperty;
 
 /**
  * A collection of test results, corresponding to a the acceptance tests for a single user story.
@@ -30,7 +31,9 @@ public class StoryTestResults {
     private final String title;
     
     private final Story story;
-    
+
+    public final Integer DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT = 5;
+
     /**
      * Create a new acceptance test run instance.
      */
@@ -87,12 +90,24 @@ public class StoryTestResults {
     }
 
     /**
-     * How many test cases contain only successful or ignored tests.
+     * How many steps make up the successful tests?
      */
     public int countStepsInSuccessfulTests() {
         List<TestOutcome> successfulTests = select(testOutcomes, having(on(TestOutcome.class).isSuccess()));
         try {
-            return (successfulTests.isEmpty()) ? 0 : sum(successfulTests, on(TestOutcome.class).getStepCount());
+            return (successfulTests.isEmpty()) ? 0 : sum(successfulTests, on(TestOutcome.class).getNestedStepCount());
+        } catch(Exception e) {
+            return 0;
+        }
+    }
+
+    /**
+     * How steps make up the pending tests
+     */
+    public int countStepsInFailingTests() {
+        List<TestOutcome> pendingTests = select(testOutcomes, having(on(TestOutcome.class).isFailure()));
+        try {
+            return (pendingTests.isEmpty()) ? 0 : sum(pendingTests, on(TestOutcome.class).getNestedStepCount());
         } catch(Exception e) {
             return 0;
         }
@@ -111,7 +126,53 @@ public class StoryTestResults {
     }
 
     public int getStepCount() {
-        return (Integer) sum(extract(testOutcomes, on(TestOutcome.class).getTestSteps().size()));
+        return sum(extract(testOutcomes, on(TestOutcome.class).getNestedStepCount())).intValue();
+    }
+
+    public Double getCoverage() {
+        if (getEstimatedTotalStepCount() == 0) {
+            return 0.0;
+        }
+        return passingOrFailingSteps() / (double) getEstimatedTotalStepCount();
+    }
+
+    public int getEstimatedTotalStepCount() {
+        return (getStepCount() + estimatedUnimplementedStepCount());
+    }
+
+    private int estimatedUnimplementedStepCount() {
+        return (int) (getAverageTestSize() * totalUnimplementedTests());
+    }
+
+    private int passingOrFailingSteps() {
+        return countStepsInSuccessfulTests() + countStepsInFailingTests();
+    }
+
+    public double getAverageTestSize() {
+        if (totalImplementedTests() > 0) {
+            return ((double) getStepCount()) / totalImplementedTests();
+        } else {
+            return ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.ESTIMATED_AVERAGE_STEP_COUNT,
+                    DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT);
+        }
+    }
+
+    private int totalUnimplementedTests() {
+        return getTotal() - totalImplementedTests();
+    }
+
+    private int totalImplementedTests() {
+       int testCount = 0;
+       for(TestOutcome testOutcome : testOutcomes) {
+           if (!testOutcome.getTestSteps().isEmpty()) {
+               testCount++;
+           }
+       }
+       return testCount;
+    }
+
+    public Double getPercentCoverage() {
+        return getCoverage() * 100;
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestOutcome, TestResult> {

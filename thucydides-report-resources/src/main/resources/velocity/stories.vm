@@ -115,10 +115,11 @@
                     <table width="980" height="50" border="0">
                         <tr>
                             <td width="10">&nbsp;</td>
-                            <td width="600" class="greentext">Stories</td>
+                            <td width="500" class="greentext">Stories</td>
                             <td width="100" class="greentext">Test Cases</td>
                             <td width="100" class="greentext">Failed</td>
                             <td width="100" class="greentext">Pending</td>
+                            <td width="100" class="greentext">Coverage</td>
                         </tr>
                     </table>
                 </div>
@@ -141,7 +142,7 @@
                         <table border="0" height="40" width="980">
                             <tr>
                                 <td width="10">&nbsp;</td>
-                                <td width="600" class="bluetext">
+                                <td width="500" class="bluetext">
 
                                     <ul id="accordion">
                                         <li>
@@ -176,6 +177,13 @@
                                 <td width="100" class="bluetext">$story.total</td>
                                 <td width="100" class="redtext"><span class="lightgreentext">$story.failureCount</span></td>
                                 <td width="100" class="lightgreentext">$story.pendingCount</td>
+                                <td width="100" class="percentgraph">
+                                    <div class="percentgraph">
+                                        <div class="greenbar" style="width:${story.percentCoverage}px">
+                                            <span class="coveragevalue">${story.percentCoverage}%</span>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         </table>
                     </div>

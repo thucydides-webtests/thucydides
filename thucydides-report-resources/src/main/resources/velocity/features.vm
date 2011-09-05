@@ -115,11 +115,12 @@
                     <table width="980" height="50" border="0">
                         <tr>
                             <td width="10">&nbsp;</td>
-                            <td width="600" class="bluetext">Features</td>
+                            <td width="500" class="bluetext">Features</td>
                             <td width="100" class="greentext">Stories</td>
                             <td width="100" class="greentext">Total tests</td>
                             <td width="100" class="greentext">Failed tests</td>
                             <td width="100" class="greentext">Pending tests</td>
+                            <td width="100" class="greentext">Coverage</td>
                         </tr>
                     </table>
                 </div>
@@ -134,6 +135,13 @@
                             <td width="100" class="bluetext">$featureResult.totalTests</td>
                             <td width="100" class="redtext">$featureResult.failingTests</td>
                             <td width="100" class="lightgreentext">$featureResult.pendingTests</td>
+                            <td width="100" class="percentgraph">
+                                <div class="percentgraph">
+                                    <div class="greenbar" style="width:${featureResult.percentCoverage}px">
+                                        <span class="coveragevalue">${featureResult.percentCoverage}%</span>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                         #end
                     </table>
