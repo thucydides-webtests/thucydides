@@ -119,7 +119,7 @@
                             <td width="100" class="greentext">Test Cases</td>
                             <td width="100" class="greentext">Failed</td>
                             <td width="100" class="greentext">Pending</td>
-                            <td width="100" class="greentext">Coverage</td>
+                            <td width="130" class="greentext">Coverage</td>
                         </tr>
                     </table>
                 </div>
@@ -177,13 +177,22 @@
                                 <td width="100" class="bluetext">$story.total</td>
                                 <td width="100" class="redtext"><span class="lightgreentext">$story.failureCount</span></td>
                                 <td width="100" class="lightgreentext">$story.pendingCount</td>
-                                <td width="100" class="percentgraph">
-                                    <div class="percentgraph">
-                                        <div class="greenbar" style="width:${story.percentCoverage}px">
-                                            <span class="coveragevalue">${story.percentCoverage}%</span>
-                                        </div>
-                                    </div>
-                                </td>
+                                <td width="130" class="lightgreentext">
+                                    <table>
+                                        <tr>
+                                            <td width="30">${story.percentCoverage}%</td>
+                                            <td width="100">
+                                                <table class="percentgraph">
+                                                    <tr class="percentgraph">
+                                                        <td width="${story.percentPassingCoverage}px" class="greenbar" title="${story.percentPassingCoverage}% passed"></td>
+                                                        <td width="${story.percentFailingCoverage}px" class="redbar" title="${story.percentFailingCoverage}% failed"></td>
+                                                        <td width="${story.percentPendingCoverage}px" class="orangebar" title="${story.percentPendingCoverage}% pending"></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                 </td>
                             </tr>
                         </table>
                     </div>

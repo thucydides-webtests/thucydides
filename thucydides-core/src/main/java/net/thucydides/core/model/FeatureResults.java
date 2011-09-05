@@ -66,7 +66,6 @@ public class FeatureResults {
 
         int coveredStepCount = 0;
         for(StoryTestResults story : storyTestResultsList) {
-            double storyCoverage = story.getCoverage();
             coveredStepCount += (story.getCoverage() * story.getEstimatedTotalStepCount());
         }
         return ((double) coveredStepCount) / getEstimatedTotalSteps();
@@ -93,5 +92,41 @@ public class FeatureResults {
 
     public Double getPercentCoverage() {
         return getCoverage() * 100;
+    }
+
+    public Double getPercentPassingCoverage() {
+        if (getEstimatedTotalSteps() == 0) {
+            return 0.0;
+        }
+
+        int stepCount = 0;
+        for(StoryTestResults story : storyTestResultsList) {
+            stepCount += (story.getPercentPassingCoverage() * story.getEstimatedTotalStepCount());
+        }
+        return ((double) stepCount) / getEstimatedTotalSteps();
+    }
+
+    public Double getPercentFailingCoverage() {
+        if (getEstimatedTotalSteps() == 0) {
+            return 0.0;
+        }
+
+        int stepCount = 0;
+        for(StoryTestResults story : storyTestResultsList) {
+            stepCount += (story.getPercentFailingCoverage() * story.getEstimatedTotalStepCount());
+        }
+        return ((double) stepCount) / getEstimatedTotalSteps();
+    }
+
+    public Double getPercentPendingCoverage() {
+        if (getEstimatedTotalSteps() == 0) {
+            return 0.0;
+        }
+
+        int stepCount = 0;
+        for(StoryTestResults story : storyTestResultsList) {
+            stepCount += (story.getPercentPendingCoverage() * story.getEstimatedTotalStepCount());
+        }
+        return ((double) stepCount) / getEstimatedTotalSteps();
     }
 }

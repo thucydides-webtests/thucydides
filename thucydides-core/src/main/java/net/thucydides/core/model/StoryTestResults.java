@@ -136,6 +136,27 @@ public class StoryTestResults {
         return passingOrFailingSteps() / (double) getEstimatedTotalStepCount();
     }
 
+    public Double getPercentPassingCoverage() {
+        if (getEstimatedTotalStepCount() == 0) {
+            return 0.0;
+        }
+        return (countStepsInSuccessfulTests() / (double) getEstimatedTotalStepCount()) * 100;
+    }
+
+    public Double getPercentFailingCoverage() {
+        if (getEstimatedTotalStepCount() == 0) {
+            return 0.0;
+        }
+        return (countStepsInFailingTests() / (double) getEstimatedTotalStepCount()) * 100;
+    }
+
+    public Double getPercentPendingCoverage() {
+        if (getEstimatedTotalStepCount() == 0) {
+            return 0.0;
+        }
+        return ((getEstimatedTotalStepCount() - passingOrFailingSteps()) / (double) getEstimatedTotalStepCount()) * 100;
+    }
+
     public int getEstimatedTotalStepCount() {
         return (getStepCount() + estimatedUnimplementedStepCount());
     }

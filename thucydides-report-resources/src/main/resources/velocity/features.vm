@@ -120,7 +120,7 @@
                             <td width="100" class="greentext">Total tests</td>
                             <td width="100" class="greentext">Failed tests</td>
                             <td width="100" class="greentext">Pending tests</td>
-                            <td width="100" class="greentext">Coverage</td>
+                            <td width="130" class="greentext">Coverage</td>
                         </tr>
                     </table>
                 </div>
@@ -135,13 +135,22 @@
                             <td width="100" class="bluetext">$featureResult.totalTests</td>
                             <td width="100" class="redtext">$featureResult.failingTests</td>
                             <td width="100" class="lightgreentext">$featureResult.pendingTests</td>
-                            <td width="100" class="percentgraph">
-                                <div class="percentgraph">
-                                    <div class="greenbar" style="width:${featureResult.percentCoverage}px">
-                                        <span class="coveragevalue">${featureResult.percentCoverage}%</span>
-                                    </div>
-                                </div>
-                            </td>
+                            <td width="130" class="lightgreentext">
+                                <table>
+                                     <tr>
+                                         <td width="30">${featureResult.percentCoverage}%</td>
+                                         <td width="100">
+                                             <table class="percentgraph">
+                                                 <tr class="percentgraph">
+                                                     <td width="${featureResult.percentPassingCoverage}px" class="greenbar" title="${featureResult.percentPassingCoverage}% passed"></td>
+                                                     <td width="${featureResult.percentFailingCoverage}px" class="redbar" title="${featureResult.percentFailingCoverage}% failed"></td>
+                                                     <td width="${featureResult.percentPendingCoverage}px" class="orangebar" title="${featureResult.percentPendingCoverage}% pending"></td>
+                                                 </tr>
+                                             </table>
+                                         </td>
+                                     </tr>
+                                 </table>
+                             </td>
                         </tr>
                         #end
                     </table>
