@@ -5,6 +5,7 @@ import java.util.Set;
 
 import net.thucydides.core.steps.StepEventBus;
 
+import org.apache.http.client.HttpResponseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;

@@ -47,6 +47,22 @@ public class FeatureResults {
         return sum(extract(storyTestResultsList, on(StoryTestResults.class).getFailureCount())).intValue();
     }
 
+    public Integer getPassingSteps() {
+        return sum(extract(storyTestResultsList, on(StoryTestResults.class).countStepsInSuccessfulTests())).intValue();
+    }
+
+    public Integer getFailingSteps() {
+        return sum(extract(storyTestResultsList, on(StoryTestResults.class).countStepsInFailingTests())).intValue();
+    }
+
+    public Integer getSkippedSteps() {
+        return sum(extract(storyTestResultsList, on(StoryTestResults.class).countStepsInSkippedTests())).intValue();
+    }
+
+    public Integer getSkippedTests() {
+        return sum(extract(storyTestResultsList, on(StoryTestResults.class).getSkipCount())).intValue();
+    }
+
     public Integer getPendingTests() {
         return sum(extract(storyTestResultsList, on(StoryTestResults.class).getPendingCount())).intValue();
     }
@@ -56,7 +72,8 @@ public class FeatureResults {
     }
 
     public Integer getEstimatedTotalSteps() {
-        return sum(extract(storyTestResultsList, on(StoryTestResults.class).getEstimatedTotalStepCount())).intValue();
+        List<Integer> stepCounts = extract(storyTestResultsList, on(StoryTestResults.class).getEstimatedTotalStepCount());
+        return sum(stepCounts, on(Integer.class).intValue());
     }
 
     public double getCoverage() {

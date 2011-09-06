@@ -21,7 +21,7 @@ public class WhenUsingTheFluentElementAPIWithChrome extends AbstractWhenUsingThe
     public static void initDriver() {
         driver = new WebDriverFacade(ChromeDriver.class, new WebDriverFactory());
         page = new StaticSitePage(driver, 1);
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(2000);
         page.open();
     }
 

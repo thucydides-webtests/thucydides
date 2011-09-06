@@ -2,6 +2,7 @@ package net.thucydides.maven.plugins;
 
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -26,6 +27,10 @@ public class WhenGeneratingAnAggregateReport {
     @Mock
     HtmlAggregateStoryReporter reporter;
 
+    @Mock
+    MavenProject project;
+
+
     @Before
     public void setupPlugin() {
 
@@ -34,7 +39,19 @@ public class WhenGeneratingAnAggregateReport {
         plugin = new ThucydidesAggregatorMojo();
         plugin.setOutputDirectory(outputDirectory);
         plugin.setSourceDirectory(sourceDirectory);
+        plugin.setProject(project);
         plugin.setReporter(reporter);
+    }
+
+    @Test
+    public void the_reporter_uses_the_project_group_and_artifact_id_to_identify_reports() throws Exception {
+
+        plugin.setReporter(null);
+        plugin.getReporter();
+
+        verify(project).getArtifactId();
+        verify(project).getGroupId();
+
     }
 
     @Test

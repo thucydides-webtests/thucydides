@@ -14,20 +14,32 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An HTML report generates reports in a given directory and uses resources (images,...) from another.
- * @author johnsmart
  *
+ * @author johnsmart
  */
 public abstract class HtmlReporter {
 
     private static final String DEFAULT_RESOURCE_DIRECTORY = "report-resources";
     private String resourceDirectory = DEFAULT_RESOURCE_DIRECTORY;
     private File outputDirectory;
-    private final TemplateManager templateManager = new TemplateManager();
+    private TemplateManager templateManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlReporter.class);
 
     public HtmlReporter() {
         super();
+    }
+
+    private TemplateManager getTemplateManager() {
+
+        if (templateManager == null) {
+            try {
+                templateManager = new TemplateManager();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to initialize velocity template manager", e);
+            }
+        }
+        return templateManager;
     }
 
     /**
@@ -47,7 +59,7 @@ public abstract class HtmlReporter {
     public void setResourceDirectory(final String resourceDirectory) {
         this.resourceDirectory = resourceDirectory;
     }
-    
+
     public String getResourceDirectory() {
         return resourceDirectory;
     }
@@ -60,7 +72,7 @@ public abstract class HtmlReporter {
     }
 
     private void updateResourceDirectoryFromSystemPropertyIfDefined() {
-        String systemDefinedResourceDirectory 
+        String systemDefinedResourceDirectory
                 = System.getProperty(ThucydidesSystemProperty.REPORT_RESOURCE_PATH.getPropertyName());
         if (systemDefinedResourceDirectory != null) {
             setResourceDirectory(systemDefinedResourceDirectory);
@@ -70,7 +82,7 @@ public abstract class HtmlReporter {
     /**
      * Write the actual HTML report to a file with the specified name in the output directory.
      */
-    protected File writeReportToOutputDirectory(final String reportFilename, 
+    protected File writeReportToOutputDirectory(final String reportFilename,
                                                 final String htmlContents) throws IOException {
         File report = new File(getOutputDirectory(), reportFilename);
         FileUtils.writeStringToFile(report, htmlContents);
@@ -90,10 +102,14 @@ public abstract class HtmlReporter {
         }
 
         public String usingContext(final VelocityContext context) {
-            Template template = templateManager.getTemplateFrom(templateFile);
-            StringWriter sw = new StringWriter();
-            template.merge(context, sw);
-            return sw.toString();
+            try {
+                Template template = getTemplateManager().getTemplateFrom(templateFile);
+                StringWriter sw = new StringWriter();
+                template.merge(context, sw);
+                return sw.toString();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to merge velocity template", e);
+            }
         }
     }
 

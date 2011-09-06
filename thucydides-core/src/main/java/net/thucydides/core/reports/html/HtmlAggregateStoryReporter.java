@@ -15,6 +15,8 @@ import net.thucydides.core.model.features.FeatureLoader;
 import net.thucydides.core.model.userstories.UserStoryLoader;
 import net.thucydides.core.reports.ThucydidesReportData;
 import net.thucydides.core.reports.UserStoryTestReporter;
+import net.thucydides.core.reports.history.TestHistory;
+import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.reports.json.JSONProgressResultTree;
 import net.thucydides.core.reports.json.JSONResultTree;
 
@@ -33,6 +35,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlAggregateStoryReporter.class);
     private static final String STORIES_TEMPLATE_PATH = "velocity/stories.vm";
+    private static final String HISTORY_TEMPLATE_PATH = "velocity/history.vm";
     private static final String FEATURES_TEMPLATE_PATH = "velocity/features.vm";
     private static final String COVERAGE_DATA_TEMPLATE_PATH = "velocity/coverage.vm";
     private static final String PROGRESS_DATA_TEMPLATE_PATH = "velocity/progress.vm";
@@ -40,13 +43,26 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final String DASHBOARD_TEMPLATE_PATH = "velocity/dashboard.vm";
     private FeatureLoader featureLoader;
     private UserStoryLoader storyLoader;
+    private TestHistory testHistory;
 	private String issueTrackerUrl;
+    private String projectName;
 
-    public HtmlAggregateStoryReporter() {
+    public HtmlAggregateStoryReporter(final String projectName) {
         storyLoader = new UserStoryLoader();
         featureLoader = new FeatureLoader();
+        this.projectName = projectName;
     }
-    
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    protected TestHistory getTestHistory() {
+        if (testHistory == null) {
+            testHistory = new TestHistory(getProjectName());
+        }
+        return testHistory;
+    }
     /**
      * Generate aggregate XML reports for the test run reports in the output directory.
      * Returns the list of
@@ -105,6 +121,25 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateStoriesReport(storyResults);
         generateFeatureReport(featureResults);
         generateReportHomePage(storyResults, featureResults);
+        
+        updateHistoryFor(featureResults);
+        generateHistoryReport();
+    }
+
+    private void updateHistoryFor(final List<FeatureResults> featureResults) {
+        getTestHistory().updateData(featureResults);
+    }
+
+    private void generateHistoryReport()  throws IOException {
+        List<TestResultSnapshot> history = getTestHistory().getHistory();
+        VelocityContext context = new VelocityContext();
+        context.put("history", history);
+        context.put("rowcount", history.size());
+        addFormattersToContext(context);
+        String htmlContents = mergeTemplate(HISTORY_TEMPLATE_PATH).usingContext(context);
+        LOGGER.debug("Writing history page");
+        writeReportToOutputDirectory("history.html", htmlContents);
+
     }
 
     private void generateFeatureReport(final List<FeatureResults> featureResults) throws IOException {
@@ -200,5 +235,9 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         if (issueTrackerUrl != null) {
             ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, issueTrackerUrl);
         }
+    }
+
+    public void clearHistory() {
+        getTestHistory().clearHistory();
     }
 }

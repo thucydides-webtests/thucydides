@@ -28,23 +28,36 @@
     }
     </style>
 
-    <!-- CSS Files -->
-    <link type="text/css" href="jit/css/base.css" rel="stylesheet"/>
-    <link type="text/css" href="jit/css/Treemap.css" rel="stylesheet"/>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type='text/javascript'>
+        google.load('visualization', '1', {'packages':['annotatedtimeline']});
+        google.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'Date');
+            data.addColumn('number', 'Specified');
+            data.addColumn('number', 'Done');
+            data.addColumn('number', 'Skipped');
+            data.addColumn('number', 'Failing');
+            data.addRows($rowcount)
+            #set( $row = 0 )
+            #foreach($snapshot in $history)
+                   data.setValue($row, 0, new Date($snapshot.timeInMilliseconds));
+                   data.setValue($row, 1, $snapshot.specifiedSteps);
+                   data.setValue($row, 2, $snapshot.passingSteps);
+                   data.setValue($row, 3, $snapshot.skippedSteps);
+                   data.setValue($row, 4, $snapshot.failingSteps);
+                   #set( $row = $row + 1 )
+            #end
 
-    <!--[if IE]>
-    <script language="javascript" type="text/javascript" src="jit/Extras/excanvas.js"></script><![endif]-->
-
-    <!-- JIT Library File -->
-    <script language="javascript" type="text/javascript" src="jit/jit.js"></script>
-
-    <!-- Data File -->
-    <script language="javascript" type="text/javascript" src="progress.js"></script>
-
+            var chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));
+            chart.draw(data, {displayAnnotations: true, colors: ['blue','green','#FF9131','red']});
+        }
+    </script>
 
 </head>
 
-<body onload="init();">
+<body>
 <div id="topheader">
     <div id="topbanner">
         <div id="menu">
@@ -77,7 +90,7 @@
     <div id="contentbody">
         <div class="titlebar">
             <div class="leftbgm"></div>
-            <div class="middlebgm"><span class="orangetext">Overview - Progress</span></div>
+            <div class="middlebgm"><span class="orangetext">Overview - History</span></div>
             <div class="rightbgm"></div>
         </div>
     </div>
@@ -88,31 +101,25 @@
         <div class="middlb">
             <div class="table">
                 <div class="middlb">
+
                     <div class="table">
-                        <table border="0">
-                            <tr>
-                                <td>
-                                    <div id="graph">
-                                        <div class="legend-zone">
-                                            <div id="progress-gradient" class="legend">
-                                                <div class="legend-minimum">Planned</div>
-                                                <div class="legend-maximum">Done</div>
-                                            </div>
-                                        </div>
-                                        <div id="infovis" class="result-graph"></div>
-                                    </div>
-                                </td>
-                                <td class="graphlinks">
-                                    <div id="link_menu">
-                                        <ul>
-                                            <li><a href="index.html">Test Results</a></li>
-                                            <li><a href="#" class="selected">Progress</a></li>
-                                            <li><a href="history.html">History</a></li>
-                                          </ul>
-                                    </div>
-                                </td>
-                            <tr>
-                        </table>
+
+	 				 <table border="0">
+					  <tr>
+					     <td>
+                           <div id='chart_div' style='width: 700px; height: 400px;'></div>
+					     </td>
+					     <td class="graphlinks">
+							<div id="link_menu">
+							  <ul>
+							 	<li><a href="index.html">Test Results</a></li>
+                                <li><a href="dashboard.html">Progress</a></li>
+                                <li><a href="#" class="selected">History</a></li>
+							  </ul>
+						     </div>
+                       </td>
+					  <tr>
+					 </table>
                     </div>
                 </div>
             </div>

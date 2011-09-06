@@ -3,6 +3,7 @@ package net.thucydides.maven.plugins;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +16,13 @@ import java.io.IOException;
  * @phase verify
  */
 public class ThucydidesAggregatorMojo extends AbstractMojo {
+    /**
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
+
     /**
      * Aggregate reports are generated here
      * 
@@ -38,12 +46,15 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
      */
     private String issueTrackerUrl;
 
-    private HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter();
+    private HtmlAggregateStoryReporter reporter;
 
     protected void setOutputDirectory(final File outputDirectory) {
         this.outputDirectory = outputDirectory;
     }
 
+    protected void setProject(final MavenProject project) {
+        this.project = project;
+    }
 
     protected void setSourceDirectory(final File sourceDirectory) {
         this.sourceDirectory = sourceDirectory;
@@ -65,10 +76,18 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
         }
     }
 
+    protected HtmlAggregateStoryReporter getReporter() {
+        if (reporter == null) {
+            reporter = new HtmlAggregateStoryReporter(MavenProjectHelper.getProjectIdentifier(project));
+        }
+        return reporter;
+
+    }
+
     private void generateHtmlStoryReports() throws IOException {
-        reporter.setOutputDirectory(outputDirectory);
-        reporter.setIssueTrackerUrl(issueTrackerUrl);
-        reporter.generateReportsForStoriesFrom(sourceDirectory);
+        getReporter().setOutputDirectory(outputDirectory);
+        getReporter().setIssueTrackerUrl(issueTrackerUrl);
+        getReporter().generateReportsForStoriesFrom(sourceDirectory);
     }
 
 }

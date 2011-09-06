@@ -1,11 +1,14 @@
 package net.thucydides.core.reports.integration;
 
+import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +16,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 
 public class WhenGeneratingAnAggregateHtmlReport {
 
@@ -23,9 +27,13 @@ public class WhenGeneratingAnAggregateHtmlReport {
 
     private File outputDirectory;
 
+    @Mock
+    TestHistory testHistory;
+
     @Before
     public void setupTestReporter() {
-        reporter = new HtmlAggregateStoryReporter();
+        MockitoAnnotations.initMocks(this);
+        reporter = new HtmlAggregateStoryReporter("project");
         outputDirectory = temporaryDirectory.newFolder("target/site/thucydides");
         reporter.setOutputDirectory(outputDirectory);
         System.out.println("Writing reports to " + outputDirectory);
@@ -92,6 +100,20 @@ public class WhenGeneratingAnAggregateHtmlReport {
         assertThat(coverageData.exists(), is(true));
     }
 
+    @Test
+    public void should_be_able_to_clear_history() throws Exception {
+
+        reporter = new HtmlAggregateStoryReporter("project") {
+            @Override
+            protected TestHistory getTestHistory() {
+                return testHistory;
+            }
+        };
+
+
+        reporter.clearHistory();
+        verify(testHistory).clearHistory();
+    }
 
     private String getStringFrom(File reportFile) throws IOException {
         return FileUtils.readFileToString(reportFile);

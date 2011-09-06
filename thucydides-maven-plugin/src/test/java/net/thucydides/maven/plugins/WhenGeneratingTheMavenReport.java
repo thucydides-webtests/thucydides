@@ -4,6 +4,7 @@ import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.Mockito.when;
 
 import org.apache.maven.doxia.sink.XhtmlBaseSink;
 
@@ -33,6 +35,9 @@ public class WhenGeneratingTheMavenReport {
 
     StringWriter writer;
 
+    @Mock
+    MavenProject project;
+
     @Before
     public void setupPlugin() {
 
@@ -46,7 +51,11 @@ public class WhenGeneratingTheMavenReport {
             }
         };
 
+        when(project.getArtifactId()).thenReturn("test-project");
+        when(project.getGroupId()).thenReturn("test-project-group");
+
         plugin.sourceDirectory = new File((getClass().getClassLoader().getResource("sampleresults")).getPath());
+        plugin.project = project;
 
         outputDirectory = temporaryFolder.newFolder("out");
         plugin.outputDirectory = outputDirectory.getAbsolutePath();

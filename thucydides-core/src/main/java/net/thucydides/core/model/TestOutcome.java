@@ -11,7 +11,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
 
@@ -423,6 +425,11 @@ public class TestOutcome {
     public Boolean isPending() {
         return (getResult() == PENDING);
     }
+
+    public Boolean isSkipped() {
+        return (getResult() == SKIPPED) || (getResult() == IGNORED);
+    }
+
 
     public Story getUserStory() {
         return userStory;

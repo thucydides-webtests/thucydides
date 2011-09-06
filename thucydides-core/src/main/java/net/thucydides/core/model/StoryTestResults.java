@@ -82,6 +82,11 @@ public class StoryTestResults {
         return select(testOutcomes, having(on(TestOutcome.class).isFailure())).size();
     }
 
+
+    public Integer getSkipCount() {
+        return select(testOutcomes, having(on(TestOutcome.class).isSkipped())).size();
+    }
+
     /**
      * How many test cases contain only successful or ignored tests.
      */
@@ -101,13 +106,19 @@ public class StoryTestResults {
         }
     }
 
-    /**
-     * How steps make up the pending tests
-     */
     public int countStepsInFailingTests() {
-        List<TestOutcome> pendingTests = select(testOutcomes, having(on(TestOutcome.class).isFailure()));
+        List<TestOutcome> tests = select(testOutcomes, having(on(TestOutcome.class).isFailure()));
         try {
-            return (pendingTests.isEmpty()) ? 0 : sum(pendingTests, on(TestOutcome.class).getNestedStepCount());
+            return (tests.isEmpty()) ? 0 : sum(tests, on(TestOutcome.class).getNestedStepCount());
+        } catch(Exception e) {
+            return 0;
+        }
+    }
+
+    public int countStepsInSkippedTests() {
+        List<TestOutcome> tests = select(testOutcomes, having(on(TestOutcome.class).isSkipped()));
+        try {
+            return (tests.isEmpty()) ? 0 : sum(tests, on(TestOutcome.class).getNestedStepCount());
         } catch(Exception e) {
             return 0;
         }
@@ -157,12 +168,12 @@ public class StoryTestResults {
         return ((getEstimatedTotalStepCount() - passingOrFailingSteps()) / (double) getEstimatedTotalStepCount());
     }
 
-    public int getEstimatedTotalStepCount() {
+    public Integer getEstimatedTotalStepCount() {
         return (getStepCount() + estimatedUnimplementedStepCount());
     }
 
-    private int estimatedUnimplementedStepCount() {
-        return (int) (getAverageTestSize() * totalUnimplementedTests());
+    private Integer estimatedUnimplementedStepCount() {
+        return (int) (Math.round(getAverageTestSize() * totalUnimplementedTests()));
     }
 
     private int passingOrFailingSteps() {

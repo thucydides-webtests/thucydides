@@ -373,7 +373,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     @Test
     public void should_wait_for_field_to_appear() {
-        StaticSitePage page = new StaticSitePage(driver, 1000);
+        StaticSitePage page = new StaticSitePage(driver, 2000);
         page.open();
 
         assertThat(page.element(page.city).isCurrentlyVisible(), is(false));
@@ -384,7 +384,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     @Test
     public void should_succeed_if_waiting_for_an_existing_field_to_appear() {
-        StaticSitePage page = new StaticSitePage(driver, 1000);
+        StaticSitePage page = new StaticSitePage(driver, 2000);
         page.open();
 
         assertThat(page.element(page.country).isCurrentlyVisible(), is(true));
@@ -393,7 +393,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     @Test
     public void should_wait_for_field_to_be_enabled() throws InterruptedException {
-        StaticSitePage page = new StaticSitePage(driver, 1000);
+        StaticSitePage page = new StaticSitePage(driver, 2000);
         page.open();
 
         assertThat(page.element(page.buttonThatIsInitiallyDisabled).isCurrentlyEnabled(), is(false));
@@ -405,7 +405,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     @Test(expected = ElementNotVisibleException.class)
     public void should_fail_if_wait_for_field_to_be_enabled_never_happens() throws InterruptedException {
-        StaticSitePage page = new StaticSitePage(driver, 1000);
+        StaticSitePage page = new StaticSitePage(driver, 2000);
         page.setWaitForTimeout(100);
         page.open();
 
@@ -414,7 +414,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     @Test(expected = ElementNotVisibleException.class)
     public void should_fail_if_wait_for_field_to_be_disabled_never_happens() throws InterruptedException {
-        StaticSitePage page = new StaticSitePage(driver, 1000);
+        StaticSitePage page = new StaticSitePage(driver, 2000);
         page.setWaitForTimeout(100);
         page.open();
 
@@ -423,7 +423,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     @Test
     public void should_pass_immediately_if_wait_for_field_to_be_disabled_is_already_disabled() throws InterruptedException {
-        StaticSitePage page = new StaticSitePage(driver, 1000);
+        StaticSitePage page = new StaticSitePage(driver, 2000);
         page.setWaitForTimeout(100);
         page.open();
 
@@ -431,7 +431,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
     }
     @Test
     public void is_currently_enabled_should_be_false_for_an_inexistant_element() throws InterruptedException {
-        StaticSitePage page = new StaticSitePage(driver, 1000);
+        StaticSitePage page = new StaticSitePage(driver, 2000);
         page.setWaitForTimeout(100);
         page.open();
 
@@ -440,7 +440,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     @Test
     public void should_wait_for_field_to_be_disabled() throws InterruptedException {
-        StaticSitePage page = new StaticSitePage(driver, 1000);
+        StaticSitePage page = new StaticSitePage(driver, 2000);
         page.open();
 
         assertThat(page.element(page.buttonThatIsInitiallyEnabled).isCurrentlyEnabled(), is(true));

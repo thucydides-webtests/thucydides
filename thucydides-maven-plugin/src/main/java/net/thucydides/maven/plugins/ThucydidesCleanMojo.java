@@ -1,12 +1,7 @@
 package net.thucydides.maven.plugins;
 
-import net.thucydides.core.Thucydides;
-import net.thucydides.core.model.FeatureResults;
-import net.thucydides.core.model.ReportNamer;
-import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.reports.ThucydidesReportData;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
-import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -14,17 +9,13 @@ import org.apache.maven.reporting.MavenReportException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 
 /**
- * Thucydides Maven site integration
- * This plugin generates an aggregate Thucydides report and integrates it into the Maven-generated site.
- * @goal thucydides
- * @requiresReports true
- * @phase site
+ * This plugin deletes existing history files for Thucydides for this project.
+ * @goal clean
  */
-public class ThucydidesReportMojo extends AbstractMavenReport {
+public class ThucydidesCleanMojo extends AbstractMavenReport {
         /**
      * @parameter expression="${project}"
      * @required
@@ -33,29 +24,14 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
     protected MavenProject project;
 
     /**
-     * The output directory for the intermediate report.
-     *
-     * @parameter expression="${project.build.directory}"
-     * @required
-     */
-    private File targetDirectory;
-
-    /**
-     * Directory where reports will go.
+     * Directory where reports go.
+     * Not relevent for this plugin, but required by the API.
      *
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      * @readonly
      */
     protected String outputDirectory;
-
-    /**
-     * Thucydides test reports are read from here
-     *
-     * @parameter expression="${project.build.directory}/site/thucydides"
-     * @required
-     */
-    protected File sourceDirectory;
 
    /**
      * @component
@@ -107,11 +83,8 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
 
     @Override
     protected void executeReport(Locale locale) throws MavenReportException {
-        getLog().info("Generating Thucydides Reports");
-        ThucydidesReportData reportData = generateHtmlStoryReports();
-
-        getHtmlReportGenerator().generateReport(reportData, getSink());
-
+        getLog().info("Clearing Thucydides historical reports");
+        getReporter().clearHistory();
     }
 
     protected HtmlAggregateStoryReporter getReporter() {
@@ -122,17 +95,6 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
 
     }
 
-    private ThucydidesReportData generateHtmlStoryReports() throws MavenReportException {
-        File reportDirectory = new File(outputDirectory, "thucydides");
 
-        getLog().info("Generating reports from " + sourceDirectory);
-        getLog().info("Generating reports to " + reportDirectory);
-        getReporter().setOutputDirectory(reportDirectory);
-        try {
-            return getReporter().generateReportsForStoriesFrom(sourceDirectory);
-        } catch (IOException e) {
-            throw new MavenReportException("Error generating aggregate thucydides reports", e);
-        }
-    }
 
 }

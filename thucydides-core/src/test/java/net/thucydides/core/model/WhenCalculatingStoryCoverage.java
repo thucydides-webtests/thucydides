@@ -218,6 +218,18 @@ public class WhenCalculatingStoryCoverage {
         assertThat(featureResults.getCoverage(), is(0.5));
     }
 
+
+    @Test
+    public void a_story_with_no_tests_has_no_coverage() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults storyResults = new StoryTestResults(story);
+
+        assertThat(storyResults.countStepsInSuccessfulTests(), is(0));
+        assertThat(storyResults.getPercentPassingCoverage(), is(0.0));
+        assertThat(storyResults.getPercentFailingCoverage(), is(0.0));
+        assertThat(storyResults.getPercentPendingCoverage(), is(0.0));
+    }
+
     @Test
     public void a_feature_passing_coverage_can_be_formatted_directly_as_a_percentage() {
         Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
@@ -233,6 +245,20 @@ public class WhenCalculatingStoryCoverage {
         featureResults.recordStoryResults(storyResults);
 
         assertThat(featureResults.getPercentPassingCoverage(), is(0.1875));
+    }
+
+    @Test
+    public void a_feature_with_no_stories_has_no_coverage() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults storyResults = new StoryTestResults(story);
+
+        FeatureResults featureResults = new FeatureResults(ApplicationFeature.from(WidgetFeature.class));
+        featureResults.recordStoryResults(storyResults);
+
+        assertThat(featureResults.countStepsInSuccessfulTests(), is(0));
+        assertThat(featureResults.getPercentPassingCoverage(), is(0.0));
+        assertThat(featureResults.getPercentFailingCoverage(), is(0.0));
+        assertThat(featureResults.getPercentPendingCoverage(), is(0.0));
     }
 
     @Test

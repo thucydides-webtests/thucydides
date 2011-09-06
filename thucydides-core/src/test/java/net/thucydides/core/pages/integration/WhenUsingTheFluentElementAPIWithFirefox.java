@@ -5,6 +5,7 @@ import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTh
     public static void initDriver() {
         driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
         page = new StaticSitePage(driver, 1);
-        page.setWaitForTimeout(100);
+        page.setWaitForTimeout(2000);
         page.open();
     }
 
@@ -29,6 +30,7 @@ public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTh
     public static void closeBrowser() {
         driver.quit();
     }
+
     @Ignore("WebDriver doesn't like tabs at the moment")
     @Test
     public void should_optionally_type_tab_after_entering_text() {

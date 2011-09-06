@@ -107,7 +107,8 @@
 							<div id="link_menu">
 							  <ul>
 							 	<li><a href="#" class="selected">Test Results</a></li>
-								<li><a href="dashboard.html">Progress</a></li>
+                                  <li><a href="dashboard.html">Progress</a></li>
+                                  <li><a href="history.html">History</a></li>
 							  </ul>
 						     </div>
                        </td>
