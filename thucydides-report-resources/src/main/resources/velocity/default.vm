@@ -112,7 +112,7 @@
     <div class="topb"><img src="images/topm.jpg"/></div>
     <div class="middlb">
         <div class="table">
-            <div class="toptableraw">
+            <div class="toptablerow">
                 <table width="980" height="50" border="0">
                     <tr>
                         <td width="40">&nbsp;</td>
@@ -160,7 +160,7 @@
                 #end
                 #set($step_indent = $level * 20)
 
-                <div class="tableraw">
+                <div class="tablerow">
                     <table border="0" width="980" height="40">
                         <tr class="test-$step.result">
                             <td width="40"><img style="margin-left: ${step_indent}px; margin-right: 5px;"

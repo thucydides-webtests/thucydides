@@ -140,21 +140,21 @@ public class StoryTestResults {
         if (getEstimatedTotalStepCount() == 0) {
             return 0.0;
         }
-        return (countStepsInSuccessfulTests() / (double) getEstimatedTotalStepCount()) * 100;
+        return (countStepsInSuccessfulTests() / (double) getEstimatedTotalStepCount());
     }
 
     public Double getPercentFailingCoverage() {
         if (getEstimatedTotalStepCount() == 0) {
             return 0.0;
         }
-        return (countStepsInFailingTests() / (double) getEstimatedTotalStepCount()) * 100;
+        return (countStepsInFailingTests() / (double) getEstimatedTotalStepCount());
     }
 
     public Double getPercentPendingCoverage() {
         if (getEstimatedTotalStepCount() == 0) {
             return 0.0;
         }
-        return ((getEstimatedTotalStepCount() - passingOrFailingSteps()) / (double) getEstimatedTotalStepCount()) * 100;
+        return ((getEstimatedTotalStepCount() - passingOrFailingSteps()) / (double) getEstimatedTotalStepCount());
     }
 
     public int getEstimatedTotalStepCount() {
@@ -192,10 +192,6 @@ public class StoryTestResults {
        return testCount;
     }
 
-    public Double getPercentCoverage() {
-        return getCoverage() * 100;
-    }
-
     private static class ExtractTestResultsConverter implements Converter<TestOutcome, TestResult> {
         public TestResult convert(final TestOutcome step) {
             return step.getResult();
@@ -218,4 +214,11 @@ public class StoryTestResults {
     public boolean containsResultsFor(final Story aUserStory) {
         return getStory().equals(aUserStory);
     }
+
+    public CoverageFormatter getFormatted() {
+        return new CoverageFormatter(getPercentPassingCoverage(),
+                                     getPercentPendingCoverage(),
+                                     getPercentFailingCoverage());
+    }
+
 }

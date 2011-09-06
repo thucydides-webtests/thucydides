@@ -87,7 +87,7 @@ a:active {
   	  <div class="topb"><img src="images/topm.jpg" /></div>
   	  <div class="middlb">
 <div class="table">  	    
- <div class="toptableraw">
+ <div class="toptablerow">
   	      <table width="980" height="50" border="0">
   <tr>
     <td width="40">&nbsp;</td>
@@ -125,7 +125,7 @@ a:active {
         #else
             #set( $outcome_icon = "ignor.png" )
         #end
-        <div class="tableraw">
+        <div class="tablerow">
         <table border="0" width="980"  height="40" >
           <tr class="test-$current_group_result">
             <td width="40"><img src="images/$group_outcome_icon" width="25" height="25" /></td>
@@ -140,7 +140,7 @@ a:active {
         #set($step_class_root = "top-level")
     #end
 #end
-<div class="tableraw">
+<div class="tablerow">
 <table border="0" width="980"  height="40" >
   <tr class="test-$step.result">
     <td width="40"><img src="images/$step_outcome_icon" class="${step_class_root}-icon" /></td>

@@ -233,13 +233,13 @@ height:70px;
 {
 height:10px;
 }
-.tableraw
+.tablerow
 {
 background-image: url(../images/tablebg.jpg); background-position:bottom; background-repeat:repeat-x; background-color:#f5f6ee;
 width:980px; float:left; 
 }
 
-.toptableraw
+.toptablerow
 {
 background-image: url(../images/greenline.jpg); background-position:bottom; background-repeat:repeat-x;  background-color:#f5f6ee;
 width:980px; float:left; height:60px;

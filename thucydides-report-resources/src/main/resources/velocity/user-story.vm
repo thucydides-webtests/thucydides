@@ -43,7 +43,7 @@ a:active {
   <div class="middlecontent">
     <div id="contenttop"> 
       <div class="tall_leftbg"></div>
-        <div class="tall_middlebg"><div style="height:30px;"><span class="bluetext">Home</span> / <span class="lightgreentext"><a href="Features.html" class="lightgreentext">Features</a></span></div>
+        <div class="tall_middlebg"><div style="height:30px;"><span class="bluetext">Home</span> / <span class="lightgreentext"><a href="Features.html" class="lightgreentext">Features</a></span> / <span class="lightgreentext"><a href="Stories.html" class="lightgreentext">Stories</a></span></div>
       </div>
         <div class="tall_rightbg"></div>
     </div>
@@ -66,17 +66,17 @@ a:active {
     
     <div id="contentbody">
       <div class="titlebar">
-        <div class="leftbgm"></div>
-            <div class="middlebgm">
-                <table width="980">
-                    <tr>
-                        <td width="25px" valign="center" height="72px"><img class="story-outcome-icon" src="images/$outcome_icon" width="25px" height="25px" /></td>
-                        <td width="%"><span class="test-case-title"><span class="$outcome_text">$formatter.addLinks($story.Title)</span></span></td>
-                        <td width="75px"><span class="test-case-duration"><span class="greentext">$story.duration ms</span></span></td>
-                    </tr>
-                </table>
-            </div>
-        <div class="rightbgm"></div>
+        <div class="tall_leftbgm"></div>
+        <div class="tall_middlebgm">
+            <table width="980">
+                <tr>
+                    <td width="25px" valign="center" height="72px"><img class="story-outcome-icon" src="images/$outcome_icon" width="25px" height="25px" /></td>
+                    <td width="%"><span class="test-case-title"><span class="$outcome_text">$formatter.addLinks($story.Title)</span></span></td>
+                    <td width="75px"><span class="test-case-duration"><span class="greentext">$story.duration ms</span></span></td>
+                </tr>
+            </table>
+        </div>
+        <div class="tall_rightbgm"></div>
       </div>
      </div>
      <div class="clr"></div>
@@ -85,7 +85,7 @@ a:active {
       <div class="topb"><img src="images/topm.jpg" /></div>
       <div class="middlb">
 <div class="table">         
- <div class="toptableraw">
+ <div class="toptablerow">
           <table width="980" height="50" border="0">
   <tr>
     <td width="35">&nbsp;</td>
@@ -110,7 +110,7 @@ a:active {
     #else
         #set( $testrun_outcome_icon = "ignor.png" )
     #end
-    <div class="tableraw">
+    <div class="tablerow">
       <table border="0" height="40" width="980" >
       <tr class="test-$testOutcome.result">
         <td width="35"><img src="images/$testrun_outcome_icon" class="outcome-icon"/></td>

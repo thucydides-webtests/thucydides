@@ -89,20 +89,6 @@ public class WhenCalculatingStoryCoverage {
         assertThat(storyResults.getCoverage(), is(0.5));
     }
 
-
-    @Test
-    public void story_coverage_can_be_returned_as_a_percentage() {
-        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
-        StoryTestResults storyResults = new StoryTestResults(story);
-        storyResults.recordTestRun(thatSucceedsFor(story, 10));
-        storyResults.recordTestRun(thatIsIgnoredFor(story, 10));
-
-        assertThat(storyResults.getPercentCoverage(), is(50.0));
-        assertThat(storyResults.getPercentPassingCoverage(), is(50.0));
-        assertThat(storyResults.getPercentPendingCoverage(), is(50.0));
-        assertThat(storyResults.getPercentFailingCoverage(), is(0.0));
-    }
-
     @Test
     public void a_test_with_only_ignored_tests_should_have_no_test_coverage() {
         Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
@@ -135,9 +121,9 @@ public class WhenCalculatingStoryCoverage {
         storyResults.recordTestRun(thatIsPendingFor(story, 0));
 
         assertThat(storyResults.getCoverage(), is(0.5));
-        assertThat(storyResults.getPercentPassingCoverage(), is(30.0));
-        assertThat(storyResults.getPercentFailingCoverage(), is(20.0));
-        assertThat(storyResults.getPercentPendingCoverage(), is(50.0));
+        assertThat(storyResults.getPercentPassingCoverage(), is(0.3));
+        assertThat(storyResults.getPercentFailingCoverage(), is(0.2));
+        assertThat(storyResults.getPercentPendingCoverage(), is(0.5));
     }
 
     @Test
@@ -233,23 +219,6 @@ public class WhenCalculatingStoryCoverage {
     }
 
     @Test
-    public void a_feature_coverage_can_be_formatted_directly_as_a_percentage() {
-        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
-        StoryTestResults storyResults = new StoryTestResults(story);
-        storyResults.recordTestRun(thatSucceedsFor(story, 10));
-        storyResults.recordTestRun(thatSucceedsFor(story, 20));
-        storyResults.recordTestRun(thatSucceedsFor(story, 30));
-        storyResults.recordTestRun(thatIsPendingFor(story, 0));
-        storyResults.recordTestRun(thatIsPendingFor(story, 0));
-        storyResults.recordTestRun(thatIsPendingFor(story, 0));
-
-        FeatureResults featureResults = new FeatureResults(ApplicationFeature.from(WidgetFeature.class));
-        featureResults.recordStoryResults(storyResults);
-
-        assertThat(featureResults.getPercentCoverage(), is(50.0));
-    }
-
-    @Test
     public void a_feature_passing_coverage_can_be_formatted_directly_as_a_percentage() {
         Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
         StoryTestResults storyResults = new StoryTestResults(story);
@@ -263,7 +232,7 @@ public class WhenCalculatingStoryCoverage {
         FeatureResults featureResults = new FeatureResults(ApplicationFeature.from(WidgetFeature.class));
         featureResults.recordStoryResults(storyResults);
 
-        assertThat(featureResults.getPercentPassingCoverage(), is(18.75));
+        assertThat(featureResults.getPercentPassingCoverage(), is(0.1875));
     }
 
     @Test
@@ -280,7 +249,7 @@ public class WhenCalculatingStoryCoverage {
         FeatureResults featureResults = new FeatureResults(ApplicationFeature.from(WidgetFeature.class));
         featureResults.recordStoryResults(storyResults);
 
-        assertThat(featureResults.getPercentFailingCoverage(), is(31.25));
+        assertThat(featureResults.getPercentFailingCoverage(), is(0.3125));
     }
 
     @Test
@@ -297,7 +266,7 @@ public class WhenCalculatingStoryCoverage {
         FeatureResults featureResults = new FeatureResults(ApplicationFeature.from(WidgetFeature.class));
         featureResults.recordStoryResults(storyResults);
 
-        assertThat(featureResults.getPercentPendingCoverage(), is(50.0));
+        assertThat(featureResults.getPercentPendingCoverage(), is(0.5));
     }
     @Test
     public void a_feature_with_several_stories_has_the_average_coverage_across_all_the_stories() {
@@ -325,6 +294,35 @@ public class WhenCalculatingStoryCoverage {
         assertThat(featureResults.getCoverage(), is(0.25));
     }
 
+
+    @Test
+    public void a_feature_can_provide_formatted_coverage_results() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults storyResults = new StoryTestResults(story);
+        storyResults.recordTestRun(thatSucceedsFor(story, 10));
+        storyResults.recordTestRun(thatSucceedsFor(story, 20));
+        storyResults.recordTestRun(thatIsFailingFor(story, 30));
+        storyResults.recordTestRun(thatIsPendingFor(story, 0));
+        storyResults.recordTestRun(thatIsPendingFor(story, 0));
+        storyResults.recordTestRun(thatIsPendingFor(story, 0));
+
+        StoryTestResults storyResults2 = new StoryTestResults(story);
+        storyResults2.recordTestRun(thatIsFailingFor(story, 10));
+        storyResults2.recordTestRun(thatIsFailingFor(story, 20));
+        storyResults2.recordTestRun(thatIsFailingFor(story, 30));
+        storyResults2.recordTestRun(thatIsPendingFor(story, 0));
+        storyResults2.recordTestRun(thatIsPendingFor(story, 0));
+        storyResults2.recordTestRun(thatIsPendingFor(story, 0));
+
+        FeatureResults featureResults = new FeatureResults(ApplicationFeature.from(WidgetFeature.class));
+        featureResults.recordStoryResults(storyResults);
+        featureResults.recordStoryResults(storyResults2);
+
+        assertThat(featureResults.getFormatted().getPercentFailingCoverage(), is("37.5%"));
+        assertThat(featureResults.getFormatted().getPercentPassingCoverage(), is("12.5%"));
+        assertThat(featureResults.getFormatted().getPercentPendingCoverage(), is("50%"));
+    }
+
     @Test
     public void a_feature_with_several_pending_stories_has_no_coverage() {
         Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
@@ -349,6 +347,54 @@ public class WhenCalculatingStoryCoverage {
         featureResults.recordStoryResults(storyResults2);
 
         assertThat(featureResults.getCoverage(), is(0.0));
+    }
+
+    @Test
+    public void a_feature_can_determine_the_overall_result_of_its_stories_for_pending_stories() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults storyResults = new StoryTestResults(story);
+        storyResults.recordTestRun(thatIsPendingFor(story, 10));
+
+        StoryTestResults storyResults2 = new StoryTestResults(story);
+        storyResults2.recordTestRun(thatSucceedsFor(story, 10));
+
+        FeatureResults featureResults = new FeatureResults(ApplicationFeature.from(WidgetFeature.class));
+        featureResults.recordStoryResults(storyResults);
+        featureResults.recordStoryResults(storyResults2);
+
+        assertThat(featureResults.getResult(), is(TestResult.PENDING));
+    }
+
+    @Test
+    public void a_feature_can_determine_the_overall_result_of_its_stories_for_passing_stories() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults storyResults = new StoryTestResults(story);
+        storyResults.recordTestRun(thatSucceedsFor(story, 10));
+
+        StoryTestResults storyResults2 = new StoryTestResults(story);
+        storyResults2.recordTestRun(thatSucceedsFor(story, 10));
+
+        FeatureResults featureResults = new FeatureResults(ApplicationFeature.from(WidgetFeature.class));
+        featureResults.recordStoryResults(storyResults);
+        featureResults.recordStoryResults(storyResults2);
+
+        assertThat(featureResults.getResult(), is(TestResult.SUCCESS));
+    }
+
+    @Test
+    public void a_feature_can_determine_the_overall_result_of_its_stories_for_failing_stories() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults storyResults = new StoryTestResults(story);
+        storyResults.recordTestRun(thatSucceedsFor(story, 10));
+
+        StoryTestResults storyResults2 = new StoryTestResults(story);
+        storyResults2.recordTestRun(thatIsFailingFor(story, 10));
+
+        FeatureResults featureResults = new FeatureResults(ApplicationFeature.from(WidgetFeature.class));
+        featureResults.recordStoryResults(storyResults);
+        featureResults.recordStoryResults(storyResults2);
+
+        assertThat(featureResults.getResult(), is(TestResult.FAILURE));
     }
 
     @Test

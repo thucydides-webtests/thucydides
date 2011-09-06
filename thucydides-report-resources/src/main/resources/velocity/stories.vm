@@ -6,47 +6,6 @@
     <title>Stories</title>
     <script type="text/javascript" src="scripts/jquery.js"></script>
     <link rel="shortcut icon" href="favicon.ico" >
-    <style>
-        #accordion {
-            list-style: none;
-            padding: 0 0 0 0;
-            width: 600px;
-        }
-
-        #accordion div {
-            display: block;
-            margin: 1px;
-            cursor: pointer;
-            padding: 5 5 5 7px;
-            list-style: circle;
-            -moz-border-radius: 10px;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-        }
-
-        #accordion ul {
-            list-style: none;
-            padding: 0 0 0 0;
-        }
-
-        #accordion ul {
-            display: none;
-        }
-
-        #accordion ul li {
-            font-weight: normal;
-            cursor: auto;
-            padding: 7px 0 0 7px;
-        }
-
-        #accordion a {
-            text-decoration: none;
-        }
-
-        #accordion a:hover {
-            text-decoration: underline;
-        }
-    </style>
 
     <style type="text/css">
         <!--
@@ -111,15 +70,15 @@
         <div class="topb"><img src="images/topm.jpg"/></div>
         <div class="middlb">
             <div class="table">
-                <div class="toptableraw">
+                <div class="toptablerow">
                     <table width="980" height="50" border="0">
                         <tr>
                             <td width="10">&nbsp;</td>
                             <td width="500" class="greentext">Stories</td>
-                            <td width="100" class="greentext">Test Cases</td>
-                            <td width="100" class="greentext">Failed</td>
-                            <td width="100" class="greentext">Pending</td>
-                            <td width="130" class="greentext">Coverage</td>
+                            <td width="80" class="greentext">Tests</td>
+                            <td width="80" class="greentext">Failed</td>
+                            <td width="80" class="greentext">Pending</td>
+                            <td width="200" class="greentext">Coverage</td>
                         </tr>
                     </table>
                 </div>
@@ -138,7 +97,7 @@
                         #set( $story_outcome_icon = "ignor.png" )
                         #set( $story_outcome_text = "ignore-color" )
                     #end
-                    <div class="tableraw">
+                    <div class="tablerow">
                         <table border="0" height="40" width="980">
                             <tr>
                                 <td width="10">&nbsp;</td>
@@ -174,21 +133,29 @@
 
                                     </ul>
                                 </td>
-                                <td width="100" class="bluetext">$story.total</td>
-                                <td width="100" class="redtext"><span class="lightgreentext">$story.failureCount</span></td>
-                                <td width="100" class="lightgreentext">$story.pendingCount</td>
-                                <td width="130" class="lightgreentext">
+                                <td width="80" class="bluetext">$story.total</td>
+                                <td width="80" class="redtext"><span class="lightgreentext">$story.failureCount</span></td>
+                                <td width="80" class="lightgreentext">$story.pendingCount</td>
+                                <td width="200" class="lightgreentext">
+
+                                    #set( $redbar = (1 - $story.percentPendingCoverage) * 150 )
+                                    #set( $greenbar = $story.percentPassingCoverage * 150 )
+
+                                    #set( $passing = $story.formatted.percentPassingCoverage )
+                                    #set( $failing = $story.formatted.percentFailingCoverage )
+                                    #set( $pending = $story.formatted.percentPendingCoverage )
+
                                     <table>
                                         <tr>
-                                            <td width="30">${story.percentCoverage}%</td>
-                                            <td width="100">
-                                                <table class="percentgraph">
-                                                    <tr class="percentgraph">
-                                                        <td width="${story.percentPassingCoverage}px" class="greenbar" title="${story.percentPassingCoverage}% passed"></td>
-                                                        <td width="${story.percentFailingCoverage}px" class="redbar" title="${story.percentFailingCoverage}% failed"></td>
-                                                        <td width="${story.percentPendingCoverage}px" class="orangebar" title="${story.percentPendingCoverage}% pending"></td>
-                                                    </tr>
-                                                </table>
+                                            <td width="50px">${passing}</td>
+                                            <td width="150px">
+                                                <a href="${story.reportName}.html">
+                                                  <div class="percentagebar" title="$pending pending">
+                                                    <div class="failingbar" style="width: ${redbar}px;"  title="$failing failing">
+                                                        <div class="passingbar" style="width: ${greenbar}px;" title="$passing passing">
+                                                    </div>
+                                                  </div>
+                                                </a>
                                             </td>
                                         </tr>
                                     </table>

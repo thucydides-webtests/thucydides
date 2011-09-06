@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.model.FeatureResults;
+import net.thucydides.core.model.NumericalFormatter;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.UserStoriesResultSet;
 import net.thucydides.core.model.features.FeatureLoader;
@@ -57,7 +58,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         VelocityContext context = new VelocityContext();
         context.put("story", storyTestResults);
-        addFormatterToContext(context);
+        addFormattersToContext(context);
         String htmlContents = mergeTemplate(DEFAULT_USER_STORY_TEMPLATE).usingContext(context);
 
         copyResourcesToOutputDirectory();
@@ -66,9 +67,10 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         return writeReportToOutputDirectory(reportFilename, htmlContents);
     }
 
-    private void addFormatterToContext(VelocityContext context) {
+    private void addFormattersToContext(VelocityContext context) {
         Formatter formatter = new Formatter(ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL));
         context.put("formatter", formatter);
+        context.put("formatted", new NumericalFormatter());
     }
 
     public ThucydidesReportData generateReportsForStoriesFrom(final File sourceDirectory) throws IOException {
@@ -107,7 +109,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     private void generateFeatureReport(final List<FeatureResults> featureResults) throws IOException {
         VelocityContext context = new VelocityContext();
-        addFormatterToContext(context);
+        addFormattersToContext(context);
         context.put("features", featureResults);
         String htmlContents = mergeTemplate(FEATURES_TEMPLATE_PATH).usingContext(context);
         writeReportToOutputDirectory("features.html", htmlContents);
@@ -122,7 +124,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         context.put("stories", feature.getStoryResults());
         context.put("storyContext", feature.getFeature().getName() );
-        addFormatterToContext(context);
+        addFormattersToContext(context);
         LOGGER.debug("Generating stories page");
         String htmlContents = mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(context);
         LOGGER.debug("Writing stories page");
@@ -134,7 +136,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         VelocityContext context = new VelocityContext();
         context.put("stories", storyResults);
         context.put("storyContext", "All stories");
-        addFormatterToContext(context);
+        addFormattersToContext(context);
         String htmlContents = mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(context);
         LOGGER.debug("Writing stories page");
         writeReportToOutputDirectory("stories.html", htmlContents);
@@ -145,7 +147,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         VelocityContext context = new VelocityContext();
         context.put("stories", new UserStoriesResultSet(storyResults));
         context.put("features", featureResults);
-        addFormatterToContext(context);
+        addFormattersToContext(context);
 
         LOGGER.debug("Generating report pages");
         generateReportPage(context, HOME_TEMPLATE_PATH, "index.html");
@@ -172,7 +174,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         }
 
         context.put("coverageData", resultTree.toJSON());
-        addFormatterToContext(context);
+        addFormattersToContext(context);
 
         String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
         writeReportToOutputDirectory("coverage.js", javascriptCoverageData);
@@ -187,7 +189,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         }
 
         context.put("progressData", resultTree.toJSON());
-        addFormatterToContext(context);
+        addFormattersToContext(context);
 
         String javascriptCoverageData = mergeTemplate(PROGRESS_DATA_TEMPLATE_PATH).usingContext(context);
         writeReportToOutputDirectory("progress.js", javascriptCoverageData);

@@ -90,10 +90,6 @@ public class FeatureResults {
         return sum(storyTestResultsList, on(StoryTestResults.class).countStepsInSuccessfulTests());
     }
 
-    public Double getPercentCoverage() {
-        return getCoverage() * 100;
-    }
-
     public Double getPercentPassingCoverage() {
         if (getEstimatedTotalSteps() == 0) {
             return 0.0;
@@ -129,4 +125,20 @@ public class FeatureResults {
         }
         return ((double) stepCount) / getEstimatedTotalSteps();
     }
+
+    public CoverageFormatter getFormatted() {
+        return new CoverageFormatter(getPercentPassingCoverage(),
+                                     getPercentPendingCoverage(),
+                                     getPercentFailingCoverage());
+    }
+
+    public TestResult getResult() {
+        TestResultList testResults = new TestResultList(getCurrentTestResults());
+        return testResults.getOverallResult();
+    }
+
+    private List<TestResult> getCurrentTestResults() {
+        return extract(storyTestResultsList, on(StoryTestResults.class).getResult());
+    }
+
 }

@@ -35,16 +35,38 @@ public class WhenGroupingTestResultsByFeature {
 
     @Feature
     class WidgetFeature {
-         class PurchaseNewWidget{};
-         class SearchWidgets{};
-         class DisplayWidgets{};
+        class PurchaseNewWidget {
+        }
+
+        ;
+
+        class SearchWidgets {
+        }
+
+        ;
+
+        class DisplayWidgets {
+        }
+
+        ;
     }
 
     @Feature
     class GizmoFeature {
-         class PurchaseNewGizmo{};
-         class SearchGizmos{};
-         class DisplayGizmos{};
+        class PurchaseNewGizmo {
+        }
+
+        ;
+
+        class SearchGizmos {
+        }
+
+        ;
+
+        class DisplayGizmos {
+        }
+
+        ;
     }
 
     ApplicationFeature widgetFeature = ApplicationFeature.from(WidgetFeature.class);

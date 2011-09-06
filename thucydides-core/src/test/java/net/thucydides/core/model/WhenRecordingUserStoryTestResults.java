@@ -261,6 +261,42 @@ public class WhenRecordingUserStoryTestResults {
         assertThat(testResults.countStepsInSuccessfulTests(), is(4));
     }
 
+    @Test
+    public void a_story_should_be_able_to_formate_percentage_passing_coverage() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults testResults = new StoryTestResults(story);
+
+        testResults.recordTestRun(thatSucceedsFor(userStory));
+
+        assertThat(testResults.getFormatted().getPercentPassingCoverage(), is("100%"));
+        assertThat(testResults.getFormatted().getPercentFailingCoverage(), is("0%"));
+        assertThat(testResults.getFormatted().getPercentPendingCoverage(), is("0%"));
+    }
+
+    @Test
+    public void a_story_should_be_able_to_formate_percentage_failing_coverage() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults testResults = new StoryTestResults(story);
+
+        testResults.recordTestRun(thatFailsFor(userStory));
+
+        assertThat(testResults.getFormatted().getPercentPassingCoverage(), is("0%"));
+        assertThat(testResults.getFormatted().getPercentFailingCoverage(), is("100%"));
+        assertThat(testResults.getFormatted().getPercentPendingCoverage(), is("0%"));
+    }
+
+    @Test
+    public void a_story_should_be_able_to_formate_percentage_pending_coverage() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults testResults = new StoryTestResults(story);
+
+        testResults.recordTestRun(thatIsPendingFor(userStory));
+
+        assertThat(testResults.getFormatted().getPercentPassingCoverage(), is("0%"));
+        assertThat(testResults.getFormatted().getPercentFailingCoverage(), is("0%"));
+        assertThat(testResults.getFormatted().getPercentPendingCoverage(), is("100%"));
+    }
+
     private TestOutcome thatFailsFor(Story story) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         testOutcome.recordStep(successfulTestStepCalled("Step 1"));

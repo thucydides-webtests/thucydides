@@ -6,47 +6,6 @@
     <title>Stories</title>
     <link rel="shortcut icon" href="favicon.ico" >
     <script type="text/javascript" src="scripts/jquery.js"></script>
-    <style>
-        #accordion {
-            list-style: none;
-            padding: 0 0 0 0;
-            width: 600px;
-        }
-
-        #accordion div {
-            display: block;
-            margin: 1px;
-            cursor: pointer;
-            padding: 5 5 5 7px;
-            list-style: circle;
-            -moz-border-radius: 10px;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-        }
-
-        #accordion ul {
-            list-style: none;
-            padding: 0 0 0 0;
-        }
-
-        #accordion ul {
-            display: none;
-        }
-
-        #accordion ul li {
-            font-weight: normal;
-            cursor: auto;
-            padding: 7px 0 0 7px;
-        }
-
-        #accordion a {
-            text-decoration: none;
-        }
-
-        #accordion a:hover {
-            text-decoration: underline;
-        }
-    </style>
 
     <style type="text/css">
         <!--
@@ -111,45 +70,73 @@
         <div class="topb"><img src="images/topm.jpg"/></div>
         <div class="middlb">
             <div class="table">
-                <div class="toptableraw">
+                <div class="toptablerow">
                     <table width="980" height="50" border="0">
                         <tr>
                             <td width="10">&nbsp;</td>
                             <td width="500" class="bluetext">Features</td>
-                            <td width="100" class="greentext">Stories</td>
-                            <td width="100" class="greentext">Total tests</td>
-                            <td width="100" class="greentext">Failed tests</td>
-                            <td width="100" class="greentext">Pending tests</td>
-                            <td width="130" class="greentext">Coverage</td>
+                            <td width="60" class="greentext">Stories</td>
+                            <td width="60" class="greentext">Total tests</td>
+                            <td width="60" class="greentext">Failed tests</td>
+                            <td width="60" class="greentext">Pending tests</td>
+                            <td width="200" class="greentext">Coverage</td>
                         </tr>
                     </table>
                 </div>
 
-                <div class="tableraw">
+                <div class="tablerow">
                     <table border="0" height="40" width="980">
                         #foreach($featureResult in $features)
+                            #if ($featureResult.result == "FAILURE")
+                                     #set( $outcome_icon = "fail.png" )
+                                     #set( $outcome_text = "failing-color" )
+                                 #elseif ($featureResult.result == "SUCCESS")
+                                     #set( $outcome_icon = "success.png" )
+                                     #set( $outcome_text = "success-color" )
+                                 #elseif ($featureResult.result == "PENDING")
+                                     #set( $outcome_icon = "pending.png" )
+                                     #set( $outcome_text = "pending-color" )
+                                 #else
+                                     #set( $outcome_icon = "ignor.png" )
+                                     #set( $outcome_text = "ignore-color" )
+                                 #end
+
                         <tr>
                             <td width="10">&nbsp;</td>
-                            <td class="greentext"><a href="${featureResult.storyReportName}">${featureResult.feature.name}</a></td>
-                            <td width="100" class="bluetext">$featureResult.totalStories</td>
-                            <td width="100" class="bluetext">$featureResult.totalTests</td>
-                            <td width="100" class="redtext">$featureResult.failingTests</td>
-                            <td width="100" class="lightgreentext">$featureResult.pendingTests</td>
-                            <td width="130" class="lightgreentext">
-                                <table>
-                                     <tr>
-                                         <td width="30">${featureResult.percentCoverage}%</td>
-                                         <td width="100">
-                                             <table class="percentgraph">
-                                                 <tr class="percentgraph">
-                                                     <td width="${featureResult.percentPassingCoverage}px" class="greenbar" title="${featureResult.percentPassingCoverage}% passed"></td>
-                                                     <td width="${featureResult.percentFailingCoverage}px" class="redbar" title="${featureResult.percentFailingCoverage}% failed"></td>
-                                                     <td width="${featureResult.percentPendingCoverage}px" class="orangebar" title="${featureResult.percentPendingCoverage}% pending"></td>
-                                                 </tr>
-                                             </table>
-                                         </td>
-                                     </tr>
-                                 </table>
+                            <td class="bluetext" witdh=500>
+                                <div>
+                                  <img src="images/${outcome_icon}" class="summary-icon"/>
+                                  <span class="${featureResult.result}-text">
+                                    <a href="${featureResult.storyReportName}">${featureResult.feature.name}</a>
+                                  </span>
+                                </div>
+                            </td>
+                            <td width="60" class="bluetext">$featureResult.totalStories</td>
+                            <td width="60" class="bluetext">$featureResult.totalTests</td>
+                            <td width="60" class="redtext">$featureResult.failingTests</td>
+                            <td width="60" class="lightgreentext">$featureResult.pendingTests</td>
+                            <td width="200" class="lightgreentext">
+                                    #set( $redbar = (1 - $featureResult.percentPendingCoverage) * 150 )
+                                    #set( $greenbar = $featureResult.percentPassingCoverage * 150 )
+
+                                    #set( $passing = $featureResult.formatted.percentPassingCoverage )
+                                    #set( $failing = $featureResult.formatted.percentFailingCoverage )
+                                    #set( $pending = $featureResult.formatted.percentPendingCoverage )
+
+                                    <table>
+                                        <tr>
+                                            <td width="50px">${passing}</td>
+                                            <td width="150px">
+                                                <a href="${featureResult.storyReportName}">
+                                                  <div class="percentagebar" title="$pending pending">
+                                                    <div class="failingbar" style="width: ${redbar}px;"  title="$failing failing">
+                                                      <div class="passingbar" style="width: ${greenbar}px;" title="$passing passing">
+                                                    </div>
+                                                  </div>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
                              </td>
                         </tr>
                         #end

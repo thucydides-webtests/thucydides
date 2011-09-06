@@ -9,6 +9,7 @@ import java.util.List;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.images.ResizableImage;
+import net.thucydides.core.model.NumericalFormatter;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -16,6 +17,7 @@ import net.thucydides.core.reports.AcceptanceTestReporter;
 import org.apache.velocity.VelocityContext;
 
 import com.google.common.base.Preconditions;
+
 
 /**
  * Generates acceptance test results in XML form.
@@ -49,7 +51,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         VelocityContext context = new VelocityContext();
         addTestOutcomeToContext(testOutcome, context);
-        addFormatterToContext(context);
+        addFormattersToContext(context);
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_REPORT).usingContext(context);
 
         copyResourcesToOutputDirectory();
@@ -64,9 +66,11 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         context.put("testrun", testOutcome);
     }
 
-    private void addFormatterToContext(VelocityContext context) {
+    private void addFormattersToContext(VelocityContext context) {
         Formatter formatter = new Formatter(ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL));
         context.put("formatter", formatter);
+        context.put("formatted", new NumericalFormatter());
+
     }
 
     private void generateScreenshotReportsFor(final TestOutcome testOutcome) throws IOException {

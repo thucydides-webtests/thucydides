@@ -84,7 +84,7 @@ a:active {
       <div class="topb"><img src="images/topm.jpg" /></div>
       <div class="middlb">
 <div class="table">         
- <div class="toptableraw">
+ <div class="toptablerow">
           <table width="980" height="50" border="0">
   <tr>
     <td width="35">&nbsp;</td>
@@ -109,7 +109,7 @@ a:active {
     #else
         #set( $testrun_outcome_icon = "ignor.png" )
     #end
-    <div class="tableraw">
+    <div class="tablerow">
       <table border="0" height="40" width="980" >
       <tr class="test-$testOutcome.result">
         <td width="35"><img src="images/$testrun_outcome_icon" class="outcome-icon"/></td>

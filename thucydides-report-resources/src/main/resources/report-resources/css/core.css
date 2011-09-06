@@ -100,7 +100,7 @@ clear:both;
 .leftbgm
 {
 background-image:url(../images/small-middle-left.jpg);
-width:9px; height:39px;
+width:4px; height:39px;
 float:left;
 }
 
@@ -114,8 +114,9 @@ float:left; width:1008px;
 .rightbgm
 {
 background-image:url(../images/small-middle-right.png);
-width:7px; height:39px;
-float:left; 
+width:3px; height:39px;
+float:left;
+background-repeat: no-repeat;
 }  
 
 .tall_leftbgm
@@ -233,13 +234,13 @@ height:70px;
 {
 height:10px;
 }
-.tableraw
+.tablerow
 {
 background-image: url(../images/tablebg.jpg); background-position:bottom; background-repeat:repeat-x; background-color:#f5f6ee;
 width:980px; float:left; 
 }
 
-.toptableraw
+.toptablerow
 {
 background-image: url(../images/greenline.jpg); background-position:bottom; background-repeat:repeat-x;  background-color:#f5f6ee;
 width:980px; float:left; height:60px;
@@ -549,40 +550,53 @@ margin-left: 50px;
     float: right;
 }
 
-
-table.percentgraph {
-    border-collapse:collapse;
-    border: thin solid gray;
+.percentagebar {
+    background-color: orange; border: thin solid gray; height: 1.1em;
 }
 
-tr.percentgraph td {
-    height: 1.3em;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    text-align: center;
-    vertical-align: middle;
-    font-size: 80%;
+.failingbar {
+    background-color: red; height: 1.1em;
+}
+.passingbar {
+    background-color: #00F000; height: 1.1em;
 }
 
-td.greenbar {
-    background-color: #00F000;
-    height: 1.3em;
-    margin: 0;
-    padding: 0;
-    border: 0;
+#accordion {
+    list-style: none;
+    padding: 0 0 0 0;
+    width: 500px;
 }
-td.redbar {
-    background-color: #F00000;
-    height: 1.3em;
-    margin: 0;
-    padding: 0;
-    border: 0;
+
+#accordion div {
+    display: block;
+    margin: 1px;
+    cursor: pointer;
+    padding: 5 5 5 7px;
+    list-style: circle;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
 }
-td.orangebar {
-    background-color: #FFA000;
-    height: 1.3em;
-    margin: 0;
-    padding: 0;
-    border: 0;
+
+#accordion ul {
+    list-style: none;
+    padding: 0 0 0 0;
+}
+
+#accordion ul {
+    display: none;
+}
+
+#accordion ul li {
+    font-weight: normal;
+    cursor: auto;
+    padding: 7px 0 0 7px;
+}
+
+#accordion a {
+    text-decoration: none;
+}
+
+#accordion a:hover {
+    text-decoration: underline;
 }

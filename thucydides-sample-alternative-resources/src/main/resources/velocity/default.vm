@@ -87,7 +87,7 @@ a:active {
   	  <div class="topb"><img src="images/topm.jpg" /></div>
   	  <div class="middlb">
 <div class="table">  	    
- <div class="toptableraw">
+ <div class="toptablerow">
   	      <table width="980" height="50" border="0">
   <tr>
     <td width="35">&nbsp;</td>
@@ -110,7 +110,7 @@ a:active {
 		#set( $step_outcome_icon = "ignor.png" )
     #end
 
-<div class="tableraw">
+<div class="tablerow">
 <table border="0" width="980"  height="40" >
   <tr class="test-$step.result">
     <td width="35"><img src="images/$step_outcome_icon" width="25" height="25" /></td>
