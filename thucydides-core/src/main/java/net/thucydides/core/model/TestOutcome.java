@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.util.NameConverter;
 import ch.lambdaj.function.convert.Converter;
 
@@ -155,6 +157,14 @@ public class TestOutcome {
         } else {
             return storedTitle;
         }
+    }
+
+    public String getTitleWithLinks() {
+        return getFormatter().addLinks(getTitle());
+    }
+
+    private Formatter getFormatter() {
+        return new Formatter(ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL));
     }
 
     private String obtainTitleFromAnnotationOrMethodName() {

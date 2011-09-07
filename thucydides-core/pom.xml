@@ -47,11 +47,6 @@
             <version>1.3.1</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.5</version>
-        </dependency>
-        <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-report-resources</artifactId>
             <version>${project.version}</version>
@@ -93,6 +88,11 @@
             <artifactId>htmlunit</artifactId>
             <version>2.9</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.18</version>
         </dependency>
     </dependencies>
 </project>

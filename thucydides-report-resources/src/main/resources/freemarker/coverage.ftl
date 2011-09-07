@@ -1,5 +1,4 @@
-#set($dollar = '$')
-var labelType, useGradients, nativeTextSupport, animate;
+<#assign dollar = "$">var labelType, useGradients, nativeTextSupport, animate;
 
 (function() {
     var ua = navigator.userAgent,
@@ -29,7 +28,7 @@ var Log = {
 
 function init() {
     //init data
-    var json = ${progressData};
+    var json = ${coverageData};
     //end
     //init TreeMap
     var tm = new ${dollar}jit.TM.Squarified({
@@ -45,7 +44,7 @@ function init() {
                 height: 700,
                 levelsToShow: 2,
 
-                //cushion: useGradients,
+                cushion: useGradients,
                 //Attach left and right click events
                 Events: {
                     enable: true,
@@ -74,17 +73,7 @@ function init() {
                     //add content to the tooltip when a node
                     //is hovered
                     onShow: function(tip, node, isLeaf, domElement) {
-						var html = '';
-                        if ((node.data.progress) && (node.data.progress != undefined)) {
-                            html = "<div class=\"percentage-progress\">"
-                                       + node.data.progress
-                                       + "%</div>";
-						} else if (node.data.result == 'SUCCESS') {
-                            html = "<div class=\"percentage-progress\">DONE</div>";
-						} else {
-                            html = "<div class=\"percentage-progress\">" + node.data.result + "</div>";
-						}
-                        html += "<div class=\"tip-title\">" + node.name
+                        var html = "<div class=\"tip-title\">" + node.name
                                 + "</div><div class=\"tip-text\">";
                         var data = node.data;
                         if (data.stories) {
@@ -116,10 +105,6 @@ function init() {
 
   					if (node.id == 'root' ) {
 	                	style.color = '#ffffff';
-					} else if (node.data.type == 'test') {
-						if (node.data.result == 'SUCCESS') {
-							style.color = '#ffffff';
-						}
 					}
 					if (node.data.progress) {
 						if (node.data.progress > 50) {

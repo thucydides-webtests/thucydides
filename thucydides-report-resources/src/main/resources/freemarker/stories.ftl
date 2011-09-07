@@ -1,3 +1,4 @@
+<#assign hash = '#'>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -83,21 +84,7 @@
                     </table>
                 </div>
 
-                #foreach($story in $stories)
-                    #if ($story.result == "FAILURE")
-                        #set( $story_outcome_icon = "fail.png" )
-                        #set( $story_outcome_text = "failing-color" )
-                    #elseif ($story.result == "SUCCESS")
-                        #set( $story_outcome_icon = "success.png" )
-                        #set( $story_outcome_text = "success-color" )
-                    #elseif ($story.result == "PENDING")
-                        #set( $story_outcome_icon = "pending.png" )
-                        #set( $story_outcome_text = "pending-color" )
-                    #else
-                        #set( $story_outcome_icon = "ignor.png" )
-                        #set( $story_outcome_text = "ignore-color" )
-                    #end
-                    <div class="tablerow">
+                <#foreach story in stories>                    <#if story.result == "FAILURE"><#assign story_outcome_icon = "fail.png"><#assign story_outcome_text = "failing-color">                    <#elseif story.result == "SUCCESS"><#assign story_outcome_icon = "success.png"><#assign story_outcome_text = "success-color">                    <#elseif story.result == "PENDING"><#assign story_outcome_icon = "pending.png"><#assign story_outcome_text = "pending-color">                    <#else><#assign story_outcome_icon = "ignor.png"><#assign story_outcome_text = "ignore-color">                    </#if>                    <div class="tablerow">
                         <table border="0" height="40" width="980">
                             <tr>
                                 <td width="10">&nbsp;</td>
@@ -109,50 +96,33 @@
                                             <ul></ul>
                                         </li>
                                         <li>
-                                            <div><img src="images/${story_outcome_icon}" class="summary-icon"/><span class="${story.result}-text">$story.title</span></div>
+                                            <div><img src="images/${story_outcome_icon}" class="summary-icon"/><span class="${story.result}-text">${story.title}</span></div>
                                             <ul>
-                                                #foreach($testOutcome in $story.testOutcomes)
-                                                    #if ($testOutcome.result == "FAILURE")
-                                                        #set( $outcome_icon = "fail.png" )
-                                                        #set( $outcome_text = "failing-color" )
-                                                    #elseif ($testOutcome.result == "SUCCESS")
-                                                        #set( $outcome_icon = "success.png" )
-                                                        #set( $outcome_text = "success-color" )
-                                                    #elseif ($testOutcome.result == "PENDING")
-                                                        #set( $outcome_icon = "pending.png" )
-                                                        #set( $outcome_text = "pending-color" )
-                                                    #else
-                                                        #set( $outcome_icon = "ignor.png" )
-                                                        #set( $outcome_text = "ignore-color" )
-                                                    #end
-
-                                                    <li><img src="images/${outcome_icon}" class="summary-icon"/><a href="${testOutcome.reportName}.html" class="${testOutcome.result}-item-text">$formatter.addLinks($testOutcome.Title)</a></li>
-                                                #end
-                                            </ul>
+                                                <#foreach testOutcome in story.testOutcomes>                                                    <#if testOutcome.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">                                                    <#elseif testOutcome.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">                                                    <#elseif testOutcome.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">                                                    <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">                                                    </#if>
+                                                    <li><img src="images/${outcome_icon}" class="summary-icon"/><a href="${testOutcome.reportName}.html" class="${testOutcome.result}-item-text">${testOutcome.titleWithLinks}</a></li>
+                                                </#foreach>                                            </ul>
                                         </li>
 
                                     </ul>
                                 </td>
-                                <td width="80" class="bluetext">$story.total</td>
-                                <td width="80" class="redtext"><span class="lightgreentext">$story.failureCount</span></td>
-                                <td width="80" class="lightgreentext">$story.pendingCount</td>
+                                <td width="80" class="bluetext">${story.total}</td>
+                                <td width="80" class="redtext"><span class="lightgreentext">${story.failureCount}</span></td>
+                                <td width="80" class="lightgreentext">${story.pendingCount}</td>
                                 <td width="200" class="lightgreentext">
 
-                                    #set( $redbar = (1 - $story.percentPendingCoverage) * 150 )
-                                    #set( $greenbar = $story.percentPassingCoverage * 150 )
-
-                                    #set( $passing = $story.formatted.percentPassingCoverage )
-                                    #set( $failing = $story.formatted.percentFailingCoverage )
-                                    #set( $pending = $story.formatted.percentPendingCoverage )
-
+                                    <#assign redbar = (1-story.percentPendingCoverage)*150>
+                                    <#assign greenbar = story.percentPassingCoverage*150>
+                                    <#assign passing = story.formatted.percentPassingCoverage>
+                                    <#assign failing = story.formatted.percentFailingCoverage>
+                                    <#assign pending = story.formatted.percentPendingCoverage>
                                     <table>
                                         <tr>
                                             <td width="50px">${passing}</td>
                                             <td width="150px">
                                                 <a href="${story.reportName}.html">
-                                                  <div class="percentagebar" title="$pending pending">
-                                                    <div class="failingbar" style="width: ${redbar}px;"  title="$failing failing">
-                                                        <div class="passingbar" style="width: ${greenbar}px;" title="$passing passing">
+                                                  <div class="percentagebar" title="${pending} pending">
+                                                    <div class="failingbar" style="width: ${redbar}px;"  title="${failing} failing">
+                                                        <div class="passingbar" style="width: ${greenbar}px;" title="${passing} passing">
                                                     </div>
                                                   </div>
                                                 </a>
@@ -163,8 +133,7 @@
                             </tr>
                         </table>
                     </div>
-               #end
-            </div>
+               </#foreach>            </div>
         </div>
 
         <div class="bottomb"><img src="images/bottomm.jpg"/></div>
@@ -176,14 +145,14 @@
 </body>
 </html>
 <SCRIPT>
-    $("#accordion > li > div").click(function() {
+    $("${hash}accordion > li > div").click(function() {
 
         if (false == $(this).next().is(':visible')) {
-            $('#accordion ul').slideUp(300);
+            $('${hash}accordion ul').slideUp(300);
         }
         $(this).next().slideToggle(300);
     });
 
-    $('#accordion ul:eq(0)').show();
+    $('${hash}accordion ul:eq(0)').show();
 
 </SCRIPT>

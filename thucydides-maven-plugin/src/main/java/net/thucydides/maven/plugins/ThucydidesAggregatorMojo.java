@@ -12,7 +12,6 @@ import java.io.IOException;
  * Generate aggregate XML acceptance test reports.
  * 
  * @goal aggregate
- * @requiresReports true
  * @phase verify
  */
 public class ThucydidesAggregatorMojo extends AbstractMojo {

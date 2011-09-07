@@ -49,20 +49,7 @@ a:active {
     </div>
     <div class="clr"></div>
     
-    #if ($story.result == "FAILURE")
-        #set( $outcome_icon = "fail.png" )
-        #set( $outcome_text = "failing-color" )
-    #elseif ($story.result == "SUCCESS")
-        #set( $outcome_icon = "success.png" )
-        #set( $outcome_text = "success-color" )
-    #elseif ($story.result == "PENDING")
-        #set( $outcome_icon = "pending.png" )
-        #set( $outcome_text = "pending-color" )
-    #else
-        #set( $outcome_icon = "ignor.png" )
-        #set( $outcome_text = "ignore-color" )
-    #end
-
+    <#if story.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">    <#elseif story.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">    <#elseif story.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">    <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">    </#if>
     
     <div id="contentbody">
       <div class="titlebar">
@@ -70,9 +57,9 @@ a:active {
         <div class="tall_middlebgm">
             <table width="980">
                 <tr>
-                    <td width="25px" valign="center" height="72px"><img class="story-outcome-icon" src="images/$outcome_icon" width="25px" height="25px" /></td>
-                    <td width="%"><span class="test-case-title"><span class="$outcome_text">$formatter.addLinks($story.Title)</span></span></td>
-                    <td width="75px"><span class="test-case-duration"><span class="greentext">$story.duration ms</span></span></td>
+                    <td width="25px" valign="center" height="72px"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25px" height="25px" /></td>
+                    <td width="%"><span class="test-case-title"><span class="${outcome_text}">${story.titleWithLinks}</span></span></td>
+                    <td width="75px"><span class="test-case-duration"><span class="greentext">${story.duration} ms</span></span></td>
                 </tr>
             </table>
         </div>
@@ -100,32 +87,21 @@ a:active {
 </table>
 </div>
 
-#foreach($testOutcome in $story.testOutcomes)
-    #if ($testOutcome.result == "FAILURE")
-        #set( $testrun_outcome_icon = "fail.png" )
-    #elseif ($testOutcome.result == "SUCCESS")
-        #set( $testrun_outcome_icon = "success.png" )
-    #elseif ($testOutcome.result == "PENDING")
-        #set( $testrun_outcome_icon = "pending.png" )
-    #else
-        #set( $testrun_outcome_icon = "ignor.png" )
-    #end
-    <div class="tablerow">
+<#foreach testOutcome in story.testOutcomes>    <#if testOutcome.result == "FAILURE"><#assign testrun_outcome_icon = "fail.png">    <#elseif testOutcome.result == "SUCCESS"><#assign testrun_outcome_icon = "success.png">    <#elseif testOutcome.result == "PENDING"><#assign testrun_outcome_icon = "pending.png">    <#else><#assign testrun_outcome_icon = "ignor.png">    </#if>    <div class="tablerow">
       <table border="0" height="40" width="980" >
-      <tr class="test-$testOutcome.result">
-        <td width="35"><img src="images/$testrun_outcome_icon" class="outcome-icon"/></td>
-        <td width="%" class="bluetext"><a href="${testOutcome.reportName}.html">$formatter.addLinks($testOutcome.title)</a></td>
-        <td width="80" class="lightgreentext">$testOutcome.stepCount</td>
-        <td width="80" class="redtext">$testOutcome.failureCount</td>
-        <td width="80" class="bluetext">$testOutcome.pendingCount</td>
-        <td width="80" class="bluetext">$testOutcome.skippedCount</td>
-        <td width="80" class="bluetext">$testOutcome.ignoredCount</td>
-        <td width="95" class="lightgreentext">$testOutcome.duration ms</td>
+      <tr class="test-${testOutcome.result}">
+        <td width="35"><img src="images/${testrun_outcome_icon}" class="outcome-icon"/></td>
+        <td width="%" class="bluetext"><a href="${testOutcome.reportName}.html">${testOutcome.titleWithLinks}</a></td>
+        <td width="80" class="lightgreentext">${testOutcome.stepCount}</td>
+        <td width="80" class="redtext">${testOutcome.failureCount}</td>
+        <td width="80" class="bluetext">${testOutcome.pendingCount}</td>
+        <td width="80" class="bluetext">${testOutcome.skippedCount}</td>
+        <td width="80" class="bluetext">${testOutcome.ignoredCount}</td>
+        <td width="95" class="lightgreentext">${testOutcome.duration} ms</td>
       </tr>
       </table>
     </div>
-#end
-</div>
+</#foreach></div>
 
 
 </div>

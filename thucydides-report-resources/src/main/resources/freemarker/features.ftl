@@ -1,3 +1,4 @@
+<#assign hash = '#'>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -86,21 +87,7 @@
 
                 <div class="tablerow">
                     <table border="0" height="40" width="980">
-                        #foreach($featureResult in $features)
-                            #if ($featureResult.result == "FAILURE")
-                                     #set( $outcome_icon = "fail.png" )
-                                     #set( $outcome_text = "failing-color" )
-                                 #elseif ($featureResult.result == "SUCCESS")
-                                     #set( $outcome_icon = "success.png" )
-                                     #set( $outcome_text = "success-color" )
-                                 #elseif ($featureResult.result == "PENDING")
-                                     #set( $outcome_icon = "pending.png" )
-                                     #set( $outcome_text = "pending-color" )
-                                 #else
-                                     #set( $outcome_icon = "ignor.png" )
-                                     #set( $outcome_text = "ignore-color" )
-                                 #end
-
+                        <#foreach featureResult in features>                            <#if featureResult.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">                                 <#elseif featureResult.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">                                 <#elseif featureResult.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">                                 <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">                                 </#if>
                         <tr>
                             <td width="10">&nbsp;</td>
                             <td class="bluetext" witdh=500>
@@ -111,26 +98,24 @@
                                   </span>
                                 </div>
                             </td>
-                            <td width="60" class="bluetext">$featureResult.totalStories</td>
-                            <td width="60" class="bluetext">$featureResult.totalTests</td>
-                            <td width="60" class="redtext">$featureResult.failingTests</td>
-                            <td width="60" class="lightgreentext">$featureResult.pendingTests</td>
+                            <td width="60" class="bluetext">${featureResult.totalStories}</td>
+                            <td width="60" class="bluetext">${featureResult.totalTests}</td>
+                            <td width="60" class="redtext">${featureResult.failingTests}</td>
+                            <td width="60" class="lightgreentext">${featureResult.pendingTests}</td>
                             <td width="200" class="lightgreentext">
-                                    #set( $redbar = (1 - $featureResult.percentPendingCoverage) * 150 )
-                                    #set( $greenbar = $featureResult.percentPassingCoverage * 150 )
-
-                                    #set( $passing = $featureResult.formatted.percentPassingCoverage )
-                                    #set( $failing = $featureResult.formatted.percentFailingCoverage )
-                                    #set( $pending = $featureResult.formatted.percentPendingCoverage )
-
+                                    <#assign redbar = (1-featureResult.percentPendingCoverage)*150>
+                                    <#assign greenbar = featureResult.percentPassingCoverage*150>
+                                    <#assign passing = featureResult.formatted.percentPassingCoverage>
+                                    <#assign failing = featureResult.formatted.percentFailingCoverage>
+                                    <#assign pending = featureResult.formatted.percentPendingCoverage>
                                     <table>
                                         <tr>
                                             <td width="50px">${passing}</td>
                                             <td width="150px">
                                                 <a href="${featureResult.storyReportName}">
-                                                  <div class="percentagebar" title="$pending pending">
-                                                    <div class="failingbar" style="width: ${redbar}px;"  title="$failing failing">
-                                                      <div class="passingbar" style="width: ${greenbar}px;" title="$passing passing">
+                                                  <div class="percentagebar" title="${pending} pending">
+                                                    <div class="failingbar" style="width: ${redbar}px;"  title="${failing} failing">
+                                                      <div class="passingbar" style="width: ${greenbar}px;" title="${passing} passing">
                                                     </div>
                                                   </div>
                                                 </a>
@@ -139,8 +124,7 @@
                                     </table>
                              </td>
                         </tr>
-                        #end
-                    </table>
+                        </#foreach>                    </table>
                 </div>
             </div>
         </div>
@@ -154,14 +138,14 @@
 </body>
 </html>
 <SCRIPT>
-    $("#accordion > li > div").click(function() {
+    $("${hash}accordion > li > div").click(function() {
 
         if (false == $(this).next().is(':visible')) {
-            $('#accordion ul').slideUp(300);
+            $('${hash}accordion ul').slideUp(300);
         }
         $(this).next().slideToggle(300);
     });
 
-    $('#accordion ul:eq(0)').show();
+    $('${hash}accordion ul:eq(0)').show();
 
 </SCRIPT>

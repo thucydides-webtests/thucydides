@@ -39,19 +39,19 @@
             data.addColumn('number', 'Done');
             data.addColumn('number', 'Skipped');
             data.addColumn('number', 'Failing');
-            data.addRows($rowcount)
-            #set( $row = 0 )
-            #foreach($snapshot in $history)
-                   data.setValue($row, 0, new Date($snapshot.timeInMilliseconds));
-                   data.setValue($row, 1, $snapshot.specifiedSteps);
-                   data.setValue($row, 2, $snapshot.passingSteps);
-                   data.setValue($row, 3, $snapshot.skippedSteps);
-                   data.setValue($row, 4, $snapshot.failingSteps);
-                   #set( $row = $row + 1 )
-            #end
-
+            data.addRows(${rowcount})
+            <#assign row = 0>
+            <#foreach snapshot in history>
+                   data.setValue(${row}, 0, new Date(${snapshot.time.toString('yyyy')}, ${snapshot.time.toString('M')?number - 1}, ${snapshot.time.toString('d')},
+                                 ${snapshot.time.toString('H')}, ${snapshot.time.toString('m')}, ${snapshot.time.toString('s')}));
+                   data.setValue(${row}, 1, ${snapshot.specifiedSteps});
+                   data.setValue(${row}, 2, ${snapshot.passingSteps});
+                   data.setValue(${row}, 3, ${snapshot.skippedSteps});
+                   data.setValue(${row}, 4, ${snapshot.failingSteps});
+                   <#assign row = row + 1>
+            </#foreach>
             var chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));
-            chart.draw(data, {displayAnnotations: true, colors: ['blue','green','#FF9131','red']});
+            chart.draw(data, {displayAnnotations:false, thickness:2, fill:5, allowRedraw:true , colors: ['blue','green','#FF9131','red']});
         }
     </script>
 

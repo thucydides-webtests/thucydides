@@ -60,6 +60,16 @@ public class WhenGeneratingAnAggregateHtmlReport {
     }
 
     @Test
+    public void should_generate_an_aggregate_history_report() throws Exception {
+
+        File sourceDirectory = new File("src/test/resources/featured-user-story-reports");
+        reporter.generateReportsForStoriesFrom(sourceDirectory);
+
+        File featureReport = new File(outputDirectory,"history.html");
+        assertThat(featureReport.exists(), is(true));
+    }
+
+    @Test
     public void should_generate_a_story_report_for_each_feature() throws Exception {
 
         File sourceDirectory = new File("src/test/resources/featured-user-story-reports");

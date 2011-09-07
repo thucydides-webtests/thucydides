@@ -1,10 +1,10 @@
 package net.thucydides.core.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.velocity.util.StringUtils;
 
 /**
  * Utility class to convert test case and method names into human-readable form.
@@ -33,7 +33,7 @@ public final class NameConverter {
         } else {
             String noUnderscores = name.replaceAll("_", " ");
             String splitCamelCase = splitCamelCase(noUnderscores);
-            return StringUtils.capitalizeFirstLetter(splitCamelCase.toLowerCase(Locale.getDefault()));
+            return StringUtils.capitalize(splitCamelCase.toLowerCase(Locale.getDefault()));
         }
     }
 

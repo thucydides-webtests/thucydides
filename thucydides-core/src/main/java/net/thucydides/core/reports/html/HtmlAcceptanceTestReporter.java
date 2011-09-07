@@ -5,19 +5,16 @@ import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.images.ResizableImage;
-import net.thucydides.core.model.NumericalFormatter;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
-
-import org.apache.velocity.VelocityContext;
-
 import com.google.common.base.Preconditions;
-
 
 /**
  * Generates acceptance test results in XML form.
@@ -25,8 +22,8 @@ import com.google.common.base.Preconditions;
  */
 public class HtmlAcceptanceTestReporter extends HtmlReporter implements AcceptanceTestReporter {
 
-    private static final String DEFAULT_ACCEPTANCE_TEST_REPORT = "velocity/default.vm";
-    private static final String DEFAULT_ACCEPTANCE_TEST_SCREENSHOT = "velocity/screenshots.vm";
+    private static final String DEFAULT_ACCEPTANCE_TEST_REPORT = "freemarker/default.ftl";
+    private static final String DEFAULT_ACCEPTANCE_TEST_SCREENSHOT = "freemarker/screenshots.ftl";
 
     private String qualifier;
 
@@ -49,7 +46,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         Preconditions.checkNotNull(getOutputDirectory());
 
-        VelocityContext context = new VelocityContext();
+        Map<String,Object> context = new HashMap<String,Object>();
         addTestOutcomeToContext(testOutcome, context);
         addFormattersToContext(context);
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_REPORT).usingContext(context);
@@ -62,14 +59,13 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         return writeReportToOutputDirectory(reportFilename, htmlContents);
     }
 
-    private void addTestOutcomeToContext(TestOutcome testOutcome, VelocityContext context) {
-        context.put("testrun", testOutcome);
+    private void addTestOutcomeToContext(final TestOutcome testOutcome, final Map<String,Object> context) {
+        context.put("testOutcome", testOutcome);
     }
 
-    private void addFormattersToContext(VelocityContext context) {
+    private void addFormattersToContext(final Map<String,Object> context) {
         Formatter formatter = new Formatter(ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL));
         context.put("formatter", formatter);
-        context.put("formatted", new NumericalFormatter());
 
     }
 
@@ -81,7 +77,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         String screenshotReport = withoutType(testOutcome.getReportName() + "_screenshots") + ".html";
 
-        VelocityContext context = new VelocityContext();
+        Map<String,Object> context = new HashMap<String,Object>();
         context.put("screenshots", screenshots);
         context.put("testOutcome", testOutcome);
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_SCREENSHOT).usingContext(context);

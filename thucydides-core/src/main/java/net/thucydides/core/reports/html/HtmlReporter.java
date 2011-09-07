@@ -3,12 +3,14 @@ package net.thucydides.core.reports.html;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Map;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.reports.templates.ReportTemplate;
+import net.thucydides.core.reports.templates.TemplateManager;
 import org.apache.commons.io.FileUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,17 +30,10 @@ public abstract class HtmlReporter {
 
     public HtmlReporter() {
         super();
+        templateManager = Injectors.getInjector().getInstance(TemplateManager.class);
     }
 
     private TemplateManager getTemplateManager() {
-
-        if (templateManager == null) {
-            try {
-                templateManager = new TemplateManager();
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to initialize velocity template manager", e);
-            }
-        }
         return templateManager;
     }
 
@@ -101,14 +96,14 @@ public abstract class HtmlReporter {
             this.templateFile = templateFile;
         }
 
-        public String usingContext(final VelocityContext context) {
+        public String usingContext(final Map<String, Object> context) {
             try {
-                Template template = getTemplateManager().getTemplateFrom(templateFile);
+                ReportTemplate template = getTemplateManager().getTemplateFrom(templateFile);
                 StringWriter sw = new StringWriter();
                 template.merge(context, sw);
                 return sw.toString();
             } catch (Exception e) {
-                throw new RuntimeException("Failed to merge velocity template", e);
+                throw new RuntimeException("Failed to merge template", e);
             }
         }
     }

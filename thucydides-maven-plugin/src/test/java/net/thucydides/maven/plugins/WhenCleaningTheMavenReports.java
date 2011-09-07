@@ -44,7 +44,7 @@ public class WhenCleaningTheMavenReports {
                 return reporter;
             }
         };
-        plugin.executeReport(Locale.getDefault());
+        plugin.execute();
 
         verify(reporter).clearHistory();
     }

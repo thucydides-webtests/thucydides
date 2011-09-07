@@ -25,10 +25,6 @@ public class TestResultSnapshot {
         return time;
     }
 
-    public long getTimeInMilliseconds() {
-        return time.getMillis();
-    }
-
     public int getSpecifiedSteps() {
         return specifiedSteps;
     }

@@ -16,6 +16,7 @@ import ch.lambdaj.function.convert.Converter;
 
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.reports.html.Formatter;
 
 /**
  * A collection of test results, corresponding to a the acceptance tests for a single user story.
@@ -134,6 +135,14 @@ public class StoryTestResults {
 
     public String getTitle() {
         return capitalize(title);
+    }
+
+    public String getTitleWithLinks() {
+        return getFormatter().addLinks(getTitle());
+    }
+
+    private Formatter getFormatter() {
+        return new Formatter(ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL));
     }
 
     public int getStepCount() {

@@ -1,13 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.thucydides.maven.plugins.samples</groupId>
-    <artifactId>project-with-jira-integration</artifactId>
+    <artifactId>simple-project-with-site</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <name>Test Thucydides Reporter Mojo</name>
+
+    <properties>
+        <thucydides.version>@project.version@</thucydides.version>
+        <!--<thucydides.version>0.3.3-SNAPSHOT</thucydides.version>-->
+    </properties>
 
     <dependencies>
         <dependency>
@@ -19,15 +24,15 @@
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-junit</artifactId>
-            <version>@project.version@</version>
+            <version>${thucydides.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.slf4j</groupId>
-        	<artifactId>slf4j-simple</artifactId>
-        	<version>1.6.1</version>
-        	<type>pom</type>
-        	<scope>compile</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.1</version>
+            <type>pom</type>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -48,21 +53,14 @@
                 <version>2.7.1</version>
                 <configuration>
                     <includes>
-                        <include>**/Sample*.java</include>
-                        <include>**/*Test.java</include>
+                        <include>**/*TestScenario.java</include>
                     </includes>
-                    <systemPropertyVariables>
-                        <thucydides.issue.tracker.url>${jira.issues}</thucydides.issue.tracker.url>
-                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>net.thucydides.maven.plugins</groupId>
                 <artifactId>maven-thucydides-plugin</artifactId>
-                <version>@project.version@</version>
-                <configuration>
-                    <issueTrackerUrl>${jira.issues}</issueTrackerUrl>
-                </configuration>
+                <version>${thucydides.version}</version>
             </plugin>
         </plugins>
     </build>
@@ -110,9 +108,5 @@
                 </plugins>
             </build>
         </profile>
-    </profiles>    
-    
-    <properties>
-        <jira.issues>http://my.jira.server/browse/MYPROJECT-{0}</jira.issues>
-    </properties>
+    </profiles>
 </project>
