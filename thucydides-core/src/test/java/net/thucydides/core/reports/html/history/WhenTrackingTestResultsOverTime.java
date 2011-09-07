@@ -1,6 +1,8 @@
 package net.thucydides.core.reports.html.history;
 
+import com.sun.servicetag.SystemEnvironment;
 import net.thucydides.core.annotations.Feature;
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.StoryTestResults;
@@ -36,6 +38,9 @@ public class WhenTrackingTestResultsOverTime {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+    @Rule
+    public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
+
     @Before
     public void prepareTestHistory() {
         originalUserHomeDirectory = System.getProperty("user.home");
@@ -52,9 +57,27 @@ public class WhenTrackingTestResultsOverTime {
     }
 
     @Test
-    public void history_should_be_stored_in_the_dot_thucydides_directory_by_default() {
-        File expectedDataDirectory = new File(homeDirectory,".thucydides");
+    public void history_should_be_stored_in_a_project_directory_in_the_dot_thucydides_directory_by_default() {
+        File expectedDataDirectory = new File(new File(homeDirectory,".thucydides"),"project");
         assertThat(testHistory.getDirectory(), is(expectedDataDirectory));
+    }
+
+    @Test
+    public void the_base_history_directory_can_be_overridden_using_a_system_property() {
+
+        File customHistoryDir = temporaryFolder.newFolder("history");
+
+        System.setProperty("thucydides.history", customHistoryDir.getAbsolutePath());
+        testHistory = new TestHistory("project");
+
+        List<FeatureResults> results = getResults();
+        testHistory.updateData(results);
+        testHistory.updateData(results);
+
+        String[] historyFiles = new File(customHistoryDir,"project").list();
+
+        assertThat(historyFiles.length, is(2));
+
     }
 
     @Test

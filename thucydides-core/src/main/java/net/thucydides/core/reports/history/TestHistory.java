@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.history;
 
 import com.thoughtworks.xstream.XStream;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
 
@@ -25,8 +26,14 @@ public class TestHistory {
     private final String projectName;
 
     public TestHistory(final String projectName) {
-        dataDirectory = new File(homeDirectory(), ".thucydides");
+        dataDirectory = new File(getBaseDirectoryPath());
         this.projectName = projectName;
+    }
+
+
+    private String getBaseDirectoryPath() {
+        String defaultBaseDirectory = new File(homeDirectory(), ".thucydides").getAbsolutePath();
+        return ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.HISTORY_BASE_DIRECTORY, defaultBaseDirectory);
     }
 
     private String homeDirectory() {
@@ -92,10 +99,11 @@ public class TestHistory {
     }
 
     public File getDirectory() {
-        if (!dataDirectory.exists()) {
-            dataDirectory.mkdirs();
+        File projectDirectory = new File(dataDirectory, projectName);
+        if (!projectDirectory.exists()) {
+            projectDirectory.mkdirs();
         }
-        return dataDirectory;
+        return projectDirectory;
     }
 
     public List<TestResultSnapshot> getHistory() {
@@ -118,15 +126,11 @@ public class TestHistory {
     }
 
     private File[] getHistoryFiles() {
-        return getDirectory().listFiles(new FileFilter() {
-                public boolean accept(File file) {
-                    return file.getName().startsWith(historyPrefix());
-                }
-            });
+        return getDirectory().listFiles();
     }
 
     private String historyPrefix() {
-        return "thucydides-" + projectName;
+        return "thucydides-";
     }
 
     public void clearHistory() {

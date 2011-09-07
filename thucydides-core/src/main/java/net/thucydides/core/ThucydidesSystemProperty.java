@@ -73,7 +73,12 @@ public enum ThucydidesSystemProperty {
      *  If defined, any issues quoted in the form #1234 will be linked to the relevent
      *  issue in the issue tracking system. Works with JIRA, Trac etc.
      */
-    ISSUE_TRACKER_URL("thucydides.issue.tracker.url");
+    ISSUE_TRACKER_URL("thucydides.issue.tracker.url"),
+
+    /**
+     * Base directory in which history files are stored.
+     */
+    HISTORY_BASE_DIRECTORY("thucydides.history");
 
     private String propertyName;
 
