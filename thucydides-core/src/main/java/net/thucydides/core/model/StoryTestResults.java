@@ -1,5 +1,13 @@
 package net.thucydides.core.model;
 
+import ch.lambdaj.function.convert.Converter;
+import com.google.common.collect.ImmutableList;
+import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.reports.html.Formatter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.having;
@@ -8,15 +16,6 @@ import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sum;
 import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 import static org.apache.commons.lang.StringUtils.capitalize;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import ch.lambdaj.function.convert.Converter;
-
-import com.google.common.collect.ImmutableList;
-import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.reports.html.Formatter;
 
 /**
  * A collection of test results, corresponding to a the acceptance tests for a single user story.

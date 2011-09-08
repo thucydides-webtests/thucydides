@@ -1,12 +1,12 @@
 package net.thucydides.core.pages;
 
+import net.thucydides.core.annotations.At;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import net.thucydides.core.annotations.At;
 
 /**
  * Determines which URLs a given page object will work with.

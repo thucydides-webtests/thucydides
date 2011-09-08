@@ -1,6 +1,5 @@
 package net.thucydides.core.reports.history;
 
-import com.sun.servicetag.SystemEnvironment;
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.FeatureResults;
@@ -9,7 +8,6 @@ import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStepFactory;
 import net.thucydides.core.model.features.ApplicationFeature;
-import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.junit.After;
@@ -25,17 +23,12 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
 
 public class WhenTrackingTestResultsOverTime {
 

@@ -1,5 +1,17 @@
 package net.thucydides.core.model;
 
+import ch.lambdaj.function.convert.Converter;
+import com.google.common.collect.ImmutableList;
+import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.annotations.TestAnnotations;
+import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.reports.html.Formatter;
+import net.thucydides.core.util.NameConverter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.having;
@@ -16,19 +28,6 @@ import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
-import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.annotations.TestAnnotations;
-import net.thucydides.core.model.features.ApplicationFeature;
-import net.thucydides.core.reports.html.Formatter;
-import net.thucydides.core.util.NameConverter;
-import ch.lambdaj.function.convert.Converter;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Represents the results of a test (or "scenario") execution. This

@@ -1,12 +1,11 @@
 package net.thucydides.core.steps;
 
 
-import java.util.List;
-
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-
 import org.openqa.selenium.WebDriver;
+
+import java.util.List;
 
 /**
  * Represents a class interested in knowing about test execution flow and results.

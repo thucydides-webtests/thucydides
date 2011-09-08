@@ -4,7 +4,6 @@ import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.model.features.FeatureLoader;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;

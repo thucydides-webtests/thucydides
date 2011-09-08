@@ -1,13 +1,13 @@
 package net.thucydides.core.model.features;
 
+import net.thucydides.core.model.FeatureResults;
+import net.thucydides.core.model.StoryTestResults;
+import net.thucydides.core.model.userstories.UserStoryLoader;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.thucydides.core.model.FeatureResults;
-import net.thucydides.core.model.StoryTestResults;
-import net.thucydides.core.model.userstories.UserStoryLoader;
 
 /**
  * Load a set of test results organized into stories and features, and return them as a list of features.

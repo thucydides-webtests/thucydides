@@ -1,15 +1,14 @@
 package net.thucydides.core.model;
 
-import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.sum;
+import com.google.common.collect.ImmutableList;
+import net.thucydides.core.model.features.ApplicationFeature;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thucydides.core.model.features.ApplicationFeature;
-
-import com.google.common.collect.ImmutableList;
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sum;
 
 /**
  * A set of test results related to a given feature.

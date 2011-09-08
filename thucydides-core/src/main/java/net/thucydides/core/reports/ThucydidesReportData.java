@@ -1,10 +1,8 @@
 package net.thucydides.core.reports;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
-import org.apache.http.annotation.Immutable;
 
 import java.util.List;
 

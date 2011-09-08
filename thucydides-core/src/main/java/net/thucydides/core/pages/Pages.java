@@ -1,16 +1,15 @@
 package net.thucydides.core.pages;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import net.thucydides.core.webdriver.WebDriverFacade;
+import net.thucydides.core.webdriver.WebdriverProxyFactory;
+import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 
-import net.thucydides.core.webdriver.WebDriverFacade;
-import net.thucydides.core.webdriver.WebdriverProxyFactory;
-
-import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 /**
  * The Pages object keeps track of what web pages a test visits, and helps with mapping pages to Page Objects.

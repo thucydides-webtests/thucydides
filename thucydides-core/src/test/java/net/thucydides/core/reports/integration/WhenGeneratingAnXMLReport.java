@@ -6,7 +6,6 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
-import net.thucydides.core.steps.BaseStepListener;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;

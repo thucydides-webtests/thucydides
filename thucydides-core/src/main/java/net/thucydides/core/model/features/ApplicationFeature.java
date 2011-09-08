@@ -1,8 +1,7 @@
 package net.thucydides.core.model.features;
 
-import net.thucydides.core.util.NameConverter;
-
 import com.google.common.base.Preconditions;
+import net.thucydides.core.util.NameConverter;
 
 /**
  * A feature represents a higher-level functionality that is illustrated by several user stories.

@@ -1,11 +1,11 @@
 package net.thucydides.core.webelements;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 /**
  * A convenience class to help handle multiple select fields.

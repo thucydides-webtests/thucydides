@@ -1,16 +1,12 @@
 package net.thucydides.core.pages.integration;
 
 
-import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;

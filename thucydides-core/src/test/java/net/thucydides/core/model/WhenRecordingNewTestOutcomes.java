@@ -23,7 +23,6 @@ import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;

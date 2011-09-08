@@ -1,6 +1,11 @@
 package net.thucydides.core.reports.html;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
+import com.google.common.base.Preconditions;
+import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.images.ResizableImage;
+import net.thucydides.core.model.Screenshot;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.AcceptanceTestReporter;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,12 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.images.ResizableImage;
-import net.thucydides.core.model.Screenshot;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.reports.AcceptanceTestReporter;
-import com.google.common.base.Preconditions;
+import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 
 /**
  * Generates acceptance test results in XML form.

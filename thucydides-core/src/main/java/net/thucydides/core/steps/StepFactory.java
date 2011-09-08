@@ -1,12 +1,12 @@
 package net.thucydides.core.steps;
 
+import net.sf.cglib.proxy.Enhancer;
+import net.thucydides.core.pages.Pages;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.sf.cglib.proxy.Enhancer;
-import net.thucydides.core.pages.Pages;
 
 /**
  * Produces an instance of a set of requirement steps for use in the acceptance tests.

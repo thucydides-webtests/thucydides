@@ -1,9 +1,9 @@
 package net.thucydides.core.webdriver;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Centralize instantiation of WebDriver drivers.

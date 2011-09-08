@@ -1,12 +1,7 @@
 package net.thucydides.core.images;
 
-import net.thucydides.core.model.Screenshot;
 import org.junit.Test;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;

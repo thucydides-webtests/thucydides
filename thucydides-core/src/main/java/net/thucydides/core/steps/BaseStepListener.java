@@ -1,17 +1,7 @@
 package net.thucydides.core.steps;
 
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.IGNORED;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SKIPPED;
-import static net.thucydides.core.model.TestResult.SUCCESS;
-import static net.thucydides.core.util.NameConverter.underscore;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
@@ -25,13 +15,21 @@ import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
-
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.IGNORED;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SKIPPED;
+import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.util.NameConverter.underscore;
 
 /**
  * Observes the test run and stores test run details for later reporting.

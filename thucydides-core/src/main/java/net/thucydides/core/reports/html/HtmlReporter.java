@@ -1,18 +1,17 @@
 package net.thucydides.core.reports.html;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Map;
-
 import net.thucydides.core.ThucydidesSystemProperty;
-
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.reports.templates.ReportTemplate;
 import net.thucydides.core.reports.templates.TemplateManager;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Map;
 
 /**
  * An HTML report generates reports in a given directory and uses resources (images,...) from another.

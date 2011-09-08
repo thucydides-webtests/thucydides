@@ -1,7 +1,6 @@
 package net.thucydides.core.steps;
 
 
-import net.thucydides.core.model.Story;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class ConsoleStepListener extends BaseStepListener {

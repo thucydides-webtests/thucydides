@@ -1,5 +1,12 @@
 package net.thucydides.core.model;
 
+import com.google.inject.internal.ImmutableList;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.join;
 import static ch.lambdaj.Lambda.on;
@@ -8,16 +15,6 @@ import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.internal.ImmutableList;
 
 /**
  * An acceptance test run is made up of test steps.

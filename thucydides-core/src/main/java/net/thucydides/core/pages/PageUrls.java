@@ -1,10 +1,10 @@
 package net.thucydides.core.pages;
 
-import java.net.URL;
-
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
+
+import java.net.URL;
 
 /**
  * Manage the URLs associated with a page

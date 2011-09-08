@@ -1,12 +1,11 @@
 package net.thucydides.core.pages.components;
 
-import java.util.Set;
-
 import net.thucydides.core.webelements.MultipleSelect;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.

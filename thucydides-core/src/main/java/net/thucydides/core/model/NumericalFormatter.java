@@ -1,7 +1,5 @@
 package net.thucydides.core.model;
 
-import org.openqa.jetty.util.StringUtil;
-
 import java.text.DecimalFormat;
 
 public class NumericalFormatter {

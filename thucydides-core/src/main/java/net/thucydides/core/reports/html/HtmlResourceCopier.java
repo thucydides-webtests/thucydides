@@ -1,12 +1,12 @@
 package net.thucydides.core.reports.html;
 
+import net.thucydides.core.resources.FileResources;
+import net.thucydides.core.resources.ResourceList;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.regex.Pattern;
-
-import net.thucydides.core.resources.FileResources;
-import net.thucydides.core.resources.ResourceList;
 
 /**
  * Utility class that copies HTML resource files (images, stylesheets...) from a JAR to a target directory.

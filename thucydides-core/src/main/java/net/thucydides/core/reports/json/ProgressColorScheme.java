@@ -1,11 +1,11 @@
 package net.thucydides.core.reports.json;
 
-import java.awt.Color;
-
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
+
+import java.awt.*;
 
 
 /**

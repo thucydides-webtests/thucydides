@@ -1,13 +1,13 @@
 package net.thucydides.core.reports.integration;
 
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStep;
+
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
-
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
 
 public class TestStepFactory {
 

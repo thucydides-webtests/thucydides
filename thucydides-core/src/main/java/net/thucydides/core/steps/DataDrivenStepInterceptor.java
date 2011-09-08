@@ -1,10 +1,10 @@
 package net.thucydides.core.steps;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Invoke a step multiple times, each time initialized with a different set of test data.

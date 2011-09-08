@@ -1,10 +1,10 @@
 package net.thucydides.core.webdriver;
 
-import java.lang.reflect.Field;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
+
+import java.lang.reflect.Field;
 
 class DisplayedElementLocatorFactory extends AjaxElementLocatorFactory {
     private final WebDriver driver;

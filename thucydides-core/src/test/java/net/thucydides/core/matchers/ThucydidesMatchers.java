@@ -7,7 +7,6 @@ import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.features.ApplicationFeature;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
-import static ch.lambdaj.Lambda.*;
 
 import java.util.List;
 

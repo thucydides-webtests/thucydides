@@ -1,11 +1,9 @@
 package net.thucydides.core.matchers;
 
 import net.thucydides.core.model.Screenshot;
-import org.apache.commons.collections.ListUtils;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

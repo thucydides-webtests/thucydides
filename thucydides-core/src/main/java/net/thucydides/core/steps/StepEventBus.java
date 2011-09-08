@@ -1,7 +1,6 @@
 package net.thucydides.core.steps;
 
 import net.thucydides.core.model.Story;
-import org.omg.IOP.ComponentIdHelper;
 
 import java.util.ArrayList;
 import java.util.List;

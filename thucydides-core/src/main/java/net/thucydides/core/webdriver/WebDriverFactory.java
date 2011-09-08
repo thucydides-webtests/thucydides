@@ -1,9 +1,6 @@
 package net.thucydides.core.webdriver;
 
 import net.thucydides.core.ThucydidesSystemProperty;
-
-import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.util.EnvironmentVariables;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;

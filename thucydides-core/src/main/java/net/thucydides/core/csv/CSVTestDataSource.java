@@ -1,5 +1,11 @@
 package net.thucydides.core.csv;
 
+import au.com.bytecode.opencsv.CSVReader;
+import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.steps.StepFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -11,14 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import net.thucydides.core.steps.ScenarioSteps;
-import net.thucydides.core.steps.StepFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * Test data from a CSV file.

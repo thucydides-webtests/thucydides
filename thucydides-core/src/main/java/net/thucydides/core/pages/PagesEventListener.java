@@ -1,7 +1,6 @@
 package net.thucydides.core.pages;
 
 import net.thucydides.core.webdriver.ThucydidesWebDriverEventListener;
-
 import org.openqa.selenium.WebDriver;
 
 /**

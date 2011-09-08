@@ -1,20 +1,19 @@
 package net.thucydides.core.model.userstories;
 
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.StoryTestResults;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.xml.NotAThucydidesReportException;
+import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.StoryTestResults;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.reports.xml.NotAThucydidesReportException;
-import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Loads a list of user stories from a given directory.

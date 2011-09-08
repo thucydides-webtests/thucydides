@@ -1,9 +1,9 @@
 package net.thucydides.core.reports;
 
+import net.thucydides.core.model.StoryTestResults;
+
 import java.io.File;
 import java.io.IOException;
-
-import net.thucydides.core.model.StoryTestResults;
 
 /**
  * Generates an aggregate acceptance test report for each user story.

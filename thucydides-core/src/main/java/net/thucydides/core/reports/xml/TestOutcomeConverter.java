@@ -1,22 +1,20 @@
 package net.thucydides.core.reports.xml;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Set;
-
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
-import net.thucydides.core.model.features.ApplicationFeature;
-
 import com.google.common.base.Preconditions;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.features.ApplicationFeature;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
 
 /**
  * XStream converter used to generate the XML acceptance test report.

@@ -1,8 +1,8 @@
 package net.thucydides.core.reports.json;
 
+import flexjson.JSONSerializer;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.FeatureResults;
-import flexjson.JSONSerializer;
 
 public class JSONResultTree {
 

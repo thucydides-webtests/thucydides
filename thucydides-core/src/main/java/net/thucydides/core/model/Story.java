@@ -1,10 +1,11 @@
 package net.thucydides.core.model;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.EqualsUtils;
 import net.thucydides.core.util.NameConverter;
+
+import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 
 /**
  * Represents a given user story.

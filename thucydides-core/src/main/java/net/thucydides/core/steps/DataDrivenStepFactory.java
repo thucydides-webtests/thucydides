@@ -1,9 +1,9 @@
 package net.thucydides.core.steps;
 
-import java.util.List;
-
 import net.sf.cglib.proxy.Enhancer;
 import net.thucydides.core.pages.Pages;
+
+import java.util.List;
 
 /**
  * Create a proxy for scenario steps objects to be used for data-driven tests.

@@ -1,10 +1,9 @@
 package net.thucydides.core.steps;
 
-import java.lang.reflect.Method;
-
 import net.thucydides.core.annotations.Pending;
-
 import org.junit.Ignore;
+
+import java.lang.reflect.Method;
 
 /**
  * Determine the status of a method based on its annotations.

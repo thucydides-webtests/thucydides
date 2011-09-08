@@ -1,9 +1,9 @@
 package net.thucydides.core.annotations;
 
+import org.openqa.selenium.WebDriver;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-
-import org.openqa.selenium.WebDriver;
 
 /**
  * The WebDriver driver is stored as an annotated field in the test classes.

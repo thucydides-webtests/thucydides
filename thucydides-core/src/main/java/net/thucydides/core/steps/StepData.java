@@ -1,10 +1,10 @@
 package net.thucydides.core.steps;
 
-import java.io.IOException;
-import java.util.List;
-
 import net.thucydides.core.csv.CSVTestDataSource;
 import net.thucydides.core.csv.TestDataSource;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Data-driven test step execution.

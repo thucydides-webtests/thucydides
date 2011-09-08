@@ -1,13 +1,5 @@
 package net.thucydides.core.reports.html;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.NumericalFormatter;
@@ -21,9 +13,16 @@ import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.reports.json.JSONProgressResultTree;
 import net.thucydides.core.reports.json.JSONResultTree;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
 
 /**
  * Generates an aggregate acceptance test report in XML form. Reads all the

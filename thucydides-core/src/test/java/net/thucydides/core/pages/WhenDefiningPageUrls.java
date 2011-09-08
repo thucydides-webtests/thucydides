@@ -5,7 +5,6 @@ import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -14,12 +13,10 @@ import org.openqa.selenium.WebDriver;
 
 import java.net.URL;
 
+import static net.thucydides.core.pages.PageObject.withParameters;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-
-import static net.thucydides.core.pages.PageObject.withParameters;
 
 public class WhenDefiningPageUrls {
 

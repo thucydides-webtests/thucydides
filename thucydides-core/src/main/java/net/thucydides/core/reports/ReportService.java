@@ -1,14 +1,14 @@
 package net.thucydides.core.reports;
 
+import net.thucydides.core.model.TestOutcome;
+import sun.misc.Service;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import net.thucydides.core.model.TestOutcome;
-import sun.misc.Service;
 
 /**
  * Generates different Thucydides reports in a given output directory.

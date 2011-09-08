@@ -1,12 +1,10 @@
 package net.thucydides.core.webdriver;
 
+import org.openqa.selenium.WebDriver;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.openqa.selenium.WebDriver;
-
-import javax.sound.midi.VoiceStatus;
 
 /**
  * Provides a proxy for a WebDriver instance.

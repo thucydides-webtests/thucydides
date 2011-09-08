@@ -1,8 +1,8 @@
 package net.thucydides.core.steps;
 
-import java.util.List;
-
 import net.thucydides.core.pages.Pages;
+
+import java.util.List;
 
 /**
  * Utility class used to inject fields into a test case.

@@ -8,16 +8,12 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.mock;
-
 import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class WhenCalculatingStoryCoverage {
 

@@ -1,10 +1,9 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.ThucydidesSystemProperty;
+
 import java.io.File;
 import java.util.Locale;
-
-import net.thucydides.core.Thucydides;
-import net.thucydides.core.ThucydidesSystemProperty;
 
 /**
  * Centralized configuration of the test runner. You can configure the output

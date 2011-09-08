@@ -1,16 +1,16 @@
 package net.thucydides.core.pages;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import net.thucydides.core.annotations.At;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class WhenMatchingUrlsToPages {
 

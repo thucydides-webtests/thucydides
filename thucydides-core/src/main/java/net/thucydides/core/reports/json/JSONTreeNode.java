@@ -1,17 +1,17 @@
 package net.thucydides.core.reports.json;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
-import static net.thucydides.core.reports.json.RelativeSizeColorScheme.rgbFormatOf;
+import net.thucydides.core.model.FeatureResults;
+import net.thucydides.core.model.StoryTestResults;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.thucydides.core.model.FeatureResults;
-import net.thucydides.core.model.StoryTestResults;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
+import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
+import static net.thucydides.core.reports.json.RelativeSizeColorScheme.rgbFormatOf;
 
 /**
  * Used to store data in JSON form to be displayed on the report dashboard.

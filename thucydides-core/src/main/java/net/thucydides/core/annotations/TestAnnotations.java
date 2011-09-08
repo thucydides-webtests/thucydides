@@ -1,10 +1,10 @@
 package net.thucydides.core.annotations;
 
-import static net.thucydides.core.util.NameConverter.withNoArguments;
+import org.junit.Ignore;
 
 import java.lang.reflect.Method;
 
-import org.junit.Ignore;
+import static net.thucydides.core.util.NameConverter.withNoArguments;
 
 /**
  * Utility class used to help process annotations on tests and test steps.

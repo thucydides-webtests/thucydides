@@ -1,7 +1,6 @@
 package net.thucydides.core.pages;
 
 import net.thucydides.core.annotations.At;
-
 import org.openqa.selenium.WebDriver;
 
 @At("http://www.apache.org")

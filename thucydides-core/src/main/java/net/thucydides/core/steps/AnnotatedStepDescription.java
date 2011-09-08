@@ -1,20 +1,18 @@
 package net.thucydides.core.steps;
 
-import static net.thucydides.core.util.NameConverter.humanize;
+import net.thucydides.core.annotations.Step;
+import net.thucydides.core.annotations.StepGroup;
+import net.thucydides.core.annotations.TestsRequirement;
+import net.thucydides.core.annotations.TestsRequirements;
+import net.thucydides.core.annotations.Title;
+import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.annotations.TestsRequirement;
-import net.thucydides.core.annotations.TestsRequirements;
-import net.thucydides.core.annotations.Title;
-import net.thucydides.core.annotations.UserStoryCode;
-
-import org.apache.commons.lang.StringUtils;
+import static net.thucydides.core.util.NameConverter.humanize;
 
 /**
  *  Test steps and step groups can be described by various annotations.

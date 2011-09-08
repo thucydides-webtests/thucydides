@@ -1,7 +1,5 @@
 package net.thucydides.core.util;
 
-import java.util.Map;
-
 /**
  * Return system environment variable values.
  */

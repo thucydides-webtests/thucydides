@@ -1,12 +1,11 @@
 package net.thucydides.core.steps;
 
-import java.io.Serializable;
-
 import net.thucydides.core.pages.Pages;
-
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
 
 /**
  * A set of reusable steps for use in an acceptance test suite.
