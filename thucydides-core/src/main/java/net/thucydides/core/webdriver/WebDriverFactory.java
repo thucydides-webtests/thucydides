@@ -2,11 +2,15 @@ package net.thucydides.core.webdriver;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.util.EnvironmentVariables;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
+
+import java.io.File;
 
 /**
  * Provides an instance of a supported WebDriver.
@@ -19,7 +23,6 @@ import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 public class WebDriverFactory {
 
     private final WebdriverInstanceFactory webdriverInstanceFactory;
-
 
     public WebDriverFactory() {
         this.webdriverInstanceFactory = new WebdriverInstanceFactory();
@@ -64,8 +67,19 @@ public class WebDriverFactory {
         return new FirefoxProfile();
     }
 
+    protected FirefoxProfile useExistingFirefoxProfile(final File profileDirectory) {
+        return new FirefoxProfile(profileDirectory);
+    }
+
     private FirefoxProfile buildFirefoxProfile() {
-        FirefoxProfile profile = createNewFirefoxProfile();
+
+        String profileDirectory = System.getProperty("webdriver.firefox.profile");
+        FirefoxProfile profile;
+        if (profileDirectory == null) {
+            profile = createNewFirefoxProfile();
+        } else {
+            profile = useExistingFirefoxProfile(new File(profileDirectory));
+        }
         if (dontAssumeUntrustedCertificateIssuer()) {
             profile.setAssumeUntrustedCertificateIssuer(false);
         }
