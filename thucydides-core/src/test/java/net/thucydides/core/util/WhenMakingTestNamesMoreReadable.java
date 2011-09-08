@@ -1,16 +1,10 @@
-package net.thucydides.core.utils;
+package net.thucydides.core.util;
 
-import net.thucydides.core.util.NameConverter;
-
-import org.junit.Before;
 import org.junit.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class WhenMakingTestNamesMoreReadable {

@@ -1,4 +1,4 @@
-package net.thucydides.core.reports.html.history;
+package net.thucydides.core.reports.history;
 
 import com.sun.servicetag.SystemEnvironment;
 import net.thucydides.core.annotations.Feature;
@@ -7,13 +7,19 @@ import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestStepFactory;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.history.TestHistory;
+import net.thucydides.core.reports.html.history.TestResultSnapshot;
+import net.thucydides.core.util.EnvironmentVariables;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.util.Arrays;
@@ -27,6 +33,9 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 public class WhenTrackingTestResultsOverTime {
 
@@ -41,13 +50,19 @@ public class WhenTrackingTestResultsOverTime {
     @Rule
     public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
 
+    @Mock
+    EnvironmentVariables environmentVariables;
+
     @Before
     public void prepareTestHistory() {
+        MockitoAnnotations.initMocks(this);
+
         originalUserHomeDirectory = System.getProperty("user.home");
         homeDirectory = temporaryFolder.newFolder("home");
-
         System.setProperty("user.home", homeDirectory.getAbsolutePath());
+
         testHistory = new TestHistory("project");
+        testHistory.setEnvironmentVariables(environmentVariables);
 
     }
 
@@ -93,6 +108,35 @@ public class WhenTrackingTestResultsOverTime {
         assertThat(data.get(0).getSkippedSteps(), is(10));
         assertThat(data.get(0).getSpecifiedSteps(), is(225));
     }
+
+    @Test
+    public void should_record_the_build_number_if_present() {
+
+        Mockito.when(environmentVariables.getValue(eq("BUILD_ID"), anyString())).thenReturn("123");
+        List<FeatureResults> results = getResults();
+        testHistory.updateData(results);
+
+        List<TestResultSnapshot> data = testHistory.getHistory();
+
+        assertThat(data.size(), is(1));
+        assertThat(data.get(0).getBuildId(), is("123"));
+
+
+    }
+
+    @Test
+    public void by_default_the_build_id_is_marked_as_manual() {
+
+        Mockito.when(environmentVariables.getValue("BUILD_ID","MANUAL")).thenReturn("MANUAL");
+
+        List<FeatureResults> results = getResults();
+        testHistory.updateData(results);
+
+        List<TestResultSnapshot> data = testHistory.getHistory();
+        assertThat(data.size(), is(1));
+        assertThat(data.get(0).getBuildId(), is("MANUAL"));
+    }
+
 
     @Test
     public void should_store_successive_sets_of_timestamped_results() {
@@ -175,7 +219,7 @@ public class WhenTrackingTestResultsOverTime {
     private TestOutcome thatSucceedsFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(successfulTestStepCalled("Step " + i));
+            testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("Step " + i));
         }
         return testOutcome;
     }
@@ -183,7 +227,7 @@ public class WhenTrackingTestResultsOverTime {
     private TestOutcome thatIsPendingFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(pendingTestStepCalled("Step " + i));
+            testOutcome.recordStep(TestStepFactory.pendingTestStepCalled("Step " + i));
         }
         return testOutcome;
     }
@@ -191,7 +235,7 @@ public class WhenTrackingTestResultsOverTime {
     private TestOutcome thatIsIgnoredFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(ignoredTestStepCalled("Step " + i));
+            testOutcome.recordStep(TestStepFactory.ignoredTestStepCalled("Step " + i));
         }
         return testOutcome;
     }
@@ -199,7 +243,7 @@ public class WhenTrackingTestResultsOverTime {
     private TestOutcome thatIsFailingFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(failingTestStepCalled("Step " + i, new AssertionError()));
+            testOutcome.recordStep(TestStepFactory.failingTestStepCalled("Step " + i, new AssertionError()));
         }
         return testOutcome;
     }

@@ -2,11 +2,12 @@ package net.thucydides.core.reports.history;
 
 import com.thoughtworks.xstream.XStream;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
+import net.thucydides.core.util.EnvironmentVariables;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,19 +15,20 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.sum;
-
 /**
  * Keep track of the test results over time.
  */
 public class TestHistory {
 
+    private static final String BUILD_ID = "BUILD_ID";
     private final File dataDirectory;
     private final String projectName;
 
+    protected EnvironmentVariables environmentVariables;
+
     public TestHistory(final String projectName) {
         dataDirectory = new File(getBaseDirectoryPath());
+        environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
         this.projectName = projectName;
     }
 
@@ -45,11 +47,13 @@ public class TestHistory {
         int passingSteps =  countPassingStepsIn(featureResults);
         int failingSteps = countFailingStepsIn(featureResults);
         int skippedSteps = countSkippedStepsIn(featureResults);
+        String buildId = getEnvironmentVariables().getValue(BUILD_ID, "MANUAL");
 
         TestResultSnapshot newSnapshot = new TestResultSnapshot(totalStepCount,
                                                                 passingSteps,
                                                                 failingSteps,
-                                                                skippedSteps);
+                                                                skippedSteps,
+                                                                buildId);
 
         try {
             save(newSnapshot);
@@ -138,5 +142,13 @@ public class TestHistory {
         for(File historyFile : historyFiles) {
             historyFile.delete();
         }
+    }
+
+    protected EnvironmentVariables getEnvironmentVariables() {
+        return environmentVariables;
+    }
+
+    protected void setEnvironmentVariables(final EnvironmentVariables environmentVariables) {
+        this.environmentVariables = environmentVariables;
     }
 }

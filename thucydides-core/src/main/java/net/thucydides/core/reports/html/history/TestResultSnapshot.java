@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.html.history;
 
+import com.sun.servicetag.SystemEnvironment;
 import org.joda.time.DateTime;
 
 public class TestResultSnapshot {
@@ -9,16 +10,19 @@ public class TestResultSnapshot {
     private final int passingSteps;
     private final int failingSteps;
     private final int skippedSteps;
+    private final String buildId;
 
     public TestResultSnapshot(final int specifiedSteps,
                               final int passingSteps,
                               final int failingSteps,
-                              final int skippedSteps) {
+                              final int skippedSteps,
+                              final String buildId) {
         this.time = DateTime.now();
         this.specifiedSteps = specifiedSteps;
         this.passingSteps = passingSteps;
         this.failingSteps = failingSteps;
         this.skippedSteps = skippedSteps;
+        this.buildId = buildId;
     }
 
     public DateTime getTime() {
@@ -40,4 +44,9 @@ public class TestResultSnapshot {
     public int getSkippedSteps() {
         return skippedSteps;
     }
+
+    public String getBuildId() {
+        return buildId;
+    }
+
 }

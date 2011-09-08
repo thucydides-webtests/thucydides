@@ -1,6 +1,5 @@
-package net.thucydides.core.utils;
+package net.thucydides.core.util;
 
-import net.thucydides.core.util.EqualsUtils;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
