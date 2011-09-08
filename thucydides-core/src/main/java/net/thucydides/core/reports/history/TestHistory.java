@@ -100,8 +100,19 @@ public class TestHistory {
     private void save(TestResultSnapshot snapshot) throws FileNotFoundException {
         XStream xstream = new XStream();
         File snapshotFile = new File(getDirectory(), historyPrefix() + snapshot.getTime().getMillis());
-        OutputStream out = new FileOutputStream(snapshotFile);
-        xstream.toXML(snapshot, out);
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(snapshotFile);
+            xstream.toXML(snapshot, out);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
     }
 

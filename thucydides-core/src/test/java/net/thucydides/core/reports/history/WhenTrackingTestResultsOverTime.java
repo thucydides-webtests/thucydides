@@ -57,6 +57,7 @@ public class WhenTrackingTestResultsOverTime {
 
         testHistory = new TestHistory("project");
         testHistory.setEnvironmentVariables(environmentVariables);
+        testHistory.clearHistory();
 
     }
 
@@ -162,11 +163,21 @@ public class WhenTrackingTestResultsOverTime {
 
         List<FeatureResults> results = getResults();
         testHistory.updateData(results);
+        waitMilliseconds(10);
         testHistory.updateData(results);
+        waitMilliseconds(10);
         testHistory.updateData(results);
 
         List<TestResultSnapshot> data = testHistory.getHistory();
         assertThat(data.size(), is(3));
+    }
+
+    private void waitMilliseconds(int pauseInMilliseconds) {
+        try {
+            Thread.sleep(pauseInMilliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     @Test
@@ -174,8 +185,11 @@ public class WhenTrackingTestResultsOverTime {
 
         List<FeatureResults> results = getResults();
         testHistory.updateData(results);
+        waitMilliseconds(10);
         testHistory.updateData(results);
+        waitMilliseconds(10);
         testHistory.updateData(results);
+        waitMilliseconds(10);
         testHistory.updateData(results);
 
         List<TestResultSnapshot> data = testHistory.getHistory();
@@ -189,9 +203,13 @@ public class WhenTrackingTestResultsOverTime {
 
         List<FeatureResults> results = getResults();
         testHistory.updateData(results);
+        waitMilliseconds(10);
         testHistory.updateData(results);
+        waitMilliseconds(10);
         testHistory.updateData(results);
+        waitMilliseconds(10);
         testHistory.updateData(results);
+        waitMilliseconds(10);
 
         List<TestResultSnapshot> data = testHistory.getHistory();
         assertThat(data.size(), greaterThan(0));
