@@ -333,16 +333,18 @@ public class TestOutcome {
      * Turns the current step into a group. Subsequent steps will be added as children of the current step.
      */
     public void startGroup() {
-        checkState(!testSteps.isEmpty());
-
-        groupStack.push(getCurrentStep());
+        if (!testSteps.isEmpty()) {
+            groupStack.push(getCurrentStep());
+        }
     }
 
     /**
      * Finish the current group. Subsequent steps will be added after the current step.
      */
     public void endGroup() {
-        groupStack.pop();
+        if (!groupStack.isEmpty()) {
+            groupStack.pop();
+        }
     }
 
     /**

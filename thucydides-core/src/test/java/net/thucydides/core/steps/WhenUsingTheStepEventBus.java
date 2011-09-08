@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
 public class WhenUsingTheStepEventBus {
 
     @SuppressWarnings("serial")
-	static class SimpleTestScenarioSteps extends ScenarioSteps {
+    static class SimpleTestScenarioSteps extends ScenarioSteps {
 
         @Managed
         WebDriver driver;
@@ -32,86 +32,87 @@ public class WhenUsingTheStepEventBus {
         }
 
         @Step
-        public void step1(){
+        public void step1() {
             getDriver().get("step_one");
         }
 
         @Step
-        public void step2(){
+        public void step2() {
             getDriver().get("step_two");
         }
 
         @Step
-        public void step3(){
+        public void step3() {
             getDriver().get("step_three");
         }
 
         @Step
-        public void step4(){
+        public void step4() {
             step5();
             step6();
         }
 
         @Step
-        public void step5(){
+        public void step5() {
             getDriver().get("step_five");
         }
 
         @Step
-        public void step6(){
+        public void step6() {
             getDriver().get("step_six");
         }
 
         @Step
-        public void step7(){
+        public void step7() {
             step1();
             failingStep();
             step2();
         }
 
         @Step
-        public void step8(){
+        public void step8() {
             step1();
             failingStep();
             step4();
         }
 
         @Step
-        public void step9(){
+        public void step9() {
             step1();
             pendingStep();
             step4();
         }
 
         @Step
-        public void nested_steps(){
+        public void nested_steps() {
             step1();
             nested_steps1();
             step4();
         }
 
         @Step
-        public void nested_steps1(){
+        public void nested_steps1() {
             step1();
             nested_steps2();
             step4();
         }
 
         @Step
-        public void nested_steps2(){
+        public void nested_steps2() {
             step1();
             step4();
         }
 
         @Step
-        public void failingStep(){
+        public void failingStep() {
             getDriver().get("failing_step");
             assertThat(true, is(false));
         }
 
         @Pending
         @Step
-        public void pendingStep(){}
+        public void pendingStep() {
+        }
 
         @Step
         public SimpleTestScenarioSteps stepThatReturnsAStep() {
@@ -131,7 +132,7 @@ public class WhenUsingTheStepEventBus {
             step3();
 
         }
-    }    
+    }
 
     static class SampleTestScenario {
 
@@ -144,15 +145,11 @@ public class WhenUsingTheStepEventBus {
             steps.step3();
         }
     }
-
     @Mock
     WebDriver driver;
-
     @Mock
     StepListener listener;
-
     ConsoleStepListener consoleStepListener;
-
     private StepFactory factory;
 
     @Before
@@ -174,7 +171,6 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().dropListener(consoleStepListener);
         StepEventBus.getEventBus().dropListener(listener);
     }
-
 
     @Test
     public void should_execute_steps_transparently() {
@@ -225,13 +221,12 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
+                "TEST a_test\n"
                 + "-step1\n"
                 + "---> STEP DONE\n"
                 + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
-
 
     @Test
     public void should_record_nested_test_steps() {
@@ -242,14 +237,14 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-step4\n"
-                          + "--step5\n"
-                          + "----> STEP DONE\n"
-                          + "--step6\n"
-                          + "----> STEP DONE\n"
-                          + "---> STEP DONE\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-step4\n"
+                + "--step5\n"
+                + "----> STEP DONE\n"
+                + "--step6\n"
+                + "----> STEP DONE\n"
+                + "---> STEP DONE\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
@@ -262,38 +257,38 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-nested_steps\n"
-                          + "--step1\n"
-                          + "----> STEP DONE\n"
-                          + "--nested_steps1\n"
-                          + "---step1\n"
-                          + "-----> STEP DONE\n"
-                          + "---nested_steps2\n"
-                          + "----step1\n"
-                          + "------> STEP DONE\n"
-                          + "----step4\n"
-                          + "-----step5\n"
-                          + "-------> STEP DONE\n"
-                          + "-----step6\n"
-                          + "-------> STEP DONE\n"
-                          + "------> STEP DONE\n"
-                          + "-----> STEP DONE\n"
-                          + "---step4\n"
-                          + "----step5\n"
-                          + "------> STEP DONE\n"
-                          + "----step6\n"
-                          + "------> STEP DONE\n"
-                          + "-----> STEP DONE\n"
-                          + "----> STEP DONE\n"
-                          + "--step4\n"
-                          + "---step5\n"
-                          + "-----> STEP DONE\n"
-                          + "---step6\n"
-                          + "-----> STEP DONE\n"
-                          + "----> STEP DONE\n"
-                          + "---> STEP DONE\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-nested_steps\n"
+                + "--step1\n"
+                + "----> STEP DONE\n"
+                + "--nested_steps1\n"
+                + "---step1\n"
+                + "-----> STEP DONE\n"
+                + "---nested_steps2\n"
+                + "----step1\n"
+                + "------> STEP DONE\n"
+                + "----step4\n"
+                + "-----step5\n"
+                + "-------> STEP DONE\n"
+                + "-----step6\n"
+                + "-------> STEP DONE\n"
+                + "------> STEP DONE\n"
+                + "-----> STEP DONE\n"
+                + "---step4\n"
+                + "----step5\n"
+                + "------> STEP DONE\n"
+                + "----step6\n"
+                + "------> STEP DONE\n"
+                + "-----> STEP DONE\n"
+                + "----> STEP DONE\n"
+                + "--step4\n"
+                + "---step5\n"
+                + "-----> STEP DONE\n"
+                + "---step6\n"
+                + "-----> STEP DONE\n"
+                + "----> STEP DONE\n"
+                + "---> STEP DONE\n"
+                + "TEST DONE\n";
 
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
@@ -306,16 +301,16 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-legacyStepGroup\n"
-                          + "--step1\n"
-                          + "----> STEP DONE\n"
-                          + "--step2\n"
-                          + "----> STEP DONE\n"
-                          + "--step3\n"
-                          + "----> STEP DONE\n"
-                          + "---> STEP DONE\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-legacyStepGroup\n"
+                + "--step1\n"
+                + "----> STEP DONE\n"
+                + "--step2\n"
+                + "----> STEP DONE\n"
+                + "--step3\n"
+                + "----> STEP DONE\n"
+                + "---> STEP DONE\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
@@ -329,12 +324,12 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-step1\n"
-                          + "---> STEP DONE\n"
-                          + "-failingStep\n"
-                          + "---> STEP FAILED\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-step1\n"
+                + "---> STEP DONE\n"
+                + "-failingStep\n"
+                + "---> STEP FAILED\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
@@ -348,15 +343,14 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-step1\n"
-                          + "---> STEP DONE\n"
-                          + "-pendingStep\n"
-                          + "---> STEP PENDING\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-step1\n"
+                + "---> STEP DONE\n"
+                + "-pendingStep\n"
+                + "---> STEP PENDING\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
-
 
     @Test
     public void should_record_nested_step_failures() {
@@ -368,22 +362,22 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-step1\n"
-                          + "---> STEP DONE\n"
-                          + "-step8\n"
-                          + "--step1\n"
-                          + "----> STEP DONE\n"
-                          + "--failingStep\n"
-                          + "----> STEP FAILED\n"
-                          + "--step4\n"
-                          + "---step5\n"
-                          + "-----> STEP IGNORED\n"
-                          + "---step6\n"
-                          + "-----> STEP IGNORED\n"
-                          + "----> STEP IGNORED\n"
-                          + "---> STEP DONE\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-step1\n"
+                + "---> STEP DONE\n"
+                + "-step8\n"
+                + "--step1\n"
+                + "----> STEP DONE\n"
+                + "--failingStep\n"
+                + "----> STEP FAILED\n"
+                + "--step4\n"
+                + "---step5\n"
+                + "-----> STEP IGNORED\n"
+                + "---step6\n"
+                + "-----> STEP IGNORED\n"
+                + "----> STEP IGNORED\n"
+                + "---> STEP DONE\n"
+                + "TEST DONE\n";
 
         System.out.println(consoleStepListener.toString());
         assertThat(consoleStepListener.toString(), is(expectedSteps));
@@ -401,22 +395,22 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-step1\n"
-                          + "---> STEP DONE\n"
-                          + "-step9\n"
-                          + "--step1\n"
-                          + "----> STEP DONE\n"
-                          + "--pendingStep\n"
-                          + "----> STEP PENDING\n"
-                          + "--step4\n"
-                          + "---step5\n"
-                          + "-----> STEP DONE\n"
-                          + "---step6\n"
-                          + "-----> STEP DONE\n"
-                          + "----> STEP DONE\n"
-                          + "---> STEP DONE\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-step1\n"
+                + "---> STEP DONE\n"
+                + "-step9\n"
+                + "--step1\n"
+                + "----> STEP DONE\n"
+                + "--pendingStep\n"
+                + "----> STEP PENDING\n"
+                + "--step4\n"
+                + "---step5\n"
+                + "-----> STEP DONE\n"
+                + "---step6\n"
+                + "-----> STEP DONE\n"
+                + "----> STEP DONE\n"
+                + "---> STEP DONE\n"
+                + "TEST DONE\n";
 
         System.out.println(consoleStepListener.toString());
         assertThat(consoleStepListener.toString(), is(expectedSteps));
@@ -434,18 +428,18 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-step1\n"
-                          + "---> STEP DONE\n"
-                          + "-step7\n"
-                          + "--step1\n"
-                          + "----> STEP DONE\n"
-                          + "--failingStep\n"
-                          + "----> STEP FAILED\n"
-                          + "--step2\n"
-                          + "----> STEP IGNORED\n"
-                          + "---> STEP DONE\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-step1\n"
+                + "---> STEP DONE\n"
+                + "-step7\n"
+                + "--step1\n"
+                + "----> STEP DONE\n"
+                + "--failingStep\n"
+                + "----> STEP FAILED\n"
+                + "--step2\n"
+                + "----> STEP IGNORED\n"
+                + "---> STEP DONE\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
@@ -459,18 +453,18 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-step1\n"
-                          + "---> STEP DONE\n"
-                          + "-step7\n"
-                          + "--step1\n"
-                          + "----> STEP DONE\n"
-                          + "--failingStep\n"
-                          + "----> STEP FAILED\n"
-                          + "--step2\n"
-                          + "----> STEP IGNORED\n"
-                          + "---> STEP DONE\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-step1\n"
+                + "---> STEP DONE\n"
+                + "-step7\n"
+                + "--step1\n"
+                + "----> STEP DONE\n"
+                + "--failingStep\n"
+                + "----> STEP FAILED\n"
+                + "--step2\n"
+                + "----> STEP IGNORED\n"
+                + "---> STEP DONE\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
@@ -484,18 +478,18 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-step1\n"
-                          + "---> STEP DONE\n"
-                          + "-step7\n"
-                          + "--step1\n"
-                          + "----> STEP DONE\n"
-                          + "--failingStep\n"
-                          + "----> STEP FAILED\n"
-                          + "--step2\n"
-                          + "----> STEP IGNORED\n"
-                          + "---> STEP DONE\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-step1\n"
+                + "---> STEP DONE\n"
+                + "-step7\n"
+                + "--step1\n"
+                + "----> STEP DONE\n"
+                + "--failingStep\n"
+                + "----> STEP FAILED\n"
+                + "--step2\n"
+                + "----> STEP IGNORED\n"
+                + "---> STEP DONE\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
@@ -508,14 +502,14 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-stepThatReturnsAStep\n"
-                          + "---> STEP DONE\n"
-                          + "-stepThatReturnsAStep\n"
-                          + "---> STEP DONE\n"
-                          + "-stepThatReturnsAStep\n"
-                          + "---> STEP DONE\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-stepThatReturnsAStep\n"
+                + "---> STEP DONE\n"
+                + "-stepThatReturnsAStep\n"
+                + "---> STEP DONE\n"
+                + "-stepThatReturnsAStep\n"
+                + "---> STEP DONE\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
@@ -528,12 +522,12 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testFinished();
 
         String expectedSteps =
-                  "TEST a_test\n"
-                          + "-stepThatFailsAndReturnsAStep\n"
-                          + "---> STEP FAILED\n"
-                          + "-stepThatReturnsAStep\n"
-                          + "---> STEP IGNORED\n"
-                          + "TEST DONE\n";
+                "TEST a_test\n"
+                + "-stepThatFailsAndReturnsAStep\n"
+                + "---> STEP FAILED\n"
+                + "-stepThatReturnsAStep\n"
+                + "---> STEP IGNORED\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
@@ -550,13 +544,13 @@ public class WhenUsingTheStepEventBus {
 
         String expectedSteps =
                 "TEST a_test\n"
-                    + "-step1\n"
-                    + "---> STEP IGNORED\n"
-                    + "-step2\n"
-                    + "---> STEP IGNORED\n"
-                    + "-step3\n"
-                    + "---> STEP IGNORED\n"
-                    + "TEST DONE\n";
+                + "-step1\n"
+                + "---> STEP IGNORED\n"
+                + "-step2\n"
+                + "---> STEP IGNORED\n"
+                + "-step3\n"
+                + "---> STEP IGNORED\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
@@ -569,9 +563,9 @@ public class WhenUsingTheStepEventBus {
 
         String expectedSteps =
                 "TEST a_test\n"
-                    + "-a step\n"
-                    + "---> STEP PENDING\n"
-                    + "TEST DONE\n";
+                + "-a step\n"
+                + "---> STEP PENDING\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
@@ -583,8 +577,8 @@ public class WhenUsingTheStepEventBus {
 
         String expectedSteps =
                 "TEST a_test\n"
-                    + "--> TEST IGNORED\n"
-                    + "TEST DONE\n";
+                + "--> TEST IGNORED\n"
+                + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 
@@ -645,6 +639,4 @@ public class WhenUsingTheStepEventBus {
 
         assertThat(StepEventBus.getEventBus().areStepsRunning(), is(false));
     }
-
-
 }
