@@ -1,6 +1,5 @@
 package net.thucydides.core.reports.html.history;
 
-import com.sun.servicetag.SystemEnvironment;
 import org.joda.time.DateTime;
 
 public class TestResultSnapshot {
