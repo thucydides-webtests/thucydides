@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,10 +121,20 @@ public class TestHistory {
         XStream xstream = new XStream();
         for(File historyFile : historyFiles) {
             TestResultSnapshot snapshot = null;
+            InputStream inputStream = null;
             try {
-                snapshot = (TestResultSnapshot) xstream.fromXML(new FileInputStream(historyFile));
+                inputStream = new FileInputStream(historyFile);
+                snapshot = (TestResultSnapshot) xstream.fromXML(inputStream);
             } catch (FileNotFoundException e) {
                 throw new IllegalArgumentException("Unable to read history data", e);
+            } finally {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             resultSnapshots.add(snapshot);
         }
