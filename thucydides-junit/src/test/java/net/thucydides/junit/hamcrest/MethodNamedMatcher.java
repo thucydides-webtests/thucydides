@@ -1,9 +1,9 @@
 package net.thucydides.junit.hamcrest;
 
-import java.lang.reflect.Method;
-
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+
+import java.lang.reflect.Method;
 
 public class MethodNamedMatcher extends TypeSafeMatcher<Method> {
     

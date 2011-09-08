@@ -1,16 +1,17 @@
 package net.thucydides.demo.steps;
 
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
-
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.demo.pages.GoogleHomePage;
 import net.thucydides.demo.pages.GoogleResultsPage;
+
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 
 public class GoogleSearchSteps extends ScenarioSteps {
     

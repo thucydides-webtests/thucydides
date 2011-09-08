@@ -2,13 +2,13 @@ package net.thucydides.junit.integration.pages;
 
 import net.thucydides.core.annotations.At;
 import net.thucydides.core.pages.PageObject;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 
 @At("http://projects.apache.org")
 public class ApacheProjectPage extends PageObject {

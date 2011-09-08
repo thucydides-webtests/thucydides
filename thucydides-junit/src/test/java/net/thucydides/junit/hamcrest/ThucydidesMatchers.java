@@ -1,13 +1,12 @@
 package net.thucydides.junit.hamcrest;
 
-import java.lang.reflect.Method;
-
 import net.thucydides.core.reports.AcceptanceTestReporter;
-
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
+
+import java.lang.reflect.Method;
 
 public class ThucydidesMatchers {
 

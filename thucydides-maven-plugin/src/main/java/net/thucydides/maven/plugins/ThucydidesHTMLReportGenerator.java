@@ -5,9 +5,7 @@ import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.reports.ThucydidesReportData;
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.sink.SinkEventAttributes;
 
-import java.text.Format;
 import java.util.List;
 
 /**

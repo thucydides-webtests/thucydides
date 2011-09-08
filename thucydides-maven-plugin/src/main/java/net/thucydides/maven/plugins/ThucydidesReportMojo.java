@@ -1,12 +1,7 @@
 package net.thucydides.maven.plugins;
 
-import net.thucydides.core.Thucydides;
-import net.thucydides.core.model.FeatureResults;
-import net.thucydides.core.model.ReportNamer;
-import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.reports.ThucydidesReportData;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
-import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -14,7 +9,6 @@ import org.apache.maven.reporting.MavenReportException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 
 /**

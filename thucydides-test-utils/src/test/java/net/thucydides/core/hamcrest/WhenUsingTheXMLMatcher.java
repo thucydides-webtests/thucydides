@@ -1,20 +1,14 @@
 package net.thucydides.core.hamcrest;
 
-import org.hamcrest.BaseDescription;
 import org.hamcrest.Description;
-import org.hamcrest.SelfDescribing;
 import org.hamcrest.StringDescription;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 import static net.thucydides.core.hamcrest.XMLMatchers.isSimilarTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class WhenUsingTheXMLMatcher {
 

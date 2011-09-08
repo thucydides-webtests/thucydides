@@ -11,7 +11,6 @@ import net.thucydides.samples.MultipleTestScenarioWithUniqueSession;
 import net.thucydides.samples.SamplePassingScenario;
 import net.thucydides.samples.SampleScenarioWithUnannotatedWebDriver;
 import net.thucydides.samples.SingleTestScenario;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

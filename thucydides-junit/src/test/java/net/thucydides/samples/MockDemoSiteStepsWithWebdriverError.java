@@ -1,10 +1,9 @@
 package net.thucydides.samples;
 
-import org.openqa.selenium.NoSuchElementException;
-
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
+import org.openqa.selenium.NoSuchElementException;
 
 public class MockDemoSiteStepsWithWebdriverError extends ScenarioSteps {
 

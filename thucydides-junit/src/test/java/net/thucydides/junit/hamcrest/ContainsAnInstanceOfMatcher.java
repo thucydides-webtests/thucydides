@@ -1,11 +1,10 @@
 package net.thucydides.junit.hamcrest;
 
-import java.util.List;
-
 import net.thucydides.core.reports.AcceptanceTestReporter;
-
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+
+import java.util.List;
 
 public class ContainsAnInstanceOfMatcher extends TypeSafeMatcher<List<AcceptanceTestReporter>> {
     

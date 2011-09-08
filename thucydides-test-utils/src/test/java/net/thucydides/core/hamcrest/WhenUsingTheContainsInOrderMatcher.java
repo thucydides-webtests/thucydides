@@ -5,9 +5,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
-import java.util.List;
 
-import static net.thucydides.core.hamcrest.Matchers.*;
+import static net.thucydides.core.hamcrest.Matchers.containsInOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;

@@ -3,7 +3,6 @@ package net.thucydides.core.steps;
 import net.thucydides.core.annotations.Story;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.notification.Failure;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.firefox.FirefoxDriver;

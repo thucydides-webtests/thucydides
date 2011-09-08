@@ -1,6 +1,5 @@
 package net.thucydides.core.webdriver;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

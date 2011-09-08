@@ -1,9 +1,7 @@
 package net.thucydides.maven.plugins;
 
-import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.doxia.sink.XhtmlBaseSink;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,8 +19,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.when;
-
-import org.apache.maven.doxia.sink.XhtmlBaseSink;
 
 public class WhenGeneratingTheMavenReport {
 

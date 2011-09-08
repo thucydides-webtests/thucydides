@@ -10,6 +10,7 @@ import net.thucydides.core.model.TestStepFactory;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.util.EnvironmentVariables;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -100,6 +101,31 @@ public class WhenTrackingTestResultsOverTime {
         assertThat(data.get(0).getPassingSteps(), is(30));
         assertThat(data.get(0).getSkippedSteps(), is(10));
         assertThat(data.get(0).getSpecifiedSteps(), is(225));
+    }
+
+
+    @Test
+    public void snapshots_should_be_ordered_by_date() {
+        TestResultSnapshot snapshot1 = new TestResultSnapshot(new DateTime(2000,01,01,01,01,01), 0,0,0,0,"MANUAL");
+        TestResultSnapshot snapshot2 = new TestResultSnapshot(new DateTime(2000,01,01,01,01,01), 0,0,0,0,"MANUAL");
+
+        assertThat(snapshot1.compareTo(snapshot2), is(0));
+    }
+
+    @Test
+    public void snapshots_should_be_ordered_by_date_with_inferior_date() {
+        TestResultSnapshot snapshot1 = new TestResultSnapshot(new DateTime(2000,01,01,01,01,01), 0,0,0,0,"MANUAL");
+        TestResultSnapshot snapshot2 = new TestResultSnapshot(new DateTime(1999,01,01,01,01,01), 0,0,0,0,"MANUAL");
+
+        assertThat(snapshot1.compareTo(snapshot2), is(1));
+    }
+
+    @Test
+    public void snapshots_should_be_ordered_by_date_with_superior_date() {
+        TestResultSnapshot snapshot1 = new TestResultSnapshot(new DateTime(2000,01,01,01,01,01), 0,0,0,0,"MANUAL");
+        TestResultSnapshot snapshot2 = new TestResultSnapshot(new DateTime(2001,01,01,01,01,01), 0,0,0,0,"MANUAL");
+
+        assertThat(snapshot1.compareTo(snapshot2), is(-1));
     }
 
     @Test
