@@ -90,7 +90,7 @@ class RenderedPageObjectView {
     public boolean elementIsDisplayed(final By byElementCriteria) {
         try {
             List<WebElement> matchingElements = driver.findElements(byElementCriteria);
-            if (matchingElements.isEmpty()) {
+            if ((matchingElements == null) || (matchingElements.isEmpty())) {
                 return false;
             }            
             return matchingElements.get(0).isDisplayed();

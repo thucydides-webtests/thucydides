@@ -35,6 +35,13 @@ public class WhenLoadingTestRunResultsIntoAUserStoryTestResults {
     }
     
     @Test
+    public void should_not_load_the_test_results_if_directory_does_not_exist() throws IOException {
+
+        List<StoryTestResults> stories = loader.loadFrom(new File("does/not/exist"));
+        assertThat(stories.size(), is(0));
+    }
+
+    @Test
     public void should_load_multiple_user_stories_if_test_runs_have_more_than_one() throws IOException {
         
         List<StoryTestResults> stories = loader.loadFrom(new File("src/test/resources/multiple-user-story-reports"));

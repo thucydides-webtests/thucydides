@@ -95,6 +95,13 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
     }
 
     @Test
+    public void an_inexistant_element_should_not_be_considered_visible() {
+        IndexPage indexPage = new IndexPage(driver);
+
+        assertThat(indexPage.isElementVisible(By.xpath("//h2[.='An title that does not exist']")), is(false));
+    }
+
+    @Test
     public void should_know_when_an_element_is_present_but_not_visible_on_the_page_using_should_be() {
         IndexPage indexPage = new IndexPage(driver);
 

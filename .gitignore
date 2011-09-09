@@ -8,7 +8,7 @@ target
 *.log.*
 *.iml
 *.versionsBackup
-
+interpolated-*.xml
 *.iws
 *.ipr
 out
