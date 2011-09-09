@@ -16,6 +16,7 @@ import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 public class WhenReadingAnXMLReport {
 
@@ -113,6 +114,12 @@ public class WhenReadingAnXMLReport {
         ApplicationFeature expectedFeature = new ApplicationFeature("myapp.myfeatures.SomeFeature", "Some feature");
         assertThat(testOutcome.getFeature().getId(), is("myapp.myfeatures.SomeFeature"));
         assertThat(testOutcome.getFeature().getName(), is("Some feature"));
+    }
+
+    @Test
+    public void should_return_null_feature_if_no_feature_is_present() {
+        TestOutcome testOutcome = new TestOutcome("aTestMethod");
+        assertThat(testOutcome.getFeature(), nullValue());
     }
 
     @Test

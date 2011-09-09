@@ -75,6 +75,15 @@ public class WhenNamingTheReports {
     }
 
     @Test
+    public void a_null_qualifier_should_be_ignored() {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        String reportName = testOutcome.getReportName(HTML,null);
+
+        assertThat(reportName, is("a_user_story_should_do_this.html"));
+    }
+
+    @Test
     public void when_no_qualifier_is_provided_the_normal_report_name_is_used() {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 

@@ -4,6 +4,7 @@ import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.Title;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,6 +52,13 @@ public class WhenRecordingNewTestOutcomes {
     @Before
     public void prepareAcceptanceTestRun() {
         testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+    }
+
+    @Test
+    public void a_test_outcome_can_be_initialized_directly_from_a_story() {
+        testOutcome = TestOutcome.forTest("should_do_this", AUserStory.class);
+
+        Assert.assertThat(testOutcome.getUserStory().getName(), is("A user story"));
     }
 
     @Test
