@@ -7,6 +7,7 @@ import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.util.EnvironmentVariables;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -105,15 +106,19 @@ public class TestHistory {
             out = new FileOutputStream(snapshotFile);
             xstream.toXML(snapshot, out);
         } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            close(out);
         }
 
+    }
+
+    private void close(Closeable stream) {
+        if (stream != null) {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Unable to close history file", e);
+            }
+        }
     }
 
     public File getDirectory() {
@@ -139,13 +144,7 @@ public class TestHistory {
             } catch (FileNotFoundException e) {
                 throw new IllegalArgumentException("Unable to read history data", e);
             } finally {
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                close(inputStream);
             }
             resultSnapshots.add(snapshot);
         }

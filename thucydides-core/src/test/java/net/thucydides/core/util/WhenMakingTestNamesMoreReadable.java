@@ -4,14 +4,25 @@ import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 public class WhenMakingTestNamesMoreReadable {
     
     @Test
+    public void null_should_be_converted_to_an_empty_string() {
+        assertThat(NameConverter.humanize(null), is(""));
+    }
+    
+    @Test
+    public void an_empty_string_should_be_converted_to_an_empty_string() {
+        assertThat(NameConverter.humanize(""), is(""));
+    }
+
+    @Test
     public void camel_cased_test_names_should_be_converted_to_human_readable_sentences() {
         assertThat(NameConverter.humanize("ATestClassName"), is("A test class name"));
     }
-    
+
     @Test
     public void already_readable_titles_should_not_be_modified() {
         assertThat(NameConverter.humanize("This is a COOL test"), is("This is a COOL test"));
@@ -36,4 +47,26 @@ public class WhenMakingTestNamesMoreReadable {
     public void human_test_names_should_be_converted_to_underscore_filenames() {
         assertThat(NameConverter.underscore("A test method"), is("a_test_method"));
     }
+
+    @Test
+    public void null_should_be_converted_to_empty_string_underscore_filename() {
+        assertThat(NameConverter.underscore(null), is(""));
+    }
+
+    @Test
+    public void should_remove_parameters_from_method_names() {
+        assertThat(NameConverter.withNoArguments("a_test_method: 1, 2"), is("a_test_method"));
+    }
+
+    @Test
+    public void should_remove_parameters_from_null_method_names() {
+        assertThat(NameConverter.withNoArguments(null), is(nullValue()));
+    }
+
+    @Test
+    public void should_remove_indexes_from_method_names() {
+        assertThat(NameConverter.withNoArguments("a_test_method[0]"), is("a_test_method"));
+    }
+
 }
+

@@ -334,7 +334,7 @@ public abstract class PageObject {
      * annotation if present. If the DefaultUrl annotation is not present, the
      * default base URL will be used.
      */
-    public void open() {
+    final public void open() {
         String startingUrl = updateUrlWithBaseUrlIfDefined(pageUrls.getStartingUrl());
         getDriver().get(startingUrl);
     }

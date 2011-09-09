@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.integration;
 
+import net.thucydides.core.reports.ThucydidesReportData;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.commons.io.FileUtils;
@@ -47,6 +48,16 @@ public class WhenGeneratingAnAggregateHtmlReport {
 
         File htmlStoryReport = new File(outputDirectory,"stories.html");
         assertThat(htmlStoryReport.exists(), is(true));
+    }
+
+    @Test
+    public void should_return_report_data_for_reporting() throws Exception {
+
+        File sourceDirectory = new File("src/test/resources/featured-user-story-reports");
+        ThucydidesReportData data = reporter.generateReportsForStoriesFrom(sourceDirectory);
+
+        assertThat(data.getFeatureResults().size(), is(3));
+        assertThat(data.getStoryResults().size(), is(4));
     }
 
     @Test
