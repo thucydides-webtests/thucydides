@@ -163,9 +163,18 @@ public class WhenGroupingUserStoriesByFeature {
     }
 
     @Test
-    public void features_referring_to_different_feature_id_and_names_are_different() {
+    public void features_referring_to_different_feature_id_are_different() {
         ApplicationFeature feature1 = new ApplicationFeature("id","name");
-        ApplicationFeature feature2 = new ApplicationFeature("id2","name2");
+        ApplicationFeature feature2 = new ApplicationFeature("id2","name");
+
+        assertThat(feature1, is(not(feature2)));
+        assertThat(feature1.hashCode(), is(not(feature2.hashCode())));
+    }
+
+    @Test
+    public void features_referring_to_different_feature_names_are_different() {
+        ApplicationFeature feature1 = new ApplicationFeature("id","name");
+        ApplicationFeature feature2 = new ApplicationFeature("id","name2");
 
         assertThat(feature1, is(not(feature2)));
         assertThat(feature1.hashCode(), is(not(feature2.hashCode())));

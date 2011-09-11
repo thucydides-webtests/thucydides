@@ -20,6 +20,7 @@ import java.util.List;
 import static net.thucydides.core.matchers.ThucydidesMatchers.containsApplicationFeature;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

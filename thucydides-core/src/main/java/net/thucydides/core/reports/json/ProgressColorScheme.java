@@ -76,13 +76,9 @@ public class ProgressColorScheme implements ColorScheme {
 
     private float calculateValueBetween(final float startColor, final float endColor, final float zeroColor,
                                         final int mainCount, final int complementaryCount) {
-        if (mainCount + complementaryCount == 0) {
-            return zeroColor;
-        } else {
-            float totalCount = mainCount + complementaryCount;
-            float deltaColor = endColor - startColor;
-            return startColor + (((float) mainCount) / totalCount) * deltaColor;
-        }
+        float totalCount = mainCount + complementaryCount;
+        float deltaColor = endColor - startColor;
+        return startColor + (((float) mainCount) / totalCount) * deltaColor;
     }
 
 }

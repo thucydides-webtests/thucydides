@@ -49,6 +49,9 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
         protected WebElement buttonThatIsInitiallyEnabled;
 
+        @FindBy(id="visible")
+        protected WebElement visibleTitle;
+
         @FindBy(id="color")
         protected WebElement colors;
 

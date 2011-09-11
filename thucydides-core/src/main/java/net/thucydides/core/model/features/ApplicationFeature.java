@@ -99,27 +99,30 @@ public class ApplicationFeature {
         return getFeatureClass().getCanonicalName();
     }
 
-    public boolean classesAreEqual(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ApplicationFeature)) return false;
+    private boolean classesAreEqual(final ApplicationFeature that) {
+        return (featureClass == that.featureClass);
+    }
 
-        ApplicationFeature that = (ApplicationFeature) o;
-
-        if (featureClass != null ? !featureClass.equals(that.featureClass) : that.featureClass != null) return false;
-
+    private boolean idAndNameAreEqual(final ApplicationFeature that) {
+        if (featureIdIsDifferent(that)) return false;
+        if (featureNameIsDifferent(that)) return false;
         return true;
     }
 
-    public boolean idAndNameAreEqual(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ApplicationFeature)) return false;
+    private boolean featureIdIsDifferent(final ApplicationFeature that) {
+//        if (featureId == null) {
+//            return that.featureId != null;
+//        } else {
+            return !getId().equals(that.featureId);
+//        }
+    }
 
-        ApplicationFeature that = (ApplicationFeature) o;
-
-        if (featureId != null ? !featureId.equals(that.featureId) : that.featureId != null) return false;
-        if (featureName != null ? !featureName.equals(that.featureName) : that.featureName != null) return false;
-
-        return true;
+    private boolean featureNameIsDifferent(final ApplicationFeature that) {
+//        if (featureName == null) {
+//            return that.featureName != null;
+//        } else {
+            return !getName().equals(that.featureName);
+//        }
     }
 
     @Override
