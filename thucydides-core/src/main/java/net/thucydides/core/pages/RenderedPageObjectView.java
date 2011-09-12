@@ -101,7 +101,7 @@ class RenderedPageObjectView {
     }
 
     private boolean matchingElementsArePresent(List<WebElement> matchingElements) {
-        return (matchingElements == null) || (matchingElements.isEmpty());
+        return (matchingElements != null) && (!matchingElements.isEmpty());
     }
 
     private void checkThatElementAppeared(final By byElementCriteria) {
