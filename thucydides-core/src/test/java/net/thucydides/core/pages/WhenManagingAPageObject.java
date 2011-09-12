@@ -197,7 +197,7 @@ public class WhenManagingAPageObject {
     }
 
     @Test(expected = ElementNotVisibleException.class)
-    public void page_will_wait_for_title_to_disappear_should_fail_if_title_doesnt_dissapear() {
+    public void page_will_wait_for_title_to_disappear_should_fail_if_title_doesnt_disappear() {
 
         BasicPageObject page = new BasicPageObject(driver);
         page.setWaitForTimeout(100);
@@ -217,6 +217,35 @@ public class WhenManagingAPageObject {
         List<WebElement> listWithElements = Arrays.asList(textBlock);
 
         when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList).thenReturn(listWithElements);
+
+        page.waitForTextToAppear(searchedBlock,"hi there");
+    }
+
+    @Test
+    public void wait_for_text_to_appear_in_element_will_succeed_if_element_is_already_present() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement textBlock = mock(WebElement.class);
+        WebElement searchedBlock = mock(WebElement.class);
+
+        List<WebElement> emptyList = Arrays.asList();
+        List<WebElement> listWithElements = Arrays.asList(textBlock);
+
+        when(searchedBlock.findElements(any(By.class))).thenReturn(listWithElements);
+
+        page.waitForTextToAppear(searchedBlock,"hi there");
+    }
+
+    @Test(expected = ElementNotVisibleException.class)
+    public void wait_for_text_to_appear_in_element_will_fail_if_text_does_not_appear() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        page.setWaitForTimeout(150);
+        WebElement searchedBlock = mock(WebElement.class);
+
+        List<WebElement> emptyList = Arrays.asList();
+
+        when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList);
 
         page.waitForTextToAppear(searchedBlock,"hi there");
     }
