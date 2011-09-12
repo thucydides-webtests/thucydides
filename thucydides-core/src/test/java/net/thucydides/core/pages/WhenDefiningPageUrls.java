@@ -3,6 +3,7 @@ package net.thucydides.core.pages;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
+import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import org.junit.Before;
 import org.junit.Rule;
@@ -301,4 +302,78 @@ public class WhenDefiningPageUrls {
 
         assertThat(url, is(staticSiteUrl));
     }
+
+    @DefaultUrl("http://localhost:8080/somepage")
+    final class PageObjectWithOnOpenPageMethod extends PageObject {
+
+        public boolean pageFullyLoaded;
+
+        public PageObjectWithOnOpenPageMethod(WebDriver driver) {
+            super(driver);
+        }
+
+        @WhenPageOpens
+        public void waitTilPageIsFullyLoaded() {
+            pageFullyLoaded = true;
+        }
+    }
+
+    @Test
+    public void annotated_OnOpenPage_methods_should_be_called_when_the_page_is_opened() {
+        PageObjectWithOnOpenPageMethod page = new PageObjectWithOnOpenPageMethod(webdriver);
+        System.setProperty("webdriver.base.url","http://staging.myapp.org");
+        page.open();
+
+        verify(webdriver).get("http://staging.myapp.org/somepage");
+        assertThat(page.pageFullyLoaded, is(true));
+    }
+
+    @DefaultUrl("http://localhost:8080/somepage")
+    final class PageObjectWithOnOpenPageMethodWithParameters extends PageObject {
+
+        public boolean pageFullyLoaded;
+
+        public PageObjectWithOnOpenPageMethodWithParameters(WebDriver driver) {
+            super(driver);
+        }
+
+        @WhenPageOpens
+        public void waitTilPageIsFullyLoaded(int value) {
+            pageFullyLoaded = true;
+        }
+    }
+
+    @Test(expected = UnableToInvokeWhenPageOpensMethods.class)
+    public void annotated_OnOpenPage_methods_cannot_have_parameters() {
+        PageObject page = new PageObjectWithOnOpenPageMethodWithParameters(webdriver);
+        System.setProperty("webdriver.base.url","http://staging.myapp.org");
+        page.open();
+    }
+
+
+    @DefaultUrl("http://localhost:8080/somepage")
+    final class PageObjectWithPrivateOnOpenPageMethod extends PageObject {
+
+        public boolean pageFullyLoaded;
+
+        public PageObjectWithPrivateOnOpenPageMethod(WebDriver driver) {
+            super(driver);
+        }
+
+        @WhenPageOpens
+        private void waitTilPageIsFullyLoaded() {
+            pageFullyLoaded = true;
+        }
+    }
+
+    @Test
+    public void annotated_OnOpenPage_methods_can_be_private() {
+        PageObjectWithPrivateOnOpenPageMethod page = new PageObjectWithPrivateOnOpenPageMethod(webdriver);
+        System.setProperty("webdriver.base.url","http://staging.myapp.org");
+        page.open();
+
+        verify(webdriver).get("http://staging.myapp.org/somepage");
+        assertThat(page.pageFullyLoaded, is(true));
+    }
+
 }

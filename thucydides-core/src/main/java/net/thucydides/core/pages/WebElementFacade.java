@@ -19,6 +19,8 @@ public class WebElementFacade {
     private final long timeoutInMilliseconds;
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 100;
     private InternalSystemClock clock;
+    private JavaScriptExecutorFacade javaScriptExecutorFacade;
+
 
     public WebElementFacade(final WebDriver driver,
                             final WebElement webElement,
@@ -27,6 +29,12 @@ public class WebElementFacade {
         this.webElement = webElement;
         this.timeoutInMilliseconds = timeoutInMilliseconds;
         this.clock = new InternalSystemClock();
+        this.javaScriptExecutorFacade = new JavaScriptExecutorFacade(driver);
+    }
+
+
+    protected JavaScriptExecutorFacade getJavaScriptExecutorFacade() {
+        return javaScriptExecutorFacade;
     }
 
     /**
@@ -193,8 +201,7 @@ public class WebElementFacade {
     }
 
     public void setWindowFocus() {
-        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
-        js.executeScript("window.focus()");
+        getJavaScriptExecutorFacade().executeScript("window.focus()");
     }
 
     public void selectByVisibleText(final String label) {

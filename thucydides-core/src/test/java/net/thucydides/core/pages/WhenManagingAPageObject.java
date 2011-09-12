@@ -111,6 +111,20 @@ public class WhenManagingAPageObject {
         page.waitForRenderedElementsToDisappear(By.id("whatever"));
     }
 
+    @Test(expected = UnexpectedElementVisibleException.class)
+    public void wait_for_rendered_element_to_disappear_will_fail_if_element_does_not_disappear() {
+
+        WebElement textBlock = mock(WebElement.class);
+        when(textBlock.isDisplayed()).thenReturn(true);
+        List<WebElement> listWithElements = Arrays.asList(textBlock);
+
+        when(driver.findElements(any(By.class))).thenReturn(listWithElements);
+
+        BasicPageObject page = new BasicPageObject(driver);
+        page.setWaitForTimeout(150);
+        page.waitForRenderedElementsToDisappear(By.id("whatever"));
+    }
+
     @Test
     public void page_will_wait_for_rendered_element_if_it_is_not_already_present() {
 
@@ -139,6 +153,20 @@ public class WhenManagingAPageObject {
         when(driver.findElements(any(By.class))).thenReturn(emptyList).thenReturn(listWithElements);
 
         page.waitForTextToAppear("hi there");
+    }
+
+    @Test(expected = ElementNotVisibleException.class)
+    public void wait_for_text_to_appear_will_fail_if_the_text_doesnt_appear() {
+
+        BasicPageObject page = new BasicPageObject(driver);
+        WebElement textBlock = mock(WebElement.class);
+
+        List<WebElement> emptyList = Arrays.asList();
+        List<WebElement> listWithElements = Arrays.asList(textBlock);
+
+        when(driver.findElements(any(By.class))).thenReturn(emptyList);
+        page.setWaitForTimeout(200);
+        page.waitForTextToAppear("Waiting for Godot.");
     }
 
     @Test

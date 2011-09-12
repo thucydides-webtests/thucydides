@@ -10,6 +10,7 @@ import org.openqa.selenium.WebElement;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -43,6 +44,23 @@ public class WhenManinpulatingWebElements {
         WebElementFacade elementFacade = new WebElementFacade(driver, webElement, 100);
 
         assertThat(elementFacade.isCurrentlyEnabled(), is(false));
+
+    }
+
+    @Mock
+    JavaScriptExecutorFacade mockJavaScriptExecutorFacade;
+
+    @Test
+    public void element_can_set_window_focus() {
+        WebElementFacade elementFacade = new WebElementFacade(driver, webElement, 100) {
+            @Override
+            protected JavaScriptExecutorFacade getJavaScriptExecutorFacade() {
+                return mockJavaScriptExecutorFacade;
+            }
+        };
+        elementFacade.setWindowFocus();
+
+        verify(mockJavaScriptExecutorFacade).executeScript("window.focus()");
 
     }
 

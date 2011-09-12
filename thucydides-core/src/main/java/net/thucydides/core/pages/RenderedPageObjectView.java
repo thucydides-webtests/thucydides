@@ -19,10 +19,10 @@ import java.util.List;
 class RenderedPageObjectView {
 
     private final transient WebDriver driver;
-    private final transient long waitForTimeout;
+    private transient long waitForTimeout;
 
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 50;
-
+                                                                                                                                     g
     private static final Logger LOGGER = LoggerFactory
             .getLogger(RenderedPageObjectView.class);
 
@@ -307,7 +307,7 @@ class RenderedPageObjectView {
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (elementIsDisplayed(byElementCriteria)) {
-            throw new ElementNotVisibleException("Element should not be displayed displayed: "
+            throw new UnexpectedElementVisibleException("Element should not be displayed displayed: "
                     + byElementCriteria);
         }
     }
@@ -337,5 +337,9 @@ class RenderedPageObjectView {
             }
         }
         return elementRendered;
+    }
+
+    public void setWaitForTimeout(long waitForTimeout) {
+        this.waitForTimeout = waitForTimeout;
     }
 }

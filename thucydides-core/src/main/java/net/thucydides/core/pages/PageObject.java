@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -13,8 +14,11 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -76,6 +80,7 @@ public abstract class PageObject {
 
     public void setWaitForTimeout(final long waitForTimeout) {
         this.waitForTimeout = waitForTimeout;
+        getRenderedView().setWaitForTimeout(waitForTimeout);
     }
 
     protected RenderedPageObjectView getRenderedView() {
@@ -329,16 +334,6 @@ public abstract class PageObject {
         shouldNotBeVisible(element);
     }
 
-    /**
-     * Open the webdriver browser to the base URL, determined by the DefaultUrl
-     * annotation if present. If the DefaultUrl annotation is not present, the
-     * default base URL will be used.
-     */
-    final public void open() {
-        String startingUrl = updateUrlWithBaseUrlIfDefined(pageUrls.getStartingUrl());
-        getDriver().get(startingUrl);
-    }
-
     public String updateUrlWithBaseUrlIfDefined(final String startingUrl) {
         String baseUrl = System.getProperty(ThucydidesSystemProperty.BASE_URL.getPropertyName());
         if (baseUrl != null) {
@@ -385,20 +380,87 @@ public abstract class PageObject {
      * Open the webdriver browser using a paramaterized URL. Parameters are
      * represented in the URL using {0}, {1}, etc.
      */
-    public void open(final String... parameterValues) {
+    public final void open(final String... parameterValues) {
         String startingUrl = pageUrls.getStartingUrl(parameterValues);
-        getDriver().get(startingUrl);
+        openPageAtUrl(startingUrl);
+        callWhenPageOpensMethods();
+    }
+
+    public final void open(final String urlTemplateName,
+                     final String[] parameterValues) {
+        String startingUrl = pageUrls.getNamedUrl(urlTemplateName, parameterValues);
+        openPageAtUrl(startingUrl);
+        callWhenPageOpensMethods();
+    }
+
+    /**
+     * Open the webdriver browser to the base URL, determined by the DefaultUrl
+     * annotation if present. If the DefaultUrl annotation is not present, the
+     * default base URL will be used. If the DefaultUrl annotation is present, a
+     * URL based on the current base url from the system-wide defulat url
+     * and the relative path provided in the DefaultUrl annotation will be used to
+     * determine the URL to open. For example, consider the following class:
+     * <pre>
+     *     <code>
+     *         @DefaultUrl("http://localhost:8080/client/list")
+     *         public class ClientList extends PageObject {
+     *             ...
+     *
+     *             @WhenPageOpens
+     *             public void waitUntilTitleAppears() {...}
+     *         }
+     *     </code>
+     * </pre>
+     *
+     * Suppose you are using a base URL of http://stage.acme.com. When you call open() for this class,
+     * it will open http://stage.acme.com/client/list. It will then invoke the waitUntilTitleAppears() method.
+     *
+     */
+    final public void open() {
+        String startingUrl = updateUrlWithBaseUrlIfDefined(pageUrls.getStartingUrl());
+        openPageAtUrl(startingUrl);
+        callWhenPageOpensMethods();
+    }
+
+    /**
+     * Override this method
+     */
+    public void callWhenPageOpensMethods() {
+        for(Method annotatedMethod : methodsAnnotatedWithWhenPageOpens()) {
+            try {
+                annotatedMethod.setAccessible(true);
+                annotatedMethod.invoke(this);
+            } catch (Exception e) {
+                throw new UnableToInvokeWhenPageOpensMethods("Could not execute @WhenPageOpens annotated method", e);
+            }
+        }
+
+    }
+
+    private List<Method> methodsAnnotatedWithWhenPageOpens() {
+        Method[] methods = this.getClass().getDeclaredMethods();
+        List<Method> annotatedMethods = new ArrayList<Method>();
+        for(Method method : methods) {
+            if (method.getAnnotation(WhenPageOpens.class) != null) {
+                if (method.getParameterTypes().length == 0) {
+                    annotatedMethods.add(method);
+                } else {
+                    throw new UnableToInvokeWhenPageOpensMethods("Could not execute @WhenPageOpens annotated method: WhenPageOpens method cannot have parameters: " + method);
+                }
+            }
+        }
+        return annotatedMethods;
     }
 
     public static String[] withParameters(final String... parameterValues) {
         return parameterValues;
     }
 
-    public void open(final String urlTemplateName,
-                     final String[] parameterValues) {
-        String startingUrl = pageUrls.getNamedUrl(urlTemplateName, parameterValues);
+
+    private void openPageAtUrl(final String startingUrl) {
         getDriver().get(startingUrl);
     }
+
 
     public void clickOn(final WebElement webElement) {
         try {

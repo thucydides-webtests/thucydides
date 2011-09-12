@@ -17,7 +17,7 @@ import net.thucydides.core.util.NameConverter;
  *         }
  *     </code>
  * </pre>
- *
+ * <p/>
  * These classes are then used in the test cases and easyb stories to refer to the tested user stories, e.g.
  * <pre>
  *     <code>
@@ -110,19 +110,11 @@ public class ApplicationFeature {
     }
 
     private boolean featureIdIsDifferent(final ApplicationFeature that) {
-//        if (featureId == null) {
-//            return that.featureId != null;
-//        } else {
-            return !getId().equals(that.featureId);
-//        }
+        return !getId().equals(that.featureId);
     }
 
     private boolean featureNameIsDifferent(final ApplicationFeature that) {
-//        if (featureName == null) {
-//            return that.featureName != null;
-//        } else {
-            return !getName().equals(that.featureName);
-//        }
+        return !getName().equals(that.featureName);
     }
 
     @Override
