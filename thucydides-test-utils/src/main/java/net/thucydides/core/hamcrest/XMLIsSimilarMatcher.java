@@ -35,10 +35,7 @@ public class XMLIsSimilarMatcher extends TypeSafeMatcher<String> {
             XMLUnit.setIgnoreWhitespace(true);
             difference = new Diff(xmlDocument,expectedXML);
             xmlIsSimilar = difference.similar();
-        } catch (SAXException e) {
-            xmlIsSimilar = false; 
-            LOGGER.info(e.getMessage());
-        } catch (IOException e) {
+        } catch (Exception e) {
             xmlIsSimilar = false; 
             LOGGER.info(e.getMessage());
         }

@@ -64,6 +64,18 @@ public class WhenFormatingForHTML {
     }
 
     @Test
+    public void formatter_should_round_doubles_to_zero_precision_if_required() {
+        NumericalFormatter formatter = new NumericalFormatter();
+        assertThat(formatter.rounded(1.234,0), is("1"));
+    }
+
+    @Test
+    public void formatter_should_round_doubles_up_to_zero_precision_if_required() {
+        NumericalFormatter formatter = new NumericalFormatter();
+        assertThat(formatter.rounded(1.634,0), is("2"));
+    }
+
+    @Test
     public void formatter_should_round_doubles_up() {
         NumericalFormatter formatter = new NumericalFormatter();
         assertThat(formatter.rounded(1.678,1), is("1.7"));
@@ -79,6 +91,18 @@ public class WhenFormatingForHTML {
     public void formatter_should_round_percentages_to_a_given_precision() {
         NumericalFormatter formatter = new NumericalFormatter();
         assertThat(formatter.percentage(0.1234,1), is("12.3%"));
+    }
+
+    @Test
+    public void formatter_should_round_percentages_to_zero_precision_if_required() {
+        NumericalFormatter formatter = new NumericalFormatter();
+        assertThat(formatter.percentage(0.1234,0), is("12%"));
+    }
+
+    @Test
+    public void formatter_should_round_percentages_up_to_zero_precision_if_required() {
+        NumericalFormatter formatter = new NumericalFormatter();
+        assertThat(formatter.percentage(0.1254,0), is("13%"));
     }
 
     @Test

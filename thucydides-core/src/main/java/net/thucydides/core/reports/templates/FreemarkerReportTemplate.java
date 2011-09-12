@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.templates;
 
+import freemarker.core.ParseException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -13,16 +14,20 @@ public class FreemarkerReportTemplate implements ReportTemplate {
     private final Template template;
 
 
-    public FreemarkerReportTemplate(final Configuration configuration, final String templateFile) throws IOException {
-        template = configuration.getTemplate(templateFile);
+    public FreemarkerReportTemplate(final Configuration configuration, final String templateFile) throws IOException, TemplateMergeException {
+        try {
+            template = configuration.getTemplate(templateFile);
+        } catch (ParseException parseException) {
+            throw new TemplateMergeException("Parsing error in template", parseException);
+        }
     }
 
-    public void merge(Map<String, Object> context, StringWriter writer) throws IOException {
+    public void merge(Map<String, Object> context, StringWriter writer) throws TemplateMergeException {
 
         try {
             template.process(context, writer);
-        } catch (TemplateException e) {
-            throw new IOException("Failed to process FreeMarker template", e);
+        } catch (Exception e) {
+            throw new TemplateMergeException("Failed to process FreeMarker template", e);
         }
     }
 }

@@ -59,18 +59,11 @@ public class ReportNamer {
     }
 
     private String appendToIfNotNull(final String baseString, final String nextElement) {
-        String appendedString = baseString;
-        if (StringUtils.isNotEmpty(nextElement)) {
-            if (StringUtils.isNotEmpty(baseString)) {
-                appendedString = baseString + "_" + nextElement;
-            } else {
-                appendedString = nextElement;
-            }
+        if (StringUtils.isNotEmpty(baseString)) {
+            return baseString + "_" + nextElement;
         } else {
-            appendedString = baseString;
+            return nextElement;
         }
-
-        return appendedString;
     }
 
     public String getNormalizedTestNameFor(final TestOutcome testOutcome, final String qualifier) {
