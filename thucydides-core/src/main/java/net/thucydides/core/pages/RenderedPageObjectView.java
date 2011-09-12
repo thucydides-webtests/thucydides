@@ -22,7 +22,7 @@ class RenderedPageObjectView {
     private transient long waitForTimeout;
 
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 50;
-                                                                                                                                     g
+
     private static final Logger LOGGER = LoggerFactory
             .getLogger(RenderedPageObjectView.class);
 
@@ -90,10 +90,7 @@ class RenderedPageObjectView {
     public boolean elementIsDisplayed(final By byElementCriteria) {
         try {
             List<WebElement> matchingElements = driver.findElements(byElementCriteria);
-            if ((matchingElements == null) || (matchingElements.isEmpty())) {
-                return false;
-            }            
-            return matchingElements.get(0).isDisplayed();
+            return (matchingElementsArePresent(matchingElements)) && matchingElements.get(0).isDisplayed();
         } catch (NoSuchElementException noSuchElement) {
             LOGGER.trace("No such element " + noSuchElement);
 			return false;
@@ -101,6 +98,10 @@ class RenderedPageObjectView {
 			LOGGER.trace("Element no longer attached to the DOM " + se);
 			return false;
 		}
+    }
+
+    private boolean matchingElementsArePresent(List<WebElement> matchingElements) {
+        return (matchingElements == null) || (matchingElements.isEmpty());
     }
 
     private void checkThatElementAppeared(final By byElementCriteria) {
