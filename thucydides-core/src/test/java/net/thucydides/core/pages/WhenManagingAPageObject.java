@@ -364,6 +364,30 @@ public class WhenManagingAPageObject {
         verify(field).sendKeys("some value");
     }
 
+    @Test
+    public void should_provide_a_fluent_api_for_entering_a_value_in_a_field() {
+        WebElement field = mock(WebElement.class);
+        BasicPageObject page = new BasicPageObject(driver);
+
+        page.enter("some value").into(field);
+
+        verify(field).clear();
+        verify(field).sendKeys("some value");
+    }
+
+    @Test
+    public void should_provide_a_fluent_api_for_entering_a_value_in_a_field_using_a_selector() {
+        WebElement field = mock(WebElement.class);
+        when(driver.findElement(By.id("field-id"))).thenReturn(field);
+        BasicPageObject page = new BasicPageObject(driver);
+
+        page.enter("some value").intoField(By.id("field-id"));
+
+        verify(field).clear();
+        verify(field).sendKeys("some value");
+    }
+
+
     @Test(expected=NoSuchElementException.class)
     public void page_will_throw_exception_if_waiting_for_rendered_element_does_not_exist() {
 

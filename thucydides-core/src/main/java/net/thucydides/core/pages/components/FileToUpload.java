@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.regex.Pattern;
 
 /**
- * A class Wthat helps upload a file to an HTML form in using a fluent API.
+ * A class that helps upload a file to an HTML form in using a fluent API.
  */
 public class FileToUpload {
     private final String filename;

@@ -272,6 +272,14 @@ public abstract class PageObject {
         field.sendKeys(value);
     }
 
+    /**
+     * Clear a field and enter a value into it.
+     * This is a more fluent alternative to using the typeInto method.
+     */
+    public FieldEntry enter(final String value) {
+        return new FieldEntry(value);
+    }
+
     public void selectFromDropdown(final WebElement dropdown,
                                    final String visibleLabel) {
 
@@ -506,4 +514,24 @@ public abstract class PageObject {
         return js.executeScript(script);
     }
 
+    public class FieldEntry {
+
+        private final String value;
+
+        public FieldEntry(final String value) {
+            this.value = value;
+        }
+
+        public void into(final WebElement field) {
+            field.clear();
+            field.sendKeys(value);
+        }
+
+        public void intoField(final By bySelector) {
+            WebElement field = getDriver().findElement(bySelector);
+            field.clear();
+            field.sendKeys(value);
+
+        }
+    }
 }

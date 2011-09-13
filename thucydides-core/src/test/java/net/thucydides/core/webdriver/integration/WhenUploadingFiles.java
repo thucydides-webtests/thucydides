@@ -70,9 +70,9 @@ public class WhenUploadingFiles {
     public void should_upload_a_file_from_the_classpath() {
         UploadPage uploadPage = new UploadPage(driver);
 
-        uploadPage.uploadFile("/uploads/readme.txt");
+        uploadPage.uploadFile("/report-resources/css/core.css");
 
-        assertThat(uploadPage.uploadField.getAttribute("value"), containsString("readme.txt"));
+        assertThat(uploadPage.uploadField.getAttribute("value"), containsString("core.css"));
 
     }
 
@@ -113,11 +113,11 @@ public class WhenUploadingFiles {
 
     @Test
     public void should_recognize_a_unix_path() {
-        assertThat(FileToUpload.isAFullWindowsPath("C:\\Projects\\somefile.pdf"), is(true));
+        assertThat(FileToUpload.isAFullWindowsPath("/home/john/somefile.pdf"), is(false));
     }
 
     @Test
-    public void should_recognize_a_complex_windows_path() {
+    public void should_recognize_a_complex_unix_path() {
         assertThat(FileToUpload.isAFullWindowsPath("/home/myuser/target/test-classes/documentUpload/somefile.pdf"), is(false));
     }
 
