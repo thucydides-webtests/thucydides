@@ -114,6 +114,12 @@ public class WhenTrackingTestResultsOverTime {
     }
 
     @Test
+    public void a_snapshot_should_be_equal_to_itself() {
+        TestResultSnapshot snapshot = new TestResultSnapshot(new DateTime(2000,01,01,01,01,01), 0,0,0,0,"MANUAL");
+        assertThat(snapshot.compareTo(snapshot), is(0));
+    }
+
+    @Test
     public void snapshots_should_be_ordered_by_date_with_inferior_date() {
         TestResultSnapshot snapshot1 = new TestResultSnapshot(new DateTime(2000,01,01,01,01,01), 0,0,0,0,"MANUAL");
         TestResultSnapshot snapshot2 = new TestResultSnapshot(new DateTime(1999,01,01,01,01,01), 0,0,0,0,"MANUAL");

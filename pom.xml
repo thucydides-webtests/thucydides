@@ -132,9 +132,10 @@
                     </docletArtifact>
                     <additionalparam>-views -all -inferrel
                         -inferdep
-                        -inferdepinpackage -hide
-                        java.* -collpackages
-                        java.util.*
+                        -inferdepvis public
+                        -inferdepinpackage
+                        -hide java.*
+                        -collpackages java.util.*
                         -qualify
                     </additionalparam>
                     <useStandardDocletOptions>true</useStandardDocletOptions>

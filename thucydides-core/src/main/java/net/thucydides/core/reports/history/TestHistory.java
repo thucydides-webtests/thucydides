@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.history;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.StreamException;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.FeatureResults;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -112,12 +114,10 @@ public class TestHistory {
     }
 
     private void close(Closeable stream) {
-        if (stream != null) {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Unable to close history file", e);
-            }
+        try {
+            stream.close();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Unable to close history file", e);
         }
     }
 
@@ -142,7 +142,9 @@ public class TestHistory {
                 inputStream = new FileInputStream(historyFile);
                 snapshot = (TestResultSnapshot) xstream.fromXML(inputStream);
             } catch (FileNotFoundException e) {
-                throw new IllegalArgumentException("Unable to read history data", e);
+                throw new IllegalArgumentException("Unable to read history data in " + historyFile, e);
+            } catch (StreamException streamException) {
+                throw new IllegalArgumentException("Unable to parse history data in " + historyFile, streamException);
             } finally {
                 close(inputStream);
             }
@@ -154,7 +156,11 @@ public class TestHistory {
     }
 
     private File[] getHistoryFiles() {
-        return getDirectory().listFiles();
+        return getDirectory().listFiles(new FilenameFilter() {
+            public boolean accept(File directory, String filename) {
+                return filename.startsWith(historyPrefix());
+            }
+        });
     }
 
     private String historyPrefix() {
