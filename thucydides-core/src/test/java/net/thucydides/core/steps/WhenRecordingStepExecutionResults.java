@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.ListenerInWrongPackage;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
@@ -22,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import sample.listeners.SampleStepListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +31,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -937,4 +940,27 @@ public class WhenRecordingStepExecutionResults {
         assertThat(testOutcome.getTestSteps().get(0).getChildren().get(1).getScreenshot(), nullValue());
 
     }
+
+    @Test
+    public void custom_listeners_on_the_classpath_are_registered_automatically() {
+        List listeners = StepEventBus.getEventBus().getAllListeners();
+        assertThat(containsAnInstanceOf(listeners, SampleStepListener.class), is(true));
+    }
+
+    @Test
+    public void custom_listeners_in_the_core_thucydides_packages_should_not_be_included() {
+        List listeners = StepEventBus.getEventBus().getAllListeners();
+        assertThat(containsAnInstanceOf(listeners, ListenerInWrongPackage.class), is(false));
+    }
+
+    public boolean containsAnInstanceOf(List<StepListener> listeners, Class listenerClass) {
+        for(StepListener listener : listeners) {
+           if (listener.getClass() == listenerClass) {
+               return true;
+           }
+        }
+        return false;
+
+    }
+
 }

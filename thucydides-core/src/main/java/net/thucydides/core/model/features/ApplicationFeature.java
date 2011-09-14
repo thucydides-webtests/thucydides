@@ -104,8 +104,12 @@ public class ApplicationFeature {
     }
 
     private boolean idAndNameAreEqual(final ApplicationFeature that) {
-        if (featureIdIsDifferent(that)) return false;
-        if (featureNameIsDifferent(that)) return false;
+        if (featureIdIsDifferent(that)) {
+            return false;
+        }
+        if (featureNameIsDifferent(that)) {
+            return false;
+        }
         return true;
     }
 
@@ -119,8 +123,12 @@ public class ApplicationFeature {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ApplicationFeature)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ApplicationFeature)) {
+            return false;
+        }
 
         ApplicationFeature that = (ApplicationFeature) o;
 

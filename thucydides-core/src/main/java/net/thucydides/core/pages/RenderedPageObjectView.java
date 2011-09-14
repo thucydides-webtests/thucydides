@@ -93,11 +93,11 @@ class RenderedPageObjectView {
             return (matchingElementsArePresent(matchingElements)) && matchingElements.get(0).isDisplayed();
         } catch (NoSuchElementException noSuchElement) {
             LOGGER.trace("No such element " + noSuchElement);
-			return false;
-		} catch (StaleElementReferenceException se) {
-			LOGGER.trace("Element no longer attached to the DOM " + se);
-			return false;
-		}
+            return false;
+        } catch (StaleElementReferenceException se) {
+            LOGGER.trace("Element no longer attached to the DOM " + se);
+            return false;
+        }
     }
 
     private boolean matchingElementsArePresent(List<WebElement> matchingElements) {
@@ -217,10 +217,10 @@ class RenderedPageObjectView {
         }
         if (!pageContains(expectedTexts)) {
             throw new ElementNotVisibleException("Expected text was not displayed: Was expecting any of '"
-                      + Arrays.toString(expectedTexts));
+                    + Arrays.toString(expectedTexts));
         }
     }
-    
+
     public void waitForAnyTextToAppear(final WebElement element, final String[] expectedText) {
         long end = System.currentTimeMillis() + waitForTimeout;
         while (System.currentTimeMillis() < end) {
@@ -231,13 +231,13 @@ class RenderedPageObjectView {
         }
         if (!elementContains(element, expectedText)) {
             throw new ElementNotVisibleException("Expected text was not displayed: '"
-                                                    + Arrays.toString(expectedText) + "'");
+                    + Arrays.toString(expectedText) + "'");
         }
-        
+
     }
 
     private boolean elementContains(final WebElement element, final String... expectedTexts) {
-        for(String expectedText : expectedTexts) {
+        for (String expectedText : expectedTexts) {
             if (containsText(element, expectedText)) {
                 return true;
             }
@@ -246,7 +246,7 @@ class RenderedPageObjectView {
     }
 
     private boolean pageContains(final String... expectedTexts) {
-        for(String expectedText : expectedTexts) {
+        for (String expectedText : expectedTexts) {
             if (containsText(expectedText)) {
                 return true;
             }
@@ -258,7 +258,7 @@ class RenderedPageObjectView {
         long end = System.currentTimeMillis() + waitForTimeout;
 
         List<String> requestedTexts = buildInitialListOfExpectedTextsFrom(expectedTexts);
-        
+
         boolean allTextsFound = false;
         while (System.currentTimeMillis() < end) {
             requestedTexts = removeAnyTextsPresentOnPageFrom(requestedTexts);
@@ -267,19 +267,19 @@ class RenderedPageObjectView {
                 allTextsFound = true;
                 break;
             }
-            
+
             waitABit(WAIT_FOR_ELEMENT_PAUSE_LENGTH);
         }
         if (!allTextsFound) {
             throw new ElementNotVisibleException("Expected text was not displayed: was expecting all of "
-                                                    + printableFormOf(requestedTexts));
+                    + printableFormOf(requestedTexts));
         }
     }
 
     private String printableFormOf(final List<String> texts) {
         return Arrays.toString(texts.toArray());
     }
-    
+
 
     private List<String> buildInitialListOfExpectedTextsFrom(final String... expectedTexts) {
         List<String> requestedTexts = new ArrayList<String>();
@@ -290,8 +290,8 @@ class RenderedPageObjectView {
     private List<String> removeAnyTextsPresentOnPageFrom(final List<String> requestedTexts) {
         List<String> updatedList = new ArrayList<String>();
         updatedList.addAll(requestedTexts);
-        
-        for(String requestedText : requestedTexts) {
+
+        for (String requestedText : requestedTexts) {
             if (pageContains(requestedText)) {
                 updatedList.remove(requestedText);
             }
@@ -325,7 +325,7 @@ class RenderedPageObjectView {
         }
         if (!renderedElementFound) {
             throw new ElementNotVisibleException("None of the expected elements where displayed: '"
-                                                    + Arrays.toString(expectedElements) + "'");
+                    + Arrays.toString(expectedElements) + "'");
         }
     }
 

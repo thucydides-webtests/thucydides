@@ -31,6 +31,33 @@ public class WhenFormatingForHTML {
     }
 
     @Test
+    public void should_allow_letters_and_numbers_in_issue_number() {
+        Formatter formatter = new Formatter("http://my.issue.tracker/MYPROJECT/browse/{0}");
+
+        String formattedValue = formatter.addLinks("A big story (#MYPROJECT-123,#MYPROJECT-456)");
+
+        assertThat(formattedValue, is("A big story (<a href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-123\">#MYPROJECT-123</a>,<a href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-456\">#MYPROJECT-456</a>)"));
+    }
+
+    @Test
+    public void should_allow_dashes_in_issue_number() {
+        Formatter formatter = new Formatter("http://my.issue.tracker/MYPROJECT/browse/{0}");
+
+        String formattedValue = formatter.addLinks("A big story (#MY-PROJECT-123,#MY-PROJECT-456)");
+
+        assertThat(formattedValue, is("A big story (<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY-PROJECT-123\">#MY-PROJECT-123</a>,<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY-PROJECT-456\">#MY-PROJECT-456</a>)"));
+    }
+
+    @Test
+    public void should_allow_underscores_in_issue_number() {
+        Formatter formatter = new Formatter("http://my.issue.tracker/MYPROJECT/browse/{0}");
+
+        String formattedValue = formatter.addLinks("A big story (#MY_PROJECT_123,#MY_PROJECT_456)");
+
+        assertThat(formattedValue, is("A big story (<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_123\">#MY_PROJECT_123</a>,<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_456\">#MY_PROJECT_456</a>)"));
+    }
+
+    @Test
     public void should_identify_issues_in_a_text() {
         Formatter formatter = new Formatter("http://my.issue.tracker");
 

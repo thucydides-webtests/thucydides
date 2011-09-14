@@ -43,7 +43,7 @@ public class UserStoryLoader {
         File[] reportFiles = getAllXMLFilesFrom(reportDirectory);
 
         if (reportFiles == null) {
-            LOGGER.error("Could not find directory for Thucydides reports: {}", reportFiles);
+            LOGGER.error("Could not find any Thucydides reports");
             return stories;
         }
 

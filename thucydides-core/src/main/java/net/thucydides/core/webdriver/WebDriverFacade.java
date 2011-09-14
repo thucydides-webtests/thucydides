@@ -100,37 +100,49 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
     }
 
     public void get(final String url) {
-        if (!isEnabled()) return;
+        if (!isEnabled()) {
+            return;
+        }
 
         getProxiedDriver().get(url);
     }
 
     public String getCurrentUrl() {
-        if (!isEnabled()) return null;
+        if (!isEnabled()) {
+            return null;
+        }
 
         return getProxiedDriver().getCurrentUrl();
     }
 
     public String getTitle() {
-        if (!isEnabled()) return null;
+        if (!isEnabled()) {
+            return null;
+        }
 
         return getProxiedDriver().getTitle();
     }
 
     public List<WebElement> findElements(final By by) {
-        if (!isEnabled()) return null;
+        if (!isEnabled()) {
+            return null;
+        }
 
         return getProxiedDriver().findElements(by);
     }
 
     public WebElement findElement(final By by) {
-        if (!isEnabled()) return null;
+        if (!isEnabled()) {
+            return null;
+        }
 
         return getProxiedDriver().findElement(by);
     }
 
     public String getPageSource() {
-        if (!isEnabled()) return null;
+        if (!isEnabled()) {
+            return null;
+        }
 
         return getProxiedDriver().getPageSource();
     }
@@ -161,31 +173,41 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
     }
 
     public Set<String> getWindowHandles() {
-        if (!isEnabled()) return null;
+        if (!isEnabled()) {
+            return null;
+        }
 
         return getProxiedDriver().getWindowHandles();
     }
 
     public String getWindowHandle() {
-        if (!isEnabled()) return null;
+        if (!isEnabled()) {
+            return null;
+        }
 
         return getProxiedDriver().getWindowHandle();
     }
 
     public TargetLocator switchTo() {
-        if (!isEnabled()) return null;
+        if (!isEnabled()) {
+            return null;
+        }
 
         return getProxiedDriver().switchTo();
     }
 
     public Navigation navigate() {
-        if (!isEnabled()) return null;
+        if (!isEnabled()) {
+            return null;
+        }
 
         return getProxiedDriver().navigate();
     }
 
     public Options manage() {
-        if (!isEnabled()) return null;
+        if (!isEnabled()) {
+            return null;
+        }
 
         return getProxiedDriver().manage();
     }

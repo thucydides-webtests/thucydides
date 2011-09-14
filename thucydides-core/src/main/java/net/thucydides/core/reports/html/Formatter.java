@@ -12,7 +12,8 @@ import java.util.regex.Pattern;
  */
 public class Formatter {
 
-    private final Pattern issueNumberPattern = Pattern.compile("#\\d+");
+    private static final String ISSUE_NUMBER_REGEXP = "#([A-Z][A-Z0-9-_]*)?-?\\d+";
+    private final Pattern issueNumberPattern = Pattern.compile(ISSUE_NUMBER_REGEXP);
     private final String issueUrlFormat;
     private final String issueLinkFormat = "<a href=\"{0}\">{1}</a>";
 

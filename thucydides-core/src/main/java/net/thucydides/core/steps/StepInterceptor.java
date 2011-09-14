@@ -247,8 +247,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private void notifyTestSkippedFor(final Method method, final Object[] args)
             throws Exception {
-        ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
-
         if (isPending(method)) {
             StepEventBus.getEventBus().stepPending();
         } else {
