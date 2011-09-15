@@ -1,30 +1,26 @@
 package net.thucydides.junit.runners;
 
-import net.thucydides.core.steps.StepListener;
+import net.thucydides.core.steps.StepPublisher;
 import org.junit.runners.model.Statement;
 
 /**
- * Created by IntelliJ IDEA.
- * User: johnsmart
- * Date: 21/05/11
- * Time: 9:47 AM
- * To change this template use File | Settings | File Templates.
+ * A JUnit statement that runs a Thucydides-enabled test and then publishes the results via JUnit.
  */
-public class ThucydidesStatement extends Statement{
+public class ThucydidesStatement extends Statement {
 
     private final Statement statement;
-    private final StepListener listener;
+    private final StepPublisher publisher;
 
-    public ThucydidesStatement(final Statement statement, final StepListener listener) {
+    public ThucydidesStatement(final Statement statement, final StepPublisher publisher) {
         this.statement = statement;
-        this.listener = listener;
+        this.publisher = publisher;
     }
 
     @Override
     public void evaluate() throws Throwable {
         statement.evaluate();
-        if (listener.aStepHasFailed()) {
-            throw listener.getTestFailureCause();
+        if (publisher.aStepHasFailed()) {
+            throw publisher.getTestFailureCause();
         }
     }
 }

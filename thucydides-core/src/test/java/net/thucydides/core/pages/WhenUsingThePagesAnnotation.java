@@ -2,16 +2,28 @@ package net.thucydides.core.pages;
 
 
 import net.thucydides.core.annotations.ManagedPages;
+import net.thucydides.core.reflection.FieldSetter;
 import net.thucydides.core.steps.InvalidManagedPagesFieldException;
-import net.thucydides.core.steps.PagesAnnotatedField;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.lang.reflect.Field;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doThrow;
 
 public class WhenUsingThePagesAnnotation {
+
+    @Before
+    public void initMocks() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void the_ManagedPages_annotation_should_identify_the_pages_field() {
@@ -58,7 +70,34 @@ public class WhenUsingThePagesAnnotation {
     public void should_throw_exception_if_pages_object_is_not_a_Pages_instance() {
         SimpleBadlyannotatedScenario testCase = new SimpleBadlyannotatedScenario();
         PagesAnnotatedField.findFirstAnnotatedField(testCase.getClass());
-
     }
+
+    @Mock Pages pages;
+    @Mock Object testCase;
+    @Mock ManagedPages managedPages;
+    @Mock FieldSetter fieldSetter;
+
+    class TestPagesAnnotatedField extends PagesAnnotatedField {
+
+        TestPagesAnnotatedField(Field field, ManagedPages annotation) {
+            super(field, annotation);
+        }
+
+        @Override
+        protected FieldSetter set(Object targetObject) {
+            return fieldSetter;
+        }
+    }
+
+    @Test(expected = InvalidManagedPagesFieldException.class)
+    public void should_throw_exception_if_pages_object_field_cannot_be_accessed() throws Exception {
+
+        doThrow(new IllegalAccessException()).when(fieldSetter).to(anyObject());
+
+        Field field = null;
+        TestPagesAnnotatedField testField = new TestPagesAnnotatedField(field, managedPages);
+        testField.setValue(testCase, pages);
+    }
+
 
 }

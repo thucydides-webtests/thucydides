@@ -13,5 +13,8 @@ public class InvalidManagedPagesFieldException extends RuntimeException {
     public InvalidManagedPagesFieldException(final String message) {
         super(message);
     }
- 
+
+    public InvalidManagedPagesFieldException(String message, IllegalAccessException cause) {
+        super(message, cause);
+    }
 }

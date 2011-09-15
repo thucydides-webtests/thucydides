@@ -1,15 +1,24 @@
 package net.thucydides.core.steps;
 
 import net.thucydides.core.annotations.InvalidStepsFieldException;
+import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.pages.PagesAnnotatedField;
+import net.thucydides.core.reflection.FieldSetter;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doThrow;
 
 public class WhenUsingAnnotatedStepLibraries {
 
@@ -70,8 +79,42 @@ public class WhenUsingAnnotatedStepLibraries {
 
     @Test(expected=InvalidStepsFieldException.class)
     public void step_index_must_have_an_annotated_step_provided() {
-        List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findMandatoryAnnotatedFields(UserStoryWithNoSteps.class);
+        StepsAnnotatedField.findMandatoryAnnotatedFields(UserStoryWithNoSteps.class);
     }
+
+    @Mock FieldSetter fieldSetter;
+    @Mock ScenarioSteps scenarioSteps;
+    @Mock Object testCase;
+
+    @Before
+    public void initMocks() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    class TestStepsAnnotatedField extends StepsAnnotatedField {
+
+        TestStepsAnnotatedField(Field field) {
+            super(field);
+        }
+
+        @Override
+        protected FieldSetter set(Object targetObject) {
+            return fieldSetter;
+        }
+    }
+
+    @Test(expected = InvalidStepsFieldException.class)
+    public void should_throw_exception_if_pages_object_field_cannot_be_accessed() throws Exception {
+
+        doThrow(new IllegalAccessException()).when(fieldSetter).to(anyObject());
+
+        Field field = null; // value ignored
+        TestStepsAnnotatedField testField = new TestStepsAnnotatedField(field);
+        testField.setValue(testCase, scenarioSteps);
+    }
+
+
+
 
 
 }

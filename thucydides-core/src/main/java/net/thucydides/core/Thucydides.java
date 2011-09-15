@@ -47,11 +47,7 @@ public class Thucydides {
     private static void initStepListener() {
         File outputDirectory = Configuration.loadOutputDirectoryFromSystemProperties();
         StepListener listener  = new BaseStepListener(outputDirectory, getPages());
-
-        listener.getTestOutcomes();
-
         stepListenerThreadLocal.set(listener);
-
         StepEventBus.getEventBus().registerListener(getStepListener());
     }
 

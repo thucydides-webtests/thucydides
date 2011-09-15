@@ -3,6 +3,7 @@ package net.thucydides.core.steps;
 import net.thucydides.core.annotations.AnnotatedFields;
 import net.thucydides.core.annotations.InvalidStepsFieldException;
 import net.thucydides.core.annotations.Steps;
+import net.thucydides.core.reflection.FieldSetter;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -76,10 +77,13 @@ public class StepsAnnotatedField {
         this.field = field;
     }
 
+    protected FieldSetter set(Object targetObject) {
+        return new FieldSetter(field, targetObject);
+    }
+
     public void setValue(final Object testCase, final ScenarioSteps steps) {
         try {
-            field.setAccessible(true);
-            field.set(testCase, steps);
+            set(testCase).to(steps);
         } catch (IllegalAccessException e) {
             throw new InvalidStepsFieldException("Could not access or set @Steps field: " + field, e);
         }

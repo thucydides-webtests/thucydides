@@ -50,7 +50,7 @@ import static org.mockito.Mockito.when;
  */
 public class WhenRecordingStepExecutionResults {
 
-    StepListener stepListener;
+    BaseStepListener stepListener;
 
     StepFactory stepFactory;
 

@@ -9,8 +9,6 @@ import java.lang.annotation.Target;
  * Define the URLs that a given Page Object works with.
  * A Page Object is designed to work with a particular page. This annotation lets
  * you define a URL or a set of URLs that work with a particular page.
- * 
- * @author johnsmart
  *
  */
 @Retention(RetentionPolicy.RUNTIME)

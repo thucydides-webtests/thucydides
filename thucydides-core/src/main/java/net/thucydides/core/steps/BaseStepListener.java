@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import static net.thucydides.core.model.Stories.findStoryFrom;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -37,7 +38,7 @@ import static net.thucydides.core.util.NameConverter.underscore;
  * recording the names and results of each test, and taking and storing
  * screenshots at strategic points during the tests.
  */
-public class BaseStepListener implements StepListener {
+public class BaseStepListener implements StepListener, StepPublisher {
 
     /**
      * Used to build the test outcome structure as the test step results come in.
@@ -150,25 +151,6 @@ public class BaseStepListener implements StepListener {
         testedStory = story;
     }
 
-    private Story findStoryFrom(Class<?> testClass) {
-        if (storyIsDefinedIn(testClass)) {
-            return storyFrom(testClass);
-        } else {
-            return Story.from(testClass);
-        }
-    }
-
-    private Story storyFrom(final Class<?> testClass) {
-        Class<?> testedStoryClass = Story.testedInTestCase(testClass);
-        if (testedStoryClass != null) {
-            return Story.from(testedStoryClass);
-        }
-        return null;
-    }
-
-    private boolean storyIsDefinedIn(final Class<?> testClass) {
-         return (storyFrom(testClass) != null);
-   }
 
     /**
      * An individual test starts.

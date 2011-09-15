@@ -6,6 +6,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Find the annotated fields in a given class.
+ * Used as a utility class for the higher-level annotation processing.
+ * Typical use:
+ * <pre>
+ *     <code>
+ *         for (Field field : AnnotatedFields.of(someClass).allFields()) {
+ *             ...
+ *         }
+ *     </code>
+ * </pre>
+ */
 public class AnnotatedFields {
 
     private final Class<?> clazz;

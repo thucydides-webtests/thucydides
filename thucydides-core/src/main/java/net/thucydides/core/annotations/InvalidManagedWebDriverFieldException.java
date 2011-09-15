@@ -22,13 +22,4 @@ public class InvalidManagedWebDriverFieldException extends RuntimeException {
     public InvalidManagedWebDriverFieldException(final String message, final Throwable e) {
         super(message, e);
     }
-
-    /**
-     * Marks a class as representing an application feature.
-     *
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    public static @interface Feature {
-    }
 }

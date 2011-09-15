@@ -1,8 +1,9 @@
-package net.thucydides.core.steps;
+package net.thucydides.core.pages;
 
 import net.thucydides.core.annotations.AnnotatedFields;
 import net.thucydides.core.annotations.ManagedPages;
-import net.thucydides.core.pages.Pages;
+import net.thucydides.core.reflection.FieldSetter;
+import net.thucydides.core.steps.InvalidManagedPagesFieldException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -70,13 +71,16 @@ public class PagesAnnotatedField {
 
     public void setValue(final Object testCase, final Pages pages) {
         try {
-            field.setAccessible(true);
-            field.set(testCase, pages);
+            set(testCase).to(pages);
         } catch (IllegalAccessException e) {
-            throw new InvalidManagedWebDriverFieldException("Could not access or set managed pages field: " + field, e);
+            throw new InvalidManagedPagesFieldException("Could not access or set managed pages field: " + field, e);
         }
     }
-    
+
+    protected FieldSetter set(Object targetObject) {
+        return new FieldSetter(field, targetObject);
+    }
+
     public String getDefaultBaseUrl() {
         return annotation.defaultUrl();
     }
