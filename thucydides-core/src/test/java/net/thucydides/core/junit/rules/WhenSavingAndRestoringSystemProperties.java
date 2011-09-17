@@ -92,12 +92,17 @@ public class WhenSavingAndRestoringSystemProperties {
 
     @Test
     public void should_be_able_to_read_system_values_with_default() {
-        System.clearProperty(ThucydidesSystemProperty.ISSUE_TRACKER_URL.getPropertyName());
+        System.clearProperty(ThucydidesSystemProperty.PUBLIC_URL.getPropertyName());
 
-        String issueTracker = ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL,"default");
+        String publicUrl = ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.PUBLIC_URL,"default");
 
-        assertThat(issueTracker, is("default"));
+        assertThat(publicUrl, is("default"));
 
+    }
+
+    @Test
+    public void system_property_tostring_should_return_property_name() {
+        assertThat(ThucydidesSystemProperty.PUBLIC_URL.toString(), is("thucydides.public.url"));
     }
 
 

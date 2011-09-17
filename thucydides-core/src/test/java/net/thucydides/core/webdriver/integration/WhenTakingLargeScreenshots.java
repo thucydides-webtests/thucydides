@@ -31,11 +31,6 @@ public class WhenTakingLargeScreenshots {
 
     private File screenshotDirectory;
     private WebDriver driver;
-    
-    @Before
-    public void open_local_static_site() throws InstantiationException, IllegalAccessException {
-        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
-    }
 
     @After
     public void closeBrowser() {
@@ -63,6 +58,8 @@ public class WhenTakingLargeScreenshots {
         System.setProperty("thucydides.browser.width","1280");
         System.setProperty("thucydides.browser.height","1024");
 
+        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
+
         openStaticTestSite(driver);
 
         Photographer photographer = new Photographer(driver, screenshotDirectory);
@@ -71,7 +68,24 @@ public class WhenTakingLargeScreenshots {
 
 
         assertThat(image.getWitdh(), is(1280));
-        assertThat(image.getHeight(), is(1024));
+    }
+
+    @Test
+    public void should_take_screenshot_with_specified_larger_dimensions()  throws Exception {
+
+        System.setProperty("thucydides.browser.width","1600");
+        System.setProperty("thucydides.browser.height","1200");
+
+        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
+
+        openStaticTestSite(driver);
+
+        Photographer photographer = new Photographer(driver, screenshotDirectory);
+        File screenshotFile = photographer.takeScreenshot("screenshot");
+        ResizableImage image = ResizableImage.loadFrom(screenshotFile);
+
+
+        assertThat(image.getWitdh(), is(1600));
     }
 
 }

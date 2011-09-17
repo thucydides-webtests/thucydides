@@ -159,8 +159,7 @@ public class Story {
      * Find the name of the report for this story for the specified report type (XML, HTML,...).
      */
     public String getReportName(final ReportNamer.ReportType type) {
-        ReportNamer reportNamer = new ReportNamer(type);
-        return reportNamer.getNormalizedTestNameFor(this);
+        return Stories.reportFor(this, type);
     }
 
     public String getReportName() {

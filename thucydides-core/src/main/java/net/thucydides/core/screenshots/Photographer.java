@@ -73,7 +73,7 @@ public class Photographer {
      * Take a screenshot of the current browser and store it in the output directory.
      */
     public File takeScreenshot(final String prefix) {
-        if (driverCanTakeSnapehots()) {
+        if (driverCanTakeSnapshots()) {
             File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             if ((screenshot != null) && (screenshot.exists())) {
                 try {
@@ -96,7 +96,7 @@ public class Photographer {
         return savedScreenshot;
     }
 
-    private boolean driverCanTakeSnapehots() {
+    private boolean driverCanTakeSnapshots() {
         return (driver instanceof TakesScreenshot);
     }
 

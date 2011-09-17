@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 
 public class WhenResizingAScreenshot {
@@ -37,6 +38,33 @@ public class WhenResizingAScreenshot {
 
         assertThat(image.getWitdh(), is(expectedWidth));
         assertThat(image.getHeight(), is(expectedHeight));
+    }
+
+
+    @Test
+    public void should_not_try_to_redimension_images_that_are_too_large() throws IOException {
+
+        File screenshotFile = screenshotFileFrom("/screenshots/wikipedia.png");
+
+        ResizableImage image = ResizableImage.loadFrom(screenshotFile);
+
+        ResizableImage resizedImage = image.rescaleCanvas(805, 1200);
+
+        assertThat(resizedImage.getWitdh(), is(805));
+        assertThat(resizedImage.getHeight(), is(greaterThan(1200)));
+    }
+
+
+    @Test
+    public void should_not_try_to_redimension_images_that_are_higher_than_the_requested_height() throws IOException {
+
+        File screenshotFile = screenshotFileFrom("/screenshots/google_page_1.png");
+
+        ResizableImage image = ResizableImage.loadFrom(screenshotFile);
+
+        ResizableImage resizedImage = image.rescaleCanvas(805, 400);
+
+        assertThat(resizedImage.getHeight(), is(greaterThan(400)));
     }
 
 

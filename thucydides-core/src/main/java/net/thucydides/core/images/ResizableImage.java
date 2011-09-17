@@ -29,6 +29,10 @@ public class ResizableImage {
 
     public ResizableImage rescaleCanvas(final int width, final int height) {
 
+        if (getHeight() > height) {
+            return this;
+        }
+
         BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
 
         fillWithWhiteBackground(resizedImage);

@@ -1,8 +1,10 @@
 package net.thucydides.core.annotations;
 
+import net.thucydides.core.reports.html.Formatter;
 import org.junit.Ignore;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import static net.thucydides.core.util.NameConverter.withNoArguments;
 
@@ -82,6 +84,20 @@ public class TestAnnotations {
             return testClass.getMethod(baseMethodName);
         } catch (NoSuchMethodException e) {
             return null;
+        }
+    }
+
+    /**
+     * Return a list of the issues mentioned in the title annotation of this method.
+     * @param methodName
+     * @return
+     */
+    public List<String> getAnnotatedIssuesForMethod(String methodName) {
+        String title = getAnnotatedTitleForMethod(methodName);
+        if (title != null) {
+            return Formatter.issuesIn(title);
+        } else {
+            return Formatter.issuesIn(methodName);
         }
     }
 }

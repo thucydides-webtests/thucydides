@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import net.thucydides.core.ThucydidesSystemProperty;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -46,13 +47,27 @@ public class WebDriverFactory {
 
     protected WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {
+            WebDriver driver;
             if (isAFirefoxDriver(driverClass)) {
-               return webdriverInstanceFactory.newInstanceOf(driverClass, buildFirefoxProfile());
+               driver = webdriverInstanceFactory.newInstanceOf(driverClass, buildFirefoxProfile());
             } else {
-                return webdriverInstanceFactory.newInstanceOf(driverClass);
+                driver =  webdriverInstanceFactory.newInstanceOf(driverClass);
             }
+            redimensionBrowser(driver);
+            return driver;
         } catch (Exception cause) {
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
+        }
+    }
+
+    private void redimensionBrowser(final WebDriver driver) {
+        int height = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_HEIGHT, 0);
+        int width = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_WIDTH, 0);
+
+        if ((height > 0) && (width > 0)) {
+            String resizeWindow = "window.resizeTo(" + width + "," + height + ")";
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript(resizeWindow);
         }
     }
 

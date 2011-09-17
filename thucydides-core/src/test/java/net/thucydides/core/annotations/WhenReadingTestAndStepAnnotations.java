@@ -4,47 +4,70 @@ package net.thucydides.core.annotations;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class WhenReadingTestAndStepAnnotations {
 
-    static final class TestSteps {
-        public void normalStep(){}
+    static final class SampleTestCase {
+        public void normalTest(){}
 
         @Title("A title")
-        public void normalStepWithTitle(){}
+        public void normalTestWithTitle(){}
 
         @Pending
-        public void pendingStep(){}
+        public void pendingTest(){}
 
         @Ignore
-        public void skippedStep() {}
+        public void skippedTest() {}
+
+        @Title("Fixes #MYPROJECT-123 and #MYPROJECT-456")
+        public void testWithIssues(){}
+
     }
 
     @Test
-    public void shouldReadStepTitles() {
-        assertThat(TestAnnotations.forClass(TestSteps.class)
-                    .getAnnotatedTitleForMethod("normalStepWithTitle"), is("A title"));
+    public void shouldReadMethodTitles() {
+        assertThat(TestAnnotations.forClass(SampleTestCase.class)
+                    .getAnnotatedTitleForMethod("normalTestWithTitle"), is("A title"));
+    }
+
+    @Test
+    public void shouldReadNoAnnotatedIssuesIfNoneFound() {
+
+        assertThat(TestAnnotations.forClass(SampleTestCase.class)
+                .getAnnotatedIssuesForMethod("normalTest").isEmpty(), is(true));
+    }
+
+    @Test
+    public void shouldReadAnnotatedIssues() {
+
+        assertThat(TestAnnotations.forClass(SampleTestCase.class)
+                .getAnnotatedIssuesForMethod("testWithIssues"), allOf(hasItem("#MYPROJECT-123"),hasItem("#MYPROJECT-456")));
     }
 
     @Test
     public void shouldIdentifyPendingSteps() {
-        assertThat(TestAnnotations.forClass(TestSteps.class).isPending("pendingStep"), is(true));
+        assertThat(TestAnnotations.forClass(SampleTestCase.class).isPending("pendingTest"), is(true));
     }
 
     @Test
     public void shouldIdentifyNonPendingSteps() {
-        assertThat(TestAnnotations.forClass(TestSteps.class).isPending("normalStep"), is(false));
+        assertThat(TestAnnotations.forClass(SampleTestCase.class).isPending("normalTest"), is(false));
     }
 
     @Test
     public void shouldIdentifySkippedSteps() {
-        assertThat(TestAnnotations.forClass(TestSteps.class).isIgnored("skippedStep"), is(true));
+        assertThat(TestAnnotations.forClass(SampleTestCase.class).isIgnored("skippedTest"), is(true));
     }
 
     @Test
     public void shouldIdentifyNonSkippedSteps() {
-        assertThat(TestAnnotations.forClass(TestSteps.class).isIgnored("normalStep"), is(false));
+        assertThat(TestAnnotations.forClass(SampleTestCase.class).isIgnored("normalTest"), is(false));
     }
 }

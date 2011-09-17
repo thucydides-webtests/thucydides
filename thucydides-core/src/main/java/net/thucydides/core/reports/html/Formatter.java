@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class Formatter {
 
     private static final String ISSUE_NUMBER_REGEXP = "#([A-Z][A-Z0-9-_]*)?-?\\d+";
-    private final Pattern issueNumberPattern = Pattern.compile(ISSUE_NUMBER_REGEXP);
+    private final static Pattern issueNumberPattern = Pattern.compile(ISSUE_NUMBER_REGEXP);
     private final String issueUrlFormat;
     private final String issueLinkFormat = "<a href=\"{0}\">{1}</a>";
 
@@ -22,7 +22,7 @@ public class Formatter {
     }
 
 
-    public List<String> issuesIn(final String value) {
+    public static List<String> issuesIn(final String value) {
         Matcher matcher = issueNumberPattern.matcher(value);
 
         List<String> issues = new ArrayList<String>();

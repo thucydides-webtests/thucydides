@@ -1,6 +1,9 @@
 package net.thucydides.core.reports;
 
+import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
+import net.thucydides.core.model.ReportNamer;
+import net.thucydides.core.model.Stories;
 import net.thucydides.core.model.TestOutcome;
 import org.junit.Test;
 
@@ -14,6 +17,11 @@ public class WhenNamingTheReports {
 
     class AUserStory {};
 
+    @Feature
+    class AFeature {
+        class AUserStoryInAFeature {}
+    }
+
     @Story(AUserStory.class)
     class SomeTestScenario {
         public void a_simple_test_case() {};
@@ -21,6 +29,12 @@ public class WhenNamingTheReports {
         public void should_do_that() {};
     }
 
+    @Story(AFeature.AUserStoryInAFeature.class)
+    class SomeOtherTestScenario {
+        public void a_simple_test_case() {};
+        public void should_do_this() {};
+        public void should_do_that() {};
+    }
 
     @Test
     public void the_report_filename_should_be_based_on_the_test_case_name() {
@@ -127,6 +141,16 @@ public class WhenNamingTheReports {
         String reportName = story.getReportName();
         
         assertThat(reportName, is("a_user_story"));
+    }
+
+    @Test
+    public void the_stories_class_can_provide_the_report_name_directly() {
+
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
+
+        String reportName = Stories.reportFor(story, ReportNamer.ReportType.HTML);
+
+        assertThat(reportName, is("a_user_story.html"));
     }
 
 }

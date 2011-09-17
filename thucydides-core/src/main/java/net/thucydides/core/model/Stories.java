@@ -1,5 +1,6 @@
 package net.thucydides.core.model;
 
+import net.thucydides.core.model.ReportNamer.ReportType;
 /**
  * Helper methods to deal with stories and related classes.
  */
@@ -18,6 +19,12 @@ public class Stories {
         } else {
             return Story.from(testClass);
         }
+    }
+
+    public static String reportFor(final Story story, final ReportType type) {
+        ReportNamer reportNamer = new ReportNamer(type);
+        return reportNamer.getNormalizedTestNameFor(story);
+
     }
 
     private static Story storyFrom(final Class<?> testClass) {

@@ -78,7 +78,22 @@ public enum ThucydidesSystemProperty {
     /**
      * Base directory in which history files are stored.
      */
-    HISTORY_BASE_DIRECTORY("thucydides.history");
+    HISTORY_BASE_DIRECTORY("thucydides.history"),
+
+    /**
+     *  Redimension the browser to enable larger screenshots.
+     */
+    SNAPSHOT_HEIGHT("thucydides.browser.height"),
+    /**
+     *  Redimension the browser to enable larger screenshots.
+     */
+    SNAPSHOT_WIDTH("thucydides.browser.width"),
+
+    /**
+     * Public URL where the Thucydides reports will be displayed.
+     * This is mainly for use by plugins.
+     */
+    PUBLIC_URL("thucydides.public.url");
 
     private String propertyName;
 
@@ -89,6 +104,8 @@ public enum ThucydidesSystemProperty {
     public String getPropertyName() {
         return propertyName;
     }
+
+
 
     public static boolean getBooleanValue(final ThucydidesSystemProperty property, final boolean defaultValue) {
         String value = System.getProperty(property.getPropertyName());
@@ -118,5 +135,10 @@ public enum ThucydidesSystemProperty {
 
     public static void setValue(ThucydidesSystemProperty issueTrackerUrl, String value) {
         System.setProperty(issueTrackerUrl.getPropertyName(), value);
+    }
+
+    @Override
+    public String toString() {
+        return propertyName;
     }
 }
