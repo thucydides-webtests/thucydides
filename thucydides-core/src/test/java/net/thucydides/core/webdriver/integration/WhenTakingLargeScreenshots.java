@@ -1,0 +1,77 @@
+package net.thucydides.core.webdriver.integration;
+
+import net.thucydides.core.images.ResizableImage;
+import net.thucydides.core.pages.PageObject;
+import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.webdriver.SupportedWebDriver;
+import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.core.webdriver.WebdriverInstanceFactory;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import java.io.File;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+public class WhenTakingLargeScreenshots {
+
+    @Rule
+    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+
+    private File screenshotDirectory;
+    private WebDriver driver;
+    
+    @Before
+    public void open_local_static_site() throws InstantiationException, IllegalAccessException {
+        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
+    }
+
+    @After
+    public void closeBrowser() {
+        driver.quit();
+    }
+
+    @Before
+    public void createScreenshotDir() {
+        screenshotDirectory = temporaryDirectory.newFolder("screenshots");
+    }
+
+    private static File fileInClasspathCalled(final String resourceName) {
+        return new File(Thread.currentThread().getContextClassLoader().getResource(resourceName).getPath());
+    }
+
+    private static void openStaticTestSite(WebDriver driver) {
+        File testSite = fileInClasspathCalled("static-site/index.html");
+        driver.get("file://" + testSite.getAbsolutePath());
+
+    }
+
+    @Test
+    public void should_take_screenshot_with_specified_dimensions()  throws Exception {
+
+        System.setProperty("thucydides.browser.width","1280");
+        System.setProperty("thucydides.browser.height","1024");
+
+        openStaticTestSite(driver);
+
+        Photographer photographer = new Photographer(driver, screenshotDirectory);
+        File screenshotFile = photographer.takeScreenshot("screenshot");
+        ResizableImage image = ResizableImage.loadFrom(screenshotFile);
+
+
+        assertThat(image.getWitdh(), is(1280));
+        assertThat(image.getHeight(), is(1024));
+    }
+
+}
