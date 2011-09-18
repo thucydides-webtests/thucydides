@@ -77,7 +77,6 @@ public class WhenResizingAScreenshot {
         int newHeight = 1250;
 
         ResizableImage image = ResizableImage.loadFrom(screenshotFile);
-
         ResizableImage resizedImage = image.rescaleCanvas(newWidth, newHeight);
 
         assertThat(resizedImage.getWitdh(), is(newWidth));

@@ -1,45 +1,52 @@
 package net.thucydides.core.images;
 
+import org.apache.commons.io.FileUtils;
+
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.FileImageInputStream;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ResizableImage {
 
-    private final BufferedImage image;
+    private final File screenshotFile;
+    private final SimpleImageInfo imageInfo;
 
-    public ResizableImage(final BufferedImage image) {
-        this.image = image;
+    public ResizableImage(final File screenshotFile) throws IOException  {
+        this.screenshotFile = screenshotFile;
+        this.imageInfo = new SimpleImageInfo(screenshotFile);
     }
 
     public static ResizableImage loadFrom(final File screenshotFile) throws IOException {
-        return new ResizableImage(ImageIO.read(screenshotFile));
+        return new ResizableImage(screenshotFile);
     }
 
     public int getWitdh() {
-        return image.getWidth();
+        return imageInfo.getWidth();
     }
 
     public int getHeight() {
-        return image.getHeight();
+        return imageInfo.getHeight();
     }
 
-    public ResizableImage rescaleCanvas(final int width, final int height) {
+    public ResizableImage rescaleCanvas(final int width, final int height) throws IOException {
 
         if (getHeight() > height) {
             return this;
         }
-
+        BufferedImage image = ImageIO.read(screenshotFile);
         BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
 
         fillWithWhiteBackground(resizedImage);
 
         resizedImage.setData(image.getRaster());
 
-        return new ResizableImage(resizedImage);
+        return new ResizedImage(resizedImage, screenshotFile);
     }
 
     private void fillWithWhiteBackground(final BufferedImage resizedImage) {
@@ -49,7 +56,11 @@ public class ResizableImage {
         g2d.dispose();
     }
 
-    public void saveTo(File file) throws IOException {
-        ImageIO.write(image, "PNG", file);
+    /**
+     * If no resize operation has been done, just copy the file.
+     * Otherwise we should be applying the saveTo() method on the ResizedImage class.
+     */
+    public void saveTo(final File savedFile) throws IOException {
+        FileUtils.copyFile(screenshotFile, savedFile);
     }
 }
