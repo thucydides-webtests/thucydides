@@ -16,6 +16,7 @@ public class ResizableImage {
 
     private final File screenshotFile;
     private final SimpleImageInfo imageInfo;
+    private final int MAX_SUPPORTED_HEIGHT = 1200;
 
     public ResizableImage(final File screenshotFile) throws IOException  {
         this.screenshotFile = screenshotFile;
@@ -39,6 +40,10 @@ public class ResizableImage {
         if (getHeight() > height) {
             return this;
         }
+        if (getHeight() > MAX_SUPPORTED_HEIGHT) {
+            return this;
+        }
+
         BufferedImage image = ImageIO.read(screenshotFile);
         BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
 
