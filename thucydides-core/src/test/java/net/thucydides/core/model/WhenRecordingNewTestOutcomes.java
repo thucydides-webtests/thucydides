@@ -687,7 +687,7 @@ public class WhenRecordingNewTestOutcomes {
         Thread.sleep(10);
         testOutcome.recordDuration();
         assertThat(testOutcome.getDuration(), is(greaterThanOrEqualTo(10L)));
-        assertThat(testOutcome.getDuration(), is(lessThan(100L)));
+        assertThat(testOutcome.getDuration(), is(lessThan(1000L)));
     }
 
 //    @Story(AUserStory.class)
