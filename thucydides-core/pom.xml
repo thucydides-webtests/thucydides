@@ -4,7 +4,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.4.4-SNAPSHOT</version>
+        <version>0.4.4</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-core</artifactId>
@@ -93,5 +93,5 @@
             <artifactId>freemarker</artifactId>
             <version>2.3.18</version>
         </dependency>
-    </dependencies>
+    </dependencies>          ˜
 </project>
