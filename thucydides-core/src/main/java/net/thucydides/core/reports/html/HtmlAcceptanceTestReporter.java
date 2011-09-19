@@ -64,7 +64,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     }
 
     private void addFormattersToContext(final Map<String,Object> context) {
-        Formatter formatter = new Formatter(ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL));
+        Formatter formatter = new Formatter(ThucydidesSystemProperty.getIssueTrackerUrl());
         context.put("formatter", formatter);
 
     }

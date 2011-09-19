@@ -141,7 +141,7 @@ public class StoryTestResults {
     }
 
     private Formatter getFormatter() {
-        return new Formatter(ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL));
+        return new Formatter(ThucydidesSystemProperty.getIssueTrackerUrl());
     }
 
     public int getStepCount() {

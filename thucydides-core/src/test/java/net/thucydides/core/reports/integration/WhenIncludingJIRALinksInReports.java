@@ -51,6 +51,21 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
         assertThat(reportContents, containsString("<a href=\"http://my.issue.tracker/1234\">#1234</a>"));
     }
 
+
+    @Test
+    public void a_jira_base_url_should_also_be_recognized()  throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", JIRAAnnotatedTestScenario.class);
+        ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.JIRA_URL, "http://my.jira");
+
+        recordSimpleTest(testOutcome);
+
+        reporter.generateReportFor(testOutcome);
+
+        File screenshotReport = new File(outputDirectory, "a_user_story_a_simple_test_case.html");
+        String reportContents = FileUtils.readFileToString(screenshotReport);
+        assertThat(reportContents, containsString("<a href=\"http://my.jira/browse/1234\">#1234</a>"));
+    }
+
     @Test
     public void jira_issue_numbers_should_be_converted_to_URLs_when_a_jira_base_url_is_provided()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this_too", JIRAAnnotatedTestScenario.class);

@@ -70,11 +70,11 @@ public class WhenSavingAndRestoringSystemProperties {
 
     @Test
     public void should_be_able_to_set_Thycydides_system_properties_easily() {
-        String originalIssueTracker = ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL);
+        String originalIssueTracker = ThucydidesSystemProperty.getIssueTrackerUrl();
 
         ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, "http://arbitrary.issue.tracker");
 
-        String updatedIssueTracker = ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL);
+        String updatedIssueTracker = ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL);;
 
         assertThat(updatedIssueTracker, is(not(originalIssueTracker)));
 
@@ -87,6 +87,26 @@ public class WhenSavingAndRestoringSystemProperties {
         String issueTracker = ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL);
 
         assertThat(issueTracker, is("http://arbitrary.issue.tracker"));
+
+    }
+
+    @Test
+    public void should_be_able_to_read_issue_tracker_url() {
+        ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, "http://arbitrary.issue.tracker");
+
+        String issueTracker = ThucydidesSystemProperty.getIssueTrackerUrl();
+
+        assertThat(issueTracker, is("http://arbitrary.issue.tracker"));
+
+    }
+
+    @Test
+    public void should_be_able_to_read_jira_issue_tracker_url() {
+        ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.JIRA_URL, "http://arbitrary.issue.tracker");
+
+        String issueTracker = ThucydidesSystemProperty.getIssueTrackerUrl();
+
+        assertThat(issueTracker, is("http://arbitrary.issue.tracker/browse/{0}"));
 
     }
 

@@ -76,6 +76,11 @@ public enum ThucydidesSystemProperty {
     ISSUE_TRACKER_URL("thucydides.issue.tracker.url"),
 
     /**
+     * If the base JIRA URL is defined, Thucydides will build the issue tracker url using the standard JIRA form.
+     */
+    JIRA_URL("jira.url"),
+
+    /**
      * Base directory in which history files are stored.
      */
     HISTORY_BASE_DIRECTORY("thucydides.history"),
@@ -135,6 +140,14 @@ public enum ThucydidesSystemProperty {
 
     public static void setValue(ThucydidesSystemProperty issueTrackerUrl, String value) {
         System.setProperty(issueTrackerUrl.getPropertyName(), value);
+    }
+
+    public static String getIssueTrackerUrl() {
+        if (getValue(JIRA_URL) != null) {
+            return getValue(JIRA_URL) + "/browse/{0}";
+        } else {
+            return getValue(ISSUE_TRACKER_URL);
+        }
     }
 
     @Override

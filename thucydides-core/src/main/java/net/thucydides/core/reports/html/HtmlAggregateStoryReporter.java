@@ -84,7 +84,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     private void addFormattersToContext(final Map<String, Object> context) {
-        Formatter formatter = new Formatter(ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL));
+        Formatter formatter = new Formatter(ThucydidesSystemProperty.getIssueTrackerUrl());
         context.put("formatter", formatter);
         context.put("formatted", new NumericalFormatter());
     }
