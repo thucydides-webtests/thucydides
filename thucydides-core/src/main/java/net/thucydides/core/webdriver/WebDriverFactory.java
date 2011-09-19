@@ -5,6 +5,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 
@@ -22,12 +23,21 @@ public class WebDriverFactory {
 
     private final WebdriverInstanceFactory webdriverInstanceFactory;
 
+    private ProfilesIni allProfiles;
+
     public WebDriverFactory() {
         this.webdriverInstanceFactory = new WebdriverInstanceFactory();
     }
 
     public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory) {
         this.webdriverInstanceFactory = webdriverInstanceFactory;
+    }
+
+    protected ProfilesIni getAllProfiles() {
+        if (allProfiles == null) {
+            allProfiles = new ProfilesIni();
+        }
+        return allProfiles;
     }
 
     /***
@@ -85,15 +95,24 @@ public class WebDriverFactory {
 
     private FirefoxProfile buildFirefoxProfile() {
 
-        String profileDirectory = System.getProperty("webdriver.firefox.profile");
+        String profileName = System.getProperty("webdriver.firefox.profile");
+
         FirefoxProfile profile;
-        if (profileDirectory == null) {
+        if (profileName == null) {
             profile = createNewFirefoxProfile();
         } else {
-            profile = useExistingFirefoxProfile(new File(profileDirectory));
+            profile = getProfileFrom(profileName);
         }
         if (dontAssumeUntrustedCertificateIssuer()) {
             profile.setAssumeUntrustedCertificateIssuer(false);
+        }
+        return profile;
+    }
+
+    private FirefoxProfile getProfileFrom(final String profileName) {
+        FirefoxProfile profile = getAllProfiles().getProfile(profileName);
+        if (profile == null) {
+            profile = useExistingFirefoxProfile(new File(profileName));
         }
         return profile;
     }

@@ -178,6 +178,7 @@ public class WebElementFacade {
      * @param value
      */
     public void type(final String value) {
+        waitUntilElementAvailable();
         webElement.clear();
         webElement.sendKeys(value);
     }
@@ -187,6 +188,7 @@ public class WebElementFacade {
      * @param value
      */
     public void typeAndEnter(final String value) {
+        waitUntilElementAvailable();
         webElement.clear();
         webElement.sendKeys(value, Keys.ENTER);
     }
@@ -196,6 +198,7 @@ public class WebElementFacade {
      * @param value
      */
     public void typeAndTab(final String value) {
+        waitUntilElementAvailable();
         webElement.clear();
         webElement.sendKeys(value + Keys.TAB);
     }
@@ -205,28 +208,38 @@ public class WebElementFacade {
     }
 
     public void selectByVisibleText(final String label) {
+        waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByVisibleText(label);
     }
 
     public String getSelectedVisibleTextValue() {
+        waitUntilElementAvailable();
         Select select = new Select(webElement);
         return select.getFirstSelectedOption().getText();
     }
 
     public void selectByValue(String value) {
+        waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByValue(value);
     }
 
     public String getSelectedValue() {
+        waitUntilElementAvailable();
         Select select = new Select(webElement);
         return select.getFirstSelectedOption().getAttribute("value");
     }
 
     public void selectByIndex(int indexValue) {
+        waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByIndex(indexValue);
+    }
+
+    private void waitUntilElementAvailable() {
+        waitUntilVisible();
+        waitUntilEnabled();
     }
 
     public boolean isPresent() {
@@ -285,10 +298,12 @@ public class WebElementFacade {
     }
 
     public String getValue() {
+        waitUntilElementAvailable();
         return webElement.getAttribute("value");
     }
 
     public String getText() {
+        waitUntilElementAvailable();
         return webElement.getText();
     }
 
@@ -321,6 +336,8 @@ public class WebElementFacade {
     }
 
     public String getTextValue(){
+        waitUntilElementAvailable();
+
         if(!getText().isEmpty())
         {
             return webElement.getText();
@@ -332,4 +349,11 @@ public class WebElementFacade {
         return "";
     }
 
+    /**
+     * Wait for an element to be visible and enabled, and then click on it.
+     */
+    public void click() {
+        waitUntilElementAvailable();
+        webElement.click();
+    }
 }

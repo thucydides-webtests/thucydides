@@ -45,6 +45,8 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
         protected WebElement textField;
 
+        protected WebElement checkbox;
+
         protected WebElement buttonThatIsInitiallyDisabled;
 
         protected WebElement buttonThatIsInitiallyEnabled;
@@ -529,4 +531,12 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
     public void should_return_empty_string_from_other_element_using_getTextValue() {
         assertThat(page.element(page.emptylist).getTextValue(), is(""));
     }
+
+    @Test
+    public void should_wait_for_element_to_be_visible_and_enabled_before_clicking() {
+        page.element(page.checkbox).click();
+
+    }
+
+
 }

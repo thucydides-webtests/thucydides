@@ -40,7 +40,7 @@ public class StepEventBus {
         return stepEventBusThreadLocal.get();
     }
 
-    private static Iterator<?> listenerImplementations = Service.providers(StepListener.class);
+    //private static Iterator<?> listenerImplementations = Service.providers(StepListener.class);
 
     private List<StepListener> registeredListeners = new ArrayList<StepListener>();
 
@@ -85,6 +85,7 @@ public class StepEventBus {
 
         if (customListeners == null) {
             customListeners = Collections.synchronizedSet(new HashSet<StepListener>());
+            Iterator<?> listenerImplementations = Service.providers(StepListener.class);
 
             while (listenerImplementations.hasNext()) {
                 StepListener listener = (StepListener) listenerImplementations.next();

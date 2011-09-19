@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -17,6 +18,7 @@ import java.io.File;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 public class WhenInstanciatingANewFirefoxDriver {
 
@@ -31,13 +33,16 @@ public class WhenInstanciatingANewFirefoxDriver {
 
     @Before
     public void createFactory() {
+        MockitoAnnotations.initMocks(this);
         webdriverInstanceFactory = new WebdriverInstanceFactory();
         originalWebdriverProfile = System.getProperty("webdriver.firefox.profile");
     }
 
     @After
     public void closeFirefox() {
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
         if (originalWebdriverProfile != null) {
             System.setProperty("webdriver.firefox.profile", originalWebdriverProfile);
         } else {
@@ -50,6 +55,8 @@ public class WhenInstanciatingANewFirefoxDriver {
          driver = webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class);
          assertThat(driver, instanceOf(FirefoxDriver.class));
     }
+
+
 
     @Test
     public void should_support_creating_a_firefox_driver_with_a_profile() throws Exception {
@@ -72,11 +79,29 @@ public class WhenInstanciatingANewFirefoxDriver {
             }
         };
 
+
         File customProfileDir = temporaryFolder.newFolder("myprofile");
         System.setProperty("webdriver.firefox.profile", customProfileDir.getAbsolutePath());
 
         driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
         assertThat(chosenProfile, is(customProfileDir.getAbsolutePath()));
+    }
+    @Test
+    public void should_support_creating_a_firefox_driver_with_a_named_profile() throws Exception {
+
+        WebDriverFactory factory = new WebDriverFactory() {
+
+            @Override
+            protected FirefoxProfile useExistingFirefoxProfile(File profileDirectory) {
+                chosenProfile = profileDirectory.getAbsolutePath();
+                return super.useExistingFirefoxProfile(profileDirectory);
+            }
+        };
+
+        System.setProperty("webdriver.firefox.profile", "default");
+
+        driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
+        assertThat(chosenProfile, is(nullValue()));
     }
 
 }

@@ -92,6 +92,10 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
                 return ((TakesScreenshot) getProxiedDriver()).getScreenshotAs(target);
             } catch (WebDriverException e) {
                 LOGGER.warn("Failed to take screenshot - driver closed already?", e);
+            } catch (OutOfMemoryError outOfMemoryError) {
+                // Out of memory errors can happen with extremely big screens, and currently Selenium does
+                // not handle them correctly/at all.
+                LOGGER.error("Failed to take screenshot - out of memory", outOfMemoryError);
             }
         }
         return null;

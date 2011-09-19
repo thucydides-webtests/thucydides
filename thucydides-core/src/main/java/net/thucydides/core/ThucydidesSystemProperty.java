@@ -70,7 +70,7 @@ public enum ThucydidesSystemProperty {
 
     /**
      *  Base URL for the issue tracking system to be referred to in the reports.
-     *  If defined, any issues quoted in the form #1234 will be linked to the relevent
+     *  If defined, any issues quoted in the form #1234 will be linked to the relevant
      *  issue in the issue tracking system. Works with JIRA, Trac etc.
      */
     ISSUE_TRACKER_URL("thucydides.issue.tracker.url"),
