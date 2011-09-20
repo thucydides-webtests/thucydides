@@ -25,6 +25,8 @@ public class WebDriverFactory {
     private final WebdriverInstanceFactory webdriverInstanceFactory;
 
     private ProfilesIni allProfiles;
+    private static final int DEFAULT_HEIGHT = 800;
+    private static final int DEFAULT_WIDTH = 1000;
 
     public WebDriverFactory() {
         this.webdriverInstanceFactory = new WebdriverInstanceFactory();
@@ -84,19 +86,13 @@ public class WebDriverFactory {
         if ((height > 0) && (width > 0)) {
             resizeBrowserTo((JavascriptExecutor) driver, height, width);
         } else {
-            maximizeBrowserDimensions((JavascriptExecutor) driver);
+            resizeBrowserTo((JavascriptExecutor) driver, DEFAULT_HEIGHT, DEFAULT_WIDTH);
         }
     }
 
     private void resizeBrowserTo(JavascriptExecutor driver, int height, int width) {
         String resizeWindow = "window.resizeTo(" + width + "," + height + ")";
         driver.executeScript(resizeWindow);
-    }
-
-    private void maximizeBrowserDimensions(JavascriptExecutor driver) {
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = toolkit.getScreenSize();
-        resizeBrowserTo(driver, screenSize.height, screenSize.width);
     }
 
     private boolean isAFirefoxDriver(Class<? extends WebDriver> driverClass) {

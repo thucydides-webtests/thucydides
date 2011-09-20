@@ -24,6 +24,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
     private static final String DEFAULT_ACCEPTANCE_TEST_REPORT = "freemarker/default.ftl";
     private static final String DEFAULT_ACCEPTANCE_TEST_SCREENSHOT = "freemarker/screenshots.ftl";
+    private static final int MAXIMUM_SCREENSHOT_WIDTH = 1000;
 
     private String qualifier;
 
@@ -118,6 +119,9 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
     private int maxWidthOf(int maxWidth, File screenshotFile) throws IOException {
         int width = ResizableImage.loadFrom(screenshotFile).getWitdh();
+        if (width > MAXIMUM_SCREENSHOT_WIDTH) {
+            width = MAXIMUM_SCREENSHOT_WIDTH;
+        }
         if (width > maxWidth) {
             maxWidth = width;
         }
@@ -137,6 +141,10 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
     private int maxHeightOf(int maxHeight, File screenshotFile) throws IOException {
         int height = ResizableImage.loadFrom(screenshotFile).getHeight();
+        int width = ResizableImage.loadFrom(screenshotFile).getWitdh();
+        if (width > MAXIMUM_SCREENSHOT_WIDTH) {
+            height = (int) ((height * 1.0) * (MAXIMUM_SCREENSHOT_WIDTH * 1.0 / width));
+        }
         if (height > maxHeight) {
             maxHeight = height;
         }

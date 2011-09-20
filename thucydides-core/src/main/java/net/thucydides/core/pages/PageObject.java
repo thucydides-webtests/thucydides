@@ -439,7 +439,9 @@ public abstract class PageObject {
                 annotatedMethod.setAccessible(true);
                 annotatedMethod.invoke(this);
             } catch (Exception e) {
-                throw new UnableToInvokeWhenPageOpensMethods("Could not execute @WhenPageOpens annotated method", e);
+                LOGGER.error("Could not execute @WhenPageOpens annotated method: " + e.getMessage());
+                throw new UnableToInvokeWhenPageOpensMethods("Could not execute @WhenPageOpens annotated method: "
+                                                             + e.getMessage(), e);
             }
         }
 

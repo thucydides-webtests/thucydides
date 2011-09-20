@@ -78,6 +78,23 @@ public class WhenResizingAScreenshot {
 
 
     @Test
+    public void should_be_able_to_redimension_an_image_by_reducing_its_size() throws IOException {
+
+        File screenshotFile = screenshotFileFrom("/screenshots/google_page_1.png");
+
+        int newWidth = 900;
+        int newHeight = 938;
+
+        ResizableImage image = ResizableImage.loadFrom(screenshotFile);
+        ResizableImage resizedImage = image.rescaleCanvas(newWidth, newHeight);
+
+        assertThat(resizedImage.getWitdh(), is(newWidth));
+        assertThat(resizedImage.getHeight(), is(newHeight));
+
+        resizedImage.saveTo(new File("//Users/johnsmart/google.png"));
+    }
+
+    @Test
     public void should_be_able_to_redimension_an_image_by_filling_out_the_background() throws IOException {
 
         File screenshotFile = screenshotFileFrom("/screenshots/google_page_1.png");
