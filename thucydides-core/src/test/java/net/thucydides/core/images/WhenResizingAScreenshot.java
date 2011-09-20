@@ -90,8 +90,6 @@ public class WhenResizingAScreenshot {
 
         assertThat(resizedImage.getWitdh(), is(newWidth));
         assertThat(resizedImage.getHeight(), is(newHeight));
-
-        resizedImage.saveTo(new File("//Users/johnsmart/google.png"));
     }
 
     @Test
