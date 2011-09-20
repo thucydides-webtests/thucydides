@@ -6,18 +6,19 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 
+import java.awt.*;
 import java.io.File;
 
 /**
  * Provides an instance of a supported WebDriver.
  * When you instanciate a Webdriver instance for Firefox or Chrome, it opens a new browser.
  * We
- * 
- * @author johnsmart
  *
+ * @author johnsmart
  */
 public class WebDriverFactory {
 
@@ -40,10 +41,10 @@ public class WebDriverFactory {
         return allProfiles;
     }
 
-    /***
+    /**
      * Create a new WebDriver instance of a given type.
      */
-    public WebDriver newInstanceOf(final SupportedWebDriver driverType)  {
+    public WebDriver newInstanceOf(final SupportedWebDriver driverType) {
         if (driverType == null) {
             throw new IllegalArgumentException("Driver type cannot be null");
         }
@@ -51,7 +52,7 @@ public class WebDriverFactory {
         return newWebdriverInstance(driverType.getWebdriverClass());
     }
 
-    public static Class<? extends WebDriver> getClassFor(final SupportedWebDriver driverType)  {
+    public static Class<? extends WebDriver> getClassFor(final SupportedWebDriver driverType) {
         return driverType.getWebdriverClass();
     }
 
@@ -59,15 +60,21 @@ public class WebDriverFactory {
         try {
             WebDriver driver;
             if (isAFirefoxDriver(driverClass)) {
-               driver = webdriverInstanceFactory.newInstanceOf(driverClass, buildFirefoxProfile());
+                driver = webdriverInstanceFactory.newInstanceOf(driverClass, buildFirefoxProfile());
             } else {
-                driver =  webdriverInstanceFactory.newInstanceOf(driverClass);
+                driver = webdriverInstanceFactory.newInstanceOf(driverClass);
             }
-            redimensionBrowser(driver);
+            if (supportsScreenResizing(driver)) {
+                redimensionBrowser(driver);
+            }
             return driver;
         } catch (Exception cause) {
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
         }
+    }
+
+    private boolean supportsScreenResizing(final WebDriver driver) {
+        return (isAFirefoxDriver(driver.getClass()) || isAnInternetExplorerDriver(driver.getClass()));
     }
 
     private void redimensionBrowser(final WebDriver driver) {
@@ -75,14 +82,29 @@ public class WebDriverFactory {
         int width = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_WIDTH, 0);
 
         if ((height > 0) && (width > 0)) {
-            String resizeWindow = "window.resizeTo(" + width + "," + height + ")";
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript(resizeWindow);
+            resizeBrowserTo((JavascriptExecutor) driver, height, width);
+        } else {
+            maximizeBrowserDimensions((JavascriptExecutor) driver);
         }
+    }
+
+    private void resizeBrowserTo(JavascriptExecutor driver, int height, int width) {
+        String resizeWindow = "window.resizeTo(" + width + "," + height + ")";
+        driver.executeScript(resizeWindow);
+    }
+
+    private void maximizeBrowserDimensions(JavascriptExecutor driver) {
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+        resizeBrowserTo(driver, screenSize.height, screenSize.width);
     }
 
     private boolean isAFirefoxDriver(Class<? extends WebDriver> driverClass) {
         return (FirefoxDriver.class.isAssignableFrom(driverClass));
+    }
+
+    private boolean isAnInternetExplorerDriver(Class<? extends WebDriver> driverClass) {
+        return (InternetExplorerDriver.class.isAssignableFrom(driverClass));
     }
 
     protected FirefoxProfile createNewFirefoxProfile() {
@@ -119,7 +141,7 @@ public class WebDriverFactory {
 
     private boolean dontAssumeUntrustedCertificateIssuer() {
         return !(ThucydidesSystemProperty.getBooleanValue(ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER,
-                                                          true));
+                true));
     }
 
     /**

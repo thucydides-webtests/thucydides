@@ -4,6 +4,8 @@ import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SupportedWebDriver;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -64,7 +66,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     @BeforeClass
     public static void openFirefox() {
-        firefoxDriver = new FirefoxDriver();
+        firefoxDriver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
     }
 
     @Before

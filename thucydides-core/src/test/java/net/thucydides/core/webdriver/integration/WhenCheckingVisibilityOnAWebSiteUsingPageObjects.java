@@ -1,6 +1,8 @@
 package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.pages.PageObject;
+import net.thucydides.core.webdriver.SupportedWebDriver;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,7 +34,7 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
     
     @BeforeClass
     public static void open_local_static_site() {
-        driver = new FirefoxDriver();
+        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
         openStaticTestSite(driver);
     }
 
