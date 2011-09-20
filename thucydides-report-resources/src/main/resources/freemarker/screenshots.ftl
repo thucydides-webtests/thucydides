@@ -25,7 +25,7 @@
 
     a:active {
         text-decoration: none;
-    }       
+    }
 	#slider {
 	    position:relative;
 	    width:1000px; /* Change this to your images width */
@@ -50,9 +50,9 @@
 
 	<script src="scripts/jquery.js"></script>
 
-	<link rel="stylesheet" href="nivo-slider/nivo-slider.css" type="text/css" media="screen" />    
+	<link rel="stylesheet" href="nivo-slider/nivo-slider.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="nivo-slider/themes/default/default.css" type="text/css" media="screen" />
-    
+
 	<script src="nivo-slider/jquery.nivo.slider.js" type="text/javascript"></script>
 	<script src="nivo-slider/jquery.nivo.slider.pack.js" type="text/javascript"></script>
 
@@ -61,13 +61,13 @@
 	    $('#slider').nivoSlider({
 			effect:'fade',
 			animSpeed:200,
-			directionNavHide:false,  
+			directionNavHide:false,
 			manualAdvance:true,
 			keyboardNav:true
 		});
 	});
 	</script>
-	
+
 </head>
 
 <body>
@@ -113,10 +113,12 @@
 
 	 <div class="slider-wrapper theme-default">
 		<div id="slider">
-            <#foreach screenshot in screenshots>		        <img src="${screenshot.filename}" alt="" title="${screenshot.description}" width="998px"/>
-            </#foreach>		</div>
+            <#foreach screenshot in screenshots>
+                <img src="${screenshot.filename}" alt="" title="${screenshot.description}" width="998px"/>
+            </#foreach>
+        </div>
 	  </div>
-	
+
 
     </div>
 </div>

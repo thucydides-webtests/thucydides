@@ -154,7 +154,7 @@
                                                 src="images/${step_outcome_icon}" class="${step_class_root}-icon"/></td>
                             <td width="%"><span class="${step_class_root}-step">${step.description}</span></td>
                             <td width="100" class="bluetext">
-                                <#if step.screenshot??>
+                                <#if !step.isAGroup() && step.screenshot??>
                                     <a href="${testOutcome.screenshotReportName}.html"><img src="${step.screenshot.name}"
                                                                                          class="screenshot"
                                                                                          width="48" height="48"/></a>

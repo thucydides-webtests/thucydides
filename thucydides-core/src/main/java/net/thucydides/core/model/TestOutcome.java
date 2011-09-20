@@ -218,7 +218,7 @@ public class TestOutcome {
         List<TestStep> testSteps = getFlattenedTestSteps();
 
         for(TestStep currentStep : testSteps) {
-            if (currentStep.getScreenshot() != null) {
+            if (!currentStep.isAGroup() && currentStep.getScreenshot() != null) {
                 screenshots.add(new Screenshot(currentStep.getScreenshot().getName(),
                                                currentStep.getDescription()));
             }

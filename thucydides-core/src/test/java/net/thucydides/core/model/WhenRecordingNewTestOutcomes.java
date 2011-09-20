@@ -239,7 +239,7 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     @Test
-    public void should_list_screenshots_in_nested_steps() {
+    public void should_list_screenshots_for_leaf_steps_in_nested_steps() {
         testOutcome.recordStep(successfulTestStepCalled("step_1"));
         testOutcome.recordStep(successfulTestStepCalled("step_2"));
         testOutcome.startGroup();
@@ -256,8 +256,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(successfulTestStepCalled("step_3"));
 
         List<String> screenshots = extract(testOutcome.getScreenshots(), on(Screenshot.class).getFilename());
-        assertThat(screenshots, hasItems("step_1.png","step_2.png","step_2.1.png",
-                                         "step_2.1.1.png","step_2.1.1.1.png",
+        assertThat(screenshots, hasItems("step_1.png","step_2.1.1.1.png",
                                          "step_2.1.2.png", "step_2.2.png", "step_3.png"));
     }
 
