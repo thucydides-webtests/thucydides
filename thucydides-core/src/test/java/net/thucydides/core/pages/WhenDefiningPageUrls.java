@@ -79,6 +79,26 @@ public class WhenDefiningPageUrls {
         verify(webdriver).get("http://my.application.com/#Showcase");
     }
 
+    @Test
+    public void the_url_should_use_the_annotation_url_if_the_base_url_is_empty() {
+        PageObject page = new PageObjectWithHashNotation(webdriver);
+
+        System.setProperty("webdriver.base.url","");
+        page.open();
+
+        verify(webdriver).get("http://some.user.application.com/#Showcase");
+    }
+
+    @Test
+    public void the_url_should_use_the_annotation_url_if_the_base_url_is_not_defined() {
+        PageObject page = new PageObjectWithHashNotation(webdriver);
+
+        System.clearProperty("webdriver.base.url");
+        page.open();
+
+        verify(webdriver).get("http://some.user.application.com/#Showcase");
+    }
+
 
     final class PageObjectWithNoUrlDefinition extends PageObject {
         public PageObjectWithNoUrlDefinition(WebDriver driver) {

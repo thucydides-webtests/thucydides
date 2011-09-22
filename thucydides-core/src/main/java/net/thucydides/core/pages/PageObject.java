@@ -6,6 +6,7 @@ import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -344,7 +345,7 @@ public abstract class PageObject {
 
     public String updateUrlWithBaseUrlIfDefined(final String startingUrl) {
         String baseUrl = System.getProperty(ThucydidesSystemProperty.BASE_URL.getPropertyName());
-        if (baseUrl != null) {
+        if ((baseUrl != null) && (!StringUtils.isEmpty(baseUrl))) {
             LOGGER.info("Updating initial URL {} using base url of {}", startingUrl, baseUrl);
             return replaceHost(startingUrl, baseUrl);
         } else {
@@ -400,8 +401,10 @@ public abstract class PageObject {
     public final void open(final String urlTemplateName,
                      final String[] parameterValues) {
         String startingUrl = pageUrls.getNamedUrl(urlTemplateName, parameterValues);
+        LOGGER.debug("Opening page at url {}", startingUrl);
         openPageAtUrl(startingUrl);
         callWhenPageOpensMethods();
+        LOGGER.debug("Page opened");
     }
 
     /**
