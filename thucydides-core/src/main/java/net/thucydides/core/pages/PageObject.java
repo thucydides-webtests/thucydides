@@ -394,8 +394,10 @@ public abstract class PageObject {
      */
     public final void open(final String... parameterValues) {
         String startingUrl = pageUrls.getStartingUrl(parameterValues);
+        LOGGER.debug("Opening page at url {}", startingUrl);
         openPageAtUrl(startingUrl);
         callWhenPageOpensMethods();
+        LOGGER.debug("Page opened");
     }
 
     public final void open(final String urlTemplateName,

@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -109,6 +110,15 @@ public class WhenManagingAPageObject {
         BasicPageObject page = new BasicPageObject(driver);
         page.setWaitForTimeout(100);
         page.waitForRenderedElementsToDisappear(By.id("whatever"));
+    }
+
+    @Test
+    public void page_can_delay_requests_for_a_short_period() {
+        long start = System.currentTimeMillis();
+        BasicPageObject page = new BasicPageObject(driver);
+        page.waitABit(500);
+
+        assertThat((int) (System.currentTimeMillis() - start), greaterThanOrEqualTo(500));
     }
 
     @Test(expected = UnexpectedElementVisibleException.class)
