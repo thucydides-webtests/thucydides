@@ -185,7 +185,7 @@
         
         //Keyboard Navigation
         if(settings.keyboardNav){
-            $(window).keypress(function(event){
+            $(window).keydown(function(event){
                 //Left
                 if(event.keyCode == '37'){
                     if(vars.running) return false;
