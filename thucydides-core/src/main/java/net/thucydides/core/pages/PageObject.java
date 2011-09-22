@@ -369,7 +369,8 @@ public abstract class PageObject {
                                                              baseUrl.getPort());
             updatedUrl = starting.replaceFirst(startingHostComponent, baseHostComponent);
         } catch (MalformedURLException e) {
-            LOGGER.error("Failed to analyse default page URL", e);
+            LOGGER.error("Failed to analyse default page URL: Starting URL: {}, Base URL: {}", starting, base);
+            LOGGER.error("URL analysis failed with exception:",e);
         }
 
         return updatedUrl;

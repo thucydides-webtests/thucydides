@@ -62,6 +62,24 @@ public class WhenDefiningPageUrls {
         verify(webdriver).get("http://www.apache.org");
     }
 
+    @DefaultUrl("http://some.user.application.com/#Showcase")
+    final class PageObjectWithHashNotation extends PageObject {
+        public PageObjectWithHashNotation(WebDriver driver) {
+            super(driver);
+        }
+    }
+
+    @Test
+    public void the_url_notation_should_work_with_hashes() {
+        PageObject page = new PageObjectWithHashNotation(webdriver);
+
+        System.setProperty("webdriver.base.url","http://my.application.com");
+        page.open();
+
+        verify(webdriver).get("http://my.application.com/#Showcase");
+    }
+
+
     final class PageObjectWithNoUrlDefinition extends PageObject {
         public PageObjectWithNoUrlDefinition(WebDriver driver) {
             super(driver);
