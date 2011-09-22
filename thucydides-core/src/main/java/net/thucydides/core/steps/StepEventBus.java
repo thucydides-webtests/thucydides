@@ -40,8 +40,6 @@ public class StepEventBus {
         return stepEventBusThreadLocal.get();
     }
 
-    //private static Iterator<?> listenerImplementations = Service.providers(StepListener.class);
-
     private List<StepListener> registeredListeners = new ArrayList<StepListener>();
 
     private TestStepResult resultTally;
@@ -114,7 +112,6 @@ public class StepEventBus {
     }
 
     public void clear() {
-
         stepStack.clear();
         clearStepFailures();
         currentTestIsNotPending();

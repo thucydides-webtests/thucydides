@@ -576,17 +576,6 @@ public class WhenManagingAPageObject {
         page.shouldNotBeVisible(field);
     }
 
-    @Test
-    public void when_clicking_on_something_should_retry_if_it_fails_once() {
-        BasicPageObject page = new BasicPageObject(driver);
-
-        doThrow(new WebDriverException()).doNothing().when(mockButton).click();
-
-        page.clickOn(page.getButton());
-
-        verify(mockButton,times(2)).click();
-    }
-
     @Test(expected = WebDriverException.class)
     public void when_clicking_on_something_should_throw_exception_if_it_fails_twice() {
         BasicPageObject page = new BasicPageObject(driver);

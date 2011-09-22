@@ -101,6 +101,8 @@ public enum ThucydidesSystemProperty {
     PUBLIC_URL("thucydides.public.url");
 
     private String propertyName;
+    public static final int DEFAULT_HEIGHT = 1000;
+    public static final int DEFAULT_WIDTH = 800;
 
     private ThucydidesSystemProperty(final String propertyName) {
         this.propertyName = propertyName;

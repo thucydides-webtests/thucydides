@@ -25,8 +25,8 @@ public class WebDriverFactory {
     private final WebdriverInstanceFactory webdriverInstanceFactory;
 
     private ProfilesIni allProfiles;
-    private static final int DEFAULT_HEIGHT = 800;
-    private static final int DEFAULT_WIDTH = 1000;
+    private static final int DEFAULT_HEIGHT = ThucydidesSystemProperty.DEFAULT_HEIGHT;
+    private static final int DEFAULT_WIDTH = ThucydidesSystemProperty.DEFAULT_WIDTH;
 
     public WebDriverFactory() {
         this.webdriverInstanceFactory = new WebdriverInstanceFactory();
@@ -80,14 +80,9 @@ public class WebDriverFactory {
     }
 
     private void redimensionBrowser(final WebDriver driver) {
-        int height = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_HEIGHT, 0);
-        int width = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_WIDTH, 0);
-
-        if ((height > 0) && (width > 0)) {
-            resizeBrowserTo((JavascriptExecutor) driver, height, width);
-        } else {
-            resizeBrowserTo((JavascriptExecutor) driver, DEFAULT_HEIGHT, DEFAULT_WIDTH);
-        }
+        int height = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_HEIGHT, DEFAULT_HEIGHT);
+        int width = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_WIDTH, DEFAULT_WIDTH);
+        resizeBrowserTo((JavascriptExecutor) driver, height, width);
     }
 
     private void resizeBrowserTo(JavascriptExecutor driver, int height, int width) {

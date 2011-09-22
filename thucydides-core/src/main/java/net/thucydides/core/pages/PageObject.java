@@ -345,8 +345,10 @@ public abstract class PageObject {
     public String updateUrlWithBaseUrlIfDefined(final String startingUrl) {
         String baseUrl = System.getProperty(ThucydidesSystemProperty.BASE_URL.getPropertyName());
         if (baseUrl != null) {
-            return replaceHost(startingUrl, baseUrl); 
+            LOGGER.info("Updating initial URL {} using base url of {}", startingUrl, baseUrl);
+            return replaceHost(startingUrl, baseUrl);
         } else {
+            LOGGER.info("Using initial URL {}", startingUrl);
             return startingUrl;
         }
     }
@@ -466,23 +468,12 @@ public abstract class PageObject {
         return parameterValues;
     }
 
-
     private void openPageAtUrl(final String startingUrl) {
         getDriver().get(startingUrl);
     }
 
-
     public void clickOn(final WebElement webElement) {
-        try {
-            webElement.click();
-        } catch (WebDriverException e) {
-            LOGGER.warn(
-                    "Click failed. This could be a flicking failure, so I'll wait 1 second and try again",
-                    e);
-            waitABit(ONE_SECOND);
-        }
         webElement.click();
-
     }
 
     /**

@@ -63,6 +63,20 @@ public class WhenResizingAScreenshot {
         assertThat(resizedImage.getHeight(), is(greaterThan(1200)));
     }
 
+    @Test
+    public void should_not_try_to_redimension_images_larger_than_the_specified_size() throws IOException {
+
+        File screenshotFile = screenshotFileFrom("/screenshots/wikipedia.png");
+
+        ResizableImage image = ResizableImage.loadFrom(screenshotFile);
+
+        ResizableImage resizedImage = image.rescaleCanvas(805, 4000);
+
+        assertThat(resizedImage.getWitdh(), is(805));
+        assertThat(resizedImage.getHeight(), is(greaterThan(4000)));
+    }
+
+
 
     @Test
     public void should_not_try_to_redimension_images_that_are_higher_than_the_requested_height() throws IOException {

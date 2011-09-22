@@ -6,11 +6,14 @@ package net.thucydides.core.model;
 public class Screenshot {
     private final String filename;
     private final String description;
+    private final int width;
 
     public Screenshot(final String filename,
-                      final String description) {
+                      final String description,
+                      final int width) {
         this.filename = filename;
         this.description = description;
+        this.width = width;
     }
 
 
@@ -20,6 +23,10 @@ public class Screenshot {
 
     public String getDescription() {
         return description;
+    }
+
+    public int getWidth() {
+        return width;
     }
 
 }

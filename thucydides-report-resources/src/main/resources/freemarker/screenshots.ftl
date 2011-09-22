@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Home</title>
@@ -29,7 +30,7 @@
 	#slider {
 	    position:relative;
 	    width:1000px; /* Change this to your images width */
-	    height:600px; /* Change this to your images height */
+	    height:800px; /* Change this to your images height */
 	    background:url(images/loading.gif) no-repeat 50% 50%;
 	}
 	#slider img {
@@ -114,7 +115,7 @@
 	 <div class="slider-wrapper theme-default">
 		<div id="slider">
             <#foreach screenshot in screenshots>
-                <img src="${screenshot.filename}" alt="" title="${screenshot.description}" width="998px"/>
+                <img src="${screenshot.filename}" alt="" title="${screenshot.description}" width="${screenshot.width?string.computer}"/>
             </#foreach>
         </div>
 	  </div>

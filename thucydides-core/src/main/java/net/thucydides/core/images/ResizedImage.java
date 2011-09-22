@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class ResizedImage extends ResizableImage{
+public class ResizedImage extends ResizableImage {
 
     private final BufferedImage image;
 
