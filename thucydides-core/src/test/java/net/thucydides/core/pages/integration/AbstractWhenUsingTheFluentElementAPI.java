@@ -3,6 +3,7 @@ package net.thucydides.core.pages.integration;
 
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
+import net.thucydides.core.pages.WebElementFacade;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -92,6 +94,39 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
         public void fieldDoesNotExistShouldContainText(String value) {
             element(fieldDoesNotExist).shouldContainText(value);
         }
+
+        public WebElementFacade firstName() {
+            return element(firstName);
+        }
+
+        public void waitForFirstNameField() {
+            waitForCondition().until(firstAndLastNameAreEnabled());
+        }
+
+        public ExpectedCondition<Boolean> firstNameIsVisibleAndDisabled() {
+            return new ExpectedCondition<Boolean>() {
+                public Boolean apply(WebDriver driver) {
+                    return (firstName.isDisplayed() && firstName.isEnabled());
+                }
+            };
+        }
+
+        public ExpectedCondition<Boolean> firstAndLastNameAreEnabled() {
+            return new ExpectedCondition<Boolean>() {
+                public Boolean apply(WebDriver driver) {
+                    return (firstName.isEnabled() && lastName.isEnabled());
+                }
+            };
+        }
+
+        public ExpectedCondition<Boolean> twoFieldsAreDisabled() {
+            return new ExpectedCondition<Boolean>() {
+                public Boolean apply(WebDriver driver) {
+                    return (!buttonThatIsInitiallyEnabled.isEnabled() && !readonlyField.isEnabled());
+                }
+            };
+        }
+
     }
 
     @Before
@@ -403,6 +438,16 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
         assertThat(page.element(page.buttonThatIsInitiallyDisabled).isCurrentlyEnabled(), is(true));
     }
 
+    @Test
+    public void should_wait_for_field_to_be_enabled_using_alternative_style() throws InterruptedException {
+        StaticSitePage page = new StaticSitePage(driver, 2000);
+        page.open();
+
+        page.firstName().waitUntilVisible();
+        page.firstName().waitUntilEnabled();
+    }
+
+
     @Test(expected = ElementNotVisibleException.class)
     public void should_fail_if_wait_for_field_to_be_enabled_never_happens() throws InterruptedException {
         StaticSitePage page = new StaticSitePage(driver, 2000);
@@ -546,5 +591,22 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     }
 
+
+
+    @Test
+    public void should_be_able_to_build_composite_wait_until_enabled_clauses() throws InterruptedException {
+        StaticSitePage page = new StaticSitePage(driver, 2000);
+        page.open();
+
+        page.waitForCondition().until(page.firstAndLastNameAreEnabled());
+    }
+
+    @Test
+    public void should_be_able_to_build_composite_wait_until_disabled_clauses() throws InterruptedException {
+        StaticSitePage page = new StaticSitePage(driver, 2000);
+        page.open();
+
+        page.waitForCondition().until(page.twoFieldsAreDisabled());
+    }
 
 }

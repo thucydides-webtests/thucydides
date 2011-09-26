@@ -285,7 +285,7 @@ public class WebElementFacade {
 
     public void waitUntilVisible() {
         try {
-            waitForElement().until(elementIsDisplayed());
+            waitForCondition().until(elementIsDisplayed());
         } catch (TimeoutException timeout) {
             throwErrorWithCauseIfPresent(timeout, timeout.getMessage());
         }
@@ -328,7 +328,7 @@ public class WebElementFacade {
         };
     }
 
-    private Wait<WebDriver> waitForElement() {
+    public Wait<WebDriver> waitForCondition() {
         return new FluentWait<WebDriver>(driver, webdriverClock, sleeper)
                 .withTimeout(timeoutInMilliseconds, TimeUnit.MILLISECONDS)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
@@ -337,7 +337,7 @@ public class WebElementFacade {
 
     public void waitUntilNotVisible() {
         try {
-            waitForElement().until(elementIsNotDisplayed());
+            waitForCondition().until(elementIsNotDisplayed());
         } catch (TimeoutException timeout) {
             throwErrorWithCauseIfPresent(timeout,"Expected hidden element was displayed");
         }
@@ -356,7 +356,7 @@ public class WebElementFacade {
     public void waitUntilEnabled() {
         try {
 
-            waitForElement().until(elementIsEnabled());
+            waitForCondition().until(elementIsEnabled());
 
         } catch (TimeoutException timeout) {
             throw new ElementNotVisibleException("Expected enabled element was not enabled", timeout);
@@ -365,7 +365,7 @@ public class WebElementFacade {
 
     public void waitUntilDisabled() {
         try {
-            waitForElement().until(elementIsNotEnabled());
+            waitForCondition().until(elementIsNotEnabled());
         } catch (TimeoutException timeout) {
             throw new ElementNotVisibleException("Expected disabled element was not enabled", timeout);
         }

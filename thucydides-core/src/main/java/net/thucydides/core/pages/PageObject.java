@@ -9,9 +9,12 @@ import net.thucydides.core.webelements.Checkbox;
 import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.*;
+import org.openqa.selenium.support.ui.SystemClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A base class representing a WebDriver page object.
@@ -34,7 +38,7 @@ public abstract class PageObject {
 
     private static final int ONE_SECOND = 1000;
 
-    private long waitForTimeout = WAIT_FOR_ELEMENT_PAUSE_LENGTH;
+    private long waitForTimeout = WAIT_FOR_ELEMENT_PAUSE_LENGTH * ONE_SECOND;
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PageObject.class);
@@ -51,9 +55,14 @@ public abstract class PageObject {
 
     private InternalSystemClock clock = new InternalSystemClock();
 
+    private final Sleeper sleeper;
+    private final Clock webdriverClock;
+
     public PageObject(final WebDriver driver, final int ajaxTimeout) {
         this.driver = driver;
         this.waitForTimeout = ajaxTimeout;
+        this.webdriverClock = new org.openqa.selenium.support.ui.SystemClock();
+        this.sleeper = Sleeper.SYSTEM_SLEEPER;
 
         setupPageUrls();
 
@@ -64,6 +73,8 @@ public abstract class PageObject {
     public PageObject(final WebDriver driver) {
         this.driver = driver;
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
+        this.webdriverClock = new SystemClock();
+        this.sleeper = Sleeper.SYSTEM_SLEEPER;
 
         setupPageUrls();
 
@@ -511,6 +522,13 @@ public abstract class PageObject {
     public Object evaluateJavascript(final String script) {
         JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
         return js.executeScript(script);
+    }
+
+    public Wait<WebDriver> waitForCondition() {
+        return new FluentWait<WebDriver>(driver, webdriverClock, sleeper)
+                .withTimeout(waitForTimeout, TimeUnit.SECONDS)
+                .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
+                .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
     }
 
     public class FieldEntry {

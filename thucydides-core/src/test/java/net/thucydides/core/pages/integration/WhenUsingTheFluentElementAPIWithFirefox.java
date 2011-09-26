@@ -6,14 +6,9 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.remote.RemoteWebElement;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -47,6 +42,9 @@ public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTh
         assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
 
+    //
+    // Note: The is in the Firefox tests as the Chrome driver does not always seem to return meaningful error messages.
+    //
     @Test
     public void should_display_meaningful_error_message_if_waiting_for_field_that_does_not_appear() {
 
