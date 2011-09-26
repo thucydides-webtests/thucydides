@@ -99,4 +99,14 @@ public class WhenReformattingScreenshots {
 
         assertThat(screenshot.getShortErrorMessage(), is("Something broke"));
     }
+
+    @Test
+    public void should_display_message_from_original_cause_if_present() {
+        String errorMessage = "Something broke";
+
+        Exception exception = new Exception("Oops", new Exception("Something went wrong"));
+        Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, exception);
+
+        assertThat(screenshot.getShortErrorMessage(), is("Something went wrong"));
+    }
 }

@@ -87,10 +87,10 @@ public class WhenGroupingTestResultsByFeature {
     private List<StoryTestResults> createMockUserStories() {
         List<StoryTestResults> mockStories = new ArrayList<StoryTestResults>();
 
-        mockStories.add(storyTestResult(Story.from(WidgetFeature.PurchaseNewWidget.class), 2, 0, 1, 1, 10));
-        mockStories.add(storyTestResult(Story.from(WidgetFeature.SearchWidgets.class), 2, 1, 1, 0, 20));
-        mockStories.add(storyTestResult(Story.from(WidgetFeature.SearchWidgets.class), 3, 2, 1, 0, 10));
-        mockStories.add(storyTestResult(Story.from(GizmoFeature.PurchaseNewGizmo.class), 4, 2, 1, 1, 10));
+        mockStories.add(storyTestResult(Story.from(WidgetFeature.PurchaseNewWidget.class), 2, 0, 1, 1, 0, 10));
+        mockStories.add(storyTestResult(Story.from(WidgetFeature.SearchWidgets.class), 2, 1, 1, 0, 1, 20));
+        mockStories.add(storyTestResult(Story.from(WidgetFeature.SearchWidgets.class), 3, 2, 1, 0, 1, 10));
+        mockStories.add(storyTestResult(Story.from(GizmoFeature.PurchaseNewGizmo.class), 4, 2, 1, 1, 1, 10));
 
         return mockStories;
 
@@ -101,6 +101,7 @@ public class WhenGroupingTestResultsByFeature {
                                              int passingTests,
                                              int failingTests,
                                              int pendingTests,
+                                             int skippedTests,
                                              int totalSteps) {
         StoryTestResults storyResults = mock(StoryTestResults.class);
 
@@ -110,6 +111,8 @@ public class WhenGroupingTestResultsByFeature {
         when(storyResults.getFailureCount()).thenReturn(failingTests);
         when(storyResults.getPendingCount()).thenReturn(pendingTests);
         when(storyResults.getStepCount()).thenReturn(totalSteps);
+        when(storyResults.getSkipCount()).thenReturn(skippedTests);
+        when(storyResults.countStepsInSuccessfulTests()).thenReturn(passingTests * 3);
         return storyResults;
     }
 
@@ -209,6 +212,19 @@ public class WhenGroupingTestResultsByFeature {
     }
 
     @Test
+    public void should_know_number_of_skipped_tests_in_the_stories_of_a_feature() throws IOException {
+        when(mockUserStoryLoader.loadFrom(reportDirectory)).thenReturn(stories);
+
+        List<FeatureResults> features = loader.loadFrom(reportDirectory);
+
+        FeatureResults widgetFeatureResult = features.get(0);
+        FeatureResults gizmoFeatureResult = features.get(1);
+
+        assertThat(widgetFeatureResult.getSkippedTests(), is(2));
+        assertThat(gizmoFeatureResult.getSkippedTests(), is(1));
+    }
+
+    @Test
     public void should_know_number_of_steps_in_the_stories_of_a_feature() throws IOException {
         when(mockUserStoryLoader.loadFrom(reportDirectory)).thenReturn(stories);
 
@@ -220,5 +236,14 @@ public class WhenGroupingTestResultsByFeature {
         assertThat(gizmoFeatureResult.getTotalSteps(), is(10));
     }
 
+    @Test
+    public void should_know_number_of_steps_in_successful_stories_in_a_feature() throws IOException {
+        when(mockUserStoryLoader.loadFrom(reportDirectory)).thenReturn(stories);
+
+        List<FeatureResults> features = loader.loadFrom(reportDirectory);
+
+        FeatureResults widgetFeatureResult = features.get(0);
+        assertThat(widgetFeatureResult.countStepsInSuccessfulTests(), is(9));
+    }
 
 }

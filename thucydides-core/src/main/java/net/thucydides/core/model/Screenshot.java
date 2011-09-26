@@ -62,14 +62,4 @@ public class Screenshot {
     public int getWidth() {
         return width;
     }
-
-    @Override
-    public String toString() {
-        return "Screenshot{" +
-                "filename='" + filename + '\'' +
-                ", description='" + description + '\'' +
-                ", width=" + width +
-                ", error='" + error + '\'' +
-                '}';
-    }
 }
