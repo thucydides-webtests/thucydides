@@ -15,6 +15,15 @@ public class TestStepResult implements Serializable {
     private List<StepFailure> failures = new ArrayList<StepFailure>();
     private int ignored = 0;
     private int run = 0;
+    final Class<?> classUnderTest;
+
+    private TestStepResult(Class<?> classUnderTest) {
+        this.classUnderTest = classUnderTest;
+    }
+
+    public Class<?> getClassUnderTest() {
+        return classUnderTest;
+    }
 
     /**
      * Record a test step failure.
@@ -71,6 +80,10 @@ public class TestStepResult implements Serializable {
      */
     public boolean wasSuccessful() {
         return (getFailureCount() == 0);
+    }
+
+    public static TestStepResult forTestClass(final Class<?> classUnderTest) {
+        return new TestStepResult(classUnderTest);
     }
 }
 

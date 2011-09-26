@@ -165,7 +165,7 @@
                         <#if step.result == "FAILURE" && !step.isAGroup()>
                             <tr class="test-${step.result}">
                                 <td width="40">&nbsp</td>
-                                <td width="%" colspan="4"><span class="error-message">${step.errorMessage!''}</span></td>
+                                <td width="%" colspan="4"><span class="error-message">${step.shortErrorMessage!''}</span></td>
                             </tr>
                         </#if>
                     </table>

@@ -50,7 +50,7 @@
 	left:0px;
 	top:-48px;
 	background:#c4baa3;
-	color:#000;
+	color:black;
 	opacity:0.5; /* Overridden by captionOpacity setting */
 	width:100%;
 	z-index:8;
@@ -86,4 +86,15 @@
 }
 .nivo-controlNav a.active {
 	font-weight:bold;
+}
+
+.errorMessage {
+    color:#F00000;
+    font-size:1.05em;
+	font-weight:bold;
+    text-align:justify;
+	display:block;
+    padding: 4px;
+    padding-left: 20px;
+    padding-right: 20px;
 }

@@ -39,7 +39,7 @@ public class WhenWeCreateATestStep {
       
         step.setResult(TestResult.FAILURE);
         Exception e = new IllegalStateException();
-        step.failedWith("Oh nose!",e);
+        step.failedWith(new Exception("Oh nose!"));
         assertThat(step.getErrorMessage(), is("Oh nose!"));
     }
     
@@ -49,15 +49,65 @@ public class WhenWeCreateATestStep {
       
         step.setResult(TestResult.FAILURE);
         Throwable e = new IllegalStateException();
-        step.failedWith("Oh nose!",e);
-        assertThat(step.getException(), is(e));
+        step.failedWith(new Exception("Oh nose", e));
+        assertThat(step.getException().getCause(), is(e));
     }
-    
+
+    @Test
+    public void when_a_step_fails_with_a_cause_the_original_message_is_used() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+
+        step.setResult(TestResult.FAILURE);
+        Throwable e = new IllegalStateException("Original error");
+        step.failedWith(new Exception("Oh nose", e));
+        assertThat(step.getErrorMessage(), is("Original error"));
+    }
+
+    @Test
+    public void the_default_short_error_message_is_the_normal_error_message() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+
+        step.setResult(TestResult.FAILURE);
+        Throwable e = new IllegalStateException("Original error");
+        step.failedWith(new Exception("Oh nose", e));
+        assertThat(step.getShortErrorMessage(), is("Original error"));
+    }
+
+    @Test
+    public void the_short_error_message_should_only_include_the_first_line() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+
+        step.setResult(TestResult.FAILURE);
+        Throwable e = new IllegalStateException("Original error\nwith lots of messy details");
+        step.failedWith(new Exception("Oh nose", e));
+        assertThat(step.getShortErrorMessage(), is("Original error"));
+    }
+
+    @Test
+    public void the_short_error_message_should_replace_double_quotes_with_single_quotes() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+
+        step.setResult(TestResult.FAILURE);
+        Throwable e = new IllegalStateException("Original \"error\"\nwith lots of messy details");
+        step.failedWith(new Exception("Oh nose", e));
+        assertThat(step.getShortErrorMessage(), is("Original 'error'"));
+    }
+
+    @Test
+    public void the_short_error_message_should_remove_double_quotes() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+
+        step.setResult(TestResult.FAILURE);
+        Throwable e = new IllegalStateException("Original error");
+        step.failedWith(new Exception("Oh nose", e));
+        assertThat(step.getShortErrorMessage(), is("Original error"));
+    }
+
     @Test
     public void we_can_record_the_lifetime_of_a_test_step() throws InterruptedException {
         TestStep step = new TestStep("a narrative description");
         Thread.sleep(10);
-        step.recordDuration();        
+        step.recordDuration();
         assertThat(step.getDuration(), is(greaterThanOrEqualTo(10L)));
         assertThat(step.getDuration(), is(lessThan(100L)));
     }
@@ -128,6 +178,7 @@ public class WhenWeCreateATestStep {
 
         assertThat(step.getResult(), is(TestResult.PENDING));
     }
+
 
     private TestStep successfulTestStepCalled(String stepName) {
         TestStep step = new TestStep(stepName);

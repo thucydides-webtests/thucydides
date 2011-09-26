@@ -6,6 +6,7 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.steps.InvalidManagedPagesFieldException;
 import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
@@ -340,7 +341,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestStep> steps = testOutcome.getTestSteps();
         TestStep failingStep = (TestStep) steps.get(5);
-        assertThat(failingStep.getException(), is(AssertionError.class));
+        assertThat(failingStep.getException(), is(StepFailureException.class));
     }
 
     @Test
@@ -355,7 +356,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestStep> steps = testOutcome.getTestSteps();
         TestStep failingStep = (TestStep) steps.get(4);
-        assertThat(failingStep.getException(), is(WebdriverAssertionError.class));
+        assertThat(failingStep.getException(), is(StepFailureException.class));
     }
 
     @Test
@@ -370,7 +371,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestStep> steps = testOutcome.getTestSteps();
         TestStep failingStep = (TestStep) steps.get(4);
-        assertThat(failingStep.getException(), is(WebdriverAssertionError.class));
+        assertThat(failingStep.getException(), is(StepFailureException.class));
     }
 
     @Test

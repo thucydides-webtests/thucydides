@@ -4,7 +4,10 @@ package net.thucydides.core.pages.integration;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.internal.runners.statements.ExpectException;
+import org.junit.rules.ExpectedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
@@ -13,6 +16,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public abstract class AbstractWhenUsingTheFluentElementAPI {
@@ -34,7 +39,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
         protected WebElement city;
 
         @FindBy(name="country")
-        private WebElement country;
+        protected WebElement country;
 
         @FindBy(name="hiddenfield")
         protected WebElement hiddenField;
@@ -462,6 +467,9 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
         page.element(page.firstName).waitUntilVisible();
     }
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void should_wait_for_field_to_disappear() {

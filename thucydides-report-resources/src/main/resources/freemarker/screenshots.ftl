@@ -115,7 +115,7 @@
 	 <div class="slider-wrapper theme-default">
 		<div id="slider">
             <#foreach screenshot in screenshots>
-                <img src="${screenshot.filename}" alt="" title="${screenshot.description}" width="${screenshot.width?string.computer}"/>
+                <img src="${screenshot.filename}" alt="${screenshot.shortErrorMessage}" title="${screenshot.description}" width="${screenshot.width?string.computer}"/>
             </#foreach>
         </div>
 	  </div>

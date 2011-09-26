@@ -13,9 +13,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.File;
+import java.util.NoSuchElementException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
 
@@ -23,11 +26,15 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
 
         public WebElement multiselect;
 
+        public WebElement doesNotExist;
+
         public IndexPage(WebDriver driver) {
             super(driver);
         }
 
-
+        public IndexPage(WebDriver driver, int ajaxTimeout) {
+            super(driver, ajaxTimeout);
+        }
     }
     
     private static WebDriver driver;
@@ -176,4 +183,20 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         IndexPage indexPage = new IndexPage(driver);
         indexPage.shouldContainTextInElement(indexPage.multiselect, "Red");
     }
+
+    @Test
+    public void should_return_meaningful_error_messages_when_an_element_is_not_found() {
+        IndexPage indexPage = new IndexPage(driver, 1);
+        boolean exceptionThrown = false;
+        try {
+            indexPage.doesNotExist.click();
+        } catch(Throwable e) {
+            assertThat(e.getCause(), is(notNullValue()));
+            assertThat(e.getCause().getMessage(), containsString("doesNotExist"));
+            exceptionThrown = true;
+        }
+
+        assertThat(exceptionThrown, is(true));
+    }
+
 }

@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
@@ -147,7 +148,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         @Step
         public void failing_web_step() {
             getDriver().get("failing_step");
-            throw new WebDriverException("Oops!");
+            throw new WebDriverException("Oops!", new WebDriverException("Element not found"));
         }
 
         @Step

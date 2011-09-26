@@ -224,7 +224,8 @@ public class TestOutcome {
             if (!currentStep.isAGroup() && currentStep.getScreenshot() != null) {
                 screenshots.add(new Screenshot(currentStep.getScreenshot().getName(),
                                                currentStep.getDescription(),
-                                               widthOf(currentStep.getScreenshot())));
+                                               widthOf(currentStep.getScreenshot()),
+                                               currentStep.getException()));
             }
         }
 

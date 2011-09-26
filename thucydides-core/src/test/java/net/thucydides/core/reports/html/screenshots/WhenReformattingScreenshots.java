@@ -4,7 +4,6 @@ import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.model.Screenshot;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -50,7 +49,7 @@ public class WhenReformattingScreenshots {
         Screenshot expandedScreenshot = ScreenshotFormatter.forScreenshot(screenshot).inDirectory(screenshotDirectory).expandToHeight(30000);
 
         int resultingHeight = new SimpleImageInfo(new File(screenshotDirectory, expandedScreenshot.getFilename())).getHeight();
-        assertThat(resultingHeight, is(8000));
+        assertThat(resultingHeight, is(4000));
         assertThat(expandedScreenshot.getWidth(), is(1200));
     }
 
@@ -76,4 +75,28 @@ public class WhenReformattingScreenshots {
         assertThat(expandedScreenshot.getWidth(), is(805));
     }
 
+    @Test
+    public void should_only_display_the_first_line_of_an_error_message_in_the_UI() {
+        String errorMessage = "<org.openqa.selenium.ElementNotVisibleException: Unable to locate element: {\"method\":\"name\",\"selector\":\"fieldDoesNotExist\"}; duration or timeout: 8 milliseconds\n" +
+                "For documentation on this error, please visit: http://seleniumhq.org/exceptions/no_such_element.html\n" +
+                "Build info: version: '2.6.0', revision: '13840', time: '2011-09-13 16:51:41'\n" +
+                "System info: os.name: 'Mac OS X', os.arch: 'x86_64', os.version: '10.7.1', java.version: '1.6.0_26'\n" +
+                "Driver info: driver.version: RemoteWebDriver\n" +
+                "Build info: version: '2.6.0', revision: '13840', time: '2011-09-13 16:51:41'\n" +
+                "System info: os.name: 'Mac OS X', os.arch: 'x86_64', os.version: '10.7.1', java.version: '1.6.0_26'\n" +
+                "Driver info: driver.version: unknown>";
+
+        Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, new AssertionError(errorMessage));
+
+        assertThat(screenshot.getShortErrorMessage(), is("Unable to locate element: {'method':'name','selector':'fieldDoesNotExist'}; duration or timeout: 8 milliseconds"));
+    }
+
+    @Test
+    public void should_only_display_the_first_line_of_a_simple_error_message_in_the_UI() {
+        String errorMessage = "Something broke";
+
+        Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, new AssertionError(errorMessage));
+
+        assertThat(screenshot.getShortErrorMessage(), is("Something broke"));
+    }
 }

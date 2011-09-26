@@ -35,7 +35,7 @@ public class TestStepFactory {
 
     public static TestStep createNewTestStep(String description, TestResult result, AssertionError assertionError) {
         TestStep step = new TestStep(description);
-        step.failedWith(assertionError.getMessage(), assertionError);
+        step.failedWith(assertionError);
         return step;
     }
 

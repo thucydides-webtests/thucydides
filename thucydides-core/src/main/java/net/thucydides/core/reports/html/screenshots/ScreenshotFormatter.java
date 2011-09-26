@@ -34,15 +34,18 @@ public class ScreenshotFormatter {
     public Screenshot expandToHeight(final int targetHeight) throws IOException {
         File screenshotFile = new File(sourceDirectory, screenshot.getFilename());
         if (screenshotFile.exists()) {
-            File resizedFile = resizedImage(screenshotFile, screenshot.getWidth(), targetHeight);
-            return new Screenshot(resizedFile.getName(), screenshot.getDescription(), screenshot.getWidth());
+            File resizedFile = resizedImage(screenshotFile, targetHeight);
+            return new Screenshot(resizedFile.getName(),
+                                  screenshot.getDescription(),
+                                  screenshot.getWidth(),
+                                  screenshot.getError());
         } else {
             return screenshot;
         }
     }
 
-    private File resizedImage(File screenshotFile, int maxWidth, int maxHeight) throws IOException {
-        ResizableImage scaledImage = ResizableImage.loadFrom(screenshotFile).rescaleCanvas(maxWidth, maxHeight);
+    private File resizedImage(File screenshotFile, int maxHeight) throws IOException {
+        ResizableImage scaledImage = ResizableImage.loadFrom(screenshotFile).rescaleCanvas(maxHeight);
         File scaledFile = new File(sourceDirectory, "scaled_" + screenshotFile.getName());
         scaledImage.saveTo(scaledFile);
         return scaledFile;

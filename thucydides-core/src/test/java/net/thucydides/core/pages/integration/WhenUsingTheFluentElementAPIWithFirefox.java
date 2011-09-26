@@ -6,10 +6,18 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.RemoteWebElement;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTheFluentElementAPI {
@@ -38,4 +46,19 @@ public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTh
 
         assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
+
+    @Test
+    public void should_display_meaningful_error_message_if_waiting_for_field_that_does_not_appear() {
+
+        expectedException.expect(ElementNotVisibleException.class);
+        expectedException.expectMessage(allOf(containsString("Unable to locate element"),
+                                              containsString("fieldDoesNotExist")));
+
+        StaticSitePage page = new StaticSitePage(driver, 2000);
+        page.setWaitForTimeout(1000);
+        page.open();
+
+        page.element(page.fieldDoesNotExist).waitUntilVisible();
+    }
+
 }

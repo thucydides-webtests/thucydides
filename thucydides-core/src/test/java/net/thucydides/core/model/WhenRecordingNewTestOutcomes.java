@@ -261,6 +261,18 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     @Test
+    public void a_screenshot_without_an_error_message__returns_an_empty_string() {
+        Screenshot screenshot = new Screenshot("step_1.png","Step 1",800);
+        assertThat(screenshot.getErrorMessage(), is(""));
+    }
+
+    @Test
+    public void a_failing_screenshot_records_the_error_message() {
+        Screenshot screenshot = new Screenshot("step_1.png","Step 1",800,new AssertionError("Element not found"));
+        assertThat(screenshot.getErrorMessage(), is("Element not found"));
+    }
+
+    @Test
     public void the_acceptance_test_case_is_a_failure_if_one_test_has_failed() {
 
         testOutcome.recordStep(successfulTestStepCalled("Step 1"));

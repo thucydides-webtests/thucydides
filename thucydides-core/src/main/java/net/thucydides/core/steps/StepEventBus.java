@@ -53,6 +53,9 @@ public class StepEventBus {
 
     private boolean pendingTest;
 
+    private Class<?> classUnderTest;
+    private Story storyUnderTest;
+
     /**
      * Register a listener to receive notification at different points during a test's execution.
      * If you are writing your own listener, you shouldn't need to call this method - just set up your
@@ -103,6 +106,11 @@ public class StepEventBus {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testSuiteStarted(testClass);
         }
+        updateClassUnderTest(testClass);
+    }
+
+    private void updateClassUnderTest(final Class<?> testClass) {
+        classUnderTest = testClass;
     }
 
     public void testSuiteStarted(final Story story) {
@@ -115,7 +123,8 @@ public class StepEventBus {
         stepStack.clear();
         clearStepFailures();
         currentTestIsNotPending();
-        this.resultTally = new TestStepResult();
+        resultTally = null;
+        classUnderTest = null;
         webdriverSuspensions.clear();
     }
 
@@ -125,7 +134,7 @@ public class StepEventBus {
 
     private TestStepResult getResultTally() {
         if (resultTally == null) {
-            resultTally = new TestStepResult();
+            resultTally = TestStepResult.forTestClass(classUnderTest);
         }
         return resultTally;
     }
