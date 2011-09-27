@@ -35,7 +35,6 @@ public class TestStep {
     private String screenshotPath;
     private File screenshot;
     private File htmlSource;
-    private String errorMessage;
     private Throwable cause;
     private TestResult result;
 
@@ -187,14 +186,21 @@ public class TestStep {
     /**
      * Indicate that this step failed with a given error.
      */
-    public void failedWith(final String message, final Throwable exception) {
+    public void failedWith(final Throwable exception) {
         setResult(TestResult.FAILURE);
-        this.errorMessage = message;
         this.cause = exception;
     }
 
     public String getErrorMessage() {
-        return errorMessage;
+        return (cause != null) ? errorMessageFrom(cause) : "";
+    }
+
+    private String errorMessageFrom(final Throwable error) {
+        return (error.getCause() != null) ? error.getCause().getMessage() : error.getMessage();
+    }
+
+    public String getShortErrorMessage() {
+        return new ErrorMessageFormatter(getErrorMessage()).getShortErrorMessage();
     }
 
     public Throwable getException() {

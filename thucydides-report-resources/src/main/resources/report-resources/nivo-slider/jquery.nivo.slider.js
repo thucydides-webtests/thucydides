@@ -94,11 +94,12 @@
 			var nivoCaption = $('.nivo-caption', slider);
 			if(vars.currentImage.attr('title') != '' && vars.currentImage.attr('title') != undefined){
 				var title = vars.currentImage.attr('title');
+				var alt = vars.currentImage.attr('alt');
 				if(title.substr(0,1) == '#') title = $(title).html();	
 
 				if(nivoCaption.css('display') == 'block'){
 					nivoCaption.find('p').fadeOut(settings.animSpeed, function(){
-						$(this).html(title);
+						$(this).html(title + '<span class="errorMessage">' + alt + '</span>');
 						$(this).fadeIn(settings.animSpeed);
 					});
 				} else {
@@ -185,7 +186,7 @@
         
         //Keyboard Navigation
         if(settings.keyboardNav){
-            $(window).keypress(function(event){
+            $(window).keydown(function(event){
                 //Left
                 if(event.keyCode == '37'){
                     if(vars.running) return false;

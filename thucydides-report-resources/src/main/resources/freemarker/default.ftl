@@ -154,7 +154,7 @@
                                                 src="images/${step_outcome_icon}" class="${step_class_root}-icon"/></td>
                             <td width="%"><span class="${step_class_root}-step">${step.description}</span></td>
                             <td width="100" class="bluetext">
-                                <#if step.screenshot??>
+                                <#if !step.isAGroup() && step.screenshot??>
                                     <a href="${testOutcome.screenshotReportName}.html"><img src="${step.screenshot.name}"
                                                                                          class="screenshot"
                                                                                          width="48" height="48"/></a>
@@ -165,7 +165,7 @@
                         <#if step.result == "FAILURE" && !step.isAGroup()>
                             <tr class="test-${step.result}">
                                 <td width="40">&nbsp</td>
-                                <td width="%" colspan="4"><span class="error-message">${step.errorMessage!''}</span></td>
+                                <td width="%" colspan="4"><span class="error-message">${step.shortErrorMessage!''}</span></td>
                             </tr>
                         </#if>
                     </table>

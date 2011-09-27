@@ -269,7 +269,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void recordFailureDetailsInFailingTestStep(final StepFailure failure) {
-        getCurrentStep().failedWith(failure.getMessage(), failure.getException());
+        getCurrentStep().failedWith(new StepFailureException(failure.getMessage(), failure.getException()));
     }
 
     public void stepIgnored() {

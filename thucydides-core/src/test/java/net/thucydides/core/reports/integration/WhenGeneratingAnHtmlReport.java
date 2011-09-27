@@ -4,11 +4,14 @@ import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import org.apache.commons.io.FileUtils;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.io.IOException;
 
 import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
@@ -21,6 +24,16 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
+
+    @Before
+    public void setupWorkingDirectory() throws IOException {
+        File screenshotsSourceDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots").getPath());
+        File[] screenshots = screenshotsSourceDirectory.listFiles();
+
+        for(File screenshot : screenshots) {
+            FileUtils.copyFileToDirectory(screenshot, outputDirectory);
+        }
+    }
 
     @Test
     public void should_generate_an_HTML_report_for_an_acceptance_test_run() throws Exception {
@@ -64,7 +77,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        File screenshot = temporaryDirectory.newFile("step_1.png");
+        File screenshot = temporaryDirectory.newFile("google_page_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
 
@@ -77,7 +90,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        File screenshot = temporaryDirectory.newFile("step_1.png");
+        File screenshot = temporaryDirectory.newFile("google_page_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
 
@@ -157,7 +170,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        File screenshot = temporaryDirectory.newFile("step_1.png");
+        File screenshot = temporaryDirectory.newFile("google_page_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
 
@@ -175,7 +188,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        File screenshot = temporaryDirectory.newFile("step_1.png");
+        File screenshot = temporaryDirectory.newFile("google_page_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
 
@@ -192,7 +205,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        File screenshot = temporaryDirectory.newFile("step_1.png");
+        File screenshot = temporaryDirectory.newFile("google_page_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
 
@@ -208,7 +221,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        File screenshot = temporaryDirectory.newFile("step_1.png");
+        File screenshot = temporaryDirectory.newFile("google_page_1.png");
         step1.setScreenshot(screenshot);
         testOutcome.recordStep(step1);
 

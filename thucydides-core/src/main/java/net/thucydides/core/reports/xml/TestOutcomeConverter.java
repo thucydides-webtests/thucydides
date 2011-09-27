@@ -11,6 +11,8 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.features.ApplicationFeature;
+import org.apache.commons.lang.StringUtils;
+import org.openqa.jetty.util.StringUtil;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -183,7 +185,7 @@ public class TestOutcomeConverter implements Converter {
 
     private void writeErrorMessageAndException(final HierarchicalStreamWriter writer,
                                                final TestStep step) {
-        if (step.getErrorMessage() != null) {
+        if ((step.getErrorMessage() != null) && (!StringUtils.isEmpty(step.getErrorMessage()))) {
             writeErrorMessageNode(writer, step.getErrorMessage());
             if (step.getException() != null) {
                 writeExceptionNode(writer, step.getException());
@@ -197,6 +199,7 @@ public class TestOutcomeConverter implements Converter {
         cause.printStackTrace(new PrintWriter(stringWriter));
         writer.setValue(stringWriter.toString());
         writer.endNode();
+
     }
 
     private void writeErrorMessageNode(final HierarchicalStreamWriter writer,

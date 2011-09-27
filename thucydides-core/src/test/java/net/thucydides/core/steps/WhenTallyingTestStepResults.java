@@ -30,10 +30,14 @@ public class WhenTallyingTestStepResults {
     @Mock
     File outputDirectory;
 
+    class ClassUnderTest {
+        public void someTest(){};
+    }
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        testStepResult = new TestStepResult();
+        testStepResult = TestStepResult.forTestClass(ClassUnderTest.class);
         when(description.getName()).thenReturn("Some test");
 
         when(stepFailure1.getDescription()).thenReturn(description);
@@ -49,6 +53,12 @@ public class WhenTallyingTestStepResults {
         assertThat(testStepResult.getFailures(), hasItem(stepFailure1));
     }
     
+    @Test
+    public void should_know_what_test_class_the_results_come_from() {
+        assertThat(testStepResult.getClassUnderTest().getSimpleName(), is("ClassUnderTest"));
+    }
+
+
     @Test
     public void should_be_able_to_count_step_failures() {
         testStepResult.logFailure(stepFailure1);
@@ -163,7 +173,7 @@ public class WhenTallyingTestStepResults {
         stepListener.stepFailed(failure);
         assertThat(stepListener.aStepHasFailed(), is(true));
 
-        stepListener.testFinished(new TestStepResult());
+        stepListener.testFinished(TestStepResult.forTestClass(ClassUnderTest.class));
         stepListener.testStarted("app_should_still_work");
 
         assertThat(stepListener.aStepHasFailed(), is(false));

@@ -3,22 +3,20 @@ package net.thucydides.core.images;
 import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.FileImageInputStream;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.logging.Logger;
 
 public class ResizableImage {
 
     private final File screenshotFile;
     private final SimpleImageInfo imageInfo;
-    private final int MAX_SUPPORTED_HEIGHT = 1200;
+    private final int MAX_SUPPORTED_HEIGHT = 4000;
 
-    public ResizableImage(final File screenshotFile) throws IOException  {
+    public ResizableImage(final File screenshotFile) throws IOException {
         this.screenshotFile = screenshotFile;
         this.imageInfo = new SimpleImageInfo(screenshotFile);
     }
@@ -35,23 +33,34 @@ public class ResizableImage {
         return imageInfo.getHeight();
     }
 
-    public ResizableImage rescaleCanvas(final int width, final int height) throws IOException {
+    public ResizableImage rescaleCanvas(final int height) throws IOException {
 
-        if (getHeight() > height) {
-            return this;
-        }
-        if (getHeight() > MAX_SUPPORTED_HEIGHT) {
+        if (skipRescale(height)) {
             return this;
         }
 
+        int targetHeight = Math.min(height, MAX_SUPPORTED_HEIGHT);
         BufferedImage image = ImageIO.read(screenshotFile);
-        BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
+        int width = new SimpleImageInfo(screenshotFile).getWidth();
+        BufferedImage resizedImage = new BufferedImage(width, targetHeight, BufferedImage.TYPE_INT_ARGB_PRE);
 
         fillWithWhiteBackground(resizedImage);
 
         resizedImage.setData(image.getRaster());
 
         return new ResizedImage(resizedImage, screenshotFile);
+    }
+
+    private boolean skipRescale(int height) {
+        if (getHeight() > MAX_SUPPORTED_HEIGHT) {
+            return true;
+        }
+
+        if (getHeight() >= height) {
+            return true;
+        }
+
+        return false;
     }
 
     private void fillWithWhiteBackground(final BufferedImage resizedImage) {

@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -109,6 +110,15 @@ public class WhenManagingAPageObject {
         BasicPageObject page = new BasicPageObject(driver);
         page.setWaitForTimeout(100);
         page.waitForRenderedElementsToDisappear(By.id("whatever"));
+    }
+
+    @Test
+    public void page_can_delay_requests_for_a_short_period() {
+        long start = System.currentTimeMillis();
+        BasicPageObject page = new BasicPageObject(driver);
+        page.waitABit(500);
+
+        assertThat((int) (System.currentTimeMillis() - start), greaterThanOrEqualTo(500));
     }
 
     @Test(expected = UnexpectedElementVisibleException.class)
@@ -574,17 +584,6 @@ public class WhenManagingAPageObject {
 
         when(field.isDisplayed()).thenReturn(false);
         page.shouldNotBeVisible(field);
-    }
-
-    @Test
-    public void when_clicking_on_something_should_retry_if_it_fails_once() {
-        BasicPageObject page = new BasicPageObject(driver);
-
-        doThrow(new WebDriverException()).doNothing().when(mockButton).click();
-
-        page.clickOn(page.getButton());
-
-        verify(mockButton,times(2)).click();
     }
 
     @Test(expected = WebDriverException.class)

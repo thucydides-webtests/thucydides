@@ -363,8 +363,7 @@ public class WhenGeneratingAnXMLReport {
     }
 
     @Test
-    public void should_include_the_name_of_any_screenshots_where_present()
-            throws Exception {
+    public void should_include_the_name_of_any_screenshots_where_present() throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='2' successful='1' failures='1' skipped='0' ignored='0' pending='0' result='FAILURE'>\n"
                 + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
@@ -446,7 +445,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
 
         TestStep step = TestStepFactory.failingTestStepCalled("step 1");
-        step.failedWith("Oh nose!", new IllegalArgumentException());
+        step.failedWith(new IllegalArgumentException("Oh nose!"));
 
         testOutcome.recordStep(step);
 
@@ -462,7 +461,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
 
         TestStep step = TestStepFactory.failingTestStepCalled("step 1");
-        step.failedWith("Oh nose!", new IllegalArgumentException());
+        step.failedWith(new IllegalArgumentException("Oh nose!"));
 
         testOutcome.recordStep(step);
 

@@ -7,9 +7,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTheFluentElementAPI {
@@ -38,4 +41,22 @@ public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTh
 
         assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
+
+    //
+    // Note: The is in the Firefox tests as the Chrome driver does not always seem to return meaningful error messages.
+    //
+    @Test
+    public void should_display_meaningful_error_message_if_waiting_for_field_that_does_not_appear() {
+
+        expectedException.expect(ElementNotVisibleException.class);
+        expectedException.expectMessage(allOf(containsString("Unable to locate element"),
+                                              containsString("fieldDoesNotExist")));
+
+        StaticSitePage page = new StaticSitePage(driver, 2000);
+        page.setWaitForTimeout(1000);
+        page.open();
+
+        page.element(page.fieldDoesNotExist).waitUntilVisible();
+    }
+
 }

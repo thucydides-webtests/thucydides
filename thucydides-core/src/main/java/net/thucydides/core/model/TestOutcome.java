@@ -4,10 +4,13 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.TestAnnotations;
+import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.util.NameConverter;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -218,13 +221,23 @@ public class TestOutcome {
         List<TestStep> testSteps = getFlattenedTestSteps();
 
         for(TestStep currentStep : testSteps) {
-            if (currentStep.getScreenshot() != null) {
+            if (!currentStep.isAGroup() && currentStep.getScreenshot() != null) {
                 screenshots.add(new Screenshot(currentStep.getScreenshot().getName(),
-                                               currentStep.getDescription()));
+                                               currentStep.getDescription(),
+                                               widthOf(currentStep.getScreenshot()),
+                                               currentStep.getException()));
             }
         }
 
         return ImmutableList.copyOf(screenshots);
+    }
+
+    private int widthOf(final File screenshot) {
+        try {
+            return new SimpleImageInfo(screenshot).getWidth();
+        } catch (IOException e) {
+            return ThucydidesSystemProperty.DEFAULT_WIDTH;
+        }
     }
 
     public List<TestStep> getFlattenedTestSteps() {

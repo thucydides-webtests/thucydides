@@ -5,13 +5,13 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.4.6-SNAPSHOT</version>
+        <version>0.4.9-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-core</artifactId>
     <name>thucydides-core</name>
     <properties>
-        <selenium.version>2.5.0</selenium.version>
+        <selenium.version>2.6.0</selenium.version>
         <root.package>net.thucydides.core</root.package>
     </properties>
     <dependencies>

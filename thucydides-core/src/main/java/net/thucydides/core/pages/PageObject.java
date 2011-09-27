@@ -6,11 +6,15 @@ import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.*;
+import org.openqa.selenium.support.ui.SystemClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A base class representing a WebDriver page object.
@@ -33,7 +38,7 @@ public abstract class PageObject {
 
     private static final int ONE_SECOND = 1000;
 
-    private long waitForTimeout = WAIT_FOR_ELEMENT_PAUSE_LENGTH;
+    private long waitForTimeout = WAIT_FOR_ELEMENT_PAUSE_LENGTH * ONE_SECOND;
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PageObject.class);
@@ -50,9 +55,14 @@ public abstract class PageObject {
 
     private InternalSystemClock clock = new InternalSystemClock();
 
+    private final Sleeper sleeper;
+    private final Clock webdriverClock;
+
     public PageObject(final WebDriver driver, final int ajaxTimeout) {
         this.driver = driver;
         this.waitForTimeout = ajaxTimeout;
+        this.webdriverClock = new org.openqa.selenium.support.ui.SystemClock();
+        this.sleeper = Sleeper.SYSTEM_SLEEPER;
 
         setupPageUrls();
 
@@ -63,6 +73,8 @@ public abstract class PageObject {
     public PageObject(final WebDriver driver) {
         this.driver = driver;
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
+        this.webdriverClock = new SystemClock();
+        this.sleeper = Sleeper.SYSTEM_SLEEPER;
 
         setupPageUrls();
 
@@ -344,9 +356,11 @@ public abstract class PageObject {
 
     public String updateUrlWithBaseUrlIfDefined(final String startingUrl) {
         String baseUrl = System.getProperty(ThucydidesSystemProperty.BASE_URL.getPropertyName());
-        if (baseUrl != null) {
-            return replaceHost(startingUrl, baseUrl); 
+        if ((baseUrl != null) && (!StringUtils.isEmpty(baseUrl))) {
+            LOGGER.info("Updating initial URL {} using base url of {}", startingUrl, baseUrl);
+            return replaceHost(startingUrl, baseUrl);
         } else {
+            LOGGER.info("Using initial URL {}", startingUrl);
             return startingUrl;
         }
     }
@@ -367,7 +381,8 @@ public abstract class PageObject {
                                                              baseUrl.getPort());
             updatedUrl = starting.replaceFirst(startingHostComponent, baseHostComponent);
         } catch (MalformedURLException e) {
-            LOGGER.error("Failed to analyse default page URL", e);
+            LOGGER.error("Failed to analyse default page URL: Starting URL: {}, Base URL: {}", starting, base);
+            LOGGER.error("URL analysis failed with exception:",e);
         }
 
         return updatedUrl;
@@ -390,15 +405,19 @@ public abstract class PageObject {
      */
     public final void open(final String... parameterValues) {
         String startingUrl = pageUrls.getStartingUrl(parameterValues);
+        LOGGER.debug("Opening page at url {}", startingUrl);
         openPageAtUrl(startingUrl);
         callWhenPageOpensMethods();
+        LOGGER.debug("Page opened");
     }
 
     public final void open(final String urlTemplateName,
                      final String[] parameterValues) {
         String startingUrl = pageUrls.getNamedUrl(urlTemplateName, parameterValues);
+        LOGGER.debug("Opening page at url {}", startingUrl);
         openPageAtUrl(startingUrl);
         callWhenPageOpensMethods();
+        LOGGER.debug("Page opened");
     }
 
     /**
@@ -439,7 +458,9 @@ public abstract class PageObject {
                 annotatedMethod.setAccessible(true);
                 annotatedMethod.invoke(this);
             } catch (Exception e) {
-                throw new UnableToInvokeWhenPageOpensMethods("Could not execute @WhenPageOpens annotated method", e);
+                LOGGER.error("Could not execute @WhenPageOpens annotated method: " + e.getMessage());
+                throw new UnableToInvokeWhenPageOpensMethods("Could not execute @WhenPageOpens annotated method: "
+                                                             + e.getMessage(), e);
             }
         }
 
@@ -464,23 +485,12 @@ public abstract class PageObject {
         return parameterValues;
     }
 
-
     private void openPageAtUrl(final String startingUrl) {
         getDriver().get(startingUrl);
     }
 
-
     public void clickOn(final WebElement webElement) {
-        try {
-            webElement.click();
-        } catch (WebDriverException e) {
-            LOGGER.warn(
-                    "Click failed. This could be a flicking failure, so I'll wait 1 second and try again",
-                    e);
-            waitABit(ONE_SECOND);
-        }
         webElement.click();
-
     }
 
     /**
@@ -512,6 +522,13 @@ public abstract class PageObject {
     public Object evaluateJavascript(final String script) {
         JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
         return js.executeScript(script);
+    }
+
+    public Wait<WebDriver> waitForCondition() {
+        return new FluentWait<WebDriver>(driver, webdriverClock, sleeper)
+                .withTimeout(waitForTimeout, TimeUnit.SECONDS)
+                .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
+                .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
     }
 
     public class FieldEntry {

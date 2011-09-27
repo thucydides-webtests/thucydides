@@ -40,8 +40,6 @@ public class StepEventBus {
         return stepEventBusThreadLocal.get();
     }
 
-    //private static Iterator<?> listenerImplementations = Service.providers(StepListener.class);
-
     private List<StepListener> registeredListeners = new ArrayList<StepListener>();
 
     private TestStepResult resultTally;
@@ -54,6 +52,9 @@ public class StepEventBus {
     private boolean stepFailed;
 
     private boolean pendingTest;
+
+    private Class<?> classUnderTest;
+    private Story storyUnderTest;
 
     /**
      * Register a listener to receive notification at different points during a test's execution.
@@ -105,6 +106,11 @@ public class StepEventBus {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testSuiteStarted(testClass);
         }
+        updateClassUnderTest(testClass);
+    }
+
+    private void updateClassUnderTest(final Class<?> testClass) {
+        classUnderTest = testClass;
     }
 
     public void testSuiteStarted(final Story story) {
@@ -114,11 +120,11 @@ public class StepEventBus {
     }
 
     public void clear() {
-
         stepStack.clear();
         clearStepFailures();
         currentTestIsNotPending();
-        this.resultTally = new TestStepResult();
+        resultTally = null;
+        classUnderTest = null;
         webdriverSuspensions.clear();
     }
 
@@ -128,7 +134,7 @@ public class StepEventBus {
 
     private TestStepResult getResultTally() {
         if (resultTally == null) {
-            resultTally = new TestStepResult();
+            resultTally = TestStepResult.forTestClass(classUnderTest);
         }
         return resultTally;
     }

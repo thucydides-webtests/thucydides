@@ -25,6 +25,8 @@ public class WebDriverFactory {
     private final WebdriverInstanceFactory webdriverInstanceFactory;
 
     private ProfilesIni allProfiles;
+    private static final int DEFAULT_HEIGHT = ThucydidesSystemProperty.DEFAULT_HEIGHT;
+    private static final int DEFAULT_WIDTH = ThucydidesSystemProperty.DEFAULT_WIDTH;
 
     public WebDriverFactory() {
         this.webdriverInstanceFactory = new WebdriverInstanceFactory();
@@ -78,25 +80,14 @@ public class WebDriverFactory {
     }
 
     private void redimensionBrowser(final WebDriver driver) {
-        int height = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_HEIGHT, 0);
-        int width = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_WIDTH, 0);
-
-        if ((height > 0) && (width > 0)) {
-            resizeBrowserTo((JavascriptExecutor) driver, height, width);
-        } else {
-            maximizeBrowserDimensions((JavascriptExecutor) driver);
-        }
+        int height = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_HEIGHT, DEFAULT_HEIGHT);
+        int width = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_WIDTH, DEFAULT_WIDTH);
+        resizeBrowserTo((JavascriptExecutor) driver, height, width);
     }
 
     private void resizeBrowserTo(JavascriptExecutor driver, int height, int width) {
         String resizeWindow = "window.resizeTo(" + width + "," + height + ")";
         driver.executeScript(resizeWindow);
-    }
-
-    private void maximizeBrowserDimensions(JavascriptExecutor driver) {
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = toolkit.getScreenSize();
-        resizeBrowserTo(driver, screenSize.height, screenSize.width);
     }
 
     private boolean isAFirefoxDriver(Class<? extends WebDriver> driverClass) {

@@ -28,12 +28,8 @@ public class DataDrivenStepInterceptor implements MethodInterceptor {
     }
 
     private void runMethodAndIgnoreExceptions(ScenarioSteps steps,  MethodProxy proxy, Method method, Object[] args) throws Throwable {
-//         try {
-             if (!method.getName().equals("finalize")) {
-                proxy.invoke(steps, args);
-             }
-//         } catch (Throwable e) {
-//            LOGGER.info("Skipping exception when running data-driven step tests: ", e.getMessage());
-//         }
+         if (!method.getName().equals("finalize")) {
+            proxy.invoke(steps, args);
+         }
     }
 }

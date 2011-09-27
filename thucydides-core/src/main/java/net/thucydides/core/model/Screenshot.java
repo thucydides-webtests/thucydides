@@ -1,18 +1,55 @@
 package net.thucydides.core.model;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Represents a screenshot stored during a test execution.
  */
 public class Screenshot {
     private final String filename;
     private final String description;
+    private final int width;
+    private final Throwable error;
 
     public Screenshot(final String filename,
-                      final String description) {
+                      final String description,
+                      final int width,
+                      final Throwable error) {
         this.filename = filename;
         this.description = description;
+        this.width = width;
+        this.error = error;
     }
 
+    public Screenshot(final String filename,
+                      final String description,
+                      final int width) {
+        this(filename, description, width, null);
+    }
+
+    public Throwable getError() {
+        return error;
+    }
+
+    public String getErrorMessage() {
+        return (error != null) ? errorMessageFrom(error) : "";
+    }
+
+    private String errorMessageFrom(final Throwable error) {
+        return (error.getCause() != null) ? error.getCause().getMessage() : error.getMessage();
+    }
+
+    /**
+     * Returns the first line only of the error message.
+     * This avoids polluting the UI with unnecessary details such as browser versions and so forth.
+     * @return
+     */
+    public String getShortErrorMessage() {
+        return new ErrorMessageFormatter(getErrorMessage()).getShortErrorMessage();
+    }
 
     public String getFilename() {
         return filename;
@@ -22,4 +59,7 @@ public class Screenshot {
         return description;
     }
 
+    public int getWidth() {
+        return width;
+    }
 }

@@ -176,23 +176,27 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         } catch (AssertionError assertionError) {
             error = assertionError;
             stepExceptions.add(assertionError);
-            LOGGER.debug("Addertion error caught - notifying of failure " + assertionError);
+            LOGGER.debug("Assertion error caught - notifying of failure " + assertionError);
             notifyOfStepFailure(method, args, assertionError);
             return appropriateReturnObject(obj, method);
         } catch (WebDriverException webdriverException) {
             error = webdriverException;
-            AssertionError webdriverAssertionError = new WebdriverAssertionError(error.getMessage(), error);
+            AssertionError webdriverAssertionError = new WebdriverAssertionError(messageFrom(error), error);
             stepExceptions.add(webdriverAssertionError);
             notifyOfStepFailure(method, args, webdriverAssertionError);
         } catch (Throwable generalException) {
             error = generalException;
-            AssertionError essertionError = new WebdriverAssertionError(error.getMessage(), error);
-            stepExceptions.add(essertionError);
-            notifyOfStepFailure(method, args, essertionError);
+            AssertionError assertionError = new WebdriverAssertionError(messageFrom(error), error);
+            stepExceptions.add(assertionError);
+            notifyOfStepFailure(method, args, assertionError);
         }
 
         LOGGER.info("Test step done: " + getTestNameFrom(method, args, false));
         return result;
+    }
+
+    private String messageFrom(final Throwable error) {
+        return (error.getCause() != null) ? error.getCause().getMessage() : error.getMessage();
     }
 
     private Object invokeMethod(final Object obj, final Method method,
