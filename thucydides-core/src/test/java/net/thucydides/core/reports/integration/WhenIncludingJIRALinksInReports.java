@@ -20,21 +20,15 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
     protected class JIRAAnnotatedTestScenario {
 
         @Title("a simple test case (#1234)")
-        public void a_simple_test_case() {
-        }
-
-        ;
+        public void a_simple_test_case() {};
 
         @Title("should do this as well (#1234, #2345)")
-        public void should_do_this_too() {
-        }
+        public void should_do_this_too() {};
 
-        ;
+        //@Issue("#3456")
+        public void and_should_do_this() {};
 
-        public void should_do_that() {
-        }
-
-        ;
+        public void should_do_that() {};
     }
 
     @Test
@@ -51,6 +45,20 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
         assertThat(reportContents, containsString("<a href=\"http://my.issue.tracker/1234\">#1234</a>"));
     }
 
+
+    @Test
+    public void a_jira_issue_number_can_also_appear_in_the_issue_annotation()  throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", JIRAAnnotatedTestScenario.class);
+        ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, "http://my.issue.tracker/{0}");
+
+        recordSimpleTest(testOutcome);
+
+        reporter.generateReportFor(testOutcome);
+
+        File screenshotReport = new File(outputDirectory, "a_user_story_a_simple_test_case.html");
+        String reportContents = FileUtils.readFileToString(screenshotReport);
+        assertThat(reportContents, containsString("<a href=\"http://my.issue.tracker/1234\">#1234</a>"));
+    }
 
     @Test
     public void a_jira_base_url_should_also_be_recognized()  throws Exception {

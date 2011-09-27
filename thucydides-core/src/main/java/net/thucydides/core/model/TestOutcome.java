@@ -8,11 +8,17 @@ import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.util.NameConverter;
+import org.apache.commons.lang.StringUtils;
+import org.openqa.jetty.util.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import static ch.lambdaj.Lambda.convert;
@@ -398,6 +404,46 @@ public class TestOutcome {
 
     public void setAnnotatedResult(final TestResult annotatedResult) {
         this.annotatedResult = annotatedResult;
+    }
+
+    public Set<String> getIssues() {
+        Set<String> issues = new HashSet<String>();
+        if (testCase != null) {
+            addMethodLevelIssuesTo(issues);
+            addClassLevelIssuesTo(issues);
+        }
+        return issues;
+    }
+
+    private void addClassLevelIssuesTo(Set<String> issues) {
+        String classIssue = TestAnnotations.forClass(testCase).getAnnotatedIssueForTestCase(testCase);
+        if (classIssue != null) {
+            issues.add(classIssue);
+        }
+        String[] classIssues = TestAnnotations.forClass(testCase).getAnnotatedIssuesForTestCase(testCase);
+        if (classIssues != null) {
+            issues.addAll(Arrays.asList(classIssues));
+        }
+    }
+
+    private void addMethodLevelIssuesTo(Set<String> issues) {
+        String issue = TestAnnotations.forClass(testCase).getAnnotatedIssueForMethod(getMethodName());
+        if (issue != null) {
+            issues.add(issue);
+        }
+        String[] multipleIssues = TestAnnotations.forClass(testCase).getAnnotatedIssuesForMethod(getMethodName());
+        if (multipleIssues != null) {
+            issues.addAll(Arrays.asList(multipleIssues));
+        }
+    }
+
+    public String getFormattedIssues() {
+        Set<String> issues = getIssues();
+        if (!issues.isEmpty()) {
+           return "(" + getFormatter().addLinks(StringUtils.join(issues, ", ")) + ")";
+        } else {
+            return "";
+        }
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {

@@ -4,9 +4,6 @@ package net.thucydides.core.annotations;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -41,14 +38,14 @@ public class WhenReadingTestAndStepAnnotations {
     public void shouldReadNoAnnotatedIssuesIfNoneFound() {
 
         assertThat(TestAnnotations.forClass(SampleTestCase.class)
-                .getAnnotatedIssuesForMethod("normalTest").isEmpty(), is(true));
+                .getAnnotatedIssuesForMethodTitle("normalTest").isEmpty(), is(true));
     }
 
     @Test
     public void shouldReadAnnotatedIssues() {
 
         assertThat(TestAnnotations.forClass(SampleTestCase.class)
-                .getAnnotatedIssuesForMethod("testWithIssues"), allOf(hasItem("#MYPROJECT-123"),hasItem("#MYPROJECT-456")));
+                .getAnnotatedIssuesForMethodTitle("testWithIssues"), allOf(hasItem("#MYPROJECT-123"),hasItem("#MYPROJECT-456")));
     }
 
     @Test
