@@ -62,6 +62,19 @@ public class WebElementFacade {
     }
 
     /**
+     * Convenience method to chain method calls more fluently.
+     */
+    public WebElementFacade and() {
+        return this;
+    }
+
+    /**
+     * Convenience method to chain method calls more fluently.
+     */
+    public WebElementFacade then() {
+        return this;
+    }
+    /**
      * Is this web element present and visible on the screen
      * This method will not throw an exception if the element is not on the screen at all.
      * The method will fail immediately if the element is not visible on the screen.
@@ -189,10 +202,11 @@ public class WebElementFacade {
      *
      * @param value
      */
-    public void type(final String value) {
+    public WebElementFacade type(final String value) {
         waitUntilElementAvailable();
         webElement.clear();
         webElement.sendKeys(value);
+        return this;
     }
 
     /**
@@ -200,10 +214,11 @@ public class WebElementFacade {
      *
      * @param value
      */
-    public void typeAndEnter(final String value) {
+    public WebElementFacade typeAndEnter(final String value) {
         waitUntilElementAvailable();
         webElement.clear();
         webElement.sendKeys(value, Keys.ENTER);
+        return this;
     }
 
     /**
@@ -211,20 +226,22 @@ public class WebElementFacade {
      *
      * @param value
      */
-    public void typeAndTab(final String value) {
+    public WebElementFacade typeAndTab(final String value) {
         waitUntilElementAvailable();
         webElement.clear();
         webElement.sendKeys(value + Keys.TAB);
+        return this;
     }
 
     public void setWindowFocus() {
         getJavaScriptExecutorFacade().executeScript("window.focus()");
     }
 
-    public void selectByVisibleText(final String label) {
+    public WebElementFacade selectByVisibleText(final String label) {
         waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByVisibleText(label);
+        return this;
     }
 
     public String getSelectedVisibleTextValue() {
@@ -233,10 +250,11 @@ public class WebElementFacade {
         return select.getFirstSelectedOption().getText();
     }
 
-    public void selectByValue(String value) {
+    public WebElementFacade selectByValue(String value) {
         waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByValue(value);
+        return this;
     }
 
     public String getSelectedValue() {
@@ -245,14 +263,14 @@ public class WebElementFacade {
         return select.getFirstSelectedOption().getAttribute("value");
     }
 
-    public void selectByIndex(int indexValue) {
+    public WebElementFacade selectByIndex(int indexValue) {
         waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByIndex(indexValue);
+        return this;
     }
 
     private void waitUntilElementAvailable() {
-        waitUntilVisible();
         waitUntilEnabled();
     }
 
@@ -283,12 +301,13 @@ public class WebElementFacade {
         }
     }
 
-    public void waitUntilVisible() {
+    public WebElementFacade waitUntilVisible() {
         try {
             waitForCondition().until(elementIsDisplayed());
         } catch (TimeoutException timeout) {
             throwErrorWithCauseIfPresent(timeout, timeout.getMessage());
         }
+        return this;
     }
 
     private void throwErrorWithCauseIfPresent(final TimeoutException timeout, final String defaultMessage) {
@@ -335,12 +354,13 @@ public class WebElementFacade {
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
     }
 
-    public void waitUntilNotVisible() {
+    public WebElementFacade waitUntilNotVisible() {
         try {
             waitForCondition().until(elementIsNotDisplayed());
         } catch (TimeoutException timeout) {
             throwErrorWithCauseIfPresent(timeout,"Expected hidden element was displayed");
         }
+        return this;
     }
 
     public String getValue() {
@@ -353,19 +373,20 @@ public class WebElementFacade {
         return webElement.getText();
     }
 
-    public void waitUntilEnabled() {
+    public WebElementFacade waitUntilEnabled() {
         try {
 
             waitForCondition().until(elementIsEnabled());
-
+            return this;
         } catch (TimeoutException timeout) {
             throw new ElementNotVisibleException("Expected enabled element was not enabled", timeout);
         }
     }
 
-    public void waitUntilDisabled() {
+    public WebElementFacade waitUntilDisabled() {
         try {
             waitForCondition().until(elementIsNotEnabled());
+            return this;
         } catch (TimeoutException timeout) {
             throw new ElementNotVisibleException("Expected disabled element was not enabled", timeout);
         }
@@ -386,8 +407,9 @@ public class WebElementFacade {
     /**
      * Wait for an element to be visible and enabled, and then click on it.
      */
-    public void click() {
+    public WebElementFacade click() {
         waitUntilElementAvailable();
         webElement.click();
+        return this;
     }
 }

@@ -252,6 +252,11 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
     }
 
     @Test
+    public void should_be_able_to_chain_methods() {
+        page.element(page.buttonThatIsInitiallyDisabled).waitUntilEnabled().and().then().click();
+    }
+
+    @Test
     public void should_know_if_disabled_element_is_not_enabled() {
         assertThat(page.element(page.readonlyField).isEnabled(), is(false));
     }
