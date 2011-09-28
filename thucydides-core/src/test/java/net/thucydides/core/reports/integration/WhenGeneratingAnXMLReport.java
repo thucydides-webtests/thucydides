@@ -1,6 +1,8 @@
 package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.annotations.Feature;
+import net.thucydides.core.annotations.Issue;
+import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
@@ -63,6 +65,15 @@ public class WhenGeneratingAnXMLReport {
         public void and_should_do_that() {};
     }
 
+    @Story(AUserStory.class)
+    @Issues({"#123","#456"})
+    class ATestScenarioWithIssues {
+        public void a_simple_test_case() {};
+        @Issue("#789")
+        public void should_do_this() {};
+        public void should_do_that() {};
+    }
+
     @Test
     public void should_generate_an_XML_report_for_an_acceptance_test_run()
             throws Exception {
@@ -70,6 +81,31 @@ public class WhenGeneratingAnXMLReport {
         String expectedReport =
               "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
             + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
+            + "  <test-step result='SUCCESS'>\n"
+            + "    <description>step 1</description>\n"
+            + "  </test-step>\n"
+            + "</acceptance-test-run>";
+
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        File xmlReport = reporter.generateReportFor(testOutcome);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }
+
+    @Test
+    public void should_include_issues_in_the_XML_report()
+            throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", ATestScenarioWithIssues.class);
+        String expectedReport =
+              "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+            + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
+            + "  <issues>\n"
+            + "    <issue>#456</issue>\n"
+            + "    <issue>#789</issue>\n"
+            + "    <issue>#123</issue>\n"
+            + "  </issues>\n"
             + "  <test-step result='SUCCESS'>\n"
             + "    <description>step 1</description>\n"
             + "  </test-step>\n"

@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-@Issues({"#MYPROJECT-200","#MYPROJECT-300"})
+@Issues({"#200","#300"})
 public class SampleTestScenario {
     
     @Managed
@@ -25,7 +25,7 @@ public class SampleTestScenario {
     @Steps
     public SampleScenarioSteps steps;
 
-    @Issues({"#MYPROJECT-123", "#MYPROJECT-456"})
+    @Title("Happy day scenario - fixes issues #123 and #456")
     @Test
     public void happy_day_scenario() {
         steps.anotherGroupOfSteps();
@@ -33,7 +33,7 @@ public class SampleTestScenario {
         steps.stepFour("f");
     }
 
-    @Issue("#MYPROJECT-400")
+    @Issue("400")
     @Test
     public void failing_scenario() {
         steps.groupOfStepsContainingAFailure();

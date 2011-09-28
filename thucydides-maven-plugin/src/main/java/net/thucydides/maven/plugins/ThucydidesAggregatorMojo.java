@@ -40,10 +40,16 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
 
     /**
      * URL of the issue tracking system to be used to generate links for issue numbers.
-     *
      * @parameter
      */
     private String issueTrackerUrl;
+
+    /**
+     * Base URL for JIRA, if you are using JIRA as your issue tracking system.
+     * If you specify this property, you don't need to specify the issueTrackerUrl.
+     * @parameter
+     */
+    private String jiraUrl;
 
     private HtmlAggregateStoryReporter reporter;
 
@@ -86,6 +92,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     private void generateHtmlStoryReports() throws IOException {
         getReporter().setOutputDirectory(outputDirectory);
         getReporter().setIssueTrackerUrl(issueTrackerUrl);
+        getReporter().setJiraUrl(jiraUrl);
         getReporter().generateReportsForStoriesFrom(sourceDirectory);
     }
 

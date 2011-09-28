@@ -155,6 +155,16 @@ float:left;
     text-align: right;
 }
 
+.related-issue-title {
+    display:block;
+    font-size:14px;
+}
+
+.related-issues {
+    display:block;
+    font-size:12px;
+}
+
 .test-FAILURE {
     background-color: #f0e3e3;
 }

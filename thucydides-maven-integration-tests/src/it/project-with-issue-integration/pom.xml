@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.thucydides.maven.plugins.samples</groupId>
-    <artifactId>project-with-jira-integration</artifactId>
+    <artifactId>project-with-issue-integration</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <name>Test Thucydides Reporter Mojo</name>
@@ -52,7 +52,7 @@
                         <include>**/*Test.java</include>
                     </includes>
                     <systemPropertyVariables>
-                        <jira.url>${jira.url}</jira.url>
+                        <thucydides.issue.tracker.url>${jira.issues}</thucydides.issue.tracker.url>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -61,7 +61,7 @@
                 <artifactId>maven-thucydides-plugin</artifactId>
                 <version>@project.version@</version>
                 <configuration>
-                    <jiraUrl>${jira.url}</jiraUrl>
+                    <issueTrackerUrl>${jira.issues}</issueTrackerUrl>
                 </configuration>
             </plugin>
         </plugins>
@@ -80,9 +80,6 @@
                         <groupId>net.thucydides.maven.plugins</groupId>
                         <artifactId>maven-thucydides-plugin</artifactId>
                         <version>@project.version@</version>
-                        <configuration>
-                            <jiraUrl>${jira.url}</jiraUrl>
-                        </configuration>
                     </plugin>
                 </plugins>
             </reporting>
@@ -116,6 +113,6 @@
     </profiles>    
     
     <properties>
-        <jira.url>http://my.jira.server</jira.url>
+        <jira.issues>http://my.jira.server/browse/MYPROJECT-{0}</jira.issues>
     </properties>
 </project>

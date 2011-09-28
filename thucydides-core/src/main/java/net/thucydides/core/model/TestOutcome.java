@@ -27,6 +27,7 @@ import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.join;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
+import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -70,6 +71,8 @@ public class TestOutcome {
     private Story userStory;
 
     private String storedTitle;
+
+    private Set<String> issues;
 
     private long duration;
 
@@ -407,12 +410,19 @@ public class TestOutcome {
     }
 
     public Set<String> getIssues() {
-        Set<String> issues = new HashSet<String>();
-        if (testCase != null) {
-            addMethodLevelIssuesTo(issues);
-            addClassLevelIssuesTo(issues);
+        if (issues == null) {
+            issues = readIssues();
         }
         return issues;
+    }
+
+    private Set<String> readIssues() {
+        Set<String> taggedIssues = new HashSet<String>();
+        if (testCase != null) {
+            addMethodLevelIssuesTo(taggedIssues);
+            addClassLevelIssuesTo(taggedIssues);
+        }
+        return taggedIssues;
     }
 
     private void addClassLevelIssuesTo(Set<String> issues) {
@@ -440,10 +450,15 @@ public class TestOutcome {
     public String getFormattedIssues() {
         Set<String> issues = getIssues();
         if (!issues.isEmpty()) {
-           return "(" + getFormatter().addLinks(StringUtils.join(issues, ", ")) + ")";
+           List<String> orderedIssues =  sort(getIssues(), on(String.class).toString());
+           return "(" + getFormatter().addLinks(StringUtils.join(orderedIssues, ", ")) + ")";
         } else {
-            return "";
+           return "";
         }
+    }
+
+    public void isRelatedToIssue(String issue) {
+        getIssues().add(issue);
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {

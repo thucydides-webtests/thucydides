@@ -134,28 +134,28 @@ public class WhenRecordingNewTestOutcomes {
     public void a_test_outcome_should_also_inject_issue_links_from_the_Issue_annotation_at_the_class_level() {
         TestOutcome outcome = TestOutcome.forTest("should_do_that", SomeTestScenario.class);
 
-        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-456, #ISSUE-123)"));
+        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123, #ISSUE-456)"));
     }
 
     @Test
     public void a_test_outcome_should_record_multiple_issues() {
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeOtherTestScenario.class);
 
-        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-456, #ISSUE-123, #ISSUE-789)"));
+        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123, #ISSUE-456, #ISSUE-789)"));
     }
 
     @Test
     public void a_test_outcome_should_record_multiple_issues_and_single_issues() {
         TestOutcome outcome = TestOutcome.forTest("should_do_that", SomeOtherTestScenario.class);
 
-        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-456, #ISSUE-123)"));
+        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123, #ISSUE-456)"));
     }
 
     @Test
     public void a_test_outcome_should_record_multiple_issues_at_class_level() {
         TestOutcome outcome = TestOutcome.forTest("should_do_something_else", SomeOtherTestScenario.class);
 
-        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-456, #ISSUE-123)"));
+        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123, #ISSUE-456)"));
     }
 
     @Test

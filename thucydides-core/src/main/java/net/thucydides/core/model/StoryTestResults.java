@@ -4,15 +4,21 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.reports.html.Formatter;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import static ch.lambdaj.Lambda.flatten;
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
+import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
 import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
 import static org.apache.commons.lang.StringUtils.capitalize;
@@ -138,6 +144,20 @@ public class StoryTestResults {
 
     public String getTitleWithLinks() {
         return getFormatter().addLinks(getTitle());
+    }
+
+    public String getFormattedIssues() {
+        if (!getIssues().isEmpty()) {
+           List<String> orderedIssues =  sort(getIssues(), on(String.class).toString());
+           return "(" + getFormatter().addLinks(StringUtils.join(orderedIssues, ", ")) + ")";
+        } else {
+            return "";
+        }
+    }
+
+    public Set<String> getIssues() {
+        List<String> allIssues = flatten(extract(testOutcomes, on(TestOutcome.class).getIssues()));
+        return new HashSet<String>(allIssues);
     }
 
     private Formatter getFormatter() {

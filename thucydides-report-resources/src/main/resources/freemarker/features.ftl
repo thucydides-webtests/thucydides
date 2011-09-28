@@ -87,7 +87,20 @@
 
                 <div class="tablerow">
                     <table border="0" height="40" width="980">
-                        <#foreach featureResult in features>                            <#if featureResult.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">                                 <#elseif featureResult.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">                                 <#elseif featureResult.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">                                 <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">                                 </#if>
+                        <#foreach featureResult in features>
+                            <#if featureResult.result == "FAILURE">
+                                <#assign outcome_icon = "fail.png">
+                                <#assign outcome_text = "failing-color">
+                            <#elseif featureResult.result == "SUCCESS">
+                                <#assign outcome_icon = "success.png">
+                                <#assign outcome_text = "success-color">
+                            <#elseif featureResult.result == "PENDING">
+                                <#assign outcome_icon = "pending.png">
+                                <#assign outcome_text = "pending-color">
+                            <#else>
+                                <#assign outcome_icon = "ignor.png">
+                                <#assign outcome_text = "ignore-color">
+                            </#if>
                         <tr>
                             <td width="10">&nbsp;</td>
                             <td class="bluetext" witdh=500>
