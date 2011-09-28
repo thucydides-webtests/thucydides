@@ -54,6 +54,11 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
         protected WebElement checkbox;
 
+        protected WebElement radioButton1;
+        protected WebElement radioButton2;
+
+        protected WebElement selectedCheckbox;
+
         protected WebElement buttonThatIsInitiallyDisabled;
 
         protected WebElement buttonThatIsInitiallyEnabled;
@@ -614,4 +619,26 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
         page.waitForCondition().until(page.twoFieldsAreDisabled());
     }
 
+
+    @Test
+    public void should_detect_when_a_checkbox_is_selected() {
+        assertThat(page.element(page.selectedCheckbox).isSelected(), is(true));
+    }
+
+    @Test
+    public void should_detect_when_a_checkbox_is_not_selected() {
+
+        assertThat(page.element(page.checkbox).isSelected(), is(false));
+    }
+
+    @Test
+    public void should_detect_when_a_radio_button_is_selected() {
+        assertThat(page.element(page.radioButton1).isSelected(), is(true));
+    }
+
+    @Test
+    public void should_detect_when_a_radio_button_is_not_selected() {
+
+        assertThat(page.element(page.radioButton2).isSelected(), is(false));
+    }
 }
