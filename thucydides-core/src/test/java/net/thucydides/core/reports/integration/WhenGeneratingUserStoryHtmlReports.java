@@ -1,7 +1,10 @@
 package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.annotations.Feature;
+import net.thucydides.core.annotations.Issue;
+import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
+import net.thucydides.core.annotations.Title;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.UserStoryTestReporter;
@@ -15,12 +18,15 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Set;
 
 import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 
 public class WhenGeneratingUserStoryHtmlReports {
@@ -39,9 +45,12 @@ public class WhenGeneratingUserStoryHtmlReports {
     class AUserStory {};
 
     @Story(AUserStory.class)
+    @Issue("#100")
     class SomeTestScenario {
         public void a_simple_test_case() {};
+        @Issues({"#300","#400"})
         public void should_do_this() {};
+        @Issue("#200")
         public void should_do_that() {};
         public void should_also_do_this() {};
     }
@@ -77,6 +86,17 @@ public class WhenGeneratingUserStoryHtmlReports {
 
     @Test
     public void should_write_aggregate_report_to_a_file_named_after_the_user_story() throws Exception {
+        Set<String> issues = storyTestResults.getIssues();
+        assertThat(issues, allOf(hasItem("#100"), hasItem("#200"), hasItem("#300"), hasItem("#400")));
+    }
+
+    @Test
+    public void should_return_formatted_issue_numbers() throws Exception {
+        assertThat(storyTestResults.getFormattedIssues(), is("(#100, #200, #300, #400)"));
+    }
+
+    @Test
+    public void should_find_issues_for_a_story() throws Exception {
         File userStoryReport = reporter.generateReportFor(storyTestResults);
         assertThat(userStoryReport.getName(), is("a_user_story.html"));
     }

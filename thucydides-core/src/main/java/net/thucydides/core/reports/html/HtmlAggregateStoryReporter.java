@@ -44,7 +44,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private FeatureLoader featureLoader;
     private UserStoryLoader storyLoader;
     private TestHistory testHistory;
-	private String issueTrackerUrl;
     private String projectName;
 
     public HtmlAggregateStoryReporter(final String projectName) {
@@ -231,7 +230,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     public void setIssueTrackerUrl(String issueTrackerUrl) {
-        this.issueTrackerUrl = issueTrackerUrl;
         if (issueTrackerUrl != null) {
             ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, issueTrackerUrl);
         }
@@ -239,5 +237,11 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     public void clearHistory() {
         getTestHistory().clearHistory();
+    }
+
+    public void setJiraUrl(String jiraUrl) {
+        if (jiraUrl != null) {
+            ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.JIRA_URL, jiraUrl);
+        }
     }
 }

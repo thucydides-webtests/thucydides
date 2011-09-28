@@ -92,7 +92,7 @@ public class TestAnnotations {
      * @param methodName
      * @return
      */
-    public List<String> getAnnotatedIssuesForMethod(String methodName) {
+    public List<String> getAnnotatedIssuesForMethodTitle(String methodName) {
         String title = getAnnotatedTitleForMethod(methodName);
         if (title != null) {
             return Formatter.issuesIn(title);
@@ -100,4 +100,53 @@ public class TestAnnotations {
             return Formatter.issuesIn(methodName);
         }
     }
+
+
+    private String getAnnotatedIssue(String methodName) {
+        Method testMethod = getMethodCalled(methodName);
+        if ((testMethod != null) && (testMethod.getAnnotation(Issue.class) != null)){
+            return testMethod.getAnnotation(Issue.class).value();
+        } else {
+            return null;
+        }
+    }
+
+    private String[] getAnnotatedIssues(String methodName) {
+        Method testMethod = getMethodCalled(methodName);
+        if ((testMethod != null) && (testMethod.getAnnotation(Issues.class) != null)){
+            return testMethod.getAnnotation(Issues.class).value();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return a list of the issues mentioned in the Issue annotation of this method.
+     */
+    public String getAnnotatedIssueForMethod(String methodName) {
+        return getAnnotatedIssue(methodName);
+    }
+
+    public String[] getAnnotatedIssuesForMethod(String methodName) {
+        return getAnnotatedIssues(methodName);
+    }
+
+    public String getAnnotatedIssueForTestCase(Class<?> testCase) {
+        Issue issueAnnotation = testCase.getAnnotation(Issue.class);
+        if (issueAnnotation != null) {
+            return issueAnnotation.value();
+        } else {
+            return null;
+        }
+    }
+
+    public String[] getAnnotatedIssuesForTestCase(Class<?> testCase) {
+        Issues issueAnnotation = testCase.getAnnotation(Issues.class);
+        if (issueAnnotation != null) {
+            return issueAnnotation.value();
+        } else {
+            return null;
+        }
+    }
+
 }

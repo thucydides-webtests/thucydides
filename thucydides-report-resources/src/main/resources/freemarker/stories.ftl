@@ -84,7 +84,21 @@
                     </table>
                 </div>
 
-                <#foreach story in stories>                    <#if story.result == "FAILURE"><#assign story_outcome_icon = "fail.png"><#assign story_outcome_text = "failing-color">                    <#elseif story.result == "SUCCESS"><#assign story_outcome_icon = "success.png"><#assign story_outcome_text = "success-color">                    <#elseif story.result == "PENDING"><#assign story_outcome_icon = "pending.png"><#assign story_outcome_text = "pending-color">                    <#else><#assign story_outcome_icon = "ignor.png"><#assign story_outcome_text = "ignore-color">                    </#if>                    <div class="tablerow">
+                <#foreach story in stories>
+                    <#if story.result == "FAILURE">
+                        <#assign story_outcome_icon = "fail.png">
+                        <#assign story_outcome_text = "failing-color">
+                    <#elseif story.result == "SUCCESS">
+                        <#assign story_outcome_icon = "success.png">
+                        <#assign story_outcome_text = "success-color">
+                    <#elseif story.result == "PENDING">
+                        <#assign story_outcome_icon = "pending.png">
+                        <#assign story_outcome_text = "pending-color">
+                    <#else>
+                        <#assign story_outcome_icon = "ignor.png">
+                        <#assign story_outcome_text = "ignore-color">
+                    </#if>
+                    <div class="tablerow">
                         <table border="0" height="40" width="980">
                             <tr>
                                 <td width="10">&nbsp;</td>
@@ -96,11 +110,31 @@
                                             <ul></ul>
                                         </li>
                                         <li>
-                                            <div><img src="images/${story_outcome_icon}" class="summary-icon"/><span class="${story.result}-text">${story.title}</span></div>
+                                            <div>
+                                                <img src="images/${story_outcome_icon}" class="summary-icon"/>
+                                                <span class="${story.result}-text">${story.title}<span class="related-issues">${story.formattedIssues}</span></span>
+                                            </div>
                                             <ul>
-                                                <#foreach testOutcome in story.testOutcomes>                                                    <#if testOutcome.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">                                                    <#elseif testOutcome.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">                                                    <#elseif testOutcome.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">                                                    <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">                                                    </#if>
-                                                    <li><img src="images/${outcome_icon}" class="summary-icon"/><a href="${testOutcome.reportName}.html" class="${testOutcome.result}-item-text">${testOutcome.titleWithLinks}</a></li>
-                                                </#foreach>                                            </ul>
+                                                <#foreach testOutcome in story.testOutcomes>
+                                                    <#if testOutcome.result == "FAILURE">
+                                                        <#assign outcome_icon = "fail.png">
+                                                        <#assign outcome_text = "failing-color">
+                                                    <#elseif testOutcome.result == "SUCCESS">
+                                                        <#assign outcome_icon = "success.png">
+                                                        <#assign outcome_text = "success-color">
+                                                    <#elseif testOutcome.result == "PENDING">
+                                                        <#assign outcome_icon = "pending.png">
+                                                        <#assign outcome_text = "pending-color">
+                                                    <#else>
+                                                        <#assign outcome_icon = "ignor.png">
+                                                        <#assign outcome_text = "ignore-color">
+                                                    </#if>
+                                                    <li>
+                                                        <img src="images/${outcome_icon}" class="summary-icon"/>
+                                                        <a href="${testOutcome.reportName}.html" class="${testOutcome.result}-item-text">${testOutcome.titleWithLinks}</a><span class="related-issues">${testOutcome.formattedIssues}</span>
+                                                    </li>
+                                                </#foreach>
+                                            </ul>
                                         </li>
 
                                     </ul>
@@ -146,6 +180,7 @@
 </html>
 <SCRIPT>
     $("${hash}accordion > li > div").click(function() {
+
 
         if (false == $(this).next().is(':visible')) {
             $('${hash}accordion ul').slideUp(300);

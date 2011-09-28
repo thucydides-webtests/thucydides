@@ -58,7 +58,7 @@ a:active {
             <table width="980">
                 <tr>
                     <td width="25px" valign="center" height="72px"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25px" height="25px" /></td>
-                    <td width="%"><span class="test-case-title"><span class="${outcome_text}">${story.titleWithLinks}</span></span></td>
+                    <td width="%"><span class="test-case-title"><span class="${outcome_text}">${story.titleWithLinks}<span class="related-issues">${story.formattedIssues}</span></span></span></td>
                     <td width="75px"><span class="test-case-duration"><span class="greentext">${story.duration} ms</span></span></td>
                 </tr>
             </table>
@@ -91,7 +91,7 @@ a:active {
       <table border="0" height="40" width="980" >
       <tr class="test-${testOutcome.result}">
         <td width="35"><img src="images/${testrun_outcome_icon}" class="outcome-icon"/></td>
-        <td width="%" class="bluetext"><a href="${testOutcome.reportName}.html">${testOutcome.titleWithLinks}</a></td>
+        <td width="%" class="bluetext"><a href="${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a></td>
         <td width="80" class="lightgreentext">${testOutcome.stepCount}</td>
         <td width="80" class="redtext">${testOutcome.failureCount}</td>
         <td width="80" class="bluetext">${testOutcome.pendingCount}</td>

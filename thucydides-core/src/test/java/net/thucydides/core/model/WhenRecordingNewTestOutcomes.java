@@ -1,11 +1,16 @@
 package net.thucydides.core.model;
 
+import net.thucydides.core.annotations.Issue;
+import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.Title;
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.List;
@@ -24,6 +29,7 @@ import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
@@ -37,9 +43,23 @@ public class WhenRecordingNewTestOutcomes {
     class AUserStory {};
 
     @Story(AUserStory.class)
+    @Issue("#ISSUE-123")
     class SomeTestScenario {
+        @Issue("#ISSUE-123")
         public void should_do_this() {};
+        @Issue("#ISSUE-456")
         public void should_do_that() {};
+        public void should_do_something_else() {};
+    }
+
+    @Story(AUserStory.class)
+    @Issues({"#ISSUE-123","#ISSUE-456"})
+    class SomeOtherTestScenario {
+        @Issues({"#ISSUE-123","#ISSUE-789"})
+        public void should_do_this() {};
+        @Issue("#ISSUE-123")
+        public void should_do_that() {};
+        public void should_do_something_else() {};
     }
 
     @Story(AUserStory.class)
@@ -48,6 +68,9 @@ public class WhenRecordingNewTestOutcomes {
         public void should_do_this() {};
         public void should_do_that() {};
     }
+
+    @Rule
+    public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
 
     @Before
     public void prepareAcceptanceTestRun() {
@@ -83,6 +106,63 @@ public class WhenRecordingNewTestOutcomes {
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenario.class);
 
         assertThat(outcome.getTitle(), is("Really should do this!"));
+    }
+
+    @Test
+    public void a_test_outcome_should_record_issue_numbers_from_the_Issue_annotation() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        assertThat(outcome.getIssues(), hasItem("#ISSUE-123"));
+    }
+
+    @Test
+    public void a_test_outcome_should_not_inject_issue__links_from_the_Issue_annotation_if_not_configured() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123)"));
+    }
+
+    @Test
+    public void a_test_outcome_should_inject_issue_links_from_the_Issue_annotation_if_requested() {
+        System.setProperty("jira.url", "http://my.jira");
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        assertThat(outcome.getFormattedIssues(), is("(<a href=\"http://my.jira/browse/ISSUE-123\">#ISSUE-123</a>)"));
+    }
+
+    @Test
+    public void a_test_outcome_should_also_inject_issue_links_from_the_Issue_annotation_at_the_class_level() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_that", SomeTestScenario.class);
+
+        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123, #ISSUE-456)"));
+    }
+
+    @Test
+    public void a_test_outcome_should_record_multiple_issues() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeOtherTestScenario.class);
+
+        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123, #ISSUE-456, #ISSUE-789)"));
+    }
+
+    @Test
+    public void a_test_outcome_should_record_multiple_issues_and_single_issues() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_that", SomeOtherTestScenario.class);
+
+        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123, #ISSUE-456)"));
+    }
+
+    @Test
+    public void a_test_outcome_should_record_multiple_issues_at_class_level() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_something_else", SomeOtherTestScenario.class);
+
+        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123, #ISSUE-456)"));
+    }
+
+    @Test
+    public void a_test_outcome_should_also_inject_issue_links_from_the_Issue_annotation_when_only_at_the_class_level() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_something_else", SomeTestScenario.class);
+
+        assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123)"));
     }
 
     @Test
@@ -684,8 +764,6 @@ public class WhenRecordingNewTestOutcomes {
         assertThat(testOutcome.getStoryTitle(), is("My user story"));
     }
 
-
-
     @Test
     public void an_acceptance_test_records_the_original_story_class() {
         net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyApp.MyUserStory.class);
@@ -700,54 +778,6 @@ public class WhenRecordingNewTestOutcomes {
         assertThat(testOutcome.getDuration(), is(greaterThanOrEqualTo(10L)));
         assertThat(testOutcome.getDuration(), is(lessThan(1000L)));
     }
-
-//    @Story(AUserStory.class)
-//    class TestScenarioWithRequirements {
-//        @TestsRequirement("SOME_BUSINESS_RULE_1")
-//        public void should_do_this() {};
-//        @TestsRequirements({"SOME_BUSINESS_RULE_1","SOME_BUSINESS_RULE_2"})
-//        public void should_do_that() {};
-//    }
-//
-//    @Test
-//    public void should_automatically_record_a_requirement_declared_for_the_test() {
-//
-//        testOutcome = TestOutcome.forTest("should_do_this", TestScenarioWithRequirements.class);
-//
-//        Assert.assertThat(testOutcome.getAllTestedRequirements(), hasItem("SOME_BUSINESS_RULE_1"));
-//
-//    }
-//
-//    @Test
-//    public void should_automatically_record_all_requirements_declared_for_the_test() {
-//
-//        testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
-//
-//        Assert.assertThat(testOutcome.getAllTestedRequirements(),
-//                          hasItems("SOME_BUSINESS_RULE_1", "SOME_BUSINESS_RULE_2"));
-//
-//    }
-//
-//    @Test
-//    public void should_get_report_filename_from_the_story_name_and_method_name() {
-//        testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
-//
-//        assertThat(testOutcome.getReportName(), is("a_user_story_should_do_that"));
-//    }
-//
-//    @Test
-//    public void there_should_be_one_screenshots_report_per_story_report() {
-//        testOutcome = TestOutcome.forTest("should_do_that", TestScenarioWithRequirements.class);
-//
-//        assertThat(testOutcome.getScreenshotReportName(), is("a_user_story_should_do_that_screenshots"));
-//    }
-//
-//    @Test
-//    public void parametrized_test_report_names_should_strip_any_indexes() {
-//        testOutcome = TestOutcome.forTest("should_do_that[0]", TestScenarioWithRequirements.class);
-//
-//        assertThat(testOutcome.getReportName(), is("a_user_story_should_do_that"));
-//    }
 
     class SimpleScenarioSteps extends ScenarioSteps {
 

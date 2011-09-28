@@ -17,6 +17,7 @@ import org.openqa.jetty.util.StringUtil;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Set;
 
 /**
  * XStream converter used to generate the XML acceptance test report.
@@ -39,8 +40,8 @@ public class TestOutcomeConverter implements Converter {
     private static final String TEST_STEP = "test-step";
     private static final String USER_STORY = "user-story";
     private static final String FEATURE = "feature";
-//    private static final String REQUIREMENTS = "requirements";
-//    private static final String REQUIREMENT = "requirement";
+    private static final String ISSUES = "issues";
+    private static final String ISSUE = "issue";
     private static final String EXCEPTION = "exception";
     private static final String ERROR = "error";
     private static final String SCREENSHOT_FIELD = "screenshot";
@@ -82,7 +83,7 @@ public class TestOutcomeConverter implements Converter {
         writer.addAttribute(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
         writer.addAttribute(RESULT_FIELD, testOutcome.getResult().toString());
         addUserStoryTo(writer, testOutcome.getUserStory());
-        //addRequirementsTo(writer, testOutcome.getTestedRequirements());
+        addIssuesTo(writer, testOutcome.getIssues());
 
         List<TestStep> steps = testOutcome.getTestSteps();
         for (TestStep step : steps) {
@@ -137,7 +138,7 @@ public class TestOutcomeConverter implements Converter {
             writer.startNode(TEST_STEP);
             writeResult(writer, step);
             writeScreenshotIfPresent(writer, step);
-            //addRequirementsTo(writer, step.getTestedRequirements());
+            //addIssuesTo(writer, step.getTestedIssues());
             writeDescription(writer, step);
             writeErrorForFailingTest(writer, step);
             writer.endNode();
@@ -164,17 +165,17 @@ public class TestOutcomeConverter implements Converter {
         writer.endNode();
     }
 
-//    private void addRequirementsTo(final HierarchicalStreamWriter writer, final Set<String> set) {
-//        if (!set.isEmpty()) {
-//            writer.startNode(REQUIREMENTS);
-//            for (String requirement : set) {
-//                writer.startNode(REQUIREMENT);
-//                writer.setValue(requirement);
-//                writer.endNode();
-//            }
-//            writer.endNode();
-//        }
-//    }
+    private void addIssuesTo(final HierarchicalStreamWriter writer, final Set<String> set) {
+        if (!set.isEmpty()) {
+            writer.startNode(ISSUES);
+            for (String requirement : set) {
+                writer.startNode(ISSUE);
+                writer.setValue(requirement);
+                writer.endNode();
+            }
+            writer.endNode();
+        }
+    }
 
     private void writeErrorForFailingTest(final HierarchicalStreamWriter writer, final TestStep step) {
         if (step.isFailure()) {
@@ -246,8 +247,8 @@ public class TestOutcomeConverter implements Converter {
                 readTestStep(reader, testOutcome);
             } else if (childNode.equals(TEST_GROUP)) {
                 readTestGroup(reader, testOutcome);
-//            } else if (childNode.equals(REQUIREMENTS)) {
-//                readTestRunRequirements(reader, testOutcome);
+            } else if (childNode.equals(ISSUES)) {
+                readTestRunIssues(reader, testOutcome);
             } else if (childNode.equals(USER_STORY)) {
                 readUserStory(reader, testOutcome);
             }
@@ -288,24 +289,15 @@ public class TestOutcomeConverter implements Converter {
     }
 
 
-//    private void readTestRunRequirements(final HierarchicalStreamReader reader,
-//                                         final TestOutcome testOutcome) {
-//        while (reader.hasMoreChildren()) {
-//            reader.moveDown();
-//            String requirement = reader.getValue();
-//            testOutcome.testsRequirement(requirement);
-//            reader.moveUp();
-//        }
-//    }
-
-//    private void readTestStepRequirements(final HierarchicalStreamReader reader, final TestStep step) {
-//        while (reader.hasMoreChildren()) {
-//            reader.moveDown();
-//            String requirement = reader.getValue();
-//            step.testsRequirement(requirement);
-//            reader.moveUp();
-//        }
-//    }
+    private void readTestRunIssues(final HierarchicalStreamReader reader,
+                                         final TestOutcome testOutcome) {
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String issue = reader.getValue();
+            testOutcome.isRelatedToIssue(issue);
+            reader.moveUp();
+        }
+    }
 
     /*
      * <test-step result="SUCCESS"> <description>The customer navigates to the
@@ -347,7 +339,7 @@ public class TestOutcomeConverter implements Converter {
             if (childNode.equals(DESCRIPTION)) {
                 step.setDescription(reader.getValue());
 //            } else if (childNode.equals(REQUIREMENTS)) {
-//                readTestStepRequirements(reader, step);
+//                readTestStepIssues(reader, step);
             }
             reader.moveUp();
         }
