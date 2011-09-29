@@ -1,6 +1,7 @@
-package net.thucydides.junit.spring.samples;
+package net.thucydides.junit.spring.samples.dao;
 
-import java.lang.reflect.Array;
+import net.thucydides.junit.spring.samples.service.WidgetService;
+
 import java.util.Arrays;
 import java.util.List;
 

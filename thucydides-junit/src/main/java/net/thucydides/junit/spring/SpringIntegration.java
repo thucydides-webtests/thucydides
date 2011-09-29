@@ -1,6 +1,6 @@
 package net.thucydides.junit.spring;
 
-import org.junit.rules.MethodRule;
+import org.junit.rules.TestWatchman;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.springframework.test.context.TestContextManager;
@@ -10,9 +10,11 @@ import org.springframework.test.context.TestContextManager;
  *
  * @author johnsmart
  */
-public class SpringIntegration implements MethodRule {
+public class SpringIntegration extends TestWatchman {
 
     private final Class<?> clazz;
+
+    private TestContextManager testContextManager;
 
     private SpringIntegration(Class<?> clazz) {
         this.clazz = clazz;
@@ -22,7 +24,15 @@ public class SpringIntegration implements MethodRule {
         return new SpringIntegration(testClass);
     }
 
-    private TestContextManager testContextManager;
+    @Override
+    public void starting(FrameworkMethod method) {
+        super.starting(method);
+    }
+
+    @Override
+    public void finished(FrameworkMethod method) {
+        super.finished(method);
+    }
 
     public Statement apply(Statement base, FrameworkMethod method, Object testInstance) {
         TestContextManager contextManager = getTestContextManager(method.getMethod().getDeclaringClass());

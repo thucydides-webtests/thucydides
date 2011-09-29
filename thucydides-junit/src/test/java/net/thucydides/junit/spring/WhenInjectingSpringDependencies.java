@@ -2,13 +2,11 @@ package net.thucydides.junit.spring;
 
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
-import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.runners.ThucydidesRunner;
-import net.thucydides.junit.spring.samples.BazingaService;
-import net.thucydides.junit.spring.samples.DoodadService;
-import net.thucydides.junit.spring.samples.GizmoDao;
-import net.thucydides.junit.spring.samples.GizmoService;
+import net.thucydides.junit.spring.samples.dao.GizmoDao;
+import net.thucydides.junit.spring.samples.service.BazingaService;
+import net.thucydides.junit.spring.samples.service.GizmoService;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;

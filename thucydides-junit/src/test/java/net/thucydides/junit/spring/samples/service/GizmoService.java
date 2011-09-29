@@ -1,4 +1,6 @@
-package net.thucydides.junit.spring.samples;
+package net.thucydides.junit.spring.samples.service;
+
+import net.thucydides.junit.spring.samples.dao.GizmoDao;
 
 public class GizmoService {
 
