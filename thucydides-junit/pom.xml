@@ -9,6 +9,10 @@
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-junit</artifactId>
     <name>thucydides-junit</name>
+    <properties>
+        <!--<spring.version>3.0.6.RELEASE</spring.version>-->
+        <spring.version>2.5.6.SEC03</spring.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>net.thucydides</groupId>
@@ -30,31 +34,31 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>3.0.6.RELEASE</version>
+            <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>3.0.6.RELEASE</version>
+            <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>3.0.6.RELEASE</version>
+            <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>3.0.6.RELEASE</version>
+            <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>3.0.6.RELEASE</version>
+            <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
