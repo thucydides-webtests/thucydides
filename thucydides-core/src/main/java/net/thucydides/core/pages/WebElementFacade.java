@@ -245,6 +245,7 @@ public class WebElementFacade {
     }
 
     public String getSelectedVisibleTextValue() {
+        waitUntilVisible();
         Select select = new Select(webElement);
         return select.getFirstSelectedOption().getText();
     }
@@ -257,6 +258,7 @@ public class WebElementFacade {
     }
 
     public String getSelectedValue() {
+        waitUntilVisible();
         Select select = new Select(webElement);
         return select.getFirstSelectedOption().getAttribute("value");
     }
@@ -362,14 +364,17 @@ public class WebElementFacade {
     }
 
     public String getValue() {
+        waitUntilVisible();
         return webElement.getAttribute("value");
     }
 
     public boolean isSelected() {
+        waitUntilVisible();
         return webElement.isSelected();
     }
 
     public String getText() {
+        waitUntilVisible();
         return webElement.getText();
     }
 
@@ -393,6 +398,7 @@ public class WebElementFacade {
     }
 
     public String getTextValue() {
+        waitUntilVisible();
         if (!getText().isEmpty()) {
             return webElement.getText();
         }
