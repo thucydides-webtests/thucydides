@@ -11,7 +11,6 @@
     <artifactId>thucydides-junit</artifactId>
     <name>thucydides-junit</name>
     <properties>
-        <!--<spring.version>3.0.6.RELEASE</spring.version>-->
         <spring.version>2.5.6.SEC03</spring.version>
     </properties>
     <dependencies>

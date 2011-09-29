@@ -1,11 +1,17 @@
 package net.thucydides.junit.spring;
 
-/**
- * Created by IntelliJ IDEA.
- * User: johnsmart
- * Date: 29/09/11
- * Time: 8:40 PM
- * To change this template use File | Settings | File Templates.
- */
-public class SpringContextStatement {
+import org.junit.runners.model.Statement;
+
+final class SpringContextStatement extends Statement {
+
+    final Statement base;
+
+    SpringContextStatement(Statement base) {
+        this.base = base;
+    }
+
+    @Override
+    public void evaluate() throws Throwable {
+        base.evaluate();
+    }
 }

@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 public class UserService {
 
     private UserDAO userDAO;

@@ -1,5 +1,6 @@
 package net.thucydides.junit.spring;
 
+
 import org.junit.rules.TestWatchman;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -16,87 +17,53 @@ public class SpringIntegration extends TestWatchman {
 
     private TestContextManager testContextManager;
 
+    public static SpringIntegration forClass(Class<?> clazz) {
+        return new SpringIntegration(clazz);
+    }
+
     private SpringIntegration(Class<?> clazz) {
         this.clazz = clazz;
     }
 
-    public static SpringIntegration forClass(Class<?> testClass) {
-        return new SpringIntegration(testClass);
-    }
-
     @Override
-    public void starting(FrameworkMethod method) {
-        super.starting(method);
-    }
-
-    @Override
-    public void finished(FrameworkMethod method) {
-        super.finished(method);
-    }
-
-    public Statement apply(Statement base, FrameworkMethod method, Object testInstance) {
+    public Statement apply(Statement base, FrameworkMethod method, Object target) {
         TestContextManager contextManager = getTestContextManager(method.getMethod().getDeclaringClass());
         try {
-            contextManager.prepareTestInstance(testInstance);
+            contextManager.prepareTestInstance(target);
         } catch (Exception e) {
             throw new IllegalStateException("Could not instantiate test instance", e);
         }
-
-        Statement statement = new SpringContextStatement(base);
-        statement = withBefores(method, testInstance, statement, contextManager);
-        statement = withAfters(method, testInstance, statement, contextManager);
-
+        Statement statement = super.apply(base, method, target);
+        statement = withBefores(method, target, statement, contextManager);
+        statement = withAfters(method, target, statement, contextManager);
         return statement;
-    }
-
-    final class SpringContextStatement extends Statement {
-
-        final Statement base;
-
-        SpringContextStatement(Statement base) {
-            this.base = base;
-        }
-
-        @Override
-        public void evaluate() throws Throwable {
-            base.evaluate();
-        }
     }
 
     protected TestContextManager getTestContextManager(Class<?> clazz) {
         if (testContextManager == null) {
-            testContextManager = createTestContextManager(clazz);
+            testContextManager = new TestContextManager(clazz);
         }
         return testContextManager;
     }
 
-    /**
-     * Creates a new {@link TestContextManager}. Can be overridden by subclasses.
-     *
-     * @param clazz the Class object corresponding to the test class to be managed
-     */
-    protected TestContextManager createTestContextManager(Class<?> clazz) {
-        return new TestContextManager(clazz);
-    }
-
-	protected Statement withBefores(FrameworkMethod frameworkMethod,
+    protected Statement withBefores(FrameworkMethod frameworkMethod,
                                     Object testInstance,
                                     Statement statement,
                                     TestContextManager testContextManager) {
-		return new RunBeforeTestMethodCallbacks(statement,
-                                                testInstance,
-                                                frameworkMethod.getMethod(),
-			                                    testContextManager);
-	}
+        return new RunBeforeTestMethodCallbacks(statement,
+                testInstance,
+                frameworkMethod.getMethod(),
+                testContextManager);
+    }
 
-	protected Statement withAfters(FrameworkMethod frameworkMethod,
+    protected Statement withAfters(FrameworkMethod frameworkMethod,
                                    Object testInstance,
                                    Statement statement,
                                    TestContextManager testContextManager) {
-		return new RunAfterTestMethodCallbacks(statement,
-                                               testInstance,
-                                               frameworkMethod.getMethod(),
-			                                   testContextManager);
-	}
+        return new RunAfterTestMethodCallbacks(statement,
+                testInstance,
+                frameworkMethod.getMethod(),
+                testContextManager);
+    }
 
 }
