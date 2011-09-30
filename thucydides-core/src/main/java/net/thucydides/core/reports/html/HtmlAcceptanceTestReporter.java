@@ -82,7 +82,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         List<Screenshot> screenshots = expandScreenshots(testOutcome.getScreenshots());
 
-        String screenshotReport = withoutType(testOutcome.getReportName() + "_screenshots") + ".html";
+        String screenshotReport = testOutcome.getReportName() + "_screenshots.html";
 
         Map<String,Object> context = new HashMap<String,Object>();
         context.put("screenshots", screenshots);
@@ -136,15 +136,6 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
             maxHeight = height;
         }
         return maxHeight;
-    }
-
-    private String withoutType(final String screenshot) {
-        int dot = screenshot.lastIndexOf('.');
-        if (dot > 0) {
-            return screenshot.substring(0, dot);
-        } else {
-            return screenshot;
-        }
     }
 
     private String reportFor(final TestOutcome testOutcome) {
