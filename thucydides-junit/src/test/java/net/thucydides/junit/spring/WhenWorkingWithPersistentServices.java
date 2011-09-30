@@ -41,7 +41,7 @@ public class WhenWorkingWithPersistentServices {
     public Pages pages;
 
     @Rule
-    public SpringIntegration springIntegration = SpringIntegration.forClass(this.getClass());
+    public SpringIntegration springIntegration = new SpringIntegration();
 
     @Autowired
     public UserService userService;

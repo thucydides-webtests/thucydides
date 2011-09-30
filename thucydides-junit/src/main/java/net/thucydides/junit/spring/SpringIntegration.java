@@ -13,16 +13,7 @@ import org.springframework.test.context.TestContextManager;
  */
 public class SpringIntegration extends TestWatchman {
 
-    private final Class<?> clazz;
-
-    private TestContextManager testContextManager;
-
-    public static SpringIntegration forClass(Class<?> clazz) {
-        return new SpringIntegration(clazz);
-    }
-
-    private SpringIntegration(Class<?> clazz) {
-        this.clazz = clazz;
+    public SpringIntegration() {
     }
 
     @Override
@@ -40,10 +31,7 @@ public class SpringIntegration extends TestWatchman {
     }
 
     protected TestContextManager getTestContextManager(Class<?> clazz) {
-        if (testContextManager == null) {
-            testContextManager = new TestContextManager(clazz);
-        }
-        return testContextManager;
+        return new TestContextManager(clazz);
     }
 
     protected Statement withBefores(FrameworkMethod frameworkMethod,

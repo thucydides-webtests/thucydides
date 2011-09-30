@@ -54,8 +54,8 @@ public class RunBeforeTestMethodCallbacks extends Statement {
 	 */
 	@Override
 	public void evaluate() throws Throwable {
-		this.testContextManager.beforeTestMethod(this.testInstance, this.testMethod);
-		this.next.evaluate();
+		testContextManager.beforeTestMethod(testInstance, testMethod);
+		next.evaluate();
 	}
 
 }

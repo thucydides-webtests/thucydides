@@ -14,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContextManager;
 
 import javax.annotation.Resource;
 
@@ -33,7 +34,7 @@ public class WhenInjectingSpringDependencies {
     public Pages pages;
 
     @Rule
-    public SpringIntegration springIntegration = SpringIntegration.forClass(this.getClass());
+    public SpringIntegration springIntegration = new SpringIntegration();
 
     @Autowired
     public GizmoService gizmoService;
@@ -63,6 +64,11 @@ public class WhenInjectingSpringDependencies {
     @Test
     public void shouldAllowQualifiers() {
         assertThat(premiumBazingaService.getName(), is("Premium Bazingas"));
+    }
+
+    @Test
+    public void should_raise_runtime_exception_if_it_cant_instanciate_the_spring_context() {
+
     }
 
 }
