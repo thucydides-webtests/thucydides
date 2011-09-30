@@ -9,4 +9,5 @@ public interface UserDAO {
 	void save(User user) ;
 	List<User> findAll() ;
     void remove(User user);
+    User findById(String id);
 }

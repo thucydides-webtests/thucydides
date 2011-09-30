@@ -189,6 +189,14 @@ public abstract class PageObject {
         return this;
     }
 
+    /**
+     * Waits for a given text to appear anywhere on the page.
+     */
+    public PageObject waitForTextToDisappear(final WebElement element,
+                                             final String expectedText) {
+        getRenderedView().waitForText(element, expectedText);
+        return this;
+    }
     public PageObject waitForTextToDisappear(final String expectedText) {
         return waitForTextToDisappear(expectedText, waitForTimeout);
     }

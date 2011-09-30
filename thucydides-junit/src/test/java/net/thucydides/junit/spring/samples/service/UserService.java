@@ -19,14 +19,15 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    @Transactional
     public List<User> listUsers() {
         return userDAO.findAll();
     }
 
-    @Transactional
     public void addNewUser(User newUser) {
         userDAO.save(newUser);
     }
 
+    public User findById(String id) {
+        return userDAO.findById(id);
+    }
 }
