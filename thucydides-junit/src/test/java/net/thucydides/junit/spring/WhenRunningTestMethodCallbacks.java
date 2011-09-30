@@ -1,4 +1,4 @@
-package net.thucydides.junit.spring.samples;
+package net.thucydides.junit.spring;
 
 
 import net.thucydides.junit.spring.RunAfterTestMethodCallbacks;
