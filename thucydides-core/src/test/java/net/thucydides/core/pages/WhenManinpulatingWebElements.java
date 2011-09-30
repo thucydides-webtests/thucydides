@@ -99,4 +99,37 @@ public class WhenManinpulatingWebElements {
 
     }
 
+    @Test
+    public void when_text_attribute_is_null_textvalue_should_return_value() {
+        when(webElement.isDisplayed()).thenReturn(true);
+        when(webElement.getText()).thenReturn(null);
+        when(webElement.getAttribute("value")).thenReturn("value");
+
+        WebElementFacade elementFacade = new WebElementFacade(driver, webElement, 100);
+
+        assertThat(elementFacade.getTextValue(), is("value"));
+    }
+
+    @Test
+    public void when_text_attribute_and_text_value_are_null_textvalue_should_return_empty_string() {
+        when(webElement.isDisplayed()).thenReturn(true);
+        when(webElement.getText()).thenReturn(null);
+        when(webElement.getAttribute("value")).thenReturn(null);
+
+        WebElementFacade elementFacade = new WebElementFacade(driver, webElement, 100);
+
+        assertThat(elementFacade.getTextValue(), is(""));
+    }
+
+    @Test
+    public void when_value_is_null_textvalue_should_return_text() {
+        when(webElement.isDisplayed()).thenReturn(true);
+        when(webElement.getText()).thenReturn("text");
+        when(webElement.getAttribute("value")).thenReturn(null);
+
+        WebElementFacade elementFacade = new WebElementFacade(driver, webElement, 100);
+
+        assertThat(elementFacade.getTextValue(), is("text"));
+    }
+
 }

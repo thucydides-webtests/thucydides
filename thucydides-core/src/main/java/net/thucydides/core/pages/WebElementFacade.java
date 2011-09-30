@@ -1,5 +1,6 @@
 package net.thucydides.core.pages;
 
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
@@ -399,14 +400,15 @@ public class WebElementFacade {
 
     public String getTextValue() {
         waitUntilVisible();
-        if (!getText().isEmpty()) {
+        if (!StringUtils.isEmpty(webElement.getText())) {
             return webElement.getText();
         }
-        if (!getValue().isEmpty()) {
+        if (!StringUtils.isEmpty(getValue())) {
             return getValue();
         }
         return "";
     }
+
 
     /**
      * Wait for an element to be visible and enabled, and then click on it.
