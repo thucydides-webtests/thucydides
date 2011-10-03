@@ -46,6 +46,8 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
         @FindBy(name="hiddenfield")
         protected WebElement hiddenField;
 
+        protected WebElement csshiddenfield;
+
         protected WebElement readonlyField;
 
         protected WebElement doesNotExist;
@@ -641,4 +643,20 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
         assertThat(page.element(page.radioButton2).isSelected(), is(false));
     }
+
+    @Test(timeout = 1000)
+    public void should_report_element_as_not_currently_visible_if_field_is_hidden_using_css_display_none() {
+        assertThat(page.element(page.csshiddenfield).isCurrentlyVisible(), is(false));
+    }
+
+
+    @Test
+    public void should_be_able_to_clear_a_text_field_using_deletes() {
+        assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
+
+        page.element(page.firstName).clear();
+
+        assertThat(page.firstName.getAttribute("value"), is(""));
+    }
+
 }
