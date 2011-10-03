@@ -8,6 +8,7 @@ import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.*;
 import org.openqa.selenium.support.ui.Sleeper;
@@ -417,5 +418,12 @@ public class WebElementFacade {
         waitUntilElementAvailable();
         webElement.click();
         return this;
+    }
+
+    public void clear() {
+        String currentValue = getTextValue();
+        for(int i = 0; i < currentValue.length(); i++) {
+            webElement.sendKeys(Keys.BACK_SPACE);
+        }
     }
 }
