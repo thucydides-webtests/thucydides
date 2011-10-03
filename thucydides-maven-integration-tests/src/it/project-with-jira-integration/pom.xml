@@ -53,6 +53,7 @@
                     </includes>
                     <systemPropertyVariables>
                         <jira.url>${jira.url}</jira.url>
+                        <jira.project>${jira.project}</jira.project>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -82,6 +83,7 @@
                         <version>@project.version@</version>
                         <configuration>
                             <jiraUrl>${jira.url}</jiraUrl>
+                            <jiraProject>${jira.project}</jiraProject>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -106,7 +108,11 @@
                                     <groupId>net.thucydides.maven.plugins</groupId>
                                     <artifactId>maven-thucydides-plugin</artifactId>
                                     <version>@project.version@</version>
-                                </plugin>
+                                    <configuration>
+                                         <jiraUrl>${jira.url}</jiraUrl>
+                                         <jiraProject>${jira.project}</jiraProject>
+                                     </configuration>
+                                 </plugin>
                             </reportPlugins>
                         </configuration>
                     </plugin>
@@ -117,5 +123,6 @@
     
     <properties>
         <jira.url>http://my.jira.server</jira.url>
+        <jira.project>MYPROJECT</jira.project>
     </properties>
 </project>

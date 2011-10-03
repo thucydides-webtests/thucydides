@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.images.SimpleImageInfo;
+import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.util.NameConverter;
@@ -175,7 +176,7 @@ public class TestOutcome {
     }
 
     private Formatter getFormatter() {
-        return new Formatter(ThucydidesSystemProperty.getIssueTrackerUrl());
+        return new Formatter(IssueTracking.getIssueTrackerUrl());
     }
 
     private String obtainTitleFromAnnotationOrMethodName() {

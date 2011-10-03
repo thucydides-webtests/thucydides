@@ -3,6 +3,7 @@ package net.thucydides.core.model;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.reports.html.Formatter;
 import org.apache.commons.lang.StringUtils;
 
@@ -161,7 +162,7 @@ public class StoryTestResults {
     }
 
     private Formatter getFormatter() {
-        return new Formatter(ThucydidesSystemProperty.getIssueTrackerUrl());
+        return new Formatter(IssueTracking.getIssueTrackerUrl());
     }
 
     public int getStepCount() {

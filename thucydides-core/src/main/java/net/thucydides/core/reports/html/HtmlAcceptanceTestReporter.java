@@ -4,6 +4,7 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Preconditions;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.images.ResizableImage;
+import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -71,7 +72,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     }
 
     private void addFormattersToContext(final Map<String,Object> context) {
-        Formatter formatter = new Formatter(ThucydidesSystemProperty.getIssueTrackerUrl());
+        Formatter formatter = new Formatter(IssueTracking.getIssueTrackerUrl());
         context.put("formatter", formatter);
 
     }

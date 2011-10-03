@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.html;
 
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.NumericalFormatter;
 import net.thucydides.core.model.StoryTestResults;
@@ -83,7 +84,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     private void addFormattersToContext(final Map<String, Object> context) {
-        Formatter formatter = new Formatter(ThucydidesSystemProperty.getIssueTrackerUrl());
+        Formatter formatter = new Formatter(IssueTracking.getIssueTrackerUrl());
         context.put("formatter", formatter);
         context.put("formatted", new NumericalFormatter());
     }
@@ -244,4 +245,11 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
             ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.JIRA_URL, jiraUrl);
         }
     }
+
+    public void setJiraProject(String jiraProject) {
+        if (jiraProject != null) {
+            ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.JIRA_PROJECT, jiraProject);
+        }
+    }
+
 }

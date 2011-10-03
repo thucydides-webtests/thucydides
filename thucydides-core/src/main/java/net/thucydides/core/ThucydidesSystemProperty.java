@@ -81,6 +81,11 @@ public enum ThucydidesSystemProperty {
     JIRA_URL("jira.url"),
 
     /**
+     *  If defined, the JIRA project id will be prepended to issue numbers.
+     */
+    JIRA_PROJECT("jira.project"),
+
+    /**
      * Base directory in which history files are stored.
      */
     HISTORY_BASE_DIRECTORY("thucydides.history"),
@@ -142,14 +147,6 @@ public enum ThucydidesSystemProperty {
 
     public static void setValue(ThucydidesSystemProperty issueTrackerUrl, String value) {
         System.setProperty(issueTrackerUrl.getPropertyName(), value);
-    }
-
-    public static String getIssueTrackerUrl() {
-        if (getValue(JIRA_URL) != null) {
-            return getValue(JIRA_URL) + "/browse/{0}";
-        } else {
-            return getValue(ISSUE_TRACKER_URL);
-        }
     }
 
     @Override

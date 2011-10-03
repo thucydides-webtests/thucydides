@@ -51,6 +51,12 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
      */
     private String jiraUrl;
 
+    /**
+     * JIRA project key, which will be prepended to the JIRA issue numbers.
+     * @parameter
+     */
+    private String jiraProject;
+
     private HtmlAggregateStoryReporter reporter;
 
     protected void setOutputDirectory(final File outputDirectory) {
@@ -93,6 +99,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
         getReporter().setOutputDirectory(outputDirectory);
         getReporter().setIssueTrackerUrl(issueTrackerUrl);
         getReporter().setJiraUrl(jiraUrl);
+        getReporter().setJiraProject(jiraProject);
         getReporter().generateReportsForStoriesFrom(sourceDirectory);
     }
 
