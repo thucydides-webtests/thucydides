@@ -118,37 +118,6 @@ public enum ThucydidesSystemProperty {
     }
 
 
-
-    public static boolean getBooleanValue(final ThucydidesSystemProperty property, final boolean defaultValue) {
-        String value = System.getProperty(property.getPropertyName());
-        if (value != null) {
-            return Boolean.valueOf(value);
-        } else {
-            return defaultValue;
-        }
-    }
-
-    public static String getValue(final ThucydidesSystemProperty property, final String defaultValue) {
-        return System.getProperty(property.getPropertyName(), defaultValue);
-    }
-
-    public static Integer getIntegerValue(final ThucydidesSystemProperty property, final Integer defaultValue) {
-        String value = System.getProperty(property.getPropertyName());
-        if (value != null) {
-            return Integer.valueOf(value);
-        } else {
-            return defaultValue;
-        }
-    }
-
-    public static String getValue(final ThucydidesSystemProperty property) {
-        return System.getProperty(property.getPropertyName());
-    }
-
-    public static void setValue(ThucydidesSystemProperty issueTrackerUrl, String value) {
-        System.setProperty(issueTrackerUrl.getPropertyName(), value);
-    }
-
     @Override
     public String toString() {
         return propertyName;

@@ -1,5 +1,8 @@
 package net.thucydides.core.reports.integration;
 
+import net.thucydides.core.ThucydidesSystemProperties;
+import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.reports.ThucydidesReportData;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
@@ -23,6 +26,9 @@ public class WhenGeneratingAnAggregateHtmlReport {
 
     @Rule
     public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+
+    @Rule
+    public SaveWebdriverSystemPropertiesRule saveProperties = new SaveWebdriverSystemPropertiesRule();
 
     private HtmlAggregateStoryReporter reporter;
 
@@ -78,6 +84,46 @@ public class WhenGeneratingAnAggregateHtmlReport {
 
         File featureReport = new File(outputDirectory,"history.html");
         assertThat(featureReport.exists(), is(true));
+    }
+
+    @Mock ThucydidesSystemProperties systemProperties;
+
+    class CustomHtmlAggregateStoryReporter extends HtmlAggregateStoryReporter {
+        CustomHtmlAggregateStoryReporter(String projectName) {
+            super(projectName);
+        }
+
+        @Override
+        protected ThucydidesSystemProperties getSystemProperties() {
+            return systemProperties;
+        }
+    }
+
+    @Test
+    public void should_pass_jira_url_to_reporter() throws Exception {
+
+        CustomHtmlAggregateStoryReporter customReport = new CustomHtmlAggregateStoryReporter("project");
+        customReport.setJiraUrl("http://my.jira.url");
+
+        verify(systemProperties).setValue(ThucydidesSystemProperty.JIRA_URL,"http://my.jira.url");
+    }
+
+    @Test
+    public void should_pass_jira_project_to_reporter() throws Exception {
+
+        CustomHtmlAggregateStoryReporter customReport = new CustomHtmlAggregateStoryReporter("project");
+        customReport.setJiraProject("MYPROJECT");
+
+        verify(systemProperties).setValue(ThucydidesSystemProperty.JIRA_PROJECT,"MYPROJECT");
+    }
+
+    @Test
+    public void should_pass_issue_tracker_to_reporter() throws Exception {
+
+        CustomHtmlAggregateStoryReporter customReport = new CustomHtmlAggregateStoryReporter("project");
+        customReport.setIssueTrackerUrl("http://my.issue.tracker");
+
+        verify(systemProperties).setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL,"http://my.issue.tracker");
     }
 
     @Test

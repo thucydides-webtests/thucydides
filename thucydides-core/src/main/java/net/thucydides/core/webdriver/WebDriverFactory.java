@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -80,8 +81,10 @@ public class WebDriverFactory {
     }
 
     private void redimensionBrowser(final WebDriver driver) {
-        int height = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_HEIGHT, DEFAULT_HEIGHT);
-        int width = ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_WIDTH, DEFAULT_WIDTH);
+        int height = ThucydidesSystemProperties.getProperties().getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_HEIGHT,
+                                                                                DEFAULT_HEIGHT);
+        int width = ThucydidesSystemProperties.getProperties().getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_WIDTH,
+                                                                                DEFAULT_WIDTH);
         resizeBrowserTo((JavascriptExecutor) driver, height, width);
     }
 
@@ -131,7 +134,7 @@ public class WebDriverFactory {
     }
 
     private boolean dontAssumeUntrustedCertificateIssuer() {
-        return !(ThucydidesSystemProperty.getBooleanValue(ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER,
+        return !(ThucydidesSystemProperties.getProperties().getBooleanValue(ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER,
                 true));
     }
 

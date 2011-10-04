@@ -2,6 +2,7 @@ package net.thucydides.core.model;
 
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
+import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.reports.html.Formatter;
@@ -213,7 +214,7 @@ public class StoryTestResults {
         if (totalImplementedTests() > 0) {
             return ((double) getStepCount()) / totalImplementedTests();
         } else {
-            return ThucydidesSystemProperty.getIntegerValue(ThucydidesSystemProperty.ESTIMATED_AVERAGE_STEP_COUNT,
+            return ThucydidesSystemProperties.getProperties().getIntegerValue(ThucydidesSystemProperty.ESTIMATED_AVERAGE_STEP_COUNT,
                     DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT);
         }
     }

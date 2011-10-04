@@ -2,6 +2,7 @@ package net.thucydides.core.reports.history;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.StreamException;
+import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.FeatureResults;
@@ -41,7 +42,8 @@ public class TestHistory {
 
     private String getBaseDirectoryPath() {
         String defaultBaseDirectory = new File(homeDirectory(), ".thucydides").getAbsolutePath();
-        return ThucydidesSystemProperty.getValue(ThucydidesSystemProperty.HISTORY_BASE_DIRECTORY, defaultBaseDirectory);
+        return ThucydidesSystemProperties.getProperties().getValue(ThucydidesSystemProperty.HISTORY_BASE_DIRECTORY,
+                                                                   defaultBaseDirectory);
     }
 
     private String homeDirectory() {

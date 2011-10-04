@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.html;
 
+import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.FeatureResults;
@@ -230,26 +231,33 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         writeReportToOutputDirectory("progress.js", javascriptCoverageData);
     }
 
-    public void setIssueTrackerUrl(String issueTrackerUrl) {
-        if (issueTrackerUrl != null) {
-            ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, issueTrackerUrl);
-        }
-    }
-
     public void clearHistory() {
         getTestHistory().clearHistory();
     }
 
+    protected ThucydidesSystemProperties getSystemProperties() {
+        return ThucydidesSystemProperties.getProperties();
+    }
+
+    public void setIssueTrackerUrl(String issueTrackerUrl) {
+
+        if (issueTrackerUrl != null) {
+            getSystemProperties().setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, issueTrackerUrl);
+        }
+    }
+
     public void setJiraUrl(String jiraUrl) {
         if (jiraUrl != null) {
-            ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.JIRA_URL, jiraUrl);
+            getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_URL, jiraUrl);
         }
     }
 
     public void setJiraProject(String jiraProject) {
         if (jiraProject != null) {
-            ThucydidesSystemProperty.setValue(ThucydidesSystemProperty.JIRA_PROJECT, jiraProject);
+            getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_PROJECT, jiraProject);
         }
     }
+
+
 
 }

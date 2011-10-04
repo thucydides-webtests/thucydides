@@ -1,26 +1,32 @@
 package net.thucydides.core.issues;
 
+import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import org.apache.commons.lang.StringUtils;
-
-import static net.thucydides.core.ThucydidesSystemProperty.getValue;
 
 /**
  * Determine the issue tracking URL formats for a project.
  */
 public class IssueTracking {
 
+    protected static ThucydidesSystemProperties getSystemProperties() {
+        return ThucydidesSystemProperties.getProperties();
+    }
+
     public static String getIssueTrackerUrl() {
-        if (getValue(ThucydidesSystemProperty.JIRA_URL) != null) {
-            return getValue(ThucydidesSystemProperty.JIRA_URL) + "/browse/" + getJiraProjectSuffix() + "{0}";
+
+
+        if (getSystemProperties().isDefined(ThucydidesSystemProperty.JIRA_URL)) {
+            return getSystemProperties().getValue(ThucydidesSystemProperty.JIRA_URL)
+                                         + "/browse/" + getJiraProjectSuffix() + "{0}";
         } else {
-            return getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL);
+            return getSystemProperties().getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL);
         }
     }
 
     private static String getJiraProjectSuffix() {
-        if (!StringUtils.isEmpty(getValue(ThucydidesSystemProperty.JIRA_PROJECT))) {
-            return getValue(ThucydidesSystemProperty.JIRA_PROJECT) + "-";
+        if (!getSystemProperties().isEmpty(ThucydidesSystemProperty.JIRA_PROJECT)) {
+            return getSystemProperties().getValue(ThucydidesSystemProperty.JIRA_PROJECT) + "-";
         } else {
             return "";
         }
