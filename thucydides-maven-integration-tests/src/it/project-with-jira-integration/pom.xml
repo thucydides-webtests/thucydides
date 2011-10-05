@@ -63,6 +63,7 @@
                 <version>@project.version@</version>
                 <configuration>
                     <jiraUrl>${jira.url}</jiraUrl>
+                    <jiraProject>${jira.project}</jiraProject>
                 </configuration>
             </plugin>
         </plugins>
