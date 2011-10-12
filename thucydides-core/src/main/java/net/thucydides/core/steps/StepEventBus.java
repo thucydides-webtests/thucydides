@@ -3,6 +3,8 @@ package net.thucydides.core.steps;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.internal.Lists;
 import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 import sun.misc.Service;
 
 import java.util.ArrayList;
@@ -42,7 +44,7 @@ public class StepEventBus {
 
     private List<StepListener> registeredListeners = new ArrayList<StepListener>();
 
-    private TestStepResult resultTally;
+    private TestResultTally resultTally;
 
     private Stack<String> stepStack = new Stack<String>();
     private Stack<Boolean> webdriverSuspensions = new Stack<Boolean>();
@@ -54,7 +56,6 @@ public class StepEventBus {
     private boolean pendingTest;
 
     private Class<?> classUnderTest;
-    private Story storyUnderTest;
 
     /**
      * Register a listener to receive notification at different points during a test's execution.
@@ -132,16 +133,16 @@ public class StepEventBus {
         pendingTest = false;
     }
 
-    private TestStepResult getResultTally() {
+    private TestResultTally getResultTally() {
         if (resultTally == null) {
-            resultTally = TestStepResult.forTestClass(classUnderTest);
+            resultTally = TestResultTally.forTestClass(classUnderTest);
         }
         return resultTally;
     }
 
-    public void testFinished() {
+    public void testFinished(TestOutcome result) {
         for(StepListener stepListener : getAllListeners()) {
-            stepListener.testFinished(getResultTally());
+            stepListener.testFinished(result);
         }
         clear();
     }
@@ -184,7 +185,9 @@ public class StepEventBus {
     }
 
     private void stepDone() {
-        popStep();
+        if (!stepStack.empty()) {
+            popStep();
+        }
     }
 
     public void stepFailed(final StepFailure failure) {

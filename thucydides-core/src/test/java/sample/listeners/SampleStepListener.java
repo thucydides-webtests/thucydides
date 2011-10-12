@@ -5,7 +5,6 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
-import net.thucydides.core.steps.TestStepResult;
 import org.openqa.selenium.WebDriver;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class SampleStepListener implements StepListener {
         
     }
 
-    public void testFinished(TestStepResult result) {
+    public void testFinished(TestOutcome result) {
         
     }
 

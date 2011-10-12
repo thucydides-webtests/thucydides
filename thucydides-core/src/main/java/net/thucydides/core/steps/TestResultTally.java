@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Result of a test step or sequence of test steps.
  */
-public class TestStepResult implements Serializable {
+public class TestResultTally implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private List<StepFailure> failures = new ArrayList<StepFailure>();
@@ -17,7 +17,7 @@ public class TestStepResult implements Serializable {
     private int run = 0;
     final Class<?> classUnderTest;
 
-    private TestStepResult(Class<?> classUnderTest) {
+    private TestResultTally(Class<?> classUnderTest) {
         this.classUnderTest = classUnderTest;
     }
 
@@ -82,8 +82,8 @@ public class TestStepResult implements Serializable {
         return (getFailureCount() == 0);
     }
 
-    public static TestStepResult forTestClass(final Class<?> classUnderTest) {
-        return new TestStepResult(classUnderTest);
+    public static TestResultTally forTestClass(final Class<?> classUnderTest) {
+        return new TestResultTally(classUnderTest);
     }
 }
 

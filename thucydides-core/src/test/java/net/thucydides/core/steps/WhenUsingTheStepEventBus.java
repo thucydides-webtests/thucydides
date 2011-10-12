@@ -5,6 +5,7 @@ import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Steps;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import org.junit.After;
 import org.junit.Before;
@@ -147,9 +148,15 @@ public class WhenUsingTheStepEventBus {
     }
     @Mock
     WebDriver driver;
+    
     @Mock
     StepListener listener;
+    
+    @Mock
+    TestOutcome testOutcome;
+    
     ConsoleStepListener consoleStepListener;
+    
     private StepFactory factory;
 
     @Before
@@ -180,7 +187,7 @@ public class WhenUsingTheStepEventBus {
         steps.step1();
         steps.step2();
         steps.step3();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         verify(driver).get("step_one");
         verify(driver).get("step_two");
@@ -203,7 +210,7 @@ public class WhenUsingTheStepEventBus {
 
         StepEventBus.getEventBus().testStarted("some_test");
         steps.step1();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         ArgumentCaptor<ExecutedStepDescription> argument = ArgumentCaptor.forClass(ExecutedStepDescription.class);
 
@@ -218,7 +225,7 @@ public class WhenUsingTheStepEventBus {
 
         StepEventBus.getEventBus().testStarted("a_test");
         steps.step1();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -234,7 +241,7 @@ public class WhenUsingTheStepEventBus {
 
         StepEventBus.getEventBus().testStarted("a_test");
         steps.step4();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -254,7 +261,7 @@ public class WhenUsingTheStepEventBus {
 
         StepEventBus.getEventBus().testStarted("a_test");
         steps.nested_steps();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -298,7 +305,7 @@ public class WhenUsingTheStepEventBus {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
         StepEventBus.getEventBus().testStarted("a_test");
         steps.legacyStepGroup();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -321,7 +328,7 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testStarted("a_test");
         steps.step1();
         steps.failingStep();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -340,7 +347,7 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testStarted("a_test");
         steps.step1();
         steps.pendingStep();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -359,7 +366,7 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testStarted("a_test");
         steps.step1();
         steps.step8();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -392,7 +399,7 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testStarted("a_test");
         steps.step1();
         steps.step9();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -425,7 +432,7 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testStarted("a_test");
         steps.step1();
         steps.step7();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -450,7 +457,7 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testStarted("a_test");
         steps.step1();
         steps.step7();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -475,7 +482,7 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testStarted("a_test");
         steps.step1();
         steps.step7();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -499,7 +506,7 @@ public class WhenUsingTheStepEventBus {
 
         StepEventBus.getEventBus().testStarted("a_test");
         steps.stepThatReturnsAStep().stepThatReturnsAStep().stepThatReturnsAStep();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -519,7 +526,7 @@ public class WhenUsingTheStepEventBus {
 
         StepEventBus.getEventBus().testStarted("a_test");
         steps.stepThatFailsAndReturnsAStep().stepThatReturnsAStep();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -540,7 +547,7 @@ public class WhenUsingTheStepEventBus {
         steps.step1();
         steps.step2();
         steps.step3();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -559,7 +566,7 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testStarted("a_test");
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
         StepEventBus.getEventBus().stepPending();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -573,7 +580,7 @@ public class WhenUsingTheStepEventBus {
     public void when_an_entier_test_is_ignored_the_test_is_marked_as_ignored() {
         StepEventBus.getEventBus().testStarted("a_test");
         StepEventBus.getEventBus().testIgnored();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         String expectedSteps =
                 "TEST a_test\n"
@@ -589,7 +596,7 @@ public class WhenUsingTheStepEventBus {
         StepEventBus.getEventBus().testStarted("a_test");
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
         StepEventBus.getEventBus().stepPending();
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         assertThat(consoleStepListener.toString(), is(""));
     }
@@ -635,7 +642,7 @@ public class WhenUsingTheStepEventBus {
 
         StepEventBus.getEventBus().testStarted("a_test");
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         assertThat(StepEventBus.getEventBus().areStepsRunning(), is(false));
     }

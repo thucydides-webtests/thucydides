@@ -30,7 +30,7 @@ public class HtmlResourceCopier {
         Pattern resourcePattern = allFilesInDirectory(resourceDirectory);
         FileResources fileResource = FileResources.from(resourceDirectory);
 
-        Collection<String> reportResources = ResourceList.getResources(resourcePattern);
+        Collection<String> reportResources = ResourceList.forResources(resourcePattern).list();
 
         for (String resourcePath : reportResources) {
             if (fileResourceFromAJar(resourcePath)) {

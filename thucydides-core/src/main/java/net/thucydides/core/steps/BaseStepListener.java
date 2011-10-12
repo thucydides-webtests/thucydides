@@ -173,9 +173,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     /**
      * A test has finished.
-     * @param result the summary of the test run, including all the tests that failed
+     * @param result
      */
-    public void testFinished(final TestStepResult result) {
+    public void testFinished(final TestOutcome result) {
         currentStepStack.clear();
     }
 

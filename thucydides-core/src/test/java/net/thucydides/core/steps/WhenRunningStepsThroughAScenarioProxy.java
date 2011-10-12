@@ -1,11 +1,12 @@
 package net.thucydides.core.steps;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.annotations.Story;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.junit.After;
@@ -196,6 +197,9 @@ public class WhenRunningStepsThroughAScenarioProxy {
     @Mock
     StepListener listener;
 
+    @Mock
+    TestOutcome testOutcome;
+    
     private StepFactory factory;
 
     @Before
@@ -506,7 +510,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
     }
 
     @Test
-    public void the_proxy_records_the_total_number_of_test_steps_executed() {
+    public void the_proxy_notifies_listeners_of_the_test_outome_when_the_test_is_finished() {
         SimpleTestScenarioSteps steps =  factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
         StepEventBus.getEventBus().testStarted("SimpleTestScenarioSteps");
@@ -514,67 +518,13 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.step2();
         steps.step3();
 
-        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
-        ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
+        ArgumentCaptor<TestOutcome> argument = ArgumentCaptor.forClass(TestOutcome.class);
         verify(listener).testFinished(argument.capture());
 
-        TestStepResult result = argument.getValue();
-        assertThat(argument.getValue().getRunCount(), is(3));
-    }
-
-    @Test
-    public void the_proxy_records_the_number_of_ignored_test_steps() {
-        SimpleTestScenarioSteps steps =  factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
-
-        StepEventBus.getEventBus().testStarted("SimpleTestScenarioSteps");
-        steps.step_one();
-        steps.step2();
-        steps.step3();
-        steps.ignored_step();
-
-        StepEventBus.getEventBus().testFinished();
-
-        ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
-        verify(listener).testFinished(argument.capture());
-
-        assertThat(argument.getValue().getIgnoreCount(), is(1));
-    }
-
-    @Test
-    public void the_proxy_records_the_number_of_pending_test_steps() {
-        SimpleTestScenarioSteps steps =  factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
-
-        StepEventBus.getEventBus().testStarted("SimpleTestScenarioSteps");
-        steps.step_one();
-        steps.step2();
-        steps.step3();
-        steps.pending_step();
-
-        StepEventBus.getEventBus().testFinished();
-
-        ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
-        verify(listener).testFinished(argument.capture());
-
-        assertThat(argument.getValue().getIgnoreCount(), is(1));
-    }
-
-    @Test
-    public void the_proxy_records_the_number_of_failing_test_steps() {
-        SimpleTestScenarioSteps steps =  factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
-
-        StepEventBus.getEventBus().testStarted("SimpleTestScenarioSteps");
-        steps.step_one();
-        steps.step2();
-        steps.step3();
-        steps.failing_step();
-
-        StepEventBus.getEventBus().testFinished();
-
-        ArgumentCaptor<TestStepResult> argument = ArgumentCaptor.forClass(TestStepResult.class);
-        verify(listener).testFinished(argument.capture());
-
-        assertThat(argument.getValue().getFailureCount(), is(1));
+        TestOutcome result = argument.getValue();
+        assertThat(result, is(testOutcome));
     }
 
     @Test

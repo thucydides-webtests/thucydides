@@ -2,6 +2,7 @@ package net.thucydides.junit.runners;
 
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
@@ -228,8 +229,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         try {
             super.runChild(method, notifier);
         } finally {
-            StepEventBus.getEventBus().testFinished();
+            StepEventBus.getEventBus().testFinished(getLatestTestOutcome());
         }
+    }
+
+    private TestOutcome getLatestTestOutcome() {
+        if (getTestOutcomes().size() > 0) {
+            return getTestOutcomes().get(getTestOutcomes().size() - 1);
+        }
+        return null;
     }
 
     /**

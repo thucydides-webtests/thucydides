@@ -3,9 +3,6 @@ package net.thucydides.core.steps;
 
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-import org.openqa.selenium.WebDriver;
-
-import java.util.List;
 
 /**
  * Represents a class interested in knowing about test execution flow and results.
@@ -32,11 +29,11 @@ public interface StepListener {
     void testStarted(final String description);
 
     /**
-     * Called when all tests have finished.
+     * Called when a test finishes.
      *
-     * @param result the summary of the test run, including all the tests that failed
+     * @param result
      */
-    void testFinished(final TestStepResult result);
+    void testFinished(final TestOutcome result);
 
     /**
      * Called when a test step is about to be started.

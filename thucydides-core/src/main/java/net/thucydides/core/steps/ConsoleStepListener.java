@@ -1,6 +1,7 @@
 package net.thucydides.core.steps;
 
 
+import net.thucydides.core.model.TestOutcome;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class ConsoleStepListener extends BaseStepListener {
@@ -31,7 +32,7 @@ public class ConsoleStepListener extends BaseStepListener {
         push();
     }
 
-    public void testFinished(TestStepResult result) {
+    public void testFinished(TestOutcome result) {
         pop();
         buffer.append("TEST DONE").append("\n");
     }

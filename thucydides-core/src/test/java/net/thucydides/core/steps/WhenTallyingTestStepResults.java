@@ -1,6 +1,7 @@
 package net.thucydides.core.steps;
 
 import net.thucydides.core.annotations.Story;
+import net.thucydides.core.model.TestOutcome;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -16,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 public class WhenTallyingTestStepResults {
 
-    TestStepResult testStepResult;
+    TestResultTally resultTally;
 
     @Mock
     StepFailure stepFailure1;
@@ -28,6 +29,9 @@ public class WhenTallyingTestStepResults {
     ExecutedStepDescription description;
 
     @Mock
+    TestOutcome testOutcome;
+
+    @Mock
     File outputDirectory;
 
     class ClassUnderTest {
@@ -37,7 +41,7 @@ public class WhenTallyingTestStepResults {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        testStepResult = TestStepResult.forTestClass(ClassUnderTest.class);
+        resultTally = TestResultTally.forTestClass(ClassUnderTest.class);
         when(description.getName()).thenReturn("Some test");
 
         when(stepFailure1.getDescription()).thenReturn(description);
@@ -48,65 +52,68 @@ public class WhenTallyingTestStepResults {
 
     @Test
     public void should_be_able_to_log_test_failures() {
-        testStepResult.logFailure(stepFailure1);
+        resultTally.logFailure(stepFailure1);
 
-        assertThat(testStepResult.getFailures(), hasItem(stepFailure1));
+        assertThat(resultTally.getFailures(), hasItem(stepFailure1));
     }
     
     @Test
     public void should_know_what_test_class_the_results_come_from() {
-        assertThat(testStepResult.getClassUnderTest().getSimpleName(), is("ClassUnderTest"));
+        assertThat(resultTally.getClassUnderTest().getSimpleName(), is("ClassUnderTest"));
     }
 
 
     @Test
     public void should_be_able_to_count_step_failures() {
-        testStepResult.logFailure(stepFailure1);
-        testStepResult.logFailure(stepFailure2);
+        resultTally.logFailure(stepFailure1);
+        resultTally.logFailure(stepFailure2);
 
-        assertThat(testStepResult.getFailureCount(), is(2));
+        assertThat(resultTally.getFailureCount(), is(2));
     }
 
 
     @Test
     public void should_be_able_to_count_executed_steps() {
-        testStepResult.logExecutedTest();
-        testStepResult.logExecutedTest();
+        resultTally.logExecutedTest();
+        resultTally.logExecutedTest();
 
-        assertThat(testStepResult.getRunCount(), is(2));
+        assertThat(resultTally.getRunCount(), is(2));
     }
 
     @Test
     public void should_be_able_to_count_ignored_steps() {
-        testStepResult.logIgnoredTest();
-        testStepResult.logIgnoredTest();
-        testStepResult.logIgnoredTest();
+        resultTally.logIgnoredTest();
+        resultTally.logIgnoredTest();
+        resultTally.logIgnoredTest();
 
-        assertThat(testStepResult.getIgnoreCount(), is(3));
+        assertThat(resultTally.getIgnoreCount(), is(3));
     }
 
     @Test
     public void a_test_run_succeeds_if_there_is_a_step_failure() {
-        testStepResult.logExecutedTest();
-        assertThat(testStepResult.wasSuccessful(), is(true));
+        resultTally.logExecutedTest();
+        assertThat(resultTally.wasSuccessful(), is(true));
     }
 
     @Test
     public void a_test_run_succeeds_if_all_steps_are_ignored() {
-        testStepResult.logExecutedTest();
-        assertThat(testStepResult.wasSuccessful(), is(true));
+        resultTally.logExecutedTest();
+        assertThat(resultTally.wasSuccessful(), is(true));
     }
 
     @Test
     public void a_test_run_succeeds_if_no_steps_are_executed() {
-        assertThat(testStepResult.wasSuccessful(), is(true));
+        assertThat(resultTally.wasSuccessful(), is(true));
     }
 
     @Test
     public void a_test_run_fails_if_there_is_a_step_failure() {
-        testStepResult.logFailure(stepFailure1);
+        resultTally.logExecutedTest();
+    }
 
-        assertThat(testStepResult.wasSuccessful(), is(false));
+    @Test
+    public void result_tally_should_also_keep_track_of_the_overall_test_result() {
+        assertThat(resultTally.wasSuccessful(), is(true));
     }
 
     @Test
@@ -173,7 +180,7 @@ public class WhenTallyingTestStepResults {
         stepListener.stepFailed(failure);
         assertThat(stepListener.aStepHasFailed(), is(true));
 
-        stepListener.testFinished(TestStepResult.forTestClass(ClassUnderTest.class));
+        stepListener.testFinished(testOutcome);
         stepListener.testStarted("app_should_still_work");
 
         assertThat(stepListener.aStepHasFailed(), is(false));

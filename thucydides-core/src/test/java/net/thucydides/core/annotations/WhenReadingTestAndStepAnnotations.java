@@ -67,4 +67,5 @@ public class WhenReadingTestAndStepAnnotations {
     public void shouldIdentifyNonSkippedSteps() {
         assertThat(TestAnnotations.forClass(SampleTestCase.class).isIgnored("normalTest"), is(false));
     }
+
 }

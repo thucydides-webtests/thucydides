@@ -1,5 +1,7 @@
 package net.thucydides.core.resources;
 
+import mx4j.tools.naming.NamingServiceMBean;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,27 +18,29 @@ import java.util.zip.ZipFile;
  * resources such as images and stylesheets can be shipped in a separate JAR
  * file.
  */
-public final class ResourceList {
+public class ResourceList {
 
     private static final List<String> UNREQUIRED_FILES = Arrays.asList("pom.xml");
-    /**
-     * This is a utility class - don't instanciate.
-     */
-    private ResourceList() {
+    private static final String PATH_SEPARATOR = System.getProperty("path.separator");
+
+    private final Pattern pattern;
+
+    public static ResourceList forResources(final Pattern pattern) {
+        return new ResourceList(pattern);
     }
 
-    private static final String PATH_SEPARATOR = System.getProperty("path.separator");
+    protected ResourceList(final Pattern pattern) {
+        this.pattern = pattern;
+    }
 
     /**
      * Find a list of resources matching a given path on the classpath. for all
      * elements of java.class.path get a Collection of resources Pattern pattern
      * = Pattern.compile(".*"); gets all resources
      * 
-     * @param pattern
-     *            the pattern to match
      * @return the resources in the order they are found
      */
-    public static Collection<String> getResources(final Pattern pattern) {
+    public Collection<String> list() {
         final ArrayList<String> resources = new ArrayList<String>();
         final String classPath = System.getProperty("java.class.path", ".");
         final String[] classPathElements = classPath.split(PATH_SEPARATOR);
@@ -46,7 +50,7 @@ public final class ResourceList {
         return resources;
     }
 
-    private static Collection<String> getResources(final String element, final Pattern pattern) {
+    private Collection<String> getResources(final String element, final Pattern pattern) {
         final ArrayList<String> resources = new ArrayList<String>();
         final File file = new File(element);
         if (isAJarFile(file)) {
@@ -57,7 +61,7 @@ public final class ResourceList {
         return removeUnnecessaryFilesFrom(resources);
     }
 
-    private static Collection<String> removeUnnecessaryFilesFrom(final Collection<String> resources) {
+    private Collection<String> removeUnnecessaryFilesFrom(final Collection<String> resources) {
         final Collection<String> cleanedResources = new ArrayList<String>();
         for (String filepath : resources) {
             String filename = new File(filepath).getName();
@@ -68,7 +72,7 @@ public final class ResourceList {
         return cleanedResources;
     }
 
-    private static boolean isAJarFile(final File file) {
+    private boolean isAJarFile(final File file) {
         if (file.isDirectory()) {
             return false;
         } else {
@@ -76,12 +80,16 @@ public final class ResourceList {
         }
     }
 
-    private static Collection<String> getResourcesFromJarFile(final File file, final Pattern pattern) {
+    protected ZipFile zipFileFor(final File file) throws IOException {
+        return new ZipFile(file);
+    }
+
+    private Collection<String> getResourcesFromJarFile(final File file, final Pattern pattern) {
         final ArrayList<String> retval = new ArrayList<String>();
         if (file.exists()) {
             ZipFile zf;
             try {
-                zf = new ZipFile(file);
+                zf = zipFileFor(file);
             } catch (final IOException e) {
                 throw new ResourceCopyingError("Could not read from the JAR file", e);
             }
@@ -105,7 +113,7 @@ public final class ResourceList {
         return retval;
     }
 
-    private static Collection<String> getResourcesFromDirectory(final File directory,
+    private Collection<String> getResourcesFromDirectory(final File directory,
                                                                 final Pattern pattern) {
         final ArrayList<String> retval = new ArrayList<String>();
         final File[] fileList = directory.listFiles();
@@ -130,4 +138,5 @@ public final class ResourceList {
         }
         return retval;
     }
+
 }
