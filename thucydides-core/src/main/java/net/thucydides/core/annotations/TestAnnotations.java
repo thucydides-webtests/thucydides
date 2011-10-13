@@ -4,6 +4,8 @@ import net.thucydides.core.reports.html.Formatter;
 import org.junit.Ignore;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static net.thucydides.core.util.NameConverter.withNoArguments;
@@ -146,6 +148,35 @@ public class TestAnnotations {
             return issueAnnotation.value();
         } else {
             return null;
+        }
+    }
+
+    public List<String> getIssuesForMethod(String methodName) {
+        List<String> issues = new ArrayList<String>();
+
+        if (testClass != null) {
+            addIssuesFromMethod(methodName, issues);
+        } else {
+            addIssuesFromTestScenarioName(methodName, issues);
+        }
+        return issues;
+    }
+
+    private void addIssuesFromTestScenarioName(String methodName, List<String> issues) {
+        issues.addAll(getAnnotatedIssuesForMethodTitle(methodName));
+    }
+
+    private void addIssuesFromMethod(String methodName, List<String> issues) {
+        if (getAnnotatedIssues(methodName) != null) {
+            issues.addAll(Arrays.asList(getAnnotatedIssues(methodName)));
+        }
+
+        if (getAnnotatedIssue(methodName) != null) {
+            issues.add(getAnnotatedIssue(methodName));
+        }
+
+        if (getAnnotatedTitle(methodName) != null) {
+            addIssuesFromTestScenarioName(methodName, issues);
         }
     }
 

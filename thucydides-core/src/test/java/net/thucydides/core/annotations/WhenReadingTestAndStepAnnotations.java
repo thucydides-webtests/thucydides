@@ -4,8 +4,11 @@ package net.thucydides.core.annotations;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -24,8 +27,18 @@ public class WhenReadingTestAndStepAnnotations {
         public void skippedTest() {}
 
         @Title("Fixes #MYPROJECT-123 and #MYPROJECT-456")
-        public void testWithIssues(){}
+        public void testWithIssuesInTitle(){}
 
+        @Issue("#MYPROJECT-123")
+        public void testWithAnnotatedIssue(){}
+
+        @Issues({"#MYPROJECT-123","#MYPROJECT-456"})
+        public void testWithAnnotatedIssues(){}
+
+        @Title("Also fixes #MYPROJECT-1")
+        @Issue("#MYPROJECT-2")
+        @Issues({"#MYPROJECT-3","#MYPROJECT-4"})
+        public void testWithLotsOfIssues(){}
     }
 
     @Test
@@ -45,7 +58,7 @@ public class WhenReadingTestAndStepAnnotations {
     public void shouldReadAnnotatedIssues() {
 
         assertThat(TestAnnotations.forClass(SampleTestCase.class)
-                .getAnnotatedIssuesForMethodTitle("testWithIssues"), allOf(hasItem("#MYPROJECT-123"),hasItem("#MYPROJECT-456")));
+                .getAnnotatedIssuesForMethodTitle("testWithIssuesInTitle"), allOf(hasItem("#MYPROJECT-123"),hasItem("#MYPROJECT-456")));
     }
 
     @Test
@@ -66,6 +79,61 @@ public class WhenReadingTestAndStepAnnotations {
     @Test
     public void shouldIdentifyNonSkippedSteps() {
         assertThat(TestAnnotations.forClass(SampleTestCase.class).isIgnored("normalTest"), is(false));
+    }
+
+
+    @Test
+    public void shouldReadIssueAnnotationsFromATestClass() {
+        String[] issues = TestAnnotations.forClass(SampleTestCase.class)
+                                         .getAnnotatedIssuesForMethod("testWithAnnotatedIssues");
+
+        assertThat(issues.length, is(2));
+        assertThat(issues[0], is("#MYPROJECT-123"));
+        assertThat(issues[1], is("#MYPROJECT-456"));
+    }
+
+    @Test
+    public void shouldReadSingleIssueAnnotationFromATestClass() {
+        String issue = TestAnnotations.forClass(SampleTestCase.class)
+                                         .getAnnotatedIssueForMethod("testWithAnnotatedIssue");
+
+        assertThat(issue, is("#MYPROJECT-123"));
+    }
+
+    @Test
+    public void shouldReadMethodIssueFromATestClass() {
+        List<String> issues = TestAnnotations.forClass(SampleTestCase.class)
+                                         .getIssuesForMethod("testWithAnnotatedIssue");
+
+        assertThat(issues.size(), is(1));
+        assertThat(issues, hasItem("#MYPROJECT-123"));
+    }
+
+    @Test
+    public void shouldReadMethodIssuesFromATestClass() {
+        List<String> issues = TestAnnotations.forClass(SampleTestCase.class)
+                                         .getIssuesForMethod("testWithAnnotatedIssues");
+
+        assertThat(issues.size(), is(2));
+        assertThat(issues, hasItems("#MYPROJECT-123", "#MYPROJECT-456"));
+    }
+
+    @Test
+    public void shouldReadMethodIssuesInTitleFromATestClass() {
+        List<String> issues = TestAnnotations.forClass(SampleTestCase.class)
+                                         .getIssuesForMethod("testWithIssuesInTitle");
+
+        assertThat(issues.size(), is(2));
+        assertThat(issues, hasItems("#MYPROJECT-123", "#MYPROJECT-456"));
+    }
+
+    @Test
+    public void shouldReadMultipleMethodIssuesInTitleFromATestClass() {
+        List<String> issues = TestAnnotations.forClass(SampleTestCase.class)
+                                         .getIssuesForMethod("testWithLotsOfIssues");
+
+        assertThat(issues.size(), is(4));
+        assertThat(issues, hasItems("#MYPROJECT-1", "#MYPROJECT-2", "#MYPROJECT-3", "#MYPROJECT-4"));
     }
 
 }

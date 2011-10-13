@@ -12,7 +12,7 @@ public class WhenReadingEnvironmentVariables {
     @Test
     public void should_read_environment_variable_from_system() {
         EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
-        String value = environmentVariables.getValue("HOME");
+        String value = environmentVariables.getValue("PATH");
         assertThat(value, is(not(nullValue())));
     }
 
