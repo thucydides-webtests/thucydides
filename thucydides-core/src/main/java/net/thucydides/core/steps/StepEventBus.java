@@ -58,6 +58,7 @@ public class StepEventBus {
     private boolean pendingTest;
 
     private Class<?> classUnderTest;
+    private Story storyUnderTest;
 
     /**
      * Register a listener to receive notification at different points during a test's execution.
@@ -76,6 +77,28 @@ public class StepEventBus {
 
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testStarted(testName);
+        }
+    }
+
+    public void testStarted(final String newTestName, final Story story) {
+        startSuiteWithStoryForFirstTest(story);
+        testStarted(newTestName);
+    }
+
+    public void testStarted(final String newTestName, final Class<?> testClass) {
+        startSuiteForFirstTest(testClass);
+        testStarted(newTestName);
+    }
+
+    private void startSuiteForFirstTest(final Class<?> testClass) {
+        if ((classUnderTest == null) || (classUnderTest != testClass)) {
+            testSuiteStarted(testClass);
+        }
+    }
+
+    private void startSuiteWithStoryForFirstTest(final Story story) {
+        if ((storyUnderTest == null) || (storyUnderTest != story)) {
+            testSuiteStarted(story);
         }
     }
 
@@ -106,7 +129,7 @@ public class StepEventBus {
     }
 
     public void testSuiteStarted(final Class<?> testClass) {
-        LOGGER.info("Test suite started for {}", testClass);
+        LOGGER.debug("Test suite started for {}", testClass);
         updateClassUnderTest(testClass);
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testSuiteStarted(testClass);
@@ -117,8 +140,14 @@ public class StepEventBus {
         classUnderTest = testClass;
     }
 
+
+    private void updateStoryUnderTest(final Story story) {
+        storyUnderTest = story;
+    }
+
     public void testSuiteStarted(final Story story) {
-        LOGGER.info("Test suite started for story {}", story);
+        LOGGER.debug("Test suite started for story {}", story);
+        updateStoryUnderTest(story);
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testSuiteStarted(story);
         }
@@ -130,6 +159,7 @@ public class StepEventBus {
         currentTestIsNotPending();
         resultTally = null;
         classUnderTest = null;
+        storyUnderTest = null;
         webdriverSuspensions.clear();
     }
 

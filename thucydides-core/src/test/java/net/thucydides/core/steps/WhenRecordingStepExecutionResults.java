@@ -78,6 +78,7 @@ public class WhenRecordingStepExecutionResults {
     @Story(AStory.class)
     class ATestCase {
         public void app_should_work() {}
+        public void app_should_still_work() {}
     }
 
     class AStepLibrary extends ScenarioSteps {
@@ -108,9 +109,15 @@ public class WhenRecordingStepExecutionResults {
 
 
     class MyStory {}
+    class MyOtherStory {}
 
     @Story(MyStory.class)
     class MyTestCase {
+        public void app_should_work() {}
+    }
+
+    @Story(MyOtherStory.class)
+    class MyOtherTestCase {
         public void app_should_work() {}
     }
 
@@ -149,8 +156,7 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_listener_should_record_basic_step_execution() {
 
-        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
-        StepEventBus.getEventBus().testStarted("app_should_work");
+        StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
 
         FlatScenarioSteps steps =  stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
@@ -167,8 +173,7 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_listener_should_record_the_tested_story() {
 
-        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
-        StepEventBus.getEventBus().testStarted("app_should_work");
+        StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
 
         FlatScenarioSteps steps =  stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
@@ -182,10 +187,29 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void the_listener_should_record_multiple_tests_and_stories() {
+
+        StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        StepEventBus.getEventBus().testStarted("app_should_still_work", MyTestCase.class);
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        StepEventBus.getEventBus().testStarted("app_should_work", MyOtherTestCase.class);
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        TestOutcome outcome = stepListener.getTestOutcomes().get(0);
+        assertThat(outcome.getUserStory().getName(), is("My story"));
+        TestOutcome outcome2 = stepListener.getTestOutcomes().get(1);
+        assertThat(outcome2.getUserStory().getName(), is("My story"));
+        TestOutcome outcome3 = stepListener.getTestOutcomes().get(2);
+        assertThat(outcome3.getUserStory().getName(), is("My other story"));
+    }
+
+    @Test
     public void the_listener_should_record_the_tested_story_without_a_class() {
 
-        StepEventBus.getEventBus().testSuiteStarted(MyStory.class);
-        StepEventBus.getEventBus().testStarted("app should work");
+        StepEventBus.getEventBus().testStarted("app_should_work", MyStory.class);
 
         StepEventBus.getEventBus().testFinished(testOutcome);
 
@@ -203,6 +227,59 @@ public class WhenRecordingStepExecutionResults {
 
         TestOutcome outcome = stepListener.getTestOutcomes().get(0);
         assertThat(outcome.getUserStory().getName(), is("My story"));
+    }
+
+
+
+    @Test
+    public void the_listener_should_record_a_test_with_the_tested_story_instance_without_a_class() {
+
+        StepEventBus.getEventBus().testStarted("app should work", MyStory.class);
+
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        TestOutcome outcome = stepListener.getTestOutcomes().get(0);
+        assertThat(outcome.getUserStory().getName(), is("My story"));
+    }
+
+    @Test
+    public void the_listener_should_record_multiple_tests_with_the_tested_story_instance_without_a_class() {
+
+        StepEventBus.getEventBus().testStarted("app should work", MyStory.class);
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        StepEventBus.getEventBus().testStarted("app should still work", MyStory.class);
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        TestOutcome outcome = stepListener.getTestOutcomes().get(0);
+        assertThat(outcome.getUserStory().getName(), is("My story"));
+
+        TestOutcome outcome2 = stepListener.getTestOutcomes().get(1);
+        assertThat(outcome2.getUserStory().getName(), is("My story"));
+
+    }
+
+    @Test
+    public void the_listener_should_record_multiple_tests_and_stories_with_the_tested_story_instance_without_a_class() {
+
+        StepEventBus.getEventBus().testStarted("app should work", MyStory.class);
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        StepEventBus.getEventBus().testStarted("app should still work", MyStory.class);
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        StepEventBus.getEventBus().testStarted("app should still work", MyOtherStory.class);
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        TestOutcome outcome = stepListener.getTestOutcomes().get(0);
+        assertThat(outcome.getUserStory().getName(), is("My story"));
+
+        TestOutcome outcome2 = stepListener.getTestOutcomes().get(1);
+        assertThat(outcome2.getUserStory().getName(), is("My story"));
+
+        TestOutcome outcome3 = stepListener.getTestOutcomes().get(2);
+        assertThat(outcome3.getUserStory().getName(), is("My other story"));
+
     }
 
     @Test

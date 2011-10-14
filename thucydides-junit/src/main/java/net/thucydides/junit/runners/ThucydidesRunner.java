@@ -150,8 +150,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     @Override
     public void run(final RunNotifier notifier) {
-        LOGGER.info("Start test run");
-
         initializeDriversAndListeners(notifier);
 
         super.run(notifier);
@@ -160,7 +158,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         generateReportsFor(stepListener.getTestOutcomes());
         notifyFailures();
         closeDriver();
-        LOGGER.info("End test run");
     }
 
     private void initializeDriversAndListeners(RunNotifier notifier) {

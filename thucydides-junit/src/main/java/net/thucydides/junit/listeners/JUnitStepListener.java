@@ -44,29 +44,19 @@ public class JUnitStepListener extends RunListener {
 		super.testRunFinished(result);
 	}
 
-	private boolean firstTest = true;
-
 	/**
 	 * Called when a test starts. We also need to start the test suite the first
 	 * time, as the testRunStarted() method is not invoked for some reason.
 	 */
 	@Override
 	public void testStarted(final Description description) {
-		LOGGER.debug("Junit notification: test started for {}", description.getMethodName());
-
 		StepEventBus.getEventBus().clear();
-		if (firstTest) {
-			StepEventBus.getEventBus().testSuiteStarted(description.getTestClass());
-			firstTest = false;
-		}
-		StepEventBus.getEventBus().testStarted(description.getMethodName());
+		StepEventBus.getEventBus().testStarted(description.getMethodName(), description.getTestClass());
 
 	}
 
 	@Override
 	public void testFinished(final Description description) throws Exception {
-		LOGGER.debug("Junit notification: test finished for {}",
-				description.getMethodName());
 	}
 
 	@Override
