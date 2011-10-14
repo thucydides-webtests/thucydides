@@ -144,6 +144,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
         LOGGER.debug("testSuiteStarted for " + startedTestSuite);
         testSuite = startedTestSuite;
         testedStory = findStoryFrom(startedTestSuite);
+        LOGGER.debug("testSuiteStarted for {} with story {}", startedTestSuite, testedStory);
     }
 
     public void testSuiteStarted(final Story story) {
@@ -157,7 +158,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
      * @param testMethod the name of the test method in the test suite class.
      */
     public void testStarted(final String testMethod) {
-        LOGGER.debug("test started: " + testMethod);
+        LOGGER.debug("test started: {}, {} " + testMethod, testedStory);
         testOutcomes.add(TestOutcome.forTestInStory(testMethod, testSuite, testedStory));
         setAnnotatedResult(testMethod);
     }

@@ -6,15 +6,18 @@ import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
+import org.apache.commons.lang.ArrayUtils;
 import org.junit.Ignore;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -240,13 +243,21 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             if (!isFirst) {
                 testName.append(", ");
             }
-            testName.append(arg);
+            testName.append(readableFormOf(arg));
             isFirst = false;
         }
         if (addMarkup) {
             testName.append("</span>");
         }
         return testName.toString();
+    }
+
+    private String readableFormOf(Object arg) {
+        if (arg.getClass().isArray()) {
+            return ArrayUtils.toString(arg);
+        } else {
+            return arg.toString();
+        }
     }
 
     private void notifyTestSkippedFor(final Method method, final Object[] args)

@@ -2,7 +2,6 @@ package net.thucydides.core.reports.html;
 
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Preconditions;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.Screenshot;
@@ -10,6 +9,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.screenshots.ScreenshotFormatter;
 import net.thucydides.core.screenshots.ScreenshotException;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -31,7 +31,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     private static final String DEFAULT_ACCEPTANCE_TEST_SCREENSHOT = "freemarker/screenshots.ftl";
     private static final int MAXIMUM_SCREENSHOT_WIDTH = 1000;
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HtmlAcceptanceTestReporter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlAcceptanceTestReporter.class);
 
     private String qualifier;
 
@@ -53,6 +53,8 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     public File generateReportFor(final TestOutcome testOutcome) throws IOException {
 
         Preconditions.checkNotNull(getOutputDirectory());
+
+        LOGGER.info("Generating XML report for {}/{}", testOutcome.getTitle(), testOutcome.getMethodName());
 
         Map<String,Object> context = new HashMap<String,Object>();
         addTestOutcomeToContext(testOutcome, context);

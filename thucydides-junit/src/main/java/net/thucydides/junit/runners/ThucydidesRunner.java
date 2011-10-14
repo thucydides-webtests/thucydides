@@ -2,7 +2,6 @@ package net.thucydides.junit.runners;
 
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
@@ -151,20 +150,26 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     @Override
     public void run(final RunNotifier notifier) {
-        WebDriver driver = initWebdriverManager();
-        initStepEventBus();
-        Pages newPages = initPagesObjectUsing(driver);
-        initListenersUsing(newPages);
-        notifier.addListener(stepListener);
+        LOGGER.info("Start test run");
 
-        initStepFactoryUsing(newPages);
+        initializeDriversAndListeners(notifier);
 
         super.run(notifier);
 
-        closeDriver();
         stepListener.close();
         generateReportsFor(stepListener.getTestOutcomes());
         notifyFailures();
+        closeDriver();
+        LOGGER.info("End test run");
+    }
+
+    private void initializeDriversAndListeners(RunNotifier notifier) {
+        initWebdriverManager();
+        initStepEventBus();
+        Pages newPages = initPagesObjectUsing(webdriverManager.getWebdriver());
+        initListenersUsing(newPages);
+        notifier.addListener(stepListener);
+        initStepFactoryUsing(newPages);
     }
 
     private void initStepEventBus() {
@@ -193,9 +198,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return webdriverManager;
     }
 
-    protected WebDriver initWebdriverManager() {
+    protected void initWebdriverManager() {
         webdriverManager = new WebdriverManager(webDriverFactory);
-        return webdriverManager.getWebdriver();
     }
 
     private ReportService getReportService() {

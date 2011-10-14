@@ -4,7 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.internal.Lists;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.misc.Service;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class StepEventBus {
 
     private static ThreadLocal<StepEventBus> stepEventBusThreadLocal = new ThreadLocal<StepEventBus>();
     private static final String CORE_THUCYDIDES_PACKAGE = "net.thucydides.core";
+    private static final Logger LOGGER = LoggerFactory.getLogger(StepEventBus.class);
 
     /**
      * The event bus used to inform listening classes about when tests and test steps start and finish.
@@ -104,10 +106,11 @@ public class StepEventBus {
     }
 
     public void testSuiteStarted(final Class<?> testClass) {
+        LOGGER.info("Test suite started for {}", testClass);
+        updateClassUnderTest(testClass);
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testSuiteStarted(testClass);
         }
-        updateClassUnderTest(testClass);
     }
 
     private void updateClassUnderTest(final Class<?> testClass) {
@@ -115,6 +118,7 @@ public class StepEventBus {
     }
 
     public void testSuiteStarted(final Story story) {
+        LOGGER.info("Test suite started for story {}", story);
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testSuiteStarted(story);
         }

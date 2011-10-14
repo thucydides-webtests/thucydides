@@ -1,6 +1,8 @@
 package net.thucydides.core.reports;
 
 import net.thucydides.core.model.TestOutcome;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.misc.Service;
 
 import java.io.File;
@@ -21,7 +23,7 @@ public class ReportService {
      */
     private File outputDirectory;
 
-   // private static List<AcceptanceTestReporter> reporters;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportService.class);
 
     /**
      * Who needs to be notified when a test is done.
@@ -84,6 +86,7 @@ public class ReportService {
     private void generateReportFor(final TestOutcome testOutcome,
                                    final AcceptanceTestReporter reporter) {
         try {
+            LOGGER.info("Generating reports for test results: {})", testOutcome.getTitle());
             reporter.setOutputDirectory(outputDirectory);
             reporter.generateReportFor(testOutcome);
         } catch (IOException e) {

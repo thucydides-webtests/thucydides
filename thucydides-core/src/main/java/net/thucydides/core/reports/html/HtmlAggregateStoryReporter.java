@@ -70,8 +70,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
      */
     public File generateReportFor(final StoryTestResults storyTestResults) throws IOException {
         
-        LOGGER.info("Generating report for user story "
-                    + storyTestResults.getTitle() + " to " + getOutputDirectory());
+        LOGGER.info("Generating report for user story {} to {}",storyTestResults.getTitle(), getOutputDirectory());
 
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("story", storyTestResults);

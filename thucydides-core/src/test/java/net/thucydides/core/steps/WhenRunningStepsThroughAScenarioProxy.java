@@ -19,6 +19,9 @@ import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -126,6 +129,16 @@ public class WhenRunningStepsThroughAScenarioProxy {
         @Step
         public void step_with_parameters(String name, int age){
             getDriver().get("step_with_parameters");
+        }
+
+        @Step
+        public void step_with_parameters(List<Integer> numbers){
+            getDriver().get("step_with_parameters");
+        }
+
+        @Step
+        public void step_with_array(Integer[] numbers){
+            getDriver().get("step_with_array");
         }
 
         @Ignore
@@ -255,6 +268,35 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         assertThat(argument.getValue().getName(), is("step_with_parameters: <span class='parameters'>Joe, 10</span>"));
     }
+
+    @Test
+    public void the_proxy_should_store_list_parameters_in_human_readable_form() {
+        SimpleTestScenarioSteps steps =  factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
+
+        List<Integer> numbers = Arrays.asList(1,2,3);
+        steps.step_with_parameters(numbers);
+
+        ArgumentCaptor<ExecutedStepDescription> argument = ArgumentCaptor.forClass(ExecutedStepDescription.class);
+
+        verify(listener).stepStarted(argument.capture());
+
+        assertThat(argument.getValue().getName(), is("step_with_parameters: <span class='single-parameter'>[1, 2, 3]</span>"));
+    }
+
+    @Test
+    public void the_proxy_should_store_array_parameters_in_human_readable_form() {
+        SimpleTestScenarioSteps steps =  factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
+
+        Integer[] numbers = {1,2,3};
+        steps.step_with_array(numbers);
+
+        ArgumentCaptor<ExecutedStepDescription> argument = ArgumentCaptor.forClass(ExecutedStepDescription.class);
+
+        verify(listener).stepStarted(argument.capture());
+
+        assertThat(argument.getValue().getName(), is("step_with_array: <span class='single-parameter'>{1,2,3}</span>"));
+    }
+
 
     @Test
     public void the_proxy_should_notify_listeners_when_tests_are_starting() {
