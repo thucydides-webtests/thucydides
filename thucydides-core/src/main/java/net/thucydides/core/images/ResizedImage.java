@@ -28,4 +28,8 @@ public class ResizedImage extends ResizableImage {
     public int getHeight() {
         return image.getHeight();
     }
+
+    protected BufferedImage getImage() {
+        return image;
+    }
 }

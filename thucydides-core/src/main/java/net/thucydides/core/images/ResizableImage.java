@@ -1,20 +1,25 @@
 package net.thucydides.core.images;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 public class ResizableImage {
 
     private final File screenshotFile;
     private final SimpleImageInfo imageInfo;
     private final int MAX_SUPPORTED_HEIGHT = 4000;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResizableImage.class);
 
     public ResizableImage(final File screenshotFile) throws IOException {
         this.screenshotFile = screenshotFile;
@@ -40,9 +45,10 @@ public class ResizableImage {
         }
 
         int targetHeight = Math.min(height, MAX_SUPPORTED_HEIGHT);
+
         BufferedImage image = ImageIO.read(screenshotFile);
         int width = new SimpleImageInfo(screenshotFile).getWidth();
-        BufferedImage resizedImage = new BufferedImage(width, targetHeight, BufferedImage.TYPE_INT_ARGB_PRE);
+        BufferedImage resizedImage = new BufferedImage(width, targetHeight, image.getType());
 
         fillWithWhiteBackground(resizedImage);
 

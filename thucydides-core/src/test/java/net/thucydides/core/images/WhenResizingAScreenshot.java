@@ -1,7 +1,12 @@
 package net.thucydides.core.images;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -11,6 +16,9 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 
 public class WhenResizingAScreenshot {
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void should_be_able_to_determine_the_size_of_an_image() throws IOException {
@@ -134,6 +142,24 @@ public class WhenResizingAScreenshot {
         File screenshotFile = screenshotFileFrom("/screenshots/google_page_1.png");
 
         int newHeight = 1250;
+
+        ResizableImage image = ResizableImage.loadFrom(screenshotFile);
+        ResizedImage resizedImage = (ResizedImage) image.rescaleCanvas(newHeight);
+
+        File resizedImageFile = temporaryFolder.newFile("resized_google_page_1.png");
+        resizedImage.saveTo(resizedImageFile);
+
+        File expectedScreenshot = screenshotFileFrom("/screenshots/google-page-resized.png");
+
+        assertThat(FileUtils.contentEquals(resizedImageFile, expectedScreenshot), is(true));
+    }
+
+    @Test
+    public void should_be_able_to_redimension_a_large_image_generated_by_chrome() throws IOException {
+
+        File screenshotFile = screenshotFileFrom("/screenshots/wikipedia-search.png");
+
+        int newHeight = 2000;
 
         ResizableImage image = ResizableImage.loadFrom(screenshotFile);
         ResizableImage resizedImage = image.rescaleCanvas(newHeight);

@@ -1,14 +1,13 @@
 package net.thucydides.core.reports.html.screenshots;
 
-import com.google.inject.internal.ImmutableList;
-import mx4j.tools.naming.NamingServiceMBean;
 import net.thucydides.core.images.ResizableImage;
+import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.model.Screenshot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class designed to help resize and scale screenshots to a format that is compatible with the Thucydides reports.
@@ -17,6 +16,8 @@ public class ScreenshotFormatter {
 
     private final Screenshot screenshot;
     private final File sourceDirectory;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScreenshotFormatter.class);
 
     private ScreenshotFormatter(final Screenshot screenshot, final File sourceDirectory) {
         this.screenshot = screenshot;
