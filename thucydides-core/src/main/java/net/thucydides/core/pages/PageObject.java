@@ -258,6 +258,17 @@ public abstract class PageObject {
     }
 
     /**
+     * Check that all of the specified texts appears somewhere in the page.
+     */
+    public void shouldContainAllText(final String... textValues) {
+        if (!containsAllText(textValues)) {
+            String errorMessage = String.format(
+                    "One of the text elements in '%s' was not found in the page", textValues);
+            throw new NoSuchElementException(errorMessage);
+        }
+    }
+
+    /**
      * Does the specified web element contain a given text value. Useful for dropdowns and so on.
      * @deprecated use element(webElement).containsText(textValue)
      */
@@ -333,12 +344,20 @@ public abstract class PageObject {
         checkbox.setChecked(value);
     }
 
+    public boolean containsText(final String textValue) {
+        return getRenderedView().containsText(textValue);
+    }
+
     /**
      * Check that the specified text appears somewhere in the page.
      */
-    public boolean containsText(final String textValue) {
-        return getRenderedView().containsText(textValue);
-
+    public boolean containsAllText(final String... textValues) {
+        for(String textValue : textValues) {
+            if (!getRenderedView().containsText(textValue)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

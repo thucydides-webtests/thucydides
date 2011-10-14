@@ -304,6 +304,21 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
     }
 
     @Test
+    public void should_contain_texts_passes_if_page_contains_all_texts() {
+        page.shouldContainAllText("joe", "mary");
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void should_contain_texts_fails_if_page_does_not_contain_all_texts() {
+        page.shouldContainAllText("joe", "Not appearing in this page");
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void should_contain_texts_fails_if_page_does_not_contain_any__texts() {
+        page.shouldContainAllText("Not appearing either", "Not appearing in this page");
+    }
+
+    @Test
     public void should_contain_text_also_works_with_non_form_elements() {
         page.element(page.grid).shouldContainText("joe");
     }
