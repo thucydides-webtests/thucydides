@@ -156,7 +156,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
      * @param testMethod the name of the test method in the test suite class.
      */
     public void testStarted(final String testMethod) {
-        LOGGER.info("test started: {} for story {} ", testMethod, testedStory.getName());
+        LOGGER.info("test started: {}", testMethod);
         testOutcomes.add(TestOutcome.forTestInStory(testMethod, testSuite, testedStory));
         setAnnotatedResult(testMethod);
     }

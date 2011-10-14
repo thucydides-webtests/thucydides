@@ -145,6 +145,8 @@ public class WhenUsingTheStepEventBus {
             steps.step2();
             steps.step3();
         }
+
+        public void some_test() {}
     }
     @Mock
     WebDriver driver;
@@ -183,7 +185,7 @@ public class WhenUsingTheStepEventBus {
     public void should_execute_steps_transparently() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("some_test");
+        StepEventBus.getEventBus().testStarted("some_test", SampleTestScenario.class);
         steps.step1();
         steps.step2();
         steps.step3();
@@ -198,6 +200,7 @@ public class WhenUsingTheStepEventBus {
     public void the_step_event_bus_can_be_used_to_sent_notification_events_about_steps() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
+        StepEventBus.getEventBus().testSuiteStarted(SampleTestScenario.class);
         StepEventBus.getEventBus().testStarted("some_test");
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
 
@@ -208,7 +211,7 @@ public class WhenUsingTheStepEventBus {
     public void should_notify_listeners_when_a_step_starts() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("some_test");
+        StepEventBus.getEventBus().testStarted("some_test", SampleTestScenario.class);
         steps.step1();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
@@ -223,7 +226,7 @@ public class WhenUsingTheStepEventBus {
     public void should_record_when_a_test_starts_and_finishes() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.step1();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
@@ -239,7 +242,7 @@ public class WhenUsingTheStepEventBus {
     public void should_record_nested_test_steps() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.step4();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
@@ -259,7 +262,7 @@ public class WhenUsingTheStepEventBus {
     public void should_record_groups_as_nested_test_steps() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.nested_steps();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
@@ -303,7 +306,7 @@ public class WhenUsingTheStepEventBus {
     @Test
     public void should_record_deeply_nested_test_steps() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.legacyStepGroup();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
@@ -325,7 +328,7 @@ public class WhenUsingTheStepEventBus {
     public void should_record_step_failures() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.step1();
         steps.failingStep();
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -344,7 +347,7 @@ public class WhenUsingTheStepEventBus {
     public void should_record_pending_steps() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.step1();
         steps.pendingStep();
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -363,7 +366,7 @@ public class WhenUsingTheStepEventBus {
     public void should_record_nested_step_failures() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.step1();
         steps.step8();
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -396,7 +399,7 @@ public class WhenUsingTheStepEventBus {
     public void should_record_nested_pending_steps() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.step1();
         steps.step9();
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -429,7 +432,7 @@ public class WhenUsingTheStepEventBus {
     public void should_skip_steps_after_a_step_failure() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.step1();
         steps.step7();
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -454,7 +457,7 @@ public class WhenUsingTheStepEventBus {
     public void should_skip_nested_steps_after_a_step_failure() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.step1();
         steps.step7();
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -479,7 +482,7 @@ public class WhenUsingTheStepEventBus {
     public void should_not_use_the_browser() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.step1();
         steps.step7();
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -504,7 +507,7 @@ public class WhenUsingTheStepEventBus {
     public void a_step_can_return_a_step_object() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.stepThatReturnsAStep().stepThatReturnsAStep().stepThatReturnsAStep();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
@@ -524,7 +527,7 @@ public class WhenUsingTheStepEventBus {
     public void a_step_can_return_a_step_object_if_a_failure_occurs() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         steps.stepThatFailsAndReturnsAStep().stepThatReturnsAStep();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
@@ -542,7 +545,7 @@ public class WhenUsingTheStepEventBus {
     public void when_an_entier_test_is_pending_all_the_contained_steps_are_skipped() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         StepEventBus.getEventBus().testPending();
         steps.step1();
         steps.step2();
@@ -563,7 +566,7 @@ public class WhenUsingTheStepEventBus {
 
     @Test
     public void a_step_can_be_marked_pending() {
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
         StepEventBus.getEventBus().stepPending();
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -578,7 +581,7 @@ public class WhenUsingTheStepEventBus {
 
     @Test
     public void when_an_entier_test_is_ignored_the_test_is_marked_as_ignored() {
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         StepEventBus.getEventBus().testIgnored();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
@@ -593,7 +596,7 @@ public class WhenUsingTheStepEventBus {
     public void should_clear_all_listeners_when_requested() {
         StepEventBus.getEventBus().dropAllListeners();
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
         StepEventBus.getEventBus().stepPending();
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -606,7 +609,7 @@ public class WhenUsingTheStepEventBus {
 
         StepEventBus.getEventBus().dropAllListeners();
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
 
         assertThat(StepEventBus.getEventBus().areStepsRunning(), is(true));
@@ -617,7 +620,7 @@ public class WhenUsingTheStepEventBus {
 
         StepEventBus.getEventBus().dropAllListeners();
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         StepEventBus.getEventBus().testPending();
 
         StepEventBus.getEventBus().testStarted("another_test");
@@ -640,7 +643,7 @@ public class WhenUsingTheStepEventBus {
 
         StepEventBus.getEventBus().dropAllListeners();
 
-        StepEventBus.getEventBus().testStarted("a_test");
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
         StepEventBus.getEventBus().testFinished(testOutcome);
 
