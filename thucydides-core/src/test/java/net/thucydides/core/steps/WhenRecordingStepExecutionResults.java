@@ -74,6 +74,7 @@ public class WhenRecordingStepExecutionResults {
     TestOutcome testOutcome;
     
     class AStory {}
+    class AnotherStory {}
 
     @Story(AStory.class)
     class ATestCase {
@@ -229,7 +230,39 @@ public class WhenRecordingStepExecutionResults {
         assertThat(outcome.getUserStory().getName(), is("My story"));
     }
 
+    @Test
+    public void the_listener_should_record_the_tested_story_instance_without_a_class_via_the_test() {
 
+        StepEventBus.getEventBus().testStarted("app should work", net.thucydides.core.model.Story.from(MyStory.class));
+
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        TestOutcome outcome = stepListener.getTestOutcomes().get(0);
+        assertThat(outcome.getUserStory().getName(), is("My story"));
+    }
+
+    @Test
+    public void the_listener_should_record_mulitple_tested_story_instances_without_a_class_via_the_tests() {
+
+        StepEventBus.getEventBus().testStarted("app should work", net.thucydides.core.model.Story.from(MyStory.class));
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        StepEventBus.getEventBus().testStarted("app should still work", net.thucydides.core.model.Story.from(MyStory.class));
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        StepEventBus.getEventBus().testStarted("app should work", net.thucydides.core.model.Story.from(AnotherStory.class));
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        TestOutcome outcome = stepListener.getTestOutcomes().get(0);
+        assertThat(outcome.getUserStory().getName(), is("My story"));
+
+        TestOutcome outcome2 = stepListener.getTestOutcomes().get(1);
+        assertThat(outcome2.getUserStory().getName(), is("My story"));
+
+        TestOutcome outcome3 = stepListener.getTestOutcomes().get(2);
+        assertThat(outcome3.getUserStory().getName(), is("Another story"));
+
+    }
 
     @Test
     public void the_listener_should_record_a_test_with_the_tested_story_instance_without_a_class() {
