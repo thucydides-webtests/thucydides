@@ -1,6 +1,6 @@
 package net.thucydides.core.csv;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utility class to convert CSV headings to valid JavaBean property names.

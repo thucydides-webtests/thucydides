@@ -1,6 +1,6 @@
 package net.thucydides.core.util;
 
-import org.apache.commons.lang.StringUtils;
+    import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
 import java.util.regex.Matcher;

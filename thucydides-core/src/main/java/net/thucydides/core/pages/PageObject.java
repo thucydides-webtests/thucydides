@@ -6,7 +6,7 @@ import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;

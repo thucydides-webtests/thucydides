@@ -6,7 +6,7 @@ import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.reports.html.Formatter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,8 +23,7 @@ import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
 import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
-import static org.apache.commons.lang.StringUtils.capitalize;
-
+import static org.apache.commons.lang3.StringUtils.capitalize;
 /**
  * A collection of test results, corresponding to a the acceptance tests for a single user story.
  * User stories can in turn belong to Features.

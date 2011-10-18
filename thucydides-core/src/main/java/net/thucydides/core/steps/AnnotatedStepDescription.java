@@ -5,7 +5,7 @@ import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Title;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package net.thucydides.core.issues;
 
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Determine the issue tracking URL formats for a project.

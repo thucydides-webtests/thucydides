@@ -6,7 +6,7 @@ import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Ignore;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;

@@ -1,6 +1,6 @@
 package net.thucydides.core;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Convenience class used to get and set Thucydides system properties.

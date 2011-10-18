@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * The Pages object keeps track of what web pages a test visits, and helps with mapping pages to Page Objects.
