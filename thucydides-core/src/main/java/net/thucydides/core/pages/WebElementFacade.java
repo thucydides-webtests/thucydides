@@ -312,6 +312,16 @@ public class WebElementFacade {
         return this;
     }
 
+    public WebElementFacade waitUntilPresent() {
+        try {
+            waitForCondition().until(elementIsPresent());
+        } catch (TimeoutException timeout) {
+            throwErrorWithCauseIfPresent(timeout, timeout.getMessage());
+        }
+        return this;
+    }
+
+
     private void throwErrorWithCauseIfPresent(final TimeoutException timeout, final String defaultMessage) {
         String timeoutMessage = (timeout.getCause() != null) ? timeout.getCause().getMessage() : timeout.getMessage();
         throw new ElementNotVisibleException(timeoutMessage, timeout);
@@ -321,6 +331,14 @@ public class WebElementFacade {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
                 return (webElement.isDisplayed());
+            }
+        };
+    }
+
+    private ExpectedCondition<Boolean> elementIsPresent() {
+        return new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver driver) {
+                return isPresent();
             }
         };
     }
@@ -400,7 +418,10 @@ public class WebElementFacade {
     }
 
     public String getTextValue() {
-        waitUntilVisible();
+        waitUntilPresent();
+        if(!isVisible()) {
+            return "";
+        }
         if (!StringUtils.isEmpty(webElement.getText())) {
             return webElement.getText();
         }

@@ -59,4 +59,13 @@ public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTh
         page.element(page.fieldDoesNotExist).waitUntilVisible();
     }
 
+    @Test
+    public void should_return_empty_string_when_a_tag_does_not_have_any_text() {
+        assertThat(page.element(page.emptyLabel).getTextValue(), is(""));
+    }
+
+    @Test
+    public void should_return_the_actual_text_when_a_tag_has_any_text() {
+        assertThat(page.element(page.nonEmptyLabel).getTextValue(), is("This div tag has text"));
+    }
 }
