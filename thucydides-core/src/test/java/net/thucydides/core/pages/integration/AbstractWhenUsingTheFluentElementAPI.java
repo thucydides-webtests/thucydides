@@ -80,6 +80,12 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
         @FindBy(name="fieldDoesNotExist")
         protected WebElement fieldDoesNotExist;
 
+        @FindBy(id="emptyLabelID")
+        protected WebElement emptyLabel;
+
+        @FindBy(id="nonEmptyLabelID")
+        protected WebElement nonEmptyLabel;
+
         public StaticSitePage(WebDriver driver, int timeout) {
             super(driver, timeout);
         }
@@ -674,4 +680,13 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
         assertThat(page.firstName.getAttribute("value"), is(""));
     }
 
+    @Test
+    public void should_return_empty_string_when_a_tag_does_not_have_any_text() {
+        assertThat(page.element(page.emptyLabel).getTextValue(), is(""));
+    }
+
+    @Test
+    public void should_return_the_actual_text_when_a_tag_has_any_text() {
+        assertThat(page.element(page.nonEmptyLabel).getTextValue(), is("This div tag has text"));
+    }
 }
