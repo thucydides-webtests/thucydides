@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.core.util.EnvironmentVariables;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -84,7 +85,7 @@ public class WhenManagingWebdriverInstances {
     @Test
     public void a_new_firefox_webdriver_instance_is_created_when_the_webdriver_system_property_is_set_to_firefox() {
 
-        System.setProperty(Configuration.WEBDRIVER_DRIVER, "firefox");
+        System.setProperty(SystemPropertiesConfiguration.WEBDRIVER_DRIVER, "firefox");
         WebdriverManager webdriverManager = new WebdriverManager(factory);
 
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
@@ -95,8 +96,8 @@ public class WhenManagingWebdriverInstances {
     @Test
     public void a_firefox_instance_will_not_assume_untrusted_certificates_if_requested() throws Exception {
 
-        System.setProperty(Configuration.WEBDRIVER_DRIVER, "firefox");
-        System.setProperty(Configuration.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER, "false");
+        System.setProperty(SystemPropertiesConfiguration.WEBDRIVER_DRIVER, "firefox");
+        System.setProperty(SystemPropertiesConfiguration.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER, "false");
 
         WebdriverManager webdriverManager = new WebdriverManager(factory);
 
@@ -109,7 +110,7 @@ public class WhenManagingWebdriverInstances {
     @Test
     public void a_firefox_instance_will_assume_untrusted_certificates_by_default() throws Exception {
 
-        System.setProperty(Configuration.WEBDRIVER_DRIVER, "firefox");
+        System.setProperty(SystemPropertiesConfiguration.WEBDRIVER_DRIVER, "firefox");
 
         WebdriverManager webdriverManager = new WebdriverManager(factory);
 
@@ -122,7 +123,7 @@ public class WhenManagingWebdriverInstances {
     @Test
     public void a_firefox_instance_will_accept_untrusted_certificates_by_default() throws Exception {
 
-        System.setProperty(Configuration.WEBDRIVER_DRIVER, "firefox");
+        System.setProperty(SystemPropertiesConfiguration.WEBDRIVER_DRIVER, "firefox");
 
         WebdriverManager webdriverManager = new WebdriverManager(factory);
 
@@ -135,7 +136,7 @@ public class WhenManagingWebdriverInstances {
     @Test
     public void a_new_chrome_webdriver_instance_is_created_when_the_webdriver_system_property_is_set_to_chrome() throws Exception {
 
-        System.setProperty(Configuration.WEBDRIVER_DRIVER, "chrome");
+        System.setProperty(SystemPropertiesConfiguration.WEBDRIVER_DRIVER, "chrome");
         initWendriverManager();
 
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
@@ -149,7 +150,7 @@ public class WhenManagingWebdriverInstances {
     @Test
     public void a_new_ie_webdriver_instance_is_created_when_the_webdriver_system_property_is_set_to_iexplorer() throws Exception {
 
-        System.setProperty(Configuration.WEBDRIVER_DRIVER, "iexplorer");
+        System.setProperty(SystemPropertiesConfiguration.WEBDRIVER_DRIVER, "iexplorer");
         initWendriverManager();
 
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
@@ -159,12 +160,14 @@ public class WhenManagingWebdriverInstances {
 
     }
 
+    @Mock
+    EnvironmentVariables environmentVariables;
 
     @Test
     public void the_default_output_directory_can_be_overrided_via_a_system_property() {
-        System.setProperty(Configuration.OUTPUT_DIRECTORY_PROPERTY, "out");
+        when(environmentVariables.getProperty("thucydides.outputDirectory")).thenReturn("out");
 
-        Configuration config = new Configuration();
+        SystemPropertiesConfiguration config = new SystemPropertiesConfiguration(environmentVariables);
 
         assertThat(config.getOutputDirectory().getName(), is("out"));
     }

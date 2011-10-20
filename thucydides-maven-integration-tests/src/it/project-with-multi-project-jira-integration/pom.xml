@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.thucydides.maven.plugins.samples</groupId>
-    <artifactId>project-with-jira-integration</artifactId>
+    <artifactId>project-with-multi-project-jira-integration</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <name>Test Thucydides Reporter Mojo</name>
@@ -33,7 +33,6 @@
 
     <properties>
         <jira.url>http://my.jira.server</jira.url>
-        <jira.project>MY-PROJECT</jira.project>
     </properties>
 
     <build>
@@ -58,7 +57,6 @@
                     </includes>
                     <systemPropertyVariables>
                         <jira.url>${jira.url}</jira.url>
-                        <jira.project>${jira.project}</jira.project>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -68,7 +66,6 @@
                 <version>@project.version@</version>
                 <configuration>
                     <jiraUrl>${jira.url}</jiraUrl>
-                    <jiraProject>${jira.project}</jiraProject>
                 </configuration>
             </plugin>
         </plugins>

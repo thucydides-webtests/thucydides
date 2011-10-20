@@ -117,6 +117,7 @@ public class StepEventBus {
             while (listenerImplementations.hasNext()) {
                 StepListener listener = (StepListener) listenerImplementations.next();
                 if (!isACore(listener)) {
+                    LOGGER.info("Registering custom listener " + listener);
                     customListeners.add(listener);
                 }
             }

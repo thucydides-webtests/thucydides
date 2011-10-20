@@ -1,5 +1,7 @@
 package net.thucydides.core.util;
 
+import net.thucydides.core.ThucydidesSystemProperty;
+
 /**
  * Return system environment variable values.
  */
@@ -17,4 +19,22 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
             return value;
         }
     }
+
+    public Integer getIntegerValue(String property, Integer defaultValue) {
+        String value = System.getProperty(property);
+        if (value != null) {
+            return Integer.valueOf(value);
+        } else {
+            return defaultValue;
+        }
+    }
+
+    public String getProperty(final String name) {
+        return System.getProperty(name);
+    }
+
+    public String getProperty(final String name, final String defaultValue) {
+        return System.getProperty(name, defaultValue);
+    }
+
 }

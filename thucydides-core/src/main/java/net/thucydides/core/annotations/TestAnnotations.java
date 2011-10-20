@@ -1,8 +1,8 @@
 package net.thucydides.core.annotations;
 
 import net.thucydides.core.reports.html.Formatter;
-import org.junit.Ignore;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,7 +53,17 @@ public class TestAnnotations {
 
     public static boolean isIgnored(final Method method) {
         if (method != null) {
-            return (method.getAnnotation(Ignore.class) != null);
+            return hasAnnotationCalled(method, "Ignore");
+        }
+        return false;
+    }
+
+    private static boolean hasAnnotationCalled(Method method, String annotationName) {
+        Annotation[] annotations = method.getAnnotations();
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType().getSimpleName().equals(annotationName)) {
+                return true;
+            }
         }
         return false;
     }

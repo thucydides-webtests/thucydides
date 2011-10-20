@@ -1,6 +1,7 @@
 package net.thucydides.core;
 
 import net.thucydides.core.annotations.TestCaseAnnotations;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.StepAnnotations;
@@ -45,7 +46,8 @@ public class Thucydides {
     }
 
     private static void initStepListener() {
-        File outputDirectory = Configuration.loadOutputDirectoryFromSystemProperties();
+        Configuration configuration = Injectors.getInjector().getInstance(Configuration.class);
+        File outputDirectory = configuration.loadOutputDirectoryFromSystemProperties();
         StepListener listener  = new BaseStepListener(outputDirectory, getPages());
         stepListenerThreadLocal.set(listener);
         StepEventBus.getEventBus().registerListener(getStepListener());

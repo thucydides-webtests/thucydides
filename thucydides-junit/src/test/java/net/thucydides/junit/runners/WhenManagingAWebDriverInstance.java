@@ -1,11 +1,11 @@
 package net.thucydides.junit.runners;
 
 import net.thucydides.core.annotations.InvalidManagedWebDriverFieldException;
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
+import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.samples.MultipleTestScenario;
 import net.thucydides.samples.MultipleTestScenarioWithUniqueSession;
 import net.thucydides.samples.SamplePassingScenario;

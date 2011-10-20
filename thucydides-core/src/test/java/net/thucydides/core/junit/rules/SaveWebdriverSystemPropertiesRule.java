@@ -19,13 +19,14 @@ public class SaveWebdriverSystemPropertiesRule implements MethodRule {
 
     private final class RestorePropertiesStatement extends Statement {
         private final Statement statement;
-        private final Map<String,String> originalValues;
+        private final ThreadLocal<Map<String,String>> originalValues;
 
         private RestorePropertiesStatement(final Statement statement,
                                            final Map<String,String> originalValues) {
             super();
             this.statement = statement;
-            this.originalValues = originalValues;
+            this.originalValues = new ThreadLocal<Map<String,String>>();
+            this.originalValues.set(originalValues);
         }
 
         @Override
@@ -46,8 +47,8 @@ public class SaveWebdriverSystemPropertiesRule implements MethodRule {
 
         private void restorePropertyValueFor(final ThucydidesSystemProperty property) {
             String propertyName = property.getPropertyName();
-            if (originalValues.containsKey(propertyName)) {
-                String originalValue = originalValues.get(propertyName);
+            if (originalValues.get().containsKey(propertyName)) {
+                String originalValue = originalValues.get().get(propertyName);
                 System.setProperty(propertyName, originalValue);
             } else {
                 System.clearProperty(propertyName);

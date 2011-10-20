@@ -1,6 +1,7 @@
 package net.thucydides.junit.runners;
 
 import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -59,7 +60,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     private JUnitStepListener stepListener;
     /**
-     * Retrieve the runner configuration from an external source.
+     * Retrieve the runner getConfiguration().from an external source.
      */
     private Configuration configuration;
     private static final Logger LOGGER = LoggerFactory.getLogger(ThucydidesRunner.class);
@@ -102,12 +103,12 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     /**
-     * The configuration manages output directories and driver types.
+     * The getConfiguration().manages output directories and driver types.
      * They can be defined as system values, or have sensible defaults.
      */
     protected Configuration getConfiguration() {
         if (configuration == null) {
-            configuration = new Configuration();
+            configuration = Injectors.getInjector().getInstance(Configuration.class);
         }
         return configuration;
     }
@@ -117,7 +118,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Otherwise, throw an InitializationError.
      */
     private void checkRequestedDriverType() {
-        Configuration.getDriverType();
+        getConfiguration().getDriverType();
     }
 
     /**
@@ -179,7 +180,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     protected JUnitStepListener initListenersUsing(final Pages pagesObject) {
-        setStepListener(new JUnitStepListener(Configuration.loadOutputDirectoryFromSystemProperties(), pagesObject));
+        setStepListener(new JUnitStepListener(getConfiguration().loadOutputDirectoryFromSystemProperties(), pagesObject));
         return stepListener;
     }
 
@@ -220,6 +221,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private void generateReportsFor(final List<TestOutcome> testOutcomeResults) {
         getReportService().generateReportsFor(testOutcomeResults);
     }
+
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {

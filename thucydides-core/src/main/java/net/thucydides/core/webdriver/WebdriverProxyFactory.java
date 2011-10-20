@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.guice.Injectors;
 import org.openqa.selenium.WebDriver;
 
 import java.io.Serializable;
@@ -20,11 +21,12 @@ public class WebdriverProxyFactory implements Serializable {
             = new ArrayList<ThucydidesWebDriverEventListener>();
 
     private WebDriverFactory webDriverFactory;
-
     private WebDriver mockDriver;
+    private final Configuration configuration;
 
     private WebdriverProxyFactory() {
         webDriverFactory = new WebDriverFactory();
+        this.configuration = Injectors.getInjector().getInstance(Configuration.class);
     }
 
     public static WebdriverProxyFactory getFactory() {
@@ -58,7 +60,7 @@ public class WebdriverProxyFactory implements Serializable {
     }
 
     public WebDriver proxyDriver() {
-        Class<? extends WebDriver> driverClass = WebDriverFactory.getClassFor(Configuration.getDriverType());
+        Class<? extends WebDriver> driverClass = WebDriverFactory.getClassFor(configuration.getDriverType());
         return proxyFor(driverClass, webDriverFactory);
     }
 

@@ -1666,7 +1666,7 @@ Options.NodeStyles = {
 /*
   Object: Options.Events
   
-  Configuration for adding mouse/touch event handlers to Nodes.
+  SystemPropertiesConfiguration for adding mouse/touch event handlers to Nodes.
   
   Syntax:
   
@@ -2837,7 +2837,7 @@ var Canvas;
     /*
       Method: getConfig
       
-      Returns the current Configuration for this Canvas Widget.
+      Returns the current SystemPropertiesConfiguration for this Canvas Widget.
       
       Example:
       
@@ -11984,7 +11984,7 @@ $jit.Sunburst = new Class({
   
   node - (object) A <Graph.Node>.
   method - (string) Whether to perform an animation or just replot the graph. Possible values are "replot" or "animate".
-  opt - (object) Configuration options merged with this visualization configuration options.
+  opt - (object) SystemPropertiesConfiguration options merged with this visualization configuration options.
   
   See also:
 
@@ -12006,7 +12006,7 @@ $jit.Sunburst = new Class({
    
    node - (object) A <Graph.Node>.
    method - (string) Whether to perform an animation or just replot the graph. Possible values are "replot" or "animate".
-   opt - (object) Configuration options merged with this visualization configuration options.
+   opt - (object) SystemPropertiesConfiguration options merged with this visualization configuration options.
    
    See also:
 

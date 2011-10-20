@@ -9,6 +9,8 @@ import net.thucydides.core.reports.templates.FreeMarkerTemplateManager;
 import net.thucydides.core.reports.templates.TemplateManager;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.SystemEnvironmentVariables;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 
 public class ThucydidesModule extends AbstractModule {
 
@@ -18,5 +20,6 @@ public class ThucydidesModule extends AbstractModule {
         bind(SystemClock.class).to(InternalSystemClock.class);
         bind(TemplateManager.class).to(FreeMarkerTemplateManager.class);
         bind(EnvironmentVariables.class).to(SystemEnvironmentVariables.class);
+        bind(Configuration.class).to(SystemPropertiesConfiguration.class);
     }
 }

@@ -79,6 +79,7 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
+                            <!--<parallel>classes</parallel>-->
                             <includes>
                                 <include>**/When*.java</include>
                                 <include>**/*Test.java</include>
@@ -184,22 +185,9 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version>1.1</version>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.8.5</version>
-            <scope>test</scope>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -213,15 +201,29 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>2.0</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8
         </project.build.sourceEncoding>
         <surefire.version>2.9</surefire.version>
+        <junit.version>4.8.2</junit.version>
         <checkstyle.rules>http://www.wakaleo-labs.com/sonar/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo</checkstyle.rules>
     </properties>
 

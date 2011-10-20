@@ -75,6 +75,8 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private Story testedStory;
 
+    private Configuration configuration;
+
     private BaseStepListener(final File outputDirectory) {
         this.proxyFactory = WebdriverProxyFactory.getFactory();
         this.testOutcomes = new ArrayList<TestOutcome>();
@@ -82,6 +84,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
         this.currentGroupStack = new Stack<TestStep>();
         this.outputDirectory = outputDirectory;
         this.clock = Injectors.getInjector().getInstance(SystemClock.class);
+        this.configuration = Injectors.getInjector().getInstance(Configuration.class);
     }
 
     /**
@@ -248,7 +251,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void pauseIfRequired() {
-        int delay = Configuration.getStepDelay();
+        int delay = configuration.getStepDelay();
         if (delay > 0) {
             getClock().pauseFor(delay);
         }

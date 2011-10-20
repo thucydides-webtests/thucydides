@@ -384,10 +384,8 @@ public abstract class PageObject {
     public String updateUrlWithBaseUrlIfDefined(final String startingUrl) {
         String baseUrl = System.getProperty(ThucydidesSystemProperty.BASE_URL.getPropertyName());
         if ((baseUrl != null) && (!StringUtils.isEmpty(baseUrl))) {
-            LOGGER.info("Updating initial URL {} using base url of {}", startingUrl, baseUrl);
             return replaceHost(startingUrl, baseUrl);
         } else {
-            LOGGER.info("Using initial URL {}", startingUrl);
             return startingUrl;
         }
     }

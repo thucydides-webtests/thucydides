@@ -1,7 +1,7 @@
 package net.thucydides.core.steps;
 
 import net.thucydides.core.annotations.Pending;
-import org.junit.Ignore;
+import net.thucydides.core.annotations.TestAnnotations;
 
 import java.lang.reflect.Method;
 
@@ -29,7 +29,6 @@ public final class TestStatus {
     }
 
     public boolean isIgnored() {
-        Ignore ignored = method.getAnnotation(Ignore.class);
-        return (ignored != null);
+        return TestAnnotations.isIgnored(method);
     }
 }
