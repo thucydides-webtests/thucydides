@@ -10,7 +10,6 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
-import sun.net.idn.StringPrep;
 
 import java.io.File;
 import java.io.IOException;
