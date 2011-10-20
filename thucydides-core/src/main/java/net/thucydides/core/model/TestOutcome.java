@@ -10,6 +10,7 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
+import sun.net.idn.StringPrep;
 
 import java.io.File;
 import java.io.IOException;
@@ -440,6 +441,7 @@ public class TestOutcome {
             addMethodLevelIssuesTo(taggedIssues);
             addClassLevelIssuesTo(taggedIssues);
         }
+        addTitleLevelIssuesTo(taggedIssues);
         return taggedIssues;
     }
 
@@ -462,6 +464,13 @@ public class TestOutcome {
         String[] multipleIssues = TestAnnotations.forClass(testCase).getAnnotatedIssuesForMethod(getMethodName());
         if (multipleIssues != null) {
             issues.addAll(Arrays.asList(multipleIssues));
+        }
+    }
+
+    private void addTitleLevelIssuesTo(Set<String> issues) {
+        List<String> titleIssues = Formatter.issuesIn(getTitle());
+        if (!titleIssues.isEmpty()) {
+            issues.addAll(titleIssues);
         }
     }
 

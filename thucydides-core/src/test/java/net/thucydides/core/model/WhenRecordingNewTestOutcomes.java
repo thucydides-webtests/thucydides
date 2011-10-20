@@ -69,6 +69,22 @@ public class WhenRecordingNewTestOutcomes {
         public void should_do_that() {};
     }
 
+    @Story(AUserStory.class)
+    class SomeAnnotatedTestScenarioWithAnIssue {
+        @Title("Really should do this! (#ISSUE-123)")
+        public void should_do_this() {};
+        public void should_do_that() {};
+    }
+
+    @Story(AUserStory.class)
+    class SomeAnnotatedTestScenarioWithManyIssues {
+        @Issue("#ISSUE-456")
+        @Issues({"#ISSUE-100", "#ISSUE-200"})
+        @Title("Really should do this! (#ISSUE-123)")
+        public void should_do_this() {};
+        public void should_do_that() {};
+    }
+
     @Rule
     public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
 
@@ -146,6 +162,30 @@ public class WhenRecordingNewTestOutcomes {
 
         assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123)"));
     }
+
+    @Test
+    public void a_test_outcome_should_know_what_issues_there_are() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        assertThat(outcome.getIssues(), hasItem("#ISSUE-123"));
+    }
+
+    @Test
+    public void a_test_outcome_should_know_what_issues_there_are_in_the_title() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenarioWithAnIssue.class);
+
+        assertThat(outcome.getIssues(), hasItem("#ISSUE-123"));
+    }
+
+
+    @Test
+    public void should_find_all_the_issues_in_a_test() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenarioWithManyIssues.class);
+
+        assertThat(outcome.getIssues(), hasItems("#ISSUE-123", "#ISSUE-456", "#ISSUE-100", "#ISSUE-200"));
+    }
+
+
 
     @Test
     public void a_test_outcome_should_inject_issue_links_from_the_Issue_annotation_if_requested() {
