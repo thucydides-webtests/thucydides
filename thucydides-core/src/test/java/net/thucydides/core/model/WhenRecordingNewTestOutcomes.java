@@ -38,6 +38,10 @@ import static org.mockito.Mockito.mock;
 
 public class WhenRecordingNewTestOutcomes {
 
+
+    @Rule
+    public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
+
     TestOutcome testOutcome;
 
     class AUserStory {};
@@ -84,9 +88,6 @@ public class WhenRecordingNewTestOutcomes {
         public void should_do_this() {};
         public void should_do_that() {};
     }
-
-    @Rule
-    public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
 
     @Before
     public void prepareAcceptanceTestRun() {
