@@ -5,6 +5,7 @@ import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
 import static net.thucydides.core.util.NameConverter.withNoArguments;
+import static net.thucydides.core.util.NameConverter.withNoIssueNumbers;
 
 /**
  * Determies the correct default name for test reports.
@@ -54,7 +55,7 @@ public class ReportNamer {
             testName = NameConverter.underscore(testOutcome.getUserStory().getName());
         }
         String scenarioName = NameConverter.underscore(testOutcome.getMethodName());
-        testName = withNoArguments(appendToIfNotNull(testName, scenarioName));
+        testName = withNoIssueNumbers(withNoArguments(appendToIfNotNull(testName, scenarioName)));
         return appendSuffixTo(testName);
     }
 

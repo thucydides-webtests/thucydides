@@ -6,13 +6,13 @@ import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.Title;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.extract;
@@ -113,6 +113,31 @@ public class WhenRecordingNewTestOutcomes {
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
         assertThat(outcome.getIssues(), hasItem("#ISSUE-123"));
+    }
+
+    @Test
+    public void a_test_outcome_can_have_no_issues() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenario.class);
+
+        assertThat(outcome.getIssues().size(), is(0));
+    }
+
+    @Test
+    public void a_test_outcome_can_be_associated_with_an_issue() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenario.class);
+
+        outcome.isRelatedToIssue("#ISSUE-999");
+        outcome.isRelatedToIssue("#ISSUE-000");
+        assertThat(outcome.getIssues(), hasItems("#ISSUE-000", "#ISSUE-999"));
+    }
+
+
+    @Test
+    public void should_be_able_to_add_extra_issues() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+        List<String> extraIssues = Arrays.asList("#ISSUE-456", "#ISSUE-789");
+        outcome.addIssues(extraIssues);
+        assertThat(outcome.getIssues(), hasItems("#ISSUE-123", "#ISSUE-456", "#ISSUE-789"));
     }
 
     @Test

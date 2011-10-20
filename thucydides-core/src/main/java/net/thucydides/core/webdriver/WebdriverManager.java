@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.guice.Injectors;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -19,8 +20,11 @@ public class WebdriverManager {
 
     private final WebDriverFactory webDriverFactory;
 
+    private final Configuration configuration;
+
     public WebdriverManager(final WebDriverFactory webDriverFactory) {
         this.webDriverFactory = webDriverFactory;
+        this.configuration = Injectors.getInjector().getInstance(Configuration.class);
         webdriver = newDriver();
     }
 
@@ -33,7 +37,7 @@ public class WebdriverManager {
      *             if the driver type is not supported.
      */
     protected WebDriver newDriver() {
-        SupportedWebDriver supportedDriverType = Configuration.getDriverType();
+        SupportedWebDriver supportedDriverType = configuration.getDriverType();
         Class<? extends WebDriver> webDriverType = WebDriverFactory.getClassFor(supportedDriverType);
         return WebdriverProxyFactory.getFactory().proxyFor(webDriverType, webDriverFactory);
     }
@@ -50,7 +54,7 @@ public class WebdriverManager {
     }
 
     public Class<? extends WebDriver> getWebDriverClass() {
-        return WebDriverFactory.getClassFor(Configuration.getDriverType());
+        return WebDriverFactory.getClassFor(configuration.getDriverType());
      }
 
 }    

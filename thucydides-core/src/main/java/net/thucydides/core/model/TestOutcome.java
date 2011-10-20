@@ -10,11 +10,9 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.jetty.util.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -74,6 +72,7 @@ public class TestOutcome {
     private String storedTitle;
 
     private Set<String> issues;
+    private Set<String> additionalIssues;
 
     private long duration;
 
@@ -104,6 +103,7 @@ public class TestOutcome {
         startTime = System.currentTimeMillis();
         this.methodName = methodName;
         this.testCase = testCase;
+        this.additionalIssues = new HashSet<String>();
         if (testCase != null) {
             initializeStoryFrom(testCase);
         }
@@ -116,6 +116,7 @@ public class TestOutcome {
         startTime = System.currentTimeMillis();
         this.methodName = methodName;
         this.testCase = testCase;
+        this.additionalIssues = new HashSet<String>();
         this.userStory = userStory;
     }
 
@@ -410,11 +411,27 @@ public class TestOutcome {
         this.annotatedResult = annotatedResult;
     }
 
-    public Set<String> getIssues() {
-        if (issues == null) {
+    private Set<String> issues() {
+        if (!thereAre(issues)) {
             issues = readIssues();
         }
         return issues;
+    }
+
+    public Set<String> getIssues() {
+        Set<String> allIssues = new HashSet<String>(issues());
+        if (thereAre(additionalIssues)) {
+            allIssues.addAll(additionalIssues);
+        }
+        return allIssues;
+    }
+
+    private boolean thereAre(Set<String> anyIssues) {
+        return ((anyIssues != null) && (!anyIssues.isEmpty()));
+    }
+
+    public void addIssues(List<String> issues) {
+        additionalIssues.addAll(issues);
     }
 
     private Set<String> readIssues() {
@@ -459,7 +476,7 @@ public class TestOutcome {
     }
 
     public void isRelatedToIssue(String issue) {
-        getIssues().add(issue);
+        issues().add(issue);
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {

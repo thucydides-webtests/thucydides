@@ -47,6 +47,39 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     }
 
     @Test
+    public void should_generate_an_HTML_report_for_an_acceptance_test_run_with_spaces_in_the_test_name() throws Exception {
+
+        TestOutcome testOutcome = new TestOutcome("A simple test case");
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        File htmlReport = reporter.generateReportFor(testOutcome);
+
+        assertThat(htmlReport.getName(), is("a_simple_test_case.html"));
+    }
+
+    @Test
+    public void should_generate_an_HTML_report_for_an_acceptance_test_run_with_an_issue_number_in_the_test_name() throws Exception {
+
+        TestOutcome testOutcome = new TestOutcome("A simple test case (#ISSUE-123)");
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        File htmlReport = reporter.generateReportFor(testOutcome);
+
+        assertThat(htmlReport.getName(), is("a_simple_test_case.html"));
+    }
+
+    @Test
+    public void should_generate_an_HTML_report_for_an_acceptance_test_run_with_issue_numbers_in_the_test_name() throws Exception {
+
+        TestOutcome testOutcome = new TestOutcome("A simple test case (#ISSUE-123, #ISSUE-145)");
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        File htmlReport = reporter.generateReportFor(testOutcome);
+
+        assertThat(htmlReport.getName(), is("a_simple_test_case.html"));
+    }
+
+    @Test
     public void css_stylesheets_should_also_be_copied_to_the_output_directory() throws Exception {
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));

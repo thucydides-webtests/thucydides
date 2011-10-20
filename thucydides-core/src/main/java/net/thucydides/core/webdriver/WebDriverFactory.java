@@ -2,6 +2,7 @@ package net.thucydides.core.webdriver;
 
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.Injectors;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -11,7 +12,6 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 
-import java.awt.*;
 import java.io.File;
 
 /**
@@ -29,8 +29,9 @@ public class WebDriverFactory {
     private static final int DEFAULT_HEIGHT = ThucydidesSystemProperty.DEFAULT_HEIGHT;
     private static final int DEFAULT_WIDTH = ThucydidesSystemProperty.DEFAULT_WIDTH;
 
+
     public WebDriverFactory() {
-        this.webdriverInstanceFactory = new WebdriverInstanceFactory();
+        this(new WebdriverInstanceFactory());
     }
 
     public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory) {
@@ -142,7 +143,8 @@ public class WebDriverFactory {
      * Initialize a page object's fields using the specified WebDriver instance.
      */
     public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver) {
-        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, Configuration.getElementTimeout());
+        Configuration configuration = Injectors.getInjector().getInstance(Configuration.class);
+        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, configuration.getElementTimeout());
         PageFactory.initElements(finder, pageObject);
     }
 

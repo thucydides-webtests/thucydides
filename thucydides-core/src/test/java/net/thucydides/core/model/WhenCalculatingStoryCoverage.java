@@ -3,8 +3,12 @@ package net.thucydides.core.model;
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.webdriver.Configuration;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
@@ -28,6 +32,11 @@ public class WhenCalculatingStoryCoverage {
     public SaveWebdriverSystemPropertiesRule rule = new SaveWebdriverSystemPropertiesRule();
 
     List<StoryTestResults> storyResults;
+
+    @Before
+    public void initMocks() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void a_story_with_all_passing_tests_has_a_step_coverage_of_100_percent() {
@@ -187,6 +196,7 @@ public class WhenCalculatingStoryCoverage {
 
     @Test
     public void average_number_of_steps_should_be_a_sensible_default_if_no_system_value_is_defined() {
+
         Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
         StoryTestResults storyResults = new StoryTestResults(story);
         storyResults.recordTestRun(thatIsPendingFor(story, 0));

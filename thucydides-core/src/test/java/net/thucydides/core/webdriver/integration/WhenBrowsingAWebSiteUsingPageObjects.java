@@ -3,7 +3,7 @@ package net.thucydides.core.webdriver.integration;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.pages.PageObject;
-import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.After;
@@ -18,7 +18,6 @@ import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
@@ -252,8 +251,8 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     @Test
     public void the_page_can_be_opened_using_an_unsecure_certificates_compatible_profile() {
 
-        System.setProperty(Configuration.WEBDRIVER_DRIVER, "firefox");
-        System.setProperty(Configuration.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER, "true");
+        System.setProperty(SystemPropertiesConfiguration.WEBDRIVER_DRIVER, "firefox");
+        System.setProperty(SystemPropertiesConfiguration.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER, "true");
 
         IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver, 1);
 

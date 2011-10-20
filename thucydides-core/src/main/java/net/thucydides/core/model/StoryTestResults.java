@@ -2,14 +2,13 @@ package net.thucydides.core.model;
 
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
-import net.thucydides.core.ThucydidesSystemProperties;
-import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.reports.html.Formatter;
+import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,12 +38,20 @@ public class StoryTestResults {
     
     private final Story story;
 
-    public final Integer DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT = 5;
+    private final Configuration configuration;
 
     /**
      * Create a new acceptance test run instance.
      */
     public StoryTestResults(final Story story) {
+        this(story, Injectors.getInjector().getInstance(Configuration.class));
+    }
+
+    /**
+     * Create a new acceptance test run instance.
+     */
+    public StoryTestResults(final Story story, Configuration configuration) {
+        this.configuration = configuration;
         testOutcomes = new ArrayList<TestOutcome>();
         this.title = story.getName();
         this.story = story;
@@ -213,8 +220,7 @@ public class StoryTestResults {
         if (totalImplementedTests() > 0) {
             return ((double) getStepCount()) / totalImplementedTests();
         } else {
-            return ThucydidesSystemProperties.getProperties().getIntegerValue(ThucydidesSystemProperty.ESTIMATED_AVERAGE_STEP_COUNT,
-                    DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT);
+            return configuration.getEstimatedAverageStepCount();
         }
     }
 

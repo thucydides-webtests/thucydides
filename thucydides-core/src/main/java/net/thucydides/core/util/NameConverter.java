@@ -66,6 +66,24 @@ public final class NameConverter {
         return stripArgumentsFrom(stripIndexesFrom(methodName));
     }
 
+    public static String withNoIssueNumbers(final String methodName) {
+        if (methodName == null) {
+            return null;
+        }
+        int firstIssueNumberIndex = methodName.indexOf("_(#");
+        if (firstIssueNumberIndex == -1) {
+            firstIssueNumberIndex = methodName.indexOf("(#");
+        }
+        if (firstIssueNumberIndex == -1) {
+            firstIssueNumberIndex = methodName.indexOf("#");
+        }
+        if (firstIssueNumberIndex > 0) {
+            return methodName.substring(0, firstIssueNumberIndex);
+        } else {
+            return methodName;
+        }
+    }
+
     public static String stripArgumentsFrom(final String methodName)  {
         if (methodName == null) {
             return null;
