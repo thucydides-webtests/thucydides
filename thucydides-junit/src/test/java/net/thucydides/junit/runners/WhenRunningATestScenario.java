@@ -7,6 +7,7 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.core.steps.InvalidManagedPagesFieldException;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFailureException;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
@@ -51,15 +52,12 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @After
-    public void resetSystemProperties() {
-        System.setProperty("thucycides.step.delay", "");
-    }
-
     WebdriverInstanceFactory webdriverInstanceFactory;
 
     @Mock
     FirefoxDriver firefoxDriver;
+
+    MockEnvironmentVariables environmentVariables;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -77,7 +75,8 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
             }
         };
 
-        webDriverFactory = new WebDriverFactory(webdriverInstanceFactory);
+        environmentVariables = new MockEnvironmentVariables();
+        webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
 
         StepEventBus.getEventBus().clear();
 

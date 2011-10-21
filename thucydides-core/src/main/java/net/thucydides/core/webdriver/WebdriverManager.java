@@ -22,10 +22,15 @@ public class WebdriverManager {
 
     private final Configuration configuration;
 
-    public WebdriverManager(final WebDriverFactory webDriverFactory) {
+
+    public WebdriverManager(final WebDriverFactory webDriverFactory, Configuration configuration) {
         this.webDriverFactory = webDriverFactory;
-        this.configuration = Injectors.getInjector().getInstance(Configuration.class);
+        this.configuration = configuration;
         webdriver = newDriver();
+    }
+
+    public WebdriverManager(final WebDriverFactory webDriverFactory) {
+        this(webDriverFactory, Injectors.getInjector().getInstance(Configuration.class));
     }
 
     /**

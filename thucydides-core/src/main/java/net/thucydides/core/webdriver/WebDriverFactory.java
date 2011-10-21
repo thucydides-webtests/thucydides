@@ -3,6 +3,7 @@ package net.thucydides.core.webdriver;
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.util.EnvironmentVariables;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -29,13 +30,20 @@ public class WebDriverFactory {
     private static final int DEFAULT_HEIGHT = ThucydidesSystemProperty.DEFAULT_HEIGHT;
     private static final int DEFAULT_WIDTH = ThucydidesSystemProperty.DEFAULT_WIDTH;
 
+    private final EnvironmentVariables environmentVariables;
 
     public WebDriverFactory() {
-        this(new WebdriverInstanceFactory());
+        this(new WebdriverInstanceFactory(), Injectors.getInjector().getInstance(EnvironmentVariables.class));
     }
 
     public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory) {
+        this(webdriverInstanceFactory, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+    }
+
+    public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
+                            EnvironmentVariables environmentVariables) {
         this.webdriverInstanceFactory = webdriverInstanceFactory;
+        this.environmentVariables = environmentVariables;
     }
 
     protected ProfilesIni getAllProfiles() {
@@ -135,8 +143,7 @@ public class WebDriverFactory {
     }
 
     private boolean dontAssumeUntrustedCertificateIssuer() {
-        return !(ThucydidesSystemProperties.getProperties().getBooleanValue(ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER,
-                true));
+        return !(environmentVariables.getBooleanValue(ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER.getPropertyName(), true));
     }
 
     /**

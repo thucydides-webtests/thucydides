@@ -29,6 +29,14 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
         }
     }
 
+    public Boolean getBooleanValue(String name, boolean defaultValue) {
+        if (System.getProperty(name) == null) {
+            return defaultValue;
+        } else {
+            return Boolean.parseBoolean(System.getProperty(name,"false"));
+        }
+    }
+
     public String getProperty(final String name) {
         return System.getProperty(name);
     }

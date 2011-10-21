@@ -13,6 +13,8 @@ public interface EnvironmentVariables {
 
     Integer getIntegerValue(final String name, final Integer defaultValue);
 
+    Boolean getBooleanValue(final String name, boolean defaultValue);
+
     public String getProperty(final String name);
 
     public String getProperty(final String name, final String defaultValue);

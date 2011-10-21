@@ -3,6 +3,7 @@ package net.thucydides.core.webdriver;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.PagesEventListener;
 import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +58,8 @@ public class WhenUsingAWebDriverProxy {
         when(webdriverInstanceFactory.newInstanceOf(InternetExplorerDriver.class)).thenReturn(ieDriver);
         when(webdriverInstanceFactory.newInstanceOf(eq(FirefoxDriver.class), any(FirefoxProfile.class))).thenReturn(firefoxDriver);
 
-        factory = new WebDriverFactory(webdriverInstanceFactory);
+        MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        factory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
 
         webdriverManager = new WebdriverManager(factory);
     }

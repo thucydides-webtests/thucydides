@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -46,7 +47,8 @@ public class WhenInstanciatingANewDriver {
         when(webdriverInstanceFactory.newInstanceOf(InternetExplorerDriver.class)).thenReturn(ieDriver);
         when(webdriverInstanceFactory.newInstanceOf(eq(FirefoxDriver.class), any(FirefoxProfile.class))).thenReturn(firefoxDriver);
 
-        webDriverFactory = new WebDriverFactory(webdriverInstanceFactory);
+        MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
     }
 
     @Test
