@@ -25,4 +25,6 @@ public interface Configuration {
     File getOutputDirectory();
 
     double getEstimatedAverageStepCount();
+
+    boolean onlySaveFailingScreenshots();
 }

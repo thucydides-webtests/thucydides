@@ -58,10 +58,4 @@ public class ScenarioSteps implements Serializable {
     public String toString() {
         return this.getClass().getSimpleName();
     }
-
-    /**
-     * Marks the last step in a requirements test.
-     * Used internally to trigger JUnit listener events at the end of a test case.
-     */
-    public void done() {}
 }

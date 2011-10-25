@@ -47,7 +47,7 @@ public class WhenUsingAnnotatedStepLibraries {
     class UserStoryWithWrongStepType {
 
         @Steps
-        public List stepLibrary;
+        public Object stepLibrary;
 
         public StepLibrary unannotatedStepLibrary;
 
@@ -70,10 +70,10 @@ public class WhenUsingAnnotatedStepLibraries {
 
 
     @Test
-    public void annotated_step_library_should_be_of_the_right_type() {
+    public void annotated_step_library_can_be_of_any_type() {
         List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findOptionalAnnotatedFields(UserStoryWithWrongStepType.class);
 
-        assertThat(stepsFields.isEmpty(), is(true));
+        assertThat(stepsFields.size(), is(1));
     }
 
 

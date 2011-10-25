@@ -1,5 +1,9 @@
 package net.thucydides.core.reports.html;
 
+import com.google.inject.Inject;
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.issues.IssueTracking;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +18,17 @@ public class Formatter {
 
     private static final String ISSUE_NUMBER_REGEXP = "#([A-Z][A-Z0-9-_]*)?-?\\d+";
     private final static Pattern issueNumberPattern = Pattern.compile(ISSUE_NUMBER_REGEXP);
-    private final String issueUrlFormat;
     private final String issueLinkFormat = "<a href=\"{0}\">{1}</a>";
 
-    public Formatter(final String issueUrlFormat) {
-        this.issueUrlFormat = issueUrlFormat;
+    private final IssueTracking issueTracking;
+
+    public Formatter() {
+        this(Injectors.getInjector().getInstance(IssueTracking.class));
+    }
+
+    @Inject
+    public Formatter(IssueTracking issueTracking) {
+        this.issueTracking = issueTracking;
     }
 
 
@@ -35,6 +45,7 @@ public class Formatter {
 
     public String addLinks(final String value) {
         String formattedValue = value;
+        String issueUrlFormat = issueTracking.getIssueTrackerUrl();
         if (issueUrlFormat != null) {
             formattedValue = insertIssueTrackingUrls(value);
         }
@@ -43,6 +54,7 @@ public class Formatter {
 
     private String insertIssueTrackingUrls(String value) {
         String formattedValue = value;
+        String issueUrlFormat = issueTracking.getIssueTrackerUrl();
         List<String> issues = issuesIn(value);
         for(String issue : issues) {
             String issueUrl = MessageFormat.format(issueUrlFormat, stripLeadingHashFrom(issue));

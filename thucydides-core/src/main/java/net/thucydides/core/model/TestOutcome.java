@@ -4,10 +4,12 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.TestAnnotations;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -91,6 +93,9 @@ public class TestOutcome {
      */
     private Stack<TestStep> groupStack = new Stack<TestStep>();
 
+
+    private IssueTracking issueTracking;
+
     /**
      * The title is immutable once set. For convenience, you can create a test
      * run directly with a title using this constructor.
@@ -104,11 +109,16 @@ public class TestOutcome {
         this.methodName = methodName;
         this.testCase = testCase;
         this.additionalIssues = new HashSet<String>();
+        this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         if (testCase != null) {
             initializeStoryFrom(testCase);
         }
     }
 
+    public TestOutcome usingIssueTracking(IssueTracking issueTracking) {
+        this.issueTracking = issueTracking;
+        return this;
+    }
     /**
      * A test outcome should relate to a particular test class or user story class.
      */
@@ -118,6 +128,7 @@ public class TestOutcome {
         this.testCase = testCase;
         this.additionalIssues = new HashSet<String>();
         this.userStory = userStory;
+        this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
     }
 
     /**
@@ -177,7 +188,7 @@ public class TestOutcome {
     }
 
     private Formatter getFormatter() {
-        return new Formatter(IssueTracking.getIssueTrackerUrl());
+        return new Formatter(issueTracking);
     }
 
     private String obtainTitleFromAnnotationOrMethodName() {

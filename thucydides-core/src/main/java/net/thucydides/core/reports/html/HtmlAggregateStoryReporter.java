@@ -2,6 +2,7 @@ package net.thucydides.core.reports.html;
 
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.NumericalFormatter;
@@ -48,10 +49,17 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private TestHistory testHistory;
     private String projectName;
 
+    private final IssueTracking issueTracking;
+
     public HtmlAggregateStoryReporter(final String projectName) {
+        this(projectName, Injectors.getInjector().getInstance(IssueTracking.class));
+    }
+
+    public HtmlAggregateStoryReporter(final String projectName, final IssueTracking issueTracking) {
         storyLoader = new UserStoryLoader();
         featureLoader = new FeatureLoader();
         this.projectName = projectName;
+        this.issueTracking = issueTracking;
     }
 
     public String getProjectName() {
@@ -84,7 +92,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     private void addFormattersToContext(final Map<String, Object> context) {
-        Formatter formatter = new Formatter(IssueTracking.getIssueTrackerUrl());
+        Formatter formatter = new Formatter(issueTracking);
         context.put("formatter", formatter);
         context.put("formatted", new NumericalFormatter());
     }

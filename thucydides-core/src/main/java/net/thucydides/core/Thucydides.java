@@ -91,7 +91,7 @@ public class Thucydides {
     /**
      * Indicate that the test run using this object is finished, and reports can be generated.
      */
-    public static void done(final Object testClass) {
+    public static void done() {
         getWebdriverManager().closeDriver();
 
     }

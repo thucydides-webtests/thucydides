@@ -31,12 +31,71 @@ public class WhenInstanciatingStepLibraries {
     }
 
     public static class AStepLibrary extends ScenarioSteps {
-        AStepLibrary(Pages pages) {
+        public AStepLibrary(Pages pages) {
             super(pages);
         }
 
         @Step
         public void step1() {}
+
+        @Step
+        public void step2() {}
+    }
+
+
+    public static class ASimpleStepLibrary  {
+        private Pages pages;
+
+        public ASimpleStepLibrary(Pages pages) {
+            this.pages = pages;
+        }
+
+        @Step
+        public void step1() {}
+
+        @Step
+        public void step2() {}
+    }
+
+
+    public static class ASimpleStepLibraryWithAPagesField  {
+        private Pages pages;
+
+        public ASimpleStepLibraryWithAPagesField() {}
+
+        public Pages getPages() {
+            return pages;
+        }
+
+        @Step
+        public void step1() {}
+
+        @Step
+        public void step2() {}
+    }
+
+    public static class ANonWebStepLibrary  {
+
+        public ANonWebStepLibrary() {}
+
+        @Step
+        public void step1() {}
+
+        @Step
+        public void step2() {}
+    }
+
+    public static class ARecursiveNonWebStepLibrary  {
+
+        ARecursiveNonWebStepLibrary() {}
+
+        @Steps
+        ARecursiveNonWebStepLibrary aRecursiveNonWebStepLibrary;
+
+        @Step
+        public void step1() {
+            aRecursiveNonWebStepLibrary.step2();
+        }
 
         @Step
         public void step2() {}
@@ -49,6 +108,21 @@ public class WhenInstanciatingStepLibraries {
 
         @Steps
         public AStepLibrary aStepLibrary;
+
+        @Step
+        public void step1() {}
+
+        @Step
+        public void step2() {}
+    }
+
+
+    public static class ANonWebNestedStepLibrary  {
+        ANonWebNestedStepLibrary() {
+        }
+
+        @Steps
+        public ANonWebStepLibrary aStepLibrary;
 
         @Step
         public void step1() {}
@@ -104,12 +178,36 @@ public class WhenInstanciatingStepLibraries {
     }
 
     @Test
+    public void should_instanciate_step_library_instance_for_parentless_step_classes() {
+        ASimpleStepLibrary steps = stepFactory.getStepLibraryFor(ASimpleStepLibrary.class);
+
+        assertThat(steps, is(notNullValue()));
+    }
+
+    @Test
+    public void should_instanciate_step_library_instances_with_a_pages_field() {
+        ASimpleStepLibraryWithAPagesField steps = stepFactory.getStepLibraryFor(ASimpleStepLibraryWithAPagesField.class);
+
+        assertThat(steps.getPages(), is(notNullValue()));
+    }
+
+
+    @Test
     public void should_instanciate_nested_step_library_instances() {
         ANestedStepLibrary steps = stepFactory.getStepLibraryFor(ANestedStepLibrary.class);
 
         assertThat(steps, is(notNullValue()));
         assertThat(steps.aStepLibrary, is(notNullValue()));
     }
+
+    @Test
+    public void should_instanciate_non_web_nested_step_library_instances() {
+        ANonWebNestedStepLibrary steps = stepFactory.getStepLibraryFor(ANonWebNestedStepLibrary.class);
+
+        assertThat(steps, is(notNullValue()));
+        assertThat(steps.aStepLibrary, is(notNullValue()));
+    }
+
 
     @Test
     public void should_correctly_instanciate_recursive_nested_step_library_instances() {
@@ -119,6 +217,15 @@ public class WhenInstanciatingStepLibraries {
         assertThat(steps.aStepLibrary, is(notNullValue()));
         assertThat(steps.aRecursiveNestedStepLibrary, is(notNullValue()));
     }
+
+    @Test
+    public void should_correctly_instanciate_recursive_nested_non_web_step_library_instances() {
+        ARecursiveNonWebStepLibrary steps = stepFactory.getStepLibraryFor(ARecursiveNonWebStepLibrary.class);
+
+        assertThat(steps, notNullValue());
+        assertThat(steps.aRecursiveNonWebStepLibrary, is(notNullValue()));
+    }
+
 
     @Test
     public void should_correctly_instanciate_cyclic_nested_step_library_instances() {

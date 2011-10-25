@@ -9,9 +9,8 @@ public abstract class AbstractTestStepRunnerTest {
         super();
     }
 
-    protected ThucydidesRunner getTestRunnerUsing(Class<?> testClass,
-            WebDriverFactory browserFactory) throws InitializationError {
-        ThucydidesRunner runner = new ThucydidesRunner(testClass); //new MockTestStepRunner(testClass, browserFactory);
+    protected ThucydidesRunner getTestRunnerUsing(Class<?> testClass) throws InitializationError {
+        ThucydidesRunner runner = new ThucydidesRunner(testClass);
         return runner;
     }
     

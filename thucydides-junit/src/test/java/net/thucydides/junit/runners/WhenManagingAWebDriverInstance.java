@@ -150,12 +150,4 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
 
         verify(firefoxDriver).get("http://www.wikipedia.com");
     }
-    
-    @Test(expected=InvalidManagedWebDriverFieldException.class)
-    public void when_no_annotated_field_is_found_an_exception_is_thrown() throws InitializationError {
-
-        ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithUnannotatedWebDriver.class, webDriverFactory);
-
-        runner.run(new RunNotifier());
-    }    
 }

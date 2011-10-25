@@ -4,6 +4,7 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.reports.templates.ReportTemplate;
 import net.thucydides.core.reports.templates.TemplateManager;
+import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +24,19 @@ public abstract class HtmlReporter {
     private static final String DEFAULT_RESOURCE_DIRECTORY = "report-resources";
     private String resourceDirectory = DEFAULT_RESOURCE_DIRECTORY;
     private File outputDirectory;
-    private TemplateManager templateManager;
+    private final TemplateManager templateManager;
+    private final EnvironmentVariables environmentVariables;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlReporter.class);
 
     public HtmlReporter() {
+        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+    }
+
+    public HtmlReporter(final EnvironmentVariables environmentVariables) {
         super();
-        templateManager = Injectors.getInjector().getInstance(TemplateManager.class);
+        this.templateManager = Injectors.getInjector().getInstance(TemplateManager.class);
+        this.environmentVariables = environmentVariables;
     }
 
     private TemplateManager getTemplateManager() {
@@ -58,6 +65,10 @@ public abstract class HtmlReporter {
         return resourceDirectory;
     }
 
+    protected EnvironmentVariables getEnvironmentVariables() {
+        return environmentVariables;
+    }
+
     protected void copyResourcesToOutputDirectory() throws IOException {
         updateResourceDirectoryFromSystemPropertyIfDefined();
         HtmlResourceCopier copier = new HtmlResourceCopier(getResourceDirectory());
@@ -66,8 +77,9 @@ public abstract class HtmlReporter {
     }
 
     private void updateResourceDirectoryFromSystemPropertyIfDefined() {
+
         String systemDefinedResourceDirectory
-                = System.getProperty(ThucydidesSystemProperty.REPORT_RESOURCE_PATH.getPropertyName());
+             = getEnvironmentVariables().getProperty(ThucydidesSystemProperty.REPORT_RESOURCE_PATH.getPropertyName());
         if (systemDefinedResourceDirectory != null) {
             setResourceDirectory(systemDefinedResourceDirectory);
         }

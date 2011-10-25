@@ -65,6 +65,15 @@ public class WhenCreatingANewBaseStepListener {
     }
 
     @Test
+    public void should_be_able_to_create_a_base_listener_without_a_page_factory() {
+        Pages pages = new Pages(driver);
+        BaseStepListener baseStepListener = new BaseStepListener(outputDirectory);
+
+        assertThat(baseStepListener.getDriver(), is(nullValue()));
+    }
+
+
+    @Test
     public void when_the_pages_object_has_no_driver_one_should_be_created() {
         Pages pages = new Pages(null);
         BaseStepListener baseStepListener = new BaseStepListener(outputDirectory, pages);
@@ -75,7 +84,7 @@ public class WhenCreatingANewBaseStepListener {
 
     @Test
     public void when_the_pages_is_null_a_new_driver_should_be_created() {
-        BaseStepListener baseStepListener = new BaseStepListener(outputDirectory, null);
+        BaseStepListener baseStepListener = new BaseStepListener(outputDirectory, (Pages) null);
 
         assertThat(baseStepListener.getDriver(), is(not(nullValue())));
     }

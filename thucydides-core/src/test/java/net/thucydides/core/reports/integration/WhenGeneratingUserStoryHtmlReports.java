@@ -5,15 +5,21 @@ import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.Title;
+import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.UserStoryTestReporter;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
+import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +34,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 
 public class WhenGeneratingUserStoryHtmlReports {
 
@@ -35,6 +42,7 @@ public class WhenGeneratingUserStoryHtmlReports {
     public TemporaryFolder temporaryDirectory = new TemporaryFolder();
 
     private net.thucydides.core.model.Story userStory = net.thucydides.core.model.Story.from(AUserStory.class);
+
     private StoryTestResults storyTestResults;
 
     private UserStoryTestReporter reporter;
@@ -66,13 +74,24 @@ public class WhenGeneratingUserStoryHtmlReports {
         public void should_do_that() {};
     }
 
+    IssueTracking issueTracking;
+
+    @Mock
+    Configuration configuration;
+
+    MockEnvironmentVariables environmentVariables;
+
     @Before
     public void setupTestReporter() {
-        reporter = new HtmlAggregateStoryReporter("project");
+        MockitoAnnotations.initMocks(this);
+
+        environmentVariables = new MockEnvironmentVariables();
+        issueTracking = new SystemPropertiesIssueTracking(environmentVariables);
+        reporter = new HtmlAggregateStoryReporter("project", issueTracking);
         outputDirectory = temporaryDirectory.newFolder("temp");
         reporter.setOutputDirectory(outputDirectory);
 
-        storyTestResults = new StoryTestResults(userStory);
+        storyTestResults = new StoryTestResults(userStory, configuration, issueTracking);
         storyTestResults.recordTestRun(thatFailsCalled("should_do_this"));
         storyTestResults.recordTestRun(thatSucceedsCalled("should_do_that"));
         storyTestResults.recordTestRun(thatFailsCalled("should_also_do_this"));
@@ -115,6 +134,26 @@ public class WhenGeneratingUserStoryHtmlReports {
         assertThat(reportText, containsString("href=\"a_user_story_should_do_this.html\""));
         assertThat(reportText, containsString("href=\"a_user_story_should_do_that.html\""));
         assertThat(reportText, containsString("href=\"a_user_story_should_also_do_this.html\""));
+    }
+
+    @Test
+    public void story_title_should_contain_links_to_jira_issues() throws Exception {
+
+        environmentVariables.setProperty("jira.url", "http://my.jira.server");
+        net.thucydides.core.model.Story storyWithIssue = net.thucydides.core.model.Story.withId("aStory", "Story with issue #123");
+        storyTestResults = new StoryTestResults(storyWithIssue, configuration, issueTracking);
+        String title = storyTestResults.getTitleWithLinks();
+        assertThat(title, containsString("<a href=\"http://my.jira.server/browse/123\">#123</a>"));
+    }
+
+    @Test
+    public void story_title_should_contain_links_to_non_jira_issues() throws Exception {
+
+        environmentVariables.setProperty("thucydides.issue.tracker.url", "http://my.trac.server/issue/{0}");
+        net.thucydides.core.model.Story storyWithIssue = net.thucydides.core.model.Story.withId("aStory", "Story with issue #123");
+        storyTestResults = new StoryTestResults(storyWithIssue, configuration, issueTracking);
+        String title = storyTestResults.getTitleWithLinks();
+        assertThat(title, containsString("<a href=\"http://my.trac.server/issue/123\">#123</a>"));
     }
 
     @Test

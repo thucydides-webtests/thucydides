@@ -1,14 +1,10 @@
 package net.thucydides.core.reports.integration;
 
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -294,16 +290,13 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         assertThat(expectedCssStylesheet.exists(), is(true));
     }
 
-    @Rule
-    public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
-
     @Test
     public void a_different_resource_location_can_be_specified_by_using_a_system_property() throws Exception {
 
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        System.setProperty("thucydides.report.resources", "alt-report-resources");
+        environmentVariables.setProperty("thucydides.report.resources", "alt-report-resources");
         reporter.generateReportFor(testOutcome);
         
         File expectedCssStylesheet = new File(new File(outputDirectory,"css"), "alternative.css");

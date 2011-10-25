@@ -2,13 +2,23 @@ package net.thucydides.core.reports.html;
 
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import net.jcip.annotations.Immutable;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.features.FeatureLoader;
+import net.thucydides.core.model.userstories.UserStoryLoader;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.screenshots.ScreenshotFormatter;
 import net.thucydides.core.screenshots.ScreenshotException;
+import net.thucydides.core.util.EnvironmentVariables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,12 +45,21 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
     private String qualifier;
 
+    private final IssueTracking issueTracking;
 
     public void setQualifier(final String qualifier) {
         this.qualifier = qualifier;
     }
 
     public HtmlAcceptanceTestReporter() {
+        super();
+        this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
+    }
+
+    public HtmlAcceptanceTestReporter(final EnvironmentVariables environmentVariables,
+                                      final IssueTracking issueTracking) {
+        super(environmentVariables);
+        this.issueTracking = issueTracking;
     }
 
     public String getName() {
@@ -63,10 +82,24 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         copyResourcesToOutputDirectory();
 
-        generateScreenshotReportsFor(testOutcome);
+        if (containsScreenshots(testOutcome)) {
+            generateScreenshotReportsFor(testOutcome);
+        }
 
         String reportFilename = reportFor(testOutcome);
         return writeReportToOutputDirectory(reportFilename, htmlContents);
+    }
+
+    private boolean containsScreenshots(TestOutcome testOutcome) {
+        return Iterables.any(testOutcome.getTestSteps(), hasScreenshot());
+    }
+
+    private Predicate<TestStep> hasScreenshot() {
+        return new Predicate<TestStep>() {
+            public boolean apply(TestStep testStep) {
+                return (testStep.getScreenshot() != null);
+            }
+        };
     }
 
     private void addTestOutcomeToContext(final TestOutcome testOutcome, final Map<String,Object> context) {
@@ -74,7 +107,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     }
 
     private void addFormattersToContext(final Map<String,Object> context) {
-        Formatter formatter = new Formatter(IssueTracking.getIssueTrackerUrl());
+        Formatter formatter = new Formatter(issueTracking);
         context.put("formatter", formatter);
 
     }

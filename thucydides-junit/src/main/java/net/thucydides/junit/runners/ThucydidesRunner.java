@@ -1,6 +1,7 @@
 package net.thucydides.junit.runners;
 
 import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
@@ -93,11 +94,12 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this(klass, new WebDriverFactory());
     }
 
-    public ThucydidesRunner(final Class<?> klass,
-            final WebDriverFactory webDriverFactory) throws InitializationError {
+    public ThucydidesRunner(final Class<?> klass, final WebDriverFactory webDriverFactory) throws InitializationError {
         super(klass);
-        checkRequestedDriverType();
-        TestCaseAnnotations.checkThatTestCaseIsCorrectlyAnnotated(klass);
+
+        if (TestCaseAnnotations.supportsWebTests(klass)) {
+            checkRequestedDriverType();
+        }
 
         this.webDriverFactory = webDriverFactory;
     }
@@ -157,17 +159,21 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
         stepListener.close();
         generateReportsFor(stepListener.getTestOutcomes());
-        notifyFailures();
         closeDriver();
     }
 
     private void initializeDriversAndListeners(RunNotifier notifier) {
         initWebdriverManager();
         initStepEventBus();
-        Pages newPages = initPagesObjectUsing(webdriverManager.getWebdriver());
-        initListenersUsing(newPages);
+        if (webtestsAreSupported()) {
+            Pages newPages = initPagesObjectUsing(webdriverManager.getWebdriver());
+            initListenersUsing(newPages);
+            initStepFactoryUsing(newPages);
+        }else {
+            initListeners();
+            initStepFactory();
+        }
         notifier.addListener(stepListener);
-        initStepFactoryUsing(newPages);
     }
 
     private void initStepEventBus() {
@@ -180,12 +186,28 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     protected JUnitStepListener initListenersUsing(final Pages pagesObject) {
-        setStepListener(new JUnitStepListener(getConfiguration().loadOutputDirectoryFromSystemProperties(), pagesObject));
+
+        setStepListener(new JUnitStepListener(getConfiguration().loadOutputDirectoryFromSystemProperties(),
+                                          pagesObject));
         return stepListener;
+    }
+
+    protected JUnitStepListener initListeners() {
+
+        setStepListener(new JUnitStepListener(getConfiguration().loadOutputDirectoryFromSystemProperties()));
+        return stepListener;
+    }
+
+    private boolean webtestsAreSupported() {
+        return TestCaseAnnotations.supportsWebTests(this.getTestClass().getJavaClass());
     }
 
     private void initStepFactoryUsing(final Pages pagesObject) {
         stepFactory = new StepFactory(pagesObject);
+    }
+
+    private void initStepFactory() {
+        stepFactory = new StepFactory();
     }
 
     private void closeDriver() {
@@ -205,10 +227,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             reportService = new ReportService(getOutputDirectory(), getDefaultReporters());
         }
         return reportService;
-    }
-
-    private void notifyFailures() {
-        stepFactory.notifyStepFinished();
     }
 
     /**
@@ -286,10 +304,14 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     @Override
     protected Statement methodInvoker(final FrameworkMethod method, final Object test) {
 
-        injectDriverInto(test);
-        injectAnnotatedPagesObjectInto(test);
+        if (webtestsAreSupported()) {
+            injectDriverInto(test);
+            injectAnnotatedPagesObjectInto(test);
+            uniqueSession = TestCaseAnnotations.forTestCase(test).isUniqueSession();
+
+        }
+
         injectScenarioStepsInto(test);
-        uniqueSession = TestCaseAnnotations.forTestCase(test).isUniqueSession();
 
         useStepFactoryForDataDrivenSteps();
 

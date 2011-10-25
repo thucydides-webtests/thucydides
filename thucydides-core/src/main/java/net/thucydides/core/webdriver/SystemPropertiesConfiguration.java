@@ -149,6 +149,10 @@ public class SystemPropertiesConfiguration implements Configuration {
                 DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT);
     }
 
+    public boolean onlySaveFailingScreenshots() {
+        return getEnvironmentVariables().getBooleanValue(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), false);
+    }
+
 
     /**
      * Transform a driver type into the SupportedWebDriver enum. Driver type can

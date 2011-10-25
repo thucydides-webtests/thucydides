@@ -604,13 +604,6 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         runner.run(new RunNotifier());
     }
 
-
-    @Test(expected = InvalidManagedPagesFieldException.class)
-    public void the_test_scenario_must_have_a_pages_field() throws InitializationError {
-        ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithoutPages.class);
-        runner.run(new RunNotifier());
-    }
-
     @Test
     public void the_manager_should_ignore_close_if_the_webdriver_if_not_defined() {
         WebdriverManager manager = new WebdriverManager(webDriverFactory);
@@ -716,16 +709,20 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         runner.run(new RunNotifier());
 
         List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new HTMLFileFilter()));
-        assertThat(generatedXMLReports.size(), is(6));
+        assertThat(generatedXMLReports.size(), is(3));
         assertThat(generatedXMLReports, hasItems("sample_passing_scenario_edge_case_1.html",
-                                                 "sample_passing_scenario_edge_case_1_screenshots.html",
                                                  "sample_passing_scenario_edge_case_2.html",
-                                                 "sample_passing_scenario_edge_case_2_screenshots.html",
-                                                 "sample_passing_scenario_happy_day_scenario.html",
-                                                 "sample_passing_scenario_happy_day_scenario_screenshots.html"));
+                                                 "sample_passing_scenario_happy_day_scenario.html"));
 
 
     }
+
+    @Test
+    public void test_scenarios_should_not_need_a_webdriver() throws InitializationError {
+        ThucydidesRunner runner = new ThucydidesRunner(SimpleNonWebScenario.class);
+        runner.run(new RunNotifier());
+    }
+
 
     private class XMLFileFilter implements FilenameFilter {
         public boolean accept(File file, String filename) {

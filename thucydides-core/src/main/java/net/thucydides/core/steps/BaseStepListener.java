@@ -2,7 +2,6 @@ package net.thucydides.core.steps;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
@@ -77,7 +76,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private Configuration configuration;
 
-    private BaseStepListener(final File outputDirectory) {
+    public BaseStepListener(final File outputDirectory) {
         this.proxyFactory = WebdriverProxyFactory.getFactory();
         this.testOutcomes = new ArrayList<TestOutcome>();
         this.currentStepStack = new Stack<TestStep>();
@@ -95,6 +94,21 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public BaseStepListener(final Class<? extends WebDriver> driverClass, final File outputDirectory) {
         this(outputDirectory);
         this.driver = getProxyFactory().proxyFor(driverClass);
+    }
+
+    public BaseStepListener(final Class<? extends WebDriver> driverClass,
+                            final File outputDirectory,
+                            final Configuration configuration) {
+        this(outputDirectory);
+        this.driver = getProxyFactory().proxyFor(driverClass);
+        this.configuration = configuration;
+    }
+
+    public BaseStepListener(final File outputDirectory,
+                            final Configuration configuration) {
+        this(outputDirectory);
+        this.driver = getProxyFactory().proxyFor(null);
+        this.configuration = configuration;
     }
 
     /**
@@ -329,8 +343,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private boolean shouldTakeScreenshotFor(final TestResult result) {
-        String onlySaveFailures = System.getProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "false");
-        Boolean onlySaveFailureScreenshots = Boolean.valueOf(onlySaveFailures);
+        Boolean onlySaveFailureScreenshots = configuration.onlySaveFailingScreenshots();
         return !(onlySaveFailureScreenshots && result != FAILURE);
     }
 

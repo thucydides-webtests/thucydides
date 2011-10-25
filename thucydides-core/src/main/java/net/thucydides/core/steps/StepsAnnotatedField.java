@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Used to identify ScenarioSteps fields that need to be instantiated.
+ * Used to identify Step library fields that need to be instantiated.
  * 
  * @author johnsmart
  * 
@@ -20,7 +20,7 @@ public class StepsAnnotatedField {
     private Field field;
     
     private static final String NO_ANNOTATED_FIELD_ERROR
-        = "No ScenarioSteps field annotated with @Steps was found in the test case.";
+        = "No field annotated with @Steps was found in the test case.";
 
     /**
      * Find the first field in the class annotated with the <b>Managed</b> annotation.
@@ -62,7 +62,7 @@ public class StepsAnnotatedField {
     }
 
     private static boolean isFieldAnnotated(final Field field) {
-        return (fieldIsAnnotatedCorrectly(field) && fieldIsRightType(field));
+        return (fieldIsAnnotatedCorrectly(field));
     }
 
     private static boolean fieldIsRightType(final Field field) {
@@ -81,7 +81,7 @@ public class StepsAnnotatedField {
         return new FieldSetter(field, targetObject);
     }
 
-    public void setValue(final Object testCase, final ScenarioSteps steps) {
+    public void setValue(final Object testCase, final Object steps) {
         try {
             set(testCase).to(steps);
         } catch (IllegalAccessException e) {

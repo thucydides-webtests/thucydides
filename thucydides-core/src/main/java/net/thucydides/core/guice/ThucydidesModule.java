@@ -1,6 +1,8 @@
 package net.thucydides.core.guice;
 
 import com.google.inject.AbstractModule;
+import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.reports.json.ColorScheme;
@@ -21,5 +23,6 @@ public class ThucydidesModule extends AbstractModule {
         bind(TemplateManager.class).to(FreeMarkerTemplateManager.class);
         bind(EnvironmentVariables.class).to(SystemEnvironmentVariables.class);
         bind(Configuration.class).to(SystemPropertiesConfiguration.class);
+        bind(IssueTracking.class).to(SystemPropertiesIssueTracking.class);
     }
 }

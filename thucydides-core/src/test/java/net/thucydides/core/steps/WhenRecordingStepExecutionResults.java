@@ -4,7 +4,6 @@ import net.thucydides.core.ListenerInWrongPackage;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
@@ -13,6 +12,9 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
 import net.thucydides.core.steps.samples.NestedScenarioSteps;
+import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -31,7 +33,6 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -56,9 +57,6 @@ public class WhenRecordingStepExecutionResults {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-    @Rule
-    public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
 
     File outputDirectory;
 
@@ -88,6 +86,10 @@ public class WhenRecordingStepExecutionResults {
         }
     }
 
+    MockEnvironmentVariables environmentVariables;
+
+    Configuration configuration;
+
     @Before
     public void createStepListenerAndFactory() throws IOException {
         MockitoAnnotations.initMocks(this);
@@ -95,7 +97,10 @@ public class WhenRecordingStepExecutionResults {
         screenshot = temporaryFolder.newFile("screenshot.jpg");
         stepFactory = new StepFactory(pages);
 
-        stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        environmentVariables = new MockEnvironmentVariables();
+        configuration = new SystemPropertiesConfiguration(environmentVariables);
+
+        stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory, configuration);
         stepListener.setDriver(driver);
         when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot);
 
@@ -149,7 +154,7 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_listener_can_create_a_new_driver_if_the_pages_factory_is_not_defined() {
 
-        BaseStepListener listener = new BaseStepListener(outputDirectory, null);
+        BaseStepListener listener = new BaseStepListener(outputDirectory, (Pages) null);
 
         assertThat(listener.getDriver(), is(notNullValue()));
     }
@@ -527,6 +532,7 @@ public class WhenRecordingStepExecutionResults {
         assertThat(testOutcome.getResult(), is(TestResult.FAILURE));
     }
 
+
     @Test
     public void a_failing_step_should_record_the_failure_cause() {
 
@@ -879,14 +885,12 @@ public class WhenRecordingStepExecutionResults {
 
         FlatScenarioSteps steps =  stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
-        System.setProperty(ThucydidesSystemProperty.STEP_DELAY.getPropertyName(), "100");
+        environmentVariables.setProperty(ThucydidesSystemProperty.STEP_DELAY.getPropertyName(), "100");
 
         long startTime = System.currentTimeMillis();
         steps.step_one();
         steps.step_two();
         long stepDuration = System.currentTimeMillis() - startTime;
-
-        System.setProperty(ThucydidesSystemProperty.STEP_DELAY.getPropertyName(), "");
 
         assertThat((int)stepDuration, greaterThanOrEqualTo(100));
     }
@@ -938,6 +942,7 @@ public class WhenRecordingStepExecutionResults {
 
         verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
     }
+
     @Test
     public void screenshots_should_have_corresponding_html_pages() {
 
@@ -962,7 +967,7 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
         StepEventBus.getEventBus().testStarted("app_should_work");
 
-        System.setProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "true");
+        environmentVariables.setProperty("thucydides.only.save.failing.screenshots", "true");
 
         FlatScenarioSteps steps =  stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
@@ -1007,7 +1012,7 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
         StepEventBus.getEventBus().testStarted("app_should_work");
 
-        System.setProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "true");
+        environmentVariables.setProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "true");
 
         FlatScenarioSteps steps =  stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();

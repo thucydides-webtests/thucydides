@@ -25,9 +25,9 @@ public final class StepAnnotations {
     /**
      * Instantiates the step scenario fields in a test case.
      */
-    public static void injectNestedScenarioStepsInto(final ScenarioSteps scenarioSteps,
+    public static void injectNestedScenarioStepsInto(final Object scenarioSteps,
                                                      final StepFactory stepFactory,
-                                                     final Class<? extends ScenarioSteps> scenarioStepsClass) {
+                                                     final Class<?> scenarioStepsClass) {
         List<StepsAnnotatedField> stepsFields = StepsAnnotatedField.findOptionalAnnotatedFields(scenarioStepsClass);
         instanciateScenarioStepFields(scenarioSteps, stepFactory, stepsFields);
      }
@@ -41,10 +41,12 @@ public final class StepAnnotations {
         }
     }
 
-    private static void instantiateAnyUnitiaializedSteps(Object testCaseOrSteps, StepFactory stepFactory, StepsAnnotatedField stepsField) {
+    private static void instantiateAnyUnitiaializedSteps(Object testCaseOrSteps,
+                                                         StepFactory stepFactory,
+                                                         StepsAnnotatedField stepsField) {
         if (!stepsField.isInstantiated(testCaseOrSteps)) {
            Class<? extends ScenarioSteps> scenarioStepsClass = stepsField.getFieldClass();
-           ScenarioSteps steps = stepFactory.getStepLibraryFor(scenarioStepsClass);
+           Object steps = stepFactory.getStepLibraryFor(scenarioStepsClass);
            stepsField.setValue(testCaseOrSteps, steps);
            injectNestedScenarioStepsInto(steps, stepFactory, scenarioStepsClass);
        }

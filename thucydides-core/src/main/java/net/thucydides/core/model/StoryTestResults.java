@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.reports.html.Formatter;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,21 +41,27 @@ public class StoryTestResults {
 
     private final Configuration configuration;
 
+    private final Formatter formatter;
     /**
      * Create a new acceptance test run instance.
      */
     public StoryTestResults(final Story story) {
-        this(story, Injectors.getInjector().getInstance(Configuration.class));
+        this(story,
+             Injectors.getInjector().getInstance(Configuration.class),
+             Injectors.getInjector().getInstance(IssueTracking.class));
     }
 
     /**
      * Create a new acceptance test run instance.
      */
-    public StoryTestResults(final Story story, Configuration configuration) {
+    public StoryTestResults(final Story story,
+                            Configuration configuration,
+                            IssueTracking issueTracking) {
         this.configuration = configuration;
         testOutcomes = new ArrayList<TestOutcome>();
         this.title = story.getName();
         this.story = story;
+        formatter = new Formatter(issueTracking);
     }
 
     public long getDuration() {
@@ -169,7 +176,7 @@ public class StoryTestResults {
     }
 
     private Formatter getFormatter() {
-        return new Formatter(IssueTracking.getIssueTrackerUrl());
+        return formatter;
     }
 
     public int getStepCount() {

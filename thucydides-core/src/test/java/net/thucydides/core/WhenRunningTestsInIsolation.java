@@ -81,7 +81,7 @@ public class WhenRunningTestsInIsolation {
 
        Thucydides.useMockDriver(mockDriver);
 
-       Thucydides.done(sampleTestClass);
+       Thucydides.done();
 
        verify(mockDriver).close();
    }

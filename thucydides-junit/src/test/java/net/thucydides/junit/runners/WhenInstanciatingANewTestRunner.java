@@ -36,7 +36,7 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
     public void the_default_output_directory_should_follow_the_maven_convention() throws InitializationError {
 
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 
         File outputDirectory = runner.getOutputDirectory();
 
@@ -52,7 +52,7 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
             System.setProperty("webdriver.driver", "htmlunit");
 
             WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-            ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class, mockBrowserFactory);
+            ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 
             runner.run(new RunNotifier());
 
@@ -70,7 +70,7 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
             System.setProperty("webdriver.driver", "opera");
 
             WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-            ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class, mockBrowserFactory);
+            ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 
             runner.run(new RunNotifier());
 
@@ -89,7 +89,7 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
                 + "thucydides");
 
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 
         File outputDirectory = runner.getOutputDirectory();
 
@@ -103,7 +103,7 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
     public void the_output_directory_can_be_defined_by_a_system_property_using_any_standard_separators() throws InitializationError {
 
         WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
-        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class, mockBrowserFactory);
+        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 
         System.setProperty("thucydides.outputDirectory", "target/reports/thucydides");
 

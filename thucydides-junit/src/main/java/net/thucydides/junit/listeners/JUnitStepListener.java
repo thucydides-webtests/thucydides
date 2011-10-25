@@ -24,7 +24,13 @@ public class JUnitStepListener extends RunListener {
 
 	private BaseStepListener baseStepListener;
 
-	public JUnitStepListener(final File outputDirectory, final Pages pages) {
+	public JUnitStepListener(final File outputDirectory) {
+		baseStepListener = new BaseStepListener(outputDirectory);
+		StepEventBus.getEventBus().registerListener(baseStepListener);
+	}
+
+
+    public JUnitStepListener(final File outputDirectory, final Pages pages) {
 		baseStepListener = new BaseStepListener(outputDirectory, pages);
 		StepEventBus.getEventBus().registerListener(baseStepListener);
 	}

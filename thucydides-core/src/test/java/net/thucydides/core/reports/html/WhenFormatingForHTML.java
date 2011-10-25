@@ -1,7 +1,11 @@
 package net.thucydides.core.reports.html;
 
+import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.NumericalFormatter;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
@@ -9,12 +13,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 
 public class WhenFormatingForHTML {
 
+    @Mock
+    IssueTracking issueTracking;
+
+    @Before
+    public void prepareFormatter() {
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     public void should_include_issue_tracking_link() {
-        Formatter formatter = new Formatter("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
+        Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("Fixes issue #123");
 
@@ -23,7 +37,8 @@ public class WhenFormatingForHTML {
 
     @Test
     public void should_include_multiple_issue_tracking_links() {
-        Formatter formatter = new Formatter("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
+        Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("A scenario with about issues #123 and #456");
 
@@ -32,7 +47,8 @@ public class WhenFormatingForHTML {
 
     @Test
     public void should_allow_letters_and_numbers_in_issue_number() {
-        Formatter formatter = new Formatter("http://my.issue.tracker/MYPROJECT/browse/{0}");
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
+        Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("A big story (#MYPROJECT-123,#MYPROJECT-456)");
 
@@ -41,7 +57,8 @@ public class WhenFormatingForHTML {
 
     @Test
     public void should_allow_dashes_in_issue_number() {
-        Formatter formatter = new Formatter("http://my.issue.tracker/MYPROJECT/browse/{0}");
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
+        Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("A big story (#MY-PROJECT-123,#MY-PROJECT-456)");
 
@@ -50,7 +67,8 @@ public class WhenFormatingForHTML {
 
     @Test
     public void should_allow_underscores_in_issue_number() {
-        Formatter formatter = new Formatter("http://my.issue.tracker/MYPROJECT/browse/{0}");
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
+        Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("A big story (#MY_PROJECT_123,#MY_PROJECT_456)");
 
@@ -59,7 +77,8 @@ public class WhenFormatingForHTML {
 
     @Test
     public void should_identify_issues_in_a_text() {
-        Formatter formatter = new Formatter("http://my.issue.tracker");
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker");
+        Formatter formatter = new Formatter(issueTracking);
 
         List<String> issues = formatter.issuesIn("A scenario about issue #123");
 
@@ -68,7 +87,8 @@ public class WhenFormatingForHTML {
 
     @Test
     public void should_identify_multiple_issues_in_a_text() {
-        Formatter formatter = new Formatter("http://my.issue.tracker");
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker");
+        Formatter formatter = new Formatter(issueTracking);
 
         List<String> issues = formatter.issuesIn("A scenario about issue #123,#456, #789");
 
@@ -77,7 +97,18 @@ public class WhenFormatingForHTML {
 
     @Test
     public void should_not_format_issues_if_no_issue_manage_url_is_provided() {
-        Formatter formatter = new Formatter(null);
+        when(issueTracking.getIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.addLinks("A scenario with about issues #123 and #456");
+
+        assertThat(formattedValue, is("A scenario with about issues #123 and #456"));
+    }
+
+    @Test
+    public void should_not_format_issues_if_the_issue_manage_url_is_empty() {
+        when(issueTracking.getIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("A scenario with about issues #123 and #456");
 

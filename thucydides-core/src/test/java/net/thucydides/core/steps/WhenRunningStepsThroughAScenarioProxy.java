@@ -6,7 +6,6 @@ import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.junit.After;
@@ -581,6 +580,38 @@ public class WhenRunningStepsThroughAScenarioProxy {
         verify(driver).get("nested.step_two");
         verify(driver).get("nested.step_three");
         verify(driver).get("nested.nested.step_one");
+    }
+
+    static class IsolatedTestScenarioStepsWithPages {
+
+        private final Pages pages;
+
+        public IsolatedTestScenarioStepsWithPages(Pages pages) {
+            this.pages = pages;
+        }
+
+        public WebDriver getDriver() {
+            return pages.getDriver();
+        }
+
+        public void step1() { getDriver().get("step_one");}
+        public void step2() { getDriver().get("step_two");}
+        public void step3() { getDriver().get("step_three");}
+
+    }
+
+    @Test
+    public void the_proxy_should_execute_steps_for_step_libraries_with_no_parent_class() {
+        IsolatedTestScenarioStepsWithPages steps
+                = factory.getNewStepLibraryFor(IsolatedTestScenarioStepsWithPages.class);
+
+        steps.step1();
+        steps.step2();
+        steps.step3();
+
+        verify(driver).get("step_one");
+        verify(driver).get("step_two");
+        verify(driver).get("step_three");
     }
 
 }

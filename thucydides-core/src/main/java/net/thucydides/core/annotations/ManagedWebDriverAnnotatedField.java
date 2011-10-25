@@ -1,9 +1,16 @@
 package net.thucydides.core.annotations;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import org.openqa.selenium.WebDriver;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.NoSuchElementException;
+
+import static com.google.common.collect.ImmutableSet.copyOf;
 
 /**
  * The WebDriver driver is stored as an annotated field in the test classes.
@@ -16,20 +23,27 @@ public class ManagedWebDriverAnnotatedField {
     private static final String NO_ANNOTATED_FIELD_ERROR 
                                     = "No WebDriver field annotated with @Managed was found in the test case.";
 
-    private Field field;
+    private final Field field;
 
     /**
      * Find the first field in the class annotated with the <b>Managed</b> annotation.
      */
     public static ManagedWebDriverAnnotatedField findFirstAnnotatedField(final Class<?> testClass) {
 
-
-        for (Field field :  AnnotatedFields.of(testClass).allFields()) {
-            if (isFieldAnnotated(field)) {
-                return new ManagedWebDriverAnnotatedField(field);
-            }
+        try {
+            Field annotatedField = Iterables.find(fieldsIn(testClass), withCorrectAnnotations());
+            return new ManagedWebDriverAnnotatedField(annotatedField);
+        } catch(NoSuchElementException e) {
+            throw new InvalidManagedWebDriverFieldException(NO_ANNOTATED_FIELD_ERROR);
         }
-        throw new InvalidManagedWebDriverFieldException(NO_ANNOTATED_FIELD_ERROR);
+    }
+
+    private static Predicate<Field> withCorrectAnnotations() {
+        return new Predicate<Field>() {
+            public boolean apply(Field field) {
+                return isFieldAnnotated(field);
+            }
+        };
     }
 
     private static boolean isFieldAnnotated(final Field field) {
@@ -41,15 +55,7 @@ public class ManagedWebDriverAnnotatedField {
     }
 
     private static boolean fieldIsAnnotatedCorrectly(final Field field) {
-        
-        boolean managedAnnotationFound = false;
-        for (Annotation annotation : field.getAnnotations()) {
-            if (annotation instanceof Managed) {
-                managedAnnotationFound = true;
-                break;
-            }
-        }
-        return managedAnnotationFound;
+        return (field.getAnnotation(Managed.class) != null);
     }
 
     protected ManagedWebDriverAnnotatedField(final Field field) {
@@ -65,6 +71,10 @@ public class ManagedWebDriverAnnotatedField {
                          + field 
                          + " - is this field public?", e);
         }
+    }
+
+    private static ImmutableSet<Field> fieldsIn(Class clazz) {
+        return ImmutableSet.copyOf(AnnotatedFields.of(clazz).allFields());
     }
 
     public boolean isUniqueSession() {

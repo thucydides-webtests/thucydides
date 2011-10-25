@@ -2,15 +2,16 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.rules.MethodRule;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
@@ -22,19 +23,20 @@ public class AbstractReportGenerationTest {
     @Rule
     public TemporaryFolder temporaryDirectory = new TemporaryFolder();
 
-    @Rule
-    public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
-
     protected AcceptanceTestReporter reporter;
 
     protected File outputDirectory;
+
+    protected MockEnvironmentVariables environmentVariables;
 
     public AbstractReportGenerationTest() {
     }
 
     @Before
     public void setupTestReporter() {
-        reporter = new HtmlAcceptanceTestReporter();
+        environmentVariables = new MockEnvironmentVariables();
+        IssueTracking issueTracking = new SystemPropertiesIssueTracking(environmentVariables);
+        reporter = new HtmlAcceptanceTestReporter(environmentVariables, issueTracking);
         outputDirectory = temporaryDirectory.newFolder("target/site/thucydides");
         reporter.setOutputDirectory(outputDirectory);
     }
