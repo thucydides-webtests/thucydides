@@ -11,7 +11,7 @@
 
     <properties>
         <thucydides.version>@project.version@</thucydides.version>
-        <!--<thucydides.version>0.3.3-SNAPSHOT</thucydides.version>-->
+        <!--<thucydides.version>0.4.16-SNAPSHOT</thucydides.version>-->
     </properties>
 
     <dependencies>
@@ -31,8 +31,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.6.1</version>
-            <type>pom</type>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -77,7 +75,7 @@
                     <plugin>
                         <groupId>net.thucydides.maven.plugins</groupId>
                         <artifactId>maven-thucydides-plugin</artifactId>
-                        <version>@project.version@</version>
+                        <version>${thucydides.version}</version>
                     </plugin>
                 </plugins>
             </reporting>
@@ -94,13 +92,13 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-site-plugin</artifactId>
-                        <version>3.0-beta-3</version>
+                        <version>3.0</version>
                         <configuration>
                             <reportPlugins>
                                 <plugin>
                                     <groupId>net.thucydides.maven.plugins</groupId>
                                     <artifactId>maven-thucydides-plugin</artifactId>
-                                    <version>@project.version@</version>
+                                    <version>${thucydides.version}</version>
                                 </plugin>
                             </reportPlugins>
                         </configuration>
