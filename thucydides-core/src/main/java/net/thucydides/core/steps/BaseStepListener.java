@@ -316,6 +316,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     private boolean currentStepExists() {
         return !currentStepStack.isEmpty();
     }
+
     private void takeScreenshotFor(TestResult result) {
         if ((currentStepExists()) && (shouldTakeScreenshotFor(result))) {
             try {
@@ -343,8 +344,11 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private boolean shouldTakeScreenshotFor(final TestResult result) {
-        Boolean onlySaveFailureScreenshots = configuration.onlySaveFailingScreenshots();
-        return !(onlySaveFailureScreenshots && result != FAILURE);
+        if (configuration.onlySaveFailingScreenshots()) {
+            return (result == FAILURE);
+        } else {
+            return true;
+        }
     }
 
     public List<TestOutcome> getTestOutcomes() {

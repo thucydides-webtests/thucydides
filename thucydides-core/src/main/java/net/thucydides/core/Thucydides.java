@@ -42,7 +42,6 @@ public class Thucydides {
         injectDriverInto(testCase);
         injectAnnotatedPagesObjectInto(testCase);
         injectScenarioStepsInto(testCase);
-
     }
 
     private static void initStepListener() {
