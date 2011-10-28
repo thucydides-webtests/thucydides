@@ -36,7 +36,10 @@ public class WhenTakingLargeScreenshots {
 
     @After
     public void closeBrowser() {
-        driver.quit();
+        try {
+            driver.quit();
+        } catch (Exception e) { // Ignore - we don't really care
+        }
     }
 
     @Before
