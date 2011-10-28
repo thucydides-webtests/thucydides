@@ -34,20 +34,23 @@ public class TestHistory {
     protected EnvironmentVariables environmentVariables;
 
     public TestHistory(final String projectName) {
-        dataDirectory = new File(getBaseDirectoryPath());
-        environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        this(projectName, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+    }
+    public TestHistory(final String projectName, final EnvironmentVariables environmentVariables) {
+        this.environmentVariables = environmentVariables;
         this.projectName = projectName;
+        dataDirectory = new File(getBaseDirectoryPath());
     }
 
 
     private String getBaseDirectoryPath() {
         String defaultBaseDirectory = new File(homeDirectory(), ".thucydides").getAbsolutePath();
-        return ThucydidesSystemProperties.getProperties().getValue(ThucydidesSystemProperty.HISTORY_BASE_DIRECTORY,
-                                                                   defaultBaseDirectory);
+        return environmentVariables.getProperty(ThucydidesSystemProperty.HISTORY_BASE_DIRECTORY.getPropertyName(),
+                                                defaultBaseDirectory);
     }
 
     private String homeDirectory() {
-        return System.getProperty("user.home");
+        return environmentVariables.getProperty("user.home");
     }
 
     public void updateData(List<FeatureResults> featureResults) {
@@ -178,9 +181,5 @@ public class TestHistory {
 
     protected EnvironmentVariables getEnvironmentVariables() {
         return environmentVariables;
-    }
-
-    protected void setEnvironmentVariables(final EnvironmentVariables environmentVariables) {
-        this.environmentVariables = environmentVariables;
     }
 }

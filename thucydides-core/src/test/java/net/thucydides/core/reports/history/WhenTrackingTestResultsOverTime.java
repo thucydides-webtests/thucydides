@@ -10,6 +10,7 @@ import net.thucydides.core.model.TestStepFactory;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
@@ -41,22 +42,18 @@ public class WhenTrackingTestResultsOverTime {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    @Rule
-    public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
-
-    @Mock
-    EnvironmentVariables environmentVariables;
+    MockEnvironmentVariables environmentVariables;
 
     @Before
     public void prepareTestHistory() {
         MockitoAnnotations.initMocks(this);
+        environmentVariables = new MockEnvironmentVariables();
 
         originalUserHomeDirectory = System.getProperty("user.home");
         homeDirectory = temporaryFolder.newFolder("home");
-        System.setProperty("user.home", homeDirectory.getAbsolutePath());
+        environmentVariables.setProperty("user.home", homeDirectory.getAbsolutePath());
 
-        testHistory = new TestHistory("project");
-        testHistory.setEnvironmentVariables(environmentVariables);
+        testHistory = new TestHistory("project", environmentVariables);
         testHistory.clearHistory();
 
     }
@@ -77,8 +74,8 @@ public class WhenTrackingTestResultsOverTime {
 
         File customHistoryDir = temporaryFolder.newFolder("history");
 
-        System.setProperty("thucydides.history", customHistoryDir.getAbsolutePath());
-        testHistory = new TestHistory("project");
+        environmentVariables.setProperty("thucydides.history", customHistoryDir.getAbsolutePath());
+        testHistory = new TestHistory("project", environmentVariables);
 
         List<FeatureResults> results = getResults();
         testHistory.updateData(results);
@@ -138,7 +135,7 @@ public class WhenTrackingTestResultsOverTime {
     @Test
     public void should_record_the_build_number_if_present() {
 
-        Mockito.when(environmentVariables.getValue(eq("BUILD_ID"), anyString())).thenReturn("123");
+        environmentVariables.setValue("BUILD_ID","123");
         List<FeatureResults> results = getResults();
         testHistory.updateData(results);
 
@@ -153,7 +150,7 @@ public class WhenTrackingTestResultsOverTime {
     @Test
     public void by_default_the_build_id_is_marked_as_manual() {
 
-        Mockito.when(environmentVariables.getValue("BUILD_ID","MANUAL")).thenReturn("MANUAL");
+        environmentVariables.setValue("BUILD_ID","MANUAL");
 
         List<FeatureResults> results = getResults();
         testHistory.updateData(results);
