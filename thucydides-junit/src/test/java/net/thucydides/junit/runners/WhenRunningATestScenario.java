@@ -21,6 +21,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
@@ -36,6 +37,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
@@ -471,7 +473,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         List<TestStep> steps = testOutcome.getTestSteps();
         assertThat(steps.size(), is(7));
 
-        verify(firefoxDriver, times(4)).getScreenshotAs(OutputType.FILE);
+        verify(firefoxDriver, times(4)).getScreenshotAs((OutputType<Object>) Matchers.anyObject());
 
     }
 

@@ -13,6 +13,7 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.verify;
 
@@ -125,7 +127,7 @@ public class WhenTakingLargeScreenshots {
         };
         File screenshot = photographer.takeScreenshot("screenshot");  // should not throw an exception
         if (screenshot == null) {
-            verify(logger).error(contains("Failed to write screenshot"));
+            verify(logger).warn(contains("Failed to write screenshot"), any(WebDriverException.class));
         }
     }
 

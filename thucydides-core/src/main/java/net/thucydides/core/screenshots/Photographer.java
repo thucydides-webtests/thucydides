@@ -1,5 +1,6 @@
 package net.thucydides.core.screenshots;
 
+import net.thucydides.core.webdriver.WebDriverFacade;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -85,24 +86,23 @@ public class Photographer {
      * Take a screenshot of the current browser and store it in the output directory.
      */
     public File takeScreenshot(final String prefix) {
+        File screenshot = null;
         if (driverCanTakeSnapshots()) {
             OutputStream stream = null;
-            File screenshot = null;
             try {
                 byte[] screenshotData = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-
-                File temporaryFolder = FileUtils.getTempDirectory();
-                String snapshotName = getTemporarySnapshotName();
-                screenshot = new File(temporaryFolder, snapshotName);
-                stream = new FileOutputStream(screenshot);
-                stream.write(screenshotData);
-
+                    if (screenshotData != null) {
+                    File temporaryFolder = FileUtils.getTempDirectory();
+                    String snapshotName = getTemporarySnapshotName();
+                    screenshot = new File(temporaryFolder, snapshotName);
+                    stream = new FileOutputStream(screenshot);
+                    stream.write(screenshotData);
+                }
                 if ((screenshot != null) && (screenshot.exists())) {
                     return saveScreenshoot(prefix, screenshot);
                 }
             } catch (Throwable e) {
-                getLogger().error("Failed to write screenshot (possibly an out of memory error)");
-                getLogger().debug("Screenshot failure", e);
+                getLogger().warn("Failed to write screenshot (possibly an out of memory error)", e);
             } finally {
                 if (stream != null)
                     try {
@@ -110,7 +110,7 @@ public class Photographer {
                     } catch (IOException e) {} // Ignore any error on close
             }
         }
-        return null;
+        return screenshot;
 
     }
 
@@ -122,7 +122,13 @@ public class Photographer {
     }
 
     private boolean driverCanTakeSnapshots() {
-        return (driver instanceof TakesScreenshot);
+        if (driver == null) {
+            return false;
+        } else if (driver instanceof WebDriverFacade) {
+            return ((WebDriverFacade) driver).canTakeScreenshots();
+        } else {
+            return TakesScreenshot.class.isAssignableFrom(driver.getClass());
+        }
     }
 
     private void savePageSourceFor(final String screenshotFile) throws IOException {

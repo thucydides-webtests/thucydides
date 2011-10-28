@@ -217,4 +217,8 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
         return getProxiedDriver().manage();
     }
+
+    public boolean canTakeScreenshots() {
+        return (driverClass != null) && (TakesScreenshot.class.isAssignableFrom(driverClass));
+    }
 }

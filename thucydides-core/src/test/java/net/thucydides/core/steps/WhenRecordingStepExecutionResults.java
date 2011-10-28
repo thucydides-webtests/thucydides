@@ -36,7 +36,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Matchers.any;
@@ -62,7 +61,7 @@ public class WhenRecordingStepExecutionResults {
 
     File outputDirectory;
 
-    File screenshot;
+    byte[] screenshot;
 
     @Mock
     FirefoxDriver driver;
@@ -96,7 +95,7 @@ public class WhenRecordingStepExecutionResults {
     public void createStepListenerAndFactory() throws IOException {
         MockitoAnnotations.initMocks(this);
         outputDirectory = temporaryFolder.newFolder("thucydides");
-        screenshot = temporaryFolder.newFile("screenshot.jpg");
+        screenshot = new byte[10000];
         stepFactory = new StepFactory(pages);
 
         environmentVariables = new MockEnvironmentVariables();

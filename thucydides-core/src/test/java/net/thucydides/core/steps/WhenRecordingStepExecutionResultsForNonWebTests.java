@@ -1,18 +1,11 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.ListenerInWrongPackage;
-import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
-import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.screenshots.ScreenshotException;
-import net.thucydides.core.steps.samples.FlatScenarioSteps;
 import net.thucydides.core.steps.samples.FlatScenarioStepsWithoutPages;
-import net.thucydides.core.steps.samples.NestedScenarioSteps;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
@@ -26,28 +19,14 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import sample.listeners.SampleStepListener;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.matchers.JUnitMatchers.everyItem;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * We record step execution results using a StepListener.

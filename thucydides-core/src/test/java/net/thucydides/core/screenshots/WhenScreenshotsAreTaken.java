@@ -30,7 +30,7 @@ public class WhenScreenshotsAreTaken {
     public TemporaryFolder temporaryDirectory = new TemporaryFolder();
 
     private File screenshotDirectory;
-    private File screenshotTaken;
+    private byte[] screenshotTaken;
 
     @Mock
     private FirefoxDriver driver;
@@ -49,14 +49,14 @@ public class WhenScreenshotsAreTaken {
     @Before
     public void prepareTemporaryFilesAndDirectories() throws IOException {
         screenshotDirectory = temporaryDirectory.newFolder("screenshots");
-        screenshotTaken = temporaryDirectory.newFile("screenshot.png");
+        screenshotTaken = new byte[10000];
     }
 
     
     @Test
     public void the_driver_should_capture_the_image() throws IOException {
 
-        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         photographer.takeScreenshot("screenshot");
         
         verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());        
@@ -66,7 +66,7 @@ public class WhenScreenshotsAreTaken {
     @Test
     public void should_not_take_a_snapshot_if_unsupported_by_the_driver() throws IOException {
 
-        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         Photographer photographer = new Photographer(htmlDriver, screenshotDirectory);
         photographer.takeScreenshot("screenshot");
 
@@ -76,7 +76,7 @@ public class WhenScreenshotsAreTaken {
     @Test
     public void the_driver_should_save_the_corresponding_source_code() throws IOException {
 
-        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         when(driver.getPageSource()).thenReturn("<html/>");
         photographer.takeScreenshot("screenshot");
 
@@ -86,7 +86,7 @@ public class WhenScreenshotsAreTaken {
     @Test
     public void the_screenshot_should_be_stored_in_the_target_directory() throws IOException {
 
-        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         
         String screenshotFile = photographer.takeScreenshot("screenshot").getName();
         File savedScreenshot = new File(screenshotDirectory, screenshotFile);
@@ -97,7 +97,7 @@ public class WhenScreenshotsAreTaken {
     @Test
     public void the_photographer_should_return_the_stored_screenshot_filename() throws IOException {
 
-        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         
         String savedFileName = photographer.takeScreenshot("screenshot").getName();
         
@@ -110,7 +110,7 @@ public class WhenScreenshotsAreTaken {
     @Test
     public void the_photographer_should_provide_the_HTML_source_code_for_a_given_screenshot() throws IOException {
 
-        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         when(driver.getPageSource()).thenReturn("<html/>");
 
         File screenshotFile = photographer.takeScreenshot("screenshot");
@@ -123,7 +123,7 @@ public class WhenScreenshotsAreTaken {
     @Test
     public void successive_screenshots_should_have_different_names() throws IOException {
 
-        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         
         String screenshotName1 = photographer.takeScreenshot("screenshot").getName();
         String screenshotName2 = photographer.takeScreenshot("screenshot").getName();
@@ -133,7 +133,7 @@ public class WhenScreenshotsAreTaken {
 
     @Test
     public void calling_api_generates_a_filename_safe_hashed_name_for_the_screenshot() throws IOException {
-        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
 
         String screenshotFile = photographer.takeScreenshot("test1_finished").getName();
         
@@ -142,7 +142,7 @@ public class WhenScreenshotsAreTaken {
     
     @Test
     public void by_default_screenshot_files_start_with_Screenshot() throws IOException {
-        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
 
         String screenshotFile = photographer.takeScreenshot("screenshot").getName();
         
@@ -158,15 +158,6 @@ public class WhenScreenshotsAreTaken {
         protected File saveScreenshoot(String prefix, File screenshot) throws IOException {
             throw new IOException();
         }
-    }
-
-    @Test(expected = ScreenshotException.class)
-    public void a_screenshot_runtime_exception_should_be_thrown_if_something_goes_wrong() {
-
-        DodgyPhotographer dodgyPhotographer = new DodgyPhotographer(driver, screenshotDirectory);
-        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
-
-        dodgyPhotographer.takeScreenshot("screenshot").getName();
     }
 
 }
