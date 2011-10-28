@@ -144,7 +144,7 @@ public class WhenTakingLargeScreenshots {
         };
         File screenshot = photographer.takeScreenshot("screenshot");  // should not throw an exception
         if (screenshot == null) {
-            verify(logger).error(contains("Failed to write screenshot"), any(WebDriverException.class));
+            verify(logger).warn(contains("Failed to write screenshot"), any(WebDriverException.class));
         } else {
             File expectedScreenshot = fileInClasspathCalled("screenshots/expected-big-screenshot.png");
             assertThat(FileUtils.contentEquals(screenshot, expectedScreenshot), is(true));
