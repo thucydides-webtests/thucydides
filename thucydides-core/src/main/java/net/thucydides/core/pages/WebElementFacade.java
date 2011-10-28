@@ -1,6 +1,8 @@
 package net.thucydides.core.pages;
 
+import ch.lambdaj.function.convert.Converter;
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
@@ -8,13 +10,15 @@ import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.*;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static ch.lambdaj.Lambda.convert;
 
 
 /**
@@ -154,6 +158,24 @@ public class WebElementFacade {
     }
 
     /**
+     * Does this dropdown contain the specified value.
+     */
+    public boolean containsSelectOption(final String value) {
+        return getSelectOptions().contains(value);
+    }
+
+    public List<String> getSelectOptions() {
+        List<WebElement> results = webElement.findElements(By.tagName("option"));
+        return convert(results, new ExtractText());
+    }
+
+    class ExtractText implements Converter<WebElement, String> {
+        public String convert(WebElement from) {
+            return from.getText();
+        }
+    }
+
+    /**
      * Check that an element contains a text value
      *
      * @param textValue
@@ -162,6 +184,14 @@ public class WebElementFacade {
         if (!containsText(textValue)) {
             String errorMessage = String.format(
                     "The text '%s' was not found in the web element", textValue);
+            throw new AssertionError(errorMessage);
+        }
+    }
+
+    public void shouldContainSelectedOption(String textValue) {
+        if (!containsSelectOption(textValue)) {
+            String errorMessage = String.format(
+                    "The list element '%s' was not found in the web element", textValue);
             throw new AssertionError(errorMessage);
         }
     }

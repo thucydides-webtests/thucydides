@@ -7,7 +7,6 @@ import net.thucydides.core.pages.WebElementFacade;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.internal.runners.statements.ExpectException;
 import org.junit.rules.ExpectedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
@@ -19,7 +18,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
 public abstract class AbstractWhenUsingTheFluentElementAPI {
@@ -308,6 +307,25 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
     public void should_contain_text_passes_if_field_contains_text() {
         page.element(page.colors).shouldContainText("Red");
     }
+    @Test
+    public void should_contain_entry_passes_if_dropdown_contains_text() {
+        page.element(page.colors).shouldContainSelectedOption("Red");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void should_contain_entry_fails_if_dropdown_does_not_contain_exact_text() {
+        page.element(page.colors).shouldContainSelectedOption("Red\nBlue");
+    }
+
+    @Test
+    public void should_find_the_list_of_select_options() {
+        assertThat(page.element(page.colors).getSelectOptions(), hasItems("Red","Blue","Green"));
+    }
+
+    @Test
+    public void should_return_an_empty_list_of_select_options_for_a_non_select_field() {
+        assertThat(page.element(page.checkbox).getSelectOptions().size(), is(0));
+    }
 
     @Test
     public void should_contain_texts_passes_if_page_contains_all_texts() {
@@ -595,6 +613,11 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     @Test
     public void should_detect_text_contained_in_a_web_element() {
+        assertThat(page.element(page.grid).containsText("joe"), is(true));
+    }
+
+    @Test
+    public void should_detect_dropdown_entry_contained_in_a_web_element() {
         assertThat(page.element(page.grid).containsText("joe"), is(true));
     }
 

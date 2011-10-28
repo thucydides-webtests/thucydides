@@ -13,6 +13,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
 public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTheFluentElementAPI {
@@ -58,4 +59,7 @@ public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTh
 
         page.element(page.fieldDoesNotExist).waitUntilVisible();
     }
+
 }
+
+
