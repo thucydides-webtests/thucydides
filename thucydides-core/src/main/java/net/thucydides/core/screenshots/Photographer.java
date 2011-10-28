@@ -7,11 +7,15 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.rmi.runtime.Log;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 /**
  * The photographer takes and stores screenshots during the test.
@@ -30,7 +34,11 @@ public class Photographer {
     private final ScreenshotSequence screenshotSequence;
     private final MessageDigest digest;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Photographer.class);
+    private final Logger logger = LoggerFactory.getLogger(Photographer.class);
+
+    protected Logger getLogger() {
+        return logger;
+    }
 
     private static final ScreenshotSequence DEFAULT_SCREENSHOT_SEQUENCE = new ScreenshotSequence();
 
@@ -46,7 +54,7 @@ public class Photographer {
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.error("Failed to create digest for screenshot name.", e);
+            getLogger().error("Failed to create digest for screenshot name.", e);
         }
         return md;
     }
@@ -69,27 +77,44 @@ public class Photographer {
         return hexString.toString();
     }
 
+    private String getTemporarySnapshotName() {
+        return UUID.randomUUID() + ".png";
+    }
+
     /**
      * Take a screenshot of the current browser and store it in the output directory.
      */
     public File takeScreenshot(final String prefix) {
         if (driverCanTakeSnapshots()) {
-            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-            if ((screenshot != null) && (screenshot.exists())) {
-                try {
+            OutputStream stream = null;
+            File screenshot = null;
+            try {
+                byte[] screenshotData = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+
+                File temporaryFolder = FileUtils.getTempDirectory();
+                String snapshotName = getTemporarySnapshotName();
+                screenshot = new File(temporaryFolder, snapshotName);
+                stream = new FileOutputStream(screenshot);
+                stream.write(screenshotData);
+
+                if ((screenshot != null) && (screenshot.exists())) {
                     return saveScreenshoot(prefix, screenshot);
-                } catch (IOException e) {
-                    throw new ScreenshotException("Screenshot could not be saved", e);
-                } catch(WebDriverException e) {
-                    throw new ScreenshotException("Screenshot could not be saved", e);
                 }
+            } catch (Throwable e) {
+                getLogger().error("Failed to write screenshot (possibly an out of memory error)");
+                getLogger().debug("Screenshot failure", e);
+            } finally {
+                if (stream != null)
+                    try {
+                        stream.close();
+                    } catch (IOException e) {} // Ignore any error on close
             }
         }
         return null;
 
     }
 
-    protected File saveScreenshoot(final String prefix, final File screenshot) throws IOException{
+    protected File saveScreenshoot(final String prefix, final File screenshot) throws IOException {
         File savedScreenshot = new File(targetDirectory, nextScreenshotName(prefix));
         FileUtils.copyFile(screenshot, savedScreenshot);
         savePageSourceFor(savedScreenshot.getAbsolutePath());
@@ -108,8 +133,8 @@ public class Photographer {
 
                 File savedSource = new File(sourceCodeFileFor(screenshotFile));
                 FileUtils.writeStringToFile(savedSource, pageSource);
-            } catch(WebDriverException e) {
-                LOGGER.warn("Failed to save screen source code",e);
+            } catch (WebDriverException e) {
+                getLogger().warn("Failed to save screen source code", e);
             }
         }
     }

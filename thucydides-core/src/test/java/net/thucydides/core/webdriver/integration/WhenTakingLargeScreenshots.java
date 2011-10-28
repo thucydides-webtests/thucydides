@@ -4,18 +4,25 @@ import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.contains;
+import static org.mockito.Mockito.verify;
 
 public class WhenTakingLargeScreenshots {
 
@@ -33,6 +40,7 @@ public class WhenTakingLargeScreenshots {
     @Before
     public void createScreenshotDir() {
         screenshotDirectory = temporaryDirectory.newFolder("screenshots");
+        MockitoAnnotations.initMocks(this);
     }
 
     private static File fileInClasspathCalled(final String resourceName) {
@@ -42,14 +50,13 @@ public class WhenTakingLargeScreenshots {
     private static void openStaticTestSite(WebDriver driver) {
         File testSite = fileInClasspathCalled("static-site/index.html");
         driver.get("file://" + testSite.getAbsolutePath());
-
     }
 
     @Test
-    public void should_take_screenshot_with_specified_dimensions()  throws Exception {
+    public void should_take_screenshot_with_specified_dimensions() throws Exception {
 
-        System.setProperty("thucydides.browser.width","800");
-        System.setProperty("thucydides.browser.height","400");
+        System.setProperty("thucydides.browser.width", "800");
+        System.setProperty("thucydides.browser.height", "400");
 
         driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
 
@@ -63,10 +70,10 @@ public class WhenTakingLargeScreenshots {
     }
 
     @Test
-    public void should_take_screenshot_with_specified_larger_dimensions()  throws Exception {
+    public void should_take_screenshot_with_specified_larger_dimensions() throws Exception {
 
-        System.setProperty("thucydides.browser.width","1600");
-        System.setProperty("thucydides.browser.height","1200");
+        System.setProperty("thucydides.browser.width", "1600");
+        System.setProperty("thucydides.browser.height", "1200");
 
         driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
 
@@ -78,6 +85,75 @@ public class WhenTakingLargeScreenshots {
 
 
         assertThat(image.getWitdh(), greaterThan(1000));
+    }
+
+    @Test
+    public void should_take_screenshots_correctly() throws IOException {
+        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
+        openPage("google.html", driver);
+
+        Photographer photographer = new Photographer(driver, screenshotDirectory);
+        File screenshotFile = photographer.takeScreenshot("screenshot");
+
+        assertThat(screenshotFile.exists(), is(true));
+    }
+
+    @Test
+    public void should_take_screenshots_correctly_in_chrome() throws IOException {
+        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.CHROME);
+        openPage("google.html", driver);
+
+        Photographer photographer = new Photographer(driver, screenshotDirectory);
+        File screenshotFile = photographer.takeScreenshot("screenshot");
+
+        assertThat(screenshotFile.exists(), is(true));
+    }
+
+    @Mock
+    Logger logger;
+
+    @Test
+    public void should_not_explode_when_firefox_cannot_take_a_large_screenshot() {
+        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
+        openPage("big-page.html", driver);
+
+        Photographer photographer = new Photographer(driver, screenshotDirectory) {
+            @Override
+            protected Logger getLogger() {
+                return logger;
+            }
+        };
+        File screenshot = photographer.takeScreenshot("screenshot");  // should not throw an exception
+        if (screenshot == null) {
+            verify(logger).error(contains("Failed to write screenshot"));
+        }
+    }
+
+    @Test
+    public void should_not_explode_when_chrome_cannot_take_a_large_screenshot() throws IOException {
+        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.CHROME);
+        openPage("big-page.html", driver);
+
+        Photographer photographer = new Photographer(driver, screenshotDirectory) {
+            @Override
+            protected Logger getLogger() {
+                return logger;
+            }
+        };
+        File screenshot = photographer.takeScreenshot("screenshot");  // should not throw an exception
+        if (screenshot == null) {
+            verify(logger).error(contains("Failed to write screenshot"));
+        } else {
+            File expectedScreenshot = fileInClasspathCalled("screenshots/expected-big-screenshot.png");
+            assertThat(FileUtils.contentEquals(screenshot, expectedScreenshot), is(true));
+
+        }
+    }
+
+    private void openPage(String pageName, WebDriver driver) {
+        File largePage = fileInClasspathCalled("screenshots/" + pageName);
+        driver.get("file://" + largePage.getAbsolutePath());
+
     }
 
 }
