@@ -1,5 +1,8 @@
 package net.thucydides.core.util;
 
+import freemarker.template.utility.StringUtil;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Properties;
 
 public class MockEnvironmentVariables implements EnvironmentVariables {
@@ -15,11 +18,16 @@ public class MockEnvironmentVariables implements EnvironmentVariables {
         return values.getProperty(name, defaultValue);
     }
 
-    public Integer getIntegerValue(String name, Integer defaultValue) {
-        return Integer.parseInt(properties.getProperty(name));
+    public Integer getPropertyAsInteger(String name, Integer defaultValue) {
+        String value = (String) properties.get(name);
+        if (StringUtils.isNumeric(value)) {
+            return Integer.parseInt(properties.getProperty(name));
+        } else {
+            return defaultValue;
+        }
     }
 
-    public Boolean getBooleanValue(String name, boolean defaultValue) {
+    public Boolean getPropertyAsBoolean(String name, boolean defaultValue) {
         if (properties.getProperty(name) == null) {
             return defaultValue;
         } else {
@@ -40,7 +48,7 @@ public class MockEnvironmentVariables implements EnvironmentVariables {
     }
 
     public void setValue(String name, String value) {
-        properties.setProperty(name, value);
+        values.setProperty(name, value);
     }
 
 }

@@ -1,7 +1,6 @@
 package net.thucydides.core.webdriver;
 
 import com.google.inject.Inject;
-import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -145,12 +144,12 @@ public class SystemPropertiesConfiguration implements Configuration {
     }
 
     public double getEstimatedAverageStepCount() {
-        return getEnvironmentVariables().getIntegerValue(ThucydidesSystemProperty.ESTIMATED_AVERAGE_STEP_COUNT.getPropertyName(),
+        return getEnvironmentVariables().getPropertyAsInteger(ThucydidesSystemProperty.ESTIMATED_AVERAGE_STEP_COUNT.getPropertyName(),
                 DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT);
     }
 
     public boolean onlySaveFailingScreenshots() {
-        return getEnvironmentVariables().getBooleanValue(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), false);
+        return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), false);
     }
 
 

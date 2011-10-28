@@ -1,9 +1,14 @@
 package net.thucydides.core.images;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.regexp.RE;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.exceptions.base.MockitoAssertionError;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -14,11 +19,17 @@ import java.net.URL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 
 public class WhenResizingAScreenshot {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    @Before
+    public void initMocks() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void should_be_able_to_determine_the_size_of_an_image() throws IOException {
@@ -108,7 +119,30 @@ public class WhenResizingAScreenshot {
         assertThat(resizedImage.getHeight(), is(greaterThan(4000)));
     }
 
+    @Mock
+    BufferedImage bufferedImage;
 
+    @Test
+    public void should_get_width_of_a_resized_image_directly_from_the_image() throws IOException {
+
+        File screenshotFile = screenshotFileFrom("/screenshots/google_page_1.png");
+        when(bufferedImage.getWidth()).thenReturn(100);
+
+        ResizedImage image = new ResizedImage(bufferedImage, screenshotFile);
+
+        assertThat(image.getWitdh(), is(100));
+    }
+
+    @Test
+    public void should_get_height_of_a_resized_image_directly_from_the_image() throws IOException {
+
+        File screenshotFile = screenshotFileFrom("/screenshots/google_page_1.png");
+        when(bufferedImage.getHeight()).thenReturn(200);
+
+        ResizedImage image = new ResizedImage(bufferedImage, screenshotFile);
+
+        assertThat(image.getHeight(), is(200));
+    }
 
     @Test
     public void should_not_try_to_redimension_images_that_are_higher_than_the_requested_height() throws IOException {

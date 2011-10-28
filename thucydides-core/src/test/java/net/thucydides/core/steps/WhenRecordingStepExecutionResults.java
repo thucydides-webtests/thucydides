@@ -8,6 +8,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
@@ -35,6 +36,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Matchers.any;
@@ -174,6 +176,12 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
         assertThat(results.get(0).toString(), is("Step one, Step two"));
+    }
+
+    class SomePage extends PageObject {
+        SomePage(WebDriver driver) {
+            super(driver);
+        }
     }
 
     @Test

@@ -143,7 +143,7 @@ public class WebDriverFactory {
     }
 
     private boolean dontAssumeUntrustedCertificateIssuer() {
-        return !(environmentVariables.getBooleanValue(ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER.getPropertyName(), true));
+        return !(environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER.getPropertyName(), true));
     }
 
     /**

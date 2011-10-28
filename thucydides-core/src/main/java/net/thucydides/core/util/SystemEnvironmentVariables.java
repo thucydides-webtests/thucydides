@@ -20,7 +20,7 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
         }
     }
 
-    public Integer getIntegerValue(String property, Integer defaultValue) {
+    public Integer getPropertyAsInteger(String property, Integer defaultValue) {
         String value = System.getProperty(property);
         if (value != null) {
             return Integer.valueOf(value);
@@ -29,7 +29,7 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
         }
     }
 
-    public Boolean getBooleanValue(String name, boolean defaultValue) {
+    public Boolean getPropertyAsBoolean(String name, boolean defaultValue) {
         if (System.getProperty(name) == null) {
             return defaultValue;
         } else {

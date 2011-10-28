@@ -65,10 +65,6 @@ public class StepsAnnotatedField {
         return (fieldIsAnnotatedCorrectly(field));
     }
 
-    private static boolean fieldIsRightType(final Field field) {
-        return (ScenarioSteps.class.isAssignableFrom(field.getType()));
-    }
-
     private static boolean fieldIsAnnotatedCorrectly(final Field field) {
         return (field.getAnnotation(Steps.class) != null);
     }

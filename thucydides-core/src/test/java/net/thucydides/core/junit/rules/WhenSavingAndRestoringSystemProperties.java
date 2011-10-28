@@ -3,7 +3,6 @@ package net.thucydides.core.junit.rules;
 
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.util.SystemEnvironmentVariables;
 import org.junit.Before;
@@ -94,6 +93,19 @@ public class WhenSavingAndRestoringSystemProperties {
         assertThat(issueTracker, is("http://arbitrary.issue.tracker"));
 
     }
+
+    @Test
+    public void should_be_able_to_read_boolean_system_values() {
+        System.setProperty("some.boolean.value", "true");
+
+        SystemEnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        Boolean value = environmentVariables.getPropertyAsBoolean("some.boolean.value", false);
+        System.clearProperty("some.boolean.value");
+        assertThat(value, is(true));
+
+
+    }
+
 
     @Test
     public void should_be_able_to_read_issue_tracker_url() {

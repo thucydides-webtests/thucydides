@@ -11,9 +11,9 @@ public interface EnvironmentVariables {
 
     public String getValue(final String name, final String defaultValue);
 
-    Integer getIntegerValue(final String name, final Integer defaultValue);
+    Integer getPropertyAsInteger(final String name, final Integer defaultValue);
 
-    Boolean getBooleanValue(final String name, boolean defaultValue);
+    Boolean getPropertyAsBoolean(final String name, boolean defaultValue);
 
     public String getProperty(final String name);
 

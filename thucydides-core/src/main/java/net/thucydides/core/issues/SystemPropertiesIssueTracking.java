@@ -16,14 +16,6 @@ public class SystemPropertiesIssueTracking implements IssueTracking {
 
     private final EnvironmentVariables environmentVariables;
 
-    protected ThucydidesSystemProperties getSystemProperties() {
-        return ThucydidesSystemProperties.getProperties();
-    }
-
-    public SystemPropertiesIssueTracking() {
-        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
-    }
-
     @Inject
     public SystemPropertiesIssueTracking(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
