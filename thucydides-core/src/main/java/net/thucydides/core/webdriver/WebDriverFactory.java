@@ -40,11 +40,16 @@ public class WebDriverFactory {
         this(webdriverInstanceFactory, Injectors.getInjector().getInstance(EnvironmentVariables.class));
     }
 
+    public WebDriverFactory(EnvironmentVariables environmentVariables) {
+        this(new WebdriverInstanceFactory(),environmentVariables);
+    }
+
     public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
                             EnvironmentVariables environmentVariables) {
         this.webdriverInstanceFactory = webdriverInstanceFactory;
         this.environmentVariables = environmentVariables;
     }
+
 
     protected ProfilesIni getAllProfiles() {
         if (allProfiles == null) {
@@ -90,9 +95,9 @@ public class WebDriverFactory {
     }
 
     private void redimensionBrowser(final WebDriver driver) {
-        int height = ThucydidesSystemProperties.getProperties().getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_HEIGHT,
+        int height = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_HEIGHT.getPropertyName(),
                                                                                 DEFAULT_HEIGHT);
-        int width = ThucydidesSystemProperties.getProperties().getIntegerValue(ThucydidesSystemProperty.SNAPSHOT_WIDTH,
+        int width = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_WIDTH.getPropertyName(),
                                                                                 DEFAULT_WIDTH);
         resizeBrowserTo((JavascriptExecutor) driver, height, width);
     }
@@ -120,7 +125,7 @@ public class WebDriverFactory {
 
     private FirefoxProfile buildFirefoxProfile() {
 
-        String profileName = System.getProperty("webdriver.firefox.profile");
+        String profileName = environmentVariables.getProperty("webdriver.firefox.profile");
 
         FirefoxProfile profile;
         if (profileName == null) {

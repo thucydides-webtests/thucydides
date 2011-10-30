@@ -1,12 +1,8 @@
 package net.thucydides.core.webdriver;
 
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
-import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
@@ -27,9 +23,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class WhenManagingWebdriverInstances {
-
-    @Rule
-    public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
 
     @Mock
     WebdriverInstanceFactory webdriverInstanceFactory;
@@ -148,7 +141,6 @@ public class WhenManagingWebdriverInstances {
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
         driver.get("http://www.google.com");
 
-        System.out.println(System.getProperty("webdriver.driver"));
         assertThat(driver.proxiedWebDriver, instanceOf(ChromeDriver.class));
 
     }

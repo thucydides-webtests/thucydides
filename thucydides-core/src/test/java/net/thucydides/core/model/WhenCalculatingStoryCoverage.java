@@ -1,13 +1,14 @@
 package net.thucydides.core.model;
 
 import net.thucydides.core.annotations.Feature;
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
@@ -27,9 +28,6 @@ public class WhenCalculatingStoryCoverage {
          class SearchWidgets{};
          class DisplayWidgets{};
     }
-
-    @Rule
-    public SaveWebdriverSystemPropertiesRule rule = new SaveWebdriverSystemPropertiesRule();
 
     List<StoryTestResults> storyResults;
 
@@ -184,13 +182,17 @@ public class WhenCalculatingStoryCoverage {
     @Test
     public void average_number_of_steps_should_be_a_system_default_if_none_are_defined() {
         Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
-        StoryTestResults storyResults = new StoryTestResults(story);
+
+        MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        IssueTracking issueTracking = new SystemPropertiesIssueTracking(environmentVariables);
+        Configuration configuration = new SystemPropertiesConfiguration(environmentVariables);
+
+        StoryTestResults storyResults = new StoryTestResults(story, configuration, issueTracking);
         storyResults.recordTestRun(thatIsPendingFor(story, 0));
         storyResults.recordTestRun(thatIsPendingFor(story, 0));
         storyResults.recordTestRun(thatIsPendingFor(story, 0));
 
-
-        System.setProperty("thucydides.estimated.average.step.count", "10");
+        environmentVariables.setProperty("thucydides.estimated.average.step.count", "10");
         assertThat(storyResults.getAverageTestSize(), is(10.0));
     }
 

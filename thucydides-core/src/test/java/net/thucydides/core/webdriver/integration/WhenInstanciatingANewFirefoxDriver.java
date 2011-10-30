@@ -1,5 +1,7 @@
 package net.thucydides.core.webdriver.integration;
 
+import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
@@ -28,6 +30,8 @@ public class WhenInstanciatingANewFirefoxDriver {
 
     private String originalWebdriverProfile;
 
+    private MockEnvironmentVariables environmentVariables;
+
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -35,18 +39,13 @@ public class WhenInstanciatingANewFirefoxDriver {
     public void createFactory() {
         MockitoAnnotations.initMocks(this);
         webdriverInstanceFactory = new WebdriverInstanceFactory();
-        originalWebdriverProfile = System.getProperty("webdriver.firefox.profile");
+        environmentVariables = new MockEnvironmentVariables();
     }
 
     @After
     public void closeFirefox() {
         if (driver != null) {
             driver.quit();
-        }
-        if (originalWebdriverProfile != null) {
-            System.setProperty("webdriver.firefox.profile", originalWebdriverProfile);
-        } else {
-            System.clearProperty("webdriver.firefox.profile");
         }
     }
 
@@ -67,21 +66,27 @@ public class WhenInstanciatingANewFirefoxDriver {
 
     String chosenProfile;
 
+    class TestableWebdriverFactory extends WebDriverFactory {
+
+        TestableWebdriverFactory(EnvironmentVariables environmentVariables) {
+            super(environmentVariables);
+        }
+
+        @Override
+        protected FirefoxProfile useExistingFirefoxProfile(File profileDirectory) {
+            chosenProfile = profileDirectory.getAbsolutePath();
+            return super.useExistingFirefoxProfile(profileDirectory);
+        }
+
+    }
+
     @Test
     public void should_support_creating_a_firefox_driver_with_an_existing_profile() throws Exception {
 
-        WebDriverFactory factory = new WebDriverFactory() {
-
-            @Override
-            protected FirefoxProfile useExistingFirefoxProfile(File profileDirectory) {
-                chosenProfile = profileDirectory.getAbsolutePath();
-                return super.useExistingFirefoxProfile(profileDirectory);
-            }
-        };
-
+        WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
 
         File customProfileDir = temporaryFolder.newFolder("myprofile");
-        System.setProperty("webdriver.firefox.profile", customProfileDir.getAbsolutePath());
+        environmentVariables.setProperty("webdriver.firefox.profile", customProfileDir.getAbsolutePath());
 
         driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
         assertThat(chosenProfile, is(customProfileDir.getAbsolutePath()));
@@ -89,16 +94,9 @@ public class WhenInstanciatingANewFirefoxDriver {
     @Test
     public void should_support_creating_a_firefox_driver_with_a_named_profile() throws Exception {
 
-        WebDriverFactory factory = new WebDriverFactory() {
+        WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
 
-            @Override
-            protected FirefoxProfile useExistingFirefoxProfile(File profileDirectory) {
-                chosenProfile = profileDirectory.getAbsolutePath();
-                return super.useExistingFirefoxProfile(profileDirectory);
-            }
-        };
-
-        System.setProperty("webdriver.firefox.profile", "default");
+        environmentVariables.setProperty("webdriver.firefox.profile", "default");
 
         driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
         assertThat(chosenProfile, is(nullValue()));

@@ -4,9 +4,11 @@ import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.Title;
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -38,9 +40,6 @@ import static org.mockito.Mockito.mock;
 
 public class WhenRecordingNewTestOutcomes {
 
-
-    @Rule
-    public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
 
     TestOutcome testOutcome;
 
@@ -190,8 +189,12 @@ public class WhenRecordingNewTestOutcomes {
 
     @Test
     public void a_test_outcome_should_inject_issue_links_from_the_Issue_annotation_if_requested() {
-        System.setProperty("jira.url", "http://my.jira");
-        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+        MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("jira.url", "http://my.jira");
+        IssueTracking issueTracking = new SystemPropertiesIssueTracking(environmentVariables);
+
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
+                                         .usingIssueTracking(issueTracking);
 
         assertThat(outcome.getFormattedIssues(), is("(<a href=\"http://my.jira/browse/ISSUE-123\">#ISSUE-123</a>)"));
     }

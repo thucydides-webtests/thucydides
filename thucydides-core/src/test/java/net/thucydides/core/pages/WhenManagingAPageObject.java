@@ -1,6 +1,6 @@
 package net.thucydides.core.pages;
 
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,12 +36,15 @@ public class WhenManagingAPageObject {
     @Mock
     WebElement mockButton;
     
-    @Rule
-    public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
+    MockEnvironmentVariables environmentVariables;
+
+    PageConfiguration pageConfiguration;
 
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+        environmentVariables = new MockEnvironmentVariables();
+        pageConfiguration = new SystemPropertiesPageConfiguration(environmentVariables);
     }
     
     class BasicPageObject extends PageObject {
@@ -598,24 +601,23 @@ public class WhenManagingAPageObject {
     @Test
     public void the_page_should_initially_open_at_the_systemwide_default_url() {
 
-        System.setProperty("webdriver.base.url","http://www.google.com");
+        environmentVariables.setProperty("webdriver.base.url","http://www.google.com");
 
         BasicPageObject page = new BasicPageObject(driver);
 
-        Pages pages = new Pages(driver);
+        Pages pages = new Pages(driver, pageConfiguration);
         pages.start();
 
         verify(driver).get("http://www.google.com");
-        System.setProperty("webdriver.base.url","");
     }
 
 
     @Test
     public void the_start_url_for_a_page_can_be_overridden_by_the_system_default_url() {
         BasicPageObject page = new BasicPageObject(driver);
-        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://www.google.com");
+        pageConfiguration.setDefaultBaseUrl("http://www.google.com");
 
-        Pages pages = new Pages(driver);
+        Pages pages = new Pages(driver, pageConfiguration);
         pages.setDefaultBaseUrl("http://www.google.co.nz");
         pages.start();
 

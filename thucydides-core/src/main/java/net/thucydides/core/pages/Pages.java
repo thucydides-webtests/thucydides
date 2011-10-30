@@ -1,5 +1,6 @@
 package net.thucydides.core.pages;
 
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.openqa.selenium.WebDriver;
@@ -28,19 +29,28 @@ public class Pages implements Serializable {
 
     private String defaultBaseUrl;
 
-    private final transient PageConfiguration pageConfiguration;
+    private final PageConfiguration pageConfiguration;
 
     private WebdriverProxyFactory proxyFactory;
 
     private transient boolean usePreviousPage = false;
 
-    public Pages() {
-        this.pageConfiguration = new PageConfiguration();
+    public Pages(PageConfiguration pageConfiguration) {
+        this.pageConfiguration = pageConfiguration;
         proxyFactory = WebdriverProxyFactory.getFactory();
     }
 
+    public Pages() {
+        this(Injectors.getInjector().getInstance(PageConfiguration.class));
+    }
+
     public Pages(final WebDriver driver) {
-        this();
+        this(Injectors.getInjector().getInstance(PageConfiguration.class));
+        this.driver = driver;
+    }
+
+    public Pages(final WebDriver driver, PageConfiguration pageConfiguration) {
+        this(pageConfiguration);
         this.driver = driver;
     }
 
@@ -180,9 +190,6 @@ public class Pages implements Serializable {
     public String getDefaultBaseUrl() {
 
         String baseUrl = defaultBaseUrl;
-        if (isNotEmpty(PageConfiguration.getCurrentConfiguration().getBaseUrl())) {
-            baseUrl = PageConfiguration.getCurrentConfiguration().getBaseUrl();
-        }
         if (isNotEmpty(pageConfiguration.getBaseUrl())) {
             baseUrl = pageConfiguration.getBaseUrl();
         }

@@ -53,6 +53,6 @@ class DisplayedElementLocator extends AjaxElementLocator {
 
     @Override
     protected boolean isElementUsable(WebElement element) {
-        return element.isDisplayed();
+        return (element != null) && (element.isDisplayed());
     }
 }

@@ -87,7 +87,14 @@ public abstract class PageObject {
     }
 
     private void setupPageUrls() {
-        pageUrls = new PageUrls(this);
+        setPageUrls(new PageUrls(this));
+    }
+
+    /**
+     * Only for testing purposes.
+     */
+    public void setPageUrls(PageUrls pageUrls) {
+        this.pageUrls = pageUrls;
     }
 
     public void setWaitForTimeout(final long waitForTimeout) {
@@ -382,7 +389,8 @@ public abstract class PageObject {
     }
 
     public String updateUrlWithBaseUrlIfDefined(final String startingUrl) {
-        String baseUrl = System.getProperty(ThucydidesSystemProperty.BASE_URL.getPropertyName());
+
+        String baseUrl = pageUrls.getBaseUrl();
         if ((baseUrl != null) && (!StringUtils.isEmpty(baseUrl))) {
             return replaceHost(startingUrl, baseUrl);
         } else {

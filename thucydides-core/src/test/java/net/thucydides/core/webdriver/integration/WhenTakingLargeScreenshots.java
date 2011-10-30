@@ -2,6 +2,7 @@ package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.apache.commons.io.FileUtils;
@@ -34,6 +35,8 @@ public class WhenTakingLargeScreenshots {
     private File screenshotDirectory;
     private WebDriver driver;
 
+    private MockEnvironmentVariables environmentVariables;
+
     @After
     public void closeBrowser() {
         try {
@@ -46,6 +49,7 @@ public class WhenTakingLargeScreenshots {
     public void createScreenshotDir() {
         screenshotDirectory = temporaryDirectory.newFolder("screenshots");
         MockitoAnnotations.initMocks(this);
+        environmentVariables = new MockEnvironmentVariables();
     }
 
     private static File fileInClasspathCalled(final String resourceName) {
@@ -60,10 +64,10 @@ public class WhenTakingLargeScreenshots {
     @Test
     public void should_take_screenshot_with_specified_dimensions() throws Exception {
 
-        System.setProperty("thucydides.browser.width", "800");
-        System.setProperty("thucydides.browser.height", "400");
+        environmentVariables.setProperty("thucydides.browser.width", "800");
+        environmentVariables.setProperty("thucydides.browser.height", "400");
 
-        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
+        driver = (new WebDriverFactory(environmentVariables)).newInstanceOf(SupportedWebDriver.FIREFOX);
 
         openStaticTestSite(driver);
 
@@ -77,10 +81,10 @@ public class WhenTakingLargeScreenshots {
     @Test
     public void should_take_screenshot_with_specified_larger_dimensions() throws Exception {
 
-        System.setProperty("thucydides.browser.width", "1600");
-        System.setProperty("thucydides.browser.height", "1200");
+        environmentVariables.setProperty("thucydides.browser.width", "1600");
+        environmentVariables.setProperty("thucydides.browser.height", "1200");
 
-        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
+        driver = (new WebDriverFactory(environmentVariables)).newInstanceOf(SupportedWebDriver.FIREFOX);
 
         openStaticTestSite(driver);
 
@@ -94,7 +98,7 @@ public class WhenTakingLargeScreenshots {
 
     @Test
     public void should_take_screenshots_correctly() throws IOException {
-        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
+        driver = (new WebDriverFactory(environmentVariables)).newInstanceOf(SupportedWebDriver.FIREFOX);
         openPage("google.html", driver);
 
         Photographer photographer = new Photographer(driver, screenshotDirectory);
@@ -105,7 +109,7 @@ public class WhenTakingLargeScreenshots {
 
     @Test
     public void should_take_screenshots_correctly_in_chrome() throws IOException {
-        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.CHROME);
+        driver = (new WebDriverFactory(environmentVariables)).newInstanceOf(SupportedWebDriver.CHROME);
         openPage("google.html", driver);
 
         Photographer photographer = new Photographer(driver, screenshotDirectory);
@@ -119,7 +123,7 @@ public class WhenTakingLargeScreenshots {
 
     @Test
     public void should_not_explode_when_firefox_cannot_take_a_large_screenshot() {
-        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
+        driver = (new WebDriverFactory(environmentVariables)).newInstanceOf(SupportedWebDriver.FIREFOX);
         openPage("big-page.html", driver);
 
         Photographer photographer = new Photographer(driver, screenshotDirectory) {
@@ -136,7 +140,7 @@ public class WhenTakingLargeScreenshots {
 
     @Test
     public void should_not_explode_when_chrome_cannot_take_a_large_screenshot() throws IOException {
-        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.CHROME);
+        driver = (new WebDriverFactory(environmentVariables)).newInstanceOf(SupportedWebDriver.CHROME);
         openPage("big-page.html", driver);
 
         Photographer photographer = new Photographer(driver, screenshotDirectory) {

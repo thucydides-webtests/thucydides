@@ -75,7 +75,7 @@ public class WhenCreatingANewBaseStepListener {
 
     @Test
     public void when_the_pages_object_has_no_driver_one_should_be_created() {
-        Pages pages = new Pages(null);
+        Pages pages = new Pages((WebDriver) null);
         BaseStepListener baseStepListener = new BaseStepListener(outputDirectory, pages);
 
         assertThat(pages.getDriver(), is(not(nullValue())));

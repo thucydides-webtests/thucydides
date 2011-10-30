@@ -2,7 +2,6 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.reports.ThucydidesReportData;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
@@ -27,9 +26,6 @@ public class WhenGeneratingAnAggregateHtmlReport {
     @Rule
     public TemporaryFolder temporaryDirectory = new TemporaryFolder();
 
-    @Rule
-    public SaveWebdriverSystemPropertiesRule saveProperties = new SaveWebdriverSystemPropertiesRule();
-
     private HtmlAggregateStoryReporter reporter;
 
     private File outputDirectory;
@@ -43,7 +39,6 @@ public class WhenGeneratingAnAggregateHtmlReport {
         reporter = new HtmlAggregateStoryReporter("project");
         outputDirectory = temporaryDirectory.newFolder("target/site/thucydides");
         reporter.setOutputDirectory(outputDirectory);
-        System.out.println("Writing reports to " + outputDirectory);
     }
 
     @Test

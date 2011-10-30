@@ -1,7 +1,6 @@
 package net.thucydides.core.reports.history;
 
 import net.thucydides.core.annotations.Feature;
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.StoryTestResults;
@@ -9,16 +8,12 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStepFactory;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
-import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.joda.time.DateTime;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
@@ -29,13 +24,10 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 
 public class WhenTrackingTestResultsOverTime {
 
     private TestHistory testHistory;
-    private String originalUserHomeDirectory;
 
     private File homeDirectory;
 
@@ -49,18 +41,12 @@ public class WhenTrackingTestResultsOverTime {
         MockitoAnnotations.initMocks(this);
         environmentVariables = new MockEnvironmentVariables();
 
-        originalUserHomeDirectory = System.getProperty("user.home");
         homeDirectory = temporaryFolder.newFolder("home");
         environmentVariables.setProperty("user.home", homeDirectory.getAbsolutePath());
 
         testHistory = new TestHistory("project", environmentVariables);
         testHistory.clearHistory();
 
-    }
-
-    @After
-    public void restoreHomeDirectory() {
-        System.setProperty("user.home", originalUserHomeDirectory);
     }
 
     @Test

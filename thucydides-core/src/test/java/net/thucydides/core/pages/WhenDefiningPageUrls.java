@@ -4,7 +4,7 @@ import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
 import net.thucydides.core.annotations.WhenPageOpens;
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,12 +24,15 @@ public class WhenDefiningPageUrls {
     @Mock
     WebDriver webdriver;
 
-    @Rule
-    public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
+    MockEnvironmentVariables environmentVariables;
+
+    PageConfiguration pageConfiguration;
 
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+        environmentVariables = new MockEnvironmentVariables();
+        pageConfiguration = new SystemPropertiesPageConfiguration(environmentVariables);
     }
 
     @DefaultUrl("http://www.apache.org")
@@ -56,6 +59,8 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_url_annotation_should_determine_where_the_page_will_open_to() {
         PageObject page = new PageObjectWithFullUrlDefinition(webdriver);
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
 
         page.open();
 
@@ -72,8 +77,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_url_notation_should_work_with_hashes() {
         PageObject page = new PageObjectWithHashNotation(webdriver);
-
-        System.setProperty("webdriver.base.url","http://my.application.com");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+        
+        environmentVariables.setProperty("webdriver.base.url","http://my.application.com");
         page.open();
 
         verify(webdriver).get("http://my.application.com/#Showcase");
@@ -82,8 +89,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_url_should_use_the_annotation_url_if_the_base_url_is_empty() {
         PageObject page = new PageObjectWithHashNotation(webdriver);
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
 
-        System.setProperty("webdriver.base.url","");
+        environmentVariables.setProperty("webdriver.base.url","");
         page.open();
 
         verify(webdriver).get("http://some.user.application.com/#Showcase");
@@ -92,6 +101,8 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_url_should_use_the_annotation_url_if_the_base_url_is_not_defined() {
         PageObject page = new PageObjectWithHashNotation(webdriver);
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
 
         System.clearProperty("webdriver.base.url");
         page.open();
@@ -109,7 +120,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_webdriver_base_url_system_property_should_not_override_pages() {
         PageObject page = new PageObjectWithFullUrlAndPageDefinition(webdriver);
-        System.setProperty("webdriver.base.url","http://staging.myapp.org");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","http://staging.myapp.org");
         page.open();
 
         verify(webdriver).get("http://staging.myapp.org/somepage");
@@ -118,7 +132,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_webdriver_base_url_system_property_should_override_protocol() {
         PageObject page = new PageObjectWithFullUrlAndPageDefinition(webdriver);
-        System.setProperty("webdriver.base.url","https://staging.myapp.org");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","https://staging.myapp.org");
         page.open();
 
         verify(webdriver).get("https://staging.myapp.org/somepage");
@@ -127,7 +144,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_webdriver_base_url_system_property_should_override_ports() {
         PageObject page = new PageObjectWithFullUrlAndPageAndPortDefinition(webdriver);
-        System.setProperty("webdriver.base.url","https://staging.myapp.org:8888");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","https://staging.myapp.org:8888");
         page.open();
 
         verify(webdriver).get("https://staging.myapp.org:8888/somepage");
@@ -136,7 +156,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_base_url_is_overrided_by_the_webdriver_base_url_system_property() {
         PageObject page = new PageObjectWithFullUrlDefinition(webdriver);
-        System.setProperty("webdriver.base.url","http://www.wikipedia.org");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","http://www.wikipedia.org");
         page.open();
 
         verify(webdriver).get("http://www.wikipedia.org");
@@ -145,7 +168,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_base_url_should_be_used_if_no_url_annotation_is_present() {
         PageObject page = new PageObjectWithNoUrlDefinition(webdriver);
-        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://www.google.com");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        pageConfiguration.setDefaultBaseUrl("http://www.google.com");
 
         page.open();
 
@@ -162,6 +188,8 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_url_annotation_should_let_you_define_a_parameterized_url() {
         PageObject page = new PageObjectWithParameterizedUrlDefinition(webdriver);
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
 
         page.open(withParameters("ISSUE-1"));
 
@@ -171,6 +199,8 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_pages_object_provides_access_to_the_webdriver_instance() {
         PageObject page = new PageObjectWithParameterizedUrlDefinition(webdriver);
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
 
         page.getDriver().get("http://www.google.com");
 
@@ -192,6 +222,8 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_url_annotation_should_let_you_define_a_named_parameterized_url() {
         PageObject page = new PageObjectWithNamedParameterizedUrlDefinition(webdriver);
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
 
         page.open("open.issue", withParameters("ISSUE-1"));
 
@@ -208,7 +240,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_url_annotation_can_be_relative_to_the_base_url() {
         PageObject page = new PageObjectWithRelaticeUrlDefinition(webdriver);
-        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://myapp.mycompany.com");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        pageConfiguration.setDefaultBaseUrl("http://myapp.mycompany.com");
 
         page.open();
 
@@ -232,7 +267,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_webdriver_base_url_system_property_should_not_override_pages_with_parameters() {
         PageObject page = new PageObjectWithDefaultUrlAndNamedParameterizedRelativeUrlDefinition(webdriver);
-        System.setProperty("webdriver.base.url","http://staging.mycompany.org");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","http://staging.mycompany.org");
         page.open("open.issue", withParameters("ISSUE-1"));
 
         verify(webdriver).get("http://staging.mycompany.org/issues/ISSUE-1");
@@ -242,7 +280,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_url_annotation_should_let_you_define_a_named_parameterized_url_relative_to_the_default_url() {
         PageObject page = new PageObjectWithDefaultUrlAndNamedParameterizedRelativeUrlDefinition(webdriver);
-        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl(null);
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        pageConfiguration.setDefaultBaseUrl(null);
         page.open("open.issue", withParameters("ISSUE-1"));
 
         verify(webdriver).get("http://jira.mycompany.org/issues/ISSUE-1");
@@ -262,7 +303,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_url_annotation_should_let_you_define_a_relative_named_parameterized_url() {
         PageObject page = new PageObjectWithNamedParameterizedRelativeUrlDefinition(webdriver);
-        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://myapp.mycompany.com");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        pageConfiguration.setDefaultBaseUrl("http://myapp.mycompany.com");
 
         page.open("open.issue", withParameters("ISSUE-1"));
 
@@ -284,6 +328,8 @@ public class WhenDefiningPageUrls {
     @Test
     public void when_the_default_url_is_defined_as_a_classpath_url_it_uses_an_absolute_path_from_the_classpath() {
         PageWithDefaultUrlOnTheClasspath page = new PageWithDefaultUrlOnTheClasspath(webdriver);
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
 
         URL staticSiteUrl = Thread.currentThread().getContextClassLoader().getResource("static-site/index.html");
 
@@ -296,6 +342,8 @@ public class WhenDefiningPageUrls {
     @Test(expected = IllegalStateException.class)
     public void if_a_classpath_url_is_not_found_an_exception_is_thrown() {
         PageWithInvalidDefaultUrlOnTheClasspath page = new PageWithInvalidDefaultUrlOnTheClasspath(webdriver);
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
 
         page.open();
 
@@ -303,7 +351,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_url_annotation_should_let_you_define_several_named_parameterized_urls() {
         PageObject page = new PageObjectWithMultipleNamedUrlDefinitions(webdriver);
-        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://myapp.mycompany.com");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        pageConfiguration.setDefaultBaseUrl("http://myapp.mycompany.com");
 
         page.open("close.issue", withParameters("ISSUE-1"));
 
@@ -313,7 +364,10 @@ public class WhenDefiningPageUrls {
     @Test(expected = IllegalArgumentException.class)
     public void the_url_annotation_should_throw_an_exception_if_no_named_url_is_found() {
         PageObject page = new PageObjectWithMultipleNamedUrlDefinitions(webdriver);
-        PageConfiguration.getCurrentConfiguration().setDefaultBaseUrl("http://myapp.mycompany.com");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        pageConfiguration.setDefaultBaseUrl("http://myapp.mycompany.com");
 
         page.open("no.such.template", withParameters("ISSUE-1"));
     }
@@ -359,7 +413,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void annotated_OnOpenPage_methods_should_be_called_when_the_page_is_opened() {
         PageObjectWithOnOpenPageMethod page = new PageObjectWithOnOpenPageMethod(webdriver);
-        System.setProperty("webdriver.base.url","http://staging.myapp.org");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","http://staging.myapp.org");
         page.open();
 
         verify(webdriver).get("http://staging.myapp.org/somepage");
@@ -384,7 +441,10 @@ public class WhenDefiningPageUrls {
     @Test(expected = UnableToInvokeWhenPageOpensMethods.class)
     public void annotated_OnOpenPage_methods_cannot_have_parameters() {
         PageObject page = new PageObjectWithOnOpenPageMethodWithParameters(webdriver);
-        System.setProperty("webdriver.base.url","http://staging.myapp.org");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","http://staging.myapp.org");
         page.open();
     }
 
@@ -407,7 +467,10 @@ public class WhenDefiningPageUrls {
     @Test
     public void annotated_OnOpenPage_methods_can_be_private() {
         PageObjectWithPrivateOnOpenPageMethod page = new PageObjectWithPrivateOnOpenPageMethod(webdriver);
-        System.setProperty("webdriver.base.url","http://staging.myapp.org");
+        PageUrls pageUrls = new PageUrls(page, pageConfiguration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","http://staging.myapp.org");
         page.open();
 
         verify(webdriver).get("http://staging.myapp.org/somepage");

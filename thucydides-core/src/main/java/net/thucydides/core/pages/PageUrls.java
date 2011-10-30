@@ -1,8 +1,10 @@
 package net.thucydides.core.pages;
 
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
+import net.thucydides.core.guice.Injectors;
 
 import java.net.URL;
 
@@ -13,15 +15,22 @@ import java.net.URL;
  * system default URL is used.
  * The NamedUrl and NamedUrls annotations can be used to define query URLs, optionally with parameters.
  */
-class PageUrls {
+public class PageUrls {
     private static final String CLASSPATH_URL_PREFIX = "classpath:";
     private static final int CLASSPATH_URL_PREFIX_LENGTH = CLASSPATH_URL_PREFIX.length();
     private Object pageObject;
 
     private String pageLevelDefaultBaseUrl;
 
-    public PageUrls(final Object pageObject) {
+    private final PageConfiguration pageConfiguration;
+
+    public PageUrls(final Object pageObject, final PageConfiguration pageConfiguration) {
         this.pageObject = pageObject;
+        this.pageConfiguration = pageConfiguration;
+    }
+
+    public PageUrls(final Object pageObject) {
+        this(pageObject, Injectors.getInjector().getInstance(PageConfiguration.class));
     }
 
     public String getStartingUrl() {
@@ -76,7 +85,7 @@ class PageUrls {
         if (pageLevelDefaultBaseUrl != null) {
             return pageLevelDefaultBaseUrl;
         } else {
-            return PageConfiguration.getCurrentConfiguration().getBaseUrl();
+            return pageConfiguration.getBaseUrl();
         }
     }
 
@@ -135,5 +144,9 @@ class PageUrls {
 
     public void overrideDefaultBaseUrl(final String defaultBaseUrl) {
         pageLevelDefaultBaseUrl = defaultBaseUrl;
+    }
+
+    public String getBaseUrl() {
+        return pageConfiguration.getBaseUrl();
     }
 }

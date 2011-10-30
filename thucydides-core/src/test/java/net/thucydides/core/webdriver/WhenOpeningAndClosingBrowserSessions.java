@@ -1,12 +1,9 @@
 package net.thucydides.core.webdriver;
 
 
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
@@ -26,9 +23,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 public class WhenOpeningAndClosingBrowserSessions {
-
-    @Rule
-    public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
 
     @Mock
     WebdriverInstanceFactory webdriverInstanceFactory;

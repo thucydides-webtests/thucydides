@@ -1,18 +1,18 @@
 package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.annotations.DefaultUrl;
-import net.thucydides.core.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.core.pages.PageConfiguration;
 import net.thucydides.core.pages.PageObject;
-import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
+import net.thucydides.core.pages.PageUrls;
+import net.thucydides.core.pages.SystemPropertiesPageConfiguration;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
@@ -55,9 +55,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         }
     }
 
-    @Rule
-    public MethodRule saveSystemProperties = new SaveWebdriverSystemPropertiesRule();
-
     WebDriver driver;
     static WebDriver firefoxDriver;
 
@@ -68,6 +65,10 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         firefoxDriver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
     }
 
+    MockEnvironmentVariables environmentVariables;
+
+    PageConfiguration pageConfiguration;
+
     @Before
     public void openLocalStaticSite() {
         driver = new HtmlUnitDriver();
@@ -75,6 +76,13 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         indexPage = new IndexPage(driver, 1);
         indexPage.setWaitForTimeout(100);
     }
+
+    @Before
+    public void initPageConfiguration() {
+        environmentVariables = new MockEnvironmentVariables();
+        pageConfiguration = new SystemPropertiesPageConfiguration(environmentVariables);
+    }
+
 
     @After
     public void closeDriver() {
@@ -251,10 +259,12 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     @Test
     public void the_page_can_be_opened_using_an_unsecure_certificates_compatible_profile() {
 
-        System.setProperty(SystemPropertiesConfiguration.WEBDRIVER_DRIVER, "firefox");
-        System.setProperty(SystemPropertiesConfiguration.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER, "true");
+        environmentVariables.setProperty("webdriver.driver","firefox");
+        environmentVariables.setProperty("refuse.untrusted.certificates","true");
 
         IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver, 1);
+        PageUrls pageUrls = new PageUrls(indexPage, pageConfiguration);
+        indexPage.setPageUrls(pageUrls);
 
         assertThat(indexPage.getTitle(), is("Thucydides Test Site"));
     }
