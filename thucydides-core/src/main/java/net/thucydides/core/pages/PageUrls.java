@@ -1,10 +1,10 @@
 package net.thucydides.core.pages;
 
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.webdriver.Configuration;
 
 import java.net.URL;
 
@@ -22,15 +22,15 @@ public class PageUrls {
 
     private String pageLevelDefaultBaseUrl;
 
-    private final PageConfiguration pageConfiguration;
+    private final Configuration configuration;
 
-    public PageUrls(final Object pageObject, final PageConfiguration pageConfiguration) {
+    public PageUrls(final Object pageObject, final Configuration Configuration) {
         this.pageObject = pageObject;
-        this.pageConfiguration = pageConfiguration;
+        this.configuration = Configuration;
     }
 
     public PageUrls(final Object pageObject) {
-        this(pageObject, Injectors.getInjector().getInstance(PageConfiguration.class));
+        this(pageObject, Injectors.getInjector().getInstance(Configuration.class));
     }
 
     public String getStartingUrl() {
@@ -85,7 +85,7 @@ public class PageUrls {
         if (pageLevelDefaultBaseUrl != null) {
             return pageLevelDefaultBaseUrl;
         } else {
-            return pageConfiguration.getBaseUrl();
+            return configuration.getBaseUrl();
         }
     }
 
@@ -147,6 +147,6 @@ public class PageUrls {
     }
 
     public String getBaseUrl() {
-        return pageConfiguration.getBaseUrl();
+        return configuration.getBaseUrl();
     }
 }

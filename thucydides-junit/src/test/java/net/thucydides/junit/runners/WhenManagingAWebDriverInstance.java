@@ -2,6 +2,8 @@ package net.thucydides.junit.runners;
 
 import net.thucydides.core.annotations.InvalidManagedWebDriverFieldException;
 import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
@@ -75,7 +77,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
             }
         };
 
-        webDriverFactory = new WebDriverFactory(webdriverInstanceFactory);
+        webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
 
         StepEventBus.getEventBus().clear();
 
@@ -125,9 +127,9 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Test
     public void when_an_unsupported_driver_is_used_an_error_is_raised() throws InitializationError {
 
-        System.setProperty("webdriver.driver", "htmlunit");      
+        environmentVariables.setProperty("webdriver.driver", "htmlunit");
         try {
-            ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
+            ThucydidesRunner runner = getTestRunnerUsing(SingleTestScenario.class);
             runner.run(new RunNotifier());
             fail();
         } catch (UnsupportedDriverException e) {
@@ -143,11 +145,19 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Test
     public void a_system_provided_url_should_override_the_default_url() throws InitializationError {
 
-        System.setProperty("webdriver.base.url", "http://www.wikipedia.com");
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
+        environmentVariables.setProperty("webdriver.base.url", "http://www.wikipedia.com");
+        ThucydidesRunner runner = getTestRunnerUsing(SingleTestScenario.class);
 
         runner.run(new RunNotifier());
 
         verify(firefoxDriver).get("http://www.wikipedia.com");
     }
+
+    @Override
+    protected ThucydidesRunner getTestRunnerUsing(Class<?> testClass) throws InitializationError {
+        Configuration configuration = new SystemPropertiesConfiguration(environmentVariables);
+        ThucydidesRunner runner = new ThucydidesRunner(testClass, webDriverFactory, configuration);
+        return runner;
+    }
+
 }

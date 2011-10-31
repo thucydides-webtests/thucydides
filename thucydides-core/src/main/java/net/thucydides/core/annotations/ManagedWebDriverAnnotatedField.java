@@ -3,14 +3,10 @@ package net.thucydides.core.annotations;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import org.openqa.selenium.WebDriver;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.NoSuchElementException;
-
-import static com.google.common.collect.ImmutableSet.copyOf;
 
 /**
  * The WebDriver driver is stored as an annotated field in the test classes.

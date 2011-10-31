@@ -1,7 +1,6 @@
 package net.thucydides.junit.runners;
 
 import net.thucydides.core.annotations.Pending;
-import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
@@ -91,17 +90,23 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * @throws InitializationError if some JUnit-related initialization problem occurred
      */
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
-        this(klass, new WebDriverFactory());
+        this(klass, new WebDriverFactory(), Injectors.getInjector().getInstance(Configuration.class));
     }
 
     public ThucydidesRunner(final Class<?> klass, final WebDriverFactory webDriverFactory) throws InitializationError {
+        this(klass, webDriverFactory, Injectors.getInjector().getInstance(Configuration.class));
+    }
+
+    public ThucydidesRunner(final Class<?> klass,
+                            final WebDriverFactory webDriverFactory,
+                            final Configuration configuration) throws InitializationError {
         super(klass);
+        this.webDriverFactory = webDriverFactory;
+        this.configuration = configuration;
 
         if (TestCaseAnnotations.supportsWebTests(klass)) {
             checkRequestedDriverType();
         }
-
-        this.webDriverFactory = webDriverFactory;
     }
 
     /**
@@ -166,9 +171,9 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         initWebdriverManager();
         initStepEventBus();
         if (webtestsAreSupported()) {
-            Pages newPages = initPagesObjectUsing(webdriverManager.getWebdriver());
-            initListenersUsing(newPages);
-            initStepFactoryUsing(newPages);
+            initPagesObjectUsing(webdriverManager.getWebdriver());
+            initListenersUsing(getPages());
+            initStepFactoryUsing(getPages());
         }else {
             initListeners();
             initStepFactory();
@@ -180,9 +185,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         StepEventBus.getEventBus().clear();
     }
 
-    private Pages initPagesObjectUsing(final WebDriver driver) {
-        pages = new Pages(driver);
-        return pages;
+    private void initPagesObjectUsing(final WebDriver driver) {
+        pages = new Pages(driver, getConfiguration());
     }
 
     protected JUnitStepListener initListenersUsing(final Pages pagesObject) {

@@ -1,6 +1,5 @@
 package net.thucydides.core.util;
 
-import freemarker.template.utility.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Properties;

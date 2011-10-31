@@ -2,12 +2,13 @@ package net.thucydides.core.pages;
 
 
 import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -37,20 +38,20 @@ public class WhenKeepingTrackOfVisitedPages {
 
     MockEnvironmentVariables environmentVariables;
 
-    PageConfiguration pageConfiguration;
+    Configuration configuration;
     
     @Before
     public void initMocksAndClearSystemwideDefaultUrl() {
         MockitoAnnotations.initMocks(this);
         environmentVariables = new MockEnvironmentVariables();
-        pageConfiguration = new SystemPropertiesPageConfiguration(environmentVariables);
+        configuration = new SystemPropertiesConfiguration(environmentVariables);
     }
     
     @Test
     public void the_pages_object_should_have_a_default_starting_point_url() {
 
         final String baseUrl = "http://www.google.com";
-        final Pages pages = new Pages(driver, pageConfiguration);
+        final Pages pages = new Pages(driver, configuration);
 
         pages.setDefaultBaseUrl(baseUrl);
 
@@ -64,7 +65,7 @@ public class WhenKeepingTrackOfVisitedPages {
     public void the_default_starting_point_url_can_refer_to_a_file_on_the_classpath() {
 
         final String baseUrl = "classpath:static-site/index.html";
-        final Pages pages = new Pages(driver, pageConfiguration);
+        final Pages pages = new Pages(driver, configuration);
         pages.setDefaultBaseUrl(baseUrl);
 
         URL staticSiteUrl = Thread.currentThread().getContextClassLoader().getResource("static-site/index.html");
@@ -79,8 +80,8 @@ public class WhenKeepingTrackOfVisitedPages {
 
         final String systemDefinedBaseUrl = "http://www.google.com.au";
 
-        PageConfiguration pageConfiguration = new SystemPropertiesPageConfiguration(environmentVariables);
-        final Pages pages = new Pages(driver, pageConfiguration);
+        Configuration Configuration = new SystemPropertiesConfiguration(environmentVariables);
+        final Pages pages = new Pages(driver, Configuration);
         
         environmentVariables.setProperty("webdriver.base.url", systemDefinedBaseUrl);
         
@@ -93,7 +94,7 @@ public class WhenKeepingTrackOfVisitedPages {
     public void the_pages_object_knows_when_we_are_on_the_right_page() {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.apache.org");
-        final Pages pages = new Pages(driver, pageConfiguration);
+        final Pages pages = new Pages(driver, configuration);
         pages.start();
 
         assertThat(pages.isCurrentPageAt(ApacheHomePage.class), is(true));
@@ -103,7 +104,7 @@ public class WhenKeepingTrackOfVisitedPages {
     public void the_pages_object_knows_when_we_are_not_on_the_right_page() {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.google.org");
-        final Pages pages = new Pages(driver, pageConfiguration);
+        final Pages pages = new Pages(driver, configuration);
         pages.start();
 
         assertThat(pages.isCurrentPageAt(ApacheHomePage.class), is(false));
@@ -113,7 +114,7 @@ public class WhenKeepingTrackOfVisitedPages {
     public void the_get_method_is_shorthand_for_currentPageAt() {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.apache.org");
-        final Pages pages = new Pages(driver, pageConfiguration);
+        final Pages pages = new Pages(driver, configuration);
         pages.start();
 
         assertThat(pages.get(ApacheHomePage.class).getClass().getName(),
@@ -124,7 +125,7 @@ public class WhenKeepingTrackOfVisitedPages {
     public void the_getAt_method_is_Groovy_shorthand_for_currentPageAt() {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.apache.org");
-        final Pages pages = new Pages(driver, pageConfiguration);
+        final Pages pages = new Pages(driver, configuration);
         pages.start();
 
         assertThat(pages.getAt(ApacheHomePage.class).getClass().getName(),
@@ -136,7 +137,7 @@ public class WhenKeepingTrackOfVisitedPages {
     public void the_pages_object_throws_a_wrong_page_error_when_we_expect_the_wrong_page() {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
-        final Pages pages = new Pages(driver, pageConfiguration);
+        final Pages pages = new Pages(driver, configuration);
         pages.start();
 
         pages.currentPageAt(ApacheHomePage.class);
@@ -153,7 +154,7 @@ public class WhenKeepingTrackOfVisitedPages {
     public void the_pages_object_throws_a_wrong_page_error_when_the_page_object_is_invalid() {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
-        final Pages pages = new Pages(driver, pageConfiguration);
+        final Pages pages = new Pages(driver, configuration);
         pages.start();
 
         pages.currentPageAt(InvalidHomePage.class);
@@ -170,7 +171,7 @@ public class WhenKeepingTrackOfVisitedPages {
     public void the_pages_object_throws_a_wrong_page_error_when_the_page_object_cant_be_instantiated() {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
-        final Pages pages = new Pages(driver, pageConfiguration);
+        final Pages pages = new Pages(driver, configuration);
         pages.start();
 
         pages.currentPageAt(ExplodingHomePage.class);
@@ -187,13 +188,13 @@ public class WhenKeepingTrackOfVisitedPages {
     public void the_pages_object_throws_a_wrong_page_error_when_the_page_object_doesnt_have_a_webdriver_constructor() {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
-        final Pages pages = new Pages(driver, pageConfiguration);
+        final Pages pages = new Pages(driver, configuration);
         pages.currentPageAt(PageObjectWithNoDriverConstructor.class);
     }
 
     @Test
     public void should_open_initial_page_when_driver_opens() {
-        Pages pages = new Pages(driver, pageConfiguration);
+        Pages pages = new Pages(driver, configuration);
         pages.setDefaultBaseUrl("http://www.google.com");
         pages.notifyWhenDriverOpens();
 
@@ -217,7 +218,7 @@ public class WhenKeepingTrackOfVisitedPages {
     @Test
     public void should_requery_driver_for_each_page_request() {
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
-        Pages pages = new Pages(driver, pageConfiguration);
+        Pages pages = new Pages(driver, configuration);
         pages.setDefaultBaseUrl("http://www.google.com");
 
         GooglePage page1 = pages.get(GooglePage.class);
@@ -228,7 +229,7 @@ public class WhenKeepingTrackOfVisitedPages {
     @Test
     public void should_use_the_same_page_object_if_we_indicate_that_are_on_the_same_unchanged_page() {
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
-        Pages pages = new Pages(driver, pageConfiguration);
+        Pages pages = new Pages(driver, configuration);
         pages.setDefaultBaseUrl("http://www.google.com");
 
         GooglePage page1 = pages.get(GooglePage.class);
@@ -240,7 +241,7 @@ public class WhenKeepingTrackOfVisitedPages {
     @Test
     public void should_use_a_new_page_object_if_we_indicate_that_are_on_the_same_unchanged_page_but_we_are_not() {
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
-        Pages pages = new Pages(driver, pageConfiguration);
+        Pages pages = new Pages(driver, configuration);
         pages.setDefaultBaseUrl("http://www.google.com");
 
         GooglePage page1 = pages.get(GooglePage.class);

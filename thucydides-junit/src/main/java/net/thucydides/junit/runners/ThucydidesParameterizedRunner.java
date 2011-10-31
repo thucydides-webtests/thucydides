@@ -1,6 +1,8 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Concurrent;
 import org.apache.commons.lang.StringUtils;
@@ -22,12 +24,16 @@ public class ThucydidesParameterizedRunner extends Suite {
 
     private final List<Runner> runners = new ArrayList<Runner>();
 
+    private final Configuration configuration;
+
     /**
      * Only used for testing.
      */
     public ThucydidesParameterizedRunner(final Class<?> klass,
+                                         Configuration configuration,
                                          final WebDriverFactory webDriverFactory) throws Throwable {
         super(klass, Collections.<Runner>emptyList());
+        this.configuration = configuration;
 
         if (runTestsInParallelFor(klass)) {
             scheduleParallelTestRunsFor(klass);
@@ -77,7 +83,11 @@ public class ThucydidesParameterizedRunner extends Suite {
         List<Object[]> parametersList = getTestAnnotations().getParametersList();
         for (int i = 0; i < parametersList.size(); i++) {
             Class<?> testClass = getTestClass().getJavaClass();
-            ThucydidesRunner runner = new TestClassRunnerForParameters(testClass, parametersList, i);
+            ThucydidesRunner runner = new TestClassRunnerForParameters(testClass,
+                                                                       configuration,
+                                                                       webDriverFactory,
+                                                                       parametersList,
+                                                                       i);
             runner.useQualifier(from(parametersList.get(i)));
             overrideWebdriverFactoryIfProvided(runner, webDriverFactory);
             runners.add(runner);
@@ -90,7 +100,10 @@ public class ThucydidesParameterizedRunner extends Suite {
 
         for (int i = 0; i < testCases.size(); i++) {
             Object testCase = testCases.get(i);
-            ThucydidesRunner runner = new TestClassRunnerForInstanciatedTestCase(testCase, i);
+            ThucydidesRunner runner = new TestClassRunnerForInstanciatedTestCase(testCase,
+                                                                                 configuration,
+                                                                                 webDriverFactory,
+                                                                                 i);
             runner.useQualifier(getQualifierFor(testCase));
             overrideWebdriverFactoryIfProvided(runner, webDriverFactory);
             runners.add(runner);
@@ -123,7 +136,7 @@ public class ThucydidesParameterizedRunner extends Suite {
      * Only called reflectively. Do not use programmatically.
      */
     public ThucydidesParameterizedRunner(final Class<?> klass) throws Throwable {
-        this(klass, null);
+        this(klass, Injectors.getInjector().getInstance(Configuration.class), null);
     }
 
     private void overrideWebdriverFactoryIfProvided(final ThucydidesRunner runner,

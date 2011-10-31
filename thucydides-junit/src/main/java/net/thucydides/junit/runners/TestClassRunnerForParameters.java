@@ -5,6 +5,7 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.util.SystemEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.listeners.JUnitStepListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
@@ -16,21 +17,20 @@ import java.util.List;
 class TestClassRunnerForParameters extends ThucydidesRunner {
     private final int parameterSetNumber;
     private final List<Object[]> parameterList;
-    private final Configuration configuration;
 
     TestClassRunnerForParameters(final Class<?> type,
+                                 final Configuration configuration,
+                                 final WebDriverFactory webDriverFactory,
                                  final List<Object[]> parameterList,
                                  final int i) throws InitializationError {
-        super(type);
+        super(type, webDriverFactory, configuration);
         this.parameterList = parameterList;
         parameterSetNumber = i;
-        this.configuration = new SystemPropertiesConfiguration(new SystemEnvironmentVariables());
     }
 
    @Override
    protected JUnitStepListener initListenersUsing(final Pages pagesObject) {
-       System.out.println("TestClassRunnerForParameters initListeners for " + parameterSetNumber);
-       setStepListener(new ParameterizedJUnitStepListener(configuration.loadOutputDirectoryFromSystemProperties(),
+       setStepListener(new ParameterizedJUnitStepListener(getConfiguration().loadOutputDirectoryFromSystemProperties(),
                                                           pagesObject,
                                                           parameterSetNumber));
        return getStepListener();
@@ -55,10 +55,7 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
 
     @Override
     protected boolean restartBrowserBeforeTest() {
-        String restartFrequencyValue
-                    = System.getProperty(ThucydidesSystemProperty.RESTART_BROWSER_FREQUENCY.getPropertyName(),"3");
-
-        int restartFrequency = Integer.valueOf(restartFrequencyValue);
+        int restartFrequency = getConfiguration().getRestartFrequency();
         return (parameterSetNumber > 0) && (parameterSetNumber % restartFrequency == 0);
     }
 

@@ -1,7 +1,5 @@
 package net.thucydides.core.util;
 
-import net.thucydides.core.ThucydidesSystemProperty;
-
 /**
  * Return system environment variable values.
  */

@@ -49,9 +49,7 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
             throws InitializationError {
 
         try {
-            System.setProperty("webdriver.driver", "htmlunit");
-
-            WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
+            environmentVariables.setProperty("webdriver.driver", "htmlunit");
             ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 
             runner.run(new RunNotifier());
@@ -67,9 +65,8 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
     public void opera_is_not_currently_a_supported_driver()
             throws InitializationError {
         try {
-            System.setProperty("webdriver.driver", "opera");
+            environmentVariables.setProperty("webdriver.driver", "opera");
 
-            WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
             ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 
             runner.run(new RunNotifier());
@@ -84,11 +81,10 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
     @Test
     public void the_output_directory_can_be_defined_by_a_system_property() throws InitializationError {
 
-        System.setProperty("thucydides.outputDirectory", "target" + FILE_SEPARATOR
+        environmentVariables.setProperty("thucydides.outputDirectory", "target" + FILE_SEPARATOR
                 + "reports" + FILE_SEPARATOR
                 + "thucydides");
 
-        WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
         ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 
         File outputDirectory = runner.getOutputDirectory();
@@ -102,10 +98,9 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
     @Test
     public void the_output_directory_can_be_defined_by_a_system_property_using_any_standard_separators() throws InitializationError {
 
-        WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
         ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 
-        System.setProperty("thucydides.outputDirectory", "target/reports/thucydides");
+        environmentVariables.setProperty("thucydides.outputDirectory", "target/reports/thucydides");
 
         File outputDirectory = runner.getOutputDirectory();
 

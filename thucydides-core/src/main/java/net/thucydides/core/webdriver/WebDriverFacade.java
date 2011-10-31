@@ -1,9 +1,7 @@
 package net.thucydides.core.webdriver;
 
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.steps.StepEventBus;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;

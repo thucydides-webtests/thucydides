@@ -134,7 +134,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private Object runNormalMethod(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
             throws Throwable {
-        LOGGER.info("Running test step " + getTestNameFrom(method, args, false));
         Object result = null;
         try {
             result = invokeMethod(obj, method, args, proxy);

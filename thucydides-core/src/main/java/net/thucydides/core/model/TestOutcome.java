@@ -9,7 +9,6 @@ import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
-import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 

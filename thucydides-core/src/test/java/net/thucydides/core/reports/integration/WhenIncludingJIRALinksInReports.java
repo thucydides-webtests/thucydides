@@ -1,7 +1,5 @@
 package net.thucydides.core.reports.integration;
 
-import net.thucydides.core.ThucydidesSystemProperties;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.Title;
 import net.thucydides.core.issues.IssueTracking;

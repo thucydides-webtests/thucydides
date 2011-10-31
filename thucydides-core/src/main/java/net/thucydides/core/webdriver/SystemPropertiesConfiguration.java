@@ -8,6 +8,8 @@ import net.thucydides.core.util.EnvironmentVariables;
 import java.io.File;
 import java.util.Locale;
 
+import static net.thucydides.core.ThucydidesSystemProperty.BASE_URL;
+
 /**
  * Centralized configuration of the test runner. You can configure the output
  * directory, the browser to use, and the reports to generate. Most
@@ -33,6 +35,8 @@ public class SystemPropertiesConfiguration implements Configuration {
     public static final int DEFAULT_ELEMENT_TIMEOUT_SECONDS = 5;
 
     public final Integer DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT = 5;
+
+    private String defaultBaseUrl;
 
     /**
      * Use this property to define the output directory in which reports will be
@@ -152,7 +156,28 @@ public class SystemPropertiesConfiguration implements Configuration {
         return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), false);
     }
 
+    /**
+     * Override the default base URL manually.
+     * Normally only needed for testing.
+     */
+    public void setDefaultBaseUrl(final String defaultBaseUrl) {
+        this.defaultBaseUrl = defaultBaseUrl;
+    }
 
+    public int getRestartFrequency() {
+        return environmentVariables.getPropertyAsInteger(
+                        ThucydidesSystemProperty.RESTART_BROWSER_FREQUENCY.getPropertyName(),3);
+
+    }
+
+    /**
+     * This is the URL where test cases start.
+     * The default value can be overriden using the webdriver.baseurl property.
+     * It is also the base URL used to build relative paths.
+     */
+    public String getBaseUrl() {
+        return environmentVariables.getProperty(BASE_URL.getPropertyName(), defaultBaseUrl);
+    }
     /**
      * Transform a driver type into the SupportedWebDriver enum. Driver type can
      * be any case.

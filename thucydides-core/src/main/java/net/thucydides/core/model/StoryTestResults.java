@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.reports.html.Formatter;
-import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,9 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static ch.lambdaj.Lambda.flatten;
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.flatten;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;

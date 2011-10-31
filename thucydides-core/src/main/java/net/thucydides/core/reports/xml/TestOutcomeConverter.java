@@ -12,7 +12,6 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.features.ApplicationFeature;
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.jetty.util.StringUtil;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

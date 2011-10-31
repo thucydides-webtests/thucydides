@@ -3,7 +3,6 @@ package net.thucydides.core.reports.templates;
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 import java.io.IOException;
 import java.io.StringWriter;

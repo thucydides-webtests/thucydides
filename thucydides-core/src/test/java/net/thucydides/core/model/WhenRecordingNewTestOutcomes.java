@@ -11,7 +11,6 @@ import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.Arrays;

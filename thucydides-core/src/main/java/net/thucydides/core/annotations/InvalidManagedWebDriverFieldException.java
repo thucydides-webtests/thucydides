@@ -1,10 +1,5 @@
 package net.thucydides.core.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
  * Thrown if no suitable WebDriver field with the @Managed annotation is found in a test.
  * 

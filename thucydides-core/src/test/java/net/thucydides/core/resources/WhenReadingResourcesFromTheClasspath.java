@@ -10,7 +10,6 @@ import org.mockito.MockitoAnnotations;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.regex.Pattern;
 import java.util.zip.ZipFile;
 

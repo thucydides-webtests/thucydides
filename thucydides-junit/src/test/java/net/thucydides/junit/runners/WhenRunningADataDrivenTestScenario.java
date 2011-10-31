@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import com.sun.tools.internal.jxc.gen.config.Config;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
@@ -9,6 +10,9 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Concurrent;
 import net.thucydides.junit.annotations.TestData;
@@ -26,6 +30,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.InitializationError;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
@@ -57,17 +62,22 @@ public class WhenRunningADataDrivenTestScenario {
     @Mock
     WebDriverFactory webDriverFactory;
 
+    MockEnvironmentVariables environmentVariables;
+
+    Configuration configuration;
+
     @Before
     public void initMocks() {
         File temporaryDirectory = tempFolder.newFolder("screenshots");
         MockitoAnnotations.initMocks(this);
+        environmentVariables = new MockEnvironmentVariables();
+        configuration = new SystemPropertiesConfiguration(environmentVariables);
     }
 
     @Test
     public void a_data_driven_test_driver_should_run_one_test_per_row_of_data() throws Throwable  {
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
@@ -78,8 +88,7 @@ public class WhenRunningADataDrivenTestScenario {
     @Test
     public void a_data_driven_test_should_also_be_able_to_use_data_from_a_CSV_file() throws Throwable  {
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleCSVDataDrivenScenario.class);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
@@ -92,11 +101,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void a_separate_xml_report_should_be_generated_from_each_row_of_data() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
-                            outputDirectory.getAbsolutePath());
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                                         outputDirectory.getAbsolutePath());
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
 
         runner.run(new RunNotifier());
 
@@ -108,11 +116,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void a_separate_xml_report_should_be_generated_from_each_row_of_data_in_a_CSV_file() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleCSVDataDrivenScenario.class);
 
         runner.run(new RunNotifier());
 
@@ -124,11 +131,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void xml_report_names_should_reflect_the_test_data() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
 
         runner.run(new RunNotifier());
 
@@ -143,11 +149,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void xml_report_names_should_reflect_the_test_data_from_the_csv_file() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleCSVDataDrivenScenario.class);
 
         runner.run(new RunNotifier());
 
@@ -161,11 +166,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void xml_report_contents_should_reflect_the_test_data() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
 
         runner.run(new RunNotifier());
 
@@ -181,11 +185,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void xml_report_contents_should_reflect_the_test_data_from_the_csv_file() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleCSVDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleCSVDataDrivenScenario.class);
 
         runner.run(new RunNotifier());
 
@@ -200,10 +203,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_test_data_is_provided_for_a_step_a_single_test_should_be_executed() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
-                            outputDirectory.getAbsolutePath());
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                                         outputDirectory.getAbsolutePath());
 
-        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioWithTestSpecificData.class);
+        ThucydidesRunner runner = getNormalTestRunnerUsing(SamplePassingScenarioWithTestSpecificData.class);
         runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
@@ -216,10 +219,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_a_step_fails_for_a_row_the_other_rows_should_be_executed() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesRunner runner = new ThucydidesRunner(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
         runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
@@ -237,10 +240,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_a_step_fails_for_a_row_the_other_rows_should_not_be_skipped() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesRunner runner = new ThucydidesRunner(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
         runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
@@ -261,10 +264,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_a_step_fails_with_an_error_for_a_row_the_other_rows_should_be_executed() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesRunner runner = new ThucydidesRunner(ScenarioWithTestSpecificDataAndABreakingTestSample.class);
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndABreakingTestSample.class);
         runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
@@ -341,10 +344,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_test_data_is_provided_for_a_step_then_a_step_should_be_reported_for_each_data_row() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesRunner runner = new ThucydidesRunner(ScenarioWithTestSpecificData.class);
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificData.class);
         runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
@@ -362,10 +365,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void test_step_data_should_appear_in_the_step_titles() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesRunner runner = new ThucydidesRunner(ScenarioWithTestSpecificData.class);
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificData.class);
         runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
@@ -386,22 +389,17 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
     @Test
-    @Ignore
-    // TODO: work out why this test fails intermediatesly
     public void when_the_Concurrent_annotation_is_used_tests_should_be_run_in_parallel() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleParallelDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleParallelDataDrivenScenario.class);
 
         AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
 
         runner.run(new RunNotifier());
-
-        Thread.currentThread().sleep(1000);
 
         List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
@@ -414,8 +412,7 @@ public class WhenRunningADataDrivenTestScenario {
     @Test
     public void the_Concurrent_annotation_indicates_that_tests_should_be_run_in_parallel() throws Throwable  {
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleParallelDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleParallelDataDrivenScenario.class);
 
         assertThat(runner.runTestsInParallelFor(SampleParallelDataDrivenScenario.class), is(true));
         assertThat(runner.runTestsInParallelFor(SampleDataDrivenScenario.class), is(false));
@@ -424,8 +421,7 @@ public class WhenRunningADataDrivenTestScenario {
     @Test
     public void by_default_the_number_of_threads_is_2_times_the_number_of_CPU_cores() throws Throwable  {
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleParallelDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleParallelDataDrivenScenario.class);
         int threadCount = runner.getThreadCountFor(SampleParallelDataDrivenScenario.class);
 
         int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
@@ -447,8 +443,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void the_number_of_threads_can_be_overridden_in_the_concurrent_annotation() throws Throwable  {
 
         ThucydidesParameterizedRunner runner
-                   = new ThucydidesParameterizedRunner(ParallelDataDrivenScenarioWithSpecifiedThreadCountSample.class,
-                                                       webDriverFactory);
+                   = getTestRunnerUsing(ParallelDataDrivenScenarioWithSpecifiedThreadCountSample.class);
         int threadCount = runner.getThreadCountFor(ParallelDataDrivenScenarioWithSpecifiedThreadCountSample.class);
 
         assertThat(threadCount, is(7));
@@ -468,8 +463,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void the_number_of_threads_can_be_overridden_in_the_concurrent_annotation_using_a_relative_value() throws Throwable  {
 
         ThucydidesParameterizedRunner runner
-                   = new ThucydidesParameterizedRunner(ParallelDataDrivenScenarioWithRelativeThreadCountSample.class,
-                                                       webDriverFactory);
+                   = getTestRunnerUsing(ParallelDataDrivenScenarioWithRelativeThreadCountSample.class);
         int threadCount = runner.getThreadCountFor(ParallelDataDrivenScenarioWithRelativeThreadCountSample.class);
 
         int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
@@ -490,8 +484,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void if_the_thread_count_is_invalid_an_exception_should_be_thrown() throws Throwable  {
 
         ThucydidesParameterizedRunner runner
-                   = new ThucydidesParameterizedRunner(ParallelDataDrivenScenarioWithInvalidThreadCountSample.class,
-                                                       webDriverFactory);
+                   = getTestRunnerUsing(ParallelDataDrivenScenarioWithInvalidThreadCountSample.class);
         int threadCount = runner.getThreadCountFor(ParallelDataDrivenScenarioWithInvalidThreadCountSample.class);
 
     }
@@ -521,11 +514,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void html_report_names_should_reflect_the_test_data() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
 
         AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
 
@@ -543,11 +535,10 @@ public class WhenRunningADataDrivenTestScenario {
     public void a_separate_html_report_should_be_generated_from_each_row_of_data() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        System.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesParameterizedRunner runner = new ThucydidesParameterizedRunner(SampleDataDrivenScenario.class,
-                                                                                 webDriverFactory);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
 
         AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
 
@@ -569,4 +560,15 @@ public class WhenRunningADataDrivenTestScenario {
         }
     }
 
+    protected ThucydidesRunner getNormalTestRunnerUsing(Class<?> testClass) throws Throwable {
+        Configuration configuration = new SystemPropertiesConfiguration(environmentVariables);
+        WebDriverFactory factory = new WebDriverFactory(environmentVariables);
+        return new ThucydidesRunner(testClass, factory, configuration);
+    }
+    
+    protected ThucydidesParameterizedRunner getTestRunnerUsing(Class<?> testClass) throws Throwable {
+        Configuration configuration = new SystemPropertiesConfiguration(environmentVariables);
+        WebDriverFactory factory = new WebDriverFactory(environmentVariables);
+        return new ThucydidesParameterizedRunner(testClass, configuration, factory);
+    }
 }

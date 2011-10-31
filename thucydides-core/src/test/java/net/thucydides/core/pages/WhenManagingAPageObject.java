@@ -1,10 +1,10 @@
 package net.thucydides.core.pages;
 
 import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.By;
@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,13 +37,13 @@ public class WhenManagingAPageObject {
     
     MockEnvironmentVariables environmentVariables;
 
-    PageConfiguration pageConfiguration;
+    Configuration configuration;
 
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
         environmentVariables = new MockEnvironmentVariables();
-        pageConfiguration = new SystemPropertiesPageConfiguration(environmentVariables);
+        configuration = new SystemPropertiesConfiguration(environmentVariables);
     }
     
     class BasicPageObject extends PageObject {
@@ -605,7 +604,7 @@ public class WhenManagingAPageObject {
 
         BasicPageObject page = new BasicPageObject(driver);
 
-        Pages pages = new Pages(driver, pageConfiguration);
+        Pages pages = new Pages(driver, configuration);
         pages.start();
 
         verify(driver).get("http://www.google.com");
@@ -615,9 +614,9 @@ public class WhenManagingAPageObject {
     @Test
     public void the_start_url_for_a_page_can_be_overridden_by_the_system_default_url() {
         BasicPageObject page = new BasicPageObject(driver);
-        pageConfiguration.setDefaultBaseUrl("http://www.google.com");
+        configuration.setDefaultBaseUrl("http://www.google.com");
 
-        Pages pages = new Pages(driver, pageConfiguration);
+        Pages pages = new Pages(driver, configuration);
         pages.setDefaultBaseUrl("http://www.google.co.nz");
         pages.start();
 

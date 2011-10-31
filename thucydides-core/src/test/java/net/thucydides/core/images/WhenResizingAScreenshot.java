@@ -1,16 +1,13 @@
 package net.thucydides.core.images;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.regexp.RE;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.exceptions.base.MockitoAssertionError;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;

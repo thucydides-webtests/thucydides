@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.openqa.selenium.WebDriver;
@@ -29,33 +30,33 @@ public class Pages implements Serializable {
 
     private String defaultBaseUrl;
 
-    private final PageConfiguration pageConfiguration;
+    private final Configuration configuration;
 
     private WebdriverProxyFactory proxyFactory;
 
     private transient boolean usePreviousPage = false;
 
-    public Pages(PageConfiguration pageConfiguration) {
-        this.pageConfiguration = pageConfiguration;
+    public Pages(Configuration configuration) {
+        this.configuration = configuration;
         proxyFactory = WebdriverProxyFactory.getFactory();
     }
 
     public Pages() {
-        this(Injectors.getInjector().getInstance(PageConfiguration.class));
+        this(Injectors.getInjector().getInstance(Configuration.class));
     }
 
     public Pages(final WebDriver driver) {
-        this(Injectors.getInjector().getInstance(PageConfiguration.class));
+        this(Injectors.getInjector().getInstance(Configuration.class));
         this.driver = driver;
     }
 
-    public Pages(final WebDriver driver, PageConfiguration pageConfiguration) {
-        this(pageConfiguration);
+    public Pages(final WebDriver driver, Configuration Configuration) {
+        this(Configuration);
         this.driver = driver;
     }
 
-    public PageConfiguration getPageConfiguration() {
-        return pageConfiguration;
+    public Configuration getConfiguration() {
+        return configuration;
     }
 
     public void setDriver(final WebDriver driver) {
@@ -190,8 +191,8 @@ public class Pages implements Serializable {
     public String getDefaultBaseUrl() {
 
         String baseUrl = defaultBaseUrl;
-        if (isNotEmpty(pageConfiguration.getBaseUrl())) {
-            baseUrl = pageConfiguration.getBaseUrl();
+        if (isNotEmpty(configuration.getBaseUrl())) {
+            baseUrl = configuration.getBaseUrl();
         }
         return baseUrl;
     }

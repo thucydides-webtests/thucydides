@@ -2,22 +2,14 @@ package net.thucydides.core.annotations;
 
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 
-import java.lang.reflect.Field;
-
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.any;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doThrow;
 
 public class WhenReadingManagedDriverAnnotations {
 

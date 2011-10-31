@@ -1,7 +1,5 @@
 package net.thucydides.core.resources;
 
-import mx4j.tools.naming.NamingServiceMBean;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

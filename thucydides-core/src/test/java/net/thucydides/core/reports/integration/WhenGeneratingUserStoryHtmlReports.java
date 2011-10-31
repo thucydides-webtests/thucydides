@@ -4,7 +4,6 @@ import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
-import net.thucydides.core.annotations.Title;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.model.StoryTestResults;
@@ -34,7 +33,6 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
 
 public class WhenGeneratingUserStoryHtmlReports {
 

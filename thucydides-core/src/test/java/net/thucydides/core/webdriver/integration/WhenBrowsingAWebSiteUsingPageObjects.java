@@ -1,12 +1,12 @@
 package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.annotations.DefaultUrl;
-import net.thucydides.core.pages.PageConfiguration;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.PageUrls;
-import net.thucydides.core.pages.SystemPropertiesPageConfiguration;
 import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SupportedWebDriver;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -67,7 +67,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     MockEnvironmentVariables environmentVariables;
 
-    PageConfiguration pageConfiguration;
+    Configuration configuration;
 
     @Before
     public void openLocalStaticSite() {
@@ -78,9 +78,9 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     }
 
     @Before
-    public void initPageConfiguration() {
+    public void initConfiguration() {
         environmentVariables = new MockEnvironmentVariables();
-        pageConfiguration = new SystemPropertiesPageConfiguration(environmentVariables);
+        configuration = new SystemPropertiesConfiguration(environmentVariables);
     }
 
 
@@ -263,7 +263,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         environmentVariables.setProperty("refuse.untrusted.certificates","true");
 
         IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver, 1);
-        PageUrls pageUrls = new PageUrls(indexPage, pageConfiguration);
+        PageUrls pageUrls = new PageUrls(indexPage, configuration);
         indexPage.setPageUrls(pageUrls);
 
         assertThat(indexPage.getTitle(), is("Thucydides Test Site"));
