@@ -1,7 +1,8 @@
 package net.thucydides.junit.spring;
 
-import org.springframework.test.context.TestContextManager;
 import org.junit.runners.model.Statement;
+import org.springframework.test.context.TestContextManager;
+
 import java.lang.reflect.Method;
 
 /**

@@ -1,10 +1,7 @@
 package net.thucydides.junit.runners;
 
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.util.SystemEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
-import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.listeners.JUnitStepListener;
 import org.junit.runner.notification.RunNotifier;

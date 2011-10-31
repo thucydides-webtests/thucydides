@@ -1,17 +1,18 @@
 package net.thucydides.junit.runners;
 
-import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
-import net.thucydides.core.steps.InvalidManagedPagesFieldException;
 import net.thucydides.core.steps.StepEventBus;
-import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.WebDriverFactory;
-import net.thucydides.core.webdriver.WebdriverInstanceFactory;
-import net.thucydides.core.webdriver.WebdriverManager;
-import net.thucydides.samples.*;
+import net.thucydides.samples.NonWebTestScenarioWithParameterizedSteps;
+import net.thucydides.samples.SampleNonWebScenarioWithError;
+import net.thucydides.samples.SamplePassingNonWebScenario;
+import net.thucydides.samples.SamplePassingNonWebScenarioWithEmptyTests;
+import net.thucydides.samples.SamplePassingNonWebScenarioWithIgnoredTests;
+import net.thucydides.samples.SamplePassingNonWebScenarioWithPendingTests;
+import net.thucydides.samples.SingleNonWebTestScenario;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,30 +20,20 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {

@@ -6,16 +6,13 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.junit.spring.samples.dao.UserDAO;
 import net.thucydides.junit.spring.samples.domain.User;
-import net.thucydides.junit.spring.samples.service.UserService;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import java.util.List;
 

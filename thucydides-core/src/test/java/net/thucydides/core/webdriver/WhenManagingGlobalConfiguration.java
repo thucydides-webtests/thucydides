@@ -1,17 +1,11 @@
 package net.thucydides.core.webdriver;
 
-import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.when;
 
 public class WhenManagingGlobalConfiguration {
 
@@ -34,7 +28,7 @@ public class WhenManagingGlobalConfiguration {
 
     @Test
     public void the_browser_restart_value_can_be_defined_in_a_system_property() {
-        environmentVariables.setProperty("thucydides.restart.browser.frequency","5");
+        environmentVariables.setProperty("thucydides.restart.browser.frequency", "5");
 
         assertThat(configuration.getRestartFrequency(), is(5));
     }

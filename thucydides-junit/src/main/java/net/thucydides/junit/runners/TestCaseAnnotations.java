@@ -5,11 +5,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
-import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.PagesAnnotatedField;
 import org.openqa.selenium.WebDriver;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 import static com.google.common.collect.ImmutableSet.copyOf;

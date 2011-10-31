@@ -10,12 +10,7 @@ import org.springframework.test.context.TestContextManager;
 
 import java.lang.reflect.Method;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 
 public class WhenCopingWithSpringConfigurationErrors {
 

@@ -1,6 +1,5 @@
 package net.thucydides.core.webdriver;
 
-import net.thucydides.core.guice.Injectors;
 import org.openqa.selenium.WebDriver;
 
 /**
