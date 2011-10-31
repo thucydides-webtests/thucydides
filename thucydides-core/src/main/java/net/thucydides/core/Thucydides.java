@@ -9,6 +9,7 @@ import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import org.openqa.selenium.WebDriver;
@@ -107,7 +108,7 @@ public class Thucydides {
      * Use a mock driver for testing purposes
      */
     protected static void useMockDriver(final WebDriver mockDriver) {
-        setupWebdriverManager(new WebdriverManager(getWebDriverFactory()) {
+        setupWebdriverManager(new ThucydidesWebdriverManager(getWebDriverFactory()) {
 
             @Override
             public WebDriver getWebdriver() {
@@ -134,7 +135,7 @@ public class Thucydides {
     }
 
     private static void setupWebdriverManager() {
-        setupWebdriverManager(new WebdriverManager(getWebDriverFactory()));
+        setupWebdriverManager(Injectors.getInjector().getInstance(WebdriverManager.class));
     }
 
     private static void setupWebdriverManager(WebdriverManager webdriverManager) {

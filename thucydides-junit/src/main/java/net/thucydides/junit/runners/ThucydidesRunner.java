@@ -11,6 +11,7 @@ import net.thucydides.core.steps.StepData;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
@@ -90,7 +91,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * @throws InitializationError if some JUnit-related initialization problem occurred
      */
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
-        this(klass, new WebDriverFactory(), Injectors.getInjector().getInstance(Configuration.class));
+        super(klass);
+        this.webDriverFactory = new WebDriverFactory();
+        this.configuration = Injectors.getInjector().getInstance(Configuration.class);
+        this.webdriverManager = Injectors.getInjector().getInstance(WebdriverManager.class);
     }
 
     public ThucydidesRunner(final Class<?> klass, final WebDriverFactory webDriverFactory) throws InitializationError {
@@ -103,6 +107,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         super(klass);
         this.webDriverFactory = webDriverFactory;
         this.configuration = configuration;
+        webdriverManager = new ThucydidesWebdriverManager(webDriverFactory, configuration);
 
         if (TestCaseAnnotations.supportsWebTests(klass)) {
             checkRequestedDriverType();
@@ -223,7 +228,9 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     protected void initWebdriverManager() {
-        webdriverManager = new WebdriverManager(webDriverFactory);
+        if (webdriverManager == null) {
+            webdriverManager = Injectors.getInjector().getInstance(WebdriverManager.class);
+        }
     }
 
     private ReportService getReportService() {

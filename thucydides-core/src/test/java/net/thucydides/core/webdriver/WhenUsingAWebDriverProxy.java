@@ -61,7 +61,7 @@ public class WhenUsingAWebDriverProxy {
         MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
         factory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
 
-        webdriverManager = new WebdriverManager(factory);
+        webdriverManager = new ThucydidesWebdriverManager(factory);
     }
 
 
@@ -77,6 +77,7 @@ public class WhenUsingAWebDriverProxy {
     @After
     public void clearMocks() {
         WebdriverProxyFactory.getFactory().clearMockDriver();
+        webdriverManager.closeDriver();
     }
 
     @Test

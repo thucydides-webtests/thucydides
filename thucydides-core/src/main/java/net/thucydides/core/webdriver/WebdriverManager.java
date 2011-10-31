@@ -11,55 +11,10 @@ import org.openqa.selenium.WebDriver;
  * @author johnsmart
  *
  */
-public class WebdriverManager {
+public interface WebdriverManager {
 
-    /**
-     * A WebDriver instance is shared across all the tests executed by the runner in a given test run.
-     */
-    private final WebDriver webdriver;
+    public WebDriver getWebdriver();
 
-    private final WebDriverFactory webDriverFactory;
+    public void closeDriver();
 
-    private final Configuration configuration;
-
-
-    public WebdriverManager(final WebDriverFactory webDriverFactory, Configuration configuration) {
-        this.webDriverFactory = webDriverFactory;
-        this.configuration = configuration;
-        webdriver = newDriver();
-    }
-
-    public WebdriverManager(final WebDriverFactory webDriverFactory) {
-        this(webDriverFactory, Injectors.getInjector().getInstance(Configuration.class));
-    }
-
-    /**
-     * Create a new driver instance based on system property values. You can
-     * override this method to use a custom driver if you really know what you
-     * are doing.
-     * 
-     * @throws UnsupportedDriverException
-     *             if the driver type is not supported.
-     */
-    protected WebDriver newDriver() {
-        SupportedWebDriver supportedDriverType = configuration.getDriverType();
-        Class<? extends WebDriver> webDriverType = WebDriverFactory.getClassFor(supportedDriverType);
-        return WebdriverProxyFactory.getFactory().proxyFor(webDriverType, webDriverFactory);
-    }
-    
-    public void closeDriver() {
-        if (getWebdriver() != null) {
-            getWebdriver().close();
-            getWebdriver().quit();
-        }
-    }
-
-    public WebDriver getWebdriver() {
-        return webdriver;
-    }
-
-    public Class<? extends WebDriver> getWebDriverClass() {
-        return WebDriverFactory.getClassFor(configuration.getDriverType());
-     }
-
-}    
+}

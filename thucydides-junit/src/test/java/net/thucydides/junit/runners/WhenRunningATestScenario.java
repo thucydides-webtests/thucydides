@@ -8,6 +8,7 @@ import net.thucydides.core.steps.InvalidManagedPagesFieldException;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
@@ -608,7 +609,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
     @Test
     public void the_manager_should_ignore_close_if_the_webdriver_if_not_defined() {
-        WebdriverManager manager = new WebdriverManager(webDriverFactory);
+        WebdriverManager manager = new ThucydidesWebdriverManager(webDriverFactory);
 
         manager.closeDriver();
     }

@@ -2,6 +2,7 @@ package net.thucydides.core.webdriver;
 
 
 import net.thucydides.core.util.MockEnvironmentVariables;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -52,7 +53,7 @@ public class WhenOpeningAndClosingBrowserSessions {
         MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
         factory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
 
-        webdriverManager = new WebdriverManager(factory);
+        webdriverManager = new ThucydidesWebdriverManager(factory);
     }
 
 
@@ -62,6 +63,11 @@ public class WhenOpeningAndClosingBrowserSessions {
         initWendriverManager();
         
         webDriver = new TransparentWebDriverFacade((WebDriverFacade)webdriverManager.getWebdriver());
+    }
+
+    @After
+    public void closeDriver() {
+        webdriverManager.closeDriver();
     }
 
     @Test

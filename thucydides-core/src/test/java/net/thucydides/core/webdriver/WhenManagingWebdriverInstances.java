@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import net.thucydides.core.util.MockEnvironmentVariables;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -62,7 +63,7 @@ public class WhenManagingWebdriverInstances {
 
         configuration = new SystemPropertiesConfiguration(environmentVariables);
         
-        webdriverManager = new WebdriverManager(factory, configuration);
+        webdriverManager = new ThucydidesWebdriverManager(factory, configuration);
     }
 
 
@@ -71,6 +72,11 @@ public class WhenManagingWebdriverInstances {
         MockitoAnnotations.initMocks(this);
         environmentVariables = new MockEnvironmentVariables();
         initWendriverManager();
+    }
+
+    @After
+    public void closeDriver() {
+        webdriverManager.closeDriver();
     }
 
     @Test
@@ -98,7 +104,7 @@ public class WhenManagingWebdriverInstances {
         environmentVariables.setProperty("webdriver.driver", "firefox");
         environmentVariables.setProperty(SystemPropertiesConfiguration.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER, "false");
 
-        WebdriverManager webdriverManager = new WebdriverManager(factory, configuration);
+        WebdriverManager webdriverManager = new ThucydidesWebdriverManager(factory, configuration);
 
         WebDriver driver = webdriverManager.getWebdriver();
         driver.get("http://www.google.com");
@@ -111,7 +117,7 @@ public class WhenManagingWebdriverInstances {
 
         environmentVariables.setProperty("webdriver.driver", "firefox");
 
-        WebdriverManager webdriverManager = new WebdriverManager(factory, configuration);
+        WebdriverManager webdriverManager = new ThucydidesWebdriverManager(factory, configuration);
 
         WebDriver driver = webdriverManager.getWebdriver();
         driver.get("http://www.google.com");
@@ -124,7 +130,7 @@ public class WhenManagingWebdriverInstances {
 
         environmentVariables.setProperty("webdriver.driver", "firefox");
 
-        WebdriverManager webdriverManager = new WebdriverManager(factory, configuration);
+        WebdriverManager webdriverManager = new ThucydidesWebdriverManager(factory, configuration);
 
         WebDriver driver = webdriverManager.getWebdriver();
         driver.get("http://www.google.com");

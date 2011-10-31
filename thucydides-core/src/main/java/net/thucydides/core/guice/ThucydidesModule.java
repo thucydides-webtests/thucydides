@@ -14,6 +14,8 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.SystemEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
+import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
+import net.thucydides.core.webdriver.WebdriverManager;
 
 public class ThucydidesModule extends AbstractModule {
 
@@ -25,6 +27,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(EnvironmentVariables.class).to(SystemEnvironmentVariables.class).in(Singleton.class);
         bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);
         bind(IssueTracking.class).to(SystemPropertiesIssueTracking.class).in(Singleton.class);
+        bind(WebdriverManager.class).to(ThucydidesWebdriverManager.class);
 
     }
 }
