@@ -17,6 +17,12 @@ public class ResizableImage {
     private final SimpleImageInfo imageInfo;
     private final int MAX_SUPPORTED_HEIGHT = 4000;
 
+    private final Logger logger = LoggerFactory.getLogger(ResizableImage.class);
+
+    protected Logger getLogger() {
+        return logger;
+    }
+
     public ResizableImage(final File screenshotFile) throws IOException {
         this.screenshotFile = screenshotFile;
         this.imageInfo = new SimpleImageInfo(screenshotFile);
@@ -46,10 +52,17 @@ public class ResizableImage {
         int width = new SimpleImageInfo(screenshotFile).getWidth();
         BufferedImage resizedImage = new BufferedImage(width, targetHeight, image.getType());
 
+        try {
+            return resizeImage(image, resizedImage);
+        } catch (IllegalArgumentException e) {
+            getLogger().warn("Failed to take screenshot", e);
+            return this;
+        }
+    }
+
+    protected ResizableImage resizeImage(BufferedImage image, BufferedImage resizedImage) throws IOException {
         fillWithWhiteBackground(resizedImage);
-
         resizedImage.setData(image.getRaster());
-
         return new ResizedImage(resizedImage, screenshotFile);
     }
 

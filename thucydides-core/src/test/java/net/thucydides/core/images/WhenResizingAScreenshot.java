@@ -5,8 +5,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -16,6 +18,9 @@ import java.net.URL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.contains;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class WhenResizingAScreenshot {
@@ -88,6 +93,40 @@ public class WhenResizingAScreenshot {
 
         assertThat(resizedImage.getWitdh(), is(805));
         assertThat(resizedImage.getHeight(), is(greaterThan(1200)));
+    }
+
+    @Mock
+    Logger logger;
+
+    class DodgyResizableImage extends ResizableImage {
+
+        public DodgyResizableImage(final File screenshotFile) throws IOException {
+            super(screenshotFile);
+        }
+
+        @Override
+        protected ResizableImage resizeImage(BufferedImage image, BufferedImage resizedImage) throws IOException {
+            throw new IllegalArgumentException();
+        }
+
+        @Override
+        protected Logger getLogger() {
+            return logger;
+        }
+    }
+
+    @Test
+    public void should_not_fail_if_cant_take_screenshot() throws IOException {
+
+        File screenshotFile = screenshotFileFrom("/screenshots/google_page_1.png");
+
+        DodgyResizableImage image = new DodgyResizableImage(screenshotFile);
+
+        ResizableImage resizedImage = image.rescaleCanvas(1200);
+
+        assertThat((DodgyResizableImage) resizedImage, is(image));
+        verify(logger).warn(contains("Failed to take screenshot"), any(Exception.class));
+
     }
 
     @Test
