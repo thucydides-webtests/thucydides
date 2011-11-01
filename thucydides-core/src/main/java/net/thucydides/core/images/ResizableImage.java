@@ -50,17 +50,16 @@ public class ResizableImage {
 
         BufferedImage image = ImageIO.read(screenshotFile);
         int width = new SimpleImageInfo(screenshotFile).getWidth();
-        BufferedImage resizedImage = new BufferedImage(width, targetHeight, image.getType());
-
         try {
-            return resizeImage(image, resizedImage);
+            return resizeImage(width, targetHeight, image);
         } catch (IllegalArgumentException e) {
-            getLogger().warn("Failed to take screenshot", e);
+            getLogger().warn("Could not resize screenshot: " + screenshotFile, e);
             return this;
         }
     }
 
-    protected ResizableImage resizeImage(BufferedImage image, BufferedImage resizedImage) throws IOException {
+    protected ResizableImage resizeImage(int width, int targetHeight, BufferedImage image) throws IOException {
+        BufferedImage resizedImage = new BufferedImage(width, targetHeight, image.getType());
         fillWithWhiteBackground(resizedImage);
         resizedImage.setData(image.getRaster());
         return new ResizedImage(resizedImage, screenshotFile);
