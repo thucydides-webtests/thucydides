@@ -4,7 +4,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.4.18</version>
+        <version>0.4.19-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides.maven.plugins</groupId>
     <artifactId>maven-thucydides-plugin</artifactId>
