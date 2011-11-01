@@ -59,7 +59,8 @@ public class ResizableImage {
     }
 
     protected ResizableImage resizeImage(int width, int targetHeight, BufferedImage image) throws IOException {
-        BufferedImage resizedImage = new BufferedImage(width, targetHeight, image.getType());
+        int imageType = (image.getType() > 0) ? image.getType() : BufferedImage.TYPE_4BYTE_ABGR;
+        BufferedImage resizedImage = new BufferedImage(width, targetHeight, imageType);
         fillWithWhiteBackground(resizedImage);
         resizedImage.setData(image.getRaster());
         return new ResizedImage(resizedImage, screenshotFile);

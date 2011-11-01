@@ -105,7 +105,7 @@ public class WhenResizingAScreenshot {
         }
 
         @Override
-        protected ResizableImage resizeImage(BufferedImage image, BufferedImage resizedImage) throws IOException {
+        protected ResizableImage resizeImage(int width, int targetHeight, BufferedImage image) throws IOException {
             throw new IllegalArgumentException();
         }
 
@@ -125,7 +125,7 @@ public class WhenResizingAScreenshot {
         ResizableImage resizedImage = image.rescaleCanvas(1200);
 
         assertThat((DodgyResizableImage) resizedImage, is(image));
-        verify(logger).warn(contains("Failed to take screenshot"), any(Exception.class));
+        verify(logger).warn(contains("Could not resize screenshot"), any(Exception.class));
 
     }
 
