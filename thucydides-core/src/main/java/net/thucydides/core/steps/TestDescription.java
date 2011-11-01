@@ -73,7 +73,7 @@ public class TestDescription {
     public String getAnnotatedTitle() {
 
         Method testMethod = getTestMethod();
-        Title title = (Title) testMethod.getAnnotation(Title.class);
+        Title title = testMethod.getAnnotation(Title.class);
         if (title != null) {
             return title.value();
         }
@@ -91,14 +91,14 @@ public class TestDescription {
     }
 
     private void addMultipleRequirementsFrom(final Set<String> requirements, final Method testMethod) {
-        TestsRequirements testRequirements = (TestsRequirements) testMethod.getAnnotation(TestsRequirements.class);
+        TestsRequirements testRequirements = testMethod.getAnnotation(TestsRequirements.class);
         if (testRequirements != null) {
             requirements.addAll(Arrays.asList(testRequirements.value()));
         }
     }
 
     private void addRequirementFrom(final Set<String> requirements, final Method testMethod) {
-        TestsRequirement testsRequirement = (TestsRequirement) testMethod.getAnnotation(TestsRequirement.class);
+        TestsRequirement testsRequirement = testMethod.getAnnotation(TestsRequirement.class);
         if (testsRequirement != null) {
             requirements.add(testsRequirement.value());
         }

@@ -8,7 +8,9 @@ import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.steps.StepListener;
+import net.thucydides.core.util.SystemEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
@@ -108,7 +110,8 @@ public class Thucydides {
      * Use a mock driver for testing purposes
      */
     protected static void useMockDriver(final WebDriver mockDriver) {
-        setupWebdriverManager(new ThucydidesWebdriverManager(getWebDriverFactory()) {
+        setupWebdriverManager(new ThucydidesWebdriverManager(getWebDriverFactory(),
+                              new SystemPropertiesConfiguration(new SystemEnvironmentVariables())) {
 
             @Override
             public WebDriver getWebdriver() {

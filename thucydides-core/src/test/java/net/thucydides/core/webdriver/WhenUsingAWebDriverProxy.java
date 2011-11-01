@@ -61,7 +61,7 @@ public class WhenUsingAWebDriverProxy {
         MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
         factory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
 
-        webdriverManager = new ThucydidesWebdriverManager(factory);
+        webdriverManager = new ThucydidesWebdriverManager(factory, new SystemPropertiesConfiguration(environmentVariables));
     }
 
 

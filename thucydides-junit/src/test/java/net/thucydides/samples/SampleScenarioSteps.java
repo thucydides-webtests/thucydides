@@ -181,4 +181,8 @@ public class SampleScenarioSteps extends ScenarioSteps {
 
     }
 
+    @Pending
+    @Step
+    public void data_driven_test_step_that_is_skipped() {
+    }
 }

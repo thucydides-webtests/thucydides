@@ -235,6 +235,28 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
     @Test
+    public void when_a_step_is_skipped_for_a_row_the_other_rows_should_be_executed() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                            outputDirectory.getAbsolutePath());
+
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
+        runner.setWebDriverFactory(webDriverFactory);
+
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(1));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+
+        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
+        assertThat(dataDrivenSteps.size(), is(3));
+
+    }
+
+
+    @Test
     public void when_a_step_fails_for_a_row_the_other_rows_should_not_be_skipped() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
@@ -316,6 +338,25 @@ public class WhenRunningADataDrivenTestScenario {
         @Test
         public void happy_day_scenario() throws Throwable {
             withTestDataFrom("test-data/simple-data.csv").run(steps).data_driven_test_step_that_fails();
+        }
+    }
+
+    @RunWith(ThucydidesRunner.class)
+    public static class ScenarioWithTestSpecificDataAndASkippedTestSample {
+
+        @Managed
+        public WebDriver webdriver;
+
+        @ManagedPages(defaultUrl = "http://www.google.com")
+        public Pages pages;
+
+        @Steps
+        public SampleScenarioSteps steps;
+
+
+        @Test
+        public void happy_day_scenario() throws Throwable {
+            withTestDataFrom("test-data/simple-data.csv").run(steps).data_driven_test_step_that_is_skipped();
         }
     }
 

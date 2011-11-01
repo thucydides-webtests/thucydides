@@ -17,8 +17,6 @@ public class ResizableImage {
     private final SimpleImageInfo imageInfo;
     private final int MAX_SUPPORTED_HEIGHT = 4000;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResizableImage.class);
-
     public ResizableImage(final File screenshotFile) throws IOException {
         this.screenshotFile = screenshotFile;
         this.imageInfo = new SimpleImageInfo(screenshotFile);

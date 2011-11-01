@@ -80,7 +80,7 @@ public class RelativeSizeColorScheme implements ColorScheme {
                                               final int failingTests,
                                               final int passingTests,
                                               final int pendingTests) {
-        float hue = 0.0f;
+        float hue;
 
         if ((failingTests > 0) && (passingTests > 0)){
             hue = weightedHue(calculateHueBetween(RED_HUE, GREEN_HUE, YELLOW_HUE, passingTests, failingTests));
@@ -116,7 +116,7 @@ public class RelativeSizeColorScheme implements ColorScheme {
 
     private float weightedHue(final float rawHue) {
         double rawValue = rawHue / proportionOfPassingTestsAsGreenHue;
-        double weightedValue = 0.0f;
+        double weightedValue;
         if (rawValue < 0.5) {
             weightedValue = (rawValue * 2.0/3.0);
         } else {

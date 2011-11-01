@@ -22,10 +22,6 @@ public class Formatter {
 
     private final IssueTracking issueTracking;
 
-    public Formatter() {
-        this(Injectors.getInjector().getInstance(IssueTracking.class));
-    }
-
     @Inject
     public Formatter(IssueTracking issueTracking) {
         this.issueTracking = issueTracking;

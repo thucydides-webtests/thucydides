@@ -162,7 +162,7 @@ public class StoryTestResults {
 
     public String getFormattedIssues() {
         if (!getIssues().isEmpty()) {
-           List<String> orderedIssues =  sort(getIssues(), on(String.class).toString());
+           List<String> orderedIssues =  sort(getIssues(), on(String.class));
            return "(" + getFormatter().addLinks(StringUtils.join(orderedIssues, ", ")) + ")";
         } else {
             return "";

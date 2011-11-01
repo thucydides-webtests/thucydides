@@ -133,7 +133,7 @@ public class Photographer {
     private void savePageSourceFor(final String screenshotFile) throws IOException {
         if (WebDriver.class.isAssignableFrom(driver.getClass())) {
             try {
-                WebDriver webdriver = (WebDriver) driver;
+                WebDriver webdriver = driver;
                 String pageSource = webdriver.getPageSource();
 
                 File savedSource = new File(sourceCodeFileFor(screenshotFile));

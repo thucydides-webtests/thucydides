@@ -30,13 +30,11 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private static final long serialVersionUID = 1L;
     private final Class<?> testStepClass;
-    private List<Throwable> stepExceptions;
     private Throwable error = null;
     private static final Logger LOGGER = LoggerFactory.getLogger(StepInterceptor.class);
 
     public StepInterceptor(final Class<?> testStepClass) {
         this.testStepClass = testStepClass;
-        this.stepExceptions = new ArrayList<Throwable>();
     }
 
     public Object intercept(final Object obj, final Method method,
@@ -139,12 +137,10 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             result = invokeMethod(obj, method, args, proxy);
         } catch (AssertionError assertionError) {
             error = assertionError;
-            stepExceptions.add(assertionError);
             notifyOfTestFailure(method, args, assertionError);
         }
         catch (WebDriverException webdriverException) {
             error = webdriverException;
-            stepExceptions.add(webdriverException);
             notifyOfTestFailure(method, args, webdriverException);
         }
         return result;
@@ -175,19 +171,16 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             notifyStepFinishedFor(method, args);
         } catch (AssertionError assertionError) {
             error = assertionError;
-            stepExceptions.add(assertionError);
             LOGGER.debug("Assertion error caught - notifying of failure " + assertionError);
             notifyOfStepFailure(method, args, assertionError);
             return appropriateReturnObject(obj, method);
         } catch (WebDriverException webdriverException) {
             error = webdriverException;
             AssertionError webdriverAssertionError = new WebdriverAssertionError(messageFrom(error), error);
-            stepExceptions.add(webdriverAssertionError);
             notifyOfStepFailure(method, args, webdriverAssertionError);
         } catch (Throwable generalException) {
             error = generalException;
             AssertionError assertionError = new WebdriverAssertionError(messageFrom(error), error);
-            stepExceptions.add(assertionError);
             notifyOfStepFailure(method, args, assertionError);
         }
 

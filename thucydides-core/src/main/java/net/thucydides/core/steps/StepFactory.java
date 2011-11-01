@@ -25,8 +25,6 @@ public class StepFactory {
 
     private final Pages pages;
 
-    private final List<Object> managedSteps = new ArrayList<Object>();
-
     private final Map<Class<?>, Object> index
             = new HashMap<Class<?>, Object>();
 
@@ -89,8 +87,6 @@ public class StepFactory {
     private <T> T instantiateNewStepLibraryFor(Class<T> scenarioStepsClass) {
         T steps = createProxyStepLibrary(scenarioStepsClass);
 
-        recordManagedStepLibrary(steps);
-
         indexStepLibrary(scenarioStepsClass, steps);
 
         instantiateAnyNestedStepLibrariesIn(steps, scenarioStepsClass);
@@ -100,8 +96,6 @@ public class StepFactory {
 
     private <T> T instantiateUniqueStepLibraryFor(Class<T> scenarioStepsClass) {
         T steps = createProxyStepLibrary(scenarioStepsClass);
-
-        recordManagedStepLibrary(steps);
 
         instantiateAnyNestedStepLibrariesIn(steps, scenarioStepsClass);
 
@@ -186,10 +180,6 @@ public class StepFactory {
 
     private <T> boolean isAScenarioStepClass(final Class<T> stepLibraryClass) {
         return ScenarioSteps.class.isAssignableFrom(stepLibraryClass);
-    }
-
-    private <T> void recordManagedStepLibrary(T steps) {
-        managedSteps.add(steps);
     }
 
     private <T> void indexStepLibrary(Class<T> scenarioStepsClass, T steps) {

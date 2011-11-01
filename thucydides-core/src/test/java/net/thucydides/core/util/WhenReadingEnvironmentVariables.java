@@ -31,6 +31,22 @@ public class WhenReadingEnvironmentVariables {
     }
 
     @Test
+    public void should_read_integer_system_properties_from_the_system() {
+        System.setProperty("some.integer.property","10");
+
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        int value = environmentVariables.getPropertyAsInteger("some.integer.property",5);
+        assertThat(value, is(10));
+    }
+
+    @Test
+    public void should_read_integer_system_properties_with_default_from_the_system() {
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        int value = environmentVariables.getPropertyAsInteger("some.default.integer.property",5);
+        assertThat(value, is(5));
+    }
+
+    @Test
     public void should_read_system_properties_from_the_system() {
         System.setProperty("some.property","some.value");
 
@@ -73,21 +89,21 @@ public class WhenReadingEnvironmentVariables {
     @Test
     public void mock_environment_variables_allow_integer_properties() {
         MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
-        environmentVariables.setProperty("property","30");
-        assertThat(environmentVariables.getPropertyAsInteger("property", 0), is(30));
+        environmentVariables.setProperty("integer.property","30");
+        assertThat(environmentVariables.getPropertyAsInteger("integer.property", 0), is(30));
     }
 
     @Test
     public void mock_environment_variables_allow_default_integer_properties() {
         MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
-        assertThat(environmentVariables.getPropertyAsInteger("property", 10), is(10));
+        assertThat(environmentVariables.getPropertyAsInteger("integer.property", 10), is(10));
     }
 
     @Test
     public void mock_environment_variables_allow_boolean_properties() {
         MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
-        environmentVariables.setProperty("property","true");
-        assertThat(environmentVariables.getPropertyAsBoolean("property", false), is(true));
+        environmentVariables.setProperty("boolean.property","true");
+        assertThat(environmentVariables.getPropertyAsBoolean("boolean.property", false), is(true));
     }
 
     @Test

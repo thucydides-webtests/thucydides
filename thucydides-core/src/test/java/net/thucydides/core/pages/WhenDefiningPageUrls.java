@@ -387,6 +387,7 @@ public class WhenDefiningPageUrls {
         assertThat(url, is("https://www.google.com"));
     }
 
+
     @Test
     public void when_we_get_a_target_url_a_classpath_url_is_converted_to_a_file_url() {
         String staticSiteUrl = Thread.currentThread().getContextClassLoader()

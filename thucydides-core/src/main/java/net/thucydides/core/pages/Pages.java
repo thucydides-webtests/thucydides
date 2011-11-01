@@ -55,10 +55,6 @@ public class Pages implements Serializable {
         this.driver = driver;
     }
 
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
     public void setDriver(final WebDriver driver) {
         this.driver = driver;
     }
@@ -84,13 +80,17 @@ public class Pages implements Serializable {
         return currentPageAt(pageObjectClass);
     }
 
+    public Configuration getConfiguration() {
+       return configuration;
+    }
+
     @SuppressWarnings("unchecked")
 	public <T extends PageObject> T get(final Class<T> pageObjectClass) {
-        T nextPage = null;
+        T nextPage;
         if (shouldUsePreviousPage(pageObjectClass)) {
             nextPage = (T) currentPage;
         } else {
-            T pageCandidate = (T) getCurrentPageOfType(pageObjectClass);
+            T pageCandidate = getCurrentPageOfType(pageObjectClass);
             pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
             cacheCurrentPage(pageCandidate);
             nextPage = pageCandidate;
@@ -101,11 +101,11 @@ public class Pages implements Serializable {
 
     @SuppressWarnings("unchecked")
     public <T extends PageObject> T currentPageAt(final Class<T> pageObjectClass) {
-        T nextPage = null;
+        T nextPage;
         if (shouldUsePreviousPage(pageObjectClass)) {
             nextPage = (T) currentPage;
         } else {
-            T pageCandidate = (T) getCurrentPageOfType(pageObjectClass);
+            T pageCandidate = getCurrentPageOfType(pageObjectClass);
             if (!pageCandidate.matchesAnyUrl()) {
                 String currentUrl = getDriver().getCurrentUrl();
                 if (!pageCandidate.compatibleWithUrl(currentUrl)) {
@@ -162,8 +162,7 @@ public class Pages implements Serializable {
             @SuppressWarnings("rawtypes")
             Class[] constructorArgs = new Class[1];
             constructorArgs[0] = WebDriver.class;
-            Constructor<? extends PageObject> constructor
-                    = (Constructor<? extends PageObject>) pageObjectClass.getConstructor(constructorArgs);
+            Constructor<? extends PageObject> constructor = pageObjectClass.getConstructor(constructorArgs);
             currentPage = (T) constructor.newInstance(driver);
         } catch (NoSuchMethodException e) {
             LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: "
@@ -191,8 +190,8 @@ public class Pages implements Serializable {
     public String getDefaultBaseUrl() {
 
         String baseUrl = defaultBaseUrl;
-        if (isNotEmpty(configuration.getBaseUrl())) {
-            baseUrl = configuration.getBaseUrl();
+        if (isNotEmpty(getConfiguration().getBaseUrl())) {
+            baseUrl = getConfiguration().getBaseUrl();
         }
         return baseUrl;
     }

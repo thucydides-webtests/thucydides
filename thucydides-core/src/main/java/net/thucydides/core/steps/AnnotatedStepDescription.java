@@ -41,14 +41,14 @@ public final class AnnotatedStepDescription {
     }
 
     private void addMultipleRequirementsFrom(final List<String> requirements, final Method testMethod) {
-        TestsRequirements testRequirements = (TestsRequirements) testMethod.getAnnotation(TestsRequirements.class);
+        TestsRequirements testRequirements = testMethod.getAnnotation(TestsRequirements.class);
         if (testRequirements != null) {
             requirements.addAll(Arrays.asList(testRequirements.value()));
         }
     }
 
     private void addRequirementFrom(final List<String> requirements, final Method testMethod) {
-        TestsRequirement testsRequirement = (TestsRequirement) testMethod
+        TestsRequirement testsRequirement = testMethod
                 .getAnnotation(TestsRequirement.class);
         if (testsRequirement != null) {
             requirements.add(testsRequirement.value());
@@ -165,7 +165,7 @@ public final class AnnotatedStepDescription {
 
         Method testMethod = getTestMethodIfPresent();
         if (testMethod != null) {
-            StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
+            StepGroup testGroup = testMethod.getAnnotation(StepGroup.class);
             return (testGroup != null);
         } else {
             return false;
@@ -174,7 +174,7 @@ public final class AnnotatedStepDescription {
 
     private String getGroupName() {
         Method testMethod = getTestMethodIfPresent();
-        StepGroup testGroup = (StepGroup) testMethod.getAnnotation(StepGroup.class);
+        StepGroup testGroup = testMethod.getAnnotation(StepGroup.class);
         return testGroup.value();
     }
 

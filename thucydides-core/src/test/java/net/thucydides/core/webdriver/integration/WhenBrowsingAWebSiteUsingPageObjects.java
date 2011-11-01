@@ -222,7 +222,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
         indexPage.waitForTextToAppear("Label that is not present");
     }
-    
+
     @Test
     public void should_know_when_one_of_several_texts_appears_on_a_page() {
         indexPage.waitForAnyTextToAppear("Label 1", "Label that is not present");

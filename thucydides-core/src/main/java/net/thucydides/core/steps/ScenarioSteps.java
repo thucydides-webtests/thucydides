@@ -39,7 +39,7 @@ public class ScenarioSteps implements Serializable {
 
     public <T extends ScenarioSteps> T onSamePage(Class<T> stepsType) {
         getPages().onSamePage();
-        return (T) stepsType.cast(this);
+        return stepsType.cast(this);
     }
 
     /**

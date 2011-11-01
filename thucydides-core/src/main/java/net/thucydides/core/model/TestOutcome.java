@@ -486,7 +486,7 @@ public class TestOutcome {
     public String getFormattedIssues() {
         Set<String> issues = getIssues();
         if (!issues.isEmpty()) {
-           List<String> orderedIssues =  sort(getIssues(), on(String.class).toString());
+           List<String> orderedIssues =  sort(getIssues(), on(String.class));
            return "(" + getFormatter().addLinks(StringUtils.join(orderedIssues, ", ")) + ")";
         } else {
            return "";

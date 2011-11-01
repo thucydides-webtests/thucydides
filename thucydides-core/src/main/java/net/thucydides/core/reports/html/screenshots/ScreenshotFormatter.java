@@ -16,8 +16,6 @@ public class ScreenshotFormatter {
     private final Screenshot screenshot;
     private final File sourceDirectory;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScreenshotFormatter.class);
-
     private ScreenshotFormatter(final Screenshot screenshot, final File sourceDirectory) {
         this.screenshot = screenshot;
         this.sourceDirectory = sourceDirectory;
