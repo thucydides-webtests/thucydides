@@ -59,11 +59,15 @@ public class ResizableImage {
     }
 
     protected ResizableImage resizeImage(int width, int targetHeight, BufferedImage image) throws IOException {
-        int imageType = (image.getType() > 0) ? image.getType() : BufferedImage.TYPE_4BYTE_ABGR;
-        BufferedImage resizedImage = new BufferedImage(width, targetHeight, imageType);
-        fillWithWhiteBackground(resizedImage);
-        resizedImage.setData(image.getRaster());
-        return new ResizedImage(resizedImage, screenshotFile);
+        try {
+            int imageType = (image.getType() > 0) ? image.getType() : BufferedImage.TYPE_4BYTE_ABGR;
+			BufferedImage resizedImage = new BufferedImage(width, targetHeight, imageType);
+			fillWithWhiteBackground(resizedImage);
+			resizedImage.setData(image.getRaster());
+	        return new ResizedImage(resizedImage, screenshotFile);
+		} catch (Throwable e) {
+			throw new IllegalArgumentException();
+		}
     }
 
     private boolean skipRescale(int height) {
