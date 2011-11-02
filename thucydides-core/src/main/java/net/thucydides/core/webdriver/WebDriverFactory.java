@@ -11,6 +11,8 @@ import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -24,6 +26,8 @@ import java.io.File;
 public class WebDriverFactory {
 
     private final WebdriverInstanceFactory webdriverInstanceFactory;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebDriverFactory.class);
 
     private ProfilesIni allProfiles;
     private static final int DEFAULT_HEIGHT = ThucydidesSystemProperty.DEFAULT_HEIGHT;
@@ -75,16 +79,19 @@ public class WebDriverFactory {
     protected WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {
             WebDriver driver;
+            LOGGER.info("Instanciating new browser");
             if (isAFirefoxDriver(driverClass)) {
                 driver = webdriverInstanceFactory.newInstanceOf(driverClass, buildFirefoxProfile());
             } else {
                 driver = webdriverInstanceFactory.newInstanceOf(driverClass);
             }
             if (supportsScreenResizing(driver)) {
+                LOGGER.info("Redimentioning browser");
                 redimensionBrowser(driver);
             }
             return driver;
         } catch (Exception cause) {
+            LOGGER.error("Could not create new Webdriver instance", cause);
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
         }
     }

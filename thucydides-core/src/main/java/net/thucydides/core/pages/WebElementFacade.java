@@ -340,8 +340,9 @@ public class WebElementFacade {
     public WebElementFacade waitUntilVisible() {
         try {
             waitForCondition().until(elementIsDisplayed());
-        } catch (TimeoutException timeout) {
-            throwErrorWithCauseIfPresent(timeout, timeout.getMessage());
+        } catch (Throwable error) {
+           error.printStackTrace();
+            throwErrorWithCauseIfPresent(error, error.getMessage());
         }
         return this;
     }
@@ -356,7 +357,7 @@ public class WebElementFacade {
     }
 
 
-    private void throwErrorWithCauseIfPresent(final TimeoutException timeout, final String defaultMessage) {
+    private void throwErrorWithCauseIfPresent(final Throwable timeout, final String defaultMessage) {
         String timeoutMessage = (timeout.getCause() != null) ? timeout.getCause().getMessage() : timeout.getMessage();
         throw new ElementNotVisibleException(timeoutMessage, timeout);
     }
@@ -364,7 +365,7 @@ public class WebElementFacade {
     private ExpectedCondition<Boolean> elementIsDisplayed() {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
-                return (webElement.isDisplayed());
+                return webElement.isDisplayed();
             }
         };
     }

@@ -30,6 +30,15 @@ public class WhenManinpulatingWebElements {
         MockitoAnnotations.initMocks(this);
     }
 
+    class PageObjectWithElement extends PageObject {
+
+        public WebElement webElement = null;
+
+        public PageObjectWithElement(final WebDriver driver) {
+            super(driver);
+        }
+    }
+
     @Test
     public void stale_element_should_not_be_considered_visible() {
         when(webElement.isDisplayed()).thenThrow(new StaleElementReferenceException("Stale element"));
