@@ -8,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -64,7 +65,7 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         indexPage.waitForTitleToAppear("Thucydides Test Site");
     }
 
-    @Test(expected = ElementNotVisibleException.class)
+    @Test(expected = TimeoutException.class)
     public void should_fail_if_title_is_as_expected() {
         IndexPage indexPage = new IndexPage(driver);
         indexPage.setWaitForTimeout(100);
@@ -115,7 +116,7 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         indexPage.shouldNotBeVisible(By.xpath("//h2[.='An invisible title']"));
     }
 
-    @Test(expected = ElementNotVisibleException.class)
+    @Test(expected = TimeoutException.class)
     public void should_fail_when_waiting_for_an_invisible_object() {
         IndexPage indexPage = new IndexPage(driver);
         indexPage.setWaitForTimeout(150);
@@ -131,7 +132,7 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         indexPage.waitForAnyRenderedElementOf(By.id("color"), By.id("taste"), By.id("sound"));
     }
 
-    @Test(expected = ElementNotVisibleException.class)
+    @Test(expected = TimeoutException.class)
     public void fails_if_waiting_for_text_to_disappear_too_long() {
         IndexPage indexPage = new IndexPage(driver);
         indexPage.setWaitForTimeout(150);
@@ -140,7 +141,7 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
     }
 
 
-    @Test(expected = ElementNotVisibleException.class)
+    @Test(expected = TimeoutException.class)
     public void should_fail_when_waiting_for_an_undisplayed_text() {
         IndexPage indexPage = new IndexPage(driver);
         indexPage.setWaitForTimeout(150);

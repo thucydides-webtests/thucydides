@@ -11,6 +11,7 @@ import org.junit.rules.ExpectedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -198,7 +199,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     @Test
     public void should_wait_for_hidden_elements() {
-        page.waitForRenderedElementsToBePresent(By.name("hiddenfield"));
+        page.waitForRenderedElementsToBePresent(By.name("city"));
     }
 
     @Test
@@ -206,7 +207,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
         page.waitForRenderedElementsToBePresent(By.name("firstname"));
     }
 
-    @Test(expected = ElementNotVisibleException.class)
+    @Test(expected = TimeoutException.class)
     public void wait_for_hidden_elements_should_fail_for_missing_elements() {
         page.waitForRenderedElementsToBePresent(By.name("noSuchField"));
     }

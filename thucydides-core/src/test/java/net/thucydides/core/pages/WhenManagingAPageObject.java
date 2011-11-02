@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -123,7 +124,7 @@ public class WhenManagingAPageObject {
         assertThat((int) (System.currentTimeMillis() - start), greaterThanOrEqualTo(500));
     }
 
-    @Test(expected = UnexpectedElementVisibleException.class)
+    @Test(expected = TimeoutException.class)
     public void wait_for_rendered_element_to_disappear_will_fail_if_element_does_not_disappear() {
 
         WebElement textBlock = mock(WebElement.class);
@@ -167,7 +168,7 @@ public class WhenManagingAPageObject {
         page.waitForTextToAppear("hi there");
     }
 
-    @Test(expected = ElementNotVisibleException.class)
+    @Test(expected = TimeoutException.class)
     public void wait_for_text_to_appear_will_fail_if_the_text_doesnt_appear() {
 
         BasicPageObject page = new BasicPageObject(driver);
@@ -208,7 +209,7 @@ public class WhenManagingAPageObject {
         page.waitForTitleToDisappear("a title");
     }
 
-    @Test(expected = ElementNotVisibleException.class)
+    @Test(expected = TimeoutException.class)
     public void page_will_wait_for_title_to_disappear_should_fail_if_title_doesnt_disappear() {
 
         BasicPageObject page = new BasicPageObject(driver);
@@ -248,7 +249,7 @@ public class WhenManagingAPageObject {
         page.waitForTextToAppear(searchedBlock,"hi there");
     }
 
-    @Test(expected = ElementNotVisibleException.class)
+    @Test(expected = TimeoutException.class)
     public void wait_for_text_to_appear_in_element_will_fail_if_text_does_not_appear() {
 
         BasicPageObject page = new BasicPageObject(driver);
@@ -292,7 +293,7 @@ public class WhenManagingAPageObject {
     }
 
 
-    @Test(expected=ElementNotVisibleException.class)
+    @Test(expected=TimeoutException.class)
     public void page_will_fail_if_text_fails_to_appear() {
 
         BasicPageObject page = new BasicPageObject(driver);
@@ -305,7 +306,7 @@ public class WhenManagingAPageObject {
         page.waitForTextToAppear("hi there");
     }
 
-    @Test(expected=ElementNotVisibleException.class)
+    @Test(expected=TimeoutException.class)
     public void page_will_fail_if_single_text_fails_to_appear_in_an_element_if_requested() {
 
         BasicPageObject page = new BasicPageObject(driver);
@@ -318,7 +319,7 @@ public class WhenManagingAPageObject {
         page.waitForAnyTextToAppear(searchedBlock, "hi there");
     }
 
-    @Test(expected=ElementNotVisibleException.class)
+    @Test(expected=TimeoutException.class)
     public void page_will_fail_if_text_fails_to_appear_in_an_element_if_requested() {
 
         BasicPageObject page = new BasicPageObject(driver);
@@ -400,7 +401,7 @@ public class WhenManagingAPageObject {
     }
 
 
-    @Test(expected=NoSuchElementException.class)
+    @Test(expected=TimeoutException.class)
     public void page_will_throw_exception_if_waiting_for_rendered_element_does_not_exist() {
 
         when(driver.findElement(any(By.class))).thenThrow(new NoSuchElementException("No such element"));
@@ -411,7 +412,7 @@ public class WhenManagingAPageObject {
     }
 
 
-    @Test(expected=ElementNotVisibleException.class)
+    @Test(expected=TimeoutException.class)
     public void page_will_throw_exception_if_waiting_for_rendered_element_is_not_visible() {
 
         WebElement renderedElement = mock(WebElement.class);
@@ -436,7 +437,7 @@ public class WhenManagingAPageObject {
         page.waitForAnyRenderedElementOf(By.id("element1"), By.id("element2"));
     }
 
-    @Test(expected=ElementNotVisibleException.class)
+    @Test(expected=TimeoutException.class)
     public void page_will_fail_for_any_of_several_rendered_elements_if_element_is_displayed_but_not_rendered() {
 
         WebElement renderedElement = mock(WebElement.class);
@@ -463,7 +464,7 @@ public class WhenManagingAPageObject {
     }
 
 
-    @Test(expected = ElementNotVisibleException.class)
+    @Test(expected = TimeoutException.class)
     public void page_will_fail_if_none_of_the_several_rendered_elements_are_present() {
 
         noElementIsRendered(By.id("element1"));
