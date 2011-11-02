@@ -122,6 +122,19 @@ public class WhenRunningPolledTests {
         };
     }
 
+    private ExpectedCondition<Boolean> weSpitTheDummyWithARuntimeException() {
+        return new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver driver) {
+                counter++;
+                if (counter < 3) {
+                    throw new NullPointerException("Oh drat");
+                } else {
+                    return true;
+                }
+            }
+        };
+    }
+
     private ExpectedCondition<Boolean> weTakeTooLong() {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
@@ -131,6 +144,14 @@ public class WhenRunningPolledTests {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
                 return false;
+            }
+        };
+    }
+
+    private ExpectedCondition<String> weDefineAnInvalidCondition() {
+        return new ExpectedCondition<String>() {
+            public String apply(WebDriver driver) {
+                return null;
             }
         };
     }
@@ -146,6 +167,29 @@ public class WhenRunningPolledTests {
 
     }
 
+    @Test(expected = NullPointerException.class)
+    public void should_propogate_exception_if_test_fails_with_runtime_error() {
+        SlowPage page = new SlowPage(driver);
+
+        page.waitForCondition()
+            .withTimeoutOf(100).milliseconds()
+            .pollingEvery(10).milliseconds()
+            .until(weSpitTheDummyWithARuntimeException());
+
+    }
+
+    @Test
+    public void should_not_propogate_exception_if_test_fails_with_an_ignored_exception() {
+        SlowPage page = new SlowPage(driver);
+
+        page.waitForCondition()
+            .ignoring(NullPointerException.class)
+            .withTimeoutOf(1000).milliseconds()
+            .pollingEvery(10).milliseconds()
+            .until(weSpitTheDummyWithARuntimeException());
+
+    }
+
     @Test(expected = TimeoutException.class)
     public void should_timeout_if_takes_too_long() {
         SlowPage page = new SlowPage(driver);
@@ -154,6 +198,18 @@ public class WhenRunningPolledTests {
             .withTimeoutOf(10).milliseconds()
             .pollingEvery(5).milliseconds()
             .until(weTakeTooLong());
+
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void should_check_that_condition_is_a_boolean_function() {
+        SlowPage page = new SlowPage(driver);
+
+        page.waitForCondition()
+            .withTimeoutOf(10).milliseconds()
+            .pollingEvery(5).milliseconds()
+            .until(weDefineAnInvalidCondition());
 
     }
 

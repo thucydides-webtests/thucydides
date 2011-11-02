@@ -363,5 +363,6 @@
         <module>thucydides-junit</module>
         <module>thucydides-maven-plugin</module>
         <module>thucydides-maven-integration-tests</module>  
+        <module>thucydides-easyb</module>  
   </modules>
 </project>

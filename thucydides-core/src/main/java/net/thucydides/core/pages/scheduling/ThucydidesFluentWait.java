@@ -50,7 +50,7 @@ public abstract class ThucydidesFluentWait<T> implements Wait<T> {
     }
 
     public <V> V until(Function<? super T, V> isTrue) {
-        long end = clock.laterBy(timeout.in(MILLISECONDS));
+        long end = getClock().laterBy(timeout.in(MILLISECONDS));
         RuntimeException lastException = null;
         while (true) {
             try {
@@ -59,14 +59,15 @@ public abstract class ThucydidesFluentWait<T> implements Wait<T> {
                     if (Boolean.TRUE.equals(value)) {
                         return value;
                     }
-                } else if (value != null) {
-                    return value;
+                }
+                else {
+                    throw new IllegalArgumentException("Condition should be a boolean function");
                 }
             } catch (RuntimeException e) {
                 lastException = propagateIfNotIngored(e);
             }
 
-            if (!clock.isNowBefore(end)) {
+            if (!getClock().isNowBefore(end)) {
                 throw timeoutException(String.format("Timed out after %d seconds",
                         timeout.in(SECONDS)), lastException);
             }
