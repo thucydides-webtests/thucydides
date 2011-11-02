@@ -1,11 +1,17 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.guice.Injectors;
 import org.openqa.selenium.WebDriver;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.synchronizedCollection;
+import static java.util.Collections.synchronizedList;
 
 /**
  * Provides a proxy for a WebDriver instance.
@@ -18,7 +24,7 @@ public class WebdriverProxyFactory implements Serializable {
     private static ThreadLocal<WebdriverProxyFactory> factory = new ThreadLocal<WebdriverProxyFactory>();
 
     private static List<ThucydidesWebDriverEventListener> eventListeners
-            = new ArrayList<ThucydidesWebDriverEventListener>();
+                                              = synchronizedList(new ArrayList<ThucydidesWebDriverEventListener>());
 
     private WebDriverFactory webDriverFactory;
     private WebDriver mockDriver;
@@ -36,6 +42,9 @@ public class WebdriverProxyFactory implements Serializable {
         return factory.get();
     }
 
+    public static List<ThucydidesWebDriverEventListener> getEventListeners() {
+        return ImmutableList.copyOf(eventListeners);
+    }
     public WebDriver proxyFor(final Class<? extends WebDriver> driverClass) {
        return proxyFor(driverClass, new WebDriverFactory());
     }
@@ -54,7 +63,7 @@ public class WebdriverProxyFactory implements Serializable {
     }
 
     public void notifyListenersOfWebdriverCreationIn(final WebDriverFacade webDriverFacade) {
-        for(ThucydidesWebDriverEventListener listener : eventListeners) {
+        for(ThucydidesWebDriverEventListener listener : getEventListeners()) {
             listener.driverCreatedIn(webDriverFacade);
         }
     }

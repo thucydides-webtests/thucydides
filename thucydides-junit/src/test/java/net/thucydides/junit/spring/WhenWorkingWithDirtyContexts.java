@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @RunWith(ThucydidesRunner.class)
-@ContextConfiguration(locations = "/spring/config.xml")
+@ContextConfiguration(locations = "/spring/dirty-config.xml")
 public class WhenWorkingWithDirtyContexts {
 
     @Managed
