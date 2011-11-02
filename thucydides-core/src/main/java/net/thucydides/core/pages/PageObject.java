@@ -3,6 +3,9 @@ package net.thucydides.core.pages;
 import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
+import net.thucydides.core.pages.scheduling.FluentWaitWithRefresh;
+import net.thucydides.core.pages.scheduling.NormalFluentWait;
+import net.thucydides.core.pages.scheduling.ThucydidesFluentWait;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webelements.Checkbox;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +18,6 @@ import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
-import org.openqa.selenium.support.ui.Wait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A base class representing a WebDriver page object.
@@ -204,6 +208,7 @@ public abstract class PageObject {
         getRenderedView().waitForText(element, expectedText);
         return this;
     }
+
     public PageObject waitForTextToDisappear(final String expectedText) {
         return waitForTextToDisappear(expectedText, waitForTimeout);
     }
@@ -277,6 +282,7 @@ public abstract class PageObject {
 
     /**
      * Does the specified web element contain a given text value. Useful for dropdowns and so on.
+     *
      * @deprecated use element(webElement).containsText(textValue)
      */
     @Deprecated
@@ -359,7 +365,7 @@ public abstract class PageObject {
      * Check that the specified text appears somewhere in the page.
      */
     public boolean containsAllText(final String... textValues) {
-        for(String textValue : textValues) {
+        for (String textValue : textValues) {
             if (!getRenderedView().containsText(textValue)) {
                 return false;
             }
@@ -407,15 +413,15 @@ public abstract class PageObject {
             URL baseUrl = new URL(base);
 
             String startingHostComponent = hostComponentFrom(startingUrl.getProtocol(),
-                                                             startingUrl.getHost(),
-                                                             startingUrl.getPort());
+                    startingUrl.getHost(),
+                    startingUrl.getPort());
             String baseHostComponent = hostComponentFrom(baseUrl.getProtocol(),
-                                                             baseUrl.getHost(),
-                                                             baseUrl.getPort());
+                    baseUrl.getHost(),
+                    baseUrl.getPort());
             updatedUrl = starting.replaceFirst(startingHostComponent, baseHostComponent);
         } catch (MalformedURLException e) {
             LOGGER.error("Failed to analyse default page URL: Starting URL: {}, Base URL: {}", starting, base);
-            LOGGER.error("URL analysis failed with exception:",e);
+            LOGGER.error("URL analysis failed with exception:", e);
         }
 
         return updatedUrl;
@@ -445,7 +451,7 @@ public abstract class PageObject {
     }
 
     public final void open(final String urlTemplateName,
-                     final String[] parameterValues) {
+                           final String[] parameterValues) {
         String startingUrl = pageUrls.getNamedUrl(urlTemplateName, parameterValues);
         LOGGER.debug("Opening page at url {}", startingUrl);
         openPageAtUrl(startingUrl);
@@ -471,10 +477,9 @@ public abstract class PageObject {
      *         }
      *     </code>
      * </pre>
-     *
+     * <p/>
      * Suppose you are using a base URL of http://stage.acme.com. When you call open() for this class,
      * it will open http://stage.acme.com/client/list. It will then invoke the waitUntilTitleAppears() method.
-     *
      */
     final public void open() {
         String startingUrl = updateUrlWithBaseUrlIfDefined(pageUrls.getStartingUrl());
@@ -486,14 +491,14 @@ public abstract class PageObject {
      * Override this method
      */
     public void callWhenPageOpensMethods() {
-        for(Method annotatedMethod : methodsAnnotatedWithWhenPageOpens()) {
+        for (Method annotatedMethod : methodsAnnotatedWithWhenPageOpens()) {
             try {
                 annotatedMethod.setAccessible(true);
                 annotatedMethod.invoke(this);
             } catch (Exception e) {
                 LOGGER.error("Could not execute @WhenPageOpens annotated method: " + e.getMessage());
                 throw new UnableToInvokeWhenPageOpensMethods("Could not execute @WhenPageOpens annotated method: "
-                                                             + e.getMessage(), e);
+                        + e.getMessage(), e);
             }
         }
 
@@ -502,7 +507,7 @@ public abstract class PageObject {
     private List<Method> methodsAnnotatedWithWhenPageOpens() {
         Method[] methods = this.getClass().getDeclaredMethods();
         List<Method> annotatedMethods = new ArrayList<Method>();
-        for(Method method : methods) {
+        for (Method method : methods) {
             if (method.getAnnotation(WhenPageOpens.class) != null) {
                 if (method.getParameterTypes().length == 0) {
                     annotatedMethods.add(method);
@@ -539,6 +544,7 @@ public abstract class PageObject {
 
     /**
      * Returns true if the specified element has the focus.
+     *
      * @deprecated Use element(webElement).hasFocus() instead
      */
     public boolean hasFocus(final WebElement webElement) {
@@ -557,8 +563,15 @@ public abstract class PageObject {
         return js.executeScript(script);
     }
 
-    public Wait<WebDriver> waitForCondition() {
-        return new FluentWait<WebDriver>(driver, webdriverClock, sleeper)
+    public ThucydidesFluentWait<WebDriver> waitForRefresh() {
+        return new FluentWaitWithRefresh<WebDriver>(driver, webdriverClock, sleeper)
+                .withTimeout(waitForTimeout, TimeUnit.MILLISECONDS)
+                .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
+                .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
+    }
+
+    public ThucydidesFluentWait<WebDriver> waitForCondition() {
+        return new NormalFluentWait<WebDriver>(driver, webdriverClock, sleeper)
                 .withTimeout(waitForTimeout, TimeUnit.SECONDS)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
