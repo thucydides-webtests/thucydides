@@ -9,6 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,8 +23,6 @@ public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTh
     public static void initDriver() {
         driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
         page = new StaticSitePage(driver, 1);
-        page.setWaitForTimeout(2000);
-        page.open();
     }
 
     @AfterClass
@@ -43,6 +42,7 @@ public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTh
         assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
 
+
     //
     // Note: The is in the Firefox tests as the Chrome driver does not always seem to return meaningful error messages.
     //
@@ -59,7 +59,5 @@ public class WhenUsingTheFluentElementAPIWithFirefox extends AbstractWhenUsingTh
 
         page.element(page.fieldDoesNotExist).waitUntilVisible();
     }
-
 }
-
 

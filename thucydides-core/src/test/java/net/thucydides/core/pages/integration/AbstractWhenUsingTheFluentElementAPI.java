@@ -64,6 +64,10 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
         protected WebElement buttonThatIsInitiallyEnabled;
 
+        protected WebElement placetitle;
+
+        protected WebElement dissapearingtext;
+
         @FindBy(id="visible")
         protected WebElement visibleTitle;
 
@@ -143,6 +147,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
     @Before
     public void openStaticPage() {
+        page.setWaitForTimeout(5000);
         page.open();
     }
 
@@ -211,7 +216,6 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
     public void wait_for_hidden_elements_should_fail_for_missing_elements() {
         page.waitForRenderedElementsToBePresent(By.name("noSuchField"));
     }
-
 
     @Test
     public void should_report_element_as_not_visible_if_not_present() {
@@ -572,10 +576,10 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
         StaticSitePage page = new StaticSitePage(driver, 2000);
         page.open();
 
-        assertThat(page.element(page.country).isCurrentlyVisible(), is(true));
-        page.element(page.country).waitUntilNotVisible();
+        assertThat(page.element(page.placetitle).isCurrentlyVisible(), is(true));
+        page.element(page.placetitle).waitUntilNotVisible();
 
-        assertThat(page.element(page.country).isCurrentlyVisible(), is(false));
+        assertThat(page.element(page.placetitle).isCurrentlyVisible(), is(false));
     }
 
     @Test(expected = ElementNotVisibleException.class)
@@ -712,4 +716,60 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
     public void should_return_the_actual_text_when_a_tag_has_any_text() {
         assertThat(page.element(page.nonEmptyLabel).getTextValue(), is("This div tag has text"));
     }
+
+    @Test
+    public void should_let_you_remove_the_focus_from_the_current_active_field() {
+        page.open();
+
+        page.element(page.firstName).click();
+
+        assertThat(page.element(page.firstName).hasFocus(), is(true));
+
+        page.blurActiveElement();
+
+        assertThat(page.element(page.firstName).hasFocus(), is(false));
+
+    }
+
+    @Test
+    public void should_wait_for_text_to_dissapear() {
+        assertThat(page.containsText("Dissapearing text"), is(true));
+
+        page.setWaitForTimeout(5000);
+        page.waitForTextToDisappear("Dissapearing text");
+
+        assertThat(page.containsText("Dissapearing text"), is(false));
+    }
+
+    @Test
+    public void should_wait_for_text_in_element_to_dissapear() {
+        assertThat(page.containsText("Dissapearing text"), is(true));
+
+        page.setWaitForTimeout(5000);
+        page.waitForTextToDisappear(page.dissapearingtext,"Dissapearing text");
+
+        assertThat(page.containsText("Dissapearing text"), is(false));
+    }
+
+    @Test(expected = TimeoutException.class)
+    public void should_timeout_when_waiting_for_elements_to_dissapear() {
+        page.waitForTextToDisappear("A visible title", 500);
+    }
+
+    @Test(expected = TimeoutException.class)
+    public void should_timeout_if_wait_for_text_in_element_to_dissapear_fails() {
+        page.setWaitForTimeout(500);
+        page.waitForTextToDisappear(page.colors,"Red");
+    }
+
+    @Test
+    public void should_wait_for_elements_to_appear() {
+        assertThat(page.element(page.city).isCurrentlyVisible(), is(false));
+
+        page.waitForAnyRenderedElementOf(By.id("city"));
+
+        assertThat(page.element(page.city).isCurrentlyVisible(), is(true));
+    }
+
+
 }

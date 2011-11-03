@@ -1,5 +1,6 @@
 package net.thucydides.core.pages;
 
+import com.google.common.base.Function;
 import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
@@ -15,6 +16,7 @@ import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Clock;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
@@ -38,11 +40,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class PageObject {
 
-    private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 5;
+    private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 250;
 
     private static final int ONE_SECOND = 1000;
 
-    private long waitForTimeout = WAIT_FOR_ELEMENT_PAUSE_LENGTH * ONE_SECOND;
+    private long waitForTimeout = 5 * ONE_SECOND;
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PageObject.class);
@@ -61,12 +63,14 @@ public abstract class PageObject {
 
     private final Sleeper sleeper;
     private final Clock webdriverClock;
+    private final JavaScriptExecutorFacade javaScriptExecutorFacade;
 
     public PageObject(final WebDriver driver, final int ajaxTimeout) {
         this.driver = driver;
         this.waitForTimeout = ajaxTimeout;
-        this.webdriverClock = new org.openqa.selenium.support.ui.SystemClock();
+        this.webdriverClock = new SystemClock();
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
+        this.javaScriptExecutorFacade = new JavaScriptExecutorFacade(driver);
 
         setupPageUrls();
 
@@ -79,6 +83,7 @@ public abstract class PageObject {
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
         this.webdriverClock = new SystemClock();
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
+        this.javaScriptExecutorFacade = new JavaScriptExecutorFacade(driver);
 
         setupPageUrls();
 
@@ -205,10 +210,18 @@ public abstract class PageObject {
      */
     public PageObject waitForTextToDisappear(final WebElement element,
                                              final String expectedText) {
-        getRenderedView().waitForText(element, expectedText);
+        waitForCondition().until(elementDoesNotContain(element, expectedText));
         return this;
     }
 
+
+    private ExpectedCondition<Boolean> elementDoesNotContain(final WebElement element, final String expectedText) {
+        return new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver driver) {
+                return !element.getText().contains(expectedText);
+            }
+        };
+    }
     public PageObject waitForTextToDisappear(final String expectedText) {
         return waitForTextToDisappear(expectedText, waitForTimeout);
     }
@@ -551,6 +564,14 @@ public abstract class PageObject {
         return element(webElement).hasFocus();
     }
 
+    public void blurActiveElement() {
+        getJavaScriptExecutorFacade().executeScript("document.activeElement.blur();");
+    }
+
+    protected JavaScriptExecutorFacade getJavaScriptExecutorFacade() {
+        return javaScriptExecutorFacade;
+    }
+
     /**
      * Provides a fluent API for querying web elements.
      */
@@ -572,7 +593,7 @@ public abstract class PageObject {
 
     public ThucydidesFluentWait<WebDriver> waitForCondition() {
         return new NormalFluentWait<WebDriver>(driver, webdriverClock, sleeper)
-                .withTimeout(waitForTimeout, TimeUnit.SECONDS)
+                .withTimeout(waitForTimeout, TimeUnit.MILLISECONDS)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
     }

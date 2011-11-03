@@ -259,13 +259,15 @@ public class WebElementFacade {
 
     /**
      * Type a value into a field and then press TAB, making sure that the field is empty first.
+     * This currently is not supported by all browsers, notably Firefox.
      *
      * @param value
      */
     public WebElementFacade typeAndTab(final String value) {
         waitUntilElementAvailable();
         webElement.clear();
-        webElement.sendKeys(value + Keys.TAB);
+        webElement.sendKeys(value);
+        webElement.sendKeys(Keys.TAB);
         return this;
     }
 

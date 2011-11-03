@@ -93,7 +93,7 @@ public class WhenTakingLargeScreenshots {
         ResizableImage image = ResizableImage.loadFrom(screenshotFile);
 
 
-        assertThat(image.getWitdh(), greaterThan(1000));
+        assertThat(image.getWitdh(), greaterThan(800));
     }
 
     @Test

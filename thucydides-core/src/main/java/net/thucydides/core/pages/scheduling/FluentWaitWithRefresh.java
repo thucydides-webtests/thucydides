@@ -13,8 +13,6 @@ public class FluentWaitWithRefresh<T> extends ThucydidesFluentWait<T> {
     @Override
     public void doWait() throws InterruptedException {
         getSleeper().sleep(interval);
-        if (WebDriver.class.isAssignableFrom(getInput().getClass())) {
-            ((WebDriver) getInput()).navigate().refresh();
-        }
+        ((WebDriver) getInput()).navigate().refresh();
     }
 }
