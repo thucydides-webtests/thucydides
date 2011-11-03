@@ -109,7 +109,6 @@ public class WhenWeCreateATestStep {
         Thread.sleep(10);
         step.recordDuration();
         assertThat(step.getDuration(), is(greaterThanOrEqualTo(10L)));
-        assertThat(step.getDuration(), is(lessThan(100L)));
     }
     
     @Test
