@@ -4,7 +4,12 @@ package net.thucydides.core.pages.integration;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.WebElementFacade;
+import net.thucydides.core.webdriver.WebDriverFacade;
+import net.thucydides.core.webdriver.WebDriverFactory;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -14,18 +19,35 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
-public abstract class AbstractWhenUsingTheFluentElementAPI {
+public class WhenUsingTheFluentElementAPI {
 
     static WebDriver driver;
 
     static StaticSitePage page;
+
+
+    @BeforeClass
+    public static void initDriver() {
+//        driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
+        driver = new WebDriverFacade(ChromeDriver.class, new WebDriverFactory());
+        page = new StaticSitePage(driver, 1);
+    }
+
+    @AfterClass
+    public static void closeBrowser() {
+        driver.quit();
+    }
 
     @DefaultUrl("classpath:static-site/index.html")
     public static final class StaticSitePage extends PageObject {
@@ -88,6 +110,8 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
         @FindBy(id="nonEmptyLabelID")
         protected WebElement nonEmptyLabel;
+
+        protected WebElement focusmessage;
 
         public StaticSitePage(WebDriver driver, int timeout) {
             super(driver, timeout);
@@ -439,6 +463,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
         assertThat(page.firstName.getAttribute("value"), is("joe"));
     }
 
+    @Ignore
     @Test
     public void should_optionally_type_tab_after_entering_text() {
         page.open();
@@ -723,11 +748,10 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
 
         page.element(page.firstName).click();
 
-        assertThat(page.element(page.firstName).hasFocus(), is(true));
-
+        assertThat(page.element(page.focusmessage).getText(), is(""));
         page.blurActiveElement();
 
-        assertThat(page.element(page.firstName).hasFocus(), is(false));
+        page.element(page.focusmessage).shouldContainText("focus left firstname");
 
     }
 
@@ -759,7 +783,7 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
     @Test(expected = TimeoutException.class)
     public void should_timeout_if_wait_for_text_in_element_to_dissapear_fails() {
         page.setWaitForTimeout(500);
-        page.waitForTextToDisappear(page.colors,"Red");
+        page.waitForTextToDisappear(page.colors, "Red");
     }
 
     @Test
@@ -771,5 +795,18 @@ public abstract class AbstractWhenUsingTheFluentElementAPI {
         assertThat(page.element(page.city).isCurrentlyVisible(), is(true));
     }
 
+    @Test
+    public void should_display_meaningful_error_message_if_waiting_for_field_that_does_not_appear() {
+
+        expectedException.expect(ElementNotVisibleException.class);
+        expectedException.expectMessage(allOf(containsString("Unable to locate element"),
+                                              containsString("fieldDoesNotExist")));
+
+        StaticSitePage page = new StaticSitePage(driver, 2000);
+        page.setWaitForTimeout(1000);
+        page.open();
+
+        page.element(page.fieldDoesNotExist).waitUntilVisible();
+    }
 
 }
