@@ -33,20 +33,21 @@ import static org.hamcrest.Matchers.is;
 public class WhenUsingTheFluentElementAPI {
 
     static WebDriver driver;
-
+    static WebDriver chromeDriver;
     static StaticSitePage page;
 
 
     @BeforeClass
     public static void initDriver() {
-//        driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
-        driver = new WebDriverFacade(ChromeDriver.class, new WebDriverFactory());
+        driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
+        chromeDriver = new WebDriverFacade(ChromeDriver.class, new WebDriverFactory());
         page = new StaticSitePage(driver, 1);
     }
 
     @AfterClass
     public static void closeBrowser() {
         driver.quit();
+        chromeDriver.quit();
     }
 
     @DefaultUrl("classpath:static-site/index.html")
@@ -454,6 +455,8 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_optionally_type_enter_after_entering_text() {
+        StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
+
         page.open();
 
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
@@ -466,6 +469,9 @@ public class WhenUsingTheFluentElementAPI {
     @Ignore
     @Test
     public void should_optionally_type_tab_after_entering_text() {
+
+        StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
+
         page.open();
 
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
@@ -744,6 +750,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_let_you_remove_the_focus_from_the_current_active_field() {
+        StaticSitePage page = new StaticSitePage(chromeDriver, 1);
         page.open();
 
         page.element(page.firstName).click();
@@ -758,7 +765,6 @@ public class WhenUsingTheFluentElementAPI {
     @Test
     @Ignore("Doesn't work in firefox")
     public void should_let_you_remove_the_focus_from_the_current_active_field_in_firefox() {
-        WebDriver driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
         StaticSitePage page = new StaticSitePage(driver, 1);
 
         page.open();
@@ -769,8 +775,6 @@ public class WhenUsingTheFluentElementAPI {
         page.blurActiveElement();
 
         page.element(page.focusmessage).shouldContainText("focus left firstname");
-
-        driver.quit();
     }
 
 
@@ -816,8 +820,6 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_display_meaningful_error_messages_in_firefox_if_waiting_for_field_that_does_not_appear() {
-        //
-        WebDriver driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
         StaticSitePage page = new StaticSitePage(driver, 1);
 
         expectedException.expect(ElementNotVisibleException.class);
@@ -828,8 +830,6 @@ public class WhenUsingTheFluentElementAPI {
         page.open();
 
         page.element(page.fieldDoesNotExist).waitUntilVisible();
-
-        driver.quit();
     }
 
 }
