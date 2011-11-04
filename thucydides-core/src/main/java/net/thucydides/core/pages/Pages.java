@@ -159,7 +159,6 @@ public class Pages implements Serializable {
     private <T extends PageObject> T getCurrentPageOfType(final Class<T> pageObjectClass) {
         T currentPage = null;
         try {
-            @SuppressWarnings("rawtypes")
             Class[] constructorArgs = new Class[1];
             constructorArgs[0] = WebDriver.class;
             Constructor<? extends PageObject> constructor = pageObjectClass.getConstructor(constructorArgs);

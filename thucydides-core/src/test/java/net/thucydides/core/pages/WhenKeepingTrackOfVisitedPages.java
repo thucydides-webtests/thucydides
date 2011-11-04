@@ -20,6 +20,7 @@ import java.net.URL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -132,6 +133,16 @@ public class WhenKeepingTrackOfVisitedPages {
                     is(ApacheHomePage.class.getName()));
     }
 
+    @Test
+    public void should_be_able_to_retrieve_the_current_page_as_an_instance_of_AnyPage() {
+
+        when(driver.getCurrentUrl()).thenReturn("http://www.apache.org");
+        final Pages pages = new Pages(driver, configuration);
+        pages.start();
+
+        AnyPage currentPage = pages.getAt(AnyPage.class);
+        assertThat(currentPage, is(not(nullValue())));
+    }
 
     @Test(expected = WrongPageError.class)
     public void the_pages_object_throws_a_wrong_page_error_when_we_expect_the_wrong_page() {
