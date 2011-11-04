@@ -460,7 +460,7 @@ public class WhenUsingTheFluentElementAPI {
 
         page.element(page.firstName).typeAndEnter("joe");
 
-        assertThat(page.firstName.getAttribute("value"), is("joe"));
+        assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
     }
 
     @Ignore
@@ -770,6 +770,7 @@ public class WhenUsingTheFluentElementAPI {
 
         page.element(page.focusmessage).shouldContainText("focus left firstname");
 
+        driver.quit();
     }
 
 
@@ -814,17 +815,21 @@ public class WhenUsingTheFluentElementAPI {
     }
 
     @Test
-    public void should_display_meaningful_error_message_if_waiting_for_field_that_does_not_appear() {
+    public void should_display_meaningful_error_messages_in_firefox_if_waiting_for_field_that_does_not_appear() {
+        //
+        WebDriver driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
+        StaticSitePage page = new StaticSitePage(driver, 1);
 
         expectedException.expect(ElementNotVisibleException.class);
         expectedException.expectMessage(allOf(containsString("Unable to locate element"),
                                               containsString("fieldDoesNotExist")));
 
-        StaticSitePage page = new StaticSitePage(driver, 2000);
         page.setWaitForTimeout(1000);
         page.open();
 
         page.element(page.fieldDoesNotExist).waitUntilVisible();
+
+        driver.quit();
     }
 
 }
