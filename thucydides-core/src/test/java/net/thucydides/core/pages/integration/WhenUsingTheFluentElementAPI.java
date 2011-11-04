@@ -756,6 +756,24 @@ public class WhenUsingTheFluentElementAPI {
     }
 
     @Test
+    @Ignore("Doesn't work in firefox")
+    public void should_let_you_remove_the_focus_from_the_current_active_field_in_firefox() {
+        WebDriver driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
+        StaticSitePage page = new StaticSitePage(driver, 1);
+
+        page.open();
+
+        page.element(page.firstName).click();
+
+        assertThat(page.element(page.focusmessage).getText(), is(""));
+        page.blurActiveElement();
+
+        page.element(page.focusmessage).shouldContainText("focus left firstname");
+
+    }
+
+
+    @Test
     public void should_wait_for_text_to_dissapear() {
         assertThat(page.containsText("Dissapearing text"), is(true));
 

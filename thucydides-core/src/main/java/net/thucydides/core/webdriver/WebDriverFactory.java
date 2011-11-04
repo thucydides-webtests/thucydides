@@ -122,7 +122,9 @@ public class WebDriverFactory {
     }
 
     protected FirefoxProfile createNewFirefoxProfile() {
-        return new FirefoxProfile();
+        FirefoxProfile profile = new FirefoxProfile();
+        profile.enableNativeEvents();
+        return profile;
     }
 
     protected FirefoxProfile useExistingFirefoxProfile(final File profileDirectory) {
