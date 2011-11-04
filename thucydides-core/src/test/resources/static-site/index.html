@@ -74,6 +74,13 @@
 
     }
 
+    function focusOn(field) {
+         document.getElementById('focusmessage').textContent = '';
+    }
+
+    function focusOff(field) {
+        document.getElementById('focusmessage').textContent = 'focus left ' + field;
+    }
 
 //-->
 </script>
@@ -87,7 +94,7 @@
 <form name="demo" action="index.html">
     <p>
     <h3 id="nametitle">Name</h3>
-    <input name="firstname" id="firstname" value="<enter first name>"/>
+    <input name="firstname" id="firstname" value="<enter first name>" onblur="focusOff('firstname')" onfocus="focusOn('firstname')"/>
     <input name="lastname" id="lastname"/>
     </p>
     <p>
@@ -154,6 +161,7 @@
     <tr><td>A</td><td>B</td><td>C</td></tr>
 </table>
 
+<div id="focusmessage"/>
 <div>
 <a href="#" onclick="toggle_visibility('toggledtext');">Click here to toggle visibility</a>
 <div id="toggledtext">Visible Text</div>
