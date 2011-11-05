@@ -120,10 +120,6 @@ class RenderedPageObjectView {
         return (matchingElements != null) && (!matchingElements.isEmpty());
     }
 
-    private void checkThatElementAppeared(final By byElementCriteria) {
-        driver.findElement(byElementCriteria);
-    }
-
     private ExpectedCondition<Boolean> textPresent(final String expectedText) {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
