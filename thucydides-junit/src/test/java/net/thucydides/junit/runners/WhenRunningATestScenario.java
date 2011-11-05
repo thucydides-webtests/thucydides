@@ -239,10 +239,29 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome3 = executedSteps.get(2);
 
         assertThat(testOutcome1.getResult(), is(TestResult.FAILURE));
+        assertThat(testOutcome1.getTestSteps().get(1).getResult(), is(TestResult.FAILURE));
         assertThat(testOutcome2.getResult(), is(TestResult.SUCCESS));
         assertThat(testOutcome3.getResult(), is(TestResult.SUCCESS));
     }
 
+    @Test
+    public void webdriver_error_should_be_recorded_when_at_the_end_of_the_test() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(MockOpenPageWithWebdriverErrorAtTheEndSample.class);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(3));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+        TestOutcome testOutcome2 = executedSteps.get(1);
+        TestOutcome testOutcome3 = executedSteps.get(2);
+
+        assertThat(testOutcome1.getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome2.getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome3.getResult(), is(TestResult.FAILURE));
+        assertThat(testOutcome3.getTestSteps().size(), is(3));
+        assertThat(testOutcome3.getTestSteps().get(2).getResult(), is(TestResult.FAILURE));
+    }
 
 
     @Test

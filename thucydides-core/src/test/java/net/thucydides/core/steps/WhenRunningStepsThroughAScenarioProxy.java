@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 
@@ -162,6 +163,12 @@ public class WhenRunningStepsThroughAScenarioProxy {
         public void failing_web_step() {
             getDriver().get("failing_step");
             throw new WebDriverException("Oops!", new WebDriverException("Element not found"));
+        }
+
+        @Step
+        public void no_such_element_web_step() {
+            getDriver().get("failing_step");
+            throw new NoSuchElementException("Could not find element");
         }
 
         @Step
@@ -489,6 +496,18 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         verify(listener, times(1)).stepFailed(any(StepFailure.class));
     }
+
+
+    @Test
+    public void the_proxy_should_notify_listeners_when_a_web_step_fails_to_find_an_element() {
+        SimpleTestScenarioSteps steps =  factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
+
+        steps.no_such_element_web_step();
+
+        verify(listener, times(1)).stepFailed(any(StepFailure.class));
+    }
+
+
 
     @Test
     public void the_proxy_should_notify_listeners_with_a_description_and_a_cause_when_a_web_step_fails() {

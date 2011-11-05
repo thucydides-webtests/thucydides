@@ -15,7 +15,7 @@
         <jira.demo.user>bruce</jira.demo.user>
         <jira.demo.password>batm0bile</jira.demo.password>
         <thucydides.public.url>http://localhost:9000</thucydides.public.url>
-        <thucydides.version>0.4.17-SNAPSHOT</thucydides.version>
+        <thucydides.version>@project.version@</thucydides.version>
     </properties>
 
     <dependencies>
