@@ -86,7 +86,7 @@
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-core</artifactId>
-            <version>${thucydides.version}</version>
+            <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>

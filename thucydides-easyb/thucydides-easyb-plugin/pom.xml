@@ -121,7 +121,7 @@
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-core</artifactId>
-            <version>${thucydides.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
