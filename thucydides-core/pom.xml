@@ -79,7 +79,7 @@
         <dependency>
             <groupId>net.sf.flexjson</groupId>
             <artifactId>flexjson</artifactId>
-            <version>2.2-SNAPSHOT</version>
+            <version>2.1</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
