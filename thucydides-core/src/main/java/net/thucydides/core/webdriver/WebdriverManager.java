@@ -14,6 +14,8 @@ public interface WebdriverManager {
 
     public WebDriver getWebdriver();
 
+    public WebDriver getWebdriver(final String driver);
+
     public void closeDriver();
 
 }

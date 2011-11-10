@@ -44,7 +44,7 @@ public class TestResultList {
         if (containsOnly(SUCCESS, IGNORED, SKIPPED)) {
             return SUCCESS;
         }
-        return PENDING;
+        return SUCCESS;
     }
 
     private boolean containsOnly(final TestResult... values) {

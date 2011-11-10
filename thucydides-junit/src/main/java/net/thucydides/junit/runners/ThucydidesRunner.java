@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
@@ -11,11 +12,13 @@ import net.thucydides.core.steps.StepData;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import net.thucydides.junit.listeners.JUnitStepListener;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -56,6 +59,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private StepFactory stepFactory;
     private Pages pages;
     private WebdriverManager webdriverManager;
+    private String requestedDriver;
+
     /**
      * Special listener that keeps track of test step execution and results.
      */
@@ -95,6 +100,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this.webDriverFactory = new WebDriverFactory();
         this.configuration = Injectors.getInjector().getInstance(Configuration.class);
         this.webdriverManager = Injectors.getInjector().getInstance(WebdriverManager.class);
+        this.requestedDriver = getSpecifiedDriver(klass);
+    }
+
+    private String getSpecifiedDriver(Class<?> klass) {
+        if (ManagedWebDriverAnnotatedField.hasManagedWebdriverField(klass)) {
+            return ManagedWebDriverAnnotatedField.findFirstAnnotatedField(klass).getDriver();
+        } else {
+            return null;
+        }
     }
 
     public ThucydidesRunner(final Class<?> klass, final WebDriverFactory webDriverFactory) throws InitializationError {
@@ -107,7 +121,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         super(klass);
         this.webDriverFactory = webDriverFactory;
         this.configuration = configuration;
-        webdriverManager = new ThucydidesWebdriverManager(webDriverFactory, configuration);
+        this.webdriverManager = new ThucydidesWebdriverManager(webDriverFactory, configuration);
+        this.requestedDriver = getSpecifiedDriver(klass);
 
         if (TestCaseAnnotations.supportsWebTests(klass)) {
             checkRequestedDriverType();
@@ -130,7 +145,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Otherwise, throw an InitializationError.
      */
     private void checkRequestedDriverType() {
-        getConfiguration().getDriverType();
+        if (requestedDriverSpecified()) {
+            SupportedWebDriver.getDriverTypeFor(requestedDriver);
+        } else {
+            getConfiguration().getDriverType();
+        }
+    }
+
+    private boolean requestedDriverSpecified() {
+        return !StringUtils.isEmpty(this.requestedDriver);
     }
 
     /**
@@ -176,7 +199,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         initWebdriverManager();
         initStepEventBus();
         if (webtestsAreSupported()) {
-            initPagesObjectUsing(webdriverManager.getWebdriver());
+            initPagesObjectUsing(webdriverManager.getWebdriver(requestedDriver));
             initListenersUsing(getPages());
             initStepFactoryUsing(getPages());
         }else {
@@ -358,7 +381,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     protected WebDriver getDriver() {
-        return getWebdriverManager().getWebdriver();
+        return getWebdriverManager().getWebdriver(requestedDriver);
     }
 
     public List<TestOutcome> getTestOutcomes() {

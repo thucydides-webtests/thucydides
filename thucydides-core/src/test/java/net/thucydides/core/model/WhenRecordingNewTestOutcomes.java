@@ -466,9 +466,9 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     @Test
-    public void the_acceptance_test_case_is_pending_if_has_no_steps() {
+    public void the_acceptance_test_case_is_considered_successful_if_has_no_steps_and_is_not_pending() {
 
-        assertThat(testOutcome.getResult(), is(PENDING));
+        assertThat(testOutcome.getResult(), is(SUCCESS));
     }
 
     @Test

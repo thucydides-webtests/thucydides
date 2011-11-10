@@ -34,6 +34,16 @@ public class ManagedWebDriverAnnotatedField {
         }
     }
 
+    public static boolean hasManagedWebdriverField(final Class<?> testClass) {
+
+        try {
+            Iterables.find(fieldsIn(testClass), withCorrectAnnotations());
+            return true;
+        } catch(NoSuchElementException e) {
+            return false;
+        }
+    }
+
     private static Predicate<Field> withCorrectAnnotations() {
         return new Predicate<Field>() {
             public boolean apply(Field field) {
@@ -75,5 +85,9 @@ public class ManagedWebDriverAnnotatedField {
 
     public boolean isUniqueSession() {
         return field.getAnnotation(Managed.class).uniqueSession();
+    }
+
+    public String getDriver() {
+        return field.getAnnotation(Managed.class).driver();
     }
 }

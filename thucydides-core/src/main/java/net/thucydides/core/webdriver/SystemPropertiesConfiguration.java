@@ -187,7 +187,7 @@ public class SystemPropertiesConfiguration implements Configuration {
     private SupportedWebDriver lookupSupportedDriverTypeFor(final String driverType) {
         SupportedWebDriver driver = null;
         try {
-            driver = SupportedWebDriver.valueOf(driverType.toUpperCase(Locale.getDefault()));
+            driver = SupportedWebDriver.getDriverTypeFor(driverType);
         } catch (IllegalArgumentException iae) {
             throwUnsupportedDriverExceptionFor(driverType);
         }

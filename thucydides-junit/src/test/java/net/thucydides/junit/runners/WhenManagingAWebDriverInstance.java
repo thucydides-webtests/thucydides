@@ -131,12 +131,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
             runner.run(new RunNotifier());
             fail();
         } catch (UnsupportedDriverException e) {
-            assertThat(e.getMessage(), allOf(containsString("htmlunit is not a supported browser"),
-                                             containsString("Supported driver values are: "),
-                                             containsString(FIREFOX.toString()),
-                                                containsString(CHROME.toString()),
-                                                containsString(IEXPLORER.toString())
-                                             ));
+            assertThat(e.getMessage(), containsString("Unsupported browser type: htmlunit"));
         }
     }
 

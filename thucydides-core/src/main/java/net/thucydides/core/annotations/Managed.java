@@ -15,4 +15,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Managed {
     boolean uniqueSession() default false;
+    String driver() default "";
 }

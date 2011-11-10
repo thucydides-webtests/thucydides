@@ -192,7 +192,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
-    public void tests_with_no_steps_should_be_marked_as_pending() throws InitializationError {
+    public void non_pending_tests_with_no_steps_should_be_marked_as_successful() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioWithEmptyTests.class, webDriverFactory);
         runner.run(new RunNotifier());
@@ -204,8 +204,8 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome3 = executedSteps.get(2);
 
         assertThat(testOutcome1.getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome2.getResult(), is(TestResult.PENDING));
-        assertThat(testOutcome3.getResult(), is(TestResult.PENDING));
+        assertThat(testOutcome2.getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome3.getResult(), is(TestResult.SUCCESS));
     }
 
 

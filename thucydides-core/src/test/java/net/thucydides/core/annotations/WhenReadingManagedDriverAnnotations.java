@@ -46,11 +46,11 @@ public class WhenReadingManagedDriverAnnotations {
         ManagedWebDriverAnnotatedField.findFirstAnnotatedField(SampleTestCaseWithNoManagedField.class);
     }
 
-    static final class SampleTestCaseUsingUniqueSession {
+    static final class SampleTestCaseUsingUniqueSessionWithChrome {
 
         public void normalTest(){}
 
-        @Managed(uniqueSession = true)
+        @Managed(uniqueSession = true, driver = "chrome")
         WebDriver webDriver;
 
     }
@@ -58,8 +58,17 @@ public class WhenReadingManagedDriverAnnotations {
     @Test
     public void shouldKnowWhenAUniqueBrowserSessionHasBeenRequested() {
         ManagedWebDriverAnnotatedField managedField
-                = ManagedWebDriverAnnotatedField.findFirstAnnotatedField(SampleTestCaseUsingUniqueSession.class);
+                = ManagedWebDriverAnnotatedField.findFirstAnnotatedField(SampleTestCaseUsingUniqueSessionWithChrome.class);
 
         assertThat(managedField.isUniqueSession(), is(true));
     }
+
+    @Test
+    public void shouldKnowWhatDriverHasBeenRequested() {
+        ManagedWebDriverAnnotatedField managedField
+                = ManagedWebDriverAnnotatedField.findFirstAnnotatedField(SampleTestCaseUsingUniqueSessionWithChrome.class);
+
+        assertThat(managedField.getDriver(), is("chrome"));
+    }
+
 }

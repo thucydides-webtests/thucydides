@@ -43,4 +43,13 @@ public enum SupportedWebDriver {
     public static String listOfSupportedDrivers() {
         return Joiner.on(", ").join(SupportedWebDriver.values());
     }
+
+    public static SupportedWebDriver getDriverTypeFor(final String value) throws UnsupportedDriverException {
+        try {
+            return SupportedWebDriver.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new UnsupportedDriverException("Unsupported browser type: " + value, e);
+        }
+
+    }
 }

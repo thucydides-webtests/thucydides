@@ -4,6 +4,8 @@ import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.samples.SuccessfulSingleTestScenario;
+import net.thucydides.samples.SuccessfulSingleTestScenarioWithFirefox;
+import net.thucydides.samples.SuccessfulSingleTestScenarioWithWrongBrowser;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
@@ -56,7 +58,7 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
 
             fail("Should have thrown UnsupportedDriverException");
         } catch (UnsupportedDriverException e) {
-            assertThat(e.getMessage(), containsString("htmlunit is not a supported browser. Supported driver values are:"));
+            assertThat(e.getMessage(), containsString("Unsupported browser type: htmlunit"));
         }
     }
 
@@ -73,10 +75,34 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
 
             fail("Should have thrown UnsupportedDriverException");
         } catch (UnsupportedDriverException e) {
-            assertThat(e.getMessage(), containsString("opera is not a supported browser. Supported driver values are:"));
+            assertThat(e.getMessage(), containsString("Unsupported browser type: opera"));
         }
     }
 
+    @Test
+    public void driver_can_be_overridden_using_the_driver_property_in_the_Managed_annotation() throws InitializationError {
+        environmentVariables.setProperty("webdriver.driver", "opera");
+
+        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenarioWithFirefox.class);
+
+        runner.run(new RunNotifier());
+    }
+
+    @Test
+    public void should_not_allow_an_incorrectly_specified_driver()
+            throws InitializationError {
+        try {
+            environmentVariables.setProperty("webdriver.driver", "firefox");
+
+            ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenarioWithWrongBrowser.class);
+
+            runner.run(new RunNotifier());
+
+            fail("Should have thrown UnsupportedDriverException");
+        } catch (UnsupportedDriverException e) {
+            assertThat(e.getMessage(), containsString("Unsupported browser type: doesnotexist"));
+        }
+    }
 
     @Test
     public void the_output_directory_can_be_defined_by_a_system_property() throws InitializationError {

@@ -99,6 +99,16 @@ public class WhenManagingWebdriverInstances {
     }
     
     @Test
+    public void the_configured_driver_type_can_be_overriden_for_a_particular_test() {
+
+        environmentVariables.setProperty("webdriver.driver","firefox");
+
+        WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver("chrome");
+        driver.get("http://www.google.com");
+        assertThat(driver.proxiedWebDriver, instanceOf(ChromeDriver.class));
+    }
+
+    @Test
     public void a_firefox_instance_will_not_assume_untrusted_certificates_if_requested() throws Exception {
 
         environmentVariables.setProperty("webdriver.driver", "firefox");

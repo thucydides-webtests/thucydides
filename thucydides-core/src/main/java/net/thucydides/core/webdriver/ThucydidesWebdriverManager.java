@@ -1,7 +1,9 @@
 package net.thucydides.core.webdriver;
 
 import com.google.inject.Inject;
+import freemarker.template.utility.StringUtil;
 import net.thucydides.core.guice.Injectors;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +40,23 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
      * @throws net.thucydides.core.webdriver.UnsupportedDriverException
      *             if the driver type is not supported.
      */
-    private static WebDriver newDriver(Configuration configuration, WebDriverFactory webDriverFactory) {
-        SupportedWebDriver supportedDriverType = configuration.getDriverType();
+    private static WebDriver newDriver(final Configuration configuration,
+                                       final WebDriverFactory webDriverFactory,
+                                       final String driver) {
+        SupportedWebDriver supportedDriverType = getConfiguredWebDriverWithOverride(configuration, driver);
         Class<? extends WebDriver> webDriverType = WebDriverFactory.getClassFor(supportedDriverType);
         return WebdriverProxyFactory.getFactory().proxyFor(webDriverType, webDriverFactory);
     }
-    
+
+    private static SupportedWebDriver getConfiguredWebDriverWithOverride(final Configuration configuration,
+                                                                         final String driver) {
+        if (StringUtils.isEmpty(driver)) {
+            return configuration.getDriverType();
+        }  else {
+            return SupportedWebDriver.getDriverTypeFor(driver);
+        }
+    }
+
     public void closeDriver() {
         if (getWebdriver() != null) {
             LOGGER.debug("Closing driver instance for thread");
@@ -54,13 +67,19 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
     }
 
     public WebDriver getWebdriver() {
-        return getThreadLocalWebDriver(configuration, webDriverFactory);
+        return getThreadLocalWebDriver(configuration, webDriverFactory, null);
     }
 
-    private static WebDriver getThreadLocalWebDriver(Configuration configuration, WebDriverFactory webDriverFactory) {
+    public WebDriver getWebdriver(final String driver) {
+        return getThreadLocalWebDriver(configuration, webDriverFactory, driver);
+    }
+
+    private static WebDriver getThreadLocalWebDriver(final Configuration configuration,
+                                                     final WebDriverFactory webDriverFactory,
+                                                     final String driver) {
         if (webdriverThreadLocal.get() == null) {
             LOGGER.debug("Instanciating new driver instance for thread");
-            webdriverThreadLocal.set(newDriver(configuration, webDriverFactory));
+            webdriverThreadLocal.set(newDriver(configuration, webDriverFactory, driver));
         }
         return webdriverThreadLocal.get();
     }
