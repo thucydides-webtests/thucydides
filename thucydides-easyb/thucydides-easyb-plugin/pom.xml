@@ -4,7 +4,7 @@
     <parent>
         <artifactId>thucydides-easyb</artifactId>
         <groupId>net.thucydides.easyb</groupId>
-        <version>0.4.24-SNAPSHOT</version>
+        <version>0.4.24</version>
     </parent>
     <groupId>net.thucydides.easyb</groupId>
     <artifactId>thucydides-easyb-plugin</artifactId>
