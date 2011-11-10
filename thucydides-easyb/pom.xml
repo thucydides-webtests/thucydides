@@ -10,11 +10,6 @@
     <artifactId>thucydides-easyb</artifactId> 
     <packaging>pom</packaging>
     <name>thucydides-net.thucydides.easyb</name>
-    <scm>
-        <connection>scm:git:git@github.com:thucydides-webtests/thucydides-easyb.git</connection>
-        <developerConnection>scm:git:git@github.com:thucydides-webtests/thucydides-easyb.git</developerConnection>
-        <url>scm:git:git@github.com:thucydides-webtests/thucydides.git</url>
-    </scm>
     <properties>
         <easyb.version>1.4</easyb.version>
         <groovy.version>1.8.2</groovy.version>
