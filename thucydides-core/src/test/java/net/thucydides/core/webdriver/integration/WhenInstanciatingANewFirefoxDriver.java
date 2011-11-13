@@ -28,8 +28,6 @@ public class WhenInstanciatingANewFirefoxDriver {
 
     WebDriver driver;
 
-    private String originalWebdriverProfile;
-
     private MockEnvironmentVariables environmentVariables;
 
     @Rule

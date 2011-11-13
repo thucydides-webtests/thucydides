@@ -42,11 +42,7 @@ scenario "Select entry in dropdown list using steps", {
     given "we are on the Thucydides demo site again", {
     }
     when "the user fills in the form", {
-        try {
-             demo_site.enter_values('Label 3', true)
-        } catch (Exception e) {
-            e.printStackTrace()
-        }
+        demo_site.enter_values('Label 3', true)
     }
     then "the chosen options should be displayed", {
         demo_site.should_have_selected_value('3')

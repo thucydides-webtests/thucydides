@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
 import java.lang.reflect.InvocationTargetException;
@@ -38,6 +39,9 @@ public class WhenManagingWebdriverInstances {
     InternetExplorerDriver ieDriver;
 
     @Mock
+    HtmlUnitDriver htmlUnitDriver;
+
+    @Mock
     FirefoxProfile firefoxProfile;
 
     MockEnvironmentVariables environmentVariables;
@@ -51,6 +55,7 @@ public class WhenManagingWebdriverInstances {
     private void initWendriverManager() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         when(webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class)).thenReturn(firefoxDriver);
         when(webdriverInstanceFactory.newInstanceOf(ChromeDriver.class)).thenReturn(chromeDriver);
+        when(webdriverInstanceFactory.newInstanceOf(HtmlUnitDriver.class)).thenReturn(htmlUnitDriver);
         when(webdriverInstanceFactory.newInstanceOf(InternetExplorerDriver.class)).thenReturn(ieDriver);
         when(webdriverInstanceFactory.newInstanceOf(eq(FirefoxDriver.class), any(FirefoxProfile.class))).thenReturn(firefoxDriver);
 
@@ -88,6 +93,7 @@ public class WhenManagingWebdriverInstances {
 
         assertThat(driver.proxiedWebDriver, instanceOf(FirefoxDriver.class));
     }
+
     @Test
     public void a_new_firefox_webdriver_instance_is_created_when_the_webdriver_system_property_is_set_to_firefox() {
 
@@ -98,6 +104,15 @@ public class WhenManagingWebdriverInstances {
         assertThat(driver.proxiedWebDriver, instanceOf(FirefoxDriver.class));
     }
     
+    @Test
+    public void a_new_htmlunit_webdriver_instance_is_created_when_the_webdriver_system_property_is_set_to_htmlunit() {
+
+        environmentVariables.setProperty("webdriver.driver","htmlunit");
+
+        WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
+        driver.get("http://www.google.com");
+        assertThat(driver.proxiedWebDriver, instanceOf(HtmlUnitDriver.class));
+    }
     @Test
     public void the_configured_driver_type_can_be_overriden_for_a_particular_test() {
 

@@ -7,6 +7,7 @@ import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -21,6 +22,9 @@ public class WhenObtainingAWebdriverInstance {
 
     @Mock
     FirefoxDriver firefoxDriver;
+
+    @Mock
+    HtmlUnitDriver htmlUnitDriver;
 
     WebDriverFactory webDriverFactory;
     
@@ -42,6 +46,8 @@ public class WhenObtainingAWebdriverInstance {
                 return firefoxDriver;
             } else if (webdriverClass == ChromeDriver.class) {
                 return chromeDriver;
+            } else if (webdriverClass == HtmlUnitDriver.class) {
+                return htmlUnitDriver;
             } else {
                 throw new AssertionError("Unsupported webdriver class " + webdriverClass);
             }
@@ -94,9 +100,21 @@ public class WhenObtainingAWebdriverInstance {
     }
     
     @Test
+    public void the_factory_works_with_htmlunit() {
+        WebDriver driver = webDriverFactory.newInstanceOf(SupportedWebDriver.HTMLUNIT);
+        assertThat(driver,instanceOf(HtmlUnitDriver.class));
+    }
+
+    @Test
      public void the_factory_knows_what_class_the_firefox_driver_uses() {
          Class driverClass = webDriverFactory.getClassFor(SupportedWebDriver.FIREFOX);
          assertThat(driverClass.getName(), is(FirefoxDriver.class.getName()));
+     }
+
+    @Test
+     public void the_factory_knows_what_class_the_htmlunit_driver_uses() {
+         Class driverClass = webDriverFactory.getClassFor(SupportedWebDriver.HTMLUNIT);
+         assertThat(driverClass.getName(), is(HtmlUnitDriver.class.getName()));
      }
 
     @Test(expected=IllegalArgumentException.class)

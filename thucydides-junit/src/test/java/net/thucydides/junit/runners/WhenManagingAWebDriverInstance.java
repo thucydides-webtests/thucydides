@@ -125,13 +125,13 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Test
     public void when_an_unsupported_driver_is_used_an_error_is_raised() throws InitializationError {
 
-        environmentVariables.setProperty("webdriver.driver", "htmlunit");
+        environmentVariables.setProperty("webdriver.driver", "netscape");
         try {
             ThucydidesRunner runner = getTestRunnerUsing(SingleTestScenario.class);
             runner.run(new RunNotifier());
             fail();
         } catch (UnsupportedDriverException e) {
-            assertThat(e.getMessage(), containsString("Unsupported browser type: htmlunit"));
+            assertThat(e.getMessage(), containsString("Unsupported browser type: netscape"));
         }
     }
 

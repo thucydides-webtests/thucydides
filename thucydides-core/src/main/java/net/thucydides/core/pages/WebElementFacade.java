@@ -483,5 +483,6 @@ public class WebElementFacade {
         for(int i = 0; i < currentValue.length(); i++) {
             webElement.sendKeys(Keys.BACK_SPACE);
         }
+        webElement.clear();
     }
 }

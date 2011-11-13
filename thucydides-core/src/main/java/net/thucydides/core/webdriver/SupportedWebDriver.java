@@ -4,8 +4,8 @@ import com.google.common.base.Joiner;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-
 /**
  * The list of supported web drivers.
  * These are the drivers that support screenshots. Note that
@@ -22,6 +22,11 @@ public enum SupportedWebDriver {
      * Chrome  WebDriver driver.
      */
     CHROME(ChromeDriver.class),
+
+    /**
+     * HTMLUnit - fast, but no screenshots.
+     */
+    HTMLUNIT(HtmlUnitDriver.class),
 
     /**
      * Not sure about this one...

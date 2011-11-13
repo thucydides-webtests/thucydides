@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
@@ -82,6 +83,9 @@ public class WebDriverFactory {
             LOGGER.info("Instanciating new browser");
             if (isAFirefoxDriver(driverClass)) {
                 driver = webdriverInstanceFactory.newInstanceOf(driverClass, buildFirefoxProfile());
+            } else if (isAnHtmlUnitDriver(driverClass)) {
+                driver = webdriverInstanceFactory.newInstanceOf(driverClass);
+                activateJavascriptSupportFor((HtmlUnitDriver) driver);
             } else {
                 driver = webdriverInstanceFactory.newInstanceOf(driverClass);
             }
@@ -94,6 +98,10 @@ public class WebDriverFactory {
             LOGGER.error("Could not create new Webdriver instance", cause);
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
         }
+    }
+
+    private void activateJavascriptSupportFor(HtmlUnitDriver driver) {
+        ((HtmlUnitDriver) driver).setJavascriptEnabled(true);
     }
 
     private boolean supportsScreenResizing(final WebDriver driver) {
@@ -115,6 +123,10 @@ public class WebDriverFactory {
 
     private boolean isAFirefoxDriver(Class<? extends WebDriver> driverClass) {
         return (FirefoxDriver.class.isAssignableFrom(driverClass));
+    }
+
+    private boolean isAnHtmlUnitDriver(Class<? extends WebDriver> driverClass) {
+        return (HtmlUnitDriver.class.isAssignableFrom(driverClass));
     }
 
     private boolean isAnInternetExplorerDriver(Class<? extends WebDriver> driverClass) {
