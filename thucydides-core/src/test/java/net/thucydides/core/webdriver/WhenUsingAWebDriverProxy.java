@@ -6,6 +6,7 @@ import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -72,6 +73,7 @@ public class WhenUsingAWebDriverProxy {
         StepEventBus.getEventBus().clear();
         webDriverFacade = (WebDriverFacade) webdriverManager.getWebdriver();
         WebdriverProxyFactory.getFactory().clearMockDriver();
+        webdriverManager.closeAllDrivers();
     }
 
     @After

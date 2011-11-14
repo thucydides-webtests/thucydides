@@ -6,6 +6,7 @@ import com.google.common.collect.Iterables;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.pages.PagesAnnotatedField;
+import org.junit.runners.model.FrameworkMethod;
 import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.Field;
@@ -71,4 +72,5 @@ public final class TestCaseAnnotations {
             }
         };
     }
+
 }

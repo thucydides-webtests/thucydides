@@ -94,7 +94,7 @@ public class Thucydides {
      * Indicate that the test run using this object is finished, and reports can be generated.
      */
     public static void done() {
-        getWebdriverManager().closeDriver();
+        getWebdriverManager().closeAllDrivers();
 
     }
 
@@ -114,7 +114,7 @@ public class Thucydides {
                               new SystemPropertiesConfiguration(new SystemEnvironmentVariables())) {
 
             @Override
-            public WebDriver getWebdriver() {
+            public WebDriver getWebdriver(String driver) {
                 return mockDriver;
             }
         });

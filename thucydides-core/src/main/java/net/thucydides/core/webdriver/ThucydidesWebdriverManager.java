@@ -8,17 +8,24 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Manage WebDriver instances.
  * It instantiates browser drivers, based on the test configuration, and manages them for the
  * duration of the tests.
+ * A webdriver manager needs to be thread-safe. Tests can potentially be run in parallel, and different
+ * tests can use different drivers.
  *                                                  ˜
  * @author johnsmart
  *
  */
 public class ThucydidesWebdriverManager implements WebdriverManager {
 
-    private static final ThreadLocal<WebDriver> webdriverThreadLocal = new ThreadLocal<WebDriver>();
+    private static final ThreadLocal<Map<String,WebDriver>> webdriverThreadLocal = new ThreadLocal<Map<String,WebDriver>>();
+
+    private static final ThreadLocal<String> currentDriverThreadLocal = new ThreadLocal<String>();
 
     private final WebDriverFactory webDriverFactory;
 
@@ -58,30 +65,53 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
     }
 
     public void closeDriver() {
-        if (getWebdriver() != null) {
-            LOGGER.debug("Closing driver instance for thread");
-            getWebdriver().close();
-            getWebdriver().quit();
+        String currentDriver = currentDriverThreadLocal.get();
+
+        Map<String, WebDriver> webDriverMap = webdriverThreadLocal.get();
+        if ((webDriverMap != null) && (webDriverMap.containsKey(currentDriver))) {
+            getWebdriver(currentDriver).close();
+            getWebdriver(currentDriver).quit();
+        }
+
+        currentDriverThreadLocal.remove();
+    }
+
+    public void closeAllDrivers() {
+
+        Map<String, WebDriver> webDriverMap = webdriverThreadLocal.get();
+        if ((webDriverMap != null) && (!webDriverMap.isEmpty())) {
+            for(String driver : webDriverMap.keySet()) {
+                getWebdriver(driver).close();
+                getWebdriver(driver).quit();
+            }
+            webDriverMap.clear();
             webdriverThreadLocal.remove();
         }
+        currentDriverThreadLocal.remove();
     }
 
     public WebDriver getWebdriver() {
-        return getThreadLocalWebDriver(configuration, webDriverFactory, null);
+        return getThreadLocalWebDriver(configuration, webDriverFactory, currentDriverThreadLocal.get());
     }
 
     public WebDriver getWebdriver(final String driver) {
+        currentDriverThreadLocal.set(driver);
         return getThreadLocalWebDriver(configuration, webDriverFactory, driver);
     }
 
     private static WebDriver getThreadLocalWebDriver(final Configuration configuration,
                                                      final WebDriverFactory webDriverFactory,
                                                      final String driver) {
-        if (webdriverThreadLocal.get() == null) {
-            LOGGER.debug("Instanciating new driver instance for thread");
-            webdriverThreadLocal.set(newDriver(configuration, webDriverFactory, driver));
+        Map<String, WebDriver> webDriverMap = webdriverThreadLocal.get();
+
+        if (webDriverMap == null) {
+            webDriverMap = new HashMap<String, WebDriver>();
+            webdriverThreadLocal.set(webDriverMap);
         }
-        return webdriverThreadLocal.get();
+        if (!webDriverMap.containsKey(driver)) {
+            webDriverMap.put(driver, newDriver(configuration, webDriverFactory, driver));
+        }
+        return webDriverMap.get(driver);
     }
 
 }

@@ -192,7 +192,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
         stepListener.close();
         generateReportsFor(stepListener.getTestOutcomes());
-        closeDriver();
+        closeDrivers();
     }
 
     private void initializeDriversAndListeners(RunNotifier notifier) {
@@ -242,8 +242,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         stepFactory = new StepFactory();
     }
 
-    private void closeDriver() {
-        getWebdriverManager().closeDriver();
+    private void closeDrivers() {
+        getWebdriverManager().closeAllDrivers();
     }
 
     protected WebdriverManager getWebdriverManager() {
@@ -339,8 +339,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     protected Statement methodInvoker(final FrameworkMethod method, final Object test) {
 
         if (webtestsAreSupported()) {
-            injectDriverInto(test);
+            injectDriverInto(test, method);
+            initPagesObjectUsing(driverFor(method));
             injectAnnotatedPagesObjectInto(test);
+            initStepFactoryUsing(getPages());
             uniqueSession = TestCaseAnnotations.forTestCase(test).isUniqueSession();
 
         }
@@ -360,10 +362,20 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     /**
      * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.
      */
-    protected void injectDriverInto(final Object testCase) {
-        TestCaseAnnotations.forTestCase(testCase).injectDriver(getDriver());
+    protected void injectDriverInto(final Object testCase,
+                                    final FrameworkMethod method) {
+        TestCaseAnnotations.forTestCase(testCase).injectDriver(driverFor(method));
     }
 
+    protected WebDriver driverFor(final FrameworkMethod method) {
+        if (TestMethodAnnotations.forTest(method).isDriverSpecified()) {
+            String testSpecificDriver =  TestMethodAnnotations.forTest(method).specifiedDriver();
+            return getDriver(testSpecificDriver);
+        } else {
+            return getDriver();
+        }
+
+    }
     /**
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
      */
@@ -382,6 +394,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     protected WebDriver getDriver() {
         return getWebdriverManager().getWebdriver(requestedDriver);
+    }
+
+    protected WebDriver getDriver(final String driver) {
+        return getWebdriverManager().getWebdriver(driver);
     }
 
     public List<TestOutcome> getTestOutcomes() {

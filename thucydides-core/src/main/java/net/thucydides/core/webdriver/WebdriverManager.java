@@ -18,4 +18,6 @@ public interface WebdriverManager {
 
     public void closeDriver();
 
+    public void closeAllDrivers();
+
 }

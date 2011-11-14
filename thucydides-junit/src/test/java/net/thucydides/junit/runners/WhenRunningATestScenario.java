@@ -83,6 +83,26 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
+    public void the_test_can_specify_a_diffrent_driver() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class, webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(3));
+    }
+
+    @Test
+    public void the_test_can_specify_a_diffrent_driver_for_an_individual_test() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioUsingHtmlUnitForOneTest.class, webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(3));
+    }
+
+    @Test
     public void the_test_runner_records_the_steps_as_they_are_executed() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenario.class, webDriverFactory);

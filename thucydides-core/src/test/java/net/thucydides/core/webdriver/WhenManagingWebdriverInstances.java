@@ -52,7 +52,7 @@ public class WhenManagingWebdriverInstances {
 
     Configuration configuration; 
     
-    private void initWendriverManager() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    private void initWebdriverManager() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         when(webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class)).thenReturn(firefoxDriver);
         when(webdriverInstanceFactory.newInstanceOf(ChromeDriver.class)).thenReturn(chromeDriver);
         when(webdriverInstanceFactory.newInstanceOf(HtmlUnitDriver.class)).thenReturn(htmlUnitDriver);
@@ -76,12 +76,12 @@ public class WhenManagingWebdriverInstances {
     public void createATestableDriverFactory() throws Exception {
         MockitoAnnotations.initMocks(this);
         environmentVariables = new MockEnvironmentVariables();
-        initWendriverManager();
+        initWebdriverManager();
     }
 
     @After
     public void closeDriver() {
-        webdriverManager.closeDriver();
+        webdriverManager.closeAllDrivers();
     }
 
     @Test
@@ -167,7 +167,7 @@ public class WhenManagingWebdriverInstances {
     public void a_new_chrome_webdriver_instance_is_created_when_the_webdriver_system_property_is_set_to_chrome() throws Exception {
 
         environmentVariables.setProperty("webdriver.driver", "chrome");
-        initWendriverManager();
+        initWebdriverManager();
 
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
         driver.get("http://www.google.com");
@@ -180,7 +180,7 @@ public class WhenManagingWebdriverInstances {
     public void a_new_ie_webdriver_instance_is_created_when_the_webdriver_system_property_is_set_to_iexplorer() throws Exception {
 
         environmentVariables.setProperty("webdriver.driver", "iexplorer");
-        initWendriverManager();
+        initWebdriverManager();
 
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
         driver.get("http://www.google.com");
