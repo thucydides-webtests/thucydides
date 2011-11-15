@@ -4,8 +4,9 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.4.27-SNAPSHOT</version>
-    </parent>
+        <version>0.4.26</version>
+    </parent>               
+	<version>0.4.26-SNAPSHOT</version>
     <groupId>net.thucydides.easyb</groupId>
     <artifactId>thucydides-easyb</artifactId> 
     <packaging>pom</packaging>
