@@ -8,6 +8,7 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -71,20 +72,6 @@ public class WhenRunningTestsInIsolation {
 
     }
 
-
-   @Test
-   public void the_webdriver_should_be_closed_when_the_tests_are_done() {
-
-       SampleTestClass sampleTestClass = new SampleTestClass();
-
-       Thucydides.initialize(sampleTestClass);
-
-       Thucydides.useMockDriver(mockDriver);
-
-       Thucydides.done();
-
-       verify(mockDriver).close();
-   }
 
     @Test
     public void any_class_can_host_an_annotated_step_library() {

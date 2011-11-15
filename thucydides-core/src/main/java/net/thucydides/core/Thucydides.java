@@ -106,31 +106,12 @@ public class Thucydides {
         return pagesThreadLocal.get();
     }
 
-    /**
-     * Use a mock driver for testing purposes
-     */
-    protected static void useMockDriver(final WebDriver mockDriver) {
-        setupWebdriverManager(new ThucydidesWebdriverManager(getWebDriverFactory(),
-                              new SystemPropertiesConfiguration(new SystemEnvironmentVariables())) {
-
-            @Override
-            public WebDriver getWebdriver(String driver) {
-                return mockDriver;
-            }
-        });
-
-    }
-
     protected static void stopUsingMockDriver() {
         setupWebdriverManager();
     }
 
     private static WebdriverManager getWebdriverManager() {
         return webdriverManagerThreadLocal.get();
-    }
-
-    private static WebDriverFactory getWebDriverFactory() {
-        return factoryThreadLocal.get();
     }
 
     private static StepFactory getStepFactory() {

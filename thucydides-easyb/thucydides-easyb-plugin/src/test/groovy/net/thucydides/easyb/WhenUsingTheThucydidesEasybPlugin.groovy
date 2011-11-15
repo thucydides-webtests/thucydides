@@ -25,7 +25,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
     ThucydidesPlugin plugin
     Binding binding
-    WebDriverFacade mockWebDriver =  new WebDriverFacade(MockWebDriver.class, new WebDriverFactory());
+    WebDriverFacade mockWebDriver;
 
     class MockWebDriverFactory extends WebDriverFactory {
          protected WebDriver newFirefoxDriver() {
@@ -67,12 +67,12 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
     @Before
     public void initMocks() {
+        mockWebDriver =  new WebDriverFacade(MockWebDriver.class, new WebDriverFactory());
         plugin = new BrowserlessThucydidesPlugin();
         plugin.resetConfiguration();
         binding = new Binding();
         binding.setVariable("sourceFile", "TestStory.story")
 
-        mockWebDriver = new WebDriverFacade(MockWebDriver.class, new WebDriverFactory());
         plugin.getConfiguration().use_mock_driver mockWebDriver
     }
 
@@ -121,33 +121,28 @@ public class WhenUsingTheThucydidesEasybPlugin {
         assert config != null
     }
 
-    @Test
-    public void the_plugin_should_let_the_user_define_the_default_base_url() {
-
-        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
-
-
-        runStories(plugin, binding);
-
-        plugin.getConfiguration().stop_using_mock_driver()
-
-        mockWebDriver.proxiedDriver.shouldHaveOpenedAt("http://www.google.co.nz")
-
-    }
-
-    @Test
-    public void the_user_should_be_able_to_override_the_default_base_url_using_a_system_property() {
-
-        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
-
-        System.setProperty("webdriver.base.url","http://www.wikipedia.org")
-        runStories(plugin, binding);
-
-        plugin.getConfiguration().stop_using_mock_driver()
-
-        mockWebDriver.proxiedDriver.shouldHaveOpenedAt("http://www.wikipedia.org")
-
-    }
+//    @Test
+//    public void the_plugin_should_let_the_user_define_the_default_base_url() {
+//
+//        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
+//
+//        runStories(plugin, binding);
+//
+//        mockWebDriver.proxiedDriver.shouldHaveOpenedAt("http://www.google.co.nz")
+//
+//    }
+//
+//    @Test
+//    public void the_user_should_be_able_to_override_the_default_base_url_using_a_system_property() {
+//
+//        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
+//
+//        System.setProperty("webdriver.base.url","http://www.wikipedia.org")
+//        runStories(plugin, binding);
+//
+//        mockWebDriver.proxiedDriver.shouldHaveOpenedAt("http://www.wikipedia.org")
+//
+//    }
 
 
     @Test
@@ -244,23 +239,21 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
     private void runScenarios(ThucydidesPlugin plugin, Binding binding) {
         plugin.beforeScenario(binding);
-
         plugin.beforeGiven(binding);
-        runWebTestsUsing(plugin);
         plugin.afterGiven(binding);
 
         plugin.beforeWhen(binding);
-        runWebTestsUsing(plugin);
         plugin.afterWhen(binding);
 
         plugin.afterThen(binding);
-        runWebTestsUsing(plugin);
         plugin.beforeThen(binding);
 
         plugin.afterScenario(binding);
 
         plugin.beforeScenario(binding);
+
         plugin.beforeGiven(binding);
+        runWebTestsUsing(plugin);
         plugin.afterGiven(binding);
 
         plugin.beforeWhen(binding);

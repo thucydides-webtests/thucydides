@@ -69,6 +69,7 @@ public class WhenManagingWebdriverInstances {
         configuration = new SystemPropertiesConfiguration(environmentVariables);
         
         webdriverManager = new ThucydidesWebdriverManager(factory, configuration);
+        webdriverManager.closeAllDrivers();
     }
 
 

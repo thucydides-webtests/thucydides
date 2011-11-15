@@ -1,14 +1,11 @@
 package net.thucydides.core.webdriver;
 
 import com.google.inject.Inject;
-import freemarker.template.utility.StringUtil;
-import net.thucydides.core.guice.Injectors;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,9 +20,7 @@ import java.util.Map;
  */
 public class ThucydidesWebdriverManager implements WebdriverManager {
 
-    private static final ThreadLocal<Map<String,WebDriver>> webdriverThreadLocal = new ThreadLocal<Map<String,WebDriver>>();
-
-    private static final ThreadLocal<String> currentDriverThreadLocal = new ThreadLocal<String>();
+    private static final ThreadLocal<WebdriverInstances> webdriverInstancesThreadLocal = new ThreadLocal<WebdriverInstances>();
 
     private final WebDriverFactory webDriverFactory;
 
@@ -65,53 +60,39 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
     }
 
     public void closeDriver() {
-        String currentDriver = currentDriverThreadLocal.get();
-
-        Map<String, WebDriver> webDriverMap = webdriverThreadLocal.get();
-        if ((webDriverMap != null) && (webDriverMap.containsKey(currentDriver))) {
-            getWebdriver(currentDriver).close();
-            getWebdriver(currentDriver).quit();
-        }
-
-        currentDriverThreadLocal.remove();
+        inThisTestThread().closeCurrentDriver();
     }
 
     public void closeAllDrivers() {
-
-        Map<String, WebDriver> webDriverMap = webdriverThreadLocal.get();
-        if ((webDriverMap != null) && (!webDriverMap.isEmpty())) {
-            for(String driver : webDriverMap.keySet()) {
-                getWebdriver(driver).close();
-                getWebdriver(driver).quit();
-            }
-            webDriverMap.clear();
-            webdriverThreadLocal.remove();
-        }
-        currentDriverThreadLocal.remove();
+        inThisTestThread().closeAllDrivers();
     }
 
     public WebDriver getWebdriver() {
-        return getThreadLocalWebDriver(configuration, webDriverFactory, currentDriverThreadLocal.get());
+        return getThreadLocalWebDriver(configuration, webDriverFactory, inThisTestThread().getCurrentDriverName());
     }
 
     public WebDriver getWebdriver(final String driver) {
-        currentDriverThreadLocal.set(driver);
-        return getThreadLocalWebDriver(configuration, webDriverFactory, driver);
+       return getThreadLocalWebDriver(configuration, webDriverFactory, driver);
     }
 
     private static WebDriver getThreadLocalWebDriver(final Configuration configuration,
                                                      final WebDriverFactory webDriverFactory,
                                                      final String driver) {
-        Map<String, WebDriver> webDriverMap = webdriverThreadLocal.get();
 
-        if (webDriverMap == null) {
-            webDriverMap = new HashMap<String, WebDriver>();
-            webdriverThreadLocal.set(webDriverMap);
+
+        if (!inThisTestThread().driverIsRegisteredFor(driver)) {
+            inThisTestThread().registerDriverCalled(driver)
+                                   .forDriver(newDriver(configuration, webDriverFactory, driver));
         }
-        if (!webDriverMap.containsKey(driver)) {
-            webDriverMap.put(driver, newDriver(configuration, webDriverFactory, driver));
+
+        return inThisTestThread().useDriver(driver);
+    }
+
+    private static WebdriverInstances inThisTestThread() {
+        if (webdriverInstancesThreadLocal.get() == null) {
+            webdriverInstancesThreadLocal.set(new WebdriverInstances());
         }
-        return webDriverMap.get(driver);
+        return webdriverInstancesThreadLocal.get();
     }
 
 }
