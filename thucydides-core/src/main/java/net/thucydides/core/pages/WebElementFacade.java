@@ -19,6 +19,7 @@ import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
 import org.openqa.selenium.support.ui.Wait;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -63,7 +64,7 @@ public class WebElementFacade {
     public boolean isVisible() {
 
         try {
-            return webElement.isDisplayed();
+            return (webElement != null) && (webElement.isDisplayed());
         } catch (NoSuchElementException e) {
             return false;
         } catch (StaleElementReferenceException se) {
@@ -158,7 +159,7 @@ public class WebElementFacade {
      * Does this element contain a given text?
      */
     public boolean containsText(final String value) {
-        return webElement.getText().contains(value);
+        return ((webElement != null) && (webElement.getText().contains(value)));
     }
 
     /**
@@ -169,7 +170,10 @@ public class WebElementFacade {
     }
 
     public List<String> getSelectOptions() {
-        List<WebElement> results = webElement.findElements(By.tagName("option"));
+        List<WebElement> results = Collections.emptyList();
+        if (webElement != null) {
+            results = webElement.findElements(By.tagName("option"));
+        }
         return convert(results, new ExtractText());
     }
 
@@ -222,7 +226,7 @@ public class WebElementFacade {
     }
 
     public boolean isEnabled() {
-        return webElement.isEnabled();
+        return (webElement != null) && (webElement.isEnabled());
     }
 
     public void shouldNotBeEnabled() {
@@ -314,7 +318,7 @@ public class WebElementFacade {
 
     public boolean isPresent() {
         try {
-            return webElement.isDisplayed() || !webElement.isDisplayed();
+            return (webElement != null) && (webElement.isDisplayed() || !webElement.isDisplayed());
         } catch (NoSuchElementException e) {
             if (e.getCause().getMessage().contains("Element is not usable")) {
                 return true;
@@ -367,7 +371,7 @@ public class WebElementFacade {
     private ExpectedCondition<Boolean> elementIsDisplayed() {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
-                return webElement.isDisplayed();
+                return (webElement != null) && (webElement.isDisplayed());
             }
         };
     }
@@ -391,7 +395,7 @@ public class WebElementFacade {
     private ExpectedCondition<Boolean> elementIsEnabled() {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
-                return (webElement.isEnabled());
+                return ((webElement != null) && (webElement.isEnabled()));
             }
         };
     }
@@ -399,7 +403,7 @@ public class WebElementFacade {
     private ExpectedCondition<Boolean> elementIsNotEnabled() {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
-                return (!webElement.isEnabled());
+                return ((webElement != null) && (!webElement.isEnabled()));
             }
         };
     }
