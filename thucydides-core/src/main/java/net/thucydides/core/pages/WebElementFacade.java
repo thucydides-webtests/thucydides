@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
+import net.thucydides.core.webdriver.WebDriverFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
@@ -11,6 +12,7 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -270,9 +272,19 @@ public class WebElementFacade {
     public WebElementFacade typeAndTab(final String value) {
         waitUntilElementAvailable();
         webElement.clear();
+
         webElement.sendKeys(value);
         webElement.sendKeys(Keys.TAB);
+
         return this;
+    }
+
+    private WebDriver getProxiedDriver() {
+        if (WebDriverFacade.class.isAssignableFrom(driver.getClass())) {
+            return ((WebDriverFacade) driver).getProxiedDriver();
+        } else {
+            return driver;
+        }
     }
 
     public void setWindowFocus() {

@@ -233,7 +233,7 @@
         </project.build.sourceEncoding>
         <surefire.version>2.9</surefire.version>
         <junit.version>4.8.2</junit.version>
-        <selenium.version>2.9.0</selenium.version>
+        <selenium.version>2.11.0</selenium.version>
         <checkstyle.rules>http://www.wakaleo-labs.com/sonar/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo</checkstyle.rules>
     </properties>
 
@@ -362,6 +362,7 @@
         <module>thucydides-core</module>
         <module>thucydides-junit</module>
         <module>thucydides-maven-plugin</module>
-        <module>thucydides-maven-integration-tests</module>   
+        <module>thucydides-maven-integration-tests</module>
+        <module>thucydides-arquillian</module>
   </modules>
 </project>

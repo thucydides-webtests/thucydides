@@ -443,6 +443,50 @@ public class WhenUsingTheFluentElementAPI {
     }
 
     @Test
+    public void should_inject_jquery_into_the_page() {
+        page.open();
+        page.evaluateJavascript("document.getElementById('firstname').focus()");
+
+        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
+        assertThat(jqueryInjected, is(true));
+    }
+
+    @Test
+    public void should_inject_jquery_into_the_page_in_chrome() {
+        StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
+        page.open();
+        page.evaluateJavascript("document.getElementById('firstname').focus()");
+
+        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
+        assertThat(jqueryInjected, is(true));
+    }
+
+    @Test
+    public void should_support_jquery_queries_in_the_page_in_chrome() {
+
+        StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
+        page.open();
+
+        assertThat(page.element(page.firstName).hasFocus(), is(false));
+
+        page.evaluateJavascript("$('#firstname').focus();");
+
+        assertThat(page.element(page.firstName).hasFocus(), is(true));
+    }
+
+    @Test
+    public void should_support_jquery_queries_in_the_page() {
+
+        page.open();
+
+        assertThat(page.element(page.firstName).hasFocus(), is(false));
+
+        page.evaluateJavascript("$('#firstname').focus();");
+
+        assertThat(page.element(page.firstName).hasFocus(), is(true));
+    }
+
+    @Test
     public void should_clear_field_before_entering_text() {
         page.open();
 
@@ -470,6 +514,19 @@ public class WhenUsingTheFluentElementAPI {
     public void should_optionally_type_tab_after_entering_text() {
 
         StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
+
+        page.open();
+
+        assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
+
+        page.element(page.firstName).typeAndTab("joe");
+
+        assertThat(page.element(page.lastName).hasFocus(), is(true));
+    }
+
+    @Ignore
+    @Test
+    public void should_optionally_type_tab_after_entering_text_in_firefox() {
 
         page.open();
 

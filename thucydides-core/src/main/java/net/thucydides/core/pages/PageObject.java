@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
-import com.google.common.base.Function;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
@@ -17,7 +18,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
 import org.slf4j.Logger;
@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A base class representing a WebDriver page object.
@@ -580,8 +578,37 @@ public abstract class PageObject {
     }
 
     public Object evaluateJavascript(final String script) {
+        ensureThatJQueryIsLoaded();
         JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
         return js.executeScript(script);
+    }
+
+    private void ensureThatJQueryIsLoaded() {
+        if (!jqueryLoaded()) {
+            injectJQueryIntoPage();       
+        }
+    }
+
+    private void injectJQueryIntoPage() {
+        String jquery = getFileAsString("jquery/jquery.min.js");
+        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
+        js.executeScript(jquery);
+    }
+
+    private String getFileAsString(final String resourcePath) {
+        String content = "";
+        try {
+            URL fileUrl = getClass().getClassLoader().getResource(resourcePath);
+            content = Resources.toString(fileUrl, Charsets.UTF_8);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+        return content;
+    }
+
+    public boolean jqueryLoaded() {
+        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
+        return (Boolean) js.executeScript("return (typeof jQuery === 'function')");
     }
 
     public ThucydidesFluentWait<WebDriver> waitForRefresh() {
