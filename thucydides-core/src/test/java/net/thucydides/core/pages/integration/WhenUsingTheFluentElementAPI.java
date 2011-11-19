@@ -909,7 +909,7 @@ public class WhenUsingTheFluentElementAPI {
     }
 
     @Test
-    @Ignore("Doesn't work in firefox in some circumstances")
+    @Ignore("Doesn't work in firefox if Firefox is not in the foreground")
     public void should_let_you_remove_the_focus_from_the_current_active_field_in_firefox() {
         StaticSitePage page = new StaticSitePage(driver, 1);
 
