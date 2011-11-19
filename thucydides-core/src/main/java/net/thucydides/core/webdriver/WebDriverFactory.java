@@ -45,10 +45,6 @@ public class WebDriverFactory {
         this(new WebdriverInstanceFactory(), Injectors.getInjector().getInstance(EnvironmentVariables.class));
     }
 
-    public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory) {
-        this(webdriverInstanceFactory, Injectors.getInjector().getInstance(EnvironmentVariables.class));
-    }
-
     public WebDriverFactory(EnvironmentVariables environmentVariables) {
         this(new WebdriverInstanceFactory(), environmentVariables);
     }
@@ -168,11 +164,17 @@ public class WebDriverFactory {
         } else {
             profile = getProfileFrom(profileName);
         }
-        addFirebugsTo(profile);
+        if (shouldActivateFirebugs()) {
+            addFirebugsTo(profile);
+        }
         if (dontAssumeUntrustedCertificateIssuer()) {
             profile.setAssumeUntrustedCertificateIssuer(false);
         }
         return profile;
+    }
+
+    private boolean shouldActivateFirebugs() {
+        return environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.ACTIVATE_FIREBUGS.getPropertyName(), true);
     }
 
     private void addFirebugsTo(FirefoxProfile profile) {

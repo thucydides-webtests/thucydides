@@ -89,6 +89,7 @@ public class WhenInstanciatingANewFirefoxDriver {
         driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
         assertThat(chosenProfile, is(customProfileDir.getAbsolutePath()));
     }
+
     @Test
     public void should_support_creating_a_firefox_driver_with_a_named_profile() throws Exception {
 
@@ -100,4 +101,21 @@ public class WhenInstanciatingANewFirefoxDriver {
         assertThat(chosenProfile, is(nullValue()));
     }
 
+    @Test
+    public void should_include_the_firebugs_extension_by_default() throws Exception {
+
+        WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
+
+        driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
+    }
+
+    @Test
+    public void should_exclude_the_firebugs_extension_if_the_thucydides_activate_firebugs_property_is_set_to_false() throws Exception {
+
+        WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
+
+        environmentVariables.setProperty("ethucydides.activate.firebugs", "false");
+
+        driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
+    }
 }

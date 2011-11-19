@@ -103,7 +103,15 @@ public enum ThucydidesSystemProperty {
      * Public URL where the Thucydides reports will be displayed.
      * This is mainly for use by plugins.
      */
-    PUBLIC_URL("thucydides.public.url");
+    PUBLIC_URL("thucydides.public.url"),
+
+    /**
+     * Activate the Firebugs plugin for firefox.
+     * Useful for debugging, but not very when running the tests on a build server.
+     * It is activated by default, so that when you run tests from within an IDE they open
+     * a Firefox instance with Firebugs. To deactivate, just pass in -Dthucydides.activate.firebugs=false
+     */
+    ACTIVATE_FIREBUGS("thucydides.activate.firebugs");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 1000;
