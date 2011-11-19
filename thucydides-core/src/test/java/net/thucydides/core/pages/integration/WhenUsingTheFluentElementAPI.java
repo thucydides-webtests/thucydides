@@ -4,6 +4,7 @@ package net.thucydides.core.pages.integration;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.WebElementFacade;
+import net.thucydides.core.webdriver.ByJQuery;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.AfterClass;
@@ -23,6 +24,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -53,19 +56,19 @@ public class WhenUsingTheFluentElementAPI {
     @DefaultUrl("classpath:static-site/index.html")
     public static final class StaticSitePage extends PageObject {
 
-        @FindBy(name="firstname")
+        @FindBy(name = "firstname")
         protected WebElement firstName;
 
-        @FindBy(name="lastname")
+        @FindBy(name = "lastname")
         protected WebElement lastName;
 
-        @FindBy(name="city")
+        @FindBy(name = "city")
         protected WebElement city;
 
-        @FindBy(name="country")
+        @FindBy(name = "country")
         protected WebElement country;
 
-        @FindBy(name="hiddenfield")
+        @FindBy(name = "hiddenfield")
         protected WebElement hiddenField;
 
         protected WebElement csshiddenfield;
@@ -91,10 +94,10 @@ public class WhenUsingTheFluentElementAPI {
 
         protected WebElement dissapearingtext;
 
-        @FindBy(id="visible")
+        @FindBy(id = "visible")
         protected WebElement visibleTitle;
 
-        @FindBy(id="color")
+        @FindBy(id = "color")
         protected WebElement colors;
 
         protected WebElement elements;
@@ -103,13 +106,13 @@ public class WhenUsingTheFluentElementAPI {
 
         protected WebElement emptylist;
 
-        @FindBy(name="fieldDoesNotExist")
+        @FindBy(name = "fieldDoesNotExist")
         protected WebElement fieldDoesNotExist;
 
-        @FindBy(id="emptyLabelID")
+        @FindBy(id = "emptyLabelID")
         protected WebElement emptyLabel;
 
-        @FindBy(id="nonEmptyLabelID")
+        @FindBy(id = "nonEmptyLabelID")
         protected WebElement nonEmptyLabel;
 
         protected WebElement focusmessage;
@@ -129,9 +132,11 @@ public class WhenUsingTheFluentElementAPI {
         public void fieldDoesNotExistShouldBePresent() {
             element(fieldDoesNotExist).shouldBePresent();
         }
+
         public void hiddenFieldShouldNotBePresent() {
             element(hiddenField).shouldNotBePresent();
         }
+
         public void fieldDoesNotExistShouldContainText(String value) {
             element(fieldDoesNotExist).shouldContainText(value);
         }
@@ -176,6 +181,119 @@ public class WhenUsingTheFluentElementAPI {
         page.open();
     }
 
+
+    @Test
+    public void should_inject_jquery_into_the_page() {
+        //StaticSitePage page = new StaticSitePage(driver, 1);
+        page.open();
+        page.addJQuerySupport();
+        page.evaluateJavascript("$('#firstname').focus();");
+
+        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
+        assertThat(jqueryInjected, is(true));
+    }
+
+
+
+    @Test
+    public void should_not_inject_jquery_into_the_page_for_non_jquery_script() {
+        StaticSitePage page = new StaticSitePage(driver, 1);
+        page.open();
+        page.evaluateJavascript("document.getElementById('firstname').focus()");
+
+        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
+        assertThat(jqueryInjected, is(false));
+    }
+
+    @Test
+    public void should_work_correctly_in_the_page_with_jquery_already_present() {
+        page.open("classpath:static-site/index-with-jquery.html");
+        page.evaluateJavascript("$('#firstname').focus();");
+
+        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
+        assertThat(jqueryInjected, is(true));
+    }
+
+    @Test
+    public void should_inject_jquery_into_the_page_in_chrome() {
+        StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
+        page.open();
+        page.evaluateJavascript("$('#firstname').focus();");
+
+        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
+        assertThat(jqueryInjected, is(true));
+    }
+
+    @Test
+    public void should_support_jquery_queries_in_the_page_in_chrome() {
+
+        StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
+        page.open();
+
+        assertThat(page.element(page.firstName).hasFocus(), is(false));
+
+        page.evaluateJavascript("$('#firstname').focus();");
+
+        assertThat(page.element(page.firstName).hasFocus(), is(true));
+    }
+
+    @Test
+    public void should_support_jquery_queries_in_the_page() {
+
+        page.open();
+
+        assertThat(page.element(page.firstName).hasFocus(), is(false));
+
+        page.evaluateJavascript("$('#firstname').focus();");
+
+        assertThat(page.element(page.firstName).hasFocus(), is(true));
+    }
+
+    @Test
+    public void should_support_jquery_queries_that_return_values_in_the_page() {
+
+        page.open();
+
+        assertThat(page.element(page.firstName).hasFocus(), is(false));
+
+        Object result = page.evaluateJavascript("return $('#country').val();");
+
+        assertThat(result.toString(), is("Australia"));
+    }
+
+    @Test
+    public void should_be_able_to_find_an_element_using_a_jquery_expression() {
+        page.open();
+        page.addJQuerySupport();
+        WebElement link = driver.findElement(ByJQuery.selector("a[title='Click Me']"));
+        assertThat(link.isDisplayed(), is(true));
+    }
+
+    @Test
+    public void should_be_able_to_find_multiple_elements_using_a_jquery_expression() {
+        page.open();
+        page.addJQuerySupport();
+        List<WebElement> links = driver.findElements(ByJQuery.selector("h2"));
+        assertThat(links.size(), is(2));
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void should_fail_gracefully_if_no_jquery_element_is_found() {
+        page.open();
+        page.addJQuerySupport();
+        driver.findElement(ByJQuery.selector("a[title='Does Not Exist']"));
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void should_fail_gracefully_if_jquery_selector_is_invalid() {
+        page.open();
+        page.addJQuerySupport();
+        driver.findElement(ByJQuery.selector("a[title='Does Not Exist'"));
+    }
+
+
+ ////////////
+
     @Test
     public void should_report_if_element_is_visible() {
         assertThat(page.element(page.firstName).isVisible(), is(true));
@@ -202,20 +320,20 @@ public class WhenUsingTheFluentElementAPI {
     }
 
     @Test
-     public void should_pass_if_expected_element_is_present() {
-         page.element(page.firstName).shouldBePresent();
-     }
+    public void should_pass_if_expected_element_is_present() {
+        page.element(page.firstName).shouldBePresent();
+    }
 
-     @Test
-     public void should_pass_if_expected__if_element_is_present_but_not_visible() {
-         page.element(page.hiddenField).shouldBePresent();
-     }
+    @Test
+    public void should_pass_if_expected__if_element_is_present_but_not_visible() {
+        page.element(page.hiddenField).shouldBePresent();
+    }
 
 
-     @Test(expected = AssertionError.class)
-     public void should_throw_exception_if_element_is_not_present() {
-         page.fieldDoesNotExistShouldBePresent();
-     }
+    @Test(expected = AssertionError.class)
+    public void should_throw_exception_if_element_is_not_present() {
+        page.fieldDoesNotExistShouldBePresent();
+    }
 
     @Test
     public void should_pass_if_unexpected_element_is_not_present() {
@@ -272,7 +390,7 @@ public class WhenUsingTheFluentElementAPI {
         page.element(page.firstName).shouldNotBeVisible();
     }
 
-    @Test(timeout = 1000,expected = AssertionError.class)
+    @Test(timeout = 1000, expected = AssertionError.class)
     public void should_throw_expection_fast_if_unrequired_element_is_present() {
         page.element(page.firstName).shouldNotBeCurrentlyVisible();
     }
@@ -336,6 +454,7 @@ public class WhenUsingTheFluentElementAPI {
     public void should_contain_text_passes_if_field_contains_text() {
         page.element(page.colors).shouldContainText("Red");
     }
+
     @Test
     public void should_contain_entry_passes_if_dropdown_contains_text() {
         page.element(page.colors).shouldContainSelectedOption("Red");
@@ -348,7 +467,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test
     public void should_find_the_list_of_select_options() {
-        assertThat(page.element(page.colors).getSelectOptions(), hasItems("Red","Blue","Green"));
+        assertThat(page.element(page.colors).getSelectOptions(), hasItems("Red", "Blue", "Green"));
     }
 
     @Test
@@ -443,50 +562,6 @@ public class WhenUsingTheFluentElementAPI {
     }
 
     @Test
-    public void should_inject_jquery_into_the_page() {
-        page.open();
-        page.evaluateJavascript("document.getElementById('firstname').focus()");
-
-        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
-        assertThat(jqueryInjected, is(true));
-    }
-
-    @Test
-    public void should_inject_jquery_into_the_page_in_chrome() {
-        StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
-        page.open();
-        page.evaluateJavascript("document.getElementById('firstname').focus()");
-
-        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
-        assertThat(jqueryInjected, is(true));
-    }
-
-    @Test
-    public void should_support_jquery_queries_in_the_page_in_chrome() {
-
-        StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
-        page.open();
-
-        assertThat(page.element(page.firstName).hasFocus(), is(false));
-
-        page.evaluateJavascript("$('#firstname').focus();");
-
-        assertThat(page.element(page.firstName).hasFocus(), is(true));
-    }
-
-    @Test
-    public void should_support_jquery_queries_in_the_page() {
-
-        page.open();
-
-        assertThat(page.element(page.firstName).hasFocus(), is(false));
-
-        page.evaluateJavascript("$('#firstname').focus();");
-
-        assertThat(page.element(page.firstName).hasFocus(), is(true));
-    }
-
-    @Test
     public void should_clear_field_before_entering_text() {
         page.open();
 
@@ -524,7 +599,6 @@ public class WhenUsingTheFluentElementAPI {
         assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
 
-    @Ignore
     @Test
     public void should_optionally_type_tab_after_entering_text_in_firefox() {
 
@@ -632,6 +706,7 @@ public class WhenUsingTheFluentElementAPI {
 
         page.element(page.readonlyField).waitUntilDisabled();
     }
+
     @Test
     public void is_currently_enabled_should_be_false_for_an_inexistant_element() throws InterruptedException {
         StaticSitePage page = new StaticSitePage(driver, 2000);
@@ -755,7 +830,6 @@ public class WhenUsingTheFluentElementAPI {
     }
 
 
-
     @Test
     public void should_be_able_to_build_composite_wait_until_enabled_clauses() throws InterruptedException {
         StaticSitePage page = new StaticSitePage(driver, 2000);
@@ -835,7 +909,7 @@ public class WhenUsingTheFluentElementAPI {
     }
 
     @Test
-    @Ignore("Doesn't work in firefox")
+    @Ignore("Doesn't work in firefox in some circumstances")
     public void should_let_you_remove_the_focus_from_the_current_active_field_in_firefox() {
         StaticSitePage page = new StaticSitePage(driver, 1);
 
@@ -865,7 +939,7 @@ public class WhenUsingTheFluentElementAPI {
         assertThat(page.containsText("Dissapearing text"), is(true));
 
         page.setWaitForTimeout(5000);
-        page.waitForTextToDisappear(page.dissapearingtext,"Dissapearing text");
+        page.waitForTextToDisappear(page.dissapearingtext, "Dissapearing text");
 
         assertThat(page.containsText("Dissapearing text"), is(false));
     }
@@ -877,7 +951,7 @@ public class WhenUsingTheFluentElementAPI {
 
     @Test(expected = TimeoutException.class)
     public void should_timeout_if_wait_for_text_in_element_to_dissapear_fails() {
-        page.setWaitForTimeout(500);
+        page.setWaitForTimeout(200);
         page.waitForTextToDisappear(page.colors, "Red");
     }
 
@@ -896,12 +970,14 @@ public class WhenUsingTheFluentElementAPI {
 
         expectedException.expect(ElementNotVisibleException.class);
         expectedException.expectMessage(allOf(containsString("Unable to locate element"),
-                                              containsString("fieldDoesNotExist")));
+                containsString("fieldDoesNotExist")));
 
-        page.setWaitForTimeout(1000);
+        page.setWaitForTimeout(200);
         page.open();
 
         page.element(page.fieldDoesNotExist).waitUntilVisible();
     }
+
+
 
 }

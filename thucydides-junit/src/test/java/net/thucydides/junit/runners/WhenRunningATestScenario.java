@@ -77,7 +77,6 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         environmentVariables = new MockEnvironmentVariables();
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
-
         StepEventBus.getEventBus().clear();
 
     }

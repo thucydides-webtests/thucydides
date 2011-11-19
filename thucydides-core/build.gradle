@@ -1,10 +1,42 @@
-apply plugin: 'java'
-
 dependencies {
-    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
-    testCompile group: 'junit', name: 'junit', version: '4.8.2'
+    compile "org.seleniumhq.selenium:selenium-server:$seleniumVersion"
+    compile "net.sf.opencsv:opencsv:2.0"
+    compile "commons-beanutils:commons-beanutils-core:1.8.3"
+    compile "com.google.guava:guava:r09"
+    compile "org.hamcrest:hamcrest-all:1.1"
+    compile "com.googlecode.lambdaj:lambdaj:2.3.1"
+    compile "com.thoughtworks.xstream:xstream:1.4.1"
+    compile "commons-collections:commons-collections:3.2.1"
+    compile "org.apache.commons:commons-lang3:3.0.1"
+    compile "net.sf.flexjson:flexjson:2.1"
+    compile "joda-time:joda-time:2.0"
+    compile "net.sourceforge.htmlunit:htmlunit:2.9"
+    compile "org.freemarker:freemarker:2.3.18"
+
+    compile project(":thucydides-report-resources")
+
+    testCompile project(":thucydides-sample-alternative-resources")
+    testCompile project(":thucydides-test-utils")
 }
 
-repositories {
-    mavenCentral()
+sourceSets {
+    integTest {
+        java.srcDirs 'src/integTests/java'
+        resources.srcDirs 'src/integTests/resources'
+        compileClasspath = sourceSets.main.output + sourceSets.test.output + configurations.testCompile
+        runtimeClasspath = classes + compileClasspath
+    }
 }
+
+test {
+    maxParallelForks = 2
+    exclude "**/integration/**"
+}
+
+task integTest(type: Test) {
+    maxParallelForks = 2
+    testClassesDir = sourceSets.integTest.classesDir
+    classpath = sourceSets.integTest.runtimeClasspath
+}
+
+check.dependsOn integTest

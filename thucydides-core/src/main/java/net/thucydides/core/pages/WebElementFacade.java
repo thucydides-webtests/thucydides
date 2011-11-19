@@ -40,6 +40,7 @@ public class WebElementFacade {
     private final Sleeper sleeper;
     private final Clock webdriverClock;
     private JavaScriptExecutorFacade javaScriptExecutorFacade;
+    private InternalSystemClock clock = new InternalSystemClock();
 
 
     public WebElementFacade(final WebDriver driver,
@@ -51,11 +52,15 @@ public class WebElementFacade {
         this.webdriverClock = new SystemClock();
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
         this.javaScriptExecutorFacade = new JavaScriptExecutorFacade(driver);
-    }
 
+    }
 
     protected JavaScriptExecutorFacade getJavaScriptExecutorFacade() {
         return javaScriptExecutorFacade;
+    }
+
+    protected InternalSystemClock getClock() {
+        return clock;
     }
 
     /**
@@ -276,6 +281,7 @@ public class WebElementFacade {
         webElement.sendKeys(value);
         webElement.sendKeys(Keys.TAB);
 
+        getClock().pauseFor(100);
         return this;
     }
 

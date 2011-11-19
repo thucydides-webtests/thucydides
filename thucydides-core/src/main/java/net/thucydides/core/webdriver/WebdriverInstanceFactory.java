@@ -1,7 +1,9 @@
 package net.thucydides.core.webdriver;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -22,7 +24,16 @@ public class WebdriverInstanceFactory {
             InstantiationException,
             NoSuchMethodException,
             InvocationTargetException {
-
         return webdriverClass.getConstructor(new Class[]{FirefoxProfile.class}).newInstance(profile);
     }
+
+    public WebDriver newInstanceOf(final Class<? extends WebDriver> webdriverClass,
+                                   final DesiredCapabilities capabilities) throws IllegalAccessException,
+            InstantiationException,
+            NoSuchMethodException,
+            InvocationTargetException {
+        new FirefoxDriver(capabilities);
+        return webdriverClass.getConstructor(new Class[]{DesiredCapabilities.class}).newInstance(capabilities);
+    }
+
 }
