@@ -20,6 +20,8 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
 import org.openqa.selenium.support.ui.Wait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +44,7 @@ public class WebElementFacade {
     private JavaScriptExecutorFacade javaScriptExecutorFacade;
     private InternalSystemClock clock = new InternalSystemClock();
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebElementFacade.class);
 
     public WebElementFacade(final WebDriver driver,
                             final WebElement webElement,
@@ -389,7 +392,13 @@ public class WebElementFacade {
     private ExpectedCondition<Boolean> elementIsDisplayed() {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
-                return (webElement != null) && (webElement.isDisplayed());
+                try {
+                    return (webElement != null) && (webElement.isDisplayed());
+                } catch(NullPointerException e) {
+                    // Workaround for an apparent Selenium bug.
+                    LOGGER.warn("Just caught a potential bug in Selenium: returning 'false' but may not be accurate", e);
+                    return false;
+                }
             }
         };
     }
