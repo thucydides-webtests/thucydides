@@ -149,6 +149,7 @@ public class WebDriverFactory {
     protected FirefoxProfile createNewFirefoxProfile() {
         FirefoxProfile profile = new FirefoxProfile();
         profile.setEnableNativeEvents(true);
+        profile.setAlwaysLoadNoFocusLib(true);
         return profile;
     }
 
