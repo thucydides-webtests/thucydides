@@ -1,7 +1,5 @@
 package net.thucydides.core.webdriver;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -12,8 +10,6 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.slf4j.Logger;
@@ -21,9 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -57,7 +51,7 @@ public class WebDriverFactory {
     }
 
     public WebDriverFactory(EnvironmentVariables environmentVariables) {
-        this(new WebdriverInstanceFactory(),environmentVariables);
+        this(new WebdriverInstanceFactory(), environmentVariables);
     }
 
     public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
@@ -93,6 +87,7 @@ public class WebDriverFactory {
      * This method is synchronized because multiple webdriver instances can be created in parallel.
      * However, they may use common system resources such as ports, so may potentially interfere
      * with each other.
+     *
      * @param driverClass
      * @return
      */
@@ -133,9 +128,9 @@ public class WebDriverFactory {
 
     private void redimensionBrowser(final WebDriver driver) {
         int height = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_HEIGHT.getPropertyName(),
-                                                                                DEFAULT_HEIGHT);
+                DEFAULT_HEIGHT);
         int width = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_WIDTH.getPropertyName(),
-                                                                                DEFAULT_WIDTH);
+                DEFAULT_WIDTH);
         resizeBrowserTo((JavascriptExecutor) driver, height, width);
     }
 
@@ -182,30 +177,43 @@ public class WebDriverFactory {
     }
 
     private void addFirebugsTo(FirefoxProfile profile) {
+        <<<<<<<HEAD
         try {
-            profile.addExtension(this.getClass(),FIREBUGS_XPI_FILE);
-            profile.setPreference("extensions.firebug.currentVersion", FIREBUGS_VERSION); // Avoid startup screen
+            profile.addExtension(this.getClass(), FIREBUGS_XPI_FILE);
+            =======
+            URL firebugsExtension = getClass().getClassLoader().getResource(FIREBUGS_XPI_FILE);
+            try {
+                profile.addExtension(new File(firebugsExtension.getFile()));
+                >>>>>>>d8ccdf5daf869d46408163a9389872fa9779dd5e
+                profile.setPreference("extensions.firebug.currentVersion", FIREBUGS_VERSION); // Avoid startup screen
 
-        } catch (IOException e) {
-            LOGGER.warn("Failed to add Firebugs extension to Firefox");
+            } catch (IOException e) {
+                LOGGER.warn("Failed to add Firebugs extension to Firefox");
+            }
         }
-    }
 
-    private URL getFirebugsExtensionFromClasspathOrJar() {
-        URL firebugs = getClass().getClassLoader().getResource(FIREBUGS_XPI_FILE);
-        if (firebugs == null) {
-            firebugs = getClass().getClassLoader().getResource("/" + FIREBUGS_XPI_FILE);
+        <<<<<<<HEAD
+        private URL getFirebugsExtensionFromClasspathOrJar
+        ()
+        {
+            URL firebugs = getClass().getClassLoader().getResource(FIREBUGS_XPI_FILE);
+            if (firebugs == null) {
+                firebugs = getClass().getClassLoader().getResource("/" + FIREBUGS_XPI_FILE);
+            }
+            return firebugs;
         }
-        return firebugs;
-    }
 
-    private FirefoxProfile getProfileFrom(final String profileName) {
-        FirefoxProfile profile = getAllProfiles().getProfile(profileName);
-        if (profile == null) {
-            profile = useExistingFirefoxProfile(new File(profileName));
+        =======
+        >>>>>>>d8ccdf5daf869d46408163a9389872fa9779dd5e
+        private FirefoxProfile getProfileFrom
+        (
+        final String profileName){
+            FirefoxProfile profile = getAllProfiles().getProfile(profileName);
+            if (profile == null) {
+                profile = useExistingFirefoxProfile(new File(profileName));
+            }
+            return profile;
         }
-        return profile;
-    }
 
     private boolean dontAssumeUntrustedCertificateIssuer() {
         return !(environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER.getPropertyName(), true));
