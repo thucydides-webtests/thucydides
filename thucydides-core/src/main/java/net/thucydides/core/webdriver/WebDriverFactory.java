@@ -165,6 +165,7 @@ public class WebDriverFactory {
             profile = getProfileFrom(profileName);
         }
         if (shouldActivateFirebugs()) {
+            LOGGER.info("Adding Firebugs to Firefox profile");
             addFirebugsTo(profile);
         }
         if (dontAssumeUntrustedCertificateIssuer()) {
