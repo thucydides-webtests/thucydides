@@ -167,7 +167,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
             try {
                 getDriverInstance().quit();
             } catch (WebDriverException e) {
-                LOGGER.warn("Error while quitting the driver - is this IE?");
+                LOGGER.warn("Error while quitting the driver - is this IE?", e);
             }
             proxiedWebDriver = null;
         }

@@ -41,4 +41,8 @@ public class JQueryEnabledPage {
         return content;
     }
 
+    public static boolean scriptContainsJQuery(final String script) {
+         return (script.contains("$(") || script.toLowerCase().contains("jquery("));
+
+    }
 }

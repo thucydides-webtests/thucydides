@@ -585,7 +585,7 @@ public abstract class PageObject {
     }
 
     private boolean isJQuery(final String script) {
-        return (script.startsWith("$(") || script.startsWith("return $("));
+        return JQueryEnabledPage.scriptContainsJQuery(script);
     }
 
     public void addJQuerySupport() {

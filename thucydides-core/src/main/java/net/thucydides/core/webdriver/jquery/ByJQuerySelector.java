@@ -1,4 +1,4 @@
-package net.thucydides.core.webdriver;
+package net.thucydides.core.webdriver.jquery;
 
 
 import net.thucydides.core.pages.jquery.JQueryEnabledPage;

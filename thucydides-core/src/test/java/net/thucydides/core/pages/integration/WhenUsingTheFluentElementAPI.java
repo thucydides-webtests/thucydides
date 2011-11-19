@@ -4,7 +4,7 @@ package net.thucydides.core.pages.integration;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.WebElementFacade;
-import net.thucydides.core.webdriver.ByJQuery;
+import net.thucydides.core.webdriver.jquery.ByJQuery;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.AfterClass;

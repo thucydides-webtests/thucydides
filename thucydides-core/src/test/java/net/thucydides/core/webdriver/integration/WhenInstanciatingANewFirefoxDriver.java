@@ -5,11 +5,13 @@ import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
+import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -21,6 +23,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class WhenInstanciatingANewFirefoxDriver {
 
@@ -32,6 +37,9 @@ public class WhenInstanciatingANewFirefoxDriver {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    @Mock
+    FirefoxProfileEnhancer firefoxProfileEnhancer;
 
     @Before
     public void createFactory() {
@@ -66,8 +74,13 @@ public class WhenInstanciatingANewFirefoxDriver {
 
     class TestableWebdriverFactory extends WebDriverFactory {
 
+        TestableWebdriverFactory(WebdriverInstanceFactory mockWebdriverInstanceFactory,
+                                 EnvironmentVariables environmentVariables) {
+            super(mockWebdriverInstanceFactory, environmentVariables, firefoxProfileEnhancer);
+        }
+
         TestableWebdriverFactory(EnvironmentVariables environmentVariables) {
-            super(environmentVariables);
+            super(webdriverInstanceFactory, environmentVariables, firefoxProfileEnhancer);
         }
 
         @Override
@@ -75,6 +88,8 @@ public class WhenInstanciatingANewFirefoxDriver {
             chosenProfile = profileDirectory.getAbsolutePath();
             return super.useExistingFirefoxProfile(profileDirectory);
         }
+
+
 
     }
 
@@ -102,11 +117,31 @@ public class WhenInstanciatingANewFirefoxDriver {
     }
 
     @Test
+    public void should_allow_the_thucydides_activate_firebugs_to_deactivate_firebugs() {
+        FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
+
+        environmentVariables.setProperty("thucydides.activate.firebugs", "false");
+
+        assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(false));
+    }
+
+    @Test
+    public void should_activate_firebugs_by_default() {
+        FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
+
+        assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(true));
+    }
+
+    @Test
     public void should_include_the_firebugs_extension_by_default() throws Exception {
 
         WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
 
+        when(firefoxProfileEnhancer.shouldActivateFirebugs()).thenReturn(true);
+
         driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
+
+        verify(firefoxProfileEnhancer).addFirebugsTo(any(FirefoxProfile.class));
     }
 
     @Test
@@ -114,8 +149,18 @@ public class WhenInstanciatingANewFirefoxDriver {
 
         WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
 
-        environmentVariables.setProperty("ethucydides.activate.firebugs", "false");
+        when(firefoxProfileEnhancer.shouldActivateFirebugs()).thenReturn(false);
 
         driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
     }
+
+    @Test
+    public void should_enable_native_events() {
+        WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
+
+        driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
+
+        verify(firefoxProfileEnhancer).enableNativeEventsFor(any(FirefoxProfile.class));
+    }
+
 }

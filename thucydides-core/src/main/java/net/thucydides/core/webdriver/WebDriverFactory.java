@@ -1,8 +1,10 @@
 package net.thucydides.core.webdriver;
 
+import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -28,8 +30,6 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class WebDriverFactory {
 
-    private static final String FIREBUGS_VERSION = "1.9.0b1";
-    private static final String FIREBUGS_XPI_FILE = "/firefox/firebug-" + FIREBUGS_VERSION + ".xpi";
 
     private final WebdriverInstanceFactory webdriverInstanceFactory;
 
@@ -40,6 +40,7 @@ public class WebDriverFactory {
     private static final int DEFAULT_WIDTH = ThucydidesSystemProperty.DEFAULT_WIDTH;
 
     private final EnvironmentVariables environmentVariables;
+    private final FirefoxProfileEnhancer firefoxProfileEnhancer;
 
     public WebDriverFactory() {
         this(new WebdriverInstanceFactory(), Injectors.getInjector().getInstance(EnvironmentVariables.class));
@@ -51,10 +52,18 @@ public class WebDriverFactory {
 
     public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
                             EnvironmentVariables environmentVariables) {
-        this.webdriverInstanceFactory = webdriverInstanceFactory;
-        this.environmentVariables = environmentVariables;
+        this(webdriverInstanceFactory,
+             environmentVariables,
+             new FirefoxProfileEnhancer(environmentVariables));
     }
 
+    public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
+                            EnvironmentVariables environmentVariables,
+                            FirefoxProfileEnhancer firefoxProfileEnhancer) {
+        this.webdriverInstanceFactory = webdriverInstanceFactory;
+        this.environmentVariables = environmentVariables;
+        this.firefoxProfileEnhancer = firefoxProfileEnhancer;
+    }
 
     protected ProfilesIni getAllProfiles() {
         if (allProfiles == null) {
@@ -148,7 +157,6 @@ public class WebDriverFactory {
 
     protected FirefoxProfile createNewFirefoxProfile() {
         FirefoxProfile profile = new FirefoxProfile();
-        profile.setEnableNativeEvents(true);
         profile.setAlwaysLoadNoFocusLib(true);
         return profile;
     }
@@ -165,30 +173,18 @@ public class WebDriverFactory {
         } else {
             profile = getProfileFrom(profileName);
         }
-        if (shouldActivateFirebugs()) {
+
+        firefoxProfileEnhancer.enableNativeEventsFor(profile);
+
+        if (firefoxProfileEnhancer.shouldActivateFirebugs()) {
             LOGGER.info("Adding Firebugs to Firefox profile");
-            addFirebugsTo(profile);
+            firefoxProfileEnhancer.addFirebugsTo(profile);
         }
         if (dontAssumeUntrustedCertificateIssuer()) {
             profile.setAssumeUntrustedCertificateIssuer(false);
         }
         return profile;
     }
-
-    private boolean shouldActivateFirebugs() {
-        return environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.ACTIVATE_FIREBUGS.getPropertyName(), true);
-    }
-
-    private void addFirebugsTo(FirefoxProfile profile) {
-        try {
-            profile.addExtension(this.getClass(), FIREBUGS_XPI_FILE);
-            profile.setPreference("extensions.firebug.currentVersion", FIREBUGS_VERSION); // Avoid startup screen
-
-        } catch (IOException e) {
-            LOGGER.warn("Failed to add Firebugs extension to Firefox");
-        }
-    }
-
 
     private FirefoxProfile getProfileFrom(final String profileName) {
         FirefoxProfile profile = getAllProfiles().getProfile(profileName);
