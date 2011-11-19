@@ -1,5 +1,7 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -10,12 +12,17 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
 /**
  * Provides an instance of a supported WebDriver.
@@ -25,6 +32,9 @@ import java.io.File;
  * @author johnsmart
  */
 public class WebDriverFactory {
+
+    private static final String FIREBUGS_VERSION = "1.9.0b1";
+    private static final String FIREBUGS_XPI_FILE = "firefox/firebug-" + FIREBUGS_VERSION + ".xpi";
 
     private final WebdriverInstanceFactory webdriverInstanceFactory;
 
@@ -82,7 +92,7 @@ public class WebDriverFactory {
             WebDriver driver;
             LOGGER.info("Instanciating new browser");
             if (isAFirefoxDriver(driverClass)) {
-                driver = webdriverInstanceFactory.newInstanceOf(driverClass, buildFirefoxProfile());
+                driver = firefoxDriverFrom(driverClass);
             } else if (isAnHtmlUnitDriver(driverClass)) {
                 driver = webdriverInstanceFactory.newInstanceOf(driverClass);
                 activateJavascriptSupportFor((HtmlUnitDriver) driver);
@@ -98,6 +108,10 @@ public class WebDriverFactory {
             LOGGER.error("Could not create new Webdriver instance", cause);
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
         }
+    }
+
+    private WebDriver firefoxDriverFrom(Class<? extends WebDriver> driverClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        return webdriverInstanceFactory.newInstanceOf(driverClass, buildFirefoxProfile());
     }
 
     private void activateJavascriptSupportFor(HtmlUnitDriver driver) {
@@ -135,7 +149,7 @@ public class WebDriverFactory {
 
     protected FirefoxProfile createNewFirefoxProfile() {
         FirefoxProfile profile = new FirefoxProfile();
-        profile.enableNativeEvents();
+        profile.setEnableNativeEvents(true);
         return profile;
     }
 
@@ -144,19 +158,29 @@ public class WebDriverFactory {
     }
 
     private FirefoxProfile buildFirefoxProfile() {
-
         String profileName = environmentVariables.getProperty("webdriver.firefox.profile");
-
         FirefoxProfile profile;
         if (profileName == null) {
             profile = createNewFirefoxProfile();
         } else {
             profile = getProfileFrom(profileName);
         }
+        addFirebugsTo(profile);
         if (dontAssumeUntrustedCertificateIssuer()) {
             profile.setAssumeUntrustedCertificateIssuer(false);
         }
         return profile;
+    }
+
+    private void addFirebugsTo(FirefoxProfile profile) {
+        URL firebugsExtension = getClass().getClassLoader().getResource(FIREBUGS_XPI_FILE);
+        try {
+            profile.addExtension(new File(firebugsExtension.getFile()));
+            profile.setPreference("extensions.firebug.currentVersion", FIREBUGS_VERSION); // Avoid startup screen
+
+        } catch (IOException e) {
+            LOGGER.warn("Failed to add Firebugs extension to Firefox");
+        }
     }
 
     private FirefoxProfile getProfileFrom(final String profileName) {
