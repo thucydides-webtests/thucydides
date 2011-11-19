@@ -11,6 +11,8 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -70,6 +72,14 @@ public class WhenManinpulatingWebElements {
 
         assertThat(view.elementIsPresent(By.id("some-element")), is(false));
 
+    }
+
+    @Test
+    public void timeout_can_be_redefined() {
+        WebElementFacade webElementFacade = new WebElementFacade(driver, webElement, 100);
+        WebElementFacade webElementFacadeWithDifferentTimeout = webElementFacade.withTimeoutOf(2, TimeUnit.SECONDS);
+
+        assertThat(webElementFacadeWithDifferentTimeout.getTimeoutInMilliseconds(), is(2000L));
     }
 
     @Test

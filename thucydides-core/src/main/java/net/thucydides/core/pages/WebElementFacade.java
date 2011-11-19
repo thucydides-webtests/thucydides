@@ -66,6 +66,15 @@ public class WebElementFacade {
         return clock;
     }
 
+    public long getTimeoutInMilliseconds() {
+        return timeoutInMilliseconds;
+    }
+
+    public WebElementFacade withTimeoutOf(int timeout, TimeUnit unit) {
+        return new WebElementFacade(driver, webElement,
+                                    TimeUnit.MILLISECONDS.convert(timeout, unit));
+    }
+
     /**
      * Is this web element present and visible on the screen
      * This method will not throw an exception if the element is not on the screen at all.
@@ -308,7 +317,6 @@ public class WebElementFacade {
     }
 
     public String getSelectedVisibleTextValue() {
-        waitUntilVisible();
         Select select = new Select(webElement);
         return select.getFirstSelectedOption().getText();
     }
@@ -395,8 +403,7 @@ public class WebElementFacade {
                 try {
                     return (webElement != null) && (webElement.isDisplayed());
                 } catch(NullPointerException e) {
-                    // Workaround for an apparent Selenium bug.
-                    LOGGER.warn("Just caught a potential bug in Selenium: returning 'false' but may not be accurate", e);
+                    // Selenium sometimes throws a NPE if the element is not present at all on the page.
                     return false;
                 }
             }
