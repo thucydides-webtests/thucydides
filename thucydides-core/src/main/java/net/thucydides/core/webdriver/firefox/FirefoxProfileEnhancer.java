@@ -13,6 +13,9 @@ public class FirefoxProfileEnhancer {
     private static final String FIREBUGS_VERSION = "1.9.0b1";
     private static final String FIREBUGS_XPI_FILE = "/firefox/firebug-" + FIREBUGS_VERSION + ".xpi";
 
+    private static final String FIREFINDER_VERSION = "1.1-fx";
+    private static final String FIREFINDER_XPI_FILE = "/firefox/firefinder_for_firebug-" + FIREFINDER_VERSION + ".xpi";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FirefoxProfileEnhancer.class);
     private final EnvironmentVariables environmentVariables;
 
@@ -28,6 +31,9 @@ public class FirefoxProfileEnhancer {
         try {
             profile.addExtension(this.getClass(), FIREBUGS_XPI_FILE);
             profile.setPreference("extensions.firebug.currentVersion", FIREBUGS_VERSION); // Avoid startup screen
+
+            profile.addExtension(this.getClass(), FIREFINDER_XPI_FILE);
+            profile.setPreference("extensions.firebug.currentVersion", FIREFINDER_VERSION); // Avoid startup screen
 
         } catch (IOException e) {
             LOGGER.warn("Failed to add Firebugs extension to Firefox");
