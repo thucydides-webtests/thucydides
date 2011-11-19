@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 
 /**
  * Provides an instance of a supported WebDriver.
@@ -119,7 +118,7 @@ public class WebDriverFactory {
     }
 
     private void activateJavascriptSupportFor(HtmlUnitDriver driver) {
-        ((HtmlUnitDriver) driver).setJavascriptEnabled(true);
+        driver.setJavascriptEnabled(true);
     }
 
     private boolean supportsScreenResizing(final WebDriver driver) {
@@ -177,43 +176,23 @@ public class WebDriverFactory {
     }
 
     private void addFirebugsTo(FirefoxProfile profile) {
-        <<<<<<<HEAD
         try {
             profile.addExtension(this.getClass(), FIREBUGS_XPI_FILE);
-            =======
-            URL firebugsExtension = getClass().getClassLoader().getResource(FIREBUGS_XPI_FILE);
-            try {
-                profile.addExtension(new File(firebugsExtension.getFile()));
-                >>>>>>>d8ccdf5daf869d46408163a9389872fa9779dd5e
-                profile.setPreference("extensions.firebug.currentVersion", FIREBUGS_VERSION); // Avoid startup screen
+            profile.setPreference("extensions.firebug.currentVersion", FIREBUGS_VERSION); // Avoid startup screen
 
-            } catch (IOException e) {
-                LOGGER.warn("Failed to add Firebugs extension to Firefox");
-            }
+        } catch (IOException e) {
+            LOGGER.warn("Failed to add Firebugs extension to Firefox");
         }
+    }
 
-        <<<<<<<HEAD
-        private URL getFirebugsExtensionFromClasspathOrJar
-        ()
-        {
-            URL firebugs = getClass().getClassLoader().getResource(FIREBUGS_XPI_FILE);
-            if (firebugs == null) {
-                firebugs = getClass().getClassLoader().getResource("/" + FIREBUGS_XPI_FILE);
-            }
-            return firebugs;
-        }
 
-        =======
-        >>>>>>>d8ccdf5daf869d46408163a9389872fa9779dd5e
-        private FirefoxProfile getProfileFrom
-        (
-        final String profileName){
-            FirefoxProfile profile = getAllProfiles().getProfile(profileName);
-            if (profile == null) {
-                profile = useExistingFirefoxProfile(new File(profileName));
-            }
-            return profile;
+    private FirefoxProfile getProfileFrom(final String profileName) {
+        FirefoxProfile profile = getAllProfiles().getProfile(profileName);
+        if (profile == null) {
+            profile = useExistingFirefoxProfile(new File(profileName));
         }
+        return profile;
+    }
 
     private boolean dontAssumeUntrustedCertificateIssuer() {
         return !(environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER.getPropertyName(), true));
