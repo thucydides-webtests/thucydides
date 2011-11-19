@@ -233,12 +233,6 @@ public class WhenManinpulatingWebElements {
     }
 
     @Test(expected = ElementNotVisibleException.class)
-    public void when_webelement_is_null_get_selected_text_value_should_fail() {
-        WebElementFacade webElementFacade = new WebElementFacade(driver, null, 100);
-        webElementFacade.getSelectedVisibleTextValue();
-    }
-
-    @Test(expected = ElementNotVisibleException.class)
     public void when_webelement_is_null_get_text_should_fail() {
         WebElementFacade webElementFacade = new WebElementFacade(driver, null, 100);
         webElementFacade.getText();

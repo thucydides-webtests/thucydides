@@ -317,6 +317,7 @@ public class WebElementFacade {
     }
 
     public String getSelectedVisibleTextValue() {
+        waitUntilVisible();
         Select select = new Select(webElement);
         return select.getFirstSelectedOption().getText();
     }
