@@ -157,7 +157,7 @@ public class WebDriverFactory {
 
     protected FirefoxProfile createNewFirefoxProfile() {
         FirefoxProfile profile = new FirefoxProfile();
-        profile.setAlwaysLoadNoFocusLib(true);
+        profile.setAlwaysLoadNoFocusLib(false);
         return profile;
     }
 
