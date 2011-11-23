@@ -23,6 +23,7 @@ public enum SupportedWebDriver {
      */
     CHROME(ChromeDriver.class),
 
+//    OPERA(OperaDriver.class),
     /**
      * HTMLUnit - fast, but no screenshots.
      */

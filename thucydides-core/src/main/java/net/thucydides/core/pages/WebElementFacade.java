@@ -297,14 +297,6 @@ public class WebElementFacade {
         return this;
     }
 
-    private WebDriver getProxiedDriver() {
-        if (WebDriverFacade.class.isAssignableFrom(driver.getClass())) {
-            return ((WebDriverFacade) driver).getProxiedDriver();
-        } else {
-            return driver;
-        }
-    }
-
     public void setWindowFocus() {
         getJavaScriptExecutorFacade().executeScript("window.focus()");
     }
