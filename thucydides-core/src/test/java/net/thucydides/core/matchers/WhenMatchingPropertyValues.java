@@ -1,7 +1,12 @@
 package net.thucydides.core.matchers;
 
+import com.google.common.collect.Lists;
 import org.hamcrest.Matcher;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -66,6 +71,30 @@ public class WhenMatchingPropertyValues {
     public void instanciated_matcher_should_provide_meaningful_description() {
         Matcher<Object> matcher = PropertyMatcher.the("firstName", is("Bill")).getMatcher();
         assertThat(matcher.toString()).isEqualTo("firstName is \"Bill\"");
+    }
+
+    @Test
+    public void should_filter_list_of_beans_by_matchers() {
+        List<Person> persons = Arrays.asList(new Person("Bill", "Oddie"),
+                                             new Person("Graham", "Garden"),
+                                             new Person("Tim", "Brook-Taylor"));
+
+        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
+        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+
+        assertThat(PropertyMatcher.matches(persons, firstNameIsBill, lastNameIsOddie)).isTrue();
+    }
+
+    @Test
+    public void should_fail_filter_if_no_matching_elements_found() {
+        List<Person> persons = Arrays.asList(new Person("Bill", "Kidd"),
+                                             new Person("Graham", "Garden"),
+                                             new Person("Tim", "Brook-Taylor"));
+
+        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
+        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+
+        assertThat(PropertyMatcher.matches(persons, firstNameIsBill, lastNameIsOddie)).isFalse();
     }
 
 }
