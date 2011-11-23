@@ -126,10 +126,10 @@ public class WhenInstanciatingANewFirefoxDriver {
     }
 
     @Test
-    public void should_activate_firebugs_by_default() {
+    public void should_not_activate_firebugs_by_default() {
         FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
 
-        assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(true));
+        assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(false));
     }
 
     @Test
