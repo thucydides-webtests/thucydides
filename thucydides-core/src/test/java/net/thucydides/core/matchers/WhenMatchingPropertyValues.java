@@ -1,5 +1,6 @@
 package net.thucydides.core.matchers;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -50,10 +51,21 @@ public class WhenMatchingPropertyValues {
     @Test
     public void should_obtain_matcher_from_fluent_static_method() {
         PropertyMatcher matcher = PropertyMatcher.the("firstName", is("Bill"));
-
         Person person = new Person("Bill", "Oddie");
-
         assertThat(matcher.matches(person)).isTrue();
+    }
+
+    @Test
+    public void should_obtain_instanciated_matcher_from_matcher() {
+        Matcher<Object> matcher = PropertyMatcher.the("firstName", is("Bill")).getMatcher();
+        Person person = new Person("Bill", "Oddie");
+        assertThat(matcher.matches(person)).isTrue();
+    }
+
+    @Test
+    public void instanciated_matcher_should_provide_meaningful_description() {
+        Matcher<Object> matcher = PropertyMatcher.the("firstName", is("Bill")).getMatcher();
+        assertThat(matcher.toString()).isEqualTo("firstName is \"Bill\"");
     }
 
 }

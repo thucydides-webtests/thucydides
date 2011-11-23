@@ -104,7 +104,6 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
-                            <!--<parallel>classes</parallel>-->
                             <excludes>
                                 <exclude>**/Abstract*.java</exclude>
                                 <exclude>**/samples/*.java</exclude>

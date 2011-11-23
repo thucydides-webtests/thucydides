@@ -1,7 +1,9 @@
 package net.thucydides.core.matchers;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 public class PropertyMatcher {
     private final String fieldName;
@@ -22,8 +24,8 @@ public class PropertyMatcher {
         return matcher.matches(fieldValue);
     }
 
-    public Matcher<String> getMatcher() {
-        return null;
+    public Matcher<Object> getMatcher() {
+        return new InstantiatedPropertyMatcher(this);
     }
 
     @Override
