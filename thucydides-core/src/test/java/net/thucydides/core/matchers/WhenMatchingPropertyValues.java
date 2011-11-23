@@ -70,7 +70,7 @@ public class WhenMatchingPropertyValues {
     @Test
     public void instanciated_matcher_should_provide_meaningful_description() {
         Matcher<Object> matcher = PropertyMatcher.the("firstName", is("Bill")).getMatcher();
-        assertThat(matcher.toString()).isEqualTo("firstName is \"Bill\"");
+        assertThat(matcher.toString()).isEqualTo("firstName is 'Bill'");
     }
 
     @Test

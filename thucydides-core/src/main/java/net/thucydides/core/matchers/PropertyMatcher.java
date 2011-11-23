@@ -35,7 +35,8 @@ public class PropertyMatcher {
 
     @Override
     public String toString() {
-        return fieldName + " " + matcher;
+        String htmlFriendlyMatcherDescription = matcher.toString().replaceAll("\"","'");
+        return fieldName + " " + htmlFriendlyMatcherDescription;
     }
 
     public static PropertyMatcher the(final String fieldName, final Matcher<String> matcher) {
