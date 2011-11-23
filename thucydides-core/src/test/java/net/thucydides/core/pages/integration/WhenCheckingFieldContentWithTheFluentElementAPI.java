@@ -17,6 +17,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -25,6 +26,17 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
 public class WhenCheckingFieldContentWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
+
+    WebDriver htmlUnitDriver;
+    StaticSitePage page;
+
+    @Before
+    public void openStaticPage() {
+        htmlUnitDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
+        page = new StaticSitePage(htmlUnitDriver, 1);
+        page.setWaitForTimeout(5000);
+        page.open();
+    }
 
     @Test
     public void should_contain_text_passes_if_field_contains_text() {

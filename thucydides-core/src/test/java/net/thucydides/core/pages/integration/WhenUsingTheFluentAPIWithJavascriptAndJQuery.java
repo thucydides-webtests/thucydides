@@ -19,6 +19,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.util.List;
 
@@ -29,6 +30,26 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
 public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElementAPITestsBaseClass {
+
+    @BeforeClass
+    public static void setupDriver() {
+        driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
+        chromeDriver = new WebDriverFacade(ChromeDriver.class, new WebDriverFactory());
+        page = new StaticSitePage(driver, 1);
+    }
+
+    @AfterClass
+    public static void closeBrowser() {
+        driver.quit();
+        chromeDriver.quit();
+    }
+
+    @Before
+    public void openStaticPage() {
+        page.setWaitForTimeout(5000);
+        page.open();
+    }
+
 
     @Test
     public void should_inject_jquery_into_the_page() {

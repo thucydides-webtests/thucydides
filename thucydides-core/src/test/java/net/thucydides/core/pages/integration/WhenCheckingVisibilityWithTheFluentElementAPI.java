@@ -17,6 +17,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -25,6 +26,17 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
 public class WhenCheckingVisibilityWithTheFluentElementAPI  extends FluentElementAPITestsBaseClass {
+
+    WebDriver htmlUnitDriver;
+    StaticSitePage page;
+
+    @Before
+    public void openStaticPage() {
+        htmlUnitDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
+        page = new StaticSitePage(htmlUnitDriver, 1);
+        page.setWaitForTimeout(5000);
+        page.open();
+    }
 
     @Test
     public void should_report_if_element_is_visible() {
@@ -305,61 +317,6 @@ public class WhenCheckingVisibilityWithTheFluentElementAPI  extends FluentElemen
     }
 
     @Test
-    public void should_optionally_type_enter_after_entering_text() {
-        StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
-
-        page.open();
-
-        assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
-
-        page.element(page.firstName).typeAndEnter("joe");
-
-        assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
-    }
-
-    @Test
-    public void should_optionally_type_tab_after_entering_text() {
-
-        StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
-
-        page.open();
-
-        assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
-
-        page.element(page.firstName).typeAndTab("joe");
-
-        assertThat(page.element(page.lastName).hasFocus(), is(true));
-    }
-
-    @Test
-    public void should_optionally_type_tab_after_entering_text_in_firefox() {
-
-        page.open();
-
-        assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
-
-        page.element(page.firstName).typeAndTab("joe");
-
-        assertThat(page.element(page.lastName).hasFocus(), is(true));
-    }
-
-    @Test
-    public void should_trigger_blur_event_when_focus_leavs_field() {
-
-        StaticSitePage page = new StaticSitePage(chromeDriver, 2000);
-
-        page.open();
-
-        assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
-
-        assertThat(page.focusmessage.getText(), is(""));
-
-        page.element(page.firstName).typeAndTab("joe");
-
-        assertThat(page.focusmessage.getText(), is("focus left firstname"));
-    }
-
-    @Test
     public void should_select_dropdown_by_visible_text() {
         page.open();
 
@@ -419,24 +376,6 @@ public class WhenCheckingVisibilityWithTheFluentElementAPI  extends FluentElemen
 
     }
 
-
-    @Test
-    public void should_be_able_to_build_composite_wait_until_enabled_clauses() throws InterruptedException {
-        StaticSitePage page = new StaticSitePage(driver, 2000);
-        page.open();
-
-        page.waitForCondition().until(page.firstAndLastNameAreEnabled());
-    }
-
-    @Test
-    public void should_be_able_to_build_composite_wait_until_disabled_clauses() throws InterruptedException {
-        StaticSitePage page = new StaticSitePage(driver, 2000);
-        page.open();
-
-        page.waitForCondition().until(page.twoFieldsAreDisabled());
-    }
-
-
     @Test
     public void should_detect_when_a_checkbox_is_selected() {
         assertThat(page.element(page.selectedCheckbox).isSelected(), is(true));
@@ -477,20 +416,4 @@ public class WhenCheckingVisibilityWithTheFluentElementAPI  extends FluentElemen
     public void should_return_the_actual_text_when_a_tag_has_any_text() {
         assertThat(page.element(page.nonEmptyLabel).getTextValue(), is("This div tag has text"));
     }
-
-    @Test
-    public void should_let_you_remove_the_focus_from_the_current_active_field() {
-        StaticSitePage page = new StaticSitePage(chromeDriver, 1);
-        page.open();
-
-        page.element(page.firstName).click();
-
-        assertThat(page.element(page.focusmessage).getText(), is(""));
-        page.blurActiveElement();
-
-        page.element(page.focusmessage).shouldContainText("focus left firstname");
-
-    }
-
-
 }
