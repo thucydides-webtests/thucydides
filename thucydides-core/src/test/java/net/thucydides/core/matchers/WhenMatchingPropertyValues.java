@@ -50,7 +50,7 @@ public class WhenMatchingPropertyValues {
     @Test
     public void should_display_expected_values_when_printed() {
         PropertyMatcher matcher = new PropertyMatcher("firstName", is("Bill"));
-        assertThat(matcher.toString()).isEqualTo("firstName is \"Bill\"");
+        assertThat(matcher.toString()).isEqualTo("firstName is 'Bill'");
     }
 
     @Test
