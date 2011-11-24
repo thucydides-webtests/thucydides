@@ -132,7 +132,7 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
 
     }
 
-    //@Ignore("Not working yet for firefox")
+    @Ignore("Not working yet for firefox")
     @Test
     public void should_let_you_remove_the_focus_from_the_current_active_field_in_firefox() {
 
