@@ -3,7 +3,7 @@ package net.thucydides.core.matchers;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
-public class InstantiatedPropertyMatcher extends TypeSafeMatcher<Object> {
+public class InstantiatedPropertyMatcher<T> extends TypeSafeMatcher<T> {
 
     private final PropertyMatcher propertyMatcher;
 
