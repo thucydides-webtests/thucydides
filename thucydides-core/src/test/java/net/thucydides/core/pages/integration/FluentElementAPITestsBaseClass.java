@@ -26,21 +26,11 @@ public class FluentElementAPITestsBaseClass {
     protected static WebDriver chromeDriver;
     protected static WebDriver htmlUnitDriver;
     protected static StaticSitePage page;
-//
-//    @BeforeClass
-//    public static void initDriver() {
-//        driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
-//        chromeDriver = new WebDriverFacade(ChromeDriver.class, new WebDriverFactory());
-//        htmlUnitDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
-//        //page = new StaticSitePage(driver, 1);
-//    }
-//
-//
-//    @Before
-//    public void openStaticPage() {
-//        page.setWaitForTimeout(5000);
-//        page.open();
-//    }
+
+    protected void refresh(StaticSitePage page) {
+        //page.open();
+        page.getDriver().navigate().refresh();
+    }
 
     protected boolean runningOnLinux() {
         return System.getProperty("os.name").contains("Linux");

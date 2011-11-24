@@ -68,7 +68,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         Preconditions.checkNotNull(getOutputDirectory());
 
-        LOGGER.info("Generating XML report for {}/{}", testOutcome.getTitle(), testOutcome.getMethodName());
+        LOGGER.debug("Generating XML report for {}/{}", testOutcome.getTitle(), testOutcome.getMethodName());
 
         Map<String,Object> context = new HashMap<String,Object>();
         addTestOutcomeToContext(testOutcome, context);

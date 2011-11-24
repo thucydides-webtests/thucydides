@@ -98,7 +98,6 @@ public class WebDriverFactory {
     protected synchronized WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {
             WebDriver driver;
-            LOGGER.info("Instanciating new browser");
             if (isAFirefoxDriver(driverClass)) {
                 driver = firefoxDriverFrom(driverClass);
             } else if (isAnHtmlUnitDriver(driverClass)) {
@@ -108,7 +107,6 @@ public class WebDriverFactory {
                 driver = webdriverInstanceFactory.newInstanceOf(driverClass);
             }
             if (supportsScreenResizing(driver)) {
-                LOGGER.info("Redimentioning browser");
                 redimensionBrowser(driver);
             }
             return driver;

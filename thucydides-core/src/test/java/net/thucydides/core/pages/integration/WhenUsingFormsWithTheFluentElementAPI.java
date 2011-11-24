@@ -34,7 +34,7 @@ public class WhenUsingFormsWithTheFluentElementAPI extends FluentElementAPITests
     public void openStaticPage() {
         htmlUnitDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
         page = new StaticSitePage(htmlUnitDriver, 1);
-        page.setWaitForTimeout(5000);
+        page.setWaitForTimeout(750);
         page.open();
     }
 
@@ -134,7 +134,6 @@ public class WhenUsingFormsWithTheFluentElementAPI extends FluentElementAPITests
         assertThat(page.element(page.selectedCheckbox).isSelected(), is(true));
     }
 
-    @Test
     public void should_detect_when_a_checkbox_is_not_selected() {
 
         assertThat(page.element(page.checkbox).isSelected(), is(false));
