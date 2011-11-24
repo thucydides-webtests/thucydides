@@ -132,16 +132,18 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
 
     }
 
-    @Ignore("Not working yet for firefox")
+    //@Ignore("Not working yet for firefox")
     @Test
     public void should_let_you_remove_the_focus_from_the_current_active_field_in_firefox() {
 
-        page.element(page.firstName).click();
+        if (runningOnLinux()) {
+            page.element(page.firstName).click();
 
-        assertThat(page.element(page.focusmessage).getText(), is(""));
-        page.blurActiveElement();
+            assertThat(page.element(page.focusmessage).getText(), is(""));
+            page.blurActiveElement();
 
-        page.element(page.focusmessage).shouldContainText("focus left firstname");
+            page.element(page.focusmessage).shouldContainText("focus left firstname");
+        }
     }
 
 
