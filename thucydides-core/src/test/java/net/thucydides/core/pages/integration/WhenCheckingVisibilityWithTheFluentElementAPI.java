@@ -258,16 +258,19 @@ public class WhenCheckingVisibilityWithTheFluentElementAPI  extends FluentElemen
 
     @Test
     public void should_detect_focus_on_input_fields() {
+        page.evaluateJavascript("document.getElementById('lastname').focus()");
         assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
 
     @Test
     public void should_detect_focus_on_input_fields_using_page_API() {
+        page.evaluateJavascript("document.getElementById('lastname').focus()");
         assertThat(page.hasFocus(page.lastName), is(true));
     }
 
     @Test
     public void should_detect_lack_of_focus_on_input_fields() {
+        page.evaluateJavascript("document.getElementById('lastname').focus()");
         assertThat(page.element(page.firstName).hasFocus(), is(false));
     }
 

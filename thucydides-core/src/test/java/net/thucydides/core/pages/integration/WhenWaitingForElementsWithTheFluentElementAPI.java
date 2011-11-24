@@ -29,6 +29,7 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
         chromeDriver = new WebDriverFacade(ChromeDriver.class, new WebDriverFactory());
         page = new StaticSitePage(driver, 750);
         page.open();
+        page.addJQuerySupport();
 
         chromePage = new StaticSitePage(chromeDriver, 750);
         chromePage.open();
@@ -75,7 +76,6 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
 
         page.element(page.firstName).typeAndTab("joe");
-
         assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
 
@@ -135,10 +135,6 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
     public void should_let_you_remove_the_focus_from_the_current_active_field_in_firefox() {
 
         if (runningOnLinux()) {
-            StaticSitePage page = new StaticSitePage(driver, 750);
-
-            refresh(page);
-
             page.element(page.firstName).click();
 
             assertThat(page.element(page.focusmessage).getText(), is(""));
