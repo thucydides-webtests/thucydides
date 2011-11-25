@@ -1,5 +1,7 @@
 package net.thucydides.core.matchers;
 
+import ch.lambdaj.Lambda;
+import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,8 +15,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.join;
 
 public class PropertyMatcher {
     private final String fieldName;
@@ -70,28 +75,48 @@ public class PropertyMatcher {
 
     private static String descriptionOf(Object bean) {
 
+        if (isAMap(bean)) {
+            return mapDescription((Map<String, ? extends Object>) bean);
+        } else {
+            return beanDescription(bean);
+        }
+    }
+
+    private static String beanDescription(Object bean) {
         List<String> propertyTerms = new ArrayList<String>();
         try {
             for(PropertyDescriptor descriptor : propertiesOf(bean)) {
                 Method getter = descriptor.getReadMethod();
                 if (getter != null) {
-                    propertyTerms.add(propertyDescription(descriptor.getDisplayName(), bean, getter));
+                    propertyTerms.add(propertyValueOf(descriptor.getDisplayName(), getter.invoke(bean).toString()));
                 }
             }
-            return StringUtils.join(propertyTerms);
+            return join(propertyTerms);
         } catch (Throwable e) {
             throw new IllegalArgumentException("Could not read bean properties", e);
         }
     }
 
+    private static String mapDescription(Map<String, ? extends Object> map) {
+        List<String> propertyTerms = new ArrayList<String>();
+
+        for (String key : map.keySet()) {
+            propertyTerms.add(propertyValueOf(key, map.get(key).toString()));
+        }
+        return join(propertyTerms);
+    }
+
+    private static String propertyValueOf(String propertyName, String value) {
+        return propertyName + " = '" + value + "'";
+    }
+
+    private static boolean isAMap(Object bean) {
+        return Map.class.isAssignableFrom(bean.getClass());
+    }
+
     private static <T> PropertyDescriptor[] propertiesOf(T bean) throws IntrospectionException {
         return Introspector.getBeanInfo(bean.getClass(), Object.class)
                                                               .getPropertyDescriptors();
-    }
-
-    private static <T> String propertyDescription(String name, T bean, Method getter)
-            throws InvocationTargetException, IllegalAccessException {
-        return name + " = '" + getter.invoke(bean) + "'";
     }
 
     public static <T> boolean matches(T bean, PropertyMatcher... matchers) {
