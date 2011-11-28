@@ -12,4 +12,7 @@ interpolated-*.xml
 *.iws
 *.ipr
 out
-*.ignore
+*.ignore      
+build
+*.gradle
+thucydides-arquillian
