@@ -1,4 +1,4 @@
-package net.thucydides.core.pages.scheduling;
+package net.thucydides.core.scheduling;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Clock;

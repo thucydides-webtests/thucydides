@@ -1,6 +1,7 @@
 package net.thucydides.core.matchers;
 
 import org.hamcrest.Matcher;
+import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -8,20 +9,30 @@ import org.junit.rules.ExpectedException;
 import java.util.Arrays;
 import java.util.List;
 
+import static net.thucydides.core.matchers.DateMatchers.isAfter;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertTrue;
 
 public class WhenMatchingPropertyValues {
 
     public class Person {
         private final String firstName;
         private final String lastName;
+        private final DateTime birthday;
+
+        Person(String firstName, String lastName, DateTime birthday) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.birthday = birthday;
+        }
 
         Person(String firstName, String lastName) {
             this.firstName = firstName;
             this.lastName = lastName;
+            this.birthday = new DateTime();
         }
 
         public String getFirstName() {
@@ -31,6 +42,10 @@ public class WhenMatchingPropertyValues {
         public String getLastName() {
             return lastName;
         }
+
+        public DateTime getBirthday() {
+            return birthday;
+        }
     }
 
     @Test
@@ -39,6 +54,14 @@ public class WhenMatchingPropertyValues {
         Person person = new Person("Bill", "Oddie");
 
         assertThat(matcher.matches(person)).isTrue();
+    }
+
+    @Test
+    public void should_match_date_fields() {
+        Person bill = new Person("Bill", "Oddie", new DateTime(1950,1,1,12,1));
+
+        PropertyMatcher birthdayAfter1900 = new PropertyMatcher("birthday", isAfter(new DateTime(1900, 1, 1, 1, 0)));
+        assertThat(birthdayAfter1900.matches(bill)).isTrue();
     }
 
     @Test

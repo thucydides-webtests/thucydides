@@ -1,4 +1,4 @@
-package net.thucydides.core.pages.scheduling;
+package net.thucydides.core.scheduling;
 
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.util.MockEnvironmentVariables;
@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.Duration;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -18,6 +17,7 @@ import org.openqa.selenium.support.ui.Sleeper;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -108,6 +108,7 @@ public class WhenRunningPolledTests {
 
         verify(sleeper, times(3)).sleep(new Duration(10, TimeUnit.MILLISECONDS));
     }
+
 
 
     private ExpectedCondition<Boolean> weSpitTheDummy() {
@@ -213,4 +214,38 @@ public class WhenRunningPolledTests {
 
     }
 
+
+    private ExpectedBackendCondition<BackEnd, Boolean> weHaveWaitedAWhile() {
+        return new ExpectedBackendCondition<BackEnd, Boolean>() {
+            public Boolean apply(BackEnd backend) {
+                return backend.isBackendReady();
+            }
+        };
+    }
+
+
+    private class BackEnd {
+        int counter = 0;
+
+        public boolean isBackendReady() {
+            return (counter++ > 5);
+        }
+
+        public int getCounter() {
+            return counter;
+        }
+    }
+
+    @Test
+    public void should_be_able_to_wait_for_non_web_tests_too() throws InterruptedException {
+
+        BackEnd backEnd = new BackEnd();
+        NormalFluentWait<BackEnd> waitFor = new NormalFluentWait(backEnd);
+
+        waitFor.withTimeoutOf(100).milliseconds()
+               .pollingEvery(10).milliseconds()
+               .until(weHaveWaitedAWhile());
+
+        assertThat(backEnd.getCounter()).isGreaterThan(5);
+    }
 }

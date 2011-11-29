@@ -1,11 +1,9 @@
 package net.thucydides.core.pages;
 
-import net.thucydides.core.pages.scheduling.FluentWaitWithRefresh;
-import net.thucydides.core.pages.scheduling.NormalFluentWait;
-import net.thucydides.core.pages.scheduling.ThucydidesFluentWait;
-import org.apache.commons.collections.ListUtils;
+import net.thucydides.core.scheduling.FluentWaitWithRefresh;
+import net.thucydides.core.scheduling.NormalFluentWait;
+import net.thucydides.core.scheduling.ThucydidesFluentWait;
 import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -15,13 +13,9 @@ import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Clock;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 

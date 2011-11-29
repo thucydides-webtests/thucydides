@@ -1,39 +1,35 @@
 package net.thucydides.core.matchers;
 
-import ch.lambdaj.Lambda;
-import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.hamcrest.Matcher;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.join;
 
 public class PropertyMatcher {
     private final String fieldName;
-    private final Matcher<String> matcher;
+    private final Matcher<? extends Object> matcher;
 
-    protected PropertyMatcher(String fieldName, Matcher<String> matcher) {
+    protected PropertyMatcher(String fieldName, Matcher<? extends Object> matcher) {
         this.fieldName = fieldName;
         this.matcher = matcher;
     }
 
     public <T> boolean matches(final T bean) {
-        String fieldValue;
+        Object fieldValue;
         try {
-            fieldValue = BeanUtils.getProperty(bean, fieldName);
+
+            fieldValue = PropertyUtils.getProperty(bean, fieldName);
         } catch (Exception e) {
             throw new IllegalArgumentException("Could not find property value for " + fieldName);
         }
@@ -46,11 +42,13 @@ public class PropertyMatcher {
 
     @Override
     public String toString() {
-        String htmlFriendlyMatcherDescription = matcher.toString().replaceAll("\"","'");
+        String matcherDescription = matcher.toString();
+        String htmlFriendlyMatcherDescription
+                = (matcherDescription != null) ? matcherDescription.replaceAll("\"", "'") : "";
         return fieldName + " " + htmlFriendlyMatcherDescription;
     }
 
-    public static PropertyMatcher the(final String fieldName, final Matcher<String> matcher) {
+    public static PropertyMatcher the(final String fieldName, final Matcher<? extends Object> matcher) {
         return new PropertyMatcher(fieldName, matcher);
     }
 

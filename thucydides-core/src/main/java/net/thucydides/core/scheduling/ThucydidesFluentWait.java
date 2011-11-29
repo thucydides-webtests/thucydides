@@ -1,9 +1,8 @@
-package net.thucydides.core.pages.scheduling;
+package net.thucydides.core.scheduling;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.Duration;
