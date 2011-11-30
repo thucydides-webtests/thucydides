@@ -192,7 +192,14 @@ public class BaseStepListener implements StepListener, StepPublisher {
      * @param result
      */
     public void testFinished(final TestOutcome result) {
+        recordTestDuration();
         currentStepStack.clear();
+    }
+
+    private void recordTestDuration() {
+        if (!testOutcomes.isEmpty()) {
+            getCurrentTestOutcome().recordDuration();
+        }
     }
 
     /**
@@ -307,6 +314,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private void currentStepDone() {
         TestStep finishedStep =  currentStepStack.pop();
+        finishedStep.recordDuration();
 
         if (finishedStep == getCurrentGroup()) {
             finishGroup();

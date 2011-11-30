@@ -306,7 +306,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         if (isPending(method)) {
             StepEventBus.getEventBus().testPending();
         }
-        if (isIgnored(method)) {
+        else if (isIgnored(method)) {
         	stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
             StepEventBus.getEventBus().testIgnored();
         }

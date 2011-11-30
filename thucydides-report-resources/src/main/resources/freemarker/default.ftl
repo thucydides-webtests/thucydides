@@ -86,8 +86,7 @@
                         <td width="%"><span class="test-case-title"><span
                                 class="${outcome_text}">${testOutcome.titleWithLinks}<span class="related-issue-title">${testOutcome.formattedIssues}</span></span></span>
                         </td>
-                        <td width="100"><span class="test-case-duration"><span class="greentext">${testOutcome.duration}
-                            ms</span></span>
+                        <td width="100"><span class="test-case-duration"><span class="greentext">${testOutcome.duration / 1000}s</span></span>
                         </td>
                     </tr>
                 </table>
@@ -160,7 +159,7 @@
                                                                                          width="48" height="48"/></a>
                                 </#if>                            </td>
                             <td width="150"><span class="${step_class_root}-step">${step.result}</span></td>
-                            <td width="100"><span class="${step_class_root}-step">${step.duration} ms</span></td>
+                            <td width="100"><span class="${step_class_root}-step">${step.duration/ 1000}s</span></td>
                         </tr>
                         <#if step.result == "FAILURE" && !step.isAGroup()>
                             <tr class="test-${step.result}">

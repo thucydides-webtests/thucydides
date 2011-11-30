@@ -59,7 +59,7 @@ a:active {
                 <tr>
                     <td width="25px" valign="center" height="72px"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25px" height="25px" /></td>
                     <td width="%"><span class="test-case-title"><span class="${outcome_text}">${story.titleWithLinks}<span class="related-issues">${story.formattedIssues}</span></span></span></td>
-                    <td width="75px"><span class="test-case-duration"><span class="greentext">${story.duration} ms</span></span></td>
+                    <td width="75px"><span class="test-case-duration"><span class="greentext">${story.duration / 1000}s</span></span></td>
                 </tr>
             </table>
         </div>
@@ -97,7 +97,7 @@ a:active {
         <td width="80" class="bluetext">${testOutcome.pendingCount}</td>
         <td width="80" class="bluetext">${testOutcome.skippedCount}</td>
         <td width="80" class="bluetext">${testOutcome.ignoredCount}</td>
-        <td width="95" class="lightgreentext">${testOutcome.duration} ms</td>
+        <td width="95" class="lightgreentext">${testOutcome.duration / 1000}s</td>
       </tr>
       </table>
     </div>

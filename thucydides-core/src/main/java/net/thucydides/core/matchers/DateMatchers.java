@@ -2,6 +2,7 @@ package net.thucydides.core.matchers;
 
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
+import org.hamcrest.core.AllOf;
 import org.joda.time.DateTime;
 
 import java.util.Date;
@@ -27,6 +28,11 @@ public class DateMatchers {
     }
 
     @Factory
+    public static Matcher<Date> isBetween(Date startDate, Date endDate){
+        return new DateIsBetweenMatcher(startDate, endDate);
+    }
+
+    @Factory
     public static Matcher<DateTime> isSameAs(DateTime expectedDate){
         return new DateTimeIsSameAsMatcher(expectedDate);
     }
@@ -39,6 +45,11 @@ public class DateMatchers {
     @Factory
     public static Matcher<DateTime> isAfter(DateTime expectedDate){
         return new DateTimeIsAfterMatcher(expectedDate);
+    }
+
+    @Factory
+    public static Matcher<DateTime> isBetween(DateTime startDate, DateTime endDate){
+        return new DateTimeIsBetweenMatcher(startDate, endDate);
     }
 
 }
