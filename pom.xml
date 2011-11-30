@@ -52,7 +52,7 @@
         </project.build.sourceEncoding>
         <surefire.version>2.9</surefire.version>
         <junit.version>4.8.2</junit.version>
-        <selenium.version>2.14.0</selenium.version>
+        <selenium.version>2.13.0</selenium.version>
         <checkstyle.rules>http://www.wakaleo-labs.com/sonar/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo</checkstyle.rules>
     </properties>
     <build>
