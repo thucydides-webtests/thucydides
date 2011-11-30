@@ -1,0 +1,63 @@
+import org.easyb.BehaviorRunner
+import org.easyb.Configuration
+import org.easyb.listener.ConsoleReporterListener
+import org.easyb.exception.VerificationException
+import static org.easyb.BehaviorRunner.getBehaviors
+
+scenario "Running a failing Thucydides test in easyb using the Thucydides plugin", {
+    given "a specification with the Thucydides plugin", {
+        spec = """
+
+        import net.thucydides.easyb.samples.pages.IndexPage
+        import net.thucydides.easyb.samples.pages.DemoSiteSteps;
+
+        using "thucydides"
+
+        thucydides.uses_default_base_url "classpath:demosite/index.html"
+        thucydides.uses_steps_from DemoSiteSteps
+
+        scenario "Select entry in dropdown list", {
+            given "we are on the Thucydides demo site", {
+                indexPage = pages.currentPageAt(IndexPage)
+            }
+            when "the user selects the 'Label 2' option", {
+                indexPage.selectItem 'Label 2'
+            }
+            then "this option should be selected", {
+                indexPage.selectedValues.shouldHave '2'
+            }
+        }
+
+
+
+    """
+    }
+    when "the specification is run with easyb", {
+        specFile = File.createTempFile('ThucydidesDemoStory', '.story')
+        specFile.deleteOnExit()
+        specFile.write(spec)
+
+        consoleOutputStream = new ByteArrayOutputStream()
+
+        originalOut = System.out
+        try {
+            System.setOut(new PrintStream(consoleOutputStream))
+            BehaviorRunner runner = new BehaviorRunner(new Configuration())
+            runner.runBehaviors(getBehaviors(specFile.absolutePath))
+        } catch (VerificationException expected) {
+        } finally {
+            System.setOut(originalOut)
+        }
+
+        consoleOutput = consoleOutputStream.toString()
+        println consoleOutput
+    }
+    
+    then "a summary of scenario results should be printed to the console", {
+        consoleOutput.contains("Scenarios run: 1, Failures: 0, Pending: 0").shouldBe true
+    }
+    and "a Thucydides report should have been generated with the name of the easyb story", {
+        File thucydidesReport = new File("target/thucydides/ThucydidesDemoStory.html")
+        assert thucydidesReport.exists()
+    }
+}
