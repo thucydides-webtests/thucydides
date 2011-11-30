@@ -6,6 +6,8 @@ import org.joda.time.DateTime;
 
 import java.util.Date;
 
+import static net.thucydides.core.matchers.DateMatcherFormatter.formatted;
+
 
 public class DateIsAfterMatcher extends TypeSafeMatcher<Date> {
 
@@ -21,7 +23,7 @@ public class DateIsAfterMatcher extends TypeSafeMatcher<Date> {
     }
 
     public void describeTo(Description description) {
-        description.appendText("a date that is after");
-        description.appendValue(expectedDate);
+        description.appendText("a date that is after ");
+        description.appendText(formatted(expectedDate));
     }
 }

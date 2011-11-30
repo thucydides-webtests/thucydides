@@ -4,6 +4,8 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.joda.time.DateTime;
 
+import static net.thucydides.core.matchers.DateMatcherFormatter.formatted;
+
 
 public class DateTimeIsSameAsMatcher extends TypeSafeMatcher<DateTime> {
 
@@ -18,7 +20,7 @@ public class DateTimeIsSameAsMatcher extends TypeSafeMatcher<DateTime> {
     }
 
     public void describeTo(Description description) {
-        description.appendText("a date that is");
-        description.appendValue(expectedDate);
+        description.appendText("a date that is ");
+        description.appendText(formatted(expectedDate));
     }
 }

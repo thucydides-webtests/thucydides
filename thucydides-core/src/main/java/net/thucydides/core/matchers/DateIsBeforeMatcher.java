@@ -6,6 +6,8 @@ import org.joda.time.DateTime;
 
 import java.util.Date;
 
+import static net.thucydides.core.matchers.DateMatcherFormatter.formatted;
+
 
 public class DateIsBeforeMatcher extends TypeSafeMatcher<Date> {
 
@@ -21,7 +23,7 @@ public class DateIsBeforeMatcher extends TypeSafeMatcher<Date> {
     }
 
     public void describeTo(Description description) {
-        description.appendText("a date that is before");
-        description.appendValue(expectedDate);
+        description.appendText("a date that is before ");
+        description.appendText(formatted(expectedDate));
     }
 }

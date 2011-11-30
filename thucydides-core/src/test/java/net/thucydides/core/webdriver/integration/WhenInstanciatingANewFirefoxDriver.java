@@ -6,6 +6,7 @@ import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,8 +19,15 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -117,19 +125,50 @@ public class WhenInstanciatingANewFirefoxDriver {
     }
 
     @Test
-    public void should_allow_the_thucydides_activate_firebugs_to_deactivate_firebugs() {
+    public void should_not_activate_firebugs_by_default() {
         FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
-
-        environmentVariables.setProperty("thucydides.activate.firebugs", "false");
 
         assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(false));
     }
 
     @Test
-    public void should_not_activate_firebugs_by_default() {
+    public void should_activate_firebugs_if_requested() {
+        environmentVariables.setProperty("thucydides.activate.firebugs", "true");
         FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
 
-        assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(false));
+        assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(true));
+    }
+
+    class MockFirefoxProfile extends FirefoxProfile {
+
+        public List<String> extensions = new ArrayList<String>();
+
+        @Override
+        public void addExtension(Class<?> loadResourcesUsing, String loadFrom) throws IOException {
+            extensions.add(loadFrom);
+        }
+    }
+
+    @Test
+    public void should_inject_firebugs_into_browser_if_requested () {
+        environmentVariables.setProperty("thucydides.activate.firebugs", "true");
+        FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
+        MockFirefoxProfile profile = new MockFirefoxProfile();
+
+        firefoxProfileEnhancer.addFirebugsTo(profile);
+
+        assertThat(profile.extensions, hasItem(allOf(containsString("firebug"), endsWith(".xpi"))));
+    }
+
+    @Test
+    public void should_inject_firefinder_into_browser_if_firebugs_is_added () {
+        environmentVariables.setProperty("thucydides.activate.firebugs", "true");
+        FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
+        MockFirefoxProfile profile = new MockFirefoxProfile();
+
+        firefoxProfileEnhancer.addFirebugsTo(profile);
+
+        assertThat(profile.extensions, hasItem(allOf(containsString("firefinder"), endsWith(".xpi"))));
     }
 
     @Test
@@ -147,11 +186,8 @@ public class WhenInstanciatingANewFirefoxDriver {
     @Test
     public void should_exclude_the_firebugs_extension_if_the_thucydides_activate_firebugs_property_is_set_to_false() throws Exception {
 
-        WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
-
-        when(firefoxProfileEnhancer.shouldActivateFirebugs()).thenReturn(false);
-
-        driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
+        FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
+        assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(false));
     }
 
     @Test

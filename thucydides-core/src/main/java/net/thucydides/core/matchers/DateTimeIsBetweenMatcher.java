@@ -6,6 +6,8 @@ import org.joda.time.DateTime;
 
 import java.util.Date;
 
+import static net.thucydides.core.matchers.DateMatcherFormatter.formatted;
+
 
 public class DateTimeIsBetweenMatcher extends TypeSafeMatcher<DateTime> {
 
@@ -23,9 +25,9 @@ public class DateTimeIsBetweenMatcher extends TypeSafeMatcher<DateTime> {
     }
 
     public void describeTo(Description description) {
-        description.appendText("a date that is between");
-        description.appendValue(startDate);
-        description.appendText("and");
-        description.appendValue(endDate);
+        description.appendText("a date that is between ");
+        description.appendText(formatted(startDate));
+        description.appendText(" and ");
+        description.appendText(formatted(endDate));
     }
 }
