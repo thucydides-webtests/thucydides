@@ -121,7 +121,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
         verify(webdriverManager, atLeast(1)).getWebdriver("chrome")
     }
 
-    @Test(expected=UnsupportedDriverException)
+    @Test
     public void should_reject_an_illegal_driver_for_a_story() {
 
         WebdriverManager webdriverManager = mock(WebdriverManager)
@@ -134,8 +134,14 @@ public class WhenUsingTheThucydidesEasybPlugin {
         plugin.configuration.uses_default_base_url "http://www.google.com"
         plugin.configuration.uses_driver "does-not-exist"
 
-        runStories(plugin, binding);
+        def exceptionThrown = false;
+        try {
+            runStories(plugin, binding);
+        } catch (UnsupportedDriverException e) {
+            exceptionThrown = true;
+        }
 
+        assert exceptionThrown == true
     }
 
     @Test
