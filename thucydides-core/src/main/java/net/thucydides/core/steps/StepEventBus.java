@@ -37,7 +37,7 @@ public class StepEventBus {
     /**
      * The event bus used to inform listening classes about when tests and test steps start and finish.
      */
-    public static StepEventBus getEventBus() {
+    public static synchronized StepEventBus getEventBus() {
         if (stepEventBusThreadLocal.get() == null) {
             stepEventBusThreadLocal.set(new StepEventBus());
         }
