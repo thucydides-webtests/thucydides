@@ -3,6 +3,7 @@ package net.thucydides.easyb
 import net.thucydides.core.steps.ScenarioSteps
 import net.thucydides.core.webdriver.WebdriverProxyFactory
 import org.openqa.selenium.WebDriver
+import net.thucydides.core.webdriver.SupportedWebDriver
 
 public class PluginConfiguration {
 
@@ -39,6 +40,8 @@ public class PluginConfiguration {
     def scenarioIssues = [];
 
     def resetBrowserInEachScenario = true
+    
+    def requestedDriver;
 
     /**
      * Define the base URL to be used for this story.
@@ -99,5 +102,17 @@ public class PluginConfiguration {
     public boolean isResetBrowserInEachScenario() {
         return resetBrowserInEachScenario;
     }
+
+    public void uses_driver(String driver) {
+        checkRequestedDriverType(driver)
+        requestedDriver = driver;
+    }
+
+    private void checkRequestedDriverType(def driver) {
+        if (driver) {
+            SupportedWebDriver.getDriverTypeFor(driver);
+        }
+    }
+
 
 }

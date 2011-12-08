@@ -52,6 +52,12 @@ public class ThucydidesPlugin extends BasePlugin {
         Object.mixin ThucydidesExtensions;
     }
 
+    public ThucydidesPlugin(WebdriverManager manager) {
+        this()
+        webdriverManager = manager;
+    }
+
+
     @Override
     public String getName() {
         return "thucydides";
@@ -77,14 +83,14 @@ public class ThucydidesPlugin extends BasePlugin {
     }
 
     protected WebdriverManager getWebdriverManager() {
-        if (webdriverManager == null) {
+        if (!webdriverManager) {
             webdriverManager = Injectors.getInjector().getInstance(WebdriverManager)
         }
         return webdriverManager;
     }
 
     private WebDriver getWebDriver() {
-        return getWebdriverManager().webdriver
+        return getWebdriverManager().getWebdriver(configuration.requestedDriver)
     }
 
     @Override
@@ -288,7 +294,7 @@ public class ThucydidesPlugin extends BasePlugin {
     }
 
     private def resetDriver(Binding binding) {
-        getWebdriverManager().webdriver.reset();
+        getWebdriverManager().resetDriver()
         Pages pages = binding.getVariable("pages")
         if (pageUrlHasBeenDefinedFor(pages)) {
             pages.start()

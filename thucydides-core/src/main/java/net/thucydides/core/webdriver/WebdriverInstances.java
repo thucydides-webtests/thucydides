@@ -43,6 +43,16 @@ public class WebdriverInstances {
         }
     }
 
+    public void resetCurrentDriver() {
+        if (getCurrentDriver() != null) {
+            WebDriver driver = getCurrentDriver();
+            if (WebDriverFacade.class.isAssignableFrom(driver.getClass())) {
+                ((WebDriverFacade) driver).reset();
+            }
+        }
+
+    }
+
     public boolean driverIsRegisteredFor(String driverName) {
         return driverMap.containsKey(driverName);
     }

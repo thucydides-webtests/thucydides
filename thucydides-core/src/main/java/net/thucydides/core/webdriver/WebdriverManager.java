@@ -20,4 +20,6 @@ public interface WebdriverManager {
 
     public void closeAllDrivers();
 
+    public void resetDriver();
+
 }

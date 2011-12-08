@@ -20,6 +20,11 @@ import net.thucydides.core.webdriver.WebdriverManager
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager
 import net.thucydides.core.util.SystemEnvironmentVariables
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration
+import static org.mockito.Mockito.verify
+import static org.mockito.Mockito.when
+import static org.mockito.Matchers.anyString
+import static org.mockito.Mockito.atLeast
+import net.thucydides.core.webdriver.UnsupportedDriverException
 
 public class WhenUsingTheThucydidesEasybPlugin {
 
@@ -97,7 +102,42 @@ public class WhenUsingTheThucydidesEasybPlugin {
         WebDriver driver = (WebDriver) binding.getVariable("driver");
 
         assert driver != null
-    } 
+    }
+
+    @Test
+    public void should_be_able_to_force_the_driver_for_a_story() {
+
+        WebdriverManager webdriverManager = mock(WebdriverManager)
+        WebDriver webDriver = mock(WebDriver)
+        when(webdriverManager.getWebdriver()).thenReturn(webDriver);
+        when(webdriverManager.getWebdriver(anyString())).thenReturn(webDriver);
+
+        ThucydidesPlugin plugin = new ThucydidesPlugin(webdriverManager)
+
+        plugin.configuration.uses_default_base_url "http://www.google.com"
+        plugin.configuration.uses_driver "chrome"
+
+        runStories(plugin, binding);
+
+        verify(webdriverManager, atLeast(1)).getWebdriver("chrome")
+    }
+
+    @Test(expected=UnsupportedDriverException)
+    public void should_reject_an_illegal_driver_for_a_story() {
+
+        WebdriverManager webdriverManager = mock(WebdriverManager)
+        WebDriver webDriver = mock(WebDriver)
+        when(webdriverManager.getWebdriver()).thenReturn(webDriver);
+        when(webdriverManager.getWebdriver(anyString())).thenReturn(webDriver);
+
+        ThucydidesPlugin plugin = new ThucydidesPlugin(webdriverManager)
+
+        plugin.configuration.uses_default_base_url "http://www.google.com"
+        plugin.configuration.uses_driver "does-not-exist"
+
+        runStories(plugin, binding);
+
+    }
 
     @Test
     public void the_plugin_should_inject_a_Pages_object_into_the_story_context() {
@@ -121,28 +161,28 @@ public class WhenUsingTheThucydidesEasybPlugin {
         assert config != null
     }
 
-//    @Test
-//    public void the_plugin_should_let_the_user_define_the_default_base_url() {
-//
-//        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
-//
-//        runStories(plugin, binding);
-//
-//        mockWebDriver.proxiedDriver.shouldHaveOpenedAt("http://www.google.co.nz")
-//
-//    }
-//
-//    @Test
-//    public void the_user_should_be_able_to_override_the_default_base_url_using_a_system_property() {
-//
-//        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
-//
-//        System.setProperty("webdriver.base.url","http://www.wikipedia.org")
-//        runStories(plugin, binding);
-//
-//        mockWebDriver.proxiedDriver.shouldHaveOpenedAt("http://www.wikipedia.org")
-//
-//    }
+    @Test
+    public void the_plugin_should_let_the_user_define_the_default_base_url() {
+
+        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
+
+        runStories(plugin, binding);
+
+        mockWebDriver.proxiedDriver.shouldHaveOpenedAt("http://www.google.co.nz")
+
+    }
+
+    @Test
+    public void the_user_should_be_able_to_override_the_default_base_url_using_a_system_property() {
+
+        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
+
+        System.setProperty("webdriver.base.url","http://www.wikipedia.org")
+        runStories(plugin, binding);
+
+        mockWebDriver.proxiedDriver.shouldHaveOpenedAt("http://www.wikipedia.org")
+
+    }
 
 
     @Test
@@ -156,6 +196,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
         driver.proxiedDriver.shouldHaveOpenedAt("http://www.google.com")
     }
     /*
+
     @Test
     public void the_plugin_should_use_a_new_driver_for_each_story() {
 
@@ -170,6 +211,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
         assert (driver1 != driver2)
     }
+
 
     @Ignore("Not really sure how to get this to work properly yet.")
     @Test

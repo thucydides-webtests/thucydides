@@ -25,6 +25,9 @@ public class WhenKeepingTrackOfManagedWebdriverInstances {
     @Mock
     WebDriver iexplorerDriver;
 
+    @Mock
+    WebDriverFacade webDriverFacade;
+
     @Test
     public void should_be_able_to_register_a_named_driver() {
         webdriverInstances.registerDriverCalled("firefox").forDriver(firefoxDriver);
@@ -38,6 +41,14 @@ public class WhenKeepingTrackOfManagedWebdriverInstances {
 
         webdriverInstances.closeCurrentDriver();
         verify(firefoxDriver).close();
+    }
+
+    @Test
+    public void should_be_able_to_reset_a_driver() {
+        webdriverInstances.registerDriverCalled("firefox").forDriver(webDriverFacade);
+
+        webdriverInstances.resetCurrentDriver();
+        verify(webDriverFacade).reset();
     }
 
     @Test
