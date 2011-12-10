@@ -111,7 +111,7 @@ public class WhenMatchingPropertyValueCollections {
 
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
-        BeanMatcher countIsOne = BeanMatchers.count(is(1));
+        BeanMatcher countIsOne = BeanMatchers.the_count(is(1));
 
         assertThat(BeanMatchers.filterElements(persons, firstNameIsBill, lastNameIsOddie, countIsOne)).contains(billoddie);
     }
@@ -165,7 +165,7 @@ public class WhenMatchingPropertyValueCollections {
     public void should_check_the_size_of_a_collection() {
         List<Person> persons = Arrays.asList(billoddie, tim, graeme);
 
-        BeanMatcher containsThreeEntries = BeanMatchers.count(is(3));
+        BeanMatcher containsThreeEntries = BeanMatchers.the_count(is(3));
 
         BeanMatchers.shouldMatch(persons, containsThreeEntries);
     }
@@ -231,7 +231,7 @@ public class WhenMatchingPropertyValueCollections {
     public void should_fail_if_the_size_of_a_collection_is_incorrect() {
         List<Person> persons = Arrays.asList(billoddie, tim, graeme);
 
-        BeanMatcher containsTwoEntries = BeanMatchers.count(is(2));
+        BeanMatcher containsTwoEntries = BeanMatchers.the_count(is(2));
 
         BeanMatchers.shouldMatch(persons, containsTwoEntries);
     }
@@ -240,7 +240,7 @@ public class WhenMatchingPropertyValueCollections {
     public void should_check_the_size_of_a_collection_and_its_contents() {
         List<Person> persons = Arrays.asList(billoddie, tim, graeme, billkidd);
 
-        BeanMatcher containsTwoEntries = BeanMatchers.count(is(2));
+        BeanMatcher containsTwoEntries = BeanMatchers.the_count(is(2));
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
 
         BeanMatchers.shouldMatch(persons, containsTwoEntries, firstNameIsBill);
@@ -250,7 +250,7 @@ public class WhenMatchingPropertyValueCollections {
     public void should_check_field_uniqueness() {
         List<Person> persons = Arrays.asList(billoddie, tim, graeme, billkidd);
 
-        BeanMatcher containsTwoEntries = BeanMatchers.count(is(2));
+        BeanMatcher containsTwoEntries = BeanMatchers.the_count(is(2));
         BeanMatcher lastNamesAreDifferent = BeanMatchers.each("lastName").isDifferent();
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
 
@@ -261,7 +261,7 @@ public class WhenMatchingPropertyValueCollections {
     public void should_check_field_uniqueness_when_not_unique() {
         List<Person> persons = Arrays.asList(billoddie, tim, graeme, billoddie);
 
-        BeanMatcher containsTwoEntries = BeanMatchers.count(is(2));
+        BeanMatcher containsTwoEntries = BeanMatchers.the_count(is(2));
         BeanMatcher lastNamesAreDifferent = BeanMatchers.each("lastName").isDifferent();
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
 
@@ -272,7 +272,7 @@ public class WhenMatchingPropertyValueCollections {
     public void should_check_multiple_different_types_of_matches() {
         List<Person> persons = Arrays.asList(billoddie, tim, graeme, billkidd);
 
-        BeanMatcher containsTwoEntries = BeanMatchers.count(is(2));
+        BeanMatcher containsTwoEntries = BeanMatchers.the_count(is(2));
         BeanMatcher lastNamesAreDifferent = BeanMatchers.each("lastName").isDifferent();
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher maxAgeIs35 = BeanMatchers.max("age", is(35));
@@ -287,7 +287,7 @@ public class WhenMatchingPropertyValueCollections {
     public void should_fail_correctly_when_checking_multiple_different_types_of_matches() {
         List<Person> persons = Arrays.asList(billoddie, tim, graeme, billkidd);
 
-        BeanMatcher containsTwoEntries = BeanMatchers.count(is(2));
+        BeanMatcher containsTwoEntries = BeanMatchers.the_count(is(2));
         BeanMatcher lastNamesAreDifferent = BeanMatchers.each("lastName").isDifferent();
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher maxAgeIs35 = BeanMatchers.max("age", is(45));

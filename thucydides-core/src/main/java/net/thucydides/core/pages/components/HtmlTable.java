@@ -50,7 +50,7 @@ public class HtmlTable {
         return tableElement.findElements(By.xpath(".//tr[td]"));
     }
 
-    public List<WebElement> getRowElementsMatching(BeanFieldMatcher... matchers) {
+    public List<WebElement> getRowElementsMatching(BeanMatcher... matchers) {
 
         List<WebElement> rowElements = getRowElements();
         List<Integer> matchingRowIndexes = findMatchingIndexesFor(rowElements, matchers);
@@ -63,7 +63,7 @@ public class HtmlTable {
     }
 
     private List<Integer> findMatchingIndexesFor(List<WebElement> rowElements,
-                                                 BeanFieldMatcher[] matchers) {
+                                                 BeanMatcher[] matchers) {
         List<Integer> indexes = new ArrayList<Integer>();
         List<String> headings = getHeadings();
 
@@ -79,8 +79,8 @@ public class HtmlTable {
         return indexes;
     }
 
-    private boolean matches(Map<String, String> rowData, BeanFieldMatcher[] matchers) {
-        for(BeanFieldMatcher matcher : matchers) {
+    private boolean matches(Map<String, String> rowData, BeanMatcher[] matchers) {
+        for(BeanMatcher matcher : matchers) {
             if (!matcher.matches(rowData)) {
                 return false;
             }
@@ -125,7 +125,7 @@ public class HtmlTable {
         return new HtmlTable(table).getRows();
     }
 
-    public static List<WebElement> filterRows(final WebElement table, final BeanFieldMatcher... matchers) {
+    public static List<WebElement> filterRows(final WebElement table, final BeanMatcher... matchers) {
         return new HtmlTable(table).getRowElementsMatching(matchers);
     }
 }

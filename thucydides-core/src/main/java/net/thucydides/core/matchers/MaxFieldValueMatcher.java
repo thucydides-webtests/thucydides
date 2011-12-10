@@ -19,6 +19,10 @@ public class MaxFieldValueMatcher implements BeanCollectionMatcher {
     }
 
     @Override
+    public boolean matches(Object target) {
+        return matches((Collection) target);
+    }
+
     public <T> boolean matches(Collection<T> elements) {
         Comparable maximumValue = null;
         try {

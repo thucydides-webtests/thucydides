@@ -1,8 +1,14 @@
 package net.thucydides.core.matchers;
 
+import ch.lambdaj.function.convert.Converter;
+import org.hamcrest.Matcher;
+
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import static ch.lambdaj.Lambda.convert;
 
 public class BeanUniquenessMatcher implements BeanCollectionMatcher {
 
@@ -13,17 +19,29 @@ public class BeanUniquenessMatcher implements BeanCollectionMatcher {
     }
 
     @Override
-    public <T> boolean matches(Collection<T> elements) {
-        Set<Object> fieldValues = new HashSet<Object>();
+    public boolean matches(Object target) {
+        return matches((Collection) target);  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-        for(Object bean : elements) {
-            fieldValues.add(BeanMatchers.getFieldValue(bean, fieldName));
+    public <T> boolean matches(Collection<T> elements) {
+        List<Object> allFieldValues = convert(elements, new FieldValueExtractor());
+        Set<Object> uniquefieldValues = new HashSet<Object>();
+
+        uniquefieldValues.addAll(allFieldValues);
+
+        return (uniquefieldValues.size() == elements.size());
+    }
+
+    public class FieldValueExtractor implements Converter<Object, Object> {
+        @Override
+        public Object convert(Object from) {
+            return BeanMatchers.getFieldValue(from, fieldName);
         }
-        return (fieldValues.size() == elements.size());
     }
 
     @Override
     public String toString() {
         return "each " + fieldName + " is different";
     }
+
 }

@@ -43,21 +43,21 @@ public class WhenMatchingPropertyValuesWithMaps {
 
     @Test
     public void should_obtain_matcher_from_fluent_static_method() {
-        BeanFieldMatcher matcher = BeanMatchers.the("firstName", is("Bill"));
+        BeanFieldMatcher matcher = (BeanFieldMatcher) BeanMatchers.the("firstName", is("Bill"));
         Map<String, String> person = mappedPerson("Bill", "Oddie");
         assertThat(matcher.matches(person)).isTrue();
     }
 
     @Test
     public void should_obtain_instanciated_matcher_from_matcher() {
-        Matcher<Object> matcher = BeanMatchers.the("firstName", is("Bill")).getMatcher();
+        Matcher<Object> matcher = ((BeanFieldMatcher) BeanMatchers.the("firstName", is("Bill"))).getMatcher();
         Map<String, String> person = mappedPerson("Bill", "Oddie");
         assertThat(matcher.matches(person)).isTrue();
     }
 
     @Test
     public void instanciated_matcher_should_provide_meaningful_description() {
-        Matcher<Object> matcher = BeanMatchers.the("firstName", is("Bill")).getMatcher();
+        Matcher<Object> matcher = ((BeanFieldMatcher) BeanMatchers.the("firstName", is("Bill"))).getMatcher();
         assertThat(matcher.toString()).isEqualTo("firstName is 'Bill'");
     }
 
@@ -195,7 +195,7 @@ public class WhenMatchingPropertyValuesWithMaps {
                 mappedPerson("Graeam", "Garden"),
                 mappedPerson("Tim", "Brooke-Taylor"));
 
-        BeanMatcher containsTwoEntries = BeanMatchers.count(is(2));
+        BeanMatcher containsTwoEntries = BeanMatchers.the_count(is(2));
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
 
         BeanMatchers.shouldMatch(persons, containsTwoEntries, firstNameIsBill);
@@ -208,7 +208,7 @@ public class WhenMatchingPropertyValuesWithMaps {
                 mappedPerson("Graeam", "Garden"),
                 mappedPerson("Tim", "Brooke-Taylor"));
 
-        BeanMatcher containsTwoEntries = BeanMatchers.count(is(2));
+        BeanMatcher containsTwoEntries = BeanMatchers.the_count(is(2));
         BeanMatcher lastNamesAreDifferent = BeanMatchers.each("lastName").isDifferent();
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
 

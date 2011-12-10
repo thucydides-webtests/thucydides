@@ -12,7 +12,7 @@ public class BeanPropertyMatcher implements BeanFieldMatcher {
     }
 
     @Override
-    public <T> boolean matches(final T bean) {
+    public boolean matches(final Object bean) {
         return matcher.matches(BeanMatchers.getFieldValue(bean, fieldName));
     }
 

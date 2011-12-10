@@ -18,7 +18,6 @@ public class BeanCountMatcher implements BeanCollectionMatcher {
         this.countMatcher = countMatcher;
     }
 
-    @Override
     public <T> boolean matches(Collection<T> elements) {
         return countMatcher.matches(elements.size());
 
@@ -27,5 +26,10 @@ public class BeanCountMatcher implements BeanCollectionMatcher {
     @Override
     public String toString() {
         return  "number of matching entries " + countMatcher;
+    }
+
+    @Override
+    public boolean matches(Object target) {
+        return matches((Collection) target);
     }
 }

@@ -18,7 +18,6 @@ public class MinFieldValueMatcher implements BeanCollectionMatcher {
         this.valueMatcher = valueMatcher;
     }
 
-    @Override
     public <T> boolean matches(Collection<T> elements) {
         List<Comparable> fieldValues = convert(elements, toComparable());
         return valueMatcher.matches(min(fieldValues));
@@ -36,5 +35,10 @@ public class MinFieldValueMatcher implements BeanCollectionMatcher {
     @Override
     public String toString() {
         return "the minimum " + fieldName + " " + valueMatcher.toString();
+    }
+
+    @Override
+    public boolean matches(Object target) {
+        return matches( (Collection) target);
     }
 }

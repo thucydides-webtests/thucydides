@@ -77,21 +77,21 @@ public class WhenMatchingPropertyValues {
 
     @Test
     public void should_obtain_matcher_from_fluent_static_method() {
-        BeanFieldMatcher matcher = BeanMatchers.the("firstName", is("Bill"));
+        BeanFieldMatcher matcher = (BeanFieldMatcher) BeanMatchers.the("firstName", is("Bill"));
         Person person = new Person("Bill", "Oddie");
         assertThat(matcher.matches(person)).isTrue();
     }
 
     @Test
     public void should_obtain_instanciated_matcher_from_matcher() {
-        Matcher<Object> matcher = BeanMatchers.the("firstName", is("Bill")).getMatcher();
+        Matcher<Object> matcher = ((BeanFieldMatcher) BeanMatchers.the("firstName", is("Bill"))).getMatcher();
         Person person = new Person("Bill", "Oddie");
         assertThat(matcher.matches(person)).isTrue();
     }
 
     @Test
     public void instanciated_matcher_should_provide_meaningful_description() {
-        Matcher<Object> matcher = BeanMatchers.the("firstName", is("Bill")).getMatcher();
+        Matcher<Object> matcher = ((BeanFieldMatcher)BeanMatchers.the("firstName", is("Bill"))).getMatcher();
         assertThat(matcher.toString()).isEqualTo("firstName is 'Bill'");
     }
 

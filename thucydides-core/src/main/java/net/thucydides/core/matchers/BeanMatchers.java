@@ -28,11 +28,11 @@ public class BeanMatchers {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
     
-    public static BeanFieldMatcher the(final String fieldName, final Matcher<? extends Object> matcher) {
+    public static BeanMatcher the(final String fieldName, final Matcher<? extends Object> matcher) {
         return new BeanPropertyMatcher(fieldName, matcher);
     }
 
-    public static BeanMatcher count(Matcher<Integer> countMatcher) {
+    public static BeanMatcher the_count(Matcher<Integer> countMatcher) {
         return new BeanCountMatcher(countMatcher);
     }
 
@@ -88,7 +88,7 @@ public class BeanMatchers {
         if (hasEntry(matchers,instanceOf(BeanCountMatcher.class)).matches(matchers)) {
             return matchers;
         } else {
-            return ListUtils.union(matchers, Arrays.asList(count(is(not(0)))));
+            return ListUtils.union(matchers, Arrays.asList(the_count(is(not(0)))));
         }
     }
 
