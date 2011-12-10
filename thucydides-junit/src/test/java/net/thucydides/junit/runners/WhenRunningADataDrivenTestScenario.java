@@ -22,6 +22,7 @@ import net.thucydides.samples.SampleParallelDataDrivenScenario;
 import net.thucydides.samples.SamplePassingScenarioWithTestSpecificData;
 import net.thucydides.samples.SampleScenarioSteps;
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -171,7 +172,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+        Iterable<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
         assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
         assertThat(reportContents, hasItem(containsString("Happy day scenario [b/2]")));
@@ -192,8 +193,8 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
-         assertThat(reportContents, hasItem(containsString("Jack Black")));
-         assertThat(reportContents, hasItem(containsString("Joe Smith")));
+        assertThat(reportContents, hasItem(containsString("Jack Black")));
+        assertThat(reportContents, hasItem(containsString("Joe Smith")));
     }
 
 
@@ -440,7 +441,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+        Iterable<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
         assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
         assertThat(reportContents, hasItem(containsString("Happy day scenario [b/2]")));

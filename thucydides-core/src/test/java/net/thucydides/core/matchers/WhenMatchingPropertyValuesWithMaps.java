@@ -1,6 +1,7 @@
 package net.thucydides.core.matchers;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -19,7 +20,7 @@ public class WhenMatchingPropertyValuesWithMaps {
 
     @Test
     public void should_match_field_by_name() {
-        PropertyMatcher matcher = new PropertyMatcher("firstName", is("Bill"));
+        BeanPropertyMatcher matcher = new BeanPropertyMatcher("firstName", is("Bill"));
         Map<String, String> person = mappedPerson("Bill", "Oddie");
 
         assertThat(matcher.matches(person)).isTrue();
@@ -34,7 +35,7 @@ public class WhenMatchingPropertyValuesWithMaps {
 
     @Test
     public void should_fail_if_match_is_not_successful() {
-        PropertyMatcher matcher = new PropertyMatcher("firstName", is("Bill"));
+        BeanPropertyMatcher matcher = new BeanPropertyMatcher("firstName", is("Bill"));
         Map<String, String> person = mappedPerson("Graeam", "Garden");
 
         assertThat(matcher.matches(person)).isFalse();
@@ -42,21 +43,21 @@ public class WhenMatchingPropertyValuesWithMaps {
 
     @Test
     public void should_obtain_matcher_from_fluent_static_method() {
-        PropertyMatcher matcher = PropertyMatcher.the("firstName", is("Bill"));
+        BeanFieldMatcher matcher = BeanMatchers.the("firstName", is("Bill"));
         Map<String, String> person = mappedPerson("Bill", "Oddie");
         assertThat(matcher.matches(person)).isTrue();
     }
 
     @Test
     public void should_obtain_instanciated_matcher_from_matcher() {
-        Matcher<Object> matcher = PropertyMatcher.the("firstName", is("Bill")).getMatcher();
+        Matcher<Object> matcher = BeanMatchers.the("firstName", is("Bill")).getMatcher();
         Map<String, String> person = mappedPerson("Bill", "Oddie");
         assertThat(matcher.matches(person)).isTrue();
     }
 
     @Test
     public void instanciated_matcher_should_provide_meaningful_description() {
-        Matcher<Object> matcher = PropertyMatcher.the("firstName", is("Bill")).getMatcher();
+        Matcher<Object> matcher = BeanMatchers.the("firstName", is("Bill")).getMatcher();
         assertThat(matcher.toString()).isEqualTo("firstName is 'Bill'");
     }
 
@@ -66,10 +67,10 @@ public class WhenMatchingPropertyValuesWithMaps {
                 mappedPerson("Graeam", "Garden"),
                 mappedPerson("Tim", "Brooke-Taylor"));
 
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+        BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(PropertyMatcher.matches(persons, firstNameIsBill, lastNameIsOddie)).isTrue();
+        assertThat(BeanMatchers.matches(persons, firstNameIsBill, lastNameIsOddie)).isTrue();
     }
 
     @Test
@@ -78,10 +79,10 @@ public class WhenMatchingPropertyValuesWithMaps {
                 mappedPerson("Graeam", "Garden"),
                 mappedPerson("Tim", "Brooke-Taylor"));
 
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+        BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(PropertyMatcher.matches(persons, firstNameIsBill, lastNameIsOddie)).isFalse();
+        assertThat(BeanMatchers.matches(persons, firstNameIsBill, lastNameIsOddie)).isFalse();
     }
 
     @Test
@@ -91,10 +92,10 @@ public class WhenMatchingPropertyValuesWithMaps {
         Map<String,String> tim = mappedPerson("Tim", "Brooke-Taylor");
         List<Map<String,String>> persons = Arrays.asList(bill, graham, tim);
 
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+        BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(PropertyMatcher.filterElements(persons, firstNameIsBill, lastNameIsOddie)).contains(bill);
+        assertThat(BeanMatchers.filterElements(persons, firstNameIsBill, lastNameIsOddie)).contains(bill);
     }
 
     @Test
@@ -105,9 +106,9 @@ public class WhenMatchingPropertyValuesWithMaps {
         Map<String,String> tim = mappedPerson("Tim", "Brooke-Taylor");
         List<Map<String,String>> persons = Arrays.asList(billoddie, billkidd, graham, tim);
 
-        PropertyMatcher firstNameIsJoe = PropertyMatcher.the("firstName", is("Joe"));
+        BeanMatcher firstNameIsJoe = BeanMatchers.the("firstName", is("Joe"));
 
-        assertThat(PropertyMatcher.filterElements(persons, firstNameIsJoe)).isEmpty();
+        assertThat(BeanMatchers.filterElements(persons, firstNameIsJoe)).isEmpty();
     }
 
     @Test
@@ -118,9 +119,9 @@ public class WhenMatchingPropertyValuesWithMaps {
         Map<String,String> tim = mappedPerson("Tim", "Brooke-Taylor");
         List<Map<String,String>> persons = Arrays.asList(billoddie, billkidd, graham, tim);
 
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
 
-        assertThat(PropertyMatcher.filterElements(persons, firstNameIsBill)).contains(billkidd, billoddie);
+        assertThat(BeanMatchers.filterElements(persons, firstNameIsBill)).contains(billkidd, billoddie);
     }
 
     @Rule
@@ -136,45 +137,83 @@ public class WhenMatchingPropertyValuesWithMaps {
                 mappedPerson("Graeam", "Garden"),
                 mappedPerson("Tim", "Brooke-Taylor"));
 
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+        BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        PropertyMatcher.shouldMatch(persons, firstNameIsBill, lastNameIsOddie);
+        BeanMatchers.shouldMatch(persons, firstNameIsBill, lastNameIsOddie);
     }
 
     @Test
     public void should_match_against_a_single_bean() {
         Map<String, String> person = mappedPerson("Bill", "Oddie");
 
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+        BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(PropertyMatcher.matches(person, firstNameIsBill, lastNameIsOddie)).isTrue();
+        assertThat(BeanMatchers.matches(person, firstNameIsBill, lastNameIsOddie)).isTrue();
     }
 
     @Test
     public void should_not_match_against_non_matching_single_bean() {
         Map<String, String> person = mappedPerson("Bill", "Kidd");
 
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+        BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(PropertyMatcher.matches(person, firstNameIsBill, lastNameIsOddie)).isFalse();
+        assertThat(BeanMatchers.matches(person, firstNameIsBill, lastNameIsOddie)).isFalse();
     }
 
     @Test
     public void should_display_detailed_diagnostics_when_a_single_bean_fails_to_match() {
         Map<String, String> person = mappedPerson("Bill", "Kidd");
 
-        expectedException.expect(AssertionError.class);
-        expectedException.expectMessage(allOf(containsString("Expected [firstName is 'Bill', lastName is 'Oddie'] but was"),
-                                              containsString("firstName = 'Bill'"),
-                                              containsString("lastName = 'Kidd")));
+        boolean assertionThrown = false;
+        String exceptionMessage = null;
+        try {
+            BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+            BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+            BeanMatchers.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
+        } catch(AssertionError e) {
+            assertionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
 
-        PropertyMatcher.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
+        MatcherAssert.assertThat(assertionThrown, is(true));
+        MatcherAssert.assertThat(exceptionMessage,
+                allOf(containsString("Expected [firstName is 'Bill', lastName is 'Oddie'] but was"),
+                        containsString("firstName = 'Bill'"),
+                        containsString("lastName = 'Kidd")));
+
     }
+
+
+    @Test
+    public void should_check_the_size_of_a_collection_and_its_contents() {
+        List<Map<String,String>> persons = Arrays.asList(mappedPerson("Bill", "Oddie"),
+                mappedPerson("Bill", "Kidd"),
+                mappedPerson("Graeam", "Garden"),
+                mappedPerson("Tim", "Brooke-Taylor"));
+
+        BeanMatcher containsTwoEntries = BeanMatchers.count(is(2));
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+
+        BeanMatchers.shouldMatch(persons, containsTwoEntries, firstNameIsBill);
+    }
+
+    @Test
+    public void should_check_field_uniqueness() {
+        List<Map<String,String>> persons = Arrays.asList(mappedPerson("Bill", "Oddie"),
+                mappedPerson("Bill", "Kidd"),
+                mappedPerson("Graeam", "Garden"),
+                mappedPerson("Tim", "Brooke-Taylor"));
+
+        BeanMatcher containsTwoEntries = BeanMatchers.count(is(2));
+        BeanMatcher lastNamesAreDifferent = BeanMatchers.each("lastName").isDifferent();
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+
+        BeanMatchers.shouldMatch(persons, containsTwoEntries, firstNameIsBill, lastNamesAreDifferent);
+    }
+
 
 }

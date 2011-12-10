@@ -4,7 +4,7 @@ import org.easyb.listener.ConsoleReporterListener
 import org.easyb.exception.VerificationException
 import static org.easyb.BehaviorRunner.getBehaviors
 
-ignore "Running Thucydides tests in easyb using the Thucydides plugin"
+//ignore "Running Thucydides tests in easyb using the Thucydides plugin"
 scenario "Running Thucydides tests in easyb using the Thucydides plugin", {
     given "a specification with the Thucydides plugin", {
         spec = """

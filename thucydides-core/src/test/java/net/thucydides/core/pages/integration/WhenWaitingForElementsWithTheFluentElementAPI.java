@@ -1,7 +1,6 @@
 package net.thucydides.core.pages.integration;
 
 
-import net.thucydides.core.annotations.WithDriver;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.AfterClass;
@@ -174,16 +173,25 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
 
     @Test
     public void should_display_meaningful_error_messages_in_firefox_if_waiting_for_field_that_does_not_appear() {
-        refresh(page);
+        boolean assertionThrown = false;
+        String exceptionMessage = null;
+        try {
 
-        expectedException.expect(ElementNotVisibleException.class);
-        expectedException.expectMessage(allOf(containsString("Unable to locate element"),
-                containsString("fieldDoesNotExist")));
+            refresh(page);
 
-        page.setWaitForTimeout(200);
-        refresh(page);
+            page.setWaitForTimeout(200);
+            refresh(page);
 
-        page.element(page.fieldDoesNotExist).waitUntilVisible();
+            page.element(page.fieldDoesNotExist).waitUntilVisible();
+
+        } catch(ElementNotVisibleException e) {
+            assertionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+        assertThat(assertionThrown, is(true));
+        assertThat(exceptionMessage,
+                allOf(containsString("Unable to locate element"), containsString("fieldDoesNotExist")));
+
     }
 
 

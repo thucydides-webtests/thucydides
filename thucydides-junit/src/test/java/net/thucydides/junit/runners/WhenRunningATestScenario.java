@@ -378,7 +378,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestStep> steps = testOutcome.getTestSteps();
         TestStep failingStep = (TestStep) steps.get(5);
-        assertThat(failingStep.getException(), is(StepFailureException.class));
+        assertThat(failingStep.getException().getClass().toString(), containsString("StepFailureException"));
     }
 
     @Test
@@ -393,7 +393,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestStep> steps = testOutcome.getTestSteps();
         TestStep failingStep = (TestStep) steps.get(4);
-        assertThat(failingStep.getException(), is(StepFailureException.class));
+        assertThat(failingStep.getException().getClass().toString(), containsString("StepFailureException"));
     }
 
     @Test
@@ -408,7 +408,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestStep> steps = testOutcome.getTestSteps();
         TestStep failingStep = (TestStep) steps.get(4);
-        assertThat(failingStep.getException(), is(StepFailureException.class));
+        assertThat(failingStep.getException().getClass().toString(), containsString("StepFailureException"));
     }
 
     @Test

@@ -2,7 +2,6 @@ package net.thucydides.core.matchers;
 
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
-import org.hamcrest.core.AllOf;
 import org.joda.time.DateTime;
 
 import java.util.Date;

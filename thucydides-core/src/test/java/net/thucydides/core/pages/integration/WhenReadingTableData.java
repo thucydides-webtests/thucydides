@@ -13,7 +13,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import java.util.List;
 import java.util.Map;
 
-import static net.thucydides.core.matchers.PropertyMatcher.the;
+import static net.thucydides.core.matchers.BeanMatchers.the;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;

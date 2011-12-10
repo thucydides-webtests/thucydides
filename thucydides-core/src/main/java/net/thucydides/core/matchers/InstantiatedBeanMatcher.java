@@ -3,11 +3,11 @@ package net.thucydides.core.matchers;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
-public class InstantiatedPropertyMatcher<T> extends TypeSafeMatcher<T> {
+public class InstantiatedBeanMatcher<T> extends TypeSafeMatcher<T> {
 
-    private final PropertyMatcher propertyMatcher;
+    private final BeanPropertyMatcher propertyMatcher;
 
-    public InstantiatedPropertyMatcher(final PropertyMatcher propertyMatcher) {
+    public InstantiatedBeanMatcher(final BeanPropertyMatcher propertyMatcher) {
         this.propertyMatcher = propertyMatcher;
     }
 

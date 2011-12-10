@@ -1,18 +1,18 @@
 package net.thucydides.core.pages.components;
 
 import ch.lambdaj.function.convert.Converter;
-import net.thucydides.core.matchers.PropertyMatcher;
+import net.thucydides.core.matchers.BeanFieldMatcher;
+import net.thucydides.core.matchers.BeanMatcher;
+import net.thucydides.core.matchers.BeanPropertyMatcher;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.index;
 import static ch.lambdaj.Lambda.of;
 
 /**
@@ -50,7 +50,7 @@ public class HtmlTable {
         return tableElement.findElements(By.xpath(".//tr[td]"));
     }
 
-    public List<WebElement> getRowElementsMatching(PropertyMatcher... matchers) {
+    public List<WebElement> getRowElementsMatching(BeanFieldMatcher... matchers) {
 
         List<WebElement> rowElements = getRowElements();
         List<Integer> matchingRowIndexes = findMatchingIndexesFor(rowElements, matchers);
@@ -63,7 +63,7 @@ public class HtmlTable {
     }
 
     private List<Integer> findMatchingIndexesFor(List<WebElement> rowElements,
-                                                 PropertyMatcher[] matchers) {
+                                                 BeanFieldMatcher[] matchers) {
         List<Integer> indexes = new ArrayList<Integer>();
         List<String> headings = getHeadings();
 
@@ -79,8 +79,8 @@ public class HtmlTable {
         return indexes;
     }
 
-    private boolean matches(Map<String, String> rowData, PropertyMatcher[] matchers) {
-        for(PropertyMatcher matcher : matchers) {
+    private boolean matches(Map<String, String> rowData, BeanFieldMatcher[] matchers) {
+        for(BeanFieldMatcher matcher : matchers) {
             if (!matcher.matches(rowData)) {
                 return false;
             }
@@ -125,7 +125,7 @@ public class HtmlTable {
         return new HtmlTable(table).getRows();
     }
 
-    public static List<WebElement> filterRows(final WebElement table, final PropertyMatcher... matchers) {
+    public static List<WebElement> filterRows(final WebElement table, final BeanFieldMatcher... matchers) {
         return new HtmlTable(table).getRowElementsMatching(matchers);
     }
 }

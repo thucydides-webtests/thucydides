@@ -6,15 +6,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static net.thucydides.core.matchers.DateMatchers.isAfter;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertTrue;
 
 public class WhenMatchingPropertyValues {
 
@@ -50,7 +47,7 @@ public class WhenMatchingPropertyValues {
 
     @Test
     public void should_match_field_by_name() {
-        PropertyMatcher matcher = new PropertyMatcher("firstName", is("Bill"));
+        BeanFieldMatcher matcher = new BeanPropertyMatcher("firstName", is("Bill"));
         Person person = new Person("Bill", "Oddie");
 
         assertThat(matcher.matches(person)).isTrue();
@@ -58,15 +55,15 @@ public class WhenMatchingPropertyValues {
 
     @Test
     public void should_match_date_fields() {
-        Person bill = new Person("Bill", "Oddie", new DateTime(1950,1,1,12,1));
+        Person bill = new Person("Bill", "Oddie", new DateTime(1950, 1, 1, 12, 1));
 
-        PropertyMatcher birthdayAfter1900 = new PropertyMatcher("birthday", isAfter(new DateTime(1900, 1, 1, 1, 0)));
+        BeanFieldMatcher birthdayAfter1900 = new BeanPropertyMatcher("birthday", isAfter(new DateTime(1900, 1, 1, 1, 0)));
         assertThat(birthdayAfter1900.matches(bill)).isTrue();
     }
 
     @Test
     public void should_fail_if_match_is_not_successful() {
-        PropertyMatcher matcher = new PropertyMatcher("firstName", is("Bill"));
+        BeanFieldMatcher matcher = new BeanPropertyMatcher("firstName", is("Bill"));
         Person person = new Person("Graeam", "Garden");
 
         assertThat(matcher.matches(person)).isFalse();
@@ -74,145 +71,75 @@ public class WhenMatchingPropertyValues {
 
     @Test
     public void should_display_expected_values_when_printed() {
-        PropertyMatcher matcher = new PropertyMatcher("firstName", is("Bill"));
+        BeanMatcher matcher = new BeanPropertyMatcher("firstName", is("Bill"));
         assertThat(matcher.toString()).isEqualTo("firstName is 'Bill'");
     }
 
     @Test
     public void should_obtain_matcher_from_fluent_static_method() {
-        PropertyMatcher matcher = PropertyMatcher.the("firstName", is("Bill"));
+        BeanFieldMatcher matcher = BeanMatchers.the("firstName", is("Bill"));
         Person person = new Person("Bill", "Oddie");
         assertThat(matcher.matches(person)).isTrue();
     }
 
     @Test
     public void should_obtain_instanciated_matcher_from_matcher() {
-        Matcher<Object> matcher = PropertyMatcher.the("firstName", is("Bill")).getMatcher();
+        Matcher<Object> matcher = BeanMatchers.the("firstName", is("Bill")).getMatcher();
         Person person = new Person("Bill", "Oddie");
         assertThat(matcher.matches(person)).isTrue();
     }
 
     @Test
     public void instanciated_matcher_should_provide_meaningful_description() {
-        Matcher<Object> matcher = PropertyMatcher.the("firstName", is("Bill")).getMatcher();
+        Matcher<Object> matcher = BeanMatchers.the("firstName", is("Bill")).getMatcher();
         assertThat(matcher.toString()).isEqualTo("firstName is 'Bill'");
     }
 
-    @Test
-    public void should_filter_list_of_beans_by_matchers() {
-        List<Person> persons = Arrays.asList(new Person("Bill", "Oddie"),
-                new Person("Graeam", "Garden"),
-                new Person("Tim", "Brooke-Taylor"));
-
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
-
-        assertThat(PropertyMatcher.matches(persons, firstNameIsBill, lastNameIsOddie)).isTrue();
-    }
-
-    @Test
-    public void should_fail_filter_if_no_matching_elements_found() {
-        List<Person> persons = Arrays.asList(new Person("Bill", "Kidd"),
-                new Person("Graeam", "Garden"),
-                new Person("Tim", "Brooke-Taylor"));
-
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
-
-        assertThat(PropertyMatcher.matches(persons, firstNameIsBill, lastNameIsOddie)).isFalse();
-    }
-
-    @Test
-    public void should_return_matching_element() {
-        Person bill = new Person("Bill", "Oddie");
-        Person graham = new Person("Graeam", "Garden");
-        Person tim = new Person("Tim", "Brooke-Taylor");
-        List<Person> persons = Arrays.asList(bill, graham, tim);
-
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
-
-        assertThat(PropertyMatcher.filterElements(persons, firstNameIsBill, lastNameIsOddie)).contains(bill);
-    }
-
-    @Test
-    public void should_return_no_elements_if_no_matching_elements_found() {
-        Person billoddie = new Person("Bill", "Oddie");
-        Person billkidd = new Person("Bill", "Kidd");
-        Person graham = new Person("Graeam", "Garden");
-        Person tim = new Person("Tim", "Brooke-Taylor");
-        List<Person> persons = Arrays.asList(billoddie, billkidd, graham, tim);
-
-        PropertyMatcher firstNameIsJoe = PropertyMatcher.the("firstName", is("Joe"));
-
-        assertThat(PropertyMatcher.filterElements(persons, firstNameIsJoe)).isEmpty();
-    }
-
-    @Test
-    public void should_return_multiple_matching_elements() {
-        Person billoddie = new Person("Bill", "Oddie");
-        Person billkidd = new Person("Bill", "Kidd");
-        Person graham = new Person("Graeam", "Garden");
-        Person tim = new Person("Tim", "Brooke-Taylor");
-        List<Person> persons = Arrays.asList(billoddie, billkidd, graham, tim);
-
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-
-        assertThat(PropertyMatcher.filterElements(persons, firstNameIsBill)).contains(billkidd, billoddie);
-    }
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    @Test
-    public void should_fail_filter_with_descriptive_message_if_no_matching_elements_found() {
-
-        expectedException.expect(AssertionError.class);
-        expectedException.expectMessage(containsString("firstName is 'Bill'"));
-
-        List<Person> persons = Arrays.asList(new Person("Bill", "Kidd"),
-                new Person("Graeam", "Garden"),
-                new Person("Tim", "Brooke-Taylor"));
-
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
-
-        PropertyMatcher.shouldMatch(persons, firstNameIsBill, lastNameIsOddie);
-    }
 
     @Test
     public void should_match_against_a_single_bean() {
         Person person = new Person("Bill", "Oddie");
 
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+        BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(PropertyMatcher.matches(person, firstNameIsBill, lastNameIsOddie)).isTrue();
+        assertThat(BeanMatchers.matches(person, firstNameIsBill, lastNameIsOddie)).isTrue();
     }
 
     @Test
     public void should_not_match_against_non_matching_single_bean() {
         Person person = new Person("Bill", "Kidd");
 
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+        BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(PropertyMatcher.matches(person, firstNameIsBill, lastNameIsOddie)).isFalse();
+        assertThat(BeanMatchers.matches(person, firstNameIsBill, lastNameIsOddie)).isFalse();
     }
 
     @Test
     public void should_display_detailed_diagnostics_when_a_single_bean_fails_to_match() {
         Person person = new Person("Bill", "Kidd");
 
-        expectedException.expect(AssertionError.class);
-        expectedException.expectMessage(allOf(containsString("Expected [firstName is 'Bill', lastName is 'Oddie'] but was"),
-                                              containsString("firstName = 'Bill'"),
-                                              containsString("lastName = 'Kidd")));
-
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
-
-        PropertyMatcher.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
+        boolean assertionThrown = false;
+        String exceptionMessage = null;
+        try {
+            BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+            BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
+    
+            BeanMatchers.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
+        } catch(AssertionError e) {
+            assertionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+        assertThat(assertionThrown, is(true));
+        assertThat(exceptionMessage,
+                        allOf(containsString("Expected [firstName is 'Bill', lastName is 'Oddie'] but was"),
+                                containsString("firstName = 'Bill'"),
+                                containsString("lastName = 'Kidd")));
     }
 
     @Test
@@ -222,9 +149,9 @@ public class WhenMatchingPropertyValues {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(containsString("Could not find property value for field-does-not-exist"));
 
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("field-does-not-exist", is("Oddie"));
+        BeanMatcher lastNameIsOddie = BeanMatchers.the("field-does-not-exist", is("Oddie"));
 
-        PropertyMatcher.shouldMatch(person, lastNameIsOddie);
+        BeanMatchers.shouldMatch(person, lastNameIsOddie);
     }
 
     public class DodgyBean {
@@ -252,10 +179,10 @@ public class WhenMatchingPropertyValues {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(containsString("Could not find property value for firstName"));
 
-        PropertyMatcher firstNameIsBill = PropertyMatcher.the("firstName", is("Bill"));
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
+        BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        PropertyMatcher.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
+        BeanMatchers.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
     }
 
     @Test
@@ -265,9 +192,9 @@ public class WhenMatchingPropertyValues {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(containsString("Could not read bean properties"));
 
-        PropertyMatcher lastNameIsOddie = PropertyMatcher.the("lastName", is("Oddie"));
+        BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        PropertyMatcher.shouldMatch(person, lastNameIsOddie);
+        BeanMatchers.shouldMatch(person, lastNameIsOddie);
     }
 
 
