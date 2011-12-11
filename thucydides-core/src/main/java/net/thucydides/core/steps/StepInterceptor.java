@@ -214,7 +214,8 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     }
 
     private String testNameWithArguments(final Method method,
-                                         final Object[] args, final boolean addMarkup) {
+                                         final Object[] args,
+                                         final boolean addMarkup) {
         StringBuilder testName = new StringBuilder(method.getName());
         testName.append(": ");
         if (addMarkup) {
@@ -229,21 +230,13 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             if (!isFirst) {
                 testName.append(", ");
             }
-            testName.append(readableFormOf(arg));
+            testName.append(StepArgumentWriter.readableFormOf(arg));
             isFirst = false;
         }
         if (addMarkup) {
             testName.append("</span>");
         }
         return testName.toString();
-    }
-
-    private String readableFormOf(Object arg) {
-        if (arg.getClass().isArray()) {
-            return ArrayUtils.toString(arg);
-        } else {
-            return arg.toString();
-        }
     }
 
     private void notifyTestSkippedFor(final Method method, final Object[] args)
