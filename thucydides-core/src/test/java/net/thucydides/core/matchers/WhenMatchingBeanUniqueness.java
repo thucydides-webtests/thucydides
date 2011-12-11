@@ -1,20 +1,11 @@
 package net.thucydides.core.matchers;
 
-import org.hamcrest.Matcher;
-import org.joda.time.DateTime;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static net.thucydides.core.matchers.DateMatchers.isAfter;
 import static org.fest.assertions.Assertions.assertThat;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
 
 public class WhenMatchingBeanUniqueness {
 

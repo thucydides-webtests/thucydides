@@ -25,11 +25,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 
 import java.lang.reflect.InvocationTargetException;
 
-import static net.thucydides.core.webdriver.SupportedWebDriver.CHROME;
-import static net.thucydides.core.webdriver.SupportedWebDriver.FIREFOX;
-import static net.thucydides.core.webdriver.SupportedWebDriver.IEXPLORER;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;

@@ -9,7 +9,7 @@ import java.util.List;
 import static ch.lambdaj.Lambda.convert;
 import static java.util.Collections.min;
 
-public class MinFieldValueMatcher implements BeanCollectionMatcher {
+class MinFieldValueMatcher implements BeanCollectionMatcher {
     private final String fieldName;
     private final Matcher<? extends Comparable> valueMatcher;
 

@@ -1,5 +1,7 @@
 package net.thucydides.easyb
 
+import net.thucydides.core.steps.ExecutedStepDescription
+import net.thucydides.core.steps.StepEventBus
 import net.thucydides.core.steps.StepFailure
 import org.easyb.BehaviorStep
 import org.easyb.domain.Behavior
@@ -11,16 +13,12 @@ import static net.thucydides.core.steps.ExecutedStepDescription.withTitle
 import static org.easyb.result.Result.FAILED
 import static org.easyb.result.Result.IGNORED
 import static org.easyb.result.Result.PENDING
+import static org.easyb.result.Result.SUCCEEDED
 import static org.easyb.util.BehaviorStepType.AND
 import static org.easyb.util.BehaviorStepType.GIVEN
 import static org.easyb.util.BehaviorStepType.SCENARIO
-import static org.easyb.util.BehaviorStepType.STORY
 import static org.easyb.util.BehaviorStepType.THEN
 import static org.easyb.util.BehaviorStepType.WHEN
-import net.thucydides.core.steps.StepEventBus
-import net.thucydides.core.steps.ExecutedStepDescription
-import org.easyb.util.BehaviorStepType
-import static org.easyb.result.Result.SUCCEEDED
 
 class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
 

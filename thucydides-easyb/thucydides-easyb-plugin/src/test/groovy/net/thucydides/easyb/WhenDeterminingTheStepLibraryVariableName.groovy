@@ -1,10 +1,10 @@
 package net.thucydides.easyb;
 
 
-import org.junit.Test
-import net.thucydides.easyb.samples.SampleSteps
-import net.thucydides.easyb.samples.MoreSampleSteps
 import net.thucydides.easyb.samples.BigSampleLibrary
+import net.thucydides.easyb.samples.MoreSampleSteps
+import net.thucydides.easyb.samples.SampleSteps
+import org.junit.Test
 
 public class WhenDeterminingTheStepLibraryVariableName {
 

@@ -6,7 +6,6 @@ import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestAnnotations;
-import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
@@ -14,9 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static net.thucydides.core.steps.ErrorConvertor.forError;
 
 /**
  * Listen to step results and publish notification messages.
@@ -176,20 +176,16 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             return appropriateReturnObject(obj, method);
         } catch (WebDriverException webdriverException) {
             error = webdriverException;
-            AssertionError webdriverAssertionError = new WebdriverAssertionError(messageFrom(error), error);
+            AssertionError webdriverAssertionError = forError(error).convertToAssertion();
             notifyOfStepFailure(method, args, webdriverAssertionError);
         } catch (Throwable generalException) {
             error = generalException;
-            AssertionError assertionError = new WebdriverAssertionError(messageFrom(error), error);
+            AssertionError assertionError = forError(error).convertToAssertion();
             notifyOfStepFailure(method, args, assertionError);
         }
 
         LOGGER.info("Test step done: " + getTestNameFrom(method, args, false));
         return result;
-    }
-
-    private String messageFrom(final Throwable error) {
-        return (error.getCause() != null) ? error.getCause().getMessage() : error.getMessage();
     }
 
     private Object invokeMethod(final Object obj, final Method method,

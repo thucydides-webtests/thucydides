@@ -3,7 +3,7 @@ package net.thucydides.core.matchers;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
-public class InstantiatedBeanMatcher<T> extends TypeSafeMatcher<T> {
+class InstantiatedBeanMatcher<T> extends TypeSafeMatcher<T> {
 
     private final BeanPropertyMatcher propertyMatcher;
 

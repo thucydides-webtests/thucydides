@@ -1,16 +1,10 @@
 package net.thucydides.core.matchers;
 
-import com.google.common.base.Preconditions;
 import org.hamcrest.Matcher;
 
 import java.util.Collection;
 
-import static ch.lambdaj.Lambda.count;
-import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.on;
-import static org.hamcrest.Matchers.allOf;
-
-public class BeanCountMatcher implements BeanCollectionMatcher {
+class BeanCountMatcher implements BeanCollectionMatcher {
     
     private final Matcher<Integer> countMatcher;
 

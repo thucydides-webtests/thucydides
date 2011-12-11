@@ -1,9 +1,7 @@
 package net.thucydides.core.pages.components;
 
 import ch.lambdaj.function.convert.Converter;
-import net.thucydides.core.matchers.BeanFieldMatcher;
 import net.thucydides.core.matchers.BeanMatcher;
-import net.thucydides.core.matchers.BeanPropertyMatcher;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -13,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.of;
 
 /**
  * Class designed to make it easier reading from and reasoning about data in HTML tables.

@@ -1,7 +1,6 @@
 package net.thucydides.core.reports.html;
 
 import com.google.inject.Inject;
-import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
 
 import java.text.MessageFormat;

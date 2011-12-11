@@ -1,9 +1,9 @@
 package net.thucydides.easyb
 
 import net.thucydides.core.steps.ScenarioSteps
+import net.thucydides.core.webdriver.SupportedWebDriver
 import net.thucydides.core.webdriver.WebdriverProxyFactory
 import org.openqa.selenium.WebDriver
-import net.thucydides.core.webdriver.SupportedWebDriver
 
 public class PluginConfiguration {
 

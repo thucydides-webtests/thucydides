@@ -3,7 +3,13 @@ package net.thucydides.easyb;
 
 import net.thucydides.core.pages.Pages
 import net.thucydides.core.steps.StepListener
+import net.thucydides.core.util.SystemEnvironmentVariables
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration
+import net.thucydides.core.webdriver.ThucydidesWebdriverManager
+import net.thucydides.core.webdriver.UnsupportedDriverException
+import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
+import net.thucydides.core.webdriver.WebdriverManager
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -13,17 +19,11 @@ import org.mockito.Mockito
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.firefox.FirefoxDriver
 import static org.hamcrest.Matchers.containsString
-import static org.mockito.Mockito.mock
-import net.thucydides.core.webdriver.WebDriverFacade
-import net.thucydides.core.webdriver.WebdriverManager
-import net.thucydides.core.webdriver.ThucydidesWebdriverManager
-import net.thucydides.core.util.SystemEnvironmentVariables
-import net.thucydides.core.webdriver.SystemPropertiesConfiguration
-import static org.mockito.Mockito.verify
-import static org.mockito.Mockito.when
 import static org.mockito.Matchers.anyString
 import static org.mockito.Mockito.atLeast
-import net.thucydides.core.webdriver.UnsupportedDriverException
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.verify
+import static org.mockito.Mockito.when
 
 public class WhenUsingTheThucydidesEasybPlugin {
 

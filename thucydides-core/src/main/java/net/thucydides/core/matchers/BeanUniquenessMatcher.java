@@ -1,7 +1,6 @@
 package net.thucydides.core.matchers;
 
 import ch.lambdaj.function.convert.Converter;
-import org.hamcrest.Matcher;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -10,7 +9,7 @@ import java.util.Set;
 
 import static ch.lambdaj.Lambda.convert;
 
-public class BeanUniquenessMatcher implements BeanCollectionMatcher {
+class BeanUniquenessMatcher implements BeanCollectionMatcher {
 
     private final String fieldName;
     

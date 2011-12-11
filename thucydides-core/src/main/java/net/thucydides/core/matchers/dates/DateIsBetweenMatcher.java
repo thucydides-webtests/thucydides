@@ -1,4 +1,4 @@
-package net.thucydides.core.matchers;
+package net.thucydides.core.matchers.dates;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
@@ -6,10 +6,8 @@ import org.joda.time.DateTime;
 
 import java.util.Date;
 
-import static net.thucydides.core.matchers.DateMatcherFormatter.formatted;
 
-
-public class DateIsBetweenMatcher extends TypeSafeMatcher<Date> {
+class DateIsBetweenMatcher extends TypeSafeMatcher<Date> {
 
     private final DateTime startDate;
     private final DateTime endDate;
@@ -27,8 +25,8 @@ public class DateIsBetweenMatcher extends TypeSafeMatcher<Date> {
 
     public void describeTo(Description description) {
         description.appendText("a date that is between ");
-        description.appendText(formatted(startDate));
+        description.appendText(DateMatcherFormatter.formatted(startDate));
         description.appendText(" and ");
-        description.appendText(formatted(endDate));
+        description.appendText(DateMatcherFormatter.formatted(endDate));
     }
 }

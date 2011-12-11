@@ -1,11 +1,12 @@
 package net.thucydides.easyb.samples;
 
-import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.pages.Pages;
-import net.thucydides.core.pages.WrongPageError;
-import net.thucydides.core.steps.ScenarioSteps;
+
+import net.thucydides.core.annotations.Step
+import net.thucydides.core.annotations.StepGroup
+import net.thucydides.core.annotations.Steps
+import net.thucydides.core.pages.Pages
+import net.thucydides.core.pages.WrongPageError
+import net.thucydides.core.steps.ScenarioSteps
 
 public class NestedScenarioSteps extends ScenarioSteps {
 

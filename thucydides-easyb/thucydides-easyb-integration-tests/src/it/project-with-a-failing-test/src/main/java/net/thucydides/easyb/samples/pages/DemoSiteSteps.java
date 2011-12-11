@@ -4,7 +4,6 @@ import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
-import net.thucydides.easyb.samples.pages.NestedSteps;
 
 public class DemoSiteSteps extends ScenarioSteps {
 

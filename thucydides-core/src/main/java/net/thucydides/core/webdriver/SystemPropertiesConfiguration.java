@@ -6,7 +6,6 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
 
 import java.io.File;
-import java.util.Locale;
 
 import static net.thucydides.core.ThucydidesSystemProperty.BASE_URL;
 

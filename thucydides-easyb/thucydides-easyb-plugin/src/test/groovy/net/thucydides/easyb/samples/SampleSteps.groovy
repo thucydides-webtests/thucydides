@@ -1,11 +1,11 @@
 package net.thucydides.easyb.samples
 
+import net.thucydides.core.annotations.Pending
 import net.thucydides.core.annotations.Step
+import net.thucydides.core.annotations.Steps
 import net.thucydides.core.pages.Pages
 import net.thucydides.core.steps.ScenarioSteps
 import org.junit.Ignore
-import net.thucydides.core.annotations.Pending
-import net.thucydides.core.annotations.Steps
 
 class SampleSteps extends ScenarioSteps {
 

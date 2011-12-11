@@ -6,8 +6,6 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 /**
  * Manage WebDriver instances.
  * It instantiates browser drivers, based on the test configuration, and manages them for the

@@ -1,8 +1,6 @@
-package net.thucydides.core.matchers;
+package net.thucydides.core.matchers.dates;
 
 import org.joda.time.DateTime;
-
-import java.util.Date;
 
 class DateMatcherFormatter {
 

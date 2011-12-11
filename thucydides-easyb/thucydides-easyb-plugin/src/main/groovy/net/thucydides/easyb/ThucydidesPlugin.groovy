@@ -2,6 +2,7 @@ package net.thucydides.easyb;
 
 
 import com.google.common.collect.ImmutableList
+import net.thucydides.core.guice.Injectors
 import net.thucydides.core.model.Story
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.pages.Pages
@@ -10,8 +11,10 @@ import net.thucydides.core.reports.ReportService
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter
 import net.thucydides.core.steps.BaseStepListener
+import net.thucydides.core.steps.StepEventBus
 import net.thucydides.core.steps.StepFactory
 import net.thucydides.core.steps.StepListener
+import net.thucydides.core.steps.StepPublisher
 import net.thucydides.core.webdriver.Configuration
 import net.thucydides.core.webdriver.WebdriverManager
 import org.easyb.listener.ListenerFactory
@@ -20,9 +23,6 @@ import org.openqa.selenium.WebDriver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import static net.thucydides.easyb.StepName.nameOf
-import net.thucydides.core.steps.StepEventBus
-import net.thucydides.core.steps.StepPublisher
-import net.thucydides.core.guice.Injectors
 
 public class ThucydidesPlugin extends BasePlugin {
 

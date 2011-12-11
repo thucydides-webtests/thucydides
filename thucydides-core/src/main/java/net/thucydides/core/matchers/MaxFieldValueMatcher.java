@@ -9,7 +9,7 @@ import java.util.List;
 import static ch.lambdaj.Lambda.convert;
 import static java.util.Collections.max;
 
-public class MaxFieldValueMatcher implements BeanCollectionMatcher {
+class MaxFieldValueMatcher implements BeanCollectionMatcher {
     private final String fieldName;
     private final Matcher<? extends Comparable> valueMatcher;
 

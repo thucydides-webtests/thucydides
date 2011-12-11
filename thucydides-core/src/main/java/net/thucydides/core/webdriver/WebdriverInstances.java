@@ -4,9 +4,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * One or more WebDriver drivers that are being used in a test.

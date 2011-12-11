@@ -1,7 +1,7 @@
 package net.thucydides.easyb.samples
 
+import net.thucydides.easyb.samples.pages.DemoSiteSteps
 import net.thucydides.easyb.samples.pages.IndexPage
-import net.thucydides.easyb.samples.pages.DemoSiteSteps;
 
 using "thucydides"
 

@@ -15,10 +15,12 @@ import java.util.zip.ZipFile;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.doThrow;
@@ -41,28 +43,28 @@ public class WhenReadingResourcesFromTheClasspath {
     @Test
     public void should_exclude_trailing_pom_files() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
-        Collection<String> resources = ResourceList.forResources(pattern).list();
+        Collection resources = ResourceList.forResources(pattern).list();
         assertThat(resources, not(hasItem(endsWith("pom.xml"))));
     }
     @Test
     public void should_return_a_list_of_resources_in_a_given_package() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
         Collection<String> resources = ResourceList.forResources(pattern).list();
-        assertThat(resources.size(), greaterThan(0));
+        assertThat(resources, hasSize(greaterThan(0)));
     }
     
     @Test
     public void should_return_a_list_of_resources_in_a_given_package_containing_matching_resources() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
-        Collection<String> resources = ResourceList.forResources(pattern).list();
-        assertThat(resources.size(), greaterThan(0));
+        Collection resources = ResourceList.forResources(pattern).list();
+        assertThat(resources, is(not(empty())));
         assertThat(resources, hasItems(containsString("resourcelist"),endsWith("sample.css"),endsWith("sample.xsl")));
     }
 
     @Test
     public void should_return_a_list_of_resources_in_a_given_package_even_from_a_dependency() {
         Pattern pattern = Pattern.compile(".*/findElement.js");
-        Collection<String> resources = ResourceList.forResources(pattern).list();
+        Collection resources = ResourceList.forResources(pattern).list();
         assertThat(resources.isEmpty(), is(false));
     }
 

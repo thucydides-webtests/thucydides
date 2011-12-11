@@ -2,7 +2,7 @@ package net.thucydides.core.matchers;
 
 import org.hamcrest.Matcher;
 
-public class BeanPropertyMatcher implements BeanFieldMatcher {
+class BeanPropertyMatcher implements BeanFieldMatcher {
     private final String fieldName;
     private final Matcher<? extends Object> matcher;
 

@@ -1,9 +1,8 @@
-package net.thucydides.core.matchers;
+package net.thucydides.core.matchers.dates;
 
 
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -11,15 +10,9 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 
-import static net.thucydides.core.matchers.DateMatchers.isAfter;
-import static net.thucydides.core.matchers.DateMatchers.isBefore;
-import static net.thucydides.core.matchers.DateMatchers.isBetween;
-import static net.thucydides.core.matchers.DateMatchers.isSameAs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 @RunWith(Parameterized.class)
 public class WhenReportingOnDateMatching {

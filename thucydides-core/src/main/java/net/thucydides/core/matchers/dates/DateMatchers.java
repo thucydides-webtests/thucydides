@@ -1,4 +1,4 @@
-package net.thucydides.core.matchers;
+package net.thucydides.core.matchers.dates;
 
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;

@@ -2,8 +2,6 @@ package net.thucydides.core.reports.html.screenshots;
 
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.model.Screenshot;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;

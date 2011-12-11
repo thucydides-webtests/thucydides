@@ -1,13 +1,13 @@
-package net.thucydides.core.matchers;
+package net.thucydides.core.matchers.dates;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.joda.time.DateTime;
 
-import static net.thucydides.core.matchers.DateMatcherFormatter.formatted;
+import static net.thucydides.core.matchers.dates.DateMatcherFormatter.formatted;
 
 
-public class DateTimeIsBeforeMatcher extends TypeSafeMatcher<DateTime> {
+class DateTimeIsBeforeMatcher extends TypeSafeMatcher<DateTime> {
 
     private final DateTime expectedDate;
 

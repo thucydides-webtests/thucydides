@@ -6,7 +6,6 @@ import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,6 +20,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -157,7 +157,7 @@ public class WhenInstanciatingANewFirefoxDriver {
 
         firefoxProfileEnhancer.addFirebugsTo(profile);
 
-        assertThat(profile.extensions, hasItem(allOf(containsString("firebug"), endsWith(".xpi"))));
+        assertThat((Collection)profile.extensions, hasItem(allOf(containsString("firebug"), endsWith(".xpi"))));
     }
 
     @Test
@@ -168,7 +168,7 @@ public class WhenInstanciatingANewFirefoxDriver {
 
         firefoxProfileEnhancer.addFirebugsTo(profile);
 
-        assertThat(profile.extensions, hasItem(allOf(containsString("firefinder"), endsWith(".xpi"))));
+        assertThat((Collection)profile.extensions, hasItem(allOf(containsString("firefinder"), endsWith(".xpi"))));
     }
 
     @Test

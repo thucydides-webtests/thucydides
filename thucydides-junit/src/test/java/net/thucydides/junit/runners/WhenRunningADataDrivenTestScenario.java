@@ -22,7 +22,6 @@ import net.thucydides.samples.SampleParallelDataDrivenScenario;
 import net.thucydides.samples.SamplePassingScenarioWithTestSpecificData;
 import net.thucydides.samples.SampleScenarioSteps;
 import org.apache.commons.io.FileUtils;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -137,7 +136,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
+        List reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
         assertThat(reportFilenames, allOf(hasItem("sample_data_driven_scenario_happy_day_scenario_a_1.xml"),
                 hasItem("sample_data_driven_scenario_happy_day_scenario_b_2.xml"),
                 hasItem("sample_data_driven_scenario_happy_day_scenario_c_3.xml")));
@@ -155,7 +154,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
+        List reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
         assertThat(reportFilenames, allOf(hasItem("sample_c_s_v_data_driven_scenario_data_driven_test_Jack_Black.xml"),
                 hasItem("sample_c_s_v_data_driven_scenario_data_driven_test_Joe_Smith.xml")));
 
@@ -172,7 +171,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        Iterable<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+        List reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
         assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
         assertThat(reportContents, hasItem(containsString("Happy day scenario [b/2]")));
@@ -191,7 +190,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+        List reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
         assertThat(reportContents, hasItem(containsString("Jack Black")));
         assertThat(reportContents, hasItem(containsString("Joe Smith")));
@@ -210,7 +209,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+        List reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
         assertThat(reportContents.size(), is(1));
     }
 
@@ -441,7 +440,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        Iterable<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+        List reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
         assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
         assertThat(reportContents, hasItem(containsString("Happy day scenario [b/2]")));
@@ -529,8 +528,8 @@ public class WhenRunningADataDrivenTestScenario {
 
     }
 
-    private List<String> filenamesOf(File[] files) {
-        List<String> filenames = new ArrayList<String>();
+    private List filenamesOf(File[] files) {
+        List filenames = new ArrayList();
         for(File file : files) {
             filenames.add(file.getName());
         }
@@ -538,8 +537,8 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
 
-    private List<String> contentsOf(File[] files) throws IOException {
-        List<String> contents = new ArrayList<String>();
+    private List contentsOf(File[] files) throws IOException {
+        List contents = new ArrayList();
         for(File file : files) {
             contents.add(stringContentsOf(file));
         }
@@ -564,7 +563,7 @@ public class WhenRunningADataDrivenTestScenario {
         runner.run(new RunNotifier());
 
         File[] reports = outputDirectory.listFiles(new HTMLFileFilter());
-        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new HTMLFileFilter()));
+        List reportFilenames = filenamesOf(outputDirectory.listFiles(new HTMLFileFilter()));
         assertThat(reportFilenames, allOf(hasItem("sample_data_driven_scenario_happy_day_scenario_a_1.html"),
                 hasItem("sample_data_driven_scenario_happy_day_scenario_b_2.html"),
                 hasItem("sample_data_driven_scenario_happy_day_scenario_c_3.html")));

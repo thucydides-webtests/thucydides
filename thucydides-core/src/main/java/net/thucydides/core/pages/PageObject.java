@@ -285,7 +285,7 @@ public abstract class PageObject {
     public void shouldContainAllText(final String... textValues) {
         if (!containsAllText(textValues)) {
             String errorMessage = String.format(
-                    "One of the text elements in '%s' was not found in the page", textValues);
+                    "One of the text elements in '%s' was not found in the page", (Object[])textValues);
             throw new NoSuchElementException(errorMessage);
         }
     }

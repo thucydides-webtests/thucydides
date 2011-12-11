@@ -1,15 +1,13 @@
-package net.thucydides.core.matchers;
+package net.thucydides.core.matchers.dates;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.joda.time.DateTime;
 
-import java.util.Date;
-
-import static net.thucydides.core.matchers.DateMatcherFormatter.formatted;
+import static net.thucydides.core.matchers.dates.DateMatcherFormatter.formatted;
 
 
-public class DateTimeIsBetweenMatcher extends TypeSafeMatcher<DateTime> {
+class DateTimeIsBetweenMatcher extends TypeSafeMatcher<DateTime> {
 
     private final DateTime startDate;
     private final DateTime endDate;

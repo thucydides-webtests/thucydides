@@ -1,16 +1,13 @@
 package net.thucydides.core.webdriver;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.guice.Injectors;
 import org.openqa.selenium.WebDriver;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static java.util.Collections.synchronizedCollection;
 import static java.util.Collections.synchronizedList;
 
 /**
