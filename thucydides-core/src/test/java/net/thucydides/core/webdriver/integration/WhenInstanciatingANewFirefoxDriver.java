@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.filter;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
@@ -157,20 +158,25 @@ public class WhenInstanciatingANewFirefoxDriver {
 
         List<String> registeredExtensions = profile.extensions;
 
-        assertThat(registeredExtensions, hasItem(isExtention("firebug")));
+        assertThat(registeredExtensions, containsExtention("firebug"));
     }
 
-    private TypeSafeMatcher<String> isExtention(final String expectedExtensionName) {
-        return new TypeSafeMatcher<String>() {
+    private TypeSafeMatcher<List<String>> containsExtention(final String extensionName) {
+        return new TypeSafeMatcher<List<String>>() {
 
             @Override
-            protected boolean matchesSafely(String extensionName) {
-                return extensionName.contains(expectedExtensionName) && extensionName.endsWith(".xpi");
+            protected boolean matchesSafely(List<String> extensions) {
+                for(String extension : extensions) {
+                    if (extension.contains(extensionName) && (extension.endsWith(".xpi"))) {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             @Override
             public void describeTo(Description description) {
-                description.appendText(" a firefox plugin called " + expectedExtensionName);
+                description.appendText(" a firefox plugin called " + extensionName);
             }
         };
     }
@@ -184,7 +190,7 @@ public class WhenInstanciatingANewFirefoxDriver {
         firefoxProfileEnhancer.addFirebugsTo(profile);
 
         List<String> registeredExtensions = profile.extensions;
-        assertThat(registeredExtensions, hasItem(isExtention("firefinder")));
+        assertThat(registeredExtensions, containsExtention("firefinder"));
     }
 
     @Test
