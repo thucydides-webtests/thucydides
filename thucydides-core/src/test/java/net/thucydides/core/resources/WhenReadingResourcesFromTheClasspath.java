@@ -1,7 +1,5 @@
 package net.thucydides.core.resources;
 
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,13 +15,10 @@ import java.util.zip.ZipFile;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.doThrow;
@@ -47,49 +42,26 @@ public class WhenReadingResourcesFromTheClasspath {
     public void should_exclude_trailing_pom_files() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
         Collection<String> resources = ResourceList.forResources(pattern).list();
-        assertThat(resources, not(containsFileCalled("pom.xml")));
+        assertThat(resources, not(hasItem(endsWith("pom.xml"))));
     }
-
-    private TypeSafeMatcher<Collection<String>> containsFileCalled(final String expectedFilename) {
-        return new TypeSafeMatcher<Collection<String>>() {
-
-            @Override
-            protected boolean matchesSafely(Collection<String> filenames) {
-                boolean matchingFileFound = false;
-                for(String file : filenames) {
-                    if (file.endsWith(expectedFilename)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText(" a resource file called " + expectedFilename);
-            }
-        };
-    }
-
     @Test
     public void should_return_a_list_of_resources_in_a_given_package() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
         Collection<String> resources = ResourceList.forResources(pattern).list();
-        assertThat(resources, hasSize(greaterThan(0)));
+        assertThat(resources.size() ,greaterThan(0));
     }
     
     @Test
     public void should_return_a_list_of_resources_in_a_given_package_containing_matching_resources() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
         Collection<String> resources = ResourceList.forResources(pattern).list();
-        assertThat(resources, containsFileCalled("sample.css"));
-        assertThat(resources, containsFileCalled("sample.xsl"));
+        assertThat(resources, hasItems(containsString("resourcelist"),endsWith("sample.css"),endsWith("sample.xsl")));
     }
 
     @Test
     public void should_return_a_list_of_resources_in_a_given_package_even_from_a_dependency() {
         Pattern pattern = Pattern.compile(".*/findElement.js");
-        Collection resources = ResourceList.forResources(pattern).list();
+        Collection<String> resources = ResourceList.forResources(pattern).list();
         assertThat(resources.isEmpty(), is(false));
     }
 
@@ -142,10 +114,8 @@ public class WhenReadingResourcesFromTheClasspath {
     public void should_transform_unix_source_path_into_relative_target_path() {
 
         String sourceResource = "/Projects/thucydides/thucydides-report-resources/target/classes/report-resources/css/core.css";
-        String resourceDirectory = "report-resources";
 
         String expectedTargetSubDirectory = "css";
-        String expectedTargetFilename = "core.css";
         FileResources fileResource = FileResources.from("report-resources");
 
         assertThat(fileResource.findTargetSubdirectoryFrom(sourceResource), is(expectedTargetSubDirectory));

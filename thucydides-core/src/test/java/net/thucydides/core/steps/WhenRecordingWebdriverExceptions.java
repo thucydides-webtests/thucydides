@@ -7,9 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 
 public class WhenRecordingWebdriverExceptions {
@@ -20,9 +19,7 @@ public class WhenRecordingWebdriverExceptions {
             assertThat("a", is("b"));
         } catch(AssertionError error) {
             AssertionError convertedError = ErrorConvertor.forError(error).convertToAssertion();
-            assertThat(convertedError.getMessage(), allOf(
-                    containsString("Expected: is \"b\""),
-                    containsString("but: was \"a\"")));
+            assertThat(convertedError.getMessage(), containsString("Expected: is \"b\""));
 
         }
     }
@@ -34,9 +31,7 @@ public class WhenRecordingWebdriverExceptions {
         } catch(AssertionError assertionError) {
             WebDriverException exception = new WebDriverException(assertionError);
             AssertionError convertedError = ErrorConvertor.forError(exception).convertToAssertion();
-            assertThat(convertedError.getMessage(), allOf(
-                    containsString("Expected: is \"b\""),
-                    containsString("but: was \"a\"")));
+            assertThat(convertedError.getMessage(), containsString("Expected: is \"b\""));
 
         }
     }
@@ -46,14 +41,13 @@ public class WhenRecordingWebdriverExceptions {
     public void should_retrieve_error_message_from_hamcrest_assertion_error_for_more_complex_errors() {
         try {
             List<String> colors = Arrays.asList("red","blue","green");
-            assertThat(colors, containsInAnyOrder("red","green","orange"));
+            assertThat(colors, hasItem("yellow"));
         } catch(AssertionError assertionError) {
             WebDriverException exception = new WebDriverException(assertionError);
             AssertionError convertedError = ErrorConvertor.forError(exception).convertToAssertion();
-            assertThat(convertedError.getMessage(), allOf(
-                    containsString("Expected: iterable over [\"red\", \"green\", \"orange\"] in any order"),
-                    containsString("but: Not matched: \"blue\"")));
-
+            assertThat(convertedError.getMessage(), containsString("[red, blue, green]"));
         }
     }
+
+
 }

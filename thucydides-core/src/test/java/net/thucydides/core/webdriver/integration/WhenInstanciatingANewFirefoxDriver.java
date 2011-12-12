@@ -165,7 +165,7 @@ public class WhenInstanciatingANewFirefoxDriver {
         return new TypeSafeMatcher<List<String>>() {
 
             @Override
-            protected boolean matchesSafely(List<String> extensions) {
+            public boolean matchesSafely(List<String> extensions) {
                 for(String extension : extensions) {
                     if (extension.contains(extensionName) && (extension.endsWith(".xpi"))) {
                         return true;

@@ -136,10 +136,10 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        List reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
-        assertThat(reportFilenames, allOf(hasItem("sample_data_driven_scenario_happy_day_scenario_a_1.xml"),
-                hasItem("sample_data_driven_scenario_happy_day_scenario_b_2.xml"),
-                hasItem("sample_data_driven_scenario_happy_day_scenario_c_3.xml")));
+        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
+        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario_a_1.xml"));
+        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario_b_2.xml"));
+        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario_c_3.xml"));
 
     }
 
@@ -154,9 +154,9 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        List reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
-        assertThat(reportFilenames, allOf(hasItem("sample_c_s_v_data_driven_scenario_data_driven_test_Jack_Black.xml"),
-                hasItem("sample_c_s_v_data_driven_scenario_data_driven_test_Joe_Smith.xml")));
+        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
+        assertThat(reportFilenames, hasItem("sample_c_s_v_data_driven_scenario_data_driven_test_Jack_Black.xml"));
+        assertThat(reportFilenames, hasItem("sample_c_s_v_data_driven_scenario_data_driven_test_Joe_Smith.xml"));
 
     }
 
@@ -171,12 +171,11 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        List reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
         assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
         assertThat(reportContents, hasItem(containsString("Happy day scenario [b/2]")));
         assertThat(reportContents, hasItem(containsString("Happy day scenario [c/3]")));
-
     }
 
     @Test
@@ -190,7 +189,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        List reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
         assertThat(reportContents, hasItem(containsString("Jack Black")));
         assertThat(reportContents, hasItem(containsString("Joe Smith")));
@@ -440,7 +439,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        List reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
         assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
         assertThat(reportContents, hasItem(containsString("Happy day scenario [b/2]")));
@@ -524,7 +523,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         ThucydidesParameterizedRunner runner
                    = getTestRunnerUsing(ParallelDataDrivenScenarioWithInvalidThreadCountSample.class);
-        int threadCount = runner.getThreadCountFor(ParallelDataDrivenScenarioWithInvalidThreadCountSample.class);
+        runner.getThreadCountFor(ParallelDataDrivenScenarioWithInvalidThreadCountSample.class);
 
     }
 
@@ -562,8 +561,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         runner.run(new RunNotifier());
 
-        File[] reports = outputDirectory.listFiles(new HTMLFileFilter());
-        List reportFilenames = filenamesOf(outputDirectory.listFiles(new HTMLFileFilter()));
+        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new HTMLFileFilter()));
         assertThat(reportFilenames, allOf(hasItem("sample_data_driven_scenario_happy_day_scenario_a_1.html"),
                 hasItem("sample_data_driven_scenario_happy_day_scenario_b_2.html"),
                 hasItem("sample_data_driven_scenario_happy_day_scenario_c_3.html")));
@@ -578,8 +576,6 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
-
-        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
 
         runner.run(new RunNotifier());
 
