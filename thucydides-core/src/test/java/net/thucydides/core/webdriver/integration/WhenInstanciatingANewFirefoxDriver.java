@@ -155,7 +155,7 @@ public class WhenInstanciatingANewFirefoxDriver {
 
         firefoxProfileEnhancer.addFirebugsTo(profile);
 
-        List registeredExtensions = profile.extensions;
+        List<String> registeredExtensions = profile.extensions;
 
         assertThat(registeredExtensions, hasItem(isExtention("firebug")));
     }
@@ -183,7 +183,7 @@ public class WhenInstanciatingANewFirefoxDriver {
 
         firefoxProfileEnhancer.addFirebugsTo(profile);
 
-        List registeredExtensions = profile.extensions;
+        List<String> registeredExtensions = profile.extensions;
         assertThat(registeredExtensions, hasItem(isExtention("firefinder")));
     }
 
