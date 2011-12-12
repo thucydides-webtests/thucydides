@@ -25,6 +25,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasItem;
@@ -157,7 +158,9 @@ public class WhenInstanciatingANewFirefoxDriver {
 
         firefoxProfileEnhancer.addFirebugsTo(profile);
 
-        assertThat((Collection)profile.extensions, hasItem(allOf(containsString("firebug"), endsWith(".xpi"))));
+        List registeredExtensions = profile.extensions;
+
+        assertThat(registeredExtensions, hasItem(allOf(containsString("firebug"), endsWith(".xpi"))));
     }
 
     @Test
@@ -168,7 +171,8 @@ public class WhenInstanciatingANewFirefoxDriver {
 
         firefoxProfileEnhancer.addFirebugsTo(profile);
 
-        assertThat((Collection)profile.extensions, hasItem(allOf(containsString("firefinder"), endsWith(".xpi"))));
+        List registeredExtensions = profile.extensions;
+        assertThat(registeredExtensions, hasItem(allOf(containsString("firefinder"), endsWith(".xpi"))));
     }
 
     @Test
