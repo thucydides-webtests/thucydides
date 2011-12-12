@@ -2,8 +2,6 @@ package net.thucydides.core.steps;
 
 import org.junit.Test;
 
-import java.util.Arrays;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -12,7 +10,7 @@ public class WhenWritingStepArguments {
     @Test
     public void shouldPrintArraysAsACommaSeparatedList() {
         String[] colors = new String[] {"red","green","yellow"};
-        assertThat(StepArgumentWriter.readableFormOf(colors), is("[red, green, yellow]"));
+        assertThat(StepArgumentWriter.readableFormOf(colors), is("{red,green,yellow}"));
     }
 
     @Test
