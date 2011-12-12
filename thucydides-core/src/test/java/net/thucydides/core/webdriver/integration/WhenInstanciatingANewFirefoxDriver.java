@@ -6,6 +6,8 @@ import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,14 +22,9 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.both;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -160,7 +157,22 @@ public class WhenInstanciatingANewFirefoxDriver {
 
         List registeredExtensions = profile.extensions;
 
-        assertThat(registeredExtensions, hasItem(allOf(containsString("firebug"), endsWith(".xpi"))));
+        assertThat(registeredExtensions, hasItem(isExtention("firebug")));
+    }
+
+    private TypeSafeMatcher<String> isExtention(final String expectedExtensionName) {
+        return new TypeSafeMatcher<String>() {
+
+            @Override
+            protected boolean matchesSafely(String extensionName) {
+                return extensionName.contains(expectedExtensionName) && extensionName.endsWith(".xpi");
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText(" a firefox plugin called " + expectedExtensionName);
+            }
+        };
     }
 
     @Test
@@ -172,7 +184,7 @@ public class WhenInstanciatingANewFirefoxDriver {
         firefoxProfileEnhancer.addFirebugsTo(profile);
 
         List registeredExtensions = profile.extensions;
-        assertThat(registeredExtensions, hasItem(allOf(containsString("firefinder"), endsWith(".xpi"))));
+        assertThat(registeredExtensions, hasItem(isExtention("firefinder")));
     }
 
     @Test

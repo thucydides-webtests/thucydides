@@ -1,5 +1,7 @@
 package net.thucydides.core.resources;
 
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,6 +18,7 @@ import java.util.zip.ZipFile;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -43,9 +46,31 @@ public class WhenReadingResourcesFromTheClasspath {
     @Test
     public void should_exclude_trailing_pom_files() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
-        Collection resources = ResourceList.forResources(pattern).list();
-        assertThat(resources, not(hasItem(endsWith("pom.xml"))));
+        Collection<String> resources = ResourceList.forResources(pattern).list();
+        assertThat(resources, not(containsFileCalled("pom.xml")));
     }
+
+    private TypeSafeMatcher<Collection<String>> containsFileCalled(final String expectedFilename) {
+        return new TypeSafeMatcher<Collection<String>>() {
+
+            @Override
+            protected boolean matchesSafely(Collection<String> filenames) {
+                boolean matchingFileFound = false;
+                for(String file : filenames) {
+                    if (file.endsWith(expectedFilename)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText(" a resource file called " + expectedFilename);
+            }
+        };
+    }
+
     @Test
     public void should_return_a_list_of_resources_in_a_given_package() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
@@ -56,9 +81,9 @@ public class WhenReadingResourcesFromTheClasspath {
     @Test
     public void should_return_a_list_of_resources_in_a_given_package_containing_matching_resources() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
-        Collection resources = ResourceList.forResources(pattern).list();
-        assertThat(resources, is(not(empty())));
-        assertThat(resources, hasItems(containsString("resourcelist"),endsWith("sample.css"),endsWith("sample.xsl")));
+        Collection<String> resources = ResourceList.forResources(pattern).list();
+        assertThat(resources, containsFileCalled("sample.css"));
+        assertThat(resources, containsFileCalled("sample.xsl"));
     }
 
     @Test
