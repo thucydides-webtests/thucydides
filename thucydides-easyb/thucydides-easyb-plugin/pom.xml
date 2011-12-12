@@ -75,30 +75,6 @@
                     <easybTestDirectory>src/test/stories</easybTestDirectory>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
-                <configuration>
-                    <skip>true</skip>
-                    <parallel>classes</parallel>
-                    <perCoreThreadCount>true</perCoreThreadCount>
-                    <includes>
-                        <include>**/When*.java</include>
-                        <include>**/When*.groovy</include>
-                        <include>**/*Test.java</include>
-                        <include>**/Test*.java</include>
-                        <include>**/*Story.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/Abstract*.java</exclude>
-                        <exclude>**/samples/*.java</exclude>
-                        <exclude>**/Sample*.java</exclude>
-                        <exclude>**/*Sample.java</exclude>
-                        <exclude>%regex[.*integration.*]</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
     <dependencies>
