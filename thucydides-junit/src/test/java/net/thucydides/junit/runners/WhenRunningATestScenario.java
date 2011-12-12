@@ -362,7 +362,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestStep> steps = testOutcome.getTestSteps();
         TestStep failingStep = (TestStep) steps.get(5);
-        assertThat(failingStep.getErrorMessage(), allOf(containsString("Expected: is <2>"), containsString("but: was <1>")));
+        assertThat(failingStep.getErrorMessage(), containsString("Expected: is <2>"));
     }
 
     @Test
