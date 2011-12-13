@@ -69,6 +69,11 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
             public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass, FirefoxProfile profile) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
                 return firefoxDriver;
             }
+
+            @Override
+            public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass) throws IllegalAccessException, InstantiationException {
+                return firefoxDriver;
+            }
         };
 
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
