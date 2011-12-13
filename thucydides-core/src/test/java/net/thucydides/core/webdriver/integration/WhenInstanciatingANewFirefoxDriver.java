@@ -125,18 +125,18 @@ public class WhenInstanciatingANewFirefoxDriver {
     }
 
     @Test
-    public void should_activate_firebugs_by_default() {
-        FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
-
-        assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(true));
-    }
-
-    @Test
-    public void should_deactivate_firebugs_if_requested() {
-        environmentVariables.setProperty("thucydides.activate.firebugs", "false");
+    public void should_not_activate_firebugs_by_default() {
         FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
 
         assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(false));
+    }
+
+    @Test
+    public void should_activate_firebugs_if_requested() {
+        environmentVariables.setProperty("thucydides.activate.firebugs", "true");
+        FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
+
+        assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(true));
     }
 
     class MockFirefoxProfile extends FirefoxProfile {
