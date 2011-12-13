@@ -8,6 +8,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.UnableToCreateProfileException;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -115,7 +116,16 @@ public class WebDriverFactory {
     }
 
     private WebDriver firefoxDriverFrom(Class<? extends WebDriver> driverClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        return webdriverInstanceFactory.newInstanceOf(driverClass, buildFirefoxProfile());
+        FirefoxProfile profile = buildFirefoxProfile();
+        if (noProfileCouldBeCreated(profile)) {
+            return webdriverInstanceFactory.newInstanceOf(driverClass, profile);
+        } else {
+            return webdriverInstanceFactory.newInstanceOf(driverClass);
+        }
+    }
+
+    private boolean noProfileCouldBeCreated(FirefoxProfile profile) {
+        return (profile == null);
     }
 
     private void activateJavascriptSupportFor(HtmlUnitDriver driver) {
@@ -163,22 +173,26 @@ public class WebDriverFactory {
     }
 
     private FirefoxProfile buildFirefoxProfile() {
-        String profileName = environmentVariables.getProperty("webdriver.firefox.profile");
-        FirefoxProfile profile;
-        if (profileName == null) {
-            profile = createNewFirefoxProfile();
-        } else {
-            profile = getProfileFrom(profileName);
-        }
+        FirefoxProfile profile = null;
+        try {
+            String profileName = environmentVariables.getProperty("webdriver.firefox.profile");
+            if (profileName == null) {
+                profile = createNewFirefoxProfile();
+            } else {
+                profile = getProfileFrom(profileName);
+            }
 
-        firefoxProfileEnhancer.enableNativeEventsFor(profile);
+            firefoxProfileEnhancer.enableNativeEventsFor(profile);
 
-        if (firefoxProfileEnhancer.shouldActivateFirebugs()) {
-            LOGGER.info("Adding Firebugs to Firefox profile");
-            firefoxProfileEnhancer.addFirebugsTo(profile);
-        }
-        if (dontAssumeUntrustedCertificateIssuer()) {
-            profile.setAssumeUntrustedCertificateIssuer(false);
+            if (firefoxProfileEnhancer.shouldActivateFirebugs()) {
+                LOGGER.info("Adding Firebugs to Firefox profile");
+                firefoxProfileEnhancer.addFirebugsTo(profile);
+            }
+            if (dontAssumeUntrustedCertificateIssuer()) {
+                profile.setAssumeUntrustedCertificateIssuer(false);
+            }
+        } catch (UnableToCreateProfileException e){
+
         }
         return profile;
     }
