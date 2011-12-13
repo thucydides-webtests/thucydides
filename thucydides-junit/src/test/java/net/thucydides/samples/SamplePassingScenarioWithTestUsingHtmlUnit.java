@@ -15,7 +15,7 @@ public class SamplePassingScenarioWithTestUsingHtmlUnit {
     @Managed(driver = "htmlunit")
     public WebDriver webdriver;
 
-    @ManagedPages(defaultUrl = "http://www.google.com")
+    @ManagedPages(defaultUrl = "classpath:static-site/index.html")
     public Pages pages;
     
     @Steps

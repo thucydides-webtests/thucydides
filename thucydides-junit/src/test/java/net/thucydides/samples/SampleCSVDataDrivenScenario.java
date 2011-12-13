@@ -33,7 +33,7 @@ public class SampleCSVDataDrivenScenario {
     @Managed
     public WebDriver webdriver;
 
-    @ManagedPages(defaultUrl = "http://www.google.com")
+    @ManagedPages(defaultUrl = "classpath:static-site/index.html")
     public Pages pages;
 
     @Steps

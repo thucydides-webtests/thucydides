@@ -1,5 +1,6 @@
 package net.thucydides.samples;
 
+import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
@@ -16,7 +17,7 @@ public class AnnotatedSingleTestScenario {
     @Managed
     public WebDriver webdriver;
 
-    @ManagedPages(defaultUrl = "http://www.google.com")
+    @ManagedPages(defaultUrl = "classpath:static-site/index.html")
     public Pages pages;
     
     @Steps

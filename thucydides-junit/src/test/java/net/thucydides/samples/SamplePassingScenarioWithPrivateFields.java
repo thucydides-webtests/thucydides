@@ -20,7 +20,7 @@ public class SamplePassingScenarioWithPrivateFields {
     @Managed
     private WebDriver webdriver;
 
-    @ManagedPages(defaultUrl = "http://www.google.com")
+    @ManagedPages(defaultUrl = "classpath:static-site/index.html")
     private Pages pages;
     
     @Steps

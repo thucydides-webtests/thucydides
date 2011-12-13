@@ -117,15 +117,15 @@ public class WebDriverFactory {
 
     private WebDriver firefoxDriverFrom(Class<? extends WebDriver> driverClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         FirefoxProfile profile = buildFirefoxProfile();
-        if (noProfileCouldBeCreated(profile)) {
+        if (aProfileCouldBeCreated(profile)) {
             return webdriverInstanceFactory.newInstanceOf(driverClass, profile);
         } else {
             return webdriverInstanceFactory.newInstanceOf(driverClass);
         }
     }
 
-    private boolean noProfileCouldBeCreated(FirefoxProfile profile) {
-        return (profile == null);
+    private boolean aProfileCouldBeCreated(FirefoxProfile profile) {
+        return (profile != null);
     }
 
     private void activateJavascriptSupportFor(HtmlUnitDriver driver) {
