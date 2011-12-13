@@ -281,11 +281,6 @@ public class WhenCheckingVisibilityWithTheFluentElementAPI  extends FluentElemen
 
 
     @Test
-    public void should_obtain_text_value_from_input() {
-        assertThat(page.element(page.firstName).getValue(), is("<enter first name>"));
-    }
-
-    @Test
     public void should_obtain_text_value_from_text_area() {
         assertThat(page.element(page.textField).getText(), is("text value"));
     }

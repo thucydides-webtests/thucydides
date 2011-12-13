@@ -46,6 +46,12 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
+    public void should_obtain_text_value_from_input() {
+        refresh(page);
+        assertThat(page.element(page.firstName).getValue(), is("<enter first name>"));
+    }
+
+    @Test
     public void should_optionally_type_enter_after_entering_text() {
         refresh(chromePage);
         assertThat(chromePage.firstName.getAttribute("value"), is("<enter first name>"));
