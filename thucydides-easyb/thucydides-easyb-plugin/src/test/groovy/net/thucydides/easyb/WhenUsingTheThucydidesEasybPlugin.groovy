@@ -24,6 +24,10 @@ import static org.mockito.Mockito.atLeast
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
+import org.easyb.listener.ExecutionListener
+import org.easyb.domain.Behavior
+import org.easyb.BehaviorStep
+import org.easyb.util.BehaviorStepType
 
 public class WhenUsingTheThucydidesEasybPlugin {
 
@@ -69,15 +73,50 @@ public class WhenUsingTheThucydidesEasybPlugin {
         }
     }
 
+    ExecutionListener listener;
+
+    Behavior behavior;
+
+    BehaviorStep scenarioStep;
+
+    BehaviorStep givenStep;
+
+    BehaviorStep whenStep;
+
+    BehaviorStep thenStep;
+
     @Before
     public void initMocks() {
         mockWebDriver =  new WebDriverFacade(MockWebDriver.class, new WebDriverFactory());
         plugin = new BrowserlessThucydidesPlugin();
         plugin.resetConfiguration();
+        listener = new ThucydidesListenerBuilder().get();
         binding = new Binding();
         binding.setVariable("sourceFile", "TestStory.story")
 
         plugin.getConfiguration().use_mock_driver mockWebDriver
+
+        behavior = [] as Behavior;
+
+        scenarioStep = [] as BehaviorStep
+        scenarioStep.id = 1
+        scenarioStep.stepType = BehaviorStepType.SCENARIO
+        scenarioStep.name = 'Some scenario'
+
+        givenStep = [] as BehaviorStep
+        givenStep.id = 2
+        givenStep.stepType = BehaviorStepType.GIVEN
+        givenStep.name = 'Some given'
+
+        whenStep = [] as BehaviorStep
+        whenStep.id = 3
+        whenStep.stepType = BehaviorStepType.WHEN
+        whenStep.name = 'Some when'
+
+        thenStep = [] as BehaviorStep
+        thenStep.id = 4
+        thenStep.stepType = BehaviorStepType.THEN
+        thenStep.name = 'Some name'
     }
 
     @After
@@ -200,68 +239,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
         driver.proxiedDriver.shouldHaveOpenedAt("http://www.google.com")
     }
-    /*
 
-    @Test
-    public void the_plugin_should_use_a_new_driver_for_each_story() {
-
-        plugin.getConfiguration().stop_using_mock_driver()
-        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
-
-        runStories(plugin, binding);
-        WebDriver driver1 = (WebDriver) binding.getVariable("driver").proxiedWebDriver;
-
-        runStories(plugin, binding);
-        WebDriver driver2 = (WebDriver) binding.getVariable("driver").proxiedWebDriver;
-
-        assert (driver1 != driver2)
-    }
-
-
-    @Ignore("Not really sure how to get this to work properly yet.")
-    @Test
-    public void the_plugin_should_be_configurable_to_use_the_same_driver_for_all_stories() {
-        plugin.getConfiguration().stop_using_mock_driver()
-        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz")
-        System.setProperty("thucydides.use.unique.browser","true")
-
-        runStories(plugin, binding)
-        WebDriver driver1 = (WebDriver) binding.getVariable("driver")
-
-        runStories(plugin, binding)
-        WebDriver driver2 = (WebDriver) binding.getVariable("driver")
-
-        System.setProperty("thucydides.use.unique.browser","false")
-
-        assert (driver1 == driver2)
-    }
-
-    @Test
-    public void the_plugin_should_close_the_driver_at_the_end_of_the_story() {
-
-        ThucydidesPlugin plugin = new BrowserlessThucydidesPlugin();
-
-        runStories(plugin, binding);
-
-        WebDriver driver = (WebDriver) binding.getVariable("driver");
-
-        assert driver.proxiedDriver.wasClosed();
-        assert driver.proxiedDriver.closedCount == 1;
-    }
-
-    @Test
-    public void the_plugin_should_not_close_the_driver_at_the_end_of_the_story_if_using_a_single_browser() {
-
-        ThucydidesPlugin plugin = new BrowserlessThucydidesPlugin();
-
-        runStories(plugin, binding);
-
-        WebDriver driver = (WebDriver) binding.getVariable("driver");
-
-        assert driver.proxiedDriver.wasClosed();
-        assert driver.proxiedDriver.closedCount == 1;
-    }
-    */
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none()
@@ -285,36 +263,63 @@ public class WhenUsingTheThucydidesEasybPlugin {
     }
 
     private void runScenarios(ThucydidesPlugin plugin, Binding binding) {
+//        plugin.beforeScenario(binding);
+//        plugin.beforeGiven(binding);
+//        plugin.afterGiven(binding);
+//
+//        plugin.beforeWhen(binding);
+//        plugin.afterWhen(binding);
+//
+//        plugin.afterThen(binding);
+//        plugin.beforeThen(binding);
+//
+//        plugin.afterScenario(binding);
+//
+//        plugin.beforeScenario(binding);
+//
+//        plugin.beforeGiven(binding);
+//        runWebTestsUsing(plugin);
+//        plugin.afterGiven(binding);
+//
+//        plugin.beforeWhen(binding);
+//        plugin.afterWhen(binding);
+//
+//        plugin.afterThen(binding);
+//        plugin.beforeThen(binding);
+//
+//        plugin.afterScenario(binding);
+
         plugin.beforeScenario(binding);
+        listener.startStep(scenarioStep);
+
         plugin.beforeGiven(binding);
+        listener.startStep(givenStep);
+
         plugin.afterGiven(binding);
+        listener.stopStep();
 
         plugin.beforeWhen(binding);
+        listener.startStep(whenStep);
+
         plugin.afterWhen(binding);
+        listener.stopStep();
+
+        plugin.beforeThen(binding);
+        listener.startStep(thenStep);
+
+        runTestsUsing(plugin, binding);
 
         plugin.afterThen(binding);
-        plugin.beforeThen(binding);
+        listener.stopStep();
 
         plugin.afterScenario(binding);
-
-        plugin.beforeScenario(binding);
-
-        plugin.beforeGiven(binding);
-        runWebTestsUsing(plugin);
-        plugin.afterGiven(binding);
-
-        plugin.beforeWhen(binding);
-        plugin.afterWhen(binding);
-
-        plugin.afterThen(binding);
-        plugin.beforeThen(binding);
-
-        plugin.afterScenario(binding);
+        listener.stopStep();
     }
 
-    def runWebTestsUsing(ThucydidesPlugin thucydidesPlugin) {
+    def runTestsUsing(ThucydidesPlugin thucydidesPlugin, Binding binding) {
+        URL staticSiteUrl = Thread.currentThread().getContextClassLoader().getResource("static-site/index.html");
         WebDriver driver = binding.getVariable("driver");
-        driver.get "http://www.google.com"
+        driver.get staticSiteUrl.toString()
     }
 
 

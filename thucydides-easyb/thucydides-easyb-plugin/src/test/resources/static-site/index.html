@@ -1,89 +1,89 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Thucydides Test Site</title>
-    <script type="text/javascript">
-        <!--
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Thucydides Test Site</title>
+<script type="text/javascript">
+<!--
 
-        function initFields() {
-            document.demo.lastname.focus()
-            hide('city')
-            displayFieldsAfterDelay();
-        }
+    function initFields() {
+        document.demo.lastname.focus()
+        hide('city')
+        displayFieldsAfterDelay();
+    }
 
-        function toggle_visibility(id) {
-            var e = document.getElementById(id);
-            if(e.style.display == 'block')
-                e.style.display = 'none';
-            else
-                e.style.display = 'block';
-        }
+    function toggle_visibility(id) {
+       var e = document.getElementById(id);
+       if(e.style.display == 'block')
+          e.style.display = 'none';
+       else
+          e.style.display = 'block';
+    }
 
-        function hide(id) {
-            var e = document.getElementById(id);
-            e.style.display = 'none';
-        }
+    function hide(id) {
+       var e = document.getElementById(id);
+       e.style.display = 'none';
+    }
 
-        function show(id) {
-            var e = document.getElementById(id);
-            e.style.display = 'block';
-        }
-        function activate(id) {
-            var e = document.getElementById(id);
-            e.disabled = false;
-        }
-        function deactivate(id) {
-            var e = document.getElementById(id);
-            e.disabled = true;
-        }
+    function show(id) {
+        var e = document.getElementById(id);
+       e.style.display = 'block';
+    }
+    function activate(id) {
+       var e = document.getElementById(id);
+       e.disabled = false;
+    }
+    function deactivate(id) {
+       var e = document.getElementById(id);
+       e.disabled = true;
+    }
 
-        function displayCityField() {
-            show('city')
-        }
-        function hideLocationTitle() {
-            hide('placetitle')
-        }
+    function displayCityField() {
+        show('city')
+    }
+    function hideLocationTitle() {
+        hide('placetitle')
+    }
 
-        function activateDisabledButton() {
-            activate('buttonThatIsInitiallyDisabled')
-        }
-        function deactivateEnabledButton() {
-            deactivate('buttonThatIsInitiallyEnabled')
-        }
+    function activateDisabledButton() {
+        activate('buttonThatIsInitiallyDisabled')
+    }
+    function deactivateEnabledButton() {
+        deactivate('buttonThatIsInitiallyEnabled')
+    }
 
-        function removeDisappearingText() {
-            document.getElementById('dissapearingtextcell').textContent = '';
+    function removeDisappearingText() {
+        document.getElementById('dissapearingtextcell').textContent = '';
 
-        }
-        function loadElementsSelect() {
-            var elementSelect = document.demo.elements.options;
-            elementSelect[0] = new Option('Earth',1);
-            elementSelect[1] = new Option('Air',2);
-            elementSelect[2] = new Option('Fire',3);
-            elementSelect[3] = new Option('Water',4);
-        }
+    }
+    function loadElementsSelect() {
+        var elementSelect = document.demo.elements.options;
+        elementSelect[0] = new Option('Earth',1);
+        elementSelect[1] = new Option('Air',2);
+        elementSelect[2] = new Option('Fire',3);
+        elementSelect[3] = new Option('Water',4);
+    }
+    
+    function displayFieldsAfterDelay() {
+        setTimeout("loadElementsSelect()", 500);
+        setTimeout("displayCityField()", 500);
+        setTimeout("hideLocationTitle()", 500);
+        setTimeout("activateDisabledButton()", 500);
+        setTimeout("deactivateEnabledButton()", 500);
+        setTimeout("removeDisappearingText()", 500);
 
-        function displayFieldsAfterDelay() {
-            setTimeout("loadElementsSelect()", 500);
-            setTimeout("displayCityField()", 500);
-            setTimeout("hideLocationTitle()", 500);
-            setTimeout("activateDisabledButton()", 500);
-            setTimeout("deactivateEnabledButton()", 500);
-            setTimeout("removeDisappearingText()", 500);
+    }
 
-        }
+    function focusOn(field) {
+         document.getElementById('focusmessage').textContent = '';
+    }
 
-        function focusOn(field) {
-            document.getElementById('focusmessage').textContent = '';
-        }
+    function focusOff(field) {
+        document.getElementById('focusmessage').textContent = 'focus left ' + field;
+    }
 
-        function focusOff(field) {
-            document.getElementById('focusmessage').textContent = 'focus left ' + field;
-        }
-
-        //-->
-    </script>
+//-->
+</script>
 </head>
 <body onLoad="initFields()">
 <h2 id="visible">A visible title</h2>

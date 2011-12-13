@@ -1,52 +1,25 @@
 package net.thucydides.junit.runners.integration;
 
-import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
 import net.thucydides.core.steps.StepEventBus;
-import net.thucydides.core.util.MockEnvironmentVariables;
-import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
-import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
-import net.thucydides.core.webdriver.WebDriverFactory;
-import net.thucydides.core.webdriver.WebdriverInstanceFactory;
-import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.junit.runners.AbstractTestStepRunnerTest;
 import net.thucydides.junit.runners.ThucydidesRunner;
-import net.thucydides.samples.*;
+import net.thucydides.samples.SamplePassingScenarioUsingHtmlUnit;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
-import org.mockito.Matchers;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 public class WhenRunningTestScenariosInParallel extends AbstractTestStepRunnerTest {
 
@@ -55,31 +28,11 @@ public class WhenRunningTestScenariosInParallel extends AbstractTestStepRunnerTe
         MockitoAnnotations.initMocks(this);
     }
 
-    WebdriverInstanceFactory webdriverInstanceFactory;
-
-    @Mock
-    FirefoxDriver firefoxDriver;
-
-    MockEnvironmentVariables environmentVariables;
-
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    WebDriverFactory webDriverFactory;
-
     @Before
-    public void createATestableDriverFactory() throws Exception {
-        MockitoAnnotations.initMocks(this);
-
-        webdriverInstanceFactory = new WebdriverInstanceFactory() {
-            @Override
-            public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass, FirefoxProfile profile) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-                return firefoxDriver;
-            }
-        };
-
-        environmentVariables = new MockEnvironmentVariables();
-        webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
+    public void clearEventBus() throws Exception {
         StepEventBus.getEventBus().clear();
 
     }
@@ -92,7 +45,7 @@ public class WhenRunningTestScenariosInParallel extends AbstractTestStepRunnerTe
         ThucydidesRunner runner;
 
         public ScenarioThread()  throws InitializationError {
-            runner = new ThucydidesRunner(SamplePassingScenario.class, webDriverFactory); 
+            runner = new ThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class);
         }
 
         public void run() {
@@ -112,7 +65,7 @@ public class WhenRunningTestScenariosInParallel extends AbstractTestStepRunnerTe
 
         List<ScenarioThread> threads = new ArrayList<ScenarioThread>();
 
-        for(int i = 0; i < 20; i++) {
+        for(int i = 0; i < 10; i++) {
             threads.add(new ScenarioThread());
         }
 

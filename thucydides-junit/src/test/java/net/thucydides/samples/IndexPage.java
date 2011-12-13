@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.Set;
 
-@DefaultUrl("classpath:demosite/index.html")
+@DefaultUrl("classpath:static-site/index.html")
 public class IndexPage extends PageObject {
 
     public WebElement multiselect;

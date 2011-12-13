@@ -15,6 +15,8 @@ import org.openqa.selenium.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
@@ -43,7 +45,9 @@ public class SampleScenarioSteps extends ScenarioSteps {
 
     @Step
     public void stepThatUsesABrowser() {
-        getDriver().get("http://www.wikipedia.org");
+        IndexPage page = pages().get(IndexPage.class);
+        page.open();
+        page.getTitle();
     }
 
     @Step
