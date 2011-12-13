@@ -29,6 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -120,22 +121,22 @@ public class WhenInstanciatingANewFirefoxDriver {
         environmentVariables.setProperty("webdriver.firefox.profile", "default");
 
         driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
-        assertThat(chosenProfile, is(nullValue()));
+        assertThat(driver, is(not(nullValue())));
     }
 
     @Test
-    public void should_not_activate_firebugs_by_default() {
-        FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
-
-        assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(false));
-    }
-
-    @Test
-    public void should_activate_firebugs_if_requested() {
-        environmentVariables.setProperty("thucydides.activate.firebugs", "true");
+    public void should_activate_firebugs_by_default() {
         FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
 
         assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(true));
+    }
+
+    @Test
+    public void should_deactivate_firebugs_if_requested() {
+        environmentVariables.setProperty("thucydides.activate.firebugs", "false");
+        FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
+
+        assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(false));
     }
 
     class MockFirefoxProfile extends FirefoxProfile {
@@ -208,6 +209,7 @@ public class WhenInstanciatingANewFirefoxDriver {
     @Test
     public void should_exclude_the_firebugs_extension_if_the_thucydides_activate_firebugs_property_is_set_to_false() throws Exception {
 
+        environmentVariables.setProperty("thucydides.activate.firebugs", "false");
         FirefoxProfileEnhancer firefoxProfileEnhancer = new FirefoxProfileEnhancer(environmentVariables);
         assertThat(firefoxProfileEnhancer.shouldActivateFirebugs(), is(false));
     }
