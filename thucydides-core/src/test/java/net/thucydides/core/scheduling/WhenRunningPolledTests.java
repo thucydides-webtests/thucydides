@@ -77,8 +77,8 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
 
         page.waitForRefresh()
-            .withTimeoutOf(100).milliseconds()
-            .pollingEvery(10).milliseconds()
+            .withTimeoutOf(1000).milliseconds()
+            .pollingEvery(100).milliseconds()
             .until(weHaveWaitedEnough());
 
         verify(navigation,times(3)).refresh();
@@ -89,8 +89,8 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
 
         page.waitForCondition()
-            .withTimeoutOf(100).milliseconds()
-            .pollingEvery(10).milliseconds()
+            .withTimeoutOf(1000).milliseconds()
+            .pollingEvery(100).milliseconds()
             .until(weHaveWaitedEnough());
 
         verify(navigation,never()).refresh();
@@ -102,11 +102,11 @@ public class WhenRunningPolledTests {
         Clock clock = new org.openqa.selenium.support.ui.SystemClock();
         NormalFluentWait<WebDriver> waitFor = new NormalFluentWait(driver, clock, sleeper);
 
-        waitFor.withTimeoutOf(100).milliseconds()
-               .pollingEvery(10).milliseconds()
+        waitFor.withTimeoutOf(1000).milliseconds()
+               .pollingEvery(100).milliseconds()
                .until(weHaveWaitedEnough());
 
-        verify(sleeper, times(3)).sleep(new Duration(10, TimeUnit.MILLISECONDS));
+        verify(sleeper, times(3)).sleep(new Duration(100, TimeUnit.MILLISECONDS));
     }
 
 
@@ -162,8 +162,8 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
 
         page.waitForCondition()
-            .withTimeoutOf(100).milliseconds()
-            .pollingEvery(10).milliseconds()
+            .withTimeoutOf(1000).milliseconds()
+            .pollingEvery(100).milliseconds()
             .until(weSpitTheDummy());
 
     }
@@ -173,8 +173,8 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
 
         page.waitForCondition()
-            .withTimeoutOf(100).milliseconds()
-            .pollingEvery(10).milliseconds()
+            .withTimeoutOf(1000).milliseconds()
+            .pollingEvery(100).milliseconds()
             .until(weSpitTheDummyWithARuntimeException());
 
     }
@@ -186,7 +186,7 @@ public class WhenRunningPolledTests {
         page.waitForCondition()
             .ignoring(NullPointerException.class)
             .withTimeoutOf(1000).milliseconds()
-            .pollingEvery(10).milliseconds()
+            .pollingEvery(100).milliseconds()
             .until(weSpitTheDummyWithARuntimeException());
 
     }
@@ -196,8 +196,8 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
 
         page.waitForCondition()
-            .withTimeoutOf(10).milliseconds()
-            .pollingEvery(5).milliseconds()
+            .withTimeoutOf(100).milliseconds()
+            .pollingEvery(25).milliseconds()
             .until(weTakeTooLong());
 
     }
@@ -208,8 +208,8 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
 
         page.waitForCondition()
-            .withTimeoutOf(10).milliseconds()
-            .pollingEvery(5).milliseconds()
+            .withTimeoutOf(100).milliseconds()
+            .pollingEvery(25).milliseconds()
             .until(weDefineAnInvalidCondition());
 
     }
