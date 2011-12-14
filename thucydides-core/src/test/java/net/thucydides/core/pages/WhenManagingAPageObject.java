@@ -458,7 +458,7 @@ public class WhenManagingAPageObject {
         noElementIsRendered(By.id("element2"));
 
         BasicPageObject page = new BasicPageObject(driver);
-        page.setWaitForTimeout(200);
+        page.setWaitForTimeout(1000);
         page.waitForAnyRenderedElementOf(By.id("element1"), By.id("element2"));
     }
 
@@ -471,7 +471,7 @@ public class WhenManagingAPageObject {
 
 
         BasicPageObject page = new BasicPageObject(driver);
-        page.setWaitForTimeout(200);
+        page.setWaitForTimeout(1000);
         page.waitForAnyRenderedElementOf(By.id("element1"), By.id("element2"));
     }
 
@@ -522,6 +522,7 @@ public class WhenManagingAPageObject {
         when(renderedElement.isDisplayed()).thenReturn(false).thenReturn(true);
         List<WebElement> listWithRenderedElement = Arrays.asList((WebElement) renderedElement);
         when(driver.findElement(criteria)).thenThrow(new NoSuchElementException("No such element"))
+                                          .thenThrow(new NoSuchElementException("No such element"))
                                           .thenReturn(renderedElement);
         when(driver.findElements(criteria)).thenReturn(emptyList)
                                            .thenReturn(listWithRenderedElement);
@@ -534,8 +535,10 @@ public class WhenManagingAPageObject {
         when(renderedElement.isDisplayed()).thenReturn(true).thenReturn(false);
         List<WebElement> listWithRenderedElement = Arrays.asList((WebElement) renderedElement);
         when(driver.findElement(criteria)).thenReturn(renderedElement)
+                                           .thenReturn(renderedElement)
                                            .thenThrow(new NoSuchElementException("No such element"));
         when(driver.findElements(criteria)).thenReturn(listWithRenderedElement)
+                                           .thenReturn(listWithRenderedElement)
                                            .thenReturn(emptyList);
     }
 
