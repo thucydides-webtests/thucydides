@@ -107,7 +107,7 @@ public class WhenMatchingPropertyValues {
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(BeanMatchers.matches(person, firstNameIsBill, lastNameIsOddie)).isTrue();
+        assertThat(BeanMatcherAsserts.matches(person, firstNameIsBill, lastNameIsOddie)).isTrue();
     }
 
     @Test
@@ -117,7 +117,7 @@ public class WhenMatchingPropertyValues {
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(BeanMatchers.matches(person, firstNameIsBill, lastNameIsOddie)).isFalse();
+        assertThat(BeanMatcherAsserts.matches(person, firstNameIsBill, lastNameIsOddie)).isFalse();
     }
 
     @Test
@@ -130,7 +130,7 @@ public class WhenMatchingPropertyValues {
             BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
             BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
     
-            BeanMatchers.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
+            BeanMatcherAsserts.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
         } catch(AssertionError e) {
             assertionThrown = true;
             exceptionMessage = e.getMessage();
@@ -151,7 +151,7 @@ public class WhenMatchingPropertyValues {
 
         BeanMatcher lastNameIsOddie = BeanMatchers.the("field-does-not-exist", is("Oddie"));
 
-        BeanMatchers.shouldMatch(person, lastNameIsOddie);
+        BeanMatcherAsserts.shouldMatch(person, lastNameIsOddie);
     }
 
     public class DodgyBean {
@@ -182,7 +182,7 @@ public class WhenMatchingPropertyValues {
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        BeanMatchers.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
+        BeanMatcherAsserts.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
     }
 
     @Test
@@ -194,7 +194,7 @@ public class WhenMatchingPropertyValues {
 
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        BeanMatchers.shouldMatch(person, lastNameIsOddie);
+        BeanMatcherAsserts.shouldMatch(person, lastNameIsOddie);
     }
 
 

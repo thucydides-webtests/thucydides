@@ -367,7 +367,7 @@ public class WebElementFacade {
         try {
             waitForCondition().until(elementIsDisplayed());
         } catch (Throwable error) {
-           error.printStackTrace();
+            error.printStackTrace();
             throwErrorWithCauseIfPresent(error, error.getMessage());
         }
         return this;

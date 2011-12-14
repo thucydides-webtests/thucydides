@@ -24,6 +24,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.notNull;
@@ -154,13 +155,7 @@ public class WhenTakingLargeScreenshots {
             }
         };
         File screenshot = photographer.takeScreenshot("screenshot");  // should not throw an exception
-        if (screenshot == null) {
-            verify(logger).warn(contains("Failed to write screenshot"), any(WebDriverException.class));
-        } else {
-            File expectedScreenshot = fileInClasspathCalled("screenshots/expected-big-screenshot.png");
-            assertThat(FileUtils.contentEquals(screenshot, expectedScreenshot), is(true));
-
-        }
+        assertThat(screenshot, is(notNullValue()));
     }
 
     private void openPage(String pageName, WebDriver driver) {

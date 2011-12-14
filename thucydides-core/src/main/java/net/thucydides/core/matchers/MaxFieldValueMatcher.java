@@ -8,6 +8,7 @@ import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
 import static java.util.Collections.max;
+import static net.thucydides.core.matchers.dates.BeanFields.fieldValueIn;
 
 class MaxFieldValueMatcher implements BeanCollectionMatcher {
     private final String fieldName;
@@ -38,7 +39,7 @@ class MaxFieldValueMatcher implements BeanCollectionMatcher {
         return new Converter<T, Comparable>() {
             @Override
             public Comparable convert(T bean) {
-                return (Comparable) BeanMatchers.getFieldValue(bean, fieldName);
+                return (Comparable) fieldValueIn(bean).forField(fieldName);
             }
         };
     }

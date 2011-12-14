@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import static ch.lambdaj.Lambda.convert;
+import static net.thucydides.core.matchers.dates.BeanFields.fieldValueIn;
 
 class BeanUniquenessMatcher implements BeanCollectionMatcher {
 
@@ -33,8 +34,8 @@ class BeanUniquenessMatcher implements BeanCollectionMatcher {
 
     public class FieldValueExtractor implements Converter<Object, Object> {
         @Override
-        public Object convert(Object from) {
-            return BeanMatchers.getFieldValue(from, fieldName);
+        public Object convert(Object bean) {
+            return fieldValueIn(bean).forField(fieldName);
         }
     }
 

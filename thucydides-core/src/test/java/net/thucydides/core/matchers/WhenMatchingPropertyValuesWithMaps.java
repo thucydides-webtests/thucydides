@@ -70,7 +70,7 @@ public class WhenMatchingPropertyValuesWithMaps {
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(BeanMatchers.matches(persons, firstNameIsBill, lastNameIsOddie)).isTrue();
+        assertThat(BeanMatcherAsserts.matches(persons, firstNameIsBill, lastNameIsOddie)).isTrue();
     }
 
     @Test
@@ -82,7 +82,7 @@ public class WhenMatchingPropertyValuesWithMaps {
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(BeanMatchers.matches(persons, firstNameIsBill, lastNameIsOddie)).isFalse();
+        assertThat(BeanMatcherAsserts.matches(persons, firstNameIsBill, lastNameIsOddie)).isFalse();
     }
 
     @Test
@@ -95,7 +95,7 @@ public class WhenMatchingPropertyValuesWithMaps {
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(BeanMatchers.filterElements(persons, firstNameIsBill, lastNameIsOddie)).contains(bill);
+        assertThat(BeanMatcherAsserts.filterElements(persons, firstNameIsBill, lastNameIsOddie)).contains(bill);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class WhenMatchingPropertyValuesWithMaps {
 
         BeanMatcher firstNameIsJoe = BeanMatchers.the("firstName", is("Joe"));
 
-        assertThat(BeanMatchers.filterElements(persons, firstNameIsJoe)).isEmpty();
+        assertThat(BeanMatcherAsserts.filterElements(persons, firstNameIsJoe)).isEmpty();
     }
 
     @Test
@@ -121,7 +121,7 @@ public class WhenMatchingPropertyValuesWithMaps {
 
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
 
-        assertThat(BeanMatchers.filterElements(persons, firstNameIsBill)).contains(billkidd, billoddie);
+        assertThat(BeanMatcherAsserts.filterElements(persons, firstNameIsBill)).contains(billkidd, billoddie);
     }
 
     @Rule
@@ -140,7 +140,7 @@ public class WhenMatchingPropertyValuesWithMaps {
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        BeanMatchers.shouldMatch(persons, firstNameIsBill, lastNameIsOddie);
+        BeanMatcherAsserts.shouldMatch(persons, firstNameIsBill, lastNameIsOddie);
     }
 
     @Test
@@ -150,7 +150,7 @@ public class WhenMatchingPropertyValuesWithMaps {
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(BeanMatchers.matches(person, firstNameIsBill, lastNameIsOddie)).isTrue();
+        assertThat(BeanMatcherAsserts.matches(person, firstNameIsBill, lastNameIsOddie)).isTrue();
     }
 
     @Test
@@ -160,7 +160,7 @@ public class WhenMatchingPropertyValuesWithMaps {
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-        assertThat(BeanMatchers.matches(person, firstNameIsBill, lastNameIsOddie)).isFalse();
+        assertThat(BeanMatcherAsserts.matches(person, firstNameIsBill, lastNameIsOddie)).isFalse();
     }
 
     @Test
@@ -173,7 +173,7 @@ public class WhenMatchingPropertyValuesWithMaps {
             BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
             BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
 
-            BeanMatchers.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
+            BeanMatcherAsserts.shouldMatch(person, firstNameIsBill, lastNameIsOddie);
         } catch(AssertionError e) {
             assertionThrown = true;
             exceptionMessage = e.getMessage();
@@ -198,7 +198,7 @@ public class WhenMatchingPropertyValuesWithMaps {
         BeanMatcher containsTwoEntries = BeanMatchers.the_count(is(2));
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
 
-        BeanMatchers.shouldMatch(persons, containsTwoEntries, firstNameIsBill);
+        BeanMatcherAsserts.shouldMatch(persons, containsTwoEntries, firstNameIsBill);
     }
 
     @Test
@@ -212,7 +212,7 @@ public class WhenMatchingPropertyValuesWithMaps {
         BeanMatcher lastNamesAreDifferent = BeanMatchers.each("lastName").isDifferent();
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
 
-        BeanMatchers.shouldMatch(persons, containsTwoEntries, firstNameIsBill, lastNamesAreDifferent);
+        BeanMatcherAsserts.shouldMatch(persons, containsTwoEntries, firstNameIsBill, lastNamesAreDifferent);
     }
 
 

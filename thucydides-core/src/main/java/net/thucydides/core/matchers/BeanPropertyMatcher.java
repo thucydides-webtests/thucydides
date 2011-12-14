@@ -2,6 +2,8 @@ package net.thucydides.core.matchers;
 
 import org.hamcrest.Matcher;
 
+import static net.thucydides.core.matchers.dates.BeanFields.fieldValueIn;
+
 class BeanPropertyMatcher implements BeanFieldMatcher {
     private final String fieldName;
     private final Matcher<? extends Object> matcher;
@@ -13,7 +15,8 @@ class BeanPropertyMatcher implements BeanFieldMatcher {
 
     @Override
     public boolean matches(final Object bean) {
-        return matcher.matches(BeanMatchers.getFieldValue(bean, fieldName));
+
+        return matcher.matches(fieldValueIn(bean).forField(fieldName));
     }
 
     @Override

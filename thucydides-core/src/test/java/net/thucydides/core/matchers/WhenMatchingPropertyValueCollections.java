@@ -9,12 +9,12 @@ import org.junit.rules.ExpectedException;
 import java.util.Arrays;
 import java.util.List;
 
+import static net.thucydides.core.matchers.BeanMatcherAsserts.matches;
+import static net.thucydides.core.matchers.BeanMatcherAsserts.shouldMatch;
 import static net.thucydides.core.matchers.BeanMatchers.each;
-import static net.thucydides.core.matchers.BeanMatchers.filterElements;
-import static net.thucydides.core.matchers.BeanMatchers.matches;
+import static net.thucydides.core.matchers.BeanMatcherAsserts.filterElements;
 import static net.thucydides.core.matchers.BeanMatchers.max;
 import static net.thucydides.core.matchers.BeanMatchers.min;
-import static net.thucydides.core.matchers.BeanMatchers.shouldMatch;
 import static net.thucydides.core.matchers.BeanMatchers.the;
 import static net.thucydides.core.matchers.BeanMatchers.the_count;
 import static org.fest.assertions.Assertions.assertThat;
@@ -91,6 +91,26 @@ public class WhenMatchingPropertyValueCollections {
         BeanMatcher lastNameIsOddie = the("lastName", is("Oddie"));
 
         assertThat(matches(persons, firstNameIsBill, lastNameIsOddie)).isTrue();
+    }
+
+    @Test
+    public void should_check_count_and_field_constraints() {
+        List<Person> persons = Arrays.asList(billoddie, tim, graeme);
+
+        BeanMatcher firstNameIsBill = the("firstName", is("Bill"));
+        BeanMatcher lastNameIsOddie = the("lastName", is("Oddie"));
+        BeanMatcher billIsUnique = the_count(is(1));
+        assertThat(matches(persons, firstNameIsBill, lastNameIsOddie, billIsUnique)).isTrue();
+    }
+
+    @Test
+    public void can_check_for_no_matching_entries() {
+        List<Person> persons = Arrays.asList(billoddie, tim, graeme);
+
+        BeanMatcher firstNameIsBilly = the("firstName", is("Billy"));
+        BeanMatcher lastNameIsTheKid = the("lastName", is("the Kid"));
+        BeanMatcher isNotPresent = the_count(is(0));
+        assertThat(matches(persons, firstNameIsBilly, lastNameIsTheKid, isNotPresent)).isTrue();
     }
 
     @Test

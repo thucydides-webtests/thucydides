@@ -89,7 +89,9 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
-                            <parallel>none</parallel>
+                            <parallel>classes</parallel>
+                            <perCoreThreadCount>true</perCoreThreadCount>
+                            <threadCount>2</threadCount>
                             <includes>
                                 <include>**/When*.java</include>
                                 <include>**/*Test.java</include>

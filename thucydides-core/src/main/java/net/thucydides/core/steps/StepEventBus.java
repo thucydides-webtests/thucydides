@@ -131,6 +131,7 @@ public class StepEventBus {
 
     public void testSuiteStarted(final Class<?> testClass) {
         LOGGER.debug("Test suite started for {}", testClass);
+        clear();
         updateClassUnderTest(testClass);
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testSuiteStarted(testClass);
