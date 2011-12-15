@@ -38,8 +38,6 @@ public class WhenRunningTestScenariosInParallel extends AbstractTestStepRunnerTe
     }
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioThread.class);
-
     public class ScenarioThread extends Thread {
 
         ThucydidesRunner runner;
@@ -49,9 +47,7 @@ public class WhenRunningTestScenariosInParallel extends AbstractTestStepRunnerTe
         }
 
         public void run() {
-            LOGGER.info("Starting thread: " + this);
             runner.run(new RunNotifier());
-            LOGGER.info("Thread finished: " + this);
         }
         
         public List<TestOutcome> getTestOutcomes() {

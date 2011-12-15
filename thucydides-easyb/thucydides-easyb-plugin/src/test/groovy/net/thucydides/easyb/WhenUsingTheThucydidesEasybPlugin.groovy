@@ -28,6 +28,12 @@ import org.easyb.listener.ExecutionListener
 import org.easyb.domain.Behavior
 import org.easyb.BehaviorStep
 import org.easyb.util.BehaviorStepType
+import org.junit.runners.model.InitializationError
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import net.thucydides.easyb.samples.SampleSteps
 
 public class WhenUsingTheThucydidesEasybPlugin {
 
@@ -128,6 +134,17 @@ public class WhenUsingTheThucydidesEasybPlugin {
     @Test
     public void the_plugin_should_answer_to_the_name_of_thucydides() {
         assert plugin.name == "thucydides"
+    }
+
+    public void the_plugin_should_inject_a_webdriver_instance_into_the_story_context() {
+
+        plugin.configuration.uses_default_base_url "http://www.google.com"
+
+        runStories(plugin, binding);
+
+        WebDriver driver = (WebDriver) binding.getVariable("driver");
+
+        assert driver != null
     }
 
     @Test
@@ -244,71 +261,107 @@ public class WhenUsingTheThucydidesEasybPlugin {
         runStories(plugin, binding);
     }
     
-    private void runStories(ThucydidesPlugin plugin, Binding binding) {
-        plugin.beforeStory(binding);
-        runScenarios(plugin, binding);
-        plugin.afterStory(binding);
-    }
 
-    private void runScenarios(ThucydidesPlugin plugin, Binding binding) {
-//        plugin.beforeScenario(binding);
-//        plugin.beforeGiven(binding);
-//        plugin.afterGiven(binding);
-//
-//        plugin.beforeWhen(binding);
-//        plugin.afterWhen(binding);
-//
-//        plugin.afterThen(binding);
-//        plugin.beforeThen(binding);
-//
-//        plugin.afterScenario(binding);
-//
-//        plugin.beforeScenario(binding);
-//
-//        plugin.beforeGiven(binding);
-//        runWebTestsUsing(plugin);
-//        plugin.afterGiven(binding);
-//
-//        plugin.beforeWhen(binding);
-//        plugin.afterWhen(binding);
-//
-//        plugin.afterThen(binding);
-//        plugin.beforeThen(binding);
-//
-//        plugin.afterScenario(binding);
-
-        plugin.beforeScenario(binding);
-        listener.startStep(scenarioStep);
-
-        plugin.beforeGiven(binding);
-        listener.startStep(givenStep);
-
-        plugin.afterGiven(binding);
-        listener.stopStep();
-
-        plugin.beforeWhen(binding);
-        listener.startStep(whenStep);
-
-        plugin.afterWhen(binding);
-        listener.stopStep();
-
-        plugin.beforeThen(binding);
-        listener.startStep(thenStep);
-
-        runTestsUsing(plugin, binding);
-
-        plugin.afterThen(binding);
-        listener.stopStep();
-
-        plugin.afterScenario(binding);
-        listener.stopStep();
-    }
 
     def runTestsUsing(ThucydidesPlugin thucydidesPlugin, Binding binding) {
-        URL staticSiteUrl = Thread.currentThread().getContextClassLoader().getResource("static-site/index.html");
-        WebDriver driver = binding.getVariable("driver");
-        driver.get staticSiteUrl.toString()
     }
 
+
+    public class ScenarioThread implements Callable<ThucydidesPlugin> {
+
+        ThucydidesPlugin plugin;
+        Binding binding;
+
+        public ScenarioThread()  throws InitializationError {
+            plugin = new MockedThucydidesPlugin();
+            binding = new Binding();
+
+            plugin.resetConfiguration();
+            plugin.stepListener = mock(StepListener)
+
+            listener = new ThucydidesListenerBuilder().get();
+            binding = new Binding();
+            binding.setVariable("sourceFile", "TestStory.story")
+
+
+
+        }
+
+        @Override
+        ThucydidesPlugin call() {
+            new StoryRunner(plugin, binding).runStories();
+            return plugin;
+        }
+    }
+
+    @Test
+    public void the_test_runner_records_the_steps_as_they_are_executed() throws InitializationError, InterruptedException {
+
+        List<ScenarioThread> threads = new ArrayList<ScenarioThread>();
+        List<Future<ThucydidesPlugin>> futures = new ArrayList<Future<ThucydidesPlugin>>();
+        
+        for(int i = 0; i < 10; i++) {
+            threads.add(new ScenarioThread());
+        }
+
+        for(ScenarioThread thread : threads) {
+            ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
+            futures.add(threadExecutor.submit(thread));
+        }
+
+        for(Future<ThucydidesPlugin> future : futures) {
+            future.get();
+        }
+    }
+
+    private runStories(ThucydidesPlugin plugin, Binding binding)  {
+        new StoryRunner(plugin, binding).runStories();
+    }
+
+    public class StoryRunner {
+
+        private final ThucydidesPlugin plugin;
+        private final Binding binding;
+
+        StoryRunner(ThucydidesPlugin plugin, Binding binding) {
+            this.plugin = plugin
+            this.binding = binding
+        }
+
+        public void runStories() {
+            plugin.beforeStory(binding);
+            runScenarios();
+            plugin.afterStory(binding);
+        }
+
+        public void runScenarios() {
+
+            plugin.beforeScenario(binding);
+            listener.startStep(scenarioStep);
+
+            plugin.beforeGiven(binding);
+            listener.startStep(givenStep);
+
+            plugin.afterGiven(binding);
+            listener.stopStep();
+
+            plugin.beforeWhen(binding);
+            listener.startStep(whenStep);
+
+            plugin.afterWhen(binding);
+            listener.stopStep();
+
+            plugin.beforeThen(binding);
+            listener.startStep(thenStep);
+
+            runTestsUsing(plugin, binding);
+
+            plugin.afterThen(binding);
+            listener.stopStep();
+
+            plugin.afterScenario(binding);
+            listener.stopStep();
+        }
+    }
 
 }
