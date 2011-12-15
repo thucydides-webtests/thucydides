@@ -131,18 +131,6 @@ public class WhenUsingTheThucydidesEasybPlugin {
     }
 
     @Test
-    public void the_plugin_should_inject_a_webdriver_instance_into_the_story_context() {
-
-        plugin.configuration.uses_default_base_url "http://www.google.com"
-
-        runStories(plugin, binding);
-
-        WebDriver driver = (WebDriver) binding.getVariable("driver");
-
-        assert driver != null
-    }
-
-    @Test
     public void should_be_able_to_force_the_driver_for_a_story() {
 
         WebdriverManager webdriverManager = mock(WebdriverManager)
