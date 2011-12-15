@@ -41,7 +41,18 @@ public class WhenRunningPolledTests {
 
     Configuration configuration;
 
-    int counter;
+    class Counter {
+        int counter = 0;
+    
+        public int getCounter() {
+            return counter;
+        }
+        
+        public void incrementCounter() {
+            counter++;
+        }
+    }
+    
     private ThucydidesFluentWait<WebDriver> waitFor;
 
     @Before
@@ -51,8 +62,6 @@ public class WhenRunningPolledTests {
         configuration = new SystemPropertiesConfiguration(environmentVariables);
 
         when(driver.navigate()).thenReturn(navigation);
-
-        counter = 0;
     }
 
     class SlowPage extends PageObject {
@@ -63,11 +72,11 @@ public class WhenRunningPolledTests {
     }
 
 
-    private ExpectedCondition<Boolean> weHaveWaitedEnough() {
+    private ExpectedCondition<Boolean> weHaveWaitedEnough(final Counter counter) {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
-                counter++;
-                return counter > 3;
+                counter.incrementCounter();
+                return counter.getCounter() > 3;
             }
         };
     }
@@ -75,11 +84,12 @@ public class WhenRunningPolledTests {
     @Test
     public void if_requested_page_should_be_refreshed_during_wait() {
         SlowPage page = new SlowPage(driver);
-
+        Counter counter = new Counter();
+        
         page.waitForRefresh()
             .withTimeoutOf(1000).milliseconds()
             .pollingEvery(100).milliseconds()
-            .until(weHaveWaitedEnough());
+            .until(weHaveWaitedEnough(counter));
 
         verify(navigation,times(3)).refresh();
     }
@@ -88,10 +98,11 @@ public class WhenRunningPolledTests {
     public void normally_page_should_be_not_refreshed_during_wait() {
         SlowPage page = new SlowPage(driver);
 
+        Counter counter = new Counter();
         page.waitForCondition()
             .withTimeoutOf(1000).milliseconds()
             .pollingEvery(100).milliseconds()
-            .until(weHaveWaitedEnough());
+            .until(weHaveWaitedEnough(counter));
 
         verify(navigation,never()).refresh();
     }
@@ -101,21 +112,22 @@ public class WhenRunningPolledTests {
 
         Clock clock = new org.openqa.selenium.support.ui.SystemClock();
         NormalFluentWait<WebDriver> waitFor = new NormalFluentWait(driver, clock, sleeper);
+        Counter counter = new Counter();
 
         waitFor.withTimeoutOf(1000).milliseconds()
                .pollingEvery(100).milliseconds()
-               .until(weHaveWaitedEnough());
+               .until(weHaveWaitedEnough(counter));
 
         verify(sleeper, times(3)).sleep(new Duration(100, TimeUnit.MILLISECONDS));
     }
 
 
 
-    private ExpectedCondition<Boolean> weSpitTheDummy() {
+    private ExpectedCondition<Boolean> weSpitTheDummy(final Counter counter) {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
-                counter++;
-                if (counter > 3) {
+                counter.incrementCounter();
+                if (counter.getCounter() > 3) {
                     throw new AssertionError("Oh drat");
                 }
                 return false;
@@ -123,11 +135,11 @@ public class WhenRunningPolledTests {
         };
     }
 
-    private ExpectedCondition<Boolean> weSpitTheDummyWithARuntimeException() {
+    private ExpectedCondition<Boolean> weSpitTheDummyWithARuntimeException(final Counter counter) {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
-                counter++;
-                if (counter < 3) {
+                counter.incrementCounter();
+                if (counter.getCounter() < 3) {
                     throw new NullPointerException("Oh drat");
                 } else {
                     return true;
@@ -160,34 +172,37 @@ public class WhenRunningPolledTests {
     @Test(expected = AssertionError.class)
     public void should_propogate_exception_if_test_fails() {
         SlowPage page = new SlowPage(driver);
+        Counter counter = new Counter();
 
         page.waitForCondition()
             .withTimeoutOf(1000).milliseconds()
             .pollingEvery(100).milliseconds()
-            .until(weSpitTheDummy());
+            .until(weSpitTheDummy(counter));
 
     }
 
     @Test(expected = NullPointerException.class)
     public void should_propogate_exception_if_test_fails_with_runtime_error() {
         SlowPage page = new SlowPage(driver);
+        Counter counter = new Counter();
 
         page.waitForCondition()
             .withTimeoutOf(1000).milliseconds()
             .pollingEvery(100).milliseconds()
-            .until(weSpitTheDummyWithARuntimeException());
+            .until(weSpitTheDummyWithARuntimeException(counter));
 
     }
 
     @Test
     public void should_not_propogate_exception_if_test_fails_with_an_ignored_exception() {
         SlowPage page = new SlowPage(driver);
+        Counter counter = new Counter();
 
         page.waitForCondition()
             .ignoring(NullPointerException.class)
             .withTimeoutOf(1000).milliseconds()
             .pollingEvery(100).milliseconds()
-            .until(weSpitTheDummyWithARuntimeException());
+            .until(weSpitTheDummyWithARuntimeException(counter));
 
     }
 
@@ -196,7 +211,7 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
 
         page.waitForCondition()
-            .withTimeoutOf(100).milliseconds()
+            .withTimeoutOf(1000).milliseconds()
             .pollingEvery(25).milliseconds()
             .until(weTakeTooLong());
 
@@ -208,7 +223,7 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
 
         page.waitForCondition()
-            .withTimeoutOf(100).milliseconds()
+            .withTimeoutOf(1000).milliseconds()
             .pollingEvery(25).milliseconds()
             .until(weDefineAnInvalidCondition());
 
