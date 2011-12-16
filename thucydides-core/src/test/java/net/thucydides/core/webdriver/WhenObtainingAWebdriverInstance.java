@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import com.opera.core.systems.OperaDriver;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -91,6 +92,12 @@ public class WhenObtainingAWebdriverInstance {
     public void the_factory_knows_what_class_the_chrome_driver_uses() {
         Class driverClass = webDriverFactory.getClassFor(SupportedWebDriver.CHROME);
         assertThat(driverClass.getName(), is(ChromeDriver.class.getName()));
+    }
+
+    @Test
+    public void the_factory_knows_what_class_the_opera_driver_uses() {
+        Class driverClass = webDriverFactory.getClassFor(SupportedWebDriver.OPERA);
+        assertThat(driverClass.getName(), is(OperaDriver.class.getName()));
     }
 
     @Test

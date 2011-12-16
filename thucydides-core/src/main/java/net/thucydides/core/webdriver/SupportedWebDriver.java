@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import com.google.common.base.Joiner;
+import com.opera.core.systems.OperaDriver;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -23,7 +24,8 @@ public enum SupportedWebDriver {
      */
     CHROME(ChromeDriver.class),
 
-//    OPERA(OperaDriver.class),
+    OPERA(OperaDriver.class),
+
     /**
      * HTMLUnit - fast, but no screenshots.
      */

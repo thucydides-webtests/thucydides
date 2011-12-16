@@ -64,10 +64,10 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
 
 
     @Test
-    public void opera_is_not_currently_a_supported_driver()
+    public void lynx_is_not_a_supported_driver()
             throws InitializationError {
         try {
-            environmentVariables.setProperty("webdriver.driver", "opera");
+            environmentVariables.setProperty("webdriver.driver", "lynx");
 
             ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 
@@ -75,7 +75,7 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
 
             fail("Should have thrown UnsupportedDriverException");
         } catch (UnsupportedDriverException e) {
-            assertThat(e.getMessage(), containsString("Unsupported browser type: opera"));
+            assertThat(e.getMessage(), containsString("Unsupported browser type: lynx"));
         }
     }
 
