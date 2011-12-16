@@ -78,6 +78,8 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 
         protected WebElement clients_with_missing_cells;
 
+        protected WebElement table_with_merged_cells;
+
         public StaticSitePage(WebDriver driver, int timeout) {
             super(driver, timeout);
         }

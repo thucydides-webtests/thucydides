@@ -30,9 +30,32 @@ public class HtmlTable {
         List<WebElement> rows = getRowElements();
 
         for (WebElement row : rows) {
-            results.add(rowDataFrom(row, headings));
+            List<WebElement> cells = cellsIn(row);
+            if (enoughCellsFor(headings).in(cells)) {
+                results.add(rowDataFrom(cells, headings));
+            }
         }
         return results;
+    }
+    
+    private class EnoughCellsCheck {
+        private final int minimumNumberOfCells;
+
+        private EnoughCellsCheck(List<String> headings) {
+            this.minimumNumberOfCells = headings.size();
+        }
+        
+        public boolean in(List<WebElement> cells) {
+            return (cells.size() >= minimumNumberOfCells);
+        }
+    }
+
+    private EnoughCellsCheck enoughCellsFor(List<String> headings) {
+        return new EnoughCellsCheck(headings);
+    }
+
+    private boolean enoughCellsAreIn(List<WebElement> cells , int minimumCellCount) {
+        return (cells.size() >= minimumCellCount);
     }
 
     public List<String> getHeadings() {
@@ -65,8 +88,9 @@ public class HtmlTable {
         List<String> headings = getHeadings();
 
         int index = 0;
-        for(WebElement rowElement : rowElements) {
-            Map<String, String> rowData = rowDataFrom(rowElement, headings);
+        for(WebElement row : rowElements) {
+            List<WebElement> cells = cellsIn(row);
+            Map<String, String> rowData = rowDataFrom(cells, headings);
             if (matches(rowData, matchers)) {
                 indexes.add(index);
             }
@@ -86,10 +110,8 @@ public class HtmlTable {
     }
 
 
-    private Map<String,String> rowDataFrom(WebElement row, List<String> headings) {
+    private Map<String,String> rowDataFrom(List<WebElement> cells, List<String> headings) {
         Map<String,String> rowData = new HashMap<String, String>();
-
-        List<WebElement> cells = row.findElements(By.tagName("td"));
 
         int column = 0;
         for (String heading : headings) {
@@ -99,6 +121,10 @@ public class HtmlTable {
             }
         }
         return rowData;
+    }
+
+    private List<WebElement> cellsIn(WebElement row) {
+        return row.findElements(By.tagName("td"));
     }
 
     private String cellValueAt(final int column, final List<WebElement> cells) {
