@@ -2,6 +2,7 @@ package net.thucydides.core.scheduling;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import net.thucydides.core.steps.StepEventBus;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.Clock;
@@ -52,6 +53,9 @@ public abstract class ThucydidesFluentWait<T> implements Wait<T> {
         long end = getClock().laterBy(timeout.in(MILLISECONDS));
         RuntimeException lastException = null;
         while (true) {
+            if (aPreviousStepHasFailed()) {
+                return (V) Boolean.TRUE;
+            }
             try {
                 V value = isTrue.apply(input);
                 if (value != null && Boolean.class.equals(value.getClass())) {
@@ -78,6 +82,10 @@ public abstract class ThucydidesFluentWait<T> implements Wait<T> {
                 throw new WebDriverException(e);
             }
         }
+    }
+
+    private boolean aPreviousStepHasFailed() {
+        return StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed();
     }
 
     public abstract void doWait() throws InterruptedException;

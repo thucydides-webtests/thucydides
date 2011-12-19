@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import net.thucydides.core.pages.WebElementFacade;
+import net.thucydides.core.steps.StepEventBus;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -36,6 +37,16 @@ class DisplayedElementLocator extends AjaxElementLocator {
     }
 
     private boolean shouldFindElementImmediately() {
+        if (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed()) {
+            return true;
+        }
+        if (calledFromAQuickMethod()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean calledFromAQuickMethod() {
         for(StackTraceElement elt : Thread.currentThread().getStackTrace()){
             if (QUICK_METHODS.contains(elt.getMethodName())
                 &&  QUICK_CLASSES.contains(elt.getClassName())) {

@@ -1,6 +1,8 @@
 package net.thucydides.core.scheduling;
 
 import net.thucydides.core.pages.PageObject;
+import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
@@ -35,6 +37,9 @@ public class WhenRunningPolledTests {
     Clock clock;
 
     @Mock
+    StepFailure failure;
+
+    @Mock
     WebDriver.Navigation navigation;
 
     MockEnvironmentVariables environmentVariables;
@@ -43,16 +48,16 @@ public class WhenRunningPolledTests {
 
     class Counter {
         int counter = 0;
-    
+
         public int getCounter() {
             return counter;
         }
-        
+
         public void incrementCounter() {
             counter++;
         }
     }
-    
+
     private ThucydidesFluentWait<WebDriver> waitFor;
 
     @Before
@@ -62,6 +67,8 @@ public class WhenRunningPolledTests {
         configuration = new SystemPropertiesConfiguration(environmentVariables);
 
         when(driver.navigate()).thenReturn(navigation);
+
+        StepEventBus.getEventBus().clear();
     }
 
     class SlowPage extends PageObject {
@@ -85,13 +92,28 @@ public class WhenRunningPolledTests {
     public void if_requested_page_should_be_refreshed_during_wait() {
         SlowPage page = new SlowPage(driver);
         Counter counter = new Counter();
-        
-        page.waitForRefresh()
-            .withTimeoutOf(1000).milliseconds()
-            .pollingEvery(100).milliseconds()
-            .until(weHaveWaitedEnough(counter));
 
-        verify(navigation,times(3)).refresh();
+        page.waitForRefresh()
+                .withTimeoutOf(1000).milliseconds()
+                .pollingEvery(100).milliseconds()
+                .until(weHaveWaitedEnough(counter));
+
+        verify(navigation, times(3)).refresh();
+    }
+
+    @Test
+    public void wait_should_be_bypassed_if_a_previous_step_has_failed() {
+        SlowPage page = new SlowPage(driver);
+        Counter counter = new Counter();
+
+        StepEventBus.getEventBus().stepFailed(failure);
+
+        page.waitForRefresh()
+                .withTimeoutOf(1000).milliseconds()
+                .pollingEvery(100).milliseconds()
+                .until(weHaveWaitedEnough(counter));
+
+        verify(navigation, times(0)).refresh();
     }
 
     @Test
@@ -100,11 +122,11 @@ public class WhenRunningPolledTests {
 
         Counter counter = new Counter();
         page.waitForCondition()
-            .withTimeoutOf(1000).milliseconds()
-            .pollingEvery(100).milliseconds()
-            .until(weHaveWaitedEnough(counter));
+                .withTimeoutOf(1000).milliseconds()
+                .pollingEvery(100).milliseconds()
+                .until(weHaveWaitedEnough(counter));
 
-        verify(navigation,never()).refresh();
+        verify(navigation, never()).refresh();
     }
 
     @Test
@@ -115,12 +137,11 @@ public class WhenRunningPolledTests {
         Counter counter = new Counter();
 
         waitFor.withTimeoutOf(1000).milliseconds()
-               .pollingEvery(100).milliseconds()
-               .until(weHaveWaitedEnough(counter));
+                .pollingEvery(100).milliseconds()
+                .until(weHaveWaitedEnough(counter));
 
         verify(sleeper, times(3)).sleep(new Duration(100, TimeUnit.MILLISECONDS));
     }
-
 
 
     private ExpectedCondition<Boolean> weSpitTheDummy(final Counter counter) {
@@ -175,9 +196,9 @@ public class WhenRunningPolledTests {
         Counter counter = new Counter();
 
         page.waitForCondition()
-            .withTimeoutOf(1000).milliseconds()
-            .pollingEvery(100).milliseconds()
-            .until(weSpitTheDummy(counter));
+                .withTimeoutOf(1000).milliseconds()
+                .pollingEvery(100).milliseconds()
+                .until(weSpitTheDummy(counter));
 
     }
 
@@ -187,9 +208,9 @@ public class WhenRunningPolledTests {
         Counter counter = new Counter();
 
         page.waitForCondition()
-            .withTimeoutOf(1000).milliseconds()
-            .pollingEvery(100).milliseconds()
-            .until(weSpitTheDummyWithARuntimeException(counter));
+                .withTimeoutOf(1000).milliseconds()
+                .pollingEvery(100).milliseconds()
+                .until(weSpitTheDummyWithARuntimeException(counter));
 
     }
 
@@ -199,10 +220,10 @@ public class WhenRunningPolledTests {
         Counter counter = new Counter();
 
         page.waitForCondition()
-            .ignoring(NullPointerException.class)
-            .withTimeoutOf(1000).milliseconds()
-            .pollingEvery(100).milliseconds()
-            .until(weSpitTheDummyWithARuntimeException(counter));
+                .ignoring(NullPointerException.class)
+                .withTimeoutOf(1000).milliseconds()
+                .pollingEvery(100).milliseconds()
+                .until(weSpitTheDummyWithARuntimeException(counter));
 
     }
 
@@ -211,9 +232,9 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
 
         page.waitForCondition()
-            .withTimeoutOf(1000).milliseconds()
-            .pollingEvery(25).milliseconds()
-            .until(weTakeTooLong());
+                .withTimeoutOf(1000).milliseconds()
+                .pollingEvery(25).milliseconds()
+                .until(weTakeTooLong());
 
     }
 
@@ -223,9 +244,9 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
 
         page.waitForCondition()
-            .withTimeoutOf(1000).milliseconds()
-            .pollingEvery(25).milliseconds()
-            .until(weDefineAnInvalidCondition());
+                .withTimeoutOf(1000).milliseconds()
+                .pollingEvery(25).milliseconds()
+                .until(weDefineAnInvalidCondition());
 
     }
 
@@ -258,8 +279,8 @@ public class WhenRunningPolledTests {
         NormalFluentWait<BackEnd> waitFor = new NormalFluentWait(backEnd);
 
         waitFor.withTimeoutOf(100).milliseconds()
-               .pollingEvery(10).milliseconds()
-               .until(weHaveWaitedAWhile());
+                .pollingEvery(10).milliseconds()
+                .until(weHaveWaitedAWhile());
 
         assertThat(backEnd.getCounter()).isGreaterThan(5);
     }
