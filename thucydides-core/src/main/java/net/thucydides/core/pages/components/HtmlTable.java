@@ -2,6 +2,7 @@ package net.thucydides.core.pages.components;
 
 import ch.lambdaj.function.convert.Converter;
 import net.thucydides.core.matchers.BeanMatcher;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -22,9 +23,9 @@ public class HtmlTable {
         this.tableElement = tableElement;
     }
 
-    public List<Map<String, String>> getRows() {
+    public List<Map<Object, String>> getRows() {
 
-        List<Map<String, String>> results = new ArrayList<Map<String, String>>();
+        List<Map<Object, String>> results = new ArrayList<Map<Object, String>>();
 
         List<String> headings = getHeadings();
         List<WebElement> rows = getRowElements();
@@ -90,7 +91,7 @@ public class HtmlTable {
         int index = 0;
         for(WebElement row : rowElements) {
             List<WebElement> cells = cellsIn(row);
-            Map<String, String> rowData = rowDataFrom(cells, headings);
+            Map<Object, String> rowData = rowDataFrom(cells, headings);
             if (matches(rowData, matchers)) {
                 indexes.add(index);
             }
@@ -100,7 +101,7 @@ public class HtmlTable {
         return indexes;
     }
 
-    private boolean matches(Map<String, String> rowData, BeanMatcher[] matchers) {
+    private boolean matches(Map<Object, String> rowData, BeanMatcher[] matchers) {
         for(BeanMatcher matcher : matchers) {
             if (!matcher.matches(rowData)) {
                 return false;
@@ -110,14 +111,17 @@ public class HtmlTable {
     }
 
 
-    private Map<String,String> rowDataFrom(List<WebElement> cells, List<String> headings) {
-        Map<String,String> rowData = new HashMap<String, String>();
+    private Map<Object,String> rowDataFrom(List<WebElement> cells, List<String> headings) {
+        Map<Object,String> rowData = new HashMap<Object, String>();
 
         int column = 0;
         for (String heading : headings) {
             String cell = cellValueAt(column++, cells);
             if (cell != null) {
-                rowData.put(heading, cell);
+                if (!StringUtils.isEmpty(heading)) {
+                    rowData.put(heading, cell);
+                }
+                rowData.put(column, cell);
             }
         }
         return rowData;
@@ -144,7 +148,7 @@ public class HtmlTable {
         };
     }
 
-    public static List<Map<String, String>> rowsFrom(final WebElement table) {
+    public static List<Map<Object, String>> rowsFrom(final WebElement table) {
         return new HtmlTable(table).getRows();
     }
 
