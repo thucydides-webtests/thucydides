@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
  */
 public class Formatter {
 
-    private static final String ISSUE_NUMBER_REGEXP = "#([A-Z][A-Z0-9-_]*)?-?\\d+";
+    private final static String ISSUE_NUMBER_REGEXP = "#([A-Z][A-Z0-9-_]*)?-?\\d+";
     private final static Pattern issueNumberPattern = Pattern.compile(ISSUE_NUMBER_REGEXP);
-    private final String issueLinkFormat = "<a href=\"{0}\">{1}</a>";
+    private final static String ISSUE_LINK_FORMAT = "<a href=\"{0}\">{1}</a>";
 
     private final IssueTracking issueTracking;
 
@@ -53,7 +53,7 @@ public class Formatter {
         List<String> issues = issuesIn(value);
         for(String issue : issues) {
             String issueUrl = MessageFormat.format(issueUrlFormat, stripLeadingHashFrom(issue));
-            String issueLink = MessageFormat.format(issueLinkFormat, issueUrl, issue);
+            String issueLink = MessageFormat.format(ISSUE_LINK_FORMAT, issueUrl, issue);
             formattedValue = formattedValue.replaceAll(issue, issueLink);
         }
         return formattedValue;

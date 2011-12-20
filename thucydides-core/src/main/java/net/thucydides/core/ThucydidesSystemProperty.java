@@ -111,11 +111,22 @@ public enum ThucydidesSystemProperty {
      * It is activated by default, so that when you run tests from within an IDE they open
      * a Firefox instance with Firebugs. To deactivate, just pass in -Dthucydides.activate.firebugs=false
      */
-    ACTIVATE_FIREBUGS("thucydides.activate.firebugs");
+    ACTIVATE_FIREBUGS("thucydides.activate.firebugs"),
+
+    /**
+     *  If batch testing is being used, this is the size of the batches being executed.
+     */
+    BATCH_COUNT("thucydides.batch.count"),
+
+    /**
+     * If batch testing is being used, this is the number of the batch being run on this machine.
+     */
+    BATCH_NUMBER("thucydides.batch.number");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 1000;
     public static final int DEFAULT_WIDTH = 800;
+
 
     private ThucydidesSystemProperty(final String propertyName) {
         this.propertyName = propertyName;

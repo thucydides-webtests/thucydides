@@ -2,6 +2,8 @@ package net.thucydides.core.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
+import net.thucydides.core.batches.BatchManager;
+import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.pages.InternalSystemClock;
@@ -28,6 +30,6 @@ public class ThucydidesModule extends AbstractModule {
         bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);
         bind(IssueTracking.class).to(SystemPropertiesIssueTracking.class).in(Singleton.class);
         bind(WebdriverManager.class).to(ThucydidesWebdriverManager.class);
-
+        bind(BatchManager.class).to(SystemVariableBasedBatchManager.class);
     }
 }

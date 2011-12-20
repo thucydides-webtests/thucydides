@@ -23,6 +23,7 @@ import org.openqa.selenium.WebDriver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import static net.thucydides.easyb.StepName.nameOf
+import net.thucydides.core.batches.BatchManager
 
 public class ThucydidesPlugin extends BasePlugin {
 
@@ -31,6 +32,8 @@ public class ThucydidesPlugin extends BasePlugin {
     private WebdriverManager webdriverManager;
 
     private runningFirstScenario = true;
+
+    private BatchManager batchManager;
 
     ReportService reportService;
 
@@ -84,9 +87,16 @@ public class ThucydidesPlugin extends BasePlugin {
 
     protected WebdriverManager getWebdriverManager() {
         if (!webdriverManager) {
-            webdriverManager = Injectors.getInjector().getInstance(WebdriverManager)
+            webdriverManager = Injectors.injector.getInstance WebdriverManager
         }
-        return webdriverManager;
+        return webdriverManager
+    }
+
+    protected BatchManager getBatchManager() {
+        if (!batchManager) {
+            batchManager = Injectors.injector.getInstance BatchManager
+        }
+        return batchManager
     }
 
     private WebDriver getWebDriver() {
@@ -124,6 +134,7 @@ public class ThucydidesPlugin extends BasePlugin {
             story = Story.withId(storyFile, storyName)
         }
         StepEventBus.eventBus.testSuiteStarted(story)
+        getBatchManager().registerTestCase(story.name)
     }
 
 

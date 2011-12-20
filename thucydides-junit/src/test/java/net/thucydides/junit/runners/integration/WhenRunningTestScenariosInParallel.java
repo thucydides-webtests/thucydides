@@ -53,7 +53,6 @@ public class WhenRunningTestScenariosInParallel extends AbstractTestStepRunnerTe
         public List<TestOutcome> getTestOutcomes() {
             return runner.getTestOutcomes();    
         }
-
     }
     
     @Test

@@ -126,10 +126,25 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         copyResourcesToOutputDirectory();
 
-        generateStoriesReport(storyResults);
-        generateFeatureReport(featureResults);
+        Map<String, Object> storyContext = new HashMap<String, Object>();
+        storyContext.put("stories", storyResults);
+        storyContext.put("storyContext", "All stories");
+        addFormattersToContext(storyContext);
+        writeReportToOutputDirectory("stories.html",
+                                     mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(storyContext));
+
+        Map<String, Object> featureContext = new HashMap<String, Object>();
+        addFormattersToContext(featureContext);
+        featureContext.put("features", featureResults);
+        writeReportToOutputDirectory("features.html",
+                                     mergeTemplate(FEATURES_TEMPLATE_PATH).usingContext(featureContext));
+
+        for(FeatureResults feature : featureResults) {
+            generateStoryReportForFeature(feature);
+        }
+
         generateReportHomePage(storyResults, featureResults);
-        
+
         updateHistoryFor(featureResults);
         generateHistoryReport();
     }
@@ -150,7 +165,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     }
 
-    private void generateFeatureReport(final List<FeatureResults> featureResults) throws IOException {
+    private void generateFeatureReportFor(final List<FeatureResults> featureResults) throws IOException {
         Map<String, Object> context = new HashMap<String, Object>();
         addFormattersToContext(context);
         context.put("features", featureResults);
@@ -175,7 +190,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         writeReportToOutputDirectory(filename, htmlContents);
     }
 
-    private void generateStoriesReport(final List<StoryTestResults> storyResults) throws IOException {
+    private void generateStoriesReportFor(final List<StoryTestResults> storyResults) throws IOException {
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("stories", storyResults);
         context.put("storyContext", "All stories");

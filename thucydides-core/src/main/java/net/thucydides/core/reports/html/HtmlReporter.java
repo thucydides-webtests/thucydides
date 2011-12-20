@@ -92,7 +92,7 @@ public abstract class HtmlReporter {
                                                 final String htmlContents) throws IOException {
         File report = new File(getOutputDirectory(), reportFilename);
         FileUtils.writeStringToFile(report, htmlContents);
-        LOGGER.debug("Writing HTML report to " + report.getAbsolutePath());
+        LOGGER.debug("Writing HTML report to {}", report.getAbsolutePath());
         return report;
     }
 

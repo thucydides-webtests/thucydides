@@ -2,6 +2,8 @@ package net.thucydides.junit.runners;
 
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.batches.BatchManager;
+import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
@@ -73,6 +75,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private ReportService reportService;
     private boolean uniqueSession;
 
+    private BatchManager batchManager;
+
     /**
      * The Step Listener observes and records what happens during the execution of the test.
      * Once the test is over, the Step Listener can provide the acceptance test outcome in the
@@ -96,11 +100,17 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * @throws InitializationError if some JUnit-related initialization problem occurred
      */
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
+        this(klass, Injectors.getInjector().getInstance(BatchManager.class));
+    }
+
+    public ThucydidesRunner(final Class<?> klass, final BatchManager batchManager) throws InitializationError {
         super(klass);
         this.webDriverFactory = new WebDriverFactory();
         this.configuration = Injectors.getInjector().getInstance(Configuration.class);
         this.webdriverManager = Injectors.getInjector().getInstance(WebdriverManager.class);
+        this.batchManager = batchManager;
         this.requestedDriver = getSpecifiedDriver(klass);
+        batchManager.registerTestCase(klass);
     }
 
     private String getSpecifiedDriver(Class<?> klass) {
@@ -186,13 +196,19 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     @Override
     public void run(final RunNotifier notifier) {
-        initializeDriversAndListeners(notifier);
+        if (!skipThisTest()) {
+            initializeDriversAndListeners(notifier);
 
-        super.run(notifier);
+            super.run(notifier);
 
-        stepListener.close();
-        generateReportsFor(stepListener.getTestOutcomes());
-        closeDrivers();
+            stepListener.close();
+            generateReportsFor(stepListener.getTestOutcomes());
+            closeDrivers();
+        }
+    }
+
+    private boolean skipThisTest() {
+        return (batchManager != null) && (!batchManager.shouldExecuteThisTest());
     }
 
     private void initializeDriversAndListeners(RunNotifier notifier) {
