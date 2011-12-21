@@ -2,6 +2,7 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.screenshots.RecordedScreenshot;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -107,7 +108,8 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("google_page_1.png");
-        step1.setScreenshot(screenshot);
+        File screenshotSource = temporaryDirectory.newFile("google_page_1.html");
+        step1.addScreenshot(new RecordedScreenshot(screenshot,screenshotSource));
         testOutcome.recordStep(step1);
 
         File xmlReport = reporter.generateReportFor(testOutcome);
@@ -120,7 +122,8 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("google_page_1.png");
-        step1.setScreenshot(screenshot);
+        File screenshotSource = temporaryDirectory.newFile("google_page_1.html");
+        step1.addScreenshot(new RecordedScreenshot(screenshot,screenshotSource));
         testOutcome.recordStep(step1);
 
         reporter.generateReportFor(testOutcome);
@@ -200,7 +203,8 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("google_page_1.png");
-        step1.setScreenshot(screenshot);
+        File screenshotSource = temporaryDirectory.newFile("google_page_1.html");
+        step1.addScreenshot(new RecordedScreenshot(screenshot,screenshotSource));
         testOutcome.recordStep(step1);
 
         reporter.generateReportFor(testOutcome);
@@ -218,7 +222,8 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("google_page_1.png");
-        step1.setScreenshot(screenshot);
+        File screenshotSource = temporaryDirectory.newFile("google_page_1.html");
+        step1.addScreenshot(new RecordedScreenshot(screenshot,screenshotSource));
         testOutcome.recordStep(step1);
 
         reporter.generateReportFor(testOutcome);
@@ -235,7 +240,8 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("google_page_1.png");
-        step1.setScreenshot(screenshot);
+        File screenshotSource = temporaryDirectory.newFile("google_page_1.html");
+        step1.addScreenshot(new RecordedScreenshot(screenshot,screenshotSource));
         testOutcome.recordStep(step1);
 
         reporter.setQualifier("qualifier");
@@ -251,7 +257,8 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("google_page_1.png");
-        step1.setScreenshot(screenshot);
+        File screenshotSource = temporaryDirectory.newFile("google_page_1.html");
+        step1.addScreenshot(new RecordedScreenshot(screenshot,screenshotSource));
         testOutcome.recordStep(step1);
 
         reporter.setQualifier("a b c");

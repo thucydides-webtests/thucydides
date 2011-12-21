@@ -47,7 +47,7 @@ public class WhenReadingAnXMLReport {
             + "    <issue>#789</issue>\n"
             + "    <issue>#123</issue>\n"
             + "  </issues>\n"
-          + "  <test-step result='SUCCESS' screenshot='step_1.png'>\n"
+          + "  <test-step result='SUCCESS'>\n"
           + "    <description>step 1</description>\n"
           + "  </test-step>\n"
           + "</acceptance-test-run>";
@@ -64,7 +64,7 @@ public class WhenReadingAnXMLReport {
         String storedReportXML =
             "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
           + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-          + "  <test-step result='SUCCESS' screenshot='step_1.png'>\n"
+          + "  <test-step result='SUCCESS'>\n"
           + "    <description>step 1</description>\n"
           + "  </test-step>\n"
           + "</acceptance-test-run>";
@@ -81,7 +81,10 @@ public class WhenReadingAnXMLReport {
         String storedReportXML =
             "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
           + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-          + "  <test-step result='SUCCESS' screenshot='step_1.png'>\n"
+          + "  <test-step result='SUCCESS'>\n"
+          + "    <screenshots>"
+          + "      <screenshot image='step_1.png' source='step_1.html' />"
+          + "    </screenshots>"
           + "    <description>step 1</description>\n"
           + "  </test-step>\n"
           + "</acceptance-test-run>";
@@ -95,7 +98,8 @@ public class WhenReadingAnXMLReport {
         assertThat(testOutcome.getTestSteps().size(), is(1));
         assertThat(testStep.getResult(), is(TestResult.SUCCESS));
         assertThat(testStep.getDescription(), is("step 1"));
-        assertThat(testStep.getScreenshotPath(), is("step_1.png"));
+        assertThat(testStep.getScreenshots().get(0).getScreenshot().getName(), is("step_1.png"));
+        assertThat(testStep.getScreenshots().get(0).getSourcecode().getName(), is("step_1.html"));
     }
 
 
@@ -104,7 +108,7 @@ public class WhenReadingAnXMLReport {
         String storedReportXML =
             "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
           + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-          + "  <test-step result='SUCCESS' screenshot='step_1.png'>\n"
+          + "  <test-step result='SUCCESS'>\n"
           + "    <description>step 1</description>\n"
           + "  </test-step>\n"
           + "</acceptance-test-run>";
@@ -123,7 +127,7 @@ public class WhenReadingAnXMLReport {
           + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story'>\n"
           + "    <feature id='myapp.myfeatures.SomeFeature' name='Some feature' />\n"
           + "  </user-story>"
-          + "  <test-step result='SUCCESS' screenshot='step_1.png'>\n"
+          + "  <test-step result='SUCCESS'>\n"
           + "    <description>step 1</description>\n"
           + "  </test-step>\n"
           + "</acceptance-test-run>";

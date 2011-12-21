@@ -11,8 +11,10 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.screenshots.RecordedScreenshot;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -43,7 +45,10 @@ public class TestOutcomeConverter implements Converter {
     private static final String ISSUE = "issue";
     private static final String EXCEPTION = "exception";
     private static final String ERROR = "error";
+    private static final String SCREENSHOT_LIST_FIELD = "screenshots";
     private static final String SCREENSHOT_FIELD = "screenshot";
+    private static final String SCREENSHOT_IMAGE = "image";
+    private static final String SCREENSHOT_SOURCE = "source";
     private static final String DESCRIPTION = "description";
 
     private transient String qualifier;
@@ -210,8 +215,15 @@ public class TestOutcomeConverter implements Converter {
     }
 
     private void writeScreenshotIfPresent(final HierarchicalStreamWriter writer, final TestStep step) {
-        if (step.getScreenshot() != null) {
-            writer.addAttribute(SCREENSHOT_FIELD, step.getScreenshot().getName());
+        if ((step.getScreenshots() != null) && (step.getScreenshots().size() > 0)) {
+            writer.startNode(SCREENSHOT_LIST_FIELD);
+            for(RecordedScreenshot screenshot : step.getScreenshots()) {
+                writer.startNode(SCREENSHOT_FIELD);
+                writer.addAttribute(SCREENSHOT_IMAGE, screenshot.getScreenshot().getName());
+                writer.addAttribute(SCREENSHOT_SOURCE, screenshot.getSourcecode().getName());
+                writer.endNode();
+            }
+            writer.endNode();
         }
     }
 
@@ -309,10 +321,6 @@ public class TestOutcomeConverter implements Converter {
         String testResultValue = reader.getAttribute(RESULT_FIELD);
         TestResult result = TestResult.valueOf(testResultValue);
         step.setResult(result);
-        String screenshot = reader.getAttribute(SCREENSHOT_FIELD);
-        if (screenshot != null) {
-            step.setScreenshotPath(screenshot);
-        }
         readTestStepChildren(reader, step);
 
         testOutcome.recordStep(step);
@@ -320,12 +328,10 @@ public class TestOutcomeConverter implements Converter {
 
     private void readTestGroup(final HierarchicalStreamReader reader, final TestOutcome testOutcome) {
         String name = reader.getAttribute(NAME_FIELD);
-        String screenshot = reader.getAttribute(SCREENSHOT_FIELD);
         String testResultValue = reader.getAttribute(RESULT_FIELD);
         TestResult result = TestResult.valueOf(testResultValue);
         testOutcome.recordStep(new TestStep(name));
         testOutcome.startGroup();
-        testOutcome.getCurrentGroup().setScreenshotPath(screenshot);
         testOutcome.getCurrentGroup().setResult(result);
         readChildren(reader, testOutcome);
         testOutcome.endGroup();
@@ -337,10 +343,25 @@ public class TestOutcomeConverter implements Converter {
             String childNode = reader.getNodeName();
             if (childNode.equals(DESCRIPTION)) {
                 step.setDescription(reader.getValue());
-//            } else if (childNode.equals(REQUIREMENTS)) {
-//                readTestStepIssues(reader, step);
+            } else if (childNode.equals(SCREENSHOT_LIST_FIELD)) {
+                readScreenshots(reader, step);
             }
             reader.moveUp();
+        }
+    }
+
+    private void readScreenshots(HierarchicalStreamReader reader, TestStep step) {
+        if (reader.getNodeName().equals(SCREENSHOT_LIST_FIELD)) {
+            while (reader.hasMoreChildren()) {
+                reader.moveDown();
+                String childNode = reader.getNodeName();
+                if (childNode.equals(SCREENSHOT_FIELD)) {
+                    String screenshot = reader.getAttribute(SCREENSHOT_IMAGE);
+                    String source = reader.getAttribute(SCREENSHOT_SOURCE);
+                    step.addScreenshot(new RecordedScreenshot(new File(screenshot), new File(source)));
+                }
+                reader.moveUp();
+            }
         }
     }
 }

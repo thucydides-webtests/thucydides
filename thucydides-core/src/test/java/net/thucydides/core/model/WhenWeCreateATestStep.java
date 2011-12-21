@@ -1,5 +1,6 @@
 package net.thucydides.core.model;
 
+import net.thucydides.core.screenshots.RecordedScreenshot;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 public class WhenWeCreateATestStep {
 
@@ -25,13 +27,55 @@ public class WhenWeCreateATestStep {
     @Test
     public void the_test_step_can_have_an_illustration() throws IOException {
         TestStep step = new TestStep("a narrative description");
-      
+
         File screenshot = temporaryFolder.newFile("screenshot.png");
-        step.setScreenshot(screenshot);
-        
-        assertThat(step.getScreenshot(), is(screenshot));
+        File source = temporaryFolder.newFile("screenshot.html");
+        step.addScreenshot(new RecordedScreenshot(screenshot, source));
+
+        assertThat(step.getScreenshots().get(0).getScreenshot(), is(screenshot));
+        assertThat(step.getScreenshots().get(0).getSourcecode(), is(source));
     }
-    
+
+    @Test
+    public void the_test_step_can_have_more_than_one_illustration() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+
+        File screenshot = temporaryFolder.newFile("screenshot.png");
+        File source = temporaryFolder.newFile("screenshot.html");
+        step.addScreenshot(new RecordedScreenshot(screenshot, source));
+
+        File screenshot2 = temporaryFolder.newFile("screenshot2.png");
+        File source2 = temporaryFolder.newFile("screenshot2.html");
+        step.addScreenshot(new RecordedScreenshot(screenshot2, source2));
+
+        assertThat(step.getScreenshots().get(0).getScreenshot(), is(screenshot));
+        assertThat(step.getScreenshots().get(0).getSourcecode(), is(source));
+        assertThat(step.getScreenshots().get(1).getScreenshot(), is(screenshot2));
+        assertThat(step.getScreenshots().get(1).getSourcecode(), is(source2));
+    }
+
+    @Test
+    public void the_first_screenshot_can_be_used_to_represent_the_step() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+
+        File screenshot = temporaryFolder.newFile("screenshot.png");
+        File source = temporaryFolder.newFile("screenshot.html");
+        step.addScreenshot(new RecordedScreenshot(screenshot, source));
+
+        File screenshot2 = temporaryFolder.newFile("screenshot2.png");
+        File source2 = temporaryFolder.newFile("screenshot2.html");
+        step.addScreenshot(new RecordedScreenshot(screenshot2, source2));
+
+        assertThat(step.getFirstScreenshot().getScreenshot(), is(screenshot));
+        assertThat(step.getFirstScreenshot().getSourcecode(), is(source));
+    }
+
+    @Test
+    public void the_first_screenshot_is_null_if_there_are_no_screenshots() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+
+        assertThat(step.getFirstScreenshot(), is(nullValue()));
+    }
     @Test
     public void when_a_step_fails_the_error_message_can_be_recorded() throws IOException {
         TestStep step = new TestStep("a narrative description");

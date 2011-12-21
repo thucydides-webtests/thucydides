@@ -1,8 +1,8 @@
 package net.thucydides.core.model;
 
 import com.google.inject.internal.ImmutableList;
+import net.thucydides.core.screenshots.RecordedScreenshot;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,9 +32,7 @@ public class TestStep {
     private String description;    
     private long duration;
     private long startTime;
-    private String screenshotPath;
-    private File screenshot;
-    private File htmlSource;
+    private List<RecordedScreenshot> screenshots = new ArrayList<RecordedScreenshot>();
     private Throwable cause;
     private TestResult result;
 
@@ -75,48 +73,22 @@ public class TestStep {
     public List<TestStep> getChildren() {
         return ImmutableList.copyOf(children);
     }
-    /**
-     * Each test step can be associated with a screenshot.
-     */
-    public void setScreenshot(final File screenshot) {
-        this.screenshot = screenshot;
+
+    public List<RecordedScreenshot> getScreenshots() {
+        return ImmutableList.copyOf(screenshots);
     }
 
-    public File getScreenshot() {
-        return screenshot;
-    }
-
-    public void setScreenshotPath(final String screenshotPath) {
-        this.screenshotPath = screenshotPath;
-    }
-
-    public String getScreenshotPath() {
-        return screenshotPath;
-    }
-
-    public String getScreenshotPage() {
-        if (screenshot != null) {
-            return "screenshot_" + withoutType(screenshot.getName()) + ".html";
+    public RecordedScreenshot getFirstScreenshot() {
+        if ((screenshots != null) && (!screenshots.isEmpty())) {
+            return screenshots.get(0);
         } else {
-            return "";
+            return null;
         }
-    }
-
-    private String withoutType(final String screenshot) {
-        int dot = screenshot.lastIndexOf('.');
-        return screenshot.substring(0, dot);
-    }
-
-    public File getHtmlSource() {
-        return htmlSource;
-    }
-
-    public void setHtmlSource(final File htmlSource) {
-        this.htmlSource = htmlSource;
     }
 
     /**
      * Each test step has a result, indicating the outcome of this step.
+     * @param result The test outcome associated with this step.
      */
     public void setResult(final TestResult result) {
         this.result = result;
@@ -185,6 +157,7 @@ public class TestStep {
 
     /**
      * Indicate that this step failed with a given error.
+     * @param exception why the test failed.
      */
     public void failedWith(final Throwable exception) {
         setResult(TestResult.FAILURE);
@@ -240,5 +213,9 @@ public class TestStep {
             }
         }
         return leafSteps;
+    }
+
+    public void addScreenshot(RecordedScreenshot screenshot) {
+            screenshots.add(screenshot);
     }
 }

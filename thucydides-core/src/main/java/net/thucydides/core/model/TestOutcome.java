@@ -9,6 +9,7 @@ import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
+import net.thucydides.core.screenshots.RecordedScreenshot;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -242,14 +243,15 @@ public class TestOutcome {
         List<TestStep> testSteps = getFlattenedTestSteps();
 
         for(TestStep currentStep : testSteps) {
-            if (!currentStep.isAGroup() && currentStep.getScreenshot() != null) {
-                screenshots.add(new Screenshot(currentStep.getScreenshot().getName(),
-                                               currentStep.getDescription(),
-                                               widthOf(currentStep.getScreenshot()),
-                                               currentStep.getException()));
+            if (!currentStep.isAGroup() && currentStep.getScreenshots() != null) {
+                for (RecordedScreenshot screenshot : currentStep.getScreenshots()) {
+                    screenshots.add(new Screenshot(screenshot.getScreenshot().getName(),
+                                                   currentStep.getDescription(),
+                                                   widthOf(screenshot.getScreenshot()),
+                                                   currentStep.getException()));
+                }
             }
         }
-
         return ImmutableList.copyOf(screenshots);
     }
 
