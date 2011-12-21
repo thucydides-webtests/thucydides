@@ -30,6 +30,9 @@ public class ListenerInWrongPackage implements StepListener {
         
     }
 
+    public void skippedStepStarted(ExecutedStepDescription description) {
+    }
+
     public void stepFailed(StepFailure failure) {
         
     }
@@ -50,19 +53,7 @@ public class ListenerInWrongPackage implements StepListener {
         return null;  
     }
 
-    public void setDriver(WebDriver driver) {
-        
-    }
-
     public WebDriver getDriver() {
-        return null;  
-    }
-
-    public boolean aStepHasFailed() {
-        return false;  
-    }
-
-    public Throwable getTestFailureCause() {
         return null;  
     }
 

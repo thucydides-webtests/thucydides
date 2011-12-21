@@ -502,22 +502,6 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
-    public void the_test_runner_should_store_screenshots_only_for_successful_and_failed_tests() throws Exception {
-
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
-        runner.run(new RunNotifier());
-
-        List<TestOutcome> executedScenarios = runner.getTestOutcomes();
-        TestOutcome testOutcome = executedScenarios.get(0);
-
-        List<TestStep> steps = testOutcome.getTestSteps();
-        assertThat(steps.size(), is(7));
-
-        verify(firefoxDriver, times(4)).getScreenshotAs((OutputType<Object>) Matchers.anyObject());
-
-    }
-
-    @Test
     public void the_test_runner_executes_tests_in_groups() throws InitializationError {
         ThucydidesRunner runner = new ThucydidesRunner(TestScenarioWithGroups.class);
         runner.run(new RunNotifier());

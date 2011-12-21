@@ -7,6 +7,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -40,11 +41,11 @@ public class WhenWeCreateATestStep {
     public void the_test_step_can_have_more_than_one_illustration() throws IOException {
         TestStep step = new TestStep("a narrative description");
 
-        File screenshot = temporaryFolder.newFile("screenshot.png");
+        File screenshot = screenshotFileFrom("/screenshots/google_page_1.png");
         File source = temporaryFolder.newFile("screenshot.html");
         step.addScreenshot(new RecordedScreenshot(screenshot, source));
 
-        File screenshot2 = temporaryFolder.newFile("screenshot2.png");
+        File screenshot2 = screenshotFileFrom("/screenshots/google_page_2.png");
         File source2 = temporaryFolder.newFile("screenshot2.html");
         step.addScreenshot(new RecordedScreenshot(screenshot2, source2));
 
@@ -68,6 +69,18 @@ public class WhenWeCreateATestStep {
 
         assertThat(step.getFirstScreenshot().getScreenshot(), is(screenshot));
         assertThat(step.getFirstScreenshot().getSourcecode(), is(source));
+    }
+
+    @Test
+    public void if_a_screenshot_is_identical_to_the_previous_one_in_the_step_it_wont_be_added() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+
+        File screenshot = temporaryFolder.newFile("screenshot.png");
+        File source = temporaryFolder.newFile("screenshot.html");
+        step.addScreenshot(new RecordedScreenshot(screenshot, source));
+        step.addScreenshot(new RecordedScreenshot(screenshot, source));
+
+        assertThat(step.getScreenshots().size(), is(1));
     }
 
     @Test
@@ -226,6 +239,11 @@ public class WhenWeCreateATestStep {
         TestStep step = new TestStep(stepName);
         step.setResult(TestResult.SUCCESS);
         return step;
+    }
+
+    private File screenshotFileFrom(final String screenshot) {
+        URL sourcePath = getClass().getResource(screenshot);
+        return new File(sourcePath.getPath());
     }
 
 }

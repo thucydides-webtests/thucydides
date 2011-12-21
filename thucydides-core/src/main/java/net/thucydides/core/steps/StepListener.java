@@ -44,6 +44,14 @@ public interface StepListener {
     void stepStarted(final ExecutedStepDescription description);
 
     /**
+     * Called when a test step is about to be started, but this step is scheduled to be skipped.
+     *
+     * @param description the description of the test that is about to be run
+     *                    (generally a class and method name)
+     */
+    void skippedStepStarted(final ExecutedStepDescription description);
+
+    /**
      * Called when a test step fails.
      *
      * @param failure describes the test that failed and the exception that was thrown

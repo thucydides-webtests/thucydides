@@ -68,14 +68,14 @@ public class SampleScenarioSteps extends ScenarioSteps {
     public void stepWithTwoParameters(String value, int number) {
     }
     
-    @StepGroup("Group of steps")
+    @Step
     public void groupOfStepsContainingAFailure() {
         stepThatSucceeds();
         stepThatShouldBeSkipped();
         
     }
 
-    @StepGroup("Another group of steps")
+    @Step
     public void anotherGroupOfSteps() {
         stepThatSucceeds();
         anotherStepThatSucceeds();
@@ -83,7 +83,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
         
     }
 
-    @StepGroup("Group of steps")
+    @Step
     public void groupOfStepsContainingAnError() {
         stepThatSucceeds();
         anotherStepThatSucceeds();

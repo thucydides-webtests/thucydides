@@ -216,6 +216,17 @@ public class TestStep {
     }
 
     public void addScreenshot(RecordedScreenshot screenshot) {
-            screenshots.add(screenshot);
+        if (thisIsANew(screenshot)) {
+        screenshots.add(screenshot);
+        }
+    }
+
+    private boolean thisIsANew(RecordedScreenshot screenshot) {
+        if (screenshots.isEmpty()) {
+            return true;    
+        } else {
+            RecordedScreenshot latestScreenshot = screenshots.get(screenshots.size() - 1);
+            return !latestScreenshot.equals(screenshot);
+        }
     }
 }

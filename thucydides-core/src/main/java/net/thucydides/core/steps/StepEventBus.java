@@ -203,12 +203,29 @@ public class StepEventBus {
         return DataDrivenStep.inProgress();
     }
 
+    /**
+     * Start the execution of a test step.
+     * @param executedStepDescription
+     */
     public void stepStarted(final ExecutedStepDescription executedStepDescription) {
 
         pushStep(executedStepDescription.getName());
 
         for(StepListener stepListener : getAllListeners()) {
             stepListener.stepStarted(executedStepDescription);
+        }
+    }
+
+    /**
+     * Record a step that is not scheduled to be executed (e.g. a skipped or ignored step).
+     * @param executedStepDescription
+     */
+    public void skippedStepStarted(final ExecutedStepDescription executedStepDescription) {
+
+        pushStep(executedStepDescription.getName());
+
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.skippedStepStarted(executedStepDescription);
         }
     }
 

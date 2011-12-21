@@ -210,6 +210,16 @@ public class BaseStepListener implements StepListener, StepPublisher {
      */
     public void stepStarted(final ExecutedStepDescription description) {
         LOGGER.debug("step started: " + description);
+        recordStep(description);
+        takeInitialScreenshot();
+    }
+
+    public void skippedStepStarted(final ExecutedStepDescription description) {
+        LOGGER.debug("skipped step started: " + description);
+        recordStep(description);
+    }
+
+    private void recordStep(ExecutedStepDescription description) {
         String stepName = AnnotatedStepDescription.from(description).getName();
         TestStep step = new TestStep(stepName);
 
@@ -218,7 +228,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
         currentStepStack.push(step);
         getCurrentTestOutcome().recordStep(step);
-        takeInitialScreenshot();
     }
 
     private void setDefaultResultFromAnnotations(final TestStep step, final ExecutedStepDescription description) {
@@ -348,12 +357,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void takeInitialScreenshot() {
-        if ((currentStepExists()) && shouldTakeInitialScreenshots()) {
+        if ((currentStepExists()) && !configuration.onlySaveFailingScreenshots()) {
+            takeScreenshot();
         }
-    }
-
-    private boolean shouldTakeInitialScreenshots() {
-        return !configuration.onlySaveFailingScreenshots();
     }
 
     private RecordedScreenshot grabScreenshotFor(final String testName) {

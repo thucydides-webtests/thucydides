@@ -937,7 +937,7 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
-    public void screenshots_should_be_taken_after_steps() {
+    public void screenshots_should_be_taken_before_and_after_steps() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
         StepEventBus.getEventBus().testStarted("app_should_work");
@@ -947,7 +947,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_two();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
-        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
+        verify(driver, times(4)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     @Test
@@ -981,7 +981,7 @@ public class WhenRecordingStepExecutionResults {
 
 
     @Test
-    public void screenshots_should_not_be_taken_for_pending_steps_among_implemented_stepd() {
+    public void screenshots_should_not_be_taken_for_pending_steps_among_implemented_steps() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
         StepEventBus.getEventBus().testStarted("app_should_work");
@@ -992,7 +992,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_two();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
-        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
+        verify(driver, times(4)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     @Test
@@ -1024,7 +1024,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step2();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
-        verify(driver, times(7)).getScreenshotAs((OutputType<?>) anyObject());
+        verify(driver, times(14)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     @Test
