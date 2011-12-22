@@ -55,10 +55,6 @@ public class HtmlTable {
         return new EnoughCellsCheck(headings);
     }
 
-    private boolean enoughCellsAreIn(List<WebElement> cells , int minimumCellCount) {
-        return (cells.size() >= minimumCellCount);
-    }
-
     public List<String> getHeadings() {
         return convert(getHeadingElements(), toTextValues());
     }
@@ -117,12 +113,10 @@ public class HtmlTable {
         int column = 0;
         for (String heading : headings) {
             String cell = cellValueAt(column++, cells);
-            if (cell != null) {
-                if (!StringUtils.isEmpty(heading)) {
-                    rowData.put(heading, cell);
-                }
-                rowData.put(column, cell);
+            if (!StringUtils.isEmpty(heading)) {
+                rowData.put(heading, cell);
             }
+            rowData.put(column, cell);
         }
         return rowData;
     }
@@ -132,11 +126,7 @@ public class HtmlTable {
     }
 
     private String cellValueAt(final int column, final List<WebElement> cells) {
-        if (column < cells.size()) {
-            return cells.get(column).getText();
-        } else {
-            return null;
-        }
+        return cells.get(column).getText();
     }
 
     private Converter<WebElement, String> toTextValues() {

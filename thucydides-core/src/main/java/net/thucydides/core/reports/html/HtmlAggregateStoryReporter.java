@@ -72,13 +72,14 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         }
         return testHistory;
     }
+
     /**
      * Generate aggregate XML reports for the test run reports in the output directory.
      * Returns the list of
      */
     public File generateReportFor(final StoryTestResults storyTestResults) throws IOException {
-        
-        LOGGER.info("Generating report for user story {} to {}",storyTestResults.getTitle(), getOutputDirectory());
+
+        LOGGER.info("Generating report for user story {} to {}", storyTestResults.getTitle(), getOutputDirectory());
 
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("story", storyTestResults);
@@ -103,7 +104,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         copyResourcesToOutputDirectory();
 
-        for(StoryTestResults storyTestResults : storyResults) {
+        for (StoryTestResults storyTestResults : storyResults) {
             generateReportFor(storyTestResults);
         }
 
@@ -122,7 +123,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     private void generateAggregateReportFor(final List<StoryTestResults> storyResults,
                                             final List<FeatureResults> featureResults) throws IOException {
-        LOGGER.info("Generating summary report for user stories to "+ getOutputDirectory());
+        LOGGER.info("Generating summary report for user stories to " + getOutputDirectory());
 
         copyResourcesToOutputDirectory();
 
@@ -131,15 +132,15 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         storyContext.put("storyContext", "All stories");
         addFormattersToContext(storyContext);
         writeReportToOutputDirectory("stories.html",
-                                     mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(storyContext));
+                mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(storyContext));
 
         Map<String, Object> featureContext = new HashMap<String, Object>();
         addFormattersToContext(featureContext);
         featureContext.put("features", featureResults);
         writeReportToOutputDirectory("features.html",
-                                     mergeTemplate(FEATURES_TEMPLATE_PATH).usingContext(featureContext));
+                mergeTemplate(FEATURES_TEMPLATE_PATH).usingContext(featureContext));
 
-        for(FeatureResults feature : featureResults) {
+        for (FeatureResults feature : featureResults) {
             generateStoryReportForFeature(feature);
         }
 
@@ -153,7 +154,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         getTestHistory().updateData(featureResults);
     }
 
-    private void generateHistoryReport()  throws IOException {
+    private void generateHistoryReport() throws IOException {
         List<TestResultSnapshot> history = getTestHistory().getHistory();
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("history", history);
@@ -165,39 +166,17 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     }
 
-    private void generateFeatureReportFor(final List<FeatureResults> featureResults) throws IOException {
-        Map<String, Object> context = new HashMap<String, Object>();
-        addFormattersToContext(context);
-        context.put("features", featureResults);
-        String htmlContents = mergeTemplate(FEATURES_TEMPLATE_PATH).usingContext(context);
-        writeReportToOutputDirectory("features.html", htmlContents);
-
-        for(FeatureResults feature : featureResults) {
-            generateStoryReportForFeature(feature);
-        }
-    }
-
     private void generateStoryReportForFeature(FeatureResults feature) throws IOException {
         Map<String, Object> context = new HashMap<String, Object>();
 
         context.put("stories", feature.getStoryResults());
-        context.put("storyContext", feature.getFeature().getName() );
+        context.put("storyContext", feature.getFeature().getName());
         addFormattersToContext(context);
         LOGGER.debug("Generating stories page");
         String htmlContents = mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(context);
         LOGGER.debug("Writing stories page");
         String filename = feature.getStoryReportName();
         writeReportToOutputDirectory(filename, htmlContents);
-    }
-
-    private void generateStoriesReportFor(final List<StoryTestResults> storyResults) throws IOException {
-        Map<String, Object> context = new HashMap<String, Object>();
-        context.put("stories", storyResults);
-        context.put("storyContext", "All stories");
-        addFormattersToContext(context);
-        String htmlContents = mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(context);
-        LOGGER.debug("Writing stories page");
-        writeReportToOutputDirectory("stories.html", htmlContents);
     }
 
     private void generateReportHomePage(final List<StoryTestResults> storyResults,
@@ -227,7 +206,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Map<String, Object> context = new HashMap<String, Object>();
 
         JSONResultTree resultTree = new JSONResultTree();
-        for(FeatureResults feature : featureResults) {
+        for (FeatureResults feature : featureResults) {
             resultTree.addFeature(feature);
         }
 
@@ -242,7 +221,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Map<String, Object> context = new HashMap<String, Object>();
 
         JSONProgressResultTree resultTree = new JSONProgressResultTree();
-        for(FeatureResults feature : featureResults) {
+        for (FeatureResults feature : featureResults) {
             resultTree.addFeature(feature);
         }
 
@@ -262,24 +241,16 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     public void setIssueTrackerUrl(String issueTrackerUrl) {
-
-        if (issueTrackerUrl != null) {
-            getSystemProperties().setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, issueTrackerUrl);
-        }
+        getSystemProperties().setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, issueTrackerUrl);
     }
 
     public void setJiraUrl(String jiraUrl) {
-        if (jiraUrl != null) {
-            getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_URL, jiraUrl);
-        }
+        getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_URL, jiraUrl);
     }
 
     public void setJiraProject(String jiraProject) {
-        if (jiraProject != null) {
-            getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_PROJECT, jiraProject);
-        }
+        getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_PROJECT, jiraProject);
     }
-
 
 
 }

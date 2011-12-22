@@ -4,6 +4,7 @@ package net.thucydides.core.pages.integration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.jquery.ByJQuery;
+import net.thucydides.core.webdriver.jquery.ByJQuerySelector;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElementAPITestsBaseClass {
@@ -148,4 +150,11 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElement
         assertThat(page.element(page.firstName).hasFocus(), is(true));
     }
 
+
+    @Test
+    public void a_jquery_selector_should_be_described_by_the_corresponding_jquery_expression() {
+        ByJQuerySelector jQuerySelector = ByJQuery.selector("a[title='Click Me']");
+        
+        assertThat(jQuerySelector.toString(), containsString("a[title='Click Me']"));
+    }
 }
