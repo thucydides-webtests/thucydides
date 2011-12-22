@@ -8,6 +8,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
+import net.thucydides.core.screenshots.RecordedScreenshot;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -403,17 +404,22 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='2' successful='1' failures='1' skipped='0' ignored='0' pending='0' result='FAILURE'>\n"
                 + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-                + "  <test-step result='SUCCESS' screenshot='step_1.png'>\n"
+                + "  <test-step result='SUCCESS'>\n"
+                + "    <screenshots>\n"
+                + "      <screenshot image='step_1.png' source='step_1.html'/>\n"
+                + "    </screenshots>\n"
                 + "    <description>step 1</description>\n"
                 + "  </test-step>\n"
                 + "  <test-step result='FAILURE'>\n"
                 + "    <description>step 2</description>\n"
-                + "  </test-step>\n" + "</acceptance-test-run>";
+                + "  </test-step>\n"
+                + "</acceptance-test-run>";
 
         File screenshot = temporaryDirectory.newFile("step_1.png");
+        File source = temporaryDirectory.newFile("step_1.html");
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        step1.setScreenshot(screenshot);
+        step1.addScreenshot(new RecordedScreenshot(screenshot, source));
         testOutcome.recordStep(step1);
         testOutcome.recordStep(TestStepFactory.failingTestStepCalled("step 2"));
 
@@ -430,7 +436,8 @@ public class WhenGeneratingAnXMLReport {
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
-        step1.setScreenshot(screenshot);
+        File source = temporaryDirectory.newFile("step_1.html");
+        step1.addScreenshot(new RecordedScreenshot(screenshot, source));
         testOutcome.recordStep(step1);
 
         File xmlReport = reporter.generateReportFor(testOutcome);
@@ -443,7 +450,8 @@ public class WhenGeneratingAnXMLReport {
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
-        step1.setScreenshot(screenshot);
+        File source = temporaryDirectory.newFile("step_1.html");
+        step1.addScreenshot(new RecordedScreenshot(screenshot, source));
         testOutcome.recordStep(step1);
 
         reporter.setQualifier("qualifier");
@@ -460,7 +468,8 @@ public class WhenGeneratingAnXMLReport {
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
-        step1.setScreenshot(screenshot);
+        File source = temporaryDirectory.newFile("step_1.html");
+        step1.addScreenshot(new RecordedScreenshot(screenshot, source));
         testOutcome.recordStep(step1);
 
         reporter.setQualifier("a b c");

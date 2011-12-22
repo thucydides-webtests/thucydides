@@ -92,7 +92,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     private Predicate<TestStep> hasScreenshot() {
         return new Predicate<TestStep>() {
             public boolean apply(TestStep testStep) {
-                return (testStep.getScreenshot() != null);
+                return ((testStep.getScreenshots() != null) && (!testStep.getScreenshots().isEmpty()));
             }
         };
     }

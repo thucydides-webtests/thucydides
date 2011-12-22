@@ -11,6 +11,7 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.screenshots.RecordedScreenshot;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
@@ -189,7 +190,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     /**
      * A test has finished.
-     * @param result
+     * @param result the result of the test that just finished.
      */
     public void testFinished(final TestOutcome result) {
         recordTestDuration();
@@ -209,6 +210,16 @@ public class BaseStepListener implements StepListener, StepPublisher {
      */
     public void stepStarted(final ExecutedStepDescription description) {
         LOGGER.debug("step started: " + description);
+        recordStep(description);
+        takeInitialScreenshot();
+    }
+
+    public void skippedStepStarted(final ExecutedStepDescription description) {
+        LOGGER.debug("skipped step started: " + description);
+        recordStep(description);
+    }
+
+    private void recordStep(ExecutedStepDescription description) {
         String stepName = AnnotatedStepDescription.from(description).getName();
         TestStep step = new TestStep(stepName);
 
@@ -326,14 +337,18 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void takeScreenshotFor(TestResult result) {
-        if ((currentStepExists()) && (shouldTakeScreenshotFor(result))) {
+        if (shouldTakeScreenshotFor(result)) {
+            takeScreenshot();
+        }
+    }
+
+    private void takeScreenshot() {
+        if (currentStepExists()) {
             try {
                 String stepDescription = getCurrentTestOutcome().getCurrentStep().getDescription();
-                File screenshot = grabScreenshotFileFor(stepDescription);
-                getCurrentStep().setScreenshot(screenshot);
-                if (screenshot != null) {
-                    File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-                    getCurrentStep().setHtmlSource(sourcecode);
+                RecordedScreenshot screenshot = grabScreenshotFor(stepDescription);
+                if (screenshot.wasTaken()) {
+                    getCurrentStep().addScreenshot(screenshot);
                 }
             } catch (ScreenshotException e) {
                 LOGGER.warn("Failed to take screenshot", e);
@@ -341,9 +356,17 @@ public class BaseStepListener implements StepListener, StepPublisher {
         }
     }
 
-    private File grabScreenshotFileFor(final String testName) {
+    private void takeInitialScreenshot() {
+        if ((currentStepExists()) && !configuration.onlySaveFailingScreenshots()) {
+            takeScreenshot();
+        }
+    }
+
+    private RecordedScreenshot grabScreenshotFor(final String testName) {
         String snapshotName = underscore(testName);
-        return getPhotographer().takeScreenshot(snapshotName);
+        File screenshot = getPhotographer().takeScreenshot(snapshotName);
+        File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
+        return new RecordedScreenshot(screenshot, sourcecode);
     }
 
     public Photographer getPhotographer() {
@@ -386,5 +409,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     public void testIgnored() {
         getCurrentTestOutcome().setAnnotatedResult(IGNORED);
+    }
+
+    @Override
+    public void notifyScreenChange() {
+        takeScreenshot();
     }
 }

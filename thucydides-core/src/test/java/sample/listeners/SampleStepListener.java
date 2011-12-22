@@ -30,6 +30,10 @@ public class SampleStepListener implements StepListener {
         
     }
 
+    @Override
+    public void skippedStepStarted(ExecutedStepDescription description) {
+    }
+
     public void stepFailed(StepFailure failure) {
         
     }
@@ -50,19 +54,7 @@ public class SampleStepListener implements StepListener {
         return null;  
     }
 
-    public void setDriver(WebDriver driver) {
-        
-    }
-
     public WebDriver getDriver() {
-        return null;  
-    }
-
-    public boolean aStepHasFailed() {
-        return false;  
-    }
-
-    public Throwable getTestFailureCause() {
         return null;  
     }
 
@@ -72,5 +64,9 @@ public class SampleStepListener implements StepListener {
 
     public void testIgnored() {
         
+    }
+
+    @Override
+    public void notifyScreenChange() {
     }
 }

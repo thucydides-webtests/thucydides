@@ -225,7 +225,7 @@ public class WhenRecordingStepExecutionResultsForNonWebTests {
         return new BaseMatcher<TestStep>() {
             public boolean matches(Object o) {
                 TestStep step = (TestStep) o;
-                return (step.getScreenshot() == null);
+                return (step.getScreenshots()== null) || (step.getScreenshots().isEmpty());
             }
 
             public void describeTo(Description description) {

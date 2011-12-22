@@ -576,6 +576,14 @@ public abstract class PageObject {
         return new WebElementFacade(driver, webElement, waitForTimeout);
     }
 
+    /**
+     * Provides a fluent API for querying web elements.
+     */
+    public WebElementFacade element(By bySelector) {
+        WebElement webElement = getDriver().findElement(bySelector);
+        return new WebElementFacade(driver, webElement, waitForTimeout);
+    }
+
     public Object evaluateJavascript(final String script) {
         if (isJQuery(script)) {
             addJQuerySupport();

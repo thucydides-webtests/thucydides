@@ -43,6 +43,11 @@ public class ConsoleStepListener extends BaseStepListener {
         push();
     }
 
+    @Override
+    public void skippedStepStarted(ExecutedStepDescription description) {
+        stepStarted(description);
+    }
+
     private void writeIndent(StringBuffer buffer) {
         for(int i = 0; i < currentIndent; i++) {
             buffer.append("-");

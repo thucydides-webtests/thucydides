@@ -937,7 +937,7 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
-    public void screenshots_should_be_taken_after_steps() {
+    public void screenshots_should_be_taken_before_and_after_steps() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
         StepEventBus.getEventBus().testStarted("app_should_work");
@@ -947,25 +947,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_two();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
-        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
-    }
-
-    @Test
-    public void screenshots_should_have_corresponding_html_pages() {
-
-        TestStep step = new TestStep();
-        step.setDescription("step");
-        step.setScreenshot(new File("step.png"));
-
-        assertThat(step.getScreenshotPage(), is("screenshot_step.html"));
-    }
-
-    @Test
-    public void if_there_is_no_screenshot_the_html_page_reference_is_empty() {
-
-        TestStep step = new TestStep("step");
-
-        assertThat(step.getScreenshotPage(), is(""));
+        verify(driver, times(4)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     @Test
@@ -999,7 +981,7 @@ public class WhenRecordingStepExecutionResults {
 
 
     @Test
-    public void screenshots_should_not_be_taken_for_pending_steps_among_implemented_stepd() {
+    public void screenshots_should_not_be_taken_for_pending_steps_among_implemented_steps() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
         StepEventBus.getEventBus().testStarted("app_should_work");
@@ -1010,7 +992,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_two();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
-        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
+        verify(driver, times(4)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     @Test
@@ -1042,14 +1024,13 @@ public class WhenRecordingStepExecutionResults {
         steps.step2();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
-        verify(driver, times(7)).getScreenshotAs((OutputType<?>) anyObject());
+        verify(driver, times(14)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     @Test
     public void screenshots_will_be_ignored_if_they_cannot_be_taken() {
 
-        when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot)
-                                                           .thenThrow(new ScreenshotException("Screenshot failed",null));
+        when(driver.getScreenshotAs(any(OutputType.class))).thenThrow(new ScreenshotException("Screenshot failed",null));
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
         StepEventBus.getEventBus().testStarted("app_should_work");
@@ -1061,8 +1042,8 @@ public class WhenRecordingStepExecutionResults {
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
-        assertThat(testOutcome.getTestSteps().get(0).getChildren().get(0).getScreenshot(), notNullValue());
-        assertThat(testOutcome.getTestSteps().get(0).getChildren().get(1).getScreenshot(), nullValue());
+        assertThat(testOutcome.getTestSteps().get(0).getChildren().get(0).getScreenshots().size(), is(0));
+        assertThat(testOutcome.getTestSteps().get(0).getChildren().get(1).getScreenshots().size(), is(0));
 
     }
 

@@ -52,7 +52,7 @@ class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
 
                 case [GIVEN, WHEN, THEN, AND] :
                     String groupName = groupNameFrom(step);
-                    StepEventBus.eventBus.stepStarted(ExecutedStepDescription.withTitle(removeAccoladesFrom(groupName)))
+                    StepEventBus.eventBus.skippedStepStarted(ExecutedStepDescription.withTitle(removeAccoladesFrom(groupName)))
                     break;
             }
         }

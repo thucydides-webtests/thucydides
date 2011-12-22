@@ -17,6 +17,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.never;
@@ -118,6 +119,11 @@ public class WhenScreenshotsAreTaken {
         File htmlSource = photographer.getMatchingSourceCodeFor(screenshotFile);
 
         assertThat(htmlSource.isFile(), is(true));
+    }
+
+    @Test
+    public void the_photographer_should_return_null_for_the_source_code_of_a_null_screenshot() throws IOException {
+        assertThat( photographer.getMatchingSourceCodeFor(null), is(nullValue()));
     }
 
     @Test

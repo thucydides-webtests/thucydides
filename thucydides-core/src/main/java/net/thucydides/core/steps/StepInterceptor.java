@@ -70,16 +70,20 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             return runNormalMethod(obj, method, args, proxy);
         }
 
-        notifyStepStarted(method, args);
-
         if (shouldSkip(method)) {
-            Object skippedReturnObject = runSkippedMethod(obj, method, args, proxy);
-            notifyTestSkippedFor(method, args);
-            return appropriateReturnObject(skippedReturnObject, obj, method);
+            notifySkippedStepStarted(method, args);
+            return skipTestStep(obj, method, args, proxy);
+        } else {
+            notifyStepStarted(method, args);
+            return runTestStep(obj, method, args, proxy);
         }
 
-        return runTestStep(obj, method, args, proxy);
+    }
 
+    private Object skipTestStep(Object obj, Method method, Object[] args, MethodProxy proxy) throws Exception {
+        Object skippedReturnObject = runSkippedMethod(obj, method, args, proxy);
+        notifyStepSkippedFor(method, args);
+        return appropriateReturnObject(skippedReturnObject, obj, method);
     }
 
     private Object runSkippedMethod(Object obj, Method method, Object[] args, MethodProxy proxy) {
@@ -238,8 +242,9 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         return testName.toString();
     }
 
-    private void notifyTestSkippedFor(final Method method, final Object[] args)
+    private void notifyStepSkippedFor(final Method method, final Object[] args)
             throws Exception {
+
         if (isPending(method)) {
             StepEventBus.getEventBus().stepPending();
         } else {
@@ -265,4 +270,12 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
         StepEventBus.getEventBus().stepStarted(description);
     }
+
+    private void notifySkippedStepStarted(final Method method, final Object[] args) {
+
+        ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
+        StepEventBus.getEventBus().skippedStepStarted(description);
+       // StepEventBus.getEventBus().stepStarted(description);
+    }
+
 }

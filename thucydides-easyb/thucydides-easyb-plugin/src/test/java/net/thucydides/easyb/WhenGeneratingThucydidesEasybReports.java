@@ -261,7 +261,7 @@ public class WhenGeneratingThucydidesEasybReports {
 
         stepListener.getTestOutcomes().get(0);
 
-        verify(driver, times(1)).getScreenshotAs((OutputType<?>) anyObject());
+        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
 

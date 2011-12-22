@@ -253,7 +253,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        assertThat(steps.get(0).getScreenshot(), is(nullValue()));
+        assertThat(steps.get(0).getScreenshots().size(), is(0));
 
 
     }

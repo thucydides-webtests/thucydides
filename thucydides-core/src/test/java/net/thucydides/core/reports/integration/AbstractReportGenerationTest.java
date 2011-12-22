@@ -8,6 +8,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
+import net.thucydides.core.screenshots.RecordedScreenshot;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -50,7 +51,9 @@ public class AbstractReportGenerationTest {
         FileUtils.copyFileToDirectory(sourceFile, outputDirectory);
 
         TestStep step = TestStepFactory.successfulTestStepCalled(stepName);
-        step.setScreenshot(new File(outputDirectory, screenshot));
+
+        step.addScreenshot(new RecordedScreenshot(new File(outputDirectory, screenshot), null));
+
         testOutcome.recordStep(step);
     }
 

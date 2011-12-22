@@ -151,7 +151,11 @@ public class Photographer {
     }
 
     public File getMatchingSourceCodeFor(final File screenshot) {
-        return new File(sourceCodeFileFor(screenshot.getAbsolutePath()));
+        if (screenshot != null) {
+            return new File(sourceCodeFileFor(screenshot.getAbsolutePath()));
+        } else {
+            return null;
+        }
     }
 
 }

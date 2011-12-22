@@ -5,6 +5,7 @@ import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
@@ -28,6 +29,11 @@ public class WhenUsingFormsWithTheFluentElementAPI extends FluentElementAPITests
     @Test
     public void should_detect_focus_on_input_fields() {
         assertThat(page.element(page.lastName).hasFocus(), is(true));
+    }
+
+    @Test
+    public void should_find_web_elements_using_selectors() {
+        assertThat(page.element(By.id("lastname")).getText(), is(""));
     }
 
     @Test
