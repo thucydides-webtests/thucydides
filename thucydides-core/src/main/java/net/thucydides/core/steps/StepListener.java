@@ -58,6 +58,8 @@ public interface StepListener {
      */
     void stepFailed(final StepFailure failure);
 
+    //void takeScreenshot();
+
     /**
      * Called when a step will not be run, generally because a test method is annotated
      * with {@link org.junit.Ignore}.
@@ -84,4 +86,6 @@ public interface StepListener {
      * The test as a whole was skipped or ignored.
      */
     void testIgnored();
+
+    void notifyScreenChange();
 }

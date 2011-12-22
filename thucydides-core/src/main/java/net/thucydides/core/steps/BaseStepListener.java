@@ -410,4 +410,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void testIgnored() {
         getCurrentTestOutcome().setAnnotatedResult(IGNORED);
     }
+
+    @Override
+    public void notifyScreenChange() {
+        takeScreenshot();
+    }
 }

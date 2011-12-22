@@ -325,4 +325,10 @@ public class StepEventBus {
     public boolean areStepsRunning() {
         return !stepStack.isEmpty();
     }
+
+    public void notifyScreenChange() {
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.notifyScreenChange();
+        }
+    }
 }

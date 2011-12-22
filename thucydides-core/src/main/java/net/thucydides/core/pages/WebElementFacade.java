@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
+import net.thucydides.core.steps.StepEventBus;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
@@ -263,6 +264,7 @@ public class WebElementFacade {
         waitUntilElementAvailable();
         webElement.clear();
         webElement.sendKeys(value);
+        StepEventBus.getEventBus().notifyScreenChange();
         return this;
     }
 
@@ -275,6 +277,7 @@ public class WebElementFacade {
         waitUntilElementAvailable();
         webElement.clear();
         webElement.sendKeys(value, Keys.ENTER);
+        StepEventBus.getEventBus().notifyScreenChange();
         return this;
     }
 
@@ -292,6 +295,7 @@ public class WebElementFacade {
         webElement.sendKeys(Keys.TAB);
 
         getClock().pauseFor(100);
+        StepEventBus.getEventBus().notifyScreenChange();
         return this;
     }
 
@@ -303,6 +307,7 @@ public class WebElementFacade {
         waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByVisibleText(label);
+        StepEventBus.getEventBus().notifyScreenChange();
         return this;
     }
 
@@ -316,6 +321,7 @@ public class WebElementFacade {
         waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByValue(value);
+        StepEventBus.getEventBus().notifyScreenChange();
         return this;
     }
 
@@ -329,6 +335,7 @@ public class WebElementFacade {
         waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByIndex(indexValue);
+        StepEventBus.getEventBus().notifyScreenChange();
         return this;
     }
 
@@ -370,6 +377,7 @@ public class WebElementFacade {
             error.printStackTrace();
             throwErrorWithCauseIfPresent(error, error.getMessage());
         }
+        StepEventBus.getEventBus().notifyScreenChange();
         return this;
     }
 
@@ -379,6 +387,7 @@ public class WebElementFacade {
         } catch (TimeoutException timeout) {
             throwErrorWithCauseIfPresent(timeout, timeout.getMessage());
         }
+        StepEventBus.getEventBus().notifyScreenChange();
         return this;
     }
 
@@ -446,6 +455,7 @@ public class WebElementFacade {
         } catch (TimeoutException timeout) {
             throwErrorWithCauseIfPresent(timeout,"Expected hidden element was displayed");
         }
+        StepEventBus.getEventBus().notifyScreenChange();
         return this;
     }
 
@@ -468,6 +478,7 @@ public class WebElementFacade {
         try {
 
             waitForCondition().until(elementIsEnabled());
+            StepEventBus.getEventBus().notifyScreenChange();
             return this;
         } catch (TimeoutException timeout) {
             throw new ElementNotVisibleException("Expected enabled element was not enabled", timeout);
@@ -477,6 +488,7 @@ public class WebElementFacade {
     public WebElementFacade waitUntilDisabled() {
         try {
             waitForCondition().until(elementIsNotEnabled());
+            StepEventBus.getEventBus().notifyScreenChange();
             return this;
         } catch (TimeoutException timeout) {
             throw new ElementNotVisibleException("Expected disabled element was not enabled", timeout);
@@ -504,6 +516,7 @@ public class WebElementFacade {
     public WebElementFacade click() {
         waitUntilElementAvailable();
         webElement.click();
+        StepEventBus.getEventBus().notifyScreenChange();
         return this;
     }
 

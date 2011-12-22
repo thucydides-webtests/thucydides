@@ -64,4 +64,8 @@ public class ListenerInWrongPackage implements StepListener {
     public void testIgnored() {
         
     }
+
+    @Override
+    public void notifyScreenChange() {
+    }
 }
