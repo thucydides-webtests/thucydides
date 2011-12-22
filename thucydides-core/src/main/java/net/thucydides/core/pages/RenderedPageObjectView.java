@@ -41,13 +41,6 @@ class RenderedPageObjectView {
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
     }
 
-    public ThucydidesFluentWait<WebDriver> waitForRefresh() {
-        return new FluentWaitWithRefresh<WebDriver>(driver, webdriverClock, sleeper)
-                .withTimeout(waitForTimeout, TimeUnit.MILLISECONDS)
-                .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
-                .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
-    }
-
     public ThucydidesFluentWait<WebDriver> waitForCondition() {
         return new NormalFluentWait<WebDriver>(driver, webdriverClock, sleeper)
                 .withTimeout(waitForTimeout, TimeUnit.MILLISECONDS)
@@ -89,10 +82,11 @@ class RenderedPageObjectView {
         try {
             List<WebElement> matchingElements = driver.findElements(byElementCriteria);
             if (matchingElements.isEmpty()) {
-                return false;
+                isDisplayed = false;
             }
         } catch (NoSuchElementException noSuchElement) {
             LOGGER.trace("No such element " + noSuchElement);
+            isDisplayed = false;
         }
         return isDisplayed;
     }

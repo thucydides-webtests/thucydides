@@ -257,6 +257,4 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         }
     }
 
-
-
 }

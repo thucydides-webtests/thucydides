@@ -11,6 +11,8 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,15 +35,6 @@ public class WhenManinpulatingWebElements {
         MockitoAnnotations.initMocks(this);
     }
 
-    class PageObjectWithElement extends PageObject {
-
-        public WebElement webElement = null;
-
-        public PageObjectWithElement(final WebDriver driver) {
-            super(driver);
-        }
-    }
-
     @Test
     public void stale_element_should_not_be_considered_visible() {
         when(webElement.isDisplayed()).thenThrow(new StaleElementReferenceException("Stale element"));
@@ -54,7 +47,7 @@ public class WhenManinpulatingWebElements {
 
     @Test
     public void stale_element_found_using_a_finder_should_not_be_considered_displayed() {
-        when(driver.findElement((By) anyObject())).thenThrow(new StaleElementReferenceException("Stale element"));
+        when(driver.findElements((By) anyObject())).thenThrow(new StaleElementReferenceException("Stale element"));
 
         RenderedPageObjectView view = new RenderedPageObjectView(driver, 100);
 
@@ -65,12 +58,22 @@ public class WhenManinpulatingWebElements {
 
     @Test
     public void inexistant_element_should_not_be_considered_present() {
-        when(driver.findElement((By) anyObject())).thenThrow(new NoSuchElementException("It ain't there."));
+        when(driver.findElements((By) anyObject())).thenThrow(new NoSuchElementException("It ain't there."));
 
         RenderedPageObjectView view = new RenderedPageObjectView(driver, 100);
 
         assertThat(view.elementIsPresent(By.id("some-element")), is(false));
 
+    }
+
+    @Test
+    public void an_element_on_the_page_should_be_considered_present() {
+        List<WebElement> presentElements = Arrays.asList(webElement);
+        when(driver.findElements((By) anyObject())).thenReturn(presentElements);
+
+        RenderedPageObjectView view = new RenderedPageObjectView(driver, 100);
+
+        assertThat(view.elementIsPresent(By.id("some-element")), is(true));
     }
 
     @Test
@@ -83,7 +86,7 @@ public class WhenManinpulatingWebElements {
 
     @Test
     public void inexistant_element_should_not_be_considered_displayed() {
-        when(driver.findElement((By) anyObject())).thenThrow(new NoSuchElementException("It ain't there."));
+        when(driver.findElements((By) anyObject())).thenThrow(new NoSuchElementException("It ain't there."));
 
         RenderedPageObjectView view = new RenderedPageObjectView(driver, 100);
 
