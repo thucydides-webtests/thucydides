@@ -47,7 +47,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <thucydides.version>${project.version}</thucydides.version>
         <surefire.version>2.10</surefire.version>
         <groovy.version>1.8.2</groovy.version>
     </properties>
@@ -197,7 +196,7 @@
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-core</artifactId>
-            <version>${thucydides.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
