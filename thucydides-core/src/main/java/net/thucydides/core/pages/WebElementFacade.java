@@ -378,7 +378,6 @@ public class WebElementFacade {
             error.printStackTrace();
             throwErrorWithCauseIfPresent(error, error.getMessage());
         }
-        notifyScreenChange();
         return this;
     }
 
@@ -388,7 +387,6 @@ public class WebElementFacade {
         } catch (TimeoutException timeout) {
             throwErrorWithCauseIfPresent(timeout, timeout.getMessage());
         }
-        notifyScreenChange();
         return this;
     }
 

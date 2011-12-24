@@ -113,6 +113,8 @@ public enum ThucydidesSystemProperty {
      */
     ACTIVATE_FIREBUGS("thucydides.activate.firebugs"),
 
+    ACTIVTE_HIGHLIGHTING("thucydides.activate.highlighting"),
+
     /**
      *  If batch testing is being used, this is the size of the batches being executed.
      */

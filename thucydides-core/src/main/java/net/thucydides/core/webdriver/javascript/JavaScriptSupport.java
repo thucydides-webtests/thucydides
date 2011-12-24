@@ -3,7 +3,6 @@ package net.thucydides.core.webdriver.javascript;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class JavascriptSupport {

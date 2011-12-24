@@ -155,10 +155,13 @@
                             <td width="%"><span class="${step_class_root}-step">${step.description}</span></td>
                             <td width="100" class="bluetext">
                                 <#if !step.isAGroup() && step.firstScreenshot??>
-                                    <a href="${testOutcome.screenshotReportName}.html"><img src="${step.firstScreenshot.screenshot.name}"
-                                                                                         class="screenshot"
-                                                                                         width="48" height="48"/></a>
-                                </#if>                            </td>
+                                    <a href="${testOutcome.screenshotReportName}.html#screenshots">
+                                        <img src="${step.firstScreenshot.screenshot.name}"
+                                             class="screenshot"
+                                             width="48" height="48"/>
+                                    </a>
+                                </#if>
+                            </td>
                             <td width="150"><span class="${step_class_root}-step">${step.result}</span></td>
                             <td width="100"><span class="${step_class_root}-step">${step.duration/ 1000} seconds</span></td>
                         </tr>

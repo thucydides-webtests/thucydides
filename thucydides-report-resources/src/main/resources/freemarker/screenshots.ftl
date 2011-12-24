@@ -100,6 +100,7 @@
     </div>
     <div class="clr"></div>
     <div id="contentbody">
+        <a name="screenshots"/>
         <div class="titlebar">
             <div class="tall_leftbgm"></div>
             <div class="tall_middlebgm"><span class="orangetext">Stories - <a href="${testOutcome.reportName}.html">${testOutcome.title}</a></span></div>
