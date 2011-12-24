@@ -2,10 +2,12 @@ package net.thucydides.core.pages.jquery;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import net.thucydides.core.pages.JavaScriptExecutorFacade;
+import net.thucydides.core.webdriver.javascript.JavaScriptExecutorFacade;
 import org.openqa.selenium.WebDriver;
 
 import java.net.URL;
+
+import static net.thucydides.core.webdriver.javascript.JavascriptSupport.javascriptIsSupportedIn;
 
 public class JQueryEnabledPage {
 
@@ -19,15 +21,26 @@ public class JQueryEnabledPage {
         return new JQueryEnabledPage(driver);
     }
 
-    public boolean containsJQuery() {
-        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
-        return (Boolean) js.executeScript("return (typeof jQuery === 'function')");
+    public boolean isJQueryEnabled() {
+        if (javascriptIsSupportedIn(driver)) {
+            JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
+            Boolean result = (Boolean) js.executeScript("return (typeof jQuery === 'function')");
+            return ((result != null) && (result));
+        }
+        return false;
     }
 
+
     public void injectJQuery() {
-        String jquery = getFileAsString("jquery/jquery.min.js");
-        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
-        js.executeScript(jquery);
+        executeScriptFrom("jquery/jquery.min.js");
+    }
+
+    private void executeScriptFrom(String scriptSource) {
+        if (javascriptIsSupportedIn(driver)) {
+            String script = getFileAsString(scriptSource);
+            JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
+            js.executeScript(script);
+        }
     }
 
     private String getFileAsString(final String resourcePath) {
@@ -41,8 +54,7 @@ public class JQueryEnabledPage {
         return content;
     }
 
-    public static boolean scriptContainsJQuery(final String script) {
-         return (script.contains("$(") || script.toLowerCase().contains("jquery("));
-
+    public void injectJQueryPlugins() {
+        executeScriptFrom("jquery/jquery-thucydides-plugin.js");
     }
 }

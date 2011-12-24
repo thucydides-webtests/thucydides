@@ -7,7 +7,10 @@ import net.thucydides.core.pages.jquery.JQueryEnabledPage;
 import net.thucydides.core.scheduling.FluentWaitWithRefresh;
 import net.thucydides.core.scheduling.NormalFluentWait;
 import net.thucydides.core.scheduling.ThucydidesFluentWait;
+import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.core.webdriver.javascript.JavaScriptExecutorFacade;
 import net.thucydides.core.webelements.Checkbox;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -29,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import static net.thucydides.core.webdriver.javascript.JavascriptSupport.isHeadlessDriver;
 
 /**
  * A base class representing a WebDriver page object.
@@ -322,8 +327,7 @@ public abstract class PageObject {
      * Clear a field and enter a value into it.
      */
     public void typeInto(final WebElement field, final String value) {
-        field.clear();
-        field.sendKeys(value);
+        element(field).type(value);
     }
 
     /**
@@ -338,11 +342,13 @@ public abstract class PageObject {
                                    final String visibleLabel) {
 
         Dropdown.forWebElement(dropdown).select(visibleLabel);
+        notifyScreenChange();
     }
 
     public void selectMultipleItemsFromDropdown(final WebElement dropdown,
                                                 final String... selectedLabels) {
         Dropdown.forWebElement(dropdown).selectMultipleItems(selectedLabels);
+        notifyScreenChange();
     }
 
 
@@ -365,6 +371,7 @@ public abstract class PageObject {
     public void setCheckbox(final WebElement field, final boolean value) {
         Checkbox checkbox = new Checkbox(field);
         checkbox.setChecked(value);
+        notifyScreenChange();
     }
 
     public boolean containsText(final String textValue) {
@@ -535,10 +542,11 @@ public abstract class PageObject {
 
     private void openPageAtUrl(final String startingUrl) {
         getDriver().get(startingUrl);
+        addJQuerySupport();
     }
 
     public void clickOn(final WebElement webElement) {
-        webElement.click();
+        element(webElement).click();
     }
 
     /**
@@ -585,23 +593,28 @@ public abstract class PageObject {
     }
 
     public Object evaluateJavascript(final String script) {
-        if (isJQuery(script)) {
-            addJQuerySupport();
-        }
         JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
         return js.executeScript(script);
     }
 
-    private boolean isJQuery(final String script) {
-        return JQueryEnabledPage.scriptContainsJQuery(script);
+    public void addJQuerySupport() {
+        if (driverIsEnabled() && !isHeadlessDriver(getDriver()))  {
+            JQueryEnabledPage jQueryEnabledPage = JQueryEnabledPage.withDriver(getDriver());
+            if (!jQueryEnabledPage.isJQueryEnabled()) {
+                jQueryEnabledPage.injectJQuery();
+            }
+            if (jQueryEnabledPage.isJQueryEnabled()) {
+                jQueryEnabledPage.injectJQueryPlugins();
+            }
+        }
     }
 
-    public void addJQuerySupport() {
-
-        JQueryEnabledPage jQueryEnabledPage = JQueryEnabledPage.withDriver(driver);
-        if (!jQueryEnabledPage.containsJQuery()) {
-            jQueryEnabledPage.injectJQuery();
+    private boolean driverIsEnabled() {
+        if (WebDriverFacade.class.isAssignableFrom(getDriver().getClass())) {
+            WebDriverFacade driverFacade = (WebDriverFacade) getDriver();
+            return driverFacade.isEnabled();
         }
+        return true;
     }
 
     public ThucydidesFluentWait<WebDriver> waitForRefresh() {
@@ -627,15 +640,18 @@ public abstract class PageObject {
         }
 
         public void into(final WebElement field) {
-            field.clear();
-            field.sendKeys(value);
+            element(field).type(value);
         }
 
         public void intoField(final By bySelector) {
             WebElement field = getDriver().findElement(bySelector);
-            field.clear();
-            field.sendKeys(value);
+            element(field).type(value);
 
         }
     }
+
+    private void notifyScreenChange() {
+        StepEventBus.getEventBus().notifyScreenChange();
+    }
+
 }

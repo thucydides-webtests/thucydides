@@ -37,7 +37,7 @@ public class WhenOpeningStaticDemoPageWithUniqueSessionScenario {
     @Test
     @Title("The user selects a value")
     public void the_user_selects_a_value() {
-        steps.enter_values("Label 2", true);
+        steps.enter_values("Label 2", true, "Rabbits");
         steps.should_have_selected_value("2");
     }
 

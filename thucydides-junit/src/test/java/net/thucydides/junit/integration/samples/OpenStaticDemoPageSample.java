@@ -37,14 +37,14 @@ public class OpenStaticDemoPageSample {
     @Test
     @Title("The user selects a value")
     public void the_user_selects_a_value() {
-        steps.enter_values("Label 2", true);
+        steps.enter_values("Label 2", true, "Smith");
         steps.should_have_selected_value("2");
     }
 
     @Test
     @Title("The user enters different values.")
     public void the_user_opens_another_page() {
-        steps.enter_values("Label 3", true);
+        steps.enter_values("Label 3", true, "Jones");
         steps.do_something();
         steps.should_have_selected_value("3");
     }

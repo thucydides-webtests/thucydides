@@ -9,6 +9,10 @@ public class MockEnvironmentVariables implements EnvironmentVariables {
     private Properties properties = new Properties();
     private Properties values = new Properties();
 
+    public boolean propertySetIsEmpty() {
+        return properties.isEmpty();
+    }
+
     public String getValue(String name) {
         return values.getProperty(name);
     }

@@ -369,6 +369,7 @@ public class WhenManagingAPageObject {
     public void entering_a_value_in_a_field_will_clear_it_first() {
         WebElement field = mock(WebElement.class);
         BasicPageObject page = new BasicPageObject(driver);
+        when(field.isEnabled()).thenReturn(true);
 
         page.typeInto(field, "some value");
 
@@ -380,6 +381,7 @@ public class WhenManagingAPageObject {
     public void should_provide_a_fluent_api_for_entering_a_value_in_a_field() {
         WebElement field = mock(WebElement.class);
         BasicPageObject page = new BasicPageObject(driver);
+        when(field.isEnabled()).thenReturn(true);
 
         page.enter("some value").into(field);
 
@@ -391,6 +393,7 @@ public class WhenManagingAPageObject {
     public void should_provide_a_fluent_api_for_entering_a_value_in_a_field_using_a_selector() {
         WebElement field = mock(WebElement.class);
         when(driver.findElement(By.id("field-id"))).thenReturn(field);
+        when(field.isEnabled()).thenReturn(true);
         BasicPageObject page = new BasicPageObject(driver);
 
         page.enter("some value").intoField(By.id("field-id"));
@@ -594,7 +597,7 @@ public class WhenManagingAPageObject {
     @Test(expected = WebDriverException.class)
     public void when_clicking_on_something_should_throw_exception_if_it_fails_twice() {
         BasicPageObject page = new BasicPageObject(driver);
-
+        when(mockButton.isEnabled()).thenReturn(true);
         doThrow(new WebDriverException()).when(mockButton).click();
 
         page.clickOn(page.getButton());

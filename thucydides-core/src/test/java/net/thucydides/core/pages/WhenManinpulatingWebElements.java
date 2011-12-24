@@ -1,5 +1,6 @@
 package net.thucydides.core.pages;
 
+import net.thucydides.core.webdriver.javascript.JavaScriptExecutorFacade;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

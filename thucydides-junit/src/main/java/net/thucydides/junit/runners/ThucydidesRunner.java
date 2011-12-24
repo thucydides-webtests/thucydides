@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.batches.BatchManager;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -103,24 +105,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this(klass, Injectors.getInjector().getInstance(BatchManager.class));
     }
 
-    public ThucydidesRunner(final Class<?> klass, final BatchManager batchManager) throws InitializationError {
-        super(klass);
-        this.webDriverFactory = new WebDriverFactory();
-        this.configuration = Injectors.getInjector().getInstance(Configuration.class);
-        this.webdriverManager = Injectors.getInjector().getInstance(WebdriverManager.class);
-        this.batchManager = batchManager;
-        this.requestedDriver = getSpecifiedDriver(klass);
-        batchManager.registerTestCase(klass);
-    }
-
-    private String getSpecifiedDriver(Class<?> klass) {
-        if (ManagedWebDriverAnnotatedField.hasManagedWebdriverField(klass)) {
-            return ManagedWebDriverAnnotatedField.findFirstAnnotatedField(klass).getDriver();
-        } else {
-            return null;
-        }
-    }
-
     public ThucydidesRunner(final Class<?> klass, final WebDriverFactory webDriverFactory) throws InitializationError {
         this(klass, webDriverFactory, Injectors.getInjector().getInstance(Configuration.class));
     }
@@ -128,14 +112,58 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     public ThucydidesRunner(final Class<?> klass,
                             final WebDriverFactory webDriverFactory,
                             final Configuration configuration) throws InitializationError {
+        this(klass,
+                webDriverFactory,
+                new ThucydidesWebdriverManager(webDriverFactory, configuration),
+                configuration,
+                Injectors.getInjector().getInstance(BatchManager.class));
+
+    }
+
+    public ThucydidesRunner(final Class<?> klass, final BatchManager batchManager) throws InitializationError {
+        this(klass,
+                new WebDriverFactory(),
+                Injectors.getInjector().getInstance(WebdriverManager.class),
+                Injectors.getInjector().getInstance(Configuration.class),
+                batchManager);
+    }
+
+
+    public ThucydidesRunner(final Class<?> klass,
+                            final WebDriverFactory webDriverFactory,
+                            final WebdriverManager webDriverManager,
+                            final Configuration configuration,
+                            final BatchManager batchManager) throws InitializationError{
         super(klass);
         this.webDriverFactory = webDriverFactory;
+        this.webdriverManager = webDriverManager;
         this.configuration = configuration;
-        this.webdriverManager = new ThucydidesWebdriverManager(webDriverFactory, configuration);
         this.requestedDriver = getSpecifiedDriver(klass);
 
         if (TestCaseAnnotations.supportsWebTests(klass)) {
             checkRequestedDriverType();
+        }
+
+        this.batchManager = batchManager;
+
+        batchManager.registerTestCase(klass);
+
+        loadLocalPreferences();
+    }
+
+    private void loadLocalPreferences() throws InitializationError {
+        try {
+            Thucydides.loadLocalPreferences();
+        } catch (IOException e) {
+            throw new InitializationError(e);
+        }
+    }
+
+    private String getSpecifiedDriver(Class<?> klass) {
+        if (ManagedWebDriverAnnotatedField.hasManagedWebdriverField(klass)) {
+            return ManagedWebDriverAnnotatedField.findFirstAnnotatedField(klass).getDriver();
+        } else {
+            return null;
         }
     }
 

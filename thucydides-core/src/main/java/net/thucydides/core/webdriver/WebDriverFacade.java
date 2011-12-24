@@ -32,6 +32,10 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
         this.webDriverFactory = webDriverFactory;
     }
 
+    public Class<? extends WebDriver>  getDriverClass() {
+        return driverClass;
+    }
+
     public WebDriver getProxiedDriver() {
         if (proxiedWebDriver == null) {
             proxiedWebDriver = newProxyDriver();
@@ -41,7 +45,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
         return proxiedWebDriver;
     }
 
-    private boolean isEnabled() {
+    public boolean isEnabled() {
         return !StepEventBus.getEventBus().webdriverCallsAreSuspended();
     }
     /**

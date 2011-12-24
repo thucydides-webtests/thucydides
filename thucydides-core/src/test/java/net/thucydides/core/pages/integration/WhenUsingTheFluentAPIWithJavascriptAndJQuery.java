@@ -55,16 +55,6 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElement
     }
 
     @Test
-    public void should_not_inject_jquery_into_the_page_for_non_jquery_script() {
-        StaticSitePage page = new StaticSitePage(driver, 1);
-        page.open();
-        page.evaluateJavascript("document.getElementById('firstname').focus()");
-
-        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
-        assertThat(jqueryInjected, is(false));
-    }
-
-    @Test
     public void should_work_correctly_in_the_page_with_jquery_already_present() {
         StaticSitePage page = new StaticSitePage(driver, 1);
         page.open("classpath:static-site/index-with-jquery.html");

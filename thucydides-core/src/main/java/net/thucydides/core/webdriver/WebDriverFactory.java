@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
+import static net.thucydides.core.webdriver.javascript.JavascriptSupport.activateJavascriptSupportFor;
+
 /**
  * Provides an instance of a supported WebDriver.
  * When you instanciate a Webdriver instance for Firefox or Chrome, it opens a new browser.
@@ -99,12 +101,12 @@ public class WebDriverFactory {
             WebDriver driver;
             if (isAFirefoxDriver(driverClass)) {
                 driver = firefoxDriverFrom(driverClass);
-            } else if (isAnHtmlUnitDriver(driverClass)) {
-                driver = webdriverInstanceFactory.newInstanceOf(driverClass);
-                activateJavascriptSupportFor((HtmlUnitDriver) driver);
             } else {
                 driver = webdriverInstanceFactory.newInstanceOf(driverClass);
             }
+
+            activateJavascriptSupportFor(driver);
+
             if (supportsScreenResizing(driver)) {
                 redimensionBrowser(driver);
             }
@@ -128,10 +130,6 @@ public class WebDriverFactory {
         return (profile != null);
     }
 
-    private void activateJavascriptSupportFor(HtmlUnitDriver driver) {
-        driver.setJavascriptEnabled(true);
-    }
-
     private boolean supportsScreenResizing(final WebDriver driver) {
         return (isAFirefoxDriver(driver.getClass()) || isAnInternetExplorerDriver(driver.getClass()));
     }
@@ -151,10 +149,6 @@ public class WebDriverFactory {
 
     private boolean isAFirefoxDriver(Class<? extends WebDriver> driverClass) {
         return (FirefoxDriver.class.isAssignableFrom(driverClass));
-    }
-
-    private boolean isAnHtmlUnitDriver(Class<? extends WebDriver> driverClass) {
-        return (HtmlUnitDriver.class.isAssignableFrom(driverClass));
     }
 
     private boolean isAnInternetExplorerDriver(Class<? extends WebDriver> driverClass) {

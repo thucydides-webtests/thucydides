@@ -16,5 +16,7 @@ public interface EnvironmentVariables {
     public String getProperty(final String name);
 
     public String getProperty(final String name, final String defaultValue);
+    
+    public void setProperty(final String name, final String value);
 
 }

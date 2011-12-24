@@ -14,6 +14,8 @@ public class IndexPage extends PageObject {
     public WebElement multiselect;
 
     public WebElement checkbox;
+    
+    public WebElement textfield;
 
     public IndexPage(WebDriver driver) {
         super(driver);
@@ -29,6 +31,10 @@ public class IndexPage extends PageObject {
 
     public void setCheckboxOption(boolean value) {
         this.setCheckbox(checkbox, value);
+    }
+    
+    public void enterValue(String value) {
+        element(textfield).type(value);
     }
 
 }

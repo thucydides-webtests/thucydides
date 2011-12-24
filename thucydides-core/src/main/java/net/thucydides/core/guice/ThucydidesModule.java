@@ -13,6 +13,8 @@ import net.thucydides.core.reports.json.RelativeSizeColorScheme;
 import net.thucydides.core.reports.templates.FreeMarkerTemplateManager;
 import net.thucydides.core.reports.templates.TemplateManager;
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.LocalPreferences;
+import net.thucydides.core.util.PropertiesFileLocalPreferences;
 import net.thucydides.core.util.SystemEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
@@ -31,5 +33,6 @@ public class ThucydidesModule extends AbstractModule {
         bind(IssueTracking.class).to(SystemPropertiesIssueTracking.class).in(Singleton.class);
         bind(WebdriverManager.class).to(ThucydidesWebdriverManager.class);
         bind(BatchManager.class).to(SystemVariableBasedBatchManager.class);
+        bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
     }
 }

@@ -381,7 +381,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        TestStep failingStep = (TestStep) steps.get(5);
+        TestStep failingStep = steps.get(5);
         assertThat(failingStep.getException().getClass().toString(), containsString("StepFailureException"));
     }
 

@@ -18,6 +18,15 @@ public class DemoSiteSteps extends ScenarioSteps {
     }
 
     @Step
+    public void enter_values(String selectValue, boolean checkboxValue, String textValue) {
+        IndexPage page = (IndexPage) getPages().currentPageAt(IndexPage.class);
+        page.selectItem(selectValue);
+        page.setCheckboxOption(checkboxValue);
+        page.enterValue(textValue);
+    }
+
+
+    @Step
     public void fields_should_be_displayed() {
         IndexPage page = (IndexPage) getPages().currentPageAt(IndexPage.class);
         page.shouldBeVisible(page.multiselect);

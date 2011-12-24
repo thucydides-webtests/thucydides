@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -126,6 +127,7 @@ public class WhenUsingFormsWithTheFluentElementAPI extends FluentElementAPITests
         assertThat(page.element(page.selectedCheckbox).isSelected(), is(true));
     }
 
+    @Test
     public void should_detect_when_a_checkbox_is_not_selected() {
 
         assertThat(page.element(page.checkbox).isSelected(), is(false));

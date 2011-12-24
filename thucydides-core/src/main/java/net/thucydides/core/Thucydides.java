@@ -8,12 +8,16 @@ import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.steps.StepListener;
+import net.thucydides.core.util.LocalPreferences;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import org.openqa.selenium.WebDriver;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * A utility class that provides services to initialize web testing and reporting-related fields in arbitrary objects.
@@ -26,6 +30,7 @@ public class Thucydides {
     private static final ThreadLocal<Pages> pagesThreadLocal = new ThreadLocal<Pages>();
     private static final ThreadLocal<StepFactory> stepFactoryThreadLocal = new ThreadLocal<StepFactory>();
     private static final ThreadLocal<StepListener> stepListenerThreadLocal = new ThreadLocal<StepListener>();
+
 
     /**
      * Initialize Thucydides-related fields in the specified object.
@@ -125,5 +130,11 @@ public class Thucydides {
 
     public static StepListener getStepListener() {
         return stepListenerThreadLocal.get();
+    }
+
+
+    public static void loadLocalPreferences() throws IOException {
+        LocalPreferences localPreferences = Injectors.getInjector().getInstance(LocalPreferences.class);
+        localPreferences.loadPreferences();
     }
 }
