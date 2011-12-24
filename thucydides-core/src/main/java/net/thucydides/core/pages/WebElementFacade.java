@@ -2,7 +2,7 @@ package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
 import net.thucydides.core.steps.StepEventBus;
-import net.thucydides.core.webdriver.javascript.JavaScriptExecutorFacade;
+import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
@@ -41,7 +41,7 @@ public class WebElementFacade {
     private static final int WAIT_FOR_ELEMENT_PAUSE_LENGTH = 250;
     private final Sleeper sleeper;
     private final Clock webdriverClock;
-    private JavaScriptExecutorFacade javaScriptExecutorFacade;
+    private JavascriptExecutorFacade javascriptExecutorFacade;
     private InternalSystemClock clock = new InternalSystemClock();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebElementFacade.class);
@@ -54,12 +54,12 @@ public class WebElementFacade {
         this.timeoutInMilliseconds = timeoutInMilliseconds;
         this.webdriverClock = new SystemClock();
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
-        this.javaScriptExecutorFacade = new JavaScriptExecutorFacade(driver);
+        this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
 
     }
 
-    protected JavaScriptExecutorFacade getJavaScriptExecutorFacade() {
-        return javaScriptExecutorFacade;
+    protected JavascriptExecutorFacade getJavascriptExecutorFacade() {
+        return javascriptExecutorFacade;
     }
 
     protected InternalSystemClock getClock() {
@@ -169,7 +169,7 @@ public class WebElementFacade {
      * Does this element currently have the focus.
      */
     public boolean hasFocus() {
-        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
+        JavascriptExecutorFacade js = new JavascriptExecutorFacade(driver);
         WebElement activeElement = (WebElement) js.executeScript("return window.document.activeElement");
         return webElement.equals(activeElement);
     }
@@ -301,7 +301,7 @@ public class WebElementFacade {
     }
 
     public void setWindowFocus() {
-        getJavaScriptExecutorFacade().executeScript("window.focus()");
+        getJavascriptExecutorFacade().executeScript("window.focus()");
     }
 
     public WebElementFacade selectByVisibleText(final String label) {

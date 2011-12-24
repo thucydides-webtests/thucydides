@@ -9,10 +9,10 @@ import static net.thucydides.core.webdriver.javascript.JavascriptSupport.javascr
 /**
  * Simple encapsulation of Javascript execution.
  */
-public class JavaScriptExecutorFacade {
+public class JavascriptExecutorFacade {
     private WebDriver driver;
 
-    public JavaScriptExecutorFacade(final WebDriver driver) {
+    public JavascriptExecutorFacade(final WebDriver driver) {
         this.driver = driver;
     }
 

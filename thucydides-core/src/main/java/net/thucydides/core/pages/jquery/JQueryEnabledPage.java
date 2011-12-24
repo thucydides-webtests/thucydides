@@ -5,7 +5,7 @@ import com.google.common.io.Resources;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
-import net.thucydides.core.webdriver.javascript.JavaScriptExecutorFacade;
+import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import org.openqa.selenium.WebDriver;
 
 import java.net.URL;
@@ -33,7 +33,7 @@ public class JQueryEnabledPage {
 
     public boolean isJQueryEnabled() {
         if (javascriptIsSupportedIn(driver)) {
-            JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
+            JavascriptExecutorFacade js = new JavascriptExecutorFacade(driver);
             Boolean result = (Boolean) js.executeScript("return (typeof jQuery === 'function')");
             return ((result != null) && (result));
         }
@@ -48,7 +48,7 @@ public class JQueryEnabledPage {
     protected void executeScriptFrom(String scriptSource) {
         if (javascriptIsSupportedIn(driver)) {
             String script = getFileAsString(scriptSource);
-            JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
+            JavascriptExecutorFacade js = new JavascriptExecutorFacade(driver);
             js.executeScript(script);
         }
     }

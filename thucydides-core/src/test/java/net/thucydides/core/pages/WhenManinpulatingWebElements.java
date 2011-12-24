@@ -1,6 +1,6 @@
 package net.thucydides.core.pages;
 
-import net.thucydides.core.webdriver.javascript.JavaScriptExecutorFacade;
+import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -106,19 +106,19 @@ public class WhenManinpulatingWebElements {
     }
 
     @Mock
-    JavaScriptExecutorFacade mockJavaScriptExecutorFacade;
+    JavascriptExecutorFacade mockJavascriptExecutorFacade;
 
     @Test
     public void element_can_set_window_focus() {
         WebElementFacade elementFacade = new WebElementFacade(driver, webElement, 100) {
             @Override
-            protected JavaScriptExecutorFacade getJavaScriptExecutorFacade() {
-                return mockJavaScriptExecutorFacade;
+            protected JavascriptExecutorFacade getJavascriptExecutorFacade() {
+                return mockJavascriptExecutorFacade;
             }
         };
         elementFacade.setWindowFocus();
 
-        verify(mockJavaScriptExecutorFacade).executeScript("window.focus()");
+        verify(mockJavascriptExecutorFacade).executeScript("window.focus()");
 
     }
 

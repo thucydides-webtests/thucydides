@@ -10,7 +10,7 @@ import net.thucydides.core.scheduling.ThucydidesFluentWait;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
-import net.thucydides.core.webdriver.javascript.JavaScriptExecutorFacade;
+import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webelements.Checkbox;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -65,14 +65,14 @@ public abstract class PageObject {
 
     private final Sleeper sleeper;
     private final Clock webdriverClock;
-    private final JavaScriptExecutorFacade javaScriptExecutorFacade;
+    private final JavascriptExecutorFacade javascriptExecutorFacade;
 
     public PageObject(final WebDriver driver, final int ajaxTimeout) {
         this.driver = driver;
         this.waitForTimeout = ajaxTimeout;
         this.webdriverClock = new SystemClock();
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
-        this.javaScriptExecutorFacade = new JavaScriptExecutorFacade(driver);
+        this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
 
         setupPageUrls();
 
@@ -85,7 +85,7 @@ public abstract class PageObject {
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
         this.webdriverClock = new SystemClock();
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
-        this.javaScriptExecutorFacade = new JavaScriptExecutorFacade(driver);
+        this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
 
         setupPageUrls();
 
@@ -570,11 +570,11 @@ public abstract class PageObject {
     }
 
     public void blurActiveElement() {
-        getJavaScriptExecutorFacade().executeScript("document.activeElement.blur();");
+        getJavascriptExecutorFacade().executeScript("document.activeElement.blur();");
     }
 
-    protected JavaScriptExecutorFacade getJavaScriptExecutorFacade() {
-        return javaScriptExecutorFacade;
+    protected JavascriptExecutorFacade getJavascriptExecutorFacade() {
+        return javascriptExecutorFacade;
     }
 
     /**
@@ -593,7 +593,7 @@ public abstract class PageObject {
     }
 
     public Object evaluateJavascript(final String script) {
-        JavaScriptExecutorFacade js = new JavaScriptExecutorFacade(driver);
+        JavascriptExecutorFacade js = new JavascriptExecutorFacade(driver);
         return js.executeScript(script);
     }
 
