@@ -4,7 +4,6 @@ import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.batches.BatchManager;
-import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
@@ -38,6 +37,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import static net.thucydides.core.Thucydides.initializeTestSession;
+
 /**
  * A test runner for WebDriver-based web tests. This test runner initializes a
  * WebDriver instance before running the tests in their order of appearance. At
@@ -50,12 +51,6 @@ import java.util.List;
  */
 public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
-    /**
-     * Creates new browser instances. The Browser Factory's job is to provide
-     * new web driver instances. It is designed to isolate the test runner from
-     * the business of creating and managing WebDriver drivers.
-     */
-    private WebDriverFactory webDriverFactory;
     /**
      * Provides a proxy of the ScenarioSteps object used to invoke the test steps.
      * This proxy notifies the test runner about individual step outcomes.
@@ -113,7 +108,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
                             final WebDriverFactory webDriverFactory,
                             final Configuration configuration) throws InitializationError {
         this(klass,
-                webDriverFactory,
                 new ThucydidesWebdriverManager(webDriverFactory, configuration),
                 configuration,
                 Injectors.getInjector().getInstance(BatchManager.class));
@@ -122,7 +116,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     public ThucydidesRunner(final Class<?> klass, final BatchManager batchManager) throws InitializationError {
         this(klass,
-                new WebDriverFactory(),
                 Injectors.getInjector().getInstance(WebdriverManager.class),
                 Injectors.getInjector().getInstance(Configuration.class),
                 batchManager);
@@ -130,12 +123,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
 
     public ThucydidesRunner(final Class<?> klass,
-                            final WebDriverFactory webDriverFactory,
                             final WebdriverManager webDriverManager,
                             final Configuration configuration,
                             final BatchManager batchManager) throws InitializationError{
         super(klass);
-        this.webDriverFactory = webDriverFactory;
         this.webdriverManager = webDriverManager;
         this.configuration = configuration;
         this.requestedDriver = getSpecifiedDriver(klass);
@@ -149,6 +140,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         batchManager.registerTestCase(klass);
 
         loadLocalPreferences();
+
     }
 
     private void loadLocalPreferences() throws InitializationError {
@@ -192,14 +184,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private boolean requestedDriverSpecified() {
         return !StringUtils.isEmpty(this.requestedDriver);
-    }
-
-    /**
-     * Override the default web driver factory. Normal users shouldn't need to
-     * do this very often.
-     */
-    public void setWebDriverFactory(final WebDriverFactory webDriverFactory) {
-        this.webDriverFactory = webDriverFactory;
     }
 
     public File getOutputDirectory() {
@@ -323,6 +307,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 
         LOGGER.info("Executing test: {}", method.getName());
+        initializeTestSession();
         resetBroswerFromTimeToTime();
         processTestMethodAnnotationsFor(method);
         try {

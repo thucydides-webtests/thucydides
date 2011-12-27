@@ -58,6 +58,12 @@ public class WhenOrganizingTestStepsInAScenario {
     }
 
     @Test
+    public void onPage_can_be_used_as_a_shorthand_for_getPages() {
+        SimpleTestScenarioSteps steps = new SimpleTestScenarioSteps(pages);
+        assertThat(steps.onPage(), is(pages));
+    }
+
+    @Test
     public void a_user_runs_the_tests_by_calling_the_step_methos() {
         SimpleTestScenarioSteps steps = new SimpleTestScenarioSteps(pages);        
         steps.step1();

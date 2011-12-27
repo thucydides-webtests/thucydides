@@ -89,7 +89,6 @@ public class ThucydidesParameterizedRunner extends Suite {
                                                                        parametersList,
                                                                        i);
             runner.useQualifier(from(parametersList.get(i)));
-            overrideWebdriverFactoryIfProvided(runner, webDriverFactory);
             runners.add(runner);
         }
     }
@@ -105,7 +104,6 @@ public class ThucydidesParameterizedRunner extends Suite {
                                                                                  webDriverFactory,
                                                                                  i);
             runner.useQualifier(getQualifierFor(testCase));
-            overrideWebdriverFactoryIfProvided(runner, webDriverFactory);
             runners.add(runner);
         }
     }
@@ -139,12 +137,12 @@ public class ThucydidesParameterizedRunner extends Suite {
         this(klass, Injectors.getInjector().getInstance(Configuration.class), null);
     }
 
-    private void overrideWebdriverFactoryIfProvided(final ThucydidesRunner runner,
-                                                    final WebDriverFactory webDriverFactory) {
-        if (webDriverFactory != null) {
-            runner.setWebDriverFactory(webDriverFactory);
-        }
-    }
+//    private void overrideWebdriverFactoryIfProvided(final ThucydidesRunner runner,
+//                                                    final WebDriverFactory webDriverFactory) {
+//        if (webDriverFactory != null) {
+//            runner.setWebDriverFactory(webDriverFactory);
+//        }
+//    }
 
 
     @Override

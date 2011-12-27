@@ -25,6 +25,10 @@ import org.openqa.selenium.support.ui.SystemClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -590,6 +594,28 @@ public abstract class PageObject {
     public WebElementFacade element(By bySelector) {
         WebElement webElement = getDriver().findElement(bySelector);
         return new WebElementFacade(driver, webElement, waitForTimeout);
+    }
+
+    /**
+     * Provides a fluent API for querying web elements.
+     */
+    public WebElementFacade element(String xpathOrCssSelector) {
+        if (isXPath(xpathOrCssSelector)) {
+            return element(By.xpath(xpathOrCssSelector));
+        } else {
+            return element(By.cssSelector(xpathOrCssSelector));
+        }
+    }
+
+    private boolean isXPath(String xpathExpression) {
+        XPathFactory factory = XPathFactory.newInstance();
+        XPath xpath = factory.newXPath();
+        try {
+            XPathExpression expr = xpath.compile(xpathExpression);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     public Object evaluateJavascript(final String script) {

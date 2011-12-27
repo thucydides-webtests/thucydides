@@ -3,6 +3,7 @@ package net.thucydides.core;
 import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.sessions.TestSessionVariables;
 import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepEventBus;
@@ -15,9 +16,8 @@ import net.thucydides.core.webdriver.WebdriverManager;
 import org.openqa.selenium.WebDriver;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.Map;
 
 /**
  * A utility class that provides services to initialize web testing and reporting-related fields in arbitrary objects.
@@ -30,6 +30,7 @@ public class Thucydides {
     private static final ThreadLocal<Pages> pagesThreadLocal = new ThreadLocal<Pages>();
     private static final ThreadLocal<StepFactory> stepFactoryThreadLocal = new ThreadLocal<StepFactory>();
     private static final ThreadLocal<StepListener> stepListenerThreadLocal = new ThreadLocal<StepListener>();
+    private static final ThreadLocal<TestSessionVariables> testSessionThreadLocal = new ThreadLocal<TestSessionVariables>();
 
 
     /**
@@ -136,5 +137,17 @@ public class Thucydides {
     public static void loadLocalPreferences() throws IOException {
         LocalPreferences localPreferences = Injectors.getInjector().getInstance(LocalPreferences.class);
         localPreferences.loadPreferences();
+    }
+
+    public static void initializeTestSession() {
+        getCurrentSession().clear();
+    }
+
+    public static Map getCurrentSession() {
+
+        if (testSessionThreadLocal.get() == null) {
+            testSessionThreadLocal.set(new TestSessionVariables());
+        }
+        return testSessionThreadLocal.get();
     }
 }

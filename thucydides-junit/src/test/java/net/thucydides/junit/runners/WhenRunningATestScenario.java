@@ -131,6 +131,23 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
+    public void the_test_runner_stores_state_between_steps() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithStateVariables.class, webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(3));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+        TestOutcome testOutcome2 = executedSteps.get(1);
+        TestOutcome testOutcome3 = executedSteps.get(2);
+
+        assertThat(testOutcome1.getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome2.getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome3.getResult(), is(TestResult.SUCCESS));
+    }
+
+    @Test
     public void private_annotated_fields_should_be_allowed() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioWithPrivateFields.class, webDriverFactory);
@@ -183,7 +200,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     public void tests_marked_as_pending_should_be_pending() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioWithPendingTests.class, webDriverFactory);
-        runner.setWebDriverFactory(webDriverFactory);
+//        runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();

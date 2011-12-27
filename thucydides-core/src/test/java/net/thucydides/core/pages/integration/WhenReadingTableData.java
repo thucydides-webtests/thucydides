@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static net.thucydides.core.matchers.BeanMatchers.the;
+import static net.thucydides.core.pages.components.HtmlTable.inTable;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -147,22 +148,29 @@ public class WhenReadingTableData extends FluentElementAPITestsBaseClass {
 
     @Test
     public void should_find_row_elements_matching_a_given_criteria() {
-        HtmlTable table = new HtmlTable(page.clients);
-
-        List<WebElement> matchingRows = table.getRowElementsMatching(the("First Name", is("Tim")),the("Last Name", containsString("Taylor")));
+        List<WebElement> matchingRows = inTable(page.clients).getRowElementsWhere(the("First Name", is("Tim")), the("Last Name", containsString("Taylor")));
         assertThat(matchingRows.size(), is(1));
         assertThat(matchingRows.get(0).getText(), containsString("Brooke-Taylor"));
     }
 
     @Test
     public void should_find_row_elements_matching_a_given_criteria_using_a_static_method() {
-        HtmlTable table = new HtmlTable(page.clients);
-
         List<WebElement> matchingRows = HtmlTable.filterRows(page.clients, the("First Name", is("Tim")),the("Last Name", containsString("Taylor")));
         assertThat(matchingRows.size(), is(1));
         assertThat(matchingRows.get(0).getText(), containsString("Brooke-Taylor"));
     }
-    
+
+    @Test
+    public void should_find_first_row_element_matching_a_given_criteria_using_a_static_method() {
+        WebElement firstRow = inTable(page.clients).findFirstRowWhere(the("First Name", is("Tim")), the("Last Name", containsString("Taylor")));
+        assertThat(firstRow.getText(), containsString("Brooke-Taylor"));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void should_throw_an_exception_if_no_matching_row_is_found() {
+        inTable(page.clients).findFirstRowWhere(the("First Name", is("Unknown-name")));
+    }
+
     @Test
     public void should_be_able_to_read_cells_with_empty_headers() {
         HtmlTable table = new HtmlTable(page.table_with_empty_headers);

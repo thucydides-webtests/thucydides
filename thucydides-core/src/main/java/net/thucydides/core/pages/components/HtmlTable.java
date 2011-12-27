@@ -23,6 +23,10 @@ public class HtmlTable {
         this.tableElement = tableElement;
     }
 
+    public static HtmlTable inTable(final WebElement table) {
+        return new HtmlTable(table);
+    }
+
     public List<Map<Object, String>> getRows() {
 
         List<Map<Object, String>> results = new ArrayList<Map<Object, String>>();
@@ -38,7 +42,15 @@ public class HtmlTable {
         }
         return results;
     }
-    
+
+    public WebElement findFirstRowWhere(final BeanMatcher... matchers) {
+        List<WebElement> rows = getRowElementsWhere(matchers);
+        if (rows.isEmpty()) {
+            throw new AssertionError("Expecting a table with at least one row: " + tableElement);
+        }
+        return rows.get(0);
+    }
+
     private class EnoughCellsCheck {
         private final int minimumNumberOfCells;
 
@@ -60,14 +72,14 @@ public class HtmlTable {
     }
 
     public List<WebElement> getHeadingElements() {
-        return tableElement.findElements(By.tagName("th"));
+        return tableElement.findElements(By.xpath(".//th"));
     }
 
     public List<WebElement> getRowElements() {
         return tableElement.findElements(By.xpath(".//tr[td]"));
     }
 
-    public List<WebElement> getRowElementsMatching(BeanMatcher... matchers) {
+    public List<WebElement> getRowElementsWhere(BeanMatcher... matchers) {
 
         List<WebElement> rowElements = getRowElements();
         List<Integer> matchingRowIndexes = findMatchingIndexesFor(rowElements, matchers);
@@ -143,6 +155,6 @@ public class HtmlTable {
     }
 
     public static List<WebElement> filterRows(final WebElement table, final BeanMatcher... matchers) {
-        return new HtmlTable(table).getRowElementsMatching(matchers);
+        return new HtmlTable(table).getRowElementsWhere(matchers);
     }
 }

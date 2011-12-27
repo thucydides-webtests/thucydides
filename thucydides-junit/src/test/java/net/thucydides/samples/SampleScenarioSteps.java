@@ -1,5 +1,6 @@
 package net.thucydides.samples;
 
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
@@ -188,5 +189,19 @@ public class SampleScenarioSteps extends ScenarioSteps {
     @Pending
     @Step
     public void data_driven_test_step_that_is_skipped() {
+    }
+    
+    @Step
+    public void store_name(String value) {
+        Thucydides.getCurrentSession().put("name", value);
+    }
+
+    @Step
+    public String get_name() {
+        return (String) Thucydides.getCurrentSession().get("name");
+    }
+
+    public Boolean hasName() {
+        return Thucydides.getCurrentSession().containsKey("name");
     }
 }

@@ -57,16 +57,12 @@ public class WhenRunningADataDrivenTestScenario {
     @Rule
     public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
 
-    @Mock
-    WebDriverFactory webDriverFactory;
-
     MockEnvironmentVariables environmentVariables;
 
     Configuration configuration;
 
     @Before
     public void initMocks() {
-        File temporaryDirectory = tempFolder.newFolder("screenshots");
         MockitoAnnotations.initMocks(this);
         environmentVariables = new MockEnvironmentVariables();
         configuration = new SystemPropertiesConfiguration(environmentVariables);
@@ -204,7 +200,6 @@ public class WhenRunningADataDrivenTestScenario {
                                          outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(SamplePassingScenarioWithTestSpecificData.class);
-        runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
 
@@ -220,7 +215,6 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
-        runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
 
@@ -241,7 +235,6 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
-        runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
 
@@ -263,7 +256,6 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
-        runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
 
@@ -287,7 +279,6 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndABreakingTestSample.class);
-        runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
 
@@ -386,7 +377,7 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificData.class);
-        runner.setWebDriverFactory(webDriverFactory);
+//        runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
 
@@ -407,7 +398,7 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificData.class);
-        runner.setWebDriverFactory(webDriverFactory);
+//        runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
 

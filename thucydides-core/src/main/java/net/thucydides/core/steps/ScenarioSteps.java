@@ -33,6 +33,10 @@ public class ScenarioSteps implements Serializable {
         return pages;
     }
 
+    public Pages onPage() {
+        return pages;
+    }
+
     public Pages pages() {
         return getPages();
     }

@@ -38,6 +38,17 @@ public class WhenUsingFormsWithTheFluentElementAPI extends FluentElementAPITests
     }
 
     @Test
+    public void should_find_web_elements_using_raw_css_selector() {
+        assertThat(page.element("#textField").getText(), is("text value"));
+    }
+
+    @Test
+    public void should_find_web_elements_using_raw_xpath_selector() {
+        assertThat(page.element("//textarea[@id='textField']").getText(), is("text value"));
+    }
+
+
+    @Test
     public void should_detect_focus_on_input_fields_using_page_API() {
         assertThat(page.hasFocus(page.lastName), is(true));
     }

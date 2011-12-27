@@ -24,6 +24,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import static net.thucydides.easyb.StepName.nameOf
 import net.thucydides.core.batches.BatchManager
+import static net.thucydides.core.Thucydides.initializeTestSession
 
 public class ThucydidesPlugin extends BasePlugin {
 
@@ -110,6 +111,7 @@ public class ThucydidesPlugin extends BasePlugin {
         } else {
             initializePlugin(binding)
         }
+        initializeTestSession();
         binding.setVariable("pages", pages)
         binding.setVariable("driver", getWebDriver());
         binding.setVariable("thucydides", configuration);
