@@ -44,7 +44,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <surefire.version>2.10</surefire.version>
-        <groovy.version>1.8.2</groovy.version>
+        <groovy.version>1.8.5</groovy.version>
     </properties>
 
     <build>
