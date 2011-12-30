@@ -1,0 +1,3085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="AsciiDoc 8.6.6">
+<title>The Thucydides Reference Manual</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+tt {
+  font-family: monospace;
+  font-size: inherit;
+  color: navy;
+}
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+.monospaced {
+  font-family: monospace;
+  font-size: inherit;
+  color: navy;
+}
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([2-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install(2);
+/*]]>*/
+</script>
+</head>
+<body class="article">
+<div id="header">
+<h1>The Thucydides Reference Manual</h1>
+<span id="author">John Ferguson Smart</span><br>
+<span id="revnumber">version 1.0.0,</span>
+<span id="revdate">January 2012</span>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="preface-copyright">1. Copyright</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Copyright © 2011 John Ferguson Smart.</p></div>
+<div class="paragraph"><p>Online version published by Wakaleo Consulting.</p></div>
+<div class="paragraph"><p>This work is licensed under a Creative Commons
+Attribution-Noncommercial-No Derivative Works 3.0 United States
+license. For more information about this license, see
+<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">creativecommons.org/licenses/by-nc-nd/3.0/us/</a>.</p></div>
+<div class="paragraph"><p>Java™ and all Java-based trademarks and logos are trademarks or
+registered trademarks of Sun Microsystems, Inc., in the United States
+and other countries.</p></div>
+<div class="paragraph"><p>Eclipse™ is a trademark of the Eclipse Foundation, Inc., in the United
+States and other countries.</p></div>
+<div class="paragraph"><p>Apache and the Apache feather logo are trademarks of The Apache
+Software Foundation.</p></div>
+<div class="paragraph"><p>Many of the designations used by manufacturers and sellers to
+distinguish their products are claimed as trademarks. Where those
+designations appear in this book, and Wakaleo Consulting was
+aware of a trademark claim, the designations have been printed in caps
+or initial caps.</p></div>
+<div class="paragraph"><p>While every precaution has been taken in the preparation of this book,
+the publisher and authors assume no responsibility for errors or
+omissions, or for damages resulting from the use of the information
+contained herein.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction">2. Introducing Thucydides</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Thucydides (Thoo-SID-a-dees) is a tool designed to make writing automated acceptance and regression tests easier. It provides features that make it easier to organize and structure your acceptance tests, associating them with the user stories or features that they test. As the tests are executed, Thucydides generates illustrated documentation describing how the application is used based on the stories described by the tests.</p></div>
+<div class="paragraph"><p>Thucydides provides strong support for automated web tests based on Selenium 2, though it can also be used effectively for non-web tests.</p></div>
+<div class="paragraph"><p>Thucydides was a Greek historian known for his astute analysis skills who rigorously recorded events that he witnessed and participated in himself. In the same way, the Thucydides framework observes and analyzes your acceptance tests, and records a detailed account of their execution.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="basic-concepts">3. Basic concepts of Acceptance and Regression Testing</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>To get the most out of Thucydides, it is useful to understand some of the basic principles behind Acceptance Test Driven Development. Thucydides is commonly used for both Automated Acceptance Tests and Regression tests, and the principles discussed here apply, with minor variations, to both.</p></div>
+<div class="paragraph"><p>Acceptance Test Driven Development, or ATDD, is an advanced form of Test Driven Development (TDD) in which automated acceptance criteria — defined in collaboration with users — drive and focus the development process. This helps ensure that everyone understands what features are under development.</p></div>
+<div class="paragraph"><p>One of the important things about ATDD is the idea of "Specification by Example". Specification by Example refers to the use of relatively concrete examples to illustrate how a system should work, as opposed to more formally written specifications.</p></div>
+<div class="paragraph"><p>Let&#8217;s look at an example. In many projects, requirements are expressed as simple stories along the following lines:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>In order to earn money to buy a new car
+As a car owner
+I want to sell my old car online</pre>
+</div></div>
+<div class="paragraph"><p>If we were implementing an online car sales web site that helps people achieve this goal, we would typically define a set of acceptance criteria to flesh out this story. For example, we might have the following criteria in our list of acceptance criteria:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Car owner can place a standard car ad online
+</p>
+</li>
+<li>
+<p>
+Car owner can place a premium car ad online
+</p>
+</li>
+<li>
+<p>
+Car ad should display the brand, model and year of the car
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>and so on.</p></div>
+<div class="paragraph"><p>A tester planning the tests for these acceptance criteria might draw up a test plan outlining of the way she expects to test these criteria. For the first criteria, she might start off with a high-level plan like the following:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Go to car ads section and choose to post a standard car ad
+</p>
+</li>
+<li>
+<p>
+Enter car details
+</p>
+</li>
+<li>
+<p>
+Choose publication options
+</p>
+</li>
+<li>
+<p>
+Preview ad
+</p>
+</li>
+<li>
+<p>
+Enter payment details
+</p>
+</li>
+<li>
+<p>
+See ad confirmation
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Each of these steps might need to be broken down into smaller steps.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<em>Enter car details</em>
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Enter car make, model and year
+</p>
+</li>
+<li>
+<p>
+Select options
+</p>
+</li>
+<li>
+<p>
+Add photos
+</p>
+</li>
+<li>
+<p>
+Enter description
+</p>
+</li>
+</ul></div>
+</li>
+</ul></div>
+<div class="paragraph"><p>These steps are often fleshed out with more concrete details:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<em>Enter car details</em>
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Create an ad for a 2006 Mitsubishi Pajero
+</p>
+</li>
+<li>
+<p>
+Add Air Conditioning and CD Player
+</p>
+</li>
+<li>
+<p>
+Add three photos
+</p>
+</li>
+<li>
+<p>
+Enter a description
+</p>
+</li>
+</ul></div>
+</li>
+</ul></div>
+<div class="paragraph"><p>For our purposes, Regression Tests can be defined as end-to-end tests that ensure that an application behaves as expected, and that it continues to behave as expected in future releases. Whereas ATDD Acceptance Tests are defined very early on in the piece, before development starts, Regression Tests involve an existing system. Other than that, the steps involved in defining and automating the tests are very similar.</p></div>
+<div class="paragraph"><p>Now different project stakeholders will be interested in different levels of detail. Some, such as project managers and management in general, will be interested only in which application features work, and which need to be done. Others, such as business analysts and QA, will be interested in the details of how each acceptance scenario is implemented, possible down to the screen level.</p></div>
+<div class="paragraph"><p>Thucydides helps you structure your automated acceptance tests into steps and sub-steps like the ones illustrated above. This tends to make the tests clearer, more flexible and easier to maintain.  In addition, when the tests are executed, Thucydides produces illustrated, narrative-style reports like the one in <a href="#fig-test-report">[fig-test-report]</a>.</p></div>
+<div class="imageblock" id="fig-test-report">
+<div class="content">
+<img src="images/test-report.png" alt="images/test-report.png">
+</div>
+<div class="title">Figure 1. A test report generated by Thucydides</div>
+</div>
+<div class="paragraph"><p>When it comes to implementing the tests themselves, Thucydides also provides many features that make it easier,  faster and cleaner to write clear, maintainable tests. This is particularly true for automated web tests using Selenium 2, but Thucydides also caters for non-web tests as well. Thucydides currently works well with JUnit and easyb - integration with other BDD frameworks is in progress.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_getting_started_with_thucydides">4. Getting started with Thucydides</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_creating_a_new_thucydides_project">4.1. Creating a new Thucydides project</h3>
+<div class="paragraph"><p>The easiest way to start a new Thucydides project is to use the Maven archetype. Two archetypes are currently available: one for using Thucydides with JUnit, and another if you also want to write your acceptance tests (or a part of them) using <a href="http://www.easyb.org/">easyb</a>. In this section, we will create a new Thucydides project using the Thucydides archetype, and go through the essential features of this project.</p></div>
+<div class="paragraph"><p>From the command line, you can run <strong>mvn archetype:generate</strong> and then select the <strong>net.thucydides.thucydides-easyb-archetype</strong> archetype from the proposed list of archetypes. Or you can use your favorite IDE to generate a new Maven project using an archetype.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>$ mvn archetype:generate
+...
+Define value for property 'groupId': : com.mycompany
+Define value for property 'artifactId': : webtests
+Define value for property 'version':  1.0-SNAPSHOT: :
+Define value for property 'package':  com.mycompany: :
+Confirm properties configuration:
+groupId: com.mycompany
+artifactId: webtests
+version: 1.0-SNAPSHOT
+package: com.mycompany
+ Y: :
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2:33.290s
+[INFO] Finished at: Fri Oct 28 07:20:41 NZDT 2011
+[INFO] Final Memory: 7M/81M
+[INFO] ------------------------------------------------------------------------</pre>
+</div></div>
+<div class="paragraph"><p>This will create a simple Thucydides project, complete with a Page Object, a Step library and two test cases, one using JUnit, and one using easyb. The actual tests run against the online dictionary at Wiktionary.org. Before going any further, take the project for a spin. First, however, you will need to add the <span class="monospaced">net.thucydides.maven.plugins</span> to your plugin groups in your <span class="monospaced">settings.xml</span> file:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>&lt;settings&gt;
+   &lt;pluginGroups&gt;
+       &lt;pluginGroup&gt;net.thucydides.maven.plugins&lt;/pluginGroup&gt;
+       ...
+      &lt;/pluginGroups&gt;
+  ...
+&lt;/settings&gt;</pre>
+</div></div>
+<div class="paragraph"><p>This will let you invoke the Maven <strong>thucydides</strong> plugin from the command line in the short-hand form shown here. Now go into the generated project directory, run the tests and generate the reports:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>$ mvn test thucydides:aggregate</pre>
+</div></div>
+<div class="paragraph"><p>This should run some web tests and generate a report in <span class="monospaced">target/site/thucydides</span> directory (open the <span class="monospaced">index.html</span> file). You should see a report like the one in <a href="#fig-aggregate-report">[fig-aggregate-report]</a>.</p></div>
+<div class="imageblock" id="fig-aggregate-report">
+<div class="content">
+<img src="images/aggregate-report.png" alt="images/aggregate-report.png">
+</div>
+<div class="title">Figure 2. An aggregate report generated by Thucydides</div>
+</div>
+<div class="paragraph"><p>If you drill down into the individual test reports, you will see an illustrated narrative for each test similar to the one shown in <a href="#fig-test-report">[fig-test-report]</a></p></div>
+<div class="paragraph"><p>Now for the details. the project directory structure is shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>+ src
+   + main
+      + java
+         + com.mycompany.pages
+            - HomePage.java
+
+   + test
+      + java
+         + com.mycompany.pages
+            + requirements
+               - Application.java
+            + steps
+               - EndUserSteps.java
+            - LookupADefinitionStoryTest.java
+
+      + stories
+         + com.mycompany
+            - LookupADefinition.story</pre>
+</div></div>
+<div class="paragraph"><p>This project is designed to provide a starting point for your Thucydides acceptance tests, and to illustrate some of the basic features. The tests come in two flavors: <em>easyb</em> and <em>JUnit</em>. easyb is a Groovy-based BDD (Behaviour Driven Development) library which works well for this kind of test. The sample easyb story can be found in the <span class="monospaced">LookupADefinition.story</span> file, and looks something like this:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>using "thucydides"
+
+thucydides.uses_default_base_url "http://en.wiktionary.org/wiki/Wiktionary:Main_Page"
+thucydides.uses_steps_from EndUserSteps
+thucydides.tests_story SearchByKeyword
+
+scenario "Looking up the definition of 'apple'", {
+    given "the user is on the Wikionary home page", {
+        end_user.is_the_home_page()
+    }
+    when "the end user looks up the definition of the word 'apple'", {
+        end_user.looks_for "apple"
+    }
+    then "they should see the definition of 'apple", {
+       end_user.should_see_definition_containing_words "A common, round fruit"
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>A cursory glance at this story will show that it relates a user looking up the definition of the word <em>apple</em>. However only the “what” is expressed at this level – the details are hidden inside the test steps and, further down, inside page objects.</p></div>
+<div class="paragraph"><p>If you prefer pure Java tests, the JUnit equivalent can be found in the <span class="monospaced">LookupADefinitionStoryTest.java</span> file:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@Story(Application.Search.SearchByKeyword.class)
+@RunWith(ThucydidesRunner.class)
+public class LookupADefinitionStoryTest {
+
+    @Managed(uniqueSession = true)
+    public WebDriver webdriver;
+
+    @ManagedPages(defaultUrl = "http://en.wiktionary.org/wiki/Wiktionary:Main_Page")
+    public Pages pages;
+
+    @Steps
+    public EndUserSteps endUser;
+
+    @Issue("#WIKI-1")
+    @Test
+    public void looking_up_the_definition_of_apple_should_display_the_corresponding_article() {
+        endUser.is_the_home_page();
+                endUser.looks_for("apple");
+        endUser.should_see_definition_containing_words("A common, round fruit");
+
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>As you can see, this is a little more technical but still very high level.</p></div>
+<div class="paragraph"><p>The step libraries contain the implementation of each of the steps used in the high-level tests. For complex tests, these steps can in turn call other steps. The step library used in this example can be found in <span class="monospaced">EndUserSteps.java</span>:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>public class EndUserSteps extends ScenarioSteps {
+
+        public EndUserSteps(Pages pages) {
+                super(pages);
+        }
+
+    @Step
+    public void searches_by_keyword(String keyword) {
+        enters(keyword);
+        performs_search();
+    }
+
+        @Step
+        public void enters(String keyword) {
+        onHomePage().enter_keywords(keyword);
+        }
+
+    @Step
+    public void performs_search() {
+        onHomePage().starts_search();
+    }
+
+    private HomePage onHomePage() {
+        return getPages().currentPageAt(HomePage.class);
+    }
+
+    @Step
+        public void should_see_article_with_title(String title) {
+        assertThat(onHomePage().getTitle(), is(title));
+        }
+
+    @Step
+    public void is_on_the_wikipedia_home_page() {
+        onHomePage().open();
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>Page Objects are a way of encapsulating the implementation details about a particular page. Selenium 2 has particularly good support for page objects, and Thucydides leverages this. The sample page object can be found in the HomePage.java class:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@DefaultUrl("http://en.wiktionary.org/wiki/Wiktionary:Main_Page")
+public class SearchPage extends PageObject {
+
+    @FindBy(name="search")
+        private WebElement searchInput;
+
+        @FindBy(name="go")
+        private WebElement searchButton;
+
+        public SearchPage(WebDriver driver) {
+                super(driver);
+        }
+
+        public void enter_keywords(String keyword) {
+                searchInput.sendKeys(keyword);
+        }
+
+    public void starts_search() {
+        searchButton.click();
+    }
+
+    public List&lt;String&gt; getDefinitions() {
+        WebElement definitionList = getDriver().findElement(By.tagName("ol"));
+        List&lt;WebElement&gt; results = definitionList.findElements(By.tagName("li"));
+        return convert(results, new ExtractDefinition());
+    }
+
+    class ExtractDefinition implements Converter&lt;WebElement, String&gt; {
+        public String convert(WebElement from) {
+            return from.getText();
+        }
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>The final piece in the puzzle is the <span class="monospaced">Application.java</span> class, which is a way of representing the structure of your requirements in Java form, so that your easyb and JUnit tests can be mapped back to the requirements they are testing:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>        public class Application {
+            @Feature
+            public class Search {
+                public class SearchByKeyword {}
+                public class SearchByAnimalRelatedKeyword {}
+                public class SearchByFoodRelatedKeyword {}
+                public class SearchByMultipleKeywords {}
+                public class SearchForQuote{}
+            }
+
+            @Feature
+            public class Backend {
+                public class ProcessSales {}
+                public class ProcessSubscriptions {}
+            }
+
+            @Feature
+            public class Contribute {
+                public class AddNewArticle {}
+                public class EditExistingArticle {}
+            }
+        }</pre>
+</div></div>
+<div class="paragraph"><p>This is what enables Thucydides to generate the aggregate reports about features and stories.</p></div>
+<div class="paragraph"><p>In the following sections, we will look at different aspects of writing automated tests with Thucydides in more detail.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_writing_acceptance_tests_with_thucydides">5. Writing Acceptance Tests with Thucydides</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>In this section, we look at the things you need to know to write your acceptance or regression tests using Thucydides in more detail. We will also outline a general approach to writing your web-based acceptance tests that has worked well for us in the past.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Define and organize the requirements or user stories you need to test
+</p>
+</li>
+<li>
+<p>
+Write high level pending tests for the acceptance criteria
+</p>
+</li>
+<li>
+<p>
+Choose a test to implement, and break it into a small (typically between 3 and 7) high-level steps
+</p>
+</li>
+<li>
+<p>
+Implement these steps, either by breaking them down into other steps, or by accessing Page Objects.
+</p>
+</li>
+<li>
+<p>
+Implement any new Page Object methods that you have discovered.
+</p>
+</li>
+</ol></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>These steps should not been seen as a linear or waterfall-style approach. Indeed, the process is usually quite incremental, with requirements being added to the <span class="monospaced">Application</span> class as they are required, and pending tests being used to defined tests before they are fleshed out.</p></div>
+</td>
+</tr></table>
+</div>
+<div class="sect2">
+<h3 id="_organizing_your_requirements">5.1. Organizing your requirements</h3>
+<div class="paragraph"><p>To get the most out of automated tests in Thucydides, you need to tell Thucydides which features of your application you are testing in each test. While this step is optional, it is highly recommended.</p></div>
+<div class="paragraph"><p>The current version of Thucydides uses a simple, three-level organization to structure acceptance tests into more manageable chunks. At the highest level, an application is broken into <em>features</em>, which is a high-level functionality or group of related functions. A feature contains a number of <em>stories</em> (corresponding to user stories, use cases, and so on). Each story is validated by a number of examples, or acceptance criteria, which are automated in the form of web tests (sometimes called scenarios). Each test, in turn, is implemented using a number of steps.</p></div>
+<div class="paragraph"><p>Of course this structure and these terms are merely a convenience to allow a higher-level vision of your acceptance tests. However, this sort of three-level abstraction seems to be fairly common.</p></div>
+<div class="paragraph"><p>In the current version of Thucydides, you define this structure within the test code, as (very light-weight) Java classes <span class="footnote"><br>[Future versions of Thucydides will support other ways of defining your user requirements.]<br></span>. This makes it easier to refactor and rename user stories and features within the tests, and gives a central point of reference in the test suite illustrating what features are being tested. A simple example is shown here. The Application class is simply a convenient way of placing the features and user stories in the one file. Features are marked with the @Feature annotation. User stories are declared as inner classes nested inside a @Feature class.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>public class Application {
+
+    @Feature
+    public class ManageCompanies {
+        public class AddNewCompany {}
+        public class DeleteCompany {}
+        public class ListCompanies {}
+    }
+
+    @Feature
+    public class ManageCategories {
+        public class AddNewCategory {}
+        public class ListCategories {}
+        public class DeleteCategory {}
+    }
+
+    @Feature
+    public class ManageTags {
+        public class DisplayTagCloud {}
+    }
+
+    @Feature
+    public class ManageJobs {}
+
+    @Feature
+    public class BrowseJobs {
+        public class UserLookForJobs {}
+        public class UserBrowsesJobTabs {}
+    }
+}</pre>
+</div></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_defining_high_level_tests">6. Defining high-level tests</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>There are two approaches to automated acceptance criteria or regression tests with Thucydides. Both involve implementing the tests as a sequence of very high-level steps, and then fleshing out those steps by drilling down into the details, until you get to the Page Objects. The difference involves the language used to implement the high-level tests. Tools like easyb are more focused on communication with non-developers, and allow high level tests to be expressed more easily in business terms. On the other hand, developers often find it more comfortable to work directly with JUnit, so if communication with non-technical stakeholders is not a high priority, this might be a preferred option.</p></div>
+<div class="paragraph"><p>In the current version of Thucydides, you can write your tests using easyb (for a more BDD-style approach) or in JUnit using Java or another JVM language (Groovy is a popular choice). Other BDD tools will be supported in future versions. We will discuss both here, but you can use whatever you and your team are more comfortable with.</p></div>
+<div class="sect2">
+<h3 id="_defining_high_level_tests_in_easyb">6.1. Defining high-level tests in easyb</h3>
+<div class="paragraph"><p>Easyb (<a href="http://easyb.org">http://easyb.org</a>) is a Groovy-based BDD tool. It makes it easy to write light-weight stories and scenarios using the classic BDD-style "given-when-then" structure, and then to implement them in Groovy. The Thucydides easyb plugin is designed to make it easy to write Thucydides tests using easyb.</p></div>
+<div class="sect3">
+<h4 id="_writing_a_pending_easyb_story">6.1.1. Writing a pending easyb story</h4>
+<div class="paragraph"><p>In easyb, you write tests (referred to as "scenarios") that, when using Thucydides, correspond to automated acceptance criteria. Tests are grouped into "stories" - each story has it&#8217;s own file.</p></div>
+<div class="paragraph"><p>Scenarios are first written as "pending". These are just high-level outlines, describing a set of acceptance criteria for a particular story in a "given-when-then" structure.</p></div>
+<div class="paragraph"><p>When the tests are executed, pending scenarios are skipped. However they appear in the reports, so that you know what features still need to be implemented. An example of how pending scenarios appear in a Thucydides report can be seen in <a href="#fig-story-results-pending">[fig-story-results-pending]</a>.</p></div>
+<div class="imageblock" id="fig-story-results-pending">
+<div class="content">
+<img src="images/story-results-pending.png" alt="images/story-results-pending.png">
+</div>
+<div class="title">Figure 3. Pending tests are shown with the <em>calendar</em> icon</div>
+</div>
+<div class="paragraph"><p>Here is an example of a pending easyb story using Thucydides:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>using "thucydides"
+
+import net.thucydides.demos.jobboard.requirements.Application.ManageCategories.AddNewCategory
+
+thucydides.tests_story AddNewCategory
+
+scenario "The administrator adds a new category to the system",
+{
+        given "a new category needs to be added to the system"
+        when "the administrator adds a new category"
+        then "the system should confirm that the category has been created"
+        and "the new category should be visible to job seekers"
+}
+
+scenario "The administrator adds a category with an existing code to the system",
+{
+        given "the administrator is on the categories list page"
+        when "the user adds a new category with an existing code"
+        then "an error message should be displayed"
+}</pre>
+</div></div>
+<div class="paragraph"><p>Let&#8217;s examine this story piece-by-piece. First, you need to declare that you are using Thucydides. You do this by using the easyb using keyword:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>using "thucydides"</pre>
+</div></div>
+<div class="paragraph"><p>This will, among other things, inject the <span class="monospaced">thucydides</span> object into your story context so that you can configure Thucydides to run your story correctly.</p></div>
+<div class="paragraph"><p>Next, you need to tell Thucydides what story you are testing. You do this by referencing one of the story classes you defined earlier. That&#8217;s what we are doing here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>import net.thucydides.demos.jobboard.requirements.Application.ManageCategories.AddNewCategory
+
+thucydides.tests_story AddNewCategory</pre>
+</div></div>
+<div class="paragraph"><p>The rest of the easyb story is just a set of regular easyb pending scenarios. For the moment, there is no implementation, so they will appear as "pending" in the reports:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>scenario "The administrator adds a new category to the system",
+{
+        given "a new category needs to be added to the system"
+        when "the administrator adds a new category"
+        then "the system should confirm that the category has been created"
+        and "the new category should be visible to job seekers"
+}
+
+scenario "The administrator adds a category with an existing code to the system",
+{
+        given "the administrator is on the categories list page"
+        when "the user adds a new category with an existing code"
+        then "an error message should be displayed"
+}</pre>
+</div></div>
+<div class="paragraph"><p>You typically declare many pending stories, preferably in collaboration with the product owner or BAs, at the start of an iteration. This lets you get a good picture of what stories need to be implemented in a given iteration, and also an idea of the relative complexity of each story.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_implementing_the_easyb_stories">6.1.2. Implementing the easyb stories</h4>
+<div class="paragraph"><p>The next step is to implement your stories. Let&#8217;s look at an implemented version of the first of these scenarios:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>using "thucydides"
+
+import net.thucydides.demos.jobboard.requirements.Application.ManageCategories.AddNewCategory
+import net.thucydides.demos.jobboard.steps.AdministratorSteps
+import net.thucydides.demos.jobboard.steps.JobSeekerSteps
+
+thucydides.uses_default_base_url "http://localhost:9000"
+thucydides.uses_steps_from AdministratorSteps
+thucydides.uses_steps_from JobSeekerSteps
+thucydides.tests_story AddNewCategory
+
+def cleanup_database() {
+    administrator.deletes_category("Scala Developers");
+}
+
+scenario "The administrator adds a new category to the system",
+{
+    given "a new category needs to be added to the system",
+    {
+      administrator.logs_in_to_admin_page_if_first_time()
+      administrator.opens_categories_list()
+    }
+    when "the administrator adds a new category",
+    {
+       administrator.selects_add_category()
+       administrator.adds_new_category("Scala Developers","SCALA")
+    }
+    then "the system should confirm that the category has been created",
+    {
+        administrator.should_see_confirmation_message "The Category has been created"
+    }
+    and "the new category should be visible to job seekers",
+    {
+        job_seeker.opens_jobs_page()
+        job_seeker.should_see_job_category "Scala Developers"
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>Again, let&#8217;s break this down. In the first section, we import the classes we need to use:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>using "thucydides"
+
+import net.thucydides.demos.jobboard.requirements.Application.ManageCategories.AddNewCategory
+import net.thucydides.demos.jobboard.steps.AdministratorSteps
+import net.thucydides.demos.jobboard.steps.JobSeekerSteps</pre>
+</div></div>
+<div class="paragraph"><p>Next, we declare the default base URL to be used for the tests. Like the equivalent annotation in the JUnit tests, this is used for tests executed from within the IDE, or if no base URL is defined on the command line using the <span class="monospaced">webdriver.base.url</span> parameter.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>thucydides.uses_default_base_url "http://localhost:9000"</pre>
+</div></div>
+<div class="paragraph"><p>We also need to declare the test step libraries we will be using. We do this using thucydides.uses_steps_from. This will inject an instance variable into the easyb context for each declared step library. If the step library class name ends in <em>Steps</em> (e.g. JobSeekerSteps), the name of the variable will be the class name less the <em>Steps</em> suffix, converted to lower case and underscores (e.g. "job_seeker"). We will learn more about implementing test step libraries further on.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>thucydides.uses_steps_from AdministratorSteps
+thucydides.uses_steps_from JobSeekerSteps
+thucydides.tests_story AddNewCategory</pre>
+</div></div>
+<div class="paragraph"><p>Finally we implement the scenario. Notice, that since this is Groovy, we can declare fixture methods to help set up and tear down the test environment as required:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>def cleanup_database() {
+    administrator.deletes_category("Scala Developers");
+}</pre>
+</div></div>
+<div class="paragraph"><p>The implementation usually just invokes step methods, as illustrated here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>scenario "The administrator adds a new category to the system",
+{
+    given "a new category needs to be added to the system",
+    {
+      administrator.logs_in_to_admin_page_if_first_time()
+      administrator.opens_categories_list()
+    }
+    when "the administrator adds a new category",
+    {
+       administrator.selects_add_category()
+       administrator.adds_new_category("Scala Developers","SCALA")
+    }
+    then "the system should confirm that the category has been created",
+    {
+        administrator.should_see_confirmation_message "The Category has been created"
+    }
+    and "the new category should be visible to job seekers",
+    {
+        job_seeker.opens_jobs_page()
+        job_seeker.should_see_job_category "Scala Developers"
+        cleanup_database()
+    }
+}</pre>
+</div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>If you are running easyb with Maven 3, there is a Maven (Aether, to be precise) bug which may result in an error along the following lines:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 8.171s
+[INFO] Finished at: Fri Jul 08 15:33:03 EST 2011
+[INFO] Final Memory: 5M/81M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal on project jobboard-webtests: Could not resolve dependencies for project net.thucydides.demos:jobboard-webtests:jar:1.0.0-SNAPSHOT: The following artifacts could not be resolved: commons-lang:commons-lang:jar:2.5, ant:ant:jar:1.6.5: Could not find artifact commons-lang:commons-lang:jar:2.5 -&gt; [Help 1]</pre>
+</div></div>
+<div class="paragraph"><p>This issue has been fixed in Maven 3.0.4.</p></div>
+</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_defining_high_level_tests_in_junit">6.2. Defining high-level tests in JUnit</h3>
+<div class="paragraph"><p>Thucydides integrates smoothly with ordinary JUnit 4 tests, using the ThucydidesRunner test runner and a few other specialized annotations. This is one of the easiest ways to start out with Thucydides, and is very well suited for regression testing, where communication and clarification with the various stakeholders is less of a requirement.</p></div>
+<div class="paragraph"><p>Here is an example of a Thucydides JUnit web test:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@RunWith(ThucydidesRunner.class)
+@Story(UserLookForJobs.class)
+public class LookForJobsStory {
+
+    @Managed
+    public WebDriver webdriver;
+
+    @ManagedPages(defaultUrl = "http://localhost:9000")
+    public Pages pages;
+
+    @Steps
+    public JobSeekerSteps job_seeker;
+
+    @Test
+    public void user_looks_for_jobs_by_key_word() {
+        job_seeker.opens_jobs_page();
+        job_seeker.searches_for_jobs_using("Java");
+        job_seeker.should_see_message("No jobs found.");
+    }
+
+    @Test
+    public void when_no_matching_job_found_should_display_error_message() {
+        job_seeker.opens_jobs_page();
+        job_seeker.searches_for_jobs_using("unknownJobCriteria");
+        job_seeker.should_see_message("No jobs found.");
+    }
+
+    @Pending @Test
+    public void tags_should_be_displayed_to_help_the_user_find_jobs() {}
+
+    @Pending @Test
+    public void the_user_can_list_all_of_the_jobs_for_a_given_tag() {}
+
+    @Pending @Test
+    public void the_user_can_see_the_total_number_of_jobs_on_offer() {}
+
+}</pre>
+</div></div>
+<div class="paragraph"><p>Let&#8217;s examine this section-by-section. The class starts with the @RunWith annotation, to indicate that this is a Thucydides test. We also use the @Story annotation to indicate which user story (defined as nested classes of the the @Feature classes above) is being tested. This is used to generate the aggregate reports.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@RunWith(ThucydidesRunner.class)
+@Story(UserLookForJobs.class)
+public class LookForJobsStory {
+    ...</pre>
+</div></div>
+<div class="paragraph"><p>Next, come two essential annotations for any web tests. First of all, your test case needs a public <span class="monospaced">Webdriver</span> field, annotated with the <span class="monospaced">@Managed</span> annotation. This enables Thucydides to take care of opening and closing a WebDriver driver for you, and lets Thucydides use this driver in the pages and test steps when the tests are executed:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    @Managed
+    public WebDriver webdriver;</pre>
+</div></div>
+<div class="paragraph"><p>The second essential field is an instance of the <span class="monospaced">Pages</span> class, annotated with the <span class="monospaced">@ManagedPages</span> annotation. This is essentially a page factory, that Thucydides uses to provide you with instantiated page objects. The <span class="monospaced">defaultUrl</span> attribute lets you define a URL to use when your pages open, if no other base URL has been defined. This is useful for IDE testing:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    @ManagedPages(defaultUrl = "http://localhost:9000")
+    public Pages pages;</pre>
+</div></div>
+<div class="paragraph"><p>Note that these two annotations are only required for web tests. If your Thucydides test does not use web tests, you can safely leave them out.</p></div>
+<div class="paragraph"><p>For high-level acceptance or regression tests, it is a good habit to define the high-level test as a sequence of high-level steps. It will make your tests more readable and easier to maintain if you delegate the implementation details of your test (the "how") to reusable "step" methods. We will discuss how to define these step methods later. However, the minimum you need to do is to define the class where the steps will be defined, using the <span class="monospaced">@Steps</span> annotation. This annotation tells Thucydides to listen to method calls on this object, and (for web tests) to inject the WebDriver instance and the page factory into the Steps class so that they can be used in the step methods.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    @Steps
+    public JobSeekerSteps job_seeker;</pre>
+</div></div>
+<div class="sect3">
+<h4 id="_pending_tests">6.2.1. Pending tests</h4>
+<div class="paragraph"><p>Tests that contain no steps are considered to be pending. Alternatively, you can force a step to be skipped (and marked as pending) by using the <span class="monospaced">@Pending</span> annotation or the <span class="monospaced">@Ignore</span> annotation. Note that the semantics are slightly different: <span class="monospaced">@Ignore</span> indicates that you are temporarily suspending execution of a test, whereas <span class="monospaced">@Pending</span> means that the test has been specified but not yet implemented. So both these tests will be pending:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@Test
+public void administrator_adds_an_existing_company_to_the_system() {}
+
+@Pending @Test
+public void administrator_adds_a_company_with_an_existing_code_to_the_system() {
+    steps.login_to_admin_page();
+    steps.open_companies_list();
+    steps.select_add_company();
+    // More to come
+}</pre>
+</div></div>
+<div class="paragraph"><p>A test is also considered pending if any of the steps used in that test are pending. For a step to be pending, it needs to be annotated with the <span class="monospaced">@Pending</span> annotation.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_running_tests_in_a_single_browser_session">6.2.2. Running tests in a single browser session</h4>
+<div class="paragraph"><p>Normally, Thucydides opens a new browser session for each test. This helps ensure that each test is isolated and independent. However, sometimes it is useful to be able to run tests in a single browser session, in particular for performance reasons on read-only screens. You can do this by using the <em>uniqueSession</em> attribute in the @Managed annotation, as shown below. In this case, the browser will open at the start of the test case, and not close until all of the tests have been executed.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@RunWith(ThucydidesRunner.class)
+public class OpenStaticDemoPageSample {
+
+    @Managed(uniqueSession=true)
+    public WebDriver webdriver;
+
+    @ManagedPages(defaultUrl = "classpath:static-site/index.html")
+    public Pages pages;
+
+    @Steps
+    public DemoSiteSteps steps;
+
+    @Test
+    @Title("The user opens the index page")
+    public void the_user_opens_the_page() {
+        steps.should_display("A visible title");
+    }
+
+    @Test
+    @Title("The user selects a value")
+    public void the_user_selects_a_value() {
+        steps.enter_values("Label 2", true);
+        steps.should_have_selected_value("2");
+    }
+
+    @Test
+    @Title("The user enters different values.")
+    public void the_user_opens_another_page() {
+        steps.enter_values("Label 3", true);
+        steps.do_something();
+        steps.should_have_selected_value("3");
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>If you do not need WebDriver support in your test, you can skip the <span class="monospaced">@Managed</span> and <span class="monospaced">@Pages</span> annotations, e.g.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@RunWith(ThucydidesRunner.class)
+@Story(Application.Backend.ProcessSales.class)
+public class WorkWithBackendTest {
+
+    @Steps
+    public BackendSteps backend;
+
+    @Test
+    public void when_processing_a_sale_transation() {
+        backend.accepts_a_sale_transaction();
+        backend.should_the_update_mainframe();
+    }
+}</pre>
+</div></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_running_thucydides_in_different_browsers">6.3. Running Thucydides in different browsers</h3>
+<div class="paragraph"><p>Thucydides supports all browser-based WebDriver drivers, i.e. Firefox, Internet Explorer and Chrome, as well as HTMLUnit. By default, it will use Firefox. However, you can override this option using the <span class="monospaced">webdriver.driver</span> system property. To set this from the command line, you could do the following:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>$ mvn test -Dwebdriver.driver=iexplorer</pre>
+</div></div>
+<div class="paragraph"><p>If you are not using Firefox by default, it is also useful to define this variable as a property in your Maven pom.xml file, e.g.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>&lt;properties&gt;
+    &lt;webdriver.driver&gt;iexplorer&lt;/webdriver.driver&gt;
+&lt;/properties&gt;</pre>
+</div></div>
+<div class="paragraph"><p>For this to work with JUnit, however, you need to pass the webdriver.driver property to JUnit. JUnit runs in a separate JVM, and will not see the system properties defined in the Maven build. To get around this, you need to pass them into JUnit explicitly using the systemPropertyVariables configuration option, e.g.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+            &lt;version&gt;2.7.1&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;systemPropertyVariables&gt;
+                    &lt;webdriver.driver&gt;${webdriver.driver}&lt;/webdriver.driver&gt;
+                &lt;/systemPropertyVariables&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;</pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_forcing_the_use_of_a_particular_driver_in_a_test_case_or_test">6.4. Forcing the use of a particular driver in a test case or test</h3>
+<div class="paragraph"><p>The <span class="monospaced">@Managed</span> annotation also lets you specify what driver you want to use for a particular test case, via the <span class="monospaced">driver</span> attribute. Current supported values are “firefox”, “iexplorer”, “chrome” and “htmlunit”. The <span class="monospaced">driver</span> attribute lets you override the system-level default driver for specific requirements. For example, the following test case will run in Chrome, regardless of the <span class="monospaced">webdriver.driver</span> system property value used:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@RunWith(ThucydidesRunner.class)
+@Story(Application.Search.SearchByKeyword.class)
+public class SearchByFoodKeywordStoryTest {
+
+    @Managed(uniqueSession = true, driver="chrome")
+    public WebDriver webdriver;
+
+    @ManagedPages(defaultUrl = "http://www.google.co.nz")
+    public Pages pages;
+
+    @Steps
+    public EndUserSteps endUser;
+
+    @Test
+    public void searching_by_keyword_pears_should_display_the_corresponding_article() {
+        endUser.is_the_google_home_page();
+            endUser.enters("pears");
+        endUser.starts_search();
+            endUser.should_see_article_with_title_containing("Pear");
+    }
+
+    @Test
+    @WithDriver("firefox")
+    public void searching_by_keyword_pineapples_should_display_the_corresponding_article() {
+        endUser.is_the_google_home_page();
+            endUser.enters("pineapples");
+        endUser.starts_search();
+        endUser.should_see_article_with_title_containing("Pineapple");
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>In <strong>easyb</strong>, you can use the <span class="monospaced">uses_driver</span> directive, as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>using "thucydides"
+...
+thucydides.uses_default_base_url "http://localhost:9000"
+*thucydides.uses_driver chrome*
+
+...
+
+scenario "The administrator adds a new category to the system",
+{
+    given "a new category needs to be added to the system",
+    {
+      administrator.logs_in_to_admin_page_if_first_time()
+      administrator.opens_categories_list()
+    }
+    when "the administrator adds a new category",
+    {
+       administrator.selects_add_category()
+       administrator.adds_new_category("Scala Developers","SCALA")
+    }
+    then "the system should confirm that the category has been created",
+    {
+        administrator.should_see_confirmation_message "The Category has been created"
+    }
+    and "the new category should be visible to job seekers",
+    {
+        job_seeker.opens_jobs_page()
+        job_seeker.should_see_job_category "Scala Developers"
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>In JUnit, you can also use the <span class="monospaced">@WithDriver</span> annotation to specify a driver for an individual test. This will override both the system-level driver and the <span class="monospaced">@Managed</span> annotation’s driver attribute, if provided. For example, the following test will always run in Firefox:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>        @Test
+        @WithDriver("firefox")
+        public void searching_by_keyword_pineapples_should_display_the_corresponding_article() {
+            endUser.is_the_google_home_page();
+            endUser.enters("pineapples");
+            endUser.starts_search();
+            endUser.should_see_article_with_title_containing("Pineapple");
+        }</pre>
+</div></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_implementing_step_libraries">7. Implementing Step Libraries</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Once you have defined the steps you need to describe your high level tests, you need to implement these steps. In an automated web test, test steps represent the level of abstraction between your Page Objects (which are designed in terms of actions that you perform on a given page) and higher-level stories (sequences of more business-focused actions that illustrate how a given user story has been implemented). Steps can contain other steps, and are included in the Thucydides reports. Whenever a step is executed, a screenshot is stored and displayed in the report.</p></div>
+<div class="sect2">
+<h3 id="_creating_step_libraries">7.1. Creating Step Libraries</h3>
+<div class="paragraph"><p>Test steps are regular java methods, annotated with the <span class="monospaced">@Step</span> annotation. You organize steps and step groups in step libraries. A step library is just a normal Java class. If you are running web tests, your step library should either have a <span class="monospaced">Pages</span> member variable, or (more simply) extend the <span class="monospaced">ScenarioSteps</span> class, e.g.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>public class JobSeekerSteps extends ScenarioSteps {
+    public JobSeekerSteps(Pages pages) {
+        super(pages);
+    }
+
+
+    @Step
+    public void opens_jobs_page() {
+        FindAJobPage page = getPages().get(FindAJobPage.class);
+        page.open();
+    }
+
+    @Step
+    public void searches_for_jobs_using(String keywords) {
+        FindAJobPage page = getPages().get(FindAJobPage.class);
+        page.look_for_jobs_with_keywords(keywords);
+
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>Note that step methods can take parameters. The parameters that are passed into a step method will be recorded and reported in the Thucydides reports, making this an excellent technique to make your tests more maintainable and more modular.</p></div>
+<div class="paragraph"><p>Steps can also call other steps, which is very useful for more complicated test scenarios. The result is the sort of nested structure you can see in <a href="#fig-test-report">[fig-test-report]</a>.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_defining_page_objects">8. Defining Page Objects</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>If you are working with WebDriver web tests, you will be familiar with the concept of Page Objects. Page Objects are a way of isolating the implementation details of a web page inside a class, exposing only business-focused methods related to that page. They are an excellent way of making your web tests more maintainable.</p></div>
+<div class="paragraph"><p>In Thucydides, page objects can be just ordinary WebDriver page objects, on the condition that they have a constructor that accepts a WebDriver parameter. However, the Thucydides <span class="monospaced">PageObject</span> class provides a number of utility methods that make page objects more convenient to work with, so a Thucydides Page Object generally extends this class.</p></div>
+<div class="paragraph"><p>Here is a simple example:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@DefaultUrl("http://localhost:9000/somepage")
+public class FindAJobPage extends PageObject {
+
+    WebElement keywords;
+    WebElement searchButton;
+
+    public FindAJobPage(WebDriver driver) {
+        super(driver);
+    }
+
+    public void look_for_jobs_with_keywords(String values) {
+        typeInto(keywords, values);
+        searchButton.click();
+    }
+
+    public List&lt;String&gt; getJobTabs() {
+        List&lt;WebElement&gt; tabs = getDriver().findElements(By.xpath("//div[@id='tabs']//a"));
+        return extract(tabs, on(WebElement.class).getText());
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>The <span class="monospaced">typeInfo</span> method is a shorthand that simply clears a field and enters the specified text. If you prefer a more fluent-API style, you can also do something like this:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@DefaultUrl("http://localhost:9000/somepage")
+public class FindAJobPage extends PageObject {
+        WebElement keywordsField;
+        WebElement searchButton;
+
+        public FindAJobPage(WebDriver driver) {
+            super(driver);
+        }
+
+        public void look_for_jobs_with_keywords(String values) {
+            **enter(values).into(keywordsField);**
+            searchButton.click();
+        }
+
+        public List&lt;String&gt; getJobTabs() {
+            List&lt;WebElement&gt; tabs = getDriver().findElements(By.xpath("//div[@id='tabs']//a"));
+            return extract(tabs, on(WebElement.class).getText());
+        }
+}</pre>
+</div></div>
+<div class="sect2">
+<h3 id="_using_pages_in_a_step_library">8.1. Using pages in a step library</h3>
+<div class="paragraph"><p>When you need to use a page object in one of your steps, you just ask for one from the Page factory, providing the class of the page object you need, e.g.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>FindAJobPage page = getPages().get(FindAJobPage.class);</pre>
+</div></div>
+<div class="paragraph"><p>If you want to make sure you are one the right page, you can use the <span class="monospaced">currentPageAt()</span> method. This will check the page class for any <span class="monospaced">@At</span> annotations present in the Page Object class and, if present, check that the current URL corresponds to the URL pattern specified in the annotation. For example, when you invoke it using <span class="monospaced">currentPageAt()</span>, the following Page Object will check that the current URL is precisely <a href="http://www.apache.org">http://www.apache.org</a>.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@At("http://www.apache.org")
+public class ApacheHomePage extends PageObject {
+    ...
+}</pre>
+</div></div>
+<div class="paragraph"><p>The <span class="monospaced">@At</span> annotation also supports wildcards and regular expressions. The following page object will match any Apache sub-domain:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@At("http://.*.apache.org")
+public class AnyApachePage extends PageObject {
+    ...
+}</pre>
+</div></div>
+<div class="paragraph"><p>More generally, however, you are more interested in what comes after the host name. You can use the special <span class="monospaced">#HOST</span> token to match any server name. So the following Page Object will match both <a href="http://localhost:8080/app/action/login.form">http://localhost:8080/app/action/login.form</a> an <a href="http://staging.acme.com/app/action/login.form">http://staging.acme.com/app/action/login.form</a>. It will also ignore parameters, so <a href="http://staging.acme.com/app/action/login.form?username=toto&amp;password=oz">http://staging.acme.com/app/action/login.form?username=toto&amp;password=oz</a> will work fine too.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@At(urls={"#HOST/app/action/login.form"})
+public class LoginPage extends PageObject {
+   ...
+}</pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_opening_the_page">8.2. Opening the page</h3>
+<div class="paragraph"><p>A page object is usually designed to work with a particular web page. When the <span class="monospaced">open()</span> method is invoked, the browser will be opened to the default URL for the page.</p></div>
+<div class="paragraph"><p>The <span class="monospaced">@DefaultUrl</span> annotation indicates the URL that this test should use when run in isolation (e.g. from within your IDE). Generally, however, the host part of the default URL will be overridden by the <span class="monospaced">webdriver.base.url</span> property, as this allows you to set the base URL across the board for all of your tests, and so makes it easier to run your tests on different environments by simply changing this property value. For example, in the test class above, setting the <span class="monospaced">webdriver.base.url</span> to <em>https://staging.mycompany.com</em> would result in the page being opened at the URL of <em>https://staging.mycompany.com/somepage</em>.</p></div>
+<div class="paragraph"><p>You can also define named URLs that can be used to open the web page, optionally with parameters. For example, in the following code, we define a URL called <em>open.issue</em>, that accepts a single parameter:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@DefaultUrl("http://jira.mycompany.org")
+@NamedUrls(
+  {
+    @NamedUrl(name = "open.issue", url = "http://jira.mycompany.org/issues/{1}")
+  }
+)
+public class JiraIssuePage extends PageObject {
+    ...
+}</pre>
+</div></div>
+<div class="paragraph"><p>You could then open this page to the <a href="http://jira.mycompany.org/issues/ISSUE-1">http://jira.mycompany.org/issues/ISSUE-1</a> URL as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>page.open("open.issue", withParameters("ISSUE-1"));</pre>
+</div></div>
+<div class="paragraph"><p>You could also dispense entirely with the base URL in the named URL definition, and rely on the default values:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@DefaultUrl("http://jira.mycompany.org")
+@NamedUrls(
+  {
+    @NamedUrl(name = "open.issue", url = "/issues/{1}")
+  }
+)
+public class JiraIssuePage extends PageObject {
+    ...
+}</pre>
+</div></div>
+<div class="paragraph"><p>And naturally you can define more than one definition:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@NamedUrls(
+  {
+          @NamedUrl(name = "open.issue", url = "/issues/{1}"),
+          @NamedUrl(name = "close.issue", url = "/issues/close/{1}")
+  }
+)</pre>
+</div></div>
+<div class="paragraph"><p>You should never try to implement the <span class="monospaced">open()</span> method yourself. In fact, it is final. If you need your page to do something upon loading, such as waiting for a dynamic element to appear, you can use the @WhenPageOpens annotation. Methods in the PageObject with this annotation will be invoked (in an unspecified order) after the URL has been opened. In this example, the <span class="monospaced">open()</span> method will not return until the dataSection web element is visible:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@DefaultUrl("http://localhost:8080/client/list")
+    public class ClientList extends PageObject {
+
+     @FindBy(id="data-section");
+     WebElement dataSection;
+     ...
+
+     @WhenPageOpens
+     public void waitUntilTitleAppears() {
+         element(dataSection).waitUntilVisible();
+     }
+}</pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_working_with_web_elements">8.3. Working with web elements</h3>
+<div class="sect3">
+<h4 id="_checking_whether_elements_are_visible">8.3.1. Checking whether elements are visible</h4>
+<div class="paragraph"><p>The element method of the PageObject class provides a convenient fluent API for dealing with web elements, providing some commonly-used extra features that are not provided out-of-the-box by the WebDriver API. For example, you can check that an element is visible as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>public class FindAJobPage extends PageObject {
+
+    WebElement searchButton;
+
+    public boolean searchButtonIsVisible() {
+        return element(searchButton).isVisible();
+    }
+    ...
+}</pre>
+</div></div>
+<div class="paragraph"><p>If the button is not present on the screen, the test will wait for a short period in case it appears due to some Ajax magic. If you don&#8217;t want the test to do this, you can use the faster version:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>public boolean searchButtonIsVisibleNow() {
+    return element(searchButton).isCurrentlyVisible();
+}</pre>
+</div></div>
+<div class="paragraph"><p>You can turn this into an assert by using the <span class="monospaced">shouldBeVisible()</span> method instead:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>public void checkThatSearchButtonIsVisible() {
+    element(searchButton).shouldBeVisible();
+}</pre>
+</div></div>
+<div class="paragraph"><p>This method will through an assertion error if the search button is not visible to the end user.</p></div>
+<div class="paragraph"><p>If you are happy to expose the fact that your page has a search button to your step methods, you can make things even simpler by adding an accessor method that returns a WebElementFacade, as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>public WebElementFacade searchButton() {
+    return element(searchButton);
+}</pre>
+</div></div>
+<div class="paragraph"><p>Then your steps will contain code like the following:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>        searchPage.searchButton().shouldBeVisible();</pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_checking_whether_elements_are_enabled">8.3.2. Checking whether elements are enabled</h4>
+<div class="paragraph"><p>You can also check whether an element is enabled or not:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>element(searchButton).isEnabled() element(searchButton).shouldBeEnabled()</pre>
+</div></div>
+<div class="paragraph"><p>There are also equivalent negative methods:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>element(searchButton).shouldNotBeVisible();
+element(searchButton).shouldNotBeCurrentlyVisible();
+element(searchButton).shouldNotBeEnabled()</pre>
+</div></div>
+<div class="paragraph"><p>You can also check for elements that are present on the page but not visible, e.g:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>element(searchButton).isPresent();
+element(searchButton).isNotPresent();
+element(searchButton).shouldBePresent();
+element(searchButton).shouldNotBePresent();</pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_manipulating_select_lists">8.3.3. Manipulating select lists</h4>
+<div class="paragraph"><p>There are also helper methods available for drop-down lists. Suppose you have the following dropdown on your page:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>&lt;select id="color"&gt;
+    &lt;option value="red"&gt;Red&lt;/option&gt;
+    &lt;option value="blue"&gt;Blue&lt;/option&gt;
+    &lt;option value="green"&gt;Green&lt;/option&gt;
+&lt;/select&gt;</pre>
+</div></div>
+<div class="paragraph"><p>You could write a page object to manipulate this dropdown as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>public class FindAJobPage extends PageObject {
+
+        @FindBy(id="color")
+        WebElement colorDropdown;
+
+        public selectDropdownValues() {
+            element(colorDropdown).selectByVisibleText("Blue");
+            assertThat(element(colorDropdown).getSelectedVisibleTextValue(), is("Blue"));
+
+            element(colorDropdown).selectByValue("blue");
+            assertThat(element(colorDropdown).getSelectedValue(), is("blue"));
+
+            page.element(colorDropdown).selectByIndex(2);
+            assertThat(element(colorDropdown).getSelectedValue(), is("green"));
+
+        }
+        ...
+}</pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_determining_focus">8.3.4. Determining focus</h4>
+<div class="paragraph"><p>You can determine whether a given field has the focus as follows:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>element(firstName).hasFocus()</pre>
+</div></div>
+<div class="paragraph"><p>You can also wait for elements to appear, disappear, or become enabled or disabled:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>element(button).waitUntilEnabled()
+element(button).waitUntilDisabled()</pre>
+</div></div>
+<div class="paragraph"><p>or</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>element(field).waitUntilVisible()
+element(button).waitUntilNotVisible()</pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_using_direct_xpath_and_css_selectors">8.3.5. Using direct XPath and CSS selectors</h4>
+<div class="paragraph"><p>Another way to access a web element is to use an XPath or CSS expression. You can use the <span class="monospaced">element</span> method with an XPath expression to do this more simply. For example, imagine your web application needs to click on a list item containing a given post code. One way would be as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>WebElement selectedSuburb = getDriver().findElement(By.xpath("//li/a[contains(.,'" + postcode + "')]"));
+selectedSuburb.click();</pre>
+</div></div>
+<div class="paragraph"><p>However, a simpler option would be to do this:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>element(By.xpath("//li/a[contains(.,'" + postcode + "')]")).click();</pre>
+</div></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_executing_javascript">8.4. Executing Javascript</h3>
+<div class="paragraph"><p>There are times when you may find it useful to execute a little Javascript directly within the browser to get the job done. You can use the <span class="monospaced">evaluateJavascript()</span> method of the <span class="monospaced">PageObject</span> class to do this. For example, you might need to evaluate an expression and use the result in your tests. The following command will evaluate the document title and return it to the calling Java code:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>String result = (String) evaluateJavascript("return document.title");</pre>
+</div></div>
+<div class="paragraph"><p>Alternatively, you may just want to execute a Javascript command locally in the browser. In the following code, for example, we set the focus to the <em>firstname</em> input field:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>        evaluateJavascript("document.getElementById('firstname').focus()");</pre>
+</div></div>
+<div class="paragraph"><p>And, if you are familiar with JQuery, you can also invoke JQuery expressions:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>        evaluateJavascript("$('#firstname').focus()");</pre>
+</div></div>
+<div class="paragraph"><p>This is often a useful strategy if you need to trigger events such as mouse-overs that are not currently supported by the WebDriver API.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_uploading_files">8.5. Uploading files</h3>
+<div class="paragraph"><p>Uploading files is easy. Files to be uploaded can be either placed in a hard-coded location (bad) or stored on the classpath (better). Here is a simple example:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>public class NewCompanyPage extends PageObject {
+    ...
+    @FindBy(id="object_logo")
+    WebElement logoField;
+
+    public NewCompanyPage(WebDriver driver) {
+        super(driver);
+    }
+
+    public void loadLogoFrom(String filename) {
+        upload(filename).to(logoField);
+    }
+}</pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_using_fluent_matcher_expressions">8.6. Using Fluent Matcher expressions</h3>
+<div class="paragraph"><p>When writing acceptance tests, you often find yourself expressing expectations about individual domain objects or collections of domain objects. For example, if you are testing a multi-criteria search feature, you will want to know that the application finds the records you expected. You might be able to do this in a very precise manner (for example, knowing exactly what field values you expect), or you might want to make your tests more flexible by expressing the ranges of values that would be acceptable. Thucydides provides a few features that make it easier to write acceptance tests for this sort of case.</p></div>
+<div class="paragraph"><p>In the rest of this section, we will study some examples based on tests for the Maven Central search site (see &lt;&lt;&gt;&gt;). This site lets you search the Maven repository for Maven artifacts, and view the details of a particular artifact.</p></div>
+<div class="imageblock" id="maven-search-report">
+<div class="content">
+<img src="images/maven-search-report.png" alt="images/maven-search-report.png">
+</div>
+<div class="title">Figure 4. The results page for the Maven Central search page</div>
+</div>
+<div class="paragraph"><p>We will use some imaginary regression tests for this site to illustrate how the Thucydides matchers can be used to write more expressive tests. The first scenario we will consider is simply searching for an artifact by name, and making sure that only artifacts matching this name appear in the results list. We might express this acceptance criteria informally in the following way:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Give that the developer is on the search page,
+</p>
+</li>
+<li>
+<p>
+And the developer searches for artifacts called <em>Thucydides</em>
+</p>
+</li>
+<li>
+<p>
+Then the developer should see at least 16 Thucydides artifacts, each with a unique artifact Id
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>In JUnit, a Thucydides test for this scenario might look like the one:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>...
+import static net.thucydides.core.matchers.BeanMatchers.the_count;
+import static net.thucydides.core.matchers.BeanMatchers.each;
+import static net.thucydides.core.matchers.BeanMatchers.the;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
+
+@RunWith(ThucydidesRunner.class)
+public class WhenSearchingForArtifacts {
+
+    @Managed
+    WebDriver driver;
+
+    @ManagedPages(defaultUrl = "http://search.maven.org")
+    public Pages pages;
+
+    @Steps
+    public DeveloperSteps developer;
+
+    @Test
+    public void should_find_the_right_number_of_artifacts() {
+        developer.opens_the_search_page();
+        developer.searches_for("Thucydides");
+        developer.should_see_artifacts_where(the("GroupId", startsWith("net.thucydides")),
+                                             each("ArtifactId").isDifferent(),
+                                             the_count(is(greaterThanOrEqualTo(16))));
+
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>Let&#8217;s see how the test in this class is implemented. The <span class="monospaced">should_find_the_right_number_of_artifacts()</span> test could be expressed as follows:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+When we open the search page
+</p>
+</li>
+<li>
+<p>
+And we search for artifacts containing the word <em>Thucydides</em>
+</p>
+</li>
+<li>
+<p>
+Then we should see a list of artifacts where each Group ID starts with "net.thucydides", each Artifact ID is unique, and that there are at least 16 such entries displayed.
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>The implementation of these steps is illustrated here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>...
+import static net.thucydides.core.matchers.BeanMatcherAsserts.shouldMatch;
+
+public class DeveloperSteps extends ScenarioSteps {
+
+    public DeveloperSteps(Pages pages) {
+        super(pages);
+    }
+
+    @Step
+    public void opens_the_search_page() {
+        onSearchPage().open();
+    }
+
+    @Step
+    public void searches_for(String search_terms) {
+        onSearchPage().enter_search_terms(search_terms);
+        onSearchPage().starts_search();
+    }
+
+    @Step
+    public void should_see_artifacts_where(BeanMatcher... matchers) {
+        shouldMatch(onSearchResultsPage().getSearchResults(), matchers);
+    }
+
+    private SearchPage onSearchPage() {
+        return getPages().get(SearchPage.class);
+    }
+
+    private SearchResultsPage onSearchResultsPage() {
+        return getPages().get(SearchResultsPage.class);
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>The first two steps are implemented by relatively simple methods. However the third step is more interesting. Let&#8217;s look at it more closely:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    @Step
+    public void should_see_artifacts_where(BeanMatcher... matchers) {
+        shouldMatch(onSearchResultsPage().getSearchResults(), matchers);
+    }</pre>
+</div></div>
+<div class="paragraph"><p>Here, we are passing an arbitrary number of expressions into the method. These expressions actually <em>matchers</em>, instances of the BeanMatcher class. Not that you usually have to worry about that level of detail - you create these matcher expressions using a set of static methods provided in the BeanMatchers class. So you typically would pass fairly readable expressions like <span class="monospaced">the("GroupId", startsWith("net.thucydides"))</span> or <span class="monospaced">each("ArtifactId").isDifferent()</span>.</p></div>
+<div class="paragraph"><p>The <span class="monospaced">shouldMatch()</span> method from the BeanMatcherAsserts class takes either a single Java object, or a collection of Java objects, and checks that at least some of the objects match the constraints specified by the matchers. In the context of web testing, these objects are typically POJOs provided by the Page Object to represent the domain object or objects displayed on a screen.</p></div>
+<div class="paragraph"><p>There are a number of different matcher expressions to choose from. The most commonly used matcher just checks the value of a field in an object. For example, suppose you are using the domain object shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>     public class Person {
+        private final String firstName;
+        private final String lastName;
+
+        Person(String firstName, String lastName) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+        }
+
+        public String getFirstName() {...}
+
+        public String getLastName() {...}
+    }</pre>
+</div></div>
+<div class="paragraph"><p>You could write a test to ensure that a list of Persons contained at least one person named "Bill" by using the "the" static method, as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    List&lt;Person&gt; persons = Arrays.asList(new Person("Bill", "Oddie"), new Person("Tim", "Brooke-Taylor"));
+
+    shouldMatch(persons, the("firstName", is("Bill"))</pre>
+</div></div>
+<div class="paragraph"><p>The second parameter in the the() method is a Hamcrest matcher, which gives you a great deal of flexibility with your expressions. For example, you could also write the following:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    List&lt;Person&gt; persons = Arrays.asList(new Person("Bill", "Oddie"), new Person("Tim", "Brooke-Taylor"));
+
+    shouldMatch(persons, the("firstName", is(not("Tim"))));
+    shouldMatch(persons, the("firstName", startsWith("B")));</pre>
+</div></div>
+<div class="paragraph"><p>You can also pass in multiple conditions:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    List&lt;Person&gt; persons = Arrays.asList(new Person("Bill", "Oddie"), new Person("Tim", "Brooke-Taylor"));
+
+    shouldMatch(persons, the("firstName", is("Bill"), the("lastName", is("Oddie"));</pre>
+</div></div>
+<div class="paragraph"><p>Thucydides also provides the DateMatchers class, which lets you apply Hamcrest matches to standard java Dates and <span class="monospaced">JodaTime</span> DateTimes. The following code samples illustrate how these might be used:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    DateTime january1st2010 = new DateTime(2010,01,01,12,0).toDate();
+    DateTime may31st2010 = new DateTime(2010,05,31,12,0).toDate();
+
+    the("purchaseDate", isBefore(january1st2010))
+    the("purchaseDate", isAfter(january1st2010))
+    the("purchaseDate", isSameAs(january1st2010))
+    the("purchaseDate", isBetween(january1st2010, may31st2010))</pre>
+</div></div>
+<div class="paragraph"><p>You sometimes also need to check constraints that apply to all of the elements under consideration. The simplest of these is to check that all of the field values for a particular field are unique. You can do this using the <span class="monospaced">each()</span> method:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    shouldMatch(persons, each("lastName").isDifferent())</pre>
+</div></div>
+<div class="paragraph"><p>You can also check that the number of matching elements corresponds to what you are expecting. For example, to check that there is only one person who&#8217;s first name is Bill, you could do this:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>     shouldMatch(persons, the("firstName", is("Bill"), the_count(is(1)));</pre>
+</div></div>
+<div class="paragraph"><p>You can also check the minimum and maximum values using the max() and min() methods. For example, if the Person class had a <span class="monospaced">getAge()</span> method, we could ensure that every person is over 21 and under 65 by doing the following:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>     shouldMatch(persons, min("age", greaterThanOrEqualTo(21)),
+                          max("age", lessThanOrEqualTo(65)));</pre>
+</div></div>
+<div class="paragraph"><p>These methods work with normal Java objects, but also with Maps. So the following code will also work:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    Map&lt;String, String&gt; person = new HashMap&lt;String, String&gt;();
+    person.put("firstName", "Bill");
+    person.put("lastName", "Oddie");
+
+    List&lt;Map&lt;String,String&gt;&gt; persons = Arrays.asList(person);
+    shouldMatch(persons, the("firstName", is("Bill"))</pre>
+</div></div>
+<div class="paragraph"><p>The other nice thing about this approach is that the matchers play nicely with the Thucydides reports. So when you use the BeanMatcher class as a parameter in your test steps, the conditions expressed in the step will be displayed in the test report, as shown in <a href="#fig-maven-search-report">[fig-maven-search-report]</a>.</p></div>
+<div class="imageblock" id="fig-maven-search-report">
+<div class="content">
+<img src="images/maven-search-report.png" alt="images/maven-search-report.png">
+</div>
+<div class="title">Figure 5. Conditional expressions are displayed in the test reports</div>
+</div>
+<div class="paragraph"><p>There are two common usage patterns when building Page Objects and steps that use this sort of matcher. The first is to write a Page Object method that returns the list of domain objects (for example, Persons) displayed on the table. For example, the getSearchResults() method used in the should_see_artifacts_where() step could be implemented as follows:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    public List&lt;Artifact&gt; getSearchResults() {
+        List&lt;WebElement&gt; rows = resultTable.findElements(By.xpath(".//tr[td]"));
+        List&lt;Artifact&gt; artifacts = new ArrayList&lt;Artifact&gt;();
+        for (WebElement row : rows) {
+            List&lt;WebElement&gt; cells = row.findElements(By.tagName("td"));
+            artifacts.add(new Artifact(cells.get(0).getText(),
+                                       cells.get(1).getText(),
+                                       cells.get(2).getText()));
+
+        }
+        return artifacts;
+    }</pre>
+</div></div>
+<div class="paragraph"><p>The second is to access the HTML table contents directly, without explicitly modelling the data contained in the table. This approach is faster and more effective if you don&#8217;t expect to reuse the domain object in other pages. We will see how to do this next.</p></div>
+<div class="sect3">
+<h4 id="_working_with_html_tables">8.6.1. Working with HTML Tables</h4>
+<div class="paragraph"><p>Since HTML tables are still widely used to represent sets of data on web applications, Thucydides comes the HtmlTable class, which provides a number of useful methods that make it easier to write Page Objects that contain tables. For example, the rowsFrom method returns the contents of an HTML table as a list of Maps, where each map contains the cell values for a row indexed by the corresponding heading, as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>...
+import static net.thucydides.core.pages.components.HtmlTable.rowsFrom;
+
+public class SearchResultsPage extends PageObject {
+
+    WebElement resultTable;
+
+    public SearchResultsPage(WebDriver driver) {
+        super(driver);
+    }
+
+    public List&lt;Map&lt;String, String&gt;&gt; getSearchResults() {
+        return rowsFrom(resultTable);
+    }
+
+}</pre>
+</div></div>
+<div class="paragraph"><p>This saves a lot of typing - our <span class="monospaced">getSearchResults()</span> method now looks like this:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    public List&lt;Map&lt;String, String&gt;&gt; getSearchResults() {
+        return rowsFrom(resultTable);
+    }</pre>
+</div></div>
+<div class="paragraph"><p>And since the Thucydides matchers work with both Java objects and Maps, the matcher expressions will be very similar. The only difference is that the Maps returned are indexed by the text values contained in the table headings, rather than by java-friendly property names.</p></div>
+<div class="paragraph"><p>You can also use the HtmlTable class to select particular rows within a table to work with. For example, another test scenario for the Maven Search page involves clicking on an artifact and displaying the details for that artifact. The test for this might look something like this:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    @Test
+    public void clicking_on_artifact_should_display_details_page() {
+        developer.opens_the_search_page();
+        developer.searches_for("Thucydides");
+        developer.open_artifact_where(the("ArtifactId", is("thucydides")),
+                                      the("GroupId", is("net.thucydides")));
+
+        developer.should_see_artifact_details_where(the("artifactId", is("thucydides")),
+                                                    the("groupId", is("net.thucydides")));
+    }</pre>
+</div></div>
+<div class="paragraph"><p>Now the open_artifact_where() method needs to click on a particular row in the table. This step looks like this:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    @Step
+    public void open_artifact_where(BeanMatcher... matchers) {
+        onSearchResultsPage().clickOnFirstRowMatching(matchers);
+    }</pre>
+</div></div>
+<div class="paragraph"><p>So we are effectively delegating to the Page Object, who does the real work. The corresponding Page Object method looks like this:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>import static net.thucydides.core.pages.components.HtmlTable.filterRows;
+...
+    public void clickOnFirstRowMatching(BeanMatcher... matchers) {
+        List&lt;WebElement&gt; matchingRows = filterRows(resultTable, matchers);
+        WebElement targetRow = matchingRows.get(0);
+        WebElement detailsLink = targetRow.findElement(By.xpath(".//a[contains(@href,'artifactdetails')]"));
+        detailsLink.click();
+    }</pre>
+</div></div>
+<div class="paragraph"><p>The interesting part here is the first line of the method, where we use the filterRows() method. This method will return a list of WebElements that match the matchers you have passed in. This method makes it fairly easy to select the rows you are interested in for special treatment.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_manipulating_steps_and_page_objects_in_groovy">8.7. Manipulating steps and Page Objects in Groovy</h3>
+<div class="paragraph"><p>TODO</p></div>
+</div>
+<div class="sect2">
+<h3 id="_running_several_steps_using_the_same_page_object">8.8. Running several steps using the same page object</h3>
+<div class="paragraph"><p>Sometimes, querying the browser can be expensive. For example, if you are testing tables with large numbers of web elements (e.g. a web element for each cell), performance can be slow, and memory usage high. Normally, Thucydides will requery the page (and create a new Page Object) each time you call <span class="monospaced">Pages.get()</span> or <span class="monospaced">Pages.currentPageAt()</span>. If you are certain that the page will not change (i.e., that you are only performing read-only operations on the page), you can use the onSamePage() method of the ScenarioSteps class to ensure that subsequent calls to <span class="monospaced">Pages.get()</span> or <span class="monospaced">Pages.currentPageAt()</span> will return the same page object:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@RunWith(ThucydidesRunner.class)
+public class WhenDisplayingTableContents {
+
+    @Managed
+    public WebDriver webdriver;
+
+    @ManagedPages(defaultUrl = "http://my.web.site/index.html")
+    public Pages pages;
+
+    @Steps
+    public DemoSiteSteps steps;
+
+    @Test
+    public void the_user_opens_another_page() {
+        steps.navigate_to_page_with_a_large_table();
+        steps.onSamePage(DemoSiteSteps.class).check_row(1);
+        steps.onSamePage(DemoSiteSteps.class).check_row(2);
+        steps.onSamePage(DemoSiteSteps.class).check_row(3);
+    }
+}</pre>
+</div></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_spring_integration">9. Spring Integration</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>If you are running your acceptance tests against an embedded web server (for example, using Jetty), it can occasionally be useful to access the service layers directly for fixture or infrastructure-related code. For example, you may have a scenario where a user action must, as a side effect, record an audit log in a table in the database. To keep your test focused and simple, you may want to call the service layer directly to check the audit logs, rather than logging on as an administrator and navigating to the audit logs screen.</p></div>
+<div class="paragraph"><p>Spring provides excellent support for integration tests, via the SpringJUnit4ClassRunner test runner. Unfortunately, if you are using Thucydides, this is not an option, as a test cannot have two runners at the same time. Fortunately, however, there is a solution! To inject dependencies using a Spring configuration file, you just need to include the Thucydides SpringIntegration rule in your test class. You instantiate this variable as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@Rule
+public SpringIntegration springIntegration = new SpringIntegration();</pre>
+</div></div>
+<div class="paragraph"><p>Then you use the <span class="monospaced">@ContextConfiguration</span> annotation to define the configuration file or files to use. The you can inject dependencies as you would with an ordinary Spring integration test, using the usual Spring annotations such as @Autowired or <span class="monospaced">@Resource</span>. For example, suppose we are using the following Spring configuration file, called ‘config.xml’:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>&lt;beans&gt;
+    &lt;bean id="widgetService" class="net.thucydides.junit.spring.WidgetService"&gt;
+        &lt;property name="name"&gt;&lt;value&gt;Widgets&lt;/value&gt;&lt;/property&gt;
+        &lt;property name="quota"&gt;&lt;value&gt;1&lt;/value&gt;&lt;/property&gt;
+    &lt;/bean&gt;
+    &lt;bean id="gizmoService" class="net.thucydides.junit.spring.GizmoService"&gt;
+        &lt;property name="name"&gt;&lt;value&gt;Gizmos&lt;/value&gt;&lt;/property&gt;
+        &lt;property name="widgetService"&gt;&lt;ref bean="widgetService" /&gt;&lt;/property&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;</pre>
+</div></div>
+<div class="paragraph"><p>We can use this configuration file to inject dependencies as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@RunWith(ThucydidesRunner.class)
+@ContextConfiguration(locations = "/config.xml")
+public class WhenInjectingSpringDependencies {
+
+    @Managed
+    WebDriver driver;
+
+    @ManagedPages(defaultUrl = "http://www.google.com")
+    public Pages pages;
+
+    @Rule
+    public SpringIntegration springIntegration = new SpringIntegration();
+
+    @Autowired
+    public GizmoService gizmoService;
+
+    @Test
+    public void shouldInstanciateGizmoService() {
+        assertThat(gizmoService, is(not(nullValue())));
+    }
+
+    @Test
+    public void shouldInstanciateNestedServices() {
+        assertThat(gizmoService.getWidgetService(), is(not(nullValue())));
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>Other context-related annotations such as <span class="monospaced">@DirtiesContext</span> will also work as they would in a traditional Spring Integration test. Spring will create a new ApplicationContext for each test, but it will use a single ApplicationContext for all of the methods in your test. If one of your tests modifies an object in the ApplicationContext, you may want to tell Spring so that it can reset the context for the next test. You do this using the <span class="monospaced">@DirtiesContext</span> annotation. In the following test case, for example, the tests will fail without the <span class="monospaced">@DirtiesContext</span> annotation:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@RunWith(ThucydidesRunner.class)
+@ContextConfiguration(locations = "/spring/config.xml")
+public class WhenWorkingWithDirtyContexts {
+
+    @Managed
+    WebDriver driver;
+
+    @ManagedPages(defaultUrl = "http://www.google.com")
+    public Pages pages;
+
+    @Rule
+    public SpringIntegration springIntegration = new SpringIntegration();
+
+    @Autowired
+    public GizmoService gizmoService;
+
+    @Test
+    @DirtiesContext
+    public void shouldNotBeAffectedByTheOtherTest() {
+        assertThat(gizmoService.getName(), is("Gizmos"));
+        gizmoService.setName("New Gizmos");
+    }
+
+    @Test
+    @DirtiesContext
+    public void shouldNotBeAffectedByTheOtherTestEither() {
+        assertThat(gizmoService.getName(), is("Gizmos"));
+        gizmoService.setName("New Gizmos");
+    }
+
+}</pre>
+</div></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_integrating_with_issue_tracking_systems">10. Integrating with Issue Tracking Systems</h2>
+<div class="sectionbody">
+</div>
+</div>
+<div class="sect1">
+<h2 id="_thucydides_reporting">11. Thucydides Reporting</h2>
+<div class="sectionbody">
+</div>
+</div>
+<div class="sect1">
+<h2 id="_running_thucydides_tests_from_the_command_line">12. Running Thucydides tests from the command line</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>You typically run Thucydides as part of the build process (either locally or on a CI server). In addition to the <span class="monospaced">webdriver.driver</span> option discussed about, you can also pass a number of parameters in as system properties to customize the way the tests are run. The full list is shown here:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>webdriver.driver</strong>: What browser do you want your tests to run in: firefox, chrome or iexplorer.
+</p>
+</li>
+<li>
+<p>
+<strong>webdriver.base.url</strong>: The default starting URL for the application, and base URL for relative paths.
+</p>
+</li>
+<li>
+<p>
+<strong>thucydides.outputDirectory</strong>: Where should reports be generated.
+</p>
+</li>
+<li>
+<p>
+<strong>thucydides.only.save.failing.screenshots</strong> : Should Thucydides only store screenshots for failing steps? This can save disk space and speed up the tests a little. It is very useful for data-driven testing.
+</p>
+</li>
+<li>
+<p>
+<strong>thucydides.restart.browser.frequency</strong>: During data-driven tests, some browsers (Firefox in particular) may slow down over time due to memory leaks. To get around this, you can get Thucydides to start a new browser session at regular intervals when it executes data-driven tests.
+</p>
+</li>
+<li>
+<p>
+<strong>thucycides.step.delay</strong>: Pause (in ms) between each test step.
+</p>
+</li>
+<li>
+<p>
+<strong>untrusted.certificates</strong>: Useful if you are running Firefox tests against an HTTPS test server without a valid certificate. This will make Thucydides use a profile with the AssumeUntrustedCertificateIssuer property set.
+</p>
+</li>
+<li>
+<p>
+<strong>thucydides.timeout</strong>: How long should the driver wait for elements not immediately visible.
+</p>
+</li>
+<li>
+<p>
+<strong>thucydides.browser.width</strong> and <strong>thucydides.browser.height</strong>: Resize the browser to the specified dimensions, in order to take larger screenshots. This should work with Internet Explorer and Firefox, but not with Chrome.
+</p>
+</li>
+<li>
+<p>
+<strong>thucydides.issue.tracker.url</strong>: The URL used to generate links to the issue tracking system.
+</p>
+</li>
+<li>
+<p>
+<strong>thucydides.activate.firebugs</strong> : * Activate the Firebugs and FireFinder plugins for Firefox when running the WebDriver tests. This is useful for debugging, but is not recommended when running the tests on a build server.
+</p>
+</li>
+<li>
+<p>
+<strong>thucydides.batch.count</strong>: If batch testing is being used, this is the size of the batches being executed.
+</p>
+</li>
+<li>
+<p>
+<strong>thucydides.batch.number</strong> :If batch testing is being used, this is the number of the batch being run on this machine.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>An example of using these parameters is shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>$ mvn test -Dwebdriver.driver=iexplorer -Dwebdriver.base.url=http://myapp.staging.acme.com</pre>
+</div></div>
+<div class="paragraph"><p>This will run the tests against the staging server using Internet Explorer.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>webdriver.firefox.profile</strong>: The path to the directory of the profile to use when starting firefox. This defaults to webdriver creating an anonymous profile. This is useful if you want to run the web tests using your own Firefox profile. If you are not sure about how to find the path to your profile, look here: <a href="http://support.mozilla.com/en-US/kb/Profiles">http://support.mozilla.com/en-US/kb/Profiles</a>. For example, to run the default profile on a Mac OS X system, you would do something like this:
+</p>
+</li>
+</ul></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>$ mvn test -Dwebdriver.firefox.profile=/Users/johnsmart/Library/Application\ Support/Firefox/Profiles/2owb5g1d.default</pre>
+</div></div>
+<div class="paragraph"><p>On Windows, it would be something like:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>C:\Projects\myproject&gt;mvn test -Dwebdriver.firefox.profile=C:\Users\John Smart\AppData\Roaming\Mozilla\Firefox\Profiles\mvxjy48u.default</pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>thucydides.history</strong>: The directory in which build history summary data is stored for each project. Each project has it&#8217;s own sub-folder within this directory. Defaults to ~./thucydides.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>If you want to set default values for some of these properties for your own development environment (e.g. to always activate the Firebugs plugin on your development machine), create a file called <span class="monospaced">thucydides.properties</span> in your home directory, and set any default values here. These values will still be overridden by any values defined in the environment variables. An example is shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>thucydides.activate.firebugs = true
+thucydides.browser.width = 1200</pre>
+</div></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_integrating_with_issue_tracking_systems_2">13. Integrating with issue tracking systems</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_basic_issue_tracking_integration">13.1. Basic issue tracking integration</h3>
+<div class="paragraph"><p></p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>http://my.jira.server/browse/MYPROJECT-{0}</pre>
+</div></div>
+<div class="paragraph"><p>To do this in Maven, you need to pass this system property to JUnit using the maven-surefire-plugin as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+    &lt;version&gt;2.7.1&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;systemPropertyVariables&gt;
+            &lt;thucydides.issue.tracker.url&gt;http://my.jira.server/browse/MYPROJECT-{0}&lt;/thucydides.issue.tracker.url&gt;
+        &lt;/systemPropertyVariables&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</pre>
+</div></div>
+<div class="paragraph"><p>Thucydides also provides special support for the Atlassian JIRA issue tracking tool. If you provide the <span class="monospaced">jira.url</span> system property instead of the <span class="monospaced">thucydides.issue.tracker.url</span>, you only need to provide the base URL for your JIRA instance, rather than the full path:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>org.apache.maven.pluginsmaven-surefire-plugin2.7.1http://my.jira.server</pre>
+</div></div>
+<div class="paragraph"><p>You need to provide the issue number. You can place this in the test title, prefixed by the <em></em> character. For easyb tests, this just means mentioning the issue number (always starting with a <em></em> character) somewhere in the scenario name. For JUnit tests, you use the @Title annotation as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@RunWith(ThucydidesRunner.class)
+public class FixingAnIssueScenario {
+
+    @Managed
+    public WebDriver webdriver;
+
+    @ManagedPages(defaultUrl = "http://www.mysite.com")
+    public Pages pages;
+
+    @Steps
+    public SampleScenarioSteps steps;
+
+    @Title("Shopping cart should let users add multiple articles - fixes issues #123")
+    @Test
+    public void shopping_cart_should_let_users_add_multiple_articles() {
+        steps.add_item_to_cart("nuts");
+        steps.add_item_to_cart("bolts");
+        steps.cart_should_contain("nuts","bolts");
+    }
+}</pre>
+</div></div>
+<div class="paragraph"><p>Another way to specify issues in JUnit is to use the @Issue or @Issues annotations. You can use the @Issue annotation to associate an individual test with a specific issue</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@Issue("#123")
+@Test
+public void shopping_cart_should_let_users_add_multiple_articles() {
+    steps.add_item_to_cart("nuts");
+    steps.add_item_to_cart("bolts");
+    steps.cart_should_contain("nuts","bolts");
+}</pre>
+</div></div>
+<div class="paragraph"><p>You can also place the @Issue annotation at the class level, in which case the issue will be associated with every test in the class:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@RunWith(ThucydidesRunner.class)
+@Issue("#123")
+public class FixingAnIssueScenario {
+
+        @Managed
+        public WebDriver webdriver;
+
+        @ManagedPages(defaultUrl = "http://www.mysite.com")
+        public Pages pages;
+
+        @Steps
+        public SampleScenarioSteps steps;
+
+        @Test
+        public void shopping_cart_should_let_users_add_multiple_articles() {
+            steps.add_item_to_cart("nuts");
+            steps.add_item_to_cart("bolts");
+            steps.cart_should_contain("nuts","bolts");
+        }
+
+        @Test
+        public void some_other_test() {
+            ...
+        }
+}</pre>
+</div></div>
+<div class="paragraph"><p>If a test needs to be associated with several issues, you can use the @Issues annotation instead:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>@Issues({"#123", #456"})
+@Test public void shopping_cart_should_let_users_add_multiple_articles() {
+    steps.add_item_to_cart("nuts"); steps.add_item_to_cart("bolts");
+        steps.cart_should_contain("nuts","bolts");
+}</pre>
+</div></div>
+<div class="paragraph"><p>When you do this, issues will appear in the Thucydides reports with a hyperlink to the corresponding issue in your issue tracking system.</p></div>
+<div class="paragraph"><p>jira-integration-example</p></div>
+</div>
+<div class="sect2">
+<h3 id="_bi_directional_jira_integration">13.2. Bi-directional JIRA integration</h3>
+<div class="paragraph"><p>A common strategy for organizations using JIRA is to represent story cards, and/or the associated acceptance criteria, as JIRA issues. It is useful to know what automated tests have been executed for a given JIRA story card, and what story is being tested for a given test.</p></div>
+<div class="paragraph"><p>You can add both of these features to your Thucydides project by using the <span class="monospaced">thucydides-jira-plugin</span>. First, you need to add the <span class="monospaced">thucydides-jira-plugin</span> to your Maven dependencies. The dependencies you will need (including the normal Thucydides ones) are listed here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    &lt;dependency&gt;
+        &lt;groupId&gt;junit&lt;/groupId&gt;
+        &lt;artifactId&gt;junit-dep&lt;/artifactId&gt;
+        &lt;version&gt;4.10&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.hamcrest&lt;/groupId&gt;
+        &lt;artifactId&gt;hamcrest-all&lt;/artifactId&gt;
+        &lt;version&gt;1.1&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;net.thucydides&lt;/groupId&gt;
+        &lt;artifactId&gt;thucydides-junit&lt;/artifactId&gt;
+        &lt;version&gt;0.6.1&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;net.thucydides.easyb&lt;/groupId&gt;
+        &lt;artifactId&gt;thucydides-easyb-plugin&lt;/artifactId&gt;
+        &lt;version&gt;0.6.1&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;net.thucydides.plugins.jira&lt;/groupId&gt;
+        &lt;artifactId&gt;thucydides-jira-plugin&lt;/artifactId&gt;
+        &lt;version&gt;0.6.1&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.codehaus.groovy&lt;/groupId&gt;
+        &lt;artifactId&gt;groovy-all&lt;/artifactId&gt;
+        &lt;version&gt;1.8.5&lt;/version&gt;
+    &lt;/dependency&gt;
+    ...</pre>
+</div></div>
+<div class="paragraph"><p>Note that the JIRA workflow integration needs Groovy 1.8 or higher to work properly.</p></div>
+<div class="paragraph"><p>You will also need an <span class="monospaced">slf4j</span> implementation, e.g. ‘slf4j-log4j12′ (if you are using Log4j) or ‘logback-classic’ (if you are using LogBack) (see <a href="http://www.slf4j.org/codes.html#StaticLoggerBinder">http://www.slf4j.org/codes.html#StaticLoggerBinder</a> for more details). If you’re stuck, just add slf4j-simple:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    &lt;dependency&gt;
+        &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+        &lt;artifactId&gt;slf4j-simple&lt;/artifactId&gt;
+        &lt;version&gt;1.6.1&lt;/version&gt;
+    &lt;/dependency&gt;</pre>
+</div></div>
+<div class="paragraph"><p>In Thucydides, you can refer to a JIRA issue by placing a reference to the corresponding JIRA issue number either in the name of the test (using the @Title annotation, for example), or, more simply, by using the @Issue or @Issues annotation as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    @RunWith(ThucydidesRunner.class)
+    public class SearchByKeywordStoryTest {
+
+        @Managed(uniqueSession = true)
+        public WebDriver webdriver;
+
+        @ManagedPages(defaultUrl = "http://www.wikipedia.com")
+        public Pages pages;
+
+        @Steps
+        public EndUserSteps endUser;
+
+        @Issue("#WIKI-1")
+        @Test
+        public void searching_by_unambiguious_keyword_should_display_the_corresponding_article() {
+            endUser.is_on_the_wikipedia_home_page();
+            endUser.looks_up_cats();
+            endUser.should_see_article_with_title("Cat - Wikipedia, the free encyclopedia");
+
+        }
+    }
+        ------------------
+
+In this example, the test will be associated with issue WIKI-1.
+
+Alternatively, you may want to associate an issue (such as a story card) with all of the stories in a test case by placing the @Issue (or @Issues) annotation at the class level:</pre>
+</div></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>@RunWith(ThucydidesRunner.class)
+@Issue("#WIKI-1")
+public class SearchByKeywordStoryTest {</pre>
+</div></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>@Managed(uniqueSession = true)
+public WebDriver webdriver;</pre>
+</div></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>@ManagedPages(defaultUrl = "http://www.wikipedia.com")
+public Pages pages;</pre>
+</div></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>@Steps
+public EndUserSteps endUser;</pre>
+</div></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>@Test
+public void searching_by_unambiguious_keyword_should_display_the_corresponding_article() {
+    endUser.is_on_the_wikipedia_home_page();
+    endUser.looks_up_cats();
+    endUser.should_see_article_with_title("Cat - Wikipedia, the free encyclopedia");</pre>
+</div></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>    }
+}</pre>
+</div></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>Thucydides can use these annotations to integrate with the issues in JIRA. The most simple JIRA integration involves adding links to the corresponding JIRA issues in the Thucydides reports. To activate this, you simply need to provide the *jira.url* command line option. You do however need to pass this option to JUnit using the maven-surefire-plugin, as shown here:</pre>
+</div></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>&lt;build&gt;
+  &lt;plugins&gt;
+      &lt;plugin&gt;
+          &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+          &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+          &lt;version&gt;2.10&lt;/version&gt;
+          &lt;configuration&gt;
+              &lt;argLine&gt;-Xmx1024m&lt;/argLine&gt;
+              &lt;systemPropertyVariables&gt;
+                  &lt;jira.url&gt;http://jira.acme.com&lt;/jira.url&gt;
+              &lt;/systemPropertyVariables&gt;
+          &lt;/configuration&gt;
+      &lt;/plugin&gt;
+      ...</pre>
+</div></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>For tighter, round-trip integration you can also use thucydides-jira-plugin. This will not only include links to JIRA
+in the Thucydides reports, but it will also update the corresponding JIRA issues with links to the corresponding
+Story page in the Thucydides reports. To set this up, add the thucydides-jira-plugin dependency to your project
+dependencies:</pre>
+</div></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>&lt;dependency&gt;
+    &lt;groupId&gt;net.thucydides.plugins.jira&lt;/groupId&gt;
+    &lt;artifactId&gt;thucydides-jira-plugin&lt;/artifactId&gt;
+    &lt;version&gt;0.6.1&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+    ------------------</pre>
+</div></div>
+<div class="paragraph"><p>You also need to provide a username and password to connect to JIRA, and the URL where your Thucydides reports will be published (for example, on your CI server). You do using by passing in the jira.username, jira.password and thucydides.public.url system parameters.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>  &lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+            &lt;version&gt;2.10&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;argLine&gt;-Xmx1024m&lt;/argLine&gt;
+                &lt;systemPropertyVariables&gt;
+                    &lt;jira.url&gt;http://jira.acme.com&lt;/jira.url&gt;
+                    &lt;jira.username&gt;${jira.demo.user}&lt;/jira.username&gt;
+                    &lt;jira.password&gt;${jira.demo.password}&lt;/jira.password&gt;
+                    &lt;thucydides.public.url&gt;http://localhost:9000&lt;/thucydides.public.url&gt;
+                &lt;/systemPropertyVariables&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+        ...</pre>
+</div></div>
+<div class="paragraph"><p>Thucydides also generates aggregate reports grouping results for stories and features. To include the JIRA links in these reports as well, you need to set the <span class="monospaced">jiraUrl</span> configuration option in the
+<span class="monospaced">maven-thucydides-plugin</span>, as illustrated here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    &lt;plugin&gt;
+        &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-site-plugin&lt;/artifactId&gt;
+        &lt;version&gt;3.0-beta-3&lt;/version&gt;
+        &lt;configuration&gt;
+            &lt;reportPlugins&gt;
+                &lt;plugin&gt;
+                    &lt;groupId&gt;net.thucydides.maven.plugins&lt;/groupId&gt;
+                    &lt;artifactId&gt;maven-thucydides-plugin&lt;/artifactId&gt;
+                    &lt;version&gt;@project.version@&lt;/version&gt;
+                    &lt;configuration&gt;
+                         &lt;jiraUrl&gt;http://jira.acme.com&lt;/jiraUrl&gt;
+                     &lt;/configuration&gt;
+                 &lt;/plugin&gt;
+            &lt;/reportPlugins&gt;
+        &lt;/configuration&gt;
+    &lt;/plugin&gt;</pre>
+</div></div>
+<div class="paragraph"><p>If you do not want Thucydides to update the JIRA issues for a particular run (e.g. for testing or debugging purposes), you can also set <span class="monospaced">thucydides.skip.jira.updates</span> to true, e.g.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre> $ mvn verify -Dthucydides.skip.jira.updates=true</pre>
+</div></div>
+<div class="paragraph"><p>You can also configure the plugin to update the status of JIRA issues. This is deactivated by default: to use this
+option, you need to set the <span class="monospaced">thucydides.jira.workflow.active</span> option to ‘true’, e.g.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre> $ mvn verify -Dthucydides.jira.workflow.active=true</pre>
+</div></div>
+<div class="paragraph"><p>The default configuration will work with the default JIRA workflow: open or in progress issues associated with successful tests will be resolved, and closed or resolved issues associated with failing tests will be reopened. If you are using a customized workflow, or want to modify the way the transitions work, you can write your own workflow configuration. Workflow configuration uses a simple Groovy DSL. The following is an example of the configuration file used for the default workflow:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    when 'Open', {
+        'success' should: 'Resolve Issue'
+    }
+
+    when 'Reopened', {
+        'success' should: 'Resolve Issue'
+    }
+
+    when 'Resolved', {
+        'failure' should: 'Reopen Issue'
+    }
+
+    when 'In Progress', {
+        'success' should: ['Stop Progress','Resolve Issue']
+    }
+
+    when 'Closed', {
+        'failure' should: 'Reopen Issue'
+    }</pre>
+</div></div>
+<div class="paragraph"><p>You can write your own configuration file and place it on the classpath of your test project (e.g. in the src/test/resources directory). Then you can override the default configuration by using the <span class="monospaced">thucydides.jira.workflow</span> property in the Maven <span class="monospaced">pom.xml</span> file or directly on the command line e.g.</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre> $ mvn verify -Dthucydides.jira.workflow=my-workflow.groovy</pre>
+</div></div>
+<div class="paragraph"><p>Alternatively, you can simply create a file called <span class="monospaced">jira-workflow.groovy</span> and place it somewhere on your classpath. Thucydides will then use this workflow. In both these cases, you don’t need to explicitly set the <span class="monospaced">thucydides.jira.workflow.active</span> property.</p></div>
+<div class="paragraph"><p>You can also integrate JIRA issues into your easyb Thucydides stories. When using the Thucydides easyb integration, you associate one or more issues with the easyb story as a whole, but not with the individual scenarios. You do this using the thucydides.tests_issue notation:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    using "thucydides"
+
+    thucydides.uses_default_base_url "http://www.wikipedia.com"
+    thucydides.uses_steps_from EndUserSteps
+    thucydides.tests_story SearchByKeyword
+
+    thucydides.tests_issue "#WIKI-2"
+
+    scenario "Searching for cats", {
+        given "the user is on the home page", {
+            end_user.is_on_the_wikipedia_home_page()
+        }
+        when "the end user searches for 'cats'", {
+            end_user.looks_up_cats()
+        }
+        then "they should see the corresponding article", {
+           end_user.should_see_article_with_title("Cat - Wikipedia, the free encyclopedia")
+        }
+    }</pre>
+</div></div>
+<div class="paragraph"><p>You can also associate several issues using <span class="monospaced">thucydides.tests_issues</span>:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    thucydides.tests_issue "#WIKI-2", "#WIKI-3"</pre>
+</div></div>
+<div class="paragraph"><p>To use easyb with Thucydides, you need to add the latest version of <span class="monospaced">thucydides-easyb-plugin</span> to your dependencies if it is not already there:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    &lt;dependency&gt;
+        &lt;groupId&gt;net.thucydides.easyb&lt;/groupId&gt;
+        &lt;artifactId&gt;thucydides-easyb-plugin&lt;/artifactId&gt;
+        &lt;version&gt;0.6.1&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;</pre>
+</div></div>
+<div class="paragraph"><p>As with JUnit, you will need to pass in the proper parameters to easyb for this to work. You will also need to be using the maven-easyb-plugin version 1.4 or higher, configured to pass in the JIRA parameters as shown here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>    &lt;plugin&gt;
+        &lt;groupId&gt;org.easyb&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-easyb-plugin&lt;/artifactId&gt;
+        &lt;version&gt;1.4&lt;/version&gt;
+        &lt;executions&gt;
+            &lt;execution&gt;
+                &lt;goals&gt;
+                    &lt;goal&gt;test&lt;/goal&gt;
+                &lt;/goals&gt;
+            &lt;/execution&gt;
+        &lt;/executions&gt;
+        &lt;configuration&gt;
+            &lt;storyType&gt;html&lt;/storyType&gt;
+            &lt;storyReport&gt;target/easyb/easyb.html&lt;/storyReport&gt;
+            &lt;easybTestDirectory&gt;src/test/stories&lt;/easybTestDirectory&gt;
+            &lt;parallel&gt;true&lt;/parallel&gt;
+            &lt;jvmArguments&gt;
+                &lt;jira.url&gt;http://jira.acme.com&lt;/jira.url&gt;
+                &lt;jira.username&gt;${jira.demo.user}&lt;/jira.username&gt;
+                &lt;jira.password&gt;${jira.demo.password}&lt;/jira.password&gt;
+                &lt;thucydides.public.url&gt;http://localhost:9000&lt;/thucydides.public.url&gt;
+            &lt;/systemPropertyVariables&gt;
+            &lt;/jvmArguments&gt;
+        &lt;/configuration&gt;
+    &lt;/plugin&gt;</pre>
+</div></div>
+<div class="paragraph"><p>Once this is done, Thucydides will update the relevant JIRA issues automatically whenever the tests are executed.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_increasing_the_size_of_screenshots">13.3. Increasing the size of screenshots</h3>
+<div class="paragraph"><p>Sometimes the default window size is too small to display all of the application screen in the screenshots. You can increase the size of the window Thucydides opens by providing the <span class="monospaced">thucydides.browser.width</span> and <span class="monospaced">thucydides.browser.height</span> system properties. For example, to use a browser window with dimensions of 1200x1024, you could do the following:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>$ mvn clean verify -Dthucydides.browser.width=1200 -Dthucydides.browser.height=1024</pre>
+</div></div>
+<div class="paragraph"><p>Typically, the width parameter is the only one you will need to specify, as the height will be determined by the contents of the browser page.</p></div>
+<div class="paragraph"><p>If you are running Thucydides with JUnit, you can also specify this parameter (and any of the others, for that matter) directly in your pom.xml file, in the maven-surefire-plugin configuration, e.g:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+            &lt;version&gt;2.7.1&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;argLine&gt;-Xmx1024m&lt;/argLine&gt;
+                &lt;systemPropertyVariables&gt;
+                    &lt;thucydides.browser.width&gt;1200&lt;/thucydides.browser.width&gt;
+                &lt;/systemPropertyVariables&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+        ...</pre>
+</div></div>
+<div class="paragraph"><p>When the browser width is larger than 1000px, the slideshow view in the reports will expand to show the full screenshots.</p></div>
+<div class="paragraph"><p>Note there are some caveats with this feature. In particular, it will not work at all with Chrome, as Chrome, by design, does not support window resizing. In addition, since WebDriver uses a real browser, so the maximum size will be limited by the physical size of the browser. This limitation applies to the browser width, as the full vertical length of the screen will still be recorded in the screenshot even if it scrolls beyond a single page.</p></div>
+<div class="sect3">
+<h4 id="_screenshots_and_outofmemoryerror_issues">13.3.1. Screenshots and OutOfMemoryError issues</h4>
+<div class="paragraph"><p>Selenium needs memory to take screenshots, particularly if the screens are large. If Selenium runs out of memory when taking screenshots, it will log an error in the test output. In this case, configure the maven-surefire-plugin to use more memory, as illustrated here:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+    &lt;version&gt;2.7.1&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;argLine&gt;-Xmx1024m&lt;/argLine&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</pre>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_managing_state_between_steps">14. Managing state between steps</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>TODO</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_running_thucydides_tests_in_parallel_batches">15. Running Thucydides tests in parallel batches</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>TODO</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="further-reading">16. Further Reading</h2>
+<div class="sectionbody">
+<div class="ulist"><div class="title">Articles</div><ul>
+<li>
+<p>
+Dr. Dobb&#8217;s Journal. <a href="http://drdobbs.com/open-source/232300277/">Project of the Month: Thucydides</a>, December. 2011.
+</p>
+</li>
+<li>
+<p>
+JavaWorld. <a href="http://www.javaworld.com/javaworld/jw-08-2011/110823-atdd-for-web-apps.html">Acceptance test driven development for web applications</a>, August. 2011.
+</p>
+</li>
+<li>
+<p>
+JavaWorld. <a href="http://www.javaworld.com/javaworld/jw-10-2011/111018-thucydides-for-atdd.html">Selenium 2 and Thucydides for ATDD</a>, August. 2011.
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr></div>
+<div id="footer">
+<div id="footer-text">
+Version 1.0.0<br>
+Last updated 2011-12-30 22:33:32 EST
+</div>
+</div>
+</body>
+</html>
