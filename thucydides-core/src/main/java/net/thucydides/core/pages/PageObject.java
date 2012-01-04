@@ -10,6 +10,7 @@ import net.thucydides.core.scheduling.ThucydidesFluentWait;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.core.webdriver.WebdriverAssertionError;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webelements.Checkbox;
 import org.apache.commons.lang3.StringUtils;
@@ -407,12 +408,20 @@ public abstract class PageObject {
     }
 
     public void shouldNotBeVisible(final WebElement field) {
-        element(field).shouldNotBeVisible();
+        try {
+            element(field).shouldNotBeVisible();
+        } catch (NoSuchElementException e) {
+            // A non-existant element is not visible
+        }
     }
 
     public void shouldNotBeVisible(final By byCriteria) {
-        WebElement element = getDriver().findElement(byCriteria);
-        shouldNotBeVisible(element);
+        try {
+            WebElement element = getDriver().findElement(byCriteria);
+            shouldNotBeVisible(element);
+        } catch (NoSuchElementException e) {
+            // A non-existant element is not visible
+        }
     }
 
     public String updateUrlWithBaseUrlIfDefined(final String startingUrl) {

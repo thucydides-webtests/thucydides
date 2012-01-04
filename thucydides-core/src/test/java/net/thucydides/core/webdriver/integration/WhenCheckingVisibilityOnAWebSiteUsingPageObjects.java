@@ -115,6 +115,20 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         indexPage.shouldNotBeVisible(By.xpath("//h2[.='An invisible title']"));
     }
 
+    @Test
+    public void a_non_existant_web_element_should_be_considered_invisible() {
+        IndexPage indexPage = new IndexPage(driver);
+
+        indexPage.shouldNotBeVisible(indexPage.doesNotExist);
+    }
+
+    @Test
+    public void a_non_existant_web_element_should_be_considered_invisible_when_found_by_a_selector() {
+        IndexPage indexPage = new IndexPage(driver);
+
+        indexPage.shouldNotBeVisible(By.xpath("//h2[.='Does not exist']"));
+    }
+
     @Test(expected = TimeoutException.class)
     public void should_fail_when_waiting_for_an_invisible_object() {
         IndexPage indexPage = new IndexPage(driver);
