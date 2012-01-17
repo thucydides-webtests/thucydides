@@ -19,76 +19,76 @@ import java.util.List;
  */
 public class JUnitStepListener extends RunListener {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(JUnitStepListener.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(JUnitStepListener.class);
 
-	private BaseStepListener baseStepListener;
+    private BaseStepListener baseStepListener;
 
-	public JUnitStepListener(final File outputDirectory) {
-		baseStepListener = new BaseStepListener(outputDirectory);
-		StepEventBus.getEventBus().registerListener(baseStepListener);
-	}
+    public JUnitStepListener(final File outputDirectory) {
+        baseStepListener = new BaseStepListener(outputDirectory);
+        StepEventBus.getEventBus().registerListener(baseStepListener);
+    }
 
 
     public JUnitStepListener(final File outputDirectory, final Pages pages) {
-		baseStepListener = new BaseStepListener(outputDirectory, pages);
-		StepEventBus.getEventBus().registerListener(baseStepListener);
-	}
+        baseStepListener = new BaseStepListener(outputDirectory, pages);
+        StepEventBus.getEventBus().registerListener(baseStepListener);
+    }
 
-	public BaseStepListener getBaseStepListener() {
-		return baseStepListener;
-	}
+    public BaseStepListener getBaseStepListener() {
+        return baseStepListener;
+    }
 
-	@Override
-	public void testRunStarted(Description description) throws Exception {
-		super.testRunStarted(description);
+    @Override
+    public void testRunStarted(Description description) throws Exception {
+        super.testRunStarted(description);
 
-	}
+    }
 
-	@Override
-	public void testRunFinished(Result result) throws Exception {
-		super.testRunFinished(result);
-	}
+    @Override
+    public void testRunFinished(Result result) throws Exception {
+        StepEventBus.getEventBus().testSuiteFinished();
+        super.testRunFinished(result);
+    }
 
-	/**
-	 * Called when a test starts. We also need to start the test suite the first
-	 * time, as the testRunStarted() method is not invoked for some reason.
-	 */
-	@Override
-	public void testStarted(final Description description) {
-		StepEventBus.getEventBus().clear();
-		StepEventBus.getEventBus().testStarted(description.getMethodName(), description.getTestClass());
+    /**
+     * Called when a test starts. We also need to start the test suite the first
+     * time, as the testRunStarted() method is not invoked for some reason.
+     */
+    @Override
+    public void testStarted(final Description description) {
+        StepEventBus.getEventBus().clear();
+        StepEventBus.getEventBus().testStarted(description.getMethodName(), description.getTestClass());
 
-	}
+    }
 
-	@Override
-	public void testFinished(final Description description) throws Exception {
-	}
+    @Override
+    public void testFinished(final Description description) throws Exception {
+    }
 
-	@Override
-	public void testFailure(final Failure failure) throws Exception {
-		StepEventBus.getEventBus().testFailed(failure.getException());
-	}
+    @Override
+    public void testFailure(final Failure failure) throws Exception {
+        StepEventBus.getEventBus().testFailed(failure.getException());
+    }
 
-	@Override
-	public void testIgnored(final Description description) throws Exception {
-		StepEventBus.getEventBus().testIgnored();
-	}
+    @Override
+    public void testIgnored(final Description description) throws Exception {
+        StepEventBus.getEventBus().testIgnored();
+    }
 
-	public List<TestOutcome> getTestOutcomes() {
-		return baseStepListener.getTestOutcomes();
-	}
+    public List<TestOutcome> getTestOutcomes() {
+        return baseStepListener.getTestOutcomes();
+    }
 
-	public Throwable getError() {
-		return baseStepListener.getTestFailureCause();
-	}
+    public Throwable getError() {
+        return baseStepListener.getTestFailureCause();
+    }
 
-	public boolean hasRecordedFailures() {
-		return baseStepListener.aStepHasFailed();
-	}
+    public boolean hasRecordedFailures() {
+        return baseStepListener.aStepHasFailed();
+    }
 
-	public void close() {
-		StepEventBus.getEventBus().dropListener(baseStepListener);
-
-	}
+    public void close() {
+        StepEventBus.getEventBus().dropListener(baseStepListener);
+    }
 }

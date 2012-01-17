@@ -2,11 +2,14 @@ package net.thucydides.core.webdriver.firefox;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.util.EnvironmentVariables;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class FirefoxProfileEnhancer {
 
@@ -41,7 +44,6 @@ public class FirefoxProfileEnhancer {
             LOGGER.warn("Failed to add Firebugs extension to Firefox");
         }
     }
-
 
     public void enableNativeEventsFor(final FirefoxProfile profile) {
         profile.setEnableNativeEvents(true);

@@ -168,6 +168,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
         testedStory = story;
     }
 
+    @Override
+    public void testSuiteFinished() {
+    }
+
 
     /**
      * An individual test starts.

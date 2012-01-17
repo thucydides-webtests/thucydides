@@ -167,6 +167,11 @@ public class WhenCheckingFieldContentWithTheFluentElementAPI extends FluentEleme
         page.element(page.readonlyField).waitUntilEnabled();
     }
 
+    @Test
+    public void should_pass_immediages_if_waiting_for_a_non_form_field_to_be_enabled() {
+        page.element(page.placetitle).waitUntilEnabled();
+    }
+
     @Test(expected = ElementNotVisibleException.class)
     public void should_fail_if_wait_for_field_to_be_disabled_never_happens() throws InterruptedException {
         page.element(page.firstName).waitUntilDisabled();
@@ -181,6 +186,7 @@ public class WhenCheckingFieldContentWithTheFluentElementAPI extends FluentEleme
     public void is_currently_enabled_should_be_false_for_an_inexistant_element() throws InterruptedException {
         assertThat(page.element(page.fieldDoesNotExist).isCurrentlyEnabled(), is(false));
     }
+
     @Test
     public void should_wait_for_field_to_be_enabled() throws InterruptedException {
         assertThat(page.element(page.buttonThatIsInitiallyDisabled).isCurrentlyEnabled(), is(false));

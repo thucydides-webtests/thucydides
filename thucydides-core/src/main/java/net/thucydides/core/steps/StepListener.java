@@ -24,6 +24,11 @@ public interface StepListener {
     void testSuiteStarted(final Story story);
 
     /**
+     * End of a test case or story.
+     */
+    void testSuiteFinished();
+
+    /**
      * A test with a given name has started.
      */
     void testStarted(final String description);

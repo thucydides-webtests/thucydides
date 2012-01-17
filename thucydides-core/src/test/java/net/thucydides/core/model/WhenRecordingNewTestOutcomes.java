@@ -87,6 +87,15 @@ public class WhenRecordingNewTestOutcomes {
         public void should_do_that() {};
     }
 
+    @Story(AUserStory.class)
+    @Issue("#123")
+    class ATestScenarioWithIssuesWithNoPrefix {
+        public void should_do_this() {};
+        @Issue("#456")
+        public void should_do_that() {};
+        public void should_do_something_else() {};
+    }
+
     @Before
     public void prepareAcceptanceTestRun() {
         testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);

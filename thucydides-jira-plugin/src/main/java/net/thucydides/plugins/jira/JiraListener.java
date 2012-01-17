@@ -1,5 +1,6 @@
 package net.thucydides.plugins.jira;
 
+import ch.lambdaj.function.convert.Converter;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.model.ReportNamer.ReportType;
 import net.thucydides.core.model.Stories;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static ch.lambdaj.Lambda.convert;
+
 /**
  * Updates JIRA issues referenced in a story with a link to the corresponding story report.
  */
@@ -42,14 +45,19 @@ public class JiraListener implements StepListener {
     WorkflowLoader loader;
 
     private final EnvironmentVariables environmentVariables;
+    private final String projectPrefix;
+
+    private final TestResultTally resultTally;
 
     public JiraListener(IssueTracker issueTracker,
                         EnvironmentVariables environmentVariables,
                         WorkflowLoader loader) {
         this.issueTracker = issueTracker;
         this.environmentVariables = environmentVariables;
+        this.projectPrefix = environmentVariables.getProperty(ThucydidesSystemProperty.JIRA_PROJECT.getPropertyName());
         configuration = Injectors.getInjector().getInstance(JIRAConfiguration.class);
         this.loader = loader;
+        this.resultTally = new TestResultTally();
         workflow = loader.load();
     }
 
@@ -76,8 +84,8 @@ public class JiraListener implements StepListener {
 
     public JiraListener() {
         this(Injectors.getInjector().getInstance(IssueTracker.class),
-             Injectors.getInjector().getInstance(EnvironmentVariables.class),
-             Injectors.getInjector().getInstance(WorkflowLoader.class));
+                Injectors.getInjector().getInstance(EnvironmentVariables.class),
+                Injectors.getInjector().getInstance(WorkflowLoader.class));
     }
 
     protected IssueTracker getIssueTracker() {
@@ -104,22 +112,35 @@ public class JiraListener implements StepListener {
 
     public void testFinished(TestOutcome result) {
         if (shouldUpdateIssues()) {
-            List<String> issues = stripInitialHashesFrom(issueReferencesIn(result));
-            updateIssues(issues, result.getResult());
+            List<String> issues = addPrefixesIfRequired(stripInitialHashesFrom(issueReferencesIn(result)));
+            tallyResults(result, issues);
+        }
+    }
+
+    private void tallyResults(TestOutcome result, List<String> issues) {
+        for(String issue : issues) {
+            resultTally.recordResult(issue, result.getResult());
+        }
+    }
+
+    public void testSuiteFinished() {
+        if (shouldUpdateIssues()) {
+            Set<String> issues = resultTally.getIssues();
+            updateIssueStatus(issues);
+        }
+    }
+
+    private void updateIssueStatus(Set<String> issues) {
+        for(String issue : issues) {
+            logIssueTracking(issue);
+            if (!dryRun()) {
+                updateIssue(resultTally.getResultForIssue(issue), issue);
+            }
         }
     }
 
     private Set<String> issueReferencesIn(TestOutcome result) {
         return result.getIssues();
-    }
-
-    private void updateIssues(List<String> issues, TestResult testResult) {
-        for (String issueId : issues) {
-            logIssueTracking(issueId);
-            if (!dryRun()) {
-                updateIssue(testResult, issueId);
-            }
-        }
     }
 
     private void updateIssue(TestResult testResult, String issueId) {
@@ -155,7 +176,7 @@ public class JiraListener implements StepListener {
         if (existingComment != null) {
             String newComment = testResultComment(testResult, linkToReport());
             IssueComment updatedComment = new IssueComment(existingComment.getId(), newComment,
-                                                           existingComment.getAuthor());
+                    existingComment.getAuthor());
             issueTracker.updateComment(updatedComment);
         } else {
             issueTracker.addComment(issueId, linkToReport());
@@ -214,18 +235,40 @@ public class JiraListener implements StepListener {
         }
     }
 
-    private List<String> stripInitialHashesFrom(final Set<String> issueNumbers) {
-        List<String> issues = new ArrayList<String>();
-        if (issueNumbers != null) {
-            for (String issueNumber : issueNumbers) {
-                if (issueNumber.startsWith("#")) {
-                    issues.add(issueNumber.substring(1));
-                } else {
-                    issues.add(issueNumber);
+    private List<String> addPrefixesIfRequired(final List<String> issueNumbers) {
+        return convert(issueNumbers, toIssueNumbersWithPrefixes());
+    }
+
+    private Converter<String, String> toIssueNumbersWithPrefixes() {
+        return new Converter<String, String>() {
+            public String convert(String issueNumber) {
+                if (StringUtils.isEmpty(projectPrefix)) {
+                    return issueNumber;
                 }
+                if (issueNumber.startsWith(projectPrefix)) {
+                    return issueNumber;
+                }
+                return projectPrefix + "-" + issueNumber;
             }
-        }
-        return issues;
+        };
+    }
+
+    private List<String> stripInitialHashesFrom(final Set<String> issueNumbers) {
+        return convert(issueNumbers, toIssueNumbersWithoutHashes());
+    }
+
+    private Converter<String, String> toIssueNumbersWithoutHashes() {
+        return new Converter<String, String>() {
+            public String convert(String issueNumber) {
+
+                if (issueNumber.startsWith("#")) {
+                    return issueNumber.substring(1);
+                } else {
+                    return issueNumber;
+                }
+
+            }
+        };
     }
 
     public void stepStarted(ExecutedStepDescription executedStepDescription) {

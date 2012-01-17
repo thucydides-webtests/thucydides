@@ -331,4 +331,10 @@ public class StepEventBus {
             stepListener.notifyScreenChange();
         }
     }
+
+    public void testSuiteFinished() {
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.testSuiteFinished();
+        }
+    }
 }

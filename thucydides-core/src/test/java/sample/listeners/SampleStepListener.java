@@ -18,6 +18,10 @@ public class SampleStepListener implements StepListener {
         
     }
 
+    @Override
+    public void testSuiteFinished() {
+    }
+
     public void testStarted(String description) {
         
     }

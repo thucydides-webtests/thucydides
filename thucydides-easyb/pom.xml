@@ -12,7 +12,7 @@
     <name>thucydides-net.thucydides.easyb</name>
     <properties>                                             
         <easyb.version>1.5</easyb.version>
-        <groovy.version>1.8.4</groovy.version>
+        <groovy.version>1.8.5</groovy.version>
     </properties>
 
     <modules>

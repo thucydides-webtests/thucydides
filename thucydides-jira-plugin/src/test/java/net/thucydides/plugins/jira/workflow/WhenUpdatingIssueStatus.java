@@ -90,7 +90,7 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
-
+        listener.testSuiteFinished();
         verify(issueTracker, never()).doTransition(eq("MYPROJECT-123"),anyString());
     }
 
@@ -108,6 +108,7 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
+        listener.testSuiteFinished();
 
         verify(issueTracker, never()).doTransition(eq("MYPROJECT-123"),anyString());
     }
@@ -125,6 +126,7 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
+        listener.testSuiteFinished();
 
         verify(issueTracker).doTransition("MYPROJECT-123", "Resolve Issue");
     }
@@ -141,6 +143,7 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
+        listener.testSuiteFinished();
 
         InOrder inOrder = inOrder(issueTracker);
         inOrder.verify(issueTracker).doTransition("MYPROJECT-123","Stop Progress");
@@ -158,6 +161,7 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
+        listener.testSuiteFinished();
 
         verify(issueTracker).doTransition("MYPROJECT-123", "Resolve Issue");
     }
@@ -173,6 +177,7 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
+        listener.testSuiteFinished();
 
         verify(issueTracker, never()).doTransition(eq("MYPROJECT-123"), anyString());
     }
@@ -188,6 +193,7 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
+        listener.testSuiteFinished();
 
         verify(issueTracker).doTransition("MYPROJECT-123", "Reopen Issue");
     }
@@ -203,6 +209,7 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
+        listener.testSuiteFinished();
 
         verify(issueTracker).doTransition("MYPROJECT-123", "Reopen Issue");
     }
@@ -218,6 +225,7 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
+        listener.testSuiteFinished();
 
         verify(issueTracker, never()).doTransition(eq("MYPROJECT-123"), anyString());
     }
@@ -233,6 +241,7 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
+        listener.testSuiteFinished();
 
         verify(issueTracker, never()).doTransition(eq("MYPROJECT-123"), anyString());
     }
@@ -248,6 +257,7 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
+        listener.testSuiteFinished();
 
         verify(issueTracker, never()).doTransition(eq("MYPROJECT-123"), anyString());
     }

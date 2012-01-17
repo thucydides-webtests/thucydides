@@ -176,7 +176,7 @@ public class WebDriverFactory {
             }
 
             firefoxProfileEnhancer.enableNativeEventsFor(profile);
-
+            //firefoxProfileEnhancer.disableTelemetry(profile);
             if (firefoxProfileEnhancer.shouldActivateFirebugs()) {
                 LOGGER.info("Adding Firebugs to Firefox profile");
                 firefoxProfileEnhancer.addFirebugsTo(profile);

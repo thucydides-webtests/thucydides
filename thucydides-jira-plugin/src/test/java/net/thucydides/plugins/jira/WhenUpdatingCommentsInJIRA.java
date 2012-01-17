@@ -11,6 +11,7 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.plugins.jira.model.IssueComment;
 import net.thucydides.plugins.jira.model.IssueTracker;
 import net.thucydides.plugins.jira.service.NoSuchIssueException;
@@ -27,10 +28,12 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.contains;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,6 +59,18 @@ public class WhenUpdatingCommentsInJIRA {
     }
 
     @Story(SampleFeature.SampleStory.class)
+    private static final class SampleTestSuiteWithoutPrefixes {
+
+        @Title("Test for issue #123")
+        public void issue_123_should_be_fixed_now() {}
+
+        @Title("Fixes issues #123,#456")
+        public void issue_123_and_456_should_be_fixed_now() {}
+
+        public void anotherTest() {}
+    }
+
+    @Story(SampleFeature.SampleStory.class)
     private static final class SampleTestSuiteWithIssueAnnotation {
 
         @Issue("#MYPROJECT-123")
@@ -73,7 +88,8 @@ public class WhenUpdatingCommentsInJIRA {
         MockitoAnnotations.initMocks(this);
         when(environmentVariables.getProperty("jira.url")).thenReturn("http://my.jira.server");
         when(environmentVariables.getProperty("thucydides.public.url"))
-                                 .thenReturn("http://my.server/myproject/thucydides");
+                .thenReturn("http://my.server/myproject/thucydides");
+        when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("true");
         workflowLoader = new ClasspathWorkflowLoader(ClasspathWorkflowLoader.BUNDLED_WORKFLOW, environmentVariables);
     }
 
@@ -103,8 +119,45 @@ public class WhenUpdatingCommentsInJIRA {
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS));
+        listener.testSuiteFinished();
 
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
+    }
+
+    @Test
+    public void should_not_add_the_project_prefix_to_the_issue_number_if_already_present() {
+        MockEnvironmentVariables mockEnvironmentVariables = prepareMockEnvironment();
+
+        JiraListener listener = new JiraListener(issueTracker, mockEnvironmentVariables, workflowLoader);
+
+        listener.testSuiteStarted(SampleTestSuite.class);
+        listener.testStarted("issue_123_should_be_fixed_now");
+        listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS));
+        listener.testSuiteFinished();
+
+        verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
+    }
+
+    @Test
+    public void should_add_the_project_prefix_to_the_issue_number_if_not_already_present() {
+        MockEnvironmentVariables mockEnvironmentVariables = prepareMockEnvironment();
+
+        JiraListener listener = new JiraListener(issueTracker, mockEnvironmentVariables, workflowLoader);
+
+        listener.testSuiteStarted(SampleTestSuiteWithoutPrefixes.class);
+        listener.testStarted("issue_123_should_be_fixed_now");
+        listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS));
+        listener.testSuiteFinished();
+
+        verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
+    }
+
+    private MockEnvironmentVariables prepareMockEnvironment() {
+        MockEnvironmentVariables mockEnvironmentVariables = new MockEnvironmentVariables();
+        mockEnvironmentVariables.setProperty("jira.project", "MYPROJECT");
+        mockEnvironmentVariables.setProperty("jira.url", "http://my.jira.server");
+        mockEnvironmentVariables.setProperty("thucydides.public.url", "http://my.server/myproject/thucydides");
+        return mockEnvironmentVariables;
     }
 
     @Test
@@ -114,6 +167,7 @@ public class WhenUpdatingCommentsInJIRA {
         listener.testSuiteStarted(SampleTestSuiteWithIssueAnnotation.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS));
+        listener.testSuiteFinished();
 
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
     }
@@ -125,6 +179,7 @@ public class WhenUpdatingCommentsInJIRA {
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_and_456_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_and_456_should_be_fixed_now", TestResult.SUCCESS));
+        listener.testSuiteFinished();
 
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
         verify(issueTracker).addComment(eq("MYPROJECT-456"), anyString());
@@ -137,6 +192,7 @@ public class WhenUpdatingCommentsInJIRA {
         listener.testSuiteStarted(SampleTestSuiteWithIssueAnnotation.class);
         listener.testStarted("issue_123_and_456_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_and_456_should_be_fixed_now", TestResult.SUCCESS));
+        listener.testSuiteFinished();
 
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
         verify(issueTracker).addComment(eq("MYPROJECT-456"), anyString());
@@ -172,6 +228,7 @@ public class WhenUpdatingCommentsInJIRA {
 
         listener.testStarted("anotherTest");
         listener.testIgnored();
+        listener.testSuiteFinished();
 
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
         verify(issueTracker).addComment(eq("MYPROJECT-456"), anyString());
@@ -184,6 +241,7 @@ public class WhenUpdatingCommentsInJIRA {
         listener.testSuiteStarted(net.thucydides.core.model.Story.from(SampleTestSuite.class));
         listener.testStarted("Fixes issues #MYPROJECT-123");
         listener.testFinished(newTestOutcome("Fixes issues #MYPROJECT-123", TestResult.FAILURE));
+        listener.testSuiteFinished();
 
         verify(issueTracker).addComment(eq("MYPROJECT-123"),
                 contains("[Thucydides Test Results|http://my.server/myproject/thucydides/sample_test_suite.html]"));
@@ -195,6 +253,7 @@ public class WhenUpdatingCommentsInJIRA {
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
+        listener.testSuiteFinished();
 
         verify(issueTracker).addComment(eq("MYPROJECT-123"),
                 contains("[Thucydides Test Results|http://my.server/myproject/thucydides/sample_story.html]"));
@@ -204,13 +263,14 @@ public class WhenUpdatingCommentsInJIRA {
     public void should_update_existing_thucydides_report_comments_if_present() {
 
         List<IssueComment> existingComments = Arrays.asList(new IssueComment(1L,"a comment", "bruce"),
-                                                            new IssueComment(2L,"Thucydides Test Results", "bruce"));
+                new IssueComment(2L,"Thucydides Test Results", "bruce"));
         when(issueTracker.getCommentsFor("MYPROJECT-123")).thenReturn(existingComments);
 
         JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
+        listener.testSuiteFinished();
 
         verify(issueTracker).updateComment(any(IssueComment.class));
     }
@@ -219,12 +279,13 @@ public class WhenUpdatingCommentsInJIRA {
     @Test
     public void should_not_update_status_if_issue_does_not_exist() {
         when(issueTracker.getStatusFor("MYPROJECT-123"))
-                         .thenThrow(new NoSuchIssueException("It ain't there no more."));
+                .thenThrow(new NoSuchIssueException("It ain't there no more."));
 
         JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
+        listener.testSuiteFinished();
 
         verify(issueTracker, never()).doTransition(anyString(), anyString());
     }
@@ -237,6 +298,7 @@ public class WhenUpdatingCommentsInJIRA {
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
+        listener.testSuiteFinished();
 
         verify(issueTracker, never()).doTransition(anyString(), anyString());
     }
@@ -249,6 +311,7 @@ public class WhenUpdatingCommentsInJIRA {
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
+        listener.testSuiteFinished();
 
         verify(issueTracker, never()).addComment(anyString(), anyString());
     }
@@ -262,6 +325,7 @@ public class WhenUpdatingCommentsInJIRA {
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
+        listener.testSuiteFinished();
 
         verify(issueTracker, never()).addComment(anyString(), anyString());
     }
@@ -272,4 +336,50 @@ public class WhenUpdatingCommentsInJIRA {
 
         assertThat(listener.getIssueTracker(), is(notNullValue()));
     }
+
+    @Test
+    public void a_passing_test_should_resolve_an_open_issue() {
+
+        when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Open");
+
+        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        listener.testSuiteStarted(SampleTestSuite.class);
+        listener.testStarted("issue_123_should_be_fixed_now");
+        listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS));
+        listener.testSuiteFinished();
+
+        verify(issueTracker).doTransition("MYPROJECT-123", "Resolve Issue");
+    }
+
+    @Test
+    public void a_failing_test_should_open_a_closed_issue() {
+
+        when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Closed");
+
+        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        listener.testSuiteStarted(SampleTestSuite.class);
+        listener.testStarted("issue_123_should_be_fixed_now");
+        listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
+        listener.testSuiteFinished();
+
+        verify(issueTracker).doTransition("MYPROJECT-123", "Reopen Issue");
+    }
+
+    @Test
+    public void a_failing_and_a_passing_test_should_open_a_closed_issue() {
+
+        when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Closed","Open");
+
+        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        listener.testSuiteStarted(SampleTestSuite.class);
+        listener.testStarted("issue_123_should_be_fixed_now");
+        listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
+        listener.testStarted("issue_123_and_456_should_be_fixed_now");
+        listener.testFinished(newTestOutcome("issue_123_and_456_should_be_fixed_now", TestResult.SUCCESS));
+        listener.testSuiteFinished();
+
+        verify(issueTracker).doTransition("MYPROJECT-123", "Reopen Issue");
+        verify(issueTracker, never()).doTransition("MYPROJECT-123", "Resolve Issue");
+    }
+
 }

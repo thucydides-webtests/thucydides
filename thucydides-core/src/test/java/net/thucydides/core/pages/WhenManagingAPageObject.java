@@ -370,6 +370,7 @@ public class WhenManagingAPageObject {
         WebElement field = mock(WebElement.class);
         BasicPageObject page = new BasicPageObject(driver);
         when(field.isEnabled()).thenReturn(true);
+        when(field.getTagName()).thenReturn("input");
 
         page.typeInto(field, "some value");
 
@@ -382,6 +383,7 @@ public class WhenManagingAPageObject {
         WebElement field = mock(WebElement.class);
         BasicPageObject page = new BasicPageObject(driver);
         when(field.isEnabled()).thenReturn(true);
+        when(field.getTagName()).thenReturn("input");
 
         page.enter("some value").into(field);
 
@@ -394,6 +396,7 @@ public class WhenManagingAPageObject {
         WebElement field = mock(WebElement.class);
         when(driver.findElement(By.id("field-id"))).thenReturn(field);
         when(field.isEnabled()).thenReturn(true);
+        when(field.getTagName()).thenReturn("input");
         BasicPageObject page = new BasicPageObject(driver);
 
         page.enter("some value").intoField(By.id("field-id"));
@@ -598,6 +601,7 @@ public class WhenManagingAPageObject {
     public void when_clicking_on_something_should_throw_exception_if_it_fails_twice() {
         BasicPageObject page = new BasicPageObject(driver);
         when(mockButton.isEnabled()).thenReturn(true);
+        when(mockButton.getTagName()).thenReturn("button");
         doThrow(new WebDriverException()).when(mockButton).click();
 
         page.clickOn(page.getButton());

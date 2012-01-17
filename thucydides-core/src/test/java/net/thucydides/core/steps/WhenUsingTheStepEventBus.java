@@ -239,6 +239,18 @@ public class WhenUsingTheStepEventBus {
     }
 
     @Test
+    public void should_notify_listeners_when_the_test_suite_finishes() {
+        SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
+
+        StepEventBus.getEventBus().testSuiteStarted(SampleTestScenario.class);
+        StepEventBus.getEventBus().testStarted("some_test", SampleTestScenario.class);
+        steps.step1();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+        StepEventBus.getEventBus().testSuiteFinished();
+
+        verify(listener).testSuiteFinished();
+    }
+    @Test
     public void should_record_nested_test_steps() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 

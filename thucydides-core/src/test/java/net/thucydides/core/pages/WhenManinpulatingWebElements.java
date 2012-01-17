@@ -126,6 +126,7 @@ public class WhenManinpulatingWebElements {
     public void when_text_attribute_is_null_textvalue_should_return_value() {
         when(webElement.isDisplayed()).thenReturn(true);
         when(webElement.getText()).thenReturn(null);
+        when(webElement.getTagName()).thenReturn("input");
         when(webElement.getAttribute("value")).thenReturn("value");
 
         WebElementFacade elementFacade = new WebElementFacade(driver, webElement, 100);
@@ -137,6 +138,7 @@ public class WhenManinpulatingWebElements {
     public void when_text_attribute_and_text_value_are_null_textvalue_should_return_empty_string() {
         when(webElement.isDisplayed()).thenReturn(true);
         when(webElement.getText()).thenReturn(null);
+        when(webElement.getTagName()).thenReturn("input");
         when(webElement.getAttribute("value")).thenReturn(null);
 
         WebElementFacade elementFacade = new WebElementFacade(driver, webElement, 100);
@@ -148,6 +150,7 @@ public class WhenManinpulatingWebElements {
     public void when_value_is_null_textvalue_should_return_text() {
         when(webElement.isDisplayed()).thenReturn(true);
         when(webElement.getText()).thenReturn("text");
+        when(webElement.getTagName()).thenReturn("textarea");
         when(webElement.getAttribute("value")).thenReturn(null);
 
         WebElementFacade elementFacade = new WebElementFacade(driver, webElement, 100);

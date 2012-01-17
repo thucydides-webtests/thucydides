@@ -134,5 +134,8 @@ class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
     }
 
     void completeTesting() {
+        // TODO: Make sure easyb calls this method
+        StepEventBus.eventBus.testSuiteFinished();
+
     }
 }

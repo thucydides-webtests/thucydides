@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,7 @@ import org.openqa.selenium.support.ui.Wait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -72,7 +74,7 @@ public class WebElementFacade {
 
     public WebElementFacade withTimeoutOf(int timeout, TimeUnit unit) {
         return new WebElementFacade(driver, webElement,
-                                    TimeUnit.MILLISECONDS.convert(timeout, unit));
+                TimeUnit.MILLISECONDS.convert(timeout, unit));
     }
 
     /**
@@ -104,6 +106,7 @@ public class WebElementFacade {
     public WebElementFacade then() {
         return this;
     }
+
     /**
      * Is this web element present and visible on the screen
      * This method will not throw an exception if the element is not on the screen at all.
@@ -401,7 +404,7 @@ public class WebElementFacade {
             public Boolean apply(WebDriver driver) {
                 try {
                     return (webElement != null) && (webElement.isDisplayed());
-                } catch(NullPointerException e) {
+                } catch (NullPointerException e) {
                     // Selenium sometimes throws a NPE if the element is not present at all on the page.
                     return false;
                 }
@@ -428,9 +431,29 @@ public class WebElementFacade {
     private ExpectedCondition<Boolean> elementIsEnabled() {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
-                return ((webElement != null) && (webElement.isEnabled()));
+                return ((webElement != null) && (!isDisabledField(webElement)));
             }
         };
+    }
+
+    private boolean isDisabledField(WebElement webElement) {
+        return (isAFormElement(webElement) && (!webElement.isEnabled()));
+    }
+
+    private final List<String> HTML_FORM_TAGS = Arrays.asList("input", "button", "select", "textarea", "link", "option");
+
+    private boolean isAFormElement(WebElement webElement) {
+        String tag = webElement.getTagName().toLowerCase();
+        return HTML_FORM_TAGS.contains(tag);
+
+    }
+
+    private static final List<String> HTML_ELEMENTS_WITH_VALUE_ATTRIBUTE = ImmutableList.of("input", "button", "option");
+
+    private boolean hasValueAttribute(WebElement webElement) {
+        String tag = webElement.getTagName().toLowerCase();
+        return HTML_ELEMENTS_WITH_VALUE_ATTRIBUTE.contains(tag);
+
     }
 
     private ExpectedCondition<Boolean> elementIsNotEnabled() {
@@ -452,7 +475,7 @@ public class WebElementFacade {
         try {
             waitForCondition().until(elementIsNotDisplayed());
         } catch (TimeoutException timeout) {
-            throwErrorWithCauseIfPresent(timeout,"Expected hidden element was displayed");
+            throwErrorWithCauseIfPresent(timeout, "Expected hidden element was displayed");
         }
         notifyScreenChange();
         return this;
@@ -495,18 +518,29 @@ public class WebElementFacade {
 
     public String getTextValue() {
         waitUntilPresent();
-        if(!isVisible()) {
+
+        if (!isVisible()) {
             return "";
         }
+
+        if (valueAttributeSupportedAndDefinedIn(webElement)) {
+            return getValue();
+        }
+
         if (!StringUtils.isEmpty(webElement.getText())) {
             return webElement.getText();
-        }
-        if (!StringUtils.isEmpty(getValue())) {
-            return getValue();
         }
         return "";
     }
 
+
+    private boolean valueAttributeSupportedAndDefinedIn(final WebElement webElement) {
+        if (hasValueAttribute(webElement)) {
+            return StringUtils.isNotEmpty(getValue());
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Wait for an element to be visible and enabled, and then click on it.
@@ -520,12 +554,12 @@ public class WebElementFacade {
 
     public void clear() {
         String currentValue = getTextValue();
-        for(int i = 0; i < currentValue.length(); i++) {
+        for (int i = 0; i < currentValue.length(); i++) {
             webElement.sendKeys(Keys.BACK_SPACE);
         }
         webElement.clear();
     }
-    
+
     private void notifyScreenChange() {
         StepEventBus.getEventBus().notifyScreenChange();
     }
