@@ -14,8 +14,12 @@ import java.util.List;
 
 class DisplayedElementLocator extends AjaxElementLocator {
 
-    private static final List<String> QUICK_METHODS = Arrays.asList("isCurrentlyVisible", "isCurrentlyEnabled",
-                                                                    "waitUntilVisible", "waitUntilEnabled");
+    private static final List<String> QUICK_METHODS = Arrays.asList("isCurrentlyVisible",
+                                                                    "isCurrentlyEnabled",
+                                                                    "waitUntilVisible",
+                                                                    "waitUntilEnabled",
+                                                                    "shouldNotBeVisible");
+
     private static final List<String> QUICK_CLASSES = Arrays.asList(WebElementFacade.class.getName());
 
     private final Field field;

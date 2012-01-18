@@ -16,8 +16,12 @@ public class TestResultList {
 
     private final List<TestResult> testResults;
 
-    public TestResultList(final List<TestResult> testResults) {
+    protected TestResultList(final List<TestResult> testResults) {
         this.testResults = testResults;
+    }
+
+    public static TestResultList of(final List<TestResult> testResults) {
+        return new TestResultList(testResults);
     }
 
     public boolean isEmpty() {

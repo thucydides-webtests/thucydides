@@ -1,6 +1,10 @@
 package net.thucydides.plugins.jira;
 
+import ch.lambdaj.function.convert.Converter;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestResultList;
 
@@ -9,33 +13,49 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentMap;
 
+import static ch.lambdaj.Lambda.convert;
+
 public class TestResultTally {
     
-    private final ConcurrentMap<String, List<TestResult>> testResultsTally;
+    private final ConcurrentMap<String, List<TestOutcome>> testOutcomesTally;
 
     public TestResultTally() {
-        this.testResultsTally = Maps.newConcurrentMap();
+        this.testOutcomesTally = Maps.newConcurrentMap();
     }
 
-    public synchronized void recordResult(String issueNumber, TestResult result) {
-        getResultTallyForIssue(issueNumber).add(result);
+    public synchronized void recordResult(String issueNumber, TestOutcome outcome) {
+        getTestOutcomeListForIssue(issueNumber).add(outcome);
 
     }
-    
-    protected List<TestResult> getResultTallyForIssue(final String issueNumber) {
-        List<TestResult> resultTallyForIssue = testResultsTally.get(issueNumber);
+
+    public List<TestOutcome> getTestOutcomesForIssue(String issueNumber) {
+       return ImmutableList.copyOf(getTestOutcomeListForIssue(issueNumber));
+
+    }
+
+    protected List<TestOutcome> getTestOutcomeListForIssue(final String issueNumber) {
+        List<TestOutcome> resultTallyForIssue = testOutcomesTally.get(issueNumber);
         if (resultTallyForIssue == null) {
-            testResultsTally.putIfAbsent(issueNumber, new Vector<TestResult>());
+            testOutcomesTally.putIfAbsent(issueNumber, new Vector<TestOutcome>());
         }
-        return testResultsTally.get(issueNumber);
+        return testOutcomesTally.get(issueNumber);
     }
     
     public TestResult getResultForIssue(final String issueNumber) {
-        TestResultList overallResults = new TestResultList(getResultTallyForIssue(issueNumber));
+        List<TestOutcome> testOutcomesForThisIssue = testOutcomesTally.get(issueNumber);
+        TestResultList overallResults = TestResultList.of(convert(testOutcomesForThisIssue, toTestResults()));
         return overallResults.getOverallResult();
     }
 
+    private Converter<TestOutcome, TestResult> toTestResults() {
+        return new Converter<TestOutcome, TestResult>() {
+            public TestResult convert(TestOutcome from) {
+                return from.getResult();
+            }
+        };
+    }
+
     public Set<String> getIssues() {
-        return testResultsTally.keySet();
+        return testOutcomesTally.keySet();
     }
 }

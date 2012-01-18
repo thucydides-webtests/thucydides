@@ -443,6 +443,9 @@ public class WebElementFacade {
     private final List<String> HTML_FORM_TAGS = Arrays.asList("input", "button", "select", "textarea", "link", "option");
 
     private boolean isAFormElement(WebElement webElement) {
+        if ((webElement == null) || (webElement.getTagName() == null)) {
+            return false;
+        }
         String tag = webElement.getTagName().toLowerCase();
         return HTML_FORM_TAGS.contains(tag);
 

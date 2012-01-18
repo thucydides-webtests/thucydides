@@ -14,6 +14,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.plugins.jira.guice.Injectors;
 import net.thucydides.plugins.jira.model.IssueComment;
 import net.thucydides.plugins.jira.model.IssueTracker;
+import net.thucydides.plugins.jira.model.TestResultComment;
 import net.thucydides.plugins.jira.service.JIRAConfiguration;
 import net.thucydides.plugins.jira.service.NoSuchIssueException;
 import net.thucydides.plugins.jira.workflow.ClasspathWorkflowLoader;
@@ -23,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -119,7 +119,7 @@ public class JiraListener implements StepListener {
 
     private void tallyResults(TestOutcome result, List<String> issues) {
         for(String issue : issues) {
-            resultTally.recordResult(issue, result.getResult());
+            resultTally.recordResult(issue, result);
         }
     }
 
@@ -134,7 +134,7 @@ public class JiraListener implements StepListener {
         for(String issue : issues) {
             logIssueTracking(issue);
             if (!dryRun()) {
-                updateIssue(resultTally.getResultForIssue(issue), issue);
+                updateIssue(issue, resultTally.getTestOutcomesForIssue(issue));
             }
         }
     }
@@ -143,11 +143,12 @@ public class JiraListener implements StepListener {
         return result.getIssues();
     }
 
-    private void updateIssue(TestResult testResult, String issueId) {
+    private void updateIssue(String issueId, List<TestOutcome> testOutcomes) {
+
         try {
-            addOrUpdateCommentFor(issueId, testResult);
+            TestResultComment testResultComment = newOrUpdatedCommentFor(issueId, testOutcomes);
             if (getWorkflow().isActive() && shouldUpdateWorkflow()) {
-                updateIssueStatusFor(issueId, testResult);
+                updateIssueStatusFor(issueId, testResultComment.getOverallResult());
             }
         } catch (NoSuchIssueException e) {
             LOGGER.error("No JIRA issue found with ID {}", issueId);
@@ -168,27 +169,37 @@ public class JiraListener implements StepListener {
         }
     }
 
-    private void addOrUpdateCommentFor(final String issueId, TestResult testResult) {
+    private TestResultComment newOrUpdatedCommentFor(final String issueId, List<TestOutcome> testOutcomes) {
         LOGGER.info("Updating comments for issue {}", issueId);
 
         List<IssueComment> comments = issueTracker.getCommentsFor(issueId);
-        IssueComment existingComment = findExistingCommentIn(comments);
-        if (existingComment != null) {
-            String newComment = testResultComment(testResult, linkToReport());
-            IssueComment updatedComment = new IssueComment(existingComment.getId(), newComment,
-                    existingComment.getAuthor());
-            issueTracker.updateComment(updatedComment);
+        IssueComment existingComment = findExistingThucydidesCommentIn(comments);
+        String testRunNumber = environmentVariables.getProperty("build.id");
+        TestResultComment testResultComment;
+
+        if (existingComment == null) {
+            testResultComment = TestResultComment.comment()
+                                                  .withResults(testOutcomes)
+                                                  .withReportUrl(linkToReport())
+                                                  .withTestRun(testRunNumber).asComment();
+
+            issueTracker.addComment(issueId, testResultComment.asText());
         } else {
-            issueTracker.addComment(issueId, linkToReport());
+            testResultComment = TestResultComment.fromText(existingComment.getText())
+                                                         .withUpdatedTestResults(testOutcomes)
+                                                         .withUpdatedReportUrl(linkToReport())
+                                                         .withUpdatedTestRunNumber(testRunNumber);
+
+            IssueComment updatedComment = new IssueComment(existingComment.getId(),
+                                                           testResultComment.asText(),
+                                                           existingComment.getAuthor());
+            issueTracker.updateComment(updatedComment);
+            
         }
-
+        return testResultComment;
     }
 
-    private String testResultComment(TestResult testResult, String linkToReport) {
-        return "Automated test run with result " + testResult + " (see " + linkToReport + ") for full report.";
-    }
-
-    private IssueComment findExistingCommentIn(List<IssueComment> comments) {
+    private IssueComment findExistingThucydidesCommentIn(List<IssueComment> comments) {
         for (IssueComment comment : comments) {
             if (comment.getText().contains("Thucydides Test Results")) {
                 return comment;

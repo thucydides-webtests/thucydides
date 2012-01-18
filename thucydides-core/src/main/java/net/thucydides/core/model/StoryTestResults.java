@@ -256,7 +256,7 @@ public class StoryTestResults {
 
     
     public TestResult getResult() {
-        TestResultList testResults = new TestResultList(getCurrentTestResults());
+        TestResultList testResults = TestResultList.of(getCurrentTestResults());
         return testResults.getOverallResult();
     }
 

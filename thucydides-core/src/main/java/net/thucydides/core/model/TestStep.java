@@ -115,7 +115,7 @@ public class TestStep {
     }
 
     private TestResult getResultFromChildren() {
-        TestResultList resultList = new TestResultList(getChildResults());
+        TestResultList resultList = TestResultList.of(getChildResults());
         return resultList.getOverallResult();
     }
 

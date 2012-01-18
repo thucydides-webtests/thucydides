@@ -86,10 +86,13 @@ public class WhenUpdatingCommentsInJIRA {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        when(environmentVariables.getProperty("jira.url")).thenReturn("http://my.jira.server");
-        when(environmentVariables.getProperty("thucydides.public.url"))
-                .thenReturn("http://my.server/myproject/thucydides");
-        when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("true");
+
+        environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("jira.url", "http://my.jira.server");
+        environmentVariables.setProperty("thucydides.public.url", "http://my.server/myproject/thucydides");
+        environmentVariables.setProperty("thucydides.jira.workflow.active","true");
+        environmentVariables.setProperty("build.id","2012-01-17_15-39-03");
+
         workflowLoader = new ClasspathWorkflowLoader(ClasspathWorkflowLoader.BUNDLED_WORKFLOW, environmentVariables);
     }
 
@@ -101,7 +104,6 @@ public class WhenUpdatingCommentsInJIRA {
     @Mock
     IssueTracker issueTracker;
 
-    @Mock
     EnvironmentVariables environmentVariables;
 
     private TestOutcome newTestOutcome(String testMethod, TestResult testResult) {
@@ -263,7 +265,7 @@ public class WhenUpdatingCommentsInJIRA {
     public void should_update_existing_thucydides_report_comments_if_present() {
 
         List<IssueComment> existingComments = Arrays.asList(new IssueComment(1L,"a comment", "bruce"),
-                new IssueComment(2L,"Thucydides Test Results", "bruce"));
+                                                            new IssueComment(2L,"Thucydides Test Results", "bruce"));
         when(issueTracker.getCommentsFor("MYPROJECT-123")).thenReturn(existingComments);
 
         JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
@@ -292,7 +294,8 @@ public class WhenUpdatingCommentsInJIRA {
 
     @Test
     public void should_not_update_status_if_jira_url_is_undefined() {
-        when(environmentVariables.getProperty("jira.url")).thenReturn("");
+        MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
+        environmentVariables.setProperty("jira.url","");
 
         JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
@@ -305,7 +308,8 @@ public class WhenUpdatingCommentsInJIRA {
 
     @Test
     public void should_skip_JIRA_updates_if_requested() {
-        when(environmentVariables.getProperty("thucydides.skip.jira.updates")).thenReturn("true");
+        MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
+        environmentVariables.setProperty("thucydides.skip.jira.updates","true");
 
         JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
@@ -320,7 +324,8 @@ public class WhenUpdatingCommentsInJIRA {
     @Test
     public void should_skip_JIRA_updates_if_no_public_url_is_specified() {
 
-        when(environmentVariables.getProperty("thucydides.public.url")).thenReturn("");
+        MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
+        environmentVariables.setProperty("thucydides.public.url","");
         JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");

@@ -304,7 +304,7 @@ public class TestOutcome {
             return annotatedResult;
         }
 
-        TestResultList testResults = new TestResultList(getCurrentTestResults());
+        TestResultList testResults = TestResultList.of(getCurrentTestResults());
         return testResults.getOverallResult();
     }
 
