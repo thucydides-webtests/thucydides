@@ -34,6 +34,7 @@ import static ch.lambdaj.Lambda.convert;
  */
 public class JiraListener implements StepListener {
 
+    private static final String BUILD_ID_PROPERTY = "build.id";
     private final IssueTracker issueTracker;
 
     private Class<?> currentTestCase;
@@ -162,7 +163,7 @@ public class JiraListener implements StepListener {
         LOGGER.info("Issue {} currently has status '{}'", issueId, currentStatus);
 
         List<String> transitions = getWorkflow().getTransitions().forTestResult(testResult).whenIssueIs(currentStatus);
-        LOGGER.info("Found transitions: {}", transitions);
+        LOGGER.info("Found transitions {} for issue {}", transitions, issueId);
 
         for(String transition : transitions) {
             issueTracker.doTransition(issueId, transition);
@@ -174,7 +175,7 @@ public class JiraListener implements StepListener {
 
         List<IssueComment> comments = issueTracker.getCommentsFor(issueId);
         IssueComment existingComment = findExistingThucydidesCommentIn(comments);
-        String testRunNumber = environmentVariables.getProperty("build.id");
+        String testRunNumber = environmentVariables.getProperty(BUILD_ID_PROPERTY);
         TestResultComment testResultComment;
 
         if (existingComment == null) {

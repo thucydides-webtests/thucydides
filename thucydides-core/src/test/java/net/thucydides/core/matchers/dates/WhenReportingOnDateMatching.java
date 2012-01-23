@@ -1,6 +1,8 @@
 package net.thucydides.core.matchers.dates;
 
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -10,6 +12,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -19,6 +23,9 @@ public class WhenReportingOnDateMatching {
 
     private static DateTime januaryOne2000 = new DateTime(2000, 1, 1, 1, 0);
     private static DateTime januaryOne2001 = new DateTime(2001, 1, 1, 1, 0);
+
+    private static List<DateTime> dateTimes = ImmutableList.of(januaryOne2000, januaryOne2001);
+    private static List<Date> dates = ImmutableList.of(januaryOne2000.toDate(), januaryOne2001.toDate());
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -31,8 +38,10 @@ public class WhenReportingOnDateMatching {
                 {new DateTimeIsAfterMatcher(januaryOne2000), "a date that is after 1 Jan 2000 01:00:00"},
                 {new DateTimeIsBeforeMatcher(januaryOne2000), "a date that is before 1 Jan 2000 01:00:00"},
                 {new DateTimeIsBetweenMatcher(januaryOne2000, januaryOne2001), "a date that is between 1 Jan 2000 01:00:00 and 1 Jan 2001 01:00:00"},
-                {new DateTimeIsSameAsMatcher(januaryOne2000), "a date that is 1 Jan 2000 01:00:00"}}
-        );
+                {new DateTimeIsSameAsMatcher(januaryOne2000), "a date that is 1 Jan 2000 01:00:00"},
+                {new DateCollectionContainsSameDatesMatcher(dates), "a collection of dates containing <[Sat Jan 01 01:00:00 EST 2000, Mon Jan 01 01:00:00 EST 2001]>"},
+                {new DateTimeCollectionContainsSameDatesMatcher(dateTimes), "a collection of dates containing <[2000-01-01T01:00:00.000+11:00, 2001-01-01T01:00:00.000+11:00]>"}}
+    );
     }
 
     private final Matcher<?> dateMatcher;

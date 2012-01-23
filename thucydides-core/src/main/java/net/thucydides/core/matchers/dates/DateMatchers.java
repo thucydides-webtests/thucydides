@@ -4,6 +4,7 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -50,5 +51,14 @@ public class DateMatchers {
     public static Matcher<DateTime> isBetween(DateTime startDate, DateTime endDate){
         return new DateTimeIsBetweenMatcher(startDate, endDate);
     }
+    
+    @Factory
+    public static Matcher<Collection<DateTime>> containsSameDateTimesAs(Collection<DateTime> expectedDates) {
+        return new DateTimeCollectionContainsSameDatesMatcher(expectedDates);
+    }
 
+    @Factory
+    public static Matcher<Collection<Date>> containsSameDatesAs(Collection<Date> expectedDates) {
+        return new DateCollectionContainsSameDatesMatcher(expectedDates);
+    }
 }
