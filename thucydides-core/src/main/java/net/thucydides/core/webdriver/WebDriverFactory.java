@@ -174,9 +174,8 @@ public class WebDriverFactory {
             } else {
                 profile = getProfileFrom(profileName);
             }
-
+            firefoxProfileEnhancer.allowWindowResizeFor(profile);
             firefoxProfileEnhancer.enableNativeEventsFor(profile);
-            //firefoxProfileEnhancer.disableTelemetry(profile);
             if (firefoxProfileEnhancer.shouldActivateFirebugs()) {
                 LOGGER.info("Adding Firebugs to Firefox profile");
                 firefoxProfileEnhancer.addFirebugsTo(profile);

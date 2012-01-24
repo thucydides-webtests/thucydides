@@ -48,4 +48,8 @@ public class FirefoxProfileEnhancer {
     public void enableNativeEventsFor(final FirefoxProfile profile) {
         profile.setEnableNativeEvents(true);
     }
+
+    public void allowWindowResizeFor(final FirefoxProfile profile) {
+        profile.setPreference("dom.disable_window_move_resize",false);
+    }
 }
