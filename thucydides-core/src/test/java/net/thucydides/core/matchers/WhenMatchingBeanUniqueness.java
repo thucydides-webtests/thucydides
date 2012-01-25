@@ -1,5 +1,6 @@
 package net.thucydides.core.matchers;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -27,8 +28,14 @@ public class WhenMatchingBeanUniqueness {
         }
     }
 
-    Person billoddie = new Person("Bill", "Oddie");
-    Person billkidd = new Person("Bill", "Kidd");
+    Person billoddie;
+    Person billkidd;
+
+    @Before
+    public void create_test_data() {
+        billoddie = new Person("Bill", "Oddie");
+        billkidd = new Person("Bill", "Kidd");
+    }
 
     @Test
     public void should_detect_unique_field_values() {

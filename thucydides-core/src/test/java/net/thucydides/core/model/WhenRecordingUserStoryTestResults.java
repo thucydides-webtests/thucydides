@@ -4,12 +4,12 @@ import net.thucydides.core.annotations.Feature;
 import org.junit.Before;
 import org.junit.Test;
 
-import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.successfulNestedTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAFailingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAPendingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forASkippedTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forASuccessfulNestedTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forASuccessfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
@@ -299,42 +299,42 @@ public class WhenRecordingUserStoryTestResults {
 
     private TestOutcome thatFailsFor(Story story) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(failingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(skippedTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 3"));
         return testOutcome;
     }
     
     private TestOutcome thatSucceedsFor(Story story) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         return testOutcome;
     }
     
     private TestOutcome thatSucceedsWithNestedStepsFor(Story story) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulNestedTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulNestedTestStepCalled("Step 3"));
         return testOutcome;
     }
 
     private TestOutcome thatIsPendingFor(Story story) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 2"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 3"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 4"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 5"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 3"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 4"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 5"));
         return testOutcome;
     }
     
     private TestOutcome thatIsIgnoredCalled(String title) {
         TestOutcome testOutcome = new TestOutcome(title);
-        testOutcome.recordStep(ignoredTestStepCalled("Step 1"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 2"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 3"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
         return testOutcome;
     }
     

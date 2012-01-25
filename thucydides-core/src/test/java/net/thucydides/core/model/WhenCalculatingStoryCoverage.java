@@ -13,10 +13,10 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAFailingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAPendingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forASuccessfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -514,7 +514,7 @@ public class WhenCalculatingStoryCoverage {
     private TestOutcome thatSucceedsFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(successfulTestStepCalled("Step " + i));
+            testOutcome.recordStep(forASuccessfulTestStepCalled("Step " + i));
         }
         return testOutcome;
     }
@@ -522,7 +522,7 @@ public class WhenCalculatingStoryCoverage {
     private TestOutcome thatIsPendingFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(pendingTestStepCalled("Step " + i));
+            testOutcome.recordStep(forAPendingTestStepCalled("Step " + i));
         }
         return testOutcome;
     }
@@ -530,7 +530,7 @@ public class WhenCalculatingStoryCoverage {
     private TestOutcome thatIsIgnoredFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(ignoredTestStepCalled("Step " + i));
+            testOutcome.recordStep(forAnIgnoredTestStepCalled("Step " + i));
         }
         return testOutcome;
     }
@@ -538,7 +538,7 @@ public class WhenCalculatingStoryCoverage {
     private TestOutcome thatIsFailingFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(failingTestStepCalled("Step " + i, new AssertionError()));
+            testOutcome.recordStep(forAFailingTestStepCalled("Step " + i, new AssertionError()));
         }
         return testOutcome;
     }

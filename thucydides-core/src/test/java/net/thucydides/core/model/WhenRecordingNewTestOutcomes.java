@@ -23,11 +23,11 @@ import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SUCCESS;
-import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.ignoredTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.pendingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAFailingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAPendingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forASkippedTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forASuccessfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -274,8 +274,8 @@ public class WhenRecordingNewTestOutcomes {
 
         assertThat(testOutcome.getTestSteps().size(), is(0));
 
-        testOutcome.recordStep(successfulTestStepCalled("The user opens the Google search page"));
-        testOutcome.recordStep(successfulTestStepCalled("The user searches for Cats"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("The user opens the Google search page"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("The user searches for Cats"));
 
         assertThat(testOutcome.getTestSteps().toString(),
                    is("[The user opens the Google search page, The user searches for Cats]"));
@@ -284,13 +284,13 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void should_record_nested_test_steps() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.2"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getTestSteps().toString(),
                    is("[Step 1, Step 2 [Step 2.1, Step 2.2], Step 3]"));
@@ -299,20 +299,20 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void should_record_deeply_nested_test_steps() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1.1"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1.1.1"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1.2"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.2"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getTestSteps().toString(),
                    is("[Step 1, Step 2 [Step 2.1 [Step 2.1.1 [Step 2.1.1.1], Step 2.1.2], Step 2.2], Step 3]"));
@@ -321,20 +321,20 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void should_count_test_steps() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1.1"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1.1.1"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1.2"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.2"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getStepCount(), is(3));
     }
@@ -342,27 +342,27 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void should_count_deeply_nested_test_steps() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1.1"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.1.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1.1.1"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.1.2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1.2"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 2.2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.2"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getNestedStepCount(), is(8));
     }
 
     @Test
     public void the_returned_test_steps_list_should_be_read_only() {
-        testOutcome.recordStep(successfulTestStepCalled("The user opens the Google search page"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("The user opens the Google search page"));
 
         List<TestStep> testSteps = testOutcome.getTestSteps();
         assertThat(testOutcome.toString(), is("The user opens the Google search page"));
@@ -377,9 +377,9 @@ public class WhenRecordingNewTestOutcomes {
 
     @Test
     public void the_acceptance_test_case_is_successful_if_all_the_tests_are_successful() {
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getResult(), is(SUCCESS));
         assertThat(testOutcome.isSuccess(), is(true));
@@ -388,29 +388,29 @@ public class WhenRecordingNewTestOutcomes {
 
     @Test
     public void should_list_screenshots_in_steps() {
-        testOutcome.recordStep(successfulTestStepCalled("step_1"));
-        testOutcome.recordStep(successfulTestStepCalled("step_2"));
-        testOutcome.recordStep(successfulTestStepCalled("step_3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_3"));
 
         assertThat(testOutcome.getScreenshots(), hasFilenames("step_1.png", "step_2.png", "step_3.png"));
     }
 
     @Test
     public void should_list_screenshots_for_leaf_steps_in_nested_steps() {
-        testOutcome.recordStep(successfulTestStepCalled("step_1"));
-        testOutcome.recordStep(successfulTestStepCalled("step_2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_2"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("step_2.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_2.1"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("step_2.1.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_2.1.1"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("step_2.1.1.1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_2.1.1.1"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("step_2.1.2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_2.1.2"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("step_2.2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_2.2"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("step_3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_3"));
 
         List<String> screenshots = extract(testOutcome.getScreenshots(), on(Screenshot.class).getFilename());
         assertThat(screenshots, hasItems("step_1.png","step_2.1.1.1.png",
@@ -432,9 +432,9 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void the_acceptance_test_case_is_a_failure_if_one_test_has_failed() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(failingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(skippedTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getResult(), is(FAILURE));
         assertThat(testOutcome.isFailure(), is(true));
@@ -443,9 +443,9 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void if_a_step_fails_the_error_message_should_be_returned_with_the_result() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(failingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(skippedTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 3"));
 
 
         TestStep failingStep = testOutcome.getTestSteps().get(1);
@@ -455,10 +455,10 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void the_acceptance_test_case_is_failing_if_multiple_tests_have_failed() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(failingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(failingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(successfulTestStepCalled("Step 4"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
 
         assertThat(testOutcome.getResult(), is(FAILURE));
     }
@@ -466,10 +466,10 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void the_acceptance_test_case_is_pending_if_at_least_one_test_is_pending_and_none_have_failed() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 4"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
 
         assertThat(testOutcome.getResult(), is(PENDING));
     }
@@ -483,10 +483,10 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void the_acceptance_test_case_is_failing_if_there_is_a_failure_even_with_pending_test_cases() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 2"));
-        testOutcome.recordStep(failingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(successfulTestStepCalled("Step 4"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
 
         assertThat(testOutcome.getResult(), is(FAILURE));
     }
@@ -494,10 +494,10 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void the_acceptance_test_case_is_ignored_if_all_test_cases_are_ignored() {
 
-        testOutcome.recordStep(ignoredTestStepCalled("Step 1"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 2"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 3"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 4"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 4"));
 
         assertThat(testOutcome.getResult(), is(IGNORED));
     }
@@ -505,11 +505,11 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void if_one_test_is_ignored_among_others_it_will_not_affect_the_outcome_for_failing_tests() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 2"));
-        testOutcome.recordStep(failingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 4"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 5"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 4"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 5"));
 
         assertThat(testOutcome.getResult(), is(FAILURE));
     }
@@ -517,12 +517,12 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void if_one_test_is_ignored_among_others_it_will_not_affect_the_outcome_for_pending_tests() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 2"));
-        testOutcome.recordStep(failingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 4"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 5"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 6"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 4"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 5"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 6"));
 
         assertThat(testOutcome.getResult(), is(FAILURE));
     }
@@ -530,10 +530,10 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void if_one_test_is_ignored_among_others_it_will_not_affect_the_outcome_for_successful_tests() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 4"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 4"));
 
         assertThat(testOutcome.getResult(), is(SUCCESS));
     }
@@ -541,9 +541,9 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void the_model_should_provide_the_number_of_successful_test_steps() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getSuccessCount(), is(3));
     }
@@ -551,11 +551,11 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void the_model_should_provide_the_number_of_successful_test_steps_in_presence_of_other_outcomes() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 3"));
-        testOutcome.recordStep(failingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(skippedTestStepCalled("Step 5"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 5"));
 
         assertThat(testOutcome.getSuccessCount(), is(2));
     }
@@ -563,12 +563,12 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void the_model_should_provide_the_number_of_failed_test_steps() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 3"));
-        testOutcome.recordStep(failingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(skippedTestStepCalled("Step 6"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 6"));
 
         assertThat(testOutcome.getFailureCount(), is(2));
     }
@@ -576,15 +576,15 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void the_model_should_provide_the_number_of_ignored_test_steps() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 3"));
-        testOutcome.recordStep(failingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(skippedTestStepCalled("Step 6"));
-        testOutcome.recordStep(skippedTestStepCalled("Step 7"));
-        testOutcome.recordStep(skippedTestStepCalled("Step 8"));
-        testOutcome.recordStep(skippedTestStepCalled("Step 9"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 6"));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 7"));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 8"));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 9"));
 
         assertThat(testOutcome.getIgnoredCount(), is(1));
     }
@@ -592,15 +592,15 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void the_model_should_provide_the_number_of_skipped_test_steps() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 3"));
-        testOutcome.recordStep(failingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(skippedTestStepCalled("Step 6"));
-        testOutcome.recordStep(skippedTestStepCalled("Step 7"));
-        testOutcome.recordStep(skippedTestStepCalled("Step 8"));
-        testOutcome.recordStep(skippedTestStepCalled("Step 9"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 6"));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 7"));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 8"));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 9"));
 
         assertThat(testOutcome.getSkippedCount(), is(4));
     }
@@ -608,15 +608,15 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void the_model_should_provide_the_number_of_pending_test_steps() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 3"));
-        testOutcome.recordStep(failingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(skippedTestStepCalled("Step 6"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 7"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 8"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 9"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 6"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 7"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 8"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 9"));
 
         assertThat(testOutcome.getPendingCount(), is(3));
     }
@@ -625,20 +625,20 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void a_test_run_with_only_successful_tests_is_successful() {
 
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getResult(), is(TestResult.SUCCESS));
     }
 
     @Test
     public void an_acceptance_test_run_can_contain_steps_nested_in_step_groups() {
-        testOutcome.recordStep(successfulTestStepCalled("A Group"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("A Group"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
         testOutcome.endGroup();
 
         assertThat(testOutcome.getTestSteps().size(), is(1));
@@ -646,16 +646,16 @@ public class WhenRecordingNewTestOutcomes {
 
 
     private void createNestedTestSteps() {
-        testOutcome.recordStep(successfulTestStepCalled("Step 0"));
-        testOutcome.recordStep(successfulTestStepCalled("A group"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 0"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("A group"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
-        testOutcome.recordStep(successfulTestStepCalled("Another group"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Another group"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 4"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 5"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 5"));
         testOutcome.endGroup();
         testOutcome.endGroup();
     }
@@ -707,25 +707,25 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     private void createNestedTestRun() {
-        testOutcome.recordStep(successfulTestStepCalled("Step 0"));
-        testOutcome.recordStep(successfulTestStepCalled("A group"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 0"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("A group"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
-        testOutcome.recordStep(failingTestStepCalled("Step 7", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(pendingTestStepCalled("Step 10"));
-        testOutcome.recordStep(successfulTestStepCalled("Another group"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 7", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 10"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Another group"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 4"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 5"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 6"));
-        testOutcome.recordStep(failingTestStepCalled("Step 7", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(failingTestStepCalled("Step 8", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(skippedTestStepCalled("Step 9"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 10"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 11"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 12"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 5"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 6"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 7", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 8", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 9"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 10"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 11"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 12"));
         testOutcome.endGroup();
         testOutcome.endGroup();
     }
@@ -733,11 +733,11 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void a_test_group_with_only_successful_tests_is_successful() {
 
-        testOutcome.recordStep(successfulTestStepCalled("A group"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("A group"));
         testOutcome.startGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
         testOutcome.endGroup();
 
         TestStep aGroup = testOutcome.getTestSteps().get(0);
@@ -749,12 +749,12 @@ public class WhenRecordingNewTestOutcomes {
     public void a_test_group_with_a_failing_test_fails() {
 
         testOutcome.startGroup("A group");
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(failingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(skippedTestStepCalled("Step 4"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 5"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 4"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 4"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 5"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
         testOutcome.endGroup();
 
         TestStep aGroup = testOutcome.getTestSteps().get(0);
@@ -766,10 +766,10 @@ public class WhenRecordingNewTestOutcomes {
     public void a_test_group_with_a_pending_test_is_pending() {
 
         testOutcome.startGroup("A group");
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(pendingTestStepCalled("Step 3"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 4"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAPendingTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
         testOutcome.endGroup();
 
         TestStep aGroup = testOutcome.getTestSteps().get(0);
@@ -780,11 +780,11 @@ public class WhenRecordingNewTestOutcomes {
     public void a_test_group_with_only_ignored_tests_is_ignored() {
 
         testOutcome.startGroup("A group");
-        testOutcome.recordStep(ignoredTestStepCalled("Step 1"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 2"));
-        testOutcome.recordStep(ignoredTestStepCalled("Step 3"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 2"));
+        testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
         testOutcome.endGroup();
-        testOutcome.recordStep(successfulTestStepCalled("Step 4"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
 
         TestStep aGroup = testOutcome.getTestSteps().get(0);
         assertThat(aGroup.getResult(), is(TestResult.IGNORED));
@@ -793,12 +793,12 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void a_test_run_with_a_nested_group_containing_a_failure_is_a_failure() {
         testOutcome.startGroup("A group");
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
         testOutcome.startGroup("Another group");
-        testOutcome.recordStep(successfulTestStepCalled("Step 4"));
-        testOutcome.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testOutcome.endGroup();
         testOutcome.endGroup();
 
@@ -808,12 +808,12 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void a_test_group_with_a_nested_group_containing_a_failure_is_a_failure() {
         testOutcome.startGroup("A group");
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
         testOutcome.startGroup("Another group");
-        testOutcome.recordStep(successfulTestStepCalled("Step 4"));
-        testOutcome.recordStep(failingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testOutcome.endGroup();
         testOutcome.endGroup();
 

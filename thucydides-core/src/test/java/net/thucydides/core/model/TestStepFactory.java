@@ -11,27 +11,27 @@ import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 
 public class TestStepFactory {
-    public static TestStep successfulTestStepCalled(String description) {
+    public static TestStep forASuccessfulTestStepCalled(String description) {
         return createNewTestStep(description, SUCCESS);
     }
     
-    public static TestStep successfulNestedTestStepCalled(String description) {
+    public static TestStep forASuccessfulNestedTestStepCalled(String description) {
         return createNewNestedTestSteps(description, SUCCESS);
     }
 
-    public static TestStep failingTestStepCalled(String description, AssertionError assertionError) {
+    public static TestStep forAFailingTestStepCalled(String description, AssertionError assertionError) {
         return createNewTestStep(description, FAILURE, assertionError);
     }
-    
-    public static TestStep skippedTestStepCalled(String description) {
+
+    public static TestStep forASkippedTestStepCalled(String description) {
         return createNewTestStep(description, SKIPPED);
     }
 
-    public static TestStep ignoredTestStepCalled(String description) {
+    public static TestStep forAnIgnoredTestStepCalled(String description) {
         return createNewTestStep(description, IGNORED);
     }
     
-    public static TestStep pendingTestStepCalled(String description) {
+    public static TestStep forAPendingTestStepCalled(String description) {
         return createNewTestStep(description, PENDING);
     }
 

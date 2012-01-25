@@ -2,6 +2,7 @@ package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
+import net.thucydides.core.pages.jquery.JQueryEnabledPage;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import org.apache.commons.lang3.StringUtils;
@@ -265,6 +266,7 @@ public class WebElementFacade {
      * @param value
      */
     public WebElementFacade type(final String value) {
+        enableHighlightingIfRequired();
         waitUntilElementAvailable();
         webElement.clear();
         webElement.sendKeys(value);
@@ -292,6 +294,7 @@ public class WebElementFacade {
      * @param value
      */
     public WebElementFacade typeAndTab(final String value) {
+        enableHighlightingIfRequired();
         waitUntilElementAvailable();
         webElement.clear();
 
@@ -322,6 +325,7 @@ public class WebElementFacade {
     }
 
     public WebElementFacade selectByValue(String value) {
+        enableHighlightingIfRequired();
         waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByValue(value);
@@ -336,6 +340,7 @@ public class WebElementFacade {
     }
 
     public WebElementFacade selectByIndex(int indexValue) {
+        enableHighlightingIfRequired();
         waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByIndex(indexValue);
@@ -549,10 +554,21 @@ public class WebElementFacade {
      * Wait for an element to be visible and enabled, and then click on it.
      */
     public WebElementFacade click() {
+        enableHighlightingIfRequired();
         waitUntilElementAvailable();
+        logClick();
         webElement.click();
         notifyScreenChange();
         return this;
+    }
+
+    private void logClick() {
+        LOGGER.info("Click on " + humanizedTabfNameFor(webElement));
+    }
+
+
+    private String humanizedTabfNameFor(WebElement webElement) {
+        return HtmlTag.from(webElement).inHumanReadableForm();
     }
 
     public void clear() {
@@ -563,6 +579,12 @@ public class WebElementFacade {
         webElement.clear();
     }
 
+    private void enableHighlightingIfRequired() {
+        JQueryEnabledPage jQueryEnabledPage = JQueryEnabledPage.withDriver(driver);
+        if (jQueryEnabledPage.isJQueryEnabled()) {
+            jQueryEnabledPage.injectJQueryPlugins();
+        }
+    }
     private void notifyScreenChange() {
         StepEventBus.getEventBus().notifyScreenChange();
     }

@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Set;
 
-import static net.thucydides.core.model.TestStepFactory.failingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.skippedTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.successfulTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAFailingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forASkippedTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forASuccessfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -215,16 +215,16 @@ public class WhenGeneratingUserStoryHtmlReports {
     
     private TestOutcome thatFailsCalled(String testName) {
         TestOutcome testOutcome = TestOutcome.forTest(testName, SomeTestScenario.class);
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(failingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(skippedTestStepCalled("Step 3"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forAFailingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 3"));
         return testOutcome;
     }
 
     private TestOutcome thatSucceedsCalled(String testName) {
         TestOutcome testOutcome = TestOutcome.forTest(testName, SomeTestScenario.class);
-        testOutcome.recordStep(successfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(successfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         return testOutcome;
     }
 

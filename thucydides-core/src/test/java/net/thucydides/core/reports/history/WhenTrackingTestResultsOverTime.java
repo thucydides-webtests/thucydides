@@ -245,7 +245,7 @@ public class WhenTrackingTestResultsOverTime {
     private TestOutcome thatSucceedsFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("Step " + i));
+            testOutcome.recordStep(TestStepFactory.forASuccessfulTestStepCalled("Step " + i));
         }
         return testOutcome;
     }
@@ -253,7 +253,7 @@ public class WhenTrackingTestResultsOverTime {
     private TestOutcome thatIsPendingFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(TestStepFactory.pendingTestStepCalled("Step " + i));
+            testOutcome.recordStep(TestStepFactory.forAPendingTestStepCalled("Step " + i));
         }
         return testOutcome;
     }
@@ -261,7 +261,7 @@ public class WhenTrackingTestResultsOverTime {
     private TestOutcome thatIsIgnoredFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(TestStepFactory.ignoredTestStepCalled("Step " + i));
+            testOutcome.recordStep(TestStepFactory.forAnIgnoredTestStepCalled("Step " + i));
         }
         return testOutcome;
     }
@@ -269,7 +269,7 @@ public class WhenTrackingTestResultsOverTime {
     private TestOutcome thatIsFailingFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(TestStepFactory.failingTestStepCalled("Step " + i, new AssertionError()));
+            testOutcome.recordStep(TestStepFactory.forAFailingTestStepCalled("Step " + i, new AssertionError()));
         }
         return testOutcome;
     }

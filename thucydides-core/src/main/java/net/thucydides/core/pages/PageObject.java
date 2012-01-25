@@ -644,6 +644,8 @@ public abstract class PageObject {
         }
     }
 
+
+
     private boolean driverIsEnabled() {
         if (WebDriverFacade.class.isAssignableFrom(getDriver().getClass())) {
             WebDriverFacade driverFacade = (WebDriverFacade) getDriver();
