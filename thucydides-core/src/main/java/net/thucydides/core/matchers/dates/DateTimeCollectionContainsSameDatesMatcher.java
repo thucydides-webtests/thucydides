@@ -1,5 +1,6 @@
 package net.thucydides.core.matchers.dates;
 
+import ch.lambdaj.function.convert.Converter;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -7,6 +8,11 @@ import org.joda.time.DateTime;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.join;
 
 public class DateTimeCollectionContainsSameDatesMatcher  extends TypeSafeMatcher<Collection<DateTime>> {
     private final Collection<DateTime> expectedDates;
@@ -40,6 +46,16 @@ public class DateTimeCollectionContainsSameDatesMatcher  extends TypeSafeMatcher
     @Override
     public void describeTo(Description description) {
         description.appendText("a collection of dates containing ");
-        description.appendValue(expectedDates);
+        List<String> dates = convert(expectedDates, toReadableForm());
+        description.appendText("[" + join(dates) + "]");
+    }
+
+    private Converter<DateTime, String> toReadableForm() {
+        return new Converter<DateTime, String>() {
+            @Override
+            public String convert(DateTime from) {
+                return from.toString("d MMM yyyy HH:mm:ss");
+            }
+        };
     }
 }
