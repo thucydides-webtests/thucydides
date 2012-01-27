@@ -135,7 +135,14 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private Object runNormalMethod(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
             throws Throwable {
-        Object result = null;
+        Object result = defaultReturnValueFor(method);
+        if (!aPreviousStepHasFailed()) {
+            result = invokeMethodAndNotifyFailures(obj, method, args, proxy, result);
+        }
+        return result;
+    }
+
+    private Object invokeMethodAndNotifyFailures(Object obj, Method method, Object[] args, MethodProxy proxy, Object result) throws Throwable {
         try {
             result = invokeMethod(obj, method, args, proxy);
         } catch (AssertionError assertionError) {
@@ -147,6 +154,14 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             notifyOfTestFailure(method, args, webdriverException);
         }
         return result;
+    }
+
+    private Object defaultReturnValueFor(Method method) {
+        if (method.getReturnType() == method.getDeclaringClass()) {
+            return this;
+
+        }
+        return null;
     }
 
     private StepGroup getTestGroupAnnotationFor(final Method method) {
