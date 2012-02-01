@@ -8,7 +8,7 @@
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides</artifactId>
-    <version>0.6.10-SNAPSHOT</version>
+    <version>0.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>thucydides</name>
     <description>An Acceptance Testing framework for web applications
@@ -51,7 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <surefire.version>2.11</surefire.version>
         <junit.version>4.10</junit.version>
-        <selenium.version>2.17.0</selenium.version>
+        <selenium.version>2.18.0</selenium.version>
         <hamcrest.version>1.1</hamcrest.version>
         <checkstyle.rules>http://www.wakaleo-labs.com/sonar/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo</checkstyle.rules>
     </properties>

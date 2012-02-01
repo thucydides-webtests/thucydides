@@ -48,12 +48,12 @@ public class WhenLoadingTestDataFromACSVFile {
     public void should_be_able_to_load_test_data_from_a_specified_CSV_file() throws IOException {
 
         File testDataFile = useTestDataIn("testdata.csv",
-                "name, address,        phone",
-                "Bill, 10 main street, 123456789");
+                                          "name, address,        phone",
+                                          "Bill, 10 main street, 123456789");
 
         TestDataSource testdata = new CSVTestDataSource(testDataFile.getAbsolutePath());
-
         List<Map<String,String>> loadedData = testdata.getData();
+
         assertThat(loadedData, is(notNullValue()));
         assertThat(loadedData.size(), is(1));
     }

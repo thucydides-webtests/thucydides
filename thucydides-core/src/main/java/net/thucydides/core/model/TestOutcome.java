@@ -311,7 +311,7 @@ public class TestOutcome {
     /**
      * Add a test step to this acceptance test.
      */
-    public void recordStep(final TestStep step) {
+    public TestOutcome recordStep(final TestStep step) {
         checkNotNull(step.getDescription(),
                 "The test step description was not defined.");
         if (inGroup()) {
@@ -319,6 +319,15 @@ public class TestOutcome {
         } else {
             testSteps.add(step);
         }
+        return this;
+    }
+
+    public TestOutcome withStep(final TestStep step) {
+        return recordStep(step);
+    }
+    
+    public TestOutcome andStep(final TestStep step) {
+        return recordStep(step);
     }
 
     private TestStep getCurrentStepGroup() {

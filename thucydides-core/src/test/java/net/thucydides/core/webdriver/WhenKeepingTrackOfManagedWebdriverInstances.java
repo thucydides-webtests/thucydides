@@ -5,8 +5,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class WhenKeepingTrackOfManagedWebdriverInstances {
@@ -37,9 +40,12 @@ public class WhenKeepingTrackOfManagedWebdriverInstances {
 
     @Test
     public void should_be_able_to_close_a_driver() {
+        WebDriver firefoxDriver = mock(FirefoxDriver.class);
+
         webdriverInstances.registerDriverCalled("firefox").forDriver(firefoxDriver);
 
         webdriverInstances.closeCurrentDriver();
+        
         verify(firefoxDriver).close();
     }
 

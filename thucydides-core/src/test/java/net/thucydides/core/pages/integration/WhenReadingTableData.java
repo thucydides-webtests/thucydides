@@ -136,6 +136,17 @@ public class WhenReadingTableData extends FluentElementAPITestsBaseClass {
     }
 
     @Test
+    public void should_use_first_row_as_headers_if_no_th_cells_are_defined() {
+        HtmlTable table = new HtmlTable(page.table_with_td_headers);
+
+        List<Map<Object, String>> tableRows = table.getRows();
+
+        assertThat(tableRows.size(), is(3));
+        assertThat(tableRows.get(0), allOf(hasEntry("First Name", "Tim"),hasEntry("Last Name", "Brooke-Taylor"), hasEntry("Favorite Colour","Red")));
+        assertThat(tableRows.get(1), allOf(hasEntry("First Name", "Graeme"),hasEntry("Last Name", "Garden"), hasEntry("Favorite Colour","Green")));
+        assertThat(tableRows.get(2), allOf(hasEntry("First Name", "Bill"),hasEntry("Last Name", "Oddie"), hasEntry("Favorite Colour","Blue")));
+    }
+    @Test
     public void should_ignore_rows_with_missing_cells() {
         HtmlTable table = new HtmlTable(page.clients_with_missing_cells);
 

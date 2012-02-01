@@ -82,6 +82,8 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 
         protected WebElement table_with_empty_headers;
 
+        protected WebElement table_with_td_headers;
+
         public StaticSitePage(WebDriver driver, int timeout) {
             super(driver, timeout);
         }

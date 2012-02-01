@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ch.lambdaj.Lambda.by;
 import static ch.lambdaj.Lambda.convert;
 
 /**
@@ -32,7 +33,7 @@ public class HtmlTable {
         List<Map<Object, String>> results = new ArrayList<Map<Object, String>>();
 
         List<String> headings = getHeadings();
-        List<WebElement> rows = getRowElements();
+        List<WebElement> rows = getRowElementsFor(headings);
 
         for (WebElement row : rows) {
             List<WebElement> cells = cellsIn(row);
@@ -68,20 +69,52 @@ public class HtmlTable {
     }
 
     public List<String> getHeadings() {
-        return convert(getHeadingElements(), toTextValues());
+        List<String> thHeadings = convert(headingElements(), toTextValues());
+        if (thHeadings.isEmpty()) {
+            return convert(firstRowElements(), toTextValues());
+        } else {
+            return thHeadings;
+        }
     }
 
-    public List<WebElement> getHeadingElements() {
+    public List<WebElement> headingElements() {
         return tableElement.findElements(By.xpath(".//th"));
     }
 
-    public List<WebElement> getRowElements() {
-        return tableElement.findElements(By.xpath(".//tr[td]"));
+    public List<WebElement> firstRowElements() {
+        return tableElement.findElement(By.tagName("tr")).findElements(By.xpath(".//td"));
+    }
+
+    public List<WebElement> getRowElementsFor(List<String> headings) {
+        
+        List<WebElement> rowCandidates = tableElement.findElements(By.xpath(".//tr[td][count(td)>=" + headings.size() + "]"));
+        rowCandidates = stripHeaderRowIfPresent(rowCandidates, headings);
+        return rowCandidates;
+    }
+
+    private List<WebElement> stripHeaderRowIfPresent(List<WebElement> rowCandidates, List<String> headings) {
+        if (!rowCandidates.isEmpty()) {
+            WebElement firstRow = rowCandidates.get(0);
+            if (hasMatchingCellValuesIn(firstRow, headings)) {
+                rowCandidates.remove(0);    
+            }
+        }
+        return rowCandidates;
+    }
+
+    private boolean hasMatchingCellValuesIn(WebElement firstRow, List<String> headings) {
+        List<WebElement> cells = firstRow.findElements(By.tagName("td"));
+        for(int cellIndex = 0; cellIndex < headings.size(); cellIndex++) {
+            if ((cells.size() < cellIndex) || (!cells.get(cellIndex).getText().equals(headings.get(cellIndex)))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public List<WebElement> getRowElementsWhere(BeanMatcher... matchers) {
 
-        List<WebElement> rowElements = getRowElements();
+        List<WebElement> rowElements = getRowElementsFor(getHeadings());
         List<Integer> matchingRowIndexes = findMatchingIndexesFor(rowElements, matchers);
 
         List<WebElement> matchingElements = new ArrayList<WebElement>();

@@ -341,7 +341,6 @@ public class WhenRecordingNewTestOutcomes {
 
     @Test
     public void should_count_deeply_nested_test_steps() {
-
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.startGroup();

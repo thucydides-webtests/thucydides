@@ -298,10 +298,11 @@ public class WhenRecordingUserStoryTestResults {
     }
 
     private TestOutcome thatFailsFor(Story story) {
-        TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
-        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(forASkippedTestStepCalled("Step 3"));
+        TestOutcome testOutcome
+                = TestOutcome.forTestInStory("a test", story)
+                    .withStep(forASuccessfulTestStepCalled("Step 1"))
+                    .andStep(forAFailingTestStepCalled("Step 2", new AssertionError("Oh bother!")))
+                    .andStep(forASkippedTestStepCalled("Step 3"));
         return testOutcome;
     }
     
