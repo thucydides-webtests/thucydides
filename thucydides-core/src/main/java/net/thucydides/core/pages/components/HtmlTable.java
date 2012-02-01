@@ -92,6 +92,11 @@ public class HtmlTable {
         return rowCandidates;
     }
 
+    public List<WebElement> getRowElements() {
+
+        return getRowElementsFor(getHeadings());
+    }
+
     private List<WebElement> stripHeaderRowIfPresent(List<WebElement> rowCandidates, List<String> headings) {
         if (!rowCandidates.isEmpty()) {
             WebElement firstRow = rowCandidates.get(0);

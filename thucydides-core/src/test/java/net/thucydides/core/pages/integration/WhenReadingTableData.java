@@ -50,7 +50,6 @@ public class WhenReadingTableData extends FluentElementAPITestsBaseClass {
         HtmlTable table = new HtmlTable(page.clients);
 
         List<Map<Object, String>> tableRows = table.getRows();
-
         assertThat(tableRows.size(), is(3));
 
 
@@ -59,6 +58,14 @@ public class WhenReadingTableData extends FluentElementAPITestsBaseClass {
         assertThat(tableRows.get(2), allOf(hasEntry("First Name", "Bill"),hasEntry("Last Name", "Oddie"), hasEntry("Favorite Colour","Blue")));
     }
 
+
+    @Test
+    public void should_read_table_data_as_a_list_of_web_elements() {
+        HtmlTable table = new HtmlTable(page.clients);
+
+        List<WebElement> tableRows = table.getRowElements();
+        assertThat(tableRows.size(), is(3));
+    }
 
     private org.hamcrest.Matcher<java.util.Map<Object, String>> hasEntry(Object key, String value) {
         return new TableRowMatcher(key, value);
