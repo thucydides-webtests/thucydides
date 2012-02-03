@@ -172,6 +172,38 @@ public class WhenReadingTableData extends FluentElementAPITestsBaseClass {
     }
 
     @Test
+    public void should_detect_the_presence_of_row_elements_matching_a_given_criteria() {
+        boolean containsRowElements = inTable(page.clients).containsRowElementsWhere(the("First Name", is("Tim")), the("Last Name", containsString("Taylor")));
+        assertThat(containsRowElements, is(true));
+    }
+
+    @Test
+    public void should_detect_the_absence_of_row_elements_matching_a_given_criteria() {
+        boolean containsRowElements = inTable(page.clients).containsRowElementsWhere(the("First Name", is("Tim")), the("Last Name", containsString("Garden")));
+        assertThat(containsRowElements, is(false));
+    }
+
+    @Test
+    public void should_assert_the_presence_of_row_elements_matching_a_given_criteria() {
+        inTable(page.clients).shouldHaveRowElementsWhere(the("First Name", is("Tim")), the("Last Name", containsString("Taylor")));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void should_assert_the_absence_of_row_elements_matching_a_given_criteria() {
+        inTable(page.clients).shouldHaveRowElementsWhere(the("First Name", is("Tim")), the("Last Name", containsString("Garden")));
+    }
+
+    @Test
+    public void should_not_assert_the_presence_of_row_elements_matching_a_given_criteria_if_not_present() {
+        inTable(page.clients).shouldNotHaveRowElementsWhere(the("First Name", is("Tim")), the("Last Name", containsString("Garden")));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void should_not_assert_the_absence_of_row_elements_matching_a_given_criteria() {
+        inTable(page.clients).shouldNotHaveRowElementsWhere(the("First Name", is("Tim")), the("Last Name", containsString("Taylor")));
+    }
+
+    @Test
     public void should_find_row_elements_matching_a_given_criteria_using_a_static_method() {
         List<WebElement> matchingRows = HtmlTable.filterRows(page.clients, the("First Name", is("Tim")),the("Last Name", containsString("Taylor")));
         assertThat(matchingRows.size(), is(1));

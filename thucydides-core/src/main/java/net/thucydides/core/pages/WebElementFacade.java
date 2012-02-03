@@ -510,7 +510,7 @@ public class WebElementFacade {
             notifyScreenChange();
             return this;
         } catch (TimeoutException timeout) {
-            throw new ElementNotVisibleException("Expected enabled element was not enabled", timeout);
+            throw new ElementNotVisibleException("Expected enabled element was not enabled" , timeout);
         }
     }
 

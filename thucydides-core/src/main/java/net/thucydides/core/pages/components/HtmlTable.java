@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,9 +48,28 @@ public class HtmlTable {
     public WebElement findFirstRowWhere(final BeanMatcher... matchers) {
         List<WebElement> rows = getRowElementsWhere(matchers);
         if (rows.isEmpty()) {
-            throw new AssertionError("Expecting a table with at least one row: " + tableElement);
+            throw new AssertionError("Expecting a table with at least one row where: " + Arrays.deepToString(matchers));
         }
         return rows.get(0);
+    }
+
+    public boolean containsRowElementsWhere(BeanMatcher... matchers) {
+        List<WebElement> rows = getRowElementsWhere(matchers);
+        return (!rows.isEmpty());
+    }
+
+    public void shouldHaveRowElementsWhere(BeanMatcher... matchers) {
+        List<WebElement> rows = getRowElementsWhere(matchers);
+        if (rows.isEmpty()) {
+            throw new AssertionError("Expecting a table with at least one row where: " + Arrays.deepToString(matchers));
+        }
+    }
+
+    public void shouldNotHaveRowElementsWhere(BeanMatcher... matchers) {
+        List<WebElement> rows = getRowElementsWhere(matchers);
+        if (!rows.isEmpty()) {
+            throw new AssertionError("Expecting a table with no rows where: " + Arrays.deepToString(matchers));
+        }
     }
 
     private class EnoughCellsCheck {
