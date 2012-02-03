@@ -93,7 +93,7 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
         Counter counter = new Counter();
 
-        page.waitForRefresh()
+        page.waitForWithRefresh()
                 .withTimeoutOf(1000).milliseconds()
                 .pollingEvery(100).milliseconds()
                 .until(weHaveWaitedEnough(counter));
@@ -108,7 +108,7 @@ public class WhenRunningPolledTests {
 
         StepEventBus.getEventBus().stepFailed(failure);
 
-        page.waitForRefresh()
+        page.waitForWithRefresh()
                 .withTimeoutOf(1000).milliseconds()
                 .pollingEvery(100).milliseconds()
                 .until(weHaveWaitedEnough(counter));

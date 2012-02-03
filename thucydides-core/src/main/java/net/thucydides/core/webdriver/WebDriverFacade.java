@@ -1,6 +1,8 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.collect.Sets;
 import net.thucydides.core.steps.StepEventBus;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -10,8 +12,11 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * A proxy class for webdriver instances, designed to prevent the browser being opened unnecessarily.
@@ -118,7 +123,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public String getCurrentUrl() {
         if (!isEnabled()) {
-            return null;
+            return StringUtils.EMPTY;
         }
 
         return getProxiedDriver().getCurrentUrl();
@@ -126,7 +131,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public String getTitle() {
         if (!isEnabled()) {
-            return null;
+            return StringUtils.EMPTY;
         }
 
         return getProxiedDriver().getTitle();
@@ -134,7 +139,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public List<WebElement> findElements(final By by) {
         if (!isEnabled()) {
-            return null;
+            return Collections.emptyList();
         }
 
         return getProxiedDriver().findElements(by);
@@ -142,7 +147,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public WebElement findElement(final By by) {
         if (!isEnabled()) {
-            return null;
+            return mock(WebElement.class);
         }
 
         return getProxiedDriver().findElement(by);
@@ -150,7 +155,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public String getPageSource() {
         if (!isEnabled()) {
-            return null;
+            return StringUtils.EMPTY;
         }
 
         return getProxiedDriver().getPageSource();
@@ -183,7 +188,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public Set<String> getWindowHandles() {
         if (!isEnabled()) {
-            return null;
+            return Collections.EMPTY_SET;
         }
 
         return getProxiedDriver().getWindowHandles();
@@ -191,7 +196,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public String getWindowHandle() {
         if (!isEnabled()) {
-            return null;
+            return StringUtils.EMPTY;
         }
 
         return getProxiedDriver().getWindowHandle();
@@ -199,7 +204,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public TargetLocator switchTo() {
         if (!isEnabled()) {
-            return null;
+            return mock(TargetLocator.class);
         }
 
         return getProxiedDriver().switchTo();
@@ -207,7 +212,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public Navigation navigate() {
         if (!isEnabled()) {
-            return null;
+            return mock(Navigation.class);
         }
 
         return getProxiedDriver().navigate();
@@ -215,11 +220,13 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public Options manage() {
         if (!isEnabled()) {
-            return null;
+            return mock(Options.class);
         }
 
         return getProxiedDriver().manage();
     }
+
+
 
     public boolean canTakeScreenshots() {
         return (driverClass != null) && (TakesScreenshot.class.isAssignableFrom(driverClass));

@@ -654,7 +654,7 @@ public abstract class PageObject {
         return true;
     }
 
-    public ThucydidesFluentWait<WebDriver> waitForRefresh() {
+    public ThucydidesFluentWait<WebDriver> waitForWithRefresh() {
         return new FluentWaitWithRefresh<WebDriver>(driver, webdriverClock, sleeper)
                 .withTimeout(waitForTimeout, TimeUnit.MILLISECONDS)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)

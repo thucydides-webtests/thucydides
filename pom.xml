@@ -88,15 +88,15 @@
                         <configuration>
                             <skip>false</skip>
                             <includes>
-                                <include>**/When*.java</include>
-                                <include>**/*Test.java</include>
-                                <include>**/*Story.java</include>
+                                <include>**/When*.*</include>
+                                <include>**/*Test.*</include>
+                                <include>**/*Story.*</include>
                             </includes>
                             <excludes>
-                                <exclude>**/Abstract*.java</exclude>
-                                <exclude>**/samples/*.java</exclude>
-                                <exclude>**/Sample*.java</exclude>
-                                <exclude>**/*Sample.java</exclude>
+                                <exclude>**/Abstract*.*</exclude>
+                                <exclude>**/samples/*.*</exclude>
+                                <exclude>**/Sample*.*</exclude>
+                                <exclude>**/*Sample.*</exclude>
                                 <exclude>%regex[.*integration.*]</exclude>
                             </excludes>
                         </configuration>
@@ -110,10 +110,10 @@
                         <configuration>
                             <skip>false</skip>
                             <excludes>
-                                <exclude>**/Abstract*.java</exclude>
-                                <exclude>**/samples/*.java</exclude>
-                                <exclude>**/Sample*.java</exclude>
-                                <exclude>**/*Sample.java</exclude>
+                                <exclude>**/Abstract*.*</exclude>
+                                <exclude>**/samples/*.*</exclude>
+                                <exclude>**/Sample*.*</exclude>
+                                <exclude>**/*Sample.*</exclude>
                             </excludes>
                             <includes>
                                 <include>%regex[.*integration.*Story.*]</include>
@@ -256,7 +256,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.8.5</version>
+            <version>1.9.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -406,6 +406,7 @@
         <module>thucydides-test-utils</module>
         <module>thucydides-report-resources</module>
         <module>thucydides-sample-alternative-resources</module>
+        <module>thucydides-history</module>
         <module>thucydides-core</module>
         <module>thucydides-junit</module>
         <module>thucydides-maven-plugin</module>
