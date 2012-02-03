@@ -553,7 +553,7 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testFinished(testOutcome);
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
-        assertThat(results.size(), is(4));
+        assertThat(results.get(0).getTestSteps().size(), is(4));
     }
 
     @Test
