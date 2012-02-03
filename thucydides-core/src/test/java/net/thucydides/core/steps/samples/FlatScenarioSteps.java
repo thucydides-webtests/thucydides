@@ -108,4 +108,16 @@ public class FlatScenarioSteps extends ScenarioSteps {
         stepWithLongName();
         step_with_long_name_and_underscores();
     }
+
+    @Step
+    public void stepCausingANullPointerException() {
+        String nullValue = null;
+        nullValue.length();
+    }
+
+    public void unannotatedStepCausingANullPointerException() {
+        String nullValue = null;
+        nullValue.length();
+    }
+
 }

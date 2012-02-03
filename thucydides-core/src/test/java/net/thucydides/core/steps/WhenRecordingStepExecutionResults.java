@@ -539,7 +539,39 @@ public class WhenRecordingStepExecutionResults {
         assertThat(testOutcome.getResult(), is(TestResult.FAILURE));
     }
 
+    @Test
+    public void after_a_failing_step_subsequent_errors_should_be_ignored() {
 
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps =  stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.failingStep();
+        steps.stepCausingANullPointerException();
+        steps.step_two();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        assertThat(results.size(), is(4));
+    }
+
+    @Test
+    public void after_a_failing_step_subsequent_unannotated_errors_should_be_ignored() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps =  stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.failingStep();
+        steps.unannotatedStepCausingANullPointerException();
+        steps.step_two();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        assertThat(results.get(0).getTestSteps().size(), is(3));
+    }
     @Test
     public void a_failing_step_should_record_the_failure_cause() {
 
