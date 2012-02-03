@@ -406,7 +406,6 @@
         <module>thucydides-test-utils</module>
         <module>thucydides-report-resources</module>
         <module>thucydides-sample-alternative-resources</module>
-        <module>thucydides-history</module>
         <module>thucydides-core</module>
         <module>thucydides-junit</module>
         <module>thucydides-maven-plugin</module>
