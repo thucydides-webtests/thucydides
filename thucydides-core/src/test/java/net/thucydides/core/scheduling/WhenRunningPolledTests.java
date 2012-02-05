@@ -69,6 +69,7 @@ public class WhenRunningPolledTests {
         when(driver.navigate()).thenReturn(navigation);
 
         StepEventBus.getEventBus().clear();
+        StepEventBus.getEventBus().testStarted("someTest");
     }
 
     class SlowPage extends PageObject {
