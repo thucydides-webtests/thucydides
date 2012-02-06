@@ -1,6 +1,7 @@
 package net.thucydides.core.scheduling;
 
 import net.thucydides.core.pages.PageObject;
+import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.util.MockEnvironmentVariables;
@@ -110,7 +111,7 @@ public class WhenRunningPolledTests {
         StepEventBus.getEventBus().clear();
         StepEventBus.getEventBus().testSuiteStarted(ATestClass.class);
         StepEventBus.getEventBus().testStarted("someTest");
-
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
         StepEventBus.getEventBus().stepFailed(failure);
 
         page.waitForWithRefresh()
