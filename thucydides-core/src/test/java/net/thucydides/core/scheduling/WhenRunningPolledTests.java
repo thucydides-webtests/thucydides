@@ -34,9 +34,6 @@ public class WhenRunningPolledTests {
     Sleeper sleeper;
 
     @Mock
-    Clock clock;
-
-    @Mock
     StepFailure failure;
 
     @Mock
@@ -58,7 +55,9 @@ public class WhenRunningPolledTests {
         }
     }
 
-    private ThucydidesFluentWait<WebDriver> waitFor;
+    class ATestClass {
+        public void someTest() {}
+    }
 
     @Before
     public void initMocks() {
@@ -69,6 +68,7 @@ public class WhenRunningPolledTests {
         when(driver.navigate()).thenReturn(navigation);
 
         StepEventBus.getEventBus().clear();
+        StepEventBus.getEventBus().testSuiteStarted(ATestClass.class);
         StepEventBus.getEventBus().testStarted("someTest");
     }
 
@@ -106,6 +106,10 @@ public class WhenRunningPolledTests {
     public void wait_should_be_bypassed_if_a_previous_step_has_failed() {
         SlowPage page = new SlowPage(driver);
         Counter counter = new Counter();
+
+        StepEventBus.getEventBus().clear();
+        StepEventBus.getEventBus().testSuiteStarted(ATestClass.class);
+        StepEventBus.getEventBus().testStarted("someTest");
 
         StepEventBus.getEventBus().stepFailed(failure);
 
