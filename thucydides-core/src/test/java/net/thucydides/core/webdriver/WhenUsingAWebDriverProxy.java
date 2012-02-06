@@ -144,14 +144,6 @@ public class WhenUsingAWebDriverProxy {
     }
 
     @Test
-    public void the_webdriver_proxy_should_ignore_find_element_when_webdriver_calls_are_disabled() {
-        StepEventBus.getEventBus().temporarilySuspendWebdriverCalls();
-
-        webDriverFacade.findElement(By.id("q"));
-        verify(firefoxDriver, never()).findElement(By.id("q"));
-    }
-
-    @Test
     public void the_webdriver_proxy_should_handle_find_elements() {
         webDriverFacade.findElements(By.id("q"));
         verify(firefoxDriver).findElements(By.id("q"));

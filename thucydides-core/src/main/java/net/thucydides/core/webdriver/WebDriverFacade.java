@@ -1,9 +1,12 @@
 package net.thucydides.core.webdriver;
 
-import com.google.common.collect.Sets;
 import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.webdriver.stubs.NavigationStub;
+import net.thucydides.core.webdriver.stubs.OptionsStub;
+import net.thucydides.core.webdriver.stubs.TargetLocatorStub;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -13,10 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static org.mockito.Mockito.mock;
 
 /**
  * A proxy class for webdriver instances, designed to prevent the browser being opened unnecessarily.
@@ -147,7 +149,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public WebElement findElement(final By by) {
         if (!isEnabled()) {
-            return mock(WebElement.class);
+            throw new ElementNotVisibleException("No element found for " + by.toString() + " (a previous step has failed)");
         }
 
         return getProxiedDriver().findElement(by);
@@ -188,7 +190,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public Set<String> getWindowHandles() {
         if (!isEnabled()) {
-            return Collections.EMPTY_SET;
+            return new HashSet<String>();
         }
 
         return getProxiedDriver().getWindowHandles();
@@ -204,7 +206,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public TargetLocator switchTo() {
         if (!isEnabled()) {
-            return mock(TargetLocator.class);
+            return new TargetLocatorStub(this);
         }
 
         return getProxiedDriver().switchTo();
@@ -212,7 +214,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public Navigation navigate() {
         if (!isEnabled()) {
-            return mock(Navigation.class);
+            return new NavigationStub();
         }
 
         return getProxiedDriver().navigate();
@@ -220,7 +222,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public Options manage() {
         if (!isEnabled()) {
-            return mock(Options.class);
+            return new OptionsStub();
         }
 
         return getProxiedDriver().manage();
