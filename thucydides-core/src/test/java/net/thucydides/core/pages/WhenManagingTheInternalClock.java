@@ -1,9 +1,14 @@
 package net.thucydides.core.pages;
 
+import net.thucydides.core.statistics.dao.SystemDateProvider;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
+import static net.thucydides.core.matchers.dates.DateMatchers.isAfter;
+import static net.thucydides.core.matchers.dates.DateMatchers.isBefore;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
 
 public class WhenManagingTheInternalClock {
 
@@ -28,5 +33,18 @@ public class WhenManagingTheInternalClock {
 
         clock.pauseFor(50);
     }
+
+    @Test
+    public void the_system_date_provider_uses_the_system_clock_to_find_the_current_date() {
+        InternalSystemClock clock = new InternalSystemClock();
+
+        DateTime before = new DateTime();
+        DateTime systemDate = clock.getCurrentTime();
+        DateTime after = new DateTime();
+
+        assertThat(before, not(isAfter(systemDate)));
+        assertThat(after, not(isBefore(systemDate)));
+    }
+
 
 }

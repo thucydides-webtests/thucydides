@@ -35,7 +35,7 @@ public class StatisticsListener implements StepListener {
 
     @Override
     public void testFinished(TestOutcome result) {
-
+        testStatisticsDAO.storeTestOutcome(result);
     }
 
     @Override

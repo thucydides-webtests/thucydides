@@ -2,6 +2,9 @@ package net.thucydides.core.statistics;
 
 import com.google.inject.Inject;
 import net.thucydides.core.statistics.dao.TestStatisticsDAO;
+import net.thucydides.core.statistics.model.TestOutcomeHistory;
+
+import java.util.List;
 
 /**
  * A description goes here.
@@ -16,5 +19,9 @@ public class TestStatistics {
     @Inject
     public TestStatistics(TestStatisticsDAO testStatisticsDAO) {
         this.testStatisticsDAO = testStatisticsDAO;
+    }
+
+    public List<TestOutcomeHistory> getTestHistories() {
+        return testStatisticsDAO.findAll();
     }
 }

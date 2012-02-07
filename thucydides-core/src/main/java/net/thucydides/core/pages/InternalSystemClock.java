@@ -1,5 +1,6 @@
 package net.thucydides.core.pages;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,5 +27,12 @@ public class InternalSystemClock implements SystemClock {
 
     protected void sleepFor(long timeInMilliseconds) throws InterruptedException {
         Thread.sleep(timeInMilliseconds);
+    }
+
+    /**
+     * Find the current system time.
+     */
+    public DateTime getCurrentTime() {
+        return new DateTime();
     }
 }

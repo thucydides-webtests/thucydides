@@ -2,8 +2,11 @@ package net.thucydides.core.statistics;
 
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.pages.SystemClock;
+import net.thucydides.core.statistics.dao.DateProvider;
 import net.thucydides.core.statistics.dao.TestStatisticsDAO;
-import net.thucydides.core.statistics.model.TestHistory;
+import net.thucydides.core.statistics.model.TestOutcomeHistory;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -24,11 +27,17 @@ public class WhenRecordingTestResultStatistics {
     @Mock
     TestOutcome testOutcome;
 
+    @Mock
+    SystemClock clock;
+
     TestStatisticsDAO testStatisticsDAO;
+
+    static final DateTime JANUARY_1ST_2012 = new DateTime(2012,1,1,0,0);
 
     @Before
     public void initListener() {
         MockitoAnnotations.initMocks(this);
+        testStatisticsDAO = new TestStatisticsDAO(clock);
         statisticsListener = new StatisticsListener(testStatisticsDAO);
         testStatistics = new TestStatistics(testStatisticsDAO);
 
@@ -47,9 +56,23 @@ public class WhenRecordingTestResultStatistics {
 
         statisticsListener.testFinished(testOutcome);
         
-        //List<TestHistory> storedTestHistories = testStatistics.getTestHistories();
+        List<TestOutcomeHistory> storedTestOutcomeHistories = testStatistics.getTestHistories();
         
-        //assertThat(storedTestHistories.size(), is(1));
+        assertThat(storedTestOutcomeHistories.size(), is(1));
+    }
+
+    @Test
+    public void should_record_the_execution_time_with_the_test_results() {
+
+        when(testOutcome.getResult()).thenReturn(TestResult.SUCCESS);
+        when(clock.getCurrentTime()).thenReturn(JANUARY_1ST_2012);
+
+        statisticsListener.testFinished(testOutcome);
+
+        List<TestOutcomeHistory> storedTestOutcomeHistories = testStatistics.getTestHistories();
+
+        TestOutcomeHistory outcomeHistory = storedTestOutcomeHistories.get(0);
+        assertThat(outcomeHistory.getExecutionDate(), is(JANUARY_1ST_2012));
     }
 
 
