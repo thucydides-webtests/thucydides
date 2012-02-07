@@ -4,7 +4,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.7.5-SNAPSHOT</version>
+        <version>0.7.6-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-core</artifactId>
@@ -128,17 +128,6 @@
             <version>2.9</version>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.9.0</version>
-        </dependency>
-
-        <!--<dependency>-->
-        <!--<groupId>com.opera</groupId>-->
-        <!--<artifactId>operadriver</artifactId>-->
-        <!--<version>0.8</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>

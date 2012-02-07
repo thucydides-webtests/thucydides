@@ -6,6 +6,8 @@ import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestAnnotations;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static net.thucydides.core.steps.ErrorConvertor.forError;
+import static org.apache.commons.lang.StringUtils.split;
 
 /**
  * Listen to step results and publish notification messages.
@@ -40,8 +43,8 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
                             final Object[] args, final MethodProxy proxy) throws Throwable {
 
         Object result;
-        if (baseClassMethod(method)) {
-            result = runNormalMethod(obj, method, args, proxy);
+        if (baseClassMethod(method, obj.getClass())) {
+            result = runBaseObjectMethod(obj, method, args, proxy);
         } else {
             result = testStepResult(obj, method, args, proxy);
         }
@@ -57,10 +60,54 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             "notify",
             "notifyAll",
             "wait",
-            "finalize");
+            "finalize",
+            "getMetaClass");
 
-    private boolean baseClassMethod(final Method method) {
-        return (OBJECT_METHODS.contains(method.getName()));
+    private boolean baseClassMethod(final Method method, final Class callingClass) {
+        boolean isACoreLanguageMethod = (OBJECT_METHODS.contains(method.getName()));
+        boolean methodDoesNotComeFromThisClassOrARelatedParentClass = !declaredInSameDomain(method, callingClass);
+        return (isACoreLanguageMethod || methodDoesNotComeFromThisClassOrARelatedParentClass); 
+    }
+
+    private boolean declaredInSameDomain(Method method, final Class callingClass) {
+        return domainPackageOf(getRoot(method)).equals(domainPackageOf(callingClass));
+    }
+
+    private String domainPackageOf(Class callingClass) {
+        String methodPackage = callingClass.getPackage().getName();
+        return packageDomainName(methodPackage);
+    }
+
+    private String packageDomainName(String methodPackage) {
+        String[] packages = split(methodPackage,".");
+
+        if (packages.length == 0) {
+            return "";
+        } else if (packages.length == 1) {
+            return packages[0];
+        } else {
+            return packages[0] + "." + packages[1];
+        }
+    }
+
+    private String domainPackageOf(Method method) {
+        String methodPackage = method.getDeclaringClass().getPackage().getName();
+        return packageDomainName(methodPackage);
+    }
+
+    private boolean declaredInSameClass(Method rootMethod, Method method) {
+        return (rootMethod.getDeclaringClass().getCanonicalName().equals(method.getDeclaringClass().getCanonicalName()));
+    }
+
+    private Method getRoot(Method method) {
+        try {
+            method.getClass().getDeclaredField("root").setAccessible(true);
+            return (Method) method.getClass().getDeclaredField("root").get(method);
+        } catch (IllegalAccessException e) {
+            return method;
+        } catch (NoSuchFieldException e) {
+            return method;
+        }
     }
 
     private Object testStepResult(final Object obj, final Method method,
@@ -115,8 +162,16 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         }
     }
 
-    private boolean shouldSkip(final Method step) {
-        return aPreviousStepHasFailed() ||  testIsPending() || isPending(step) || isIgnored(step);
+    private boolean shouldNotSkipMethod(final Method methodOrStep, final Class callingClass) {
+        return !shouldSkipMethod(methodOrStep, callingClass);
+    }
+
+    private boolean shouldSkipMethod(final Method methodOrStep, final Class callingClass) {
+        return (aPreviousStepHasFailed() && declaredInSameDomain(methodOrStep, callingClass));
+    }
+
+    private boolean shouldSkip(final Method methodOrStep) {
+        return aPreviousStepHasFailed() ||  testIsPending() || isPending(methodOrStep) || isIgnored(methodOrStep);
     }
 
     private boolean testIsPending() {
@@ -133,10 +188,17 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         return aPreviousStepHasFailed;
     }
 
+    private Object runBaseObjectMethod(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
+            throws Throwable {
+        return invokeMethod(obj, method, args, proxy);
+    }
+
     private Object runNormalMethod(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
             throws Throwable {
+
         Object result = defaultReturnValueFor(method);
-        if (!aPreviousStepHasFailed()) {
+
+        if (shouldNotSkipMethod(method, obj.getClass())) {
             result = invokeMethodAndNotifyFailures(obj, method, args, proxy, result);
         }
         return result;
@@ -159,9 +221,9 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     private Object defaultReturnValueFor(Method method) {
         if (method.getReturnType() == method.getDeclaringClass()) {
             return this;
-
+        } else {
+            return DefaultValue.forClass(method.getReturnType());
         }
-        return null;
     }
 
     private StepGroup getTestGroupAnnotationFor(final Method method) {
@@ -290,7 +352,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
         StepEventBus.getEventBus().skippedStepStarted(description);
-       // StepEventBus.getEventBus().stepStarted(description);
     }
 
 }

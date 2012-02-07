@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
+import some.other.place.BaseScenarioInSomeOtherPackage;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -206,6 +207,8 @@ public class WhenUsingTheStepEventBus {
 
         verify(listener).stepStarted(any(ExecutedStepDescription.class));
     }
+
+
 
     @Test
     public void should_notify_listeners_when_a_step_starts() {
