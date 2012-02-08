@@ -3,18 +3,18 @@ package net.thucydides.core.statistics;
 import com.google.inject.Inject;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.statistics.dao.TestStatisticsDAO;
+import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
 
 public class StatisticsListener implements StepListener {
 
-    private final TestStatisticsDAO testStatisticsDAO;
+    private final TestOutcomeHistoryDAO testOutcomeHistoryDAO;
 
     @Inject
-    public StatisticsListener(TestStatisticsDAO testStatisticsDAO) {
-        this.testStatisticsDAO = testStatisticsDAO;
+    public StatisticsListener(TestOutcomeHistoryDAO testOutcomeHistoryDAO) {
+        this.testOutcomeHistoryDAO = testOutcomeHistoryDAO;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class StatisticsListener implements StepListener {
 
     @Override
     public void testFinished(TestOutcome result) {
-        testStatisticsDAO.storeTestOutcome(result);
+        testOutcomeHistoryDAO.storeTestOutcome(result);
     }
 
     @Override

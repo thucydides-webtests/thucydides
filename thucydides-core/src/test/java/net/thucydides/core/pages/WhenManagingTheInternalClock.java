@@ -1,6 +1,5 @@
 package net.thucydides.core.pages;
 
-import net.thucydides.core.statistics.dao.SystemDateProvider;
 import org.joda.time.DateTime;
 import org.junit.Test;
 

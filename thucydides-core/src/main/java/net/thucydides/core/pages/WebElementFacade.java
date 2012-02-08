@@ -268,7 +268,7 @@ public class WebElementFacade {
     public WebElementFacade type(final String value) {
         enableHighlightingIfRequired();
         waitUntilElementAvailable();
-        webElement.clear();
+        clear();
         webElement.sendKeys(value);
         notifyScreenChange();
         return this;
@@ -281,7 +281,7 @@ public class WebElementFacade {
      */
     public WebElementFacade typeAndEnter(final String value) {
         waitUntilElementAvailable();
-        webElement.clear();
+        clear();
         webElement.sendKeys(value, Keys.ENTER);
         notifyScreenChange();
         return this;
@@ -296,7 +296,7 @@ public class WebElementFacade {
     public WebElementFacade typeAndTab(final String value) {
         enableHighlightingIfRequired();
         waitUntilElementAvailable();
-        webElement.clear();
+        clear();
 
         webElement.sendKeys(value);
         webElement.sendKeys(Keys.TAB);
@@ -572,10 +572,7 @@ public class WebElementFacade {
     }
 
     public void clear() {
-        String currentValue = getTextValue();
-        for (int i = 0; i < currentValue.length(); i++) {
-            webElement.sendKeys(Keys.BACK_SPACE);
-        }
+        webElement.sendKeys(Keys.chord(Keys.CONTROL,"a"), Keys.DELETE);
         webElement.clear();
     }
 
