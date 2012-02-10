@@ -113,6 +113,7 @@
 							<div id="link_menu">
 							  <ul>
 							 	<li><a href="index.html">Test Results</a></li>
+                                <li><a href="treemap.html">Tree Map</a></li>
                                 <li><a href="dashboard.html">Progress</a></li>
                                 <li><a href="#" class="selected">History</a></li>
 							  </ul>

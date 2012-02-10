@@ -51,6 +51,10 @@ public class StatisticsListener implements StepListener {
     }
 
     @Override
+    public void lastStepFailed(StepFailure failure) {
+    }
+
+    @Override
     public void stepIgnored() {
     }
 

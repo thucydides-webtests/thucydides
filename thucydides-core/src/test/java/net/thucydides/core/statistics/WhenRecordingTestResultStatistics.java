@@ -28,6 +28,9 @@ public class WhenRecordingTestResultStatistics {
     TestOutcome testOutcome;
 
     @Mock
+    TestOutcome anotherTestOutcome;
+
+    @Mock
     SystemClock clock;
 
     TestStatisticsDAO testStatisticsDAO;
@@ -55,9 +58,9 @@ public class WhenRecordingTestResultStatistics {
         when(testOutcome.getResult()).thenReturn(TestResult.SUCCESS);
 
         statisticsListener.testFinished(testOutcome);
-        
+
         List<TestOutcomeHistory> storedTestOutcomeHistories = testStatistics.getTestHistories();
-        
+
         assertThat(storedTestOutcomeHistories.size(), is(1));
     }
 
@@ -78,13 +81,14 @@ public class WhenRecordingTestResultStatistics {
 
     @Test
     public void should_be_able_to_find_the_average_number_of_failures_for_a_test() {
-    }
+        when(testOutcome.getResult()).thenReturn(TestResult.SUCCESS);
 
+        statisticsListener.testFinished(testOutcome);
+
+    }
 
     @Test
-    public void should_be_able_to_find_the_mean_time_beween_failures_for_a_test() {
+    public void should_be_able_to_find_the_average_number_of_failures_for_a_story() {
 
     }
-
-
 }

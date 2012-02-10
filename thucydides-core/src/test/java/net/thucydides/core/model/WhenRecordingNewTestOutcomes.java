@@ -384,6 +384,13 @@ public class WhenRecordingNewTestOutcomes {
         assertThat(testOutcome.isSuccess(), is(true));
     }
 
+    @Test
+    public void a_test_case_with_no_steps_should_be_considered_pending() {
+        assertThat(testOutcome.getResult(), is(PENDING));
+        assertThat(testOutcome.isSuccess(), is(false));
+        assertThat(testOutcome.isPending(), is(true));
+
+    }
 
     @Test
     public void should_list_screenshots_in_steps() {
@@ -474,9 +481,9 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     @Test
-    public void the_acceptance_test_case_is_considered_successful_if_has_no_steps_and_is_not_pending() {
+    public void the_acceptance_test_case_is_considered_pending_if_has_no_steps() {
 
-        assertThat(testOutcome.getResult(), is(SUCCESS));
+        assertThat(testOutcome.getResult(), is(PENDING));
     }
 
     @Test
@@ -602,6 +609,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASkippedTestStepCalled("Step 9"));
 
         assertThat(testOutcome.getSkippedCount(), is(4));
+        assertThat(testOutcome.getSkippedOrIgnoredCount(), is(5));
     }
 
     @Test

@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
@@ -371,5 +372,21 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         reporter.setOutputDirectory(new File("target/thucyidides"));
         reporter.generateReportFor(testOutcome);
     }
+
+    @Test
+    public void should_display_the_number_of_()  throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("search_for_cats", SomeTestScenario.class);
+
+        recordStepWithScreenshot(testOutcome, "Search cats on Google", "google_page_1.png");
+        recordStepWithScreenshot(testOutcome, "View the results", "google_page_2.png");
+        recordStepWithScreenshot(testOutcome, "Display a resulting page", "google_page_3.png");
+
+        reporter.generateReportFor(testOutcome);
+
+        File screenshotReport = new File(outputDirectory, "a_user_story_search_for_cats_screenshots.html");
+        String reportContents = FileUtils.readFileToString(screenshotReport);
+        assertThat(reportContents, is(notNullValue()));
+    }
+
 
 }

@@ -75,25 +75,26 @@
                     <table width="980" height="50" border="0">
                         <tr>
                             <td width="10">&nbsp;</td>
-                            <td width="500" class="greentext">Stories</td>
-                            <td width="80" class="greentext">Tests</td>
-                            <td width="80" class="greentext">Failed</td>
-                            <td width="80" class="greentext">Pending</td>
+                            <td width="440" class="greentext">Stories</td>
+                            <td width="75" class="greentext">Tests</td>
+                            <td width="75" class="greentext">Failed</td>
+                            <td width="75" class="greentext">Pending</td>
+                            <td width="75" class="greentext">Skipped</td>
                             <td width="200" class="greentext">Coverage</td>
                         </tr>
                     </table>
                 </div>
 
                 <#foreach story in stories>
-                    <#if story.result == "FAILURE">
+                    <#if story.result == "PENDING" || story.result == "IGNORED">
+                        <#assign story_outcome_icon = "pending.png">
+                        <#assign story_outcome_text = "pending-color">
+                    <#elseif story.result == "FAILURE">
                         <#assign story_outcome_icon = "fail.png">
                         <#assign story_outcome_text = "failing-color">
                     <#elseif story.result == "SUCCESS">
                         <#assign story_outcome_icon = "success.png">
                         <#assign story_outcome_text = "success-color">
-                    <#elseif story.result == "PENDING">
-                        <#assign story_outcome_icon = "pending.png">
-                        <#assign story_outcome_text = "pending-color">
                     <#else>
                         <#assign story_outcome_icon = "ignor.png">
                         <#assign story_outcome_text = "ignore-color">
@@ -102,7 +103,7 @@
                         <table border="0" height="40" width="980">
                             <tr>
                                 <td width="10">&nbsp;</td>
-                                <td width="500" class="bluetext">
+                                <td width="440" class="bluetext">
 
                                     <ul id="accordion">
                                         <li>
@@ -112,19 +113,19 @@
                                         <li>
                                             <div>
                                                 <img src="images/${story_outcome_icon}" class="summary-icon"/>
-                                                <span class="${story.result}-text">${story.title}<span class="related-issues">${story.formattedIssues}</span></span>
+                                                <span class="${story.result}-text"><a href="${story.reportName}.html">${story.title}</a><span class="related-issues">${story.formattedIssues}</span></span>
                                             </div>
                                             <ul>
                                                 <#foreach testOutcome in story.testOutcomes>
-                                                    <#if testOutcome.result == "FAILURE">
+                                                    <#if testOutcome.result == "PENDING" || testOutcome.result == "IGNORED" || testOutcome.stepCount == 0>
+                                                        <#assign outcome_icon = "pending.png">
+                                                        <#assign outcome_text = "pending-color">
+                                                    <#elseif testOutcome.result == "FAILURE">
                                                         <#assign outcome_icon = "fail.png">
                                                         <#assign outcome_text = "failing-color">
                                                     <#elseif testOutcome.result == "SUCCESS">
                                                         <#assign outcome_icon = "success.png">
                                                         <#assign outcome_text = "success-color">
-                                                    <#elseif testOutcome.result == "PENDING">
-                                                        <#assign outcome_icon = "pending.png">
-                                                        <#assign outcome_text = "pending-color">
                                                     <#else>
                                                         <#assign outcome_icon = "ignor.png">
                                                         <#assign outcome_text = "ignore-color">
@@ -139,9 +140,10 @@
 
                                     </ul>
                                 </td>
-                                <td width="80" class="bluetext">${story.total}</td>
-                                <td width="80" class="redtext"><span class="lightgreentext">${story.failureCount}</span></td>
-                                <td width="80" class="lightgreentext">${story.pendingCount}</td>
+                                <td width="75" class="bluetext">${story.total}</td>
+                                <td width="75" class="redtext"><span class="lightgreentext">${story.failureCount}</span></td>
+                                <td width="75" class="lightgreentext">${story.pendingCount}</td>
+                                <td width="75" class="lightgreentext">${story.skipCount}</td>
                                 <td width="200" class="lightgreentext">
 
                                     <#assign redbar = (1-story.percentPendingCoverage)*150>
@@ -154,7 +156,7 @@
                                             <td width="50px">${passing}</td>
                                             <td width="150px">
                                                 <a href="${story.reportName}.html">
-                                                  <div class="percentagebar" title="${pending} pending">
+                                                  <div class="percentagebar" title="${pending} pending" style="width: 150px;">
                                                     <div class="failingbar" style="width: ${redbar}px;"  title="${failing} failing">
                                                         <div class="passingbar" style="width: ${greenbar}px;" title="${passing} passing">
                                                     </div>
@@ -179,15 +181,14 @@
 </body>
 </html>
 <SCRIPT>
-    $("${hash}accordion > li > div").click(function() {
+    $("#accordion > li > div > img").click(function() {
 
-
-        if (false == $(this).next().is(':visible')) {
-            $('${hash}accordion ul').slideUp(300);
+        if (false == $(this).parent().next().is(':visible')) {
+            $('#accordion ul').slideUp(300);
         }
-        $(this).next().slideToggle(300);
+        $(this).parent().next().slideToggle(300);
     });
 
-    $('${hash}accordion ul:eq(0)').show();
+    $('#accordion ul:eq(0)').show();
 
 </SCRIPT>

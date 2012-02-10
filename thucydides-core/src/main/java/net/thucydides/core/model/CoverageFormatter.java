@@ -27,6 +27,5 @@ public class CoverageFormatter {
     public String getPercentPendingCoverage() {
         return formatter.percentage(pending,1);
     }
-
 }
 

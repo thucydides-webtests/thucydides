@@ -177,6 +177,23 @@ public class WhenTallyingTestStepResults {
         assertThat(stepListener.aStepHasFailed(), is(true));
     }
 
+
+    @Test
+    public void step_failures_can_be_raised_after_the_last_step() {
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        stepListener.testSuiteStarted(MyTestCase.class);
+        stepListener.testStarted("app_should_work");
+
+        stepListener.stepStarted(ExecutedStepDescription.withTitle("A test"));
+        stepListener.stepFinished();
+
+        StepFailure failure = new StepFailure(ExecutedStepDescription.withTitle("Oops!"), new AssertionError());
+        stepListener.lastStepFailed(failure);
+        assertThat(stepListener.aStepHasFailed(), is(true));
+    }
+
+
+
     @Test
     public void test_failures_should_be_reset_at_the_start_of_each_test_case() {
         BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);

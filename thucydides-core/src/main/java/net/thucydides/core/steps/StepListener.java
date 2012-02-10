@@ -63,7 +63,10 @@ public interface StepListener {
      */
     void stepFailed(final StepFailure failure);
 
-    //void takeScreenshot();
+    /**
+     * Declare that a step has failed after it has finished.
+     */
+    void lastStepFailed(StepFailure failure);
 
     /**
      * Called when a step will not be run, generally because a test method is annotated

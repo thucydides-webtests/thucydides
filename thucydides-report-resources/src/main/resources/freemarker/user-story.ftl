@@ -49,7 +49,19 @@ a:active {
     </div>
     <div class="clr"></div>
     
-    <#if story.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">    <#elseif story.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">    <#elseif story.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">    <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">    </#if>
+    <#if story.result == "FAILURE">
+        <#assign outcome_icon = "fail.png">
+        <#assign outcome_text = "failing-color">
+    <#elseif story.result == "SUCCESS">
+        <#assign outcome_icon = "success.png">
+        <#assign outcome_text = "success-color">
+    <#elseif story.result == "PENDING">
+        <#assign outcome_icon = "pending.png">
+        <#assign outcome_text = "pending-color">
+    <#else>
+        <#assign outcome_icon = "ignor.png">
+        <#assign outcome_text = "ignore-color">
+    </#if>
     
     <div id="contentbody">
       <div class="titlebar">
@@ -59,7 +71,24 @@ a:active {
                 <tr>
                     <td width="25px" valign="center" height="72px"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25px" height="25px" /></td>
                     <td width="%"><span class="test-case-title"><span class="${outcome_text}">${story.titleWithLinks}<span class="related-issues">${story.formattedIssues}</span></span></span></td>
-                    <td width="75px"><span class="test-case-duration"><span class="greentext">${story.duration / 1000} seconds</span></span></td>
+                    <td width="150px" class="story-coverage">
+                        <div>
+                            <#assign redbar = (1-story.percentPendingCoverage)*150>
+                            <#assign greenbar = story.percentPassingCoverage*150>
+                            <#assign passing = story.formatted.percentPassingCoverage>
+                            <#assign failing = story.formatted.percentFailingCoverage>
+                            <#assign pending = story.formatted.percentPendingCoverage>
+                            <div class="percentagebar" title="${pending} pending" style="width: 150px;">
+                                <div class="failingbar" style="width: ${redbar}px;"  title="${failing} failing">
+                                    <div class="passingbar" style="width: ${greenbar}px;" title="${passing} passing"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="test-case-duration"><span class="greentext">${story.duration / 1000} seconds</span></span>
+                        </div>
+                    </td>
+
                 </tr>
             </table>
         </div>
@@ -87,12 +116,23 @@ a:active {
 </table>
 </div>
 
-<#foreach testOutcome in story.testOutcomes>    <#if testOutcome.result == "FAILURE"><#assign testrun_outcome_icon = "fail.png">    <#elseif testOutcome.result == "SUCCESS"><#assign testrun_outcome_icon = "success.png">    <#elseif testOutcome.result == "PENDING"><#assign testrun_outcome_icon = "pending.png">    <#else><#assign testrun_outcome_icon = "ignor.png">    </#if>    <div class="tablerow">
+<#foreach testOutcome in story.testOutcomes>
+    <#if testOutcome.stepCount == 0 || testOutcome.result == "PENDING" || testOutcome.result == "IGNORED">
+        <#assign testrun_outcome_icon = "pending.png">
+    <#elseif testOutcome.result == "FAILURE">
+        <#assign testrun_outcome_icon = "fail.png">
+    <#elseif testOutcome.result == "SUCCESS">
+        <#assign testrun_outcome_icon = "success.png">
+    <#else>
+        <#assign testrun_outcome_icon = "ignor.png">
+    </#if>
+    <div class="tablerow">
       <table border="0" height="40" width="980" >
       <tr class="test-${testOutcome.result}">
-        <td width="35"><img src="images/${testrun_outcome_icon}" class="outcome-icon"/></td>
-        <td width="%" class="bluetext"><a href="${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a></td>
-        <td width="80" class="lightgreentext">${testOutcome.stepCount}</td>
+        <td width="35"><img src="images/${testrun_outcome_icon}" class="summary-icon"/></td>
+        <td width="%" class="${testOutcome.result}-text"><a href="${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a></td>
+
+        <td width="80" class="lightgreentext"><b>${testOutcome.stepCount}</b></td>
         <td width="80" class="redtext">${testOutcome.failureCount}</td>
         <td width="80" class="bluetext">${testOutcome.pendingCount}</td>
         <td width="80" class="bluetext">${testOutcome.skippedCount}</td>

@@ -10,6 +10,8 @@ import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.screenshots.RecordedScreenshot;
+import net.thucydides.core.steps.StepFailure;
+import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -407,6 +409,18 @@ public class TestOutcome {
 
     }
 
+    public TestStep getLastStep() {
+        checkState(!testSteps.isEmpty());
+
+        if (!inGroup()) {
+            return lastStepIn(testSteps);
+        } else {
+            TestStep currentStepGroup = groupStack.peek();
+            return lastStepIn(currentStepGroup.getChildren());
+        }
+
+    }
+
     private TestStep lastStepIn(final List<TestStep> testSteps) {
         return testSteps.get(testSteps.size() - 1);
     }
@@ -508,6 +522,12 @@ public class TestOutcome {
         issues().add(issue);
     }
 
+    public void lastStepFailedWith(StepFailure failure) {
+        setTestFailureCause(failure.getException());
+        TestStep lastTestStep = testSteps.get(testSteps.size() - 1);
+        lastTestStep.failedWith(new StepFailureException(failure.getMessage(), failure.getException()));
+    }
+
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {
             return step.getResult();
@@ -530,6 +550,10 @@ public class TestOutcome {
     public Integer getFailureCount() {
         List<TestStep> allTestSteps = getLeafTestSteps();
         return select(allTestSteps, having(on(TestStep.class).isFailure())).size();
+    }
+
+    public Integer getSkippedOrIgnoredCount() {
+        return getIgnoredCount() + getSkippedCount();
     }
 
     public Integer getIgnoredCount() {
@@ -555,7 +579,7 @@ public class TestOutcome {
     }
 
     public Boolean isPending() {
-        return (getResult() == PENDING);
+        return ((getResult() == PENDING) || (getStepCount() == 0));
     }
 
     public Boolean isSkipped() {

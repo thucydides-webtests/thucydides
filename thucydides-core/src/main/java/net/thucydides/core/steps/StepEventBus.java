@@ -254,6 +254,16 @@ public class StepEventBus {
         stepFailed = true;
     }
 
+    public void lastStepFailed(final StepFailure failure) {
+
+        getResultTally().logFailure(failure);
+
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.stepFailed(failure);
+        }
+        stepFailed = true;
+    }
+
     public void stepIgnored() {
 
         stepDone();

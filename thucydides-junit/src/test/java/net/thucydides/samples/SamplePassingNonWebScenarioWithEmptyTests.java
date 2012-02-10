@@ -28,3 +28,4 @@ public class SamplePassingNonWebScenarioWithEmptyTests {
     @Test
     public void edge_case_2() {}
 }
+

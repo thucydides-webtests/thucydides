@@ -32,7 +32,7 @@ public class WhenEvaluatingOverallResults {
     @Parameters
     public static Collection<Object[]> testData() {
         return Arrays.asList(new Object[][] {
-                { Collections.emptyList(),                  SUCCESS },
+                { Collections.emptyList(),                  PENDING },
                 { Arrays.asList(SUCCESS),                   SUCCESS },
                 { Arrays.asList(SUCCESS, SUCCESS),          SUCCESS },
                 { Arrays.asList(SUCCESS, SUCCESS, SUCCESS), SUCCESS },

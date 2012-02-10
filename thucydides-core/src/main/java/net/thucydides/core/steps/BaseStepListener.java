@@ -306,6 +306,13 @@ public class BaseStepListener implements StepListener, StepPublisher {
         currentStepDone();
     }
 
+    public void lastStepFailed(StepFailure failure) {
+        LOGGER.debug("last step failed: " + failure);
+        takeScreenshotFor(FAILURE);
+        getCurrentTestOutcome().lastStepFailedWith(failure);
+    }
+
+
     private void recordFailureDetailsInFailingTestStep(final StepFailure failure) {
         getCurrentStep().failedWith(new StepFailureException(failure.getMessage(), failure.getException()));
     }

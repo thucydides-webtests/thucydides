@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
@@ -87,6 +88,54 @@ public class WhenAggregatingStoryResults {
         assertThat(userStoriesResultSet.getFailureCount(), is(6));
     }
 
+    @Test
+    public void should_count_overall_steps() {
+        UserStoriesResultSet userStoriesResultSet = new UserStoriesResultSet(storyResults);
+
+        assertThat(userStoriesResultSet.getTotalStepCount(), is(300));
+    }
+
+    @Test
+    public void should_count_steps_in_passing_tests() {
+        UserStoriesResultSet userStoriesResultSet = new UserStoriesResultSet(storyResults);
+
+        assertThat(userStoriesResultSet.getPassingStepCount(), is(195));
+    }
+
+    @Test
+    public void should_count_percentage_steps_in_failing_tests() {
+        UserStoriesResultSet userStoriesResultSet = new UserStoriesResultSet(storyResults);
+
+        assertThat(userStoriesResultSet.getPercentageFailingStepCount(), is(0.2));
+    }
+
+    @Test
+    public void should_count_percentage_steps_in_passing_tests() {
+        UserStoriesResultSet userStoriesResultSet = new UserStoriesResultSet(storyResults);
+
+        assertThat(userStoriesResultSet.getPercentagePassingStepCount(), is(0.65));
+    }
+
+    @Test
+    public void should_count_percentage_steps_in_pending_tests() {
+        UserStoriesResultSet userStoriesResultSet = new UserStoriesResultSet(storyResults);
+
+        assertThat(userStoriesResultSet.getPercentagePendingStepCount(), is(0.15));
+    }
+
+    @Test
+    public void should_format_percentage_steps() {
+        UserStoriesResultSet userStoriesResultSet = new UserStoriesResultSet(storyResults);
+
+        assertThat(userStoriesResultSet.getFormatted().getPercentFailingCoverage(), is("20%"));
+    }
+
+    @Test
+    public void should_count_steps_in_failing_tests() {
+        UserStoriesResultSet userStoriesResultSet = new UserStoriesResultSet(storyResults);
+
+        assertThat(userStoriesResultSet.getFailingStepCount(), is(60));
+    }
 
     private StoryTestResults mockStoryTestResults(Class<?> storyClass,
                                               Integer stepCount,
@@ -101,6 +150,10 @@ public class WhenAggregatingStoryResults {
         when(story.getSuccessCount()).thenReturn(passingCount);
         when(story.getFailureCount()).thenReturn(failingCount);
         when(story.getPendingCount()).thenReturn(pendingCount);
+        when(story.getEstimatedTotalStepCount()).thenReturn(100);
+        when(story.countStepsInFailingTests()).thenReturn(20);
+        when(story.countStepsInSuccessfulTests()).thenReturn(65);
+        when(story.countStepsInSkippedTests()).thenReturn(10);
 
 
         List<TestOutcome> mockOutcomes = mockSomeTestOutcomes(passingCount,pendingCount,failingCount);

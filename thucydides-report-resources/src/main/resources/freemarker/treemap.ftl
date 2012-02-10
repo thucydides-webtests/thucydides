@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Home</title>
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="favicon.ico" >
     <style type="text/css">
         <!--
         @import url("css/core.css");
@@ -28,18 +28,17 @@
     }
     </style>
 
-    <!-- CSS Files -->
-    <link type="text/css" href="jit/css/base.css" rel="stylesheet"/>
-    <link type="text/css" href="jit/css/Treemap.css" rel="stylesheet"/>
+	<!-- CSS Files -->
+	<link type="text/css" href="jit/css/base.css" rel="stylesheet" />
+	<link type="text/css" href="jit/css/Treemap.css" rel="stylesheet" />
 
-    <!--[if IE]>
-    <script language="javascript" type="text/javascript" src="jit/Extras/excanvas.js"></script><![endif]-->
+	<!--[if IE]><script language="javascript" type="text/javascript" src="jit/Extras/excanvas.js"></script><![endif]-->
 
-    <!-- JIT Library File -->
-    <script language="javascript" type="text/javascript" src="jit/jit.js"></script>
+	<!-- JIT Library File -->
+	<script language="javascript" type="text/javascript" src="jit/jit.js"></script>
 
-    <!-- Data File -->
-    <script language="javascript" type="text/javascript" src="progress.js"></script>
+	<!-- Data File -->
+	<script language="javascript" type="text/javascript" src="coverage.js"></script>
 
 
 </head>
@@ -77,7 +76,7 @@
     <div id="contentbody">
         <div class="titlebar">
             <div class="leftbgm"></div>
-            <div class="middlebgm"><span class="orangetext">Overview - Progress</span></div>
+            <div class="middlebgm"><span class="orangetext">Overview - Test Results</span></div>
             <div class="rightbgm"></div>
         </div>
     </div>
@@ -89,31 +88,33 @@
             <div class="table">
                 <div class="middlb">
                     <div class="table">
-                        <table border="0">
-                            <tr>
-                                <td>
-                                    <div id="graph">
-                                        <div class="legend-zone">
-                                            <div id="progress-gradient" class="legend">
-                                                <div class="legend-minimum">Planned</div>
-                                                <div class="legend-maximum">Done</div>
-                                            </div>
-                                        </div>
-                                        <div id="infovis" class="result-graph"></div>
-                                    </div>
-                                </td>
-                                <td class="graphlinks">
-                                    <div id="link_menu">
-                                        <ul>
-                                            <li><a href="index.html">Test Results</a></li>
-                                            <li><a href="treemap.html">Tree Map</a></li>
-                                            <li><a href="#" class="selected">Progress</a></li>
-                                            <li><a href="history.html">History</a></li>
-                                          </ul>
-                                    </div>
-                                </td>
-                            <tr>
-                        </table>
+
+	 				 <table border="0">
+					  <tr>
+					   <td>
+						 <div id="graph">
+                            <div class="legend-zone">
+                              <div id="result-gradient" class="legend">
+                                <div class="dark-legend-minimum">Failing</div>
+                                <div class="dark-legend-center">Pending</div>
+                                <div class="dark-legend-maximum">Passing</div>
+                              </div>
+                              <div id="infovis" class="result-graph"></div>
+                            </div>
+                          </div>
+					   </td>
+					   <td class="graphlinks">
+							<div id="link_menu">
+							  <ul>
+                                  <li><a href="index.html">Test Results</a></li>
+                                  <li><a href="#" class="selected">Tree Map</a></li>
+                                  <li><a href="dashboard.html">Progress</a></li>
+                                  <li><a href="history.html">History</a></li>
+							  </ul>
+						     </div>
+                       </td>
+					  <tr>
+					 </table>
                     </div>
                 </div>
             </div>

@@ -19,6 +19,7 @@ import static org.easyb.util.BehaviorStepType.GIVEN
 import static org.easyb.util.BehaviorStepType.SCENARIO
 import static org.easyb.util.BehaviorStepType.THEN
 import static org.easyb.util.BehaviorStepType.WHEN
+import net.thucydides.core.model.TestResult
 
 class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
 
@@ -92,7 +93,13 @@ class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
         LOGGER.debug("GOT RESULT $result")
         if (StepEventBus.eventBus.areStepsRunning()) {
             notifyStepListenerUsingEasybResult(result)
+        } else if (result == TestResult.FAILURE) {
+            notifyStepListenerThatTheLastStepFailed(result)
         }
+    }
+
+    private def notifyStepListenerThatTheLastStepFailed(Result result) {
+        StepEventBus.eventBus.lastStepFailed(new StepFailure(withTitle(result.cause.message), result.cause));
     }
 
     private def notifyStepListenerUsingEasybResult(Result result) {

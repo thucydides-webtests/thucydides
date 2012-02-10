@@ -43,6 +43,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final String COVERAGE_DATA_TEMPLATE_PATH = "freemarker/coverage.ftl";
     private static final String PROGRESS_DATA_TEMPLATE_PATH = "freemarker/progress.ftl";
     private static final String HOME_TEMPLATE_PATH = "freemarker/index.ftl";
+    private static final String TREEMAP_TEMPLATE_PATH = "freemarker/treemap.ftl";
     private static final String DASHBOARD_TEMPLATE_PATH = "freemarker/dashboard.ftl";
     private FeatureLoader featureLoader;
     private UserStoryLoader storyLoader;
@@ -187,6 +188,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         LOGGER.debug("Generating report pages");
         generateReportPage(context, HOME_TEMPLATE_PATH, "index.html");
+        generateReportPage(context, TREEMAP_TEMPLATE_PATH, "treemap.html");
         generateReportPage(context, DASHBOARD_TEMPLATE_PATH, "dashboard.html");
 
         LOGGER.debug("Generating coverage data");

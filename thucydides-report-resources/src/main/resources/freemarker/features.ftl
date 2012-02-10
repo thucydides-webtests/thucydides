@@ -75,11 +75,12 @@
                     <table width="980" height="50" border="0">
                         <tr>
                             <td width="10">&nbsp;</td>
-                            <td width="500" class="bluetext">Features</td>
-                            <td width="60" class="greentext">Stories</td>
-                            <td width="60" class="greentext">Total tests</td>
-                            <td width="60" class="greentext">Failed tests</td>
-                            <td width="60" class="greentext">Pending tests</td>
+                            <td width="415" class="bluetext">Features</td>
+                            <td width="65" class="greentext">Stories</td>
+                            <td width="65" class="greentext">Tests</td>
+                            <td width="65" class="greentext">Failed</td>
+                            <td width="65" class="greentext">Pending</td>
+                            <td width="65" class="greentext">Skipped</td>
                             <td width="200" class="greentext">Coverage</td>
                         </tr>
                     </table>
@@ -94,7 +95,7 @@
                             <#elseif featureResult.result == "SUCCESS">
                                 <#assign outcome_icon = "success.png">
                                 <#assign outcome_text = "success-color">
-                            <#elseif featureResult.result == "PENDING">
+                            <#elseif featureResult.result == "PENDING" || featureResult.result == "IGNORED" >
                                 <#assign outcome_icon = "pending.png">
                                 <#assign outcome_text = "pending-color">
                             <#else>
@@ -115,6 +116,7 @@
                             <td width="60" class="bluetext">${featureResult.totalTests}</td>
                             <td width="60" class="redtext">${featureResult.failingTests}</td>
                             <td width="60" class="lightgreentext">${featureResult.pendingTests}</td>
+                            <td width="60" class="lightgreentext">${featureResult.skippedTests}</td>
                             <td width="200" class="lightgreentext">
                                     <#assign redbar = (1-featureResult.percentPendingCoverage)*150>
                                     <#assign greenbar = featureResult.percentPassingCoverage*150>

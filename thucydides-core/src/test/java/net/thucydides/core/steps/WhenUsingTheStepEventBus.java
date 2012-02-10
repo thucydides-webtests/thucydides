@@ -359,6 +359,30 @@ public class WhenUsingTheStepEventBus {
     }
 
     @Test
+    public void should_be_able_to_record_step_failures_after_a_step_ends() {
+        SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
+
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
+        steps.step1();
+        steps.step2();
+
+        StepFailure failure = new StepFailure(ExecutedStepDescription.withTitle("Oops!"), new AssertionError());
+
+        StepEventBus.getEventBus().lastStepFailed(failure);
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        String expectedSteps =
+                "TEST a_test\n"
+                        + "-step1\n"
+                        + "---> STEP DONE\n"
+                        + "-step2\n"
+                        + "---> STEP DONE\n"
+                        + "--> STEP FAILED\n"
+                        + "TEST DONE\n";
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
+    }
+
+    @Test
     public void should_record_pending_steps() {
         SimpleTestScenarioSteps steps = factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 

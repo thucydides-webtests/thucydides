@@ -42,6 +42,11 @@ public class SampleStepListener implements StepListener {
         
     }
 
+    @Override
+    public void lastStepFailed(StepFailure failure) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void stepIgnored() {
         
     }

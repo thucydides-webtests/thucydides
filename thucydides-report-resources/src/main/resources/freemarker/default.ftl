@@ -153,7 +153,7 @@
                             <td width="40"><img style="margin-left: ${step_indent}px; margin-right: 5px;"
                                                 src="images/${step_outcome_icon}" class="${step_class_root}-icon"/></td>
                             <td width="%"><span class="${step_class_root}-step">${step.description}</span></td>
-                            <td width="100" class="bluetext">
+                            <td width="100" class="${step.result}-text">
                                 <#if !step.isAGroup() && step.firstScreenshot??>
                                     <a href="${testOutcome.screenshotReportName}.html#screenshots">
                                         <img src="${step.firstScreenshot.screenshot.name}"
