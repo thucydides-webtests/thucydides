@@ -5378,7 +5378,7 @@ Graph.Op = {
             
             case 'fade:con':
                 that = this;
-                //set alpha to 0 for nodes to remove. Tag them for being ignored on computing positions.
+                //set alpha to 0 for nodes to remove. TestRunTag them for being ignored on computing positions.
                 for(i=0; i<n.length; i++) {
                     nodeObj = viz.graph.getNode(n[i]);
                     nodeObj.setData('alpha', 0, 'end');
@@ -5479,7 +5479,7 @@ Graph.Op = {
             
             case 'fade:con':
                 that = this;
-                //set alpha to 0 for nodes to remove. Tag them for being ignored when computing positions.
+                //set alpha to 0 for nodes to remove. TestRunTag them for being ignored when computing positions.
                 for(i=0; i<v.length; i++) {
                     adj = viz.graph.getAdjacence(v[i][0], v[i][1]);
                     if(adj) {

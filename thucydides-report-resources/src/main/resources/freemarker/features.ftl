@@ -139,7 +139,8 @@
                                     </table>
                              </td>
                         </tr>
-                        </#foreach>                    </table>
+                        </#foreach>
+                    </table>
                 </div>
             </div>
         </div>

@@ -461,6 +461,10 @@ public class TestOutcome {
         return allIssues;
     }
 
+    public Class<?> getTestCase() {
+        return testCase;
+    }
+
     private boolean thereAre(Set<String> anyIssues) {
         return ((anyIssues != null) && (!anyIssues.isEmpty()));
     }

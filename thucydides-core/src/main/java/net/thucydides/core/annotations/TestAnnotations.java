@@ -1,5 +1,6 @@
 package net.thucydides.core.annotations;
 
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.reports.html.Formatter;
 
 import java.lang.annotation.Annotation;
@@ -188,6 +189,44 @@ public class TestAnnotations {
         if (getAnnotatedTitle(methodName) != null) {
             addIssuesFromTestScenarioName(methodName, issues);
         }
+    }
+
+    public List<WithTag> getTagsForMethod(String methodName) {
+
+        List<WithTag> allTags = new ArrayList<WithTag>(getTags());
+        allTags.addAll(getTagsFor(methodName));
+
+        return ImmutableList.copyOf(allTags);
+    }
+
+    public List<WithTag> getTags() {
+        List<WithTag> tags = new ArrayList<WithTag>();
+        addTags(tags, testClass.getAnnotation(WithTags.class));
+        addTag(tags, testClass.getAnnotation(WithTag.class));
+        return tags;
+    }
+
+    private void addTag(List<WithTag> tags, WithTag tag) {
+        if (tag != null) {
+            tags.add(tag);
+        }
+    }
+
+    private void addTags(List<WithTag> tags, WithTags tagSet) {
+        if (tagSet != null) {
+            tags.addAll(Arrays.asList(tagSet.value()));
+        }
+    }
+
+    public List<WithTag> getTagsFor(String methodName) {
+        List<WithTag> tags = new ArrayList<WithTag>();
+
+        Method testMethod = getMethodCalled(methodName);
+        if (testMethod != null) {
+            addTags(tags, testMethod.getAnnotation(WithTags.class));
+            addTag(tags, testMethod.getAnnotation(WithTag.class));
+        }
+        return tags;
     }
 
 }

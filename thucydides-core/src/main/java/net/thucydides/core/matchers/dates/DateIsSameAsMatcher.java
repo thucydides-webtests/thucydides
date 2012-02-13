@@ -16,8 +16,7 @@ class DateIsSameAsMatcher extends TypeSafeMatcher<Date> {
     }
 
     public boolean matchesSafely(Date date) {
-        DateTime provided = new DateTime(date);
-        return provided.isEqual(expectedDate);
+        return (DateComparator.sameDate(new DateTime(date), expectedDate));
     }
 
     public void describeTo(Description description) {

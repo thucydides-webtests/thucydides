@@ -1,5 +1,6 @@
 package net.thucydides.core.statistics.model;
 
+import com.google.common.collect.ImmutableSet;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import org.hibernate.annotations.Immutable;
@@ -7,7 +8,12 @@ import org.hibernate.annotations.Immutable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Immutable
@@ -21,6 +27,14 @@ public class TestRun {
     private TestResult result;
     private Date executionDate;
     private long duration;
+
+    @ManyToMany
+    @JoinTable(
+            name = "testrun_tags",
+            joinColumns = {@JoinColumn(name = "testrun_id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id")}
+    )
+    private Set<TestRunTag> tags = new HashSet<TestRunTag>();
 
     public TestRun() {}
 
@@ -45,6 +59,10 @@ public class TestRun {
 
     public long getDuration() {
         return duration;
+    }
+
+    public Set<TestRunTag> getTags() {
+        return tags;
     }
 
     public static TestRun from(final TestOutcome result) {

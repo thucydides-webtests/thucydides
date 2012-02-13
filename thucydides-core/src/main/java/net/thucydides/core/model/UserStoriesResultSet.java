@@ -1,5 +1,7 @@
 package net.thucydides.core.model;
 
+import com.google.common.collect.ImmutableList;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -17,6 +19,10 @@ public class UserStoriesResultSet {
         this.stories = stories;
     }
 
+    public List<StoryTestResults> getStories() {
+        return ImmutableList.copyOf(stories);
+    }
+    
     public int getStoryCount() {
         return stories.size();
     }

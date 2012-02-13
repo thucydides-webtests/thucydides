@@ -9,7 +9,7 @@
 
         <!-- Database connection settings -->
         <property name="connection.driver_class">net.sourceforge.jtds.jdbc.Driver</property>
-        <property name="connection.url">jdbc:hsqldb:file:testdb</property>
+        <property name="connection.url">jdbc:h2:~/thucydidesdb</property>
         <property name="connection.username">SA</property>
         <property name="connection.password"></property>
 

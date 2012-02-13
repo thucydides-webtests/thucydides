@@ -1,13 +1,12 @@
 package net.thucydides.core.webdriver.stubs;
 
-import com.google.common.collect.Sets;
-import net.thucydides.core.webdriver.WebDriverFacade;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.Logs;
 
 import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A description goes here.
@@ -63,6 +62,16 @@ public class OptionsStub implements WebDriver.Options {
     @Override
     public WebDriver.Window window() {
         return new WindowStub();
+    }
+
+    @Override
+    public Logs logs() {
+        return new Logs(){
+            @Override
+            public LogEntries get(String s) {
+                return null;
+            }
+        };
     }
 
 

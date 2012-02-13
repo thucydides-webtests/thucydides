@@ -80,6 +80,16 @@
             <div class="rightbgm"></div>
         </div>
     </div>
+
+    <div class="menu">
+        <ul>
+            <li><a href="index.html">Test Results</a></li>
+            <li><a href="#" class="current">Tree Map</a></li>
+            <li><a href="dashboard.html">Progress</a></li>
+            <li><a href="history.html">History</a></li>
+        </ul>
+        <br style="clear:left"/>
+    </div>
     <div class="clr"></div>
     <div id="beforetable"></div>
     <div id="contenttilttle">

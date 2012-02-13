@@ -148,6 +148,15 @@
             <div class="rightbgm"></div>
         </div>
     </div>
+    <div class="menu">
+        <ul>
+            <li><a href="#" class="current">Test Results</a></li>
+            <li><a href="treemap.html">Tree Map</a></li>
+            <li><a href="dashboard.html">Progress</a></li>
+            <li><a href="history.html">History</a></li>
+        </ul>
+        <br style="clear:left"/>
+    </div>
     <div class="clr"></div>
     <div id="beforetable"></div>
     <div id="contenttilttle">
@@ -159,18 +168,21 @@
 
                         <table border="0">
                             <tr>
-
-                                <td width="750px">
+                                <td width="375px">
                                     <table>
                                         <tr>
                                             <td>
                                                 <div class="bluetext"><strong>Coverage</strong></div>
                                             </td>
                                             <td width="250px">
-                                                <div class="percentagebar" title="${stories.formatted.percentPendingCoverage} pending">
-                                                    <div class="failingbar" style="width: 100px;" title="${stories.formatted.percentFailingCoverage}% failing">
-                                                        <div class="passingbar" style="width: 20px;"
-                                                             title="${stories.formatted.percentPassingCoverage}% passing"></div>
+                                                <#assign redbar = (1-stories.percentagePendingStepCount)*250>
+                                                <#assign greenbar = stories.percentagePassingStepCount*250>
+                                                <#assign passing = stories.percentagePassingStepCount*250>
+                                                <#assign failing = stories.percentageFailingStepCount*250>
+                                                <#assign pending = stories.percentagePendingStepCount*250>
+                                                <div class="percentagebar" title="${stories.formatted.percentPendingCoverage}% pending steps" style="width: 250px;">
+                                                    <div class="failingbar" style="width: ${redbar}px;" title="${stories.formatted.percentFailingCoverage}% failing steps">
+                                                        <div class="passingbar" style="width: ${greenbar}px;" title="${stories.formatted.percentPassingCoverage}% passing steps"></div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -194,17 +206,113 @@
                                         </tr>
                                     </table>
                                 </td>
+                                <td width="25px">&nbsp;</td>
+                                <td width="625px" valign="top">
+                                    <table class="test-summary-table">
+                                        <tr>
+                                            <td colspan="3">
+                                                <div class="bluetext"><a href="features.html"><strong>Tested Features</strong></a></div>
+                                            </td>
+                                        </tr>
+                                        <#foreach featureResult in features>
+                                            <#if featureResult.result == "FAILURE">
+                                                <#assign outcome_icon = "fail.png">
+                                                <#assign outcome_text = "failing-color">
+                                            <#elseif featureResult.result == "SUCCESS">
+                                                <#assign outcome_icon = "success.png">
+                                                <#assign outcome_text = "success-color">
+                                            <#elseif featureResult.result == "PENDING" || featureResult.result == "IGNORED" >
+                                                <#assign outcome_icon = "pending.png">
+                                                <#assign outcome_text = "pending-color">
+                                            <#else>
+                                                <#assign outcome_icon = "ignor.png">
+                                                <#assign outcome_text = "ignore-color">
+                                            </#if>
+                                            <tr>
+                                                <td class="bluetext" witdh="100">
+                                                    <div>
+                                                        <img src="images/${outcome_icon}" class="summary-icon"/>
+                                                          <span class="${featureResult.result}-text">
+                                                            <a href="${featureResult.storyReportName}">${featureResult.feature.name}</a>
+                                                          </span>
+                                                    </div>
+                                                </td>
+                                                <td width="150px" class="lightgreentext">
+                                                    <#assign redbar = (1-featureResult.percentPendingCoverage)*150>
+                                                    <#assign greenbar = featureResult.percentPassingCoverage*150>
+                                                    <#assign passing = featureResult.formatted.percentPassingCoverage>
+                                                    <#assign failing = featureResult.formatted.percentFailingCoverage>
+                                                    <#assign pending = featureResult.formatted.percentPendingCoverage>
+                                                    <table>
+                                                        <tr>
+                                                            <td width="50px">${passing}</td>
+                                                            <td width="10px">
+                                                                <a href="${featureResult.storyReportName}">
+                                                                    <div class="percentagebar" title="${pending} pending" style="width: 150px;">
+                                                                        <div class="failingbar" style="width: ${redbar}px;"  title="${failing} failing">
+                                                                            <div class="passingbar" style="width: ${greenbar}px;" title="${passing} passing">
+                                                                            </div>
+                                                                        </div>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </#foreach>
+                                    </table>
 
-
-                                <td class="graphlinks">
-                                    <div id="link_menu">
-                                        <ul>
-                                            <li><a href="#" class="selected">Test Results</a></li>
-                                            <li><a href="treemap.html">Tree Map</a></li>
-                                            <li><a href="dashboard.html">Progress</a></li>
-                                            <li><a href="history.html">History</a></li>
-                                        </ul>
-                                    </div>
+                                    <table class="test-summary-table">
+                                        <tr>
+                                            <td colspan="3">
+                                                <div class="bluetext"><a href="stories.html"><strong>Tested Stories</strong></a></div>
+                                            </td>
+                                        </tr>
+                                        <#foreach story in stories.stories>
+                                            <#if story.result == "PENDING" || story.result == "IGNORED">
+                                                <#assign story_outcome_icon = "pending.png">
+                                                <#assign story_outcome_text = "pending-color">
+                                            <#elseif story.result == "FAILURE">
+                                                <#assign story_outcome_icon = "fail.png">
+                                                <#assign story_outcome_text = "failing-color">
+                                            <#elseif story.result == "SUCCESS">
+                                                <#assign story_outcome_icon = "success.png">
+                                                <#assign story_outcome_text = "success-color">
+                                            <#else>
+                                                <#assign story_outcome_icon = "ignor.png">
+                                                <#assign story_outcome_text = "ignore-color">
+                                            </#if>
+                                            <tr>
+                                                <td class="bluetext" witdh="100">
+                                                    <div>
+                                                        <img src="images/${story_outcome_icon}" class="summary-icon"/>
+                                                        <span class="${story.result}-text"><a href="${story.reportName}.html">${story.title}</a><span class="related-issues">${story.formattedIssues}</span></span>
+                                                    </div>
+                                                </td>
+                                                <td width="150px" class="lightgreentext">
+                                                    <#assign redbar = (1-story.percentPendingCoverage)*150>
+                                                    <#assign greenbar = story.percentPassingCoverage*150>
+                                                    <#assign passing = story.formatted.percentPassingCoverage>
+                                                    <#assign failing = story.formatted.percentFailingCoverage>
+                                                    <#assign pending = story.formatted.percentPendingCoverage>
+                                                    <table>
+                                                        <tr>
+                                                            <td width="50px">${passing}</td>
+                                                            <td width="150px">
+                                                                <a href="${story.reportName}.html">
+                                                                    <div class="percentagebar" title="${pending} pending" style="width: 150px;">
+                                                                        <div class="failingbar" style="width: ${redbar}px;"  title="${failing} failing">
+                                                                            <div class="passingbar" style="width: ${greenbar}px;" title="${passing} passing">
+                                                                            </div>
+                                                                        </div>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </#foreach>
+                                    </table>
                                 </td>
                             <tr>
                         </table>

@@ -636,3 +636,43 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
     padding: 5px;
     font-family:euphemia, verdana, sans-serif; font-size:14px; color: #0d78ae; font- font-weight:normal; font-size-adjust:inherit;
 }
+
+.test-summary-table {
+    border: 1px solid #BBB;
+    width: 525px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+
+.menu {
+    width: 99%;
+    background-color: #e0e2df;
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #0d78ae; font- font-weight:normal; font-size-adjust:inherit;
+}
+
+.menu ul{
+    margin: 0; padding: 0;
+    float: left;
+}
+
+.menu ul li{
+    display: inline;
+}
+
+.menu ul li a{
+    float: left; text-decoration: none;
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #0d78ae; font- font-weight:normal; font-size-adjust:inherit;
+    padding: 10.5px 11px;
+    background-color: #e0e2df;
+}
+
+.menu ul li a:hover{
+    color: #fff;
+    background-color:#0d92df;
+}
+
+.menu ul li .current{
+    color: #fff;
+    background-color:#0b75b2;
+}

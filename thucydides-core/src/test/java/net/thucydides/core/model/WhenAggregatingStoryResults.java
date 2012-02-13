@@ -63,6 +63,13 @@ public class WhenAggregatingStoryResults {
     }
 
     @Test
+    public void should_list_stories() {
+        UserStoriesResultSet userStoriesResultSet = new UserStoriesResultSet(storyResults);
+
+        assertThat(userStoriesResultSet.getStories().size(), is(3));
+    }
+
+    @Test
     public void should_count_total_tests() {
         UserStoriesResultSet userStoriesResultSet = new UserStoriesResultSet(storyResults);
 

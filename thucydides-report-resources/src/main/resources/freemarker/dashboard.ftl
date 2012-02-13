@@ -71,6 +71,8 @@
         </div>
         <div class="rightbg"></div>
     </div>
+
+
     <div class="clr"></div>
 
     <!--/* starts second table*/-->
@@ -81,6 +83,18 @@
             <div class="rightbgm"></div>
         </div>
     </div>
+
+    <div class="menu">
+        <ul>
+            <li><a href="index.html">Test Results</a></li>
+            <li><a href="treemap.html">Tree Map</a></li>
+            <li><a href="#" class="current">Progress</a></li>
+            <li><a href="history.html">History</a></li>
+        </ul>
+        <br style="clear:left"/>
+    </div>
+
+
     <div class="clr"></div>
     <div id="beforetable"></div>
     <div id="contenttilttle">
@@ -100,16 +114,6 @@
                                             </div>
                                         </div>
                                         <div id="infovis" class="result-graph"></div>
-                                    </div>
-                                </td>
-                                <td class="graphlinks">
-                                    <div id="link_menu">
-                                        <ul>
-                                            <li><a href="index.html">Test Results</a></li>
-                                            <li><a href="treemap.html">Tree Map</a></li>
-                                            <li><a href="#" class="selected">Progress</a></li>
-                                            <li><a href="history.html">History</a></li>
-                                          </ul>
                                     </div>
                                 </td>
                             <tr>

@@ -84,6 +84,7 @@
         </div>
         <div class="rightbg"></div>
     </div>
+
     <div class="clr"></div>
 
     <!--/* starts second table*/-->
@@ -93,6 +94,15 @@
             <div class="middlebgm"><span class="orangetext">Overview - History</span></div>
             <div class="rightbgm"></div>
         </div>
+    </div>
+    <div class="menu">
+        <ul>
+            <li><a href="index.html">Test Results</a></li>
+            <li><a href="treemap.html">Tree Map</a></li>
+            <li><a href="dashboard.html">Progress</a></li>
+            <li><a href="#" class="current">History</a></li>
+        </ul>
+        <br style="clear:left"/>
     </div>
     <div class="clr"></div>
     <div id="beforetable"></div>
@@ -109,16 +119,6 @@
 					     <td>
                            <div id='chart_div' style='width: 700px; height: 400px;'></div>
 					     </td>
-					     <td class="graphlinks">
-							<div id="link_menu">
-							  <ul>
-							 	<li><a href="index.html">Test Results</a></li>
-                                <li><a href="treemap.html">Tree Map</a></li>
-                                <li><a href="dashboard.html">Progress</a></li>
-                                <li><a href="#" class="selected">History</a></li>
-							  </ul>
-						     </div>
-                       </td>
 					  <tr>
 					 </table>
                     </div>

@@ -36,7 +36,7 @@ public class DateTimeCollectionContainsSameDatesMatcher  extends TypeSafeMatcher
 
     private boolean hasIdenticalDate(DateTime expectedDate, Collection<DateTime> dates) {
         for (DateTime date : dates) {
-            if (date.equals(expectedDate)) {
+            if (DateComparator.sameDate(date, expectedDate)) {
                 return true;
             }
         }
