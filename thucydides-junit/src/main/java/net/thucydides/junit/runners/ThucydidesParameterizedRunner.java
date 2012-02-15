@@ -134,7 +134,7 @@ public class ThucydidesParameterizedRunner extends Suite {
      * Only called reflectively. Do not use programmatically.
      */
     public ThucydidesParameterizedRunner(final Class<?> klass) throws Throwable {
-        this(klass, Injectors.getInjector().getInstance(Configuration.class), null);
+        this(klass, Injectors.getInjector().getInstance(Configuration.class), new WebDriverFactory());
     }
 
 //    private void overrideWebdriverFactoryIfProvided(final ThucydidesRunner runner,

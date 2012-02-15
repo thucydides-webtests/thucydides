@@ -547,13 +547,11 @@ public class TestOutcome {
     }
 
     public Integer getSuccessCount() {
-        List<TestStep> allTestSteps = getLeafTestSteps();
-        return select(allTestSteps, having(on(TestStep.class).isSuccessful())).size();
+        return count(getLeafTestSteps(), successfulSteps());
     }
 
     public Integer getFailureCount() {
-        List<TestStep> allTestSteps = getLeafTestSteps();
-        return select(allTestSteps, having(on(TestStep.class).isFailure())).size();
+        return count(getLeafTestSteps(), failingSteps());
     }
 
     public Integer getSkippedOrIgnoredCount() {
@@ -561,13 +559,11 @@ public class TestOutcome {
     }
 
     public Integer getIgnoredCount() {
-        List<TestStep> allTestSteps = getLeafTestSteps();
-        return select(allTestSteps, having(on(TestStep.class).isIgnored())).size();
+        return count(getLeafTestSteps(), ignoredSteps());
     }
 
     public Integer getSkippedCount() {
-        List<TestStep> allTestSteps = getLeafTestSteps();
-        return select(allTestSteps, having(on(TestStep.class).isSkipped())).size();
+        return count(getLeafTestSteps(), skippedSteps());
     }
 
     public Integer getPendingCount() {
@@ -611,6 +607,15 @@ public class TestOutcome {
         }
     }
 
+    int count(List<TestStep> steps, StepFilter filter) {
+        int count = 0;
+        for (TestStep step : steps) {
+            count = count + filter.apply(step);
+        }
+        return count;
+    }
+
+
     public Integer countTestSteps() {
         return countLeafStepsIn(testSteps);
     }
@@ -626,5 +631,43 @@ public class TestOutcome {
         }
         return leafCount;
     }
+    abstract class StepFilter {
+        abstract int apply(TestStep step);
+    }
 
+    StepFilter successfulSteps() {
+        return new StepFilter() {
+            @Override
+            int apply(TestStep step) {
+                return step.isSuccessful() ? 1 : 0;
+            }
+        };
+    }
+
+    StepFilter failingSteps() {
+        return new StepFilter() {
+            @Override
+            int apply(TestStep step) {
+                return step.isFailure() ? 1 : 0;
+            }
+        };
+    }
+
+    StepFilter ignoredSteps() {
+        return new StepFilter() {
+            @Override
+            int apply(TestStep step) {
+                return step.isIgnored() ? 1 : 0;
+            }
+        };
+    }
+
+    StepFilter skippedSteps() {
+        return new StepFilter() {
+            @Override
+            int apply(TestStep step) {
+                return step.isSkipped() ? 1 : 0;
+            }
+        };
+    }
 }

@@ -1,26 +1,10 @@
 package net.thucydides.core.matchers;
 
-import ch.lambdaj.Lambda;
-import ch.lambdaj.function.convert.Converter;
-import com.google.common.collect.ImmutableList;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.collections.ListUtils;
 import org.hamcrest.Matcher;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.join;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
@@ -44,6 +28,10 @@ public class BeanMatchers {
 
     public static BeanMatcher min(String fieldName, Matcher<? extends Comparable> valueMatcher) {
         return new MinFieldValueMatcher(fieldName, valueMatcher);
+    }
+
+    public static SimpleValueMatcher checkThat(final String value, final Matcher<? extends Object> matcher) {
+        return new SimpleValueMatcher(value, matcher);
     }
 
     public static class BeanConstraint {
