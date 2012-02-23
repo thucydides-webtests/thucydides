@@ -32,6 +32,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -48,6 +51,9 @@ public class WhenInstanciatingANewFirefoxDriver {
 
     @Mock
     FirefoxProfileEnhancer firefoxProfileEnhancer;
+
+    @Mock
+    FirefoxProfile profile;
 
     @Before
     public void createFactory() {
@@ -221,6 +227,39 @@ public class WhenInstanciatingANewFirefoxDriver {
         driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
 
         verify(firefoxProfileEnhancer).enableNativeEventsFor(any(FirefoxProfile.class));
+    }
+
+    @Test
+    public void should_allow_a_proxy_to_be_configured_using_system_properites() {
+        environmentVariables.setProperty("thucydides.proxy.http", "my.proxy");
+        environmentVariables.setProperty("thucydides.proxy.http_port", "8080");
+
+        WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
+        driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
+
+        verify(firefoxProfileEnhancer).activateProxy(any(FirefoxProfile.class), "my.proxy", "8080");
+    }
+
+    @Test
+    public void should_not_activate_the_proxy_if_proxy_system_property_not_set() {
+        environmentVariables.setProperty("thucydides.proxy.http", "");
+        environmentVariables.setProperty("thucydides.proxy.http_port", "");
+
+        WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
+        driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
+
+        verify(firefoxProfileEnhancer, never()).activateProxy(any(FirefoxProfile.class), anyString(), anyString());
+    }
+
+    @Test
+    public void should_set_firefox_preferences_to_activate_proxy() {
+        FirefoxProfileEnhancer enhancer = new FirefoxProfileEnhancer(environmentVariables);
+
+        enhancer.activateProxy(profile, "my.proxy","8080");
+
+        verify(profile).setPreference("network.proxy.http","my.proxy");
+        verify(profile).setPreference("network.proxy.http_port","8080");
+        verify(profile).setPreference("network.proxy.type","1");
     }
 
 }

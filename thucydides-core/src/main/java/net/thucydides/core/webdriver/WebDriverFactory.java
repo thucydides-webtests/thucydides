@@ -4,6 +4,7 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -188,8 +189,12 @@ public class WebDriverFactory {
             } else {
                 profile = getProfileFrom(profileName);
             }
+
             firefoxProfileEnhancer.allowWindowResizeFor(profile);
             firefoxProfileEnhancer.enableNativeEventsFor(profile);
+            if (shouldActivateProxy()) {
+                activateProxyFor(profile, firefoxProfileEnhancer);
+            }
             if (firefoxProfileEnhancer.shouldActivateFirebugs()) {
                 LOGGER.info("Adding Firebugs to Firefox profile");
                 firefoxProfileEnhancer.addFirebugsTo(profile);
@@ -201,6 +206,25 @@ public class WebDriverFactory {
 
         }
         return profile;
+    }
+
+    private void activateProxyFor(FirefoxProfile profile, FirefoxProfileEnhancer firefoxProfileEnhancer) {
+        String proxyUrl = getProxyUrlFromEnvironmentVariables();
+        String proxyPort = getProxyPortFromEnvironmentVariables();
+        firefoxProfileEnhancer.activateProxy(profile, proxyUrl, proxyPort);
+    }
+
+    private String getProxyPortFromEnvironmentVariables() {
+        return environmentVariables.getProperty(ThucydidesSystemProperty.PROXY_PORT.getPropertyName());
+    }
+
+    private boolean shouldActivateProxy() {
+        String proxyUrl = getProxyUrlFromEnvironmentVariables();
+        return StringUtils.isNotEmpty(proxyUrl);
+    }
+
+    private String getProxyUrlFromEnvironmentVariables() {
+        return environmentVariables.getProperty(ThucydidesSystemProperty.PROXY_URL.getPropertyName());
     }
 
     private FirefoxProfile getProfileFrom(final String profileName) {

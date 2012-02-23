@@ -2,14 +2,11 @@ package net.thucydides.core.webdriver.firefox;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.util.EnvironmentVariables;
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class FirefoxProfileEnhancer {
 
@@ -22,6 +19,9 @@ public class FirefoxProfileEnhancer {
     private static final String FIREFINDER_XPI_FILE = "/firefox/firefinder_for_firebug-" + FIREFINDER_VERSION + ".xpi";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FirefoxProfileEnhancer.class);
+    private static final String FIREFOX_NETWORK_PROXY_TYPE = "network.proxy.type";
+    private static final String FIREFOX_NETWORK_PROXY_HTTP = "network.proxy.http";
+    private static final String FIREFOX_NETWORK_PROXY_HTTP_PORT = "network.proxy.http_port";
     private final EnvironmentVariables environmentVariables;
 
     public FirefoxProfileEnhancer(EnvironmentVariables environmentVariables) {
@@ -51,5 +51,11 @@ public class FirefoxProfileEnhancer {
 
     public void allowWindowResizeFor(final FirefoxProfile profile) {
         profile.setPreference("dom.disable_window_move_resize",false);
+    }
+
+    public void activateProxy(final FirefoxProfile profile, String proxyUrl, String proxyPort) {
+        profile.setPreference(FIREFOX_NETWORK_PROXY_HTTP, proxyUrl);
+        profile.setPreference(FIREFOX_NETWORK_PROXY_HTTP_PORT, proxyPort);
+        profile.setPreference(FIREFOX_NETWORK_PROXY_TYPE, "1");
     }
 }

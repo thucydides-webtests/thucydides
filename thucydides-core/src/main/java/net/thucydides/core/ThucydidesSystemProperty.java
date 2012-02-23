@@ -122,7 +122,17 @@ public enum ThucydidesSystemProperty {
     /**
      * If batch testing is being used, this is the number of the batch being run on this machine.
      */
-    BATCH_NUMBER("thucydides.batch.number");
+    BATCH_NUMBER("thucydides.batch.number"),
+
+    /**
+     * HTTP Proxy URL configuration for Firefox
+     */
+    PROXY_URL("thucydides.proxy.http"),
+
+    /**
+     * HTTP Proxy port configuration for Firefox
+     */
+    PROXY_PORT("thucydides.proxy.http_port");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 1000;
