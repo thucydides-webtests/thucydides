@@ -4,6 +4,7 @@ import net.thucydides.core.csv.CSVTestDataSource;
 import net.thucydides.core.csv.TestDataSource;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.annotations.UseTestDataFrom;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
@@ -48,8 +49,16 @@ class DataDrivenAnnotations {
         return null;
     }
 
+    @SuppressWarnings("MalformedRegex")
     private String findTestDataSource() {
-        return findUseTestDataFromAnnotation().value();
+        String testDataSource = findUseTestDataFromAnnotation().value();
+        String homeDir = System.getProperty("user.home");
+        String userDir = System.getProperty("user.dir");
+        testDataSource = StringUtils.replace(testDataSource, "$HOME", homeDir);
+        testDataSource = StringUtils.replace(testDataSource, "${HOME}", homeDir);
+        testDataSource = StringUtils.replace(testDataSource, "$USERDIR", homeDir);
+        testDataSource = StringUtils.replace(testDataSource, "${USERDIR}", homeDir);
+        return testDataSource;
     }
 
     private UseTestDataFrom findUseTestDataFromAnnotation() {

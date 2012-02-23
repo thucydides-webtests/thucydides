@@ -8,7 +8,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
-import net.thucydides.core.screenshots.RecordedScreenshot;
+import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -419,7 +419,7 @@ public class WhenGeneratingAnXMLReport {
         File source = temporaryDirectory.newFile("step_1.html");
 
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        step1.addScreenshot(new RecordedScreenshot(screenshot, source));
+        step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
         testOutcome.recordStep(step1);
         testOutcome.recordStep(TestStepFactory.failingTestStepCalled("step 2"));
 
@@ -437,7 +437,7 @@ public class WhenGeneratingAnXMLReport {
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         File source = temporaryDirectory.newFile("step_1.html");
-        step1.addScreenshot(new RecordedScreenshot(screenshot, source));
+        step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
         testOutcome.recordStep(step1);
 
         File xmlReport = reporter.generateReportFor(testOutcome);
@@ -451,7 +451,7 @@ public class WhenGeneratingAnXMLReport {
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         File source = temporaryDirectory.newFile("step_1.html");
-        step1.addScreenshot(new RecordedScreenshot(screenshot, source));
+        step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
         testOutcome.recordStep(step1);
 
         reporter.setQualifier("qualifier");
@@ -469,7 +469,7 @@ public class WhenGeneratingAnXMLReport {
         TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
         File screenshot = temporaryDirectory.newFile("step_1.png");
         File source = temporaryDirectory.newFile("step_1.html");
-        step1.addScreenshot(new RecordedScreenshot(screenshot, source));
+        step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
         testOutcome.recordStep(step1);
 
         reporter.setQualifier("a b c");

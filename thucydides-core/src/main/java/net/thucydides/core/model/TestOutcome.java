@@ -9,7 +9,7 @@ import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
-import net.thucydides.core.screenshots.RecordedScreenshot;
+import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.NameConverter;
@@ -26,6 +26,7 @@ import java.util.Stack;
 
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.join;
 import static ch.lambdaj.Lambda.on;
@@ -34,7 +35,7 @@ import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
+import static net.thucydides.core.model.ReportType.ROOT;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -58,7 +59,7 @@ public class TestOutcome {
     private final String methodName;
 
     /**
-     *  The class containing the test method, if the test is implemented in a Java class.
+     * The class containing the test method, if the test is implemented in a Java class.
      */
     private final Class<?> testCase;
 
@@ -121,6 +122,7 @@ public class TestOutcome {
         this.issueTracking = issueTracking;
         return this;
     }
+
     /**
      * A test outcome should relate to a particular test class or user story class.
      */
@@ -175,6 +177,7 @@ public class TestOutcome {
      * Return the human-readable name for this test.
      * This is derived from the test name for tests using a Java implementation, or can also be defined using
      * the Title annotation.
+     *
      * @return the human-readable name for this test.
      */
     public String getTitle() {
@@ -209,20 +212,24 @@ public class TestOutcome {
         return userStory.getName();
     }
 
-    public String getReportName(final ReportNamer.ReportType type) {
-        ReportNamer reportNamer = new ReportNamer(type);
+    public String getReportName(final ReportType type) {
+        ReportNamer reportNamer = ReportNamer.forReportType(type);
         return reportNamer.getNormalizedTestNameFor(this);
     }
 
-    public String getReportName(final ReportNamer.ReportType type, final String qualifier) {
-        ReportNamer reportNamer = new ReportNamer(type);
-        if (qualifier == null) {
-            return reportNamer.getNormalizedTestNameFor(this);
+    public String getReportName(final ReportType type, final String qualifier) {
+        ReportNamer reportNamer = ReportNamer.forReportType(type);
+        if (shouldAddQualifier(qualifier)) {
+            return reportNamer.getQualifiedTestNameFor(this, qualifier);
         } else {
-            return reportNamer.getNormalizedTestNameFor(this, qualifier);
+            return reportNamer.getNormalizedTestNameFor(this);
         }
     }
-
+    
+    private boolean shouldAddQualifier(final String qualifier) {
+        return (qualifier != null);
+    }
+    
     public String getReportName() {
         return getReportName(ROOT);
     }
@@ -242,19 +249,35 @@ public class TestOutcome {
 
     public List<Screenshot> getScreenshots() {
         List<Screenshot> screenshots = new ArrayList<Screenshot>();
-        List<TestStep> testSteps = getFlattenedTestSteps();
 
-        for(TestStep currentStep : testSteps) {
-            if (!currentStep.isAGroup() && currentStep.getScreenshots() != null) {
-                for (RecordedScreenshot screenshot : currentStep.getScreenshots()) {
-                    screenshots.add(new Screenshot(screenshot.getScreenshot().getName(),
-                                                   currentStep.getDescription(),
-                                                   widthOf(screenshot.getScreenshot()),
-                                                   currentStep.getException()));
-                }
-            }
+        List<TestStep> testStepsWithScreenshots = select(getFlattenedTestSteps(),
+                                                         having(on(TestStep.class).needsScreenshots()));
+
+        for (TestStep currentStep : testStepsWithScreenshots) {
+            screenshots.addAll(screenshotsIn(currentStep));
         }
+
         return ImmutableList.copyOf(screenshots);
+    }
+
+    private List<Screenshot> screenshotsIn(TestStep currentStep) {
+        return convert(currentStep.getScreenshots(), toScreenshotsFor(currentStep));
+    }
+
+    private Converter<ScreenshotAndHtmlSource, Screenshot> toScreenshotsFor(final TestStep currentStep) {
+        return new Converter<ScreenshotAndHtmlSource, Screenshot>() {
+            @Override
+            public Screenshot convert(ScreenshotAndHtmlSource from) {
+                return new Screenshot(from.getScreenshotFile().getName(),
+                                      currentStep.getDescription(),
+                                      widthOf(from.getScreenshotFile()),
+                                      currentStep.getException());
+            }
+        };
+    }
+
+    private boolean weNeedAScreenshotFor(TestStep step) {
+        return (step.needsScreenshots());
     }
 
     private int widthOf(final File screenshot) {
@@ -327,7 +350,7 @@ public class TestOutcome {
     public TestOutcome withStep(final TestStep step) {
         return recordStep(step);
     }
-    
+
     public TestOutcome andStep(final TestStep step) {
         return recordStep(step);
     }
@@ -515,10 +538,10 @@ public class TestOutcome {
     public String getFormattedIssues() {
         Set<String> issues = getIssues();
         if (!issues.isEmpty()) {
-           List<String> orderedIssues =  sort(getIssues(), on(String.class));
-           return "(" + getFormatter().addLinks(StringUtils.join(orderedIssues, ", ")) + ")";
+            List<String> orderedIssues = sort(getIssues(), on(String.class));
+            return "(" + getFormatter().addLinks(StringUtils.join(orderedIssues, ", ")) + ")";
         } else {
-           return "";
+            return "";
         }
     }
 
@@ -547,29 +570,30 @@ public class TestOutcome {
     }
 
     public Integer getSuccessCount() {
-        return count(getLeafTestSteps(), successfulSteps());
+        return count(successfulSteps()).in(getLeafTestSteps());
     }
 
     public Integer getFailureCount() {
-        return count(getLeafTestSteps(), failingSteps());
+        return count(failingSteps()).in(getLeafTestSteps());
+    }
+
+    public Integer getIgnoredCount() {
+        return count(ignoredSteps()).in(getLeafTestSteps());
     }
 
     public Integer getSkippedOrIgnoredCount() {
         return getIgnoredCount() + getSkippedCount();
     }
 
-    public Integer getIgnoredCount() {
-        return count(getLeafTestSteps(), ignoredSteps());
-    }
-
     public Integer getSkippedCount() {
-        return count(getLeafTestSteps(), skippedSteps());
+        return count(skippedSteps()).in(getLeafTestSteps());
     }
 
     public Integer getPendingCount() {
         List<TestStep> allTestSteps = getLeafTestSteps();
         return select(allTestSteps, having(on(TestStep.class).isPending())).size();
     }
+
     public Boolean isSuccess() {
         return (getResult() == SUCCESS);
     }
@@ -607,12 +631,26 @@ public class TestOutcome {
         }
     }
 
-    int count(List<TestStep> steps, StepFilter filter) {
-        int count = 0;
-        for (TestStep step : steps) {
-            count = count + filter.apply(step);
+    StepCountBuilder count(StepFilter filter) {
+        return new StepCountBuilder(filter);
+    }
+
+    public static class StepCountBuilder {
+        private final StepFilter filter;
+
+        public StepCountBuilder(StepFilter filter) {
+            this.filter = filter;
         }
-        return count;
+
+        int in(List<TestStep> steps) {
+            int count = 0;
+            for (TestStep step : steps) {
+                if (filter.apply(step)) {
+                    count++;
+                }
+            }
+            return count;
+        }
     }
 
 
@@ -622,7 +660,7 @@ public class TestOutcome {
 
     private Integer countLeafStepsIn(List<TestStep> testSteps) {
         int leafCount = 0;
-        for(TestStep step : testSteps) {
+        for (TestStep step : testSteps) {
             if (step.isAGroup()) {
                 leafCount += countLeafStepsIn(step.getChildren());
             } else {
@@ -631,15 +669,17 @@ public class TestOutcome {
         }
         return leafCount;
     }
+
     abstract class StepFilter {
-        abstract int apply(TestStep step);
+        abstract boolean apply(TestStep step);
+
     }
 
     StepFilter successfulSteps() {
         return new StepFilter() {
             @Override
-            int apply(TestStep step) {
-                return step.isSuccessful() ? 1 : 0;
+            boolean apply(TestStep step) {
+                return step.isSuccessful();
             }
         };
     }
@@ -647,8 +687,8 @@ public class TestOutcome {
     StepFilter failingSteps() {
         return new StepFilter() {
             @Override
-            int apply(TestStep step) {
-                return step.isFailure() ? 1 : 0;
+            boolean apply(TestStep step) {
+                return step.isFailure();
             }
         };
     }
@@ -656,8 +696,8 @@ public class TestOutcome {
     StepFilter ignoredSteps() {
         return new StepFilter() {
             @Override
-            int apply(TestStep step) {
-                return step.isIgnored() ? 1 : 0;
+            boolean apply(TestStep step) {
+                return step.isIgnored();
             }
         };
     }
@@ -665,8 +705,8 @@ public class TestOutcome {
     StepFilter skippedSteps() {
         return new StepFilter() {
             @Override
-            int apply(TestStep step) {
-                return step.isSkipped() ? 1 : 0;
+            boolean apply(TestStep step) {
+                return step.isSkipped();
             }
         };
     }

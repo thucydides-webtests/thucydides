@@ -11,8 +11,8 @@ import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
 public class SimpleWebTestScenario {
-    
-    @Managed
+
+    @Managed(driver = "htmlunit")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "classpath:demosite/index.html")

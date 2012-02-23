@@ -14,34 +14,13 @@ import static net.thucydides.core.util.NameConverter.withNoIssueNumbers;
  */
 public class ReportNamer {
 
-    /**
-     * The report namer knows how to find names for these types of reports
-     */
-    public enum ReportType {
-        /** report name with no suffix. */
-        ROOT(""),
-        
-        /** XML reports. */
-        XML("xml"), 
-        
-        /** HTML reports. */
-        HTML("html");
-        
-        private String suffix;
-        
-        private ReportType(final String suffix) {
-            this.suffix = suffix;
-        }
-        
-        @Override
-        public String toString() {
-            return suffix;
-        }
+    public static ReportNamer forReportType(ReportType type) {
+        return new ReportNamer(type);
     }
-    
+
     private ReportType type;
         
-    public ReportNamer(final ReportType type) {
+    private ReportNamer(final ReportType type) {
         this.type = type;
     }
     
@@ -67,7 +46,7 @@ public class ReportNamer {
         }
     }
 
-    public String getNormalizedTestNameFor(final TestOutcome testOutcome, final String qualifier) {
+    public String getQualifiedTestNameFor(final TestOutcome testOutcome, final String qualifier) {
         String userStory = "";
         if (testOutcome.getUserStory() != null) {
             userStory = NameConverter.underscore(testOutcome.getUserStory().getName()) + "_";

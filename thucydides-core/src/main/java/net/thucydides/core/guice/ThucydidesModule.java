@@ -1,8 +1,11 @@
 package net.thucydides.core.guice;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import net.thucydides.core.ThucydidesSystemProperties;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.issues.IssueTracking;
@@ -48,14 +51,24 @@ public class ThucydidesModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public EntityManagerFactory provideEntityManagerFactory() {
+    @Inject
+    public EntityManagerFactory provideEntityManagerFactory(EnvironmentVariables environmentVariables) {
         Map<String, String> properties = new HashMap<String, String>();
-        properties.put("hibernate.connection.driver_class", "org.h2.Driver");
-        properties.put("hibernate.connection.url", "jdbc:h2:test");
-        properties.put("hibernate.connection.username", "sa");
-        properties.put("hibernate.connection.password", "");
+
+        String defaultThucydidesDirectory = environmentVariables.getProperty("user.home") + "/.thucydides";
+        String defaultDatabase = defaultThucydidesDirectory + "/stats";
+        String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", "org.h2.Driver");
+        String url = environmentVariables.getProperty("thucydides.statistics.url", "jdbc:h2:file:" + defaultDatabase);
+        String username = environmentVariables.getProperty("thucydides.statistics.username", "sa");
+        String password = environmentVariables.getProperty("thucydides.statistics.password", "");
+        String dialect = environmentVariables.getProperty("thucydides.statistics.dialect", "org.hibernate.dialect.H2Dialect");
+
+        properties.put("hibernate.connection.driver_class", driver);
+        properties.put("hibernate.connection.url", url);
+        properties.put("hibernate.connection.username", username);
+        properties.put("hibernate.connection.password", password);
+        properties.put("hibernate.dialect", dialect);
         properties.put("hibernate.connection.pool_size", "1");
-        properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         properties.put("hibernate.hbm2ddl.auto", "create");
         return Persistence.createEntityManagerFactory("db-manager", properties);
     }

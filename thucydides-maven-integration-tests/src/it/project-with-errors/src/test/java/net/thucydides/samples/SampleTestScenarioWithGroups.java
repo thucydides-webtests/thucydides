@@ -13,8 +13,8 @@ import org.openqa.selenium.WebDriver;
 @RunWith(ThucydidesRunner.class)
 @UserStoryCode("US02")
 public class SampleTestScenarioWithGroups {
-    
-    @Managed
+
+    @Managed(driver = "htmlunit")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "http://www.google.com")

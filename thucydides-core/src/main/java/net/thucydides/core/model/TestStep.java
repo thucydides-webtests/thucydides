@@ -1,7 +1,7 @@
 package net.thucydides.core.model;
 
 import com.google.inject.internal.ImmutableList;
-import net.thucydides.core.screenshots.RecordedScreenshot;
+import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +32,7 @@ public class TestStep {
     private String description;    
     private long duration;
     private long startTime;
-    private List<RecordedScreenshot> screenshots = new ArrayList<RecordedScreenshot>();
+    private List<ScreenshotAndHtmlSource> screenshots = new ArrayList<ScreenshotAndHtmlSource>();
     private Throwable cause;
     private TestResult result;
 
@@ -74,11 +74,11 @@ public class TestStep {
         return ImmutableList.copyOf(children);
     }
 
-    public List<RecordedScreenshot> getScreenshots() {
+    public List<ScreenshotAndHtmlSource> getScreenshots() {
         return ImmutableList.copyOf(screenshots);
     }
 
-    public RecordedScreenshot getFirstScreenshot() {
+    public ScreenshotAndHtmlSource getFirstScreenshot() {
         if ((screenshots != null) && (!screenshots.isEmpty())) {
             return screenshots.get(0);
         } else {
@@ -86,6 +86,9 @@ public class TestStep {
         }
     }
 
+    public boolean needsScreenshots() {
+        return (!isAGroup() && getScreenshots() != null);
+    }
     /**
      * Each test step has a result, indicating the outcome of this step.
      * @param result The test outcome associated with this step.
@@ -215,18 +218,18 @@ public class TestStep {
         return leafSteps;
     }
 
-    public void addScreenshot(RecordedScreenshot screenshot) {
-        if (thisIsANew(screenshot)) {
-        screenshots.add(screenshot);
+    public void addScreenshot(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
+        if (thisIsANew(screenshotAndHtmlSource)) {
+        screenshots.add(screenshotAndHtmlSource);
         }
     }
 
-    private boolean thisIsANew(RecordedScreenshot screenshot) {
+    private boolean thisIsANew(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
         if (screenshots.isEmpty()) {
             return true;    
         } else {
-            RecordedScreenshot latestScreenshot = screenshots.get(screenshots.size() - 1);
-            return !latestScreenshot.equals(screenshot);
+            ScreenshotAndHtmlSource latestScreenshotAndHtmlSource = screenshots.get(screenshots.size() - 1);
+            return !latestScreenshotAndHtmlSource.equals(screenshotAndHtmlSource);
         }
     }
 }

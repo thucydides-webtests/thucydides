@@ -1,7 +1,7 @@
 package net.thucydides.maven.plugins;
 
 import net.thucydides.core.model.FeatureResults;
-import net.thucydides.core.model.ReportNamer;
+import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.reports.ThucydidesReportData;
 import org.apache.maven.doxia.sink.Sink;
@@ -113,7 +113,7 @@ public class ThucydidesHTMLReportGenerator {
         for(StoryTestResults storyResult : storyResults) {
             sink.tableRow();
             tableCellWithLink(sink, storyResult.getTitle(),
-                    "thucydides/" + storyResult.getReportName(ReportNamer.ReportType.HTML));
+                    "thucydides/" + storyResult.getReportName(ReportType.HTML));
             tableCell(sink, Integer.toString(storyResult.getTotal()));
             tableCell(sink, Integer.toString(storyResult.getSuccessCount()));
             tableCell(sink, Integer.toString(storyResult.getPendingCount()));

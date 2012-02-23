@@ -2,7 +2,7 @@ package net.thucydides.core.reports.json;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.model.FeatureResults;
-import net.thucydides.core.model.ReportNamer;
+import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
@@ -422,7 +422,7 @@ public class WhenStoringTestResultsAsAJSONStructure {
             when(outcome.getTitle()).thenReturn("Test " + result + " " + count);
             when(outcome.getResult()).thenReturn(result);
             when(outcome.getNestedStepCount()).thenReturn(3);
-            when(outcome.getReportName(ReportNamer.ReportType.HTML)).thenReturn("story-report.html");
+            when(outcome.getReportName(ReportType.HTML)).thenReturn("story-report.html");
             if (result == TestResult.FAILURE) {
                 when(outcome.isFailure()).thenReturn(true);
                 when(outcome.isSuccess()).thenReturn(false);

@@ -156,7 +156,7 @@
                             <td width="100" class="${step.result}-text">
                                 <#if !step.isAGroup() && step.firstScreenshot??>
                                     <a href="${testOutcome.screenshotReportName}.html#screenshots">
-                                        <img src="${step.firstScreenshot.screenshot.name}"
+                                        <img src="${step.firstScreenshot.screenshotFile.name}"
                                              class="screenshot"
                                              width="48" height="48"/>
                                     </a>

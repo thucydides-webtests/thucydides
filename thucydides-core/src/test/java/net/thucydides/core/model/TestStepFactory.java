@@ -1,6 +1,6 @@
 package net.thucydides.core.model;
 
-import net.thucydides.core.screenshots.RecordedScreenshot;
+import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 
 import java.io.File;
 
@@ -43,7 +43,7 @@ public class TestStepFactory {
 
     public static TestStep createNewTestStep(String description, TestResult result) {
         TestStep step = new TestStep(description);
-        step.addScreenshot(new RecordedScreenshot(new File(description + ".png"), new File(description + ".html")));
+        step.addScreenshot(new ScreenshotAndHtmlSource(new File(description + ".png"), new File(description + ".html")));
         step.setResult(result);
         step.setDuration(100);
         return step;
@@ -56,11 +56,11 @@ public class TestStepFactory {
         TestStep child1 = new TestStep(description);
         TestStep child2 = new TestStep(description);
 
-        child1.addScreenshot(new RecordedScreenshot(new File(description + ".png"), new File(description + ".html")));
+        child1.addScreenshot(new ScreenshotAndHtmlSource(new File(description + ".png"), new File(description + ".html")));
         child1.setResult(result);
         child1.setDuration(100);
 
-        child2.addScreenshot(new RecordedScreenshot(new File(description + ".png"), new File(description + ".html")));
+        child2.addScreenshot(new ScreenshotAndHtmlSource(new File(description + ".png"), new File(description + ".html")));
         child2.setResult(result);
         child2.setDuration(100);
 

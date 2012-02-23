@@ -22,17 +22,50 @@ public class TestOutcomeHistoryDAO {
     private static final String FIND_BY_NAME = "select t from TestRun t where t.title = :title";
     private static final String FIND_TAG_BY_NAME = "select t from TestRunTag t where t.name = :name and t.code = :code";
     private static final String FIND_ALL_TAGS  = "select t from TestRunTag t order by t.name";
-//    private static final String FIND_ALL_TAGS_FOR_CODE  = "select t from TestRunTag t where t.code = :code order by t.name";
+    private static final String FIND_ALL_TAG_TYPES = "select distinct t.type from TestRunTag t order by t.type";
     private static final String COUNT_BY_NAME = "select count(t) from TestRun t where t.title = :title";
     private static final String COUNT_TESTS_BY_NAME_AND_RESULT
             = "select count(t) from TestRun t where t.title = :title and t.result = :result";
 
     private static final String COUNT_BY_TAG = "select count(t) from TestRun t where t.title = :title";
 
+    private static final String COUNT_LATEST_TESTS_BY_TAG_AND_RESULT
+            = "select count(test) from TestRun test "+
+            " left outer join test.tags as tag " +
+            "where tag.name = :name " +
+            "and test.result = :result " +
+            "and test.executionDate = "+
+            "(select max(tt.executionDate) from TestRun tt where tt.id = test.id)";
+
     private static final String SELECT_LATEST_TEST_BY_TITLE
-            = "select t from TestRun t \n"+
-            "where t.title = :title and t.executionDate = \n"+
+            = "select t from TestRun t "+
+            "where t.title = :title and t.executionDate = "+
             "     (select max(tt.executionDate) from TestRun tt where tt.id = t.id)";
+
+    private static final String SELECT_LATEST_TEST_BY_TAG
+            = "select test from TestRun test "+
+            " left outer join test.tags as tag " +
+            "where tag.name = :name " +
+            "and test.executionDate = "+
+                "(select max(tt.executionDate) from TestRun tt where tt.id = test.id)";
+
+    private static final String SELECT_TEST_RESULTS_BY_TAG
+            = "select test.result from TestRun test "+
+            " left outer join test.tags as tag " +
+            "where tag.name = :name " +
+            "order by test.executionDate desc";
+
+
+    private static final String COUNT_LATEST_TEST_BY_TAG
+            = "select count(test) from TestRun test "+
+            " left outer join test.tags as tag " +
+            "where tag.name = :name " +
+            "and test.executionDate = "+
+            "(select max(tt.executionDate) from TestRun tt where tt.id = test.id)";
+
+    private static final String SELECT_TEST_RESULTS_BY_TITLE
+            = "select test.result from TestRun test where test.title = :title " +
+              "order by test.executionDate desc";
 
     protected EntityManager entityManager;
 
@@ -98,10 +131,10 @@ public class TestOutcomeHistoryDAO {
         return (Long) entityManager.createQuery(COUNT_BY_NAME).setParameter("title", title).getSingleResult();
     }
 
-    public Long countPassingTestRunsByTitle(String title) {
+    public Long countTestRunsByTitleAndResult(String title, TestResult result) {
         return (Long) entityManager.createQuery(COUNT_TESTS_BY_NAME_AND_RESULT)
                                    .setParameter("title", title)
-                                   .setParameter("result", TestResult.SUCCESS)
+                                   .setParameter("result", result)
                                    .getSingleResult();
     }
 
@@ -119,15 +152,42 @@ public class TestOutcomeHistoryDAO {
        }
     }
 
+    public List<TestResult> getResultsTestWithTitle(String title) {
+        return entityManager.createQuery(SELECT_TEST_RESULTS_BY_TITLE).setParameter("title", title).getResultList();
+    }
+
+    public List<TestResult> getResultsForTestsWithTag(String tag) {
+        return entityManager.createQuery(SELECT_TEST_RESULTS_BY_TAG).setParameter("name", tag).getResultList();
+    }
+
     public Long countTestRunsByTag(String tag) {
-        return 0L;
+        return (Long) entityManager.createQuery(COUNT_LATEST_TEST_BY_TAG)
+                                   .setParameter("name", tag)
+                                    .getSingleResult();
     }
 
-    public Long countPassingTestRunsByTag(String tag) {
-        return 0L;
+    public Long countTestRunsByTagAndResult(String tag, TestResult result) {
+        return (Long) entityManager.createQuery(COUNT_LATEST_TESTS_BY_TAG_AND_RESULT)
+                .setParameter("name", tag)
+                .setParameter("result",result)
+                .getSingleResult();
     }
 
-    public List<TestRunTag> getLatestTagsForTestWithTag(String tag) {
-        return null;
+    public List<TestRunTag> getLatestTagsForTestsWithTag(String tag) {
+        List<TestRun> latestTestRuns = entityManager.createQuery(SELECT_LATEST_TEST_BY_TAG).setParameter("name", tag).getResultList();
+        if (latestTestRuns.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return ImmutableList.copyOf(latestTestRuns.get(0).getTags());
+        }
+    }
+
+    public List<TestRun> getLatestTestsWithTag(String tag) {
+        List<TestRun> latestTestRuns = entityManager.createQuery(SELECT_LATEST_TEST_BY_TAG).setParameter("name", tag).getResultList();
+        return ImmutableList.copyOf(latestTestRuns);
+    }
+
+    public List<String> findAllTagTypes() {
+        return entityManager.createQuery(FIND_ALL_TAG_TYPES).getResultList();
     }
 }

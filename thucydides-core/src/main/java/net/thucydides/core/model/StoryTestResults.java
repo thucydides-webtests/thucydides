@@ -21,7 +21,7 @@ import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
-import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
+import static net.thucydides.core.model.ReportType.ROOT;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 /**
  * A collection of test results, corresponding to a the acceptance tests for a single user story.
@@ -71,8 +71,8 @@ public class StoryTestResults {
         return story;
     }
 
-    public String getReportName(final ReportNamer.ReportType type) {
-        ReportNamer reportNamer = new ReportNamer(type);
+    public String getReportName(final ReportType type) {
+        ReportNamer reportNamer = ReportNamer.forReportType(type);
         return reportNamer.getNormalizedTestNameFor(getStory());
     }
 

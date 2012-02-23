@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sum;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 /**
  * A set of test results related to a given feature.
@@ -22,10 +25,27 @@ public class FeatureResults {
 
     public FeatureResults(final ApplicationFeature feature) {
         this.feature = feature;
-        this.namer = new ReportNamer(ReportNamer.ReportType.HTML);
+        this.namer = ReportNamer.forReportType(ReportType.HTML);
         storyTestResultsList = new ArrayList<StoryTestResults>();
     }
+          
+    
+    public void foo() {
 
+        
+        List<Integer> ages = ImmutableList.of(10,15,18,21,25,30,40,50);
+        
+        List<Integer> adults = new ArrayList<Integer>();
+        for(int age : ages) {
+            if (age >= 18) {
+                adults.add(age);
+            }
+        }
+        
+        List<Integer> adultAges = filter(greaterThanOrEqualTo(18), ages);
+        
+        
+    }
     public ApplicationFeature getFeature() {
         return feature;
     }

@@ -2,13 +2,13 @@ package net.thucydides.core.reports;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
-import net.thucydides.core.model.ReportNamer;
+import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.Stories;
 import net.thucydides.core.model.TestOutcome;
 import org.junit.Test;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
-import static net.thucydides.core.model.ReportNamer.ReportType.XML;
+import static net.thucydides.core.model.ReportType.HTML;
+import static net.thucydides.core.model.ReportType.XML;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -148,7 +148,7 @@ public class WhenNamingTheReports {
 
         net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
 
-        String reportName = Stories.reportFor(story, ReportNamer.ReportType.HTML);
+        String reportName = Stories.reportFor(story, ReportType.HTML);
 
         assertThat(reportName, is("a_user_story.html"));
     }

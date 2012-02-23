@@ -1,6 +1,6 @@
 package net.thucydides.core.model;
 
-import net.thucydides.core.screenshots.RecordedScreenshot;
+import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -31,9 +31,9 @@ public class WhenWeCreateATestStep {
 
         File screenshot = temporaryFolder.newFile("screenshot.png");
         File source = temporaryFolder.newFile("screenshot.html");
-        step.addScreenshot(new RecordedScreenshot(screenshot, source));
+        step.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
 
-        assertThat(step.getScreenshots().get(0).getScreenshot(), is(screenshot));
+        assertThat(step.getScreenshots().get(0).getScreenshotFile(), is(screenshot));
         assertThat(step.getScreenshots().get(0).getSourcecode(), is(source));
     }
 
@@ -43,15 +43,15 @@ public class WhenWeCreateATestStep {
 
         File screenshot = screenshotFileFrom("/screenshots/google_page_1.png");
         File source = temporaryFolder.newFile("screenshot.html");
-        step.addScreenshot(new RecordedScreenshot(screenshot, source));
+        step.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
 
         File screenshot2 = screenshotFileFrom("/screenshots/google_page_2.png");
         File source2 = temporaryFolder.newFile("screenshot2.html");
-        step.addScreenshot(new RecordedScreenshot(screenshot2, source2));
+        step.addScreenshot(new ScreenshotAndHtmlSource(screenshot2, source2));
 
-        assertThat(step.getScreenshots().get(0).getScreenshot(), is(screenshot));
+        assertThat(step.getScreenshots().get(0).getScreenshotFile(), is(screenshot));
         assertThat(step.getScreenshots().get(0).getSourcecode(), is(source));
-        assertThat(step.getScreenshots().get(1).getScreenshot(), is(screenshot2));
+        assertThat(step.getScreenshots().get(1).getScreenshotFile(), is(screenshot2));
         assertThat(step.getScreenshots().get(1).getSourcecode(), is(source2));
     }
 
@@ -61,13 +61,13 @@ public class WhenWeCreateATestStep {
 
         File screenshot = temporaryFolder.newFile("screenshot.png");
         File source = temporaryFolder.newFile("screenshot.html");
-        step.addScreenshot(new RecordedScreenshot(screenshot, source));
+        step.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
 
         File screenshot2 = temporaryFolder.newFile("screenshot2.png");
         File source2 = temporaryFolder.newFile("screenshot2.html");
-        step.addScreenshot(new RecordedScreenshot(screenshot2, source2));
+        step.addScreenshot(new ScreenshotAndHtmlSource(screenshot2, source2));
 
-        assertThat(step.getFirstScreenshot().getScreenshot(), is(screenshot));
+        assertThat(step.getFirstScreenshot().getScreenshotFile(), is(screenshot));
         assertThat(step.getFirstScreenshot().getSourcecode(), is(source));
     }
 
@@ -77,8 +77,8 @@ public class WhenWeCreateATestStep {
 
         File screenshot = temporaryFolder.newFile("screenshot.png");
         File source = temporaryFolder.newFile("screenshot.html");
-        step.addScreenshot(new RecordedScreenshot(screenshot, source));
-        step.addScreenshot(new RecordedScreenshot(screenshot, source));
+        step.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
+        step.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
 
         assertThat(step.getScreenshots().size(), is(1));
     }

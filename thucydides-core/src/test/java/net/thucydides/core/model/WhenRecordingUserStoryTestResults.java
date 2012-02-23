@@ -49,7 +49,7 @@ public class WhenRecordingUserStoryTestResults {
 
     @Test
     public void html_report_name_should_be_based_on_story_name_with_html_suffix() {
-        String reportName = storyTestResults.getReportName(ReportNamer.ReportType.HTML);
+        String reportName = storyTestResults.getReportName(ReportType.HTML);
         assertThat(reportName, is("purchase_new_widget.html"));
     }
 

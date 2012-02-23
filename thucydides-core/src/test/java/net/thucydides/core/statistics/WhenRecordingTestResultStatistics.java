@@ -11,7 +11,6 @@ import net.thucydides.core.statistics.model.TestRunTag;
 import net.thucydides.core.statistics.model.TestStatistics;
 import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -22,12 +21,12 @@ import java.util.List;
 import static net.thucydides.core.matchers.dates.DateMatchers.isSameAs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class WhenRecordingTestResultStatistics {
-
 
     /*
         - Retrieve the list of the executed tests
@@ -113,7 +112,31 @@ public class WhenRecordingTestResultStatistics {
 
         TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.title("Boat sales test"));
 
-        assertThat(testStatistics.getPassRate(), is(0.75));
+        assertThat(testStatistics.getOverallPassRate(), is(0.75));
+    }
+
+    @Test
+    public void should_be_able_to_find_the_average_pass_rate_for_a_given_test_over_the_last_N_tests() {
+
+        TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.title("Boat sales test"));
+
+        assertThat(testStatistics.getPassRate().overTheLast(4).testRuns(), is(1.0));
+    }
+
+    @Test
+    public void should_be_able_to_find_the_average_pass_rate_for_a_given_tag_over_the_last_N_tests() {
+
+        TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.tag("Boat sales"));
+
+        assertThat(testStatistics.getPassRate().overTheLast(4).testRuns(), is(1.0));
+    }
+
+    @Test
+    public void should_be_able_to_find_the_average_pass_rate_for_a_given_tag_over_the_last_8_tests() {
+
+        TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.tag("Boat sales"));
+
+        assertThat(testStatistics.getPassRate().overTheLast(8).testRuns(), is(0.75));
     }
 
     @Test
@@ -121,7 +144,7 @@ public class WhenRecordingTestResultStatistics {
 
         TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.title("An unexecuted test"));
 
-        assertThat(testStatistics.getPassRate(), is(0.0));
+        assertThat(testStatistics.getOverallPassRate(), is(0.0));
     }
 
     @WithTag(value="Online sales", type="feature")
@@ -181,12 +204,22 @@ public class WhenRecordingTestResultStatistics {
     }
 
     @Test
-    @Ignore("In progress")
+    public void should_retrieve_a_list_of_all_available_tag_types_associated_with_the_latest_test_run_of_a_test() {
+
+        List<String> allTagTypes = testStatisticsProvider.findAllTagTypes();
+
+        assertThat(allTagTypes.size(), is(1));
+        assertThat(allTagTypes, hasItem("feature"));
+    }
+
+    @Test
     public void should_retrieve_a_list_of_all_test_statistics_for_a_given_tag() {
 
         TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.tag("Boat sales"));
 
-        assertThat(testStatistics.getTotalTestRuns(), is(5L));
+        assertThat(testStatistics.getTotalTestRuns(), is(8L));
+        assertThat(testStatistics.getPassingTestRuns(), is(6L));
+        assertThat(testStatistics.getFailingTestRuns(), is(1L));
     }
 
     /*
@@ -198,7 +231,7 @@ public class WhenRecordingTestResultStatistics {
 
     private void prepareTestData() {
         if (!runOnce) {
-            statisticsListener.testFinished(failingTestFor("boat_sales_test"));
+            statisticsListener.testFinished(pendingTestFor("boat_sales_test"));
             statisticsListener.testFinished(failingTestFor("car_sales_test"));
             statisticsListener.testFinished(failingTestFor("house_sales_test"));
 
@@ -254,18 +287,10 @@ public class WhenRecordingTestResultStatistics {
         return passingTestOutcome;
     }
 
-    private TestOutcome successfulTestCalled(String title, String methodName) {
-        TestOutcome failingTestOutcome = mock(TestOutcome.class);
-        return testCalled(title, methodName, failingTestOutcome, TestResult.SUCCESS);
-    }
-
-    private TestOutcome testCalled(String title, String methodName, TestOutcome failingTestOutcome, TestResult testResult) {
-        when(failingTestOutcome.getTitle()).thenReturn(title);
-        when(failingTestOutcome.getResult()).thenReturn(testResult);
-        when(failingTestOutcome.getMethodName()).thenReturn(methodName);
-        when(failingTestOutcome.getDuration()).thenReturn(500L);
-
-        return failingTestOutcome;
+    private TestOutcome pendingTestFor(String methodName) {
+        TestOutcome passingTestOutcome = TestOutcome.forTest(methodName, OnlineSalesTestCaseSample.class);
+        passingTestOutcome.setAnnotatedResult(TestResult.PENDING);
+        return passingTestOutcome;
     }
 
     private void prepareDAOWithFixedClock() {

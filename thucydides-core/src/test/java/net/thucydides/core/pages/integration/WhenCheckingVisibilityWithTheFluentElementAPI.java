@@ -4,6 +4,7 @@ package net.thucydides.core.pages.integration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -255,12 +256,14 @@ public class WhenCheckingVisibilityWithTheFluentElementAPI  extends FluentElemen
         page.element(page.colors).shouldNotContainText("Red");
     }
 
+    @Ignore
     @Test
     public void should_detect_focus_on_input_fields() {
         page.evaluateJavascript("document.getElementById('lastname').focus()");
         assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
 
+    @Ignore
     @Test
     public void should_detect_focus_on_input_fields_using_page_API() {
         page.evaluateJavascript("document.getElementById('lastname').focus()");
@@ -285,6 +288,7 @@ public class WhenCheckingVisibilityWithTheFluentElementAPI  extends FluentElemen
         assertThat(page.element(page.textField).getText(), is("text value"));
     }
 
+    @Ignore
     @Test
     public void should_execute_javascript_within_browser() {
         page.open();

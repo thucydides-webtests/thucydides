@@ -35,5 +35,26 @@ public class WhenRecordingTestOutputInASpreadsheet {
                 ImmutableList.of("d","e","f"));
 
         assertThat(outputFile.exists(), is(true));
-    }   
+    }
+
+    @Test
+    public void should_reset_excel_spreadsheet_if_it_already_exists() throws Exception {
+
+        File outputDir = temporaryFolder.newFolder();
+        File outputFile = new File(outputDir, "testresults2.xls");
+        ResultsOutput output = new SpreadsheetResultsOutput(outputFile, ImmutableList.of("A","B","C"));
+
+        String expectedValue = "$10";
+        String actualValue1 = "$10";
+        String actualValue2 = "$11";
+
+        output.recordResult(checkThat(expectedValue, is(actualValue1)), ImmutableList.of("a","b","c"));
+        output.recordResult(checkThat(expectedValue, is(actualValue2)), ImmutableList.of("d","e","f"));
+
+        ResultsOutput newOutput = new SpreadsheetResultsOutput(outputFile, ImmutableList.of("A","B","C"));
+        newOutput.recordResult(checkThat(expectedValue, is(actualValue1)), ImmutableList.of("a","b","c"));
+        newOutput.recordResult(checkThat(expectedValue, is(actualValue2)), ImmutableList.of("d","e","f"));
+
+        assertThat(outputFile.exists(), is(true));
+    }
 }

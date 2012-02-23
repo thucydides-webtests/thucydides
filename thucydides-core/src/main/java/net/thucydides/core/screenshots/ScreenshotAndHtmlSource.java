@@ -5,17 +5,20 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 
-public class RecordedScreenshot {
+/**
+ * A screenshot image and the corresponding HTML source code.
+ */
+public class ScreenshotAndHtmlSource {
     
     private final File screenshot;
     private final File sourcecode;
 
-    public RecordedScreenshot(File screenshot, File sourcecode) {
+    public ScreenshotAndHtmlSource(File screenshot, File sourcecode) {
         this.screenshot = screenshot;
         this.sourcecode = sourcecode;
     }
 
-    public File getScreenshot() {
+    public File getScreenshotFile() {
         return screenshot;
     }
 
@@ -30,9 +33,9 @@ public class RecordedScreenshot {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RecordedScreenshot)) return false;
+        if (!(o instanceof ScreenshotAndHtmlSource)) return false;
 
-        RecordedScreenshot that = (RecordedScreenshot) o;
+        ScreenshotAndHtmlSource that = (ScreenshotAndHtmlSource) o;
 
         if (screenshot == null) {
             return (that.screenshot == null);

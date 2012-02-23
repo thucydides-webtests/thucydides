@@ -4,6 +4,7 @@ package net.thucydides.core.pages.integration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -27,6 +28,7 @@ public class WhenUsingFormsWithTheFluentElementAPI extends FluentElementAPITests
     }
 
 
+    @Ignore
     @Test
     public void should_detect_focus_on_input_fields() {
         assertThat(page.element(page.lastName).hasFocus(), is(true));
@@ -47,7 +49,7 @@ public class WhenUsingFormsWithTheFluentElementAPI extends FluentElementAPITests
         assertThat(page.element("//textarea[@id='textField']").getText(), is("text value"));
     }
 
-
+    @Ignore
     @Test
     public void should_detect_focus_on_input_fields_using_page_API() {
         assertThat(page.hasFocus(page.lastName), is(true));

@@ -11,7 +11,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.features.ApplicationFeature;
-import net.thucydides.core.screenshots.RecordedScreenshot;
+import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -217,10 +217,10 @@ public class TestOutcomeConverter implements Converter {
     private void writeScreenshotIfPresent(final HierarchicalStreamWriter writer, final TestStep step) {
         if ((step.getScreenshots() != null) && (step.getScreenshots().size() > 0)) {
             writer.startNode(SCREENSHOT_LIST_FIELD);
-            for(RecordedScreenshot screenshot : step.getScreenshots()) {
+            for(ScreenshotAndHtmlSource screenshotAndHtmlSource : step.getScreenshots()) {
                 writer.startNode(SCREENSHOT_FIELD);
-                writer.addAttribute(SCREENSHOT_IMAGE, screenshot.getScreenshot().getName());
-                writer.addAttribute(SCREENSHOT_SOURCE, screenshot.getSourcecode().getName());
+                writer.addAttribute(SCREENSHOT_IMAGE, screenshotAndHtmlSource.getScreenshotFile().getName());
+                writer.addAttribute(SCREENSHOT_SOURCE, screenshotAndHtmlSource.getSourcecode().getName());
                 writer.endNode();
             }
             writer.endNode();
@@ -358,7 +358,7 @@ public class TestOutcomeConverter implements Converter {
                 if (childNode.equals(SCREENSHOT_FIELD)) {
                     String screenshot = reader.getAttribute(SCREENSHOT_IMAGE);
                     String source = reader.getAttribute(SCREENSHOT_SOURCE);
-                    step.addScreenshot(new RecordedScreenshot(new File(screenshot), new File(source)));
+                    step.addScreenshot(new ScreenshotAndHtmlSource(new File(screenshot), new File(source)));
                 }
                 reader.moveUp();
             }

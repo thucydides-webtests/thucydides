@@ -86,7 +86,7 @@ public class BeanMatcherAsserts {
     }
 
     private static List<BeanFieldMatcher> propertyMatchersIn(BeanMatcher[] matchers) {
-        List<BeanMatcher> compatibleMatchers = Lambda.filter(instanceOf(BeanFieldMatcher.class), matchers);
+        List<BeanMatcher> compatibleMatchers = filter(instanceOf(BeanFieldMatcher.class), matchers);
         return convert(compatibleMatchers, toBeanFieldMatchers());
     }
 

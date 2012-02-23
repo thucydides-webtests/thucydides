@@ -13,8 +13,8 @@ import org.openqa.selenium.WebDriver;
 @RunWith(ThucydidesRunner.class)
 @Story(Application.MakeWidgets.MakeBigWidgets.class)
 public class MakeBigWidgetsTestScenario {
-    
-    @Managed
+
+    @Managed(driver = "htmlunit")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "http://www.google.com")

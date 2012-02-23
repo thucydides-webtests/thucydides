@@ -15,7 +15,7 @@ import org.openqa.selenium.WebDriver;
 @RunWith(ThucydidesRunner.class)
 @Issues({"#200","#300"})
 public class SampleTestScenario {
-    
+
     @Managed
     public WebDriver webdriver;
 

@@ -5,7 +5,7 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.EqualsUtils;
 import net.thucydides.core.util.NameConverter;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.ROOT;
+import static net.thucydides.core.model.ReportType.ROOT;
 
 /**
  * Represents a given user story.
@@ -158,7 +158,7 @@ public class Story {
     /**
      * Find the name of the report for this story for the specified report type (XML, HTML,...).
      */
-    public String getReportName(final ReportNamer.ReportType type) {
+    public String getReportName(final ReportType type) {
         return Stories.reportFor(this, type);
     }
 

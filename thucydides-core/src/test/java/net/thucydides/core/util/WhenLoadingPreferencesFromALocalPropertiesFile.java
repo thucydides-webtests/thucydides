@@ -80,7 +80,7 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
     }
 
     @Test
-    public void local_preferences_are_instanciated_using_guice() throws IOException {
+    public void local_preferences_are_instantiated_using_guice() throws IOException {
         Thucydides.loadLocalPreferences();
 
     }

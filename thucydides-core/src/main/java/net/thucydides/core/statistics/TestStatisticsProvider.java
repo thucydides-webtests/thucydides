@@ -1,12 +1,14 @@
 package net.thucydides.core.statistics;
 
 import com.google.inject.Inject;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.model.TestRun;
 import net.thucydides.core.statistics.model.TestRunTag;
 import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.statistics.service.WithTagNamed;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,19 +50,27 @@ public class TestStatisticsProvider {
     private TestStatistics testStatisticsForTestsWithTag(WithTagNamed withCondition) {
         String tag = withCondition.getTag();
         Long totalTests = testOutcomeHistoryDAO.countTestRunsByTag(tag);
-        Long passingTests = testOutcomeHistoryDAO.countPassingTestRunsByTag(tag);
-        List<TestRunTag> latestTags = testOutcomeHistoryDAO.getLatestTagsForTestWithTag(tag);
-        return new TestStatistics(totalTests, passingTests, latestTags);
+        Long passingTests = testOutcomeHistoryDAO.countTestRunsByTagAndResult(tag, TestResult.SUCCESS);
+        Long failingTests = testOutcomeHistoryDAO.countTestRunsByTagAndResult(tag, TestResult.FAILURE);
+        List<TestResult> results = testOutcomeHistoryDAO.getResultsForTestsWithTag(tag);
+        List<TestRunTag> latestTags = testOutcomeHistoryDAO.getLatestTagsForTestsWithTag(tag);
+        return new TestStatistics(totalTests, passingTests, failingTests, results, latestTags);
     }
 
     private TestStatistics testStatisticsForTitle(WithTitle withCondition) {
-        Long totalTests = testOutcomeHistoryDAO.countTestRunsByTitle(((WithTitle) withCondition).getTitle());
-        Long passingTests = testOutcomeHistoryDAO.countPassingTestRunsByTitle(((WithTitle) withCondition).getTitle());
-        List<TestRunTag> latestTags = testOutcomeHistoryDAO.getLatestTagsForTestWithTitleByTitle(((WithTitle) withCondition).getTitle());
-        return new TestStatistics(totalTests, passingTests, latestTags);
+        Long totalTests = testOutcomeHistoryDAO.countTestRunsByTitle(withCondition.getTitle());
+        Long passingTests = testOutcomeHistoryDAO.countTestRunsByTitleAndResult(withCondition.getTitle(), TestResult.SUCCESS);
+        Long failingTests = testOutcomeHistoryDAO.countTestRunsByTitleAndResult(withCondition.getTitle(), TestResult.FAILURE);
+        List<TestResult> results = testOutcomeHistoryDAO.getResultsTestWithTitle(withCondition.getTitle());
+        List<TestRunTag> latestTags = testOutcomeHistoryDAO.getLatestTagsForTestWithTitleByTitle(withCondition.getTitle());
+        return new TestStatistics(totalTests, passingTests, failingTests, results, latestTags);
     }
 
     public List<TestRunTag> findAllTags() {
         return testOutcomeHistoryDAO.findAllTags();
+    }
+
+    public List<String> findAllTagTypes() {
+        return testOutcomeHistoryDAO.findAllTagTypes();
     }
 }

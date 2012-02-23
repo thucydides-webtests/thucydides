@@ -3,7 +3,6 @@ package net.thucydides.core.reports.html;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.issues.IssueTracking;
@@ -24,7 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import static ch.lambdaj.Lambda.convert;
-import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
+import static com.google.common.collect.Iterables.any;
+import static net.thucydides.core.model.ReportType.HTML;
 
 /**
  * Generates acceptance test results in XML form.
@@ -86,7 +86,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     }
 
     private boolean containsScreenshots(TestOutcome testOutcome) {
-        return Iterables.any(testOutcome.getTestSteps(), hasScreenshot());
+        return any(testOutcome.getTestSteps(), hasScreenshot());
     }
 
     private Predicate<TestStep> hasScreenshot() {

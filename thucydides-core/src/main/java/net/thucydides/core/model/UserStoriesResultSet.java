@@ -28,32 +28,59 @@ public class UserStoriesResultSet {
     }
 
     public int getTotalTestCount() {
-        return sum(stories, on(StoryTestResults.class).getTotal());
+        int sum = 0;
+        for(StoryTestResults story : stories) {
+            sum += story.getTotal();
+        }
+        return sum;
     }
 
     public int getSuccessCount() {
-
-        return sum(stories, on(StoryTestResults.class).getSuccessCount());
+        int sum = 0;
+        for(StoryTestResults story : stories) {
+            sum += story.getSuccessCount();
+        }
+        return sum;
     }
 
     public int getFailureCount() {
-        return sum(stories, on(StoryTestResults.class).getFailureCount());
+        int sum = 0;
+        for(StoryTestResults story : stories) {
+            sum += story.getFailureCount();
+        }
+        return sum;
     }
 
     public int getPendingCount() {
-        return sum(stories, on(StoryTestResults.class).getPendingCount());
+        int sum = 0;
+        for(StoryTestResults story : stories) {
+            sum += story.getPendingCount();
+        }
+        return sum;
     }
 
     public Integer getTotalStepCount() {
-        return sum(stories, on(StoryTestResults.class).getEstimatedTotalStepCount());
+        int sum = 0;
+        for(StoryTestResults story : stories) {
+            sum += story.getEstimatedTotalStepCount();
+        }
+        return sum;
     }
 
     public Integer getPassingStepCount() {
-        return sum(stories, on(StoryTestResults.class).countStepsInSuccessfulTests());
+        int sum = 0;
+        for(StoryTestResults story : stories) {
+            sum += story.countStepsInSuccessfulTests();
+        }
+        return sum;
     }
 
     public Integer getFailingStepCount() {
-        return sum(stories, on(StoryTestResults.class).countStepsInFailingTests());
+        int sum = 0;
+        for(StoryTestResults story : stories) {
+            sum += story.countStepsInFailingTests();
+        }
+        return sum;
     }
 
     public Double getPercentageFailingStepCount() {
@@ -73,7 +100,6 @@ public class UserStoriesResultSet {
     }
 
     public Double getPercentagePendingStepCount() {
-        
         return roundedTo1DecimalPlace(1 - getPercentageFailingStepCount() - getPercentagePassingStepCount());
     }
 

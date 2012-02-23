@@ -7,4 +7,5 @@ import org.joda.time.DateTime;
  */
 public interface SystemClock {
     void pauseFor(long timeInMilliseconds);
-    DateTime getCurrentTime();}
+    DateTime getCurrentTime();
+}

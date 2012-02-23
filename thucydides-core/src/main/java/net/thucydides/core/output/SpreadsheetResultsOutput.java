@@ -1,12 +1,9 @@
 package net.thucydides.core.output;
 
 import com.google.common.collect.ImmutableList;
-import jxl.Cell;
 import jxl.JXLException;
-import jxl.Sheet;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
-import jxl.format.BoldStyle;
 import jxl.format.Colour;
 import jxl.read.biff.BiffException;
 import jxl.write.Label;
@@ -15,9 +12,7 @@ import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
 import net.thucydides.core.matchers.SimpleValueMatcher;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,41 +22,53 @@ import java.util.Locale;
 public class SpreadsheetResultsOutput implements ResultsOutput {
     List<String> titles;
     File outputFile;
+    boolean recordingStarted;
 
     public SpreadsheetResultsOutput(File outputFile, List<String> titles) {
         this.titles = ImmutableList.copyOf(titles);
         this.outputFile = outputFile;
+        recordingStarted = false;
 
     }
 
     @Override
-    public synchronized void recordResult(SimpleValueMatcher check, List<String> columnValues) throws IOException {
+    public synchronized void recordResult(SimpleValueMatcher validityCheck, List<String> columnValues) throws IOException {
 
         WritableWorkbook workbook = null;
 
         try {
-            workbook = obtainWorkbook();
-            WritableSheet sheet = workbook.getSheet(0);
-
-            boolean isAFailedTest = !check.matches();
-            WritableCellFormat font = getFontFor(isAFailedTest);
-
-            int row = sheet.getRows();
-            int column = 0;
-            for (String columnValue : columnValues) {
-                Label resultCell = new Label(column++, row, columnValue, font);
-                sheet.addCell(resultCell);
-            }
+            workbook = currentWorkbook();
+            writeRow(validityCheck, columnValues, workbook.getSheet(0));
             workbook.write();
         } catch (JXLException e) {
             throw new IOException(e);
         } finally {
+            close(workbook);
+        }
+    }
+
+    private void close(WritableWorkbook workbook) throws IOException {
+        try {
             if (workbook != null) {
-                try {
-                    workbook.close();
-                } catch (WriteException e) {
-                }
+                workbook.close();
             }
+        } catch (WriteException e) {
+            // Don't really care
+        }
+    }
+
+    private void writeRow(SimpleValueMatcher check, List<String> columnValues, WritableSheet sheet) throws WriteException {
+
+        recordingStarted = true;
+
+        boolean isAFailedTest = !check.matches();
+        WritableCellFormat font = getFontFor(isAFailedTest);
+
+        int row = sheet.getRows();
+        int column = 0;
+        for (String columnValue : columnValues) {
+            Label resultCell = new Label(column++, row, columnValue, font);
+            sheet.addCell(resultCell);
         }
     }
 
@@ -74,9 +81,9 @@ public class SpreadsheetResultsOutput implements ResultsOutput {
         return new WritableCellFormat(baseFont);
     }
 
-    private WritableWorkbook obtainWorkbook() throws IOException, BiffException {
+    private WritableWorkbook currentWorkbook() throws IOException, BiffException {
         WritableWorkbook workbook;
-        if (!outputFile.exists()) {
+        if (!recordingStarted || !outputFile.exists()) {
             workbook = createNewSpreadSheet(outputFile);
         } else {
             workbook = openExistingSpreadsheet();
@@ -103,9 +110,7 @@ public class SpreadsheetResultsOutput implements ResultsOutput {
                 sheet.addCell(label);
             }
             return workbook;
-        } catch (RowsExceededException e) {
-            throw new IOException(e);
-        } catch (WriteException e) {
+        } catch (JXLException e) {
             throw new IOException(e);
         }
     }

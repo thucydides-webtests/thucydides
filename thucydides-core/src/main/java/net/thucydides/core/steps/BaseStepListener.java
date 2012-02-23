@@ -11,7 +11,7 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.screenshots.Photographer;
-import net.thucydides.core.screenshots.RecordedScreenshot;
+import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
@@ -357,9 +357,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
         if (currentStepExists()) {
             try {
                 String stepDescription = getCurrentTestOutcome().getCurrentStep().getDescription();
-                RecordedScreenshot screenshot = grabScreenshotFor(stepDescription);
-                if (screenshot.wasTaken()) {
-                    getCurrentStep().addScreenshot(screenshot);
+                ScreenshotAndHtmlSource screenshotAndHtmlSource = grabScreenshotFor(stepDescription);
+                if (screenshotAndHtmlSource.wasTaken()) {
+                    getCurrentStep().addScreenshot(screenshotAndHtmlSource);
                 }
             } catch (ScreenshotException e) {
                 LOGGER.warn("Failed to take screenshot", e);
@@ -373,11 +373,11 @@ public class BaseStepListener implements StepListener, StepPublisher {
         }
     }
 
-    private RecordedScreenshot grabScreenshotFor(final String testName) {
+    private ScreenshotAndHtmlSource grabScreenshotFor(final String testName) {
         String snapshotName = underscore(testName);
         File screenshot = getPhotographer().takeScreenshot(snapshotName);
         File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-        return new RecordedScreenshot(screenshot, sourcecode);
+        return new ScreenshotAndHtmlSource(screenshot, sourcecode);
     }
 
     public Photographer getPhotographer() {

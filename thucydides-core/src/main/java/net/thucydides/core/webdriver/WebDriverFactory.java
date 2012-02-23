@@ -10,7 +10,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.UnableToCreateProfileException;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.slf4j.Logger;
@@ -100,6 +102,8 @@ public class WebDriverFactory {
             WebDriver driver;
             if (isAFirefoxDriver(driverClass)) {
                 driver = firefoxDriverFrom(driverClass);
+            } else if (isAnHtmlUnitDriver(driverClass)) {
+                driver = htmlunitDriverFrom(driverClass);
             } else {
                 driver = webdriverInstanceFactory.newInstanceOf(driverClass);
             }
@@ -114,6 +118,12 @@ public class WebDriverFactory {
             LOGGER.error("Could not create new Webdriver instance", cause);
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
         }
+    }
+
+    private WebDriver htmlunitDriverFrom(Class<? extends WebDriver> driverClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        DesiredCapabilities caps = DesiredCapabilities.firefox();
+        caps.setJavascriptEnabled(true);
+        return new HtmlUnitDriver(caps);
     }
 
     private WebDriver firefoxDriverFrom(Class<? extends WebDriver> driverClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -148,6 +158,10 @@ public class WebDriverFactory {
 
     private boolean isAFirefoxDriver(Class<? extends WebDriver> driverClass) {
         return (FirefoxDriver.class.isAssignableFrom(driverClass));
+    }
+
+    private boolean isAnHtmlUnitDriver(Class<? extends WebDriver> driverClass) {
+        return (HtmlUnitDriver.class.isAssignableFrom(driverClass));
     }
 
     private boolean isAnInternetExplorerDriver(Class<? extends WebDriver> driverClass) {

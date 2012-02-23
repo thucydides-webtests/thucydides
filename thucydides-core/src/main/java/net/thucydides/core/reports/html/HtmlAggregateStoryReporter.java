@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.HTML;
+import static net.thucydides.core.model.ReportType.HTML;
 
 /**
  * Generates an aggregate acceptance test report in XML form. Reads all the

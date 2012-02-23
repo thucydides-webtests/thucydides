@@ -7,6 +7,7 @@ using "thucydides"
 
 thucydides.uses_default_base_url "classpath:demosite/index.html"
 thucydides.uses_steps_from DemoSiteSteps
+thucydides.uses_driver "htmlunit"
 
 thucydides.tests_issues "#WIKI-2", "#WIKI-3"
 thucydides.tests_issue "#WIKI-4"

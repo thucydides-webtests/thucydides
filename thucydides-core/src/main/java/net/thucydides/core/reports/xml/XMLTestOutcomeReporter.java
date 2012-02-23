@@ -14,7 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static net.thucydides.core.model.ReportNamer.ReportType.XML;
+import static net.thucydides.core.model.ReportType.XML;
 
 /**
  * Generates acceptance test results in XML form.
