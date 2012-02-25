@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -237,7 +238,7 @@ public class WhenInstanciatingANewFirefoxDriver {
         WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
         driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
 
-        verify(firefoxProfileEnhancer).activateProxy(any(FirefoxProfile.class), "my.proxy", "8080");
+        verify(firefoxProfileEnhancer).activateProxy(any(FirefoxProfile.class), eq("my.proxy"), eq("8080"));
     }
 
     @Test
