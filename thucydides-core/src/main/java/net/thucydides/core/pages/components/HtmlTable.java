@@ -215,4 +215,9 @@ public class HtmlTable {
     public static List<WebElement> filterRows(final WebElement table, final BeanMatcher... matchers) {
         return new HtmlTable(table).getRowElementsWhere(matchers);
     }
+
+    public List<WebElement> filterRows(final BeanMatcher... matchers) {
+        return new HtmlTable(tableElement).getRowElementsWhere(matchers);
+    }
+
 }
