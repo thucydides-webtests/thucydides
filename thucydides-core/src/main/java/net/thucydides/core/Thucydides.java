@@ -150,4 +150,13 @@ public class Thucydides {
         }
         return testSessionThreadLocal.get();
     }
+
+    public static void pendingStep(String reason) {
+        throw new PendingStepException(reason);
+    }
+
+    public static void ignoredStep(String reason) {
+        throw new IgnoredStepException(reason);
+    }
+
 }

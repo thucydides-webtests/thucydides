@@ -762,6 +762,40 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void a_step_can_be_marked_as_pending_programmatically() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.programmaticallyPendingStep();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        TestOutcome testOutcome = results.get(0);
+
+        assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.PENDING));
+    }
+
+    @Test
+    public void a_step_can_be_marked_as_ignored_programmatically() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.programmaticallyIgnoredStep();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        TestOutcome testOutcome = results.get(0);
+
+        assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.IGNORED));
+    }
+
+    @Test
     public void grouped_test_steps_should_appear_as_nested() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);

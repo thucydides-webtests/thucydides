@@ -1,5 +1,6 @@
 package net.thucydides.core.steps.samples;
 
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
@@ -118,6 +119,18 @@ public class FlatScenarioSteps extends ScenarioSteps {
     public void unannotatedStepCausingANullPointerException() {
         String nullValue = null;
         nullValue.length();
+    }
+
+    @Step
+    public void programmaticallyIgnoredStep() {
+        Thucydides.ignoredStep("This test should be skipped");
+
+    }
+
+    @Step
+    public void programmaticallyPendingStep() {
+        Thucydides.pendingStep("This test should be skipped");
+
     }
 
 }

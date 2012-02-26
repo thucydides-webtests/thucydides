@@ -2,12 +2,12 @@ package net.thucydides.core.steps;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
+import net.thucydides.core.IgnoredStepException;
+import net.thucydides.core.PendingStepException;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestAnnotations;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -247,8 +247,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         LOGGER.info("Running test step " + getTestNameFrom(method, args, false));
         Object result = null;
         try {
-            result = proxy.invokeSuper(obj, args);
-            notifyStepFinishedFor(method, args);
+            result = executeTestStepMethod(obj, method, args, proxy, result);
         } catch (AssertionError assertionError) {
             error = assertionError;
             LOGGER.debug("Assertion error caught - notifying of failure " + assertionError);
@@ -268,6 +267,18 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         return result;
     }
 
+    private Object executeTestStepMethod(Object obj, Method method, Object[] args, MethodProxy proxy, Object result) throws Throwable {
+        try {
+            result = proxy.invokeSuper(obj, args);
+            notifyStepFinishedFor(method, args);
+        } catch(PendingStepException pendingStep) {
+            notifyStepPending(method, args);
+        } catch(IgnoredStepException ignoredStep) {
+            notifyStepIgnored(method, args);
+        }
+        return result;
+    }
+
     private Object invokeMethod(final Object obj, final Method method,
                                 final Object[] args, final MethodProxy proxy) throws Throwable {
         return proxy.invokeSuper(obj, args);
@@ -279,6 +290,14 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private void notifyStepFinishedFor(final Method method, final Object[] args) {
         StepEventBus.getEventBus().stepFinished();
+    }
+
+    private void notifyStepPending(final Method method, final Object[] args) {
+        StepEventBus.getEventBus().stepPending();
+    }
+
+    private void notifyStepIgnored(final Method method, final Object[] args) {
+        StepEventBus.getEventBus().stepIgnored();
     }
 
     private String getTestNameFrom(final Method method, final Object[] args) {
