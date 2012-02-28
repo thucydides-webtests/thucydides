@@ -2,6 +2,8 @@ package net.thucydides.core.steps;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import net.thucydides.core.IgnoredStepException;
+import net.thucydides.core.PendingStepException;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
@@ -328,10 +330,22 @@ public class BaseStepListener implements StepListener, StepPublisher {
         }
     }
 
+    @Override
+    public void stepIgnored(String message) {
+        getCurrentStep().testAborted(new IgnoredStepException(message));
+        stepIgnored();
+    }
+
     public void stepPending() {
         LOGGER.debug("step pending");
         markCurrentStepAs(PENDING);
         currentStepDone();
+    }
+
+    @Override
+    public void stepPending(String message) {
+        getCurrentStep().testAborted(new PendingStepException(message));
+        stepPending();
     }
 
     private void currentStepDone() {

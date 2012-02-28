@@ -27,7 +27,6 @@ public class SingleTestScenarioWithWebdriverException {
     public void happy_day_scenario() {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
-        steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
         steps.stepThatFailsWithWebdriverException();
         steps.stepThatShouldBeSkipped();

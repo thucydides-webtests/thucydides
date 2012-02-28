@@ -41,20 +41,54 @@ public class WhenWeCreateATestStep {
     public void the_test_step_can_have_more_than_one_illustration() throws IOException {
         TestStep step = new TestStep("a narrative description");
 
-        File screenshot = screenshotFileFrom("/screenshots/google_page_1.png");
-        File source = temporaryFolder.newFile("screenshot.html");
-        step.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
+        step.addScreenshot(forScreenshotWithImage("/screenshots/google_page_1.png").and().withSource("screenshot.html"));
+        step.addScreenshot(forScreenshotWithImage("/screenshots/google_page_2.png").and().withSource("screenshot2.html"));
 
-        File screenshot2 = screenshotFileFrom("/screenshots/google_page_2.png");
-        File source2 = temporaryFolder.newFile("screenshot2.html");
-        step.addScreenshot(new ScreenshotAndHtmlSource(screenshot2, source2));
+        ScreenshotAndHtmlSource screenshot1 = step.getScreenshots().get(0);
+        ScreenshotAndHtmlSource screenshot2 = step.getScreenshots().get(1);
 
-        assertThat(step.getScreenshots().get(0).getScreenshotFile(), is(screenshot));
-        assertThat(step.getScreenshots().get(0).getSourcecode(), is(source));
-        assertThat(step.getScreenshots().get(1).getScreenshotFile(), is(screenshot2));
-        assertThat(step.getScreenshots().get(1).getSourcecode(), is(source2));
+        assertThat(screenshot1.getScreenshotFile().getName(), is("google_page_1.png"));
+        assertThat(screenshot1.getSourcecode().getName(), is("screenshot.html"));
+
+        assertThat(screenshot2.getScreenshotFile().getName(), is("google_page_2.png"));
+        assertThat(screenshot2.getSourcecode().getName(), is("screenshot2.html"));
     }
 
+    @Test
+    public void the_test_step_knows_how_many_illustrations_it_has() throws IOException {
+        TestStep step = new TestStep("a narrative description");
+
+        step.addScreenshot(forScreenshotWithImage("/screenshots/google_page_1.png").and().withSource("screenshot.html"));
+        step.addScreenshot(forScreenshotWithImage("/screenshots/google_page_2.png").and().withSource("screenshot2.html"));
+        step.addScreenshot(forScreenshotWithImage("/screenshots/google_page_3.png").and().withSource("screenshot2.html"));
+
+        assertThat(step.getScreenshotCount(), is(3));
+    }              
+    
+    private ScreenshotAndHtmlSourceBuilder forScreenshotWithImage(String image) {
+        return new ScreenshotAndHtmlSourceBuilder().withImage(image);
+    }
+
+    private class ScreenshotAndHtmlSourceBuilder {                   
+        String image;
+        public ScreenshotAndHtmlSourceBuilder withImage(String image) {
+            this.image = image;
+            return this;
+        }
+        
+        public ScreenshotAndHtmlSourceBuilder and() {
+            return this;
+        }
+        
+        public ScreenshotAndHtmlSource withSource(String source) throws IOException {
+            File screenshotFile = screenshotFileFrom(image);
+            File sourceFile = new File(source);
+            return new ScreenshotAndHtmlSource(screenshotFile, sourceFile);
+        }
+        
+        
+    }
+    
     @Test
     public void the_first_screenshot_can_be_used_to_represent_the_step() throws IOException {
         TestStep step = new TestStep("a narrative description");
@@ -245,5 +279,4 @@ public class WhenWeCreateATestStep {
         URL sourcePath = getClass().getResource(screenshot);
         return new File(sourcePath.getPath());
     }
-
 }

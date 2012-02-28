@@ -59,7 +59,15 @@ public class StatisticsListener implements StepListener {
     }
 
     @Override
+    public void stepIgnored(String message) {
+    }
+
+    @Override
     public void stepPending() {
+    }
+
+    @Override
+    public void stepPending(String message) {
     }
 
     @Override

@@ -103,7 +103,7 @@
 						$(this).fadeIn(settings.animSpeed);
 					});
 				} else {
-					nivoCaption.find('p').html(title);
+					nivoCaption.find('p').html(title + '<span class="errorMessage">' + alt + '</span>');
 				}					
 				nivoCaption.fadeIn(settings.animSpeed);
 			} else {

@@ -454,10 +454,10 @@ public class WhenUsingTheStepEventBus {
                 + "----> STEP PENDING\n"
                 + "--step4\n"
                 + "---step5\n"
-                + "-----> STEP DONE\n"
+                + "-----> STEP IGNORED\n"
                 + "---step6\n"
-                + "-----> STEP DONE\n"
-                + "----> STEP DONE\n"
+                + "-----> STEP IGNORED\n"
+                + "----> STEP IGNORED\n"
                 + "---> STEP DONE\n"
                 + "TEST DONE\n";
 

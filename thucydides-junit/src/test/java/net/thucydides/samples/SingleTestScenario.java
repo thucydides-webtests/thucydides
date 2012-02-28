@@ -30,7 +30,6 @@ public class SingleTestScenario {
         steps.stepThatUsesABrowser();
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
-        steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
         steps.stepThatFails();
         steps.stepThatShouldBeSkipped();

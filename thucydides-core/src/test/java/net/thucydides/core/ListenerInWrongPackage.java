@@ -43,15 +43,22 @@ public class ListenerInWrongPackage implements StepListener {
 
     @Override
     public void lastStepFailed(StepFailure failure) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void stepIgnored() {
         
     }
 
+    @Override
+    public void stepIgnored(String message) {
+    }
+
     public void stepPending() {
         
+    }
+
+    @Override
+    public void stepPending(String message) {
     }
 
     public void stepFinished() {

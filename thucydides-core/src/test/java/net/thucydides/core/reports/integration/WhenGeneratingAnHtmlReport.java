@@ -231,7 +231,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         File testReport = new File(outputDirectory, "a_user_story_should_do_this.html");
         String reportContents = FileUtils.readFileToString(testReport);
-        assertThat(reportContents, containsString("<a href=\"a_user_story_should_do_this_screenshots.html#screenshots\">"));
+        assertThat(reportContents, containsString("<a href=\"a_user_story_should_do_this_screenshots.html#screenshots?screenshot=0\">"));
     }
 
 

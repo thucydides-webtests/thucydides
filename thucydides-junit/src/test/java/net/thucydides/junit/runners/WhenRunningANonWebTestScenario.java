@@ -176,9 +176,9 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         assertThat(steps.get(0).isSuccessful(), is(true));
         assertThat(steps.get(1).isIgnored(), is(true));
         assertThat(steps.get(2).isPending(), is(true));
-        assertThat(steps.get(3).isSuccessful(), is(true));
-        assertThat(steps.get(4).isFailure(), is(true));
-        assertThat(steps.get(5).isSkipped(), is(true));
+        assertThat(steps.get(3).isIgnored(), is(true));
+        assertThat(steps.get(4).isIgnored(), is(true));
+        assertThat(steps.get(5).isIgnored(), is(true));
     }
 
 
@@ -239,7 +239,6 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
 
         assertThat(ignored.getResult(), is(TestResult.IGNORED));
         assertThat(pending.getResult(), is(TestResult.PENDING));
-        assertThat(skipped.getResult(), is(TestResult.SKIPPED));
     }
 
 

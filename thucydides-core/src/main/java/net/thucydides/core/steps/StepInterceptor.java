@@ -95,10 +95,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         return packageDomainName(methodPackage);
     }
 
-    private boolean declaredInSameClass(Method rootMethod, Method method) {
-        return (rootMethod.getDeclaringClass().getCanonicalName().equals(method.getDeclaringClass().getCanonicalName()));
-    }
-
     private Method getRoot(Method method) {
         try {
             method.getClass().getDeclaredField("root").setAccessible(true);
@@ -250,7 +246,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             result = executeTestStepMethod(obj, method, args, proxy, result);
         } catch (AssertionError assertionError) {
             error = assertionError;
-            LOGGER.debug("Assertion error caught - notifying of failure " + assertionError);
             notifyOfStepFailure(method, args, assertionError);
             return appropriateReturnObject(obj, method);
         } catch (WebDriverException webdriverException) {
@@ -272,9 +267,9 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             result = proxy.invokeSuper(obj, args);
             notifyStepFinishedFor(method, args);
         } catch(PendingStepException pendingStep) {
-            notifyStepPending(method, args);
+            notifyStepPending(pendingStep.getMessage());
         } catch(IgnoredStepException ignoredStep) {
-            notifyStepIgnored(method, args);
+            notifyStepIgnored(ignoredStep.getMessage());
         }
         return result;
     }
@@ -292,12 +287,12 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         StepEventBus.getEventBus().stepFinished();
     }
 
-    private void notifyStepPending(final Method method, final Object[] args) {
-        StepEventBus.getEventBus().stepPending();
+    private void notifyStepPending(String message) {
+        StepEventBus.getEventBus().stepPending(message);
     }
 
-    private void notifyStepIgnored(final Method method, final Object[] args) {
-        StepEventBus.getEventBus().stepIgnored();
+    private void notifyStepIgnored(String message) {
+        StepEventBus.getEventBus().stepIgnored(message);
     }
 
     private String getTestNameFrom(final Method method, final Object[] args) {

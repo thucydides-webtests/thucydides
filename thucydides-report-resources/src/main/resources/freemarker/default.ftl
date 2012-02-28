@@ -116,8 +116,10 @@
                 </div>
 
             <#assign level = 1>
+            <#assign index = 0>
             <#macro write_step(step)>
-                <@step_details step=step level=level />
+                <@step_details step=step level=level index=index />
+                <#assign index = index + step.screenshotCount>
                 <#if step.isAGroup()>
                     <#assign level = level + 1>
                     <#foreach nestedStep in step.children>
@@ -126,7 +128,7 @@
                     <#assign level = level-1>
                 </#if>
             </#macro>
-            <#macro step_details(step, level)>
+            <#macro step_details(step, level, index)>
                 <#if step.result == "FAILURE">
                     <#assign step_outcome_icon = "fail.png">
                 <#elseif step.result == "SUCCESS">
@@ -155,7 +157,7 @@
                             <td width="%"><span class="${step_class_root}-step">${step.description}</span></td>
                             <td width="100" class="${step.result}-text">
                                 <#if !step.isAGroup() && step.firstScreenshot??>
-                                    <a href="${testOutcome.screenshotReportName}.html#screenshots">
+                                    <a href="${testOutcome.screenshotReportName}.html#screenshots?screenshot=${index}">
                                         <img src="${step.firstScreenshot.screenshotFile.name}"
                                              class="screenshot"
                                              width="48" height="48"/>

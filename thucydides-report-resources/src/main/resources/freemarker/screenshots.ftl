@@ -49,18 +49,29 @@
 	<!-- CSS Files -->
     <link href="slides/js/global.css" rel="stylesheet" type="text/css"/>
 
-	<script src="scripts/jquery.js"></script>
+    <script src="scripts/jquery.js"></script>
 
 	<link rel="stylesheet" href="nivo-slider/nivo-slider.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="nivo-slider/themes/default/default.css" type="text/css" media="screen" />
 
-	<script src="nivo-slider/jquery.nivo.slider.js" type="text/javascript"></script>
 	<script src="nivo-slider/jquery.nivo.slider.pack.js" type="text/javascript"></script>
 
 	<script type="text/javascript">
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+    var screenshotIndex = getUrlVars()["screenshot"];
+
 	$(window).load(function() {
 	    $('#slider').nivoSlider({
-			effect:'fade',
+            startSlide:screenshotIndex,
+            effect:'fade',
 			animSpeed:200,
 			directionNavHide:false,
 			manualAdvance:true,

@@ -326,14 +326,13 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        assertThat(steps.size(), is(7));
+        assertThat(steps.size(), is(6));
         assertThat(steps.get(0).isSuccessful(), is(true));
         assertThat(steps.get(1).isSuccessful(), is(true));
         assertThat(steps.get(2).isIgnored(), is(true));
-        assertThat(steps.get(3).isPending(), is(true));
-        assertThat(steps.get(4).isSuccessful(), is(true));
-        assertThat(steps.get(5).isFailure(), is(true));
-        assertThat(steps.get(6).isSkipped(), is(true));
+        assertThat(steps.get(3).isSuccessful(), is(true));
+        assertThat(steps.get(4).isFailure(), is(true));
+        assertThat(steps.get(5).isSkipped(), is(true));
     }
 
     @Test
@@ -362,13 +361,12 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        assertThat(steps.size(), is(6));
+        assertThat(steps.size(), is(5));
         assertThat(steps.get(0).isSuccessful(), is(true));
         assertThat(steps.get(1).isIgnored(), is(true));
-        assertThat(steps.get(2).isPending(), is(true));
-        assertThat(steps.get(3).isSuccessful(), is(true));
-        assertThat(steps.get(4).isFailure(), is(true));
-        assertThat(steps.get(5).isSkipped(), is(true));
+        assertThat(steps.get(2).isSuccessful(), is(true));
+        assertThat(steps.get(3).isFailure(), is(true));
+        assertThat(steps.get(4).isSkipped(), is(true));
     }
 
 
@@ -383,7 +381,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        TestStep failingStep = (TestStep) steps.get(5);
+        TestStep failingStep = (TestStep) steps.get(4);
         assertThat(failingStep.getErrorMessage(), containsString("Expected: is <2>"));
     }
 
@@ -398,7 +396,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        TestStep failingStep = steps.get(5);
+        TestStep failingStep = steps.get(4);
         assertThat(failingStep.getException().getClass().toString(), containsString("StepFailureException"));
     }
 
@@ -413,7 +411,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        TestStep failingStep = (TestStep) steps.get(4);
+        TestStep failingStep = (TestStep) steps.get(3);
         assertThat(failingStep.getException().getClass().toString(), containsString("StepFailureException"));
     }
 
@@ -428,7 +426,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        TestStep failingStep = (TestStep) steps.get(4);
+        TestStep failingStep = (TestStep) steps.get(3);
         assertThat(failingStep.getException().getClass().toString(), containsString("StepFailureException"));
     }
 
@@ -484,7 +482,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
-    public void the_test_runner_distinguishes_between_ignored_skipped_and_pending_steps() throws InitializationError {
+    public void the_test_runner_distinguishes_between_ignored_and_skipped_steps() throws InitializationError {
         ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
 
         runner.run(new RunNotifier());
@@ -493,11 +491,9 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         assertThat(executedScenarios.size(), is(1));
         TestOutcome testOutcome = executedScenarios.get(0);
         TestStep ignored = testOutcome.getTestSteps().get(2);
-        TestStep pending = testOutcome.getTestSteps().get(3);
-        TestStep skipped = testOutcome.getTestSteps().get(6);
+        TestStep skipped = testOutcome.getTestSteps().get(5);
 
         assertThat(ignored.getResult(), is(TestResult.IGNORED));
-        assertThat(pending.getResult(), is(TestResult.PENDING));
         assertThat(skipped.getResult(), is(TestResult.SKIPPED));
     }
 
@@ -510,11 +506,9 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         assertThat(executedScenarios.size(), greaterThan(0));
         TestOutcome testOutcome = executedScenarios.get(0);
         TestStep ignored = testOutcome.getTestSteps().get(2);
-        TestStep pending = testOutcome.getTestSteps().get(3);
-        TestStep skipped = testOutcome.getTestSteps().get(6);
+        TestStep skipped = testOutcome.getTestSteps().get(5);
 
         assertThat(ignored.getResult(), is(TestResult.IGNORED));
-        assertThat(pending.getResult(), is(TestResult.PENDING));
         assertThat(skipped.getResult(), is(TestResult.SKIPPED));
     }
 

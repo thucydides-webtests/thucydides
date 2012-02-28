@@ -779,6 +779,25 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void steps_following_a_pending_step_should_be_ignored() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.programmaticallyPendingStep();
+        steps.step_two();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        TestOutcome testOutcome = results.get(0);
+
+        assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.PENDING));
+        assertThat(testOutcome.getTestSteps().get(2).getResult(), is(TestResult.IGNORED));
+    }
+
+    @Test
     public void a_step_can_be_marked_as_ignored_programmatically() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
@@ -1160,10 +1179,9 @@ public class WhenRecordingStepExecutionResults {
         FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
         steps.step_one();
         steps.pendingStep();
-        steps.step_two();
         StepEventBus.getEventBus().testFinished(testOutcome);
 
-        verify(driver, times(4)).getScreenshotAs((OutputType<?>) anyObject());
+        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     @Test

@@ -75,9 +75,21 @@ public interface StepListener {
     void stepIgnored();
 
     /**
+     * The step is marked as ignored with a descriptive message.
+     * @param message
+     */
+    void stepIgnored(String message);
+
+    /**
      * The step is marked as pending.
      */
     void stepPending();
+
+    /**
+     * The step is marked as pending with a descriptive message.
+     * @param message
+     */
+    void stepPending(String message);
 
     /**
      * Called when an test step has finished successfully

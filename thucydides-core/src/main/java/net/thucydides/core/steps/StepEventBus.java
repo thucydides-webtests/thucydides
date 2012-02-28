@@ -274,13 +274,26 @@ public class StepEventBus {
         }
     }
 
-    public void stepPending() {
+    public void stepIgnored(String message) {
+        stepIgnored();
+    }
 
+    public void stepPending() {
+        stepPending(null);
+
+    }
+
+    public void stepPending(String message) {
+        testPending();
         stepDone();
         getResultTally().logIgnoredTest();
 
         for(StepListener stepListener : getAllListeners()) {
-            stepListener.stepPending();
+            if (message != null) {
+                stepListener.stepPending(message);
+            } else {
+                stepListener.stepPending();
+            }
         }
     }
 
@@ -347,4 +360,5 @@ public class StepEventBus {
             stepListener.testSuiteFinished();
         }
     }
+
 }

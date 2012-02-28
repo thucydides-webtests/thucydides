@@ -25,7 +25,6 @@ public class SampleNoSuchElementExceptionScenario {
     public void failing_happy_day_scenario() {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
-        steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
         steps.failsToFindElement();
         steps.stepThatShouldBeSkipped();
@@ -36,7 +35,6 @@ public class SampleNoSuchElementExceptionScenario {
     public void successful_happy_day_scenario() {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
-        steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
     }
 

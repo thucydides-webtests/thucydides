@@ -27,7 +27,6 @@ public class SingleTestScenarioWithRuntimeException {
     public void happy_day_scenario() {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
-        steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
         steps.stepThatFailsWithRuntimeException();
         steps.stepThatShouldBeSkipped();

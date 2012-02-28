@@ -78,6 +78,8 @@ public class TestStep {
         return ImmutableList.copyOf(screenshots);
     }
 
+
+
     public ScreenshotAndHtmlSource getFirstScreenshot() {
         if ((screenshots != null) && (!screenshots.isEmpty())) {
             return screenshots.get(0);
@@ -171,6 +173,14 @@ public class TestStep {
         return (cause != null) ? errorMessageFrom(cause) : "";
     }
 
+    /**
+     * The test has been aborted (marked as pending or ignored) for a reason described in the exception.
+     * @param exception
+     */
+    public void testAborted(final Throwable exception) {
+        this.cause = exception;
+    }
+
     private String errorMessageFrom(final Throwable error) {
         return (error.getCause() != null) ? error.getCause().getMessage() : error.getMessage();
     }
@@ -220,7 +230,7 @@ public class TestStep {
 
     public void addScreenshot(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
         if (thisIsANew(screenshotAndHtmlSource)) {
-        screenshots.add(screenshotAndHtmlSource);
+            screenshots.add(screenshotAndHtmlSource);
         }
     }
 
@@ -231,5 +241,9 @@ public class TestStep {
             ScreenshotAndHtmlSource latestScreenshotAndHtmlSource = screenshots.get(screenshots.size() - 1);
             return !latestScreenshotAndHtmlSource.equals(screenshotAndHtmlSource);
         }
+    }
+
+    public int getScreenshotCount() {
+        return screenshots.size();
     }
 }
