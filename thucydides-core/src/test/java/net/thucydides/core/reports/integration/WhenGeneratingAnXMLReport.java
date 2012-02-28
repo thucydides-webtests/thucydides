@@ -80,9 +80,9 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
         String expectedReport =
-              "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+              "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
             + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-            + "  <test-step result='SUCCESS'>\n"
+            + "  <test-step result='SUCCESS' duration='0'>\n"
             + "    <description>step 1</description>\n"
             + "  </test-step>\n"
             + "</acceptance-test-run>";
@@ -100,14 +100,14 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", ATestScenarioWithIssues.class);
         String expectedReport =
-              "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+              "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
             + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
             + "  <issues>\n"
             + "    <issue>#456</issue>\n"
             + "    <issue>#789</issue>\n"
             + "    <issue>#123</issue>\n"
             + "  </issues>\n"
-            + "  <test-step result='SUCCESS'>\n"
+            + "  <test-step result='SUCCESS' duration='0'>\n"
             + "    <description>step 1</description>\n"
             + "  </test-step>\n"
             + "</acceptance-test-run>";
@@ -125,11 +125,11 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioInAFeature.class);
         String expectedReport =
-              "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+              "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
             + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.AUserStoryInAFeature' name='A user story in a feature'>\n"
             + "    <feature id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature' name='A feature'/>\n"
             + "  </user-story>\n"
-            + "  <test-step result='SUCCESS'>\n"
+            + "  <test-step result='SUCCESS' duration='0'>\n"
             + "    <description>step 1</description>\n"
             + "  </test-step>\n"
             + "</acceptance-test-run>";
@@ -148,9 +148,9 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
 
-        String expectedReport = "<acceptance-test-run title='A simple test case [qualifier]' name='a_simple_test_case_qualifier' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+        String expectedReport = "<acceptance-test-run title='A simple test case [qualifier]' name='a_simple_test_case_qualifier' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
                 + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-                + "  <test-step result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS' duration='0'>\n"
                 + "    <description>step 1</description>\n"
                 + "  </test-step>\n" + "</acceptance-test-run>";
 
@@ -167,9 +167,9 @@ public class WhenGeneratingAnXMLReport {
     public void should_generate_a_qualified_XML_report_with_formatted_parameters_if_the_qualifier_is_specified()
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-        String expectedReport = "<acceptance-test-run title='A simple test case [a/b]' name='a_simple_test_case_a_b' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+        String expectedReport = "<acceptance-test-run title='A simple test case [a/b]' name='a_simple_test_case_a_b' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
                 + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-                + "  <test-step result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS' duration='0'>\n"
                 + "    <description>step 1</description>\n"
                 + "  </test-step>\n" + "</acceptance-test-run>";
 
@@ -205,33 +205,33 @@ public class WhenGeneratingAnXMLReport {
     public void should_count_the_total_number_of_steps_with_each_outcome_in_acceptance_test_run()
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-        String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='9' successful='2' failures='3' skipped='1' ignored='2' pending='1' result='FAILURE'>\n"
+        String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='9' successful='2' failures='3' skipped='1' ignored='2' pending='1' result='FAILURE' duration='0'>\n"
                 + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-                + "  <test-step result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS' duration='0'>\n"
                 + "    <description>step 1</description>\n"
                 + "  </test-step>\n"
-                + "  <test-step result='IGNORED'>\n"
+                + "  <test-step result='IGNORED' duration='0'>\n"
                 + "    <description>step 2</description>\n"
                 + "  </test-step>\n"
-                + "  <test-step result='IGNORED'>\n"
+                + "  <test-step result='IGNORED' duration='0'>\n"
                 + "    <description>step 3</description>\n"
                 + "  </test-step>\n"
-                + "  <test-step result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS' duration='0'>\n"
                 + "    <description>step 4</description>\n"
                 + "  </test-step>\n"
-                + "  <test-step result='FAILURE'>\n"
+                + "  <test-step result='FAILURE' duration='0'>\n"
                 + "    <description>step 5</description>\n"
                 + "  </test-step>\n"
-                + "  <test-step result='FAILURE'>\n"
+                + "  <test-step result='FAILURE' duration='0'>\n"
                 + "    <description>step 6</description>\n"
                 + "  </test-step>\n"
-                + "  <test-step result='FAILURE'>\n"
+                + "  <test-step result='FAILURE' duration='0'>\n"
                 + "    <description>step 7</description>\n"
                 + "  </test-step>\n"
-                + "  <test-step result='SKIPPED'>\n"
+                + "  <test-step result='SKIPPED' duration='0'>\n"
                 + "    <description>step 8</description>\n"
                 + "  </test-step>\n"
-                + "  <test-step result='PENDING'>\n"
+                + "  <test-step result='PENDING' duration='0'>\n"
                 + "    <description>step 9</description>\n"
                 + "  </test-step>\n" + "</acceptance-test-run>";
 
@@ -264,16 +264,16 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
         String expectedReport =
-                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='3' successful='3' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='3' successful='3' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
                 + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
                 + "  <test-group name='Group 1' result='SUCCESS'>\n"
-                + "    <test-step result='SUCCESS'>\n"
+                + "    <test-step result='SUCCESS' duration='0'>\n"
                 + "      <description>step 1</description>\n"
                 + "    </test-step>\n"
-                + "    <test-step result='SUCCESS'>\n"
+                + "    <test-step result='SUCCESS' duration='0'>\n"
                 + "      <description>step 2</description>\n"
                 + "    </test-step>\n"
-                + "    <test-step result='SUCCESS'>\n"
+                + "    <test-step result='SUCCESS' duration='0'>\n"
                 + "      <description>step 3</description>\n"
                 + "    </test-step>\n"
                 + "  </test-group>\n" 
@@ -296,23 +296,23 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
         String expectedReport = 
-                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='5' successful='5' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='5' successful='5' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
                 + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
                 + "  <test-group name='Group 1' result='SUCCESS'>\n"
-                + "    <test-step result='SUCCESS'>\n"
+                + "    <test-step result='SUCCESS' duration='0'>\n"
                 + "      <description>step 1</description>\n"
                 + "    </test-step>\n"
-                + "    <test-step result='SUCCESS'>\n"
+                + "    <test-step result='SUCCESS' duration='0'>\n"
                 + "      <description>step 2</description>\n"
                 + "    </test-step>\n"
-                + "    <test-step result='SUCCESS'>\n"
+                + "    <test-step result='SUCCESS' duration='0'>\n"
                 + "      <description>step 3</description>\n"
                 + "    </test-step>\n"
                 + "    <test-group name='Group 1.1' result='SUCCESS'>\n"
-                + "      <test-step result='SUCCESS'>\n"
+                + "      <test-step result='SUCCESS' duration='0'>\n"
                 + "        <description>step 4</description>\n"
                 + "      </test-step>\n"
-                + "      <test-step result='SUCCESS'>\n"
+                + "      <test-step result='SUCCESS' duration='0'>\n"
                 + "        <description>step 5</description>\n"
                 + "      </test-step>\n"
                 + "    </test-group>\n" 
@@ -340,12 +340,12 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
         String expectedReport = 
-                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
                 + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
                 + "  <test-group name='Group 1' result='SUCCESS'>\n"
                 + "    <test-group name='Group 1.1' result='SUCCESS'>\n"
                 + "      <test-group name='Group 1.1.1' result='SUCCESS'>\n"
-                + "        <test-step result='SUCCESS'>\n"
+                + "        <test-step result='SUCCESS' duration='0'>\n"
                 + "          <description>step 1</description>\n"
                 + "        </test-step>\n"
                 + "      </test-group>\n" 
@@ -372,12 +372,12 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
         String expectedReport =
-                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                  "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
                 + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
                 + "  <test-group name='Group 1' result='SUCCESS'>\n"
                 + "    <test-group name='Group 1.1' result='SUCCESS'>\n"
                 + "      <test-group name='Group 1.1.1' result='SUCCESS'>\n"
-                + "        <test-step result='SUCCESS'>\n"
+                + "        <test-step result='SUCCESS' duration='0'>\n"
                 + "          <description>step 1</description>\n"
                 + "        </test-step>\n"
                 + "      </test-group>\n"
@@ -402,15 +402,15 @@ public class WhenGeneratingAnXMLReport {
     @Test
     public void should_include_the_name_of_any_screenshots_where_present() throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-        String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='2' successful='1' failures='1' skipped='0' ignored='0' pending='0' result='FAILURE'>\n"
+        String expectedReport = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='2' successful='1' failures='1' skipped='0' ignored='0' pending='0' result='FAILURE' duration='0'>\n"
                 + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-                + "  <test-step result='SUCCESS'>\n"
+                + "  <test-step result='SUCCESS' duration='0'>\n"
                 + "    <screenshots>\n"
                 + "      <screenshot image='step_1.png' source='step_1.html'/>\n"
                 + "    </screenshots>\n"
                 + "    <description>step 1</description>\n"
                 + "  </test-step>\n"
-                + "  <test-step result='FAILURE'>\n"
+                + "  <test-step result='FAILURE' duration='0'>\n"
                 + "    <description>step 2</description>\n"
                 + "  </test-step>\n"
                 + "</acceptance-test-run>";

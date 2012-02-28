@@ -50,6 +50,7 @@ public class TestOutcomeConverter implements Converter {
     private static final String SCREENSHOT_IMAGE = "image";
     private static final String SCREENSHOT_SOURCE = "source";
     private static final String DESCRIPTION = "description";
+    private static final String DURATION = "duration";
 
     private transient String qualifier;
 
@@ -86,6 +87,7 @@ public class TestOutcomeConverter implements Converter {
         writer.addAttribute(IGNORED_FIELD, Integer.toString(testOutcome.getIgnoredCount()));
         writer.addAttribute(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
         writer.addAttribute(RESULT_FIELD, testOutcome.getResult().toString());
+        writer.addAttribute(DURATION, Long.toString(testOutcome.getDuration()));
         addUserStoryTo(writer, testOutcome.getUserStory());
         addIssuesTo(writer, testOutcome.getIssues());
 
@@ -141,6 +143,7 @@ public class TestOutcomeConverter implements Converter {
         } else {
             writer.startNode(TEST_STEP);
             writeResult(writer, step);
+            writer.addAttribute(DURATION, Long.toString(step.getDuration()));
             writeScreenshotIfPresent(writer, step);
             //addIssuesTo(writer, step.getTestedIssues());
             writeDescription(writer, step);
@@ -246,6 +249,8 @@ public class TestOutcomeConverter implements Converter {
         String methodName = reader.getAttribute(NAME_FIELD);
         TestOutcome testOutcome = new TestOutcome(methodName);
         testOutcome.setTitle(reader.getAttribute(TITLE_FIELD));
+        Long duration = readDuration(reader);
+        testOutcome.setDuration(duration);
         readChildren(reader, testOutcome);
         return testOutcome;
     }
@@ -321,9 +326,21 @@ public class TestOutcomeConverter implements Converter {
         String testResultValue = reader.getAttribute(RESULT_FIELD);
         TestResult result = TestResult.valueOf(testResultValue);
         step.setResult(result);
+
+        Long duration = readDuration(reader);
+        step.setDuration(duration);
         readTestStepChildren(reader, step);
 
         testOutcome.recordStep(step);
+    }
+
+    private long readDuration(HierarchicalStreamReader reader) {
+        String durationValue = reader.getAttribute(DURATION);
+        if (StringUtils.isNumeric(durationValue)) {
+            return Long.parseLong(reader.getAttribute(DURATION));
+        } else {
+            return 0;
+        }
     }
 
     private void readTestGroup(final HierarchicalStreamReader reader, final TestOutcome testOutcome) {
