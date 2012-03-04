@@ -51,6 +51,15 @@ public class WhenFindingTestDataInADataDrivenTest {
     }
 
     @Test
+    public void should_be_able_to_count_the_number_of_data_entries() throws Throwable {
+        TestClass testClass = new TestClass(CSVDataDrivenTestScenario.class);
+        int dataEntries = DataDrivenAnnotations.forClass(testClass).countDataEntries();
+
+        assertThat(dataEntries, is(3));
+
+    }
+
+    @Test
     public void should_recognize_a_test_case_with_valid_test_data() {
         TestClass testClass = new TestClass(DataDrivenTestScenario.class);
         assertThat(DataDrivenAnnotations.forClass(testClass).hasTestDataDefined(), is(true));

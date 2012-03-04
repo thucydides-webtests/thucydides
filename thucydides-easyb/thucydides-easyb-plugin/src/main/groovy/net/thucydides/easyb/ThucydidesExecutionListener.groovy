@@ -39,7 +39,6 @@ class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
 
     @Override
     void startStep(BehaviorStep step) {
-        println("THUCYDIDES STARTING STEP $step ($step.id)")
         LOGGER.debug("THUCYDIDES STARTING STEP $step ($step.id)")
         if (!processedSteps.contains(step.id)) {
             processedSteps.add(step.id)
@@ -89,7 +88,6 @@ class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
 
 
     void gotResult(Result result) {
-        println "GOT RESULT $result"
         LOGGER.debug("GOT RESULT $result")
         if (StepEventBus.eventBus.areStepsRunning()) {
             notifyStepListenerUsingEasybResult(result)

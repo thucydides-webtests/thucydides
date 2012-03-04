@@ -10,7 +10,6 @@ import net.thucydides.core.scheduling.ThucydidesFluentWait;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
-import net.thucydides.core.webdriver.WebdriverAssertionError;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webelements.Checkbox;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +20,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
 import org.slf4j.Logger;
@@ -29,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -72,6 +69,8 @@ public abstract class PageObject {
     private final Sleeper sleeper;
     private final Clock webdriverClock;
     private final JavascriptExecutorFacade javascriptExecutorFacade;
+
+    private boolean jquerySupportActivated = false;
 
     public PageObject(final WebDriver driver, final int ajaxTimeout) {
         this.driver = driver;
@@ -629,12 +628,13 @@ public abstract class PageObject {
     }
 
     public Object evaluateJavascript(final String script) {
+        addJQuerySupport();
         JavascriptExecutorFacade js = new JavascriptExecutorFacade(driver);
         return js.executeScript(script);
     }
 
     public void addJQuerySupport() {
-        if (driverIsEnabled() && !isHeadlessDriver(getDriver()))  {
+        if (!jquerySupportActivated && driverIsEnabled() && !isHeadlessDriver(getDriver()))  {
             JQueryEnabledPage jQueryEnabledPage = JQueryEnabledPage.withDriver(getDriver());
             if (!jQueryEnabledPage.isJQueryEnabled()) {
                 jQueryEnabledPage.injectJQuery();
@@ -642,6 +642,7 @@ public abstract class PageObject {
             if (jQueryEnabledPage.isJQueryEnabled()) {
                 jQueryEnabledPage.injectJQueryPlugins();
             }
+            jquerySupportActivated = true;
         }
     }
 

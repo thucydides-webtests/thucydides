@@ -284,7 +284,9 @@ public class ThucydidesPlugin extends BasePlugin {
 
     private Pages newPagesInstanceIn(Binding binding) {
         Pages pages = new Pages()
-        pages.setDefaultBaseUrl(getConfiguration().getDefaultBaseUrl())
+        if (getConfiguration().getDefaultBaseUrl()) {
+            pages.setDefaultBaseUrl(getConfiguration().getDefaultBaseUrl())
+        }
         pages.setDriver(getWebDriver());
         pages.notifyWhenDriverOpens()
         return pages

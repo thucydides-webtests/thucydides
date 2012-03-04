@@ -94,7 +94,7 @@ public class Pages implements Serializable {
             pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
             cacheCurrentPage(pageCandidate);
             nextPage = pageCandidate;
-            nextPage.addJQuerySupport();
+            //nextPage.addJQuerySupport();
         }
         usePreviousPage = false;
         return nextPage;

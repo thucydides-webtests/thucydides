@@ -17,6 +17,7 @@ import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +79,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
     private Story testedStory;
 
     private Configuration configuration;
+    
+    private boolean inFluentStepSequence;
+    
+    private String fluentStepComposedName;
 
     public BaseStepListener(final File outputDirectory) {
         this.proxyFactory = WebdriverProxyFactory.getFactory();
@@ -87,6 +92,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
         this.outputDirectory = outputDirectory;
         this.clock = Injectors.getInjector().getInstance(SystemClock.class);
         this.configuration = Injectors.getInjector().getInstance(Configuration.class);
+        this.inFluentStepSequence = false;
     }
 
     /**
@@ -227,13 +233,50 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private void recordStep(ExecutedStepDescription description) {
         String stepName = AnnotatedStepDescription.from(description).getName();
-        TestStep step = new TestStep(stepName);
 
-        startNewGroupIfNested();
-        setDefaultResultFromAnnotations(step, description);
+        updateFluentStepStatus(description, stepName);
 
-        currentStepStack.push(step);
-        getCurrentTestOutcome().recordStep(step);
+        if (justStartedAFluentSequenceFor(description) || notInAFluentSequence()) {
+
+            TestStep step = new TestStep(stepName);
+
+            startNewGroupIfNested();
+            setDefaultResultFromAnnotations(step, description);
+    
+            currentStepStack.push(step);
+            getCurrentTestOutcome().recordStep(step);
+        }
+        inFluentStepSequence = AnnotatedStepDescription.from(description).isFluent();
+    }
+
+    private void updateFluentStepStatus(ExecutedStepDescription description, String stepName) {
+        if (currentlyInAFluentSequenceFor(description) || justFinishedAFluentSequenceFor(description)) {
+            addToFluentStepName(stepName);
+        }
+    }
+
+    private void addToFluentStepName(String stepName) {
+        String updatedStepName = getCurrentStep().getDescription() + " " + StringUtils.uncapitalize(stepName);
+        getCurrentStep().setDescription(updatedStepName);
+    }
+
+    private boolean notInAFluentSequence() {
+        return !inFluentStepSequence;
+    }
+
+    private boolean justFinishedAFluentSequenceFor(ExecutedStepDescription description) {
+        boolean thisStepIsFluent = AnnotatedStepDescription.from(description).isFluent();
+        return (inFluentStepSequence && !thisStepIsFluent);
+    }
+
+    private boolean justStartedAFluentSequenceFor(ExecutedStepDescription description) {
+        boolean thisStepIsFluent = AnnotatedStepDescription.from(description).isFluent();
+        return (!inFluentStepSequence && thisStepIsFluent);
+    }
+
+    private boolean currentlyInAFluentSequenceFor(ExecutedStepDescription description) {
+        boolean thisStepIsFluent = AnnotatedStepDescription.from(description).isFluent();
+        return (inFluentStepSequence && thisStepIsFluent);
     }
 
     private void setDefaultResultFromAnnotations(final TestStep step, final ExecutedStepDescription description) {
@@ -349,11 +392,13 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void currentStepDone() {
-        TestStep finishedStep =  currentStepStack.pop();
-        finishedStep.recordDuration();
+        if (!inFluentStepSequence) {
+            TestStep finishedStep =  currentStepStack.pop();
+            finishedStep.recordDuration();
 
-        if (finishedStep == getCurrentGroup()) {
-            finishGroup();
+            if (finishedStep == getCurrentGroup()) {
+                finishGroup();
+            }
         }
     }
 

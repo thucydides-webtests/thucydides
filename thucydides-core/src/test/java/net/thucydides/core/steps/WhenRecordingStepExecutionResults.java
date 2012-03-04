@@ -12,6 +12,7 @@ import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
+import net.thucydides.core.steps.samples.FluentScenarioSteps;
 import net.thucydides.core.steps.samples.NestedScenarioSteps;
 import net.thucydides.core.steps.samples.StepsDerivedFromADifferentDomain;
 import net.thucydides.core.util.MockEnvironmentVariables;
@@ -19,6 +20,7 @@ import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -815,6 +817,27 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void a_step_following_an_ignored_step_will_be_executed_normally() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.programmaticallyIgnoredStep();
+        steps.step_two();
+        steps.step_three();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        TestOutcome testOutcome = results.get(0);
+
+        assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.IGNORED));
+        assertThat(testOutcome.getTestSteps().get(2).getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome.getTestSteps().get(3).getResult(), is(TestResult.SUCCESS));
+    }
+
+    @Test
     public void grouped_test_steps_should_appear_as_nested() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
@@ -936,6 +959,38 @@ public class WhenRecordingStepExecutionResults {
         assertThat(testOutcome.getTestSteps().get(0).getDescription(), is("A step with a title"));
     }
 
+    @Test
+    public void a_series_of_fluent_steps_should_be_recorded_as_one_step() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FluentScenarioSteps steps = stepFactory.getStepLibraryFor(FluentScenarioSteps.class);
+
+        steps.when().someone().does().this_sort_of_thing();
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        TestOutcome testOutcome = results.get(0);
+
+        assertThat(testOutcome.getTestSteps().get(0).getDescription(), is("When someone does this sort of thing"));
+    }
+
+    @Test
+    @Ignore("Work in progress")
+    public void fluent_step_calls_should_be_nestable() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FluentScenarioSteps steps = stepFactory.getStepLibraryFor(FluentScenarioSteps.class);
+
+        steps.parent_step();
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        TestOutcome testOutcome = results.get(0);
+
+        assertThat(testOutcome.getTestSteps().get(0).getDescription(), is("Parent step [When someone does this sort of thing]"));
+    }
     @Test
     public void a_test_group_without_an_annotated_title_should_record_the_humanized_group_name() {
 

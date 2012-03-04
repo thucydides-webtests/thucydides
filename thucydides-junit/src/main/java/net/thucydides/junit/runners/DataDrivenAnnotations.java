@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-class DataDrivenAnnotations {
+public class DataDrivenAnnotations {
 
     public static DataDrivenAnnotations forClass(final TestClass testClass) {
         return new DataDrivenAnnotations(testClass);
@@ -76,6 +76,11 @@ class DataDrivenAnnotations {
     public <T> List<T> getDataAsInstancesOf(final Class<T> clazz) throws IOException {
         TestDataSource testdata = new CSVTestDataSource(findTestDataSource(), findTestDataSeparator());
         return testdata.getDataAsInstancesOf(clazz);
+    }
+    
+    public int countDataEntries() throws IOException {
+        TestDataSource testdata = new CSVTestDataSource(findTestDataSource(), findTestDataSeparator());
+        return testdata.getData().size();
     }
 
     private char findTestDataSeparator() {

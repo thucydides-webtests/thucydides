@@ -15,12 +15,12 @@ import java.util.List;
 import static net.thucydides.core.util.NameConverter.humanize;
 
 /**
- *  Test steps and step groups can be described by various annotations.
+ * Test steps and step groups can be described by various annotations.
  */
 public final class AnnotatedStepDescription {
 
     private final ExecutedStepDescription description;
-    
+
     public static AnnotatedStepDescription from(final ExecutedStepDescription description) {
         return new AnnotatedStepDescription(description);
 
@@ -126,7 +126,7 @@ public final class AnnotatedStepDescription {
 
     public String getName() {
         if (noClassIsDefined()) {
-          return description.getName();
+            return description.getName();
         } else if (isAGroup()) {
             return groupName();
         } else {
@@ -186,5 +186,13 @@ public final class AnnotatedStepDescription {
     public boolean isIgnored() {
         Method testMethod = getTestMethodIfPresent();
         return testMethod != null && TestStatus.of(testMethod).isIgnored();
+    }
+
+    public boolean isFluent() {
+        if (description.getTestMethod() != null) {
+            Step step = description.getTestMethod().getAnnotation(Step.class);
+            return ((step != null) && (step.fluent()));
+        }
+        return false;
     }
 }
