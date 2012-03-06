@@ -26,10 +26,12 @@ public class WhenUsingTheTestStatisticsDatabase {
 
     Injector injector;
     MockEnvironmentVariables environmentVariables;
+    ThucydidesModuleWithMockEnvironmentVariables guiceModule;
 
     class ThucydidesModuleWithMockEnvironmentVariables extends ThucydidesModule {
         @Override
         protected void configure() {
+            clearEntityManagerCache();
             bind(EnvironmentVariables.class).to(MockEnvironmentVariables.class).in(Singleton.class);
             bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
             bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
@@ -38,7 +40,8 @@ public class WhenUsingTheTestStatisticsDatabase {
 
     @Before
     public void setupInjectors() {
-        injector = Guice.createInjector(new ThucydidesModuleWithMockEnvironmentVariables());
+        guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
+        injector = Guice.createInjector(guiceModule);
         environmentVariables = (MockEnvironmentVariables) injector.getInstance(EnvironmentVariables.class);
     }
 

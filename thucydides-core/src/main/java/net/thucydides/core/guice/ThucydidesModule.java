@@ -81,4 +81,11 @@ public class ThucydidesModule extends AbstractModule {
         }
         return entityManager;
     }
+
+    /**
+     * Used for testing
+     */
+    protected void clearEntityManagerCache() {
+        ENTITY_MANAGER_CACHE.remove();
+    }
 }
