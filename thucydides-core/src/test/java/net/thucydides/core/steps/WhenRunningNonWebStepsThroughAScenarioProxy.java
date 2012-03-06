@@ -39,6 +39,8 @@ public class WhenRunningNonWebStepsThroughAScenarioProxy {
         StepEventBus.getEventBus().registerListener(listener);
         StepEventBus.getEventBus().registerListener(mockListener);
 
+        StepEventBus.getEventBus().testStarted("aTest");
+
     }
 
     @After
@@ -163,22 +165,23 @@ public class WhenRunningNonWebStepsThroughAScenarioProxy {
 
         String executedSteps = listener.toString();
         String expectedSteps =
-                "step1\n" +
-                        "--> STEP DONE\n" +
-                        "step2\n" +
-                        "--> STEP DONE\n" +
-                        "nested_steps\n" +
-                        "-step1_1\n" +
+                "TEST aTest\n" +
+                        "-step1\n" +
                         "---> STEP DONE\n" +
-                        "-step1_2\n" +
+                        "-step2\n" +
                         "---> STEP DONE\n" +
-                        "-step1_3\n" +
+                        "-nested_steps\n" +
+                        "--step1_1\n" +
+                        "----> STEP DONE\n" +
+                        "--step1_2\n" +
+                        "----> STEP DONE\n" +
+                        "--step1_3\n" +
+                        "----> STEP DONE\n" +
                         "---> STEP DONE\n" +
-                        "--> STEP DONE\n" +
-                        "step3\n" +
-                        "--> STEP DONE\n";
+                        "-step3\n" +
+                        "---> STEP DONE\n";
 
-        assertThat(executedSteps, is(expectedSteps));
+        assertThat(executedSteps, containsString(expectedSteps));
     }
 
     @Test
@@ -236,13 +239,14 @@ public class WhenRunningNonWebStepsThroughAScenarioProxy {
         steps.step3();
 
         String expectedExecution =
-                "step1\n" +
-                        "--> STEP DONE\n" +
-                        "failing_step\n" +
-                        "--> STEP FAILED\n" +
-                        "step3\n" +
-                        "--> STEP IGNORED\n";
-        assertThat(listener.toString(), is(expectedExecution));
+                "TEST aTest\n" +
+                    "-step1\n" +
+                        "---> STEP DONE\n" +
+                        "-failing_step\n" +
+                        "---> STEP FAILED\n" +
+                        "-step3\n" +
+                        "---> STEP IGNORED\n";
+        assertThat(listener.toString(), containsString(expectedExecution));
 
     }
 
