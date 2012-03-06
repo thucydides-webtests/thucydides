@@ -1,5 +1,7 @@
 package net.thucydides.core;
 
+import net.thucydides.core.util.EnvironmentVariables;
+
 /**
  * Properties that can be passed to a web driver test to customize its behaviour.
  * This class is mainly for internal use.
@@ -132,7 +134,22 @@ public enum ThucydidesSystemProperty {
     /**
      * HTTP Proxy port configuration for Firefox
      */
-    PROXY_PORT("thucydides.proxy.http_port");
+    PROXY_PORT("thucydides.proxy.http_port"),
+
+    SAUCELABS_TARGET_PLATFORM("saucelabs.target.platform"),
+
+    SAUCELABS_DRIVER_VERSION("saucelabs.driver.version"),
+
+    SAUCELABS_TEST_NAME("saucelabs.test.name"),
+    /**
+     * SauceLabs URL if running the web tests on SauceLabs
+     */
+    SAUCELABS_URL("saucelabs.url"),
+
+    /**
+     * Override the default implicit timeout value for the Saucelabs driver.
+     */
+    SAUCELABS_IMPLICIT_TIMEOUT("saucelabs.implicit.timeout");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 1000;
@@ -151,5 +168,9 @@ public enum ThucydidesSystemProperty {
     @Override
     public String toString() {
         return propertyName;
+    }
+    
+    public String from(EnvironmentVariables environmentVariables) {
+        return environmentVariables.getProperty(getPropertyName());
     }
 }

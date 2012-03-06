@@ -9,9 +9,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -91,13 +93,13 @@ public class WhenObtainingAWebdriverInstance {
     @Test
     public void the_factory_knows_what_class_the_chrome_driver_uses() {
         Class driverClass = webDriverFactory.getClassFor(SupportedWebDriver.CHROME);
-        assertThat(driverClass.getName(), is(ChromeDriver.class.getName()));
+        assertThat(driverClass.getName(), anyOf(is(ChromeDriver.class.getName()), is(RemoteWebDriver.class.getName())));
     }
 
     @Test
     public void the_factory_knows_what_class_the_opera_driver_uses() {
         Class driverClass = webDriverFactory.getClassFor(SupportedWebDriver.OPERA);
-        assertThat(driverClass.getName(), is(OperaDriver.class.getName()));
+        assertThat(driverClass.getName(), anyOf(is(OperaDriver.class.getName()), is(RemoteWebDriver.class.getName())));
     }
 
     @Test
@@ -115,13 +117,13 @@ public class WhenObtainingAWebdriverInstance {
     @Test
      public void the_factory_knows_what_class_the_firefox_driver_uses() {
          Class driverClass = webDriverFactory.getClassFor(SupportedWebDriver.FIREFOX);
-         assertThat(driverClass.getName(), is(FirefoxDriver.class.getName()));
+         assertThat(driverClass.getName(), anyOf(is(FirefoxDriver.class.getName()), is(RemoteWebDriver.class.getName())));
      }
 
     @Test
      public void the_factory_knows_what_class_the_htmlunit_driver_uses() {
          Class driverClass = webDriverFactory.getClassFor(SupportedWebDriver.HTMLUNIT);
-         assertThat(driverClass.getName(), is(HtmlUnitDriver.class.getName()));
+         assertThat(driverClass.getName(), anyOf(is(HtmlUnitDriver.class.getName()), is(RemoteWebDriver.class.getName())));
      }
 
     @Test(expected=IllegalArgumentException.class)

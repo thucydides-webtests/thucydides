@@ -1,6 +1,7 @@
 package net.thucydides.core.pages.integration;
 
 
+import net.thucydides.core.webdriver.StaticTestSite;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.jquery.ByJQuery;
@@ -9,6 +10,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -22,11 +24,15 @@ import static org.hamcrest.Matchers.is;
 public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElementAPITestsBaseClass {
 
     private static StaticSitePage chromePage;
+    private static StaticTestSite testSite;
 
     @BeforeClass
     public static void setupDriver() {
-        driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
-        chromeDriver = new WebDriverFacade(ChromeDriver.class, new WebDriverFactory());
+        testSite = new StaticTestSite();
+
+        driver = testSite.open();
+        chromeDriver = testSite.open("chrome");
+
         page = new StaticSitePage(driver, 1);
         chromePage = new StaticSitePage(chromeDriver, 1);
         page.open();

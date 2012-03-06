@@ -24,6 +24,9 @@ public enum SupportedWebDriver {
      */
     CHROME(ChromeDriver.class),
 
+    /**
+     * Opera - use it with SauceLabs
+     */
     OPERA(OperaDriver.class),
 
     /**
@@ -32,7 +35,7 @@ public enum SupportedWebDriver {
     HTMLUNIT(HtmlUnitDriver.class),
 
     /**
-     * Not sure about this one...
+     * Internet Explorer
      */
     IEXPLORER(InternetExplorerDriver.class);
 

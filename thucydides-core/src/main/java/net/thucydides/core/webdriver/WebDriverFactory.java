@@ -3,9 +3,14 @@ package net.thucydides.core.webdriver;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -13,7 +18,9 @@ import org.openqa.selenium.firefox.UnableToCreateProfileException;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.slf4j.Logger;
@@ -21,8 +28,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import static net.thucydides.core.webdriver.javascript.JavascriptSupport.activateJavascriptSupportFor;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 /**
  * Provides an instance of a supported WebDriver.
@@ -86,10 +98,17 @@ public class WebDriverFactory {
         return newWebdriverInstance(driverType.getWebdriverClass());
     }
 
-    public static Class<? extends WebDriver> getClassFor(final SupportedWebDriver driverType) {
-        return driverType.getWebdriverClass();
+    public Class<? extends WebDriver> getClassFor(final SupportedWebDriver driverType) {
+        if (usesSauceLabs()) {
+            return RemoteWebDriver.class;
+        } else {
+            return driverType.getWebdriverClass();
+        }
     }
 
+    public boolean usesSauceLabs() {
+        return StringUtils.isNotEmpty(ThucydidesSystemProperty.SAUCELABS_URL.from(environmentVariables));
+    }
     /**
      * This method is synchronized because multiple webdriver instances can be created in parallel.
      * However, they may use common system resources such as ports, so may potentially interfere
@@ -101,7 +120,9 @@ public class WebDriverFactory {
     protected synchronized WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {
             WebDriver driver;
-            if (isAFirefoxDriver(driverClass)) {
+            if (isARemoteDriver(driverClass)) {
+                driver = newRemoteDriver();
+            } else if (isAFirefoxDriver(driverClass)) {
                 driver = firefoxDriverFrom(driverClass);
             } else if (isAnHtmlUnitDriver(driverClass)) {
                 driver = htmlunitDriverFrom(driverClass);
@@ -119,6 +140,115 @@ public class WebDriverFactory {
             LOGGER.error("Could not create new Webdriver instance", cause);
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
         }
+    }
+
+    private WebDriver newRemoteDriver() throws MalformedURLException {
+        String saucelabsUrl = ThucydidesSystemProperty.SAUCELABS_URL.from(environmentVariables);
+        WebDriver driver = new RemoteWebDriver(new URL(saucelabsUrl), findSaucelabsCapabilities());
+        
+        if (isNotEmpty(ThucydidesSystemProperty.SAUCELABS_IMPLICIT_TIMEOUT.from(environmentVariables))) {
+            int implicitWait = environmentVariables.getPropertyAsInteger(
+                                            ThucydidesSystemProperty.SAUCELABS_IMPLICIT_TIMEOUT.getPropertyName(), 5);
+            driver.manage().timeouts().implicitlyWait(implicitWait, TimeUnit.SECONDS);
+        }
+
+        Augmenter augmenter = new Augmenter();
+        return augmenter.augment(driver);
+    }
+
+    private DesiredCapabilities findSaucelabsCapabilities() {
+
+        String driver = ThucydidesSystemProperty.DRIVER.from(environmentVariables);
+        DesiredCapabilities capabilities = capabilitiesForDriver(driver);
+
+        configureBrowserVersion(capabilities);
+
+        configureTargetPlatform(capabilities);
+
+        configureTestName(capabilities);
+
+        capabilities.setJavascriptEnabled(true);
+
+        return capabilities;
+    }
+
+    private void configureBrowserVersion(DesiredCapabilities capabilities) {
+        String driverVersion = ThucydidesSystemProperty.SAUCELABS_DRIVER_VERSION.from(environmentVariables);
+        if (isNotEmpty(driverVersion)) {
+            capabilities.setCapability("version", driverVersion);
+        }
+    }
+
+    private void configureTargetPlatform(DesiredCapabilities capabilities) {
+        String platformValue = ThucydidesSystemProperty.SAUCELABS_TARGET_PLATFORM.from(environmentVariables);
+        if (isNotEmpty(platformValue)) {
+            capabilities.setCapability("platform", platformFrom(platformValue));
+        }
+    }
+
+    private void configureTestName(DesiredCapabilities capabilities) {
+        String testName = ThucydidesSystemProperty.SAUCELABS_TEST_NAME.from(environmentVariables);
+        if (isNotEmpty(testName)) {
+            capabilities.setCapability("name", testName);
+        } else {
+            String guessedTestName = bestGuessOfTestName();
+            if (guessedTestName != null) {
+                capabilities.setCapability("name", bestGuessOfTestName());
+            }
+        }
+    }
+
+    private String bestGuessOfTestName() {
+        for(StackTraceElement elt : Thread.currentThread().getStackTrace()){
+            try {
+                Class callingClass = Class.forName(elt.getClassName());
+                Method callingMethod = callingClass.getMethod(elt.getMethodName());
+                if (isATestMethod(callingMethod)) {
+                    return NameConverter.humanize(elt.getMethodName());
+                } else if (isASetupMethod(callingMethod)) {
+                    return NameConverter.humanize(elt.getClassName());
+                }
+            } catch (ClassNotFoundException e) {
+            } catch (NoSuchMethodException e) {}
+        }
+        return null;
+    }
+
+    private boolean isATestMethod(Method callingMethod) {
+        return callingMethod.getAnnotation(Test.class) != null;
+    }
+
+    private boolean isASetupMethod(Method callingMethod) {
+        return (callingMethod.getAnnotation(Before.class) != null)
+                || (callingMethod.getAnnotation(BeforeClass.class) != null);
+    }
+
+    private Platform platformFrom(String platformValue) {
+        return Platform.valueOf(platformValue.toUpperCase());
+    }
+
+    private DesiredCapabilities capabilitiesForDriver(String driver) {
+        if (driver == null) {
+            driver = "firefox";
+        }
+        SupportedWebDriver driverType = SupportedWebDriver.valueOf(driver.toUpperCase());
+        switch (driverType) {
+            case CHROME :
+                return DesiredCapabilities.chrome();
+
+            case FIREFOX :
+                return DesiredCapabilities.firefox();
+
+            case HTMLUNIT :
+                return DesiredCapabilities.htmlUnit();
+
+            case OPERA:
+                return DesiredCapabilities.opera();
+            
+            case IEXPLORER:
+                return DesiredCapabilities.internetExplorer();
+        }
+        throw new IllegalArgumentException("Unsupported remote driver type: " + driver);
     }
 
     private WebDriver htmlunitDriverFrom(Class<? extends WebDriver> driverClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -155,6 +285,10 @@ public class WebDriverFactory {
     private void resizeBrowserTo(JavascriptExecutor driver, int height, int width) {
         String resizeWindow = "window.resizeTo(" + width + "," + height + ")";
         driver.executeScript(resizeWindow);
+    }
+
+    private boolean isARemoteDriver(Class<? extends WebDriver> driverClass) {
+        return (RemoteWebDriver.class == driverClass);
     }
 
     private boolean isAFirefoxDriver(Class<? extends WebDriver> driverClass) {

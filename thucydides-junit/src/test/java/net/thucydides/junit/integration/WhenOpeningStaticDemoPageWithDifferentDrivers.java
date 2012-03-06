@@ -20,7 +20,7 @@ import org.openqa.selenium.WebDriver;
 @RunWith(ThucydidesRunner.class)
 public class WhenOpeningStaticDemoPageWithDifferentDrivers {
 
-    @Managed(driver = "chrome")
+    @Managed(driver = "htmlunit")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "classpath:static-site/index.html")
@@ -30,7 +30,6 @@ public class WhenOpeningStaticDemoPageWithDifferentDrivers {
     public DemoSiteSteps steps;
         
     @Test
-    @WithDriver("chrome")
     @Title("The user opens the index page")
     public void the_user_opens_the_page() {
         steps.should_display("A visible title");

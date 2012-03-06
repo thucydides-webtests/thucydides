@@ -66,7 +66,7 @@ public class WebdriverProxyFactory implements Serializable {
     }
 
     public WebDriver proxyDriver() {
-        Class<? extends WebDriver> driverClass = WebDriverFactory.getClassFor(configuration.getDriverType());
+        Class<? extends WebDriver> driverClass = webDriverFactory.getClassFor(configuration.getDriverType());
         return proxyFor(driverClass, webDriverFactory);
     }
 

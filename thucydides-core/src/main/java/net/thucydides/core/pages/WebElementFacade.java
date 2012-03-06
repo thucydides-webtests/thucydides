@@ -15,6 +15,8 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.Augmenter;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -53,12 +55,21 @@ public class WebElementFacade {
                             final WebElement webElement,
                             final long timeoutInMilliseconds) {
         this.driver = driver;
-        this.webElement = webElement;
+        this.webElement = augmented(webElement);
         this.timeoutInMilliseconds = timeoutInMilliseconds;
         this.webdriverClock = new SystemClock();
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
         this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
 
+    }
+
+    private WebElement augmented(WebElement webElement) {
+//        if (webElement instanceof RemoteWebElement) {
+//            Augmenter augmenter = new Augmenter();
+//            return augmenter.augment((RemoteWebElement)webElement);
+//        } else {
+            return webElement;
+//        }
     }
 
     protected JavascriptExecutorFacade getJavascriptExecutorFacade() {

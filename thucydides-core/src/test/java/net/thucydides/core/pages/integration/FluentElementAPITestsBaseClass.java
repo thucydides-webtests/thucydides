@@ -11,7 +11,6 @@ public class FluentElementAPITestsBaseClass {
     protected static StaticSitePage page;
 
     protected void refresh(StaticSitePage page) {
-        //page.open();
         page.getDriver().navigate().refresh();
     }
 

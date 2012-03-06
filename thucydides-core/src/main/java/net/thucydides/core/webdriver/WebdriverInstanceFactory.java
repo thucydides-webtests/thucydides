@@ -18,7 +18,7 @@ public class WebdriverInstanceFactory {
     public WebDriver newInstanceOf(final Class<? extends WebDriver> webdriverClass) throws IllegalAccessException, InstantiationException {
         return webdriverClass.newInstance();
     }
-
+    
     public WebDriver newInstanceOf(final Class<? extends WebDriver> webdriverClass,
                                    final FirefoxProfile profile) throws IllegalAccessException,
             InstantiationException,

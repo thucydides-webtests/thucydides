@@ -1,6 +1,4 @@
-package net.thucydides.core.statistics.service;
-
-import net.thucydides.core.statistics.With;
+package net.thucydides.core.statistics;
 
 public class WithTagNamed extends With {
 

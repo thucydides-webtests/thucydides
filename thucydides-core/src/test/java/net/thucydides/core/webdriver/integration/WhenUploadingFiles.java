@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.FindBy;
 
 import java.io.File;
@@ -40,7 +41,7 @@ public class WhenUploadingFiles {
 
     @BeforeClass
     public static void open_local_static_site() {
-        driver = new FirefoxDriver();
+        driver = new HtmlUnitDriver();
         openStaticTestSite(driver);
     }
 

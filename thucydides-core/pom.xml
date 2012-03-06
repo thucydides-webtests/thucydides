@@ -24,6 +24,11 @@
             <version>2.2.2</version>
         </dependency>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit-dep</artifactId>
+            <version>4.10</version>
+        </dependency>
+        <dependency>
             <groupId>com.opera</groupId>
             <artifactId>operadriver</artifactId>
             <version>0.10</version>

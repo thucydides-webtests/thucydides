@@ -1,7 +1,10 @@
 package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.pages.PageObject;
-import net.thucydides.core.webdriver.SupportedWebDriver;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.StaticTestSite;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
+import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,11 +39,12 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
     }
     
     private static WebDriver driver;
-    
+    private static StaticTestSite testSite;
+
     @BeforeClass
-    public static void open_local_static_site() {
-        driver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
-        openStaticTestSite(driver);
+    public static void openStaticTestSite() {
+        testSite = new StaticTestSite();
+        driver = testSite.open();
     }
 
     @AfterClass
@@ -48,15 +52,6 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         driver.quit();
     }
 
-    private static File fileInClasspathCalled(final String resourceName) {
-        return new File(Thread.currentThread().getContextClassLoader().getResource(resourceName).getPath());
-    }
-
-    private static void openStaticTestSite(WebDriver driver) {
-        File testSite = fileInClasspathCalled("static-site/index.html");
-        driver.get("file://" + testSite.getAbsolutePath());
-
-    }
 
     @Test
     public void should_succeed_immediately_if_title_is_as_expected() {

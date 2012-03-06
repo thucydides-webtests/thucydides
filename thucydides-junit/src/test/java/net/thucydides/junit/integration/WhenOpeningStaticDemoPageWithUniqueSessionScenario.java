@@ -19,7 +19,7 @@ import org.openqa.selenium.WebDriver;
 @RunWith(ThucydidesRunner.class)
 public class WhenOpeningStaticDemoPageWithUniqueSessionScenario {
 
-    @Managed(uniqueSession=true)
+    @Managed(uniqueSession=true, driver = "htmlunit")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "classpath:static-site/index.html")

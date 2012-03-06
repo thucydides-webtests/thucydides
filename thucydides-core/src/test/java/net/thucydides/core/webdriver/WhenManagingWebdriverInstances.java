@@ -12,6 +12,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -44,6 +45,9 @@ public class WhenManagingWebdriverInstances {
     @Mock
     FirefoxProfile firefoxProfile;
 
+    @Mock
+    RemoteWebDriver remoteWebDriver;
+
     MockEnvironmentVariables environmentVariables;
     
     WebdriverManager webdriverManager;
@@ -58,6 +62,7 @@ public class WhenManagingWebdriverInstances {
         when(webdriverInstanceFactory.newInstanceOf(HtmlUnitDriver.class)).thenReturn(htmlUnitDriver);
         when(webdriverInstanceFactory.newInstanceOf(InternetExplorerDriver.class)).thenReturn(ieDriver);
         when(webdriverInstanceFactory.newInstanceOf(eq(FirefoxDriver.class), any(FirefoxProfile.class))).thenReturn(firefoxDriver);
+        when(webdriverInstanceFactory.newInstanceOf(eq(RemoteWebDriver.class))).thenReturn(remoteWebDriver);
 
         factory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables) {
             @Override
@@ -198,5 +203,4 @@ public class WhenManagingWebdriverInstances {
 
         assertThat(config.getOutputDirectory().getName(), is("out"));
     }
-
 }

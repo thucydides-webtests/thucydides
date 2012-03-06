@@ -1,13 +1,11 @@
 package net.thucydides.core.webdriver.integration;
 
-import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.PageUrls;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
-import net.thucydides.core.webdriver.SupportedWebDriver;
+import net.thucydides.core.webdriver.StaticTestSite;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
-import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -43,26 +41,28 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         }
     }
 
-    @DefaultUrl("classpath:static-site/index.html")
-    public class IndexPageWithDefaultUrl extends PageObject {
+    public class IndexPageWithShortTimeout extends PageObject {
 
         public WebElement multiselect;
 
         public WebElement checkbox;
 
-        public IndexPageWithDefaultUrl(WebDriver driver, int timeout) {
+        public IndexPageWithShortTimeout(WebDriver driver, int timeout) {
             super(driver, 1);
         }
     }
 
     WebDriver driver;
+
+    private static StaticTestSite testSite;
     static WebDriver firefoxDriver;
 
     IndexPage indexPage;
 
     @BeforeClass
     public static void openFirefox() {
-        firefoxDriver = (new WebDriverFactory()).newInstanceOf(SupportedWebDriver.FIREFOX);
+        testSite = new StaticTestSite();
+        firefoxDriver = testSite.open();
     }
 
     MockEnvironmentVariables environmentVariables;
@@ -204,15 +204,13 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         
     @Test
     public void should_know_when_an_element_is_visible() {
-        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(firefoxDriver, 1);
-        indexPage.open();
+        IndexPageWithShortTimeout indexPage = new IndexPageWithShortTimeout(firefoxDriver, 1);
         assertThat(indexPage.isElementVisible(By.id("visible")), is(true));
     }
 
     @Test
     public void should_know_when_an_element_is_invisible() {
-        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(firefoxDriver, 1);
-        indexPage.open();
+        IndexPageWithShortTimeout indexPage = new IndexPageWithShortTimeout(firefoxDriver, 1);
         assertThat(indexPage.isElementVisible(By.id("invisible")), is(false));
     }
 
@@ -251,7 +249,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     @Test
     public void the_page_can_be_read_from_a_file_on_the_classpath() {
 
-        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver, 1);
+        IndexPageWithShortTimeout indexPage = new IndexPageWithShortTimeout(driver, 1);
 
         assertThat(indexPage.getTitle(), is("Thucydides Test Site"));
     }
@@ -262,7 +260,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         environmentVariables.setProperty("webdriver.driver","firefox");
         environmentVariables.setProperty("refuse.untrusted.certificates","true");
 
-        IndexPageWithDefaultUrl indexPage = new IndexPageWithDefaultUrl(driver, 1);
+        IndexPageWithShortTimeout indexPage = new IndexPageWithShortTimeout(driver, 1);
         PageUrls pageUrls = new PageUrls(indexPage, configuration);
         indexPage.setPageUrls(pageUrls);
 

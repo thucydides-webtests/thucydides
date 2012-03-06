@@ -6,9 +6,7 @@ import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.model.TestRun;
 import net.thucydides.core.statistics.model.TestRunTag;
 import net.thucydides.core.statistics.model.TestStatistics;
-import net.thucydides.core.statistics.service.WithTagNamed;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,6 +41,8 @@ public class TestStatisticsProvider {
             return testStatisticsForTitle((WithTitle) withCondition);
         } else if (withCondition instanceof WithTagNamed) {
             return testStatisticsForTestsWithTag((WithTagNamed) withCondition);
+        } else if (withCondition instanceof WithTagTypeNamed) {
+            return testStatisticsForTestsWithTagType((WithTagTypeNamed) withCondition);
         }
         return null;
     }
@@ -54,6 +54,16 @@ public class TestStatisticsProvider {
         Long failingTests = testOutcomeHistoryDAO.countTestRunsByTagAndResult(tag, TestResult.FAILURE);
         List<TestResult> results = testOutcomeHistoryDAO.getResultsForTestsWithTag(tag);
         List<TestRunTag> latestTags = testOutcomeHistoryDAO.getLatestTagsForTestsWithTag(tag);
+        return new TestStatistics(totalTests, passingTests, failingTests, results, latestTags);
+    }
+
+    private TestStatistics testStatisticsForTestsWithTagType(WithTagTypeNamed withCondition) {
+        String tagType = withCondition.getTagType();
+        Long totalTests = testOutcomeHistoryDAO.countTestRunsByTagType(tagType);
+        Long passingTests = testOutcomeHistoryDAO.countTestRunsByTagTypeAndResult(tagType, TestResult.SUCCESS);
+        Long failingTests = testOutcomeHistoryDAO.countTestRunsByTagTypeAndResult(tagType, TestResult.FAILURE);
+        List<TestResult> results = testOutcomeHistoryDAO.getResultsForTestsWithTagType(tagType);
+        List<TestRunTag> latestTags = testOutcomeHistoryDAO.getLatestTagsForTestsWithTagType(tagType);
         return new TestStatistics(totalTests, passingTests, failingTests, results, latestTags);
     }
 

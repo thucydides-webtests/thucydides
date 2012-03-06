@@ -15,12 +15,18 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.ExtensionConnection;
+import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.internal.Lock;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +65,17 @@ public class WhenInstanciatingANewFirefoxDriver {
     @Before
     public void createFactory() {
         MockitoAnnotations.initMocks(this);
-        webdriverInstanceFactory = new WebdriverInstanceFactory();
+        webdriverInstanceFactory = new WebdriverInstanceFactory() {
+            @Override
+            public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass) throws IllegalAccessException, InstantiationException {
+                return super.newInstanceOf(MockedFirefoxDriver.class);
+            }
+
+            @Override
+            public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass, FirefoxProfile profile) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+                return super.newInstanceOf(MockedFirefoxDriver.class, profile);
+            }
+        };
         environmentVariables = new MockEnvironmentVariables();
     }
 
@@ -70,29 +86,40 @@ public class WhenInstanciatingANewFirefoxDriver {
         }
     }
 
-    @Test
-    public void should_support_creating_a_firefox_driver() throws Exception {
-         driver = webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class);
-         assertThat(driver, instanceOf(FirefoxDriver.class));
+    public static class MockedFirefoxDriver extends FirefoxDriver {
+        public MockedFirefoxDriver() { }
+        public MockedFirefoxDriver(FirefoxProfile profile) {}
+        public MockedFirefoxDriver(Capabilities capabilities) {}
+
+        @Override
+        protected void startClient() {}
+
+        @Override
+        protected void startSession(Capabilities desiredCapabilities) {}
+
+        @Override
+        public Object executeScript(String script, Object... args) {
+            return null;
+        }
     }
 
+    @Test
+    public void should_support_creating_a_firefox_driver() throws Exception {
+         driver = webdriverInstanceFactory.newInstanceOf(MockedFirefoxDriver.class);
+         assertThat(driver, instanceOf(MockedFirefoxDriver.class));
+    }
 
 
     @Test
     public void should_support_creating_a_firefox_driver_with_a_profile() throws Exception {
         FirefoxProfile profile = new FirefoxProfile();
-        driver = webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class, profile);
-        assertThat(driver, instanceOf(FirefoxDriver.class));
+        driver = webdriverInstanceFactory.newInstanceOf(MockedFirefoxDriver.class, profile);
+        assertThat(driver, instanceOf(MockedFirefoxDriver.class));
     }
 
     String chosenProfile;
 
     class TestableWebdriverFactory extends WebDriverFactory {
-
-        TestableWebdriverFactory(WebdriverInstanceFactory mockWebdriverInstanceFactory,
-                                 EnvironmentVariables environmentVariables) {
-            super(mockWebdriverInstanceFactory, environmentVariables, firefoxProfileEnhancer);
-        }
 
         TestableWebdriverFactory(EnvironmentVariables environmentVariables) {
             super(webdriverInstanceFactory, environmentVariables, firefoxProfileEnhancer);
@@ -103,9 +130,6 @@ public class WhenInstanciatingANewFirefoxDriver {
             chosenProfile = profileDirectory.getAbsolutePath();
             return super.useExistingFirefoxProfile(profileDirectory);
         }
-
-
-
     }
 
     @Test

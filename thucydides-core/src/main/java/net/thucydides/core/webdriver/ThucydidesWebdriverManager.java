@@ -44,7 +44,7 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
                                        final WebDriverFactory webDriverFactory,
                                        final String driver) {
         SupportedWebDriver supportedDriverType = getConfiguredWebDriverWithOverride(configuration, driver);
-        Class<? extends WebDriver> webDriverType = WebDriverFactory.getClassFor(supportedDriverType);
+        Class<? extends WebDriver> webDriverType = webDriverFactory.getClassFor(supportedDriverType);
         return WebdriverProxyFactory.getFactory().proxyFor(webDriverType, webDriverFactory);
     }
 
@@ -85,7 +85,7 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
 
         if (!inThisTestThread().driverIsRegisteredFor(driver)) {
             inThisTestThread().registerDriverCalled(driver)
-                                   .forDriver(newDriver(configuration, webDriverFactory, driver));
+                              .forDriver(newDriver(configuration, webDriverFactory, driver));
         }
 
         return inThisTestThread().useDriver(driver);

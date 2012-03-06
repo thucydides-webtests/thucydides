@@ -1,18 +1,16 @@
 package net.thucydides.core.pages.integration;
 
 
-import net.thucydides.core.webdriver.WebDriverFacade;
-import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.core.webdriver.StaticTestSite;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -21,23 +19,33 @@ import static org.hamcrest.Matchers.is;
 
 public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
 
-    static StaticSitePage page;
-    static StaticSitePage chromePage;
+    StaticSitePage page;
+    StaticSitePage chromePage;
+
+    private StaticTestSite testSite;
 
     @BeforeClass
-    public static void setupDriver() {
-        driver = new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
-        chromeDriver = new WebDriverFacade(ChromeDriver.class, new WebDriverFactory());
-        page = new StaticSitePage(driver, 750);
+    public static void setup() {
+        System.setProperty("saucelabs.url","http://thucydides:98e053c0-ebdf-4906-a68c-1bf6049aa41f@ondemand.saucelabs.com:80/wd/hub");
+    }
+    @Before
+    public  void setupDriver() {
+
+        testSite = new StaticTestSite();
+
+        driver = testSite.open();
+        chromeDriver = testSite.open("chrome");
+
+        page = new StaticSitePage(driver, 1000);
         page.open();
         page.addJQuerySupport();
 
-        chromePage = new StaticSitePage(chromeDriver, 750);
+        chromePage = new StaticSitePage(chromeDriver, 1000);
         chromePage.open();
     }
 
-    @AfterClass
-    public static void closeBrowser() {
+    @After
+    public  void closeBrowser() {
         driver.quit();
         chromeDriver.quit();
     }
@@ -47,13 +55,13 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
 
     @Test
     public void should_obtain_text_value_from_input() {
-        refresh(page);
+        ////refresh(page);
         assertThat(page.element(page.firstName).getValue(), is("<enter first name>"));
     }
 
     @Test
     public void should_optionally_type_enter_after_entering_text() {
-        refresh(chromePage);
+        //refresh(chromePage);
         assertThat(chromePage.firstName.getAttribute("value"), is("<enter first name>"));
 
         chromePage.element(chromePage.firstName).typeAndEnter("joe");
@@ -65,7 +73,7 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
     public void should_optionally_type_tab_after_entering_text_on_linux() {
 
         if (runningOnLinux()) {
-            refresh(chromePage);
+            //refresh(chromePage);
 
             assertThat(chromePage.firstName.getAttribute("value"), is("<enter first name>"));
 
@@ -76,10 +84,9 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
     }
 
     @Test
-    @Ignore("Known issue with tabs in Firefox")
     public void should_optionally_type_tab_after_entering_text_in_firefox() {
 
-        refresh(page);
+        ////refresh(page);
 
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
 
@@ -112,14 +119,14 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
 
     @Test
     public void should_be_able_to_build_composite_wait_until_enabled_clauses() throws InterruptedException {
-        refresh(page);
+        ////refresh(page);
 
         page.waitForCondition().until(page.firstAndLastNameAreEnabled());
     }
 
     @Test
     public void should_be_able_to_build_composite_wait_until_disabled_clauses() throws InterruptedException {
-        refresh(page);
+        ////refresh(page);
 
         page.waitForCondition().until(page.twoFieldsAreDisabled());
     }
@@ -128,7 +135,7 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
     @Test
     public void should_let_you_remove_the_focus_from_the_current_active_field() {
         StaticSitePage page = new StaticSitePage(chromeDriver, 750);
-        refresh(page);
+        ////refresh(page);
 
         page.element(page.firstName).click();
 
@@ -139,7 +146,6 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
 
     }
 
-    @Ignore("Not working yet for firefox")
     @Test
     public void should_let_you_remove_the_focus_from_the_current_active_field_in_firefox() {
 
@@ -156,7 +162,7 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
 
     @Test
     public void should_wait_for_text_to_dissapear() {
-        refresh(page);
+        ////refresh(page);
         page.waitForTextToDisappear("Dissapearing text");
 
         assertThat(page.containsText("Dissapearing text"), is(false));
@@ -164,7 +170,7 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
 
     @Test
     public void should_wait_for_text_in_element_to_dissapear() {
-        refresh(page);
+        ////refresh(page);
         page.waitForTextToDisappear(page.dissapearingtext, "Dissapearing text");
 
         assertThat(page.containsText("Dissapearing text"), is(false));
@@ -172,7 +178,7 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
 
     @Test
     public void should_wait_for_elements_to_appear() {
-        refresh(chromePage);
+        //refresh(chromePage);
         chromePage.waitForAnyRenderedElementOf(By.id("city"));
         assertThat(chromePage.element(chromePage.city).isCurrentlyVisible(), is(true));
     }
@@ -183,10 +189,10 @@ public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElement
         String exceptionMessage = null;
         try {
 
-            refresh(page);
+            ////refresh(page);
 
             page.setWaitForTimeout(200);
-            refresh(page);
+            ////refresh(page);
 
             page.element(page.fieldDoesNotExist).waitUntilVisible();
 

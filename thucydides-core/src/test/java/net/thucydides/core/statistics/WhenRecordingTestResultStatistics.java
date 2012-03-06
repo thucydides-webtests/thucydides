@@ -41,9 +41,6 @@ public class WhenRecordingTestResultStatistics {
     TestOutcome testOutcome;
 
     @Mock
-    TestOutcome anotherTestOutcome;
-
-    @Mock
     SystemClock clock;
 
     TestOutcomeHistoryDAO testOutcomeHistoryDAO;
@@ -147,9 +144,9 @@ public class WhenRecordingTestResultStatistics {
         assertThat(testStatistics.getOverallPassRate(), is(0.0));
     }
 
-    @WithTag(value="Online sales", type="feature")
+    @WithTag(value="Online sales")
     class SomeTestCaseWithTagOnMethodAndClass {
-        @WithTag(value="Car sales", type="feature")
+        @WithTag(value="Car sales")
         public void some_test_method() {}
     }
 
@@ -221,6 +218,18 @@ public class WhenRecordingTestResultStatistics {
         assertThat(testStatistics.getPassingTestRuns(), is(6L));
         assertThat(testStatistics.getFailingTestRuns(), is(1L));
     }
+
+    @Test
+    public void should_retrieve_a_list_of_all_test_statistics_for_a_given_tag_type() {
+
+        TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.tagType("feature"));
+
+        assertThat(testStatistics.getTotalTestRuns(), is(58L));
+        assertThat(testStatistics.getPassingTestRuns(), is(32L));
+        assertThat(testStatistics.getFailingTestRuns(), is(22L));
+        assertThat(testStatistics.getTags().size(), is(2));
+    }
+
 
     /*
         - should retrieve test statistics for a given tag

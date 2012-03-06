@@ -1,0 +1,57 @@
+package net.thucydides.core.webdriver;
+
+import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.MockEnvironmentVariables;
+import org.openqa.selenium.WebDriver;
+
+import java.io.File;
+
+public class StaticTestSite {
+
+    private WebDriverFactory factory;
+    private ThucydidesWebdriverManager webdriverManager;
+    private EnvironmentVariables environmentVariables;
+
+    public StaticTestSite() {
+        factory = new WebDriverFactory();
+        environmentVariables = MockEnvironmentVariables.fromSystemEnvironment();
+        webdriverManager = new ThucydidesWebdriverManager(factory, new SystemPropertiesConfiguration(environmentVariables));
+    }
+
+    public WebDriver open() {
+        WebDriver driver = webdriverManager.getWebdriver();
+        if (factory.usesSauceLabs()) {
+            driver.get("http://wakaleo.com/thucydides-tests/index.html");
+        } else {
+            File testSite = fileInClasspathCalled("static-site/index.html");
+            driver.get("file://" + testSite.getAbsolutePath());
+        }
+        return driver;
+    }
+
+
+    public WebDriver open(String driver) {
+        environmentVariables.setProperty("webdriver.driver", driver);
+        return open();
+    }
+
+    public WebDriver open(String remoteUrl, String correspondingLocalFile, String driver) {
+        environmentVariables.setProperty("webdriver.driver", driver);
+        return open(remoteUrl, correspondingLocalFile);
+    }
+
+    public WebDriver open(String remoteUrl, String correspondingLocalFile) {
+        WebDriver driver = webdriverManager.getWebdriver();
+        if (factory.usesSauceLabs()) {
+            driver.get(remoteUrl);
+        } else {
+            File testSite = fileInClasspathCalled(correspondingLocalFile);
+            driver.get("file://" + testSite.getAbsolutePath());
+        }
+        return driver;
+    }
+
+    private static File fileInClasspathCalled(final String resourceName) {
+        return new File(Thread.currentThread().getContextClassLoader().getResource(resourceName).getPath());
+    }
+}
