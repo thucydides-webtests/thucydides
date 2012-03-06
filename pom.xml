@@ -109,11 +109,13 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
+                            <!--<parallel>classes</parallel>-->
                             <excludes>
                                 <exclude>**/Abstract*.*</exclude>
                                 <exclude>**/samples/*.*</exclude>
                                 <exclude>**/Sample*.*</exclude>
                                 <exclude>**/*Sample.*</exclude>
+
                             </excludes>
                             <includes>
                                 <include>%regex[.*integration.*Story.*]</include>

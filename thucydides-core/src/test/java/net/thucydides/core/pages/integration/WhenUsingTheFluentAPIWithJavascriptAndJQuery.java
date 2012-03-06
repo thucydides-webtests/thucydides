@@ -1,19 +1,11 @@
 package net.thucydides.core.pages.integration;
 
 
-import net.thucydides.core.webdriver.StaticTestSite;
-import net.thucydides.core.webdriver.WebDriverFacade;
-import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.jquery.ByJQuery;
 import net.thucydides.core.webdriver.jquery.ByJQuerySelector;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.List;
 
@@ -23,47 +15,10 @@ import static org.hamcrest.Matchers.is;
 
 public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElementAPITestsBaseClass {
 
-    private static StaticSitePage chromePage;
-    private static StaticTestSite testSite;
-
-    @BeforeClass
-    public static void setupDriver() {
-        testSite = new StaticTestSite();
-
-        driver = testSite.open();
-        chromeDriver = testSite.open("chrome");
-
-        page = new StaticSitePage(driver, 1);
-        chromePage = new StaticSitePage(chromeDriver, 1);
-        page.open();
-        page.addJQuerySupport();
-        chromePage.open();
-        chromePage.addJQuerySupport();
-    }
-
-    @AfterClass
-    public static void closeBrowser() {
-        driver.quit();
-        chromeDriver.quit();
-    }
-
-    public void refreshPage() {
-        refresh(page);
-        refresh(chromePage);
-    }
-
     @Test
     public void should_inject_jquery_into_the_page() {
-        page.evaluateJavascript("$('#firstname').focus();");
+        StaticSitePage page = getFirefoxPage();
 
-        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
-        assertThat(jqueryInjected, is(true));
-    }
-
-    @Test
-    public void should_work_correctly_in_the_page_with_jquery_already_present() {
-        StaticSitePage page = new StaticSitePage(driver, 1);
-        page.open("classpath:static-site/index-with-jquery.html");
         page.evaluateJavascript("$('#firstname').focus();");
 
         Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
@@ -72,28 +27,32 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElement
 
     @Test
     public void should_inject_jquery_into_the_page_in_chrome() {
+        StaticSitePage page = getChromePage();
 
-        chromePage.evaluateJavascript("$('#firstname').focus();");
+        page.evaluateJavascript("$('#firstname').focus();");
 
-        Boolean jqueryInjected = (Boolean) chromePage.evaluateJavascript("return (typeof jQuery === 'function')");
+        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
         assertThat(jqueryInjected, is(true));
     }
 
     @Test
     public void should_support_jquery_queries_in_the_page_in_chrome() {
 
-        chromePage.evaluateJavascript("$('#firstname').focus();");
+        StaticSitePage page = getChromePage();
 
-        assertThat(chromePage.element(chromePage.firstName).hasFocus(), is(true));
+        page.evaluateJavascript("$('#firstname').focus();");
 
-        chromePage.evaluateJavascript("$('#lastname').focus();");
+        assertThat(page.element(page.firstName).hasFocus(), is(true));
 
-        assertThat(chromePage.element(chromePage.lastName).hasFocus(), is(true));
+        page.evaluateJavascript("$('#lastname').focus();");
+
+        assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
 
     @Test
     public void should_support_jquery_queries_in_the_page() {
 
+        StaticSitePage page = getFirefoxPage();
         page.evaluateJavascript("$('#firstname').focus();");
 
         assertThat(page.element(page.firstName).hasFocus(), is(true));
@@ -106,6 +65,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElement
     @Test
     public void should_support_jquery_queries_that_return_values_in_the_page() {
 
+        StaticSitePage page = getFirefoxPage();
         Object result = page.evaluateJavascript("return $('#country').val();");
 
         assertThat(result.toString(), is("Australia"));
@@ -113,34 +73,41 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElement
 
     @Test
     public void should_be_able_to_find_an_element_using_a_jquery_expression() {
-        WebElement link = driver.findElement(ByJQuery.selector("a[title='Click Me']"));
+        StaticSitePage page = getFirefoxPage();
+
+        WebElement link = page.getDriver().findElement(ByJQuery.selector("a[title='Click Me']"));
         assertThat(link.isDisplayed(), is(true));
     }
 
     @Test
     public void should_be_able_to_find_multiple_elements_using_a_jquery_expression() {
-        List<WebElement> links = driver.findElements(ByJQuery.selector("h2"));
+        StaticSitePage page = getFirefoxPage();
+        List<WebElement> links = page.getDriver().findElements(ByJQuery.selector("h2"));
         assertThat(links.size(), is(2));
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = WebDriverException.class)
     public void should_fail_gracefully_if_no_jquery_element_is_found() {
-        driver.findElement(ByJQuery.selector("a[title='Does Not Exist']"));
+        StaticSitePage page = getFirefoxPage();
+        page.getDriver().findElement(ByJQuery.selector("a[title='Does Not Exist']"));
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = WebDriverException.class)
     public void should_fail_gracefully_if_jquery_selector_is_invalid() {
-        driver.findElement(ByJQuery.selector("a[title='Does Not Exist'"));
+        StaticSitePage page = getFirefoxPage();
+        page.getDriver().findElement(ByJQuery.selector("a[title='Does Not Exist'"));
     }
 
     @Test
     public void should_evaluate_javascript_within_browser() {
+        StaticSitePage page = getFirefoxPage();
         String result = (String) page.evaluateJavascript("return document.title");
         assertThat(result, is("Thucydides Test Site"));
     }
 
     @Test
     public void should_execute_javascript_within_browser() {
+        StaticSitePage page = getFirefoxPage();
         assertThat(page.element(page.firstName).hasFocus(), is(false));
         page.evaluateJavascript("document.getElementById('firstname').focus()");
         assertThat(page.element(page.firstName).hasFocus(), is(true));

@@ -84,7 +84,7 @@ public class WhenTakingLargeScreenshots {
         ResizableImage image = ResizableImage.loadFrom(screenshotFile);
 
 
-        assertThat(image.getWitdh(), greaterThan(800));
+        assertThat(image.getWitdh(), greaterThan(750));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class WhenTakingLargeScreenshots {
         };
         File screenshot = photographer.takeScreenshot("screenshot");  // should not throw an exception
         if (screenshot == null) {
-            verify(logger).warn(contains("Failed to write screenshot"), any(WebDriverException.class));
+            verify(logger).warn(contains("Failed to write screenshot"));
         }
     }
 
@@ -140,7 +140,7 @@ public class WhenTakingLargeScreenshots {
         };
         File screenshot = photographer.takeScreenshot("screenshot");  // should not throw an exception
         if (screenshot == null) {
-            verify(logger).warn(contains("Failed to write screenshot"), any(WebDriverException.class));
+            verify(logger).warn(contains("Failed to write screenshot"));
         }
     }
 }

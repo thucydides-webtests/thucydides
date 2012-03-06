@@ -11,6 +11,7 @@ public class StaticTestSite {
     private WebDriverFactory factory;
     private ThucydidesWebdriverManager webdriverManager;
     private EnvironmentVariables environmentVariables;
+    private String driverType;
 
     public StaticTestSite() {
         factory = new WebDriverFactory();
@@ -19,7 +20,12 @@ public class StaticTestSite {
     }
 
     public WebDriver open() {
-        WebDriver driver = webdriverManager.getWebdriver();
+        WebDriver driver; 
+        if (driverType != null) {
+            driver = webdriverManager.getWebdriver(driverType);
+        } else {
+            driver = webdriverManager.getWebdriver();
+        }
         if (factory.usesSauceLabs()) {
             driver.get("http://wakaleo.com/thucydides-tests/index.html");
         } else {
@@ -30,8 +36,9 @@ public class StaticTestSite {
     }
 
 
-    public WebDriver open(String driver) {
-        environmentVariables.setProperty("webdriver.driver", driver);
+    public WebDriver open(String driverType) {
+        this.driverType = driverType;
+        environmentVariables.setProperty("webdriver.driver", driverType);
         return open();
     }
 

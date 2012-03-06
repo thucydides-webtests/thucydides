@@ -154,6 +154,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     protected TestOutcome getCurrentTestOutcome() {
+        if (testOutcomes.isEmpty()) {
+
+        }
         Preconditions.checkState(!testOutcomes.isEmpty());
         return testOutcomes.get(testOutcomes.size() - 1);
     }

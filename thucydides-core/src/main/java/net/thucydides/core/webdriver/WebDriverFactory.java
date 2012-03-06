@@ -99,7 +99,7 @@ public class WebDriverFactory {
     }
 
     public Class<? extends WebDriver> getClassFor(final SupportedWebDriver driverType) {
-        if (usesSauceLabs()) {
+        if (usesSauceLabs() && (driverType != SupportedWebDriver.HTMLUNIT)) {
             return RemoteWebDriver.class;
         } else {
             return driverType.getWebdriverClass();
@@ -206,7 +206,7 @@ public class WebDriverFactory {
                 if (isATestMethod(callingMethod)) {
                     return NameConverter.humanize(elt.getMethodName());
                 } else if (isASetupMethod(callingMethod)) {
-                    return NameConverter.humanize(elt.getClassName());
+                    return NameConverter.humanize(callingClass.getSimpleName());
                 }
             } catch (ClassNotFoundException e) {
             } catch (NoSuchMethodException e) {}

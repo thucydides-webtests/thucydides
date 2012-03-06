@@ -199,7 +199,7 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
             indexPage.doesNotExist.click();
         } catch(Throwable e) {
             assertThat(e.getCause(), is(notNullValue()));
-            assertThat(e.getCause().getMessage(), containsString("doesNotExist"));
+            assertThat(e.getCause().getMessage(), containsString("Unable to locate element"));
             exceptionThrown = true;
         }
 

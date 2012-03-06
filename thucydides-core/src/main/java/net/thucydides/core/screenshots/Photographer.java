@@ -99,6 +99,8 @@ public class Photographer {
                 }
                 if ((screenshot != null) && (screenshot.exists())) {
                     return saveScreenshoot(prefix, screenshot);
+                } else {
+                    getLogger().warn("Failed to write screenshot (possibly an out of memory error)");
                 }
             } catch (Throwable e) {
                 getLogger().warn("Failed to write screenshot (possibly an out of memory error)", e);

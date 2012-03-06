@@ -35,7 +35,7 @@ public class CSVTestDataSource implements TestDataSource {
 
     public CSVTestDataSource(final String path) throws IOException {
         this(path, CSVReader.DEFAULT_SEPARATOR);
-    }    
+    }
     
     private Reader getDataFileFor(final String path) throws FileNotFoundException {
         if (isAClasspathResource(path)) {
