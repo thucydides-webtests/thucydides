@@ -394,7 +394,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void currentStepDone() {
-        if (!inFluentStepSequence) {
+        if ((!inFluentStepSequence) && currentStepExists()) {
             TestStep finishedStep =  currentStepStack.pop();
             finishedStep.recordDuration();
 
