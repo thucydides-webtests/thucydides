@@ -39,7 +39,12 @@ public class CSVTestDataSource implements TestDataSource {
     
     private Reader getDataFileFor(final String path) throws FileNotFoundException {
         if (isAClasspathResource(path)) {
-            return new InputStreamReader(getClass().getClassLoader().getResourceAsStream(path));
+            try {
+                return new InputStreamReader(getClass().getClassLoader().getResourceAsStream(path));
+            } catch(Throwable e) {
+                LOGGER.error(e.getMessage(), e);
+                throw new FileNotFoundException("Could not load test data from " + path);
+            }
         }
         return new FileReader(new File(path));
     }
