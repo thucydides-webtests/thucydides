@@ -3,6 +3,7 @@ package net.thucydides.core.pages.integration;
 
 import net.thucydides.core.webdriver.jquery.ByJQuery;
 import net.thucydides.core.webdriver.jquery.ByJQuerySelector;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -14,6 +15,13 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElementAPITestsBaseClass {
+
+    
+    @Before
+    public void setup() {
+        System.setProperty("saucelabs.url","http://thucydides:98e053c0-ebdf-4906-a68c-1bf6049aa41f@ondemand.saucelabs.com:80/wd/hub");
+    }
+
 
     @Test
     public void should_inject_jquery_into_the_page() {
