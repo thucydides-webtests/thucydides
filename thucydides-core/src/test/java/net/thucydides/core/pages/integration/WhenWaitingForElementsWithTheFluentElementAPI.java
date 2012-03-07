@@ -1,6 +1,7 @@
 package net.thucydides.core.pages.integration;
 
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -10,6 +11,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
+
+    @Before
+    public void setup() {
+        System.setProperty("saucelabs.url","http://thucydides:98e053c0-ebdf-4906-a68c-1bf6049aa41f@ondemand.saucelabs.com:80/wd/hub");
+    }
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

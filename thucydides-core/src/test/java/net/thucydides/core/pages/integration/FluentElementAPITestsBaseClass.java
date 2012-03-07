@@ -26,31 +26,35 @@ public class FluentElementAPITestsBaseClass {
 
     protected StaticSitePage getFirefoxPage() {
         StaticSitePage page;
-        if (firefoxPage.get() == null) {
-            WebDriver driver = getStaticTestSite().open();
-            openDrivers.add(driver);
-            page = new StaticSitePage(driver, 1000);
-            page.open();
-            page.addJQuerySupport();
-        } else {
-            page = firefoxPage.get();
-            refresh(page);
-        }
+//        if (firefoxPage.get() == null) {
+//            WebDriver driver = getStaticTestSite().open();
+//            openDrivers.add(driver);
+//            page = new StaticSitePage(driver, 1000);
+//            page.open();
+//            page.addJQuerySupport();
+//        } else {
+//            page = firefoxPage.get();
+//            refresh(page);
+//        }
+        WebDriver driver = getStaticTestSite().open();
+        page = new StaticSitePage(driver, 5000);
         return page;
     }
 
     protected StaticSitePage getChromePage() {
         StaticSitePage page;
-        if (chromePage.get() == null) {
-            WebDriver driver = getStaticTestSite().open("chrome");
-            openDrivers.add(driver);
-            page = new StaticSitePage(driver, 1000);
-            page.open();
-            page.addJQuerySupport();
-        } else {
-            page = chromePage.get();
-            refresh(page);
-        }
+//        if (chromePage.get() == null) {
+//            WebDriver driver = testSiteThreadLocal.get().open("chrome");
+//            openDrivers.add(driver);
+//            page = new StaticSitePage(driver, 1000);
+//            page.open();
+//            page.addJQuerySupport();
+//        } else {
+//            page = chromePage.get();
+//            refresh(page);
+//        }
+        WebDriver driver = getStaticTestSite().open("chrome");
+        page = new StaticSitePage(driver, 5000);
         return page;
     }
 
