@@ -148,7 +148,7 @@ public class WebDriverFactory {
         
         if (isNotEmpty(ThucydidesSystemProperty.SAUCELABS_IMPLICIT_TIMEOUT.from(environmentVariables))) {
             int implicitWait = environmentVariables.getPropertyAsInteger(
-                                            ThucydidesSystemProperty.SAUCELABS_IMPLICIT_TIMEOUT.getPropertyName(), 5);
+                                            ThucydidesSystemProperty.SAUCELABS_IMPLICIT_TIMEOUT.getPropertyName(), 30);
             driver.manage().timeouts().implicitlyWait(implicitWait, TimeUnit.SECONDS);
         }
 
