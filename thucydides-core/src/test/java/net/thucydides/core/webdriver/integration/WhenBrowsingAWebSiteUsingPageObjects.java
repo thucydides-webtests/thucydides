@@ -59,18 +59,21 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     IndexPage indexPage;
 
-    @BeforeClass
-    public static void openFirefox() {
-        testSite = new StaticTestSite();
-        firefoxDriver = testSite.open();
-    }
-
+//    @BeforeClass
+//    public static void openFirefox() {
+//        testSite = new StaticTestSite();
+//        firefoxDriver = testSite.open();
+//    }
+//
     MockEnvironmentVariables environmentVariables;
 
     Configuration configuration;
 
     @Before
     public void openLocalStaticSite() {
+        testSite = new StaticTestSite();
+        firefoxDriver = testSite.open();
+
         driver = new HtmlUnitDriver();
         openStaticTestSite(driver);
         indexPage = new IndexPage(driver, 1);
@@ -89,12 +92,13 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         if (driver != null) {
             driver.close();
         }
-    }
-
-    @AfterClass
-    public static void shutdownFirefox() {
         firefoxDriver.quit();
     }
+
+//    @AfterClass
+//    public static void shutdownFirefox() {
+//        firefoxDriver.quit();
+//    }
 
     private void openStaticTestSite(WebDriver driver) {
         File baseDir = new File(System.getProperty("user.dir"));

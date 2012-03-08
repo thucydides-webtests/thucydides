@@ -2,7 +2,9 @@ package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.webdriver.StaticTestSite;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -32,17 +34,17 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         }
     }
     
-    private static WebDriver driver;
-    private static StaticTestSite testSite;
+    private WebDriver driver;
+    private StaticTestSite testSite;
 
-    @BeforeClass
-    public static void openStaticTestSite() {
+    @Before
+    public void openStaticTestSite() {
         testSite = new StaticTestSite();
         driver = testSite.open();
     }
 
-    @AfterClass
-    public static void closeBrowser() {
+    @After
+    public void closeBrowser() {
         driver.quit();
     }
 

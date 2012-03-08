@@ -33,8 +33,8 @@ public class WhenTakingLargeScreenshots {
 
     private File screenshotDirectory;
 
-    private static WebDriver driver;
-    private static StaticTestSite testSite;
+    private WebDriver driver;
+    private StaticTestSite testSite;
 
     private EnvironmentVariables environmentVariables;
 
