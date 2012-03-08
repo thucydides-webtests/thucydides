@@ -3,6 +3,9 @@ package net.thucydides.core.webdriver;
 import com.google.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.SessionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +75,16 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
 
     public WebDriver getWebdriver() {
         return getThreadLocalWebDriver(configuration, webDriverFactory, inThisTestThread().getCurrentDriverName());
+    }
+
+    public SessionId getSessionId() {
+        WebDriver driver = getThreadLocalWebDriver(configuration, webDriverFactory,
+                                                   inThisTestThread().getCurrentDriverName());
+        if (driver instanceof RemoteWebDriver) {
+            return ((RemoteWebDriver) driver).getSessionId();
+        }
+        
+        throw new IllegalArgumentException("Session Ids are only available for remote web drivers");
     }
 
     public WebDriver getWebdriver(final String driver) {

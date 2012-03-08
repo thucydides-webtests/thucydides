@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.IgnoredStepException;
 import net.thucydides.core.PendingStepException;
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
@@ -187,8 +188,17 @@ public class BaseStepListener implements StepListener, StepPublisher {
      */
     public void testStarted(final String testMethod) {
         LOGGER.info("test started: {}", testMethod);
+
         testOutcomes.add(TestOutcome.forTestInStory(testMethod, testSuite, testedStory));
+        updateSessionIdIfKnown();
         setAnnotatedResult(testMethod);
+    }
+
+    private void updateSessionIdIfKnown() {
+        String sessionId = Thucydides.getCurrentSessionID();
+        if (sessionId != null) {
+            getCurrentTestOutcome().setSessionId(sessionId);
+        }
     }
 
     private void setAnnotatedResult(String testMethod) {
@@ -224,6 +234,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
         LOGGER.debug("step started: " + description);
         recordStep(description);
         takeInitialScreenshot();
+        updateSessionIdIfKnown();
     }
 
     public void skippedStepStarted(final ExecutedStepDescription description) {
@@ -320,6 +331,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void stepFinished() {
         LOGGER.debug("step finished");
 
+        updateSessionIdIfKnown();
         takeScreenshotFor(SUCCESS);
         currentStepDone();
         markCurrentStepAs(SUCCESS);

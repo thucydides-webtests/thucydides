@@ -147,6 +147,17 @@ public enum ThucydidesSystemProperty {
     SAUCELABS_URL("saucelabs.url"),
 
     /**
+     * SauceLabs access key - if provided, Thucydides can generate links to the SauceLabs reports that don't require a login.
+     */
+    SAUCELABS_ACCESS_KEY("saucelabs.access.key"),
+
+    /**
+     * SauceLabs user id - if provided with the access key,
+     * Thucydides can generate links to the SauceLabs reports that don't require a login.
+     */
+    SAUCELABS_USER_ID("saucelabs.user.id"),
+
+    /**
      * Override the default implicit timeout value for the Saucelabs driver.
      */
     SAUCELABS_IMPLICIT_TIMEOUT("saucelabs.implicit.timeout");

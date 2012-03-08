@@ -101,6 +101,13 @@ public class Thucydides {
 
     }
 
+    public static String getCurrentSessionID() {
+        if ((getWebdriverManager() != null) && (getWebdriverManager().getSessionId() != null)) {
+            return getWebdriverManager().getSessionId().toString();
+        }
+        return null;
+    }
+
     protected static WebDriver getDriver() {
         return getWebdriverManager().getWebdriver();
     }

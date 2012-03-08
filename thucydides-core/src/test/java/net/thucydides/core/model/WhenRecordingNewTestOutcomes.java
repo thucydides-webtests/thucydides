@@ -42,40 +42,79 @@ public class WhenRecordingNewTestOutcomes {
 
     TestOutcome testOutcome;
 
-    class AUserStory {};
+    class AUserStory {
+    }
+
+    ;
 
     @Story(AUserStory.class)
     @Issue("#ISSUE-123")
     class SomeTestScenario {
         @Issue("#ISSUE-123")
-        public void should_do_this() {};
+        public void should_do_this() {
+        }
+
+        ;
+
         @Issue("#ISSUE-456")
-        public void should_do_that() {};
-        public void should_do_something_else() {};
+        public void should_do_that() {
+        }
+
+        ;
+
+        public void should_do_something_else() {
+        }
+
+        ;
     }
 
     @Story(AUserStory.class)
-    @Issues({"#ISSUE-123","#ISSUE-456"})
+    @Issues({"#ISSUE-123", "#ISSUE-456"})
     class SomeOtherTestScenario {
-        @Issues({"#ISSUE-123","#ISSUE-789"})
-        public void should_do_this() {};
+        @Issues({"#ISSUE-123", "#ISSUE-789"})
+        public void should_do_this() {
+        }
+
+        ;
+
         @Issue("#ISSUE-123")
-        public void should_do_that() {};
-        public void should_do_something_else() {};
+        public void should_do_that() {
+        }
+
+        ;
+
+        public void should_do_something_else() {
+        }
+
+        ;
     }
 
     @Story(AUserStory.class)
     class SomeAnnotatedTestScenario {
         @Title("Really should do this!")
-        public void should_do_this() {};
-        public void should_do_that() {};
+        public void should_do_this() {
+        }
+
+        ;
+
+        public void should_do_that() {
+        }
+
+        ;
     }
 
     @Story(AUserStory.class)
     class SomeAnnotatedTestScenarioWithAnIssue {
         @Title("Really should do this! (#ISSUE-123)")
-        public void should_do_this() {};
-        public void should_do_that() {};
+        public void should_do_this() {
+        }
+
+        ;
+
+        public void should_do_that() {
+        }
+
+        ;
     }
 
     @Story(AUserStory.class)
@@ -83,17 +122,35 @@ public class WhenRecordingNewTestOutcomes {
         @Issue("#ISSUE-456")
         @Issues({"#ISSUE-100", "#ISSUE-200"})
         @Title("Really should do this! (#ISSUE-123)")
-        public void should_do_this() {};
-        public void should_do_that() {};
+        public void should_do_this() {
+        }
+
+        ;
+
+        public void should_do_that() {
+        }
+
+        ;
     }
 
     @Story(AUserStory.class)
     @Issue("#123")
     class ATestScenarioWithIssuesWithNoPrefix {
-        public void should_do_this() {};
+        public void should_do_this() {
+        }
+
+        ;
+
         @Issue("#456")
-        public void should_do_that() {};
-        public void should_do_something_else() {};
+        public void should_do_that() {
+        }
+
+        ;
+
+        public void should_do_something_else() {
+        }
+
+        ;
     }
 
     @Before
@@ -194,7 +251,6 @@ public class WhenRecordingNewTestOutcomes {
     }
 
 
-
     @Test
     public void a_test_outcome_should_inject_issue_links_from_the_Issue_annotation_if_requested() {
         MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
@@ -202,7 +258,7 @@ public class WhenRecordingNewTestOutcomes {
         IssueTracking issueTracking = new SystemPropertiesIssueTracking(environmentVariables);
 
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
-                                         .usingIssueTracking(issueTracking);
+                .usingIssueTracking(issueTracking);
 
         assertThat(outcome.getFormattedIssues(), is("(<a href=\"http://my.jira/browse/ISSUE-123\">#ISSUE-123</a>)"));
     }
@@ -278,7 +334,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("The user searches for Cats"));
 
         assertThat(testOutcome.getTestSteps().toString(),
-                   is("[The user opens the Google search page, The user searches for Cats]"));
+                is("[The user opens the Google search page, The user searches for Cats]"));
     }
 
     @Test
@@ -293,7 +349,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getTestSteps().toString(),
-                   is("[Step 1, Step 2 [Step 2.1, Step 2.2], Step 3]"));
+                is("[Step 1, Step 2 [Step 2.1, Step 2.2], Step 3]"));
     }
 
     @Test
@@ -315,7 +371,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getTestSteps().toString(),
-                   is("[Step 1, Step 2 [Step 2.1 [Step 2.1.1 [Step 2.1.1.1], Step 2.1.2], Step 2.2], Step 3]"));
+                is("[Step 1, Step 2 [Step 2.1 [Step 2.1.1 [Step 2.1.1.1], Step 2.1.2], Step 2.2], Step 3]"));
     }
 
     @Test
@@ -370,7 +426,7 @@ public class WhenRecordingNewTestOutcomes {
             testSteps.add(new TestStep("Some other step"));
             fail("An UnsupportedOperationException exception should have been thrown");
         } catch (UnsupportedOperationException e) {
-            assertThat(testOutcome.toString(),  is("The user opens the Google search page"));
+            assertThat(testOutcome.toString(), is("The user opens the Google search page"));
         }
     }
 
@@ -419,19 +475,19 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("step_3"));
 
         List<String> screenshots = extract(testOutcome.getScreenshots(), on(Screenshot.class).getFilename());
-        assertThat(screenshots, hasItems("step_1.png","step_2.1.1.1.png",
-                                         "step_2.1.2.png", "step_2.2.png", "step_3.png"));
+        assertThat(screenshots, hasItems("step_1.png", "step_2.1.1.1.png",
+                "step_2.1.2.png", "step_2.2.png", "step_3.png"));
     }
 
     @Test
     public void a_screenshot_without_an_error_message__returns_an_empty_string() {
-        Screenshot screenshot = new Screenshot("step_1.png","Step 1",800);
+        Screenshot screenshot = new Screenshot("step_1.png", "Step 1", 800);
         assertThat(screenshot.getErrorMessage(), is(""));
     }
 
     @Test
     public void a_failing_screenshot_records_the_error_message() {
-        Screenshot screenshot = new Screenshot("step_1.png","Step 1",800,new AssertionError("Element not found"));
+        Screenshot screenshot = new Screenshot("step_1.png", "Step 1", 800, new AssertionError("Element not found"));
         assertThat(screenshot.getErrorMessage(), is("Element not found"));
     }
 
@@ -829,7 +885,8 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     class MyApp {
-        class MyUserStory {}
+        class MyUserStory {
+        }
     }
 
     @Test
@@ -878,4 +935,34 @@ public class WhenRecordingNewTestOutcomes {
         assertThat(steps.toString(), is("SimpleScenarioSteps"));
     }
 
+    @Test
+    public void should_be_able_to_obtain_a_link_to_the_saucelabs_video() {
+        testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+        testOutcome.setSessionId("1234");
+        assertThat(testOutcome.getVideoLink(), is("http://saucelabs.com/jobs/1234"));
+    }
+
+    @Test
+    public void should_be_able_to_find_the_last_step() {
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
+
+        assertThat(testOutcome.getLastStep().getDescription(), is("Step 3"));
+    }
+
+
+    @Test
+    public void should_be_able_to_find_the_last_step_in_a_group() {
+
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Group 1"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Group 2"));
+        testOutcome.startGroup();
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
+
+        assertThat(testOutcome.getLastStep().getDescription(), is("Step 3"));
+    }
 }

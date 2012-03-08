@@ -83,6 +83,9 @@
                         <td width="25"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25"
                                             height="25"/>
                         </td>
+                        <#if (testOutcome.videoLink)??>
+                            <td width="25"><a href="${testOutcome.videoLink}"><img class="story-outcome-icon" src="images/video.png" width="25" height="25" alt="Video"/></a></td>
+                        </#if>
                         <td width="%"><span class="test-case-title"><span
                                 class="${outcome_text}">${testOutcome.titleWithLinks}<span class="related-issue-title">${testOutcome.formattedIssues}</span></span></span>
                         </td>

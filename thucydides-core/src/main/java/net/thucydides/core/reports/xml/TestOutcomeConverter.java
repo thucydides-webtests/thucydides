@@ -20,6 +20,8 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 /**
  * XStream converter used to generate the XML acceptance test report.
  *
@@ -51,6 +53,7 @@ public class TestOutcomeConverter implements Converter {
     private static final String SCREENSHOT_SOURCE = "source";
     private static final String DESCRIPTION = "description";
     private static final String DURATION = "duration";
+    private static final String SESSION_ID = "session-id";
 
     private transient String qualifier;
 
@@ -88,6 +91,9 @@ public class TestOutcomeConverter implements Converter {
         writer.addAttribute(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
         writer.addAttribute(RESULT_FIELD, testOutcome.getResult().toString());
         writer.addAttribute(DURATION, Long.toString(testOutcome.getDuration()));
+        if (isNotEmpty(testOutcome.getSessionId())) {
+            writer.addAttribute(SESSION_ID, testOutcome.getSessionId());
+        }
         addUserStoryTo(writer, testOutcome.getUserStory());
         addIssuesTo(writer, testOutcome.getIssues());
 
@@ -251,6 +257,8 @@ public class TestOutcomeConverter implements Converter {
         testOutcome.setTitle(reader.getAttribute(TITLE_FIELD));
         Long duration = readDuration(reader);
         testOutcome.setDuration(duration);
+        String sessionId = readSessionId(reader);
+        testOutcome.setSessionId(sessionId);
         readChildren(reader, testOutcome);
         return testOutcome;
     }
@@ -341,6 +349,10 @@ public class TestOutcomeConverter implements Converter {
         } else {
             return 0;
         }
+    }
+
+    private String readSessionId(HierarchicalStreamReader reader) {
+        return reader.getAttribute(SESSION_ID);
     }
 
     private void readTestGroup(final HierarchicalStreamReader reader, final TestOutcome testOutcome) {

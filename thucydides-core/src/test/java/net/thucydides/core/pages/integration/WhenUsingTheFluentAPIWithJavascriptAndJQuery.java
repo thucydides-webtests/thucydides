@@ -16,13 +16,6 @@ import static org.hamcrest.Matchers.is;
 
 public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElementAPITestsBaseClass {
 
-    
-    @Before
-    public void setup() {
-        System.setProperty("saucelabs.url","http://thucydides:98e053c0-ebdf-4906-a68c-1bf6049aa41f@ondemand.saucelabs.com:80/wd/hub");
-    }
-
-
     @Test
     public void should_inject_jquery_into_the_page() {
         StaticSitePage page = getFirefoxPage();

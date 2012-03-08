@@ -9,6 +9,8 @@ import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
+import net.thucydides.core.reports.saucelabs.LinkGenerator;
+import net.thucydides.core.reports.saucelabs.SaucelabsLinkGenerator;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
@@ -100,6 +102,14 @@ public class TestOutcome {
     private IssueTracking issueTracking;
 
     /**
+     * The session ID for this test, is a remote web driver was used.
+     * If the tests are run on SauceLabs, this is used to generate a link to the corresponding report and video.
+     */
+    private String sessionId;
+
+    private LinkGenerator linkGenerator;
+
+    /**
      * The title is immutable once set. For convenience, you can create a test
      * run directly with a title using this constructor.
      */
@@ -113,6 +123,7 @@ public class TestOutcome {
         this.testCase = testCase;
         this.additionalIssues = new HashSet<String>();
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
+        this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
         if (testCase != null) {
             initializeStoryFrom(testCase);
         }
@@ -133,6 +144,7 @@ public class TestOutcome {
         this.additionalIssues = new HashSet<String>();
         this.userStory = userStory;
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
+        this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
     }
 
     /**
@@ -629,6 +641,22 @@ public class TestOutcome {
         } else {
             return duration;
         }
+    }
+
+    /**
+     * Returns the link to the associated video (e.g. from Saucelabs) for this test.
+     * @return
+     */
+    public String getVideoLink() {
+        return linkGenerator.linkFor(this);
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     StepCountBuilder count(StepFilter filter) {

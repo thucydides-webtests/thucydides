@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.SessionId;
 
 /**
  * Manage WebDriver instances.
@@ -15,6 +16,8 @@ public interface WebdriverManager {
     public WebDriver getWebdriver();
 
     public WebDriver getWebdriver(final String driver);
+
+    public SessionId getSessionId();
 
     public void closeDriver();
 
