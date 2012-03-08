@@ -83,8 +83,7 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
         if (driver instanceof RemoteWebDriver) {
             return ((RemoteWebDriver) driver).getSessionId();
         }
-        
-        throw new IllegalArgumentException("Session Ids are only available for remote web drivers");
+        return null;
     }
 
     public WebDriver getWebdriver(final String driver) {
