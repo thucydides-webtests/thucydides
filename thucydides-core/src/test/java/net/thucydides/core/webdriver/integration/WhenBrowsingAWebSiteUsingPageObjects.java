@@ -59,12 +59,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     IndexPage indexPage;
 
-//    @BeforeClass
-//    public static void openFirefox() {
-//        testSite = new StaticTestSite();
-//        firefoxDriver = testSite.open();
-//    }
-//
     MockEnvironmentVariables environmentVariables;
 
     Configuration configuration;
@@ -72,10 +66,9 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     @Before
     public void openLocalStaticSite() {
         testSite = new StaticTestSite();
-        firefoxDriver = testSite.open();
 
         driver = new HtmlUnitDriver();
-        openStaticTestSite(driver);
+        openStaticTestSite();
         indexPage = new IndexPage(driver, 1);
         indexPage.setWaitForTimeout(100);
     }
@@ -89,18 +82,12 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     @After
     public void closeDriver() {
-        if (driver != null) {
-            driver.close();
+        if (firefoxDriver != null) {
+            firefoxDriver.quit();
         }
-        firefoxDriver.quit();
     }
 
-//    @AfterClass
-//    public static void shutdownFirefox() {
-//        firefoxDriver.quit();
-//    }
-
-    private void openStaticTestSite(WebDriver driver) {
+    private void openStaticTestSite() {
         File baseDir = new File(System.getProperty("user.dir"));
         File testSite = new File(baseDir,"src/test/resources/static-site/index.html");
         this.driver.get("file://" + testSite.getAbsolutePath());
@@ -208,12 +195,14 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         
     @Test
     public void should_know_when_an_element_is_visible() {
+        firefoxDriver = testSite.open();
         IndexPageWithShortTimeout indexPage = new IndexPageWithShortTimeout(firefoxDriver, 1);
         assertThat(indexPage.isElementVisible(By.id("visible")), is(true));
     }
 
     @Test
     public void should_know_when_an_element_is_invisible() {
+        firefoxDriver = testSite.open();
         IndexPageWithShortTimeout indexPage = new IndexPageWithShortTimeout(firefoxDriver, 1);
         assertThat(indexPage.isElementVisible(By.id("invisible")), is(false));
     }
