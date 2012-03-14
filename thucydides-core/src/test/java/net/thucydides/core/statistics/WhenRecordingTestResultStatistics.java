@@ -1,14 +1,21 @@
 package net.thucydides.core.statistics;
 
+import com.google.inject.Key;
+import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.pages.SystemClock;
+import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.model.TestRun;
 import net.thucydides.core.statistics.model.TestRunTag;
 import net.thucydides.core.statistics.model.TestStatistics;
+import net.thucydides.core.steps.StepListener;
+import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +29,9 @@ import static net.thucydides.core.matchers.dates.DateMatchers.isSameAs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,6 +45,8 @@ public class WhenRecordingTestResultStatistics {
     StatisticsListener statisticsListener;
 
     TestStatisticsProvider testStatisticsProvider;
+
+    EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
 
     @Mock
     TestOutcome testOutcome;
@@ -63,11 +74,18 @@ public class WhenRecordingTestResultStatistics {
         when(testOutcome.getStoryTitle()).thenReturn("A Test Story");
         when(testOutcome.getDuration()).thenReturn(500L);
 
-        testOutcomeHistoryDAO = Injectors.getInjector().getInstance(TestOutcomeHistoryDAO.class);
-        statisticsListener = new StatisticsListener(testOutcomeHistoryDAO);
+        testOutcomeHistoryDAO = Injectors.getInjector().getInstance(HibernateTestOutcomeHistoryDAO.class);
+        statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables);
         testStatisticsProvider = new TestStatisticsProvider(testOutcomeHistoryDAO);
 
         prepareTestData();
+    }
+
+    @Test
+    public void should_be_able_to_obtain_the_statistics_listener_via_guice() {
+        StepListener statisticsListener =
+                Injectors.getInjector().getInstance(Key.get(StepListener.class, Statistics.class));
+        assertThat(statisticsListener, instanceOf(StatisticsListener.class));
     }
 
     @Test
@@ -78,6 +96,7 @@ public class WhenRecordingTestResultStatistics {
         when(testOutcome.getResult()).thenReturn(TestResult.SUCCESS);
 
         statisticsListener.testFinished(testOutcome);
+        statisticsListener.testSuiteFinished();
 
         List<TestRun> storedTestRuns = testStatisticsProvider.testRunsForTest(With.title(testOutcome.getTitle()));
         assertThat(storedTestRuns.size(), greaterThan(0));
@@ -224,7 +243,7 @@ public class WhenRecordingTestResultStatistics {
 
         TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.tagType("feature"));
 
-        assertThat(testStatistics.getTotalTestRuns(), is(58L));
+        assertThat(testStatistics.getTotalTestRuns(), is(56L));
         assertThat(testStatistics.getPassingTestRuns(), is(32L));
         assertThat(testStatistics.getFailingTestRuns(), is(22L));
         assertThat(testStatistics.getTags().size(), is(2));
@@ -240,6 +259,8 @@ public class WhenRecordingTestResultStatistics {
 
     private void prepareTestData() {
         if (!runOnce) {
+            statisticsListener.testSuiteFinished();
+
             statisticsListener.testFinished(pendingTestFor("boat_sales_test"));
             statisticsListener.testFinished(failingTestFor("car_sales_test"));
             statisticsListener.testFinished(failingTestFor("house_sales_test"));
@@ -279,6 +300,7 @@ public class WhenRecordingTestResultStatistics {
 
             statisticsListener.testFinished(passingTestFor("more_boat_sales_test"));
             statisticsListener.testFinished(passingTestFor("more_car_sales_test"));
+            statisticsListener.testSuiteFinished();
 
             runOnce = true;
         }
@@ -304,8 +326,8 @@ public class WhenRecordingTestResultStatistics {
 
     private void prepareDAOWithFixedClock() {
         when(clock.getCurrentTime()).thenReturn(JANUARY_1ST_2012);
-        testOutcomeHistoryDAO = new TestOutcomeHistoryDAO(Injectors.getInjector().getInstance(EntityManager.class), clock);
-        statisticsListener = new StatisticsListener(testOutcomeHistoryDAO);
+        testOutcomeHistoryDAO = new HibernateTestOutcomeHistoryDAO(Injectors.getInjector().getInstance(EntityManager.class), clock);
+        statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables);
         testStatisticsProvider = new TestStatisticsProvider(testOutcomeHistoryDAO);
     }
 }

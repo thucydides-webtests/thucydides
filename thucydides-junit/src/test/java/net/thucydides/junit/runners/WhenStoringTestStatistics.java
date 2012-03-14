@@ -1,29 +1,28 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.steps.StepEventBus;
-import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
+import net.thucydides.junit.rules.DisableThucydidesHistoryRule;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.samples.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -39,12 +38,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-public class WhenRunningTestBatches extends AbstractTestStepRunnerTest {
+public class WhenStoringTestStatistics extends AbstractTestStepRunnerTest {
 
     @Before
     public void initMocks() {
@@ -56,13 +51,10 @@ public class WhenRunningTestBatches extends AbstractTestStepRunnerTest {
     @Mock
     FirefoxDriver firefoxDriver;
 
-    MockEnvironmentVariables environmentVariables;
+    EnvironmentVariables environmentVariables;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-    @Rule
-    public QuietThucydidesLoggingRule quietThucydidesLoggingRule = new QuietThucydidesLoggingRule();
 
     WebDriverFactory webDriverFactory;
 
@@ -82,14 +74,14 @@ public class WhenRunningTestBatches extends AbstractTestStepRunnerTest {
             }
         };
 
-        environmentVariables = new MockEnvironmentVariables();
+        environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
         StepEventBus.getEventBus().clear();
 
     }
 
     @Test
-    public void the_test_runner_records_the_steps_as_they_are_executed() throws InitializationError {
+    public void the_test_runner_records_test_results_in_the_statistics_database() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenario.class, webDriverFactory);
         runner.run(new RunNotifier());

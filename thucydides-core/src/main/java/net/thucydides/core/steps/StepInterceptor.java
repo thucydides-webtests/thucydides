@@ -25,7 +25,6 @@ import static org.apache.commons.lang.StringUtils.split;
  * The step interceptor is designed to work on a given test case or user story.
  * It logs test step results so that they can be reported on at the end of the test case.
  *
- * TODO: Remove the stepExceptions variable
  * @author johnsmart
  */
 public class StepInterceptor implements MethodInterceptor, Serializable {
@@ -130,7 +129,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     }
 
     private Object runSkippedMethod(Object obj, Method method, Object[] args, MethodProxy proxy) {
-        LOGGER.info("Running test step " + getTestNameFrom(method, args, false));
+        LOGGER.trace("Running test step " + getTestNameFrom(method, args, false));
         Object result = null;
         StepEventBus.getEventBus().temporarilySuspendWebdriverCalls();
         try {
@@ -240,7 +239,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private Object runTestStep(final Object obj, final Method method,
                                final Object[] args, final MethodProxy proxy) throws Throwable {
-        LOGGER.info("Running test step " + getTestNameFrom(method, args, false));
+        LOGGER.trace("Running test step " + getTestNameFrom(method, args, false));
         Object result = null;
         try {
             result = executeTestStepMethod(obj, method, args, proxy, result);
@@ -258,7 +257,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             notifyOfStepFailure(method, args, assertionError);
         }
 
-        LOGGER.info("Test step done: " + getTestNameFrom(method, args, false));
+        LOGGER.trace("Test step done: " + getTestNameFrom(method, args, false));
         return result;
     }
 

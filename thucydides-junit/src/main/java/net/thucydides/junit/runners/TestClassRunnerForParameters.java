@@ -26,10 +26,11 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
     }
 
    @Override
-   protected JUnitStepListener initListenersUsing(final Pages pagesObject) {
-       setStepListener(new ParameterizedJUnitStepListener(getConfiguration().loadOutputDirectoryFromSystemProperties(),
-                                                          pagesObject,
-                                                          parameterSetNumber));
+   protected JUnitStepListener initListenersUsing(final Pages pageFactory) {
+       setStepListener(JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
+                                        .and().withPageFactory(pageFactory)
+                                        .and().withParameterSetNumber(parameterSetNumber)
+                                        .and().build());
        return getStepListener();
    }
 

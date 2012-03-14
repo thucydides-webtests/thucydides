@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import com.google.inject.Module;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;

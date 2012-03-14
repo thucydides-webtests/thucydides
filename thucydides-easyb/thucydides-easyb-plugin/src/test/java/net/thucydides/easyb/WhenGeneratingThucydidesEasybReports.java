@@ -98,6 +98,7 @@ public class WhenGeneratingThucydidesEasybReports {
 
         stepListener.setDriver(driver);
         when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot);
+        when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
 
         stepFactory = new StepFactory(pages);
 

@@ -99,7 +99,7 @@ public class Photographer {
                 }
                 if ((screenshot != null) && (screenshot.exists())) {
                     return saveScreenshoot(prefix, screenshot);
-                } else {
+                } else if (!isAMock(driver)){
                     getLogger().warn("Failed to write screenshot (possibly an out of memory error)");
                 }
             } catch (Throwable e) {
@@ -112,7 +112,6 @@ public class Photographer {
             }
         }
         return screenshot;
-
     }
 
     protected File saveScreenshoot(final String prefix, final File screenshot) throws IOException {
@@ -126,10 +125,15 @@ public class Photographer {
         if (driver == null) {
             return false;
         } else if (driver instanceof WebDriverFacade) {
-            return ((WebDriverFacade) driver).canTakeScreenshots();
+            return ((WebDriverFacade) driver).canTakeScreenshots()
+                    && (((WebDriverFacade) driver).getProxiedDriver() != null);
         } else {
             return TakesScreenshot.class.isAssignableFrom(driver.getClass());
         }
+    }
+
+    private boolean isAMock(WebDriver driver) {
+        return driver.getClass().getCanonicalName().contains("Mock");
     }
 
     private void savePageSourceFor(final String screenshotFile) throws IOException {

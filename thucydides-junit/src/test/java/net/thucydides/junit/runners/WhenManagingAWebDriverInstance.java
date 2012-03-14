@@ -6,6 +6,7 @@ import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
+import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.samples.MultipleTestScenario;
 import net.thucydides.samples.MultipleTestScenarioWithUniqueSession;
@@ -56,6 +57,9 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
 
     @Mock
     FirefoxDriver firefoxDriver;
+
+    @Rule
+    public QuietThucydidesLoggingRule quietThucydidesLoggingRule = new QuietThucydidesLoggingRule();
 
     WebDriverFactory webDriverFactory;
 

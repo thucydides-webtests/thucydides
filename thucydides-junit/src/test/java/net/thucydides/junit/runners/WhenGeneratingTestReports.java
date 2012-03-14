@@ -3,8 +3,10 @@ package net.thucydides.junit.runners;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportGenerationFailedError;
+import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.samples.AnnotatedSingleTestScenario;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
@@ -37,7 +39,10 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
     }
-    
+
+    @Rule
+    public QuietThucydidesLoggingRule quietThucydidesLoggingRule = new QuietThucydidesLoggingRule();
+
     @Test
     public void a_test_reporter_can_subscribe_to_the_runner() throws InitializationError, IOException {
         

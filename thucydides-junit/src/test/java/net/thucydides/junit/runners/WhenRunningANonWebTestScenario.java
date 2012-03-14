@@ -1,11 +1,20 @@
 package net.thucydides.junit.runners;
 
+import com.google.inject.Binder;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.guice.ThucydidesModule;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.junit.rules.DisableThucydidesHistoryRule;
+import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.samples.NonWebTestScenarioWithParameterizedSteps;
 import net.thucydides.samples.SampleNonWebScenarioWithError;
 import net.thucydides.samples.SamplePassingNonWebScenario;
@@ -13,6 +22,7 @@ import net.thucydides.samples.SamplePassingNonWebScenarioWithEmptyTests;
 import net.thucydides.samples.SamplePassingNonWebScenarioWithIgnoredTests;
 import net.thucydides.samples.SamplePassingNonWebScenarioWithPendingTests;
 import net.thucydides.samples.SingleNonWebTestScenario;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,8 +41,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -43,22 +53,30 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    MockEnvironmentVariables environmentVariables;
+    EnvironmentVariables environmentVariables;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+    @Rule
+    public QuietThucydidesLoggingRule quietThucydidesLoggingRule = new QuietThucydidesLoggingRule();
+
+    @Rule
+    public DisableThucydidesHistoryRule disableThucydidesHistoryRule = new DisableThucydidesHistoryRule();
+
+    Injector injector;
+
     @Before
     public void createATestableDriverFactory() throws Exception {
         MockitoAnnotations.initMocks(this);
-        environmentVariables = new MockEnvironmentVariables();
+        injector = Guice.createInjector(new ThucydidesModule());
         StepEventBus.getEventBus().clear();
     }
 
     @Test
     public void the_test_runner_records_the_steps_as_they_are_executed() throws InitializationError {
 
-        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingNonWebScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePassingNonWebScenario.class, injector);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
@@ -189,7 +207,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         RunNotifier notifier = mock(RunNotifier.class);
         runner.run(notifier);
 
-        verify(notifier).fireTestFailure((Failure)anyObject());
+        verify(notifier,atLeast(1)).fireTestFailure((Failure) anyObject());
     }
 
     @Test

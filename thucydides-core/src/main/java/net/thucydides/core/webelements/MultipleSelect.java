@@ -19,7 +19,6 @@ public class MultipleSelect {
 
     public Set<String> getSelectedOptionLabels() {
         Set<String> selectedOptions = new HashSet<String>();
-
         List<WebElement> options = dropdownField.findElements(By.tagName("option"));
         for (WebElement option : options) {
             if (option.isSelected()) {

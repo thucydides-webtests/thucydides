@@ -15,6 +15,7 @@ import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Concurrent;
 import net.thucydides.junit.annotations.TestData;
+import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.samples.SampleCSVDataDrivenScenario;
 import net.thucydides.samples.SampleDataDrivenScenario;
@@ -29,7 +30,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 
@@ -56,6 +56,9 @@ public class WhenRunningADataDrivenTestScenario {
 
     @Rule
     public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
+
+    @Rule
+    public QuietThucydidesLoggingRule quietThucydidesLoggingRule = new QuietThucydidesLoggingRule();
 
     MockEnvironmentVariables environmentVariables;
 
@@ -295,7 +298,7 @@ public class WhenRunningADataDrivenTestScenario {
     @RunWith(ThucydidesRunner.class)
     public static class ScenarioWithTestSpecificData {
 
-        @Managed
+        @Managed(driver="htmlunit")
         public WebDriver webdriver;
 
         @ManagedPages(defaultUrl = "http://www.google.com")
@@ -315,7 +318,7 @@ public class WhenRunningADataDrivenTestScenario {
     @RunWith(ThucydidesRunner.class)
     public static class ScenarioWithTestSpecificDataAndAFailingTestSample {
 
-        @Managed
+        @Managed(driver="htmlunit")
         public WebDriver webdriver;
 
         @ManagedPages(defaultUrl = "http://www.google.com")
@@ -334,7 +337,7 @@ public class WhenRunningADataDrivenTestScenario {
     @RunWith(ThucydidesRunner.class)
     public static class ScenarioWithTestSpecificDataAndASkippedTestSample {
 
-        @Managed
+        @Managed(driver="htmlunit")
         public WebDriver webdriver;
 
         @ManagedPages(defaultUrl = "http://www.google.com")
@@ -353,7 +356,7 @@ public class WhenRunningADataDrivenTestScenario {
     @RunWith(ThucydidesRunner.class)
     public static class ScenarioWithTestSpecificDataAndABreakingTestSample {
 
-        @Managed
+        @Managed(driver="htmlunit")
         public WebDriver webdriver;
 
         @ManagedPages(defaultUrl = "http://www.google.com")
@@ -425,8 +428,6 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleParallelDataDrivenScenario.class);
-
-        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
 
         runner.run(new RunNotifier());
 
@@ -518,8 +519,8 @@ public class WhenRunningADataDrivenTestScenario {
 
     }
 
-    private List filenamesOf(File[] files) {
-        List filenames = new ArrayList();
+    private List<String> filenamesOf(File[] files) {
+        List filenames = new ArrayList<String>();
         for(File file : files) {
             filenames.add(file.getName());
         }
@@ -527,8 +528,8 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
 
-    private List contentsOf(File[] files) throws IOException {
-        List contents = new ArrayList();
+    private List<String> contentsOf(File[] files) throws IOException {
+        List<String> contents = new ArrayList();
         for(File file : files) {
             contents.add(stringContentsOf(file));
         }

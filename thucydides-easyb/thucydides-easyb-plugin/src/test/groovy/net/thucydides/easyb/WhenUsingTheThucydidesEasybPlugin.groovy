@@ -33,6 +33,8 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
+import net.thucydides.core.model.TestOutcome
+import net.thucydides.core.steps.ExecutedStepDescription
 
 public class WhenUsingTheThucydidesEasybPlugin {
 
@@ -255,14 +257,15 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
         ThucydidesPlugin plugin = new MockedThucydidesPlugin();
         Binding binding = new Binding();
-        plugin.stepListener = mock(StepListener)
+        plugin.stepListeners = [mock(StepListener)]
         
         runStories(plugin, binding);
     }
     
-
-
     def runTestsUsing(ThucydidesPlugin thucydidesPlugin, Binding binding) {
+        thucydidesPlugin.baseStepListener.testStarted("A simple story")
+        thucydidesPlugin.baseStepListener.stepStarted(ExecutedStepDescription.withTitle("A simple scenario"))
+        thucydidesPlugin.baseStepListener.stepFinished();
     }
 
 
@@ -276,7 +279,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
             binding = new Binding();
 
             plugin.resetConfiguration();
-            plugin.stepListener = mock(StepListener)
+            plugin.stepListeners = [mock(StepListener)]
 
             listener = new ThucydidesListenerBuilder().get();
             binding = new Binding();

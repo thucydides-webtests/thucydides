@@ -236,4 +236,8 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
                 && ((TakesScreenshot.class.isAssignableFrom(driverClass))
                     || (driverClass == RemoteWebDriver.class));
     }
+
+    public boolean isInstantiated() {
+        return (driverClass != null) && (proxiedWebDriver != null);
+    }
 }

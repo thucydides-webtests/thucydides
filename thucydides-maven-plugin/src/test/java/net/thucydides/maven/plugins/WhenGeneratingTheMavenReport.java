@@ -82,7 +82,6 @@ public class WhenGeneratingTheMavenReport {
         plugin.executeReport(Locale.getDefault());
         String htmlReport = writer.toString();
 
-        System.out.println(htmlReport);
         assertThat(htmlReport, containsString("Features"));
         assertThat(htmlReport, containsString("<a href=\"thucydides/stories_make_widgets.html\">Make widgets</a>"));
         assertThat(htmlReport, containsString("<a href=\"thucydides/stories_sell_widgets.html\">Sell widgets</a>"));
@@ -94,7 +93,6 @@ public class WhenGeneratingTheMavenReport {
         plugin.executeReport(Locale.getDefault());
         String htmlReport = writer.toString();
 
-        System.out.println(htmlReport);
         assertThat(htmlReport, containsString("Stories"));
         assertThat(htmlReport, containsString("<a href=\"thucydides/make_small_widgets.html\">Make small widgets</a>"));
         assertThat(htmlReport, containsString("<a href=\"thucydides/sell_widgets_online.html\">Sell widgets online</a>"));
@@ -106,7 +104,6 @@ public class WhenGeneratingTheMavenReport {
         plugin.executeReport(Locale.getDefault());
         String htmlReport = writer.toString();
 
-        System.out.println(htmlReport);
         assertThat(htmlReport, containsString("Step Coverage"));
         assertThat(htmlReport, containsString("50.0%"));
     }

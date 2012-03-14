@@ -1,6 +1,7 @@
 package net.thucydides.core;
 
 import net.thucydides.core.util.EnvironmentVariables;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Properties that can be passed to a web driver test to customize its behaviour.
@@ -160,7 +161,18 @@ public enum ThucydidesSystemProperty {
     /**
      * Override the default implicit timeout value for the Saucelabs driver.
      */
-    SAUCELABS_IMPLICIT_TIMEOUT("saucelabs.implicit.timeout");
+    SAUCELABS_IMPLICIT_TIMEOUT("saucelabs.implicit.timeout"),
+
+    /**
+     * Three levels are supported: QUIET, NORMAL and VERBOSE
+     */
+    LOGGING("thucydides.logging"),
+
+    /**
+     * Should we store test result history.
+     * It is usually only deactivated for testing purposes.
+     */
+    STORE_TEST_HISTORY("thucydides.store.history");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 1000;
@@ -180,8 +192,17 @@ public enum ThucydidesSystemProperty {
     public String toString() {
         return propertyName;
     }
-    
+
     public String from(EnvironmentVariables environmentVariables) {
         return environmentVariables.getProperty(getPropertyName());
+    }
+
+    public String from(EnvironmentVariables environmentVariables, String defaultValue) {
+        String value = environmentVariables.getProperty(getPropertyName());
+        if (StringUtils.isEmpty(value)) {
+            return defaultValue;
+        } else {
+            return value;
+        }
     }
 }

@@ -96,7 +96,7 @@ public class WhenManagingWebdriverInstances {
 
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
 
-        driver.get("http://www.google.com");
+        driver.get(staticSiteUrl());
 
         assertThat(driver.proxiedWebDriver, instanceOf(FirefoxDriver.class));
     }
@@ -107,7 +107,7 @@ public class WhenManagingWebdriverInstances {
         environmentVariables.setProperty("webdriver.driver","firefox");
 
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
-        driver.get("http://www.google.com");
+        driver.get(staticSiteUrl());
         assertThat(driver.proxiedWebDriver, instanceOf(FirefoxDriver.class));
     }
     
@@ -117,7 +117,7 @@ public class WhenManagingWebdriverInstances {
         environmentVariables.setProperty("webdriver.driver","htmlunit");
 
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
-        driver.get("http://www.google.com");
+        driver.get(staticSiteUrl());
         assertThat(driver.proxiedWebDriver, instanceOf(HtmlUnitDriver.class));
     }
     @Test
@@ -126,7 +126,7 @@ public class WhenManagingWebdriverInstances {
         environmentVariables.setProperty("webdriver.driver","firefox");
 
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver("chrome");
-        driver.get("http://www.google.com");
+        driver.get(staticSiteUrl());
         assertThat(driver.proxiedWebDriver, instanceOf(ChromeDriver.class));
     }
 
@@ -139,7 +139,7 @@ public class WhenManagingWebdriverInstances {
         WebdriverManager webdriverManager = new ThucydidesWebdriverManager(factory, configuration);
 
         WebDriver driver = webdriverManager.getWebdriver();
-        driver.get("http://www.google.com");
+        driver.get(staticSiteUrl());
 
         verify(firefoxProfile).setAssumeUntrustedCertificateIssuer(false);
     }
@@ -152,7 +152,7 @@ public class WhenManagingWebdriverInstances {
         WebdriverManager webdriverManager = new ThucydidesWebdriverManager(factory, configuration);
 
         WebDriver driver = webdriverManager.getWebdriver();
-        driver.get("http://www.google.com");
+        driver.get(staticSiteUrl());
 
         verify(firefoxProfile, never()).setAssumeUntrustedCertificateIssuer(false);
     }
@@ -165,7 +165,7 @@ public class WhenManagingWebdriverInstances {
         WebdriverManager webdriverManager = new ThucydidesWebdriverManager(factory, configuration);
 
         WebDriver driver = webdriverManager.getWebdriver();
-        driver.get("http://www.google.com");
+        driver.get(staticSiteUrl());
 
         verify(firefoxProfile,never()).setAcceptUntrustedCertificates(false);
     }
@@ -178,7 +178,7 @@ public class WhenManagingWebdriverInstances {
         initWebdriverManager();
 
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
-        driver.get("http://www.google.com");
+        driver.get(staticSiteUrl());
 
         assertThat(driver.proxiedWebDriver, instanceOf(ChromeDriver.class));
 
@@ -191,7 +191,7 @@ public class WhenManagingWebdriverInstances {
         initWebdriverManager();
 
         WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
-        driver.get("http://www.google.com");
+        driver.get(staticSiteUrl());
 
         assertThat(driver.proxiedWebDriver, instanceOf(InternetExplorerDriver.class));
 
@@ -205,4 +205,9 @@ public class WhenManagingWebdriverInstances {
 
         assertThat(config.getOutputDirectory().getName(), is("out"));
     }
+
+    private String staticSiteUrl() {
+        return "file://" + Thread.currentThread().getContextClassLoader().getResource("static-site/index.html").toString();
+    }
+
 }

@@ -10,7 +10,6 @@ import net.thucydides.core.reports.AcceptanceTestReporter
 import net.thucydides.core.reports.ReportService
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter
-import net.thucydides.core.steps.BaseStepListener
 import net.thucydides.core.steps.StepEventBus
 import net.thucydides.core.steps.StepFactory
 import net.thucydides.core.steps.StepListener
@@ -25,6 +24,8 @@ import org.slf4j.LoggerFactory
 import static net.thucydides.easyb.StepName.nameOf
 import net.thucydides.core.batches.BatchManager
 import static net.thucydides.core.Thucydides.initializeTestSession
+import net.thucydides.core.steps.Listeners
+import net.thucydides.core.steps.BaseStepListener
 
 public class ThucydidesPlugin extends BasePlugin {
 
@@ -40,7 +41,9 @@ public class ThucydidesPlugin extends BasePlugin {
 
     StepFactory stepFactory;
 
-    StepListener stepListener;
+    BaseStepListener baseStepListener
+    ;
+    List<StepListener> stepListeners;
     StepPublisher stepPublisher;
 
     Configuration systemConfiguration;
@@ -68,7 +71,7 @@ public class ThucydidesPlugin extends BasePlugin {
     }
 
     private boolean useUniqueBrowser() {
-        systemConfiguration.useUniqueBrowser
+        getSystemConfiguration().useUniqueBrowser
     }
 
     private void initializePlugin(final Binding binding) {
@@ -161,11 +164,19 @@ public class ThucydidesPlugin extends BasePlugin {
     private def initializeStepFactoryAndListeners() {
 
         stepFactory = new StepFactory(pages)
-        stepListener = new BaseStepListener(getSystemConfiguration().outputDirectory, pages)
-        stepPublisher = (StepPublisher) stepListener;
+        def outputDirectory = getSystemConfiguration().outputDirectory;
+
+        baseStepListener = Listeners.baseStepListener.withPages(pages).and().withOutputDirectory(outputDirectory)
+        stepListeners = [baseStepListener,
+                         Listeners.loggingListener,
+                         Listeners.statisticsListener]
+
+        stepPublisher = (StepPublisher) baseStepListener;
 
         StepEventBus.eventBus.dropAllListeners();
-        StepEventBus.eventBus.registerListener(stepListener)
+        stepListeners.each {
+            StepEventBus.eventBus.registerListener(it)
+        }
 
         ListenerFactory.registerBuilder(new ThucydidesListenerBuilder());
     }
@@ -202,7 +213,7 @@ public class ThucydidesPlugin extends BasePlugin {
 
     @Override
     public Object afterStory(final Binding binding) {
-        StepEventBus.eventBus.dropListener(stepListener)
+        StepEventBus.eventBus.dropAllListeners()
         StepEventBus.eventBus.clear()
 
         generateReportsFor(stepPublisher.testOutcomes);
@@ -232,6 +243,7 @@ public class ThucydidesPlugin extends BasePlugin {
         if (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed()) {
             raiseError()
         }
+        return super.afterGiven(binding)
     }
 
     @Override
@@ -239,6 +251,7 @@ public class ThucydidesPlugin extends BasePlugin {
         if (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed()) {
             raiseError()
         }
+        return super.afterWhen(binding)
     }
 
 
@@ -247,6 +260,7 @@ public class ThucydidesPlugin extends BasePlugin {
         if (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed()) {
             raiseError()
         }
+        return super.afterThen(binding)
     }
 
     // TODO: This doesn't work
@@ -254,10 +268,6 @@ public class ThucydidesPlugin extends BasePlugin {
         def error = stepPublisher.testFailureCause
         if (errorIsNew(error)) {
             throw error
-        } else {
-//            stepListener.stepIgnored()
-//            StepEventBus.eventBus.currentTestIsPending();
-//            throw new AssertionError("Step skipped due to previous step failure")
         }
     }
 
@@ -304,13 +314,13 @@ public class ThucydidesPlugin extends BasePlugin {
         stepFactory.getStepLibraryFor(stepLibraryClass)
     }
 
-    private def closeDriver(Binding binding) {
+    private void closeDriver(Binding binding) {
         getWebdriverManager().closeDriver()
     }
 
-    private def resetDriver(Binding binding) {
+    private void resetDriver(Binding binding) {
         getWebdriverManager().resetDriver()
-        Pages pages = binding.getVariable("pages")
+        Pages pages = (Pages) binding.getVariable("pages")
         if (pageUrlHasBeenDefinedFor(pages)) {
             pages.start()
         }

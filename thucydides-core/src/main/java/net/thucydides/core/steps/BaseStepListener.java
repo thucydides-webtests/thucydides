@@ -17,6 +17,7 @@ import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
@@ -83,8 +84,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
     
     private boolean inFluentStepSequence;
     
-    private String fluentStepComposedName;
-
     public BaseStepListener(final File outputDirectory) {
         this.proxyFactory = WebdriverProxyFactory.getFactory();
         this.testOutcomes = new ArrayList<TestOutcome>();
@@ -187,8 +186,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
      * @param testMethod the name of the test method in the test suite class.
      */
     public void testStarted(final String testMethod) {
-        LOGGER.info("test started: {}", testMethod);
-
         testOutcomes.add(TestOutcome.forTestInStory(testMethod, testSuite, testedStory));
         updateSessionIdIfKnown();
         setAnnotatedResult(testMethod);
@@ -231,14 +228,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
      * @param description the description of the test that is about to be run
      */
     public void stepStarted(final ExecutedStepDescription description) {
-        LOGGER.debug("step started: " + description);
         recordStep(description);
         takeInitialScreenshot();
         updateSessionIdIfKnown();
     }
 
     public void skippedStepStarted(final ExecutedStepDescription description) {
-        LOGGER.debug("skipped step started: " + description);
         recordStep(description);
     }
 
@@ -255,9 +250,13 @@ public class BaseStepListener implements StepListener, StepPublisher {
             setDefaultResultFromAnnotations(step, description);
     
             currentStepStack.push(step);
-            getCurrentTestOutcome().recordStep(step);
+            recordStepToCurrentTestOutcome(step);
         }
         inFluentStepSequence = AnnotatedStepDescription.from(description).isFluent();
+    }
+
+    private void recordStepToCurrentTestOutcome(TestStep step) {
+        getCurrentTestOutcome().recordStep(step);
     }
 
     private void updateFluentStepStatus(ExecutedStepDescription description, String stepName) {
@@ -329,8 +328,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void stepFinished() {
-        LOGGER.debug("step finished");
-
         updateSessionIdIfKnown();
         takeScreenshotFor(SUCCESS);
         currentStepDone();
@@ -355,7 +352,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void stepFailed(StepFailure failure) {
-        LOGGER.debug("step failed: " + failure);
         takeScreenshotFor(FAILURE);
         getCurrentTestOutcome().setTestFailureCause(failure.getException());
         markCurrentStepAs(FAILURE);
@@ -364,7 +360,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void lastStepFailed(StepFailure failure) {
-        LOGGER.debug("last step failed: " + failure);
         takeScreenshotFor(FAILURE);
         getCurrentTestOutcome().lastStepFailedWith(failure);
     }
@@ -377,7 +372,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void stepIgnored() {
-        LOGGER.debug("step ignored");
         if (aStepHasFailed()) {
             markCurrentStepAs(SKIPPED);
             currentStepDone();
@@ -394,7 +388,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void stepPending() {
-        LOGGER.debug("step pending");
         markCurrentStepAs(PENDING);
         currentStepDone();
     }
@@ -427,7 +420,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void takeScreenshot() {
-        if (currentStepExists()) {
+        if (currentStepExists() && browserIsOpen()) {
             try {
                 String stepDescription = getCurrentTestOutcome().getCurrentStep().getDescription();
                 ScreenshotAndHtmlSource screenshotAndHtmlSource = grabScreenshotFor(stepDescription);
@@ -437,6 +430,17 @@ public class BaseStepListener implements StepListener, StepPublisher {
             } catch (ScreenshotException e) {
                 LOGGER.warn("Failed to take screenshot", e);
             }
+        }
+    }
+
+    private boolean browserIsOpen() {
+        if (driver == null) {
+            return false;
+        }
+        if (driver instanceof  WebDriverFacade) {
+            return (((WebDriverFacade) driver).isInstantiated());
+        } else {
+            return (driver.getCurrentUrl() != null);
         }
     }
 
@@ -459,11 +463,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private boolean shouldTakeScreenshotFor(final TestResult result) {
-        if (configuration.onlySaveFailingScreenshots()) {
-            return (result == FAILURE);
-        } else {
-            return true;
-        }
+        return !configuration.onlySaveFailingScreenshots() || (result == FAILURE);
     }
 
     public List<TestOutcome> getTestOutcomes() {
@@ -479,6 +479,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
         return driver;
     }
 
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     public boolean aStepHasFailed() {
         return (!getTestOutcomes().isEmpty()) && (getCurrentTestOutcome().getTestFailureCause() != null);
     }

@@ -1,6 +1,8 @@
 package net.thucydides.junit.runners;
 
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.steps.BaseStepListener;
+import net.thucydides.core.steps.StepListener;
 import net.thucydides.junit.listeners.JUnitStepListener;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -11,8 +13,8 @@ public class ParameterizedJUnitStepListener extends JUnitStepListener {
 
     final int parameterSetNumber;
 
-    public ParameterizedJUnitStepListener(final File outputDirectory, final Pages pages, final int parameterSetNumber) {
-        super(outputDirectory, pages);
+    public ParameterizedJUnitStepListener(final int parameterSetNumber, BaseStepListener baseStepListener, StepListener... listeners) {
+        super(baseStepListener, listeners);
         this.parameterSetNumber = parameterSetNumber;
     }
 

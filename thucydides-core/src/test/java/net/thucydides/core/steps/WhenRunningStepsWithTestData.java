@@ -80,7 +80,6 @@ public class WhenRunningStepsWithTestData {
 
         @Step
         public void step1() {
-            System.out.println("step1 with " + name);
             getDriver().get(name);
         }
 

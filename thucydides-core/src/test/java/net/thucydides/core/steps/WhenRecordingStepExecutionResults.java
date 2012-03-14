@@ -112,6 +112,7 @@ public class WhenRecordingStepExecutionResults {
 
         stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory, configuration);
         stepListener.setDriver(driver);
+        when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
         when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot);
 
         StepEventBus.getEventBus().clear();

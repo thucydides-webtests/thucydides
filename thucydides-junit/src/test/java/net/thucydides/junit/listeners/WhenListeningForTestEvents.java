@@ -71,7 +71,8 @@ public class WhenListeningForTestEvents {
 
     @Before
     public void setupListener() throws Exception {
-        listener = new JUnitStepListener(outputDirectory, pages);
+        listener = JUnitStepListener.withOutputDirectory(outputDirectory)
+                                    .and().withPageFactory(pages).build();
         stepFactory = new StepFactory(pages);
         listener.testRunStarted(Description.createSuiteDescription(MyTestCase.class));
         listener.testStarted(Description.createTestDescription(MyTestCase.class,"app_should_work"));

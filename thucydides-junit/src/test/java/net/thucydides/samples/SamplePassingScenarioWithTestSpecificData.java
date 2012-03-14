@@ -14,7 +14,7 @@ import static net.thucydides.core.steps.StepData.withTestDataFrom;
 @RunWith(ThucydidesRunner.class)
 public class SamplePassingScenarioWithTestSpecificData {
 
-    @Managed
+    @Managed(driver="htmlunit")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "classpath:static-site/index.html")

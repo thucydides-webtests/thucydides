@@ -1,9 +1,9 @@
 package net.thucydides.junit.listeners;
 
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.steps.StepListener;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -23,16 +23,20 @@ public class JUnitStepListener extends RunListener {
             .getLogger(JUnitStepListener.class);
 
     private BaseStepListener baseStepListener;
+    private boolean testStarted;
 
-    public JUnitStepListener(final File outputDirectory) {
-        baseStepListener = new BaseStepListener(outputDirectory);
-        StepEventBus.getEventBus().registerListener(baseStepListener);
+    public static JUnitStepListenerBuilder withOutputDirectory(File outputDirectory) {
+        return new JUnitStepListenerBuilder(outputDirectory);     
     }
-
-
-    public JUnitStepListener(final File outputDirectory, final Pages pages) {
-        baseStepListener = new BaseStepListener(outputDirectory, pages);
+    
+    protected JUnitStepListener(BaseStepListener baseStepListener, StepListener... listeners) {
+        testStarted = false;
+        this.baseStepListener = baseStepListener;
         StepEventBus.getEventBus().registerListener(baseStepListener);
+
+        for(StepListener listener : listeners) {
+            StepEventBus.getEventBus().registerListener(listener);
+        }
     }
 
     public BaseStepListener getBaseStepListener() {
@@ -58,21 +62,33 @@ public class JUnitStepListener extends RunListener {
     @Override
     public void testStarted(final Description description) {
         StepEventBus.getEventBus().clear();
-        StepEventBus.getEventBus().testStarted(description.getMethodName(), description.getTestClass());
+        StepEventBus.getEventBus().testStarted(description.getMethodName(),
+                                               description.getTestClass());
+        startTest();
     }
 
     @Override
     public void testFinished(final Description description) throws Exception {
+        endTest();
     }
 
     @Override
     public void testFailure(final Failure failure) throws Exception {
+        startTestIfNotYetStarted(failure.getDescription());
         StepEventBus.getEventBus().testFailed(failure.getException());
+        endTest();
+    }
+
+    private void startTestIfNotYetStarted(Description description) {
+        if (!testStarted) {
+           testStarted(description);
+        }
     }
 
     @Override
     public void testIgnored(final Description description) throws Exception {
         StepEventBus.getEventBus().testIgnored();
+        endTest();
     }
 
     public List<TestOutcome> getTestOutcomes() {
@@ -89,5 +105,12 @@ public class JUnitStepListener extends RunListener {
 
     public void close() {
         StepEventBus.getEventBus().dropListener(baseStepListener);
+    }
+
+    private void startTest() {
+        testStarted = true;
+    }
+    private void endTest() {
+        testStarted = false;
     }
 }

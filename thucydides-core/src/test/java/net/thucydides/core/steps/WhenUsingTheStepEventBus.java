@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
@@ -7,6 +8,8 @@ import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +17,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
-import some.other.place.BaseScenarioInSomeOtherPackage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -157,29 +161,38 @@ public class WhenUsingTheStepEventBus {
     
     @Mock
     TestOutcome testOutcome;
-    
+
+    EnvironmentVariables environmentVariables;
+
     ConsoleStepListener consoleStepListener;
-    
+
+    ConsoleLoggingListener consoleLoggingListener;
+
     private StepFactory factory;
+
+    Logger logger = LoggerFactory.getLogger(Thucydides.class);
 
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+        environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("thucydides.logging","VERBOSE");
 
         factory = new StepFactory(new Pages(driver));
 
         consoleStepListener = new ConsoleStepListener();
+        consoleLoggingListener = new ConsoleLoggingListener(environmentVariables);
 
         StepEventBus.getEventBus().clear();
         StepEventBus.getEventBus().registerListener(listener);
         StepEventBus.getEventBus().registerListener(consoleStepListener);
+        StepEventBus.getEventBus().registerListener(consoleLoggingListener);
 
     }
 
     @After
     public void clearListener() {
-        StepEventBus.getEventBus().dropListener(consoleStepListener);
-        StepEventBus.getEventBus().dropListener(listener);
+        StepEventBus.getEventBus().dropAllListeners();
     }
 
     @Test
@@ -428,7 +441,6 @@ public class WhenUsingTheStepEventBus {
                 + "---> STEP DONE\n"
                 + "TEST DONE\n";
 
-        System.out.println(consoleStepListener.toString());
         assertThat(consoleStepListener.toString(), is(expectedSteps));
 
 
@@ -461,7 +473,6 @@ public class WhenUsingTheStepEventBus {
                 + "---> STEP DONE\n"
                 + "TEST DONE\n";
 
-        System.out.println(consoleStepListener.toString());
         assertThat(consoleStepListener.toString(), is(expectedSteps));
 
 

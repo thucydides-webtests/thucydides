@@ -70,7 +70,7 @@ public class Pages implements Serializable {
     /**
      * Opens a browser on the application home page, as defined by the base URL.
      */
-    protected void start() {
+    public void start() {
         getDriver().get(getStartingUrl());
     }
 

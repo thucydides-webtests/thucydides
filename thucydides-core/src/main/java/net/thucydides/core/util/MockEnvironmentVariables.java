@@ -60,6 +60,11 @@ public class MockEnvironmentVariables implements EnvironmentVariables {
         properties.setProperty(name, value);
     }
 
+    @Override
+    public void clearProperty(String name) {
+        properties.remove(name);
+    }
+
     public void setValue(String name, String value) {
         values.setProperty(name, value);
     }

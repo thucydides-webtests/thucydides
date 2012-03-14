@@ -1,28 +1,28 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.steps.StepEventBus;
-import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
+import net.thucydides.junit.rules.DisableThucydidesHistoryRule;
+import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.samples.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -34,15 +34,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
@@ -56,10 +51,16 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Mock
     FirefoxDriver firefoxDriver;
 
-    MockEnvironmentVariables environmentVariables;
+    EnvironmentVariables environmentVariables;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    @Rule
+    public QuietThucydidesLoggingRule quietThucydidesLoggingRule = new QuietThucydidesLoggingRule();
+
+    @Rule
+    public DisableThucydidesHistoryRule disableThucydidesHistoryRule = new DisableThucydidesHistoryRule();
 
     WebDriverFactory webDriverFactory;
 
@@ -79,14 +80,14 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
             }
         };
 
-        environmentVariables = new MockEnvironmentVariables();
+        environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
         StepEventBus.getEventBus().clear();
 
     }
 
     @Test
-    public void the_test_can_specify_a_diffrent_driver() throws InitializationError {
+    public void the_test_can_specify_a_different_driver() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class, webDriverFactory);
         runner.run(new RunNotifier());
@@ -426,18 +427,8 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        TestStep failingStep = (TestStep) steps.get(3);
+        TestStep failingStep = steps.get(3);
         assertThat(failingStep.getException().getClass().toString(), containsString("StepFailureException"));
-    }
-
-    @Test
-    public void the_test_runner_should_notify_test_failures() throws Exception {
-
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
-        RunNotifier notifier = mock(RunNotifier.class);
-        runner.run(notifier);
-
-        verify(notifier).fireTestFailure((Failure)anyObject());
     }
 
     @Test

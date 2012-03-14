@@ -30,7 +30,7 @@ public class SampleCSVDataDrivenScenario {
         return name;
     }
 
-    @Managed
+    @Managed(driver="htmlunit")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "classpath:static-site/index.html")
@@ -41,12 +41,10 @@ public class SampleCSVDataDrivenScenario {
 
     @Before
     public void setup() {
-        System.out.println("Setup");
     }
 
     @After
     public void teardown() {
-        System.out.println("Teardown");
     }
 
     @Test

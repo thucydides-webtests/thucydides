@@ -99,6 +99,9 @@
                                 <exclude>**/*Sample.*</exclude>
                                 <exclude>%regex[.*integration.*]</exclude>
                             </excludes>
+                            <systemPropertyVariables>
+                                <thucydides.logging>QUIET</thucydides.logging>
+                            </systemPropertyVariables>
                         </configuration>
                     </execution>
                     <execution>

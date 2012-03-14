@@ -86,7 +86,6 @@ public class ReportService {
     private void generateReportFor(final TestOutcome testOutcome,
                                    final AcceptanceTestReporter reporter) {
         try {
-            LOGGER.info("Generating reports for test results: {})", testOutcome.getTitle());
             reporter.setOutputDirectory(outputDirectory);
             reporter.generateReportFor(testOutcome);
         } catch (IOException e) {

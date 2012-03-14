@@ -47,4 +47,9 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
     public void setProperty(String name, String value) {
         System.setProperty(name, value);
     }
+
+    @Override
+    public void clearProperty(String name) {
+        System.clearProperty(name);
+    }
 }

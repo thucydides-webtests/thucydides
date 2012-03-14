@@ -3,13 +3,16 @@ package net.thucydides.core.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import com.google.inject.Scope;
 import com.google.inject.Singleton;
+import com.google.inject.name.Names;
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.issues.SystemPropertiesIssueTracking;
+import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.reports.json.ColorScheme;
@@ -18,6 +21,12 @@ import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.reports.saucelabs.SaucelabsLinkGenerator;
 import net.thucydides.core.reports.templates.FreeMarkerTemplateManager;
 import net.thucydides.core.reports.templates.TemplateManager;
+import net.thucydides.core.statistics.Statistics;
+import net.thucydides.core.statistics.StatisticsListener;
+import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
+import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
+import net.thucydides.core.steps.ConsoleLoggingListener;
+import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.LocalPreferences;
 import net.thucydides.core.util.PropertiesFileLocalPreferences;
@@ -50,6 +59,10 @@ public class ThucydidesModule extends AbstractModule {
         bind(BatchManager.class).to(SystemVariableBasedBatchManager.class);
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
+        bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class);
+
+        bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class);
+        bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class);
     }
 
     @Provides
@@ -60,11 +73,11 @@ public class ThucydidesModule extends AbstractModule {
 
         String defaultThucydidesDirectory = environmentVariables.getProperty("user.home") + "/.thucydides";
         String defaultDatabase = defaultThucydidesDirectory + "/stats";
-        String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", "org.h2.Driver");
-        String url = environmentVariables.getProperty("thucydides.statistics.url", "jdbc:h2:file:" + defaultDatabase);
+        String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", "org.hsqldb.jdbc.JDBCDriver");
+        String url = environmentVariables.getProperty("thucydides.statistics.url", "jdbc:hsqldb:file:" + defaultDatabase);
         String username = environmentVariables.getProperty("thucydides.statistics.username", "sa");
         String password = environmentVariables.getProperty("thucydides.statistics.password", "");
-        String dialect = environmentVariables.getProperty("thucydides.statistics.dialect", "org.hibernate.dialect.H2Dialect");
+        String dialect = environmentVariables.getProperty("thucydides.statistics.dialect", "org.hibernate.dialect.HSQLDialect");
 
         properties.put("hibernate.connection.driver_class", driver);
         properties.put("hibernate.connection.url", url);
