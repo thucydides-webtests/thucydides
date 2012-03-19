@@ -26,7 +26,7 @@ public class FluentElementAPITestsBaseClass {
 
     protected StaticSitePage getFirefoxPage() {
         StaticSitePage page;
-        WebDriver driver = getStaticTestSite().open();
+        WebDriver driver = getStaticTestSite().open("firefox");
         page = new StaticSitePage(driver, 5000);
         page.addJQuerySupport();
         return page;

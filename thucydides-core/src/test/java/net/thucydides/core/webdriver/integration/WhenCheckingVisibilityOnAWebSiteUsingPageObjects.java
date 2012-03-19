@@ -40,7 +40,7 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
     @Before
     public void openStaticTestSite() {
         testSite = new StaticTestSite();
-        driver = testSite.open();
+        driver = testSite.open("firefox");
     }
 
     @After

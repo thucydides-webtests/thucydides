@@ -62,7 +62,7 @@ public class WhenTakingLargeScreenshots {
         environmentVariables.setProperty("thucydides.browser.width", "800");
         environmentVariables.setProperty("thucydides.browser.height", "400");
 
-        driver = testSite.open();
+        driver = testSite.open("firefox");
 
         Photographer photographer = new Photographer(driver, screenshotDirectory);
         File screenshotFile = photographer.takeScreenshot("screenshot");

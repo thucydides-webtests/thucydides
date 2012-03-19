@@ -127,7 +127,7 @@ public class WebDriverFactory {
             } else if (isAnHtmlUnitDriver(driverClass)) {
                 driver = htmlunitDriverFrom(driverClass);
             } else {
-                driver = webdriverInstanceFactory.newInstanceOf(driverClass);
+                driver = newDriverInstanceFrom(driverClass);
             }
 
             activateJavascriptSupportFor(driver);
@@ -140,6 +140,10 @@ public class WebDriverFactory {
             LOGGER.error("Could not create new Webdriver instance", cause);
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
         }
+    }
+
+    private WebDriver newDriverInstanceFrom(Class<? extends WebDriver> driverClass) throws IllegalAccessException, InstantiationException {
+        return webdriverInstanceFactory.newInstanceOf(driverClass);
     }
 
     private WebDriver newRemoteDriver() throws MalformedURLException {
@@ -262,7 +266,7 @@ public class WebDriverFactory {
         if (aProfileCouldBeCreated(profile)) {
             return webdriverInstanceFactory.newInstanceOf(driverClass, profile);
         } else {
-            return webdriverInstanceFactory.newInstanceOf(driverClass);
+            return newDriverInstanceFrom(driverClass);
         }
     }
 
