@@ -9,7 +9,9 @@ public class MockEnvironmentVariables implements EnvironmentVariables {
     private Properties properties = new Properties();
     private Properties values = new Properties();
 
-    public MockEnvironmentVariables() {}
+    public MockEnvironmentVariables() {
+        this.properties.setProperty("user.home", System.getProperty("user.home"));
+    }
 
     protected MockEnvironmentVariables(Properties properties) {
         this.properties = new Properties(properties);

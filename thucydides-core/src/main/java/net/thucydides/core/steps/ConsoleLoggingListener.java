@@ -7,7 +7,9 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.logging.LoggingLevel;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,39 +72,52 @@ public class ConsoleLoggingListener implements StepListener {
 
     private final Logger logger;
     private final EnvironmentVariables environmentVariables;
-    private final LoggingLevel loggingLevel;
 
-    @Inject
-    public ConsoleLoggingListener(EnvironmentVariables environmentVariables) {
-        this.logger = LoggerFactory.getLogger(Thucydides.class);
+    public ConsoleLoggingListener(EnvironmentVariables environmentVariables,
+                                  Logger logger) {
+        this.logger = logger;
         this.environmentVariables = environmentVariables;
-        this.loggingLevel = getLoggingLevel();
         logBanner();
     }
 
+    @Inject
+    public ConsoleLoggingListener(EnvironmentVariables environmentVariables) {
+        this(environmentVariables, LoggerFactory.getLogger(Thucydides.class));
+    }
+    
+    protected Logger getLogger() {
+        return logger;
+    }
+
     private void logBanner() {
-        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            logger.info(BANNER);
+        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+            getLogger().info(BANNER);
         }
     }
 
     private boolean loggingLevelIsAtLeast(LoggingLevel minimumLoggingLevel) {
-        return (loggingLevel.compareTo(minimumLoggingLevel) >= 0);
+        return (getLoggingLevel().compareTo(minimumLoggingLevel) >= 0);
     }
 
     private LoggingLevel getLoggingLevel() {
         String logLevel = ThucydidesSystemProperty.LOGGING.from(environmentVariables,
-                LoggingLevel.NORMAL.name());
+                                                                LoggingLevel.NORMAL.name());
 
         return LoggingLevel.valueOf(logLevel);
     }
 
     @Override
     public void testSuiteStarted(Class<?> storyClass) {
+        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+            getLogger().info("Test Suite Started: " + NameConverter.humanize(storyClass.getSimpleName()));
+        }
     }
 
     @Override
     public void testSuiteStarted(Story story) {
+        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+            getLogger().info("Test Suite Started: " + NameConverter.humanize(story.getName()));
+        }
     }
 
     @Override
@@ -110,19 +125,14 @@ public class ConsoleLoggingListener implements StepListener {
     }
 
     public void testStarted(String description) {
-        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            logger.info(TEST_STARTED + "\nTEST: " + description + underline(TEST_STARTED));
+        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+            getLogger().info(TEST_STARTED + "\nTEST: " + description + underline(TEST_STARTED));
         }
     }
 
     private String underline(String banner) {
         StringBuilder underline = new StringBuilder();
-        int endOfLine = banner.indexOf('\n', 1);
-        if (endOfLine >= 0) {
-            underline.append(StringUtils.repeat('-', endOfLine));
-        } else {
-            underline.append(StringUtils.repeat('-', banner.length()));
-        }
+        underline.append(StringUtils.repeat('-', banner.length()));
         return "\n" + underline.toString();
     }
 
@@ -139,33 +149,33 @@ public class ConsoleLoggingListener implements StepListener {
     }
 
     private void logFailure(TestOutcome result) {
-        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            logger.info(TEST_FAILED + "\nTEST: " + result.getTitle() + " failed" + underline(TEST_FAILED));
+        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+            getLogger().info(TEST_FAILED + "\nTEST: " + result.getTitle() + " failed" + underline(TEST_FAILED));
         }
     }
 
     private void logPending(TestOutcome result) {
-        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            logger.info(TEST_SKIPPED + "\nTEST: " + result.getTitle() + " is pending" + underline(TEST_SKIPPED));
+        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+            getLogger().info(TEST_SKIPPED + "\nTEST: " + result.getTitle() + " is pending" + underline(TEST_SKIPPED));
 
         }
     }
 
     private void logSkipped(TestOutcome result) {
-        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            logger.info(TEST_SKIPPED + "\nTEST: " + result.getTitle() + " is skipped" + underline(TEST_SKIPPED));
+        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+            getLogger().info(TEST_SKIPPED + "\nTEST: " + result.getTitle() + " is skipped" + underline(TEST_SKIPPED));
         }
     }
 
     private void logSuccess(TestOutcome result) {
-        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            logger.info(TEST_PASSED + "\nTEST: " + result.getTitle() + " passed" + underline(TEST_PASSED));
+        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+            getLogger().info(TEST_PASSED + "\nTEST: " + result.getTitle() + " passed" + underline(TEST_PASSED));
         }
     }
 
     public void stepStarted(ExecutedStepDescription description) {
-        if (loggingLevelIsAtLeast(LoggingLevel.VERBOSE)) {
-            logger.info("STARTING STEP " + description.getTitle());
+        if (loggingLevelIsAtLeast(getLoggingLevel().VERBOSE)) {
+            getLogger().info("STARTING STEP " + description.getTitle());
         }
     }
 
@@ -175,14 +185,14 @@ public class ConsoleLoggingListener implements StepListener {
     }
 
     public void stepFinished() {
-        if (loggingLevelIsAtLeast(LoggingLevel.VERBOSE)) {
-            logger.info("FINISHING STEP");
+        if (loggingLevelIsAtLeast(getLoggingLevel().VERBOSE)) {
+            getLogger().info("FINISHING STEP");
         }
     }
 
     public void stepFailed(StepFailure failure) {
-        if (loggingLevelIsAtLeast(LoggingLevel.VERBOSE)) {
-            logger.info("STEP FAILED: " + failure.getMessage());
+        if (loggingLevelIsAtLeast(getLoggingLevel().VERBOSE)) {
+            getLogger().info("STEP FAILED: " + failure.getMessage());
         }
     }
 
@@ -191,42 +201,42 @@ public class ConsoleLoggingListener implements StepListener {
     }
 
     public void stepIgnored() {
-        if (loggingLevelIsAtLeast(LoggingLevel.VERBOSE)) {
-            logger.info("IGNORING STEP");
+        if (loggingLevelIsAtLeast(getLoggingLevel().VERBOSE)) {
+            getLogger().info("IGNORING STEP");
         }
     }
 
     @Override
     public void stepIgnored(String message) {
-        if (loggingLevelIsAtLeast(LoggingLevel.VERBOSE)) {
-            logger.info("IGNORING STEP + (" + message + ")");
+        if (loggingLevelIsAtLeast(getLoggingLevel().VERBOSE)) {
+            getLogger().info("IGNORING STEP " + "(" + message + ")");
         }
     }
 
     public void stepPending() {
-        if (loggingLevelIsAtLeast(LoggingLevel.VERBOSE)) {
-            logger.info("PENDING STEP");
+        if (loggingLevelIsAtLeast(getLoggingLevel().VERBOSE)) {
+            getLogger().info("PENDING STEP");
         }
     }
 
     @Override
     public void stepPending(String message) {
-        if (loggingLevelIsAtLeast(LoggingLevel.VERBOSE)) {
-            logger.info("PENDING STEP + (" + message + ")");
+        if (loggingLevelIsAtLeast(getLoggingLevel().VERBOSE)) {
+            getLogger().info("PENDING STEP " + "(" + message + ")");
         }
     }
 
 
     public void testFailed(Throwable cause) {
-        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            logger.info(FAILURE + "\n" + cause.getMessage());
+        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+            getLogger().info(FAILURE + "\n" + cause.getMessage());
             underline(FAILURE);
         }
     }
 
     public void testIgnored() {
-        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            logger.info("TEST IGNORED");
+        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+            getLogger().info("TEST IGNORED");
         }
     }
 

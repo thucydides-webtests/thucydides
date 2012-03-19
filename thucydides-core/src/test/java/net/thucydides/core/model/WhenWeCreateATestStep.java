@@ -12,6 +12,7 @@ import java.net.URL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 public class WhenWeCreateATestStep {
@@ -52,6 +53,8 @@ public class WhenWeCreateATestStep {
 
         assertThat(screenshot2.getScreenshotFile().getName(), is("google_page_2.png"));
         assertThat(screenshot2.getSourcecode().getName(), is("screenshot2.html"));
+        
+        assertThat(screenshot1.hashCode(), is(not(screenshot2.hashCode())));
     }
 
     @Test

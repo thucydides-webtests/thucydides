@@ -55,12 +55,22 @@ public class WhenScreenshotsAreTaken {
 
     
     @Test
+    public void the_driver_should_not_take_screenshots_if_the_driver_is_not_available() throws IOException {
+
+        Photographer photographer = new Photographer(null, screenshotDirectory);
+        when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
+        photographer.takeScreenshot("screenshot");
+        
+        verify(driver,times(0)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+    @Test
     public void the_driver_should_capture_the_image() throws IOException {
 
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         photographer.takeScreenshot("screenshot");
-        
-        verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());        
+
+        verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
 
