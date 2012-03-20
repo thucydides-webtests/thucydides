@@ -1,5 +1,7 @@
 package net.thucydides.core.model;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,9 +58,7 @@ public class TestResultList {
     }
 
     private boolean containsOnly(final TestResult... values) {
-        if (isEmpty()) {
-            return false;
-        }
+        Preconditions.checkState(!isEmpty());
 
         List<TestResult> authorizedTypes = Arrays.asList(values);
         for (TestResult result : testResults) {

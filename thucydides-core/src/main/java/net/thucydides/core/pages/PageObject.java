@@ -1,12 +1,14 @@
 package net.thucydides.core.pages;
 
 import net.thucydides.core.annotations.WhenPageOpens;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
 import net.thucydides.core.pages.jquery.JQueryEnabledPage;
 import net.thucydides.core.scheduling.FluentWaitWithRefresh;
 import net.thucydides.core.scheduling.NormalFluentWait;
 import net.thucydides.core.scheduling.ThucydidesFluentWait;
+import net.thucydides.core.steps.StepDelayer;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -64,7 +66,7 @@ public abstract class PageObject {
 
     private PageUrls pageUrls;
 
-    private InternalSystemClock clock = new InternalSystemClock();
+    private net.thucydides.core.pages.SystemClock clock;
 
     private final Sleeper sleeper;
     private final Clock webdriverClock;
@@ -76,6 +78,7 @@ public abstract class PageObject {
         this.driver = driver;
         this.waitForTimeout = ajaxTimeout;
         this.webdriverClock = new SystemClock();
+        this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
         this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
 
@@ -89,6 +92,7 @@ public abstract class PageObject {
         this.driver = driver;
         this.waitForTimeout = WAIT_FOR_TIMEOUT;
         this.webdriverClock = new SystemClock();
+        this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
         this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
 
@@ -125,7 +129,7 @@ public abstract class PageObject {
         return renderedView;
     }
 
-    protected InternalSystemClock getClock() {
+    protected net.thucydides.core.pages.SystemClock getClock() {
         return clock;
     }
 
@@ -272,6 +276,10 @@ public abstract class PageObject {
 
     protected void waitABit(final long timeInMilliseconds) {
         getClock().pauseFor(timeInMilliseconds);
+    }
+
+    public StepDelayer.WaitForBuilder waitFor(int duration) {
+        return new StepDelayer(clock).waitFor(duration);
     }
 
     public List<WebElement> thenReturnElementList(final By byListCriteria) {

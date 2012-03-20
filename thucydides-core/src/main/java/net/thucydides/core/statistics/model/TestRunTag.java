@@ -17,6 +17,7 @@ public class TestRunTag {
     @GeneratedValue
     private Long id;
 
+    private String projectKey;
     private String code;
     private String name;
     private String type;
@@ -24,7 +25,8 @@ public class TestRunTag {
     public TestRunTag() {
     }
 
-    public TestRunTag(String type, String name, String code) {
+    public TestRunTag(String projectKey, String type, String name, String code) {
+        this.projectKey = projectKey;
         this.type = type;
         this.name = name;
         this.code = code;
@@ -32,6 +34,10 @@ public class TestRunTag {
 
     public Long getId() {
         return id;
+    }
+
+    public String getProjectKey() {
+        return projectKey;
     }
 
     public String getCode() {

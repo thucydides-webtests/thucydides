@@ -41,6 +41,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class ThucydidesModule extends AbstractModule {
 
@@ -69,24 +70,8 @@ public class ThucydidesModule extends AbstractModule {
     @Singleton
     @Inject
     public EntityManagerFactory provideEntityManagerFactory(EnvironmentVariables environmentVariables) {
-        Map<String, String> properties = new HashMap<String, String>();
-
-        String defaultThucydidesDirectory = environmentVariables.getProperty("user.home") + "/.thucydides";
-        String defaultDatabase = defaultThucydidesDirectory + "/stats";
-        String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", "org.hsqldb.jdbc.JDBCDriver");
-        String url = environmentVariables.getProperty("thucydides.statistics.url", "jdbc:hsqldb:file:" + defaultDatabase);
-        String username = environmentVariables.getProperty("thucydides.statistics.username", "sa");
-        String password = environmentVariables.getProperty("thucydides.statistics.password", "");
-        String dialect = environmentVariables.getProperty("thucydides.statistics.dialect", "org.hibernate.dialect.HSQLDialect");
-
-        properties.put("hibernate.connection.driver_class", driver);
-        properties.put("hibernate.connection.url", url);
-        properties.put("hibernate.connection.username", username);
-        properties.put("hibernate.connection.password", password);
-        properties.put("hibernate.dialect", dialect);
-        properties.put("hibernate.connection.pool_size", "1");
-        properties.put("hibernate.hbm2ddl.auto", "create");
-        return Persistence.createEntityManagerFactory("db-manager", properties);
+        Properties connectionProperties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
+        return Persistence.createEntityManagerFactory("db-manager", connectionProperties);
     }
 
     @Provides

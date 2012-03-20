@@ -21,7 +21,12 @@ public enum ThucydidesSystemProperty {
      * The default starting URL for the application, and base URL for relative paths.
      */
     BASE_URL("webdriver.base.url"),
-    
+
+    /**
+     * A unique identifier for the project under test, used to record test statistics.
+     */
+    PROJECT_KEY("thucydides.project.key"),
+
     /**
      * Indicates a directory from which the resources for the HTML reports should be copied.
      * This directory currently needs to be provided in a JAR file.

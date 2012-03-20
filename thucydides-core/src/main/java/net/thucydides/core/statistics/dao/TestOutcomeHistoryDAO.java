@@ -40,7 +40,5 @@ public interface TestOutcomeHistoryDAO {
 
     List<TestRunTag> getLatestTagsForTestsWithTagType(String tagType);
 
-    List<TestRun> getLatestTestsWithTag(String tag);
-
     List<String> findAllTagTypes();
 }

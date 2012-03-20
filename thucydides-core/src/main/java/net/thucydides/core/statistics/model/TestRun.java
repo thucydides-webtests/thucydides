@@ -24,6 +24,7 @@ public class TestRun {
     private Long id;
 
     private String title;
+    private String projectKey;
     private TestResult result;
     private Date executionDate;
     private long duration;
@@ -38,8 +39,9 @@ public class TestRun {
 
     public TestRun() {}
 
-    protected TestRun(String title, TestResult result, long duration, Date executionDate) {
+    protected TestRun(String title, String projectKey, TestResult result, long duration, Date executionDate) {
         this.title = title;
+        this.projectKey = projectKey;
         this.result = result;
         this.executionDate = executionDate;
         this.duration = duration;
@@ -49,12 +51,16 @@ public class TestRun {
         return title;
     }
 
+    public String getProjectKey() {
+        return projectKey;
+    }
+
     public TestResult getResult() {
         return result;
     }
 
     public Date getExecutionDate() {
-        return new Date(executionDate.getTime());
+        return (executionDate == null) ? null : new Date(executionDate.getTime());
     }
 
     public long getDuration() {
@@ -66,10 +72,14 @@ public class TestRun {
     }
 
     public static TestRun from(final TestOutcome result) {
-        return new TestRun(result.getTitle(), result.getResult(), result.getDuration(), null);
+        return new TestRun(result.getTitle(), null, result.getResult(), result.getDuration(), null);
+    }
+
+    public TestRun inProject(final String projectKey) {
+        return new TestRun(getTitle(), projectKey, getResult(), getDuration(), getExecutionDate());
     }
 
     public TestRun at(final Date executionDate) {
-        return new TestRun(getTitle(), getResult(), getDuration(), executionDate);
+        return new TestRun(getTitle(), getProjectKey(), getResult(), getDuration(), executionDate);
     }
 }

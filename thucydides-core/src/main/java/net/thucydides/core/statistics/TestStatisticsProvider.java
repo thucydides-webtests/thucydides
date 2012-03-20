@@ -1,6 +1,7 @@
 package net.thucydides.core.statistics;
 
 import com.google.inject.Inject;
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.model.TestRun;
@@ -18,10 +19,16 @@ import java.util.List;
 public class TestStatisticsProvider {
 
     private final TestOutcomeHistoryDAO testOutcomeHistoryDAO;
+    private final String projectKey;
 
+    protected TestStatisticsProvider(TestOutcomeHistoryDAO testOutcomeHistoryDAO, String projectKey) {
+        this.testOutcomeHistoryDAO = testOutcomeHistoryDAO;
+        this.projectKey = projectKey;
+    }
+    
     @Inject
     public TestStatisticsProvider(TestOutcomeHistoryDAO testOutcomeHistoryDAO) {
-        this.testOutcomeHistoryDAO = testOutcomeHistoryDAO;
+       this(testOutcomeHistoryDAO, Thucydides.DEFAULT_PROJECT_KEY);
     }
 
     public List<TestRun> testRunsForTest(With withCondition) {
@@ -82,5 +89,9 @@ public class TestStatisticsProvider {
 
     public List<String> findAllTagTypes() {
         return testOutcomeHistoryDAO.findAllTagTypes();
+    }
+
+    public TestStatisticsProvider forProject(String projectKey) {
+        return new TestStatisticsProvider(testOutcomeHistoryDAO, projectKey);
     }
 }

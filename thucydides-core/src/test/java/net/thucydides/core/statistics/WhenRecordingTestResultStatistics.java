@@ -1,18 +1,22 @@
 package net.thucydides.core.statistics;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.name.Named;
-import com.google.inject.name.Names;
+import com.google.inject.Singleton;
 import net.thucydides.core.annotations.WithTag;
-import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.guice.ThucydidesModule;
+import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.model.TestRun;
 import net.thucydides.core.statistics.model.TestRunTag;
 import net.thucydides.core.statistics.model.TestStatistics;
+import net.thucydides.core.steps.ConsoleLoggingListener;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
@@ -31,22 +35,27 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class WhenRecordingTestResultStatistics {
 
-    /*
-        - Retrieve the list of the executed tests
-        - Retrieve statistics about each of the tests
-        - Retrieve detailed execution stats for a particular test
-     */
+    Injector injector;
+    EnvironmentVariables environmentVariables;
+    ThucydidesModuleWithMockEnvironmentVariables guiceModule;
     StatisticsListener statisticsListener;
-
     TestStatisticsProvider testStatisticsProvider;
 
-    EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+    class ThucydidesModuleWithMockEnvironmentVariables extends ThucydidesModule {
+        @Override
+        protected void configure() {
+            clearEntityManagerCache();
+            bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
+            bind(EnvironmentVariables.class).to(MockEnvironmentVariables.class).in(Singleton.class);
+            bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class);
+            bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class);
+            bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class);
+        }
+    }
 
     @Mock
     TestOutcome testOutcome;
@@ -74,7 +83,12 @@ public class WhenRecordingTestResultStatistics {
         when(testOutcome.getStoryTitle()).thenReturn("A Test Story");
         when(testOutcome.getDuration()).thenReturn(500L);
 
-        testOutcomeHistoryDAO = Injectors.getInjector().getInstance(HibernateTestOutcomeHistoryDAO.class);
+        guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
+        injector = Guice.createInjector(guiceModule);
+        environmentVariables = injector.getInstance(EnvironmentVariables.class);
+        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:testDatabase");;
+
+        testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
         statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables);
         testStatisticsProvider = new TestStatisticsProvider(testOutcomeHistoryDAO);
 
@@ -83,8 +97,7 @@ public class WhenRecordingTestResultStatistics {
 
     @Test
     public void should_be_able_to_obtain_the_statistics_listener_via_guice() {
-        StepListener statisticsListener =
-                Injectors.getInjector().getInstance(Key.get(StepListener.class, Statistics.class));
+        StepListener statisticsListener = injector.getInstance(Key.get(StepListener.class, Statistics.class));
         assertThat(statisticsListener, instanceOf(StatisticsListener.class));
     }
 
@@ -108,6 +121,29 @@ public class WhenRecordingTestResultStatistics {
     }
 
     @Test
+    public void should_use_a_defined_project_key_to_group_results() {
+
+        environmentVariables.setProperty("thucydides.project.key", "GIZMOS");
+
+        recordTests();
+        recordTests();
+
+        TestStatistics testStatistics =  testStatisticsProvider.forProject("GIZMO")
+                .statisticsForTests(With.title("Boat sales test"));
+
+        assertThat(testStatistics.getTotalTestRuns(), is(16L));
+    }
+
+
+    @Test
+    public void should_list_all_the_test_history_results_for_the_current_project() {
+
+        List<TestRun> testRuns =  testStatisticsProvider.getAllTestHistories();
+
+        assertThat(testRuns.size(), is(31));
+    }
+
+    @Test
     public void should_be_able_to_find_the_total_number_of_test_runs_for_a_given_test() {
 
         TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.title("Boat sales test"));
@@ -121,6 +157,14 @@ public class WhenRecordingTestResultStatistics {
         TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.title("Boat sales test"));
 
         assertThat(testStatistics.getPassingTestRuns(), is(6L));
+    }
+
+    @Test
+    public void should_not_fail_if_no_tests_are_available_with_a_given_name() {
+
+        TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.title("Does not exist"));
+
+        assertThat(testStatistics.getTotalTestRuns(), is(0L));
     }
 
     @Test
@@ -145,6 +189,14 @@ public class WhenRecordingTestResultStatistics {
         TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.tag("Boat sales"));
 
         assertThat(testStatistics.getPassRate().overTheLast(4).testRuns(), is(1.0));
+    }
+
+    @Test
+    public void should_not_fail_if_no_matching_test_runs_exist() {
+
+        TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.tag("does-not-exist"));
+
+        assertThat(testStatistics.getTotalTestRuns(), is(0L));
     }
 
     @Test
@@ -249,6 +301,15 @@ public class WhenRecordingTestResultStatistics {
         assertThat(testStatistics.getTags().size(), is(2));
     }
 
+    @Test
+    public void should_not_fail_if_no_tags_of_this_type_exist() {
+
+        TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.tagType("does-not-exist"));
+
+        assertThat(testStatistics.getTotalTestRuns(), is(0L));
+        assertThat(testStatistics.getTags().size(), is(0));
+    }
+
 
     /*
         - should retrieve test statistics for a given tag
@@ -257,53 +318,58 @@ public class WhenRecordingTestResultStatistics {
 
     static boolean runOnce = false;
 
+    class SomeTestScenario {}
+
     private void prepareTestData() {
         if (!runOnce) {
-            statisticsListener.testSuiteFinished();
-
-            statisticsListener.testFinished(pendingTestFor("boat_sales_test"));
-            statisticsListener.testFinished(failingTestFor("car_sales_test"));
-            statisticsListener.testFinished(failingTestFor("house_sales_test"));
-
-            statisticsListener.testFinished(failingTestFor("boat_sales_test"));
-            statisticsListener.testFinished(failingTestFor("car_sales_test"));
-            statisticsListener.testFinished(passingTestFor("house_sales_test"));
-
-            statisticsListener.testFinished(passingTestFor("boat_sales_test"));
-            statisticsListener.testFinished(failingTestFor("car_sales_test"));
-            statisticsListener.testFinished(failingTestFor("house_sales_test"));
-
-            statisticsListener.testFinished(passingTestFor("boat_sales_test"));
-            statisticsListener.testFinished(failingTestFor("car_sales_test"));
-            statisticsListener.testFinished(passingTestFor("house_sales_test"));
-
-            statisticsListener.testFinished(passingTestFor("boat_sales_test"));
-            statisticsListener.testFinished(passingTestFor("car_sales_test"));
-            statisticsListener.testFinished(failingTestFor("house_sales_test"));
-
-            statisticsListener.testFinished(passingTestFor("boat_sales_test"));
-            statisticsListener.testFinished(passingTestFor("car_sales_test"));
-            statisticsListener.testFinished(passingTestFor("house_sales_test"));
-
-            statisticsListener.testFinished(passingTestFor("boat_sales_test"));
-            statisticsListener.testFinished(failingTestFor("car_sales_test"));
-            statisticsListener.testFinished(failingTestFor("house_sales_test"));
-            statisticsListener.testFinished(passingTestFor("gizmo_sales_test"));
-
-            statisticsListener.testFinished(passingTestFor("boat_sales_test"));
-            statisticsListener.testFinished(passingTestFor("car_sales_test"));
-            statisticsListener.testFinished(passingTestFor("house_sales_test"));
-            statisticsListener.testFinished(failingTestFor("gizmo_sales_test"));
-
-            statisticsListener.testFinished(passingTestFor("more_boat_sales_test"));
-            statisticsListener.testFinished(passingTestFor("more_car_sales_test"));
-
-            statisticsListener.testFinished(passingTestFor("more_boat_sales_test"));
-            statisticsListener.testFinished(passingTestFor("more_car_sales_test"));
-            statisticsListener.testSuiteFinished();
-
+            recordTests();
             runOnce = true;
         }
+    }
+
+    private void recordTests() {
+        statisticsListener.testSuiteStarted(SomeTestScenario.class);
+
+        statisticsListener.testFinished(pendingTestFor("boat_sales_test"));
+        statisticsListener.testFinished(failingTestFor("car_sales_test"));
+        statisticsListener.testFinished(failingTestFor("house_sales_test"));
+
+        statisticsListener.testFinished(failingTestFor("boat_sales_test"));
+        statisticsListener.testFinished(failingTestFor("car_sales_test"));
+        statisticsListener.testFinished(passingTestFor("house_sales_test"));
+
+        statisticsListener.testFinished(passingTestFor("boat_sales_test"));
+        statisticsListener.testFinished(failingTestFor("car_sales_test"));
+        statisticsListener.testFinished(failingTestFor("house_sales_test"));
+
+        statisticsListener.testFinished(passingTestFor("boat_sales_test"));
+        statisticsListener.testFinished(failingTestFor("car_sales_test"));
+        statisticsListener.testFinished(passingTestFor("house_sales_test"));
+
+        statisticsListener.testFinished(passingTestFor("boat_sales_test"));
+        statisticsListener.testFinished(passingTestFor("car_sales_test"));
+        statisticsListener.testFinished(failingTestFor("house_sales_test"));
+
+        statisticsListener.testFinished(passingTestFor("boat_sales_test"));
+        statisticsListener.testFinished(passingTestFor("car_sales_test"));
+        statisticsListener.testFinished(passingTestFor("house_sales_test"));
+
+        statisticsListener.testFinished(passingTestFor("boat_sales_test"));
+        statisticsListener.testFinished(failingTestFor("car_sales_test"));
+        statisticsListener.testFinished(failingTestFor("house_sales_test"));
+        statisticsListener.testFinished(passingTestFor("gizmo_sales_test"));
+
+        statisticsListener.testFinished(passingTestFor("boat_sales_test"));
+        statisticsListener.testFinished(passingTestFor("car_sales_test"));
+        statisticsListener.testFinished(passingTestFor("house_sales_test"));
+        statisticsListener.testFinished(failingTestFor("gizmo_sales_test"));
+
+        statisticsListener.testFinished(passingTestFor("more_boat_sales_test"));
+        statisticsListener.testFinished(passingTestFor("more_car_sales_test"));
+
+        statisticsListener.testFinished(passingTestFor("more_boat_sales_test"));
+        statisticsListener.testFinished(passingTestFor("more_car_sales_test"));
+        statisticsListener.testSuiteFinished();
     }
 
     private TestOutcome failingTestFor(String methodName) {
@@ -326,7 +392,9 @@ public class WhenRecordingTestResultStatistics {
 
     private void prepareDAOWithFixedClock() {
         when(clock.getCurrentTime()).thenReturn(JANUARY_1ST_2012);
-        testOutcomeHistoryDAO = new HibernateTestOutcomeHistoryDAO(Injectors.getInjector().getInstance(EntityManager.class), clock);
+        testOutcomeHistoryDAO = new HibernateTestOutcomeHistoryDAO(injector.getInstance(EntityManager.class),
+                                                                   environmentVariables,
+                                                                   clock);
         statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables);
         testStatisticsProvider = new TestStatisticsProvider(testOutcomeHistoryDAO);
     }

@@ -1,6 +1,8 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.pages.SystemClock;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +21,12 @@ public class ScenarioSteps implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioSteps.class);
 
-    private Pages pages;
-    
+    private final Pages pages;
+    private final SystemClock clock;
+
     public ScenarioSteps(final Pages pages) {
         this.pages = pages;
+        this.clock = Injectors.getInjector().getInstance(SystemClock.class);
     }
     
     public WebDriver getDriver() {
@@ -57,6 +61,11 @@ public class ScenarioSteps implements Serializable {
             LOGGER.warn("Wait a bit method was interrupted.", e);
         }
     }
+
+    public StepDelayer.WaitForBuilder waitFor(int duration) {
+        return new StepDelayer(clock).waitFor(duration);
+    }
+    
 
     @Override
     public String toString() {

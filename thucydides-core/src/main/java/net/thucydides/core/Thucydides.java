@@ -32,6 +32,7 @@ public class Thucydides {
     private static final ThreadLocal<StepListener> stepListenerThreadLocal = new ThreadLocal<StepListener>();
     private static final ThreadLocal<TestSessionVariables> testSessionThreadLocal = new ThreadLocal<TestSessionVariables>();
 
+    public static final String DEFAULT_PROJECT_KEY = "DEFAULT";
 
     /**
      * Initialize Thucydides-related fields in the specified object.
