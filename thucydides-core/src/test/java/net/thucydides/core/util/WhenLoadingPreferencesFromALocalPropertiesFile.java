@@ -15,12 +15,6 @@ import java.io.PrintWriter;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-/**
- * A description goes here.
- * User: johnsmart
- * Date: 24/12/11
- * Time: 11:16 AM
- */
 public class WhenLoadingPreferencesFromALocalPropertiesFile {
 
     @Rule
@@ -48,13 +42,6 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
 
         assertThat(localPreferences.getHomeDirectory().getPath(), is(homeDirectory));
     }
-
-    @Test
-    public void no_properties_are_defined_if_no_properties_file_is_present() throws Exception {
-        localPreferences.loadPreferences();
-        assertThat(((MockEnvironmentVariables)environmentVariables).propertySetIsEmpty(), is(true)) ;
-    }
-
 
     @Test
     public void should_load_property_values_from_local_preferences() throws Exception {
