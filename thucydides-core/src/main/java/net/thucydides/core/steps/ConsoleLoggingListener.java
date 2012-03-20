@@ -132,7 +132,12 @@ public class ConsoleLoggingListener implements StepListener {
 
     private String underline(String banner) {
         StringBuilder underline = new StringBuilder();
-        underline.append(StringUtils.repeat('-', banner.length()));
+        int endOfLine = banner.indexOf('\n', 1);
+        if (endOfLine >= 0) {
+            underline.append(StringUtils.repeat('-', endOfLine));
+        } else {
+            underline.append(StringUtils.repeat('-', banner.length()));
+        }
         return "\n" + underline.toString();
     }
 
