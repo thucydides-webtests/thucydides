@@ -3,6 +3,8 @@ package net.thucydides.samples;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
+import net.thucydides.core.annotations.TestsRequirement;
+import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
@@ -10,7 +12,8 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-public class AnotherSamplePassingScenario {
+@UserStoryCode("US01")
+public class SingleHtmlUnitTestScenario {
     
     @Managed(driver = "htmlunit")
     public WebDriver webdriver;
@@ -20,25 +23,15 @@ public class AnotherSamplePassingScenario {
     
     @Steps
     public SampleScenarioSteps steps;
-
+        
     @Test
-    public void happy_day_scenario() throws Throwable {
+    @TestsRequirement("SOME_BUSINESS_RULE")
+    public void happy_day_scenario() {
+        steps.stepThatUsesABrowser();
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
-        steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
-    }
-
-    @Test
-    public void edge_case_1() {
-        steps.stepThatSucceeds();
-        steps.anotherStepThatSucceeds();
-        steps.stepThatIsPending();
-    }
-
-    @Test
-    public void edge_case_2() {
-        steps.stepThatSucceeds();
-        steps.anotherStepThatSucceeds();
+        steps.stepThatFails();
+        steps.stepThatShouldBeSkipped();
     }
 }

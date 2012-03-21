@@ -66,6 +66,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
     @Before
     public void createATestableDriverFactory() throws Exception {
+        
         MockitoAnnotations.initMocks(this);
 
         webdriverInstanceFactory = new WebdriverInstanceFactory() {
@@ -320,7 +321,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test
     public void the_test_runner_skips_any_tests_after_a_failure() throws Exception {
 
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleHtmlUnitTestScenario.class, webDriverFactory);
 
         runner.run(new RunNotifier());
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
@@ -374,7 +375,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test
     public void when_a_test_fails_the_message_is_recorded_in_the_test_step() throws Exception {
 
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleHtmlUnitTestScenario.class, webDriverFactory);
 
         runner.run(new RunNotifier());
 
@@ -389,7 +390,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     @Test
     public void when_a_test_fails_the_exception_is_recorded_in_the_test_step() throws Exception {
 
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleHtmlUnitTestScenario.class, webDriverFactory);
 
         runner.run(new RunNotifier());
 
@@ -474,7 +475,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
     @Test
     public void the_test_runner_distinguishes_between_ignored_and_skipped_steps() throws InitializationError {
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleHtmlUnitTestScenario.class, webDriverFactory);
 
         runner.run(new RunNotifier());
 
@@ -490,7 +491,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
     @Test
     public void the_test_runner_executes_steps_with_parameters() throws InitializationError {
-        ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
+        ThucydidesRunner runner = new ThucydidesRunner(SingleHtmlUnitTestScenario.class, webDriverFactory);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
@@ -685,22 +686,22 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         File outputDirectory = temporaryFolder.newFolder("output");
 
-        new TestableThucydidesRunner(SamplePassingScenario.class,
+        new TestableThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class,
                                        webDriverFactory,
                                        outputDirectory).run(new RunNotifier());
 
-        new TestableThucydidesRunner(SampleFailingScenario.class,
+        new TestableThucydidesRunner(SampleFailingScenarioUsingHtmlUnit.class,
                                        webDriverFactory,
                                        outputDirectory).run(new RunNotifier());
 
         List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new XMLFileFilter()));
         assertThat(generatedXMLReports.size(), is(6));
-        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_edge_case_1.xml",
-                                                 "sample_passing_scenario_edge_case_2.xml",
-                                                 "sample_passing_scenario_happy_day_scenario.xml",
-                                                 "sample_failing_scenario_edge_case_1.xml",
-                                                 "sample_failing_scenario_edge_case_2.xml",
-                                                 "sample_failing_scenario_happy_day_scenario.xml"));
+        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_using_html_unit_edge_case_1.xml",
+                                                 "sample_passing_scenario_using_html_unit_edge_case_2.xml",
+                                                 "sample_passing_scenario_using_html_unit_happy_day_scenario.xml",
+                                                 "sample_failing_scenario_using_html_unit_edge_case_1.xml",
+                                                 "sample_failing_scenario_using_html_unit_edge_case_2.xml",
+                                                 "sample_failing_scenario_using_html_unit_happy_day_scenario.xml"));
     }
 
     @Test
@@ -708,7 +709,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         File outputDirectory = temporaryFolder.newFolder("output");
 
-        new TestableThucydidesRunner(SamplePassingScenario.class,
+        new TestableThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class,
                                        webDriverFactory,
                                        outputDirectory).run(new RunNotifier());
 
@@ -718,9 +719,9 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new XMLFileFilter()));
         assertThat(generatedXMLReports.size(), is(6));
-        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_edge_case_1.xml",
-                                                 "sample_passing_scenario_edge_case_2.xml",
-                                                 "sample_passing_scenario_happy_day_scenario.xml",
+        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_using_html_unit_edge_case_1.xml",
+                                                 "sample_passing_scenario_using_html_unit_edge_case_2.xml",
+                                                 "sample_passing_scenario_using_html_unit_happy_day_scenario.xml",
                                                  "another_sample_passing_scenario_edge_case_1.xml",
                                                  "another_sample_passing_scenario_edge_case_2.xml",
                                                  "another_sample_passing_scenario_happy_day_scenario.xml"));
@@ -731,16 +732,16 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         File outputDirectory = temporaryFolder.newFolder("output");
 
-        ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingScenario.class,
+        ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class,
                                                                webDriverFactory,
                                                                outputDirectory);
         runner.run(new RunNotifier());
 
         List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new HTMLFileFilter()));
         assertThat(generatedXMLReports.size(), is(3));
-        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_edge_case_1.html",
-                                                 "sample_passing_scenario_edge_case_2.html",
-                                                 "sample_passing_scenario_happy_day_scenario.html"));
+        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_using_html_unit_edge_case_1.html",
+                                                 "sample_passing_scenario_using_html_unit_edge_case_2.html",
+                                                 "sample_passing_scenario_using_html_unit_happy_day_scenario.html"));
 
 
     }

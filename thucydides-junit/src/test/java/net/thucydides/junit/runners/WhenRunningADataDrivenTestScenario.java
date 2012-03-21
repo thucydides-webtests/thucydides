@@ -565,7 +565,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
         environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
-                            outputDirectory.getAbsolutePath());
+                                         outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
 
