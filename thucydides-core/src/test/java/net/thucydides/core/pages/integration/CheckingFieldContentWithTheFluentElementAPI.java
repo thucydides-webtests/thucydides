@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
-public class WhenCheckingFieldContentWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
+public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
 
     static WebDriver htmlUnitDriver;
     static StaticSitePage page;

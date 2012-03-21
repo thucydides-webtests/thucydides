@@ -9,7 +9,7 @@ import org.openqa.selenium.By;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class WhenWaitingForElementsWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
+public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

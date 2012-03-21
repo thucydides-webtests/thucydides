@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-public class WhenReadingTableData extends FluentElementAPITestsBaseClass {
+public class ReadingTableData extends FluentElementAPITestsBaseClass {
 
     WebDriver htmlUnitDriver;
     StaticSitePage page;

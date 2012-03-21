@@ -21,7 +21,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class WhenRunningTestScenariosInParallel extends AbstractTestStepRunnerTest {
+public class RunningTestScenariosInParallel extends AbstractTestStepRunnerTest {
 
     @Before
     public void initMocks() {

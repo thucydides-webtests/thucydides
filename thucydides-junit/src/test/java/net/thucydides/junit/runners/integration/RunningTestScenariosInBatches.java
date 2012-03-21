@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 
-public class WhenRunningTestScenariosInBatches {
+public class RunningTestScenariosInBatches {
 
 
     static List<Integer> executedTests = new CopyOnWriteArrayList<Integer>();

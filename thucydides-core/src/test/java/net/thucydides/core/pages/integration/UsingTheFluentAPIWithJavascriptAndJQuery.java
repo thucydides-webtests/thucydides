@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElementAPITestsBaseClass {
+public class UsingTheFluentAPIWithJavascriptAndJQuery extends FluentElementAPITestsBaseClass {
 
     @Test
     public void should_inject_jquery_into_the_page() {

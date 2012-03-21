@@ -14,7 +14,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class WhenUsingFormsWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
+public class UsingFormsWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
 
     WebDriver htmlUnitDriver;
     StaticSitePage page;

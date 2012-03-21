@@ -2,6 +2,7 @@ package net.thucydides.core.pages.integration;
 
 
 import net.thucydides.core.webdriver.StaticTestSite;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.openqa.selenium.WebDriver;
@@ -12,13 +13,11 @@ import java.util.Set;
 
 public class FluentElementAPITestsBaseClass {
 
-    private ThreadLocal<StaticTestSite> testSiteThreadLocal = new ThreadLocal<StaticTestSite>();
+    private static ThreadLocal<StaticTestSite> testSiteThreadLocal = new ThreadLocal<StaticTestSite>();
     private ThreadLocal<StaticSitePage> firefoxPage = new ThreadLocal<StaticSitePage>();
     private ThreadLocal<StaticSitePage> chromePage = new ThreadLocal<StaticSitePage>();
 
-    private static Set<WebDriver> openDrivers = Collections.synchronizedSet(new HashSet<WebDriver>());
-
-    protected StaticTestSite getStaticTestSite() {
+    protected static StaticTestSite getStaticTestSite() {
         if (testSiteThreadLocal.get() == null) {
             testSiteThreadLocal.set(new StaticTestSite());
         }
@@ -28,7 +27,6 @@ public class FluentElementAPITestsBaseClass {
     protected StaticSitePage getFirefoxPage() {
         if (firefoxPage.get() == null) {
             WebDriver driver = getStaticTestSite().open("firefox");
-            openDrivers.add(driver);
             firefoxPage.set(new StaticSitePage(driver, 5000));
             firefoxPage.get().addJQuerySupport();
         }
@@ -38,7 +36,6 @@ public class FluentElementAPITestsBaseClass {
     protected StaticSitePage getChromePage() {
         if (chromePage.get() == null) {
             WebDriver driver = getStaticTestSite().open("chrome");
-            openDrivers.add(driver);
             chromePage.set(new StaticSitePage(driver, 5000));
             chromePage.get().addJQuerySupport();
         }
@@ -47,9 +44,7 @@ public class FluentElementAPITestsBaseClass {
 
     @AfterClass
     public static void closeBrowsers() {
-        for(WebDriver driver : openDrivers) {
-            driver.quit();
-        }
+        getStaticTestSite().close();
     }
 
     protected void refresh(StaticSitePage page) {
