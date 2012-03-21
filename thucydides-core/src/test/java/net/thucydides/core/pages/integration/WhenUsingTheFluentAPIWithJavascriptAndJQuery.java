@@ -4,6 +4,7 @@ package net.thucydides.core.pages.integration;
 import net.thucydides.core.webdriver.jquery.ByJQuery;
 import net.thucydides.core.webdriver.jquery.ByJQuerySelector;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -24,30 +25,6 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery  extends FluentElement
 
         Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
         assertThat(jqueryInjected, is(true));
-    }
-
-    @Test
-    public void should_inject_jquery_into_the_page_in_chrome() {
-        StaticSitePage page = getChromePage();
-
-        page.evaluateJavascript("$('#firstname').focus();");
-
-        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
-        assertThat(jqueryInjected, is(true));
-    }
-
-    @Test
-    public void should_support_jquery_queries_in_the_page_in_chrome() {
-
-        StaticSitePage page = getChromePage();
-
-        page.evaluateJavascript("$('#firstname').focus();");
-
-        assertThat(page.element(page.firstName).hasFocus(), is(true));
-
-        page.evaluateJavascript("$('#lastname').focus();");
-
-        assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
 
     @Test

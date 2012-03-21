@@ -3,6 +3,7 @@ package net.thucydides.core.pages.integration;
 
 import net.thucydides.core.webdriver.StaticTestSite;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Collections;
@@ -25,19 +26,23 @@ public class FluentElementAPITestsBaseClass {
     }
 
     protected StaticSitePage getFirefoxPage() {
-        StaticSitePage page;
-        WebDriver driver = getStaticTestSite().open("firefox");
-        page = new StaticSitePage(driver, 5000);
-        page.addJQuerySupport();
-        return page;
+        if (firefoxPage.get() == null) {
+            WebDriver driver = getStaticTestSite().open("firefox");
+            openDrivers.add(driver);
+            firefoxPage.set(new StaticSitePage(driver, 5000));
+            firefoxPage.get().addJQuerySupport();
+        }
+        return firefoxPage.get();
     }
 
     protected StaticSitePage getChromePage() {
-        StaticSitePage page;
-        WebDriver driver = getStaticTestSite().open("chrome");
-        page = new StaticSitePage(driver, 5000);
-        page.addJQuerySupport();
-        return page;
+        if (chromePage.get() == null) {
+            WebDriver driver = getStaticTestSite().open("chrome");
+            openDrivers.add(driver);
+            chromePage.set(new StaticSitePage(driver, 5000));
+            chromePage.get().addJQuerySupport();
+        }
+        return chromePage.get();
     }
 
     @AfterClass

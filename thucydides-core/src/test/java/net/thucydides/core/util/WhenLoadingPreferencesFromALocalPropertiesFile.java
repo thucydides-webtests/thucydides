@@ -46,7 +46,7 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
     @Test
     public void should_load_property_values_from_local_preferences() throws Exception {
         writeToPropertiesFile("webdriver.driver = opera");
-        
+
         localPreferences.setHomeDirectory(homeDirectory);
         
         localPreferences.loadPreferences();
