@@ -41,8 +41,7 @@ public class ThucydidesPlugin extends BasePlugin {
 
     StepFactory stepFactory;
 
-    BaseStepListener baseStepListener
-    ;
+    BaseStepListener baseStepListener;
     List<StepListener> stepListeners;
     StepPublisher stepPublisher;
 
