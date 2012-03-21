@@ -34,17 +34,17 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         }
     }
     
-    private WebDriver driver;
-    private StaticTestSite testSite;
+    private static WebDriver driver;
+    private static StaticTestSite testSite;
 
-    @Before
-    public void openStaticTestSite() {
+    @BeforeClass
+    public static void openStaticTestSite() {
         testSite = new StaticTestSite();
         driver = testSite.open("firefox");
     }
 
-    @After
-    public void closeBrowser() {
+    @AfterClass
+    public static void closeBrowser() {
         driver.quit();
     }
 
