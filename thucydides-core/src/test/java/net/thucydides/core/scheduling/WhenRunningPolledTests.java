@@ -284,7 +284,7 @@ public class WhenRunningPolledTests {
         BackEnd backEnd = new BackEnd();
         NormalFluentWait<BackEnd> waitFor = new NormalFluentWait(backEnd);
 
-        waitFor.withTimeoutOf(100).milliseconds()
+        waitFor.withTimeoutOf(1000).milliseconds()
                 .pollingEvery(10).milliseconds()
                 .until(weHaveWaitedAWhile());
 
