@@ -77,6 +77,8 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <skip>true</skip>
+                    <parallel>classes</parallel>
+                    <threadCount>4</threadCount>
                 </configuration>
                 <executions>
                     <execution>
