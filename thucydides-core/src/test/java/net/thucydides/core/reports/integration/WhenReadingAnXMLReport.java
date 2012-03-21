@@ -146,14 +146,14 @@ public class WhenReadingAnXMLReport {
     @Test
     public void should_load_the_session_id_from_xml_file() throws Exception {
         String storedReportXML =
-                "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' session-id='1234'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story'>\n"
-                        + "    <feature id='myapp.myfeatures.SomeFeature' name='Some feature' />\n"
-                        + "  </user-story>"
-                        + "  <test-step result='SUCCESS'>\n"
-                        + "    <description>step 1</description>\n"
-                        + "  </test-step>\n"
-                        + "</acceptance-test-run>";
+                  "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' session-id='1234'>\n"
+                + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story'>\n"
+                + "    <feature id='myapp.myfeatures.SomeFeature' name='Some feature' />\n"
+                + "  </user-story>"
+                + "  <test-step result='SUCCESS'>\n"
+                + "    <description>step 1</description>\n"
+                + "  </test-step>\n"
+                + "</acceptance-test-run>";
 
         File report = temporaryDirectory.newFile("saved-report.xml");
         FileUtils.writeStringToFile(report, storedReportXML);
@@ -171,7 +171,7 @@ public class WhenReadingAnXMLReport {
     @Test
     public void should_load_acceptance_test_report_with_nested_groups_from_xml_file() throws Exception {
         String storedReportXML = 
-            "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+              "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
             + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
             + "  <test-group name='Group 1' result='SUCCESS'>\n"
             + "    <test-group name='Group 1.1' result='SUCCESS'>\n"
@@ -198,7 +198,7 @@ public class WhenReadingAnXMLReport {
     @Test
     public void should_load_acceptance_test_report_with_simple_nested_groups_from_xml_file() throws Exception {
         String storedReportXML = 
-            "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+              "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
             + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
             + "  <test-group name='Group 1' result='SUCCESS'>\n"
             + "    <test-group name='Group 1.1' result='SUCCESS'>\n"
@@ -223,7 +223,8 @@ public class WhenReadingAnXMLReport {
 
     @Test
     public void should_load_acceptance_test_report_with_multiple_test_steps_from_xml_file() throws Exception {
-        String storedReportXML = "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+        String storedReportXML =
+                  "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
                 + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
                 + "  <test-step result='SUCCESS'>\n"
                 + "    <description>step 1</description>\n"
