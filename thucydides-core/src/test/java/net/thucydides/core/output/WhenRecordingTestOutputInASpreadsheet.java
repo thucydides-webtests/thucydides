@@ -28,11 +28,10 @@ public class WhenRecordingTestOutputInASpreadsheet {
         String actualValue1 = "$10";
         String actualValue2 = "$11";
 
-        output.recordResult(checkThat(expectedValue, is(actualValue1)),
-                ImmutableList.of("a","b","c"));
+        output.recordResult(ImmutableList.of("a","b","c"), checkThat(expectedValue, is(actualValue1)));
 
-        output.recordResult(checkThat(expectedValue, is(actualValue2)),
-                ImmutableList.of("d","e","f"));
+        output.recordResult(ImmutableList.of("d","e","f"),
+                checkThat(expectedValue, is(actualValue2)));
 
         assertThat(outputFile.exists(), is(true));
     }
@@ -48,12 +47,12 @@ public class WhenRecordingTestOutputInASpreadsheet {
         String actualValue1 = "$10";
         String actualValue2 = "$11";
 
-        output.recordResult(checkThat(expectedValue, is(actualValue1)), ImmutableList.of("a","b","c"));
-        output.recordResult(checkThat(expectedValue, is(actualValue2)), ImmutableList.of("d","e","f"));
+        output.recordResult(ImmutableList.of("a","b","c"), checkThat(expectedValue, is(actualValue1)));
+        output.recordResult(ImmutableList.of("d","e","f"), checkThat(expectedValue, is(actualValue2)));
 
         ResultsOutput newOutput = new SpreadsheetResultsOutput(outputFile, ImmutableList.of("A","B","C"));
-        newOutput.recordResult(checkThat(expectedValue, is(actualValue1)), ImmutableList.of("a","b","c"));
-        newOutput.recordResult(checkThat(expectedValue, is(actualValue2)), ImmutableList.of("d","e","f"));
+        newOutput.recordResult(ImmutableList.of("a","b","c"), checkThat(expectedValue, is(actualValue1)));
+        newOutput.recordResult(ImmutableList.of("d","e","f"), checkThat(expectedValue, is(actualValue2)));
 
         assertThat(outputFile.exists(), is(true));
     }

@@ -40,10 +40,29 @@ public class WhenConfiguringTheStatisticsDatabase {
         Properties properties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
 
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:file:"));
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats"));
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-default"));
         assertThat(properties.getProperty("hibernate.connection.url"), containsString(";shutdown=true"));
     }
 
+    @Test
+    public void should_define_a_local_hsqldb_database_using_the_project_key_if_provided() {
+        environmentVariables.setProperty("thucydides.project.key","myproject");
+        Properties properties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
+
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:file:"));
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-myproject"));
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString(";shutdown=true"));
+    }
+
+    @Test
+    public void should_define_a_local_hsqldb_database_using_the_full_database_name_if_provided() {
+        environmentVariables.setProperty("thucydides.project.key","myproject");
+        Properties properties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
+
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:file:"));
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-myproject"));
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString(";shutdown=true"));
+    }
 
     @Test
     public void should_update_the_default_local_database_automatically() {

@@ -86,13 +86,14 @@ public class WhenRecordingTestResultStatistics {
         guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
         injector = Guice.createInjector(guiceModule);
         environmentVariables = injector.getInstance(EnvironmentVariables.class);
-        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:testDatabase");;
+        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:testDatabase");
+        environmentVariables.setProperty("thucydides.record.statistics","true");
 
         testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
         statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables);
         testStatisticsProvider = new TestStatisticsProvider(testOutcomeHistoryDAO);
 
-        prepareTestData();
+        prepareTestData(statisticsListener);
     }
 
     @Test
@@ -121,12 +122,37 @@ public class WhenRecordingTestResultStatistics {
     }
 
     @Test
+    public void by_default_statistics_are_not_recorded_for_now() {
+
+        ThucydidesModuleWithMockEnvironmentVariables guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
+        Injector injector = Guice.createInjector(guiceModule);
+        EnvironmentVariables environmentVariables = injector.getInstance(EnvironmentVariables.class);
+        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:defaultTestDatabase");
+
+        TestOutcomeHistoryDAO testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
+        StatisticsListener statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables);
+        TestStatisticsProvider testStatisticsProvider = new TestStatisticsProvider(testOutcomeHistoryDAO);
+
+        prepareTestData(statisticsListener);
+
+        prepareDAOWithFixedClock();
+
+        when(testOutcome.getResult()).thenReturn(TestResult.SUCCESS);
+
+        statisticsListener.testFinished(testOutcome);
+        statisticsListener.testSuiteFinished();
+
+        List<TestRun> storedTestRuns = testStatisticsProvider.testRunsForTest(With.title(testOutcome.getTitle()));
+        assertThat(storedTestRuns.size(), is(0));
+    }
+
+    @Test
     public void should_use_a_defined_project_key_to_group_results() {
 
         environmentVariables.setProperty("thucydides.project.key", "GIZMOS");
 
-        recordTests();
-        recordTests();
+        recordTests(statisticsListener);
+        recordTests(statisticsListener);
 
         TestStatistics testStatistics =  testStatisticsProvider.forProject("GIZMO")
                 .statisticsForTests(With.title("Boat sales test"));
@@ -320,14 +346,14 @@ public class WhenRecordingTestResultStatistics {
 
     class SomeTestScenario {}
 
-    private void prepareTestData() {
+    private void prepareTestData(StatisticsListener statisticsListener) {
         if (!runOnce) {
-            recordTests();
+            recordTests(statisticsListener);
             runOnce = true;
         }
     }
 
-    private void recordTests() {
+    private void recordTests(StatisticsListener statisticsListener) {
         statisticsListener.testSuiteStarted(SomeTestScenario.class);
 
         statisticsListener.testFinished(pendingTestFor("boat_sales_test"));

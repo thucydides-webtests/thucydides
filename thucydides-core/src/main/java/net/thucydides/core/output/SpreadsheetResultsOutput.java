@@ -32,13 +32,14 @@ public class SpreadsheetResultsOutput implements ResultsOutput {
     }
 
     @Override
-    public synchronized void recordResult(SimpleValueMatcher validityCheck, List<String> columnValues) throws IOException {
+    public synchronized void recordResult(List<String> columnValues,
+                                          SimpleValueMatcher... validityChecks) throws IOException {
 
         WritableWorkbook workbook = null;
 
         try {
             workbook = currentWorkbook();
-            writeRow(validityCheck, columnValues, workbook.getSheet(0));
+            writeRow(columnValues, workbook.getSheet(0), validityChecks);
             workbook.write();
         } catch (JXLException e) {
             throw new IOException(e);
@@ -57,11 +58,13 @@ public class SpreadsheetResultsOutput implements ResultsOutput {
         }
     }
 
-    private void writeRow(SimpleValueMatcher check, List<String> columnValues, WritableSheet sheet) throws WriteException {
+    private void writeRow(List<String> columnValues,
+                          WritableSheet sheet,
+                          SimpleValueMatcher... checks) throws WriteException {
 
         recordingStarted = true;
 
-        boolean isAFailedTest = !check.matches();
+        boolean isAFailedTest = checkIfTestHasFailed(checks);
         WritableCellFormat font = getFontFor(isAFailedTest);
 
         int row = sheet.getRows();
@@ -70,6 +73,16 @@ public class SpreadsheetResultsOutput implements ResultsOutput {
             Label resultCell = new Label(column++, row, columnValue, font);
             sheet.addCell(resultCell);
         }
+    }
+
+    private boolean checkIfTestHasFailed(SimpleValueMatcher[] checks) {
+        boolean isAFailedTest = false;
+        for(SimpleValueMatcher check : checks) {
+            if (!check.matches()) {
+                isAFailedTest = true;
+            }
+        }
+        return isAFailedTest;
     }
 
     private WritableCellFormat getFontFor(boolean aFailedTest) throws WriteException {

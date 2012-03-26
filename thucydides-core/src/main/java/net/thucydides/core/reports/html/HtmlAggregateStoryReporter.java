@@ -184,6 +184,8 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("stories", new UserStoriesResultSet(storyResults));
         context.put("features", featureResults);
+        //TODO: integrate statistics-based tags
+
         addFormattersToContext(context);
 
         LOGGER.debug("Generating report pages");

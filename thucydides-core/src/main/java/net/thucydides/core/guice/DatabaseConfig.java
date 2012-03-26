@@ -1,6 +1,9 @@
 package net.thucydides.core.guice;
 
+import com.google.common.collect.ImmutableList;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.util.EnvironmentVariables;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -21,6 +24,7 @@ public class DatabaseConfig {
     private static final int TABLE_NAME_COLUMN  = 3;
 
     private final EnvironmentVariables environmentVariables;
+    private String defaultLocalDatabaseName;
 
     public DatabaseConfig(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
@@ -57,7 +61,7 @@ public class DatabaseConfig {
 
     private String getDefaultDatabaseUrl() {
         String defaultThucydidesDirectory = environmentVariables.getProperty("user.home") + "/.thucydides";
-        String defaultDatabase = defaultThucydidesDirectory + "/stats";
+        String defaultDatabase = defaultThucydidesDirectory + "/" + getDefaultLocalDatabaseName();
         return "jdbc:hsqldb:file:" + defaultDatabase + ";shutdown=true";
     }
 
@@ -89,4 +93,8 @@ public class DatabaseConfig {
         return tableNames;
     }
 
+    public String getDefaultLocalDatabaseName() {
+        String projectKey = ThucydidesSystemProperty.PROJECT_KEY.from(environmentVariables, "default");
+        return StringUtils.join(ImmutableList.of("stats", projectKey), "-");
+    }
 }

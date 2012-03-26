@@ -28,6 +28,12 @@ public enum ThucydidesSystemProperty {
     PROJECT_KEY("thucydides.project.key"),
 
     /**
+     * Record test result statistics in a database for reporting purposes.
+     * Y
+     */
+    RECORD_STATISTICS("thucydides.record.statistics"),
+
+    /**
      * Indicates a directory from which the resources for the HTML reports should be copied.
      * This directory currently needs to be provided in a JAR file.
      */
@@ -171,13 +177,7 @@ public enum ThucydidesSystemProperty {
     /**
      * Three levels are supported: QUIET, NORMAL and VERBOSE
      */
-    LOGGING("thucydides.logging"),
-
-    /**
-     * Should we store test result history.
-     * It is usually only deactivated for testing purposes.
-     */
-    STORE_TEST_HISTORY("thucydides.store.history");
+    LOGGING("thucydides.logging");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 1000;

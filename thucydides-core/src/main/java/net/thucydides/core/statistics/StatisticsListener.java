@@ -59,7 +59,7 @@ public class StatisticsListener implements StepListener {
 
     private boolean historyActivated() {
         return environmentVariables.getPropertyAsBoolean(
-                ThucydidesSystemProperty.STORE_TEST_HISTORY.getPropertyName(), true);
+                ThucydidesSystemProperty.RECORD_STATISTICS.getPropertyName(), false);
     }
 
     @Override
