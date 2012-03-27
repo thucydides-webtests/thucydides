@@ -37,6 +37,7 @@ import static net.thucydides.core.matchers.dates.DateMatchers.isSameAs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -264,25 +265,25 @@ public class WhenRecordingTestResultStatistics {
 
     @WithTag(value="Online sales", type="feature")
     class OnlineSalesTestCaseSample {
-        @WithTag(value="Boat sales", type="feature")
+        @WithTag(value="Boat sales", type="story")
         public void boat_sales_test() {}
 
-        @WithTag(value="Car sales", type="feature")
+        @WithTag(value="Car sales", type="story")
         public void car_sales_test() {}
 
-        @WithTag(value="House sales", type="feature")
+        @WithTag(value="House sales", type="story")
         public void house_sales_test() {}
 
-        @WithTag(value="Gizmo sales", type="feature")
+        @WithTag(value="Gizmo sales", type="story")
         public void gizmo_sales_test() {}
     }
 
     @WithTag(value="Online sales", type="feature")
     class AnotherOnlineSalesTestCaseSample {
-        @WithTag(value="Boat sales", type="feature")
+        @WithTag(value="Boat sales", type="story")
         public void more_boat_sales_test() {}
 
-        @WithTag(value="Car sales", type="feature")
+        @WithTag(value="Car sales", type="story")
         public void more_car_sales_test() {}
     }
 
@@ -308,8 +309,8 @@ public class WhenRecordingTestResultStatistics {
 
         List<String> allTagTypes = testStatisticsProvider.findAllTagTypes();
 
-        assertThat(allTagTypes.size(), is(1));
-        assertThat(allTagTypes, hasItem("feature"));
+        assertThat(allTagTypes.size(), is(2));
+        assertThat(allTagTypes, hasItems("feature","story"));
     }
 
     @Test
@@ -327,9 +328,9 @@ public class WhenRecordingTestResultStatistics {
 
         TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.tagType("feature"));
 
-        assertThat(testStatistics.getTotalTestRuns(), is(56L));
-        assertThat(testStatistics.getPassingTestRuns(), is(32L));
-        assertThat(testStatistics.getFailingTestRuns(), is(22L));
+        assertThat(testStatistics.getTotalTestRuns(), is(30L));
+        assertThat(testStatistics.getPassingTestRuns(), is(18L));
+        assertThat(testStatistics.getFailingTestRuns(), is(11L));
         assertThat(testStatistics.getTags().size(), is(2));
     }
 
