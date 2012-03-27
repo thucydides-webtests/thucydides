@@ -15,12 +15,6 @@ import org.openqa.selenium.WebDriver;
 @Issues({"#MY-PROJECT-200","#MY-PROJECT-300"})
 public class SampleTestScenario {
 
-    @Managed(driver = "htmlunit")
-    public WebDriver webdriver;
-
-    @ManagedPages(defaultUrl = "http://www.google.com")
-    public Pages pages;
-    
     @Steps
     public SampleScenarioSteps steps;
 

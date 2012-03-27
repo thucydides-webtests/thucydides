@@ -28,8 +28,17 @@ public enum ThucydidesSystemProperty {
     PROJECT_KEY("thucydides.project.key"),
 
     /**
+     * The home directory for Thucydides output and data files - by default, $USER_HOME/.thucydides
+     */
+    THUCYDIDES_HOME("thucydides.home"),
+
+    /**
+     * The port used by Thucydides for the local statistics database.
+     */
+    THUCYDIDES_PORT("thucydides.database.port"),
+
+    /**
      * Record test result statistics in a database for reporting purposes.
-     * Y
      */
     RECORD_STATISTICS("thucydides.record.statistics"),
 
@@ -182,7 +191,7 @@ public enum ThucydidesSystemProperty {
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 1000;
     public static final int DEFAULT_WIDTH = 800;
-
+    public static final int DEFAULT_DATABASE_PORT = 9111;
 
     private ThucydidesSystemProperty(final String propertyName) {
         this.propertyName = propertyName;

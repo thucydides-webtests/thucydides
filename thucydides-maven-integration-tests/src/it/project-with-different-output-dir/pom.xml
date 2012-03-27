@@ -51,9 +51,9 @@
                 <version>2.7.1</version>
                 <configuration>
                     <includes>
-                        <include>**/Sample*.java</include>
-                        <include>**/*Test.java</include>
+                        <include>**/*Scenario.java</include>
                     </includes>
+                    <parallel>methods</parallel>
                 </configuration>
             </plugin>
             <plugin>

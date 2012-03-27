@@ -49,6 +49,7 @@
                         <include>**/Sample*.java</include>
                         <include>**/*Test.java</include>
                     </includes>
+                    <parallel>methods</parallel>
                 </configuration>
             </plugin>
             <plugin>

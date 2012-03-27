@@ -3,11 +3,7 @@ package net.thucydides.core.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
-import com.google.inject.Scope;
 import com.google.inject.Singleton;
-import com.google.inject.name.Names;
-import net.thucydides.core.ThucydidesSystemProperties;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.issues.IssueTracking;
@@ -25,6 +21,8 @@ import net.thucydides.core.statistics.Statistics;
 import net.thucydides.core.statistics.StatisticsListener;
 import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
+import net.thucydides.core.statistics.integration.db.LocalDatabase;
+import net.thucydides.core.statistics.integration.db.LocalHSqldbDatabase;
 import net.thucydides.core.steps.ConsoleLoggingListener;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -39,9 +37,6 @@ import net.thucydides.core.webdriver.WebdriverManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 public class ThucydidesModule extends AbstractModule {
 
@@ -60,6 +55,9 @@ public class ThucydidesModule extends AbstractModule {
         bind(BatchManager.class).to(SystemVariableBasedBatchManager.class);
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
+
+        bind(LocalDatabase.class).to(LocalHSqldbDatabase.class).in(Singleton.class);
+        bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
         bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class);
 
         bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class);
@@ -69,9 +67,29 @@ public class ThucydidesModule extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    public EntityManagerFactory provideEntityManagerFactory(EnvironmentVariables environmentVariables) {
-        Properties connectionProperties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
-        return Persistence.createEntityManagerFactory("db-manager", connectionProperties);
+    public EntityManagerFactory provideEntityManagerFactory(DatabaseConfig databaseConfig,
+                                                            LocalDatabase localDatabase) {
+
+        if (databaseConfig.isUsingLocalDatabase()) {
+            startIfNotAlreadyRunning(localDatabase);
+        }
+        return Persistence.createEntityManagerFactory("db-manager", databaseConfig.getProperties());
+    }
+
+    private void startIfNotAlreadyRunning(LocalDatabase localDatabase) {
+        if (!localDatabase.isAvailable()) {
+            localDatabase.start();
+            addShutdownHookFor(localDatabase);
+        }
+    }
+
+    private void addShutdownHookFor(final LocalDatabase localDatabase) {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                localDatabase.stop();
+            }
+        });
     }
 
     @Provides

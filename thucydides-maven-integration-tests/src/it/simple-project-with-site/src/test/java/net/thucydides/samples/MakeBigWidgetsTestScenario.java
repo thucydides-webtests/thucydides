@@ -14,12 +14,6 @@ import org.openqa.selenium.WebDriver;
 @Story(Application.MakeWidgets.MakeBigWidgets.class)
 public class MakeBigWidgetsTestScenario {
     
-    @Managed
-    public WebDriver webdriver;
-
-    @ManagedPages(defaultUrl = "http://www.google.com")
-    public Pages pages;
-    
     @Steps
     public SampleScenarioSteps steps;
 

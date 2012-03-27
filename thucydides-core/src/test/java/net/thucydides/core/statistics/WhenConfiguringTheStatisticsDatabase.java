@@ -1,6 +1,8 @@
 package net.thucydides.core.statistics;
 
-import net.thucydides.core.guice.DatabaseConfig;
+import net.thucydides.core.guice.EnvironmentVariablesDatabaseConfig;
+import net.thucydides.core.statistics.integration.db.LocalDatabase;
+import net.thucydides.core.statistics.integration.db.LocalHSqldbDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
@@ -21,15 +23,19 @@ import static org.hamcrest.Matchers.is;
 public class WhenConfiguringTheStatisticsDatabase {
 
     EnvironmentVariables environmentVariables;
-
+    EnvironmentVariablesDatabaseConfig databaseConfig;
+    LocalDatabase localDatabase;
+    
     @Before
     public void initMocks() {
         environmentVariables = new MockEnvironmentVariables();
+        localDatabase = new LocalHSqldbDatabase(environmentVariables);
+        databaseConfig = new EnvironmentVariablesDatabaseConfig(environmentVariables, localDatabase);    
     }
     
     @Test
     public void should_define_an_hsqldb_database_by_default() {
-        Properties properties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
+        Properties properties = databaseConfig.getProperties();
 
         assertThat(properties.getProperty("hibernate.connection.driver_class"), is("org.hsqldb.jdbc.JDBCDriver"));
     }
@@ -37,48 +43,45 @@ public class WhenConfiguringTheStatisticsDatabase {
 
     @Test
     public void should_define_a_local_hsqldb_database_by_default() {
-        Properties properties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
+        Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:file:"));
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:"));
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-default"));
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString(";shutdown=true"));
     }
 
     @Test
     public void should_define_a_local_hsqldb_database_using_the_project_key_if_provided() {
         environmentVariables.setProperty("thucydides.project.key","myproject");
-        Properties properties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
+        Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:file:"));
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:"));
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-myproject"));
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString(";shutdown=true"));
     }
 
     @Test
     public void should_define_a_local_hsqldb_database_using_the_full_database_name_if_provided() {
         environmentVariables.setProperty("thucydides.project.key","myproject");
-        Properties properties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
+        Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:file:"));
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:"));
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-myproject"));
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString(";shutdown=true"));
     }
 
     @Test
     public void should_update_the_default_local_database_automatically() {
-        Properties properties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
+        Properties properties = databaseConfig.getProperties();
 
         assertThat(properties.getProperty("hibernate.hbm2ddl.auto"), is("update"));
     }
 
     @Test
     public void should_validate_but_not_update_an_existing_custom_database() throws SQLException {
-        String preexistingDatabaseUrl = "jdbc:hsqldb:mem:stats";
+        String preexistingDatabaseUrl = "jdbc:hsqldb:mem:existing-database";
         createPreexistingDatabaseFor(preexistingDatabaseUrl);
 
         environmentVariables.setProperty("thucydides.statistics.url",preexistingDatabaseUrl);
 
-        Properties properties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
+        Properties properties = databaseConfig.getProperties();
 
         assertThat(properties.getProperty("hibernate.hbm2ddl.auto"), is("validate"));
     }
@@ -94,7 +97,7 @@ public class WhenConfiguringTheStatisticsDatabase {
 
         environmentVariables.setProperty("thucydides.statistics.url",emptyDatabaseUrl);
 
-        Properties properties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
+        Properties properties = databaseConfig.getProperties();
 
         assertThat(properties.getProperty("hibernate.hbm2ddl.auto"), is("update"));
     }
@@ -108,7 +111,7 @@ public class WhenConfiguringTheStatisticsDatabase {
         environmentVariables.setProperty("thucydides.statistics.password","password");
         environmentVariables.setProperty("thucydides.statistics.dialect","org.hibernate.dialect.PostgresDialect");
 
-        Properties properties = DatabaseConfig.usingPropertiesFrom(environmentVariables).getProperties();
+        Properties properties = databaseConfig.getProperties();
 
         assertThat(properties.getProperty("hibernate.connection.driver_class"), is("org.postgresql.Driver"));
         assertThat(properties.getProperty("hibernate.connection.url"), is("jdbc:postgresql:dbserver/stats"));

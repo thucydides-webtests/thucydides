@@ -14,13 +14,7 @@ import org.openqa.selenium.WebDriver;
 @RunWith(ThucydidesRunner.class)
 @Story(Application.MakeWidgets.MakeSmallWidgets.class)
 public class MakeSmallWidgetsTestScenario {
-    
-    @Managed
-    public WebDriver webdriver;
 
-    @ManagedPages(defaultUrl = "http://www.google.com")
-    public Pages pages;
-    
     @Steps
     public SampleScenarioSteps steps;
 

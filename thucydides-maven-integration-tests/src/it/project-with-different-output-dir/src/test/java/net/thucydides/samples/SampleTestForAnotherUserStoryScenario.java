@@ -10,9 +10,9 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-public class SampleTestScenarioForAnotherUserStory {
+public class SampleTestForAnotherUserStoryScenario {
 
-    @Managed(driver = "htmlunit")
+    @Managed(driver = "htmlunit", uniqueSession = true)
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "http://www.google.com")

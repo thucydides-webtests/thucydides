@@ -13,13 +13,7 @@ import org.openqa.selenium.WebDriver;
 @RunWith(ThucydidesRunner.class)
 @Story(Application.SellWidgets.SellWidgetsOnline.class)
 public class SellWidgetsOnlineTestScenario {
-    
-    @Managed
-    public WebDriver webdriver;
 
-    @ManagedPages(defaultUrl = "http://www.google.com")
-    public Pages pages;
-    
     @Steps
     public SampleScenarioSteps steps;
         
