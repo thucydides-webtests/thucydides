@@ -1,8 +1,6 @@
 package net.thucydides.core.reports;
 
 import net.thucydides.core.model.TestOutcome;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sun.misc.Service;
 
 import java.io.File;
@@ -23,13 +21,18 @@ public class ReportService {
      */
     private File outputDirectory;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReportService.class);
-
     /**
      * Who needs to be notified when a test is done.
      */
     private List<AcceptanceTestReporter> subscribedReporters;
 
+    /**
+     * Reports are generated using the test results in a given directory.
+     * The actual reports are generated using a set of reporter objects. The report service passes test outcomes
+     * to the reporter objects, which generate different types of reports.
+     * @param outputDirectory Where the test data is stored, and where the generated reports will go.
+     * @param subscribedReporters A set of reporters that generate the actual reports.
+     */
     public ReportService(final File outputDirectory, final Collection<AcceptanceTestReporter> subscribedReporters) {
         this.outputDirectory = outputDirectory;
         getSubscribedReporters().addAll(subscribedReporters);
@@ -59,6 +62,9 @@ public class ReportService {
      * notifies these reporters of the test outcomes. The reporter's job is to
      * process each test run outcome and do whatever is appropriate.
      *
+     * @param testOutcomeResults A list of test outcomes to use in report generation.
+     *                           These may be stored in memory (e.g. by a Listener instance) or read from the XML
+     *                           test results.
      */
     public void generateReportsFor(final List<TestOutcome> testOutcomeResults) {
 
@@ -71,6 +77,7 @@ public class ReportService {
 
     /**
      * The default reporters applicable for standard test runs.
+     * @return a list of default reporters.
      */
     public static List<AcceptanceTestReporter> getDefaultReporters() {
         List<AcceptanceTestReporter> reporters = new ArrayList<AcceptanceTestReporter>();

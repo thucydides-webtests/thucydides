@@ -1,6 +1,7 @@
 package net.thucydides.core.annotations;
 
 
+import com.google.common.base.Optional;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -44,7 +45,7 @@ public class WhenReadingTestAndStepAnnotations {
     @Test
     public void shouldReadMethodTitles() {
         assertThat(TestAnnotations.forClass(SampleTestCase.class)
-                    .getAnnotatedTitleForMethod("normalTestWithTitle"), is("A title"));
+                                   .getAnnotatedTitleForMethod("normalTestWithTitle").get(), is("A title"));
     }
 
     @Test
@@ -94,10 +95,10 @@ public class WhenReadingTestAndStepAnnotations {
 
     @Test
     public void shouldReadSingleIssueAnnotationFromATestClass() {
-        String issue = TestAnnotations.forClass(SampleTestCase.class)
+        Optional<String> issue = TestAnnotations.forClass(SampleTestCase.class)
                                          .getAnnotatedIssueForMethod("testWithAnnotatedIssue");
 
-        assertThat(issue, is("#MYPROJECT-123"));
+        assertThat(issue.get(), is("#MYPROJECT-123"));
     }
 
     @Test

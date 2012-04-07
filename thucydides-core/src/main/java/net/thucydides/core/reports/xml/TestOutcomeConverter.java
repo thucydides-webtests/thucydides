@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.xml;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -10,13 +11,16 @@ import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -45,6 +49,10 @@ public class TestOutcomeConverter implements Converter {
     private static final String FEATURE = "feature";
     private static final String ISSUES = "issues";
     private static final String ISSUE = "issue";
+    private static final String TAGS = "tags";
+    private static final String TAG = "tag";
+    private static final String TAG_NAME = "name";
+    private static final String TAG_TYPE = "type";
     private static final String EXCEPTION = "exception";
     private static final String ERROR = "error";
     private static final String SCREENSHOT_LIST_FIELD = "screenshots";
@@ -96,13 +104,13 @@ public class TestOutcomeConverter implements Converter {
         }
         addUserStoryTo(writer, testOutcome.getUserStory());
         addIssuesTo(writer, testOutcome.getIssues());
+        addTagsTo(writer, testOutcome.getTags());
 
         List<TestStep> steps = testOutcome.getTestSteps();
         for (TestStep step : steps) {
             writeStepTo(writer, step);
         }
     }
-
 
     private String titleFrom(final TestOutcome testOutcome) {
         if (qualifier == null) {
@@ -151,7 +159,6 @@ public class TestOutcomeConverter implements Converter {
             writeResult(writer, step);
             writer.addAttribute(DURATION, Long.toString(step.getDuration()));
             writeScreenshotIfPresent(writer, step);
-            //addIssuesTo(writer, step.getTestedIssues());
             writeDescription(writer, step);
             writeErrorForFailingTest(writer, step);
             writer.endNode();
@@ -178,17 +185,33 @@ public class TestOutcomeConverter implements Converter {
         writer.endNode();
     }
 
-    private void addIssuesTo(final HierarchicalStreamWriter writer, final Set<String> set) {
-        if (!set.isEmpty()) {
+    private void addIssuesTo(final HierarchicalStreamWriter writer, final Set<String> issues) {
+        if (!issues.isEmpty()) {
             writer.startNode(ISSUES);
-            for (String requirement : set) {
+            for (String issue : issues) {
                 writer.startNode(ISSUE);
-                writer.setValue(requirement);
+                writer.setValue(issue);
                 writer.endNode();
             }
             writer.endNode();
         }
     }
+
+
+    private void addTagsTo(HierarchicalStreamWriter writer, Set<TestTag> tags) {
+        if (!CollectionUtils.isEmpty(tags)) {
+            writer.startNode(TAGS);
+            for (TestTag tag : tags) {
+                writer.startNode(TAG);
+                writer.addAttribute(TAG_NAME, tag.getName());
+                writer.addAttribute(TAG_TYPE, tag.getType());
+                writer.endNode();
+            }
+            writer.endNode();
+        }
+    }
+
+    
 
     private void writeErrorForFailingTest(final HierarchicalStreamWriter writer, final TestStep step) {
         if (step.isFailure()) {
@@ -275,6 +298,8 @@ public class TestOutcomeConverter implements Converter {
                 readTestRunIssues(reader, testOutcome);
             } else if (childNode.equals(USER_STORY)) {
                 readUserStory(reader, testOutcome);
+            } else if (childNode.equals(TAGS)) {
+                readTags(reader, testOutcome);
             }
             reader.moveUp();
         }
@@ -323,12 +348,30 @@ public class TestOutcomeConverter implements Converter {
         }
     }
 
+    private void readTags(final HierarchicalStreamReader reader,
+                          final TestOutcome testOutcome) {
+        Set<TestTag> tags = new HashSet<TestTag>();
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String childNode = reader.getNodeName();
+            if (childNode.equals(TAG)) {
+                tags.add(readTag(reader));
+            }
+            reader.moveUp();
+        }
+        testOutcome.setTags(tags);
+    }
+
+    private TestTag readTag(HierarchicalStreamReader reader) {
+        return TestTag.withName(reader.getAttribute("name")).andType(reader.getAttribute("type"));
+    }
+
     /*
-     * <test-step result="SUCCESS"> <description>The customer navigates to the
-     * metro masthead site.</description>
-     * <screenshot>the_customer_navigates_to_the_metro_masthead_site2
-     * .png</screenshot> </test-step>
-     */
+    * <test-step result="SUCCESS"> <description>The customer navigates to the
+    * metro masthead site.</description>
+    * <screenshot>the_customer_navigates_to_the_metro_masthead_site2
+    * .png</screenshot> </test-step>
+    */
     private void readTestStep(final HierarchicalStreamReader reader, final TestOutcome testOutcome) {
         TestStep step = new TestStep();
         String testResultValue = reader.getAttribute(RESULT_FIELD);

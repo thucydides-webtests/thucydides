@@ -1,31 +1,40 @@
 package net.thucydides.core.statistics.dao;
 
+import ch.lambdaj.function.convert.Converter;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.statistics.model.TestRun;
 import net.thucydides.core.statistics.model.TestRunTag;
 import net.thucydides.core.statistics.service.TagProvider;
 import net.thucydides.core.statistics.service.TagProviderService;
 import net.thucydides.core.util.EnvironmentVariables;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import static ch.lambdaj.Lambda.convert;
 
 public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
 
     private static final String FIND_ALL_TEST_HISTORIES = "select t from TestRun t where t.projectKey = :projectKey order by t.executionDate";
     private static final String FIND_BY_NAME = "select t from TestRun t where t.title = :title and t.projectKey = :projectKey";
-    private static final String FIND_TAG_BY_NAME = "select t from TestRunTag t where t.name = :name and t.code = :code and t.projectKey = :projectKey";
+    private static final String FIND_TAG_BY_NAME = "select t from TestRunTag t where t.name = :name and t.type = :type and t.projectKey = :projectKey";
     private static final String FIND_ALL_TAGS  = "select t from TestRunTag t where t.projectKey = :projectKey order by t.name";
     private static final String FIND_ALL_TAG_TYPES = "select distinct t.type from TestRunTag t where t.projectKey = :projectKey order by t.type";
     private static final String COUNT_BY_NAME = "select count(t) from TestRun t where t.title = :title and t.projectKey = :projectKey";
@@ -150,7 +159,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
             TestRun storedHistory = TestRun.from(testOutcome)
                                            .inProject(getProjectKey())
                                            .at(clock.getCurrentTime().toDate());
-            addTagsTo(testOutcome, storedHistory);
+            addTagsFrom(testOutcome).to(storedHistory);
             LOGGER.debug("Storing statistics for test result " + testOutcome.getTitle());
             entityManager.persist(storedHistory);
         }
@@ -163,29 +172,69 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
                                                          Thucydides.DEFAULT_PROJECT_KEY);
     }
 
-    private void addTagsTo(TestOutcome testResult, TestRun storedTestRun) {
-        for(TagProvider tagProvider : tagProviders) {
-            Set<TestRunTag> tags = tagProvider.getTagsFor(testResult);
+    private TagAdder addTagsFrom(TestOutcome testResult) {
+        return new TagAdder(testResult);
+    }
+
+    private class TagAdder {
+
+        private final TestOutcome testOutcome;
+
+        private TagAdder(TestOutcome testOutcome) {
+            this.testOutcome = testOutcome;
+        }
+        
+        public void to(TestRun storedTestRun) {
+            for(TagProvider tagProvider : tagProviders) {
+                List<TestRunTag> tagsToPersist = convert(tagProvider.getTagsFor(testOutcome), toTestRunTags());
+
+                List<TestRunTag> existingTags = findAndUpdateAnyExistingTags(storedTestRun, tagsToPersist);
+
+                tagsToPersist.removeAll(existingTags);
+
+                for(TestRunTag tag : tagsToPersist) {
+                    entityManager.persist(tag);
+                    storedTestRun.getTags().add(tag);
+                }
+            }
+        }
+
+        private Converter<TestTag, TestRunTag> toTestRunTags() {
+            return new Converter<TestTag, TestRunTag>() {
+
+                @Override
+                public TestRunTag convert(TestTag from) {
+                    return new TestRunTag(getProjectKey(), from.getType(), from.getName());
+                }
+            }; 
+        }
+
+        private List<TestRunTag> findAndUpdateAnyExistingTags(TestRun storedTestRun, List<TestRunTag> tags) {
             List<TestRunTag> matchedTags = Lists.newArrayList();
+
             for(TestRunTag tag : tags) {
-                List<TestRunTag> matchingStoredTags = entityManager.createQuery(FIND_TAG_BY_NAME)
-                        .setParameter("name", tag.getName())
-                        .setParameter("projectKey", tag.getProjectKey())
-                        .setParameter("code", tag.getCode())
-                        .getResultList();
-                if (!matchingStoredTags.isEmpty()) {
-                    TestRunTag firstMatchingTag = matchingStoredTags.get(0);
-                    storedTestRun.getTags().add(firstMatchingTag);
-                    firstMatchingTag.getTestRuns().add(storedTestRun);
+                Optional<TestRunTag> matchingStoredTag = tagInDatabaseMatching(tag);
+                if (matchingStoredTag.isPresent()) {
+                    TestRunTag matchingTag = matchingStoredTag.get();
+                    storedTestRun.getTags().add(matchingTag);
+                    matchingTag.getTestRuns().add(storedTestRun);
                     matchedTags.add(tag);
                 }
             }
+            return ImmutableList.copyOf(matchedTags);
+        }
 
-            tags.removeAll(matchedTags);
+        private Optional<TestRunTag> tagInDatabaseMatching(TestRunTag tag) {
+            List<TestRunTag> matchingStoredTags = entityManager.createQuery(FIND_TAG_BY_NAME)
+                                    .setParameter("name", tag.getName())
+                                    .setParameter("type", tag.getType())
+                                    .setParameter("projectKey", tag.getProjectKey())
+                                    .getResultList();
 
-            for(TestRunTag tag : tags) {
-                entityManager.persist(tag);
-                storedTestRun.getTags().add(tag);
+            if (matchingStoredTags.isEmpty()) {
+                return Optional.absent();
+            } else {
+                return Optional.of(matchingStoredTags.get(0));
             }
         }
     }

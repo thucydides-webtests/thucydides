@@ -12,12 +12,22 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
+import static net.thucydides.core.matchers.FileMatchers.exists;
+import static net.thucydides.core.util.TestResources.directoryInClasspathCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
 
@@ -30,6 +40,8 @@ public class WhenGeneratingAnAggregateHtmlReport {
 
     private File outputDirectory;
 
+    WebDriver driver;
+    
     @Mock
     TestHistory testHistory;
 
@@ -39,52 +51,39 @@ public class WhenGeneratingAnAggregateHtmlReport {
         reporter = new HtmlAggregateStoryReporter("project");
         outputDirectory = temporaryDirectory.newFolder("target/site/thucydides");
         reporter.setOutputDirectory(outputDirectory);
+
+        driver = new HtmlUnitDriver();
     }
 
     @Test
-    public void should_generate_an_aggregate_story_report() throws Exception {
+    public void should_aggregate_dashboard_should_contain_a_list_of_features_and_stories_for_legacy_tests() throws Exception {
 
-        File sourceDirectory = new File("src/test/resources/featured-user-story-reports");
+        File sourceDirectory = directoryInClasspathCalled("/test-outcomes/containing-features-and-stories");
         reporter.generateReportsForStoriesFrom(sourceDirectory);
 
-        File htmlStoryReport = new File(outputDirectory,"stories.html");
-        assertThat(htmlStoryReport.exists(), is(true));
-    }
+        File report = new File(outputDirectory,"index.html");
 
-    @Test
-    public void should_return_report_data_for_reporting() throws Exception {
+        String reportUrl = "file:///" + report.getAbsolutePath();
+        driver.get(reportUrl);
 
-        File sourceDirectory = new File("src/test/resources/featured-user-story-reports");
-        ThucydidesReportData data = reporter.generateReportsForStoriesFrom(sourceDirectory);
-
-        assertThat(data.getFeatureResults().size(), is(3));
-        assertThat(data.getStoryResults().size(), is(4));
-    }
-
-    @Test
-    public void should_generate_an_aggregate_feature_report() throws Exception {
-
-        File sourceDirectory = new File("src/test/resources/featured-user-story-reports");
-        reporter.generateReportsForStoriesFrom(sourceDirectory);
-
-        File featureReport = new File(outputDirectory,"features.html");
-        assertThat(featureReport.exists(), is(true));
-    }
-
-    @Test
-    public void should_generate_an_aggregate_history_report() throws Exception {
-
-        File sourceDirectory = new File("src/test/resources/featured-user-story-reports");
-        reporter.generateReportsForStoriesFrom(sourceDirectory);
-
-        File featureReport = new File(outputDirectory,"history.html");
-        assertThat(featureReport.exists(), is(true));
+        List<WebElement> tagTypes = driver.findElements(By.cssSelector(".tagTitle"));
+        List<String> tagTypeNames = extract(tagTypes, on(WebElement.class).getText());
+        assertThat(tagTypeNames, hasItems("A User Story In A Feature","A Feature"));
     }
 
     @Mock ThucydidesSystemProperties systemProperties;
 
     class CustomHtmlAggregateStoryReporter extends HtmlAggregateStoryReporter {
-        CustomHtmlAggregateStoryReporter(String projectName) {
+//        CustomHtmlAggregateStoryReporter(String projectName) {
+//            super(projectName);
+//        }
+//
+//        @Override
+//        protected ThucydidesSystemProperties getSystemProperties() {
+//            return systemProperties;
+//        }
+
+        public CustomHtmlAggregateStoryReporter(final String projectName) {
             super(projectName);
         }
 
@@ -119,47 +118,6 @@ public class WhenGeneratingAnAggregateHtmlReport {
         customReport.setIssueTrackerUrl("http://my.issue.tracker");
 
         verify(systemProperties).setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL,"http://my.issue.tracker");
-    }
-
-    @Test
-    public void should_generate_a_story_report_for_each_feature() throws Exception {
-
-        File sourceDirectory = new File("src/test/resources/featured-user-story-reports");
-        reporter.generateReportsForStoriesFrom(sourceDirectory);
-
-        File storyReport1 = new File(outputDirectory,"stories_a_feature.html");
-        File storyReport2 = new File(outputDirectory,"stories_another_feature.html");
-        File storyReport3 = new File(outputDirectory,"stories_another_different_feature.html");
-
-        assertThat(storyReport1.exists(), is(true));
-        assertThat(storyReport2.exists(), is(true));
-        assertThat(storyReport3.exists(), is(true));
-    }
-
-    @Test
-    public void report_dashboard_should_have_links_to_the_stories() throws Exception {
-
-        File sourceDirectory = new File("src/test/resources/featured-user-story-reports");
-        reporter.generateReportsForStoriesFrom(sourceDirectory);
-
-        File featureReport = new File(outputDirectory,"features.html");
-
-        String featureReportContents = getStringFrom(featureReport);
-
-        assertThat(featureReportContents, containsString("<a href=\"stories_a_feature.html\""));
-        assertThat(featureReportContents, containsString("<a href=\"stories_another_feature.html\""));
-        assertThat(featureReportContents, containsString("<a href=\"stories_another_different_feature.html\""));
-
-    }
-
-    @Test
-    public void should_generate_functional_coverage_data() throws Exception {
-
-        File sourceDirectory = new File("src/test/resources/featured-user-story-reports");
-        reporter.generateReportsForStoriesFrom(sourceDirectory);
-
-        File coverageData = new File(outputDirectory,"coverage.js");
-        assertThat(coverageData.exists(), is(true));
     }
 
     @Test

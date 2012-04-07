@@ -1,6 +1,8 @@
 package net.thucydides.core.model;
 
 import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.util.Inflection;
+import net.thucydides.core.util.Inflector;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,11 +21,11 @@ public class ReportNamer {
     }
 
     private ReportType type;
-        
+
     private ReportNamer(final ReportType type) {
         this.type = type;
     }
-    
+
     /**
      * Return a filesystem-friendly version of the test case name. The filesytem
      * version should have no spaces and have the XML file suffix.
@@ -56,12 +58,15 @@ public class ReportNamer {
     }
 
     public String getNormalizedTestNameFor(final Story userStory) {
-        String testNameWithUnderscores = NameConverter.underscore(userStory.getName());
-        return appendSuffixTo(testNameWithUnderscores);
+        return getNormalizedTestNameFor(userStory.getName());
     }
 
     public String getNormalizedTestNameFor(final ApplicationFeature feature) {
-        String testNameWithUnderscores = NameConverter.underscore(feature.getName());
+        return getNormalizedTestNameFor(feature.getName());
+    }
+
+    public String getNormalizedTestNameFor(String name) {
+        String testNameWithUnderscores = NameConverter.underscore(name);
         return appendSuffixTo(testNameWithUnderscores);
     }
 
@@ -72,6 +77,4 @@ public class ReportNamer {
             return testNameWithUnderscores + "." + type.toString();
         }
     }
-    
-
 }

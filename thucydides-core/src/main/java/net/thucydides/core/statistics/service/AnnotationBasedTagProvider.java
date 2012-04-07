@@ -9,6 +9,7 @@ import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.statistics.model.TestRunTag;
 import net.thucydides.core.util.EnvironmentVariables;
 
@@ -22,33 +23,25 @@ import static ch.lambdaj.Lambda.project;
 
 public class AnnotationBasedTagProvider implements TagProvider {
     
-    private final String projectKey;
-
     public AnnotationBasedTagProvider() {
-        projectKey = getProjectKey();
     }
 
-    private String getProjectKey() {
-        EnvironmentVariables environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
-        return ThucydidesSystemProperty.PROJECT_KEY.from(environmentVariables, Thucydides.DEFAULT_PROJECT_KEY);
-    }
-
-    public Set<TestRunTag> getTagsFor(final TestOutcome testOutcome) {
+    public Set<TestTag> getTagsFor(final TestOutcome testOutcome) {
         if (testOutcome.getTestCase() == null) {
             return Collections.emptySet();
         }
         List<WithTag> tags = TestAnnotations.forClass(testOutcome.getTestCase()).getTagsForMethod(testOutcome.getMethodName());
 
-        return Sets.newHashSet(convert(tags, toTestRunTags(projectKey)));
+        return Sets.newHashSet(convert(tags, toTestTags()));
     }
 
-    private Converter<Object, TestRunTag> toTestRunTags(final String projectKey) {
-        return new Converter<Object, TestRunTag>() {
+    private Converter<Object, TestTag> toTestTags() {
+        return new Converter<Object, TestTag>() {
 
             @Override
-            public TestRunTag convert(Object tag) {
+            public TestTag convert(Object tag) {
                 WithTag withTag = (WithTag) tag;
-                return new TestRunTag(projectKey, withTag.type(), withTag.value(), withTag.value());
+                return TestTag.withName(withTag.name()).andType(withTag.type());
             }
         };
     }

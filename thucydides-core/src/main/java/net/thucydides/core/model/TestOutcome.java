@@ -1,17 +1,24 @@
 package net.thucydides.core.model;
 
 import ch.lambdaj.function.convert.Converter;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.TestAnnotations;
+import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
-import net.thucydides.core.reports.saucelabs.SaucelabsLinkGenerator;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import net.thucydides.core.statistics.service.TagProvider;
+import net.thucydides.core.statistics.service.TagProviderService;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.NameConverter;
@@ -28,7 +35,6 @@ import java.util.Stack;
 
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.join;
 import static ch.lambdaj.Lambda.on;
@@ -50,6 +56,9 @@ import static net.thucydides.core.util.NameConverter.withNoArguments;
  * includes the narrative steps taken during the test, screenshots at each step,
  * the results of each step, and the overall result. A test scenario
  * can be associated with a user story using the UserStory annotation.
+ *
+ * A TestOutcome is stored as an XML file after a test is executed. When the aggregate reports
+ * are generated, the test outcome XML files are loaded into memory and processed.
  *
  * @author johnsmart
  */
@@ -80,6 +89,7 @@ public class TestOutcome {
 
     private Set<String> issues;
     private Set<String> additionalIssues;
+    private Set<TestTag> tags;
 
     private long duration;
 
@@ -112,6 +122,7 @@ public class TestOutcome {
     /**
      * The title is immutable once set. For convenience, you can create a test
      * run directly with a title using this constructor.
+     * @param methodName The name of the Java method that implements this test.
      */
     public TestOutcome(final String methodName) {
         this(methodName, null);
@@ -134,8 +145,14 @@ public class TestOutcome {
         return this;
     }
 
+
+
     /**
      * A test outcome should relate to a particular test class or user story class.
+     * @param methodName The name of the Java method implementing this test, if the test is a JUnit or TestNG test (for example)
+     * @param testCase The test class that contains this test method, if the test is a JUnit or TestNG test
+     * @param userStory If the test is not implemented by a Java class (e.g. an easyb story), we may just use the Story class to
+     *                  represent the story in which the test is implemented.
      */
     protected TestOutcome(final String methodName, final Class<?> testCase, final Story userStory) {
         startTime = System.currentTimeMillis();
@@ -149,8 +166,10 @@ public class TestOutcome {
 
     /**
      * Create a new test outcome instance for a given test class or user story.
+     * @param methodName  The name of the Java method implementing this test,
+     * @param testCase The  JUnit or TestNG test class that contains this test method
+     * @return A new TestOutcome object for this test.
      */
-
     public static TestOutcome forTest(final String methodName, final Class<?> testCase) {
         return new TestOutcome(methodName, testCase);
     }
@@ -209,11 +228,8 @@ public class TestOutcome {
     }
 
     private String obtainTitleFromAnnotationOrMethodName() {
-        String annotatedTitle = TestAnnotations.forClass(testCase).getAnnotatedTitleForMethod(methodName);
-        if (annotatedTitle != null) {
-            return annotatedTitle;
-        }
-        return NameConverter.humanize(withNoArguments(methodName));
+        Optional<String> annotatedTitle = TestAnnotations.forClass(testCase).getAnnotatedTitleForMethod(methodName);
+        return annotatedTitle.or(NameConverter.humanize(withNoArguments(methodName)));
     }
 
     public String getStoryTitle() {
@@ -254,6 +270,7 @@ public class TestOutcome {
      * An acceptance test is made up of a series of steps. Each step is in fact
      * a small test, which follows on from the previous one. The outcome of the
      * acceptance test as a whole depends on the outcome of all of the steps.
+     * @return A list of top-level test steps for this test.
      */
     public List<TestStep> getTestSteps() {
         return ImmutableList.copyOf(testSteps);
@@ -286,10 +303,6 @@ public class TestOutcome {
                                       currentStep.getException());
             }
         };
-    }
-
-    private boolean weNeedAScreenshotFor(TestStep step) {
-        return (step.needsScreenshots());
     }
 
     private int widthOf(final File screenshot) {
@@ -331,6 +344,7 @@ public class TestOutcome {
      * of the steps are ignored, the test will be considered 'ignored'. If all
      * of the tests succeed except the ignored tests, the test is a success.
      * The test result can also be overridden using the 'setResult()' method.
+     * @return The outcome of this test.
      */
     public TestResult getResult() {
         if (testFailureCause != null) {
@@ -347,6 +361,8 @@ public class TestOutcome {
 
     /**
      * Add a test step to this acceptance test.
+     * @param step a completed step to be added to this test outcome.
+     * @return this TestOucome insstance - this is a convenience to allow method chaining.
      */
     public TestOutcome recordStep(final TestStep step) {
         checkNotNull(step.getDescription(),
@@ -380,16 +396,14 @@ public class TestOutcome {
      * If no user story is defined, no feature can be returned, so the method returns null.
      * If a user story has been defined without a class (for example, one that has been reloaded),
      * the feature will be built using the feature name and id in the user story.
+     * @return The Feature defined for this TestOutcome, if any
      */
     public ApplicationFeature getFeature() {
-        if (getUserStory() != null) {
-            return obtainFeatureFromUserStory();
+        if ((getUserStory() != null) && (getUserStory().getFeature() != null)) {
+            return getUserStory().getFeature();
+        } else {
+            return null;
         }
-        return null;
-    }
-
-    private ApplicationFeature obtainFeatureFromUserStory() {
-        return getUserStory().getFeature();
     }
 
     public void setTitle(final String title) {
@@ -430,7 +444,7 @@ public class TestOutcome {
     }
 
     /**
-     * The current step is the last step in the step list, or the last step in the children of the current step group.
+     * @return The current step is the last step in the step list, or the last step in the children of the current step group.
      */
     public TestStep getCurrentStep() {
         checkState(!testSteps.isEmpty());
@@ -530,14 +544,12 @@ public class TestOutcome {
     }
 
     private void addMethodLevelIssuesTo(Set<String> issues) {
-        String issue = TestAnnotations.forClass(testCase).getAnnotatedIssueForMethod(getMethodName());
-        if (issue != null) {
-            issues.add(issue);
+        Optional<String> issue = TestAnnotations.forClass(testCase).getAnnotatedIssueForMethod(getMethodName());
+        if (issue.isPresent()) {
+            issues.add(issue.get());
         }
         String[] multipleIssues = TestAnnotations.forClass(testCase).getAnnotatedIssuesForMethod(getMethodName());
-        if (multipleIssues != null) {
-            issues.addAll(Arrays.asList(multipleIssues));
-        }
+        issues.addAll(Arrays.asList(multipleIssues));
     }
 
     private void addTitleLevelIssuesTo(Set<String> issues) {
@@ -565,6 +577,38 @@ public class TestOutcome {
         setTestFailureCause(failure.getException());
         TestStep lastTestStep = testSteps.get(testSteps.size() - 1);
         lastTestStep.failedWith(new StepFailureException(failure.getMessage(), failure.getException()));
+    }
+
+    public Set<TestTag> getTags() {
+        if (tags != null) {
+            return tags;
+        } else {
+            List<TagProvider> tagProviders = TagProviderService.getTagProviders();
+            tags = getTagsUsingTagProviders(tagProviders);
+        }
+        return ImmutableSet.copyOf(tags);
+    }
+
+    private Set<TestTag> getTagsUsingTagProviders(List<TagProvider> tagProviders) {
+        Set<TestTag> tags  = Sets.newHashSet();
+        for (TagProvider tagProvider : tagProviders) {
+            tags.addAll(tagProvider.getTagsFor(this));
+        }
+        return ImmutableSet.copyOf(tags);
+    }
+
+    private Converter<WithTag, TestTag> toTestTags() {
+        return new Converter<WithTag, TestTag>() {
+            @Override
+            public TestTag convert(WithTag from) {
+                return TestTag.withName(from.name()).andType(from.type());
+            }
+        };
+    }
+
+    public void setTags(Set<TestTag> tags) {
+        Preconditions.checkArgument(this.tags == null, "Tags cannot be reassiged once set.");
+        this.tags = ImmutableSet.copyOf(tags);
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {

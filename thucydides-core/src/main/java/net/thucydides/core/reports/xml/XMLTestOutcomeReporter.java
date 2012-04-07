@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.xml;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
@@ -86,7 +87,7 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
         }
     }
 
-    public TestOutcome loadReportFrom(final File reportFile) throws NotAThucydidesReportException, IOException {
+    public Optional<TestOutcome> loadReportFrom(final File reportFile) throws IOException {
 
         InputStream input = null;
         try {
@@ -94,9 +95,10 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
             xstream.alias("acceptance-test-run", TestOutcome.class);
             xstream.registerConverter(usingXmlConverter());
             input = new FileInputStream(reportFile);
-            return (TestOutcome) xstream.fromXML(input);
+            return Optional.of((TestOutcome) xstream.fromXML(input));
         } catch (CannotResolveClassException e) {
-            throw new NotAThucydidesReportException("This file is not a thucydides report: " + reportFile, e);
+            LOGGER.warn("Tried to load a file that is not a thucydides report: " + reportFile);
+            return Optional.absent();
         } finally {
             input.close();
         }

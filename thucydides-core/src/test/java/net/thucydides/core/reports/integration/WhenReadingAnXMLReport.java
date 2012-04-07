@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.integration;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
@@ -55,8 +56,29 @@ public class WhenReadingAnXMLReport {
         File report = temporaryDirectory.newFile("saved-report.xml");
         FileUtils.writeStringToFile(report, storedReportXML);
 
-        TestOutcome testOutcome = outcomeReporter.loadReportFrom(report);
-        assertThat(testOutcome.getIssues(), hasItems("#123", "#456", "#789"));
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+        assertThat(testOutcome.get().getIssues(), hasItems("#123", "#456", "#789"));
+    }
+
+    @Test
+    public void should_load_tags_from_xml_file() throws Exception {
+        String storedReportXML =
+        "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
+            + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.SomeTestScenarioWithTags' name='Some test scenario with tags' />\n"
+            + "  <tags>\n"
+            + "    <tag name='important feature' type='feature' />\n"
+            + "    <tag name='simple story' type='story' />\n"
+            + "  </tags>\n"
+            + "  <test-step result='SUCCESS' duration='0'>\n"
+            + "    <description>step 1</description>\n"
+            + "  </test-step>\n"
+            + "</acceptance-test-run>";
+
+        File report = temporaryDirectory.newFile("saved-report.xml");
+        FileUtils.writeStringToFile(report, storedReportXML);
+
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+        assertThat(testOutcome.get().getTags().size(), is(2));
     }
 
     @Test
@@ -72,8 +94,8 @@ public class WhenReadingAnXMLReport {
         File report = temporaryDirectory.newFile("saved-report.xml");
         FileUtils.writeStringToFile(report, storedReportXML);
 
-        TestOutcome testOutcome = outcomeReporter.loadReportFrom(report);
-        assertThat(testOutcome.getTitle(), is("Should do this"));
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+        assertThat(testOutcome.get().getTitle(), is("Should do this"));
     }
 
     @Test
@@ -92,10 +114,10 @@ public class WhenReadingAnXMLReport {
         File report = temporaryDirectory.newFile("saved-report.xml");
         FileUtils.writeStringToFile(report, storedReportXML);
 
-        TestOutcome testOutcome = outcomeReporter.loadReportFrom(report);
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
 
-        TestStep testStep = (TestStep) testOutcome.getTestSteps().get(0);
-        assertThat(testOutcome.getTestSteps().size(), is(1));
+        TestStep testStep = (TestStep) testOutcome.get().getTestSteps().get(0);
+        assertThat(testOutcome.get().getTestSteps().size(), is(1));
         assertThat(testStep.getResult(), is(TestResult.SUCCESS));
         assertThat(testStep.getDescription(), is("step 1"));
         assertThat(testStep.getScreenshots().get(0).getScreenshotFile().getName(), is("step_1.png"));
@@ -116,8 +138,8 @@ public class WhenReadingAnXMLReport {
         File report = temporaryDirectory.newFile("saved-report.xml");
         FileUtils.writeStringToFile(report, storedReportXML);
 
-        TestOutcome testOutcome = outcomeReporter.loadReportFrom(report);
-        assertThat(testOutcome.getUserStory(), is(Story.withId("net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory", "A user story")));
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+        assertThat(testOutcome.get().getUserStory(), is(Story.withId("net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory", "A user story")));
     }
 
     @Test
@@ -135,12 +157,12 @@ public class WhenReadingAnXMLReport {
         File report = temporaryDirectory.newFile("saved-report.xml");
         FileUtils.writeStringToFile(report, storedReportXML);
 
-        TestOutcome testOutcome = outcomeReporter.loadReportFrom(report);
-        testOutcome.getFeature();
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+        testOutcome.get().getFeature();
 
         ApplicationFeature expectedFeature = new ApplicationFeature("myapp.myfeatures.SomeFeature", "Some feature");
-        assertThat(testOutcome.getFeature().getId(), is("myapp.myfeatures.SomeFeature"));
-        assertThat(testOutcome.getFeature().getName(), is("Some feature"));
+        assertThat(testOutcome.get().getFeature().getId(), is("myapp.myfeatures.SomeFeature"));
+        assertThat(testOutcome.get().getFeature().getName(), is("Some feature"));
     }
 
     @Test
@@ -158,14 +180,14 @@ public class WhenReadingAnXMLReport {
         File report = temporaryDirectory.newFile("saved-report.xml");
         FileUtils.writeStringToFile(report, storedReportXML);
 
-        TestOutcome testOutcome = outcomeReporter.loadReportFrom(report);
-        assertThat(testOutcome.getSessionId(), is("1234"));
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+        assertThat(testOutcome.get().getSessionId(), is("1234"));
     }
     
     @Test
     public void should_return_null_feature_if_no_feature_is_present() {
         TestOutcome testOutcome = new TestOutcome("aTestMethod");
-        assertThat(testOutcome.getFeature(), nullValue());
+        assertThat(testOutcome.getFeature(), is(nullValue()));
     }
 
     @Test
@@ -187,12 +209,12 @@ public class WhenReadingAnXMLReport {
         File report = temporaryDirectory.newFile("saved-report.xml");
         FileUtils.writeStringToFile(report, storedReportXML);
 
-        TestOutcome testOutcome = outcomeReporter.loadReportFrom(report);
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
 
-        assertThat(testOutcome.getTitle(), is("A nested test case"));
+        assertThat(testOutcome.get().getTitle(), is("A nested test case"));
         
-        TestStep group1 = testOutcome.getTestSteps().get(0);
-        assertThat(testOutcome.getTestSteps().size(), is(1));
+        TestStep group1 = testOutcome.get().getTestSteps().get(0);
+        assertThat(testOutcome.get().getTestSteps().size(), is(1));
     }
 
     @Test
@@ -212,12 +234,12 @@ public class WhenReadingAnXMLReport {
         File report = temporaryDirectory.newFile("saved-report.xml");
         FileUtils.writeStringToFile(report, storedReportXML);
 
-        TestOutcome testOutcome = outcomeReporter.loadReportFrom(report);
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
 
-        assertThat(testOutcome.getTitle(), is("A nested test case"));
+        assertThat(testOutcome.get().getTitle(), is("A nested test case"));
         
-        TestStep group1 = testOutcome.getTestSteps().get(0);
-        assertThat(testOutcome.getTestSteps().size(), is(1));
+        TestStep group1 = testOutcome.get().getTestSteps().get(0);
+        assertThat(testOutcome.get().getTestSteps().size(), is(1));
     }
 
 
@@ -237,14 +259,14 @@ public class WhenReadingAnXMLReport {
         File report = temporaryDirectory.newFile("saved-report.xml");
         FileUtils.writeStringToFile(report, storedReportXML);
 
-        TestOutcome testOutcome = outcomeReporter.loadReportFrom(report);
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
 
-        assertThat(testOutcome.getTitle(), is("A simple test case"));
-        assertThat(testOutcome.getTestSteps().size(), is(2));
-        assertThat(testOutcome.getTestSteps().get(0).getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome.getTestSteps().get(0).getDescription(), is("step 1"));
-        assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.FAILURE));
-        assertThat(testOutcome.getTestSteps().get(1).getDescription(), is("step 2"));
+        assertThat(testOutcome.get().getTitle(), is("A simple test case"));
+        assertThat(testOutcome.get().getTestSteps().size(), is(2));
+        assertThat(testOutcome.get().getTestSteps().get(0).getResult(), is(TestResult.SUCCESS));
+        assertThat(testOutcome.get().getTestSteps().get(0).getDescription(), is("step 1"));
+        assertThat(testOutcome.get().getTestSteps().get(1).getResult(), is(TestResult.FAILURE));
+        assertThat(testOutcome.get().getTestSteps().get(1).getDescription(), is("step 2"));
     }
 
 

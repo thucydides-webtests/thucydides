@@ -18,18 +18,16 @@ public class TestRunTag {
     private Long id;
 
     private String projectKey;
-    private String code;
     private String name;
     private String type;
 
     public TestRunTag() {
     }
 
-    public TestRunTag(String projectKey, String type, String name, String code) {
+    public TestRunTag(String projectKey, String type, String name) {
         this.projectKey = projectKey;
         this.type = type;
         this.name = name;
-        this.code = code;
     }
 
     public Long getId() {
@@ -38,10 +36,6 @@ public class TestRunTag {
 
     public String getProjectKey() {
         return projectKey;
-    }
-
-    public String getCode() {
-        return code;
     }
 
     public String getName() {

@@ -9,6 +9,7 @@ import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.screenshots.ScreenshotFormatter;
 import net.thucydides.core.screenshots.ScreenshotException;
@@ -74,7 +75,6 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         addTestOutcomeToContext(testOutcome, context);
         addFormattersToContext(context);
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_REPORT).usingContext(context);
-
         copyResourcesToOutputDirectory();
 
         if (containsScreenshots(testOutcome)) {
@@ -104,7 +104,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     private void addFormattersToContext(final Map<String,Object> context) {
         Formatter formatter = new Formatter(issueTracking);
         context.put("formatter", formatter);
-
+        context.put("reportName", new ReportNameProvider());
     }
 
     private void generateScreenshotReportsFor(final TestOutcome testOutcome) throws IOException {
@@ -118,6 +118,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         Map<String,Object> context = new HashMap<String,Object>();
         context.put("screenshots", screenshots);
         context.put("testOutcome", testOutcome);
+        context.put("reportName", new ReportNameProvider());
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_SCREENSHOT).usingContext(context);
         writeReportToOutputDirectory(screenshotReport, htmlContents);
 

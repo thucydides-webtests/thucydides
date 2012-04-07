@@ -2,7 +2,7 @@
 htmlReport = new File("${basedir}/target/site/thucydides/index.html")
 assert htmlReport.exists()
 
-htmlStoriesReport = new File("${basedir}/target/site/thucydides/stories.html").text
+def htmlStoriesReport = htmlReport.text
 assert htmlStoriesReport.contains('<a href="http://my.jira.server/browse/MY-PROJECT-123">#MY-PROJECT-123</a>')
 assert htmlStoriesReport.contains('<a href="http://my.jira.server/browse/MY-PROJECT-200">#MY-PROJECT-200</a>')
 assert htmlStoriesReport.contains('<a href="http://my.jira.server/browse/MY-PROJECT-300">#MY-PROJECT-300</a>')

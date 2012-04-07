@@ -10,12 +10,14 @@ import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.UserStoriesResultSet;
 import net.thucydides.core.model.features.FeatureLoader;
 import net.thucydides.core.model.userstories.UserStoryLoader;
-import net.thucydides.core.reports.ThucydidesReportData;
+import net.thucydides.core.reports.TestOutcomeLoader;
+import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.UserStoryTestReporter;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.reports.json.JSONProgressResultTree;
 import net.thucydides.core.reports.json.JSONResultTree;
+import net.thucydides.core.util.Inflector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +44,9 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final String FEATURES_TEMPLATE_PATH = "freemarker/features.ftl";
     private static final String COVERAGE_DATA_TEMPLATE_PATH = "freemarker/coverage.ftl";
     private static final String PROGRESS_DATA_TEMPLATE_PATH = "freemarker/progress.ftl";
-    private static final String HOME_TEMPLATE_PATH = "freemarker/index.ftl";
+    private static final String TEST_OUTCOME_TEMPLATE_PATH = "freemarker/home.ftl";
     private static final String TREEMAP_TEMPLATE_PATH = "freemarker/treemap.ftl";
     private static final String DASHBOARD_TEMPLATE_PATH = "freemarker/dashboard.ftl";
-    private FeatureLoader featureLoader;
-    private UserStoryLoader storyLoader;
     private TestHistory testHistory;
     private String projectName;
 
@@ -57,8 +57,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     public HtmlAggregateStoryReporter(final String projectName, final IssueTracking issueTracking) {
-        storyLoader = new UserStoryLoader();
-        featureLoader = new FeatureLoader();
         this.projectName = projectName;
         this.issueTracking = issueTracking;
     }
@@ -73,13 +71,14 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         }
         return testHistory;
     }
+
     /**
      * Generate aggregate XML reports for the test run reports in the output directory.
      * Returns the list of
      */
     public File generateReportFor(final StoryTestResults storyTestResults) throws IOException {
 
-        LOGGER.info("Generating report for user story {} to {}",storyTestResults.getTitle(), getOutputDirectory());
+        LOGGER.info("Generating report for user story {} to {}", storyTestResults.getTitle(), getOutputDirectory());
 
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("story", storyTestResults);
@@ -96,34 +95,34 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Formatter formatter = new Formatter(issueTracking);
         context.put("formatter", formatter);
         context.put("formatted", new NumericalFormatter());
+        context.put("inflection", Inflector.getInstance());
     }
 
-    public ThucydidesReportData generateReportsForStoriesFrom(final File sourceDirectory) throws IOException {
-        List<StoryTestResults> storyResults = loadStoryResultsFrom(sourceDirectory);
-        List<FeatureResults> featureResults = loadFeatureResultsFrom(sourceDirectory);
+    public TestOutcomes generateReportsForStoriesFrom(final File sourceDirectory) throws IOException {
+        TestOutcomes testOutcomes = loadTestOutcomesFrom(sourceDirectory);
 
         copyResourcesToOutputDirectory();
 
-        for(StoryTestResults storyTestResults : storyResults) {
-            generateReportFor(storyTestResults);
-        }
+        generateAggregateReportFor(testOutcomes);
+        generateTagReportsFor(testOutcomes);
+        generateResultReportsFor(testOutcomes);
 
-        generateAggregateReportFor(storyResults, featureResults);
-
-        return new ThucydidesReportData(featureResults, storyResults);
+        return testOutcomes;
     }
 
-    private List<StoryTestResults> loadStoryResultsFrom(final File sourceDirectory) throws IOException {
-        return storyLoader.loadFrom(sourceDirectory);
+    private TestOutcomes loadTestOutcomesFrom(File sourceDirectory) throws IOException {
+        return TestOutcomeLoader.testOutcomesIn(sourceDirectory);
     }
 
-    private List<FeatureResults> loadFeatureResultsFrom(final File sourceDirectory) throws IOException {
-        return featureLoader.loadFrom(sourceDirectory);
-    }
-
+    /**
+     * @param storyResults   soon to be deprecated
+     * @param featureResults soon to be deprecated
+     * @throws IOException
+     * @Deprecated Only generate reports for tags
+     */
     private void generateAggregateReportFor(final List<StoryTestResults> storyResults,
                                             final List<FeatureResults> featureResults) throws IOException {
-        LOGGER.info("Generating summary report for user stories to "+ getOutputDirectory());
+        LOGGER.info("Generating summary report for user stories to " + getOutputDirectory());
 
         copyResourcesToOutputDirectory();
 
@@ -132,15 +131,15 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         storyContext.put("storyContext", "All stories");
         addFormattersToContext(storyContext);
         writeReportToOutputDirectory("stories.html",
-                                     mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(storyContext));
+                mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(storyContext));
 
         Map<String, Object> featureContext = new HashMap<String, Object>();
         addFormattersToContext(featureContext);
         featureContext.put("features", featureResults);
         writeReportToOutputDirectory("features.html",
-                                     mergeTemplate(FEATURES_TEMPLATE_PATH).usingContext(featureContext));
+                mergeTemplate(FEATURES_TEMPLATE_PATH).usingContext(featureContext));
 
-        for(FeatureResults feature : featureResults) {
+        for (FeatureResults feature : featureResults) {
             generateStoryReportForFeature(feature);
         }
 
@@ -150,11 +149,86 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateHistoryReport();
     }
 
+    private void generateAggregateReportFor(TestOutcomes testOutcomes) throws IOException {
+
+        ReportNameProvider defaultNameProvider = new ReportNameProvider();
+        Map<String, Object> context = buildContext(testOutcomes, defaultNameProvider);
+        context.put("report", ReportProperties.forAggregateResultsReport());
+        generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, "index.html");
+    }
+
+    private void generateTagReportsFor(TestOutcomes testOutcomes) throws IOException {
+        generateTagReportsFor(testOutcomes, new ReportNameProvider());
+    }
+
+    private void generateResultReportsFor(TestOutcomes testOutcomes) throws IOException {
+        generateResultReportsFor(testOutcomes, new ReportNameProvider());
+    }
+
+    private void generateTagReportsFor(TestOutcomes testOutcomes, ReportNameProvider reportName) throws IOException {
+
+        for (String tag : testOutcomes.getTags()) {
+            generateTagReport(testOutcomes, reportName, tag);
+            generateAssociatedTagReportsForTag(testOutcomes.withTag(tag), tag);
+        }
+    }
+
+    private void generateResultReportsFor(TestOutcomes testOutcomes, ReportNameProvider reportName) throws IOException {
+        generateResultReports(testOutcomes, reportName);
+
+        for (String tag : testOutcomes.getTags()) {
+            generateResultReports(testOutcomes.withTag(tag), new ReportNameProvider(tag));
+        }
+    }
+
+    private void generateResultReports(TestOutcomes testOutcomesForThisTag, ReportNameProvider reportName) throws IOException {
+        if (testOutcomesForThisTag.getSuccessCount() > 0) {
+            generateResultReport(testOutcomesForThisTag.getPassingTests(), reportName, "success");
+        }
+        if (testOutcomesForThisTag.getPendingCount() > 0) {
+            generateResultReport(testOutcomesForThisTag.getPendingTests(), reportName, "pending");
+        }
+        if (testOutcomesForThisTag.getFailureCount() > 0) {
+            generateResultReport(testOutcomesForThisTag.getFailingTests(), reportName, "failure");
+        }
+    }
+
+    private void generateResultReport(TestOutcomes testOutcomes, ReportNameProvider reportName, String testResult) throws IOException {
+        Map<String, Object> context = buildContext(testOutcomes, reportName);
+        context.put("report", ReportProperties.forTestResultsReport());
+        String report = reportName.forTestResult(testResult);
+        generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, report);
+    }
+
+    private void generateTagReport(TestOutcomes testOutcomes, ReportNameProvider reportName, String tag) throws IOException {
+        TestOutcomes testOutcomesForTag = testOutcomes.withTag(tag);
+        Map<String, Object> context = buildContext(testOutcomesForTag, reportName);
+        context.put("report", ReportProperties.forTagResultsReport());
+        String report = reportName.forTag(tag);
+        generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, report);
+    }
+
+    private void generateAssociatedTagReportsForTag(TestOutcomes testOutcomes, String sourceTag) throws IOException {
+        ReportNameProvider reportName = new ReportNameProvider(sourceTag);
+        for (String tag : testOutcomes.getTags()) {
+            generateTagReport(testOutcomes, reportName, tag);
+        }
+    }
+
+    private Map<String, Object> buildContext(TestOutcomes testOutcomesForTagType,
+                                             ReportNameProvider reportName) {
+        Map<String, Object> context = new HashMap<String, Object>();
+        context.put("testOutcomes", testOutcomesForTagType);
+        context.put("reportName", reportName);
+        addFormattersToContext(context);
+        return context;
+    }
+
     private void updateHistoryFor(final List<FeatureResults> featureResults) {
         getTestHistory().updateData(featureResults);
     }
 
-    private void generateHistoryReport()  throws IOException {
+    private void generateHistoryReport() throws IOException {
         List<TestResultSnapshot> history = getTestHistory().getHistory();
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("history", history);
@@ -170,7 +244,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Map<String, Object> context = new HashMap<String, Object>();
 
         context.put("stories", feature.getStoryResults());
-        context.put("storyContext", feature.getFeature().getName() );
+        context.put("storyContext", feature.getFeature().getName());
         addFormattersToContext(context);
         LOGGER.debug("Generating stories page");
         String htmlContents = mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(context);
@@ -189,7 +263,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         addFormattersToContext(context);
 
         LOGGER.debug("Generating report pages");
-        generateReportPage(context, HOME_TEMPLATE_PATH, "index.html");
         generateReportPage(context, TREEMAP_TEMPLATE_PATH, "treemap.html");
         generateReportPage(context, DASHBOARD_TEMPLATE_PATH, "dashboard.html");
 
@@ -209,7 +282,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Map<String, Object> context = new HashMap<String, Object>();
 
         JSONResultTree resultTree = new JSONResultTree();
-        for(FeatureResults feature : featureResults) {
+        for (FeatureResults feature : featureResults) {
             resultTree.addFeature(feature);
         }
 
@@ -224,7 +297,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Map<String, Object> context = new HashMap<String, Object>();
 
         JSONProgressResultTree resultTree = new JSONProgressResultTree();
-        for(FeatureResults feature : featureResults) {
+        for (FeatureResults feature : featureResults) {
             resultTree.addFeature(feature);
         }
 

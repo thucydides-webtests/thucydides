@@ -1,6 +1,6 @@
 package net.thucydides.maven.plugins;
 
-import net.thucydides.core.reports.ThucydidesReportData;
+import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
@@ -102,9 +102,9 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
     @Override
     protected void executeReport(Locale locale) throws MavenReportException {
         getLog().info("Generating Thucydides Reports");
-        ThucydidesReportData reportData = generateHtmlStoryReports();
+        TestOutcomes testOutcomes = generateHtmlStoryReports();
 
-        getHtmlReportGenerator().generateReport(reportData, getSink());
+        getHtmlReportGenerator().generateReport(testOutcomes, getSink());
 
     }
 
@@ -116,7 +116,7 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
 
     }
 
-    private ThucydidesReportData generateHtmlStoryReports() throws MavenReportException {
+    private TestOutcomes generateHtmlStoryReports() throws MavenReportException {
         File reportDirectory = new File(outputDirectory, "thucydides");
 
         getLog().info("Generating reports from " + sourceDirectory);

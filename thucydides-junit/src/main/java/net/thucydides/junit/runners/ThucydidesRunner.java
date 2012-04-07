@@ -303,6 +303,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * place the reports in. Then, at the end of the test, the test runner
      * notifies these reporters of the test outcomes. The reporter's job is to
      * process each test run outcome and do whatever is appropriate.
+     * @param testOutcomeResults the test results from the previous test run.
      */
     private void generateReportsFor(final List<TestOutcome> testOutcomeResults) {
         getReportService().generateReportsFor(testOutcomeResults);

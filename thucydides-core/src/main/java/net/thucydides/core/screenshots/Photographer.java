@@ -103,7 +103,7 @@ public class Photographer {
                     getLogger().warn("Failed to write screenshot (possibly an out of memory error)");
                 }
             } catch (Throwable e) {
-                getLogger().warn("Failed to write screenshot (possibly an out of memory error)", e);
+                getLogger().warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
             } finally {
                 if (stream != null)
                     try {

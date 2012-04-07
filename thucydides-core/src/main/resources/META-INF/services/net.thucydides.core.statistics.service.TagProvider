@@ -1,2 +1,3 @@
 net.thucydides.core.statistics.service.AnnotationBasedTagProvider
+net.thucydides.core.statistics.service.FeatureStoryTagProvider
 

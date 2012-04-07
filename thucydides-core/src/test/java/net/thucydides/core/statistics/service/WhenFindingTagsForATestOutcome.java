@@ -5,6 +5,7 @@ import net.thucydides.core.annotations.NamedUrls;
 import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.annotations.WithTags;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.statistics.model.TestRunTag;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,11 +59,11 @@ public class WhenFindingTagsForATestOutcome {
 
         AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
 
-        Set<TestRunTag> tags = tagProvider.getTagsFor(testOutcome);
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags.size(), is(0));
     }
 
-    @WithTag(value="Car sales", type="pillar")
+    @WithTag(name="Car sales", type="pillar")
     class SomeTestCase {
         public void some_test_method() {}
     }
@@ -74,16 +75,16 @@ public class WhenFindingTagsForATestOutcome {
 
         AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
 
-        Set<TestRunTag> tags = tagProvider.getTagsFor(testOutcome);
-         assertThat(tags.size(), is(not(0)));
-        TestRunTag tag = tags.iterator().next();
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
+        assertThat(tags.size(), is(not(0)));
+        TestTag tag = tags.iterator().next();
 
         assertThat(tag.getName(), is("Car sales"));
         assertThat(tag.getType(), is("pillar"));
     }
 
     class SomeTestCaseWithTagOnMethod {
-        @WithTag(value="Car sales", type="pillar")
+        @WithTag(name="Car sales", type="pillar")
         public void some_test_method() {}
     }
 
@@ -94,17 +95,17 @@ public class WhenFindingTagsForATestOutcome {
 
         AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
 
-        Set<TestRunTag> tags = tagProvider.getTagsFor(testOutcome);
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags.size(), is(not(0)));
-        TestRunTag tag = tags.iterator().next();
+        TestTag tag = tags.iterator().next();
 
         assertThat(tag.getName(), is("Car sales"));
         assertThat(tag.getType(), is("pillar"));
     }
 
-    @WithTag(value="More Car sales", type="pillar")
+    @WithTag(name="More Car sales", type="pillar")
     class SomeTestCaseWithTagOnMethodAndClass {
-        @WithTag(value="Car sales", type="pillar")
+        @WithTag(name="Car sales", type="pillar")
         public void some_test_method() {}
     }
 
@@ -115,15 +116,15 @@ public class WhenFindingTagsForATestOutcome {
 
         AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
 
-        Set<TestRunTag> tags = tagProvider.getTagsFor(testOutcome);
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags.size(), is(2));
     }
 
 
     @WithTags(
             {
-                    @WithTag(value="Car sales", type="pillar"),
-                    @WithTag(value="Boat sales", type="pillar")
+                    @WithTag(name="Car sales", type="pillar"),
+                    @WithTag(name="Boat sales", type="pillar")
             }
     )
     class SomeTestCaseWithTagsOnClass {
@@ -137,15 +138,15 @@ public class WhenFindingTagsForATestOutcome {
 
         AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
 
-        Set<TestRunTag> tags = tagProvider.getTagsFor(testOutcome);
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags.size(), is(2));
     }
 
     class SomeTestCaseWithTagsOnMethod {
         @WithTags(
                 {
-                        @WithTag(value="Car sales", type="pillar"),
-                        @WithTag(value="Boat sales", type="pillar")
+                        @WithTag(name="Car sales", type="pillar"),
+                        @WithTag(name="Boat sales", type="pillar")
                 }
         )
         public void some_test_method() {}
@@ -158,16 +159,16 @@ public class WhenFindingTagsForATestOutcome {
 
         AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
 
-        Set<TestRunTag> tags = tagProvider.getTagsFor(testOutcome);
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags.size(), is(2));
     }
 
-    @WithTag(value="Online sales", type="pillar")
+    @WithTag(name="Online sales", type="pillar")
     class SomeTestCaseWithTagsOnMethodAndClass {
         @WithTags(
                 {
-                        @WithTag(value="Car sales", type="pillar"),
-                        @WithTag(value="Boat sales", type="pillar")
+                        @WithTag(name="Car sales", type="pillar"),
+                        @WithTag(name="Boat sales", type="pillar")
                 }
         )
         public void some_test_method() {}
@@ -180,7 +181,7 @@ public class WhenFindingTagsForATestOutcome {
 
         AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
 
-        Set<TestRunTag> tags = tagProvider.getTagsFor(testOutcome);
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags.size(), is(3));
     }
 }

@@ -114,7 +114,7 @@ public abstract class HtmlReporter {
                 template.merge(context, sw);
                 return sw.toString();
             } catch (Exception e) {
-                throw new RuntimeException("Failed to merge template", e);
+                throw new RuntimeException("Failed to merge template: " + e.getMessage(), e);
             }
         }
     }

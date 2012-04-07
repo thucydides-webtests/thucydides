@@ -5,11 +5,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Home</title>
-    <style type="text/css">
-        <!--
-        @import url("css/core.css");
-        -->
-    </style>
     <link rel="shortcut icon" href="favicon.ico" >
     <link href="css/core.css" rel="stylesheet" type="text/css"/>
     <style type="text/css">a:link {
@@ -85,27 +80,25 @@
 <body>
 <div id="topheader">
     <div id="topbanner">
-        <div id="menu">
-            <table border="0">
-                <tr>
-                    <td><a href="index.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>
-                    <td><a href="features.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a>
-                    </td>
-                    <td><a href="stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        <#--<div id="menu">-->
+            <#--<table border="0">-->
+                <#--<tr>-->
+                    <#--<td><a href="index.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>-->
+                    <#--<td><a href="features.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a>-->
+                    <#--</td>-->
+                    <#--<td><a href="stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a>-->
+                    <#--</td>-->
+                <#--</tr>-->
+            <#--</table>-->
+        <#--</div>-->
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
     </div>
 </div>
 
 <div class="middlecontent">
     <div id="contenttop">
-        <div class="leftbg"></div>
         <div class="middlebg">
-            <div style="height:30px;"><span class="bluetext"><a href="index.html">Home</a></span> / <span class="lightgreentext"><a
-                    href="features.html" class="lightgreentext">Features</a></span></div>
+            <div style="height:30px;"><span class="bluetext"><a href="index.html" class="bluetext">Home</a></span></div>
         </div>
         <div class="rightbg"></div>
     </div>
@@ -113,9 +106,32 @@
     <div id="contentbody">
         <a name="screenshots"/>
         <div class="titlebar">
-            <div class="tall_leftbgm"></div>
-            <div class="tall_middlebgm"><span class="orangetext">Stories - <a href="${testOutcome.reportName}.html">${testOutcome.title}</a></span></div>
-            <div class="tall_rightbgm"></div>
+            <div class="story-title">
+             <#if testOutcome.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">    <#elseif testOutcome.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">    <#elseif testOutcome.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">    <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">    </#if>
+                <table width="1005">
+                    <td width="50"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25"
+                                        height="25"/>
+                    </td>
+                <#if (testOutcome.videoLink)??>
+                    <td width="25"><a href="${testOutcome.videoLink}"><img class="story-outcome-icon" src="images/video.png" width="25" height="25" alt="Video"/></a></td>
+                </#if>
+                    <td width="%"><span class="test-case-title"><span
+                            class="${outcome_text}">${testOutcome.titleWithLinks}<span class="related-issue-title">${testOutcome.formattedIssues}</span></span></span>
+                    </td>
+                    <td width="100"><span class="test-case-duration"><span class="greentext">${testOutcome.duration / 1000}
+                        seconds</span></span>
+                    </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                        <#foreach tag in testOutcome.tags>
+                            <#assign tagReport = reportName.forTag(tag.name) />
+                            <a class="tagLink" href="${tagReport}">${tag.name} (${tag.type})</a>
+                        </#foreach>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
     <div class="clr"></div>

@@ -73,10 +73,11 @@ public class WhenRecordingTestResultStatistics {
     TestOutcomeHistoryDAO testOutcomeHistoryDAO;
 
     static final DateTime JANUARY_1ST_2012 = new DateTime(2012, 1, 1, 0, 0);
+    static final DateTime JANUARY_2ND_2012 = new DateTime(2012, 1, 2, 0, 0);
 
-    @WithTag(value="Online sales", type="feature")
+    @WithTag(name="Online sales", type="feature")
     class CarSalesTestCaseSample {
-        @WithTag(value="Car sales", type="feature")
+        @WithTag(name="Car sales", type="feature")
         public void car_sales_test() {}
     }
 
@@ -129,7 +130,7 @@ public class WhenRecordingTestResultStatistics {
     }
 
     @Test
-    public void by_default_statistics_are_not_recorded_for_now() {
+    public void by_default_statistics_are_recorded_for_now() {
 
         ThucydidesModuleWithMockEnvironmentVariables guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
         Injector injector = Guice.createInjector(guiceModule);
@@ -248,9 +249,9 @@ public class WhenRecordingTestResultStatistics {
         assertThat(testStatistics.getOverallPassRate(), is(0.0));
     }
 
-    @WithTag(value="Online sales")
+    @WithTag(name="Online sales")
     class SomeTestCaseWithTagOnMethodAndClass {
-        @WithTag(value="Car sales")
+        @WithTag(name="Car sales")
         public void some_test_method() {}
     }
 
@@ -263,27 +264,27 @@ public class WhenRecordingTestResultStatistics {
         assertThat(storedTags.isEmpty(), is(false));
     }
 
-    @WithTag(value="Online sales", type="feature")
+    @WithTag(name="Online sales", type="feature")
     class OnlineSalesTestCaseSample {
-        @WithTag(value="Boat sales", type="story")
+        @WithTag(name="Boat sales", type="story")
         public void boat_sales_test() {}
 
-        @WithTag(value="Car sales", type="story")
+        @WithTag(name="Car sales", type="story")
         public void car_sales_test() {}
 
-        @WithTag(value="House sales", type="story")
+        @WithTag(name="House sales", type="story")
         public void house_sales_test() {}
 
-        @WithTag(value="Gizmo sales", type="story")
+        @WithTag(name="Gizmo sales", type="story")
         public void gizmo_sales_test() {}
     }
 
-    @WithTag(value="Online sales", type="feature")
+    @WithTag(name="Online sales", type="feature")
     class AnotherOnlineSalesTestCaseSample {
-        @WithTag(value="Boat sales", type="story")
+        @WithTag(name="Boat sales", type="story")
         public void more_boat_sales_test() {}
 
-        @WithTag(value="Car sales", type="story")
+        @WithTag(name="Car sales", type="story")
         public void more_car_sales_test() {}
     }
 
@@ -293,7 +294,7 @@ public class WhenRecordingTestResultStatistics {
         TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.title("Boat sales test"));
 
         List<TestRunTag> storedTags = testStatistics.getTags();
-        assertThat(storedTags.size(), is(2));
+        assertThat(storedTags.size(), is(3));
     }
 
     @Test
@@ -301,11 +302,11 @@ public class WhenRecordingTestResultStatistics {
 
         List<TestRunTag> allTags = testStatisticsProvider.findAllTags();
 
-        assertThat(allTags.size(), is(5));
+        assertThat(allTags.size(), is(6));
     }
 
     @Test
-    public void should_retrieve_a_list_of_all_available_tag_types_associated_with_the_latest_test_run_of_a_test() {
+    public void should_retrieve_a_list_of_all_available_tag_types() {
 
         List<String> allTagTypes = testStatisticsProvider.findAllTagTypes();
 
@@ -317,7 +318,6 @@ public class WhenRecordingTestResultStatistics {
     public void should_retrieve_a_list_of_all_test_statistics_for_a_given_tag() {
 
         TestStatistics testStatistics = testStatisticsProvider.statisticsForTests(With.tag("Boat sales"));
-
         assertThat(testStatistics.getTotalTestRuns(), is(8L));
         assertThat(testStatistics.getPassingTestRuns(), is(6L));
         assertThat(testStatistics.getFailingTestRuns(), is(1L));
@@ -331,7 +331,7 @@ public class WhenRecordingTestResultStatistics {
         assertThat(testStatistics.getTotalTestRuns(), is(30L));
         assertThat(testStatistics.getPassingTestRuns(), is(18L));
         assertThat(testStatistics.getFailingTestRuns(), is(11L));
-        assertThat(testStatistics.getTags().size(), is(2));
+        assertThat(testStatistics.getTags().size(), is(3));
     }
 
     @Test
@@ -361,6 +361,9 @@ public class WhenRecordingTestResultStatistics {
     }
 
     private void recordTests(StatisticsListener statisticsListener) {
+        prepareDAOWithFixedClock();
+        when(clock.getCurrentTime()).thenReturn(JANUARY_1ST_2012);
+
         statisticsListener.testSuiteStarted(SomeTestScenario.class);
 
         statisticsListener.testFinished(pendingTestFor("boat_sales_test"));

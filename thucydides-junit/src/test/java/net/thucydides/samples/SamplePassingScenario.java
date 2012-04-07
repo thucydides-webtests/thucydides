@@ -24,7 +24,7 @@ public class SamplePassingScenario {
     public SampleScenarioSteps steps;
 
     @Test
-    @WithTag(value = "simple scenario", type = "story")
+    @WithTag(name = "simple scenario", type = "story")
     public void happy_day_scenario() throws Throwable {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
@@ -33,7 +33,7 @@ public class SamplePassingScenario {
     }
 
     @Test
-    @WithTag(value = "simple scenario", type = "story")
+    @WithTag(name = "simple scenario", type = "story")
     public void edge_case_1() {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();
@@ -41,7 +41,7 @@ public class SamplePassingScenario {
     }
 
     @Test
-    @WithTag(value = "simple scenario", type = "story")
+    @WithTag(name = "simple scenario", type = "story")
     public void edge_case_2() {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();

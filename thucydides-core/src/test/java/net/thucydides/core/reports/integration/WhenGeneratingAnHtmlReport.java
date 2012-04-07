@@ -184,21 +184,6 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     }
 
     @Test
-    public void the_screenshots_report_should_contain_a_link_back_to_the_test_results()  throws Exception {
-        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
-
-        recordStepWithScreenshot(testOutcome, "Search cats on Google", "google_page_1.png");
-        recordStepWithScreenshot(testOutcome, "View the results", "google_page_2.png");
-        recordStepWithScreenshot(testOutcome, "Display a resulting page", "google_page_3.png");
-
-        reporter.generateReportFor(testOutcome);
-
-        File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_screenshots.html");
-        String reportContents = FileUtils.readFileToString(screenshotReport);
-        assertThat(reportContents, containsString("<a href=\"a_user_story_should_do_this.html\""));
-    }
-
-    @Test
     public void screenshot_html_should_mention_the_step_name()  throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 

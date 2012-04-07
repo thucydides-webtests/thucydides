@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
-public class WhenFormatingForHTML {
+public class WhenFormattingForHTML {
 
     @Mock
     IssueTracking issueTracking;

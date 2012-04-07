@@ -63,10 +63,6 @@ public class StoryTestResults {
         formatter = new Formatter(issueTracking);
     }
 
-    public long getDuration() {
-        return sum(testOutcomes, on(TestOutcome.class).getDuration());
-    }
-
     public Story getStory() {
         return story;
     }
@@ -87,32 +83,6 @@ public class StoryTestResults {
         testOutcomes.add(testOutcome);
     }
 
-    /**
-     * How many test runs in total have been recorded.
-     *
-     */
-    public int getTotal() {
-       return testOutcomes.size();
-    }
-
-    /**
-     * How many test cases contain at least one failing test.
-     */
-    public int getFailureCount() {
-        return select(testOutcomes, having(on(TestOutcome.class).isFailure())).size();
-    }
-
-
-    public Integer getSkipCount() {
-        return select(testOutcomes, having(on(TestOutcome.class).isSkipped())).size();
-    }
-
-    /**
-     * How many test cases contain only successful or ignored tests.
-     */
-    public int getSuccessCount() {
-        return select(testOutcomes, having(on(TestOutcome.class).isSuccess())).size();
-    }
 
     /**
      * How many steps make up the successful tests?
@@ -144,10 +114,6 @@ public class StoryTestResults {
         }
     }
 
-    public int getPendingCount() {
-        return select(testOutcomes, having(on(TestOutcome.class).isPending())).size();
-    }
-
     public List<TestOutcome> getTestOutcomes() {
         return ImmutableList.copyOf(testOutcomes);
     }
@@ -176,10 +142,6 @@ public class StoryTestResults {
 
     private Formatter getFormatter() {
         return formatter;
-    }
-
-    public int getStepCount() {
-        return sum(extract(testOutcomes, on(TestOutcome.class).getNestedStepCount())).intValue();
     }
 
     public Double getCoverage() {
@@ -244,22 +206,6 @@ public class StoryTestResults {
        return testCount;
     }
 
-    private static class ExtractTestResultsConverter implements Converter<TestOutcome, TestResult> {
-        public TestResult convert(final TestOutcome step) {
-            return step.getResult();
-        }
-    }
-
-    private List<TestResult> getCurrentTestResults() {
-        return convert(getTestOutcomes(), new ExtractTestResultsConverter());
-    }
-
-    
-    public TestResult getResult() {
-        TestResultList testResults = TestResultList.of(getCurrentTestResults());
-        return testResults.getOverallResult();
-    }
-
     /**
      * Does this set of test results correspond to a specified user story?
      */
@@ -271,6 +217,62 @@ public class StoryTestResults {
         return new CoverageFormatter(getPercentPassingCoverage(),
                                      getPercentPendingCoverage(),
                                      getPercentFailingCoverage());
+    }
+
+
+    //******* Refactored into TestOutcomes
+
+    public long getDuration() {
+        return sum(testOutcomes, on(TestOutcome.class).getDuration());
+    }
+
+    /**
+     * How many test runs in total have been recorded.
+     *
+     */
+    public int getTotal() {
+        return testOutcomes.size();
+    }
+
+    public TestResult getResult() {
+        TestResultList testResults = TestResultList.of(getCurrentTestResults());
+        return testResults.getOverallResult();
+    }
+
+    private static class ExtractTestResultsConverter implements Converter<TestOutcome, TestResult> {
+        public TestResult convert(final TestOutcome step) {
+            return step.getResult();
+        }
+    }
+
+    private List<TestResult> getCurrentTestResults() {
+        return convert(getTestOutcomes(), new ExtractTestResultsConverter());
+    }
+
+    public int getStepCount() {
+        return sum(extract(testOutcomes, on(TestOutcome.class).getNestedStepCount())).intValue();
+    }
+
+    /**
+     * How many test cases contain only successful or ignored tests.
+     */
+    public int getSuccessCount() {
+        return select(testOutcomes, having(on(TestOutcome.class).isSuccess())).size();
+    }
+
+    /**
+     * How many test cases contain at least one failing test.
+     */
+    public int getFailureCount() {
+        return select(testOutcomes, having(on(TestOutcome.class).isFailure())).size();
+    }
+
+    public int getPendingCount() {
+        return select(testOutcomes, having(on(TestOutcome.class).isPending())).size();
+    }
+
+    public Integer getSkipCount() {
+        return select(testOutcomes, having(on(TestOutcome.class).isSkipped())).size();
     }
 
 }

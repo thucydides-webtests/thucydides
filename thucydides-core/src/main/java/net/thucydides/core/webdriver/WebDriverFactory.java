@@ -137,7 +137,6 @@ public class WebDriverFactory {
             }
             return driver;
         } catch (Exception cause) {
-            LOGGER.error("Could not create new Webdriver instance", cause);
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
         }
     }

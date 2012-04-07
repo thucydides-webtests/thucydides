@@ -10,12 +10,6 @@ import net.thucydides.core.statistics.model.TestStatistics;
 
 import java.util.List;
 
-/**
- * A description goes here.
- * User: johnsmart
- * Date: 3/02/12
- * Time: 4:04 PM
- */
 public class TestStatisticsProvider {
 
     private final TestOutcomeHistoryDAO testOutcomeHistoryDAO;

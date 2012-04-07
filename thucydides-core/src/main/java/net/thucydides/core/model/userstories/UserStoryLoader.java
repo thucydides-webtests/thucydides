@@ -1,5 +1,6 @@
 package net.thucydides.core.model.userstories;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
@@ -48,15 +49,12 @@ public class UserStoryLoader {
         }
 
         for (File reportFile : reportFiles) {
-            try {
-                TestOutcome testOutcome = testOutcomeReporter.loadReportFrom(reportFile);
-                if (testOutcome.getUserStory() != null) {
-                    StoryTestResults storyResults = userStoryResultsFor(testOutcome, stories);
-                    storyResults.recordTestRun(testOutcome);
+            Optional<TestOutcome> testOutcome = testOutcomeReporter.loadReportFrom(reportFile);
+            if (testOutcome.isPresent())
+                if (testOutcome.get().getUserStory() != null) {
+                    StoryTestResults storyResults = userStoryResultsFor(testOutcome.get(), stories);
+                    storyResults.recordTestRun(testOutcome.get());
                 }
-            } catch (NotAThucydidesReportException e) {
-                LOGGER.info("Skipping XML file - not a Thucydides report: " + reportFile);
-            }
         }
         
         return stories;

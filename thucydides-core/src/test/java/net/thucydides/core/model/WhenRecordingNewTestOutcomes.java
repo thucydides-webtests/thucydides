@@ -12,6 +12,8 @@ import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +38,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class WhenRecordingNewTestOutcomes {
 
@@ -45,8 +48,6 @@ public class WhenRecordingNewTestOutcomes {
     class AUserStory {
     }
 
-    ;
-
     @Story(AUserStory.class)
     @Issue("#ISSUE-123")
     class SomeTestScenario {
@@ -54,18 +55,12 @@ public class WhenRecordingNewTestOutcomes {
         public void should_do_this() {
         }
 
-        ;
-
         @Issue("#ISSUE-456")
         public void should_do_that() {
         }
 
-        ;
-
         public void should_do_something_else() {
         }
-
-        ;
     }
 
     @Story(AUserStory.class)
@@ -75,18 +70,12 @@ public class WhenRecordingNewTestOutcomes {
         public void should_do_this() {
         }
 
-        ;
-
         @Issue("#ISSUE-123")
         public void should_do_that() {
         }
 
-        ;
-
         public void should_do_something_else() {
         }
-
-        ;
     }
 
     @Story(AUserStory.class)
@@ -95,12 +84,8 @@ public class WhenRecordingNewTestOutcomes {
         public void should_do_this() {
         }
 
-        ;
-
         public void should_do_that() {
         }
-
-        ;
     }
 
     @Story(AUserStory.class)
@@ -109,12 +94,8 @@ public class WhenRecordingNewTestOutcomes {
         public void should_do_this() {
         }
 
-        ;
-
         public void should_do_that() {
         }
-
-        ;
     }
 
     @Story(AUserStory.class)
@@ -125,12 +106,8 @@ public class WhenRecordingNewTestOutcomes {
         public void should_do_this() {
         }
 
-        ;
-
         public void should_do_that() {
         }
-
-        ;
     }
 
     @Story(AUserStory.class)
@@ -139,22 +116,17 @@ public class WhenRecordingNewTestOutcomes {
         public void should_do_this() {
         }
 
-        ;
-
         @Issue("#456")
         public void should_do_that() {
         }
 
-        ;
-
         public void should_do_something_else() {
         }
-
-        ;
     }
 
     @Before
     public void prepareAcceptanceTestRun() {
+        MockitoAnnotations.initMocks(this);
         testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
     }
 
@@ -212,6 +184,16 @@ public class WhenRecordingNewTestOutcomes {
         assertThat(outcome.getIssues(), hasItems("#ISSUE-000", "#ISSUE-999"));
     }
 
+    @Mock
+    IssueTracking issueTracking;
+
+    @Test
+    public void the_test_outcome_title_should_contain_links_to_the_issues() {
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenarioWithAnIssue.class).usingIssueTracking(issueTracking);
+
+        assertThat(outcome.getTitleWithLinks() , is("Really should do this! (<a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-ISSUE-123\">#ISSUE-123</a>)"));
+    }
 
     @Test
     public void should_be_able_to_add_extra_issues() {

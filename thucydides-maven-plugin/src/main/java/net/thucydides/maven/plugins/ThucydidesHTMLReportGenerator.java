@@ -3,7 +3,11 @@ package net.thucydides.maven.plugins;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.StoryTestResults;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.ThucydidesReportData;
+import net.thucydides.core.util.Inflection;
+import net.thucydides.core.util.Inflector;
 import org.apache.maven.doxia.sink.Sink;
 
 import java.util.List;
@@ -13,7 +17,7 @@ import java.util.List;
  */
 public class ThucydidesHTMLReportGenerator {
 
-    public void generateReport(ThucydidesReportData reportData, Sink sink) {
+    public void generateReport(TestOutcomes testOutcomes, Sink sink) {
         sink.head();
         generateTitle(sink);
         sink.head_();
@@ -21,10 +25,6 @@ public class ThucydidesHTMLReportGenerator {
         sink.body();
 
         generateOverviewSection(sink);
-
-        generateFeatureTable(reportData, sink);
-
-        generateStoriesTable(reportData, sink);
 
         sink.body_();
         sink.flush();
@@ -46,22 +46,67 @@ public class ThucydidesHTMLReportGenerator {
         sink.rawText("Dashboard");
         sink.link_();
         sink.sectionTitle2_();
-
-        sink.sectionTitle2();
-        sink.link("thucydides/features.html");
-        sink.rawText("Features");
-        sink.link_();
-        sink.sectionTitle2_();
-
-        sink.sectionTitle2();
-        sink.link("thucydides/stories.html");
-        sink.rawText("Stories");
-        sink.link_();
-        sink.sectionTitle2_();
+//
+//        sink.sectionTitle2();
+//        sink.link("thucydides/features.html");
+//        sink.rawText("Features");
+//        sink.link_();
+//        sink.sectionTitle2_();
+//
+//        sink.sectionTitle2();
+//        sink.link("thucydides/stories.html");
+//        sink.rawText("Stories");
+//        sink.link_();
+//        sink.sectionTitle2_();
 
         sink.section1_();
     }
-
+//
+//    private void generateTables(TestOutcomes testOutcomes, Sink sink) {
+//
+//        for (String tagType : testOutcomes.getTagTypes()) {
+//            generateTableFor(tagType, testOutcomes.withTagType(tagType), sink);
+//        }
+//    }
+//
+//    private void generateTableFor(String label, TestOutcomes testOutcomes, Sink sink) {
+//
+//        Inflector inflection = Inflector.getInstance();
+//        String title = inflection.of(label).asATitle().toString();
+//
+//        sink.section1();
+//        sectionTitle(sink, title);
+//
+//        for (String outcomeType : testOutcomes.getTagsOfType(title)) {
+//            sink.table();
+//            sink.tableRow();
+//            tableHeader(sink, inflection.of(outcomeType).asATitle().toString());
+//            tableHeader(sink, "Total tests");
+//            tableHeader(sink, "Passing tests");
+//            tableHeader(sink, "Pending tests");
+//            tableHeader(sink, "Failing tests");
+//            tableHeader(sink, "Coverage");
+//            sink.tableRow_();
+//
+//            for(TestOutcome outcomes : testOutcomes.) {
+//                sink.tableRow();
+//                tableCellWithLink(sink, featureResult.getFeature().getName(),
+//                        "thucydides/" + featureResult.getStoryReportName());
+//                tableCell(sink, featureResult.getTotalStories().toString());
+//                tableCell(sink, featureResult.getPassingTests().toString());
+//                tableCell(sink, featureResult.getPendingTests().toString());
+//                tableCell(sink, featureResult.getFailingTests().toString());
+//
+//                String percentageCoverage = String.format("%.1f%%",featureResult.getCoverage() * 100);
+//                tableCell(sink, percentageCoverage);
+//
+//                sink.tableRow_();
+//            }
+//            sink.table_();
+//        }
+//        sink.section1_();
+//    }
+/*
     private void generateFeatureTable(ThucydidesReportData reportData, Sink sink) {
         sink.section1();
         sectionTitle(sink, "Features");
@@ -128,25 +173,28 @@ public class ThucydidesHTMLReportGenerator {
         sink.section1_();
     }
 
-    private void tableHeader(final Sink sink, final String heading) {
-        sink.tableHeaderCell();
-        sink.rawText(heading);
-        sink.tableHeaderCell_();
-    }
 
-    private void tableCell(final Sink sink, final String heading) {
-        sink.tableCell();
-        sink.rawText(heading);
-        sink.tableCell_();
-    }
+*/
 
-    private void tableCellWithLink(final Sink sink, final String heading, final String link) {
-        sink.tableCell();
-        sink.link(link);
-        sink.rawText(heading);
-        sink.link_();
-        sink.tableCell_();
-    }
+//    private void tableHeader(final Sink sink, final String heading) {
+//        sink.tableHeaderCell();
+//        sink.rawText(heading);
+//        sink.tableHeaderCell_();
+//    }
+//
+//    private void tableCell(final Sink sink, final String heading) {
+//        sink.tableCell();
+//        sink.rawText(heading);
+//        sink.tableCell_();
+//    }
+//
+//    private void tableCellWithLink(final Sink sink, final String heading, final String link) {
+//        sink.tableCell();
+//        sink.link(link);
+//        sink.rawText(heading);
+//        sink.link_();
+//        sink.tableCell_();
+//    }
 
     private void sectionTitle(final Sink sink, final String title) {
         sink.sectionTitle1();

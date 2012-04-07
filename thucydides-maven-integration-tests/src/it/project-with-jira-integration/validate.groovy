@@ -2,12 +2,13 @@
 htmlReport = new File("${basedir}/target/site/thucydides/index.html")
 assert htmlReport.exists()
 
-htmlStoriesReport = new File("${basedir}/target/site/thucydides/stories.html").text
-assert htmlStoriesReport.contains('<a href="http://my.jira.server/browse/MY-PROJECT-123">#123</a>')
-assert htmlStoriesReport.contains('<a href="http://my.jira.server/browse/MY-PROJECT-200">#200</a>')
-assert htmlStoriesReport.contains('<a href="http://my.jira.server/browse/MY-PROJECT-300">#300</a>')
-assert htmlStoriesReport.contains('<a href="http://my.jira.server/browse/MY-PROJECT-400">#400</a>')
-assert htmlStoriesReport.contains('<a href="http://my.jira.server/browse/MY-PROJECT-456">#456</a>')
+def reportContent = htmlReport.text
+
+assert reportContent.contains('<a href="http://my.jira.server/browse/MY-PROJECT-123">#123</a>')
+assert reportContent.contains('<a href="http://my.jira.server/browse/MY-PROJECT-200">#200</a>')
+assert reportContent.contains('<a href="http://my.jira.server/browse/MY-PROJECT-300">#300</a>')
+assert reportContent.contains('<a href="http://my.jira.server/browse/MY-PROJECT-400">#400</a>')
+assert reportContent.contains('<a href="http://my.jira.server/browse/MY-PROJECT-456">#456</a>')
 
 def testReport = new File("${basedir}/target/site/thucydides/sample_test_scenario_happy_day_scenario.html").text
 

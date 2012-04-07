@@ -75,37 +75,4 @@ public class WhenGeneratingTheMavenReport {
 
         assertThat(htmlReport, containsString("<a href=\"thucydides/index.html\""));
     }
-
-    @Test
-    public void the_maven_report_should_generate_a_list_of_features() throws Exception {
-
-        plugin.executeReport(Locale.getDefault());
-        String htmlReport = writer.toString();
-
-        assertThat(htmlReport, containsString("Features"));
-        assertThat(htmlReport, containsString("<a href=\"thucydides/stories_make_widgets.html\">Make widgets</a>"));
-        assertThat(htmlReport, containsString("<a href=\"thucydides/stories_sell_widgets.html\">Sell widgets</a>"));
-    }
-
-    @Test
-    public void the_maven_report_should_generate_a_list_of_stories() throws Exception {
-
-        plugin.executeReport(Locale.getDefault());
-        String htmlReport = writer.toString();
-
-        assertThat(htmlReport, containsString("Stories"));
-        assertThat(htmlReport, containsString("<a href=\"thucydides/make_small_widgets.html\">Make small widgets</a>"));
-        assertThat(htmlReport, containsString("<a href=\"thucydides/sell_widgets_online.html\">Sell widgets online</a>"));
-    }
-
-    @Test
-    public void the_maven_report_should_contain_story_coverage() throws Exception {
-
-        plugin.executeReport(Locale.getDefault());
-        String htmlReport = writer.toString();
-
-        assertThat(htmlReport, containsString("Step Coverage"));
-        assertThat(htmlReport, containsString("50.0%"));
-    }
-
 }

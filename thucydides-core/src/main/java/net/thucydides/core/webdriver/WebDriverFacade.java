@@ -80,7 +80,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
             getDriverInstance().quit();
             proxiedWebDriver = null;
         } catch (WebDriverException e) {
-            LOGGER.warn("Closing a driver that was already closed",e);
+            LOGGER.warn("Closing a driver that was already closed: " + e.getMessage());
         }
     }
 
@@ -92,7 +92,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
         try {
             return webDriverFactory.newWebdriverInstance(driverClass);
         } catch (Exception e) {
-            LOGGER.error("FAILED TO CREATE NEW DRIVER INSTANCE " + driverClass, e);
+            LOGGER.error("FAILED TO CREATE NEW DRIVER INSTANCE " + driverClass + ": " + e.getMessage());
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, e);
         }
     }
@@ -102,7 +102,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
             try {
                 return ((TakesScreenshot) getProxiedDriver()).getScreenshotAs(target);
             } catch (WebDriverException e) {
-                LOGGER.warn("Failed to take screenshot - driver closed already?", e);
+                LOGGER.warn("Failed to take screenshot - driver closed already? (" + e.getMessage() + ")");
             } catch (OutOfMemoryError outOfMemoryError) {
                 // Out of memory errors can happen with extremely big screens, and currently Selenium does
                 // not handle them correctly/at all.
@@ -179,7 +179,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
             try {
                 getDriverInstance().quit();
             } catch (WebDriverException e) {
-                LOGGER.warn("Error while quitting the driver - is this IE?", e);
+                LOGGER.warn("Error while quitting the driver - is this IE? (" + e.getMessage() + ")");
             }
             proxiedWebDriver = null;
         }

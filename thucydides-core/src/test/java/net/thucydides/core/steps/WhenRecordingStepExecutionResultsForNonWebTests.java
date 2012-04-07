@@ -12,6 +12,7 @@ import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.matchers.JUnitMatchers.everyItem;
 
 /**
@@ -219,6 +221,9 @@ public class WhenRecordingStepExecutionResultsForNonWebTests {
 
         List<TestStep> stepOutomes = stepListener.getTestOutcomes().get(0).getTestSteps();
         assertThat(stepOutomes, everyItem(hasNoScreenshot()));
+        
+        List<Integer> a = null;
+        assertThat(a, everyItem(lessThan(1)));
     }
 
     private Matcher<TestStep> hasNoScreenshot() {

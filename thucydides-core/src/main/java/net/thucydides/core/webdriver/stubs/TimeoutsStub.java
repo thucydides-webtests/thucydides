@@ -14,4 +14,9 @@ public class TimeoutsStub implements WebDriver.Timeouts {
     public WebDriver.Timeouts setScriptTimeout(long time, TimeUnit unit) {
         return this;
     }
+
+    @Override
+    public WebDriver.Timeouts pageLoadTimeout(long l, TimeUnit timeUnit) {
+        return this;
+    }
 }

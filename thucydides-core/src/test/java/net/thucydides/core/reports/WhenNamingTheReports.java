@@ -41,7 +41,13 @@ public class WhenNamingTheReports {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         assertThat(testOutcome.getReportName(), is("a_user_story_a_simple_test_case"));
     }
-    
+
+    @Test
+    public void the_report_screenshot_filename_should_be_based_on_the_test_case_name() {
+        TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+        assertThat(testOutcome.getScreenshotReportName(), is("a_user_story_a_simple_test_case_screenshots"));
+    }
+
     @Test
     public void the_report_filename_should_replace_spaces_with_underscores() {
 

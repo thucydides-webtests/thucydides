@@ -20,7 +20,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
      * @required
      * @readonly
      */
-    protected MavenProject project;
+    public MavenProject project;
 
     /**
      * Aggregate reports are generated here
@@ -28,7 +28,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
      * @parameter expression="${project.build.directory}/site/thucydides"
      * @required
      */
-    private File outputDirectory;
+    public File outputDirectory;
 
     /**
      * Thucydides test reports are read from here
@@ -36,26 +36,26 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
      * @parameter expression="${project.build.directory}/site/thucydides"
      * @required
      */
-    private File sourceDirectory;
+    public File sourceDirectory;
 
     /**
      * URL of the issue tracking system to be used to generate links for issue numbers.
      * @parameter
      */
-    private String issueTrackerUrl;
+    public String issueTrackerUrl;
 
     /**
      * Base URL for JIRA, if you are using JIRA as your issue tracking system.
      * If you specify this property, you don't need to specify the issueTrackerUrl.
      * @parameter
      */
-    private String jiraUrl;
+    public String jiraUrl;
 
     /**
      * JIRA project key, which will be prepended to the JIRA issue numbers.
      * @parameter
      */
-    private String jiraProject;
+    public String jiraProject;
 
     private HtmlAggregateStoryReporter reporter;
 
