@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.IgnoredStepException;
@@ -7,6 +8,7 @@ import net.thucydides.core.PendingStepException;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
@@ -19,12 +21,14 @@ import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -36,6 +40,8 @@ import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.util.NameConverter.underscore;
+import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.*;
+import static org.apache.commons.io.FileUtils.checksumCRC32;
 
 /**
  * Observes the test run and stores test run details for later reporting.
@@ -83,7 +89,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
     private Configuration configuration;
     
     private boolean inFluentStepSequence;
-    
+
+    protected enum ScreenshotType {
+        OPTIONAL_SCREENSHOT,
+        MANDATORY_SCREENSHOT
+    }
+
     public BaseStepListener(final File outputDirectory) {
         this.proxyFactory = WebdriverProxyFactory.getFactory();
         this.testOutcomes = new ArrayList<TestOutcome>();
@@ -413,24 +424,55 @@ public class BaseStepListener implements StepListener, StepPublisher {
         return !currentStepStack.isEmpty();
     }
 
-    private void takeScreenshotFor(TestResult result) {
+    private void takeScreenshotFor(final TestResult result) {
         if (shouldTakeScreenshotFor(result)) {
-            takeScreenshot();
+            take(OPTIONAL_SCREENSHOT);
         }
     }
 
-    private void takeScreenshot() {
+    private void take(final ScreenshotType screenshotType) {
         if (currentStepExists() && browserIsOpen()) {
             try {
                 String stepDescription = getCurrentTestOutcome().getCurrentStep().getDescription();
                 ScreenshotAndHtmlSource screenshotAndHtmlSource = grabScreenshotFor(stepDescription);
-                if (screenshotAndHtmlSource.wasTaken()) {
+                if (shouldTakeScreenshot(screenshotType, screenshotAndHtmlSource)) {
                     getCurrentStep().addScreenshot(screenshotAndHtmlSource);
                 }
             } catch (ScreenshotException e) {
                 LOGGER.warn("Failed to take screenshot", e);
             }
         }
+    }
+
+    private boolean shouldTakeScreenshot(ScreenshotType screenshotType,
+                                         ScreenshotAndHtmlSource screenshotAndHtmlSource) {
+        if (screenshotType == MANDATORY_SCREENSHOT) {
+            return true;
+        } else {
+            return (screenshotAndHtmlSource.wasTaken() && (!sameAsPreviousScreenshot(screenshotAndHtmlSource)));
+        }
+    }
+
+    private boolean sameAsPreviousScreenshot(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
+        try {
+            Optional<Screenshot> screenshot = latestScreenshot();
+            if (screenshot.isPresent()) {
+                File screenshotTargetDirectory = new File(screenshotAndHtmlSource.getScreenshotFile().getParent());
+                File screenshotFile = new File(screenshotTargetDirectory, screenshot.get().getFilename());
+                return (checksumCRC32(screenshotFile) == checksumCRC32(screenshotAndHtmlSource.getScreenshotFile()));
+            }
+        } catch (IOException e) {
+            LOGGER.warn("Failed to compare screenshots: " + e.getMessage());
+        }
+        return false;
+    }
+
+    private Optional<Screenshot> latestScreenshot() {
+        List<Screenshot> screenshotsToDate = getCurrentTestOutcome().getScreenshots();
+        if (!screenshotsToDate.isEmpty()) {
+            return Optional.of(screenshotsToDate.get(screenshotsToDate.size() - 1));
+        }
+        return Optional.absent();
     }
 
     private boolean browserIsOpen() {
@@ -446,7 +488,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private void takeInitialScreenshot() {
         if ((currentStepExists()) && !configuration.onlySaveFailingScreenshots()) {
-            takeScreenshot();
+            take(OPTIONAL_SCREENSHOT);
         }
     }
 
@@ -498,6 +540,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     @Override
     public void notifyScreenChange() {
-        takeScreenshot();
+        take(OPTIONAL_SCREENSHOT);
     }
 }

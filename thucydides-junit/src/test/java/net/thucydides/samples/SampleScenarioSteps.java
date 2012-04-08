@@ -35,12 +35,11 @@ public class SampleScenarioSteps extends ScenarioSteps {
     public SampleScenarioNestedSteps nestedSteps;
     
     @Step
-    @TestsRequirement("LOW_LEVEL_BUSINESS_RULE")
     public void stepThatSucceeds() {
+
     }
 
     @Step
-    @TestsRequirements({"LOW_LEVEL_BUSINESS_RULE_1","LOW_LEVEL_BUSINESS_RULE_2"})
     public void anotherStepThatSucceeds() {
     }
 
@@ -49,6 +48,22 @@ public class SampleScenarioSteps extends ScenarioSteps {
         IndexPage page = pages().get(IndexPage.class);
         page.open();
         page.getTitle();
+    }
+
+    @Step
+    public void anotherStepThatUsesABrowser() {
+        IndexPage page = pages().get(IndexPage.class);
+        page.enterValue("some value");
+        page.enterValue("some value");
+        page.enterValue("some other different value");
+    }
+
+    @Step
+    public void aStepThatAlsoUsesABrowser() {
+        IndexPage page = pages().get(IndexPage.class);
+        page.enterValue("some other value");
+        page.enterValue("some other value");
+        page.enterValue("some other value");
     }
 
     @Step
@@ -72,7 +87,7 @@ public class SampleScenarioSteps extends ScenarioSteps {
     public void stepThatShouldBeSkipped() {
     }
 
-    @StepGroup("Nested group of steps")
+    @Step("Nested group of steps")
     public void stepThatCallsNestedSteps() {
         nestedSteps.stepThatSucceeds();
         nestedSteps.anotherStepThatSucceeds();

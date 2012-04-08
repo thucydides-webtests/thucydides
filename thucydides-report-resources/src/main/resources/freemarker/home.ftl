@@ -72,7 +72,7 @@
             //toggle the componenet with class msg_body
             $("#test_list_title").click(function()
             {
-                $(this).next("#test_list_tests").slideToggle(600);
+                $("#test_list_tests").slideToggle(600);
                 $(this).text($(this).text() == 'Click to View Tests' ? 'Click to Hide Tests' : 'Click to View Tests');
             });
         });
@@ -304,7 +304,7 @@
                 </table>
                 <#--- Test Results -->
                 <table><tr><td>
-                    <div id="test_list_title"><h3>Click to view tests</h3></div>
+                    <div><h3 id="test_list_title">Click to View Tests</h3></div>
                     <div id="test_list_tests" class="table">
                         <div class="toptablerow">
                             <table width="1025" height="50" border="0">
