@@ -2,7 +2,7 @@ package net.thucydides.core.statistics;
 
 import net.thucydides.core.guice.EnvironmentVariablesDatabaseConfig;
 import net.thucydides.core.statistics.integration.db.LocalDatabase;
-import net.thucydides.core.statistics.integration.db.LocalHSqldbDatabase;
+import net.thucydides.core.statistics.integration.db.LocalHSqldbServerDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
@@ -29,7 +29,7 @@ public class WhenConfiguringTheStatisticsDatabase {
     @Before
     public void initMocks() {
         environmentVariables = new MockEnvironmentVariables();
-        localDatabase = new LocalHSqldbDatabase(environmentVariables);
+        localDatabase = new LocalHSqldbServerDatabase(environmentVariables);
         databaseConfig = new EnvironmentVariablesDatabaseConfig(environmentVariables, localDatabase);    
     }
     

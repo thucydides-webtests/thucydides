@@ -33,8 +33,6 @@ public class WhenSavingAndRestoringSystemProperties {
     @Rule
     public SaveWebdriverSystemPropertiesRule saveWebdriverSystemPropertiesRule = new SaveWebdriverSystemPropertiesRule();
 
-    String originalPropertyValue;
-
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);

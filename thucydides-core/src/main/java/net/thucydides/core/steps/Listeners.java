@@ -16,7 +16,7 @@ public class Listeners {
     
     public static class BaseStepListenerBuilder {
         private Pages pages;
-        
+
         public BaseStepListenerBuilder and() {
             return this;
         }
@@ -25,7 +25,7 @@ public class Listeners {
             this.pages = pages;
             return this;
         }
-        
+
         public BaseStepListener withOutputDirectory(File outputDirectory) {
             if (pages != null) {
                 return new BaseStepListener(outputDirectory, pages);

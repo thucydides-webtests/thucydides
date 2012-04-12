@@ -755,7 +755,18 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
     font-family:euphemia, verdana, sans-serif;
     font-size:16px;
     font-weight: bold;
+    width: 1008px;
+    min-width: 1008px;
 }
+
+#test-results-table {
+    color:#0d78ae;
+    font-family:euphemia, verdana, sans-serif;
+    font-size:16px;
+    width: 1008px;
+    min-width: 1008px;
+}
+
 
 #results-dashboard
 {
@@ -771,5 +782,17 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 }
 
 
+.test-results-heading
+{
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #88a717; font-weight:bold;
+}
+
+#test_list_tests label {
+    font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;
+}
+
+.dataTables_info {
+    font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;    
+}
 
 

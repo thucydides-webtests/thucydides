@@ -291,7 +291,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     }
 
     private void notifyStepIgnored(String message) {
-        StepEventBus.getEventBus().stepIgnored(message);
+        StepEventBus.getEventBus().stepIgnored();
     }
 
     private String getTestNameFrom(final Method method, final Object[] args) {

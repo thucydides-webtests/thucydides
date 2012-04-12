@@ -531,7 +531,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         steps.step_with_failing_ordinary_method();
 
-        verify(listener, times(1)).testFailed(any(Throwable.class));
+        verify(listener, times(1)).testFailed(any(TestOutcome.class), any(Throwable.class));
     }
 
     @Test
@@ -541,7 +541,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.step_with_failing_ordinary_method();
 
         ArgumentCaptor<Throwable> argument = ArgumentCaptor.forClass(Throwable.class);
-        verify(listener).testFailed(argument.capture());
+        verify(listener).testFailed(any(TestOutcome.class),argument.capture());
         assertThat(argument.getValue().getMessage(), is("Oops!"));
         assertThat(argument.getValue().getClass().getName(), is(AssertionError.class.getName()));
 
@@ -553,7 +553,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         steps.step_with_failing_web_method();
 
-        verify(listener, times(1)).testFailed(any(Throwable.class));
+        verify(listener, times(1)).testFailed(any(TestOutcome.class),any(Throwable.class));
     }
 
     @Test
@@ -563,7 +563,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         steps.step_with_failing_web_method();
 
         ArgumentCaptor<Throwable> argument = ArgumentCaptor.forClass(Throwable.class);
-        verify(listener).testFailed(argument.capture());
+        verify(listener).testFailed(any(TestOutcome.class),argument.capture());
         assertThat(argument.getValue().getMessage(), containsString("Oops!"));
         assertThat(argument.getValue().getClass().getName(), is(WebDriverException.class.getName()));
 

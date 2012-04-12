@@ -2,6 +2,7 @@ package net.thucydides.core.steps;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.internal.Lists;
+import com.google.inject.internal.Preconditions;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ public class StepEventBus {
 
     /**
      * The event bus used to inform listening classes about when tests and test steps start and finish.
+     * There is a separate event bus for each thread.
      */
     public static synchronized StepEventBus getEventBus() {
         if (stepEventBusThreadLocal.get() == null) {
@@ -45,6 +47,10 @@ public class StepEventBus {
     }
 
     private List<StepListener> registeredListeners = new ArrayList<StepListener>();
+    /**
+     * A reference to the base step listener, if registered.
+     */
+    private BaseStepListener baseStepListener;
 
     private TestResultTally resultTally;
 
@@ -67,8 +73,18 @@ public class StepEventBus {
      * place the listener class on the classpath and it will be detected automatically.
      */
     public StepEventBus registerListener(final StepListener listener) {
-        registeredListeners.add(listener);
+        if (!registeredListeners.contains(listener)) {
+            registeredListeners.add(listener);
+            if (listener.getClass().isAssignableFrom(BaseStepListener.class)) {
+                baseStepListener = (BaseStepListener) listener;
+            }
+        }
         return this;
+    }
+
+    private BaseStepListener getBaseStepListener() {
+        Preconditions.checkNotNull(baseStepListener,"No BaseStepListener has been registered");
+        return baseStepListener;
     }
 
     public void testStarted(final String testName) {
@@ -176,6 +192,13 @@ public class StepEventBus {
         return resultTally;
     }
 
+    public void testFinished() {
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.testFinished(getBaseStepListener().getCurrentTestOutcome());
+        }
+        clear();
+    }
+
     public void testFinished(TestOutcome result) {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testFinished(result);
@@ -205,7 +228,6 @@ public class StepEventBus {
 
     /**
      * Start the execution of a test step.
-     * @param executedStepDescription
      */
     public void stepStarted(final ExecutedStepDescription executedStepDescription) {
 
@@ -218,7 +240,6 @@ public class StepEventBus {
 
     /**
      * Record a step that is not scheduled to be executed (e.g. a skipped or ignored step).
-     * @param executedStepDescription
      */
     public void skippedStepStarted(final ExecutedStepDescription executedStepDescription) {
 
@@ -274,10 +295,6 @@ public class StepEventBus {
         }
     }
 
-    public void stepIgnored(String message) {
-        stepIgnored();
-    }
-
     public void stepPending() {
         stepPending(null);
 
@@ -323,7 +340,7 @@ public class StepEventBus {
      */
     public void testFailed(final Throwable cause) {
         for(StepListener stepListener : getAllListeners()) {
-            stepListener.testFailed(cause);
+            stepListener.testFailed(getBaseStepListener().getCurrentTestOutcome(), cause);
         }
     }
 

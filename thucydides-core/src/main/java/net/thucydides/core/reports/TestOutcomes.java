@@ -11,6 +11,9 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestResultList;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
+import net.thucydides.core.statistics.With;
+import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.Matcher;
@@ -30,19 +33,22 @@ import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTag
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagType;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.withResult;
 import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isOneOf;
 
 /**
  * A set of test outcomes, which lets you perform query operations on the test outcomes.
  * In particular, you can filter a set of test outcomes by tag type and by tag values.
- * Since these operations also return TestOucomes, you can then further drill down into the test
+ * Since these operations also return TestOutcomes, you can then further drill down into the test
  * outcome sets.
+ * The TestOutcomes object will usually return a list of TestOutcome objects. You can also inject
+ * statistics and test run history by using the withHistory() method. This will return a list
+ * of TestOutcomeWithHistory instances.
+ *
  */
 public class TestOutcomes {
 
-    private final List<TestOutcome> outcomes;
+    private final List<? extends TestOutcome> outcomes;
     private final double estimatedAverageStepCount;
 
     /**
@@ -50,28 +56,38 @@ public class TestOutcomes {
      */
     private final String label;
 
+    /**
+     * Reference to the test statistics service provider, used to inject test history if required.
+     */
+    private final HibernateTestStatisticsProvider testStatisticsProvider;
+
     @Inject
-    protected TestOutcomes(List<TestOutcome> outcomes,
+    protected TestOutcomes(List<? extends TestOutcome> outcomes,
                           double estimatedAverageStepCount,
-                          String label) {
+                          String label,
+                          HibernateTestStatisticsProvider testStatisticsProvider) {
         this.outcomes = ImmutableList.copyOf(outcomes);
         this.estimatedAverageStepCount = estimatedAverageStepCount;
         this.label = label;
+        this.testStatisticsProvider = testStatisticsProvider;
     }
 
-    protected TestOutcomes(List<TestOutcome> outcomes,
+    protected TestOutcomes(List<? extends TestOutcome> outcomes,
                            double estimatedAverageStepCount) {
-        this(outcomes, estimatedAverageStepCount, "");
+        this(outcomes, estimatedAverageStepCount, "", defaultTestStatisticsProvider());
+    }
+
+    private static HibernateTestStatisticsProvider defaultTestStatisticsProvider() {
+        return Injectors.getInjector().getInstance(HibernateTestStatisticsProvider.class);
     }
 
     protected TestOutcomes withLabel(String label) {
-        return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, label);
+        return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, label, defaultTestStatisticsProvider());
     }
     
-    public static TestOutcomes of(List<TestOutcome> outcomes) {
+    public static TestOutcomes of(List<? extends TestOutcome> outcomes) {
         return new TestOutcomes(outcomes, 
-                                Injectors.getInjector().getInstance(Configuration.class)
-                                                       .getEstimatedAverageStepCount());
+                                Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
     }
 
     public String getLabel() {
@@ -152,6 +168,27 @@ public class TestOutcomes {
     }
 
     /**
+     * Return a copy of the current test outcomes, with test run history and statistics.
+     * @return a TestOutcome instance containing a list of TestOutcomeWithHistory instances.
+     */
+    public TestOutcomes withHistory() {
+        return TestOutcomes.of(convert(outcomes, toOutcomesWithHistory()));
+    }
+
+    private Converter<TestOutcome, TestOutcome> toOutcomesWithHistory() {
+        return new Converter<TestOutcome, TestOutcome>() {
+
+            @Override
+            public TestOutcome convert(TestOutcome testOutcome) {
+                TestStatistics statistics = testStatisticsProvider.statisticsForTests(With.title(testOutcome.getTitle()));
+                System.out.println("Statistics for " + testOutcome.getTitle() + ":" + statistics.getPassingTestRuns() + "/" + statistics.getTotalTestRuns());
+                testOutcome.setStatistics(statistics);
+                return testOutcome;
+            }
+        };
+    }
+
+    /**
      * Find the failing test outcomes in this set
      * @return A new set of test outcomes containing only the failing tests
      */
@@ -181,6 +218,7 @@ public class TestOutcomes {
      * Find the pending or ignored test outcomes in this set
      * @return A new set of test outcomes containing only the pending or ignored tests
      */
+    @SuppressWarnings("unchecked")
     public TestOutcomes getPendingTests() {
         return TestOutcomes.of(filter(anyOf(withResult(TestResult.PENDING), withResult(TestResult.SKIPPED)), outcomes))
                            .withLabel(labelForTestsWithStatus("pending tests"));
@@ -190,7 +228,7 @@ public class TestOutcomes {
     /**
      * @return The list of TestOutcomes contained in this test outcome set.
      */
-    public List<TestOutcome> getTests() {
+    public List<? extends TestOutcome> getTests() {
         return sort(outcomes, on(TestOutcome.class).getTitle());
     }
 
@@ -221,7 +259,7 @@ public class TestOutcomes {
         return convert(outcomes, toTestResults());
     }
 
-    private Converter<TestOutcome, TestResult> toTestResults() {
+    private Converter<? extends TestOutcome, TestResult> toTestResults() {
         return new Converter<TestOutcome, TestResult>() {
             public TestResult convert(final TestOutcome step) {
                 return step.getResult();
@@ -300,7 +338,7 @@ public class TestOutcomes {
     }
 
     private int countStepsWithResultThat(Matcher<TestResult> matchingResult) {
-        List<TestOutcome> matchingTests = select(outcomes, having(on(TestOutcome.class).getResult(), matchingResult));
+        List<? extends TestOutcome> matchingTests = select(outcomes, having(on(TestOutcome.class).getResult(), matchingResult));
         return (matchingTests.isEmpty()) ? 0 : sum(matchingTests, on(TestOutcome.class).getNestedStepCount());
     }
 

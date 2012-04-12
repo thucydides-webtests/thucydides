@@ -4,6 +4,7 @@ import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.reports.TestOutcomes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +74,26 @@ public class JSONTreeNode {
 
         children.add(featureNode);
 
+    }
+
+    // TODO
+    public void addTestOutcomesForTag(String tag, TestOutcomes testOutcomes) {
+        JSONTreeNode featureNode = new JSONTreeNode(tag, tag, colorScheme);
+        featureNode.getData().put("$area", testOutcomes.getStepCount());
+        featureNode.getData().put("type", "tag");
+        //featureNode.getData().put("$color", rgbFormatOf(colorScheme.colorFor(testOutcomes)));
+        featureNode.getData().put("tests", testOutcomes.getTotal());
+        featureNode.getData().put("passing", testOutcomes.getSuccessCount());
+        featureNode.getData().put("pending", testOutcomes.getPendingCount());
+        featureNode.getData().put("failing", testOutcomes.getFailureCount());
+        featureNode.getData().put("steps", testOutcomes.getStepCount());
+
+        //int progress = getProgressFor(testOutcomes);
+        //featureNode.getData().put("progress", progress);
+
+        //featureNode.children.addAll(getTestNodesFor(testOutcomes));
+
+        children.add(featureNode);
     }
 
     private int getProgressFor(FeatureResults feature) {

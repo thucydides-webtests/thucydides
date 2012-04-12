@@ -17,7 +17,7 @@ import org.openqa.selenium.WebDriver;
 @RunWith(ThucydidesRunner.class)
 public class MockOpenStaticDemoPageWithFailureSample {
 
-    @Managed(uniqueSession=true)
+    @Managed(uniqueSession=true, driver = "htmlunit")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "classpath:static-site/index.html")
@@ -44,6 +44,4 @@ public class MockOpenStaticDemoPageWithFailureSample {
         steps.enter_values("Label 3", true);
         steps.do_something_else();
     }
-
-
 }

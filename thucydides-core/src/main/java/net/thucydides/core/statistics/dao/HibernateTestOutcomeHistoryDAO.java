@@ -13,6 +13,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.pages.SystemClock;
+import net.thucydides.core.statistics.StatisticsListener;
 import net.thucydides.core.statistics.model.TestRun;
 import net.thucydides.core.statistics.model.TestRunTag;
 import net.thucydides.core.statistics.service.TagProvider;
@@ -118,8 +119,6 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
               "and test.projectKey = :projectKey " +
               "order by test.executionDate desc";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateTestOutcomeHistoryDAO.class);
-
     protected EntityManager entityManager;
 
     private final SystemClock clock;
@@ -127,6 +126,8 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     private final EnvironmentVariables environmentVariables;
     
     private List<TagProvider> tagProviders;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateTestOutcomeHistoryDAO.class);
 
     @Inject
     public HibernateTestOutcomeHistoryDAO(EntityManager entityManager, EnvironmentVariables environmentVariables, SystemClock clock) {
@@ -154,17 +155,18 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     @Override
     public void storeTestOutcomes(List<TestOutcome> testOutcomes) {
         entityManager.getTransaction().begin();
+        storeEachOutcomeIn(testOutcomes);
+        entityManager.getTransaction().commit();
+    }
 
+    private void storeEachOutcomeIn(List<TestOutcome> testOutcomes) {
         for(TestOutcome testOutcome : testOutcomes) {
             TestRun storedHistory = TestRun.from(testOutcome)
                                            .inProject(getProjectKey())
                                            .at(clock.getCurrentTime().toDate());
             addTagsFrom(testOutcome).to(storedHistory);
-            LOGGER.debug("Storing statistics for test result " + testOutcome.getTitle());
             entityManager.persist(storedHistory);
         }
-
-        entityManager.getTransaction().commit();
     }
 
     private String getProjectKey() {

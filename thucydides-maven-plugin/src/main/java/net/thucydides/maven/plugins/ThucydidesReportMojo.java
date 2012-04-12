@@ -123,7 +123,7 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
         getLog().info("Generating reports to " + reportDirectory);
         getReporter().setOutputDirectory(reportDirectory);
         try {
-            return getReporter().generateReportsForStoriesFrom(sourceDirectory);
+            return getReporter().generateReportsForTestResultsFrom(sourceDirectory);
         } catch (IOException e) {
             throw new MavenReportException("Error generating aggregate thucydides reports", e);
         }

@@ -186,7 +186,7 @@ public class WhenRecordingStepExecutionResults {
         steps.step_one();
         steps.step_two();
 
-        StepEventBus.getEventBus().testFinished(testOutcome);
+        StepEventBus.getEventBus().testFinished();
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
@@ -202,6 +202,7 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_listener_should_record_the_tested_story() {
 
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
         StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
 
         FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
@@ -218,11 +219,15 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_listener_should_record_multiple_tests_and_stories() {
 
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
         StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
         StepEventBus.getEventBus().testFinished(testOutcome);
 
         StepEventBus.getEventBus().testStarted("app_should_still_work", MyTestCase.class);
         StepEventBus.getEventBus().testFinished(testOutcome);
+
+        StepEventBus.getEventBus().testSuiteFinished();
+        StepEventBus.getEventBus().testSuiteStarted(MyOtherStory.class);
 
         StepEventBus.getEventBus().testStarted("app_should_work", MyOtherTestCase.class);
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -238,6 +243,7 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_listener_should_record_the_tested_story_without_a_class() {
 
+        StepEventBus.getEventBus().testSuiteStarted(MyStory.class);
         StepEventBus.getEventBus().testStarted("app_should_work", MyStory.class);
 
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -261,6 +267,8 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_listener_should_record_the_tested_story_instance_without_a_class_via_the_test() {
 
+        StepEventBus.getEventBus().testSuiteStarted(MyStory.class);
+        StepEventBus.getEventBus().testStarted("app_should_work", MyStory.class);
         StepEventBus.getEventBus().testStarted("app should work", net.thucydides.core.model.Story.from(MyStory.class));
 
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -295,6 +303,7 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_listener_should_record_a_test_with_the_tested_story_instance_without_a_class() {
 
+        StepEventBus.getEventBus().testSuiteStarted(MyStory.class);
         StepEventBus.getEventBus().testStarted("app should work", MyStory.class);
 
         StepEventBus.getEventBus().testFinished(testOutcome);
@@ -306,6 +315,7 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_listener_should_record_multiple_tests_with_the_tested_story_instance_without_a_class() {
 
+        StepEventBus.getEventBus().testSuiteStarted(MyStory.class);
         StepEventBus.getEventBus().testStarted("app should work", MyStory.class);
         StepEventBus.getEventBus().testFinished(testOutcome);
 
@@ -323,12 +333,15 @@ public class WhenRecordingStepExecutionResults {
     @Test
     public void the_listener_should_record_multiple_tests_and_stories_with_the_tested_story_instance_without_a_class() {
 
+        StepEventBus.getEventBus().testSuiteStarted(MyStory.class);
         StepEventBus.getEventBus().testStarted("app should work", MyStory.class);
         StepEventBus.getEventBus().testFinished(testOutcome);
 
         StepEventBus.getEventBus().testStarted("app should still work", MyStory.class);
         StepEventBus.getEventBus().testFinished(testOutcome);
 
+        StepEventBus.getEventBus().testSuiteFinished();
+        StepEventBus.getEventBus().testSuiteStarted(MyOtherStory.class);
         StepEventBus.getEventBus().testStarted("app should still work", MyOtherStory.class);
         StepEventBus.getEventBus().testFinished(testOutcome);
 
@@ -706,7 +719,6 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testStarted("app_should_work");
 
         StepEventBus.getEventBus().testFailed(new AssertionError("Test failed"));
-        StepEventBus.getEventBus().testFinished(testOutcome);
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
@@ -720,7 +732,6 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testStarted("app_should_work");
 
         StepEventBus.getEventBus().testFailed(new AssertionError("Test failed"));
-        StepEventBus.getEventBus().testFinished(testOutcome);
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);

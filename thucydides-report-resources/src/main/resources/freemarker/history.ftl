@@ -1,14 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Home</title>
+    <meta charset="UTF-8" />
+    <title>History</title>
     <link rel="shortcut icon" href="favicon.ico">
-    <style type="text/css">
-        <!--
-        @import url("css/core.css");
-        -->
     </style>
     <link href="css/core.css" rel="stylesheet" type="text/css"/>
     <style type="text/css">a:link {
@@ -60,17 +55,17 @@
 <body>
 <div id="topheader">
     <div id="topbanner">
-        <div id="menu">
-            <table border="0">
-                <tr>
-                    <td><a href="index.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>
-                    <td><a href="features.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a>
-                    </td>
-                    <td><a href="stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        <#--<div id="menu">-->
+            <#--<table border="0">-->
+                <#--<tr>-->
+                    <#--<td><a href="index.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>-->
+                    <#--<td><a href="features.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a>-->
+                    <#--</td>-->
+                    <#--<td><a href="stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a>-->
+                    <#--</td>-->
+                <#--</tr>-->
+            <#--</table>-->
+        <#--</div>-->
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
     </div>
 </div>
@@ -79,7 +74,7 @@
     <div id="contenttop">
         <div class="leftbg"></div>
         <div class="middlebg">
-            <div style="height:30px;"><span class="bluetext"><a href="index.html" class="bluetext">Home</a></span> /
+            <div style="height:30px;"><span class="bluetext"><a href="index.html" class="bluetext">Home</a></span> > History
             </div>
         </div>
         <div class="rightbg"></div>
@@ -90,7 +85,6 @@
     <!--/* starts second table*/-->
     <div id="contentbody">
         <div class="titlebar">
-            <div class="leftbgm"></div>
             <div class="middlebgm"><span class="orangetext">Overview - History</span></div>
             <div class="rightbgm"></div>
         </div>
@@ -98,35 +92,26 @@
     <div class="menu">
         <ul>
             <li><a href="index.html">Test Results</a></li>
-            <li><a href="treemap.html">Tree Map</a></li>
-            <li><a href="dashboard.html">Progress</a></li>
+            <#--<li><a href="treemap.html">Tree Map</a></li>-->
+            <#--<li><a href="dashboard.html">Progress</a></li>-->
             <li><a href="#" class="current">History</a></li>
         </ul>
         <br style="clear:left"/>
     </div>
     <div class="clr"></div>
     <div id="beforetable"></div>
-    <div id="contenttilttle">
-        <div class="topb"><img src="images/topm.jpg"/></div>
+    <div id="results-dashboard">
         <div class="middlb">
             <div class="table">
-                <div class="middlb">
-
-                    <div class="table">
-
-	 				 <table border="0">
-					  <tr>
-					     <td>
-                           <div id='chart_div' style='width: 700px; height: 400px;'></div>
-					     </td>
-					  <tr>
-					 </table>
-                    </div>
-                </div>
+                 <table class='overview'>
+                  <tr>
+                     <td>
+                       <div id='chart_div' style='width: 700px; height: 400px;'></div>
+                     </td>
+                  <tr>
+                 </table>
             </div>
         </div>
-
-        <div class="bottomb"><img src="images/bottomm.jpg"/></div>
     </div>
 </div>
 <div id="beforefooter"></div>

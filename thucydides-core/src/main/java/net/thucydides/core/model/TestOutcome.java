@@ -5,7 +5,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.TestAnnotations;
@@ -17,6 +16,7 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.statistics.service.TagProvider;
 import net.thucydides.core.statistics.service.TagProviderService;
 import net.thucydides.core.steps.StepFailure;
@@ -64,6 +64,7 @@ import static net.thucydides.core.util.NameConverter.withNoArguments;
  */
 public class TestOutcome {
 
+    private static final int RECENT_TEST_RUN_COUNT = 5;
     /**
      * The name of the method implementing this test.
      */
@@ -108,7 +109,6 @@ public class TestOutcome {
      */
     private Stack<TestStep> groupStack = new Stack<TestStep>();
 
-
     private IssueTracking issueTracking;
 
     /**
@@ -118,6 +118,12 @@ public class TestOutcome {
     private String sessionId;
 
     private LinkGenerator linkGenerator;
+
+    /**
+     * Test statistics, read from the statistics database.
+     * This data is only loaded when required, and added to the TestOutcome using the corresponding setter.
+     */
+    private TestStatistics statistics;
 
     /**
      * The title is immutable once set. For convenience, you can create a test
@@ -597,15 +603,6 @@ public class TestOutcome {
         return ImmutableSet.copyOf(tags);
     }
 
-    private Converter<WithTag, TestTag> toTestTags() {
-        return new Converter<WithTag, TestTag>() {
-            @Override
-            public TestTag convert(WithTag from) {
-                return TestTag.withName(from.name()).andType(from.type());
-            }
-        };
-    }
-
     public void setTags(Set<TestTag> tags) {
         Preconditions.checkArgument(this.tags == null, "Tags cannot be reassiged once set.");
         this.tags = ImmutableSet.copyOf(tags);
@@ -689,7 +686,7 @@ public class TestOutcome {
 
     /**
      * Returns the link to the associated video (e.g. from Saucelabs) for this test.
-     * @return
+     * @return a URL.
      */
     public String getVideoLink() {
         return linkGenerator.linkFor(this);
@@ -781,5 +778,37 @@ public class TestOutcome {
                 return step.isSkipped();
             }
         };
+    }
+
+    public void setStatistics(TestStatistics statistics) {
+        this.statistics = statistics;
+    }
+
+    public TestStatistics getStatistics() {
+        return statistics;
+    }
+
+    public double getOverallStability() {
+        return getStatistics().getOverallPassRate();
+    }
+
+    public double getRecentStability() {
+        return getStatistics().getPassRate().overTheLast(RECENT_TEST_RUN_COUNT).testRuns();
+    }
+
+    public Long getRecentTestRunCount() {
+        return (getStatistics().getTotalTestRuns() > RECENT_TEST_RUN_COUNT) ? RECENT_TEST_RUN_COUNT :  getStatistics().getTotalTestRuns();
+    }
+
+    public int getRecentPassCount() {
+        return getStatistics().countResults().overTheLast(RECENT_TEST_RUN_COUNT).whereTheOutcomeWas(TestResult.SUCCESS);
+    }
+
+    public int getRecentFailCount() {
+        return getStatistics().countResults().overTheLast(RECENT_TEST_RUN_COUNT).whereTheOutcomeWas(TestResult.FAILURE);
+    }
+
+    public int getRecentPendingCount() {
+        return getStatistics().countResults().overTheLast(RECENT_TEST_RUN_COUNT).whereTheOutcomeWas(TestResult.PENDING);
     }
 }

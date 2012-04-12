@@ -8,8 +8,6 @@ import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.NumericalFormatter;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.UserStoriesResultSet;
-import net.thucydides.core.model.features.FeatureLoader;
-import net.thucydides.core.model.userstories.UserStoryLoader;
 import net.thucydides.core.reports.TestOutcomeLoader;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.UserStoryTestReporter;
@@ -98,7 +96,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         context.put("inflection", Inflector.getInstance());
     }
 
-    public TestOutcomes generateReportsForStoriesFrom(final File sourceDirectory) throws IOException {
+    public TestOutcomes generateReportsForTestResultsFrom(final File sourceDirectory) throws IOException {
         TestOutcomes testOutcomes = loadTestOutcomesFrom(sourceDirectory);
 
         copyResourcesToOutputDirectory();
@@ -106,47 +104,13 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateAggregateReportFor(testOutcomes);
         generateTagReportsFor(testOutcomes);
         generateResultReportsFor(testOutcomes);
+        generateHistoryReport();
 
         return testOutcomes;
     }
 
     private TestOutcomes loadTestOutcomesFrom(File sourceDirectory) throws IOException {
-        return TestOutcomeLoader.testOutcomesIn(sourceDirectory);
-    }
-
-    /**
-     * @param storyResults   soon to be deprecated
-     * @param featureResults soon to be deprecated
-     * @throws IOException
-     * @Deprecated Only generate reports for tags
-     */
-    private void generateAggregateReportFor(final List<StoryTestResults> storyResults,
-                                            final List<FeatureResults> featureResults) throws IOException {
-        LOGGER.info("Generating summary report for user stories to " + getOutputDirectory());
-
-        copyResourcesToOutputDirectory();
-
-        Map<String, Object> storyContext = new HashMap<String, Object>();
-        storyContext.put("stories", storyResults);
-        storyContext.put("storyContext", "All stories");
-        addFormattersToContext(storyContext);
-        writeReportToOutputDirectory("stories.html",
-                mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(storyContext));
-
-        Map<String, Object> featureContext = new HashMap<String, Object>();
-        addFormattersToContext(featureContext);
-        featureContext.put("features", featureResults);
-        writeReportToOutputDirectory("features.html",
-                mergeTemplate(FEATURES_TEMPLATE_PATH).usingContext(featureContext));
-
-        for (FeatureResults feature : featureResults) {
-            generateStoryReportForFeature(feature);
-        }
-
-        generateReportHomePage(storyResults, featureResults);
-
-        updateHistoryFor(featureResults);
-        generateHistoryReport();
+        return TestOutcomeLoader.testOutcomesIn(sourceDirectory).withHistory();
     }
 
     private void generateAggregateReportFor(TestOutcomes testOutcomes) throws IOException {
@@ -240,37 +204,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     }
 
-    private void generateStoryReportForFeature(FeatureResults feature) throws IOException {
-        Map<String, Object> context = new HashMap<String, Object>();
-
-        context.put("stories", feature.getStoryResults());
-        context.put("storyContext", feature.getFeature().getName());
-        addFormattersToContext(context);
-        LOGGER.debug("Generating stories page");
-        String htmlContents = mergeTemplate(STORIES_TEMPLATE_PATH).usingContext(context);
-        LOGGER.debug("Writing stories page");
-        String filename = feature.getStoryReportName();
-        writeReportToOutputDirectory(filename, htmlContents);
-    }
-
-    private void generateReportHomePage(final List<StoryTestResults> storyResults,
-                                        final List<FeatureResults> featureResults) throws IOException {
-        Map<String, Object> context = new HashMap<String, Object>();
-        context.put("stories", new UserStoriesResultSet(storyResults));
-        context.put("features", featureResults);
-        //TODO: integrate statistics-based tags
-
-        addFormattersToContext(context);
-
-        LOGGER.debug("Generating report pages");
-        generateReportPage(context, TREEMAP_TEMPLATE_PATH, "treemap.html");
-        generateReportPage(context, DASHBOARD_TEMPLATE_PATH, "dashboard.html");
-
-        LOGGER.debug("Generating coverage data");
-        generateCoverageData(featureResults);
-        generateProgressData(featureResults);
-    }
-
     private void generateReportPage(final Map<String, Object> context,
                                     final String template,
                                     final String outputFile) throws IOException {
@@ -291,6 +224,32 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
         writeReportToOutputDirectory("coverage.js", javascriptCoverageData);
+    }
+
+    private void generateOutcomeData(final TestOutcomes testOutcomes) throws IOException {
+        Map<String, Object> context = new HashMap<String, Object>();
+
+        List<String> tagTypes = testOutcomes.getTagTypes();
+        for (String tagType : tagTypes) {
+            generateOutcomeDataForTagType(tagType, testOutcomes.withTagType(tagType));
+        }
+    }
+
+    private void generateOutcomeDataForTagType(String tagType, TestOutcomes testOutcomes) throws IOException {
+        Map<String, Object> context = new HashMap<String, Object>();
+
+        JSONResultTree resultTree = new JSONResultTree();
+
+        List<String> tags = testOutcomes.getTagsOfType(tagType);
+        for(String tag : tags) {
+            resultTree.addTestOutcomesForTag(tag, testOutcomes.withTag(tag));
+        }
+
+        context.put("coverageData", resultTree.toJSON());
+        addFormattersToContext(context);
+
+        String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
+        writeReportToOutputDirectory("coverage-" + tagType +".js", javascriptCoverageData);
     }
 
     private void generateProgressData(final List<FeatureResults> featureResults) throws IOException {

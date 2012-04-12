@@ -1,5 +1,7 @@
 package net.thucydides.core.model;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
@@ -7,6 +9,8 @@ import net.thucydides.core.annotations.Title;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.statistics.model.TestRunTag;
+import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Assert;
@@ -16,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.extract;
@@ -39,6 +44,7 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static net.thucydides.core.model.TestResult.*;
 
 public class WhenRecordingNewTestOutcomes {
 
@@ -946,5 +952,38 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getLastStep().getDescription(), is("Step 3"));
+    }
+
+    @Test
+    public void should_calculate_the_overall_success_rate_from_provided_statistics() {
+        TestStatistics statistics = new TestStatistics(10L, 7L, 3L,
+                                                       ImmutableList.of(SUCCESS,SUCCESS,SUCCESS,SUCCESS,SUCCESS,SUCCESS,SUCCESS,FAILURE,FAILURE,FAILURE),
+                                                       ImmutableList.of(new TestRunTag("MYPROJECT","A story","story")));
+
+        testOutcome.setStatistics(statistics);
+        assertThat(testOutcome.getOverallStability(), is(0.7));
+    }
+
+    @Test
+    public void should_calculate_the_recent_success_rate_from_provided_statistics() {
+        TestStatistics statistics = new TestStatistics(10L, 7L, 3L,
+                ImmutableList.of(SUCCESS,SUCCESS,SUCCESS,SUCCESS,SUCCESS,SUCCESS,SUCCESS,FAILURE,FAILURE,FAILURE),
+                ImmutableList.of(new TestRunTag("MYPROJECT","A story","story")));
+
+        testOutcome.setStatistics(statistics);
+        assertThat(testOutcome.getRecentStability(), is(1.0));
+    }
+
+    @Test
+    public void should_count_the_recent_test_runs_from_provided_statistics() {
+        TestStatistics statistics = new TestStatistics(8L, 5L, 3L,
+                ImmutableList.of(FAILURE,FAILURE,PENDING,SUCCESS,SUCCESS,SUCCESS,SUCCESS,SUCCESS),
+                ImmutableList.of(new TestRunTag("MYPROJECT","A story","story")));
+
+        testOutcome.setStatistics(statistics);
+        assertThat(testOutcome.getRecentTestRunCount() , is(5L));
+        assertThat(testOutcome.getRecentFailCount() , is(2));
+        assertThat(testOutcome.getRecentPassCount() , is(2));
+        assertThat(testOutcome.getRecentPendingCount() , is(1));
     }
 }

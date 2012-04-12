@@ -166,11 +166,11 @@ public class Pages implements Serializable {
             Constructor<? extends PageObject> constructor = pageObjectClass.getConstructor(constructorArgs);
             currentPage = (T) constructor.newInstance(driver);
         } catch (NoSuchMethodException e) {
-            LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: "
-                    + pageObjectClass, e);
+            LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: {} ({})",
+                    pageObjectClass, e.getMessage());
             thisIsNotThePageYourLookingFor(pageObjectClass);
         } catch (Exception e) {
-            LOGGER.info("Failed to instantiate page of type " + pageObjectClass, e);
+            LOGGER.info("Failed to instantiate page of type {} ({})", pageObjectClass, e.getMessage());
             thisIsNotThePageYourLookingFor(pageObjectClass);
         }
         return currentPage;

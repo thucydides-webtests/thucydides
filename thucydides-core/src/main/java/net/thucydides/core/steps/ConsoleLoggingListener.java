@@ -7,7 +7,6 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.logging.LoggingLevel;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
@@ -156,6 +155,10 @@ public class ConsoleLoggingListener implements StepListener {
     private void logFailure(TestOutcome result) {
         if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
             getLogger().info(TEST_FAILED + "\nTEST: " + result.getTitle() + " failed" + underline(TEST_FAILED));
+            if (result.getTestFailureCause() != null) {
+                getLogger().info(FAILURE + "\n" + result.getTestFailureCause().getMessage());
+            }
+            underline(FAILURE);
         }
     }
 
@@ -231,14 +234,15 @@ public class ConsoleLoggingListener implements StepListener {
         }
     }
 
-
-    public void testFailed(Throwable cause) {
+    @Override
+    public void testFailed(TestOutcome testOutcome, Throwable cause) {
         if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
-            getLogger().info(FAILURE + "\n" + cause.getMessage());
-            underline(FAILURE);
+//            getLogger().info(FAILURE + "\n" + cause.getMessage());
+//            underline(FAILURE);
         }
     }
 
+    @Override
     public void testIgnored() {
         if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
             getLogger().info("TEST IGNORED");

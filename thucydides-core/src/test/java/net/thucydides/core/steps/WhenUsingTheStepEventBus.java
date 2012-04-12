@@ -12,13 +12,17 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -165,15 +169,18 @@ public class WhenUsingTheStepEventBus {
     EnvironmentVariables environmentVariables;
 
     ConsoleStepListener consoleStepListener;
-
+    BaseStepListener baseStepListener;
     ConsoleLoggingListener consoleLoggingListener;
 
     private StepFactory factory;
 
     Logger logger = LoggerFactory.getLogger(Thucydides.class);
 
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
+
     @Before
-    public void initMocks() {
+    public void initMocks() throws IOException {
         MockitoAnnotations.initMocks(this);
         environmentVariables = new MockEnvironmentVariables();
         environmentVariables.setProperty("thucydides.logging","VERBOSE");
@@ -182,11 +189,12 @@ public class WhenUsingTheStepEventBus {
 
         consoleStepListener = new ConsoleStepListener();
         consoleLoggingListener = new ConsoleLoggingListener(environmentVariables);
-
+        baseStepListener = new BaseStepListener(temp.newFolder());
         StepEventBus.getEventBus().clear();
         StepEventBus.getEventBus().registerListener(listener);
         StepEventBus.getEventBus().registerListener(consoleStepListener);
         StepEventBus.getEventBus().registerListener(consoleLoggingListener);
+        StepEventBus.getEventBus().registerListener(baseStepListener);
 
     }
 

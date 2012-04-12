@@ -8,7 +8,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses( { CheckingFieldContentWithTheFluentElementAPI.class,
                        CheckingVisibilityWithTheFluentElementAPI.class,
                        UsingFormsWithTheFluentElementAPI.class,
-                       UsingTheFluentAPIWithJavascriptAndJQuery.class,
                        WaitingForElementsWithTheFluentElementAPI.class,
                        ReadingTableData.class})
 public class WhenUsingTheFluentElementAPI {

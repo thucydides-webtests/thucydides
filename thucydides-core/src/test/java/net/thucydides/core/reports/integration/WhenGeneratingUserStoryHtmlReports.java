@@ -161,7 +161,7 @@ public class WhenGeneratingUserStoryHtmlReports {
         HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter("project");
         reporter.setOutputDirectory(outputDirectory);  
         File sourceDirectory = new File("src/test/resources/multiple-user-story-reports");
-        reporter.generateReportsForStoriesFrom(sourceDirectory);
+        reporter.generateReportsForTestResultsFrom(sourceDirectory);
 
         File expectedStoryReport1 = new File(outputDirectory, "a_user_story_in_a_feature.html");
         assertThat(expectedStoryReport1.exists(), is(true));
@@ -178,7 +178,7 @@ public class WhenGeneratingUserStoryHtmlReports {
         HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter("project");
         reporter.setOutputDirectory(outputDirectory);  
         File sourceDirectory = new File("src/test/resources/multiple-user-story-reports");
-        reporter.generateReportsForStoriesFrom(sourceDirectory);
+        reporter.generateReportsForTestResultsFrom(sourceDirectory);
         File expectedStoryHtmlReport = new File(outputDirectory, "stories.html");
         assertThat(expectedStoryHtmlReport.exists(), is(true));
     }
@@ -192,7 +192,7 @@ public class WhenGeneratingUserStoryHtmlReports {
         dir.getPath();
         File sourceDirectory = new File(dir.getPath());
         //File sourceDirectory = new File("src/test/resources/multiple-user-story-reports");
-        reporter.generateReportsForStoriesFrom(sourceDirectory);
+        reporter.generateReportsForTestResultsFrom(sourceDirectory);
         File expectedCssStylesheet = new File(new File(outputDirectory,"css"), "core.css");
         assertThat(expectedCssStylesheet.exists(), is(true));
     }

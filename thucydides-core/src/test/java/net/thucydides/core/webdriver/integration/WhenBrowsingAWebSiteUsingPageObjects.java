@@ -54,7 +54,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     WebDriver driver;
 
-    private static StaticTestSite testSite;
     static WebDriver firefoxDriver;
 
     IndexPage indexPage;
@@ -65,8 +64,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     @Before
     public void openLocalStaticSite() {
-        testSite = new StaticTestSite();
-
         driver = new HtmlUnitDriver();
         openStaticTestSite();
         indexPage = new IndexPage(driver, 1);
@@ -195,18 +192,9 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         
     @Test
     public void should_know_when_an_element_is_visible() {
-        firefoxDriver = testSite.open();
-        IndexPageWithShortTimeout indexPage = new IndexPageWithShortTimeout(firefoxDriver, 1);
+        indexPage.getDriver().navigate().refresh();
         assertThat(indexPage.isElementVisible(By.id("visible")), is(true));
     }
-
-    @Test
-    public void should_know_when_an_element_is_invisible() {
-        firefoxDriver = testSite.open();
-        IndexPageWithShortTimeout indexPage = new IndexPageWithShortTimeout(firefoxDriver, 1);
-        assertThat(indexPage.isElementVisible(By.id("invisible")), is(false));
-    }
-
 
     @Test(expected=TimeoutException.class)
     public void should_fail_if_text_does_not_appear_on_a_page() {

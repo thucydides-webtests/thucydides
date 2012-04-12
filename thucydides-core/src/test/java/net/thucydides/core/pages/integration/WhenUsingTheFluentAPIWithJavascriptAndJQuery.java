@@ -1,13 +1,20 @@
 package net.thucydides.core.pages.integration;
 
 
+import net.thucydides.core.webdriver.StaticTestSite;
 import net.thucydides.core.webdriver.jquery.ByJQuery;
 import net.thucydides.core.webdriver.jquery.ByJQuerySelector;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.List;
 
@@ -15,7 +22,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-public class UsingTheFluentAPIWithJavascriptAndJQuery extends FluentElementAPITestsBaseClass {
+public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
+
+    private static StaticSitePage page;
+    private static WebDriver driver;
+
+    @BeforeClass
+    public static void openFirefox() {
+        driver = new ChromeDriver();
+        page = new StaticSitePage(driver, 1000);
+        page.open();
+    }
+
+    @AfterClass
+    public static void shutdownDriver() {
+        driver.quit();
+    }
 
     @Test
     public void should_inject_jquery_into_the_page() {
@@ -97,5 +119,9 @@ public class UsingTheFluentAPIWithJavascriptAndJQuery extends FluentElementAPITe
         ByJQuerySelector jQuerySelector = ByJQuery.selector("a[title='Click Me']");
         
         assertThat(jQuerySelector.toString(), containsString("a[title='Click Me']"));
+    }
+
+    public StaticSitePage getFirefoxPage() {
+        return page;
     }
 }

@@ -2,6 +2,7 @@ package net.thucydides.core.reports.json;
 
 import flexjson.JSONSerializer;
 import net.thucydides.core.model.FeatureResults;
+import net.thucydides.core.reports.TestOutcomes;
 
 public class JSONProgressResultTree {
 

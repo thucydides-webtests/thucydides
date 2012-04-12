@@ -38,7 +38,7 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         reporter.setOutputDirectory(outputDirectory);
 
         File sourceDirectory = directoryInClasspathCalled("/test-outcomes/containing-failure");
-        reporter.generateReportsForStoriesFrom(sourceDirectory);
+        reporter.generateReportsForTestResultsFrom(sourceDirectory);
     }
 
     @AfterClass

@@ -98,9 +98,10 @@ public interface StepListener {
 
     /**
      * The test failed, but not while executing a step.
-     * @param cause
+     * @param testOutcome The test outcome structure for the failing test
+     * @param cause The exception that triggered the failure
      */
-    void testFailed(final Throwable cause);
+    void testFailed(TestOutcome testOutcome, final Throwable cause);
 
     /**
      * The test as a whole was skipped or ignored.

@@ -21,7 +21,6 @@ import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
@@ -446,11 +445,11 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private boolean shouldTakeScreenshot(ScreenshotType screenshotType,
                                          ScreenshotAndHtmlSource screenshotAndHtmlSource) {
-        if (screenshotType == MANDATORY_SCREENSHOT) {
-            return true;
-        } else {
-            return (screenshotAndHtmlSource.wasTaken() && (!sameAsPreviousScreenshot(screenshotAndHtmlSource)));
-        }
+        return (screenshotType == MANDATORY_SCREENSHOT) || shouldTakeOptionalScreenshot(screenshotAndHtmlSource);
+    }
+
+    private boolean shouldTakeOptionalScreenshot(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
+        return (screenshotAndHtmlSource.wasTaken() && (!sameAsPreviousScreenshot(screenshotAndHtmlSource)));
     }
 
     private boolean sameAsPreviousScreenshot(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
@@ -530,7 +529,8 @@ public class BaseStepListener implements StepListener, StepPublisher {
         return getCurrentTestOutcome().getTestFailureCause();
     }
 
-    public void testFailed(final Throwable cause) {
+    // TODO: should assign to testOutcome
+    public void testFailed(TestOutcome testOutcome, final Throwable cause) {
         getCurrentTestOutcome().setTestFailureCause(cause);
     }
 

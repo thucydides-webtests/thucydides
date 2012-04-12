@@ -21,7 +21,7 @@ public interface UserStoryTestReporter {
     /**
      * Generates a set of user story reports from a given directory.
      */
-    TestOutcomes generateReportsForStoriesFrom(final File sourceDirectory) throws IOException;
+    TestOutcomes generateReportsForTestResultsFrom(final File sourceDirectory) throws IOException;
     
     File getOutputDirectory();
 

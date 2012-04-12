@@ -9,9 +9,8 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.guice.ThucydidesModule;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
-import net.thucydides.core.statistics.StatisticsListener;
 import net.thucydides.core.statistics.integration.db.LocalDatabase;
-import net.thucydides.core.statistics.integration.db.LocalHSqldbDatabase;
+import net.thucydides.core.statistics.integration.db.LocalHSqldbServerDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.LocalPreferences;
 import net.thucydides.core.util.MockEnvironmentVariables;
@@ -36,7 +35,6 @@ public class WhenUsingTheTestStatisticsDatabase {
         protected void configure() {
             clearEntityManagerCache();
             bind(EnvironmentVariables.class).to(MockEnvironmentVariables.class).in(Singleton.class);
-            bind(LocalDatabase.class).to(LocalHSqldbDatabase.class).in(Singleton.class);
             bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
             bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
             bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);

@@ -26,7 +26,7 @@ public class FreemarkerReportTemplate implements ReportTemplate {
         try {
             template.process(context, writer);
         } catch (Exception e) {
-            throw new TemplateMergeException("Failed to process FreeMarker template", e);
+            throw new TemplateMergeException("Failed to process FreeMarker template:" + e.getMessage(), e);
         }
     }
 }

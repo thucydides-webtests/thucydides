@@ -30,8 +30,6 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -214,14 +212,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     @Override
     public void run(final RunNotifier notifier) {
         if (!skipThisTest()) {
-            initializeDriversAndListeners(notifier);
-
-            super.run(notifier);
-
-            stepListener.close();
-            generateReportsFor(stepListener.getTestOutcomes());
-            closeDrivers();
-            StepEventBus.getEventBus().testSuiteFinished();
+            try {
+                initializeDriversAndListeners(notifier);
+                super.run(notifier);
+            } finally {
+                StepEventBus.getEventBus().testSuiteFinished();
+                generateReportsFor(stepListener.getTestOutcomes());
+                closeDrivers();
+                stepListener.dropListeners();
+            }
         }
     }
 
@@ -254,8 +253,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
         JUnitStepListener stepListener =
                 JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
-                        .and().withPageFactory(pageFactory)
-                        .and().build();
+                                 .and().withPageFactory(pageFactory)
+                                 .and().build();
 
         setStepListener(stepListener);
         return stepListener;
@@ -316,18 +315,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         initializeTestSession();
         resetBroswerFromTimeToTime();
         processTestMethodAnnotationsFor(method);
-        try {
-            super.runChild(method, notifier);
-        } finally {
-            StepEventBus.getEventBus().testFinished(getLatestTestOutcome());
-        }
-    }
-
-    private TestOutcome getLatestTestOutcome() {
-        if (getTestOutcomes().size() > 0) {
-            return getTestOutcomes().get(getTestOutcomes().size() - 1);
-        }
-        return null;
+        super.runChild(method, notifier);
     }
 
     /**
@@ -335,8 +323,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Ignored tests will just be skipped by JUnit - we need to ensure
      * that they are included in the Thucydides reports
      * If a test method is pending, all the steps should be skipped.
-     *
-     * @param method
      */
     private void processTestMethodAnnotationsFor(FrameworkMethod method) {
         if (isPending(method)) {
@@ -446,11 +432,5 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return ReportService.getDefaultReporters();
     }
 
-    public class ThucydidesRunnerBuilder {
-        private Class<?> classUnderTest;
 
-        public ThucydidesRunnerBuilder(Class<?> classUnderTest) {
-            this.classUnderTest = classUnderTest;
-        }
-    }
 }

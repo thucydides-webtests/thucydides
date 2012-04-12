@@ -1,6 +1,6 @@
 package net.thucydides.core.statistics;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.model.Story;
@@ -10,17 +10,23 @@ import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
-import org.apache.commons.collections.list.SynchronizedList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Records test results in a database, for reporting on test statistics.
+ */
 public class StatisticsListener implements StepListener {
 
     private final TestOutcomeHistoryDAO testOutcomeHistoryDAO;
     private final EnvironmentVariables environmentVariables;
     private final List<TestOutcome> testOutcomes;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsListener.class);
 
     @Inject
     public StatisticsListener(TestOutcomeHistoryDAO testOutcomeHistoryDAO,
@@ -32,7 +38,6 @@ public class StatisticsListener implements StepListener {
 
     @Override
     public void testSuiteStarted(Class<?> storyClass) {
-        testOutcomes.clear();
     }
 
     @Override
@@ -46,20 +51,26 @@ public class StatisticsListener implements StepListener {
     @Override
     public void testFinished(TestOutcome result) {
         if (historyActivated()) {
-            testOutcomes.add(result);
+            if (!testOutcomes.contains(result)) {
+                testOutcomes.add(result);
+            }
         }
     }
 
     @Override
     public void testSuiteFinished() {
         if (historyActivated()) {
-            testOutcomeHistoryDAO.storeTestOutcomes(testOutcomes);
+            synchronized (testOutcomes) {
+                List<TestOutcome> outcomesReadyToBeStored = ImmutableList.copyOf(testOutcomes);
+                testOutcomeHistoryDAO.storeTestOutcomes(outcomesReadyToBeStored);
+                testOutcomes.removeAll(outcomesReadyToBeStored);
+            }
         }
     }
 
+
     private boolean historyActivated() {
-        return environmentVariables.getPropertyAsBoolean(
-                ThucydidesSystemProperty.RECORD_STATISTICS.getPropertyName(), false);
+        return environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.RECORD_STATISTICS.getPropertyName(), true);
     }
 
     @Override
@@ -99,7 +110,7 @@ public class StatisticsListener implements StepListener {
     }
 
     @Override
-    public void testFailed(Throwable cause) {
+    public void testFailed(TestOutcome result, Throwable cause) {
     }
 
     @Override

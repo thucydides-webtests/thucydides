@@ -5,6 +5,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -17,6 +19,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     @Test
     public void should_obtain_text_value_from_input() {
         StaticSitePage page = getFirefoxPage();
+        page.getDriver().navigate().refresh();
         assertThat(page.element(page.firstName).getValue(), is("<enter first name>"));
     }
 
@@ -72,6 +75,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     @Test
     public void should_wait_for_element_to_be_visible_and_enabled_before_clicking() {
         StaticSitePage page = getFirefoxPage();
+        page.getDriver().navigate().refresh();
         page.element(page.checkbox).click();
 
     }

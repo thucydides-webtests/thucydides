@@ -12,17 +12,17 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
         given:
             def inflection = Inflector.instance
         when:
-            def pluralForm = inflection.of(singleForm).inPluralForm().toString()
+            def pluralForm = inflection.of(singleForm).inPluralForm().toString();
         then:
             pluralForm == expectedPluralForm
         where:
-        singleForm          | expectedPluralForm
-        'epic'              | 'epics'
-        'feature'           | 'features'
-        'story'             | 'stories'
-        'stories'           | 'stories'
-        'octopus'           | 'octopi'
-        'sheep'             | 'sheep'
+            singleForm          | expectedPluralForm
+            'epic'              | 'epics'
+            'feature'           | 'features'
+            'story'             | 'stories'
+            'stories'           | 'stories'
+            'octopus'           | 'octopi'
+            'sheep'             | 'sheep'
     }
 
     def "should transform plural nouns into singles"() {
@@ -33,13 +33,13 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
         then:
             singleForm == expectedSingleForm
         where:
-        pluralForm          | expectedSingleForm
-            'epics'             | 'epic'
-            'features'          | 'feature'
-            'stories'           | 'story'
-            'story'             | 'story'
-            'octopi'            | 'octopus'
-            'sheep'             | 'sheep'
+            pluralForm          | expectedSingleForm
+                'epics'             | 'epic'
+                'features'          | 'feature'
+                'stories'           | 'story'
+                'story'             | 'story'
+                'octopi'            | 'octopus'
+                'sheep'             | 'sheep'
     }
 
     def "should transform a number of object nouns into plural or singular based on the number"() {

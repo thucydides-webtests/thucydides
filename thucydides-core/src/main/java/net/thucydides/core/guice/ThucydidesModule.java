@@ -4,6 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import net.thucydides.core.Thucydides;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.issues.IssueTracking;
@@ -17,12 +19,15 @@ import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.reports.saucelabs.SaucelabsLinkGenerator;
 import net.thucydides.core.reports.templates.FreeMarkerTemplateManager;
 import net.thucydides.core.reports.templates.TemplateManager;
+import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
 import net.thucydides.core.statistics.Statistics;
 import net.thucydides.core.statistics.StatisticsListener;
+import net.thucydides.core.statistics.TestStatisticsProvider;
 import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.integration.db.LocalDatabase;
-import net.thucydides.core.statistics.integration.db.LocalHSqldbDatabase;
+import net.thucydides.core.statistics.integration.db.LocalFileBasedHsqldbDatabase;
+import net.thucydides.core.statistics.integration.db.LocalHSqldbServerDatabase;
 import net.thucydides.core.steps.ConsoleLoggingListener;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -56,12 +61,24 @@ public class ThucydidesModule extends AbstractModule {
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
 
-        bind(LocalDatabase.class).to(LocalHSqldbDatabase.class).in(Singleton.class);
         bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
-        bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class);
+        bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class).in(Singleton.class);
+        bind(TestStatisticsProvider.class).to(HibernateTestStatisticsProvider.class).in(Singleton.class);
 
-        bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class);
-        bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class);
+        bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class).in(Singleton.class);
+        bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class).in(Singleton.class);
+    }
+
+    @Provides
+    @Singleton
+    @Inject
+    public LocalDatabase provideLocalDatabase(EnvironmentVariables environmentVariables) {
+        String useServerProperty = ThucydidesSystemProperty.THUCYDIDES_USE_LOCAL_SERVER.from(environmentVariables, "true");
+        if (Boolean.valueOf(useServerProperty)) {
+            return new LocalHSqldbServerDatabase(environmentVariables);
+        } else {
+            return new LocalFileBasedHsqldbDatabase(environmentVariables);
+        }
     }
 
     @Provides

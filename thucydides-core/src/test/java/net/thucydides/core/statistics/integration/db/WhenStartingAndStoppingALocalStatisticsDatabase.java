@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 public class WhenStartingAndStoppingALocalStatisticsDatabase {
 
     MockEnvironmentVariables environmentVariables;
-    LocalHSqldbDatabase localDatabase;
+    LocalHSqldbServerDatabase localDatabase;
 
     @Before
     public void initMocks() {
@@ -45,7 +45,7 @@ public class WhenStartingAndStoppingALocalStatisticsDatabase {
         setupMockEnvironment();
 
         environmentVariables.setProperty("thucydides.project.key","integration-test-db1");
-        localDatabase = new LocalHSqldbDatabase(environmentVariables);
+        localDatabase = new LocalHSqldbServerDatabase(environmentVariables);
         localDatabase.start();
         
         DriverManager.getConnection("jdbc:hsqldb:hsql://localhost:9112/stats-integration-test-db1","SA","");
@@ -59,7 +59,7 @@ public class WhenStartingAndStoppingALocalStatisticsDatabase {
         setupMockEnvironment();
 
         environmentVariables.setProperty("thucydides.project.key","integration-test-db2");
-        localDatabase = new LocalHSqldbDatabase(environmentVariables);
+        localDatabase = new LocalHSqldbServerDatabase(environmentVariables);
         localDatabase.start();
 
         DriverManager.getConnection("jdbc:hsqldb:hsql://localhost:9112/stats-integration-test-db2", "SA","");
@@ -75,7 +75,7 @@ public class WhenStartingAndStoppingALocalStatisticsDatabase {
         setupMockEnvironment();
 
         environmentVariables.setProperty("thucydides.project.key","integration-test-db3");
-        localDatabase = new LocalHSqldbDatabase(environmentVariables);
+        localDatabase = new LocalHSqldbServerDatabase(environmentVariables);
         localDatabase.start();
 
         DriverManager.getConnection("jdbc:hsqldb:hsql://localhost:9112/stats-integration-test-db3", "SA","");

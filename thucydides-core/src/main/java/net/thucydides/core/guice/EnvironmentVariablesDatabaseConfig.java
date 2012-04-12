@@ -55,7 +55,7 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
         boolean databaseIsConfigured = databaseIsConfigured(properties);
         if (isUsingLocalDatabase() || !databaseIsConfigured) {
             properties.put("hibernate.hbm2ddl.auto", "update");
-        } else if (databaseIsConfigured) {
+        } else {
             properties.put("hibernate.hbm2ddl.auto", "validate");
         }
         return properties;

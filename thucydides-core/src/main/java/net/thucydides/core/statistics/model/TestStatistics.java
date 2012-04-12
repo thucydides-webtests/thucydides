@@ -1,17 +1,36 @@
 package net.thucydides.core.statistics.model;
 
-import ch.lambdaj.Lambda;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import net.thucydides.core.model.TestResult;
 
-import java.util.Collections;
 import java.util.List;
 
-import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.select;
 import static org.hamcrest.Matchers.is;
 
+/**
+ * A summary of statistics related to a particular set of tests.
+ * First, obtain a set of statistics using the HibernateTestStatisticsProvider class. For example, you could
+ * obtain statistics for a particular test outcome like this:
+ * <pre>
+ *     <code>
+ *      TestStatistics stats = testStatisticsProvider.statisticsForTests(With.title(testOutcome.getTitle()));
+ *     </code>
+ * </pre>
+ * or
+ * <pre>
+ *     <code>
+ *      TestStatistics stats = testStatisticsProvider.statisticsForTests(With.tag("A story));
+ *     </code>
+ * </pre>
+ * Then, you can obtain various statistics about the test (or group of tests):
+ * <pre>
+ *     <code>
+ *     Double passRateForAllTests = stats.getOverallPassRate();
+ *     Double recentPassRate = stats.getPassRate().overTheLast(5).testRuns();
+ *     </code>
+ * </pre>
+ */
 public class TestStatistics {
 
     private final Long totalTestRuns;
@@ -57,8 +76,20 @@ public class TestStatistics {
         return tags;
     }
 
+    /**
+     * Calculate the pass rate over a given number of tests, e.g.
+     * <pre>
+     *     <code>
+     *     Double recentPassRate = stats.getPassRate().overTheLast(5).testRuns();
+     *     </code>
+     * </pre>
+     */
     public PassRateBuilder getPassRate() {
         return new PassRateBuilder(OVERALL);
+    }
+
+    public ResultCountBuilder countResults() {
+        return new ResultCountBuilder(OVERALL);
     }
 
     public class PassRateBuilder {
@@ -73,10 +104,14 @@ public class TestStatistics {
             return new PassRateBuilder(number);
         }
 
-        public Double testRuns() {
+        public double testRuns() {
             int successfulRecentTestRuns = countSuccessfulTestRunsInLast(testRunsOverPeriod, testResults);
             int eligableTestRunCount = (testResults.size() < testRunsOverPeriod) ? testResults.size() : testRunsOverPeriod;
-            return (successfulRecentTestRuns * 1.0) / (eligableTestRunCount * 1.0);
+            if (eligableTestRunCount > 0) {
+                return (successfulRecentTestRuns * 1.0) / (eligableTestRunCount * 1.0);
+            } else {
+                return 0.0;
+            }
         }
 
         private int countSuccessfulTestRunsInLast(int testRunCount, List<TestResult> testResults) {
@@ -94,5 +129,37 @@ public class TestStatistics {
             return (testRunsOverPeriod > testResults.size()) ? testResults.size() : testRunsOverPeriod;
         }
 
+    }
+
+    public class ResultCountBuilder {
+
+        int testRunsOverPeriod;
+
+        public ResultCountBuilder(int testRunsOverPeriod) {
+            this.testRunsOverPeriod = testRunsOverPeriod;
+        }
+
+        public ResultCountBuilder overTheLast(int number) {
+            return new ResultCountBuilder(number);
+        }
+
+        public int whereTheOutcomeWas(TestResult testResult) {
+            return countTestRunsByResultInLast(testResult, testRunsOverPeriod, testResults);
+        }
+
+        private int countTestRunsByResultInLast(TestResult testResult, int testRunCount, List<TestResult> testResults) {
+            List<TestResult> eligableTestResults = mostRecent(testRunCount, testResults);
+            List<TestResult> successfulTestResults = select(eligableTestResults, is(testResult));
+            return successfulTestResults.size();
+        }
+
+        private List<TestResult> mostRecent(int testRunsOverPeriod, List<TestResult> testResults) {
+            int eligableCount = eligableTestResultSize(testResults, testRunsOverPeriod);
+            return testResults.subList(0, eligableCount);
+        }
+
+        private int eligableTestResultSize(List<TestResult> testResults, int testRunsOverPeriod) {
+            return (testRunsOverPeriod > testResults.size()) ? testResults.size() : testRunsOverPeriod;
+        }
     }
 }

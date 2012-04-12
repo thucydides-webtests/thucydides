@@ -3,6 +3,7 @@ package net.thucydides.core.reports.json;
 import flexjson.JSONSerializer;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.FeatureResults;
+import net.thucydides.core.reports.TestOutcomes;
 
 public class JSONResultTree {
 
@@ -30,4 +31,7 @@ public class JSONResultTree {
         return colorScheme;
     }
 
+    public void addTestOutcomesForTag(String tag, TestOutcomes testOutcomes) {
+        root.addTestOutcomesForTag(tag, testOutcomes);
+    }
 }

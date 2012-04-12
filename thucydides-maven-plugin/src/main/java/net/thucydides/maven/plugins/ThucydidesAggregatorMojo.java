@@ -1,5 +1,6 @@
 package net.thucydides.maven.plugins;
 
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -57,6 +58,13 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
      */
     public String jiraProject;
 
+    /**
+     * Thucydides project key
+     * @parameter expression="${thucydides.project.key}" default-value="default"
+     *
+     */
+    public String projectKey;
+
     private HtmlAggregateStoryReporter reporter;
 
     protected void setOutputDirectory(final File outputDirectory) {
@@ -81,15 +89,22 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
         }
 
         try {
+            configureEnvironmentVariables();
             generateHtmlStoryReports();
         } catch (IOException e) {
             throw new MojoExecutionException("Error generating aggregate thucydides reports", e);
         }
     }
 
+    private void configureEnvironmentVariables() {
+        if (projectKey != null) {
+            System.setProperty(ThucydidesSystemProperty.PROJECT_KEY.getPropertyName(), projectKey);
+        }
+    }
+
     protected HtmlAggregateStoryReporter getReporter() {
         if (reporter == null) {
-            reporter = new HtmlAggregateStoryReporter(MavenProjectHelper.getProjectIdentifier(project));
+            reporter = new HtmlAggregateStoryReporter(projectKey);
         }
         return reporter;
 
@@ -100,7 +115,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
         getReporter().setIssueTrackerUrl(issueTrackerUrl);
         getReporter().setJiraUrl(jiraUrl);
         getReporter().setJiraProject(jiraProject);
-        getReporter().generateReportsForStoriesFrom(sourceDirectory);
+        getReporter().generateReportsForTestResultsFrom(sourceDirectory);
     }
 
 }

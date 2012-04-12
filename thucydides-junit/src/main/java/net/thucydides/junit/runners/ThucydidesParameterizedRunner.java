@@ -137,14 +137,6 @@ public class ThucydidesParameterizedRunner extends Suite {
         this(klass, Injectors.getInjector().getInstance(Configuration.class), new WebDriverFactory());
     }
 
-//    private void overrideWebdriverFactoryIfProvided(final ThucydidesRunner runner,
-//                                                    final WebDriverFactory webDriverFactory) {
-//        if (webDriverFactory != null) {
-//            runner.setWebDriverFactory(webDriverFactory);
-//        }
-//    }
-
-
     @Override
     protected List<Runner> getChildren() {
         return runners;

@@ -11,23 +11,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class LocalHSqldbDatabase implements LocalDatabase {
+public class LocalHSqldbServerDatabase implements LocalDatabase {
 
     private static final String LOCALHOST = "127.0.0.1";
     private final EnvironmentVariables environmentVariables;
     private Server server;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocalHSqldbDatabase.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocalHSqldbServerDatabase.class);
 
     @Inject
-    public LocalHSqldbDatabase(EnvironmentVariables environmentVariables) {
+    public LocalHSqldbServerDatabase(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
     }
 
@@ -105,9 +104,8 @@ public class LocalHSqldbDatabase implements LocalDatabase {
 
     public String getDatabasePath() {
         String defaultThucydidesDirectory = environmentVariables.getProperty("user.home") + "/.thucydides";
-        String thucydidesHomeDirectory = ThucydidesSystemProperty.THUCYDIDES_HOME.from(environmentVariables,
-                defaultThucydidesDirectory);
-        return thucydidesHomeDirectory + "/hsqldb";
+        String thucydidesHomeDirectory = ThucydidesSystemProperty.THUCYDIDES_HOME.from(environmentVariables, defaultThucydidesDirectory);
+        return thucydidesHomeDirectory + "/" + getDatabaseName();
     }
 
     public int getPort() {

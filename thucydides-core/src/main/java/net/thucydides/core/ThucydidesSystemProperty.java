@@ -38,6 +38,12 @@ public enum ThucydidesSystemProperty {
     THUCYDIDES_PORT("thucydides.database.port"),
 
     /**
+     * Run the local Thucydides database as an in-memory server, as opposed to a file-based database.
+     * This is useful if the Thucydides tests are to be run in parallel on different JVM forks.
+     */
+    THUCYDIDES_USE_LOCAL_SERVER("thucydides.use.local.server"),
+
+    /**
      * Record test result statistics in a database for reporting purposes.
      */
     RECORD_STATISTICS("thucydides.record.statistics"),

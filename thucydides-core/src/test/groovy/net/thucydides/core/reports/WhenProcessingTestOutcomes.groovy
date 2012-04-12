@@ -8,6 +8,7 @@ import net.thucydides.core.model.TestResult
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.withResult
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagName
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagType
+import net.thucydides.core.statistics.model.TestStatistics
 
 class WhenProcessingTestOutcomes extends Specification {
 
@@ -161,6 +162,14 @@ class WhenProcessingTestOutcomes extends Specification {
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
         then:
             testOutcomes.total == 3
+    }
+
+    def "should complete test outcome with history if requested"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes")).withHistory()
+            TestStatistics statistics = testOutcomes.tests[0].statistics
+        then:
+            statistics != null;
     }
 
 }

@@ -16,7 +16,7 @@ import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.integration.db.LocalDatabase;
-import net.thucydides.core.statistics.integration.db.LocalHSqldbDatabase;
+import net.thucydides.core.statistics.integration.db.LocalHSqldbServerDatabase;
 import net.thucydides.core.statistics.model.TestRun;
 import net.thucydides.core.statistics.model.TestRunTag;
 import net.thucydides.core.statistics.model.TestStatistics;
@@ -48,7 +48,7 @@ public class WhenRecordingTestResultStatistics {
     EnvironmentVariables environmentVariables;
     ThucydidesModuleWithMockEnvironmentVariables guiceModule;
     StatisticsListener statisticsListener;
-    TestStatisticsProvider testStatisticsProvider;
+    HibernateTestStatisticsProvider testStatisticsProvider;
 
     class ThucydidesModuleWithMockEnvironmentVariables extends ThucydidesModule {
         @Override
@@ -56,7 +56,6 @@ public class WhenRecordingTestResultStatistics {
             clearEntityManagerCache();
             bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
             bind(EnvironmentVariables.class).to(MockEnvironmentVariables.class).in(Singleton.class);
-            bind(LocalDatabase.class).to(LocalHSqldbDatabase.class).in(Singleton.class);
             bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
             bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class);
             bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class);
@@ -99,7 +98,7 @@ public class WhenRecordingTestResultStatistics {
 
         testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
         statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables);
-        testStatisticsProvider = new TestStatisticsProvider(testOutcomeHistoryDAO);
+        testStatisticsProvider = new HibernateTestStatisticsProvider(testOutcomeHistoryDAO);
 
         prepareTestData(statisticsListener);
     }
@@ -130,7 +129,7 @@ public class WhenRecordingTestResultStatistics {
     }
 
     @Test
-    public void by_default_statistics_are_recorded_for_now() {
+    public void by_default_statistics_are_recorded() {
 
         ThucydidesModuleWithMockEnvironmentVariables guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
         Injector injector = Guice.createInjector(guiceModule);
@@ -139,7 +138,32 @@ public class WhenRecordingTestResultStatistics {
 
         TestOutcomeHistoryDAO testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
         StatisticsListener statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables);
-        TestStatisticsProvider testStatisticsProvider = new TestStatisticsProvider(testOutcomeHistoryDAO);
+        HibernateTestStatisticsProvider testStatisticsProvider = new HibernateTestStatisticsProvider(testOutcomeHistoryDAO);
+
+        prepareTestData(statisticsListener);
+
+        prepareDAOWithFixedClock();
+
+        when(testOutcome.getResult()).thenReturn(TestResult.SUCCESS);
+
+        statisticsListener.testFinished(testOutcome);
+        statisticsListener.testSuiteFinished();
+
+        List<TestRun> storedTestRuns = testStatisticsProvider.testRunsForTest(With.title(testOutcome.getTitle()));
+        assertThat(storedTestRuns.size(), is(1));
+    }
+
+    @Test
+    public void statistics_can_be_deactivated_via_a_system_property() {
+
+        ThucydidesModuleWithMockEnvironmentVariables guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
+        Injector injector = Guice.createInjector(guiceModule);
+        EnvironmentVariables environmentVariables = injector.getInstance(EnvironmentVariables.class);
+        environmentVariables.setProperty("thucydides.record.statistics", "false");
+
+        TestOutcomeHistoryDAO testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
+        StatisticsListener statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables);
+        HibernateTestStatisticsProvider testStatisticsProvider = new HibernateTestStatisticsProvider(testOutcomeHistoryDAO);
 
         prepareTestData(statisticsListener);
 
@@ -152,20 +176,6 @@ public class WhenRecordingTestResultStatistics {
 
         List<TestRun> storedTestRuns = testStatisticsProvider.testRunsForTest(With.title(testOutcome.getTitle()));
         assertThat(storedTestRuns.size(), is(0));
-    }
-
-    @Test
-    public void should_use_a_defined_project_key_to_group_results() {
-
-        environmentVariables.setProperty("thucydides.project.key", "GIZMOS");
-
-        recordTests(statisticsListener);
-        recordTests(statisticsListener);
-
-        TestStatistics testStatistics =  testStatisticsProvider.forProject("GIZMO")
-                .statisticsForTests(With.title("Boat sales test"));
-
-        assertThat(testStatistics.getTotalTestRuns(), is(16L));
     }
 
 
@@ -432,6 +442,6 @@ public class WhenRecordingTestResultStatistics {
                                                                    environmentVariables,
                                                                    clock);
         statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables);
-        testStatisticsProvider = new TestStatisticsProvider(testOutcomeHistoryDAO);
+        testStatisticsProvider = new HibernateTestStatisticsProvider(testOutcomeHistoryDAO);
     }
 }

@@ -55,21 +55,12 @@ public class WebElementFacade {
                             final WebElement webElement,
                             final long timeoutInMilliseconds) {
         this.driver = driver;
-        this.webElement = augmented(webElement);
+        this.webElement = webElement;
         this.timeoutInMilliseconds = timeoutInMilliseconds;
         this.webdriverClock = new SystemClock();
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
         this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
 
-    }
-
-    private WebElement augmented(WebElement webElement) {
-//        if (webElement instanceof RemoteWebElement) {
-//            Augmenter augmenter = new Augmenter();
-//            return augmenter.augment((RemoteWebElement)webElement);
-//        } else {
-            return webElement;
-//        }
     }
 
     protected JavascriptExecutorFacade getJavascriptExecutorFacade() {

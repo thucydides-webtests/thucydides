@@ -5,6 +5,7 @@
     <title>Home</title>
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="css/core.css"/>
+    <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
     <style type="text/css">a:link {
         text-decoration: none;
     }
@@ -22,13 +23,23 @@
     }
     </style>
 
+
     <!--[if IE]>
     <script language="javascript" type="text/javascript" src="jit/Extras/excanvas.js"></script><![endif]-->
 
     <script type="text/javascript" src="scripts/jquery.js"></script>
+    <script type="text/javascript" src="datatables/media/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="jqplot/jquery.jqplot.min.js"></script>
     <script type="text/javascript" src="jqplot/plugins/jqplot.pieRenderer.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
+
+    <link type="text/css" href="jqueryui/css/start/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
+    <script type="text/javascript" src="jqueryui/js/jquery-ui-1.8.18.custom.min.js"></script>
+
+    <style type="text/css" media="screen">
+        .dataTables_info { padding-top: 0; }
+        .dataTables_paginate { padding-top: 0; }
+        .css_right { float: right; }
+    </style>
 
     <script class="code" type="text/javascript">$(document).ready(function () {
         var plot1 = $.jqplot('test_results_pie_chart', [
@@ -60,6 +71,12 @@
                 {label:'${testOutcomes.failureCount} / ${testOutcomes.total} failed'}
             ]
         });
+
+        // Results table
+        $('#test-results-table').dataTable( {
+            "aaSorting": [[ 1, "asc" ]],
+            "bJQueryUI": true
+        } );
     })
     ;
     </script>
@@ -127,15 +144,15 @@
             <#--<div class="rightbgm"></div>-->
         <#--</div>-->
     <#--</div>-->
-    <#--<div class="menu">-->
-        <#--<ul>-->
-            <#--<li><a href="#" class="current">Test Results</a></li>-->
+    <div class="menu">
+        <ul>
+            <li><a href="#" class="current">Test Results</a></li>
             <#--<li><a href="treemap.html">Tree Map</a></li>-->
             <#--<li><a href="dashboard.html">Progress</a></li>-->
-            <#--<li><a href="history.html">History</a></li>-->
-        <#--</ul>-->
-        <#--<br style="clear:left"/>-->
-    <#--</div>-->
+            <li><a href="history.html">History</a></li>
+        </ul>
+        <br style="clear:left"/>
+    </div>
 
     <div class="clr"></div>
     <div id="beforetable"></div>
@@ -241,6 +258,7 @@
                                     <#assign tagReport = reportName.forTag(tagName) >
                                     <#assign outcomesForTag = outcomesForType.withTag(tagName) >
                                     <#if outcomesForTag.result == "FAILURE">
+
                                         <#assign outcome_icon = "fail.png">
                                         <#assign outcome_text = "failing-color">
                                     <#elseif outcomesForTag.result == "SUCCESS">
@@ -303,52 +321,82 @@
                     </tr>
                 </table>
                 <#--- Test Results -->
-                <table><tr><td>
+                <table>
+                 <tr>
+                   <td>
                     <div><h3 id="test_list_title">Click to View Tests</h3></div>
                     <div id="test_list_tests" class="table">
-                        <div class="toptablerow">
-                            <table width="1025" height="50" border="0">
-                                <tr>
-                                    <td width="35">&nbsp;</td>
-                                    <td width="%" class="greentext">Acceptance Criteria</td>
-                                    <td width="80" class="greentext">Steps</td>
-                                    <td width="80" class="greentext">Failed</td>
-                                    <td width="80" class="greentext">Pending</td>
-                                    <td width="80" class="greentext">Ignored</td>
-                                    <td width="80" class="greentext">Skipped</td>
-                                    <td width="95" class="greentext">Duration</td>
-                                </tr>
-                            </table>
-                        </div>
-                    <#assign testResultSet = testOutcomes.tests >
-                    <#foreach testOutcome in testResultSet>
-                        <#if testOutcome.stepCount == 0 || testOutcome.result == "PENDING" || testOutcome.result == "IGNORED">
-                            <#assign testrun_outcome_icon = "pending.png">
-                        <#elseif testOutcome.result == "FAILURE">
-                            <#assign testrun_outcome_icon = "fail.png">
-                        <#elseif testOutcome.result == "SUCCESS">
-                            <#assign testrun_outcome_icon = "success.png">
-                        <#else>
-                            <#assign testrun_outcome_icon = "ignor.png">
-                        </#if>
-                        <div class="tablerow">
-                            <table border="0" height="40" width="1025" >
-                                <tr class="test-${testOutcome.result}">
-                                    <td width="35"><img src="images/${testrun_outcome_icon}" class="summary-icon"/></td>
-                                    <td width="%" class="${testOutcome.result}-text"><a href="${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a></td>
+                        <div class="test-results">
+                            <table id="test-results-table">
+                                <thead>
+                                    <tr>
+                                        <th width="30" class="test-results-heading">&nbsp;</th>
+                                        <th width="525" class="test-results-heading">Acceptance Criteria</th>
+                                        <th width="70" class="test-results-heading">Steps</th>
+                                        <th width="65" class="test-results-heading">Fail</th>
+                                        <th width="65" class="test-results-heading">Pend</th>
+                                        <th width="65" class="test-results-heading">Ignore</th>
+                                        <th width="65" class="test-results-heading">Skip</th>
+                                        <th width="65" class="test-results-heading">Stable</th>
+                                        <th width="100" class="test-results-heading">Duration<br>(seconds)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <#assign testResultSet = testOutcomes.tests >
+                                <#foreach testOutcome in testResultSet>
+                                    <#if testOutcome.stepCount == 0 || testOutcome.result == "PENDING" || testOutcome.result == "IGNORED">
+                                        <#assign testrun_outcome_icon = "pending.png">
+                                    <#elseif testOutcome.result == "FAILURE">
+                                        <#assign testrun_outcome_icon = "fail.png">
+                                    <#elseif testOutcome.result == "SUCCESS">
+                                        <#assign testrun_outcome_icon = "success.png">
+                                    <#else>
+                                        <#assign testrun_outcome_icon = "ignor.png">
+                                    </#if>
 
-                                    <td width="80" class="lightgreentext"><b>${testOutcome.stepCount}</b></td>
-                                    <td width="80" class="redtext">${testOutcome.failureCount}</td>
-                                    <td width="80" class="bluetext">${testOutcome.pendingCount}</td>
-                                    <td width="80" class="bluetext">${testOutcome.skippedCount}</td>
-                                    <td width="80" class="bluetext">${testOutcome.ignoredCount}</td>
-                                    <td width="95" class="lightgreentext">${testOutcome.duration / 1000} seconds</td>
-                                </tr>
+                                    <#assign stability = testOutcome.recentStability>
+                                    <#if (testOutcome.recentTestRunCount == testOutcome.recentPendingCount)>
+                                        <#assign stability_icon = "traffic-in-progress.gif">
+                                        <#assign stability_rank = 0>
+                                    <#elseif stability < 0.25>
+                                        <#assign stability_icon = "traffic-red.gif">
+                                        <#assign stability_rank = 1>
+                                    <#elseif stability < 0.5 >
+                                        <#assign stability_icon = "traffic-orange.gif">
+                                        <#assign stability_rank = 2>
+                                    <#elseif stability < 0.5 >
+                                        <#assign stability_icon = "traffic-yellow.gif">
+                                        <#assign stability_rank = 3>
+                                    <#else>
+                                        <#assign stability_icon = "traffic-green.gif">
+                                        <#assign stability_rank = 4>
+                                    </#if>
+
+                                <tr class="test-${testOutcome.result}">
+                                        <td><img src="images/${testrun_outcome_icon}" class="summary-icon"/><span style="display:none">${testOutcome.result}</span></td>
+                                        <td class="${testOutcome.result}-text"><a href="${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a></td>
+
+                                        <td class="lightgreentext">${testOutcome.nestedStepCount}</td>
+                                        <td class="redtext">${testOutcome.failureCount}</td>
+                                        <td class="bluetext">${testOutcome.pendingCount}</td>
+                                        <td class="bluetext">${testOutcome.skippedCount}</td>
+                                        <td class="bluetext">${testOutcome.ignoredCount}</td>
+                                        <td class="bluetext">
+                                            <img src="images/${stability_icon}"
+                                                 title="Over the last ${testOutcome.recentTestRunCount} tests: ${testOutcome.recentPassCount} passed, ${testOutcome.recentFailCount} failed, ${testOutcome.recentPendingCount} pending"
+                                                 class="summary-icon"/>
+                                            <span style="display:none">${stability_rank }</span>
+                                        </td>
+                                        <td class="lightgreentext">${testOutcome.duration / 1000}</td>
+                                    </tr>
+                                </#foreach>
+                                </tbody>
                             </table>
                         </div>
-                    </#foreach>
                     </div>
-                </td></tr></table>
+                   </td>
+                  </tr>
+                 </table>
             </div>
             <#--- Test Results end -->
             </div>

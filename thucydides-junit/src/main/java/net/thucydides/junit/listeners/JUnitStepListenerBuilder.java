@@ -54,8 +54,7 @@ public class JUnitStepListenerBuilder {
         if (pageFactory != null) {
             return Listeners.getBaseStepListener()
                              .withPages(pageFactory)
-                             .and()
-                             .withOutputDirectory(outputDirectory);
+                             .and().withOutputDirectory(outputDirectory);
         } else {
             return Listeners.getBaseStepListener()
                             .withOutputDirectory(outputDirectory);
@@ -74,4 +73,5 @@ public class JUnitStepListenerBuilder {
                                      Listeners.getLoggingListener(),
                                      Listeners.getStatisticsListener());
     }
+
 }

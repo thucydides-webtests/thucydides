@@ -13,33 +13,38 @@ import java.util.Set;
 
 public class FluentElementAPITestsBaseClass {
 
-    private static ThreadLocal<StaticTestSite> testSiteThreadLocal = new ThreadLocal<StaticTestSite>();
-    private ThreadLocal<StaticSitePage> firefoxPage = new ThreadLocal<StaticSitePage>();
-    private ThreadLocal<StaticSitePage> chromePage = new ThreadLocal<StaticSitePage>();
+    private static StaticTestSite staticTestSite;
+    private static StaticSitePage firefoxPage;
+    private static StaticSitePage chromePage;
+
+    @BeforeClass
+    public static void openStaticSite() {
+        staticTestSite = new StaticTestSite();
+    }
 
     protected static StaticTestSite getStaticTestSite() {
-        if (testSiteThreadLocal.get() == null) {
-            testSiteThreadLocal.set(new StaticTestSite());
-        }
-        return testSiteThreadLocal.get();
+        return staticTestSite;
     }
 
     protected StaticSitePage getFirefoxPage() {
-        if (firefoxPage.get() == null) {
+
+        if (firefoxPage == null) {
             WebDriver driver = getStaticTestSite().open("firefox");
-            firefoxPage.set(new StaticSitePage(driver, 5000));
-            firefoxPage.get().addJQuerySupport();
+            firefoxPage = new StaticSitePage(driver, 1000);
+            firefoxPage.open();
+            firefoxPage.addJQuerySupport();
         }
-        return firefoxPage.get();
+        return firefoxPage;
     }
 
     protected StaticSitePage getChromePage() {
-        if (chromePage.get() == null) {
+        if (chromePage == null) {
             WebDriver driver = getStaticTestSite().open("chrome");
-            chromePage.set(new StaticSitePage(driver, 5000));
-            chromePage.get().addJQuerySupport();
+            chromePage = new StaticSitePage(driver, 1000);
+            chromePage.open();
+            chromePage.addJQuerySupport();
         }
-        return chromePage.get();
+        return chromePage;
     }
 
     @AfterClass

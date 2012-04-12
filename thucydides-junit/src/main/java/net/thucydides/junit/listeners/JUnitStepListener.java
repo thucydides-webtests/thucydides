@@ -8,8 +8,6 @@ import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
@@ -19,10 +17,9 @@ import java.util.List;
  */
 public class JUnitStepListener extends RunListener {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(JUnitStepListener.class);
-
     private BaseStepListener baseStepListener;
+    private StepListener[] extraListeners;
+
     private boolean testStarted;
 
     public static JUnitStepListenerBuilder withOutputDirectory(File outputDirectory) {
@@ -32,9 +29,16 @@ public class JUnitStepListener extends RunListener {
     protected JUnitStepListener(BaseStepListener baseStepListener, StepListener... listeners) {
         testStarted = false;
         this.baseStepListener = baseStepListener;
+        this.extraListeners = listeners;
+
+        registerThucydidesListeners();
+
+    }
+
+    public void registerThucydidesListeners() {
         StepEventBus.getEventBus().registerListener(baseStepListener);
 
-        for(StepListener listener : listeners) {
+        for(StepListener listener : extraListeners) {
             StepEventBus.getEventBus().registerListener(listener);
         }
     }
@@ -52,6 +56,7 @@ public class JUnitStepListener extends RunListener {
     @Override
     public void testRunFinished(Result result) throws Exception {
         StepEventBus.getEventBus().testSuiteFinished();
+        //dropListeners();
         super.testRunFinished(result);
     }
 
@@ -69,6 +74,7 @@ public class JUnitStepListener extends RunListener {
 
     @Override
     public void testFinished(final Description description) throws Exception {
+        StepEventBus.getEventBus().testFinished();
         endTest();
     }
 
@@ -103,8 +109,11 @@ public class JUnitStepListener extends RunListener {
         return baseStepListener.aStepHasFailed();
     }
 
-    public void close() {
+    public void dropListeners() {
         StepEventBus.getEventBus().dropListener(baseStepListener);
+        for(StepListener listener : extraListeners) {
+            StepEventBus.getEventBus().dropListener(listener);
+        }
     }
 
     private void startTest() {

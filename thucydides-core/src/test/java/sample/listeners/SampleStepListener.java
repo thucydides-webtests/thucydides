@@ -66,20 +66,20 @@ public class SampleStepListener implements StepListener {
         
     }
 
+    @Override
+    public void testFailed(TestOutcome testOutcome, Throwable cause) {
+    }
+
+    @Override
+    public void testIgnored() {
+    }
+
     public List<TestOutcome> getTestOutcomes() {
         return null;  
     }
 
     public WebDriver getDriver() {
         return null;  
-    }
-
-    public void testFailed(Throwable cause) {
-        
-    }
-
-    public void testIgnored() {
-        
     }
 
     @Override

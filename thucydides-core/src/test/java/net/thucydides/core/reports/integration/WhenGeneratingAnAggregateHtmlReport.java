@@ -2,7 +2,6 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.reports.ThucydidesReportData;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.commons.io.FileUtils;
@@ -23,10 +22,8 @@ import java.util.List;
 
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.on;
-import static net.thucydides.core.matchers.FileMatchers.exists;
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
@@ -59,7 +56,7 @@ public class WhenGeneratingAnAggregateHtmlReport {
     public void should_aggregate_dashboard_should_contain_a_list_of_features_and_stories_for_legacy_tests() throws Exception {
 
         File sourceDirectory = directoryInClasspathCalled("/test-outcomes/containing-features-and-stories");
-        reporter.generateReportsForStoriesFrom(sourceDirectory);
+        reporter.generateReportsForTestResultsFrom(sourceDirectory);
 
         File report = new File(outputDirectory,"index.html");
 

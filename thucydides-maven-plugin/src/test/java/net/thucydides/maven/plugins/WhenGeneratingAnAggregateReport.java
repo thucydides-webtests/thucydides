@@ -47,17 +47,6 @@ public class WhenGeneratingAnAggregateReport {
     }
 
     @Test
-    public void the_reporter_uses_the_project_group_and_artifact_id_to_identify_reports() throws Exception {
-
-        plugin.setReporter(null);
-        plugin.getReporter();
-
-        verify(project).getArtifactId();
-        verify(project).getGroupId();
-
-    }
-
-    @Test
     public void the_output_directory_can_be_set_via_the_plugin_configuration() throws Exception {
 
         plugin.execute();
@@ -72,7 +61,7 @@ public class WhenGeneratingAnAggregateReport {
 
         plugin.execute();
 
-        verify(reporter).generateReportsForStoriesFrom(sourceDirectory);
+        verify(reporter).generateReportsForTestResultsFrom(sourceDirectory);
     }
 
 
@@ -102,7 +91,7 @@ public class WhenGeneratingAnAggregateReport {
     @Test(expected = MojoExecutionException.class)
     public void if_the_report_cant_be_written_the_plugin_execution_should_fail() throws Exception {
 
-        doThrow(new IOException("IO error")).when(reporter).generateReportsForStoriesFrom(sourceDirectory);
+        doThrow(new IOException("IO error")).when(reporter).generateReportsForTestResultsFrom(sourceDirectory);
 
         plugin.execute();
     }

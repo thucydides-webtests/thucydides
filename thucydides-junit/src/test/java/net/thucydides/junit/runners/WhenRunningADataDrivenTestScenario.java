@@ -49,6 +49,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
+//@Ignore("Not working yet")
 public class WhenRunningADataDrivenTestScenario {
 
     @Rule
