@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.StreamException;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.model.FeatureResults;
+import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.util.EnvironmentVariables;
 
@@ -52,11 +52,11 @@ public class TestHistory {
         return environmentVariables.getProperty("user.home");
     }
 
-    public void updateData(List<FeatureResults> featureResults) {
-        int totalStepCount = countTotalStepsIn(featureResults);
-        int passingSteps =  countPassingStepsIn(featureResults);
-        int failingSteps = countFailingStepsIn(featureResults);
-        int skippedSteps = countSkippedStepsIn(featureResults);
+    public void updateData(TestOutcomes testOutcomes) {
+        int totalStepCount = testOutcomes.getStepCount();
+        int passingSteps =  testOutcomes.getPassingTests().getStepCount();
+        int failingSteps = testOutcomes.getFailingTests().getStepCount();
+        int skippedSteps = totalStepCount - passingSteps - failingSteps;
         String buildId = getEnvironmentVariables().getValue(BUILD_ID, "MANUAL");
 
         TestResultSnapshot newSnapshot = new TestResultSnapshot(totalStepCount,
@@ -70,38 +70,6 @@ public class TestHistory {
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Unable to store history data", e);
         }
-    }
-
-    private int countTotalStepsIn(final List<FeatureResults> featureResults) {
-        int total = 0;
-        for(FeatureResults results : featureResults) {
-            total += results.getEstimatedTotalSteps();
-        }
-        return total;
-    }
-
-    private int countPassingStepsIn(final List<FeatureResults> featureResults) {
-        int total = 0;
-        for(FeatureResults results : featureResults) {
-            total += results.getPassingSteps();
-        }
-        return total;
-    }
-
-    private int countFailingStepsIn(final List<FeatureResults> featureResults) {
-        int total = 0;
-        for(FeatureResults results : featureResults) {
-            total += results.getFailingSteps();
-        }
-        return total;
-    }
-
-    private int countSkippedStepsIn(final List<FeatureResults> featureResults) {
-        int total = 0;
-        for(FeatureResults results : featureResults) {
-            total += results.getSkippedSteps();
-        }
-        return total;
     }
 
     private void save(TestResultSnapshot snapshot) throws FileNotFoundException {
@@ -128,6 +96,7 @@ public class TestHistory {
     public File getDirectory() {
         File projectDirectory = new File(dataDirectory, projectName);
         if (!projectDirectory.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             projectDirectory.mkdirs();
         }
         return projectDirectory;
@@ -174,6 +143,7 @@ public class TestHistory {
     public void clearHistory() {
         File[] historyFiles = getHistoryFiles();
         for(File historyFile : historyFiles) {
+            //noinspection ResultOfMethodCallIgnored
             historyFile.delete();
         }
     }

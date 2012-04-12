@@ -46,13 +46,7 @@ public class ThucydidesHTMLReportGenerator {
         sink.rawText("Dashboard");
         sink.link_();
         sink.sectionTitle2_();
-//
-//        sink.sectionTitle2();
-//        sink.link("thucydides/features.html");
-//        sink.rawText("Features");
-//        sink.link_();
-//        sink.sectionTitle2_();
-//
+
 //        sink.sectionTitle2();
 //        sink.link("thucydides/stories.html");
 //        sink.rawText("Stories");

@@ -104,7 +104,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateAggregateReportFor(testOutcomes);
         generateTagReportsFor(testOutcomes);
         generateResultReportsFor(testOutcomes);
-        generateHistoryReport();
+        generateHistoryReportFor(testOutcomes);
 
         return testOutcomes;
     }
@@ -188,11 +188,13 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         return context;
     }
 
-    private void updateHistoryFor(final List<FeatureResults> featureResults) {
-        getTestHistory().updateData(featureResults);
+    private void updateHistoryFor(final TestOutcomes testOutcomes) {
+        getTestHistory().updateData(testOutcomes);
     }
 
-    private void generateHistoryReport() throws IOException {
+    private void generateHistoryReportFor(TestOutcomes testOutcomes) throws IOException {
+        updateHistoryFor(testOutcomes);
+
         List<TestResultSnapshot> history = getTestHistory().getHistory();
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("history", history);
