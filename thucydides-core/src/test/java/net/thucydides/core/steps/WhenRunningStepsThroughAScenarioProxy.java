@@ -7,6 +7,7 @@ import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.steps.samples.SomeTestScenario;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.junit.After;
 import org.junit.Before;
@@ -212,11 +213,6 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
     }
 
-    static class SomeTestClass {
-        @Test
-        public void should_do_something() {}
-    }
-
     @Mock
     WebDriver driver;
 
@@ -245,7 +241,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         StepEventBus.getEventBus().registerListener(baseStepListener);
         StepEventBus.getEventBus().registerListener(listener);
 
-        StepEventBus.getEventBus().testSuiteStarted(SomeTestClass.class);
+        StepEventBus.getEventBus().testSuiteStarted(SomeTestScenario.class);
         StepEventBus.getEventBus().testStarted("should_do_something");
     }
 
