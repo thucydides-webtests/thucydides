@@ -11,7 +11,9 @@ import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -19,6 +21,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -209,6 +212,10 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
     }
 
+    static class SomeTestClass {
+        @Test
+        public void should_do_something() {}
+    }
 
     @Mock
     WebDriver driver;
@@ -216,19 +223,30 @@ public class WhenRunningStepsThroughAScenarioProxy {
     @Mock
     StepListener listener;
 
+    BaseStepListener baseStepListener;
+
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
+
     @Mock
     TestOutcome testOutcome;
     
     private StepFactory factory;
 
     @Before
-    public void initMocks() {
+    public void initMocks() throws IOException {
         MockitoAnnotations.initMocks(this);
 
         factory = new StepFactory(new Pages(driver));
 
         StepEventBus.getEventBus().clear();
+        baseStepListener = new BaseStepListener(temp.newFolder());
+
+        StepEventBus.getEventBus().registerListener(baseStepListener);
         StepEventBus.getEventBus().registerListener(listener);
+
+        StepEventBus.getEventBus().testSuiteStarted(SomeTestClass.class);
+        StepEventBus.getEventBus().testStarted("should_do_something");
     }
 
     @After
