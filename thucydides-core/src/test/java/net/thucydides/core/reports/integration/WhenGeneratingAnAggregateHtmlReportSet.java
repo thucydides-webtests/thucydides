@@ -95,6 +95,13 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     }
 
     @Test
+    public void should_generate_a_summary_report_for_each_tag_type() throws Exception {
+        assertThat(new File(outputDirectory,"tagtype_feature.html"), exists());
+        assertThat(new File(outputDirectory,"tagtype_story.html"), exists());
+        assertThat(new File(outputDirectory,"tagtype_epic.html"), exists());
+    }
+
+    @Test
     public void aggregate_dashboard_should_contain_a_list_of_all_tag_types() throws Exception {
 
         File report = new File(outputDirectory,"index.html");
@@ -121,7 +128,7 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     }
 
     @Test
-    public void aggregate_dashboard_should_contain_links_to_associated_tag_type_reports() throws Exception {
+    public void aggregate_dashboard_should_contain_links_to_associated_detailed_tag_type_reports() throws Exception {
 
         File report = new File(outputDirectory,"index.html");
         driver.get(urlFor(report));
@@ -133,6 +140,32 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
                                         endsWith("tag_an_epic.html"),
                                         endsWith("tag_another_story.html"),
                                         endsWith("tag_another_different_story.html")));
+    }
+
+    @Test
+    public void aggregate_dashboard_should_contain_links_to_all_overview_tag_type_reports() throws Exception {
+
+        File report = new File(outputDirectory,"index.html");
+        driver.get(urlFor(report));
+
+        List<WebElement> tagTypes = driver.findElements(By.xpath("//div[@class='menu']//a"));
+        List<String> tagTypeLinks = extract(tagTypes, on(WebElement.class).getAttribute("href"));
+        assertThat(tagTypeLinks, hasItems(endsWith("tagtype_feature.html"),
+                endsWith("tagtype_story.html"),
+                endsWith("tagtype_epic.html")));
+    }
+
+    @Test
+    public void tagtype_overview_report_should_contain_links_to_all_other_overview_tag_type_reports() throws Exception {
+
+        File report = new File(outputDirectory,"tagtype_feature.html");
+        driver.get(urlFor(report));
+
+        List<WebElement> tagTypes = driver.findElements(By.xpath("//div[@class='menu']//a"));
+        List<String> tagTypeLinks = extract(tagTypes, on(WebElement.class).getAttribute("href"));
+        assertThat(tagTypeLinks, hasItems(endsWith("tagtype_feature.html"),
+                endsWith("tagtype_story.html"),
+                endsWith("tagtype_epic.html")));
     }
 
     @Test

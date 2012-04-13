@@ -1,6 +1,7 @@
 package net.thucydides.core.reports;
 
 import ch.lambdaj.function.convert.Converter;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -12,6 +13,7 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestResultList;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
+import net.thucydides.core.statistics.TestStatisticsProvider;
 import net.thucydides.core.statistics.With;
 import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.webdriver.Configuration;
@@ -49,6 +51,7 @@ import static org.hamcrest.Matchers.isOneOf;
 public class TestOutcomes {
 
     private final List<? extends TestOutcome> outcomes;
+    private final Optional<TestOutcomes> rootOutcomes;
     private final double estimatedAverageStepCount;
 
     /**
@@ -65,11 +68,20 @@ public class TestOutcomes {
     protected TestOutcomes(List<? extends TestOutcome> outcomes,
                           double estimatedAverageStepCount,
                           String label,
-                          HibernateTestStatisticsProvider testStatisticsProvider) {
+                          HibernateTestStatisticsProvider testStatisticsProvider,
+                          TestOutcomes rootOutcomes) {
         this.outcomes = ImmutableList.copyOf(outcomes);
         this.estimatedAverageStepCount = estimatedAverageStepCount;
         this.label = label;
         this.testStatisticsProvider = testStatisticsProvider;
+        this.rootOutcomes = Optional.fromNullable(rootOutcomes);
+    }
+
+    protected TestOutcomes(List<? extends TestOutcome> outcomes,
+                           double estimatedAverageStepCount,
+                           String label,
+                           HibernateTestStatisticsProvider testStatisticsProvider) {
+        this(outcomes, estimatedAverageStepCount, label, testStatisticsProvider, null);
     }
 
     protected TestOutcomes(List<? extends TestOutcome> outcomes,
@@ -90,6 +102,9 @@ public class TestOutcomes {
                                 Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
     }
 
+    protected TestStatisticsProvider getTestStatisticsProvider() {
+        return testStatisticsProvider;
+    }
     public String getLabel() {
         return label;
     }
@@ -127,10 +142,24 @@ public class TestOutcomes {
         return sort(ImmutableList.copyOf(tags), on(String.class));
     }
 
+    public List<String> getTagsOfTypeExcluding(String tagType, String excludedTags) {
+        Set<String> tags = Sets.newHashSet();
+
+        for(TestOutcome outcome : outcomes) {
+            List<String> allTagsOfType = tagsOfType(tagType).in(outcome);
+            allTagsOfType.remove(excludedTags);
+            tags.addAll(allTagsOfType);
+        }
+        return sort(ImmutableList.copyOf(tags), on(String.class));
+    }
     private TagFinder tagsOfType(String tagType) {
         return new TagFinder(tagType);
     }
-    
+
+    public TestOutcomes getRootOutcomes() {
+        return rootOutcomes.or(this);
+    }
+
     private class TagFinder {
         private final String tagType;
 
@@ -145,7 +174,7 @@ public class TestOutcomes {
                     matchingTags.add(tag.getName());
                 }
             }
-            return ImmutableList.copyOf(matchingTags);
+            return matchingTags;
         }
     }
 
@@ -155,7 +184,11 @@ public class TestOutcomes {
      * @return A new set of test outcomes for this tag type
      */
     public TestOutcomes withTagType(String tagType) {
-        return TestOutcomes.of(filter(havingTagType(tagType), outcomes)).withLabel(tagType);
+        return TestOutcomes.of(filter(havingTagType(tagType), outcomes)).withLabel(tagType).withRootOutcomes(this.getRootOutcomes());
+    }
+
+    private TestOutcomes withRootOutcomes(TestOutcomes rootOutcomes) {
+        return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, this.label, this.testStatisticsProvider, rootOutcomes);
     }
 
     /**
@@ -164,7 +197,7 @@ public class TestOutcomes {
      * @return A new set of test outcomes for this tag name
      */
     public TestOutcomes withTag(String tagName) {
-        return TestOutcomes.of(filter(havingTagName(tagName), outcomes)).withLabel(tagName);
+        return TestOutcomes.of(filter(havingTagName(tagName), outcomes)).withLabel(tagName).withRootOutcomes(getRootOutcomes());
     }
 
     /**
@@ -181,7 +214,6 @@ public class TestOutcomes {
             @Override
             public TestOutcome convert(TestOutcome testOutcome) {
                 TestStatistics statistics = testStatisticsProvider.statisticsForTests(With.title(testOutcome.getTitle()));
-                System.out.println("Statistics for " + testOutcome.getTitle() + ":" + statistics.getPassingTestRuns() + "/" + statistics.getTotalTestRuns());
                 testOutcome.setStatistics(statistics);
                 return testOutcome;
             }
@@ -194,7 +226,8 @@ public class TestOutcomes {
      */
     public TestOutcomes getFailingTests() {
         return TestOutcomes.of(filter(withResult(TestResult.FAILURE), outcomes))
-                            .withLabel(labelForTestsWithStatus("failing tests"));
+                            .withLabel(labelForTestsWithStatus("failing tests"))
+                            .withRootOutcomes(getRootOutcomes());
     }
 
     private String labelForTestsWithStatus(String status) {
@@ -211,7 +244,8 @@ public class TestOutcomes {
      */
     public TestOutcomes getPassingTests() {
         return TestOutcomes.of(filter(withResult(TestResult.SUCCESS), outcomes))
-                            .withLabel(labelForTestsWithStatus("passing tests"));
+                            .withLabel(labelForTestsWithStatus("passing tests"))
+                .withRootOutcomes(getRootOutcomes());
     }
 
     /**
@@ -221,7 +255,8 @@ public class TestOutcomes {
     @SuppressWarnings("unchecked")
     public TestOutcomes getPendingTests() {
         return TestOutcomes.of(filter(anyOf(withResult(TestResult.PENDING), withResult(TestResult.SKIPPED)), outcomes))
-                           .withLabel(labelForTestsWithStatus("pending tests"));
+                           .withLabel(labelForTestsWithStatus("pending tests"))
+                .withRootOutcomes(getRootOutcomes());
 
     }
 
@@ -355,6 +390,22 @@ public class TestOutcomes {
             return ((double) getStepCount()) / totalImplementedTests();
         } else {
             return estimatedAverageStepCount;
+        }
+    }
+
+    public double getRecentStability() {
+        if (outcomes.isEmpty()) {
+            return 0.0;
+        } else {
+            return sum(outcomes, on(TestOutcome.class).getRecentStability()) / outcomes.size();
+        }
+    }
+
+    public double getOverallStability() {
+        if (outcomes.isEmpty()) {
+            return 0.0;
+        } else {
+            return sum(outcomes, on(TestOutcome.class).getOverallStability()) / outcomes.size();
         }
     }
 

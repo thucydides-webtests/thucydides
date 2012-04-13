@@ -16,6 +16,10 @@ public class ReportProperties {
         return new ReportProperties(false);
     }
 
+    public static ReportProperties forTagTypeResultsReport() {
+        return new ReportProperties(false);
+    }
+
     public static ReportProperties forAggregateResultsReport() {
         return new ReportProperties(false);
     }

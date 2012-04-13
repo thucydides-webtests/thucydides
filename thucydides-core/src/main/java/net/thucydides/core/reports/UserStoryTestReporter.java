@@ -27,5 +27,4 @@ public interface UserStoryTestReporter {
 
     void setOutputDirectory(final File outputDirectory);
 
-    File generateReportFor(StoryTestResults storyTestResults) throws IOException;
 }

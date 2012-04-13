@@ -73,7 +73,7 @@ public class ThucydidesModule extends AbstractModule {
     @Singleton
     @Inject
     public LocalDatabase provideLocalDatabase(EnvironmentVariables environmentVariables) {
-        String useServerProperty = ThucydidesSystemProperty.THUCYDIDES_USE_LOCAL_SERVER.from(environmentVariables, "true");
+        String useServerProperty = ThucydidesSystemProperty.THUCYDIDES_USE_LOCAL_SERVER.from(environmentVariables, "false");
         if (Boolean.valueOf(useServerProperty)) {
             return new LocalHSqldbServerDatabase(environmentVariables);
         } else {

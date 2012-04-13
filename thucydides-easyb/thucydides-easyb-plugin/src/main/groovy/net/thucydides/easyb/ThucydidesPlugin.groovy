@@ -195,6 +195,7 @@ public class ThucydidesPlugin extends BasePlugin {
         if (getLatestTestOutcome()) {
             if (configuration.scenarioIssues) {
                 getLatestTestOutcome().addIssues(configuration.scenarioIssues)
+                getLatestTestOutcome().setTags(configuration.tags)
             }
         }
 

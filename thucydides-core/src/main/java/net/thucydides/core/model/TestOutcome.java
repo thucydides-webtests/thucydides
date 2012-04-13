@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.TestAnnotations;
-import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.issues.IssueTracking;

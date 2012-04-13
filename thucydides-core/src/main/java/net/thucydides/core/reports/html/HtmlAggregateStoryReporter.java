@@ -6,8 +6,6 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.NumericalFormatter;
-import net.thucydides.core.model.StoryTestResults;
-import net.thucydides.core.model.UserStoriesResultSet;
 import net.thucydides.core.reports.TestOutcomeLoader;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.UserStoryTestReporter;
@@ -25,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static net.thucydides.core.model.ReportType.HTML;
-
 /**
  * Generates an aggregate acceptance test report in XML form. Reads all the
  * reports from the output directory and generates an aggregate report
@@ -34,19 +30,17 @@ import static net.thucydides.core.model.ReportType.HTML;
  */
 public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStoryTestReporter {
 
-    private static final String DEFAULT_USER_STORY_TEMPLATE = "freemarker/user-story.ftl";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlAggregateStoryReporter.class);
-    private static final String STORIES_TEMPLATE_PATH = "freemarker/stories.ftl";
+
     private static final String HISTORY_TEMPLATE_PATH = "freemarker/history.ftl";
-    private static final String FEATURES_TEMPLATE_PATH = "freemarker/features.ftl";
     private static final String COVERAGE_DATA_TEMPLATE_PATH = "freemarker/coverage.ftl";
     private static final String PROGRESS_DATA_TEMPLATE_PATH = "freemarker/progress.ftl";
     private static final String TEST_OUTCOME_TEMPLATE_PATH = "freemarker/home.ftl";
-    private static final String TREEMAP_TEMPLATE_PATH = "freemarker/treemap.ftl";
-    private static final String DASHBOARD_TEMPLATE_PATH = "freemarker/dashboard.ftl";
+    private static final String TAGTYPE_TEMPLATE_PATH = "freemarker/results-by-tagtype.ftl";
+
     private TestHistory testHistory;
     private String projectName;
+    private ReportNameProvider reportNameProvider;
 
     private final IssueTracking issueTracking;
 
@@ -57,6 +51,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     public HtmlAggregateStoryReporter(final String projectName, final IssueTracking issueTracking) {
         this.projectName = projectName;
         this.issueTracking = issueTracking;
+        this.reportNameProvider = new ReportNameProvider();
     }
 
     public String getProjectName() {
@@ -70,25 +65,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         return testHistory;
     }
 
-    /**
-     * Generate aggregate XML reports for the test run reports in the output directory.
-     * Returns the list of
-     */
-    public File generateReportFor(final StoryTestResults storyTestResults) throws IOException {
-
-        LOGGER.info("Generating report for user story {} to {}", storyTestResults.getTitle(), getOutputDirectory());
-
-        Map<String, Object> context = new HashMap<String, Object>();
-        context.put("story", storyTestResults);
-        addFormattersToContext(context);
-        String htmlContents = mergeTemplate(DEFAULT_USER_STORY_TEMPLATE).usingContext(context);
-
-        copyResourcesToOutputDirectory();
-
-        String reportFilename = storyTestResults.getReportName(HTML);
-        return writeReportToOutputDirectory(reportFilename, htmlContents);
-    }
-
     private void addFormattersToContext(final Map<String, Object> context) {
         Formatter formatter = new Formatter(issueTracking);
         context.put("formatter", formatter);
@@ -97,16 +73,17 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     public TestOutcomes generateReportsForTestResultsFrom(final File sourceDirectory) throws IOException {
-        TestOutcomes testOutcomes = loadTestOutcomesFrom(sourceDirectory);
-
+        TestOutcomes currentTestOutcomes = loadTestOutcomesFrom(sourceDirectory);
+        TestOutcomes allTestOutcomes = currentTestOutcomes;
         copyResourcesToOutputDirectory();
 
-        generateAggregateReportFor(testOutcomes);
-        generateTagReportsFor(testOutcomes);
-        generateResultReportsFor(testOutcomes);
-        generateHistoryReportFor(testOutcomes);
+        generateAggregateReportFor(currentTestOutcomes);
+        generateTagReportsFor(currentTestOutcomes);
+        generateTagTypeReportsFor(currentTestOutcomes);
+        generateResultReportsFor(currentTestOutcomes);
+        generateHistoryReportFor(currentTestOutcomes);
 
-        return testOutcomes;
+        return allTestOutcomes;
     }
 
     private TestOutcomes loadTestOutcomesFrom(File sourceDirectory) throws IOException {
@@ -122,23 +99,22 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     private void generateTagReportsFor(TestOutcomes testOutcomes) throws IOException {
-        generateTagReportsFor(testOutcomes, new ReportNameProvider());
-    }
-
-    private void generateResultReportsFor(TestOutcomes testOutcomes) throws IOException {
-        generateResultReportsFor(testOutcomes, new ReportNameProvider());
-    }
-
-    private void generateTagReportsFor(TestOutcomes testOutcomes, ReportNameProvider reportName) throws IOException {
 
         for (String tag : testOutcomes.getTags()) {
-            generateTagReport(testOutcomes, reportName, tag);
+            generateTagReport(testOutcomes, reportNameProvider, tag);
             generateAssociatedTagReportsForTag(testOutcomes.withTag(tag), tag);
         }
     }
 
-    private void generateResultReportsFor(TestOutcomes testOutcomes, ReportNameProvider reportName) throws IOException {
-        generateResultReports(testOutcomes, reportName);
+    private void generateTagTypeReportsFor(TestOutcomes testOutcomes) throws IOException {
+
+        for (String tagType : testOutcomes.getTagTypes()) {
+            generateTagTypeReport(testOutcomes, reportNameProvider, tagType);
+        }
+    }
+
+    private void generateResultReportsFor(TestOutcomes testOutcomes) throws IOException {
+        generateResultReports(testOutcomes, reportNameProvider);
 
         for (String tag : testOutcomes.getTags()) {
             generateResultReports(testOutcomes.withTag(tag), new ReportNameProvider(tag));
@@ -172,6 +148,17 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, report);
     }
 
+    private void generateTagTypeReport(TestOutcomes testOutcomes, ReportNameProvider reportName, String tagType) throws IOException {
+        TestOutcomes testOutcomesForTagType = testOutcomes.withTagType(tagType);
+
+        Map<String, Object> context = buildContext(testOutcomesForTagType, reportName);
+        context.put("report", ReportProperties.forTagTypeResultsReport());
+        context.put("tagType", tagType);
+
+        String report = reportName.forTagType(tagType);
+        generateReportPage(context, TAGTYPE_TEMPLATE_PATH, report);
+    }
+
     private void generateAssociatedTagReportsForTag(TestOutcomes testOutcomes, String sourceTag) throws IOException {
         ReportNameProvider reportName = new ReportNameProvider(sourceTag);
         for (String tag : testOutcomes.getTags()) {
@@ -183,12 +170,14 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
                                              ReportNameProvider reportName) {
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("testOutcomes", testOutcomesForTagType);
+        context.put("allTestOutcomes", testOutcomesForTagType.getRootOutcomes());
         context.put("reportName", reportName);
         addFormattersToContext(context);
         return context;
     }
 
     private void updateHistoryFor(final TestOutcomes testOutcomes) {
+        System.out.println("Update history for project " + projectName);
         getTestHistory().updateData(testOutcomes);
     }
 

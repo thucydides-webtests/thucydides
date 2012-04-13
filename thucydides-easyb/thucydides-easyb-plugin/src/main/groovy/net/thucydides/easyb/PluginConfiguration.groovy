@@ -4,6 +4,7 @@ import net.thucydides.core.steps.ScenarioSteps
 import net.thucydides.core.webdriver.SupportedWebDriver
 import net.thucydides.core.webdriver.WebdriverProxyFactory
 import org.openqa.selenium.WebDriver
+import net.thucydides.core.model.TestTag
 
 public class PluginConfiguration {
 
@@ -31,17 +32,19 @@ public class PluginConfiguration {
         return configuration.get();
     }
 
-    def defaultBaseUrl;
+    def defaultBaseUrl
 
-    def storyClass;
+    def storyClass
 
-    def registeredSteps = [];
+    def registeredSteps = []
 
-    def scenarioIssues = [];
+    def scenarioIssues = []
+
+    def tags = [] as Set
 
     def resetBrowserInEachScenario = true
     
-    def requestedDriver;
+    def requestedDriver
 
     /**
      * Define the base URL to be used for this story.
@@ -71,6 +74,18 @@ public class PluginConfiguration {
 
     public void tests_issues(String... issues) {
         scenarioIssues.addAll(issues)
+    }
+
+    public void feature(String featureName) {
+        tags += TestTag.withName(featureName).andType("feature")
+    }
+
+    public void story(String storyName) {
+        tags += TestTag.withName(storyName).andType("feature")
+    }
+
+    public void tag(String name, type) {
+        tags += TestTag.withName(name).andType("feature")
     }
 
     public List<String> getScenarioIssues() {
