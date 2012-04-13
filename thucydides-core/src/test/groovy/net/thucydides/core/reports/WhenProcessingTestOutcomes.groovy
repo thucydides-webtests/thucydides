@@ -41,7 +41,7 @@ class WhenProcessingTestOutcomes extends Specification {
         given:
             TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
-            def tags = testOutcomes.getTags()
+            def tags = testOutcomes.getTagNames()
         then:
             tags == ["a feature", "a story", "an epic", "another different story", "another story"]
     }

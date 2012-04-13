@@ -121,9 +121,9 @@ public class TestOutcomes {
     }
 
     /**
-     * @return The list of all the different tags in these test outcomes
+     * @return The list of all the names of the different tags in these test outcomes
      */
-    public List<String> getTags() {
+    public List<String> getTagNames() {
         Set<String> tags = Sets.newHashSet();
         for(TestOutcome outcome : outcomes) {
             tags.addAll(extract(outcome.getTags(), on(TestTag.class).getName()));
@@ -131,6 +131,16 @@ public class TestOutcomes {
         return sort(ImmutableList.copyOf(tags), on(String.class));
     }
 
+    /**
+     * @return The list of all the different tags in these test outcomes
+     */
+    public List<TestTag> getTags() {
+        Set<TestTag> tags = Sets.newHashSet();
+        for(TestOutcome outcome : outcomes) {
+            tags.addAll(outcome.getTags());
+        }
+        return ImmutableList.copyOf(tags);
+    }
     /**
      * @return The list of all the tags associated with a given tag type.
      */

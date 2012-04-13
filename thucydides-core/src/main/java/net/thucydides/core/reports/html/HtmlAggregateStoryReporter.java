@@ -6,6 +6,7 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.NumericalFormatter;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.TestOutcomeLoader;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.UserStoryTestReporter;
@@ -100,9 +101,9 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     private void generateTagReportsFor(TestOutcomes testOutcomes) throws IOException {
 
-        for (String tag : testOutcomes.getTags()) {
+        for (TestTag tag : testOutcomes.getTags()) {
             generateTagReport(testOutcomes, reportNameProvider, tag);
-            generateAssociatedTagReportsForTag(testOutcomes.withTag(tag), tag);
+            generateAssociatedTagReportsForTag(testOutcomes.withTag(tag.getName()), tag.getName());
         }
     }
 
@@ -114,37 +115,39 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     private void generateResultReportsFor(TestOutcomes testOutcomes) throws IOException {
-        generateResultReports(testOutcomes, reportNameProvider);
+        generateResultReports(testOutcomes, reportNameProvider, "");
 
-        for (String tag : testOutcomes.getTags()) {
-            generateResultReports(testOutcomes.withTag(tag), new ReportNameProvider(tag));
+        for (TestTag tag : testOutcomes.getTags()) {
+            generateResultReports(testOutcomes.withTag(tag.getName()), new ReportNameProvider(tag.getName()), tag.getType());
         }
     }
 
-    private void generateResultReports(TestOutcomes testOutcomesForThisTag, ReportNameProvider reportName) throws IOException {
+    private void generateResultReports(TestOutcomes testOutcomesForThisTag, ReportNameProvider reportName, String tagType) throws IOException {
         if (testOutcomesForThisTag.getSuccessCount() > 0) {
-            generateResultReport(testOutcomesForThisTag.getPassingTests(), reportName, "success");
+            generateResultReport(testOutcomesForThisTag.getPassingTests(), reportName, tagType, "success");
         }
         if (testOutcomesForThisTag.getPendingCount() > 0) {
-            generateResultReport(testOutcomesForThisTag.getPendingTests(), reportName, "pending");
+            generateResultReport(testOutcomesForThisTag.getPendingTests(), reportName, tagType, "pending");
         }
         if (testOutcomesForThisTag.getFailureCount() > 0) {
-            generateResultReport(testOutcomesForThisTag.getFailingTests(), reportName, "failure");
+            generateResultReport(testOutcomesForThisTag.getFailingTests(), reportName, tagType, "failure");
         }
     }
 
-    private void generateResultReport(TestOutcomes testOutcomes, ReportNameProvider reportName, String testResult) throws IOException {
+    private void generateResultReport(TestOutcomes testOutcomes, ReportNameProvider reportName, String tagType, String testResult) throws IOException {
         Map<String, Object> context = buildContext(testOutcomes, reportName);
         context.put("report", ReportProperties.forTestResultsReport());
+        context.put("currentTagType", tagType);
         String report = reportName.forTestResult(testResult);
         generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, report);
     }
 
-    private void generateTagReport(TestOutcomes testOutcomes, ReportNameProvider reportName, String tag) throws IOException {
-        TestOutcomes testOutcomesForTag = testOutcomes.withTag(tag);
+    private void generateTagReport(TestOutcomes testOutcomes, ReportNameProvider reportName, TestTag tag) throws IOException {
+        TestOutcomes testOutcomesForTag = testOutcomes.withTag(tag.getName());
         Map<String, Object> context = buildContext(testOutcomesForTag, reportName);
         context.put("report", ReportProperties.forTagResultsReport());
-        String report = reportName.forTag(tag);
+        context.put("currentTagType", tag.getType());
+        String report = reportName.forTag(tag.getName());
         generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, report);
     }
 
@@ -161,7 +164,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     private void generateAssociatedTagReportsForTag(TestOutcomes testOutcomes, String sourceTag) throws IOException {
         ReportNameProvider reportName = new ReportNameProvider(sourceTag);
-        for (String tag : testOutcomes.getTags()) {
+        for (TestTag tag : testOutcomes.getTags()) {
             generateTagReport(testOutcomes, reportName, tag);
         }
     }

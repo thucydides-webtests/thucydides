@@ -96,7 +96,11 @@
         <#assign pageTitle = 'All Tests' >
     <#else>
         <#assign resultsContext = '- ' + testOutcomes.label>
-        <#assign pageTitle = inflection.of(testOutcomes.label).asATitle() >
+        <#if (currentTagType == '')>
+            <#assign pageTitle = inflection.of(testOutcomes.label).asATitle() >
+        <#else>
+            <#assign pageTitle = inflection.of(currentTagType!"").asATitle() + ': ' +  inflection.of(testOutcomes.label).asATitle() >
+        </#if>
     </#if>
     <div id="contenttop">
         <#--<div class="leftbg"></div>-->
