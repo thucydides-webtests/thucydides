@@ -16,6 +16,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 public class WhenRunningATestScenarioWithScreenshots extends AbstractTestStepRunnerTest {
 
@@ -38,7 +39,7 @@ public class WhenRunningATestScenarioWithScreenshots extends AbstractTestStepRun
         assertThat(testOutcome1.getTitle(), is("Happy day scenario"));
         assertThat(testOutcome1.getMethodName(), is("happy_day_scenario"));
         assertThat(testOutcome1.getTestSteps().size(), is(3));
-        assertThat(testOutcome1.getScreenshots().size(), is(greaterThanOrEqualTo(4)));
+        assertThat(testOutcome1.getScreenshots().size(), is(not(0)));
     }
 
 }
