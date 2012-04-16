@@ -5,6 +5,7 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.SystemEnvironmentVariables;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 
@@ -44,6 +45,9 @@ public class SystemPropertiesConfiguration implements Configuration {
      */
     public static final String OUTPUT_DIRECTORY_PROPERTY = ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName();
 
+    private static final String MAVEN_BUILD_DIRECTORY = "project.build.directory";
+
+    private static final String MAVEN_REPORTS_DIRECTORY = "project.reporting.OutputDirectory";
     /**
      * By default, when accepting untrusted SSL certificates, assume that these certificates will come from an
      * untrusted issuer or will be self signed. Due to limitation within Firefox, it is easy to find out if the
@@ -92,11 +96,25 @@ public class SystemPropertiesConfiguration implements Configuration {
      * Where should the reports go?
      */
     public File loadOutputDirectoryFromSystemProperties() {
-        String systemDefinedDirectory = getEnvironmentVariables().getProperty(OUTPUT_DIRECTORY_PROPERTY);
+        String defaultMavenRelativeTargetDirectory = getMavenBuildDirectory();
+        String systemDefinedDirectory = getEnvironmentVariables().getProperty(OUTPUT_DIRECTORY_PROPERTY, defaultMavenRelativeTargetDirectory);
+
         if (systemDefinedDirectory == null) {
             systemDefinedDirectory = DEFAULT_OUTPUT_DIRECTORY;
         }
         return new File(systemDefinedDirectory);
+    }
+
+    private String getMavenBuildDirectory() {
+        String mavenBuildDirectory = getEnvironmentVariables().getProperty(MAVEN_BUILD_DIRECTORY);
+        String mavenReportsDirectory = getEnvironmentVariables().getProperty(MAVEN_REPORTS_DIRECTORY);
+        String defaultMavenRelativeTargetDirectory = null;
+        if (StringUtils.isNotEmpty(mavenReportsDirectory)) {
+            defaultMavenRelativeTargetDirectory = mavenReportsDirectory + "/thucydides";
+        } else if (StringUtils.isNotEmpty(mavenBuildDirectory)) {
+            defaultMavenRelativeTargetDirectory = mavenBuildDirectory + "/site/thucydides";
+        }
+        return defaultMavenRelativeTargetDirectory;
     }
 
     public int getStepDelay() {

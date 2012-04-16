@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Generates an aggregate acceptance test report in XML form. Reads all the
- * reports from the output directory and generates an aggregate report
+ * Generates an aggregate acceptance test report in XML form.
+ * Reads all the reports from the output directory and generates aggregate HTML reports
  * summarizing the results.
  */
 public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStoryTestReporter {
@@ -74,15 +74,15 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     public TestOutcomes generateReportsForTestResultsFrom(final File sourceDirectory) throws IOException {
-        TestOutcomes currentTestOutcomes = loadTestOutcomesFrom(sourceDirectory);
-        TestOutcomes allTestOutcomes = currentTestOutcomes;
+        TestOutcomes allTestOutcomes = loadTestOutcomesFrom(sourceDirectory);
         copyResourcesToOutputDirectory();
 
-        generateAggregateReportFor(currentTestOutcomes);
-        generateTagReportsFor(currentTestOutcomes);
-        generateTagTypeReportsFor(currentTestOutcomes);
-        generateResultReportsFor(currentTestOutcomes);
-        generateHistoryReportFor(currentTestOutcomes);
+        generateAggregateReportFor(allTestOutcomes);
+        generateTagReportsFor(allTestOutcomes);
+        generateTagTypeReportsFor(allTestOutcomes);
+        generateResultReportsFor(allTestOutcomes);
+        generateHistoryReportFor(allTestOutcomes);
+        generateCoverageReportsFor(allTestOutcomes);
 
         return allTestOutcomes;
     }
@@ -119,6 +119,13 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         for (TestTag tag : testOutcomes.getTags()) {
             generateResultReports(testOutcomes.withTag(tag.getName()), new ReportNameProvider(tag.getName()), tag.getType());
+        }
+    }
+
+    private void generateCoverageReportsFor(TestOutcomes testOutcomes) throws IOException {
+
+        for (String tagType : testOutcomes.getTagTypes()) {
+            generateCoverageData(testOutcomes, tagType);
         }
     }
 
@@ -205,19 +212,19 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         writeReportToOutputDirectory(outputFile, htmlContents);
     }
 
-    private void generateCoverageData(final List<FeatureResults> featureResults) throws IOException {
+    private void generateCoverageData(final TestOutcomes testOutcomes, String tagType) throws IOException {
         Map<String, Object> context = new HashMap<String, Object>();
 
         JSONResultTree resultTree = new JSONResultTree();
-        for (FeatureResults feature : featureResults) {
-            resultTree.addFeature(feature);
+        for (String tag : testOutcomes.getTagsOfType(tagType)) {
+            resultTree.addTestOutcomesForTag(tag, testOutcomes.withTag(tag));
         }
 
         context.put("coverageData", resultTree.toJSON());
         addFormattersToContext(context);
 
         String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
-        writeReportToOutputDirectory("coverage.js", javascriptCoverageData);
+        writeReportToOutputDirectory(tagType + "-coverage.js", javascriptCoverageData);
     }
 
     private void generateOutcomeData(final TestOutcomes testOutcomes) throws IOException {
@@ -286,5 +293,4 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
             getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_PROJECT, jiraProject);
         }
     }
-
 }

@@ -4,6 +4,7 @@ import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.reports.TestOutcomes;
 
 import java.awt.*;
 
@@ -36,6 +37,10 @@ public class ProgressColorScheme implements ColorScheme {
         return colorForResults(storyResult.getStepCount(), storyResult.countStepsInSuccessfulTests());
     }
 
+    @Override
+    public Color colorFor(TestOutcomes outcome) {
+        return colorForResults(100, (int) (outcome.getPercentagePassingStepCount() * 100));
+    }
 
     private Color colorForResults(final int totalTestSteps,
                                   final int totalStepsInPassingTests) {

@@ -76,24 +76,30 @@ public class JSONTreeNode {
 
     }
 
-    // TODO
     public void addTestOutcomesForTag(String tag, TestOutcomes testOutcomes) {
-        JSONTreeNode featureNode = new JSONTreeNode(tag, tag, colorScheme);
-        featureNode.getData().put("$area", testOutcomes.getStepCount());
-        featureNode.getData().put("type", "tag");
-        //featureNode.getData().put("$color", rgbFormatOf(colorScheme.colorFor(testOutcomes)));
-        featureNode.getData().put("tests", testOutcomes.getTotal());
-        featureNode.getData().put("passing", testOutcomes.getSuccessCount());
-        featureNode.getData().put("pending", testOutcomes.getPendingCount());
-        featureNode.getData().put("failing", testOutcomes.getFailureCount());
-        featureNode.getData().put("steps", testOutcomes.getStepCount());
+        JSONTreeNode node = new JSONTreeNode(tag, tag, colorScheme);
+        node.getData().put("$area", testOutcomes.getStepCount());
+        node.getData().put("type", "tag");
+        node.getData().put("$color", rgbFormatOf(colorScheme.colorFor(testOutcomes)));
+        node.getData().put("tests", testOutcomes.getTotal());
+        node.getData().put("passing", testOutcomes.getSuccessCount());
+        node.getData().put("pending", testOutcomes.getPendingCount());
+        node.getData().put("failing", testOutcomes.getFailureCount());
+        node.getData().put("steps", testOutcomes.getStepCount());
 
-        //int progress = getProgressFor(testOutcomes);
-        //featureNode.getData().put("progress", progress);
+        int progress = getProgressFor(testOutcomes);
+        node.getData().put("progress", progress);
 
-        //featureNode.children.addAll(getTestNodesFor(testOutcomes));
+        //node.children.addAll(getTestNodesFor(testOutcomes));
 
-        children.add(featureNode);
+        children.add(node);
+    }
+
+    private int getProgressFor(TestOutcomes outcomes) {
+        if (outcomes.getTotal() == 0) {
+            return 0;
+        }
+        return (int) (outcomes.getPercentagePassingStepCount() * 100);
     }
 
     private int getProgressFor(FeatureResults feature) {

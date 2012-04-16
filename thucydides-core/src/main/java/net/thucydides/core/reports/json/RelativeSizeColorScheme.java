@@ -4,6 +4,7 @@ import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.StoryTestResults;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.reports.TestOutcomes;
 
 import java.awt.*;
 
@@ -61,6 +62,13 @@ public class RelativeSizeColorScheme implements ColorScheme {
                 storyResult.getFailureCount(),
                 storyResult.getSuccessCount(),
                 storyResult.getPendingCount());
+    }
+
+    @Override
+    public Color colorFor(TestOutcomes outcome) {
+        return colorForResults(100, (int) (outcome.getPercentageFailingStepCount() * 100),
+                                    (int) (outcome.getPercentagePassingStepCount() * 100),
+                                    (int) (outcome.getPercentagePendingStepCount() * 100));
     }
 
 

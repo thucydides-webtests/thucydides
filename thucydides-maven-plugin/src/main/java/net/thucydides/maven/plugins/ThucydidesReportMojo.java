@@ -37,7 +37,7 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
     /**
      * Directory where reports will go.
      *
-     * @parameter expression="${project.reporting.outputDirectory}"
+     * @parameter expression="${project.build.directory}/site/thucydides"
      * @required
      * @readonly
      */
@@ -117,11 +117,14 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
     }
 
     private TestOutcomes generateHtmlStoryReports() throws MavenReportException {
-        File reportDirectory = new File(outputDirectory, "thucydides");
+        File reportDirectory = new File(outputDirectory);//, "thucydides");
 
-        getLog().info("Generating reports from " + sourceDirectory);
-        getLog().info("Generating reports to " + reportDirectory);
+//        getLog().info("Generating reports from " + sourceDirectory);
+//        getLog().info("Generating reports to " + reportDirectory);
+        System.out.println("Generating reports from " + reportDirectory);
+        System.out.println("Generating reports to " + reportDirectory);
         getReporter().setOutputDirectory(reportDirectory);
+
         try {
             return getReporter().generateReportsForTestResultsFrom(sourceDirectory);
         } catch (IOException e) {

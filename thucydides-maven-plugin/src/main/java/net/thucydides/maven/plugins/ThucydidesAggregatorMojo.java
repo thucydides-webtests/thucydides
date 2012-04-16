@@ -26,7 +26,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     /**
      * Aggregate reports are generated here
      * 
-     * @parameter expression="${project.build.directory}/site/thucydides"
+     * @parameter expression="${project.reporting.OutputDirectory}/thucydides"
      * @required
      */
     public File outputDirectory;
@@ -34,7 +34,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     /**
      * Thucydides test reports are read from here
      * 
-     * @parameter expression="${project.build.directory}/site/thucydides"
+     * @parameter expression="${project.reporting.OutputDirectory}/thucydides"
      * @required
      */
     public File sourceDirectory;
