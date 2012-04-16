@@ -24,12 +24,12 @@
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-junit</artifactId>
-            <version>0.1.8-SNAPSHOT</version>
+            <version>0.8.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-core</artifactId>
-            <version>0.1.8-SNAPSHOT</version>
+            <version>0.8.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -53,12 +53,12 @@
             <plugin>
                 <groupId>net.thucydides.maven.plugins</groupId>
                 <artifactId>maven-thucydides-plugin</artifactId>
-                <version>0.1.1-SNAPSHOT</version>
+                <version>0.8.0</version>
             </plugin>
             <plugin>
                 <groupId>org.easyb</groupId>
                 <artifactId>maven-easyb-plugin</artifactId>
-                <version>0.9.7-1</version>
+                <version>1.4</version>
                 <executions>
                     <execution>
                         <goals>
@@ -73,8 +73,8 @@
                 <dependencies>
                     <dependency>
                         <groupId>org.easyb</groupId>
-                        <artifactId>easyb</artifactId>
-                        <version>0.9.8</version>
+                        <artifactId>easyb-core</artifactId>
+                        <version>1.5</version>
                     </dependency>
                 </dependencies>
             </plugin>
