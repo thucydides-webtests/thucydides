@@ -8,6 +8,7 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * This plugin deletes existing history files for Thucydides for this project.
+ * @goal clean
  */
 public class ThucydidesCleanMojo extends AbstractMojo {
         /**
@@ -20,14 +21,6 @@ public class ThucydidesCleanMojo extends AbstractMojo {
     private HtmlAggregateStoryReporter reporter;
 
     private ThucydidesHTMLReportGenerator htmlReportGenerator;
-
-
-    protected ThucydidesHTMLReportGenerator getHtmlReportGenerator() {
-        if (htmlReportGenerator == null) {
-            htmlReportGenerator = new ThucydidesHTMLReportGenerator();
-        }
-        return htmlReportGenerator;
-    }
 
     protected HtmlAggregateStoryReporter getReporter() {
         if (reporter == null) {

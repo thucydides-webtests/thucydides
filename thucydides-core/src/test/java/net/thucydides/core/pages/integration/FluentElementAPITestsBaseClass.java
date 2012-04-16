@@ -3,6 +3,7 @@ package net.thucydides.core.pages.integration;
 
 import net.thucydides.core.webdriver.StaticTestSite;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.openqa.selenium.WebDriver;
@@ -35,6 +36,24 @@ public class FluentElementAPITestsBaseClass {
             firefoxPage.addJQuerySupport();
         }
         return firefoxPage;
+    }
+
+    @After
+    public void closeFirefox() {
+        if (firefoxPage != null) {
+            firefoxPage.getDriver().close();
+            firefoxPage.getDriver().quit();
+            firefoxPage = null;
+        }
+    }
+
+    @After
+    public void closeChrome() {
+        if (chromePage != null) {
+            chromePage.getDriver().close();
+            chromePage.getDriver().quit();
+            chromePage = null;
+        }
     }
 
     protected StaticSitePage getChromePage() {

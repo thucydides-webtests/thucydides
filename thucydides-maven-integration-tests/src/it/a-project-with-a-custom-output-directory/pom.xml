@@ -10,8 +10,9 @@
     <name>Test Thucydides Reporter Mojo</name>
 
     <properties>
-        <thucydides.version>0.8.1-SNAPSHOT</thucydides.version>
+        <thucydides.version>@project.version@</thucydides.version>
         <thucydides.outputDirectory>${basedir}/build/thucydides-reports</thucydides.outputDirectory>
+        <thucydides.sourceDirectory>${basedir}/build/thucydides-reports</thucydides.sourceDirectory>
     </properties>
 
     <dependencies>
@@ -69,7 +70,8 @@
                         <thucydides.outputDirectory>${thucydides.outputDirectory}</thucydides.outputDirectory>
                     </systemPropertyVariables>
                 </configuration>
-            </plugin></plugins>
+            </plugin>
+        </plugins>
     </build>
     <profiles>
         <profile>
@@ -84,11 +86,7 @@
                     <plugin>
                         <groupId>net.thucydides.maven.plugins</groupId>
                         <artifactId>maven-thucydides-plugin</artifactId>
-                        <version>@project.version@</version>
-                        <configuration>
-                            <sourceDirectory>${thucydides.outputDirectory}</sourceDirectory>
-                            <outputDirectory>${thucydides.outputDirectory}</outputDirectory>
-                        </configuration>
+                        <version>${thucydides.version}</version>
                     </plugin>
                 </plugins>
             </reporting>
@@ -111,7 +109,7 @@
                                 <plugin>
                                     <groupId>net.thucydides.maven.plugins</groupId>
                                     <artifactId>maven-thucydides-plugin</artifactId>
-                                    <version>@project.version@</version>
+                                    <version>${thucydides.version}</version>
                                 </plugin>
                             </reportPlugins>
                         </configuration>

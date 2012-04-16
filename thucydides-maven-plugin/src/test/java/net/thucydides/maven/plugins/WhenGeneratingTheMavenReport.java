@@ -50,7 +50,7 @@ public class WhenGeneratingTheMavenReport {
         when(project.getArtifactId()).thenReturn("test-project");
         when(project.getGroupId()).thenReturn("test-project-group");
 
-        plugin.sourceDirectory = new File((getClass().getClassLoader().getResource("sampleresults")).getPath());
+        plugin.sourceDirectory = (getClass().getClassLoader().getResource("sampleresults")).getPath();
         plugin.project = project;
 
         outputDirectory = temporaryFolder.newFolder("out");

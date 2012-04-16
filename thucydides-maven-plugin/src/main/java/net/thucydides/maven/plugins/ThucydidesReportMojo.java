@@ -27,17 +27,9 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
     protected MavenProject project;
 
     /**
-     * The output directory for the intermediate report.
-     *
-     * @parameter expression="${project.build.directory}"
-     * @required
-     */
-    private File targetDirectory;
-
-    /**
      * Directory where reports will go.
      *
-     * @parameter expression="${project.build.directory}/site/thucydides"
+     * @parameter expression="${thucydides.outputDirectory}" default-value=${project.reporting.outputDirectory}/thucydides
      * @required
      * @readonly
      */
@@ -46,10 +38,10 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
     /**
      * Thucydides test reports are read from here
      *
-     * @parameter expression="${project.build.directory}/site/thucydides"
+     * @parameter expression="${thucydides.sourceDirectory}" default-value=${project.reporting.outputDirectory}/thucydides
      * @required
      */
-    protected File sourceDirectory;
+    protected String sourceDirectory;
 
    /**
      * @component
@@ -102,7 +94,7 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
     @Override
     protected void executeReport(Locale locale) throws MavenReportException {
         getLog().info("Generating Thucydides Reports");
-        TestOutcomes testOutcomes = generateHtmlStoryReports();
+        TestOutcomes testOutcomes = generateHtmlReports();
 
         getHtmlReportGenerator().generateReport(testOutcomes, getSink());
 
@@ -116,17 +108,16 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
 
     }
 
-    private TestOutcomes generateHtmlStoryReports() throws MavenReportException {
-        File reportDirectory = new File(outputDirectory);//, "thucydides");
+    private TestOutcomes generateHtmlReports() throws MavenReportException {
+        File reportDirectory = new File(outputDirectory);
 
-//        getLog().info("Generating reports from " + sourceDirectory);
-//        getLog().info("Generating reports to " + reportDirectory);
-        System.out.println("Generating reports from " + reportDirectory);
-        System.out.println("Generating reports to " + reportDirectory);
+        getLog().info("Generating reports from " + sourceDirectory);
+        getLog().info("Generating reports to " + reportDirectory);
+
         getReporter().setOutputDirectory(reportDirectory);
 
         try {
-            return getReporter().generateReportsForTestResultsFrom(sourceDirectory);
+            return getReporter().generateReportsForTestResultsFrom(new File(sourceDirectory));
         } catch (IOException e) {
             throw new MavenReportException("Error generating aggregate thucydides reports", e);
         }

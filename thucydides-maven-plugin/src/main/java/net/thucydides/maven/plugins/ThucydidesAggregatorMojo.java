@@ -25,16 +25,15 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
 
     /**
      * Aggregate reports are generated here
-     * 
-     * @parameter expression="${project.reporting.OutputDirectory}/thucydides"
+     * @parameter expression="${thucydides.outputDirectory}" default-value="${project.build.directory}/site/thucydides/"
      * @required
      */
     public File outputDirectory;
 
     /**
      * Thucydides test reports are read from here
-     * 
-     * @parameter expression="${project.reporting.OutputDirectory}/thucydides"
+     *
+     * @parameter expression="${thucydides.sourceDirectory}" default-value="${project.build.directory}/site/thucydides/"
      * @required
      */
     public File sourceDirectory;
@@ -92,6 +91,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
             configureEnvironmentVariables();
             generateHtmlStoryReports();
         } catch (IOException e) {
+            e.printStackTrace();
             throw new MojoExecutionException("Error generating aggregate thucydides reports", e);
         }
     }
@@ -111,11 +111,13 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     }
 
     private void generateHtmlStoryReports() throws IOException {
+        System.out.println("Generating reports from " + sourceDirectory);
+        System.out.println("Generating reports to " + outputDirectory);
+
         getReporter().setOutputDirectory(outputDirectory);
         getReporter().setIssueTrackerUrl(issueTrackerUrl);
         getReporter().setJiraUrl(jiraUrl);
         getReporter().setJiraProject(jiraProject);
         getReporter().generateReportsForTestResultsFrom(sourceDirectory);
     }
-
 }
