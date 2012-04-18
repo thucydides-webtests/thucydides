@@ -1,20 +1,16 @@
 package net.thucydides.core.pages.integration;
 
 
-import net.thucydides.core.webdriver.StaticTestSite;
 import net.thucydides.core.webdriver.jquery.ByJQuery;
 import net.thucydides.core.webdriver.jquery.ByJQuerySelector;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.List;
 
@@ -37,6 +33,17 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     @AfterClass
     public static void shutdownDriver() {
         driver.quit();
+    }
+
+    @Test
+    public void should_check_and_close_javascript_alerts() {
+        StaticSitePage page = getFirefoxPage();
+
+        page.alertButton.click();
+        page.getAlert().accept();
+
+        assertThat(page.getTitle(), is("Thucydides Test Site"));
+
     }
 
     @Test

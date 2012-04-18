@@ -84,6 +84,11 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 
         protected WebElement table_with_td_headers;
 
+        protected WebElement alertButton;
+
+        protected WebElementFacade alertButton() {
+            return element(alertButton);
+        }
         public StaticSitePage(WebDriver driver, int timeout) {
             super(driver, timeout);
         }

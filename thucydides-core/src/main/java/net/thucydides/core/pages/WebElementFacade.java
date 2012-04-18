@@ -15,8 +15,6 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.Augmenter;
-import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -402,7 +400,8 @@ public class WebElementFacade {
 
     private void throwErrorWithCauseIfPresent(final Throwable timeout, final String defaultMessage) {
         String timeoutMessage = (timeout.getCause() != null) ? timeout.getCause().getMessage() : timeout.getMessage();
-        throw new ElementNotVisibleException(timeoutMessage, timeout);
+        String finalMessage = (StringUtils.isNotEmpty(timeoutMessage)) ? timeoutMessage : defaultMessage;
+        throw new ElementNotVisibleException(finalMessage, timeout);
     }
 
     private ExpectedCondition<Boolean> elementIsDisplayed() {
@@ -544,11 +543,7 @@ public class WebElementFacade {
 
 
     private boolean valueAttributeSupportedAndDefinedIn(final WebElement webElement) {
-        if (hasValueAttribute(webElement)) {
-            return StringUtils.isNotEmpty(getValue());
-        } else {
-            return false;
-        }
+        return hasValueAttribute(webElement) && StringUtils.isNotEmpty(getValue());
     }
 
     /**

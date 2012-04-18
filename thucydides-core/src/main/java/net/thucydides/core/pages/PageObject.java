@@ -15,6 +15,7 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webelements.Checkbox;
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
@@ -678,6 +679,9 @@ public abstract class PageObject {
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
     }
 
+    public Alert getAlert() {
+        return driver.switchTo().alert();
+    }
     public class FieldEntry {
 
         private final String value;
