@@ -1,8 +1,8 @@
 package net.thucydides.core.steps;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.inject.internal.Lists;
-import com.google.inject.internal.Preconditions;
+import com.google.common.collect.Lists;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import org.slf4j.Logger;
@@ -83,7 +83,7 @@ public class StepEventBus {
     }
 
     private BaseStepListener getBaseStepListener() {
-        Preconditions.checkNotNull(baseStepListener,"No BaseStepListener has been registered");
+        Preconditions.checkNotNull(baseStepListener, "No BaseStepListener has been registered");
         return baseStepListener;
     }
 

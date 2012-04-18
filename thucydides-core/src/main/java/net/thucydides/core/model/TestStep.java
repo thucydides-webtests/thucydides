@@ -1,6 +1,6 @@
 package net.thucydides.core.model;
 
-import com.google.inject.internal.ImmutableList;
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 
 import java.util.ArrayList;
