@@ -137,9 +137,9 @@ public class WhenRunningADataDrivenTestScenario {
         runner.run(new RunNotifier());
 
         List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
-        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario_a_1.xml"));
-        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario_b_2.xml"));
-        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario_c_3.xml"));
+        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario[0]_a_1.xml"));
+        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario[1]_b_2.xml"));
+        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario[2]_c_3.xml"));
 
     }
 
@@ -155,9 +155,8 @@ public class WhenRunningADataDrivenTestScenario {
         runner.run(new RunNotifier());
 
         List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
-        assertThat(reportFilenames, hasItem("sample_c_s_v_data_driven_scenario_data_driven_test_Jack_Black.xml"));
-        assertThat(reportFilenames, hasItem("sample_c_s_v_data_driven_scenario_data_driven_test_Joe_Smith.xml"));
-
+        assertThat(reportFilenames, hasItem("sample_c_s_v_data_driven_scenario_data_driven_test[0]_Joe_Smith.xml"));
+        assertThat(reportFilenames, hasItem("sample_c_s_v_data_driven_scenario_data_driven_test[1]_Jack_Black.xml"));
     }
 
     @Test
@@ -555,9 +554,9 @@ public class WhenRunningADataDrivenTestScenario {
         runner.run(new RunNotifier());
 
         List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new HTMLFileFilter()));
-        assertThat(reportFilenames, allOf(hasItem("sample_data_driven_scenario_happy_day_scenario_a_1.html"),
-                hasItem("sample_data_driven_scenario_happy_day_scenario_b_2.html"),
-                hasItem("sample_data_driven_scenario_happy_day_scenario_c_3.html")));
+        assertThat(reportFilenames, allOf(hasItem("sample_data_driven_scenario_happy_day_scenario[0]_a_1.html"),
+                hasItem("sample_data_driven_scenario_happy_day_scenario[1]_b_2.html"),
+                hasItem("sample_data_driven_scenario_happy_day_scenario[2]_c_3.html")));
     }
 
 
