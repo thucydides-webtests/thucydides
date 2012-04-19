@@ -7,6 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -31,9 +32,19 @@ public class UsingWebdriverActionsWithTheFluentElementAPI extends FluentElementA
     }
 
     @Test
-    public void should_report_if_element_is_visible() {
+    public void should_be_able_to_use_the_action_api() {
         page.withAction().moveToElement(page.firstName).perform();
-//        Actions builder = new Actions(page.getDriver());
-//        builder.moveToElement(page.firstName).perform();
+    }
+
+    @Test
+    public void should_be_able_to_use_the_mouse_actions_using_the_webdriver() {
+        Actions builder = new Actions(page.getDriver());
+        builder.moveToElement(page.firstName).perform();
+    }
+
+    @Test
+    public void should_be_able_to_use_keyboard_actions_using_the_webdriver() {
+        Actions builder = new Actions(page.getDriver());
+        builder.moveToElement(page.firstName).sendKeys("Joe").perform();
     }
 }

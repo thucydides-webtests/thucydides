@@ -7,6 +7,10 @@ import net.thucydides.core.webdriver.stubs.TargetLocatorStub;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.HasInputDevices;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keyboard;
+import org.openqa.selenium.Mouse;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -24,7 +28,7 @@ import java.util.Set;
 /**
  * A proxy class for webdriver instances, designed to prevent the browser being opened unnecessarily.
  */
-public class WebDriverFacade implements WebDriver, TakesScreenshot {
+public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevices, JavascriptExecutor {
 
     private final Class<? extends WebDriver> driverClass;
 
@@ -228,5 +232,25 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot {
 
     public boolean isInstantiated() {
         return (driverClass != null) && (proxiedWebDriver != null);
+    }
+
+    @Override
+    public Keyboard getKeyboard() {
+        return ((HasInputDevices) getProxiedDriver()).getKeyboard();
+    }
+
+    @Override
+    public Mouse getMouse() {
+        return ((HasInputDevices) getProxiedDriver()).getMouse();
+    }
+
+    @Override
+    public Object executeScript(String script, Object... parameters) {
+        return ((JavascriptExecutor) getProxiedDriver()).executeScript(script, parameters);
+    }
+
+    @Override
+    public Object executeAsyncScript(String script, Object... parameters) {
+        return ((JavascriptExecutor) getProxiedDriver()).executeScript(script, parameters);
     }
 }

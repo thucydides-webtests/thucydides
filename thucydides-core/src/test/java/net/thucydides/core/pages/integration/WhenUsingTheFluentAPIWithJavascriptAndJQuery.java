@@ -1,12 +1,12 @@
 package net.thucydides.core.pages.integration;
 
 
+import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webdriver.jquery.ByJQuery;
 import net.thucydides.core.webdriver.jquery.ByJQuerySelector;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -54,6 +54,16 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
 
         Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
         assertThat(jqueryInjected, is(true));
+    }
+
+    @Test
+    public void should_be_able_to_use_the_javascript_executor_directly() {
+        StaticSitePage page = getFirefoxPage();
+
+        JavascriptExecutorFacade js = new JavascriptExecutorFacade(page.getDriver());
+        js.executeScript("$('#firstname').focus();");
+
+        assertThat(page.element(page.firstName).hasFocus(), is(true));
     }
 
     @Test
