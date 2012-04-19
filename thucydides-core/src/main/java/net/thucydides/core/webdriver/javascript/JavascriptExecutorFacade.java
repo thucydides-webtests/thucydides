@@ -30,6 +30,15 @@ public class JavascriptExecutorFacade {
         }
     }
 
+    public Object executeScript(final String script, final Object... params) {
+        if (javascriptIsSupportedIn(driver)) {
+            JavascriptExecutor js = getJavascriptEnabledDriver();
+            return js.executeScript(script, params);
+        } else {
+            return null;
+        }
+    }
+
     private WebDriver getRealDriver() {
         if (WebDriverFacade.class.isAssignableFrom(driver.getClass())) {
             WebDriverFacade driverFacade = (WebDriverFacade) driver;
