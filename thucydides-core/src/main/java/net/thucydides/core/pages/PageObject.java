@@ -21,6 +21,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Sleeper;
@@ -682,6 +683,12 @@ public abstract class PageObject {
     public Alert getAlert() {
         return driver.switchTo().alert();
     }
+
+    public Actions withAction() {
+        WebDriver proxiedDriver = ((WebDriverFacade) getDriver()).getProxiedDriver();
+        return new Actions(proxiedDriver);
+    }
+
     public class FieldEntry {
 
         private final String value;
