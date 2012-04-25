@@ -85,10 +85,13 @@ public class TestAnnotations {
         if (testClass == null) {
             return Optional.absent();
         }
-
         String baseMethodName = withNoArguments(methodName);
         try {
-            return Optional.of(testClass.getMethod(baseMethodName));
+            if (baseMethodName == null) {
+                return Optional.absent();
+            } else {
+                return Optional.fromNullable(testClass.getMethod(baseMethodName));
+            }
         } catch (NoSuchMethodException e) {
             return Optional.absent();
         }

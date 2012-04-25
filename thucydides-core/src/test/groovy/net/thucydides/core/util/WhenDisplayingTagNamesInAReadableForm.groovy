@@ -56,6 +56,20 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
             2       | 'epic'            | 'epics'
     }
 
+    def "should transform camel-case to underscore"() {
+        given:
+            def inflection = Inflector.instance
+        when:
+            def underscoreForm = inflection.of(word).withUnderscores().toString()
+        then:
+            underscoreForm == expectedUnderscoreForm
+        where:
+                word              | expectedUnderscoreForm
+                    'aWord'        | 'a_word'
+                    'AnotherWord'  | 'another_word'
+    }
+
+
     def "should captialize first word"() {
         given:
             def inflection = Inflector.instance
@@ -94,5 +108,7 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
         word          | expectedHumanizedForm
             'employee_salary'   | 'Employee salary'
             'author_id'         | 'Author'
+            'someTest'          | 'Some test'
+            'AnotherTest'       | 'Another test'
     }
 }

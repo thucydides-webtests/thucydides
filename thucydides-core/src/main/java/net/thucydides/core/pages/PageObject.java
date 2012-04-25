@@ -643,6 +643,12 @@ public abstract class PageObject {
         return js.executeScript(script);
     }
 
+    public Object evaluateJavascript(final String script, final Object... params) {
+        addJQuerySupport();
+        JavascriptExecutorFacade js = new JavascriptExecutorFacade(driver);
+        return js.executeScript(script, params);
+    }
+
     public void addJQuerySupport() {
         if (!jquerySupportActivated && driverIsEnabled() && !isHeadlessDriver(getDriver()))  {
             JQueryEnabledPage jQueryEnabledPage = JQueryEnabledPage.withDriver(getDriver());

@@ -4,6 +4,7 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
+import static net.thucydides.core.util.NameConverter.withNoArguments;
 import static net.thucydides.core.util.NameConverter.withNoIssueNumbers;
 
 /**
@@ -34,6 +35,20 @@ public class ReportNamer {
         }
         String scenarioName = NameConverter.underscore(testOutcome.getMethodName());
         testName = withNoIssueNumbers(appendToIfNotNull(testName, scenarioName));
+        return appendSuffixTo(testName);
+    }
+
+    /**
+     * Return a filesystem-friendly version of the test case name. The filesytem
+     * version should have no spaces and have the XML file suffix.
+     */
+    public String getSimpleTestNameFor(final TestOutcome testOutcome) {
+        String testName = "";
+        if (testOutcome.getUserStory() != null) {
+            testName = NameConverter.underscore(testOutcome.getUserStory().getName());
+        }
+        String scenarioName = NameConverter.underscore(testOutcome.getMethodName());
+        testName = withNoIssueNumbers(withNoArguments(appendToIfNotNull(testName, scenarioName)));
         return appendSuffixTo(testName);
     }
 

@@ -202,6 +202,44 @@ public class Inflector {
     }
 
     /**
+     * Makes an underscored form from the expression in the string (the reverse of the {@link #camelCase(String, boolean, char[])
+     * camelCase} method. Also changes any characters that match the supplied delimiters into underscore.
+     *
+     * Examples:
+     *
+     * <pre>
+     *   inflector.underscore(&quot;activeRecord&quot;)     #=&gt; &quot;active_record&quot;
+     *   inflector.underscore(&quot;ActiveRecord&quot;)     #=&gt; &quot;active_record&quot;
+     *   inflector.underscore(&quot;firstName&quot;)        #=&gt; &quot;first_name&quot;
+     *   inflector.underscore(&quot;FirstName&quot;)        #=&gt; &quot;first_name&quot;
+     *   inflector.underscore(&quot;name&quot;)             #=&gt; &quot;name&quot;
+     *   inflector.underscore(&quot;The.firstName&quot;)    #=&gt; &quot;the_first_name&quot;
+     * </pre>
+     *
+     *
+     *
+     * @param camelCaseWord the camel-cased word that is to be converted;
+     * @param delimiterChars optional characters that are used to delimit word boundaries (beyond capitalization)
+     * @return a lower-cased version of the input, with separate words delimited by the underscore character.
+     */
+    public String underscore( String camelCaseWord,
+                              char... delimiterChars ) {
+        if (camelCaseWord == null) return null;
+        String result = camelCaseWord.trim();
+        if (result.length() == 0) return "";
+        result = result.replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2");
+        result = result.replaceAll("([a-z\\d])([A-Z])", "$1_$2");
+        result = result.replace('-', '_');
+        if (delimiterChars != null) {
+            for (char delimiterChar : delimiterChars) {
+                result = result.replace(delimiterChar, '_');
+            }
+        }
+        return result.toLowerCase();
+    }
+
+
+    /**
      * Capitalizes all the words and replaces some characters in the string to create a nicer looking title. Underscores are
      * changed to spaces, a trailing "_id" is removed, and any of the supplied tokens are removed. Like
      * {@link #humanize(String, String[])}, this is meant for creating pretty output.

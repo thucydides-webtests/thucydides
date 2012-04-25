@@ -58,6 +58,15 @@ public class WhenNamingTheReports {
     }
 
     @Test
+    public void the_default_simplifiedreport_filename_should_replace_spaces_with_underscores() {
+
+        TestOutcome testOutcome = TestOutcome.forTestInStory("A simple test case", net.thucydides.core.model.Story.from(AUserStory.class));
+        String reportName = testOutcome.getSimpleReportName(XML);
+
+        assertThat(reportName, is("a_user_story_a_simple_test_case.xml"));
+    }
+
+    @Test
     public void the_report_filename_should_be_determined_even_if_no_method_is_named() {
 
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);

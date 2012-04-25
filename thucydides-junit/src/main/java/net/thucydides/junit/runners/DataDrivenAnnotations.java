@@ -14,11 +14,19 @@ import java.util.List;
 
 public class DataDrivenAnnotations {
 
+    public static DataDrivenAnnotations forClass(final Class testClass) {
+        return new DataDrivenAnnotations(testClass);
+    }
+
     public static DataDrivenAnnotations forClass(final TestClass testClass) {
         return new DataDrivenAnnotations(testClass);
     }
 
     private final TestClass testClass;
+
+    DataDrivenAnnotations(final Class testClass) {
+        this(new TestClass(testClass));
+    }
 
     DataDrivenAnnotations(final TestClass testClass) {
         this.testClass = testClass;

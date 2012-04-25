@@ -56,7 +56,13 @@ public class WhenFindingTestDataInADataDrivenTest {
         int dataEntries = DataDrivenAnnotations.forClass(testClass).countDataEntries();
 
         assertThat(dataEntries, is(3));
+    }
 
+    @Test
+    public void should_be_able_to_count_the_number_of_data_entries_using_a_class_directory() throws Throwable {
+        int dataEntries = DataDrivenAnnotations.forClass(CSVDataDrivenTestScenario.class).countDataEntries();
+
+        assertThat(dataEntries, is(3));
     }
 
     @Test

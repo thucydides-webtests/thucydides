@@ -72,19 +72,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private BatchManager batchManager;
 
-    /**
-     * The Step Listener observes and records what happens during the execution of the test.
-     * Once the test is over, the Step Listener can provide the acceptance test outcome in the
-     * form of an TestOutcome object.
-     */
-    public JUnitStepListener getStepListener() {
-        return stepListener;
-    }
-
-    protected void setStepListener(final JUnitStepListener stepListener) {
-        this.stepListener = stepListener;
-    }
-
     public Pages getPages() {
         return pages;
     }
@@ -217,28 +204,51 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
                 super.run(notifier);
             } finally {
                 StepEventBus.getEventBus().testSuiteFinished();
-                generateReportsFor(stepListener.getTestOutcomes());
+                generateReports();
                 closeDrivers();
-                stepListener.dropListeners();
+                dropListeners();
             }
         }
+    }
+
+    private void dropListeners() {
+            getStepListener().dropListeners();
+    }
+
+    private void generateReports() {
+            generateReportsFor(getStepListener().getTestOutcomes());
     }
 
     private boolean skipThisTest() {
         return (batchManager != null) && (!batchManager.shouldExecuteThisTest());
     }
 
-    private void initializeDriversAndListeners(RunNotifier notifier) {
+    /**
+     * The Step Listener observes and records what happens during the execution of the test.
+     * Once the test is over, the Step Listener can provide the acceptance test outcome in the
+     * form of an TestOutcome object.
+     */
+    private JUnitStepListener getStepListener() {
+        if (stepListener == null) {
+            buildAndConfigureListeners();
+        }
+        return stepListener;
+    }
+
+    private void buildAndConfigureListeners() {
         initStepEventBus();
         if (webtestsAreSupported()) {
             initPagesObjectUsing(webdriverManager.getWebdriver(requestedDriver));
-            initListenersUsing(getPages());
+            stepListener = initListenersUsing(getPages());
             initStepFactoryUsing(getPages());
         } else {
-            initListeners();
+            stepListener = initListeners();
             initStepFactory();
         }
-        notifier.addListener(stepListener);
+    }
+
+    private void initializeDriversAndListeners(RunNotifier notifier) {
+        notifier.addListener(getStepListener());
     }
 
     private void initStepEventBus() {
@@ -251,22 +261,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     protected JUnitStepListener initListenersUsing(final Pages pageFactory) {
 
-        JUnitStepListener stepListener =
-                JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
+        return JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
                                  .and().withPageFactory(pageFactory)
                                  .and().build();
-
-        setStepListener(stepListener);
-        return stepListener;
     }
 
     protected JUnitStepListener initListeners() {
 
-        JUnitStepListener stepListener =
-                JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
-                        .and().build();
-        setStepListener(stepListener);
-        return stepListener;
+        return JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
+                                                                       .and().build();
     }
 
     private boolean webtestsAreSupported() {

@@ -57,7 +57,16 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     }
 
     @Test
-    public void should_be_able_to_use_the_javascript_executor_directly() {
+    public void should_be_able_to_use_the_javascript_executor_with_parameters() {
+        StaticSitePage page = getFirefoxPage();
+
+        page.evaluateJavascript("$('#firstname').focus();", "#firstname");
+
+        assertThat(page.element(page.firstName).hasFocus(), is(true));
+    }
+
+    @Test
+    public void s_directly() {
         StaticSitePage page = getFirefoxPage();
 
         JavascriptExecutorFacade js = new JavascriptExecutorFacade(page.getDriver());

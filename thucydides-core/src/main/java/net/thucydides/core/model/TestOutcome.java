@@ -250,6 +250,11 @@ public class TestOutcome {
         return reportNamer.getNormalizedTestNameFor(this);
     }
 
+    public String getSimpleReportName(final ReportType type) {
+        ReportNamer reportNamer = ReportNamer.forReportType(type);
+        return reportNamer.getSimpleTestNameFor(this);
+    }
+
     public String getReportName(final ReportType type, final String qualifier) {
         ReportNamer reportNamer = ReportNamer.forReportType(type);
         if (shouldAddQualifier(qualifier)) {
@@ -268,7 +273,7 @@ public class TestOutcome {
     }
 
     public String getScreenshotReportName() {
-        return getReportName(ROOT) + "_screenshots";
+        return getSimpleReportName(ROOT) + "_screenshots";
     }
 
     /**

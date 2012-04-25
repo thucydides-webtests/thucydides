@@ -32,7 +32,12 @@ public class Inflection {
     }
     
     public Inflection inHumanReadableForm() {
-        return new Inflection(Inflector.getInstance().humanize(word));
+        Inflector inflector = Inflector.getInstance();
+        return new Inflection(inflector.humanize(inflector.underscore(word)));
+    }
+
+    public Inflection withUnderscores() {
+        return new Inflection(Inflector.getInstance().underscore(word));
     }
 
     public Inflection asATitle() {

@@ -102,8 +102,10 @@ public class StepEventBus {
     }
 
     public void testStarted(final String newTestName, final Class<?> testClass) {
-        startSuiteForFirstTest(testClass);
-        testStarted(newTestName);
+        if (newTestName != null) {
+            startSuiteForFirstTest(testClass);
+            testStarted(newTestName);
+        }
     }
 
     private void startSuiteForFirstTest(final Class<?> testClass) {
