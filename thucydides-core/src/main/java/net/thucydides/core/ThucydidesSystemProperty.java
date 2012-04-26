@@ -163,6 +163,13 @@ public enum ThucydidesSystemProperty {
      */
     PROXY_PORT("thucydides.proxy.http_port"),
 
+    /**
+     * Enable JQuery integration.
+     * If set to true (the default), JQuery will be injected into any page that does not already have it.
+     * You can turn this option off for performance reasons if you are not using JQuery selectors.
+     */
+    JQUERY_INTEGRATION("thucydides.jquery.integration"),
+
     SAUCELABS_TARGET_PLATFORM("saucelabs.target.platform"),
 
     SAUCELABS_DRIVER_VERSION("saucelabs.driver.version"),

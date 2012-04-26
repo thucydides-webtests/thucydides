@@ -32,7 +32,11 @@ public class JQueryEnabledPage {
     }
 
     public boolean isJQueryEnabled() {
-        if (javascriptIsSupportedIn(driver)) {
+        boolean jqueryIntegrationEnabled =
+                    Boolean.valueOf(ThucydidesSystemProperty.JQUERY_INTEGRATION
+                                                            .from(environmentVariables,"true"));
+
+        if (jqueryIntegrationEnabled && javascriptIsSupportedIn(driver)) {
             JavascriptExecutorFacade js = new JavascriptExecutorFacade(driver);
             Boolean result = (Boolean) js.executeScript("return (typeof jQuery === 'function')");
             return ((result != null) && (result));

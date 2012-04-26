@@ -1,5 +1,6 @@
 package net.thucydides.core.pages;
 
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.components.Dropdown;
@@ -650,18 +651,13 @@ public abstract class PageObject {
     }
 
     public void addJQuerySupport() {
-        if (!jquerySupportActivated && driverIsEnabled() && !isHeadlessDriver(getDriver()))  {
-            JQueryEnabledPage jQueryEnabledPage = JQueryEnabledPage.withDriver(getDriver());
-            if (!jQueryEnabledPage.isJQueryEnabled()) {
-                jQueryEnabledPage.injectJQuery();
-            }
-            if (jQueryEnabledPage.isJQueryEnabled()) {
-                jQueryEnabledPage.injectJQueryPlugins();
-            }
-            jquerySupportActivated = true;
+        JQueryEnabledPage jQueryEnabledPage = JQueryEnabledPage.withDriver(getDriver());
+        if (!jQueryEnabledPage.isJQueryEnabled()) {
+            jQueryEnabledPage.injectJQuery();
+            jQueryEnabledPage.injectJQueryPlugins();
         }
+        jquerySupportActivated = true;
     }
-
 
 
     private boolean driverIsEnabled() {

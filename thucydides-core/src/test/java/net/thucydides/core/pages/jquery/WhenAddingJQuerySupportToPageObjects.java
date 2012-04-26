@@ -14,6 +14,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 public class WhenAddingJQuerySupportToPageObjects {
@@ -73,5 +74,12 @@ public class WhenAddingJQuerySupportToPageObjects {
         assertThat(page.executedScripts, hasItem(containsString("jquery-thucydides-plugin.js")));
     }
 
+
+    @Test
+    public void should_not_add_the_jquery_library_to_a_page_if_jquery_integration_is_deactivated() {
+        environmentVariables.setProperty("thucydides.jquery.integration", "false");
+
+        assertThat(page.isJQueryEnabled(), is(false));
+    }
 
 }
