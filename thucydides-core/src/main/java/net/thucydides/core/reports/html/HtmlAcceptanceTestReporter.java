@@ -9,7 +9,6 @@ import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
-import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.screenshots.ScreenshotFormatter;
 import net.thucydides.core.screenshots.ScreenshotException;

@@ -3,6 +3,7 @@ package net.thucydides.core.steps;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.thucydides.core.IgnoredStepException;
 import net.thucydides.core.PendingStepException;
 import net.thucydides.core.Thucydides;
@@ -325,6 +326,14 @@ public class BaseStepListener implements StepListener, StepPublisher {
         return currentStepStack.peek();
     }
 
+    private Optional<TestStep> getPreviousStep() {
+        if (currentStepStack.size() > 1) {
+            return Optional.of(currentStepStack.get(currentStepStack.size() - 2));
+        } else {
+            return Optional.absent();
+        }
+    }
+
     private TestStep getCurrentGroup() {
         if (currentGroupStack.isEmpty()) {
             return null;
@@ -434,22 +443,56 @@ public class BaseStepListener implements StepListener, StepPublisher {
             try {
                 String stepDescription = getCurrentTestOutcome().getCurrentStep().getDescription();
                 ScreenshotAndHtmlSource screenshotAndHtmlSource = grabScreenshotFor(stepDescription);
-                if (shouldTakeScreenshot(screenshotType, screenshotAndHtmlSource)) {
-                    getCurrentStep().addScreenshot(screenshotAndHtmlSource);
-                }
+                takeScreenshotIfRequired(screenshotType, screenshotAndHtmlSource);
+                removeDuplicatedInitalScreenshotsIfPresent();
             } catch (ScreenshotException e) {
                 LOGGER.warn("Failed to take screenshot", e);
             }
         }
     }
 
+    private void removeDuplicatedInitalScreenshotsIfPresent() {
+        if (currentStepHasMoreThanOneScreenshot() && getPreviousStep().isPresent()) {
+            ScreenshotAndHtmlSource lastScreenshotOfPreviousStep = lastScreenshotOf(getPreviousStep().get());
+            ScreenshotAndHtmlSource firstScreenshotOfThisStep = getCurrentStep().getFirstScreenshot();
+            if (haveIdenticalScreenshots(firstScreenshotOfThisStep, lastScreenshotOfPreviousStep)) {
+                getCurrentStep().removeScreenshot(1);
+            }
+        }
+    }
+
+    private boolean currentStepHasMoreThanOneScreenshot() {
+        return getCurrentStep().getScreenshotCount() > 1;
+    }
+
+    private ScreenshotAndHtmlSource lastScreenshotOf(TestStep testStep) {
+        if (!testStep.getScreenshots().isEmpty()) {
+            return testStep.getScreenshots().get(testStep.getScreenshots().size() - 1);
+        }
+        return null;
+    }
+
+    private void takeScreenshotIfRequired(ScreenshotType screenshotType, ScreenshotAndHtmlSource screenshotAndHtmlSource) {
+        if (shouldTakeScreenshot(screenshotType, screenshotAndHtmlSource) && screenshotWasTaken(screenshotAndHtmlSource)) {
+            getCurrentStep().addScreenshot(screenshotAndHtmlSource);
+        }
+    }
+
+    private boolean screenshotWasTaken(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
+        return screenshotAndHtmlSource.getScreenshotFile() != null;
+    }
+
+
     private boolean shouldTakeScreenshot(ScreenshotType screenshotType,
                                          ScreenshotAndHtmlSource screenshotAndHtmlSource) {
-        return (screenshotType == MANDATORY_SCREENSHOT) || shouldTakeOptionalScreenshot(screenshotAndHtmlSource);
+        return (screenshotType == MANDATORY_SCREENSHOT)
+                || getCurrentStep().getScreenshots().isEmpty()
+                || shouldTakeOptionalScreenshot(screenshotAndHtmlSource);
     }
 
     private boolean shouldTakeOptionalScreenshot(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
-        return (screenshotAndHtmlSource.wasTaken() && (!sameAsPreviousScreenshot(screenshotAndHtmlSource)));
+        return (screenshotAndHtmlSource.wasTaken()
+                && (!sameAsPreviousScreenshot(screenshotAndHtmlSource)));
     }
 
     private boolean sameAsPreviousScreenshot(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
@@ -460,6 +503,21 @@ public class BaseStepListener implements StepListener, StepPublisher {
                 File screenshotFile = new File(screenshotTargetDirectory, screenshot.get().getFilename());
                 return (checksumCRC32(screenshotFile) == checksumCRC32(screenshotAndHtmlSource.getScreenshotFile()));
             }
+        } catch (IOException e) {
+            LOGGER.warn("Failed to compare screenshots: " + e.getMessage());
+        }
+        return false;
+    }
+
+    private boolean haveIdenticalScreenshots(ScreenshotAndHtmlSource screenshotAndHtmlSource,
+                                             ScreenshotAndHtmlSource anotherScreenshotAndHtmlSource) {
+        try {
+            File screenshotTargetDirectory = new File(screenshotAndHtmlSource.getScreenshotFile().getParent());
+            File screenshot = new File(screenshotTargetDirectory,
+                                       screenshotAndHtmlSource.getScreenshotFile().getName());
+            File anotherScreenshot = new File(screenshotTargetDirectory,
+                                              anotherScreenshotAndHtmlSource.getScreenshotFile().getName());
+            return (checksumCRC32(screenshot) == checksumCRC32(anotherScreenshot));
         } catch (IOException e) {
             LOGGER.warn("Failed to compare screenshots: " + e.getMessage());
         }

@@ -1,5 +1,6 @@
 package net.thucydides.core.screenshots;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -85,40 +87,45 @@ public class Photographer {
      * Take a screenshot of the current browser and store it in the output directory.
      */
     public File takeScreenshot(final String prefix) {
-        File screenshot = null;
         if (driverCanTakeSnapshots()) {
-            OutputStream stream = null;
             try {
                 byte[] screenshotData = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-                    if (screenshotData != null) {
-                    File temporaryFolder = FileUtils.getTempDirectory();
-                    String snapshotName = getTemporarySnapshotName();
-                    screenshot = new File(temporaryFolder, snapshotName);
-                    stream = new FileOutputStream(screenshot);
-                    stream.write(screenshotData);
-                }
-                if ((screenshot != null) && (screenshot.exists())) {
-                    return saveScreenshoot(prefix, screenshot);
+                Optional<File> savedScreenshot = saveScreenshotFile(screenshotData, prefix);
+                if ((savedScreenshot.isPresent()) && (savedScreenshot.get().exists())) {
+                    savePageSourceFor(savedScreenshot.get().getAbsolutePath());
+                    return savedScreenshot.get();
                 } else if (!isAMock(driver)){
                     getLogger().warn("Failed to write screenshot (possibly an out of memory error)");
                 }
             } catch (Throwable e) {
                 getLogger().warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    private Optional<File> saveScreenshotFile(byte[] screenshotData, String prefix) throws IOException {
+        if (screenshotData == null) {
+            return Optional.absent();
+        } else {
+            targetDirectory.mkdirs();
+            File savedScreenshot = new File(targetDirectory, nextScreenshotName(prefix));
+            OutputStream stream = null;
+            try {
+                stream = new FileOutputStream(savedScreenshot);
+                stream.write(screenshotData);
+                return Optional.of(savedScreenshot);
+            } catch (Throwable e) {
+                getLogger().warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
+                return Optional.absent();
             } finally {
-                if (stream != null)
+                if (stream != null) {
                     try {
                         stream.close();
                     } catch (IOException e) {} // Ignore any error on close
+                }
             }
         }
-        return screenshot;
-    }
-
-    protected File saveScreenshoot(final String prefix, final File screenshot) throws IOException {
-        File savedScreenshot = new File(targetDirectory, nextScreenshotName(prefix));
-        FileUtils.copyFile(screenshot, savedScreenshot);
-        savePageSourceFor(savedScreenshot.getAbsolutePath());
-        return savedScreenshot;
     }
 
     private boolean driverCanTakeSnapshots() {

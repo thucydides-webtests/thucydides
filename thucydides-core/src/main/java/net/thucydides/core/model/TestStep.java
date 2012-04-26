@@ -246,4 +246,8 @@ public class TestStep {
     public int getScreenshotCount() {
         return screenshots.size();
     }
+
+    public void removeScreenshot(int index) {
+        screenshots.remove(index);
+    }
 }

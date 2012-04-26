@@ -35,7 +35,7 @@ public class WhenScreenshotsAreTaken {
 
     @Mock
     private FirefoxDriver driver;
-    
+
     @Mock
     private HtmlUnitDriver htmlDriver;
 
@@ -163,17 +163,6 @@ public class WhenScreenshotsAreTaken {
         String screenshotFile = photographer.takeScreenshot("screenshot").getName();
         
         assertThat(screenshotFile, startsWith("screenshot"));
-    }
-
-    class DodgyPhotographer extends Photographer {
-        DodgyPhotographer(WebDriver driver, File targetDirectory) {
-            super(driver, targetDirectory);
-        }
-
-        @Override
-        protected File saveScreenshoot(String prefix, File screenshot) throws IOException {
-            throw new IOException();
-        }
     }
 
 }

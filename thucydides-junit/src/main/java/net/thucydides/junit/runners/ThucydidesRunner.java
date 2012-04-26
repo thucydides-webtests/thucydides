@@ -228,11 +228,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Once the test is over, the Step Listener can provide the acceptance test outcome in the
      * form of an TestOutcome object.
      */
-    private JUnitStepListener getStepListener() {
+    protected JUnitStepListener getStepListener() {
         if (stepListener == null) {
             buildAndConfigureListeners();
         }
         return stepListener;
+    }
+
+    protected void setStepListener(JUnitStepListener stepListener) {
+        this.stepListener = stepListener;
     }
 
     private void buildAndConfigureListeners() {
