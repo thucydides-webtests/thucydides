@@ -19,6 +19,7 @@ import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.screenshots.ScreenshotException;
+import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
@@ -87,7 +88,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
     private Story testedStory;
 
     private Configuration configuration;
-    
+
+    ScreenshotProcessor screenshotProcessor;
+
     private boolean inFluentStepSequence;
 
     protected enum ScreenshotType {
@@ -103,6 +106,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
         this.outputDirectory = outputDirectory;
         this.clock = Injectors.getInjector().getInstance(SystemClock.class);
         this.configuration = Injectors.getInjector().getInstance(Configuration.class);
+        this.screenshotProcessor = Injectors.getInjector().getInstance(ScreenshotProcessor.class);
         this.inFluentStepSequence = false;
     }
 
@@ -189,6 +193,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     @Override
     public void testSuiteFinished() {
+        screenshotProcessor.waitUntilDone();
     }
 
 

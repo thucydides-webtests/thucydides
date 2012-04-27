@@ -2,6 +2,8 @@ package net.thucydides.core.util;
 
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,6 +22,7 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
     private File workingDirectory;
     private File homeDirectory;
     private final EnvironmentVariables environmentVariables;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesFileLocalPreferences.class);
 
     @Inject
     public PropertiesFileLocalPreferences(EnvironmentVariables environmentVariables) {
@@ -46,6 +49,7 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
     }
 
     private void updatePreferencesFrom(File preferencesFile) throws IOException {
+        LOGGER.debug("Loading local Thucydides properties from " + preferencesFile.getAbsolutePath());
         if (preferencesFile.exists()) {
             Properties localPreferences = new Properties();
             localPreferences.load(new FileInputStream(preferencesFile));
@@ -60,6 +64,7 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
             String currentPropertyValue = environmentVariables.getProperty(propertyName);
 
             if ((currentPropertyValue == null) && (localPropertyValue != null)) {
+                LOGGER.debug(propertyName + "=" + localPropertyValue);
                 environmentVariables.setProperty(propertyName, localPropertyValue);
             }
         }

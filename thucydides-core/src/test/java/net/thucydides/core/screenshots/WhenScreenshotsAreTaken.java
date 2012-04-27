@@ -7,7 +7,6 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
@@ -163,6 +162,18 @@ public class WhenScreenshotsAreTaken {
         String screenshotFile = photographer.takeScreenshot("screenshot").getName();
         
         assertThat(screenshotFile, startsWith("screenshot"));
+    }
+
+    @Mock
+    ScreenshotProcessor screenshotProcessor;
+
+    @Test
+    public void should_send_screenshots_to_screenshot_processor() {
+
+        when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
+        photographer.setScreenshotProcessor(screenshotProcessor);
+        String screenshotFile = photographer.takeScreenshot("screenshot").getName();
+
     }
 
 }

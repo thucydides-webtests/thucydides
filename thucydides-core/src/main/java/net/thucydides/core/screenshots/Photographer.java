@@ -1,6 +1,7 @@
 package net.thucydides.core.screenshots;
 
 import com.google.common.base.Optional;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
@@ -11,13 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.UUID;
 
 /**
  * The photographer takes and stores screenshots during the test.
@@ -37,6 +34,7 @@ public class Photographer {
     private final MessageDigest digest;
 
     private final Logger logger = LoggerFactory.getLogger(Photographer.class);
+    private ScreenshotProcessor screenshotProcessor;
 
     protected Logger getLogger() {
         return logger;
@@ -47,6 +45,7 @@ public class Photographer {
     public Photographer(final WebDriver driver, final File targetDirectory) {
         this.driver = driver;
         this.targetDirectory = targetDirectory;
+        this.screenshotProcessor = Injectors.getInjector().getInstance(ScreenshotProcessor.class);
         this.screenshotSequence = DEFAULT_SCREENSHOT_SEQUENCE;
         this.digest = getMd5Digest();
     }
@@ -72,15 +71,11 @@ public class Photographer {
 
     private String getMD5DigestFrom(final String value) {
         byte[] messageDigest = digest.digest(value.getBytes());
-        StringBuffer hexString = new StringBuffer();
-        for (int i = 0; i < messageDigest.length; i++) {
-            hexString.append(Integer.toHexString(MESSAGE_DIGEST_MASK & messageDigest[i]));
+        StringBuilder hexString = new StringBuilder();
+        for (byte aMessageDigest : messageDigest) {
+            hexString.append(Integer.toHexString(MESSAGE_DIGEST_MASK & aMessageDigest));
         }
         return hexString.toString();
-    }
-
-    private String getTemporarySnapshotName() {
-        return UUID.randomUUID() + ".png";
     }
 
     /**
@@ -108,23 +103,11 @@ public class Photographer {
         if (screenshotData == null) {
             return Optional.absent();
         } else {
+            //noinspection ResultOfMethodCallIgnored
             targetDirectory.mkdirs();
             File savedScreenshot = new File(targetDirectory, nextScreenshotName(prefix));
-            OutputStream stream = null;
-            try {
-                stream = new FileOutputStream(savedScreenshot);
-                stream.write(screenshotData);
-                return Optional.of(savedScreenshot);
-            } catch (Throwable e) {
-                getLogger().warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
-                return Optional.absent();
-            } finally {
-                if (stream != null) {
-                    try {
-                        stream.close();
-                    } catch (IOException e) {} // Ignore any error on close
-                }
-            }
+            screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotData, savedScreenshot));
+            return Optional.of(savedScreenshot);
         }
     }
 
@@ -171,4 +154,7 @@ public class Photographer {
         }
     }
 
+    public void setScreenshotProcessor(ScreenshotProcessor screenshotProcessor) {
+        this.screenshotProcessor = screenshotProcessor;
+    }
 }

@@ -19,6 +19,8 @@ import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.reports.saucelabs.SaucelabsLinkGenerator;
 import net.thucydides.core.reports.templates.FreeMarkerTemplateManager;
 import net.thucydides.core.reports.templates.TemplateManager;
+import net.thucydides.core.screenshots.MultithreadScreenshotProcessor;
+import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
 import net.thucydides.core.statistics.Statistics;
 import net.thucydides.core.statistics.StatisticsListener;
@@ -60,6 +62,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(BatchManager.class).to(SystemVariableBasedBatchManager.class);
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
+        bind(ScreenshotProcessor.class).to(MultithreadScreenshotProcessor.class).in(Singleton.class);
 
         bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
         bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class).in(Singleton.class);
