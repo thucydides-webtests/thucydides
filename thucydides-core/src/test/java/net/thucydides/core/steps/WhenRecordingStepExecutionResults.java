@@ -951,6 +951,8 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
         assertThat(testOutcome.toString(), is("Step one, Ignored group [Step three, Step two, Step one]"));
         assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.SKIPPED));
     }
@@ -964,6 +966,8 @@ public class WhenRecordingStepExecutionResults {
         FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
 
         steps.step_with_title();
+
+        StepEventBus.getEventBus().testFinished(testOutcome);
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);

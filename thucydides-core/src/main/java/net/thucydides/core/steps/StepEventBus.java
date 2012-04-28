@@ -3,8 +3,12 @@ package net.thucydides.core.steps;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.screenshots.ScreenshotProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.Service;
@@ -41,7 +45,7 @@ public class StepEventBus {
      */
     public static synchronized StepEventBus getEventBus() {
         if (stepEventBusThreadLocal.get() == null) {
-            stepEventBusThreadLocal.set(new StepEventBus());
+            stepEventBusThreadLocal.set(Injectors.getInjector().getInstance(StepEventBus.class));
         }
         return stepEventBusThreadLocal.get();
     }
@@ -65,6 +69,13 @@ public class StepEventBus {
 
     private Class<?> classUnderTest;
     private Story storyUnderTest;
+
+    private final ScreenshotProcessor screenshotProcessor;
+
+    @Inject
+    public StepEventBus(ScreenshotProcessor screenshotProcessor) {
+        this.screenshotProcessor = screenshotProcessor;
+    }
 
     /**
      * Register a listener to receive notification at different points during a test's execution.
@@ -195,6 +206,7 @@ public class StepEventBus {
     }
 
     public void testFinished() {
+        screenshotProcessor.waitUntilDone();
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testFinished(getBaseStepListener().getCurrentTestOutcome());
         }
@@ -202,6 +214,7 @@ public class StepEventBus {
     }
 
     public void testFinished(TestOutcome result) {
+        screenshotProcessor.waitUntilDone();
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testFinished(result);
         }

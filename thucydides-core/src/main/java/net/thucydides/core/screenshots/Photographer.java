@@ -118,22 +118,16 @@ public class Photographer {
         }
     }
 
-    private boolean isAMock(WebDriver driver) {
-        return driver.getClass().getCanonicalName().contains("Mock");
-    }
-
     private void savePageSourceFor(final String screenshotFile) throws IOException {
-        //if (WebDriver.class.isAssignableFrom(driver.getClass())) {
-            try {
-                WebDriver webdriver = driver;
-                String pageSource = webdriver.getPageSource();
+        try {
+            WebDriver webdriver = driver;
+            String pageSource = webdriver.getPageSource();
 
-                File savedSource = new File(sourceCodeFileFor(screenshotFile));
-                FileUtils.writeStringToFile(savedSource, pageSource);
-            } catch (WebDriverException e) {
-                getLogger().warn("Failed to save screen source code", e);
-            }
-       // }
+            File savedSource = new File(sourceCodeFileFor(screenshotFile));
+            FileUtils.writeStringToFile(savedSource, pageSource);
+        } catch (WebDriverException e) {
+            getLogger().warn("Failed to save screen source code", e);
+        }
     }
 
 
