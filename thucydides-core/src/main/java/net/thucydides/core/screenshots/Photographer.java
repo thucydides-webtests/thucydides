@@ -86,12 +86,8 @@ public class Photographer {
             try {
                 byte[] screenshotData = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
                 Optional<File> savedScreenshot = saveScreenshotFile(screenshotData, prefix);
-                if ((savedScreenshot.isPresent()) && (savedScreenshot.get().exists())) {
-                    savePageSourceFor(savedScreenshot.get().getAbsolutePath());
-                    return savedScreenshot.get();
-                } else if (!isAMock(driver)){
-                    getLogger().warn("Failed to write screenshot (possibly an out of memory error)");
-                }
+                savePageSourceFor(savedScreenshot.get().getAbsolutePath());
+                return savedScreenshot.get();
             } catch (Throwable e) {
                 getLogger().warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
             }
@@ -111,7 +107,7 @@ public class Photographer {
         }
     }
 
-    private boolean driverCanTakeSnapshots() {
+    protected boolean driverCanTakeSnapshots() {
         if (driver == null) {
             return false;
         } else if (driver instanceof WebDriverFacade) {
@@ -127,7 +123,7 @@ public class Photographer {
     }
 
     private void savePageSourceFor(final String screenshotFile) throws IOException {
-        if (WebDriver.class.isAssignableFrom(driver.getClass())) {
+        //if (WebDriver.class.isAssignableFrom(driver.getClass())) {
             try {
                 WebDriver webdriver = driver;
                 String pageSource = webdriver.getPageSource();
@@ -137,7 +133,7 @@ public class Photographer {
             } catch (WebDriverException e) {
                 getLogger().warn("Failed to save screen source code", e);
             }
-        }
+       // }
     }
 
 

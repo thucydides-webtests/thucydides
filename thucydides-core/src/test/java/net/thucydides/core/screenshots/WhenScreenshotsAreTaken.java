@@ -39,7 +39,19 @@ public class WhenScreenshotsAreTaken {
     private HtmlUnitDriver htmlDriver;
 
     private Photographer photographer;
-    
+
+
+    class MockPhotographer extends Photographer {
+
+        public MockPhotographer(final WebDriver driver, final File targetDirectory) {
+            super(driver, targetDirectory);
+        }
+
+        @Override
+        protected boolean driverCanTakeSnapshots() {
+            return true;
+        }
+    }
     @Before 
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
@@ -56,7 +68,7 @@ public class WhenScreenshotsAreTaken {
     @Test
     public void the_driver_should_not_take_screenshots_if_the_driver_is_not_available() throws IOException {
 
-        Photographer photographer = new Photographer(null, screenshotDirectory);
+        Photographer photographer = new MockPhotographer(null, screenshotDirectory);
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         photographer.takeScreenshot("screenshot");
         
