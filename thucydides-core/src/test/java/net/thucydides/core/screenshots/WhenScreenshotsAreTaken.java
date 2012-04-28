@@ -53,7 +53,8 @@ public class WhenScreenshotsAreTaken {
             return true;
         }
     }
-    @Before 
+
+    @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
         photographer = new Photographer(driver, screenshotDirectory);        
@@ -72,7 +73,8 @@ public class WhenScreenshotsAreTaken {
         Photographer photographer = new MockPhotographer(null, screenshotDirectory);
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         photographer.takeScreenshot("screenshot");
-        
+        photographer.getScreenshotProcessor().waitUntilDone();
+
         verify(driver,times(0)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
@@ -81,6 +83,7 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         photographer.takeScreenshot("screenshot");
+        photographer.getScreenshotProcessor().waitUntilDone();
 
         verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());
     }
@@ -92,6 +95,7 @@ public class WhenScreenshotsAreTaken {
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         Photographer photographer = new Photographer(htmlDriver, screenshotDirectory);
         photographer.takeScreenshot("screenshot");
+        photographer.getScreenshotProcessor().waitUntilDone();
 
         verify(driver,never()).getScreenshotAs((OutputType<?>) anyObject());
     }
@@ -102,6 +106,7 @@ public class WhenScreenshotsAreTaken {
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         when(driver.getPageSource()).thenReturn("<html/>");
         photographer.takeScreenshot("screenshot");
+        photographer.getScreenshotProcessor().waitUntilDone();
 
         verify(driver,times(1)).getPageSource();
     }
@@ -112,8 +117,9 @@ public class WhenScreenshotsAreTaken {
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         
         String screenshotFile = photographer.takeScreenshot("screenshot").getName();
+        photographer.getScreenshotProcessor().waitUntilDone();
+
         File savedScreenshot = new File(screenshotDirectory, screenshotFile);
-        
         assertThat(savedScreenshot.isFile(), is(true));
     }
 
@@ -123,7 +129,8 @@ public class WhenScreenshotsAreTaken {
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         
         String savedFileName = photographer.takeScreenshot("screenshot").getName();
-        
+        photographer.getScreenshotProcessor().waitUntilDone();
+
         File savedScreenshot = new File(screenshotDirectory, savedFileName);
         
         assertThat(savedScreenshot.isFile(), is(true));
@@ -137,6 +144,7 @@ public class WhenScreenshotsAreTaken {
         when(driver.getPageSource()).thenReturn("<html/>");
 
         File screenshotFile = photographer.takeScreenshot("screenshot");
+        photographer.getScreenshotProcessor().waitUntilDone();
 
         File htmlSource = photographer.getMatchingSourceCodeFor(screenshotFile);
 
@@ -155,7 +163,8 @@ public class WhenScreenshotsAreTaken {
         
         String screenshotName1 = photographer.takeScreenshot("screenshot").getName();
         String screenshotName2 = photographer.takeScreenshot("screenshot").getName();
-        
+        photographer.getScreenshotProcessor().waitUntilDone();
+
         assertThat(screenshotName1, is(not((screenshotName2))));
     }
 
@@ -164,7 +173,8 @@ public class WhenScreenshotsAreTaken {
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
 
         String screenshotFile = photographer.takeScreenshot("test1_finished").getName();
-        
+        photographer.getScreenshotProcessor().waitUntilDone();
+
         assertThat(screenshotFile, startsWith("screenshot-989da2d4"));
     }
     
@@ -173,20 +183,40 @@ public class WhenScreenshotsAreTaken {
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
 
         String screenshotFile = photographer.takeScreenshot("screenshot").getName();
-        
+        photographer.getScreenshotProcessor().waitUntilDone();
+
         assertThat(screenshotFile, startsWith("screenshot"));
     }
 
     @Mock
     ScreenshotProcessor screenshotProcessor;
 
+    class MockProcessorPhotographer extends Photographer {
+
+        public MockProcessorPhotographer(final WebDriver driver, final File targetDirectory) {
+            super(driver, targetDirectory);
+        }
+
+        @Override
+        protected boolean driverCanTakeSnapshots() {
+            return true;
+        }
+
+        @Override
+        protected ScreenshotProcessor getScreenshotProcessor() {
+            return screenshotProcessor;
+        }
+    }
+
     @Test
     public void should_send_screenshots_to_screenshot_processor() {
 
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         photographer.setScreenshotProcessor(screenshotProcessor);
-        String screenshotFile = photographer.takeScreenshot("screenshot").getName();
 
+        photographer.takeScreenshot("screenshot");
+
+        verify(screenshotProcessor).queueScreenshot((QueuedScreenshot) anyObject());
     }
 
 }

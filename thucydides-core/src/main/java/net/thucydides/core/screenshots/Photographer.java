@@ -147,4 +147,8 @@ public class Photographer {
     public void setScreenshotProcessor(ScreenshotProcessor screenshotProcessor) {
         this.screenshotProcessor = screenshotProcessor;
     }
+
+    protected ScreenshotProcessor getScreenshotProcessor() {
+        return screenshotProcessor;
+    }
 }
