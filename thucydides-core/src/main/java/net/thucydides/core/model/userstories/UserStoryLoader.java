@@ -44,7 +44,7 @@ public class UserStoryLoader {
         File[] reportFiles = getAllXMLFilesFrom(reportDirectory);
 
         if (reportFiles == null) {
-            LOGGER.error("Could not findBy any Thucydides reports");
+            LOGGER.error("Could not find any Thucydides reports");
             return stories;
         }
 

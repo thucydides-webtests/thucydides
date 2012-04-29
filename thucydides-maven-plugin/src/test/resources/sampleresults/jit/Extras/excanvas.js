@@ -122,7 +122,7 @@ if (!document.createElement('canvas').getContext) {
     },
 
     init_: function(doc) {
-      // findBy all canvas elements
+      // find all canvas elements
       var els = doc.getElementsByTagName('canvas');
       for (var i = 0; i < els.length; i++) {
         this.initElement(els[i]);
@@ -770,7 +770,7 @@ if (!document.createElement('canvas').getContext) {
   contextPrototype.drawImage = function(image, var_args) {
     var dx, dy, dw, dh, sx, sy, sw, sh;
 
-    // to findBy the original width we overide the width and height
+    // to find the original width we overide the width and height
     var oldRuntimeWidth = image.runtimeStyle.width;
     var oldRuntimeHeight = image.runtimeStyle.height;
     image.runtimeStyle.width = 'auto';
