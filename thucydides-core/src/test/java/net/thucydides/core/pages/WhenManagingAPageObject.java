@@ -115,6 +115,17 @@ public class WhenManagingAPageObject {
     }
 
     @Test
+    public void page_will_wait_for_rendered_element_to_disappear_using_shortened_form() {
+
+        List<WebElement> emptyList = Arrays.asList();
+        when(driver.findElements(any(By.class))).thenReturn(emptyList);
+
+        BasicPageObject page = new BasicPageObject(driver);
+        page.setWaitForTimeout(100);
+        page.waitForAbsenceOf("#whatever");
+    }
+
+    @Test
     public void page_can_delay_requests_for_a_short_period() {
         long start = System.currentTimeMillis();
         BasicPageObject page = new BasicPageObject(driver);

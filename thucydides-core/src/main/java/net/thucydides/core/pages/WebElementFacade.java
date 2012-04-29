@@ -15,6 +15,7 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.server.handler.BySelector;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -67,6 +68,21 @@ public class WebElementFacade {
 
     protected InternalSystemClock getClock() {
         return clock;
+    }
+
+    public WebElementFacade then(String xpathOrCssSelector) {
+        WebElement nestedElement = null;
+        if (PageObject.isXPath(xpathOrCssSelector)) {
+            nestedElement = driver.findElement((By.xpath(xpathOrCssSelector)));
+        } else {
+            nestedElement = driver.findElement((By.cssSelector(xpathOrCssSelector)));
+        }
+        return new  WebElementFacade(driver, nestedElement, timeoutInMilliseconds);
+    }
+
+    public WebElementFacade then(By selector) {
+        WebElement nestedElement = driver.findElement(selector);
+        return new  WebElementFacade(driver, nestedElement, timeoutInMilliseconds);
     }
 
     public long getTimeoutInMilliseconds() {

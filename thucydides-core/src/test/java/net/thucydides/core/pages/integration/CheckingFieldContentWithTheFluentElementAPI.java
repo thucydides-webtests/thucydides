@@ -6,6 +6,7 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
@@ -57,6 +58,16 @@ public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAP
     @Test
     public void should_return_an_empty_list_of_select_options_for_a_non_select_field() {
         assertThat(page.element(page.checkbox).getSelectOptions().size(), is(0));
+    }
+
+    @Test
+    public void should_allow_find_as_a_synonym_for_element() {
+        assertThat(page.find(By.name("demo")).then(By.name("specialField")).getValue(), is("Special"));
+    }
+
+    @Test
+    public void should_allow_find_as_a_synonym_for_element_using_strings() {
+        assertThat(page.findBy("#demo").then("#specialField").getValue(), is("Special"));
     }
 
     @Test

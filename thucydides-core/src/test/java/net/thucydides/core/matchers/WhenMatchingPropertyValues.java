@@ -147,7 +147,7 @@ public class WhenMatchingPropertyValues {
         DodgyBean person = new DodgyBean("Bill", "Oddie");
 
         expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage(containsString("Could not find property value for field-does-not-exist"));
+        expectedException.expectMessage(containsString("Could not findBy property value for field-does-not-exist"));
 
         BeanMatcher lastNameIsOddie = BeanMatchers.the("field-does-not-exist", is("Oddie"));
 
@@ -177,7 +177,7 @@ public class WhenMatchingPropertyValues {
         DodgyBean person = new DodgyBean("Bill", "Kidd");
 
         expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage(containsString("Could not find property value for firstName"));
+        expectedException.expectMessage(containsString("Could not findBy property value for firstName"));
 
         BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
         BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));

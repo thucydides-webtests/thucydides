@@ -356,7 +356,7 @@ public class WhenRecordingTestResultStatistics {
 
     /*
         - should retrieve test statistics for a given tag
-        - should find aggregate data for tests for a given tag
+        - should findBy aggregate data for tests for a given tag
      */
 
     static boolean runOnce = false;

@@ -22,4 +22,8 @@ public class WindowStub implements WebDriver.Window {
     public Point getPosition() {
         return new Point(0,0);
     }
+
+    @Override
+    public void maximize() {
+    }
 }

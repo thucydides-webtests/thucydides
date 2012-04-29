@@ -181,15 +181,28 @@ public abstract class PageObject {
         return this;
     }
 
+    public PageObject waitFor(String xpathOrCssSelector) {
+        return waitForRenderedElements(xpathOrCssSelector(xpathOrCssSelector));
+    }
+
     public PageObject waitForRenderedElementsToBePresent(final By byElementCriteria) {
         getRenderedView().waitForPresenceOf(byElementCriteria);
         return this;
     }
 
+    public PageObject waitForPresenceOf(String xpathOrCssSelector) {
+        return waitForRenderedElementsToBePresent(xpathOrCssSelector(xpathOrCssSelector));
+    }
+
+
     public PageObject waitForRenderedElementsToDisappear(
             final By byElementCriteria) {
         getRenderedView().waitForElementsToDisappear(byElementCriteria);
         return this;
+    }
+
+    public PageObject waitForAbsenceOf(String xpathOrCssSelector) {
+        return waitForRenderedElementsToDisappear(xpathOrCssSelector(xpathOrCssSelector));
     }
 
     /**
@@ -236,6 +249,7 @@ public abstract class PageObject {
             }
         };
     }
+
     public PageObject waitForTextToDisappear(final String expectedText) {
         return waitForTextToDisappear(expectedText, waitForTimeout);
     }
@@ -306,7 +320,7 @@ public abstract class PageObject {
     public void shouldContainAllText(final String... textValues) {
         if (!containsAllText(textValues)) {
             String errorMessage = String.format(
-                    "One of the text elements in '%s' was not found in the page", (Object[])textValues);
+                    "One of the text elements in '%s' was not found in the page", (Object[]) textValues);
             throw new NoSuchElementException(errorMessage);
         }
     }
@@ -616,22 +630,34 @@ public abstract class PageObject {
         return new WebElementFacade(driver, webElement, waitForTimeout);
     }
 
+    public WebElementFacade find(By selector) {
+        return element(selector);
+    }
+
     /**
      * Provides a fluent API for querying web elements.
      */
     public WebElementFacade element(String xpathOrCssSelector) {
+        return element(xpathOrCssSelector(xpathOrCssSelector));
+    }
+
+    private By xpathOrCssSelector(String xpathOrCssSelector) {
         if (isXPath(xpathOrCssSelector)) {
-            return element(By.xpath(xpathOrCssSelector));
+            return By.xpath(xpathOrCssSelector);
         } else {
-            return element(By.cssSelector(xpathOrCssSelector));
+            return By.cssSelector(xpathOrCssSelector);
         }
     }
 
-    private boolean isXPath(String xpathExpression) {
+    public WebElementFacade findBy(String xpathOrCssSelector) {
+        return element(xpathOrCssSelector);
+    }
+
+    public static boolean isXPath(String xpathExpression) {
         XPathFactory factory = XPathFactory.newInstance();
         XPath xpath = factory.newXPath();
         try {
-            XPathExpression expr = xpath.compile(xpathExpression);
+            xpath.compile(xpathExpression);
         } catch (Exception e) {
             return false;
         }
