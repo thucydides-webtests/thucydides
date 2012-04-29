@@ -172,7 +172,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         @Step
         public void no_such_element_web_step() {
             getDriver().get("failing_step");
-            throw new NoSuchElementException("Could not find element");
+            throw new NoSuchElementException("Could not findBy element");
         }
 
         @Step

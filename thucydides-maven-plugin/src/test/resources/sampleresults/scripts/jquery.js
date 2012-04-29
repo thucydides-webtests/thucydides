@@ -4407,7 +4407,7 @@ if ( document.querySelectorAll ) {
 			// Only use querySelectorAll on non-XML documents
 			// (ID selectors don't work in non-HTML documents)
 			if ( !seed && !Sizzle.isXML(context) ) {
-				// See if we find a selector to speed up
+				// See if we findBy a selector to speed up
 				var match = /^(\w+$)|^\.([\w\-]+$)|^#([\w\-]+$)/.exec( query );
 				
 				if ( match && (context.nodeType === 1 || context.nodeType === 9) ) {
@@ -4532,7 +4532,7 @@ if ( document.querySelectorAll ) {
 
 	div.innerHTML = "<div class='test e'></div><div class='test'></div>";
 
-	// Opera can't find a second classname (in 9.6)
+	// Opera can't findBy a second classname (in 9.6)
 	// Also, make sure that getElementsByClassName actually exists
 	if ( !div.getElementsByClassName || div.getElementsByClassName("e").length === 0 ) {
 		return;

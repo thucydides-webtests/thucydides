@@ -30,7 +30,7 @@ class MaxFieldValueMatcher implements BeanCollectionMatcher {
             List<Comparable> fieldValues = convert(elements, toComparable());
             maximumValue = max(fieldValues);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Could not find property value for " + fieldName);
+            throw new IllegalArgumentException("Could not findBy property value for " + fieldName);
         }
         return valueMatcher.matches(maximumValue);
     }

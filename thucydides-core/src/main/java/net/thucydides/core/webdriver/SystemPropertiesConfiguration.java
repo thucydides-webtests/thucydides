@@ -50,8 +50,8 @@ public class SystemPropertiesConfiguration implements Configuration {
     private static final String MAVEN_REPORTS_DIRECTORY = "project.reporting.OutputDirectory";
     /**
      * By default, when accepting untrusted SSL certificates, assume that these certificates will come from an
-     * untrusted issuer or will be self signed. Due to limitation within Firefox, it is easy to find out if the
-     * certificate has expired or does not match the host it was served for, but hard to find out if the issuer of
+     * untrusted issuer or will be self signed. Due to limitation within Firefox, it is easy to findBy out if the
+     * certificate has expired or does not match the host it was served for, but hard to findBy out if the issuer of
      * the certificate is untrusted. By default, it is assumed that the certificates were not be issued from a trusted
      * CA. If you are receive an "untrusted site" prompt on Firefox when using a certificate that was issued by valid
      * issuer, but has expired or is being served served for a different host (e.g. production certificate served in
