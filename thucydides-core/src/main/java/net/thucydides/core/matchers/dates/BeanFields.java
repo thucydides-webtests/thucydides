@@ -18,7 +18,7 @@ public class BeanFields {
         try {
             return PropertyUtils.getProperty(bean, fieldName);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Could not findBy property value for " + fieldName);
+            throw new IllegalArgumentException("Could not find property value for " + fieldName);
         }
     }
 

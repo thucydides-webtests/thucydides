@@ -3905,7 +3905,7 @@ Complex.KER = $C(0, 0);
 /*
  Class: Graph
 
- A Graph Class that provides useful manipulation functions. You can findBy more manipulation methods in the <Graph.Util> object.
+ A Graph Class that provides useful manipulation functions. You can find more manipulation methods in the <Graph.Util> object.
 
  An instance of this class can be accessed by using the *graph* parameter of any tree or graph visualization.
  
