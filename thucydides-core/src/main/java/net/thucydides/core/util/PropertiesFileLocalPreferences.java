@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -43,9 +44,18 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
     public void loadPreferences() throws IOException {
         File homeDirectoryPreferencesFile = getLocalPreferencesFile();
         File workingDirectoryPreferencesFile = getLocalWorkingPreferencesFile();
+        updatePreferencesFromClasspath();
         updatePreferencesFrom(workingDirectoryPreferencesFile);
         updatePreferencesFrom(homeDirectoryPreferencesFile);
+    }
 
+    private void updatePreferencesFromClasspath() throws IOException {
+        InputStream propertiesOnClasspath = getClass().getClassLoader().getResourceAsStream("/thucydides.properties");
+        if (propertiesOnClasspath != null) {
+            Properties localPreferences = new Properties();
+            localPreferences.load(propertiesOnClasspath);
+            setUndefinedSystemPropertiesFrom(localPreferences);
+        }
     }
 
     private void updatePreferencesFrom(File preferencesFile) throws IOException {
@@ -77,5 +87,4 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
     private File getLocalWorkingPreferencesFile() {
         return new File(workingDirectory, "thucydides.properties");
     }
-
 }

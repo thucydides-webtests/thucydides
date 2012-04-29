@@ -43,7 +43,7 @@ public class TestOutcomeLoader {
     private List<File> getAllXMLFilesFrom(final File reportsDirectory) throws IOException{
         File[] matchingFiles = reportsDirectory.listFiles(new XmlFilenameFilter());
         if (matchingFiles == null) {
-            throw new IOException("Could not find directory " + reportsDirectory);
+            throw new IOException("Could not findBy directory " + reportsDirectory);
         }
         return ImmutableList.copyOf(matchingFiles);
     }

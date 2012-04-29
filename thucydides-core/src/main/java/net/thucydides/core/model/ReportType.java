@@ -1,7 +1,7 @@
 package net.thucydides.core.model;
 
 /**
- * The report namer knows how to find names for these types of reports
+ * The report namer knows how to findBy names for these types of reports
  */
 public enum ReportType {
     /** report name with no suffix. */

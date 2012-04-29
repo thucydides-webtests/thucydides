@@ -1,7 +1,6 @@
 package net.thucydides.core.util;
 
 import net.thucydides.core.Thucydides;
-import net.thucydides.core.guice.Injectors;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

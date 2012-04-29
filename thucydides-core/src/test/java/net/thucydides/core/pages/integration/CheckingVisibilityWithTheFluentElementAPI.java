@@ -86,10 +86,19 @@ public class CheckingVisibilityWithTheFluentElementAPI extends FluentElementAPIT
     }
 
     @Test
+    public void should_wait_for_hidden_elements_using_shortened_form() {
+        page.waitFor("#city");
+    }
+
+    @Test
     public void wait_for_hidden_elements_should_work_for_visible_elements() {
         page.waitForRenderedElementsToBePresent(By.name("firstname"));
     }
 
+    @Test
+    public void wait_for_hidden_elements_should_work_for_visible_elements_using_shortened_form() {
+        page.waitForPresenceOf("#firstname");
+    }
     @Test(expected = TimeoutException.class)
     public void wait_for_hidden_elements_should_fail_for_missing_elements() {
         page.waitForRenderedElementsToBePresent(By.name("noSuchField"));

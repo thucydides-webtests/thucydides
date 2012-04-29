@@ -90,7 +90,7 @@ public final class InstanceBuilder {
                 return field;
             }
         }
-        throw new FailedToInitializeTestData("Could not find property called " + property);
+        throw new FailedToInitializeTestData("Could not findBy property called " + property);
     }
 
     public static <T> InstanceBuilder inObject(final T newObject) {

@@ -91,7 +91,7 @@
     <h2 id="invisible">An invisible title</h2>
 </div>
 <p>Some test pages for the Thucydides tests</p>
-<form name="demo" action="index.html">
+<form name="demo" id="demo" action="index.html">
     <p>
     <h3 id="nametitle">Name</h3>
     <input name="firstname" id="firstname" value="<enter first name>" onblur="focusOff('firstname')" onfocus="focusOn('firstname')"/>
@@ -101,6 +101,7 @@
     <h3 id="placetitle">Location</h3>
     <input name="city" id="city"/>
     <input name="country" id="country" value="Australia"/>
+    <input id="specialField" name="specialField" value="Special"/>
     </p>
     <input id="buttonThatIsInitiallyDisabled" type="submit" value="Initially disabled" disabled="true"/>
     <input id="buttonThatIsInitiallyEnabled" type="submit" value="Initially enabled"/>
