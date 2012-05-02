@@ -64,8 +64,8 @@ public class DataDrivenAnnotations {
         String userDir = System.getProperty("user.dir");
         testDataSource = StringUtils.replace(testDataSource, "$HOME", homeDir);
         testDataSource = StringUtils.replace(testDataSource, "${HOME}", homeDir);
-        testDataSource = StringUtils.replace(testDataSource, "$USERDIR", homeDir);
-        testDataSource = StringUtils.replace(testDataSource, "${USERDIR}", homeDir);
+        testDataSource = StringUtils.replace(testDataSource, "$USERDIR", userDir);
+        testDataSource = StringUtils.replace(testDataSource, "${USERDIR}", userDir);
         return testDataSource;
     }
 

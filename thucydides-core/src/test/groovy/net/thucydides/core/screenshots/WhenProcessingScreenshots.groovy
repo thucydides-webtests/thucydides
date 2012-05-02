@@ -18,7 +18,7 @@ class WhenProcessingScreenshots extends Specification {
 
     def "should process queued screenshots"() {
         given:
-            def screenshotProcessor = new MultithreadScreenshotProcessor()
+        def screenshotProcessor = new MultithreadScreenshotProcessor()
         when:
             (1..1000).each {
                 screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotData,

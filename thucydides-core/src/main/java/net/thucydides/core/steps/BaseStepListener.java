@@ -516,6 +516,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private boolean haveIdenticalScreenshots(ScreenshotAndHtmlSource screenshotAndHtmlSource,
                                              ScreenshotAndHtmlSource anotherScreenshotAndHtmlSource) {
+        if (noScreenshotIn(screenshotAndHtmlSource) || noScreenshotIn(anotherScreenshotAndHtmlSource)) {
+            return false;
+        }
         try {
             File screenshotTargetDirectory = new File(screenshotAndHtmlSource.getScreenshotFile().getParent());
             File screenshot = new File(screenshotTargetDirectory,
@@ -527,6 +530,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
             LOGGER.warn("Failed to compare screenshots: " + e.getMessage());
         }
         return false;
+    }
+
+    private boolean noScreenshotIn(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
+        return ((screenshotAndHtmlSource == null) || (screenshotAndHtmlSource.getScreenshotFile() == null));
     }
 
     private Optional<Screenshot> latestScreenshot() {
