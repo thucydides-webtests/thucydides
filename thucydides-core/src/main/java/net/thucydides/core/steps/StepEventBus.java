@@ -8,6 +8,7 @@ import com.google.inject.Injector;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -207,8 +208,9 @@ public class StepEventBus {
 
     public void testFinished() {
         screenshotProcessor.waitUntilDone();
+        TestOutcome outcome = getBaseStepListener().getCurrentTestOutcome();
         for(StepListener stepListener : getAllListeners()) {
-            stepListener.testFinished(getBaseStepListener().getCurrentTestOutcome());
+            stepListener.testFinished(outcome);
         }
         clear();
     }
@@ -354,8 +356,13 @@ public class StepEventBus {
      * @param cause the underlying cause of the failure.
      */
     public void testFailed(final Throwable cause) {
+        TestOutcome outcome = getBaseStepListener().getCurrentTestOutcome();
         for(StepListener stepListener : getAllListeners()) {
-            stepListener.testFailed(getBaseStepListener().getCurrentTestOutcome(), cause);
+            try {
+                stepListener.testFailed(outcome, cause);
+            } catch (AbstractMethodError ame) {
+                LOGGER.error("Caught abstract method error", ame);
+            }
         }
     }
 

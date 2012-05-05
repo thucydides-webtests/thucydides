@@ -7,13 +7,17 @@ import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.StaticTestSite;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -25,6 +29,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class WhenTakingLargeScreenshots {
 
@@ -62,7 +67,7 @@ public class WhenTakingLargeScreenshots {
         environmentVariables.setProperty("thucydides.browser.width", "800");
         environmentVariables.setProperty("thucydides.browser.height", "400");
 
-        driver = testSite.open("chrome");
+        driver = testSite.open();
 
         Photographer photographer = new Photographer(driver, screenshotDirectory);
         File screenshotFile = photographer.takeScreenshot("screenshot");
@@ -111,28 +116,15 @@ public class WhenTakingLargeScreenshots {
     @Mock
     Logger logger;
 
+    @Mock
+    FirefoxDriver mockDriver;
+
     @Test
     public void should_not_explode_when_firefox_cannot_take_a_large_screenshot() {
-        driver = testSite.open("http://en.wikipedia.org/wiki/United_states", "screenshots/big-page.html");
 
-        Photographer photographer = new Photographer(driver, screenshotDirectory) {
-            @Override
-            protected Logger getLogger() {
-                return logger;
-            }
-        };
-        File screenshot = photographer.takeScreenshot("screenshot");  // should not throw an exception
-        if (screenshot == null) {
-            verify(logger).warn(contains("Failed to write screenshot"));
-        }
-    }
+        when(mockDriver.getScreenshotAs(OutputType.BYTES)).thenThrow(new WebDriverException());
 
-    @Test
-    public void should_not_explode_when_chrome_cannot_take_a_large_screenshot() throws IOException {
-
-        driver = testSite.open("http://en.wikipedia.org/wiki/United_states", "screenshots/big-page.html", "chrome");
-
-        Photographer photographer = new Photographer(driver, screenshotDirectory) {
+        Photographer photographer = new Photographer(mockDriver, screenshotDirectory) {
             @Override
             protected Logger getLogger() {
                 return logger;

@@ -173,8 +173,8 @@ public class ThucydidesPlugin extends BasePlugin {
         stepPublisher = (StepPublisher) baseStepListener;
 
         StepEventBus.eventBus.dropAllListeners();
-        stepListeners.each {
-            StepEventBus.eventBus.registerListener(it)
+        stepListeners.each { listener ->
+            if (listener) StepEventBus.eventBus.registerListener(listener)
         }
 
         ListenerFactory.registerBuilder(new ThucydidesListenerBuilder());

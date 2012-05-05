@@ -89,7 +89,7 @@ public class ConsoleLoggingListener implements StepListener {
     }
 
     private void logBanner() {
-        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info(BANNER);
         }
     }
@@ -107,14 +107,14 @@ public class ConsoleLoggingListener implements StepListener {
 
     @Override
     public void testSuiteStarted(Class<?> storyClass) {
-        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info("Test Suite Started: " + NameConverter.humanize(storyClass.getSimpleName()));
         }
     }
 
     @Override
     public void testSuiteStarted(Story story) {
-        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info("Test Suite Started: " + NameConverter.humanize(story.getName()));
         }
     }
@@ -124,7 +124,7 @@ public class ConsoleLoggingListener implements StepListener {
     }
 
     public void testStarted(String description) {
-        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info(TEST_STARTED + "\nTEST: " + description + underline(TEST_STARTED));
         }
     }
@@ -153,7 +153,7 @@ public class ConsoleLoggingListener implements StepListener {
     }
 
     private void logFailure(TestOutcome result) {
-        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info(TEST_FAILED + "\nTEST: " + result.getTitle() + " failed" + underline(TEST_FAILED));
             if (result.getTestFailureCause() != null) {
                 getLogger().info(FAILURE + "\n" + result.getTestFailureCause().getMessage());
@@ -163,20 +163,20 @@ public class ConsoleLoggingListener implements StepListener {
     }
 
     private void logPending(TestOutcome result) {
-        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info(TEST_SKIPPED + "\nTEST: " + result.getTitle() + " is pending" + underline(TEST_SKIPPED));
 
         }
     }
 
     private void logSkipped(TestOutcome result) {
-        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info(TEST_SKIPPED + "\nTEST: " + result.getTitle() + " is skipped" + underline(TEST_SKIPPED));
         }
     }
 
     private void logSuccess(TestOutcome result) {
-        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info(TEST_PASSED + "\nTEST: " + result.getTitle() + " passed" + underline(TEST_PASSED));
         }
     }
@@ -236,15 +236,11 @@ public class ConsoleLoggingListener implements StepListener {
 
     @Override
     public void testFailed(TestOutcome testOutcome, Throwable cause) {
-        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
-//            getLogger().info(FAILURE + "\n" + cause.getMessage());
-//            underline(FAILURE);
-        }
     }
 
     @Override
     public void testIgnored() {
-        if (loggingLevelIsAtLeast(getLoggingLevel().NORMAL)) {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info("TEST IGNORED");
         }
     }

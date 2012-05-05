@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Generates an aggregate acceptance test report in XML form.
+ * Generates an aggregate acceptance test report in HTML form.
  * Reads all the reports from the output directory and generates aggregate HTML reports
  * summarizing the results.
  */

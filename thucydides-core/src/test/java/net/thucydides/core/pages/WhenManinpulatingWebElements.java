@@ -47,6 +47,15 @@ public class WhenManinpulatingWebElements {
     }
 
     @Test
+    public void web_element_facade_should_be_printed_as_the_web_element() {
+        when(webElement.toString()).thenReturn("<web element>");
+        WebElementFacade elementFacade = new WebElementFacade(driver, webElement, 100);
+
+        assertThat(elementFacade.toString(), is("<web element>"));
+
+    }
+
+    @Test
     public void stale_element_found_using_a_finder_should_not_be_considered_displayed() {
         when(driver.findElements((By) anyObject())).thenThrow(new StaleElementReferenceException("Stale element"));
 

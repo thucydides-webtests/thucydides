@@ -12,7 +12,7 @@ public class SampleNonWebScenarioWithError {
     public SampleNonWebSteps steps;
 
     @Test
-    public void happy_day_scenario() throws Throwable {
+    public void happy_day_scenario() {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
         steps.stepThatIsPending();

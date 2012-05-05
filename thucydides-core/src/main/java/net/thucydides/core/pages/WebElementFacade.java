@@ -526,7 +526,7 @@ public class WebElementFacade {
             notifyScreenChange();
             return this;
         } catch (TimeoutException timeout) {
-            throw new ElementNotVisibleException("Expected enabled element was not enabled" , timeout);
+            throw new ElementNotVisibleException("Expected enabled element " + this + "was not enabled" , timeout);
         }
     }
 
@@ -536,7 +536,7 @@ public class WebElementFacade {
             notifyScreenChange();
             return this;
         } catch (TimeoutException timeout) {
-            throw new ElementNotVisibleException("Expected disabled element was not enabled", timeout);
+            throw new ElementNotVisibleException("Expected disabled element " + this + "  was not disabled", timeout);
         }
     }
 
@@ -596,6 +596,11 @@ public class WebElementFacade {
     }
     private void notifyScreenChange() {
         StepEventBus.getEventBus().notifyScreenChange();
+    }
+
+    @Override
+    public String toString() {
+        return webElement.toString();
     }
 }
 

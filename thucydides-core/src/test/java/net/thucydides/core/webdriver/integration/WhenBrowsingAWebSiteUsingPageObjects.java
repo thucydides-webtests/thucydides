@@ -2,6 +2,7 @@ package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.PageUrls;
+import net.thucydides.core.pages.WebElementFacade;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.StaticTestSite;
@@ -36,6 +37,9 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         
         public WebElement color;
 
+        WebElementFacade checkbox() {
+            return element(checkbox);
+        }
         public IndexPage(WebDriver driver, int timeout) {
             super(driver, timeout);
         }
@@ -93,7 +97,13 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     @Test
     public void should_find_page_title() {
         assertThat(indexPage.getTitle(), is("Thucydides Test Site"));
-    } 
+    }
+
+    @Test
+    public void should_print_web_element_facades_in_a_readable_form() {
+
+        assertThat(indexPage.checkbox().toString(), is("<input id=\"checkbox\" type=\"checkbox\" value=\"checkbox_value\" />"));
+    }
 
     @Test
     public void should_find_text_contained_in_page() {
