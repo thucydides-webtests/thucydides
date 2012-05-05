@@ -603,7 +603,7 @@ public class WebElementFacade {
         if (webElement != null) {
             return webElement.toString();
         } else {
-            return "<Undefined web element>"
+            return "<Undefined web element>";
         }
     }
 }
