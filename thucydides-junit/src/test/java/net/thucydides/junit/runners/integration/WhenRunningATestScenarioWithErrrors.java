@@ -33,13 +33,7 @@ public class WhenRunningATestScenarioWithErrrors extends AbstractTestStepRunnerT
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
-        assertThat(executedScenarios.size(), is(1));
-        TestOutcome testOutcome1 = executedScenarios.get(0);
-
-//        assertThat(testOutcome1.getTitle(), is("Happy day scenario"));
-//        assertThat(testOutcome1.getMethodName(), is("happy_day_scenario"));
-//        assertThat(testOutcome1.getTestSteps().size(), is(3));
-//        assertThat(testOutcome1.getScreenshots().size(), is(not(0)));
+        assertThat(executedScenarios.size(), is(3));
     }
 
 }
