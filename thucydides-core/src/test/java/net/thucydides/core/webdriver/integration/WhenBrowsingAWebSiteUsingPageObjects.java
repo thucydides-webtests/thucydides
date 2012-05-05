@@ -106,6 +106,13 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     }
 
     @Test
+    public void should_print_web_element_facade_without_a_webelement_in_a_readable_form() {
+
+        WebElementFacade WebElement = new WebElementFacade(driver, null, 0)
+        assertThat(indexPage.checkbox().toString(), is("<Undefined web element>"));
+    }
+
+    @Test
     public void should_find_text_contained_in_page() {
         indexPage.shouldContainText("Some test pages");
     }

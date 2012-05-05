@@ -600,7 +600,11 @@ public class WebElementFacade {
 
     @Override
     public String toString() {
-        return webElement.toString();
+        if (webElement != null) {
+            return webElement.toString();
+        } else {
+            return "<Undefined web element>"
+        }
     }
 }
 
