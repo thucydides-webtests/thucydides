@@ -45,13 +45,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.7.1</version>
                 <configuration>
-                    <includes>
-                        <include>**/*Scenario.java</include>
-                    </includes>
                     <systemPropertyVariables>
                         <thucydides.issue.tracker.url>${jira.issues}</thucydides.issue.tracker.url>
                     </systemPropertyVariables>
-                    <!--<parallel>methods</parallel>-->
                 </configuration>
             </plugin>
             <plugin>

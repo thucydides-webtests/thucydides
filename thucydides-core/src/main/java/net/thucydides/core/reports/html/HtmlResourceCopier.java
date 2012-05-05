@@ -27,8 +27,6 @@ public class HtmlResourceCopier {
      */
     public void copyHTMLResourcesTo(final File targetDirectory) throws IOException {
 
-        System.out.println("Copying resource files to " + targetDirectory);
-
         Pattern resourcePattern = allFilesInDirectory(resourceDirectory);
         FileResources fileResource = FileResources.from(resourceDirectory);
 

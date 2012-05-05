@@ -11,27 +11,23 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-@Story(Application.SellWidgets.SellWidgetsOnline.class)
-public class SellWidgetsOnlineTestScenario {
+@Story(Application.MakeWidgets.MakeBigWidgets.class)
+public class TestMakeBigWidgetsTestScenario {
 
     @Steps
     public SampleScenarioSteps steps;
-        
+
     @Test
-    public void another_happy_day_scenario() {
-		steps.stepThatSucceeds();
-		steps.anotherStepThatSucceeds();
-        steps.stepThatCallsNestedSteps();
-        steps.stepThree("a");
-        steps.stepFour("c");
+    public void happy_day_scenario() {
+        steps.anotherGroupOfSteps();
+        steps.stepThree("e");
+        steps.stepFour("f");
     }    
 
     @Test
-    public void successful_scenario() {
-		steps.stepThatSucceeds();
-		steps.anotherStepThatSucceeds();
+    public void working_scenario() {
         steps.anotherGroupOfSteps();
-        steps.stepFour("c");
+        steps.stepThatSucceeds();
     }    
 	
 }

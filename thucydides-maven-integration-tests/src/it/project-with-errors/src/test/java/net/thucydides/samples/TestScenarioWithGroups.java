@@ -3,6 +3,7 @@ package net.thucydides.samples;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
+import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
@@ -10,19 +11,14 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-public class SampleTestScenario {
+@UserStoryCode("US02")
+public class TestScenarioWithGroups {
 
-    @Managed(driver = "htmlunit")
-    public WebDriver webdriver;
-
-    @ManagedPages(defaultUrl = "http://www.google.com")
-    public Pages pages;
-    
     @Steps
     public SampleScenarioSteps steps;
-
+        
     @Test
-    public void simple_scenario() {
+    public void happy_day_scenario() {
         steps.anotherGroupOfSteps();
         steps.stepThree("e");
         steps.stepFour("f");
@@ -35,17 +31,4 @@ public class SampleTestScenario {
         steps.stepThatSucceeds();
     }    
 	
-    @Test
-    public void nested_scenario() {
-        steps.stepThatSucceeds();
-        steps.anotherGroupOfSteps();
-    }
-
-    @Test
-    public void nested_scenario_with_an_error() {
-        steps.stepThatSucceeds();
-        steps.groupOfStepsContainingAFailure();
-        steps.anotherGroupOfSteps();
-    }
-
 }

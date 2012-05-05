@@ -12,7 +12,7 @@ import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
 @UserStoryCode("US01")
-public class SampleTestForAnotherUserStoryScenario {
+public class TestSampleTestForAnotherUserStoryScenario {
 
     @Steps
     public SampleScenarioSteps steps;

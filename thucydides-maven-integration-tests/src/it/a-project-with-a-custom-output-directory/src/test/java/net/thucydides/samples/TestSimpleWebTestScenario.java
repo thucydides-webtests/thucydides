@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-public class SimpleWebTestScenario {
+public class TestSimpleWebTestScenario {
 
     @Managed(driver = "htmlunit", uniqueSession = true)
     public WebDriver webdriver;

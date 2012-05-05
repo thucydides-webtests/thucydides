@@ -13,7 +13,7 @@ import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
 @Story(Application.MakeWidgets.MakeSmallWidgets.class)
-public class MakeSmallWidgetsTestScenario {
+public class TestMakeSmallWidgetsTestScenario {
 
     @Steps
     public SampleScenarioSteps steps;
