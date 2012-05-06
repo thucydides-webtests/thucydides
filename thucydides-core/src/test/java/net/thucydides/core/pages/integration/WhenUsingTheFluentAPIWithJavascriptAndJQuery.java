@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
 
     @BeforeClass
     public static void openFirefox() {
-        driver = new ChromeDriver();
+        driver = new FirefoxDriver();
         page = new StaticSitePage(driver, 1000);
         page.open();
     }
