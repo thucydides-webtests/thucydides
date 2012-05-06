@@ -76,16 +76,16 @@ public class PluginConfiguration {
         scenarioIssues.addAll(issues)
     }
 
-    public void feature(String featureName) {
+    public void tests_feature(String featureName) {
         tags += TestTag.withName(featureName).andType("feature")
     }
 
-    public void story(String storyName) {
-        tags += TestTag.withName(storyName).andType("feature")
+    public void tests_story(String storyName) {
+        tags += TestTag.withName(storyName).andType("story")
     }
 
     public void tag(String name, type) {
-        tags += TestTag.withName(name).andType("feature")
+        tags += TestTag.withName(name).andType(type)
     }
 
     public List<String> getScenarioIssues() {
