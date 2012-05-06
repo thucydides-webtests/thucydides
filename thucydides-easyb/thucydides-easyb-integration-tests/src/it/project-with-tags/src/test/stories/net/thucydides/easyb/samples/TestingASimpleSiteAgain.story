@@ -11,6 +11,7 @@ thucydides.uses_driver "htmlunit"
 
 tags "someTag"
 
+//testing.behavior "Doing something else"
 /**
  * Thucydides can manage pages for us.
  */

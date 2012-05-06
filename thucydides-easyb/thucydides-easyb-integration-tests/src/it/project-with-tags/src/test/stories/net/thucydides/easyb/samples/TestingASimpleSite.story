@@ -11,6 +11,7 @@ thucydides.uses_driver "htmlunit"
 
 tags "someTag"
 
+//tests.behavior "Selecting an entry"
 /**
  * Thucydides can manage pages for us.
  */

@@ -118,6 +118,7 @@ public class ThucydidesPlugin extends BasePlugin {
         binding.setVariable("driver", getWebDriver());
         binding.setVariable("thucydides", configuration);
         binding.setVariable("testing", new Tagger(configuration));
+        binding.setVariable("tests", new Tagger(configuration));
 
         initializeStepsLibraries(binding);
 

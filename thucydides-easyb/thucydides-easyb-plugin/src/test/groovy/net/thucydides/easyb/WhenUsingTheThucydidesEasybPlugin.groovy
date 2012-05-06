@@ -212,6 +212,28 @@ public class WhenUsingTheThucydidesEasybPlugin {
     }
 
     @Test
+    public void tagger_is_available_via_a_property_called_tests() {
+        ThucydidesPlugin plugin = new BrowserlessThucydidesPlugin();
+
+        runStories(plugin, binding);
+
+        Tagger tagger = (Tagger) binding.getVariable("tests");
+        assert tagger != null
+    }
+
+
+    @Test
+    public void tagger_is_available_via_a_property_called_testing() {
+        ThucydidesPlugin plugin = new BrowserlessThucydidesPlugin();
+
+        runStories(plugin, binding);
+
+        Tagger tagger = (Tagger) binding.getVariable("testing");
+        assert tagger != null
+    }
+
+
+    @Test
     public void the_plugin_should_let_the_user_define_the_default_base_url() {
 
         plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
