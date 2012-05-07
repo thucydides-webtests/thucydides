@@ -9,9 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.UnableToCreateProfileException;
@@ -31,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static net.thucydides.core.webdriver.javascript.JavascriptSupport.activateJavascriptSupportFor;
@@ -68,8 +71,8 @@ public class WebDriverFactory {
     public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
                             EnvironmentVariables environmentVariables) {
         this(webdriverInstanceFactory,
-             environmentVariables,
-             new FirefoxProfileEnhancer(environmentVariables));
+                environmentVariables,
+                new FirefoxProfileEnhancer(environmentVariables));
     }
 
     public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
@@ -109,6 +112,7 @@ public class WebDriverFactory {
     public boolean usesSauceLabs() {
         return StringUtils.isNotEmpty(ThucydidesSystemProperty.SAUCELABS_URL.from(environmentVariables));
     }
+
     /**
      * This method is synchronized because multiple webdriver instances can be created in parallel.
      * However, they may use common system resources such as ports, so may potentially interfere
@@ -130,11 +134,10 @@ public class WebDriverFactory {
                 driver = newDriverInstanceFrom(driverClass);
             }
 
+            redimensionBrowser(driver);
+
             activateJavascriptSupportFor(driver);
 
-            if (supportsScreenResizing(driver)) {
-                redimensionBrowser(driver);
-            }
             return driver;
         } catch (Exception cause) {
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
@@ -148,10 +151,10 @@ public class WebDriverFactory {
     private WebDriver newRemoteDriver() throws MalformedURLException {
         String saucelabsUrl = ThucydidesSystemProperty.SAUCELABS_URL.from(environmentVariables);
         WebDriver driver = new RemoteWebDriver(new URL(saucelabsUrl), findSaucelabsCapabilities());
-        
+
         if (isNotEmpty(ThucydidesSystemProperty.SAUCELABS_IMPLICIT_TIMEOUT.from(environmentVariables))) {
             int implicitWait = environmentVariables.getPropertyAsInteger(
-                                            ThucydidesSystemProperty.SAUCELABS_IMPLICIT_TIMEOUT.getPropertyName(), 30);
+                    ThucydidesSystemProperty.SAUCELABS_IMPLICIT_TIMEOUT.getPropertyName(), 30);
             driver.manage().timeouts().implicitlyWait(implicitWait, TimeUnit.SECONDS);
         }
 
@@ -202,7 +205,7 @@ public class WebDriverFactory {
     }
 
     private String bestGuessOfTestName() {
-        for(StackTraceElement elt : Thread.currentThread().getStackTrace()){
+        for (StackTraceElement elt : Thread.currentThread().getStackTrace()) {
             try {
                 Class callingClass = Class.forName(elt.getClassName());
                 Method callingMethod = callingClass.getMethod(elt.getMethodName());
@@ -212,7 +215,8 @@ public class WebDriverFactory {
                     return NameConverter.humanize(callingClass.getSimpleName());
                 }
             } catch (ClassNotFoundException e) {
-            } catch (NoSuchMethodException e) {}
+            } catch (NoSuchMethodException e) {
+            }
         }
         return null;
     }
@@ -236,18 +240,18 @@ public class WebDriverFactory {
         }
         SupportedWebDriver driverType = SupportedWebDriver.valueOf(driver.toUpperCase());
         switch (driverType) {
-            case CHROME :
+            case CHROME:
                 return DesiredCapabilities.chrome();
 
-            case FIREFOX :
+            case FIREFOX:
                 return DesiredCapabilities.firefox();
 
-            case HTMLUNIT :
+            case HTMLUNIT:
                 return DesiredCapabilities.htmlUnit();
 
             case OPERA:
                 return DesiredCapabilities.opera();
-            
+
             case IEXPLORER:
                 return DesiredCapabilities.internetExplorer();
         }
@@ -273,21 +277,42 @@ public class WebDriverFactory {
         return (profile != null);
     }
 
-    private boolean supportsScreenResizing(final WebDriver driver) {
-        return (isAFirefoxDriver(driver.getClass()) || isAnInternetExplorerDriver(driver.getClass()));
-    }
-
-    private void redimensionBrowser(final WebDriver driver) {
+    private Dimension getRequestedBrowserSize() {
         int height = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_HEIGHT.getPropertyName(),
                 DEFAULT_HEIGHT);
         int width = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_WIDTH.getPropertyName(),
                 DEFAULT_WIDTH);
-        resizeBrowserTo((JavascriptExecutor) driver, height, width);
+
+        return new Dimension(width, height);
     }
 
-    private void resizeBrowserTo(JavascriptExecutor driver, int height, int width) {
+    private void redimensionBrowser(final WebDriver driver) {
+        if (supportsScreenResizing(driver)) {
+            resizeBrowserTo(driver,
+                    getRequestedBrowserSize().height,
+                    getRequestedBrowserSize().width);
+        }
+    }
+
+    private boolean supportsScreenResizing(final WebDriver driver) {
+        return isNotAMocked(driver) && (!isAnHtmlUnitDriver(getDriverClass(driver)));
+    }
+
+    private boolean isNotAMocked(WebDriver driver) {
+        return (!driver.getClass().getName().contains("Mock"));
+    }
+
+    private void resizeBrowserTo(WebDriver driver, int height, int width) {
+
+        if (usesFirefox(driver) || usesChrome(driver)) {
+            ((JavascriptExecutor) driver).executeScript("window.open('about:blank','_blank','width=#{width},height=#{height}');");
+            Set<String> windowHandles = driver.getWindowHandles();
+            windowHandles.remove(driver.getWindowHandle());
+            String newWindowHandle = windowHandles.toArray(new String[]{})[0];
+            driver.switchTo().window(newWindowHandle);
+        }
         String resizeWindow = "window.resizeTo(" + width + "," + height + ")";
-        driver.executeScript(resizeWindow);
+        ((JavascriptExecutor) driver).executeScript(resizeWindow);
     }
 
     private boolean isARemoteDriver(Class<? extends WebDriver> driverClass) {
@@ -296,6 +321,24 @@ public class WebDriverFactory {
 
     private boolean isAFirefoxDriver(Class<? extends WebDriver> driverClass) {
         return (FirefoxDriver.class.isAssignableFrom(driverClass));
+    }
+
+    private boolean usesFirefox(WebDriver driver) {
+        return (FirefoxDriver.class.isAssignableFrom(getDriverClass(driver)));
+    }
+
+    private boolean usesChrome(WebDriver driver) {
+        return (ChromeDriver.class.isAssignableFrom(getDriverClass(driver)));
+    }
+
+    private Class getDriverClass(WebDriver driver) {
+        Class driverClass = null;
+        if (driver instanceof WebDriverFacade) {
+            driverClass = ((WebDriverFacade) driver).getDriverClass();
+        } else {
+            driverClass = driver.getClass();
+        }
+        return driverClass;
     }
 
     private boolean isAnHtmlUnitDriver(Class<? extends WebDriver> driverClass) {
@@ -339,7 +382,7 @@ public class WebDriverFactory {
             if (dontAssumeUntrustedCertificateIssuer()) {
                 profile.setAssumeUntrustedCertificateIssuer(false);
             }
-        } catch (UnableToCreateProfileException e){
+        } catch (UnableToCreateProfileException e) {
 
         }
         return profile;

@@ -1,11 +1,13 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.stubs.NavigationStub;
 import net.thucydides.core.webdriver.stubs.OptionsStub;
 import net.thucydides.core.webdriver.stubs.TargetLocatorStub;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.HasInputDevices;
 import org.openqa.selenium.JavascriptExecutor;
@@ -37,6 +39,8 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
     protected WebDriver proxiedWebDriver;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebDriverFacade.class);
+
+    private Optional<Dimension> requestedBrowserSize;
 
     public WebDriverFacade(final Class<? extends WebDriver> driverClass,
                            final WebDriverFactory webDriverFactory) {
@@ -252,5 +256,9 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
     @Override
     public Object executeAsyncScript(String script, Object... parameters) {
         return ((JavascriptExecutor) getProxiedDriver()).executeScript(script, parameters);
+    }
+
+    public void setScreenSize(Dimension requestedBrowserSize) {
+        this.requestedBrowserSize = Optional.fromNullable(requestedBrowserSize);
     }
 }

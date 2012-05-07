@@ -21,6 +21,7 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import java.lang.reflect.InvocationTargetException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -281,7 +282,7 @@ public class WhenUsingAWebDriverProxy {
     @Test
     public void the_webdriver_proxy_should_handle_manage() {
         webDriverFacade.manage();
-        verify(firefoxDriver).manage();
+        verify(firefoxDriver, atLeast(1)).manage();
     }
 
     @Test
