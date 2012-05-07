@@ -43,6 +43,8 @@ import net.thucydides.core.webdriver.WebdriverManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.io.File;
+import java.sql.SQLException;
 
 public class ThucydidesModule extends AbstractModule {
 
@@ -92,6 +94,34 @@ public class ThucydidesModule extends AbstractModule {
         if (databaseConfig.isUsingLocalDatabase()) {
             startIfNotAlreadyRunning(localDatabase);
         }
+        EntityManagerFactory entityManagerFactory = null;
+
+        try {
+            entityManagerFactory = createEntityManagerFactory(databaseConfig);
+        } catch (SQLException sqlException) {
+            if (localFileDatabaseCouldNotBeLocked(localDatabase, sqlException)) {
+                tryToDeleteTheDatabaseLockFile(localDatabase);
+            }
+        }
+
+        return entityManagerFactory;
+
+    }
+
+    private void tryToDeleteTheDatabaseLockFile(LocalDatabase localDatabase) {
+        int filePathStart = localDatabase.getUrl().indexOf("file:") + 5;
+        String databaseLock = localDatabase.getUrl().substring(filePathStart) + ".lck";
+        (new File(databaseLock)).delete();
+    }
+
+    private boolean localFileDatabaseCouldNotBeLocked(LocalDatabase localDatabase, SQLException sqlException) {
+        if (localDatabase.getUrl().contains("file:")) {
+
+        }
+        return false;
+    }
+
+    private EntityManagerFactory createEntityManagerFactory(DatabaseConfig databaseConfig) throws SQLException {
         return Persistence.createEntityManagerFactory("db-manager", databaseConfig.getProperties());
     }
 
