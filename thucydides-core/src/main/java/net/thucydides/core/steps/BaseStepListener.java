@@ -610,6 +610,8 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     @Override
     public void notifyScreenChange() {
-        take(OPTIONAL_SCREENSHOT);
+        if (!configuration.onlySaveFailingScreenshots()) {
+            take(OPTIONAL_SCREENSHOT);
+       }
     }
 }

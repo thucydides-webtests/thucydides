@@ -273,7 +273,7 @@ public class TestOutcome {
     }
 
     public String getScreenshotReportName() {
-        return getSimpleReportName(ROOT) + "_screenshots";
+        return getReportName(ROOT) + "_screenshots";
     }
 
     /**
