@@ -36,37 +36,37 @@ public class WhenResizingTheBrower {
 
     @Test
     public void should_resize_chrome_automatically() {
-        environmentVariables.setProperty("thucydides.browser.height", "600");
-        environmentVariables.setProperty("thucydides.browser.width", "1200");
+        environmentVariables.setProperty("thucydides.browser.height", "200");
+        environmentVariables.setProperty("thucydides.browser.width", "400");
 
         driver = factory.newInstanceOf(SupportedWebDriver.CHROME);
         page = new StaticSitePage(driver, 1000);
         page.open();
 
         int width = ((Long)(((JavascriptExecutor)driver).executeScript("return window.innerWidth"))).intValue();
-        assertThat(width, is(1200));
+        assertThat(width, is(400));
     }
 
     @Test
     public void should_resize_firefox_automatically() {
-        environmentVariables.setProperty("thucydides.browser.height", "800");
-        environmentVariables.setProperty("thucydides.browser.width", "1200");
+        environmentVariables.setProperty("thucydides.browser.height", "200");
+        environmentVariables.setProperty("thucydides.browser.width", "400");
 
         driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
         page = new StaticSitePage(driver, 1000);
         page.open();
 
         int width = ((Long)(((JavascriptExecutor)driver).executeScript("return window.innerWidth"))).intValue();
-        assertThat(width, is(1200));
+        assertThat(width, is(400));
     }
 
     @Test
     public void should_not_resize_htmlunit_automatically() {
-        environmentVariables.setProperty("thucydides.browser.height", "800");
-        environmentVariables.setProperty("thucydides.browser.width", "1200");
+        environmentVariables.setProperty("thucydides.browser.height", "200");
+        environmentVariables.setProperty("thucydides.browser.width", "400");
 
         driver = factory.newInstanceOf(SupportedWebDriver.HTMLUNIT);
-        page = new StaticSitePage(driver, 1000);
+        page = new StaticSitePage(driver, 1024);
         page.open();
 
     }
