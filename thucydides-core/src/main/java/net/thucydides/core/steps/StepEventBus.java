@@ -361,7 +361,7 @@ public class StepEventBus {
             try {
                 stepListener.testFailed(outcome, cause);
             } catch (AbstractMethodError ame) {
-                LOGGER.error("Caught abstract method error", ame);
+                LOGGER.warn("Caught abstract method error - this seems to be mostly harmless.");
             }
         }
     }

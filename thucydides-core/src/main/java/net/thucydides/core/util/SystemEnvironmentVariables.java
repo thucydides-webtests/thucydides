@@ -9,6 +9,11 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
         return getValue(name, null);
     }
 
+    @Override
+    public String getValue(Enum<?> property) {
+        return getValue(property.toString());
+    }
+
     public String getValue(final String name, final String defaultValue) {
         String value = System.getenv(name);
         if (value == null) {
@@ -16,6 +21,11 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
         } else {
             return value;
         }
+    }
+
+    @Override
+    public String getValue(Enum<?> property, String defaultValue) {
+        return getValue(property.toString(), defaultValue);
     }
 
     public Integer getPropertyAsInteger(String property, Integer defaultValue) {
@@ -27,6 +37,11 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
         }
     }
 
+    @Override
+    public Integer getPropertyAsInteger(Enum<?> property, Integer defaultValue) {
+        return getPropertyAsInteger(property.toString(), defaultValue);
+    }
+
     public Boolean getPropertyAsBoolean(String name, boolean defaultValue) {
         if (System.getProperty(name) == null) {
             return defaultValue;
@@ -35,12 +50,27 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
         }
     }
 
+    @Override
+    public Boolean getPropertyAsBoolean(Enum<?> property, boolean defaultValue) {
+        return getPropertyAsBoolean(property.toString(), defaultValue);
+    }
+
     public String getProperty(final String name) {
         return System.getProperty(name);
     }
 
+    @Override
+    public String getProperty(Enum<?> property) {
+        return getProperty(property.toString());
+    }
+
     public String getProperty(final String name, final String defaultValue) {
         return System.getProperty(name, defaultValue);
+    }
+
+    @Override
+    public String getProperty(Enum<?> property, String defaultValue) {
+        return getProperty(property.toString(), defaultValue);
     }
 
     @Override

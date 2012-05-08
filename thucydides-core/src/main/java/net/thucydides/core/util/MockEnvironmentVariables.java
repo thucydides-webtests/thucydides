@@ -29,8 +29,18 @@ public class MockEnvironmentVariables implements EnvironmentVariables {
         return values.getProperty(name);
     }
 
+    @Override
+    public String getValue(Enum<?> property) {
+        return getValue(property.toString());
+    }
+
     public String getValue(String name, String defaultValue) {
         return values.getProperty(name, defaultValue);
+    }
+
+    @Override
+    public String getValue(Enum<?> property, String defaultValue) {
+        return getValue(property.toString(), defaultValue);
     }
 
     public Integer getPropertyAsInteger(String name, Integer defaultValue) {
@@ -42,6 +52,11 @@ public class MockEnvironmentVariables implements EnvironmentVariables {
         }
     }
 
+    @Override
+    public Integer getPropertyAsInteger(Enum<?> property, Integer defaultValue) {
+        return getPropertyAsInteger(property.toString(), defaultValue);
+    }
+
     public Boolean getPropertyAsBoolean(String name, boolean defaultValue) {
         if (properties.getProperty(name) == null) {
             return defaultValue;
@@ -50,12 +65,27 @@ public class MockEnvironmentVariables implements EnvironmentVariables {
         }
     }
 
+    @Override
+    public Boolean getPropertyAsBoolean(Enum<?> property, boolean defaultValue) {
+        return getPropertyAsBoolean(property.toString(), defaultValue);
+    }
+
     public String getProperty(String name) {
         return properties.getProperty(name);
     }
 
+    @Override
+    public String getProperty(Enum<?> property) {
+        return getProperty(property.toString());
+    }
+
     public String getProperty(String name, String defaultValue) {
         return properties.getProperty(name, defaultValue);
+    }
+
+    @Override
+    public String getProperty(Enum<?> property, String defaultValue) {
+        return getProperty(property.toString(), defaultValue);
     }
 
     public void setProperty(String name, String value) {

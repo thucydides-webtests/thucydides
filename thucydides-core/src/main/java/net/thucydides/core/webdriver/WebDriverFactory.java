@@ -123,6 +123,7 @@ public class WebDriverFactory {
      */
     protected synchronized WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {
+            LOGGER.info("Creating new driver of type {}", driverClass.getName());
             WebDriver driver;
             if (isARemoteDriver(driverClass)) {
                 driver = newRemoteDriver();
@@ -278,11 +279,8 @@ public class WebDriverFactory {
     }
 
     private Dimension getRequestedBrowserSize() {
-        int height = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_HEIGHT.getPropertyName(),
-                DEFAULT_HEIGHT);
-        int width = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_WIDTH.getPropertyName(),
-                DEFAULT_WIDTH);
-
+        int height = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_HEIGHT, DEFAULT_HEIGHT);
+        int width = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_WIDTH, DEFAULT_WIDTH);
         return new Dimension(width, height);
     }
 
@@ -303,6 +301,8 @@ public class WebDriverFactory {
     }
 
     private void resizeBrowserTo(WebDriver driver, int height, int width) {
+
+        LOGGER.info("Setting browser dimensions to {}/{}", height, width);
 
         if (usesFirefox(driver) || usesChrome(driver)) {
             ((JavascriptExecutor) driver).executeScript("window.open('about:blank','_blank','width=#{width},height=#{height}');");

@@ -5,19 +5,31 @@ package net.thucydides.core.util;
  */
 public interface EnvironmentVariables {
 
-    public String getValue(final String name);
+    String getValue(final String name);
 
-    public String getValue(final String name, final String defaultValue);
+    String getValue(final Enum<?> property);
+
+    String getValue(final String name, final String defaultValue);
+
+    String getValue(Enum<?> property, String defaultValue);
 
     Integer getPropertyAsInteger(final String name, final Integer defaultValue);
 
+    Integer getPropertyAsInteger(final Enum<?> property, final Integer defaultValue);
+
     Boolean getPropertyAsBoolean(final String name, boolean defaultValue);
 
-    public String getProperty(final String name);
+    Boolean getPropertyAsBoolean(final Enum<?> property, boolean defaultValue);
 
-    public String getProperty(final String name, final String defaultValue);
-    
-    public void setProperty(final String name, final String value);
+    String getProperty(final String name);
+
+    String getProperty(final Enum<?> property);
+
+    String getProperty(final String name, final String defaultValue);
+
+    String getProperty(final Enum<?> property, final String defaultValue);
+
+    void setProperty(final String name, final String value);
 
     void clearProperty(final String name);
 }

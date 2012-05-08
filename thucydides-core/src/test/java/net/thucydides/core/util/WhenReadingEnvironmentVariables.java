@@ -16,6 +16,23 @@ public class WhenReadingEnvironmentVariables {
         assertThat(value, is(not(nullValue())));
     }
 
+    enum LocalEnvProperties {PATH, USER_DIR, DOES_NOT_EXIST}
+
+    @Test
+    public void should_read_environment_variable_from_system_using_an_enum() {
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        String value = environmentVariables.getValue(LocalEnvProperties.PATH);
+        assertThat(value, is(not(nullValue())));
+    }
+
+    @Test
+    public void should_read_environment_variable_from_system_with_a_default_using_an_enum() {
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        String value = environmentVariables.getValue(LocalEnvProperties.DOES_NOT_EXIST,"default");
+        assertThat(value, is("default"));
+    }
+
+
     @Test
     public void should_return_null_for_inexistant_environment_variable() {
         EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
@@ -30,6 +47,33 @@ public class WhenReadingEnvironmentVariables {
         assertThat(value, is("DEFAULT"));
     }
 
+    enum LocalSystemProperties {
+        SOME_INTEGER_PROPERTY() {
+            @Override
+            public String toString() {
+                return "some.integer.property";
+            }
+        },
+        SOME_BOOLEAN_PROPERTY() {
+            @Override
+            public String toString() {
+                return "some.boolean.property";
+            }
+        },
+        SOME_PROPERTY() {
+            @Override
+            public String toString() {
+                return "some.property";
+            }
+        },
+        SOME_UNDEFINED_PROPERTY() {
+            @Override
+            public String toString() {
+                return "some.undefined.property";
+            }
+        }
+    }
+
     @Test
     public void should_read_integer_system_properties_from_the_system() {
         System.setProperty("some.integer.property","10");
@@ -37,6 +81,41 @@ public class WhenReadingEnvironmentVariables {
         EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
         int value = environmentVariables.getPropertyAsInteger("some.integer.property",5);
         assertThat(value, is(10));
+    }
+
+    @Test
+    public void should_read_integer_system_properties_from_the_system_via_an_enum() {
+        System.setProperty("some.integer.property","10");
+
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        int value = environmentVariables.getPropertyAsInteger(LocalSystemProperties.SOME_INTEGER_PROPERTY,5);
+        assertThat(value, is(10));
+    }
+
+    @Test
+    public void should_read_boolean_system_properties_from_the_system() {
+        System.setProperty("some.boolean.property","true");
+
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        boolean value = environmentVariables.getPropertyAsBoolean("some.boolean.property",false);
+        assertThat(value, is(true));
+    }
+
+
+    @Test
+    public void should_read_boolean_system_properties_from_the_system_with_a_default() {
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        boolean value = environmentVariables.getPropertyAsBoolean("some.unknown.boolean.property",false);
+        assertThat(value, is(false));
+    }
+
+    @Test
+    public void should_read_boolean_system_properties_from_the_system_via_an_enum() {
+        System.setProperty("some.boolean.property","true");
+
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        boolean value = environmentVariables.getPropertyAsBoolean(LocalSystemProperties.SOME_BOOLEAN_PROPERTY,false);
+        assertThat(value, is(true));
     }
 
     @Test
@@ -52,6 +131,52 @@ public class WhenReadingEnvironmentVariables {
 
         EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
         String value = environmentVariables.getProperty("some.property");
+        assertThat(value, is("some.value"));
+    }
+
+    @Test
+    public void should_read_system_properties_from_the_system_with_an_enum() {
+        System.setProperty("some.property","some.value");
+
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        String value = environmentVariables.getProperty(LocalSystemProperties.SOME_PROPERTY);
+        assertThat(value, is("some.value"));
+    }
+
+
+    @Test
+    public void should_read_default_value_for_a_system_property_from_the_system_with_an_enum() {
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        String value = environmentVariables.getProperty(LocalSystemProperties.SOME_UNDEFINED_PROPERTY, "default");
+        assertThat(value, is("default"));
+    }
+
+    @Test
+    public void should_be_able_to_set_system_properties() {
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        environmentVariables.setProperty("my.property","SomeValue");
+        String value = System.getProperty("my.property");
+
+        assertThat(value, is("SomeValue"));
+    }
+
+    @Test
+    public void should_be_able_to_clear_a_set_system_properties() {
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        environmentVariables.setProperty("my.property","SomeValue");
+        String value = System.getProperty("my.property");
+        environmentVariables.clearProperty("my.property");
+
+        assertThat(System.getProperty("my.property"), is(nullValue()));
+    }
+
+
+    @Test
+    public void should_read_system_properties_from_the_system_via_an_enum() {
+        System.setProperty("some.property","some.value");
+
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        String value = environmentVariables.getProperty(LocalSystemProperties.SOME_PROPERTY);
         assertThat(value, is("some.value"));
     }
 
