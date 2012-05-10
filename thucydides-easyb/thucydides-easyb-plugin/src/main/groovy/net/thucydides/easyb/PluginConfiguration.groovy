@@ -5,8 +5,12 @@ import net.thucydides.core.webdriver.SupportedWebDriver
 import net.thucydides.core.webdriver.WebdriverProxyFactory
 import org.openqa.selenium.WebDriver
 import net.thucydides.core.model.TestTag
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 public class PluginConfiguration {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PluginConfiguration.class);
 
     /**
      * Use this property to define the output directory in which reports will be
@@ -66,6 +70,14 @@ public class PluginConfiguration {
 
     public void uses_steps_from(Class<ScenarioSteps> stepsClass) {
         registeredSteps += stepsClass
+    }
+
+    public Tagger getTests() {
+        return new Tagger(this)
+    }
+
+    public Tagger getTesting() {
+        return new Tagger(this)
     }
 
     public void tests_issue(String issue) {
@@ -130,4 +142,11 @@ public class PluginConfiguration {
     }
 
 
+    def clearTags() {
+        tags.clear()
+    }
+
+    def clearIssues() {
+        scenarioIssues.clear()
+    }
 }

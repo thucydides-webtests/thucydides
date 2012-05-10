@@ -2,7 +2,7 @@ package net.thucydides.core.statistics;
 
 import net.thucydides.core.guice.EnvironmentVariablesDatabaseConfig;
 import net.thucydides.core.statistics.integration.db.LocalDatabase;
-import net.thucydides.core.statistics.integration.db.LocalHSqldbServerDatabase;
+import net.thucydides.core.statistics.integration.db.LocalH2Database;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
@@ -24,20 +24,22 @@ public class WhenConfiguringTheStatisticsDatabase {
 
     EnvironmentVariables environmentVariables;
     EnvironmentVariablesDatabaseConfig databaseConfig;
+
     LocalDatabase localDatabase;
-    
+
     @Before
     public void initMocks() {
         environmentVariables = new MockEnvironmentVariables();
-        localDatabase = new LocalHSqldbServerDatabase(environmentVariables);
+        localDatabase = new LocalH2Database(environmentVariables);
         databaseConfig = new EnvironmentVariablesDatabaseConfig(environmentVariables, localDatabase);    
     }
     
     @Test
-    public void should_define_an_hsqldb_database_by_default() {
+    public void should_define_an_h2_database_by_default() {
         Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("hibernate.connection.driver_class"), is("org.hsqldb.jdbc.JDBCDriver"));
+        //assertThat(properties.getProperty("hibernate.connection.driver_class"), is("org.hsqldb.jdbc.JDBCDriver"));
+        assertThat(properties.getProperty("hibernate.connection.driver_class"), is("org.h2.Driver"));
     }
 
 
@@ -45,7 +47,7 @@ public class WhenConfiguringTheStatisticsDatabase {
     public void should_define_a_local_hsqldb_database_by_default() {
         Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:"));
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:"));
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-default"));
     }
 
@@ -54,7 +56,7 @@ public class WhenConfiguringTheStatisticsDatabase {
         environmentVariables.setProperty("thucydides.project.key","myproject");
         Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:"));
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:"));
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-myproject"));
     }
 
@@ -63,7 +65,7 @@ public class WhenConfiguringTheStatisticsDatabase {
         environmentVariables.setProperty("thucydides.project.key","myproject");
         Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:hsqldb:"));
+        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:"));
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-myproject"));
     }
 

@@ -5,48 +5,48 @@ import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.StringUtils;
-import org.hsqldb.HsqlException;
-import org.hsqldb.server.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.h2.tools.Server;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class LocalFileBasedHsqldbDatabase implements LocalDatabase {
+public class LocalH2Database implements LocalDatabase {
 
     private final EnvironmentVariables environmentVariables;
 
+    Server server;
+
     @Inject
-    public LocalFileBasedHsqldbDatabase(EnvironmentVariables environmentVariables) {
+    public LocalH2Database(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
     }
 
     @Override
     public void start() {
+        try {
+            server = Server.createTcpServer( new String[] { "-tcpAllowOthers" }).start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void stop() {
+        server.stop();
     }
 
     @Override
     public boolean isAvailable() {
-        return true;
+        return (server != null) && (server.isRunning(false));
     }
 
     @Override
     public String getUrl() {
-        return "jdbc:hsqldb:file:" + getDatabasePath() + ";shutdown=true";
+        return "jdbc:h2:tcp://localhost" + getDatabasePath();
     }
 
     @Override
     public String getDriver() {
-        return "org.hsqldb.jdbc.JDBCDriver";
+        return "org.h2.Driver";
     }
 
     @Override
@@ -61,7 +61,7 @@ public class LocalFileBasedHsqldbDatabase implements LocalDatabase {
 
     @Override
     public String getDialect() {
-        return "org.hibernate.dialect.HSQLDialect";
+        return "org.hibernate.dialect.H2Dialect";
     }
 
     public String getDatabaseName() {

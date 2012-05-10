@@ -820,6 +820,16 @@ h3 {
 }
 
 
+h4 {
+    font-family:euphemia, verdana, sans-serif;
+    font-style: italic;
+    font-size: 14px;
+    color:#0d78ae;
+    margin-bottom: 10px;
+}
+
+
+
 .test-count-summary {
     font-family:euphemia, verdana, sans-serif;
     font-size: 16px;

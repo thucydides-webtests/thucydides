@@ -35,6 +35,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.steps.ExecutedStepDescription
+import net.thucydides.core.model.TestTag
 
 public class WhenUsingTheThucydidesEasybPlugin {
 
@@ -137,6 +138,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
         assert plugin.name == "thucydides"
     }
 
+    @Test
     public void the_plugin_should_inject_a_webdriver_instance_into_the_story_context() {
 
         plugin.configuration.uses_default_base_url "http://www.google.com"
@@ -217,7 +219,8 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
         runStories(plugin, binding);
 
-        Tagger tagger = (Tagger) binding.getVariable("tests");
+        PluginConfiguration config = (PluginConfiguration) binding.getVariable("thucydides");
+        Tagger tagger = config.tests
         assert tagger != null
     }
 
@@ -228,10 +231,11 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
         runStories(plugin, binding);
 
-        Tagger tagger = (Tagger) binding.getVariable("testing");
+        PluginConfiguration config = (PluginConfiguration) binding.getVariable("thucydides");
+        Tagger tagger = config.testing
+
         assert tagger != null
     }
-
 
     @Test
     public void the_plugin_should_let_the_user_define_the_default_base_url() {

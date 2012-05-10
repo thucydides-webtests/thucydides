@@ -4,7 +4,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.issues.IssueTracking;
@@ -27,8 +26,9 @@ import net.thucydides.core.statistics.TestStatisticsProvider;
 import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.integration.db.LocalDatabase;
-import net.thucydides.core.statistics.integration.db.LocalFileBasedHsqldbDatabase;
-import net.thucydides.core.statistics.integration.db.LocalHSqldbServerDatabase;
+import net.thucydides.core.statistics.integration.db.LocalHSQLDBDatabase;
+import net.thucydides.core.statistics.integration.db.LocalH2Database;
+import net.thucydides.core.statistics.integration.db.LocalHSQLDBDatabase;
 import net.thucydides.core.steps.ConsoleLoggingListener;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -77,12 +77,7 @@ public class ThucydidesModule extends AbstractModule {
     @Singleton
     @Inject
     public LocalDatabase provideLocalDatabase(EnvironmentVariables environmentVariables) {
-        String useServerProperty = ThucydidesSystemProperty.THUCYDIDES_USE_LOCAL_SERVER.from(environmentVariables, "false");
-        if (Boolean.valueOf(useServerProperty)) {
-            return new LocalHSqldbServerDatabase(environmentVariables);
-        } else {
-            return new LocalFileBasedHsqldbDatabase(environmentVariables);
-        }
+        return new LocalH2Database(environmentVariables);
     }
 
     @Provides
@@ -94,6 +89,7 @@ public class ThucydidesModule extends AbstractModule {
         if (databaseConfig.isUsingLocalDatabase()) {
             startIfNotAlreadyRunning(localDatabase);
         }
+
         EntityManagerFactory entityManagerFactory = null;
 
         try {
@@ -116,7 +112,7 @@ public class ThucydidesModule extends AbstractModule {
 
     private boolean localFileDatabaseCouldNotBeLocked(LocalDatabase localDatabase, SQLException sqlException) {
         if (localDatabase.getUrl().contains("file:")) {
-
+            return (sqlException.getMessage().contains("Database lock acquisition failure"));
         }
         return false;
     }

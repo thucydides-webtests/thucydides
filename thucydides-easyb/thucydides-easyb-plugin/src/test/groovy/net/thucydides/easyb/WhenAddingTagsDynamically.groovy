@@ -47,8 +47,8 @@ public class WhenAddingTagsDynamically {
         tagger.feature("some feature")
         tagger.epic("some epic")
 
-        assert plugin.configuration.getTags().contains(TestTag.withName("epic").andType("some epic"))
-        assert plugin.configuration.getTags().contains(TestTag.withName("feature").andType("some feature"))
+        assert plugin.configuration.getTags().contains(TestTag.withName("some epic").andType("epic"))
+        assert plugin.configuration.getTags().contains(TestTag.withName("some feature").andType("feature"))
     }
 
 

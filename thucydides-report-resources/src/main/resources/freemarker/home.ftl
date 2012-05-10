@@ -93,9 +93,11 @@
 
     <#if (testOutcomes.label == '')>
         <#assign resultsContext = ''>
-        <#assign pageTitle = 'All Tests' >
+        <#assign pageTitle = 'Test Results: All Tests' >
+        <#assign tagsTitle = 'All available tags' >
     <#else>
-        <#assign resultsContext = '- ' + testOutcomes.label>
+        <#assign tagsTitle = 'Related tags' >
+        <#assign resultsContext = '> ' + testOutcomes.label>
         <#if (currentTagType == '')>
             <#assign pageTitle = inflection.of(testOutcomes.label).asATitle() >
         <#else>
@@ -105,7 +107,7 @@
     <div id="contenttop">
         <#--<div class="leftbg"></div>-->
         <div class="middlebg">
-            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > Test Results ${resultsContext}</span>
+            <span class="bluetext"><a href="index.html" class="bluetext">Home</a>${resultsContext}</span>
         </div>
         <div class="rightbg"></div>
     </div>
@@ -133,7 +135,7 @@
     <div id="results-dashboard">
         <div class="middlb">
             <div class="table">
-                <h2>Test Results: ${pageTitle}</h2>
+                <h2>${pageTitle}</h2>
                 <table class='overview'>
                     <tr>
                         <td width="375px">
@@ -168,6 +170,7 @@
                         </td>
                         <td width="25px">&nbsp;</td>
                         <td width="625px" valign="top">
+                        <h4>${tagsTitle}</h4>
                         <#foreach tagType in testOutcomes.tagTypes>
                             <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
                             <#assign outcomesForType = testOutcomes.withTagType(tagType) >

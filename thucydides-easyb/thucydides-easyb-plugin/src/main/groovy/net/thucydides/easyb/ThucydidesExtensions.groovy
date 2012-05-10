@@ -9,6 +9,8 @@ public class ThucydidesExtensions {
 
     public PluginConfiguration getThucydides() {
         def configuration = getPlugin().getConfiguration();
+        configuration.clearIssues();
+        configuration.clearTags();
         return configuration;
     }
 

@@ -4,6 +4,7 @@ import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import java.util.HashSet;
@@ -30,7 +31,8 @@ public class TestRunTag {
         this.name = name;
     }
 
-    public Long getId() {
+    public Long getId()
+    {
         return id;
     }
 

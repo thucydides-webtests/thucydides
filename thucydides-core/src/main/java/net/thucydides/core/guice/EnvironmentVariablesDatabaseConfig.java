@@ -19,7 +19,7 @@ import java.util.Properties;
 /**
  * Obtain the statistics database connection details.
  * The statistics database is configured using the environment variables.
- * If the default HSQLDB database is not used, the database must already exist.
+ * If the default database is not used, the database must already exist.
  */
 public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
 

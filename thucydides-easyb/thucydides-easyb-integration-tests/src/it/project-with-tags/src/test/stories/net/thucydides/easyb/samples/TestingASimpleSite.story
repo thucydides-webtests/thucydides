@@ -8,10 +8,10 @@ using "thucydides"
 thucydides.uses_default_base_url "classpath:demosite/index.html"
 thucydides.uses_steps_from DemoSiteSteps
 thucydides.uses_driver "htmlunit"
+thucydides.tests.behavior "Selecting an entry"
 
 tags "someTag"
 
-//tests.behavior "Selecting an entry"
 /**
  * Thucydides can manage pages for us.
  */

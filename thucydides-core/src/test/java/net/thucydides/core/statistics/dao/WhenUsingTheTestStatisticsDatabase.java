@@ -9,8 +9,6 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.guice.ThucydidesModule;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
-import net.thucydides.core.statistics.integration.db.LocalDatabase;
-import net.thucydides.core.statistics.integration.db.LocalHSqldbServerDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.LocalPreferences;
 import net.thucydides.core.util.MockEnvironmentVariables;

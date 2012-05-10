@@ -123,7 +123,6 @@ public class WebDriverFactory {
      */
     protected synchronized WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {
-            LOGGER.info("Creating new driver of type {}", driverClass.getName());
             WebDriver driver;
             if (isARemoteDriver(driverClass)) {
                 driver = newRemoteDriver();

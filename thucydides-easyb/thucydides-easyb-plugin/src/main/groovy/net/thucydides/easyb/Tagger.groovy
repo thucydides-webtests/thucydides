@@ -8,11 +8,12 @@ class Tagger {
     }
 
     @Override
-    Object invokeMethod(String name, Object args) {
+    Object invokeMethod(String methodName, Object args) {
         if (args[0] instanceof String) {
-            pluginConfiguration.tag(name, args[0])
+            def tagType = methodName
+            pluginConfiguration.tag(args[0], tagType)
         } else {
-            return super.invokeMethod(name, args)
+            return super.invokeMethod(methodName, args)
         }
     }
 }

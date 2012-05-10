@@ -26,6 +26,7 @@ import net.thucydides.core.batches.BatchManager
 import static net.thucydides.core.Thucydides.initializeTestSession
 import net.thucydides.core.steps.Listeners
 import net.thucydides.core.steps.BaseStepListener
+import net.thucydides.core.util.Inflector
 
 public class ThucydidesPlugin extends BasePlugin {
 
@@ -117,8 +118,6 @@ public class ThucydidesPlugin extends BasePlugin {
         binding.setVariable("pages", pages)
         binding.setVariable("driver", getWebDriver());
         binding.setVariable("thucydides", configuration);
-        binding.setVariable("testing", new Tagger(configuration));
-        binding.setVariable("tests", new Tagger(configuration));
 
         initializeStepsLibraries(binding);
 
@@ -138,6 +137,7 @@ public class ThucydidesPlugin extends BasePlugin {
             def storyName = lookupStoryNameFrom(binding)
             def storyFile = lookupStoryFileFrom(binding)
             story = Story.withId(storyFile, storyName)
+            configuration.tag(storyName, "story")
         }
         StepEventBus.eventBus.testSuiteStarted(story)
         getBatchManager().registerTestCase(story.name)
@@ -150,8 +150,10 @@ public class ThucydidesPlugin extends BasePlugin {
         if (sourceFile == null) {
             throw new IllegalArgumentException("No easyb source file name found - are you using a recent version of easyb (1.1 or greater)?")
         }
-        String sourceFilename = new File(sourceFile).name
-        sourceFilename.substring(0, sourceFilename.lastIndexOf("."))
+        def sourceFilename = new File(sourceFile).name
+        def basicStoryName = sourceFilename.substring(0, sourceFilename.lastIndexOf("."))
+
+        new Inflector().of(basicStoryName).inHumanReadableForm().asATitle().toString()
     }
 
     def lookupStoryFileFrom(def binding) {
@@ -197,6 +199,8 @@ public class ThucydidesPlugin extends BasePlugin {
         if (getLatestTestOutcome()) {
             if (configuration.scenarioIssues) {
                 getLatestTestOutcome().addIssues(configuration.scenarioIssues)
+            }
+            if (configuration.tags) {
                 getLatestTestOutcome().setTags(configuration.tags)
             }
         }

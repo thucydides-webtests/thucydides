@@ -17,3 +17,6 @@ out
 build
 *.gradle
 thucydides-arquillian
+
+*.sublime-project
+*.sublime-workspace
