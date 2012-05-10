@@ -8,19 +8,16 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.zip.ZipFile;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -123,6 +120,25 @@ public class WhenReadingResourcesFromTheClasspath {
 
     @Rule
     public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+
+
+    @Test
+    public void should_attempt_to_get_output_stream_for_target_till_timeout() throws Exception {
+        File targetDir = temporaryDirectory.newFolder("target");
+        String sourceResource = new File("src/test/resources/resourcelist/sample.css").getAbsolutePath();
+
+        FileResources fileResource = new FileResources("resourceList") {
+            @Override
+            protected FileOutputStream createOutputStream(File destinationFile) throws FileNotFoundException {
+                return new FileOutputStream(destinationFile);
+            }
+        };
+
+        fileResource.copyResourceTo(sourceResource, targetDir);
+
+    }
+
+
 
     @Test
     public void should_copy_resource_file_into_target_directory() throws Exception {

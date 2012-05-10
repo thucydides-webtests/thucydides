@@ -1,9 +1,12 @@
 package net.thucydides.core.resources;
 
+import net.thucydides.core.ThucydidesSystemProperties;
+import net.thucydides.core.ThucydidesSystemProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,9 +15,10 @@ import java.io.OutputStream;
 /**
  * Utility class used to copy resources from a classpath to a target directory.
  */
-public final class FileResources {
+public class FileResources {
 
     private static final int BUFFER_SIZE = 4096;
+    private static final int DEFAULT_FILE_IO_RETRY_TIMEOUT = 120;
 
     private String resourceDirectoryRoot;
 
@@ -22,11 +26,11 @@ public final class FileResources {
         return new FileResources(resourceDirectoryRoot);
     }
 
-    private FileResources(final String resourceDirectoryRoot) {
+    protected FileResources(final String resourceDirectoryRoot) {
         this.resourceDirectoryRoot = resourceDirectoryRoot;
     }
 
-    public String findTargetSubdirectoryFrom(final String sourceResource) {
+    public final String findTargetSubdirectoryFrom(final String sourceResource) {
         int directoryRootStartsAt = StringUtils.lastIndexOf(sourceResource,
                 resourceDirectoryRoot);
         int relativePathStartsAt = directoryRootStartsAt
@@ -36,7 +40,7 @@ public final class FileResources {
         return directoryIn(relativePath);
     }
 
-    public String stripLeadingSeparatorFrom(final String path) {
+    public final String stripLeadingSeparatorFrom(final String path) {
         if (path.startsWith("/") || path.startsWith("\\")) {
             return path.substring(1);
         } else {
@@ -44,7 +48,7 @@ public final class FileResources {
         }
     }
 
-    public String findTargetFileFrom(final String sourceResource) {
+    public final String findTargetFileFrom(final String sourceResource) {
         int directoryRootStartsAt = StringUtils.lastIndexOf(sourceResource,
                 resourceDirectoryRoot);
         int relativePathStartsAt = directoryRootStartsAt
@@ -54,7 +58,7 @@ public final class FileResources {
         return filenameIn(relativePath);
     }
 
-    public void copyResourceTo(final String sourceResource, final File targetDirectory)
+    public final void copyResourceTo(final String sourceResource, final File targetDirectory)
             throws IOException {
 
         String targetFile = findTargetFileFrom(sourceResource);
@@ -94,12 +98,45 @@ public final class FileResources {
                 new File(destinationFile.getParent()).mkdirs();
             }
 
-            out = new FileOutputStream(destinationFile);
+            out = getOutputStreamForDestination(destinationFile);
 
             copyData(in, out);
         } finally {
             closeSafely(out, in);
         }
+    }
+
+	private FileOutputStream getOutputStreamForDestination(File destinationFile) throws FileNotFoundException {
+		FileOutputStream outStream = null;
+		long start = new java.util.Date().getTime();
+		long timeout = getRetryTimeOut();
+		long timeElapsed = 0;
+		boolean FILE_NOT_FOUND = true;
+		while (FILE_NOT_FOUND) {
+			try{
+				timeElapsed = new java.util.Date().getTime() - start;
+				outStream = createOutputStream(destinationFile);
+                FILE_NOT_FOUND = false;
+			}catch(FileNotFoundException fnfe) {
+				if (timeElapsed > timeout) {
+					//timeout
+					throw fnfe;
+				}
+			}
+		}
+		
+		return outStream;
+	}
+
+    private long getRetryTimeOut() {
+
+        ThucydidesSystemProperties systemProperties = ThucydidesSystemProperties.getProperties();
+        int timeout = systemProperties.getIntegerValue(ThucydidesSystemProperty.FILE_IO_RETRY_TIMEOUT, DEFAULT_FILE_IO_RETRY_TIMEOUT);
+        return timeout * 1000; //milliseconds
+    }
+
+    protected FileOutputStream createOutputStream(File destinationFile) throws FileNotFoundException {
+        return new FileOutputStream(destinationFile);
     }
 
     private void copyData(final InputStream in, final OutputStream out)
