@@ -187,7 +187,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     private void updateHistoryFor(final TestOutcomes testOutcomes) {
-        System.out.println("Update history for project " + projectName);
         getTestHistory().updateData(testOutcomes);
     }
 

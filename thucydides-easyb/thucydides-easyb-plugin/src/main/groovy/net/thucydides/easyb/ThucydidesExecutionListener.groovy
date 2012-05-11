@@ -31,7 +31,10 @@ class ThucydidesExecutionListener extends ExecutionListenerAdaptor {
     }
 
     void startBehavior(Behavior behavior) {
+        LOGGER.debug("THUCYDIDES STARTING BEHAVIOR ${behavior.phrase}")
         StepEventBus.eventBus.clear()
+        PluginConfiguration.instance.clearTags()
+        PluginConfiguration.instance.clearIssues()
         processedSteps = [] as Set
     }
 

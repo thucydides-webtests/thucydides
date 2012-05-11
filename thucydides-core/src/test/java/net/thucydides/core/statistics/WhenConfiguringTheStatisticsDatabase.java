@@ -1,8 +1,8 @@
 package net.thucydides.core.statistics;
 
 import net.thucydides.core.guice.EnvironmentVariablesDatabaseConfig;
-import net.thucydides.core.statistics.integration.db.LocalDatabase;
-import net.thucydides.core.statistics.integration.db.LocalH2Database;
+import net.thucydides.core.statistics.database.LocalDatabase;
+import net.thucydides.core.statistics.database.LocalH2Database;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;

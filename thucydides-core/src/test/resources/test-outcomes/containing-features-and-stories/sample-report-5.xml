@@ -2,7 +2,11 @@
   <user-story id="net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.YetAnotherUserStory" name="Yet another user story">
      <feature id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AnotherDifferentFeature' name='Another different feature'/>
   </user-story>
-  <test-step result="SUCCESS">
+    <tags>
+        <tag type="story" name="yet another user story"/>
+        <tag name="another different feature" type="feature"/>
+    </tags>
+    <test-step result="SUCCESS">
     <description>The customer navigates from metro jobs link.</description>
     <screenshot>the_customer_navigates_from_metro_jobs_link1.png</screenshot>
   </test-step>

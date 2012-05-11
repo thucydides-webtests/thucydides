@@ -1,4 +1,4 @@
-package net.thucydides.core.statistics.integration.db;
+package net.thucydides.core.statistics.database;
 
 /**
  * A local database used to store statistics by default.

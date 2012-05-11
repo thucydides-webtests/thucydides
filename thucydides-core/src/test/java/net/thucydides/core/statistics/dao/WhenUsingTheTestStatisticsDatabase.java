@@ -9,6 +9,8 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.guice.ThucydidesModule;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
+import net.thucydides.core.statistics.service.ClasspathTagProviderService;
+import net.thucydides.core.statistics.service.TagProviderService;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.LocalPreferences;
 import net.thucydides.core.util.MockEnvironmentVariables;
@@ -36,6 +38,7 @@ public class WhenUsingTheTestStatisticsDatabase {
             bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
             bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
             bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
+            bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
         }
     }
 

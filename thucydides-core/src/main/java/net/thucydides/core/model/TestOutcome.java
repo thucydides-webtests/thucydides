@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -125,6 +126,11 @@ public class TestOutcome {
     private TestStatistics statistics;
 
     /**
+     * Returns a set of tag provider classes that are used to determine the tags to associate with a test outcome.
+     */
+    private TagProviderService tagProviderService;
+
+    /**
      * The title is immutable once set. For convenience, you can create a test
      * run directly with a title using this constructor.
      * @param methodName The name of the Java method that implements this test.
@@ -143,6 +149,13 @@ public class TestOutcome {
         if (testCase != null) {
             initializeStoryFrom(testCase);
         }
+    }
+
+    private TagProviderService getTagProviderService() {
+        if (tagProviderService == null) {
+            tagProviderService = Injectors.getInjector().getInstance(TagProviderService.class);
+        }
+        return tagProviderService;
     }
 
     public TestOutcome usingIssueTracking(IssueTracking issueTracking) {
@@ -593,8 +606,7 @@ public class TestOutcome {
         if (tags != null) {
             return tags;
         } else {
-            List<TagProvider> tagProviders = TagProviderService.getTagProviders();
-            tags = getTagsUsingTagProviders(tagProviders);
+            tags = getTagsUsingTagProviders(getTagProviderService().getTagProviders());
         }
         return ImmutableSet.copyOf(tags);
     }
@@ -680,12 +692,19 @@ public class TestOutcome {
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public Long getDuration() {
         if ((duration == 0) && (testSteps != null) && (testSteps.size() > 0)) {
             return sum(testSteps, on(TestStep.class).getDuration());
         } else {
             return duration;
         }
+    }
+
+    /**
+     * @return The total duration of all of the tests in this set in milliseconds.
+     */
+    public double getDurationInSeconds() {
+        return TestDuration.of(duration).inSeconds();
     }
 
     /**

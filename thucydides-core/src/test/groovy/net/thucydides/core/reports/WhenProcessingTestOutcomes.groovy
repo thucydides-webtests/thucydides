@@ -48,11 +48,29 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all the tags of a given type for the test outcomes"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+        TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
-            def tags = testOutcomes.getTagsOfType 'story'
+        def tags = testOutcomes.getTagsOfType 'story'
         then:
-            tags == ["a story", "another different story", "another story"]
+        tags == ["a story", "another different story", "another story"]
+    }
+
+    def "should list all the tags of a given type for the test outcomes except for specified tags"() {
+        given:
+        TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+        when:
+        def tags = testOutcomes.getTagsOfTypeExcluding 'story', 'a story'
+        then:
+        tags == ["another different story", "another story"]
+    }
+
+    def "should list all the tags of a given type for the test outcomes except for specified tags for different cases"() {
+        given:
+        TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+        when:
+        def tags = testOutcomes.getTagsOfTypeExcluding 'story', 'A Story'
+        then:
+        tags == ["another different story", "another story"]
     }
 
     def "should list all the tags of a single type for the test outcomes"() {
@@ -154,7 +172,21 @@ class WhenProcessingTestOutcomes extends Specification {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
         then:
-            testOutcomes.duration == 3000
+            testOutcomes.duration == 1775
+    }
+
+    def "should provide total test duration in seconds for a set of tests"() {
+        when:
+        def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+        then:
+        testOutcomes.durationInSeconds == 1.78
+    }
+
+    def "should provide total test duration in seconds for a set of tests when the time is zero"() {
+        when:
+        def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/with-no-steps"));
+        then:
+        testOutcomes.durationInSeconds == 0.0
     }
 
     def "should count tests in set"() {

@@ -1,22 +1,23 @@
 package net.thucydides.core.statistics.service;
 
-import net.thucydides.core.annotations.NamedUrl;
-import net.thucydides.core.annotations.NamedUrls;
 import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.annotations.WithTags;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
-import net.thucydides.core.statistics.model.TestRunTag;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import some.other.place.AlternativeTagProvider;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.when;
@@ -26,17 +27,42 @@ public class WhenFindingTagsForATestOutcome {
     @Mock
     TestOutcome emptyTestOutcome;
 
+    MockEnvironmentVariables environmentVariables;
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+        environmentVariables = new MockEnvironmentVariables();
     }
 
     @Test
     public void should_find_the_annotation_tag_provider_by_default() {
-        List<TagProvider> tagProviders = TagProviderService.getTagProviders();
-        
-        assertThat(tagProviders.size(), is(not(0)));
-        assertThat(tagProviders.get(0), instanceOf(AnnotationBasedTagProvider.class));
+        TagProviderService tagProviderService = new ClasspathTagProviderService(environmentVariables);
+        List<TagProvider> tagProviders = tagProviderService.getTagProviders();
+
+        boolean containsAnnotationTagProvider = false;
+        for(TagProvider provider : tagProviders) {
+            if (provider instanceof AnnotationBasedTagProvider) {
+                containsAnnotationTagProvider = true;
+            }
+        }
+        assertThat(containsAnnotationTagProvider, is(true));
+    }
+
+    @Test
+    @Ignore
+    public void should_find_a_custom_tag_provider_in_a_specified_package() {
+        environmentVariables.setProperty("thucydides.ext.packages","some.other.place");
+        TagProviderService tagProviderService = new ClasspathTagProviderService(environmentVariables);
+        List<TagProvider> tagProviders = tagProviderService.getTagProviders();
+
+        boolean containsAlternativeTagProvider = false;
+        for(TagProvider provider : tagProviders) {
+            if (provider instanceof AlternativeTagProvider) {
+                containsAlternativeTagProvider = true;
+            }
+        }
+        assertThat(containsAlternativeTagProvider, is(true));
     }
 
     @Test

@@ -124,13 +124,13 @@ public class WhenScreenshotsAreTaken {
     }
 
     @Test
-    public void the_photographer_should_return_the_stored_screenshot_filename() throws IOException {
+    public void the_photographer_should_return_the_stored_screenshot_filename() throws IOException, InterruptedException {
 
         when(driver.getScreenshotAs(OutputType.BYTES)).thenReturn(screenshotTaken);
         
         String savedFileName = photographer.takeScreenshot("screenshot").getName();
         photographer.getScreenshotProcessor().waitUntilDone();
-
+        Thread.sleep(250);
         File savedScreenshot = new File(screenshotDirectory, savedFileName);
         
         assertThat(savedScreenshot.isFile(), is(true));

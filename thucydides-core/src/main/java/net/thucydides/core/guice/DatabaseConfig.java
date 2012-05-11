@@ -8,4 +8,6 @@ import java.util.Properties;
 public interface DatabaseConfig {
     Properties getProperties();
     boolean isUsingLocalDatabase();
+    void disable();
+    boolean isActive();
 }

@@ -54,4 +54,14 @@ public class TestRunTag {
     public Set<TestRun> getTestRuns() {
         return testRuns;
     }
+
+    @Override
+    public String toString() {
+        return "TestRunTag{" +
+                "type='" + type + '\'' +
+                ", id=" + id +
+                ", projectKey='" + projectKey + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

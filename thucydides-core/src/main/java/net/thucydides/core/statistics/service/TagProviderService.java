@@ -1,20 +1,13 @@
 package net.thucydides.core.statistics.service;
 
-import com.google.common.collect.Lists;
-import sun.misc.Service;
-
-import java.util.Iterator;
 import java.util.List;
 
-public class TagProviderService {
-    public static List<TagProvider> getTagProviders() {
-        List<TagProvider> tagProviders = Lists.newArrayList();
-
-        Iterator<?> tagProviderImplementations = Service.providers(TagProvider.class);
-
-        while (tagProviderImplementations.hasNext()) {
-            tagProviders.add((TagProvider) tagProviderImplementations.next());
-        }
-        return tagProviders;
-    }
+/**
+ * A description goes here.
+ * User: johnsmart
+ * Date: 11/05/12
+ * Time: 11:55 AM
+ */
+public interface TagProviderService {
+    List<TagProvider> getTagProviders();
 }

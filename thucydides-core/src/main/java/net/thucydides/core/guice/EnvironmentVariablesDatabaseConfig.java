@@ -3,7 +3,7 @@ package net.thucydides.core.guice;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.statistics.integration.db.LocalDatabase;
+import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,6 +27,7 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
 
     private final EnvironmentVariables environmentVariables;
     private final LocalDatabase localDatabase;
+    private boolean isActive = true;
 
     @Inject
     public EnvironmentVariablesDatabaseConfig(EnvironmentVariables environmentVariables,
@@ -92,5 +93,15 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
 
     public boolean isUsingLocalDatabase() {
         return (environmentVariables.getProperty("thucydides.statistics.url") == null);
+    }
+
+    @Override
+    public void disable() {
+        isActive = false;
+    }
+
+    @Override
+    public boolean isActive() {
+        return isActive;
     }
 }

@@ -163,6 +163,14 @@ public enum ThucydidesSystemProperty {
      */
     PROXY_PORT("thucydides.proxy.http_port"),
 
+
+    /**
+     * Extension packages. This is a list of packages that will be scanned for custom TagProvider implementations.
+     * To add a custom tag provider, just implement the TagProvider interface and specify the root package for this
+     * provider in this parameter.
+     */
+    EXTENSION_PACKAGES("thucydides.ext.packages"),
+
     /**
      * Enable JQuery integration.
      * If set to true (the default), JQuery will be injected into any page that does not already have it.

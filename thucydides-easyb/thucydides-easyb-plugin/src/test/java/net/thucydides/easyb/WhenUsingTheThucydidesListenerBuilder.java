@@ -3,6 +3,7 @@ package net.thucydides.easyb;
 import org.easyb.listener.ExecutionListener;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.MatcherAssert.assertThat;

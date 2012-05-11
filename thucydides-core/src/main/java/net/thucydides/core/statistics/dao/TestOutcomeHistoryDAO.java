@@ -14,6 +14,8 @@ public interface TestOutcomeHistoryDAO {
 
     void storeTestOutcomes(List<TestOutcome> testOutcomes);
 
+    void storeTestOutcome(TestOutcome testOutcome);
+
     Long countTestRunsByTitle(String title);
 
     Long countTestRunsByTitleAndResult(String title, TestResult result);
@@ -22,7 +24,7 @@ public interface TestOutcomeHistoryDAO {
 
     List<TestRunTag> getLatestTagsForTestWithTitleByTitle(String title);
 
-    List<TestResult> getResultsTestWithTitle(String title);
+    List getResultsTestWithTitle(String title);
 
     List<TestResult> getResultsForTestsWithTag(String tag);
 
@@ -41,4 +43,6 @@ public interface TestOutcomeHistoryDAO {
     List<TestRunTag> getLatestTagsForTestsWithTagType(String tagType);
 
     List<String> findAllTagTypes();
+
+    List<TestRunTag> findTagsMatching(TestRunTag tag);
 }

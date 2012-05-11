@@ -323,7 +323,7 @@
                                                  class="summary-icon"/>
                                             <span style="display:none">${stability_rank }</span>
                                         </td>
-                                        <td class="lightgreentext">${testOutcome.duration / 1000}</td>
+                                        <td class="lightgreentext">${testOutcome.durationInSeconds}</td>
                                     </tr>
                                 </#foreach>
                                 </tbody>

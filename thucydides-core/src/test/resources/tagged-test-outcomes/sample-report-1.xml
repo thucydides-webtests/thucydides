@@ -3,7 +3,7 @@
      <feature id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature' name='A feature'/>
   </user-story>
   <tags>
-      <tag name="a feature" type="feature"/>
+      <tag name="A Feature" type="feature"/>
       <tag name="a story" type="story"/>
   </tags>
   <test-step result="SUCCESS">

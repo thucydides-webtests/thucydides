@@ -8,6 +8,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.CoverageFormatter;
+import net.thucydides.core.model.TestDuration;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestResultList;
@@ -20,6 +21,7 @@ import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.Matcher;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -46,7 +48,6 @@ import static org.hamcrest.Matchers.isOneOf;
  * The TestOutcomes object will usually return a list of TestOutcome objects. You can also inject
  * statistics and test run history by using the withHistory() method. This will return a list
  * of TestOutcomeWithHistory instances.
- *
  */
 public class TestOutcomes {
 
@@ -63,13 +64,14 @@ public class TestOutcomes {
      * Reference to the test statistics service provider, used to inject test history if required.
      */
     private final HibernateTestStatisticsProvider testStatisticsProvider;
+    private static final Integer DEFAULT_ESTIMATED_TOTAL_STEPS = 3;
 
     @Inject
     protected TestOutcomes(List<? extends TestOutcome> outcomes,
-                          double estimatedAverageStepCount,
-                          String label,
-                          HibernateTestStatisticsProvider testStatisticsProvider,
-                          TestOutcomes rootOutcomes) {
+                           double estimatedAverageStepCount,
+                           String label,
+                           HibernateTestStatisticsProvider testStatisticsProvider,
+                           TestOutcomes rootOutcomes) {
         this.outcomes = ImmutableList.copyOf(outcomes);
         this.estimatedAverageStepCount = estimatedAverageStepCount;
         this.label = label;
@@ -96,15 +98,16 @@ public class TestOutcomes {
     protected TestOutcomes withLabel(String label) {
         return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, label, defaultTestStatisticsProvider());
     }
-    
+
     public static TestOutcomes of(List<? extends TestOutcome> outcomes) {
-        return new TestOutcomes(outcomes, 
-                                Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
+        return new TestOutcomes(outcomes,
+                Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
     }
 
     protected TestStatisticsProvider getTestStatisticsProvider() {
         return testStatisticsProvider;
     }
+
     public String getLabel() {
         return label;
     }
@@ -114,8 +117,9 @@ public class TestOutcomes {
      */
     public List<String> getTagTypes() {
         Set<String> tagTypes = Sets.newHashSet();
-        for(TestOutcome outcome : outcomes) {
-            tagTypes.addAll(extract(outcome.getTags(), on(TestTag.class).getType()));
+        for (TestOutcome outcome : outcomes) {
+            addTagTypesFrom(outcome, tagTypes);
+            //tagTypes.addAll(extract(outcome.getTags(), on(TestTag.class).getType().toLowerCase()));
         }
         return sort(ImmutableList.copyOf(tagTypes), on(String.class));
     }
@@ -125,10 +129,28 @@ public class TestOutcomes {
      */
     public List<String> getTagNames() {
         Set<String> tags = Sets.newHashSet();
-        for(TestOutcome outcome : outcomes) {
-            tags.addAll(extract(outcome.getTags(), on(TestTag.class).getName()));
+        for (TestOutcome outcome : outcomes) {
+            addTagNamesFrom(outcome, tags);
         }
         return sort(ImmutableList.copyOf(tags), on(String.class));
+    }
+
+    private void addTagNamesFrom(TestOutcome outcome, Set<String> tags) {
+        for (TestTag tag : outcome.getTags()) {
+            String normalizedForm = tag.getName().toLowerCase();
+            if (!tags.contains(normalizedForm)) {
+                tags.add(normalizedForm);
+            }
+        }
+    }
+
+    private void addTagTypesFrom(TestOutcome outcome, Set<String> tags) {
+        for (TestTag tag : outcome.getTags()) {
+            String normalizedForm = tag.getType().toLowerCase();
+            if (!tags.contains(normalizedForm)) {
+                tags.add(normalizedForm);
+            }
+        }
     }
 
     /**
@@ -136,17 +158,18 @@ public class TestOutcomes {
      */
     public List<TestTag> getTags() {
         Set<TestTag> tags = Sets.newHashSet();
-        for(TestOutcome outcome : outcomes) {
+        for (TestOutcome outcome : outcomes) {
             tags.addAll(outcome.getTags());
         }
         return ImmutableList.copyOf(tags);
     }
+
     /**
      * @return The list of all the tags associated with a given tag type.
      */
     public List<String> getTagsOfType(String tagType) {
         Set<String> tags = Sets.newHashSet();
-        for(TestOutcome outcome : outcomes) {
+        for (TestOutcome outcome : outcomes) {
             tags.addAll(tagsOfType(tagType).in(outcome));
         }
         return sort(ImmutableList.copyOf(tags), on(String.class));
@@ -155,13 +178,14 @@ public class TestOutcomes {
     public List<String> getTagsOfTypeExcluding(String tagType, String excludedTags) {
         Set<String> tags = Sets.newHashSet();
 
-        for(TestOutcome outcome : outcomes) {
+        for (TestOutcome outcome : outcomes) {
             List<String> allTagsOfType = tagsOfType(tagType).in(outcome);
-            allTagsOfType.remove(excludedTags);
+            allTagsOfType.remove(excludedTags.toLowerCase());
             tags.addAll(allTagsOfType);
         }
         return sort(ImmutableList.copyOf(tags), on(String.class));
     }
+
     private TagFinder tagsOfType(String tagType) {
         return new TagFinder(tagType);
     }
@@ -176,12 +200,12 @@ public class TestOutcomes {
         private TagFinder(String tagType) {
             this.tagType = tagType;
         }
-        
+
         List<String> in(TestOutcome testOutcome) {
             List<String> matchingTags = Lists.newArrayList();
-            for(TestTag tag : testOutcome.getTags()) {
-                if (tag.getType().equals(tagType)) {
-                    matchingTags.add(tag.getName());
+            for (TestTag tag : testOutcome.getTags()) {
+                if (tag.getType().compareToIgnoreCase(tagType) == 0) {
+                    matchingTags.add(tag.getName().toLowerCase());
                 }
             }
             return matchingTags;
@@ -190,6 +214,7 @@ public class TestOutcomes {
 
     /**
      * Find the test outcomes with a given tag type
+     *
      * @param tagType the tag type we are filtering on
      * @return A new set of test outcomes for this tag type
      */
@@ -203,6 +228,7 @@ public class TestOutcomes {
 
     /**
      * Find the test outcomes with a given tag name
+     *
      * @param tagName the name of the tag type we are filtering on
      * @return A new set of test outcomes for this tag name
      */
@@ -212,6 +238,7 @@ public class TestOutcomes {
 
     /**
      * Return a copy of the current test outcomes, with test run history and statistics.
+     *
      * @return a TestOutcome instance containing a list of TestOutcomeWithHistory instances.
      */
     public TestOutcomes withHistory() {
@@ -232,12 +259,13 @@ public class TestOutcomes {
 
     /**
      * Find the failing test outcomes in this set
+     *
      * @return A new set of test outcomes containing only the failing tests
      */
     public TestOutcomes getFailingTests() {
         return TestOutcomes.of(filter(withResult(TestResult.FAILURE), outcomes))
-                            .withLabel(labelForTestsWithStatus("failing tests"))
-                            .withRootOutcomes(getRootOutcomes());
+                .withLabel(labelForTestsWithStatus("failing tests"))
+                .withRootOutcomes(getRootOutcomes());
     }
 
     private String labelForTestsWithStatus(String status) {
@@ -250,22 +278,24 @@ public class TestOutcomes {
 
     /**
      * Find the successful test outcomes in this set
+     *
      * @return A new set of test outcomes containing only the successful tests
      */
     public TestOutcomes getPassingTests() {
         return TestOutcomes.of(filter(withResult(TestResult.SUCCESS), outcomes))
-                            .withLabel(labelForTestsWithStatus("passing tests"))
+                .withLabel(labelForTestsWithStatus("passing tests"))
                 .withRootOutcomes(getRootOutcomes());
     }
 
     /**
      * Find the pending or ignored test outcomes in this set
+     *
      * @return A new set of test outcomes containing only the pending or ignored tests
      */
     @SuppressWarnings("unchecked")
     public TestOutcomes getPendingTests() {
         return TestOutcomes.of(filter(anyOf(withResult(TestResult.PENDING), withResult(TestResult.SKIPPED)), outcomes))
-                           .withLabel(labelForTestsWithStatus("pending tests"))
+                .withLabel(labelForTestsWithStatus("pending tests"))
                 .withRootOutcomes(getRootOutcomes());
 
     }
@@ -280,13 +310,23 @@ public class TestOutcomes {
     /**
      * @return The total duration of all of the tests in this set in milliseconds.
      */
-    public long getDuration() {
-        return sum(outcomes, on(TestOutcome.class).getDuration());
+    public Long getDuration() {
+        Long total = 0L;
+        for (TestOutcome outcome : outcomes) {
+            total += outcome.getDuration();
+        }
+        return total;
+    }
+
+    /**
+     * @return The total duration of all of the tests in this set in milliseconds.
+     */
+    public double getDurationInSeconds() {
+        return TestDuration.of(getDuration()).inSeconds();
     }
 
     /**
      * @return The total number of test runs in this set.
-     *
      */
     public int getTotal() {
         return outcomes.size();
@@ -349,37 +389,43 @@ public class TestOutcomes {
 
     /**
      * @return The percent of passing steps, based on the real and estimated test size in terms of the relative number
-     * of steps.
+     *         of steps.
      */
     public Double getPercentagePassingStepCount() {
-        return (countStepsWithResultThat(is(TestResult.SUCCESS)) / (double) getEstimatedTotalStepCount());
+        int passingStepCount = countStepsWithResultThat(is(TestResult.SUCCESS));
+        return (passingStepCount == 0) ? 0 : (passingStepCount / (double) getEstimatedTotalStepCount());
     }
 
     /**
      * @return The percent of failing steps, based on the real and estimated test size in terms of the relative number
-     * of steps.
+     *         of steps.
      */
     public Double getPercentageFailingStepCount() {
-        return (countStepsWithResultThat(is(TestResult.FAILURE)) / (double) getEstimatedTotalStepCount());
+        int failingStepCount = countStepsWithResultThat(is(TestResult.FAILURE));
+        return (failingStepCount == 0) ? 0 : (failingStepCount / (double) getEstimatedTotalStepCount());
     }
 
     /**
      * @return The percent of pending steps, based on the real and estimated test size in terms of the relative number
-     * of steps.
+     *         of steps.
      */
     public Double getPercentagePendingStepCount() {
         int passingOrFailingSteps = countStepsWithResultThat(isOneOf(TestResult.SUCCESS, TestResult.FAILURE));
-        return ((getEstimatedTotalStepCount() - passingOrFailingSteps) / (double) getEstimatedTotalStepCount());
+        if (passingOrFailingSteps == 0) {
+            return 1.0;
+        } else {
+            int pendingSteps = getEstimatedTotalStepCount() - passingOrFailingSteps;
+            return (pendingSteps == 0) ? 0 : (pendingSteps / (double) getEstimatedTotalStepCount());
+        }
     }
 
     /**
-     *
      * @return Formatted version of the test coverage metrics
      */
     public CoverageFormatter getFormatted() {
         return new CoverageFormatter(getPercentagePassingStepCount(),
-                                     getPercentagePendingStepCount(),
-                                     getPercentageFailingStepCount());
+                getPercentagePendingStepCount(),
+                getPercentageFailingStepCount());
     }
 
     private int countStepsWithResultThat(Matcher<TestResult> matchingResult) {
@@ -388,7 +434,8 @@ public class TestOutcomes {
     }
 
     private Integer getEstimatedTotalStepCount() {
-        return (getStepCount() + estimatedUnimplementedStepCount());
+        int estimatedTotalSteps = (getStepCount() + estimatedUnimplementedStepCount());
+        return (estimatedTotalSteps == 0) ? DEFAULT_ESTIMATED_TOTAL_STEPS : estimatedTotalSteps;
     }
 
     private Integer estimatedUnimplementedStepCount() {

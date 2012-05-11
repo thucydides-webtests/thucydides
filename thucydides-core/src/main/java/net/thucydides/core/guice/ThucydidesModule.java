@@ -25,10 +25,13 @@ import net.thucydides.core.statistics.StatisticsListener;
 import net.thucydides.core.statistics.TestStatisticsProvider;
 import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
-import net.thucydides.core.statistics.integration.db.LocalDatabase;
-import net.thucydides.core.statistics.integration.db.LocalHSQLDBDatabase;
-import net.thucydides.core.statistics.integration.db.LocalH2Database;
-import net.thucydides.core.statistics.integration.db.LocalHSQLDBDatabase;
+import net.thucydides.core.statistics.database.LocalDatabase;
+import net.thucydides.core.statistics.database.LocalH2Database;
+import net.thucydides.core.statistics.database.LocalH2ServerDatabase;
+import net.thucydides.core.statistics.database.LocalHSQLDBDatabase;
+import net.thucydides.core.statistics.service.ClasspathTagProviderService;
+import net.thucydides.core.statistics.service.TagProvider;
+import net.thucydides.core.statistics.service.TagProviderService;
 import net.thucydides.core.steps.ConsoleLoggingListener;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -39,6 +42,8 @@ import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebdriverManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -50,6 +55,8 @@ public class ThucydidesModule extends AbstractModule {
 
     private static final ThreadLocal<EntityManager> ENTITY_MANAGER_CACHE
             = new ThreadLocal<EntityManager>();
+
+    private final Logger LOGGER = LoggerFactory.getLogger(ThucydidesModule.class);
 
     @Override
     protected void configure() {
@@ -68,6 +75,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
         bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class).in(Singleton.class);
         bind(TestStatisticsProvider.class).to(HibernateTestStatisticsProvider.class).in(Singleton.class);
+        bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
 
         bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class).in(Singleton.class);
         bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class).in(Singleton.class);
@@ -77,7 +85,9 @@ public class ThucydidesModule extends AbstractModule {
     @Singleton
     @Inject
     public LocalDatabase provideLocalDatabase(EnvironmentVariables environmentVariables) {
-        return new LocalH2Database(environmentVariables);
+        //return new LocalH2Database(environmentVariables);
+        return new LocalH2ServerDatabase(environmentVariables);
+        //return new LocalHSQLDBDatabase(environmentVariables);
     }
 
     @Provides
@@ -91,30 +101,15 @@ public class ThucydidesModule extends AbstractModule {
         }
 
         EntityManagerFactory entityManagerFactory = null;
-
         try {
             entityManagerFactory = createEntityManagerFactory(databaseConfig);
-        } catch (SQLException sqlException) {
-            if (localFileDatabaseCouldNotBeLocked(localDatabase, sqlException)) {
-                tryToDeleteTheDatabaseLockFile(localDatabase);
-            }
+        } catch (SQLException e) {
+            LOGGER.error("Could not connect to statistics database - statistics will be disabled", e);
+            databaseConfig.disable();
         }
 
         return entityManagerFactory;
 
-    }
-
-    private void tryToDeleteTheDatabaseLockFile(LocalDatabase localDatabase) {
-        int filePathStart = localDatabase.getUrl().indexOf("file:") + 5;
-        String databaseLock = localDatabase.getUrl().substring(filePathStart) + ".lck";
-        (new File(databaseLock)).delete();
-    }
-
-    private boolean localFileDatabaseCouldNotBeLocked(LocalDatabase localDatabase, SQLException sqlException) {
-        if (localDatabase.getUrl().contains("file:")) {
-            return (sqlException.getMessage().contains("Database lock acquisition failure"));
-        }
-        return false;
     }
 
     private EntityManagerFactory createEntityManagerFactory(DatabaseConfig databaseConfig) throws SQLException {

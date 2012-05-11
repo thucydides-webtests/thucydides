@@ -194,12 +194,15 @@ public class ThucydidesPlugin extends BasePlugin {
 
     @Override
     public Object afterScenario(final Binding binding) {
+        LOGGER.info("AFTER SCENARIO")
         runningFirstScenario = false;
 
         if (getLatestTestOutcome()) {
             if (configuration.scenarioIssues) {
                 getLatestTestOutcome().addIssues(configuration.scenarioIssues)
             }
+
+            LOGGER.info("STORING TAGS " + configuration.tags)
             if (configuration.tags) {
                 getLatestTestOutcome().setTags(configuration.tags)
             }
@@ -219,6 +222,7 @@ public class ThucydidesPlugin extends BasePlugin {
 
     @Override
     public Object afterStory(final Binding binding) {
+        StepEventBus.eventBus.testSuiteFinished()
         StepEventBus.eventBus.dropAllListeners()
         StepEventBus.eventBus.clear()
 

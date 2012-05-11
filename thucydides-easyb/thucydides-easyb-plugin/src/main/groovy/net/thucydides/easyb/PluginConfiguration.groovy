@@ -98,6 +98,7 @@ public class PluginConfiguration {
 
     public void tag(String name, type) {
         tags += TestTag.withName(name).andType(type)
+        LOGGER.info("TAGS: ${tags}")
     }
 
     public List<String> getScenarioIssues() {
@@ -143,6 +144,7 @@ public class PluginConfiguration {
 
 
     def clearTags() {
+        LOGGER.info("CLEAR TAGS")
         tags.clear()
     }
 

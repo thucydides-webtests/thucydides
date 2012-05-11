@@ -3,6 +3,7 @@ package net.thucydides.core.statistics;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.DatabaseConfig;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
@@ -25,14 +26,17 @@ public class StatisticsListener implements StepListener {
     private final TestOutcomeHistoryDAO testOutcomeHistoryDAO;
     private final EnvironmentVariables environmentVariables;
     private final List<TestOutcome> testOutcomes;
+    private final DatabaseConfig databaseConfig;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsListener.class);
 
     @Inject
     public StatisticsListener(TestOutcomeHistoryDAO testOutcomeHistoryDAO,
-                              EnvironmentVariables environmentVariables) {
+                              EnvironmentVariables environmentVariables,
+                              DatabaseConfig databaseConfig) {
         this.testOutcomeHistoryDAO = testOutcomeHistoryDAO;
         this.environmentVariables = environmentVariables;
+        this.databaseConfig = databaseConfig;
         testOutcomes = Collections.synchronizedList(new ArrayList<TestOutcome>());
     }
 
@@ -50,6 +54,7 @@ public class StatisticsListener implements StepListener {
 
     @Override
     public void testFinished(TestOutcome result) {
+
         if (historyActivated()) {
             if (!testOutcomes.contains(result)) {
                 testOutcomes.add(result);
@@ -70,7 +75,7 @@ public class StatisticsListener implements StepListener {
 
 
     private boolean historyActivated() {
-        return environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.RECORD_STATISTICS.getPropertyName(), true);
+        return databaseConfig.isActive() && environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.RECORD_STATISTICS.getPropertyName(), true);
     }
 
     @Override

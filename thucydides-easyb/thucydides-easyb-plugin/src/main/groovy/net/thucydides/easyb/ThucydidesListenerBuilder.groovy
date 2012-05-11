@@ -12,7 +12,8 @@ class ThucydidesListenerBuilder implements ListenerBuilder {
 
     public static final ThreadLocal executionListenerThreadLocal = new ThreadLocal();
 
-    ThucydidesListenerBuilder() {}
+    ThucydidesListenerBuilder() {
+    }
 
     ExecutionListener get() {
         exeuctionListenerMustHaveBeenAssigned();
@@ -25,7 +26,7 @@ class ThucydidesListenerBuilder implements ListenerBuilder {
         }
     }
 
-    private static instantiateStepListener() {
+    private instantiateStepListener() {
         resetListener();
         setListener(new ThucydidesExecutionListener());
     }
