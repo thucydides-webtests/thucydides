@@ -18,7 +18,7 @@ import java.io.OutputStream;
 public class FileResources {
 
     private static final int BUFFER_SIZE = 4096;
-    private static final int DEFAULT_FILE_IO_RETRY_TIMEOUT = 120;
+    private static final int DEFAULT_FILE_IO_RETRY_TIMEOUT = 60;
 
     private String resourceDirectoryRoot;
 
@@ -118,7 +118,6 @@ public class FileResources {
 				outStream = createOutputStream(destinationFile);
                 FILE_NOT_FOUND = false;
 			}catch(FileNotFoundException fnfe) {
-                System.out.println("$$$$$$$$$$$$$$$ " + timeElapsed + " $$$$$$$$$$$$4 " + timeout);
 				if (timeElapsed > timeout) {
 					//timeout
 					throw fnfe;

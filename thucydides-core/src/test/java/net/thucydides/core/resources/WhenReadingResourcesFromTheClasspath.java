@@ -3,6 +3,7 @@ package net.thucydides.core.resources;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -16,13 +17,16 @@ import java.util.Date;
 import java.util.regex.Pattern;
 import java.util.zip.ZipFile;
 
+import static net.thucydides.core.matchers.FileMatchers.exists;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 public class WhenReadingResourcesFromTheClasspath {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void initMocks() {
@@ -127,14 +131,12 @@ public class WhenReadingResourcesFromTheClasspath {
     public void should_attempt_to_get_output_stream_for_target_till_timeout() throws Exception {
         File targetDir = temporaryDirectory.newFolder("target");
         String sourceResource = new File("src/test/resources/resourcelist/sample.css").getAbsolutePath();
-        final TestTimer timer = new TestTimer(FileResources.getDefaultRetryTimeout() / 20) ;
-        //System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" + timer);
+        final TestTimer timer = new TestTimer(FileResources.getDefaultRetryTimeout() / 60) ;
 
-        FileResources fileResource = new FileResources("resourceList") {
+        FileResources fileResource = new FileResources("resourcelist") {
             @Override
             protected FileOutputStream createOutputStream(File destinationFile) throws FileNotFoundException {
                 timer.increment();
-                //System.out.println("############################################" + timer);
                 if (timer.timeOut()) {
                     return new FileOutputStream(destinationFile);
                 } else {
@@ -150,7 +152,34 @@ public class WhenReadingResourcesFromTheClasspath {
 
     }
 
+    @Test
+    public void should_fail_to_get_output_stream_for_target_after_timeout() throws Exception {
 
+        expectedException.expect(FileNotFoundException.class);
+        expectedException.expectMessage(containsString("Destination file not found"));
+
+        File targetDir = temporaryDirectory.newFolder("target");
+        String sourceResource = new File("src/test/resources/resourcelist/sample.css").getAbsolutePath();
+        final TestTimer timer = new TestTimer(FileResources.getDefaultRetryTimeout() * 2) ;
+
+        FileResources fileResource = new FileResources("resourcelist") {
+            @Override
+            protected FileOutputStream createOutputStream(File destinationFile) throws FileNotFoundException {
+                timer.increment();
+                if (timer.timeOut()) {
+                    return new FileOutputStream(destinationFile);
+                } else {
+                    throw new FileNotFoundException("Destination file not found");
+                }
+            }
+        };
+
+        fileResource.copyResourceTo(sourceResource, targetDir);
+
+        File destinationFile = new File(targetDir, "sample.css");
+        assertThat(destinationFile, exists());
+
+    }
 
     @Test
     public void should_copy_resource_file_into_target_directory() throws Exception {
