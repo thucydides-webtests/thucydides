@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.regex.Pattern;
 import java.util.zip.ZipFile;
 
@@ -126,15 +127,26 @@ public class WhenReadingResourcesFromTheClasspath {
     public void should_attempt_to_get_output_stream_for_target_till_timeout() throws Exception {
         File targetDir = temporaryDirectory.newFolder("target");
         String sourceResource = new File("src/test/resources/resourcelist/sample.css").getAbsolutePath();
+        final TestTimer timer = new TestTimer(FileResources.getDefaultRetryTimeout() / 20) ;
+        //System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" + timer);
 
         FileResources fileResource = new FileResources("resourceList") {
             @Override
             protected FileOutputStream createOutputStream(File destinationFile) throws FileNotFoundException {
-                return new FileOutputStream(destinationFile);
+                timer.increment();
+                //System.out.println("############################################" + timer);
+                if (timer.timeOut()) {
+                    return new FileOutputStream(destinationFile);
+                } else {
+                    throw new FileNotFoundException("Destination file not found");
+                }
             }
         };
 
         fileResource.copyResourceTo(sourceResource, targetDir);
+
+        File destinationFile = new File(targetDir, "sample.css");
+        assertThat(destinationFile.exists(), is(true));
 
     }
 
@@ -225,4 +237,27 @@ public class WhenReadingResourcesFromTheClasspath {
         assertThat(destinationFile.isDirectory(), is(true));
     }
 
+}
+
+
+class TestTimer {
+    private long timeout = FileResources.getDefaultRetryTimeout();
+    private long elapsedTime = 0;
+    private long startTime = 0;
+    public TestTimer(long timeout ) {
+        this.timeout = timeout;
+        this.startTime = new Date().getTime();
+    }
+
+    public void increment() {
+        elapsedTime = new Date().getTime() - startTime;
+    }
+
+    public boolean timeOut() {
+        return elapsedTime >= timeout;
+    }
+
+    public String toString() {
+        return "[" + timeout + " , " + startTime + " , " + elapsedTime + "]";
+    }
 }

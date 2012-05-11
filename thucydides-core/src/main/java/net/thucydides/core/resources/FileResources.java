@@ -118,6 +118,7 @@ public class FileResources {
 				outStream = createOutputStream(destinationFile);
                 FILE_NOT_FOUND = false;
 			}catch(FileNotFoundException fnfe) {
+                System.out.println("$$$$$$$$$$$$$$$ " + timeElapsed + " $$$$$$$$$$$$4 " + timeout);
 				if (timeElapsed > timeout) {
 					//timeout
 					throw fnfe;
@@ -133,6 +134,10 @@ public class FileResources {
         ThucydidesSystemProperties systemProperties = ThucydidesSystemProperties.getProperties();
         int timeout = systemProperties.getIntegerValue(ThucydidesSystemProperty.FILE_IO_RETRY_TIMEOUT, DEFAULT_FILE_IO_RETRY_TIMEOUT);
         return timeout * 1000; //milliseconds
+    }
+
+    public static long getDefaultRetryTimeout() {
+        return DEFAULT_FILE_IO_RETRY_TIMEOUT * 1000;
     }
 
     protected FileOutputStream createOutputStream(File destinationFile) throws FileNotFoundException {
