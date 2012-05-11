@@ -197,6 +197,16 @@ public enum ThucydidesSystemProperty {
     SAUCELABS_IMPLICIT_TIMEOUT("saucelabs.implicit.timeout"),
 
     /**
+     * Timeout (in seconds) for retrying file I/O.
+     * Used in net.thucydides.core.resources.FileResources.copyResourceTo().
+     * Sometimes, file I/O fails on Windows machine due to the way Windows handles memory-mapped
+     * files (http://stackoverflow.com/questions/3602783/file-access-synchronized-on-java-object).
+     * This property, if set, will retry copying the resource till timeout. A default value is used
+     * if the property is not set.
+     */
+     FILE_IO_RETRY_TIMEOUT("thucydides.file.io.retry.timeout"),
+
+    /**
      * Three levels are supported: QUIET, NORMAL and VERBOSE
      */
     LOGGING("thucydides.logging");

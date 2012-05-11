@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.io.File;
 
+import static net.thucydides.core.util.FileSeparatorUtil.changeSeparatorIfRequired;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -25,7 +26,7 @@ public class WhenObtainingTheOutputDirectory {
     public void the_default_output_directory_is_in_the_default_maven_site_directory() {
         File outputDirectory = configuration.loadOutputDirectoryFromSystemProperties();
 
-        assertThat(outputDirectory.getPath(), is("target/site/thucydides"));
+        assertThat(outputDirectory.getPath(), is(changeSeparatorIfRequired("target/site/thucydides")));
     }
 
     @Test
@@ -33,7 +34,7 @@ public class WhenObtainingTheOutputDirectory {
         environmentVariables.setProperty("project.build.directory","build");
         File outputDirectory = configuration.loadOutputDirectoryFromSystemProperties();
 
-        assertThat(outputDirectory.getPath(), is("build/site/thucydides"));
+        assertThat(outputDirectory.getPath(), is(changeSeparatorIfRequired("build/site/thucydides")));
     }
 
     @Test
@@ -41,7 +42,7 @@ public class WhenObtainingTheOutputDirectory {
         environmentVariables.setProperty("project.reporting.OutputDirectory","custom-reports-directory");
         File outputDirectory = configuration.loadOutputDirectoryFromSystemProperties();
 
-        assertThat(outputDirectory.getPath(), is("custom-reports-directory/thucydides"));
+        assertThat(outputDirectory.getPath(), is(changeSeparatorIfRequired("custom-reports-directory/thucydides")));
     }
 
     @Test
