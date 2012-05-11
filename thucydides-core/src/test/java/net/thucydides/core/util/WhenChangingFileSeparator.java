@@ -22,7 +22,8 @@ public class WhenChangingFileSeparator {
     @Test
     public void back_slashes_are_converted_to_system_specific_separator() {
         String[] randomFileNameNodes = {"target", "site","thucydides","datatables"};
-        String originalFileName = StringUtils.join(randomFileNameNodes, "\\");
+        String systemSpecificSeparator = System.getProperty("file.separator");
+        String originalFileName = StringUtils.join(randomFileNameNodes, systemSpecificSeparator);
         String expectedFileName = StringUtils.join(randomFileNameNodes, File.separator);
 
         assertThat(FileSeparatorUtil.changeSeparatorIfRequired(originalFileName), is(expectedFileName));
