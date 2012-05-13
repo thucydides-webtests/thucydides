@@ -43,7 +43,7 @@ public class LocalH2ServerDatabase implements LocalDatabase {
     }
 
     public String getUrl() {
-        return "jdbc:h2:tcp://localhost" + getDatabasePath();
+        return "jdbc:h2:tcp://localhost/" + getDatabasePath();
     }
 
     public String getDriver() {
