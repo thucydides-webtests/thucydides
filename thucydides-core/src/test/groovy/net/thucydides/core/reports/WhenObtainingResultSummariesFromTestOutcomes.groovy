@@ -63,6 +63,7 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             "/test-outcomes/all-successful"            | 1.0               | 0.0                | 0.0
             "/test-outcomes/containing-failure"        | 0.32              | 0.24               | 0.44
             "/test-outcomes/containing-pending"        | 0.6               | 0.0                | 0.4
+            "/test-outcomes/all-pending"               | 0.0               | 0.0                | 1.0
     }
 
     def "should provide a formatted version of the passing coverage"() {
@@ -100,7 +101,7 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             testOutcomes.formatted.percentFailingCoverage == "0%"
     }
 
-    def "should return 100% pening coverage if there are no steps"() {
+    def "should return 100% pending coverage if there are no steps"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/with-no-steps"));
         then:

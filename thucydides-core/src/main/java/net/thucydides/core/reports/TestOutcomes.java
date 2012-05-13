@@ -393,7 +393,7 @@ public class TestOutcomes {
      */
     public Double getPercentagePassingStepCount() {
         int passingStepCount = countStepsWithResultThat(is(TestResult.SUCCESS));
-        return (passingStepCount == 0) ? 0 : (passingStepCount / (double) getEstimatedTotalStepCount());
+        return (passingStepCount / (double) getEstimatedTotalStepCount());
     }
 
     /**
@@ -402,7 +402,7 @@ public class TestOutcomes {
      */
     public Double getPercentageFailingStepCount() {
         int failingStepCount = countStepsWithResultThat(is(TestResult.FAILURE));
-        return (failingStepCount == 0) ? 0 : (failingStepCount / (double) getEstimatedTotalStepCount());
+        return (failingStepCount / (double) getEstimatedTotalStepCount());
     }
 
     /**
@@ -415,7 +415,7 @@ public class TestOutcomes {
             return 1.0;
         } else {
             int pendingSteps = getEstimatedTotalStepCount() - passingOrFailingSteps;
-            return (pendingSteps == 0) ? 0 : (pendingSteps / (double) getEstimatedTotalStepCount());
+            return (pendingSteps / (double) getEstimatedTotalStepCount());
         }
     }
 
