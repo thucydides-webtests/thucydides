@@ -64,7 +64,7 @@ import static net.thucydides.core.util.NameConverter.withNoArguments;
  */
 public class TestOutcome {
 
-    private static final int RECENT_TEST_RUN_COUNT = 5;
+    private static final int RECENT_TEST_RUN_COUNT = 10;
     /**
      * The name of the method implementing this test.
      */

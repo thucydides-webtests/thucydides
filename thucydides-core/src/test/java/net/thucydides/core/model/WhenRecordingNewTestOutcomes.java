@@ -971,7 +971,7 @@ public class WhenRecordingNewTestOutcomes {
                 ImmutableList.of(new TestRunTag("MYPROJECT","A story","story")));
 
         testOutcome.setStatistics(statistics);
-        assertThat(testOutcome.getRecentStability(), is(1.0));
+        assertThat(testOutcome.getRecentStability(), is(0.7));
     }
 
     @Test
@@ -981,9 +981,9 @@ public class WhenRecordingNewTestOutcomes {
                 ImmutableList.of(new TestRunTag("MYPROJECT","A story","story")));
 
         testOutcome.setStatistics(statistics);
-        assertThat(testOutcome.getRecentTestRunCount() , is(5L));
+        assertThat(testOutcome.getRecentTestRunCount() , is(8L));
         assertThat(testOutcome.getRecentFailCount() , is(2));
-        assertThat(testOutcome.getRecentPassCount() , is(2));
+        assertThat(testOutcome.getRecentPassCount() , is(5));
         assertThat(testOutcome.getRecentPendingCount() , is(1));
     }
 }
