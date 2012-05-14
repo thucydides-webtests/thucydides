@@ -62,53 +62,6 @@
             }
         });
     });</script>
-
-
-<#--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
-<#--<script type="text/javascript">-->
-
-<#--// Load the Visualization API and the piechart package.-->
-<#--google.load('visualization', '1.0', {'packages':['corechart']});-->
-
-<#--// Set a callback to run when the Google Visualization API is loaded.-->
-<#--google.setOnLoadCallback(drawChart);-->
-
-<#--// Callback that creates and populates a data table,-->
-<#--// instantiates the pie chart, passes in the data and-->
-<#--// draws it.-->
-<#--function drawChart() {-->
-
-<#--// Create the data table.-->
-<#--var data = new google.visualization.DataTable();-->
-<#--data.addColumn('string', 'Tests');-->
-<#--data.addColumn('number', 'Results');-->
-<#--data.addRows([-->
-<#--['Success', ${stories.successCount}],-->
-<#--['Failures', ${stories.failureCount}],-->
-<#--['Pending', ${stories.pendingCount}]-->
-<#--]);-->
-
-<#--// Set chart options-->
-<#--var options = {'title':'Overall Test Results',-->
-<#--'width':375,-->
-<#--'is3D':true,-->
-<#--'fontSize':16,-->
-<#--'legend':{position:'none'},-->
-<#--'title':'Whatever',-->
-<#--backgroundColor:{'stroke':'#3688BA', 'strokeWidth':1},-->
-<#--chartArea:{left:20, top:0, width:"100%", height:"100%"},-->
-<#--colors:['#00DD00', 'red', 'blue'],-->
-<#--'height':300};-->
-
-<#--// Instantiate and draw our chart, passing in some options.-->
-<#--var chart = new google.visualization.PieChart(document.getElementById('pie_chart'));-->
-<#--chart.draw(data, options);-->
-
-
-<#--}-->
-<#--</script>-->
-
-
 </head>
 
 <body>
