@@ -41,7 +41,7 @@ public final class TestOutcomeMatchers {
             public boolean matches(Object matchee) {
                 TestOutcome testOutcome =  (TestOutcome) matchee;
                 for (TestTag tag : testOutcome.getTags()) {
-                    if (tag.getName().equals(tagName))  {
+                    if (tag.getName().equalsIgnoreCase(tagName))  {
                         return true;
                     }
                 }
