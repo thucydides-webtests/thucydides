@@ -328,18 +328,6 @@ public class WhenRecordingTestResultStatistics {
     }
 
     @Test
-    public void tag_names_should_be_case_insensitive() {
-
-        TestRunTag tag = new TestRunTag("DEFAULT","story","Car sales");
-        List<TestRunTag> carSalesTags = testOutcomeHistoryDAO.findTagsMatching(tag);
-        assertThat(carSalesTags.size(), is(1));
-
-        List<TestRunTag> lowerCaseCarSalesTags = testOutcomeHistoryDAO.findTagsMatching(new TestRunTag("DEFAULT","story","car sales"));
-        assertThat(lowerCaseCarSalesTags, is(carSalesTags));
-
-    }
-
-    @Test
     public void should_retrieve_a_list_of_all_available_tag_types() {
 
         List<String> allTagTypes = testStatisticsProvider.findAllTagTypes();

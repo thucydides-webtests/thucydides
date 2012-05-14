@@ -32,8 +32,6 @@ public class Thucydides {
     private static final ThreadLocal<StepListener> stepListenerThreadLocal = new ThreadLocal<StepListener>();
     private static final ThreadLocal<TestSessionVariables> testSessionThreadLocal = new ThreadLocal<TestSessionVariables>();
 
-    public static final String DEFAULT_PROJECT_KEY = "DEFAULT";
-
     /**
      * Initialize Thucydides-related fields in the specified object.
      * This includes managed WebDriver instances,
@@ -167,4 +165,11 @@ public class Thucydides {
         throw new IgnoredStepException(reason);
     }
 
+    /**
+     * The current working directory name is used as a default project key if no other key is provided.
+     */
+    public static String getDefaultProjectKey() {
+        String workingDirPath = System.getProperty("user.dir");
+        return new File(workingDirPath).getName();
+    }
 }

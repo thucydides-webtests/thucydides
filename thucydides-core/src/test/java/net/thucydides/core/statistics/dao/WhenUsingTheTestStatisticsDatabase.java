@@ -3,6 +3,7 @@ package net.thucydides.core.statistics.dao;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.guice.DatabaseConfig;
 import net.thucydides.core.guice.EnvironmentVariablesDatabaseConfig;
 import net.thucydides.core.guice.Injectors;
@@ -18,6 +19,7 @@ import net.thucydides.core.util.PropertiesFileLocalPreferences;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -77,6 +79,11 @@ public class WhenUsingTheTestStatisticsDatabase {
         assertThat(((HibernateTestOutcomeHistoryDAO)dao).entityManager, is(notNullValue()));
     }
 
-
+    @Test
+    public void the_current_working_directory_is_used_as_the_default_project_key() {
+        String workingDirPath = System.getProperty("user.dir");
+        String workingDirName = new File(workingDirPath).getName();
+        assertThat(Thucydides.getDefaultProjectKey(), is(workingDirName));
+    }
 
 }

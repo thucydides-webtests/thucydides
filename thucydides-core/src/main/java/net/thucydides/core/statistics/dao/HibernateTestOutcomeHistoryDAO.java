@@ -183,7 +183,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
 
     private String getProjectKey() {
         return ThucydidesSystemProperty.PROJECT_KEY.from(environmentVariables,
-                                                         Thucydides.DEFAULT_PROJECT_KEY);
+                                                         Thucydides.getDefaultProjectKey());
     }
 
     private TagAdder addTagsFrom(TestOutcome testResult) {

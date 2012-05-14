@@ -93,6 +93,7 @@ public enum ThucydidesSystemProperty {
 
     /**
      * The estimated number of steps in a pending scenario.
+     * The estimated number of steps in a pending sceario.
      * This is used for stories where no scenarios have been defined.
      */
     ESTIMATED_AVERAGE_STEP_COUNT("thucydides.estimated.average.step.count"),
@@ -222,7 +223,6 @@ public enum ThucydidesSystemProperty {
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 1000;
     public static final int DEFAULT_WIDTH = 800;
-    public static final int DEFAULT_DATABASE_PORT = 9111;
 
     private ThucydidesSystemProperty(final String propertyName) {
         this.propertyName = propertyName;
