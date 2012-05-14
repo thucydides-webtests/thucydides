@@ -42,6 +42,8 @@ public class PluginConfiguration {
 
     def registeredSteps = []
 
+    def stepNameMap = [:]
+
     def scenarioIssues = []
 
     def tags = [] as Set
@@ -70,6 +72,24 @@ public class PluginConfiguration {
 
     public void uses_steps_from(Class<ScenarioSteps> stepsClass) {
         registeredSteps += stepsClass
+        stepNameMap.remove(stepsClass.name)
+    }
+
+    public void uses_steps_from(Class<ScenarioSteps> stepsClass, String stepName) {
+        registeredSteps += stepsClass
+        stepNameMap[stepsClass.name] = stepName
+    }
+
+    class StepBuilder {
+        def name
+
+        def from(Class<ScenarioSteps> stepsClass) {
+            uses_steps_from(stepsClass, name)
+        }
+    }
+
+    public StepBuilder uses_steps_named(String stepName) {
+        return new StepBuilder(name: stepName)
     }
 
     public Tagger getTests() {
@@ -150,5 +170,12 @@ public class PluginConfiguration {
 
     def clearIssues() {
         scenarioIssues.clear()
+    }
+
+    String stepLibraryNameFor(String stepLibraryClassName) {
+        if (stepLibraryClassName.indexOf('$') > 0) {
+            stepLibraryClassName = stepLibraryClassName.subSequence(0, stepLibraryClassName.indexOf('$'))
+        }
+        stepNameMap[stepLibraryClassName]
     }
 }

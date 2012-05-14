@@ -6,7 +6,7 @@ import net.thucydides.easyb.samples.pages.IndexPage
 using "thucydides"
 
 thucydides.uses_default_base_url "classpath:demosite/index.html"
-thucydides.uses_steps_from DemoSiteSteps
+thucydides.uses_steps_named("a_developer").from DemoSiteSteps
 thucydides.uses_driver "htmlunit"
 thucydides.testing.behavior "Doing something else"
 
@@ -45,13 +45,13 @@ scenario "Select entry in dropdown list using steps", {
     }
     when "the user fills in the form", {
         try {
-             demo_site.enter_values('Label 3', true)
+            a_developer.enter_values('Label 3', true)
         } catch (Exception e) {
             e.printStackTrace()
         }
     }
     then "the chosen options should be displayed", {
-        demo_site.should_have_selected_value('3')
+        a_developer.should_have_selected_value('3')
     }
 }
 
@@ -60,10 +60,10 @@ scenario "Select entry in dropdown list using nested steps", {
     given "we are on the Thucydides demo site again", {
     }
     when "the user fills in the form", {
-        demo_site.use_nested_steps()
+        a_developer.use_nested_steps()
     }
     then "the chosen options should be displayed", {
-        demo_site.should_have_selected_value '1'
+        a_developer.should_have_selected_value '1'
     }
 }
 
@@ -71,9 +71,9 @@ scenario "Select entry in dropdown list using steps", {
     given "we are on the Thucydides demo site again", {
     }
     when "the user fills in the form", {
-        demo_site.enter_values('Label 3', true)
+        a_developer.enter_values('Label 3', true)
     }
     then "the chosen options should be displayed", {
-        demo_site.should_have_selected_value '3'
+        a_developer.should_have_selected_value '3'
     }
 }

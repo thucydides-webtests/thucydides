@@ -11,6 +11,7 @@ import net.thucydides.easyb.samples.SampleSteps
 import org.junit.Before
 import org.junit.Test
 import org.openqa.selenium.WebDriver
+import net.thucydides.core.model.TestTag
 
 public class WhenUsingTheThucydidesMixin {
 
@@ -63,8 +64,6 @@ public class WhenUsingTheThucydidesMixin {
     @Test
     public void declared_step_libraries_should_be_available_in_the_story_context() {
 
-        plugin.beforeStory(binding);
-
         def story = new Object()
         story.thucydides.uses_steps_from SampleSteps
 
@@ -77,9 +76,35 @@ public class WhenUsingTheThucydidesMixin {
     }
 
     @Test
-    public void declared_step_libraries_should_be_available_in_the_story_context_using_a_convention_based_name() {
+    public void declared_step_libraries_with_custom_names_should_be_available_in_the_story_context() {
+
+        def story = new Object()
+        story.thucydides.uses_steps_from SampleSteps, "mysteps"
 
         plugin.beforeStory(binding);
+        plugin.beforeScenario(binding);
+
+        def stepLibrary = binding.getProperty("mysteps")
+
+        assert SampleSteps.isAssignableFrom(stepLibrary.class)
+    }
+
+    @Test
+    public void declared_step_libraries_with_custom_names_and_using_the_using_steps_named_notation_should_be_available_in_the_story_context() {
+
+        def story = new Object()
+        story.thucydides.uses_steps_named("mysteps").from SampleSteps
+
+        plugin.beforeStory(binding);
+        plugin.beforeScenario(binding);
+
+        def stepLibrary = binding.getProperty("mysteps")
+
+        assert SampleSteps.isAssignableFrom(stepLibrary.class)
+    }
+
+    @Test
+    public void declared_step_libraries_should_be_available_in_the_story_context_using_a_convention_based_name() {
 
         def story = new Object()
         story.thucydides.uses_steps_from MoreSampleSteps
@@ -94,8 +119,6 @@ public class WhenUsingTheThucydidesMixin {
 
     @Test
     public void a_story_can_have_several_step_libraries() {
-
-        plugin.beforeStory(binding);
 
         def story = new Object()
         story.thucydides.uses_steps_from SampleSteps
@@ -113,8 +136,6 @@ public class WhenUsingTheThucydidesMixin {
 
     @Test
     public void step_libraries_should_be_initialized_with_the_pages_object() {
-
-        plugin.beforeStory(binding);
 
         def story = new Object()
         story.thucydides.uses_steps_from SampleSteps
@@ -150,5 +171,65 @@ public class WhenUsingTheThucydidesMixin {
         assert plugin.configuration.defaultBaseUrl == "http://www.google.com"
     }
 
+    @Test
+    public void "feature tags can be added dynamically"() {
+
+        plugin.beforeStory(binding);
+
+        def story = new Object()
+        story.thucydides.tests.behavior "my behavior"
+
+        assert story.thucydides.tags.contains( TestTag.withName("my behavior").andType("behavior") )
+    }
+
+    @Test
+    public void "multiple feature tags can be added dynamically"() {
+
+        plugin.beforeStory(binding);
+
+        def story = new Object()
+        story.thucydides.tests.behavior "my behavior", "my other behavior"
+
+        assert story.thucydides.tags.contains( TestTag.withName("my behavior").andType("behavior") )
+        assert story.thucydides.tags.contains( TestTag.withName("my other behavior").andType("behavior") )
+    }
+
+    @Test
+    public void "multiple feature tags can be added dynamically in plural form"() {
+
+        plugin.beforeStory(binding);
+
+        def story = new Object()
+        story.thucydides.tests.behaviors "my behavior", "my other behavior"
+
+        assert story.thucydides.tags.contains( TestTag.withName("my behavior").andType("behavior") )
+        assert story.thucydides.tags.contains( TestTag.withName("my other behavior").andType("behavior") )
+    }
+
+
+    @Test
+    public void "issues can be added dynamically"() {
+
+        plugin.beforeStory(binding);
+
+        def story = new Object()
+        story.thucydides.tests.issue "123"
+
+        assert story.thucydides.scenarioIssues.contains("123")
+
+    }
+
+    @Test
+    public void "multiple issues can be added dynamically"() {
+
+        plugin.beforeStory(binding);
+
+        def story = new Object()
+        story.thucydides.tests.issues "123", "456"
+
+        assert story.thucydides.scenarioIssues.contains("123")
+        assert story.thucydides.scenarioIssues.contains("456")
+
+    }
 
 }

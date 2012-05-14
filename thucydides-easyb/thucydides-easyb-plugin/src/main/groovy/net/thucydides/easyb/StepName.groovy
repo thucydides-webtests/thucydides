@@ -13,7 +13,7 @@ final class StepName {
     private static final String STEPS_SUFFIX = "Steps"
     private static final int STEPS_SUFFIX_LENGTH = STEPS_SUFFIX.size()
 
-    public static String nameOf(final Class<ScenarioSteps> stepLibrary) {
+    public static String defaultNameOf(final Class<ScenarioSteps> stepLibrary) {
         def normalizedName = stripStepSuffix(stepLibrary.getSimpleName());
         def humanizedName = NameConverter.humanize(normalizedName).toLowerCase()
         return NameConverter.underscore(humanizedName)

@@ -21,7 +21,7 @@ import org.easyb.plugin.BasePlugin
 import org.openqa.selenium.WebDriver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import static net.thucydides.easyb.StepName.nameOf
+import static net.thucydides.easyb.StepName.defaultNameOf
 import net.thucydides.core.batches.BatchManager
 import static net.thucydides.core.Thucydides.initializeTestSession
 import net.thucydides.core.steps.Listeners
@@ -78,7 +78,6 @@ public class ThucydidesPlugin extends BasePlugin {
         pages = newPagesInstanceIn(binding)
         initializeStepFactoryAndListeners()
         initializeReportService()
-
         pluginInitialized = true;
     }
 
@@ -118,6 +117,7 @@ public class ThucydidesPlugin extends BasePlugin {
         binding.setVariable("pages", pages)
         binding.setVariable("driver", getWebDriver());
         binding.setVariable("thucydides", configuration);
+
 
         initializeStepsLibraries(binding);
 
@@ -316,7 +316,9 @@ public class ThucydidesPlugin extends BasePlugin {
 
         configuration.registeredSteps.each { stepLibraryClass ->
             def stepLibrary = proxyFor(stepLibraryClass)
-            binding.setVariable(nameOf(stepLibraryClass), stepLibrary)
+            def customStepLibraryName = configuration.stepLibraryNameFor(stepLibraryClass.name)
+            String stepLibraryName = (customStepLibraryName) ? customStepLibraryName : defaultNameOf(stepLibraryClass)
+            binding.setVariable(stepLibraryName, stepLibrary)
         }
     }
 
