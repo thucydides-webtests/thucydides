@@ -9,6 +9,7 @@ import org.h2.tools.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.ServerSocket;
 import java.sql.SQLException;
 
 public class LocalH2ServerDatabase implements LocalDatabase {
@@ -18,6 +19,8 @@ public class LocalH2ServerDatabase implements LocalDatabase {
     Server server;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalH2ServerDatabase.class);
+    private int port;
+
     @Inject
     public LocalH2ServerDatabase(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
@@ -25,10 +28,21 @@ public class LocalH2ServerDatabase implements LocalDatabase {
 
     public void start() {
         try {
+            findFreePort();
             LOGGER.info("STARTING H2 DATABASE AT " + getUrl());
-            server = Server.createTcpServer( new String[] { "-tcpAllowOthers" }).start();
+            server = Server.createTcpServer(new String[]{"-tcpAllowOthers", "-tcpPort", Integer.toString(getPort())}).start();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void findFreePort() {
+        try {
+            ServerSocket socket = new ServerSocket(0);
+            port = socket.getLocalPort();
+            socket.close();
+        } catch (Exception e) {
+            port = -1;
         }
     }
 
@@ -43,7 +57,7 @@ public class LocalH2ServerDatabase implements LocalDatabase {
     }
 
     public String getUrl() {
-        return "jdbc:h2:tcp://localhost/" + getDatabasePath();
+        return "jdbc:h2:tcp://localhost" + ":" + getPort() + "/" + getDatabasePath();
     }
 
     public String getDriver() {
@@ -71,5 +85,9 @@ public class LocalH2ServerDatabase implements LocalDatabase {
         String defaultThucydidesDirectory = environmentVariables.getProperty("user.home") + "/.thucydides";
         String thucydidesHomeDirectory = ThucydidesSystemProperty.THUCYDIDES_HOME.from(environmentVariables, defaultThucydidesDirectory);
         return thucydidesHomeDirectory + "/" + getDatabaseName();
+    }
+
+    public int getPort() {
+        return port;
     }
 }

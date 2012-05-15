@@ -86,11 +86,6 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
         return tableNames;
     }
 
-    public String getDefaultLocalDatabaseName() {
-        String projectKey = ThucydidesSystemProperty.PROJECT_KEY.from(environmentVariables, "default");
-        return StringUtils.join(ImmutableList.of("stats", projectKey), "-");
-    }
-
     public boolean isUsingLocalDatabase() {
         return (environmentVariables.getProperty("thucydides.statistics.url") == null);
     }
