@@ -409,7 +409,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     protected void injectScenarioStepsInto(final Object testCase) {
         StepAnnotations.injectScenarioStepsInto(testCase, stepFactory);
-
     }
 
     /**

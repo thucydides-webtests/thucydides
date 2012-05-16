@@ -5,7 +5,9 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +34,9 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
             FileUtils.copyFileToDirectory(screenshot, outputDirectory);
         }
     }
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void should_generate_an_HTML_report_for_an_acceptance_test_run() throws Exception {
@@ -84,6 +89,20 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         reporter.generateReportFor(testOutcome);
         
         File cssDir = new File(outputDirectory, "css");
+        File cssStylesheet = new File(cssDir, "core.css");
+        assertThat(cssStylesheet.exists(), is(true));
+    }
+
+    @Test
+    public void css_stylesheets_should_be_copied_to_a_non_standard_output_directory() throws Exception {
+        File differentOutputDirectory = new File(temporaryFolder.newFolder(),"build/thucydides");
+        reporter.setOutputDirectory(differentOutputDirectory);
+
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+        reporter.generateReportFor(testOutcome);
+
+        File cssDir = new File(differentOutputDirectory, "css");
         File cssStylesheet = new File(cssDir, "core.css");
         assertThat(cssStylesheet.exists(), is(true));
     }

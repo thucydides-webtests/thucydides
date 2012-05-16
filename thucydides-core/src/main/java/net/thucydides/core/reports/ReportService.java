@@ -22,7 +22,7 @@ public class ReportService {
     private File outputDirectory;
 
     /**
-     * Who needs to be notified when a test is done.
+     * These classes generate the reports from the test results.
      */
     private List<AcceptanceTestReporter> subscribedReporters;
 
