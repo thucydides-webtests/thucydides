@@ -1,5 +1,6 @@
 package net.thucydides.core.model;
 
+import com.google.common.base.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
@@ -9,12 +10,12 @@ import java.util.regex.Pattern;
  * Converts a full WebDriver message into a shorter, more web-friendly format.
  */
 public class ErrorMessageFormatter {
-    private final String originalMessage;
+    private final Optional<String> originalMessage;
 
-    Pattern LEADING_EXCEPTIONS = Pattern.compile("^<?[\\w\\.]*:\\s");
+    Pattern LEADING_EXCEPTIONS = Pattern.compile("^<?[\\w\\.]*:");
 
     public ErrorMessageFormatter(String originalMessage) {
-        this.originalMessage = originalMessage;
+        this.originalMessage = Optional.fromNullable(originalMessage);
     }
 
     /**
@@ -24,8 +25,22 @@ public class ErrorMessageFormatter {
      * @return
      */
     public String getShortErrorMessage() {
-        String lines[] = originalMessage.split("\\r?\\n");
-        return StringUtils.trimToEmpty(replaceDoubleQuotes((removeLeadingExceptionFrom(lines[0]))));
+        return (originalMessage.isPresent()) ? extractFirstLine() : "";
+    }
+
+    private String extractFirstLine() {
+        String lines[] = originalMessage.get().split("\\r?\\n");
+        return StringUtils.trimToEmpty(replaceDoubleQuotesIn(firstNonExceptionLineIn(lines)));
+    }
+
+    private String firstNonExceptionLineIn(String lines[]) {
+        for(String candidateLine : lines) {
+            String lineWithoutExceptions = removeLeadingExceptionFrom(candidateLine);
+            if (StringUtils.isNotEmpty(lineWithoutExceptions)) {
+                return lineWithoutExceptions;
+            }
+        }
+        return "";
     }
 
     private String removeLeadingExceptionFrom(final String message) {
@@ -37,7 +52,7 @@ public class ErrorMessageFormatter {
         }
     }
 
-    private String replaceDoubleQuotes(final String message) {
+    private String replaceDoubleQuotesIn(final String message) {
         return message.replaceAll("\"","'");
     }
 }
