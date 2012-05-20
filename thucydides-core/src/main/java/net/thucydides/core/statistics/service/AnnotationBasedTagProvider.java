@@ -6,6 +6,7 @@ import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Set;
 import static ch.lambdaj.Lambda.convert;
 
 public class AnnotationBasedTagProvider implements TagProvider {
-    
+
     public AnnotationBasedTagProvider() {
     }
 
@@ -33,7 +34,11 @@ public class AnnotationBasedTagProvider implements TagProvider {
             @Override
             public TestTag convert(Object tag) {
                 WithTag withTag = (WithTag) tag;
-                return TestTag.withName(withTag.name()).andType(withTag.type());
+                if (StringUtils.isEmpty(withTag.value())) {
+                    return TestTag.withName(withTag.name()).andType(withTag.type());
+                } else {
+                    return TestTag.withValue(withTag.value());
+                }
             }
         };
     }

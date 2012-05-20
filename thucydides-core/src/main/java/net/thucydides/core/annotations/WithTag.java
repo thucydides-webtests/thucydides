@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface WithTag {
-    String name();
+    String value() default "";
+    String name() default "";
     String type() default "feature";
 }

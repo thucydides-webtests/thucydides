@@ -147,6 +147,24 @@ public class WhenFindingTagsForATestOutcome {
     }
 
 
+    class SomeTestCaseWithAShortenedTagOnMethodAndClass {
+        @WithTag("pillar:Car sales")
+        public void some_test_method() {}
+    }
+
+    @Test
+    public void tags_can_use_a_shorthand_notation() {
+
+        TestOutcome testOutcome = TestOutcome.forTest("some_test_method", SomeTestCaseWithAShortenedTagOnMethodAndClass.class);
+
+        AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
+
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
+        TestTag tag = (TestTag) tags.toArray()[0];
+        assertThat(tag.getName(), is("Car sales"));
+        assertThat(tag.getType(), is("pillar"));
+    }
+
     @WithTags(
             {
                     @WithTag(name="Car sales", type="pillar"),

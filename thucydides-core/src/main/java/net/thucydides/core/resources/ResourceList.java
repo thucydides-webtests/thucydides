@@ -1,7 +1,12 @@
 package net.thucydides.core.resources;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,7 +15,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 /**
  * Utility class to read report resources from the classpath. This way, report
  * resources such as images and stylesheets can be shipped in a separate JAR
@@ -20,6 +24,8 @@ public class ResourceList {
 
     private static final List<String> UNREQUIRED_FILES = Arrays.asList("pom.xml");
     private static final String PATH_SEPARATOR = System.getProperty("path.separator");
+
+    private final Logger LOGGER = LoggerFactory.getLogger(ResourceList.class);
 
     private final Pattern pattern;
 
@@ -40,6 +46,19 @@ public class ResourceList {
      */
     public Collection<String> list() {
         final ArrayList<String> resources = new ArrayList<String>();
+        URLClassLoader classLoader = (URLClassLoader)  getClass().getClassLoader();
+        resources.addAll(systemPropertiesClasspathElements());
+
+        URL[] classPathElements = classLoader.getURLs();
+        for(URL classPathElement : classPathElements) {
+            resources.addAll(getResources(classPathElement.getFile(), pattern));
+        }
+        return resources;
+    }
+
+
+    public Collection<String> systemPropertiesClasspathElements() {
+        final ArrayList<String> resources = new ArrayList<String>();
         final String classPath = System.getProperty("java.class.path", ".");
         final String[] classPathElements = classPath.split(PATH_SEPARATOR);
         for (final String element : classPathElements) {
@@ -47,6 +66,7 @@ public class ResourceList {
         }
         return resources;
     }
+
 
     private Collection<String> getResources(final String element, final Pattern pattern) {
         final ArrayList<String> resources = new ArrayList<String>();
