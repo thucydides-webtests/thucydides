@@ -26,11 +26,8 @@ import net.thucydides.core.statistics.TestStatisticsProvider;
 import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.database.LocalDatabase;
-import net.thucydides.core.statistics.database.LocalH2Database;
 import net.thucydides.core.statistics.database.LocalH2ServerDatabase;
-import net.thucydides.core.statistics.database.LocalHSQLDBDatabase;
 import net.thucydides.core.statistics.service.ClasspathTagProviderService;
-import net.thucydides.core.statistics.service.TagProvider;
 import net.thucydides.core.statistics.service.TagProviderService;
 import net.thucydides.core.steps.ConsoleLoggingListener;
 import net.thucydides.core.steps.StepListener;
@@ -48,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.io.File;
 import java.sql.SQLException;
 
 public class ThucydidesModule extends AbstractModule {
@@ -85,10 +81,9 @@ public class ThucydidesModule extends AbstractModule {
     @Singleton
     @Inject
     public LocalDatabase provideLocalDatabase(EnvironmentVariables environmentVariables) {
-        //return new LocalH2Database(environmentVariables);
         return new LocalH2ServerDatabase(environmentVariables);
-        //return new LocalHSQLDBDatabase(environmentVariables);
     }
+
 
     @Provides
     @Singleton

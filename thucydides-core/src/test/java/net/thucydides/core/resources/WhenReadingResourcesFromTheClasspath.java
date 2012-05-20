@@ -1,6 +1,7 @@
 package net.thucydides.core.resources;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -44,7 +45,7 @@ public class WhenReadingResourcesFromTheClasspath {
     public void should_exclude_trailing_pom_files() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
         Collection<String> resources = ResourceList.forResources(pattern).list();
-        //assertThat(resources, not(hasItem(endsWith("pom.xml"))));
+        assertThat(resources, not(hasItem(endsWith("pom.xml"))));
     }
     @Test
     public void should_return_a_list_of_resources_in_a_given_package() {
@@ -57,7 +58,7 @@ public class WhenReadingResourcesFromTheClasspath {
     public void should_return_a_list_of_resources_in_a_given_package_containing_matching_resources() {
         Pattern pattern = Pattern.compile(".*[\\\\/]resourcelist[\\\\/].*");
         Collection<String> resources = ResourceList.forResources(pattern).list();
-        //assertThat(resources, hasItems(containsString("resourcelist"),endsWith("sample.css"),endsWith("sample.xsl")));
+        assertThat(resources, hasItems(containsString("resourcelist"),endsWith("sample.css"),endsWith("sample.xsl")));
     }
 
     @Test
@@ -153,6 +154,7 @@ public class WhenReadingResourcesFromTheClasspath {
     }
 
     @Test
+    @Ignore
     public void should_fail_to_get_output_stream_for_target_after_timeout() throws Exception {
 
         expectedException.expect(FileNotFoundException.class);
