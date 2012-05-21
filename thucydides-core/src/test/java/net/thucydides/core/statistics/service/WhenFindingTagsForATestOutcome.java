@@ -38,7 +38,7 @@ public class WhenFindingTagsForATestOutcome {
 
     @Test
     public void should_find_the_annotation_tag_provider_by_default() {
-        TagProviderService tagProviderService = new ClasspathTagProviderService(environmentVariables);
+        TagProviderService tagProviderService = new ClasspathTagProviderService();
         List<TagProvider> tagProviders = tagProviderService.getTagProviders();
 
         boolean containsAnnotationTagProvider = false;
@@ -54,7 +54,7 @@ public class WhenFindingTagsForATestOutcome {
     @Ignore
     public void should_find_a_custom_tag_provider_in_a_specified_package() {
         environmentVariables.setProperty("thucydides.ext.packages","some.other.place");
-        TagProviderService tagProviderService = new ClasspathTagProviderService(environmentVariables);
+        TagProviderService tagProviderService = new ClasspathTagProviderService();
         List<TagProvider> tagProviders = tagProviderService.getTagProviders();
 
         boolean containsAlternativeTagProvider = false;

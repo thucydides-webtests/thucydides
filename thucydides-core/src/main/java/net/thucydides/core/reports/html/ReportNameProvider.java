@@ -38,7 +38,7 @@ public class ReportNameProvider {
 
     private String prefixUsing(Optional<String> context) {
         if (context.isPresent()) {
-            return "context_" + NameConverter.underscore(context.get()) + "_";
+            return "context_" + reportNamer.getNormalizedTestNameFor(context.get()) + "_";
         } else {
             return "";
         }

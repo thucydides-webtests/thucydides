@@ -2,7 +2,11 @@ package net.thucydides.core.model;
 
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.NameConverter;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import static net.thucydides.core.util.NameConverter.withNoArguments;
 import static net.thucydides.core.util.NameConverter.withNoIssueNumbers;
@@ -79,7 +83,8 @@ public class ReportNamer {
 
     public String getNormalizedTestNameFor(String name) {
         String testNameWithUnderscores = NameConverter.underscore(name);
-        return appendSuffixTo(testNameWithUnderscores);
+        String nameWithSuffix = appendSuffixTo(testNameWithUnderscores);
+        return DigestUtils.md5Hex(nameWithSuffix);
     }
 
     private String appendSuffixTo(final String testNameWithUnderscores) {

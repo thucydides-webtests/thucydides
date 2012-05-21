@@ -129,43 +129,5 @@ public class WhenNamingTheReports {
 
         assertThat(reportName, is("a_user_story_should_do_this_qualifier.xml"));
     }
-
-
-    @Test
-    public void a_user_story_can_provide_its_own_html_report_name() {
-        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
-        
-        String reportName = story.getReportName(HTML);
-        
-        assertThat(reportName, is("a_user_story.html"));
-    }
-
-    @Test
-    public void a_user_story_can_provide_its_own_xml_report_name() {
-        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
-        
-        String reportName = story.getReportName(XML);
-        
-        assertThat(reportName, is("a_user_story.xml"));
-    }
-
-    @Test
-    public void a_user_story_can_provide_its_own_base_report_name() {
-        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
-        
-        String reportName = story.getReportName();
-        
-        assertThat(reportName, is("a_user_story"));
-    }
-
-    @Test
-    public void the_stories_class_can_provide_the_report_name_directly() {
-
-        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
-
-        String reportName = Stories.reportFor(story, ReportType.HTML);
-
-        assertThat(reportName, is("a_user_story.html"));
-    }
-
 }
+
