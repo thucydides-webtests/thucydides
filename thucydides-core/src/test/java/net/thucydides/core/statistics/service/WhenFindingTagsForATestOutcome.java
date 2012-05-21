@@ -1,6 +1,7 @@
 package net.thucydides.core.statistics.service;
 
 import net.thucydides.core.annotations.WithTag;
+import net.thucydides.core.annotations.WithTagValuesOf;
 import net.thucydides.core.annotations.WithTags;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
@@ -147,7 +148,7 @@ public class WhenFindingTagsForATestOutcome {
     }
 
 
-    class SomeTestCaseWithAShortenedTagOnMethodAndClass {
+    class SomeTestCaseWithAShortenedTagOnAMethod {
         @WithTag("pillar:Car sales")
         public void some_test_method() {}
     }
@@ -155,7 +156,7 @@ public class WhenFindingTagsForATestOutcome {
     @Test
     public void tags_can_use_a_shorthand_notation() {
 
-        TestOutcome testOutcome = TestOutcome.forTest("some_test_method", SomeTestCaseWithAShortenedTagOnMethodAndClass.class);
+        TestOutcome testOutcome = TestOutcome.forTest("some_test_method", SomeTestCaseWithAShortenedTagOnAMethod.class);
 
         AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
 
@@ -164,6 +165,31 @@ public class WhenFindingTagsForATestOutcome {
         assertThat(tag.getName(), is("Car sales"));
         assertThat(tag.getType(), is("pillar"));
     }
+
+    class SomeTestCaseWithSeveralShortenedaTagOnAMethod {
+        @WithTagValuesOf({"pillar: car sales", "A feature"})
+        public void some_test_method() {}
+    }
+
+    @Test
+    public void multiple_tags_can_use_a_shorthand_notation() {
+
+        TestOutcome testOutcome = TestOutcome.forTest("some_test_method", SomeTestCaseWithSeveralShortenedaTagOnAMethod.class);
+
+        AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
+
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
+        assertThat(tags.size(), is(2));
+        TestTag tag1 = (TestTag) tags.toArray()[0];
+        assertThat(tag1.getName(), is("A feature"));
+        assertThat(tag1.getType(), is("feature"));
+
+        TestTag tag2 = (TestTag) tags.toArray()[1];
+        assertThat(tag2.getName(), is("car sales"));
+        assertThat(tag2.getType(), is("pillar"));
+
+    }
+
 
     @WithTags(
             {

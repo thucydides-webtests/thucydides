@@ -23,23 +23,8 @@ public class AnnotationBasedTagProvider implements TagProvider {
         if (testOutcome.getTestCase() == null) {
             return Collections.emptySet();
         }
-        List<WithTag> tags = TestAnnotations.forClass(testOutcome.getTestCase()).getTagsForMethod(testOutcome.getMethodName());
+        List<TestTag> tags = TestAnnotations.forClass(testOutcome.getTestCase()).getTagsForMethod(testOutcome.getMethodName());
 
-        return Sets.newHashSet(convert(tags, toTestTags()));
-    }
-
-    private Converter<Object, TestTag> toTestTags() {
-        return new Converter<Object, TestTag>() {
-
-            @Override
-            public TestTag convert(Object tag) {
-                WithTag withTag = (WithTag) tag;
-                if (StringUtils.isEmpty(withTag.value())) {
-                    return TestTag.withName(withTag.name()).andType(withTag.type());
-                } else {
-                    return TestTag.withValue(withTag.value());
-                }
-            }
-        };
+        return Sets.newHashSet(tags);
     }
 }

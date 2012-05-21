@@ -29,11 +29,11 @@ public class TestTag {
     public static TestTag withValue(String value) {
         if (value.contains(":")) {
             int separatorPosition = value.indexOf(":");
-            String type = value.substring(0, separatorPosition);
-            String name = value.substring(separatorPosition + 1);
+            String type = value.substring(0, separatorPosition).trim();
+            String name = value.substring(separatorPosition + 1).trim();
             return TestTag.withName(name).andType(type);
         } else {
-            return TestTag.withName(value).andType("feature");
+            return TestTag.withName(value.trim()).andType("feature");
         }
     }
 
