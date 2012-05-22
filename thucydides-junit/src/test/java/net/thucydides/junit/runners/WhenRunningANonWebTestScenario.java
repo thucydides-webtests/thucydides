@@ -18,6 +18,7 @@ import net.thucydides.samples.SamplePassingNonWebScenarioWithEmptyTests;
 import net.thucydides.samples.SamplePassingNonWebScenarioWithIgnoredTests;
 import net.thucydides.samples.SamplePassingNonWebScenarioWithPendingTests;
 import net.thucydides.samples.SingleNonWebTestScenario;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -33,6 +34,7 @@ import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.List;
 
+import static net.thucydides.junit.util.FileFormating.md5;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
@@ -204,7 +206,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         RunNotifier notifier = mock(RunNotifier.class);
         runner.run(notifier);
 
-        verify(notifier,atLeast(1)).fireTestFailure((Failure) anyObject());
+        verify(notifier, atLeast(1)).fireTestFailure((Failure) anyObject());
     }
 
     @Test
@@ -330,14 +332,14 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         File outputDirectory = temporaryFolder.newFolder("output");
 
         ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingNonWebScenario.class,
-                                                               outputDirectory);
+                outputDirectory);
         runner.run(new RunNotifier());
 
         List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new XMLFileFilter()));
         assertThat(generatedXMLReports.size(), is(3));
-        assertThat(generatedXMLReports, hasItems("sample_passing_non_web_scenario_edge_case_1.xml",
-                                                 "sample_passing_non_web_scenario_edge_case_2.xml",
-                                                 "sample_passing_non_web_scenario_happy_day_scenario.xml"));
+        assertThat(generatedXMLReports, hasItems(md5("sample_passing_non_web_scenario_edge_case_1.xml"),
+                md5("sample_passing_non_web_scenario_edge_case_2.xml"),
+                md5("sample_passing_non_web_scenario_happy_day_scenario.xml")));
 
 
     }
@@ -348,14 +350,14 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         File outputDirectory = temporaryFolder.newFolder("output");
 
         ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingNonWebScenario.class,
-                                                               outputDirectory);
+                outputDirectory);
         runner.run(new RunNotifier());
 
         List<String> generatedHtmlReports = Arrays.asList(outputDirectory.list(new HTMLFileFilter()));
         assertThat(generatedHtmlReports.size(), is(3));
-        assertThat(generatedHtmlReports, hasItems("sample_passing_non_web_scenario_edge_case_1.html",
-                                                  "sample_passing_non_web_scenario_edge_case_2.html",
-                                                  "sample_passing_non_web_scenario_happy_day_scenario.html"));
+        assertThat(generatedHtmlReports, hasItems(md5("sample_passing_non_web_scenario_edge_case_1.html"),
+                md5("sample_passing_non_web_scenario_edge_case_2.html"),
+                md5("sample_passing_non_web_scenario_happy_day_scenario.html")));
     }
 
     private class XMLFileFilter implements FilenameFilter {

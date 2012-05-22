@@ -33,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
+import static net.thucydides.junit.util.FileFormating.md5;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
@@ -66,7 +67,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
     @Before
     public void createATestableDriverFactory() throws Exception {
-        
+
         MockitoAnnotations.initMocks(this);
 
         webdriverInstanceFactory = new WebdriverInstanceFactory() {
@@ -198,6 +199,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         assertThat(testOutcome3.getMethodName(), is("edge_case_2"));
         assertThat(testOutcome3.getTestSteps().size(), is(2));
     }
+
     @Test
     public void tests_marked_as_pending_should_be_pending() throws InitializationError {
 
@@ -345,11 +347,10 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         runner.run(new RunNotifier());
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
         TestOutcome testOutcome = executedScenarios.get(0);
-        
+
         assertThat(testOutcome.getResult(), is(TestResult.IGNORED));
         assertThat(testOutcome.getTestSteps().size(), is(0));
     }
-
 
 
     @Test
@@ -668,15 +669,15 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         File outputDirectory = temporaryFolder.newFolder("output");
 
         ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingScenario.class,
-                                                               webDriverFactory,
-                                                               outputDirectory);
+                webDriverFactory,
+                outputDirectory);
         runner.run(new RunNotifier());
 
         List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new XMLFileFilter()));
         assertThat(generatedXMLReports.size(), is(3));
-        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_edge_case_1.xml",
-                                                 "sample_passing_scenario_edge_case_2.xml",
-                                                 "sample_passing_scenario_happy_day_scenario.xml"));
+        assertThat(generatedXMLReports, hasItems(md5("sample_passing_scenario_edge_case_1.xml"),
+                md5("sample_passing_scenario_edge_case_2.xml"),
+                md5("sample_passing_scenario_happy_day_scenario.xml")));
 
 
     }
@@ -687,21 +688,21 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         File outputDirectory = temporaryFolder.newFolder("output");
 
         new TestableThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class,
-                                       webDriverFactory,
-                                       outputDirectory).run(new RunNotifier());
+                webDriverFactory,
+                outputDirectory).run(new RunNotifier());
 
         new TestableThucydidesRunner(SampleFailingScenarioUsingHtmlUnit.class,
-                                       webDriverFactory,
-                                       outputDirectory).run(new RunNotifier());
+                webDriverFactory,
+                outputDirectory).run(new RunNotifier());
 
         List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new XMLFileFilter()));
         assertThat(generatedXMLReports.size(), is(6));
-        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_using_html_unit_edge_case_1.xml",
-                                                 "sample_passing_scenario_using_html_unit_edge_case_2.xml",
-                                                 "sample_passing_scenario_using_html_unit_happy_day_scenario.xml",
-                                                 "sample_failing_scenario_using_html_unit_edge_case_1.xml",
-                                                 "sample_failing_scenario_using_html_unit_edge_case_2.xml",
-                                                 "sample_failing_scenario_using_html_unit_happy_day_scenario.xml"));
+        assertThat(generatedXMLReports, hasItems(md5("sample_passing_scenario_using_html_unit_edge_case_1.xml"),
+                md5("sample_passing_scenario_using_html_unit_edge_case_2.xml"),
+                md5("sample_passing_scenario_using_html_unit_happy_day_scenario.xml"),
+                md5("sample_failing_scenario_using_html_unit_edge_case_1.xml"),
+                md5("sample_failing_scenario_using_html_unit_edge_case_2.xml"),
+                md5("sample_failing_scenario_using_html_unit_happy_day_scenario.xml")));
     }
 
     @Test
@@ -710,21 +711,21 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         File outputDirectory = temporaryFolder.newFolder("output");
 
         new TestableThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class,
-                                       webDriverFactory,
-                                       outputDirectory).run(new RunNotifier());
+                webDriverFactory,
+                outputDirectory).run(new RunNotifier());
 
         new TestableThucydidesRunner(AnotherSamplePassingScenario.class,
-                                       webDriverFactory,
-                                       outputDirectory).run(new RunNotifier());
+                webDriverFactory,
+                outputDirectory).run(new RunNotifier());
 
         List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new XMLFileFilter()));
         assertThat(generatedXMLReports.size(), is(6));
-        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_using_html_unit_edge_case_1.xml",
-                                                 "sample_passing_scenario_using_html_unit_edge_case_2.xml",
-                                                 "sample_passing_scenario_using_html_unit_happy_day_scenario.xml",
-                                                 "another_sample_passing_scenario_edge_case_1.xml",
-                                                 "another_sample_passing_scenario_edge_case_2.xml",
-                                                 "another_sample_passing_scenario_happy_day_scenario.xml"));
+        assertThat(generatedXMLReports, hasItems(md5("sample_passing_scenario_using_html_unit_edge_case_1.xml"),
+                md5("sample_passing_scenario_using_html_unit_edge_case_2.xml"),
+                md5("sample_passing_scenario_using_html_unit_happy_day_scenario.xml"),
+                md5("another_sample_passing_scenario_edge_case_1.xml"),
+                md5("another_sample_passing_scenario_edge_case_2.xml"),
+                md5("another_sample_passing_scenario_happy_day_scenario.xml")));
     }
 
     @Test
@@ -733,15 +734,15 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         File outputDirectory = temporaryFolder.newFolder("output");
 
         ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class,
-                                                               webDriverFactory,
-                                                               outputDirectory);
+                webDriverFactory,
+                outputDirectory);
         runner.run(new RunNotifier());
 
         List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new HTMLFileFilter()));
         assertThat(generatedXMLReports.size(), is(3));
-        assertThat(generatedXMLReports, hasItems("sample_passing_scenario_using_html_unit_edge_case_1.html",
-                                                 "sample_passing_scenario_using_html_unit_edge_case_2.html",
-                                                 "sample_passing_scenario_using_html_unit_happy_day_scenario.html"));
+        assertThat(generatedXMLReports, hasItems(md5("sample_passing_scenario_using_html_unit_edge_case_1.html"),
+                md5("sample_passing_scenario_using_html_unit_edge_case_2.html"),
+                md5("sample_passing_scenario_using_html_unit_happy_day_scenario.html")));
 
 
     }

@@ -3,6 +3,7 @@ package net.thucydides.core.reports.integration;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -57,7 +58,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         File htmlReport = reporter.generateReportFor(testOutcome);
 
-        assertThat(htmlReport.getName(), is("a_simple_test_case.html"));
+        assertThat(htmlReport.getName(), is(DigestUtils.md5Hex("a_simple_test_case") + ".html"));
     }
 
     @Test
@@ -68,7 +69,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         File htmlReport = reporter.generateReportFor(testOutcome);
 
-        assertThat(htmlReport.getName(), is("a_simple_test_case.html"));
+        assertThat(htmlReport.getName(), is(DigestUtils.md5Hex("a_simple_test_case") + ".html"));
     }
 
     @Test
@@ -79,7 +80,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         File htmlReport = reporter.generateReportFor(testOutcome);
 
-        assertThat(htmlReport.getName(), is("a_simple_test_case.html"));
+        assertThat(htmlReport.getName(), is(DigestUtils.md5Hex("a_simple_test_case") + ".html"));
     }
 
     @Test
@@ -115,7 +116,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         reporter.generateReportFor(testOutcome);
         
-        File report = new File(outputDirectory,"a_simple_test_case.html");
+        File report = new File(outputDirectory,DigestUtils.md5Hex("a_simple_test_case") + ".html");
         File cssDir = new File(outputDirectory, "css");
         File cssStylesheet = new File(cssDir, "core.css");
         assertThat(cssStylesheet.exists(), is(true));
@@ -133,7 +134,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         testOutcome.recordStep(step1);
 
         File xmlReport = reporter.generateReportFor(testOutcome);
-        assertThat(xmlReport.getName(), is("a_user_story_should_do_this.html"));
+        assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_user_story_should_do_this") + ".html"));
     }
 
     @Test
@@ -148,7 +149,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         reporter.generateReportFor(testOutcome);
 
-        File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_screenshots.html");
+        File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_should_do_this") + "_screenshots.html");
         assertThat(screenshotReport.exists(), is(true));
 
     }
@@ -163,7 +164,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         reporter.generateReportFor(testOutcome);
 
-        File screenshotReport = new File(outputDirectory, "a_user_story_search_for_cats_screenshots.html");
+        File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_search_for_cats") + "_screenshots.html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
         assertThat(reportContents, allOf(containsString("src=\"scaled_google_page_1.png\""),
                                         containsString("src=\"scaled_google_page_2.png\""),
@@ -180,7 +181,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         reporter.generateReportFor(testOutcome);
 
-        File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_screenshots.html");
+        File screenshotReport = new File(outputDirectory,  DigestUtils.md5Hex("a_user_story_should_do_this") + "_screenshots.html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
         assertThat(reportContents, allOf(containsString("title=\"Search cats on Google\""),
                 containsString("title=\"View the results\""),
@@ -197,7 +198,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         reporter.generateReportFor(testOutcome);
 
-        File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_screenshots.html");
+        File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_should_do_this") + "_screenshots.html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
         assertThat(reportContents, containsString("Should do this"));
     }
@@ -214,7 +215,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         reporter.generateReportFor(testOutcome);
 
-        File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_screenshots.html");
+        File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_should_do_this") + "_screenshots.html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
         assertThat(reportContents, containsString("step 1"));
 
@@ -233,9 +234,10 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         reporter.generateReportFor(testOutcome);
 
-        File testReport = new File(outputDirectory, "a_user_story_should_do_this.html");
+        File testReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_should_do_this") + ".html");
         String reportContents = FileUtils.readFileToString(testReport);
-        assertThat(reportContents, containsString("<a href=\"a_user_story_should_do_this_screenshots.html#screenshots?screenshot=0\">"));
+        assertThat(reportContents, containsString("<a href=\"" + DigestUtils.md5Hex("a_user_story_should_do_this")
+                                                  + "_screenshots.html#screenshots?screenshot=0\">"));
     }
 
 
@@ -252,7 +254,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         reporter.setQualifier("qualifier");
 
         File xmlReport = reporter.generateReportFor(testOutcome);
-        assertThat(xmlReport.getName(), is("a_user_story_should_do_this_qualifier.html"));
+        assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_user_story_should_do_this_qualifier") + ".html"));
 
     }
 
@@ -269,7 +271,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         reporter.setQualifier("a b c");
 
         File xmlReport = reporter.generateReportFor(testOutcome);
-        assertThat(xmlReport.getName(), is("a_user_story_should_do_this_a_b_c.html"));
+        assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_user_story_should_do_this_a_b_c") + ".html"));
 
     }
 
@@ -376,21 +378,5 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         reporter.setOutputDirectory(new File("target/thucyidides"));
         reporter.generateReportFor(testOutcome);
     }
-
-    @Test
-    public void should_display_the_number_of_()  throws Exception {
-        TestOutcome testOutcome = TestOutcome.forTest("search_for_cats", SomeTestScenario.class);
-
-        recordStepWithScreenshot(testOutcome, "Search cats on Google", "google_page_1.png");
-        recordStepWithScreenshot(testOutcome, "View the results", "google_page_2.png");
-        recordStepWithScreenshot(testOutcome, "Display a resulting page", "google_page_3.png");
-
-        reporter.generateReportFor(testOutcome);
-
-        File screenshotReport = new File(outputDirectory, "a_user_story_search_for_cats_screenshots.html");
-        String reportContents = FileUtils.readFileToString(screenshotReport);
-        assertThat(reportContents, is(notNullValue()));
-    }
-
 
 }

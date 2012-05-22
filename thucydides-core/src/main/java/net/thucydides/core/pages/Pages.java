@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -71,10 +73,28 @@ public class Pages implements Serializable {
      * Opens a browser on the application home page, as defined by the base URL.
      */
     public void start() {
-        getDriver().get(getStartingUrl());
+        String startingUrl = getStartingUrl();
+        if (!currentUrlIs(startingUrl)) {
+            getDriver().get(startingUrl);
+        }
+    }
+
+    private boolean currentUrlIs(String startingUrl) {
+        String currentUrl = getDriver().getCurrentUrl();
+        if ((currentUrl != null) && (startingUrl != null)) {
+            try {
+                return new URL(currentUrl).equals(new URL(startingUrl));
+            } catch (MalformedURLException e) {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     PageObject currentPage = null;
+
+    PagesEventListener eventListener = null;
 
     public <T extends PageObject> T getAt(final Class<T> pageObjectClass) {
         return currentPageAt(pageObjectClass);
@@ -209,11 +229,14 @@ public class Pages implements Serializable {
     }
 
     public void notifyWhenDriverOpens() {
-        PagesEventListener eventListener = new PagesEventListener(this);
+        if (eventListener == null) {
+            eventListener = new PagesEventListener(this);
+            getProxyFactory().registerListener(eventListener);
+        }
+
         if ((getDriver() != null) && !usingProxiedWebDriver()) {
             start();
         }
-        getProxyFactory().registerListener(eventListener);
     }
 
     private boolean usingProxiedWebDriver() {

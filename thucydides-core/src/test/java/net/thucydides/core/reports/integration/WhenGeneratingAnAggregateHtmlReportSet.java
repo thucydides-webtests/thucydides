@@ -4,6 +4,7 @@ import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.model.ReportType;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import net.thucydides.core.reports.html.ReportProperties;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -68,47 +69,43 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     }
 
     @Test
-    @Ignore
     public void should_generate_overall_passed_failed_and_pending_reports() throws Exception {
-        String successSuffix = ReportNamer.forReportType(ReportType.HTML).getNormalizedTestNameFor("success");
-        String pendingSuffix = ReportNamer.forReportType(ReportType.HTML).getNormalizedTestNameFor("pending");
+        assertThat(new File(outputDirectory, md5("result_success") + ".html"), exists());
+        assertThat(new File(outputDirectory, md5("result_pending") + ".html"), exists());
+    }
 
-        assertThat(new File(outputDirectory,"result_" + successSuffix + ".html"), exists());
-        assertThat(new File(outputDirectory,"result_" + pendingSuffix + ".html"), exists());
+    private String md5(String value) {
+        return DigestUtils.md5Hex(value);
     }
 
     @Test
-    @Ignore
     public void should_generate_overall_passed_failed_and_pending_reports_for_each_tag() throws Exception {
-        assertThat(new File(outputDirectory,"context_a_feature_result_success.html"), exists());
-        assertThat(new File(outputDirectory,"context_a_feature_result_pending.html"), exists());
-        assertThat(new File(outputDirectory,"context_a_feature_result_pending.html"), exists());
+        assertThat(new File(outputDirectory,md5("context_a_feature_result_success") + ".html"), exists());
+        assertThat(new File(outputDirectory,md5("context_a_feature_result_pending") + ".html"), exists());
+        assertThat(new File(outputDirectory,md5("context_a_feature_result_pending") + ".html"), exists());
     }
 
     @Test
-    @Ignore
     public void should_generate_an_aggregate_report_for_each_tag() throws Exception {
-        assertThat(new File(outputDirectory,"tag_a_feature.html"), exists());
-        assertThat(new File(outputDirectory,"tag_a_story.html"), exists());
-        assertThat(new File(outputDirectory,"tag_another_story.html"), exists());
-        assertThat(new File(outputDirectory,"tag_another_different_story.html"), exists());
-        assertThat(new File(outputDirectory,"tag_an_epic.html"), exists());
+        assertThat(new File(outputDirectory, md5("tag_a_feature") + ".html"), exists());
+        assertThat(new File(outputDirectory, md5("tag_a_story") + ".html"), exists());
+        assertThat(new File(outputDirectory, md5("tag_another_story") + ".html"), exists());
+        assertThat(new File(outputDirectory, md5("tag_another_different_story") + ".html"), exists());
+        assertThat(new File(outputDirectory, md5("tag_an_epic") + ".html"), exists());
     }
 
     @Test
-    @Ignore
     public void should_generate_an_aggregate_report_for_tags_in_each_tag_type() throws Exception {
-        assertThat(new File(outputDirectory,"context_a_feature_tag_a_story.html"), exists());
-        assertThat(new File(outputDirectory,"context_a_feature_tag_another_story.html"), exists());
-        assertThat(new File(outputDirectory,"context_an_epic_tag_another_different_story.html"), exists());
+        assertThat(new File(outputDirectory,md5("context_a_feature_tag_a_story") + ".html"), exists());
+        assertThat(new File(outputDirectory,md5("context_a_feature_tag_another_story") + ".html"), exists());
+        assertThat(new File(outputDirectory,md5("context_an_epic_tag_another_different_story") + ".html"), exists());
     }
 
     @Test
-    @Ignore
     public void should_generate_a_summary_report_for_each_tag_type() throws Exception {
-        assertThat(new File(outputDirectory,"tagtype_feature.html"), exists());
-        assertThat(new File(outputDirectory,"tagtype_story.html"), exists());
-        assertThat(new File(outputDirectory,"tagtype_epic.html"), exists());
+        assertThat(new File(outputDirectory,md5("tagtype_feature") +".html"), exists());
+        assertThat(new File(outputDirectory,md5("tagtype_story") + ".html"), exists());
+        assertThat(new File(outputDirectory,md5("tagtype_epic") + ".html"), exists());
     }
 
     @Test
@@ -138,82 +135,13 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     }
 
     @Test
-    @Ignore
-    public void aggregate_dashboard_should_contain_links_to_associated_detailed_tag_type_reports() throws Exception {
-
-        File report = new File(outputDirectory,"index.html");
-        driver.get(urlFor(report));
-
-        List<WebElement> tagTypes = driver.findElements(By.xpath("//div[@class='tagTitle']//a"));
-        List<String> tagTypeLinks = extract(tagTypes, on(WebElement.class).getAttribute("href"));
-        assertThat(tagTypeLinks, hasItems(endsWith("tag_a_feature.html"),
-                                        endsWith("tag_a_story.html"),
-                                        endsWith("tag_an_epic.html"),
-                                        endsWith("tag_another_story.html"),
-                                        endsWith("tag_another_different_story.html")));
-    }
-
-    @Test
-    @Ignore
-    public void aggregate_dashboard_should_contain_links_to_all_overview_tag_type_reports() throws Exception {
-
-        File report = new File(outputDirectory,"index.html");
-        driver.get(urlFor(report));
-
-        List<WebElement> tagTypes = driver.findElements(By.xpath("//div[@class='menu']//a"));
-        List<String> tagTypeLinks = extract(tagTypes, on(WebElement.class).getAttribute("href"));
-        assertThat(tagTypeLinks, hasItems(endsWith("tagtype_feature.html"),
-                endsWith("tagtype_story.html"),
-                endsWith("tagtype_epic.html")));
-    }
-
-    @Test
-    @Ignore
-    public void tagtype_overview_report_should_contain_links_to_all_other_overview_tag_type_reports() throws Exception {
-
-        File report = new File(outputDirectory,"tagtype_feature.html");
-        driver.get(urlFor(report));
-
-        List<WebElement> tagTypes = driver.findElements(By.xpath("//div[@class='menu']//a"));
-        List<String> tagTypeLinks = extract(tagTypes, on(WebElement.class).getAttribute("href"));
-        assertThat(tagTypeLinks, hasItems(endsWith("tagtype_feature.html"),
-                endsWith("tagtype_story.html"),
-                endsWith("tagtype_epic.html")));
-    }
-
-    @Test
-    @Ignore
-    public void story_report_should_contain_links_to_associated_result_reports() throws Exception {
-
-        File report = new File(outputDirectory,"tag_a_story.html");
-        driver.get(urlFor(report));
-
-        WebElement passedLink = driver.findElement(By.xpath("//a[.='passed']"));
-        String resultPage = passedLink.getAttribute("href");
-        assertThat(resultPage, endsWith("/context_a_story_result_success.html"));
-    }
-
-    @Test
-    @Ignore
     public void nested_test_result_report_should_not_contain_result_links() throws Exception {
 
-        File report = new File(outputDirectory,"context_a_feature_result_success.html");
+        File report = new File(outputDirectory,md5("context_a_feature_result_success") + ".html");
         driver.get(urlFor(report));
 
         List<WebElement> passedLinks = driver.findElements(By.xpath("//a[.='passed']"));
         assertThat(passedLinks.size(), is(0));
-    }
-
-    @Test
-    @Ignore
-    public void aggregate_report_should_contain_links_to_overall_result_reports() throws Exception {
-
-        File report = new File(outputDirectory,"index.html");
-        driver.get(urlFor(report));
-
-        WebElement passedLink = driver.findElement(By.xpath("//a[.='passed']"));
-        String resultPage = passedLink.getAttribute("href");
-        assertThat(resultPage, endsWith("/result_success.html"));
     }
 
     @Test

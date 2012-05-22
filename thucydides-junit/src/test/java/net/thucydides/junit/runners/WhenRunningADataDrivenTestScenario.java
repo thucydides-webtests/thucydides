@@ -22,6 +22,7 @@ import net.thucydides.samples.SampleDataDrivenScenario;
 import net.thucydides.samples.SampleParallelDataDrivenScenario;
 import net.thucydides.samples.SamplePassingScenarioWithTestSpecificData;
 import net.thucydides.samples.SampleScenarioSteps;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -42,12 +43,14 @@ import java.util.Collection;
 import java.util.List;
 
 import static net.thucydides.core.steps.StepData.withTestDataFrom;
+import static net.thucydides.junit.util.FileFormating.md5;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 
 public class WhenRunningADataDrivenTestScenario {
 
@@ -136,9 +139,9 @@ public class WhenRunningADataDrivenTestScenario {
         runner.run(new RunNotifier());
 
         List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
-        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario[0]_a_1.xml"));
-        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario[1]_b_2.xml"));
-        assertThat(reportFilenames, hasItem("sample_data_driven_scenario_happy_day_scenario[2]_c_3.xml"));
+        assertThat(reportFilenames, hasItem(md5("sample_data_driven_scenario_happy_day_scenario[0]_a_1.xml")));
+        assertThat(reportFilenames, hasItem(md5("sample_data_driven_scenario_happy_day_scenario[1]_B_2.xml")));
+        assertThat(reportFilenames, hasItem(md5("sample_data_driven_scenario_happy_day_scenario[2]_c_3.xml")));
 
     }
 
@@ -154,8 +157,8 @@ public class WhenRunningADataDrivenTestScenario {
         runner.run(new RunNotifier());
 
         List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
-        assertThat(reportFilenames, hasItem("sample_c_s_v_data_driven_scenario_data_driven_test[0]_Joe_Smith.xml"));
-        assertThat(reportFilenames, hasItem("sample_c_s_v_data_driven_scenario_data_driven_test[1]_Jack_Black.xml"));
+        assertThat(reportFilenames, hasItem(md5("sample_c_s_v_data_driven_scenario_data_driven_test[0]_Joe_Smith.xml")));
+        assertThat(reportFilenames, hasItem(md5("sample_c_s_v_data_driven_scenario_data_driven_test[1]_Jack_Black.xml")));
     }
 
     @Test
@@ -172,7 +175,7 @@ public class WhenRunningADataDrivenTestScenario {
         List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
         assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
-        assertThat(reportContents, hasItem(containsString("Happy day scenario [b/2]")));
+        assertThat(reportContents, hasItem(containsString("Happy day scenario [B/2]")));
         assertThat(reportContents, hasItem(containsString("Happy day scenario [c/3]")));
     }
 
@@ -553,9 +556,9 @@ public class WhenRunningADataDrivenTestScenario {
         runner.run(new RunNotifier());
 
         List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new HTMLFileFilter()));
-        assertThat(reportFilenames, allOf(hasItem("sample_data_driven_scenario_happy_day_scenario[0]_a_1.html"),
-                hasItem("sample_data_driven_scenario_happy_day_scenario[1]_b_2.html"),
-                hasItem("sample_data_driven_scenario_happy_day_scenario[2]_c_3.html")));
+        assertThat(reportFilenames, allOf(hasItem(md5("sample_data_driven_scenario_happy_day_scenario[0]_a_1.html")),
+                hasItem(md5("sample_data_driven_scenario_happy_day_scenario[1]_B_2.html")),
+                hasItem(md5("sample_data_driven_scenario_happy_day_scenario[2]_c_3.html"))));
     }
 
 

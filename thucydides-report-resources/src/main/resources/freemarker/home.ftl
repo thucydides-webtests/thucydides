@@ -138,7 +138,7 @@
                 <h2>${pageTitle}</h2>
                 <table class='overview'>
                     <tr>
-                        <td width="375px">
+                        <td width="375px" valign="top">
                             <div class="test-count-summary">
                                 <span class="test-count-title">${testOutcomes.total} tests:</span>
                                 <#assign successReport = reportName.withPrefix(testOutcomes.label).forTestResult("success") >

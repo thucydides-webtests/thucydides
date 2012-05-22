@@ -11,6 +11,7 @@ import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -350,7 +351,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         File xmlReport = reporter.generateReportFor(testOutcome);
 
-        assertThat(xmlReport.getName(), is("a_simple_test_case.xml"));
+        assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_simple_test_case") + ".xml"));
     }
 
     @Test
@@ -622,21 +623,6 @@ public class WhenGeneratingAnXMLReport {
         assertThat(generatedReportText, isSimilarTo(expectedReport));
     }
 
-
-    @Test
-    public void should_have_a_meaningful_filename() throws Exception {
-        TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-
-        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        File screenshot = temporaryDirectory.newFile("step_1.png");
-        File source = temporaryDirectory.newFile("step_1.html");
-        step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
-        testOutcome.recordStep(step1);
-
-        File xmlReport = reporter.generateReportFor(testOutcome);
-        assertThat(xmlReport.getName(), is("a_user_story_a_simple_test_case.xml"));
-    }
-
     @Test
     public void should_have_a_qualified_filename_if_qualifier_present() throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
@@ -650,7 +636,7 @@ public class WhenGeneratingAnXMLReport {
         reporter.setQualifier("qualifier");
 
         File xmlReport = reporter.generateReportFor(testOutcome);
-        assertThat(xmlReport.getName(), is("a_user_story_a_simple_test_case_qualifier.xml"));
+        assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_user_story_a_simple_test_case_qualifier") + ".xml"));
 
     }
 

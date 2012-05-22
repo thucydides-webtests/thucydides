@@ -29,18 +29,23 @@ public class ReportNamer {
     }
 
     /**
-     * Return a filesystem-friendly version of the test case name. The filesytem
+     * Return a filesystem-friendly version of the test case name. The file system
      * version should have no spaces and have the XML file suffix.
      */
     public String getNormalizedTestNameFor(final TestOutcome testOutcome) {
+        String testName = getBaseTestNameFor(testOutcome);
+        return appendSuffixTo(DigestUtils.md5Hex(testName));
+    }
+
+    private String getBaseTestNameFor(TestOutcome testOutcome) {
         String testName = "";
         if (testOutcome.getUserStory() != null) {
             testName = NameConverter.underscore(testOutcome.getUserStory().getName());
         }
         String scenarioName = NameConverter.underscore(testOutcome.getMethodName());
-        testName = withNoIssueNumbers(appendToIfNotNull(testName, scenarioName));
-        return appendSuffixTo(testName);
+        return withNoIssueNumbers(appendToIfNotNull(testName, scenarioName));
     }
+
 
     /**
      * Return a filesystem-friendly version of the test case name. The filesytem
@@ -53,7 +58,7 @@ public class ReportNamer {
         }
         String scenarioName = NameConverter.underscore(testOutcome.getMethodName());
         testName = withNoIssueNumbers(withNoArguments(appendToIfNotNull(testName, scenarioName)));
-        return appendSuffixTo(testName);
+        return appendSuffixTo(DigestUtils.md5Hex(testName));
     }
 
     private String appendToIfNotNull(final String baseString, final String nextElement) {
@@ -70,7 +75,8 @@ public class ReportNamer {
             userStory = NameConverter.underscore(testOutcome.getUserStory().getName()) + "_";
         }
         String normalizedQualifier = qualifier.replaceAll(" ", "_");
-        return appendSuffixTo(userStory + testOutcome.getMethodName() + "_" + normalizedQualifier);
+        String plainTextTestName = userStory + testOutcome.getMethodName() + "_" + normalizedQualifier;
+        return appendSuffixTo(DigestUtils.md5Hex(plainTextTestName));
     }
 
     public String getNormalizedTestNameFor(final Story userStory) {
@@ -83,8 +89,7 @@ public class ReportNamer {
 
     public String getNormalizedTestNameFor(String name) {
         String testNameWithUnderscores = NameConverter.underscore(name);
-        String nameWithSuffix = appendSuffixTo(testNameWithUnderscores);
-        return DigestUtils.md5Hex(nameWithSuffix);
+        return appendSuffixTo(DigestUtils.md5Hex(testNameWithUnderscores));
     }
 
     private String appendSuffixTo(final String testNameWithUnderscores) {
