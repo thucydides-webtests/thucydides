@@ -74,7 +74,7 @@ public class ReportNamer {
         if (testOutcome.getUserStory() != null) {
             userStory = NameConverter.underscore(testOutcome.getUserStory().getName()) + "_";
         }
-        String normalizedQualifier = qualifier.replaceAll(" ", "_");
+        String normalizedQualifier = qualifier.replaceAll(" ", "_").toLowerCase();
         String plainTextTestName = userStory + testOutcome.getMethodName() + "_" + normalizedQualifier;
         return appendSuffixTo(DigestUtils.md5Hex(plainTextTestName));
     }
