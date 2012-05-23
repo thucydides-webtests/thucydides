@@ -111,9 +111,6 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     }
 
     private void generateHtmlStoryReports() throws IOException {
-        System.out.println("Generating reports from " + sourceDirectory);
-        System.out.println("Generating reports to " + outputDirectory);
-
         getReporter().setOutputDirectory(outputDirectory);
         getReporter().setIssueTrackerUrl(issueTrackerUrl);
         getReporter().setJiraUrl(jiraUrl);
