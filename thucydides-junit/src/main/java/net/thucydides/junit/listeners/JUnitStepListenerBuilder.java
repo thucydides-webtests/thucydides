@@ -1,8 +1,12 @@
 package net.thucydides.junit.listeners;
 
+import com.google.inject.Injector;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.Listeners;
+import net.thucydides.core.steps.StepListener;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.junit.runners.ParameterizedJUnitStepListener;
 
 import java.io.File;
@@ -53,25 +57,32 @@ public class JUnitStepListenerBuilder {
     private BaseStepListener buildBaseStepListener() {
         if (pageFactory != null) {
             return Listeners.getBaseStepListener()
-                             .withPages(pageFactory)
-                             .and().withOutputDirectory(outputDirectory);
+                    .withPages(pageFactory)
+                    .and().withOutputDirectory(outputDirectory);
         } else {
             return Listeners.getBaseStepListener()
-                            .withOutputDirectory(outputDirectory);
+                    .withOutputDirectory(outputDirectory);
         }
     }
 
     private JUnitStepListener newParameterizedJUnitStepListener() {
         return new ParameterizedJUnitStepListener(parameterSetNumber,
-                                                  buildBaseStepListener(),
-                                                  Listeners.getLoggingListener(),
-                                                  Listeners.getStatisticsListener());
+                buildBaseStepListener(),
+                Listeners.getLoggingListener(),
+                newTestCountListener(),
+                Listeners.getStatisticsListener());
+    }
+
+    private StepListener newTestCountListener() {
+        EnvironmentVariables environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        return new TestCountListener(environmentVariables);
     }
 
     private JUnitStepListener newStandardJunitStepListener() {
         return new JUnitStepListener(buildBaseStepListener(),
-                                     Listeners.getLoggingListener(),
-                                     Listeners.getStatisticsListener());
+                Listeners.getLoggingListener(),
+                newTestCountListener(),
+                Listeners.getStatisticsListener());
     }
 
 }

@@ -218,7 +218,14 @@ public enum ThucydidesSystemProperty {
     /**
      * Three levels are supported: QUIET, NORMAL and VERBOSE
      */
-    LOGGING("thucydides.logging");
+    LOGGING("thucydides.logging"),
+
+    /**
+     * The root package for the tests in a given project.
+     * If provided, Thucydides will log information about the total number of tests to be executed,
+     * and keep a tally of the executed tests.
+     */
+    TEST_ROOT_PACKAGE("thucydides.test.root");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 1000;

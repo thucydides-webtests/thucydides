@@ -110,7 +110,7 @@ public class WhenLoggingStepEvents {
     public void should_log_test_name_when_test_starts() {
         consoleLoggingListener.testStarted("Some test");
 
-        verify(logger).info(contains("TEST: Some test"));
+        verify(logger).info(contains("TEST STARTED: Some test"));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class WhenLoggingStepEvents {
 
         consoleLoggingListener.testFinished(testOutcome);
 
-        verify(logger).info(contains("TEST: Some test failed"));
+        verify(logger).info(contains("TEST FAILED: Some test"));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class WhenLoggingStepEvents {
 
         consoleLoggingListener.testFinished(testOutcome);
 
-        verify(logger,never()).info(contains("TEST: Some test failed"));
+        verify(logger,never()).info(contains("TEST FAILED: Some test"));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class WhenLoggingStepEvents {
 
         consoleLoggingListener.testFinished(testOutcome);
 
-        verify(logger).info(contains("TEST: Some test is pending"));
+        verify(logger).info(contains("TEST PENDING: Some test"));
     }
 
     @Test
@@ -148,7 +148,7 @@ public class WhenLoggingStepEvents {
 
         consoleLoggingListener.testFinished(testOutcome);
 
-        verify(logger,never()).info(contains("TEST: Some test is pending"));
+        verify(logger,never()).info(contains("TEST PENDING: Some test"));
     }
 
     @Test
@@ -157,7 +157,7 @@ public class WhenLoggingStepEvents {
 
         consoleLoggingListener.testFinished(testOutcome);
 
-        verify(logger).info(contains("TEST: Some test is skipped"));
+        verify(logger).info(contains("TEST SKIPPED: Some test"));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class WhenLoggingStepEvents {
 
         consoleLoggingListener.testFinished(testOutcome);
 
-        verify(logger,never()).info(contains("TEST: Some test is skipped"));
+        verify(logger,never()).info(contains("TEST SKIPPED: Some test"));
     }
 
 //    @Test
@@ -207,7 +207,7 @@ public class WhenLoggingStepEvents {
 
         consoleLoggingListener.testFinished(testOutcome);
 
-        verify(logger).info(contains("TEST: Some test passed"));
+        verify(logger).info(contains("TEST PASSED: Some test"));
     }
 
     @Test
@@ -217,7 +217,7 @@ public class WhenLoggingStepEvents {
 
         consoleLoggingListener.testFinished(testOutcome);
 
-        verify(logger,never()).info(contains("TEST: Some test passed"));
+        verify(logger,never()).info(contains("TEST PASSED: Some test"));
     }    
     
     @Test
@@ -231,7 +231,7 @@ public class WhenLoggingStepEvents {
     public void should_log_test_name_when_a_test_starts() {
         consoleLoggingListener.testStarted("some_test");
 
-        verify(logger).info(contains("TEST: some_test"));
+        verify(logger).info(contains("TEST STARTED: some_test"));
     }
 
     @Test

@@ -2,6 +2,7 @@ package net.thucydides.core.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
@@ -12,6 +13,7 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.statistics.model.TestRunTag;
 import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Assert;
 import org.junit.Before;
@@ -66,6 +68,10 @@ public class WhenRecordingNewTestOutcomes {
         }
 
         public void should_do_something_else() {
+        }
+
+        @Issue("#789")
+        public void should_do_some_other_thing() {
         }
     }
 
@@ -172,6 +178,25 @@ public class WhenRecordingNewTestOutcomes {
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
         assertThat(outcome.getIssues(), hasItem("#ISSUE-123"));
+    }
+
+    @Test
+    public void a_test_outcome_should_record_issue_keys_using_the_project_key_if_not_provided() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_some_other_thing", SomeTestScenario.class);
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+
+        environmentVariables.setProperty("thucydides.project.key", "ISSUE");
+        outcome.setEnvironmentVariables(environmentVariables);
+
+
+        assertThat(outcome.getIssueKeys(), hasItem("ISSUE-789"));
+    }
+
+    @Test
+    public void a_test_outcome_should_record_issue_keys_without_the_hash_prefix() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        assertThat(outcome.getIssueKeys(), hasItem("ISSUE-123"));
     }
 
     @Test

@@ -140,7 +140,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
         assertThat(reportFilenames, hasItem(md5("sample_data_driven_scenario_happy_day_scenario[0]_a_1.xml")));
-        assertThat(reportFilenames, hasItem(md5("sample_data_driven_scenario_happy_day_scenario[1]_B_2.xml")));
+        assertThat(reportFilenames, hasItem(md5("sample_data_driven_scenario_happy_day_scenario[1]_b_2.xml")));
         assertThat(reportFilenames, hasItem(md5("sample_data_driven_scenario_happy_day_scenario[2]_c_3.xml")));
 
     }
@@ -157,8 +157,8 @@ public class WhenRunningADataDrivenTestScenario {
         runner.run(new RunNotifier());
 
         List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
-        assertThat(reportFilenames, hasItem(md5("sample_c_s_v_data_driven_scenario_data_driven_test[0]_Joe_Smith.xml")));
-        assertThat(reportFilenames, hasItem(md5("sample_c_s_v_data_driven_scenario_data_driven_test[1]_Jack_Black.xml")));
+        assertThat(reportFilenames, hasItem(md5("sample_c_s_v_data_driven_scenario_data_driven_test[0]_joe_smith.xml")));
+        assertThat(reportFilenames, hasItem(md5("sample_c_s_v_data_driven_scenario_data_driven_test[1]_jack_black.xml")));
     }
 
     @Test
@@ -557,7 +557,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new HTMLFileFilter()));
         assertThat(reportFilenames, allOf(hasItem(md5("sample_data_driven_scenario_happy_day_scenario[0]_a_1.html")),
-                hasItem(md5("sample_data_driven_scenario_happy_day_scenario[1]_B_2.html")),
+                hasItem(md5("sample_data_driven_scenario_happy_day_scenario[1]_b_2.html")),
                 hasItem(md5("sample_data_driven_scenario_happy_day_scenario[2]_c_3.html"))));
     }
 

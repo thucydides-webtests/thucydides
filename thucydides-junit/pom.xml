@@ -55,7 +55,10 @@
             <artifactId>junit-dep</artifactId>
             <version>${junit.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+        </dependency>
         <!-- TEST DEPENDENCIES -->
         <dependency>
             <groupId>commons-dbcp</groupId>

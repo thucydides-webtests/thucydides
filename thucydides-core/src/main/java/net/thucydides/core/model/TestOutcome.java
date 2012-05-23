@@ -1,6 +1,7 @@
 package net.thucydides.core.model;
 
 import ch.lambdaj.function.convert.Converter;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -20,6 +21,7 @@ import net.thucydides.core.statistics.service.TagProvider;
 import net.thucydides.core.statistics.service.TagProviderService;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -111,6 +113,8 @@ public class TestOutcome {
 
     private IssueTracking issueTracking;
 
+    private EnvironmentVariables environmentVariables;
+
     /**
      * The session ID for this test, is a remote web driver was used.
      * If the tests are run on SauceLabs, this is used to generate a link to the corresponding report and video.
@@ -163,7 +167,16 @@ public class TestOutcome {
         return this;
     }
 
+    public void setEnvironmentVariables(EnvironmentVariables environmentVariables) {
+        this.environmentVariables = environmentVariables;
+    }
 
+    public EnvironmentVariables getEnvironmentVariables() {
+        if (environmentVariables == null) {
+            environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        }
+        return environmentVariables;
+    }
 
     /**
      * A test outcome should relate to a particular test class or user story class.
@@ -622,6 +635,34 @@ public class TestOutcome {
     public void setTags(Set<TestTag> tags) {
         Preconditions.checkArgument(this.tags == null, "Tags cannot be reassiged once set.");
         this.tags = ImmutableSet.copyOf(tags);
+    }
+
+    public List<String> getIssueKeys() {
+        return convert(getIssues(), toIssueKeys());
+    }
+
+    private Converter<String, String> toIssueKeys() {
+        return new Converter<String,String>() {
+
+            @Override
+            public String convert(String issueNumber) {
+                String issueKey = issueNumber;
+                if (issueKey.startsWith("#")) {
+                    issueKey = issueKey.substring(1);
+                }
+                if (StringUtils.isNumeric(issueKey)) {
+                    Joiner joiner = Joiner.on("-");
+                    issueKey = joiner.join(getProjectPrefix(), issueKey);
+                }
+                return issueKey;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+
+        };
+    }
+
+    private String getProjectPrefix() {
+        return ThucydidesSystemProperty.PROJECT_KEY.from(getEnvironmentVariables());
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
