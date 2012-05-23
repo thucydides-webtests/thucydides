@@ -5,6 +5,8 @@ import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.Stories;
 import net.thucydides.core.model.TestOutcome;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.bouncycastle.crypto.digests.MD5Digest;
 import org.junit.Test;
 
 import static net.thucydides.core.model.ReportType.HTML;
@@ -39,13 +41,13 @@ public class WhenNamingTheReports {
     @Test
     public void the_report_filename_should_be_based_on_the_test_case_name() {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-        assertThat(testOutcome.getReportName(), is("a_user_story_a_simple_test_case"));
+        assertThat(testOutcome.getReportName(), is(DigestUtils.md5Hex("a_user_story_a_simple_test_case")));
     }
 
     @Test
     public void the_report_screenshot_filename_should_be_based_on_the_test_case_name() {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-        assertThat(testOutcome.getScreenshotReportName(), is("a_user_story_a_simple_test_case_screenshots"));
+        assertThat(testOutcome.getScreenshotReportName(), is(DigestUtils.md5Hex("a_user_story_a_simple_test_case") + "_screenshots"));
     }
 
     @Test
@@ -54,7 +56,7 @@ public class WhenNamingTheReports {
         TestOutcome testOutcome = TestOutcome.forTestInStory("A simple test case", net.thucydides.core.model.Story.from(AUserStory.class));
         String reportName = testOutcome.getReportName(XML);
         
-        assertThat(reportName, is("a_user_story_a_simple_test_case.xml"));
+        assertThat(reportName, is(DigestUtils.md5Hex("a_user_story_a_simple_test_case") + ".xml"));
     }
 
     @Test
@@ -63,7 +65,7 @@ public class WhenNamingTheReports {
         TestOutcome testOutcome = TestOutcome.forTestInStory("A simple test case", net.thucydides.core.model.Story.from(AUserStory.class));
         String reportName = testOutcome.getSimpleReportName(XML);
 
-        assertThat(reportName, is("a_user_story_a_simple_test_case.xml"));
+        assertThat(reportName, is(DigestUtils.md5Hex("a_user_story_a_simple_test_case") + ".xml"));
     }
 
     @Test
@@ -72,7 +74,7 @@ public class WhenNamingTheReports {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         String reportName = testOutcome.getReportName(XML);
 
-        assertThat(reportName, is("a_user_story_a_simple_test_case.xml"));
+        assertThat(reportName, is(DigestUtils.md5Hex("a_user_story_a_simple_test_case") + ".xml"));
     }
 
     @Test
@@ -81,7 +83,7 @@ public class WhenNamingTheReports {
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         String reportName = testOutcome.getReportName(HTML);
         
-        assertThat(reportName, is("a_simple_test_case.html"));
+        assertThat(reportName, is(DigestUtils.md5Hex("a_simple_test_case") + ".html"));
     }
 
     @Test
@@ -91,7 +93,7 @@ public class WhenNamingTheReports {
 
         String reportName = testOutcome.getReportName(HTML);
         
-        assertThat(reportName, is("a_user_story_should_do_this.html"));
+        assertThat(reportName, is(DigestUtils.md5Hex("a_user_story_should_do_this") + ".html"));
     }
 
     @Test
@@ -100,7 +102,7 @@ public class WhenNamingTheReports {
 
         String reportName = testOutcome.getReportName(HTML,"qualifier");
 
-        assertThat(reportName, is("a_user_story_should_do_this_qualifier.html"));
+        assertThat(reportName, is(DigestUtils.md5Hex("a_user_story_should_do_this_qualifier") + ".html"));
     }
 
     @Test
@@ -109,7 +111,7 @@ public class WhenNamingTheReports {
 
         String reportName = testOutcome.getReportName(HTML,null);
 
-        assertThat(reportName, is("a_user_story_should_do_this.html"));
+        assertThat(reportName, is(DigestUtils.md5Hex("a_user_story_should_do_this") + ".html"));
     }
 
     @Test
@@ -118,7 +120,7 @@ public class WhenNamingTheReports {
 
         String reportName = testOutcome.getReportName(HTML);
 
-        assertThat(reportName, is("a_user_story_should_do_this.html"));
+        assertThat(reportName, is(DigestUtils.md5Hex("a_user_story_should_do_this") + ".html"));
     }
 
     @Test
@@ -127,45 +129,7 @@ public class WhenNamingTheReports {
 
         String reportName = testOutcome.getReportName(XML,"qualifier");
 
-        assertThat(reportName, is("a_user_story_should_do_this_qualifier.xml"));
+        assertThat(reportName, is(DigestUtils.md5Hex("a_user_story_should_do_this_qualifier") + ".xml"));
     }
-
-
-    @Test
-    public void a_user_story_can_provide_its_own_html_report_name() {
-        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
-        
-        String reportName = story.getReportName(HTML);
-        
-        assertThat(reportName, is("a_user_story.html"));
-    }
-
-    @Test
-    public void a_user_story_can_provide_its_own_xml_report_name() {
-        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
-        
-        String reportName = story.getReportName(XML);
-        
-        assertThat(reportName, is("a_user_story.xml"));
-    }
-
-    @Test
-    public void a_user_story_can_provide_its_own_base_report_name() {
-        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
-        
-        String reportName = story.getReportName();
-        
-        assertThat(reportName, is("a_user_story"));
-    }
-
-    @Test
-    public void the_stories_class_can_provide_the_report_name_directly() {
-
-        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(AUserStory.class);
-
-        String reportName = Stories.reportFor(story, ReportType.HTML);
-
-        assertThat(reportName, is("a_user_story.html"));
-    }
-
 }
+

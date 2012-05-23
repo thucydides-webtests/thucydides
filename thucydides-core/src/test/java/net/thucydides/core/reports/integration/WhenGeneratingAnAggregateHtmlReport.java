@@ -71,14 +71,6 @@ public class WhenGeneratingAnAggregateHtmlReport {
     @Mock ThucydidesSystemProperties systemProperties;
 
     class CustomHtmlAggregateStoryReporter extends HtmlAggregateStoryReporter {
-//        CustomHtmlAggregateStoryReporter(String projectName) {
-//            super(projectName);
-//        }
-//
-//        @Override
-//        protected ThucydidesSystemProperties getSystemProperties() {
-//            return systemProperties;
-//        }
 
         public CustomHtmlAggregateStoryReporter(final String projectName) {
             super(projectName);

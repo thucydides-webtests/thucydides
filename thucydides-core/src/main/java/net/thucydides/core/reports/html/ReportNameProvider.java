@@ -25,11 +25,15 @@ public class ReportNameProvider {
     }
 
     public String forTestResult(String result) {
-        return prefixUsing(context) + "result_" + reportNamer.getNormalizedTestNameFor(result);
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "result_" + result);
     }
 
     public String forTag(String tag) {
-        return prefixUsing(context) + "tag_" + reportNamer.getNormalizedTestNameFor(tag);
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tag_" + tag);
+    }
+
+    public String forTagType(String tagType) {
+        return reportNamer.getNormalizedTestNameFor("tagtype_" + tagType);
     }
 
     public ReportNameProvider withPrefix(String prefix) {
@@ -42,10 +46,6 @@ public class ReportNameProvider {
         } else {
             return "";
         }
-    }
-
-    public String forTagType(String tagType) {
-        return "tagtype_" + reportNamer.getNormalizedTestNameFor(tagType);
     }
 
     public ReportNameProvider inContext(String context) {

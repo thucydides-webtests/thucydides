@@ -111,10 +111,6 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
     }
 
     private TestOutcomes generateHtmlReports() throws MavenReportException {
-        System.out.println("GENERATING THUCYDIDES REPORTS");
-        getLog().info("Generating reports from " + sourceDirectory);
-        getLog().info("Generating reports to " + getThucydidesOutputDirectory());
-
         getReporter().setOutputDirectory(getThucydidesOutputDirectory());
 
         try {

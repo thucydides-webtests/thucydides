@@ -5,6 +5,7 @@ import net.thucydides.core.annotations.Title;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.model.TestOutcome;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +52,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
 
         reporter.generateReportFor(testOutcome);
 
-        File screenshotReport = new File(outputDirectory, "a_user_story_a_simple_test_case.html");
+        File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_a_simple_test_case") + ".html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
         assertThat(reportContents, containsString("<a href=\"http://my.issue.tracker/1234\">#1234</a>"));
     }
@@ -67,7 +68,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
 
         reporter.generateReportFor(testOutcome);
 
-        File screenshotReport = new File(outputDirectory, "a_user_story_a_simple_test_case.html");
+        File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_a_simple_test_case") + ".html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
         assertThat(reportContents, containsString("<a href=\"http://my.issue.tracker/1234\">#1234</a>"));
     }
@@ -82,7 +83,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
 
         reporter.generateReportFor(testOutcome);
 
-        File screenshotReport = new File(outputDirectory, "a_user_story_a_simple_test_case.html");
+        File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_a_simple_test_case") + ".html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
         assertThat(reportContents, containsString("<a href=\"http://my.jira/browse/1234\">#1234</a>"));
     }
@@ -98,7 +99,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
 
         reporter.generateReportFor(testOutcome);
 
-        File screenshotReport = new File(outputDirectory, "a_user_story_a_simple_test_case.html");
+        File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_a_simple_test_case") + ".html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
         assertThat(reportContents, containsString("<a href=\"http://my.jira/browse/MYPROJECT-1234\">#1234</a>"));
     }
@@ -113,7 +114,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
 
         reporter.generateReportFor(testOutcome);
 
-        File screenshotReport = new File(outputDirectory, "a_user_story_should_do_this_too.html");
+        File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_should_do_this_too") + ".html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
         assertThat(reportContents, allOf(containsString("<a href=\"http://my.issue.tracker/1234\">#1234</a>"),
                                          containsString("<a href=\"http://my.issue.tracker/2345\">#2345</a>")));

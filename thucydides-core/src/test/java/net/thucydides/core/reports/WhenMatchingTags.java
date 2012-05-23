@@ -152,4 +152,19 @@ public class WhenMatchingTags {
 
         assertThat(withResult(TestResult.FAILURE).matches(testOutcome), is(false));
     }
+
+    @Test
+    public void should_define_tags_using_a_shorthand_notation() {
+        TestTag storyTag = TestTag.withValue("story:a story");
+        assertThat(storyTag.getName(), is("a story"));
+        assertThat(storyTag.getType(), is("story"));
+    }
+
+    @Test
+    public void should_define_default_feature_tags_using_a_shorthand_notation() {
+        TestTag storyTag = TestTag.withValue("a feature");
+        assertThat(storyTag.getName(), is("a feature"));
+        assertThat(storyTag.getType(), is("feature"));
+    }
+
 }

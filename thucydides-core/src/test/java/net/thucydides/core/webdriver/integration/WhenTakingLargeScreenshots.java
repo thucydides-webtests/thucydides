@@ -77,22 +77,6 @@ public class WhenTakingLargeScreenshots {
     }
 
     @Test
-    public void should_take_screenshot_with_specified_larger_dimensions() throws Exception {
-
-        environmentVariables.setProperty("thucydides.browser.width", "1600");
-        environmentVariables.setProperty("thucydides.browser.height", "1200");
-
-        driver = testSite.open();
-
-        Photographer photographer = new Photographer(driver, screenshotDirectory);
-        File screenshotFile = photographer.takeScreenshot("screenshot");
-        ResizableImage image = ResizableImage.loadFrom(screenshotFile);
-
-
-        assertThat(image.getWitdh(), greaterThan(750));
-    }
-
-    @Test
     public void should_take_screenshots_correctly() throws IOException {
         driver = testSite.open("http:www.google.com", "screenshots/google.html");
 

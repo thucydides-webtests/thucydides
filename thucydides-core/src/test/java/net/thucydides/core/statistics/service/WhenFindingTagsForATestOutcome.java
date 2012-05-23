@@ -1,6 +1,7 @@
 package net.thucydides.core.statistics.service;
 
 import net.thucydides.core.annotations.WithTag;
+import net.thucydides.core.annotations.WithTagValuesOf;
 import net.thucydides.core.annotations.WithTags;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
@@ -37,7 +38,7 @@ public class WhenFindingTagsForATestOutcome {
 
     @Test
     public void should_find_the_annotation_tag_provider_by_default() {
-        TagProviderService tagProviderService = new ClasspathTagProviderService(environmentVariables);
+        TagProviderService tagProviderService = new ClasspathTagProviderService();
         List<TagProvider> tagProviders = tagProviderService.getTagProviders();
 
         boolean containsAnnotationTagProvider = false;
@@ -53,7 +54,7 @@ public class WhenFindingTagsForATestOutcome {
     @Ignore
     public void should_find_a_custom_tag_provider_in_a_specified_package() {
         environmentVariables.setProperty("thucydides.ext.packages","some.other.place");
-        TagProviderService tagProviderService = new ClasspathTagProviderService(environmentVariables);
+        TagProviderService tagProviderService = new ClasspathTagProviderService();
         List<TagProvider> tagProviders = tagProviderService.getTagProviders();
 
         boolean containsAlternativeTagProvider = false;
@@ -144,6 +145,49 @@ public class WhenFindingTagsForATestOutcome {
 
         Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags.size(), is(2));
+    }
+
+
+    class SomeTestCaseWithAShortenedTagOnAMethod {
+        @WithTag("pillar:Car sales")
+        public void some_test_method() {}
+    }
+
+    @Test
+    public void tags_can_use_a_shorthand_notation() {
+
+        TestOutcome testOutcome = TestOutcome.forTest("some_test_method", SomeTestCaseWithAShortenedTagOnAMethod.class);
+
+        AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
+
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
+        TestTag tag = (TestTag) tags.toArray()[0];
+        assertThat(tag.getName(), is("Car sales"));
+        assertThat(tag.getType(), is("pillar"));
+    }
+
+    class SomeTestCaseWithSeveralShortenedaTagOnAMethod {
+        @WithTagValuesOf({"pillar: car sales", "A feature"})
+        public void some_test_method() {}
+    }
+
+    @Test
+    public void multiple_tags_can_use_a_shorthand_notation() {
+
+        TestOutcome testOutcome = TestOutcome.forTest("some_test_method", SomeTestCaseWithSeveralShortenedaTagOnAMethod.class);
+
+        AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
+
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
+        assertThat(tags.size(), is(2));
+        TestTag tag1 = (TestTag) tags.toArray()[0];
+        assertThat(tag1.getName(), is("A feature"));
+        assertThat(tag1.getType(), is("feature"));
+
+        TestTag tag2 = (TestTag) tags.toArray()[1];
+        assertThat(tag2.getName(), is("car sales"));
+        assertThat(tag2.getType(), is("pillar"));
+
     }
 
 

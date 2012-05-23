@@ -2,19 +2,20 @@ package net.thucydides.core.statistics.service;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.util.EnvironmentVariables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
 
 public class ClasspathTagProviderService implements TagProviderService {
-//    private final List<TagProvider> tagProviders;
-    private final EnvironmentVariables environmentVariables;
 
-    @Inject
-    public ClasspathTagProviderService(EnvironmentVariables environmentVariables) {
-        this.environmentVariables = environmentVariables;
+    private final Logger logger = LoggerFactory.getLogger(ClasspathTagProviderService.class);
+
+    public ClasspathTagProviderService() {
     }
 
     @Override
@@ -24,6 +25,7 @@ public class ClasspathTagProviderService implements TagProviderService {
         ServiceLoader<TagProvider> serviceLoader = ServiceLoader.load(TagProvider.class);
 
         for (TagProvider aServiceLoader : serviceLoader) {
+            logger.info("Using tag provider: {}", aServiceLoader.getClass());
             tagProviders.add(aServiceLoader);
         }
         return tagProviders;

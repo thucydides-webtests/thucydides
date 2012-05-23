@@ -70,6 +70,10 @@ public class Story {
         return new Story(storyId, storyName, null, null);
     }
 
+    public static Story called(final String storyName) {
+        return new Story(storyName, storyName, null, null);
+    }
+
     public static Story withId(final String storyId, final String storyName,
                                final String featureClassName, final String featureName) {
         return new Story(storyId, storyName, featureClassName, featureName);

@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
 
 public class WhenManagingGlobalConfiguration {
@@ -42,12 +43,19 @@ public class WhenManagingGlobalConfiguration {
 
     @Test
     public void the_unique_browser_value_can_be_defined_in_a_system_property() {
+        environmentVariables.setProperty("thucydides.outputDirectory","build/reports/thucydides");
+
+        assertThat(configuration.getOutputDirectory().getAbsoluteFile().toString(), endsWith("build/reports/thucydides"));
+    }
+
+    @Test
+    public void the_output_directory_can_be_defined_in_a_system_property() {
         environmentVariables.setProperty("thucydides.use.unique.browser","true");
 
         assertThat(configuration.getUseUniqueBrowser(), is(true));
     }
 
-   @Test
+    @Test
     public void the_default_unique_browser_value_should_be_false() {
         assertThat(configuration.getUseUniqueBrowser(), is(false));
     }

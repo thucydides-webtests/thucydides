@@ -56,6 +56,13 @@ public class WhenAggregatingStoryResults {
     }
 
     @Test
+    public void a_story_can_be_defined_by_a_name() {
+        Story story = Story.called("storyName");
+        assertThat(story.getName(), is("storyName"));
+        assertThat(story.getId(), is("storyName"));
+    }
+
+    @Test
     public void should_count_stories() {
         UserStoriesResultSet userStoriesResultSet = new UserStoriesResultSet(storyResults);
 

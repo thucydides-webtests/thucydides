@@ -12,6 +12,7 @@ import net.thucydides.samples.MultipleTestScenario;
 import net.thucydides.samples.MultipleTestScenarioWithUniqueSession;
 import net.thucydides.samples.SamplePassingScenario;
 import net.thucydides.samples.SingleTestScenario;
+import net.thucydides.samples.SingleWikipediaTestScenario;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Managing the WebDriver instance during a test run
  * The instance should be created once at the start of the test run,
- * and closed once at the end of the tets.
+ * and closed once at the end of the tests.
  * 
  * @author johnsmart
  * 
@@ -143,8 +144,8 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Test
     public void a_system_provided_url_should_override_the_default_url() throws InitializationError {
 
-        environmentVariables.setProperty("webdriver.base.url", "http://www.wikipedia.com");
-        ThucydidesRunner runner = getTestRunnerUsing(SingleTestScenario.class);
+        System.setProperty("webdriver.base.url", "http://www.wikipedia.com");
+        ThucydidesRunner runner = getTestRunnerUsing(SingleWikipediaTestScenario.class);
 
         runner.run(new RunNotifier());
 

@@ -1,6 +1,7 @@
 package net.thucydides.core.steps;
 
 
+import com.google.common.base.Joiner;
 import com.google.inject.Inject;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
@@ -125,7 +126,7 @@ public class ConsoleLoggingListener implements StepListener {
 
     public void testStarted(String description) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            getLogger().info(TEST_STARTED + "\nTEST: " + description + underline(TEST_STARTED));
+            getLogger().info(TEST_STARTED + "\nTEST STARTED: " + description + underline(TEST_STARTED));
         }
     }
 
@@ -154,30 +155,43 @@ public class ConsoleLoggingListener implements StepListener {
 
     private void logFailure(TestOutcome result) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            getLogger().info(TEST_FAILED + "\nTEST: " + result.getTitle() + " failed" + underline(TEST_FAILED));
-            if (result.getTestFailureCause() != null) {
-                getLogger().info(FAILURE + "\n" + result.getTestFailureCause().getMessage());
-            }
+            getLogger().info(TEST_FAILED + "\nTEST FAILED: " + result.getTitle() + underline(TEST_FAILED));
+
+            logRelatedIssues(result);
+            logFailureCause(result);
+
             underline(FAILURE);
+        }
+    }
+
+    private void logRelatedIssues(TestOutcome result) {
+        Joiner joiner = Joiner.on(",");
+        getLogger().info("RELATED ISSUES: " + joiner.join(result.getIssueKeys()));
+
+    }
+
+    private void logFailureCause(TestOutcome result) {
+        if (result.getTestFailureCause() != null) {
+            getLogger().info(FAILURE + "\n" + result.getTestFailureCause().getMessage());
         }
     }
 
     private void logPending(TestOutcome result) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            getLogger().info(TEST_SKIPPED + "\nTEST: " + result.getTitle() + " is pending" + underline(TEST_SKIPPED));
+            getLogger().info(TEST_SKIPPED + "\nTEST PENDING: " + result.getTitle() + underline(TEST_SKIPPED));
 
         }
     }
 
     private void logSkipped(TestOutcome result) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            getLogger().info(TEST_SKIPPED + "\nTEST: " + result.getTitle() + " is skipped" + underline(TEST_SKIPPED));
+            getLogger().info(TEST_SKIPPED + "\nTEST SKIPPED: " + result.getTitle() + underline(TEST_SKIPPED));
         }
     }
 
     private void logSuccess(TestOutcome result) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            getLogger().info(TEST_PASSED + "\nTEST: " + result.getTitle() + " passed" + underline(TEST_PASSED));
+            getLogger().info(TEST_PASSED + "\nTEST PASSED: " + result.getTitle() + underline(TEST_PASSED));
         }
     }
 

@@ -105,7 +105,7 @@ public class WhenRecordingTestResultStatistics {
         testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
         statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables, databaseConfig);
         testStatisticsProvider = new HibernateTestStatisticsProvider(testOutcomeHistoryDAO);
-        tagProviderService = new ClasspathTagProviderService(environmentVariables);
+        tagProviderService = new ClasspathTagProviderService();
         prepareTestData(statisticsListener);
     }
 

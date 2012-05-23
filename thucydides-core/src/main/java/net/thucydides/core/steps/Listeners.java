@@ -17,7 +17,7 @@ public class Listeners {
     public static BaseStepListenerBuilder getBaseStepListener() {
         return new BaseStepListenerBuilder();    
     }
-    
+
     public static class BaseStepListenerBuilder {
         private Pages pages;
 

@@ -1,8 +1,11 @@
 package net.thucydides.core.annotations;
 
+import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.html.Formatter;
+import org.apache.commons.lang.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -10,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.convert;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
 
 /**
@@ -186,44 +190,80 @@ public class TestAnnotations {
         }
     }
 
-    public List<WithTag> getTagsForMethod(String methodName) {
+    public List<TestTag> getTagsForMethod(String methodName) {
 
-        List<WithTag> allTags = new ArrayList<WithTag>(getTags());
+        List<TestTag> allTags = new ArrayList<TestTag>(getTags());
         allTags.addAll(getTagsFor(methodName));
 
         return ImmutableList.copyOf(allTags);
     }
 
-    public List<WithTag> getTags() {
-        List<WithTag> tags = new ArrayList<WithTag>();
+    public List<TestTag> getTags() {
+        List<TestTag> tags = new ArrayList<TestTag>();
         if (testClass != null) {
+            addTagValues(tags, testClass.getAnnotation(WithTagValuesOf.class));
             addTags(tags, testClass.getAnnotation(WithTags.class));
             addTag(tags, testClass.getAnnotation(WithTag.class));
         }
         return tags;
     }
 
-    private void addTag(List<WithTag> tags, WithTag tag) {
-        if (tag != null) {
-            tags.add(tag);
+    private void addTag(List<TestTag> tags, WithTag tagAnnotation) {
+        if (tagAnnotation != null) {
+            tags.add(convertToTestTag(tagAnnotation));
         }
     }
 
-    private void addTags(List<WithTag> tags, WithTags tagSet) {
+    private void addTags(List<TestTag> tags, WithTags tagSet) {
         if (tagSet != null) {
-            tags.addAll(Arrays.asList(tagSet.value()));
+            tags.addAll(convert(tagSet.value(), toTestTags()));
         }
     }
 
-    private List<WithTag> getTagsFor(String methodName) {
-        List<WithTag> tags = new ArrayList<WithTag>();
+    private void addTagValues(List<TestTag> tags, WithTagValuesOf tagSet) {
+        if (tagSet != null) {
+            tags.addAll(convert(tagSet.value(), fromStringValuesToTestTags()));
+        }
+    }
+
+    private List<TestTag> getTagsFor(String methodName) {
+        List<TestTag> tags = new ArrayList<TestTag>();
 
         Optional<Method> testMethod = getMethodCalled(methodName);
         if (testMethod.isPresent()) {
+            addTagValues(tags, testMethod.get().getAnnotation(WithTagValuesOf.class));
             addTags(tags, testMethod.get().getAnnotation(WithTags.class));
             addTag(tags, testMethod.get().getAnnotation(WithTag.class));
         }
         return tags;
+    }
+
+    public TestTag convertToTestTag(WithTag withTag) {
+        if (StringUtils.isEmpty(withTag.value())) {
+            return TestTag.withName(withTag.name()).andType(withTag.type());
+        } else {
+            return TestTag.withValue(withTag.value());
+        }
+    }
+
+    private Converter<Object, TestTag> toTestTags() {
+        return new Converter<Object, TestTag>() {
+
+            @Override
+            public TestTag convert(Object tag) {
+                return convertToTestTag((WithTag) tag);
+            }
+        };
+    }
+
+    private Converter<Object, TestTag> fromStringValuesToTestTags() {
+        return new Converter<Object, TestTag>() {
+
+            @Override
+            public TestTag convert(Object tagValue) {
+                return  TestTag.withValue((String) tagValue);
+            }
+        };
     }
 
 }

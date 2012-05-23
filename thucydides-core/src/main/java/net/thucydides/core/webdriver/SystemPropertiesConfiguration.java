@@ -2,10 +2,13 @@ package net.thucydides.core.webdriver;
 
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.csv.CSVTestDataSource;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.SystemEnvironmentVariables;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -71,6 +74,8 @@ public class SystemPropertiesConfiguration implements Configuration {
     private File outputDirectory;    
 
     private EnvironmentVariables environmentVariables;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SystemPropertiesConfiguration.class);
 
     @Inject
     public SystemPropertiesConfiguration(EnvironmentVariables environmentVariables) {
@@ -162,6 +167,7 @@ public class SystemPropertiesConfiguration implements Configuration {
     public File getOutputDirectory() {
         outputDirectory = loadOutputDirectoryFromSystemProperties();
         outputDirectory.mkdirs();
+        LOGGER.info("Writing reports to " + outputDirectory);
         return outputDirectory;
     }
 
