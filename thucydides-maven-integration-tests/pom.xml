@@ -15,7 +15,7 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-invoker-plugin</artifactId>
+                <artifactId>˜</artifactId>
                 <version>1.5</version>
                 <configuration>
                     <projectsDirectory>src/it</projectsDirectory>
