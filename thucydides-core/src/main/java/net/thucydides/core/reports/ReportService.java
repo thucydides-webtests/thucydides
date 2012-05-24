@@ -39,7 +39,7 @@ public class ReportService {
      * @param outputDirectory Where the test data is stored, and where the generated reports will go.
      * @param subscribedReporters A set of reporters that generate the actual reports.
      */
-    protected ReportService(final File outputDirectory, final Collection<AcceptanceTestReporter> subscribedReporters) {
+    public ReportService(final File outputDirectory, final Collection<AcceptanceTestReporter> subscribedReporters) {
         this.outputDirectory = outputDirectory;
         getSubscribedReporters().addAll(subscribedReporters);
     }

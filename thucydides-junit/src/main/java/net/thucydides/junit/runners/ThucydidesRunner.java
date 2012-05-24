@@ -58,7 +58,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private Pages pages;
     private final WebdriverManager webdriverManager;
     private String requestedDriver;
-
+    private ReportService reportService;
     /**
      * Special listener that keeps track of test step execution and results.
      */
@@ -205,13 +205,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
                 StepEventBus.getEventBus().testSuiteFinished();
                 generateReports();
                 closeDrivers();
-                dropListeners();
+                dropListeners(notifier);
             }
         }
     }
 
-    private void dropListeners() {
-            getStepListener().dropListeners();
+    private void dropListeners(final RunNotifier notifier) {
+        getStepListener().dropListeners();
+        notifier.removeListener(getStepListener());
+
     }
 
     private void generateReports() {
@@ -239,6 +241,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private void buildAndConfigureListeners() {
+
         initStepEventBus();
         if (webtestsAreSupported()) {
             initPagesObjectUsing(webdriverManager.getWebdriver(requestedDriver));
@@ -296,7 +299,11 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private ReportService getReportService() {
-        return Injectors.getInjector().getInstance(ReportService.class);
+        if (reportService == null) {
+            reportService = new ReportService(getOutputDirectory(), getDefaultReporters());
+        }
+        return reportService;
+//        return Injectors.getInjector().getInstance(ReportService.class);
     }
 
     /**

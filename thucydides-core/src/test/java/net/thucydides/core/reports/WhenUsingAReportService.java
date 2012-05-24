@@ -40,15 +40,6 @@ public class WhenUsingAReportService {
     }
 
     @Test
-    public void the_report_service_is_configured_as_a_guice_singleton() throws Exception {
-        ReportService reportService1 = Injectors.getInjector().getInstance(ReportService.class);
-        ReportService reportService2 = Injectors.getInjector().getInstance(ReportService.class);
-
-        assertThat(reportService1, is(notNullValue()));
-        assertThat(reportService1, is(reportService2));
-    }
-
-    @Test
     public void a_report_service_should_generate_reports_for_each_subscribed_reporter() throws Exception {
         List<TestOutcome> testOutcomeResults = new ArrayList<TestOutcome>();
         testOutcomeResults.add(testOutcome);

@@ -85,12 +85,12 @@ public class ThucydidesModule extends AbstractModule {
         return new LocalH2ServerDatabase(environmentVariables);
     }
 
-    @Provides
-    @Singleton
-    @Inject
-    public ReportService provideReportService(Configuration configuration) {
-        return new ReportService(configuration);
-    }
+//    @Provides
+//    @Singleton
+//    @Inject
+//    public ReportService provideReportService(Configuration configuration) {
+//        return new ReportService(configuration);
+//    }
 
     @Provides
     @Singleton

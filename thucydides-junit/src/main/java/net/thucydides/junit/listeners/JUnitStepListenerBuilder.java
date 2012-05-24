@@ -1,12 +1,15 @@
 package net.thucydides.junit.listeners;
 
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.Listeners;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.junit.guice.JUnitInjectors;
+import net.thucydides.junit.guice.ThucydidesJUnitModule;
 import net.thucydides.junit.runners.ParameterizedJUnitStepListener;
 
 import java.io.File;
@@ -74,8 +77,7 @@ public class JUnitStepListenerBuilder {
     }
 
     private StepListener newTestCountListener() {
-        EnvironmentVariables environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
-        return new TestCountListener(environmentVariables);
+        return JUnitInjectors.getInjector().getInstance(Key.get(StepListener.class, TestCounter.class));
     }
 
     private JUnitStepListener newStandardJunitStepListener() {
