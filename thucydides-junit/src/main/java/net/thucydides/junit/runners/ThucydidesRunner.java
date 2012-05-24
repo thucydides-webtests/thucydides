@@ -67,7 +67,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Retrieve the runner getConfiguration().from an external source.
      */
     private Configuration configuration;
-    private ReportService reportService;
     private boolean uniqueSession;
 
     private BatchManager batchManager;
@@ -297,10 +296,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private ReportService getReportService() {
-        if (reportService == null) {
-            reportService = new ReportService(getOutputDirectory(), getDefaultReporters());
-        }
-        return reportService;
+        return Injectors.getInjector().getInstance(ReportService.class);
     }
 
     /**

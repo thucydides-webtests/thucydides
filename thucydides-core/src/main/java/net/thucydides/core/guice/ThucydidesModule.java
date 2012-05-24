@@ -11,6 +11,7 @@ import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
+import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.reports.json.ColorScheme;
 import net.thucydides.core.reports.json.RelativeSizeColorScheme;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
@@ -84,6 +85,12 @@ public class ThucydidesModule extends AbstractModule {
         return new LocalH2ServerDatabase(environmentVariables);
     }
 
+    @Provides
+    @Singleton
+    @Inject
+    public ReportService provideReportService(Configuration configuration) {
+        return new ReportService(configuration);
+    }
 
     @Provides
     @Singleton

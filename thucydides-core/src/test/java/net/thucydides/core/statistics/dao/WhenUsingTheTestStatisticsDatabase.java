@@ -16,6 +16,8 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.LocalPreferences;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.util.PropertiesFileLocalPreferences;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,6 +43,7 @@ public class WhenUsingTheTestStatisticsDatabase {
             bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
             bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
             bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
+            bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);
         }
     }
 

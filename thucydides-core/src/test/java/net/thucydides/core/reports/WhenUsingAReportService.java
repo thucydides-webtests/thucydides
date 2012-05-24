@@ -1,5 +1,6 @@
 package net.thucydides.core.reports;
 
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -18,6 +19,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +37,15 @@ public class WhenUsingAReportService {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void the_report_service_is_configured_as_a_guice_singleton() throws Exception {
+        ReportService reportService1 = Injectors.getInjector().getInstance(ReportService.class);
+        ReportService reportService2 = Injectors.getInjector().getInstance(ReportService.class);
+
+        assertThat(reportService1, is(notNullValue()));
+        assertThat(reportService1, is(reportService2));
     }
 
     @Test

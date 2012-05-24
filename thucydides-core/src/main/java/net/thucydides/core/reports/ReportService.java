@@ -1,8 +1,10 @@
 package net.thucydides.core.reports;
 
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.webdriver.Configuration;
 import sun.misc.Service;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,6 +28,10 @@ public class ReportService {
      */
     private List<AcceptanceTestReporter> subscribedReporters;
 
+    @Inject
+    public ReportService(final Configuration configuration) {
+        this(configuration.getOutputDirectory(), getDefaultReporters());
+    }
     /**
      * Reports are generated using the test results in a given directory.
      * The actual reports are generated using a set of reporter objects. The report service passes test outcomes
@@ -33,7 +39,7 @@ public class ReportService {
      * @param outputDirectory Where the test data is stored, and where the generated reports will go.
      * @param subscribedReporters A set of reporters that generate the actual reports.
      */
-    public ReportService(final File outputDirectory, final Collection<AcceptanceTestReporter> subscribedReporters) {
+    protected ReportService(final File outputDirectory, final Collection<AcceptanceTestReporter> subscribedReporters) {
         this.outputDirectory = outputDirectory;
         getSubscribedReporters().addAll(subscribedReporters);
     }

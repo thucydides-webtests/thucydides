@@ -294,8 +294,7 @@ public class ThucydidesPlugin extends BasePlugin {
 
 
     def initializeReportService() {
-
-        reportService = new ReportService(getSystemConfiguration().outputDirectory, getDefaultReporters());
+        reportService = Injectors.getInjector().getInstance(ReportService.class);
     }
 
     def generateReportsFor(final List<TestOutcome> testRunResults) {

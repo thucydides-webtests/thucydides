@@ -204,7 +204,6 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     public void tests_marked_as_pending_should_be_pending() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioWithPendingTests.class, webDriverFactory);
-//        runner.setWebDriverFactory(webDriverFactory);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();

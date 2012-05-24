@@ -24,6 +24,8 @@ import net.thucydides.core.steps.ConsoleLoggingListener;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -62,6 +64,7 @@ public class WhenRecordingTestResultStatistics {
             bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class);
             bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class);
             bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
+            bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);
         }
     }
 
