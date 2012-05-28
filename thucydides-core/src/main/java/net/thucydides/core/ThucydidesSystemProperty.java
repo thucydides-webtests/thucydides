@@ -66,6 +66,15 @@ public enum ThucydidesSystemProperty {
     ONLY_SAVE_FAILING_SCREENSHOTS("thucydides.only.save.failing.screenshots"),
 
     /**
+     * Should Thucydides take screenshots for every clicked button and every selected link?
+     * If this option is set to true (the default value), Thucydides will record screenshots for any action performed
+     * on a WebElementFacade, i.e. any time you use an expression like element(...).click(),
+     * findBy(...).click() and so on.
+     * This will be overridden if the ONLY_SAVE_FAILING_SCREENSHOTS option is activated.
+     */
+    VERBOSE_SCREENSHOTS("thucydides.verbose.screenshots"),
+
+    /**
      * Restart the browser every so often during data-driven tests.
      */
     RESTART_BROWSER_FREQUENCY("thucydides.restart.browser.frequency"),
@@ -104,6 +113,12 @@ public enum ThucydidesSystemProperty {
      *  issue in the issue tracking system. Works with JIRA, Trac etc.
      */
     ISSUE_TRACKER_URL("thucydides.issue.tracker.url"),
+
+    /**
+     * Activate native events in Firefox.
+     * This is true by default, but can cause issues with some versions of linux.
+     */
+    NATIVE_EVENTS("thucydides.native.events"),
 
     /**
      * If the base JIRA URL is defined, Thucydides will build the issue tracker url using the standard JIRA form.

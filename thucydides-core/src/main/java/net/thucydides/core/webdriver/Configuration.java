@@ -30,4 +30,6 @@ public interface Configuration {
      * It is also the base URL used to build relative paths.
      */
     public String getBaseUrl();
+
+    boolean takeVerboseScreenshots();
 }

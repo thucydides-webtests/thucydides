@@ -180,6 +180,10 @@ public class SystemPropertiesConfiguration implements Configuration {
         return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), false);
     }
 
+    public boolean takeVerboseScreenshots() {
+        return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.VERBOSE_SCREENSHOTS.getPropertyName(), true);
+    }
+
     /**
      * Override the default base URL manually.
      * Normally only needed for testing.

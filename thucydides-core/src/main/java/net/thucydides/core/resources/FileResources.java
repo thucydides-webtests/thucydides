@@ -92,8 +92,11 @@ public class FileResources {
             } else {
                 in = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
             }
-            File destinationFile = new File(targetDirectory,
-                    resourceOnClasspath.getName());
+            File destinationFile = new File(targetDirectory, resourceOnClasspath.getName());
+
+            if (destinationFile.exists()) {
+                return;
+            }
             if (destinationFile.getParent() != null) {
                 new File(destinationFile.getParent()).mkdirs();
             }

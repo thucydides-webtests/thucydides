@@ -246,12 +246,22 @@ public class WhenInstanciatingANewFirefoxDriver {
     }
 
     @Test
-    public void should_enable_native_events() {
+    public void should_enable_native_events_by_default() {
         WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
 
         driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
 
         verify(firefoxProfileEnhancer).enableNativeEventsFor(any(FirefoxProfile.class));
+    }
+
+    @Test
+    public void should_be_able_to_deactivate_native_events_if_required() {
+        WebDriverFactory factory = new TestableWebdriverFactory(environmentVariables);
+
+        environmentVariables.setProperty("thucydides.native.events", "false");
+        driver = factory.newInstanceOf(SupportedWebDriver.FIREFOX);
+
+        verify(firefoxProfileEnhancer, never()).enableNativeEventsFor(any(FirefoxProfile.class));
     }
 
     @Test

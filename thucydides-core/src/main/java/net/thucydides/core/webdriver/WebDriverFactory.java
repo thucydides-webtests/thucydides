@@ -370,7 +370,9 @@ public class WebDriverFactory {
             }
 
             firefoxProfileEnhancer.allowWindowResizeFor(profile);
-            firefoxProfileEnhancer.enableNativeEventsFor(profile);
+            if (shouldEnableNativeEvents()) {
+                firefoxProfileEnhancer.enableNativeEventsFor(profile);
+            }
             if (shouldActivateProxy()) {
                 activateProxyFor(profile, firefoxProfileEnhancer);
             }
@@ -385,6 +387,10 @@ public class WebDriverFactory {
 
         }
         return profile;
+    }
+
+    private boolean shouldEnableNativeEvents() {
+        return Boolean.valueOf(ThucydidesSystemProperty.NATIVE_EVENTS.from(environmentVariables,"true"));
     }
 
     private void activateProxyFor(FirefoxProfile profile, FirefoxProfileEnhancer firefoxProfileEnhancer) {
