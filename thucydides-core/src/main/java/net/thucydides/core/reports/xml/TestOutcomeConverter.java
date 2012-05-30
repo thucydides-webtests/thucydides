@@ -51,6 +51,7 @@ public class TestOutcomeConverter implements Converter {
     private static final String ISSUE = "issue";
     private static final String TAGS = "tags";
     private static final String TAG = "tag";
+    private static final String QUALIFIER_FIELD = "qualifier";
     private static final String TAG_NAME = "name";
     private static final String TAG_TYPE = "type";
     private static final String EXCEPTION = "exception";
@@ -63,14 +64,7 @@ public class TestOutcomeConverter implements Converter {
     private static final String DURATION = "duration";
     private static final String SESSION_ID = "session-id";
 
-    private transient String qualifier;
-
     public TestOutcomeConverter() {
-    }
-
-    public TestOutcomeConverter(final String qualifier) {
-        this();
-        this.qualifier = qualifier;
     }
 
     /**
@@ -91,6 +85,9 @@ public class TestOutcomeConverter implements Converter {
 
         writer.addAttribute(TITLE_FIELD, titleFrom(testOutcome));
         writer.addAttribute(NAME_FIELD, nameFrom(testOutcome));
+        if (testOutcome.getQualifier() != null && testOutcome.getQualifier().isPresent()) {
+            writer.addAttribute(QUALIFIER_FIELD, testOutcome.getQualifier().get());
+        }
         writer.addAttribute(STEPS_FIELD, Integer.toString(testOutcome.countTestSteps()));
         writer.addAttribute(SUCCESSFUL_FIELD, Integer.toString(testOutcome.getSuccessCount()));
         writer.addAttribute(FAILURES_FIELD, Integer.toString(testOutcome.getFailureCount()));
@@ -113,32 +110,15 @@ public class TestOutcomeConverter implements Converter {
     }
 
     private String titleFrom(final TestOutcome testOutcome) {
-        if (qualifier == null) {
-            return testOutcome.getTitle();
-        } else {
-            return testOutcome.getTitle() + " [" + humanized(qualifier) + "]";
-        }
-    }
-
-    private String humanized(final String text) {
-        return text.replaceAll("_", "/");
+        return testOutcome.getTitle();
     }
 
     private String nameFrom(final TestOutcome testOutcome) {
-        String baseName;
         if (testOutcome.getMethodName() != null) {
-            baseName = testOutcome.getMethodName();
+            return testOutcome.getMethodName();
         } else {
-            baseName = testOutcome.getTitle();
+            return testOutcome.getTitle();
         }
-        String testRunName;
-        if (qualifier == null) {
-            testRunName = baseName;
-        } else {
-            String qualifierWithoutSpaces = qualifier.replaceAll(" ", "_");
-            testRunName = baseName + "_" + qualifierWithoutSpaces;
-        }
-        return testRunName;
     }
 
 
@@ -278,6 +258,9 @@ public class TestOutcomeConverter implements Converter {
         String methodName = reader.getAttribute(NAME_FIELD);
         TestOutcome testOutcome = new TestOutcome(methodName);
         testOutcome.setTitle(reader.getAttribute(TITLE_FIELD));
+        if (reader.getAttribute(QUALIFIER_FIELD) != null) {
+            testOutcome = testOutcome.withQualifier(reader.getAttribute(QUALIFIER_FIELD));
+        }
         Long duration = readDuration(reader);
         testOutcome.setDuration(duration);
         String sessionId = readSessionId(reader);

@@ -166,6 +166,28 @@ public class WhenGeneratingAnXMLReport {
     }
 
     @Test
+    public void should_generate_an_XML_report_for_an_acceptance_test_run_with_a_qualifier()
+            throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class).withQualifier("a qualifier");
+        String expectedReport =
+                "<acceptance-test-run title='Should do this [a qualifier]' name='should_do_this' qualifier='a qualifier' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
+                        + "  <tags>\n"
+                        + "    <tag name='A user story' type='story'/>\n"
+                        + "  </tags>"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
+                        + "  <test-step result='SUCCESS' duration='0'>\n"
+                        + "    <description>step 1</description>\n"
+                        + "  </test-step>\n"
+                        + "</acceptance-test-run>";
+
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        File xmlReport = reporter.generateReportFor(testOutcome);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }
+    @Test
     public void should_store_tags_in_the_XML_reports()
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioWithTags.class);
@@ -296,12 +318,11 @@ public class WhenGeneratingAnXMLReport {
 
 
     @Test
-    public void should_generate_a_qualified_XML_report_for_an_acceptance_test_run_if_the_qualifier_is_specified()
-            throws Exception {
+    public void should_generate_a_qualified_XML_report_for_an_acceptance_test_run_if_the_qualifier_is_specified() throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
 
         String expectedReport =
-                "<acceptance-test-run title='A simple test case [qualifier]' name='a_simple_test_case_qualifier' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
+                "<acceptance-test-run title='A simple test case [qualifier]' name='a_simple_test_case' qualifier='qualifier' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
                         + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
@@ -325,7 +346,7 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         String expectedReport =
-                "<acceptance-test-run title='A simple test case [a/b]' name='a_simple_test_case_a_b' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
+                "<acceptance-test-run title='A simple test case [a_b]' name='a_simple_test_case' qualifier='a_b' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
                         + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
@@ -637,28 +658,6 @@ public class WhenGeneratingAnXMLReport {
 
         File xmlReport = reporter.generateReportFor(testOutcome);
         assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_user_story_a_simple_test_case_qualifier") + ".xml"));
-
-    }
-
-
-    @Test
-    public void spaces_in_the_qualifer_should_be_converted_to_underscores_in_the_test_run_name() throws Exception {
-        TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-
-        TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
-        File screenshot = temporaryDirectory.newFile("step_1.png");
-        File source = temporaryDirectory.newFile("step_1.html");
-        step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
-        testOutcome.recordStep(step1);
-
-        reporter.setQualifier("a b c");
-
-        File xmlReport = reporter.generateReportFor(testOutcome);
-
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, containsString("name=\"a_simple_test_case_a_b_c\""));
-
 
     }
 

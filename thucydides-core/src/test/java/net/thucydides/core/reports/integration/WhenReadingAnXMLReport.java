@@ -16,6 +16,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -58,6 +59,29 @@ public class WhenReadingAnXMLReport {
 
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
         assertThat(testOutcome.get().getIssues(), hasItems("#123", "#456", "#789"));
+    }
+
+    @Test
+    public void should_load_a_qualified_acceptance_test_report_from_xml_file() throws Exception {
+        String storedReportXML =
+                "<acceptance-test-run title='Should do this [a qualifier]' qualifier='a qualifier' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
+                        + "  <issues>\n"
+                        + "    <issue>#456</issue>\n"
+                        + "    <issue>#789</issue>\n"
+                        + "    <issue>#123</issue>\n"
+                        + "  </issues>\n"
+                        + "  <test-step result='SUCCESS'>\n"
+                        + "    <description>step 1</description>\n"
+                        + "  </test-step>\n"
+                        + "</acceptance-test-run>";
+
+        File report = temporaryDirectory.newFile("saved-report.xml");
+        FileUtils.writeStringToFile(report, storedReportXML);
+
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+        assertThat(testOutcome.get().getQualifier().get(), is("a qualifier"));
+        assertThat(testOutcome.get().getTitle(), containsString("[a qualifier]"));
     }
 
     @Test
@@ -269,5 +293,23 @@ public class WhenReadingAnXMLReport {
         assertThat(testOutcome.get().getTestSteps().get(1).getDescription(), is("step 2"));
     }
 
+    @Test
+    public void should_load_qualified_acceptance_test_report_with_a_qualified_name() throws Exception {
+        String storedReportXML =
+                "<acceptance-test-run title='Search for news [euro]' name='searchForNews[0]' qualifier='euro' steps='0' successful='0' failures='0' skipped='0' ignored='0' pending='0' result='PENDING' duration='85'>\n"+
+                        "  <user-story id='samples.ParametrizedTest' name='Parametrized test'/>\n"+
+                        "  <tags>\n"+
+                        "    <tag name='Parametrized test' type='story'/>\n"+
+                        "  </tags>\n"+
+                        "</acceptance-test-run>";
+
+        File report = temporaryDirectory.newFile("saved-report.xml");
+        FileUtils.writeStringToFile(report, storedReportXML);
+
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+
+        assertThat(testOutcome.get().getTitle(), is("Search for news [euro]"));
+        assertThat(testOutcome.get().getTitleWithLinks(), is("Search for news [euro]"));
+    }
 
 }

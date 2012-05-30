@@ -135,6 +135,10 @@ public class TestOutcome {
     private TagProviderService tagProviderService;
 
     /**
+     * An optional qualifier used to distinguish different runs of this test in data-driven tests.
+     */
+    private Optional<String> qualifier;
+    /**
      * The title is immutable once set. For convenience, you can create a test
      * run directly with a title using this constructor.
      * @param methodName The name of the Java method that implements this test.
@@ -150,6 +154,7 @@ public class TestOutcome {
         this.additionalIssues = new HashSet<String>();
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
+        this.qualifier = Optional.absent();
         if (testCase != null) {
             initializeStoryFrom(testCase);
         }
@@ -195,6 +200,36 @@ public class TestOutcome {
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
     }
 
+    protected TestOutcome(final long startTime,
+                          final long duration,
+                          final String title,
+                          final String methodName,
+                          final Class<?> testCase,
+                          final List<TestStep> testSteps,
+                          final Set<String> issues,
+                          final Set<String> additionalIssues,
+                          final Set<TestTag> tags,
+                          final Story userStory,
+                          final Throwable testFailureCause,
+                          final TestResult annotatedResult,
+                          final Optional<String> qualifier) {
+        this.startTime = startTime;
+        this.duration = duration;
+        this.storedTitle = title;
+        this.methodName = methodName;
+        this.testCase = testCase;
+        this.testSteps.addAll(testSteps);
+        this.issues = issues;
+        this.additionalIssues = additionalIssues;
+        this.tags = tags;
+        this.userStory = userStory;
+        this.testFailureCause = testFailureCause;
+        this.qualifier = qualifier;
+        this.annotatedResult = annotatedResult;
+        this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
+        this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
+    }
+
     /**
      * Create a new test outcome instance for a given test class or user story.
      * @param methodName  The name of the Java method implementing this test,
@@ -203,6 +238,26 @@ public class TestOutcome {
      */
     public static TestOutcome forTest(final String methodName, final Class<?> testCase) {
         return new TestOutcome(methodName, testCase);
+    }
+
+    public TestOutcome withQualifier(String qualifier) {
+        if (qualifier != null) {
+            return new TestOutcome(this.startTime,
+                                   this.duration,
+                                   this.storedTitle,
+                                   this.methodName,
+                                   this.testCase,
+                                   this.testSteps,
+                                   this.issues,
+                                   this.additionalIssues,
+                                   this.tags,
+                                   this.userStory,
+                                   this.testFailureCause,
+                                   this.annotatedResult,
+                                   Optional.fromNullable(qualifier));
+        } else {
+            return this;
+        }
     }
 
     private void initializeStoryFrom(final Class<?> testCase) {
@@ -260,7 +315,17 @@ public class TestOutcome {
 
     private String obtainTitleFromAnnotationOrMethodName() {
         Optional<String> annotatedTitle = TestAnnotations.forClass(testCase).getAnnotatedTitleForMethod(methodName);
-        return annotatedTitle.or(NameConverter.humanize(withNoArguments(methodName)));
+        String rootTitle = annotatedTitle.or(NameConverter.humanize(withNoArguments(methodName)));
+        if ((qualifier != null) && (qualifier.isPresent())) {
+            return qualified(rootTitle);
+        } else {
+            return rootTitle;
+        }
+
+    }
+
+    private String qualified(String rootTitle) {
+        return rootTitle + " [" + qualifier.get() + "]";
     }
 
     public String getStoryTitle() {
@@ -272,8 +337,7 @@ public class TestOutcome {
     }
 
     public String getReportName(final ReportType type) {
-        ReportNamer reportNamer = ReportNamer.forReportType(type);
-        return reportNamer.getNormalizedTestNameFor(this);
+        return ReportNamer.forReportType(type).getNormalizedTestNameFor(this);
     }
 
     public String getSimpleReportName(final ReportType type) {
@@ -281,19 +345,6 @@ public class TestOutcome {
         return reportNamer.getSimpleTestNameFor(this);
     }
 
-    public String getReportName(final ReportType type, final String qualifier) {
-        ReportNamer reportNamer = ReportNamer.forReportType(type);
-        if (shouldAddQualifier(qualifier)) {
-            return reportNamer.getQualifiedTestNameFor(this, qualifier);
-        } else {
-            return reportNamer.getNormalizedTestNameFor(this);
-        }
-    }
-    
-    private boolean shouldAddQualifier(final String qualifier) {
-        return (qualifier != null);
-    }
-    
     public String getReportName() {
         return getReportName(ROOT);
     }
@@ -460,6 +511,9 @@ public class TestOutcome {
         startGroup();
     }
 
+    public Optional<String> getQualifier() {
+        return qualifier;
+    }
 
     /**
      * Turns the current step into a group. Subsequent steps will be added as children of the current step.
@@ -663,6 +717,15 @@ public class TestOutcome {
 
     private String getProjectPrefix() {
         return ThucydidesSystemProperty.PROJECT_KEY.from(getEnvironmentVariables());
+    }
+
+    public String getQualifiedMethodName() {
+        if ((qualifier != null) && (qualifier.isPresent())) {
+            String qualifierWithoutSpaces = qualifier.get().replaceAll(" ", "_");
+            return getMethodName() + "_" + qualifierWithoutSpaces;
+        } else {
+            return getMethodName();
+        }
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {

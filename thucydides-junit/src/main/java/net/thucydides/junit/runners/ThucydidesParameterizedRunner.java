@@ -121,7 +121,7 @@ public class ThucydidesParameterizedRunner extends Suite {
         boolean firstEntry = true;
         for (Object testDataValue : testData) {
             if (!firstEntry) {
-                testDataQualifier.append("_");
+                testDataQualifier.append("/");
             }
             testDataQualifier.append(testDataValue);
             firstEntry = false;

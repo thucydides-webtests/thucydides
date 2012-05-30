@@ -2,16 +2,14 @@ package net.thucydides.core.reports;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
-import net.thucydides.core.model.ReportType;
-import net.thucydides.core.model.Stories;
 import net.thucydides.core.model.TestOutcome;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.bouncycastle.crypto.digests.MD5Digest;
 import org.junit.Test;
 
 import static net.thucydides.core.model.ReportType.HTML;
 import static net.thucydides.core.model.ReportType.XML;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class WhenNamingTheReports {
@@ -98,9 +96,10 @@ public class WhenNamingTheReports {
 
     @Test
     public void a_qualifier_can_be_provided_to_distinguish_html_reports_from_other_similar_reports() {
-        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
+                                             .withQualifier("qualifier");
 
-        String reportName = testOutcome.getReportName(HTML,"qualifier");
+        String reportName = testOutcome.getReportName(HTML);
 
         assertThat(reportName, is(DigestUtils.md5Hex("a_user_story_should_do_this_qualifier") + ".html"));
     }
@@ -109,7 +108,7 @@ public class WhenNamingTheReports {
     public void a_null_qualifier_should_be_ignored() {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
-        String reportName = testOutcome.getReportName(HTML,null);
+        String reportName = testOutcome.getReportName(HTML);
 
         assertThat(reportName, is(DigestUtils.md5Hex("a_user_story_should_do_this") + ".html"));
     }
@@ -125,11 +124,21 @@ public class WhenNamingTheReports {
 
     @Test
     public void a_qualifier_can_be_provided_to_distinguish_xml_reports_from_other_similar_reports() {
-        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
+                                             .withQualifier("qualifier");
 
-        String reportName = testOutcome.getReportName(XML,"qualifier");
+        String reportName = testOutcome.getReportName(XML);
 
         assertThat(reportName, is(DigestUtils.md5Hex("a_user_story_should_do_this_qualifier") + ".xml"));
     }
+
+    @Test
+    public void a_qualifier_should_be_indicated_in_the_test_title() {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
+                .withQualifier("qualifier");
+
+        assertThat(testOutcome.getTitle(), containsString("qualifier"));
+    }
+
 }
 

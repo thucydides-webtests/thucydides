@@ -167,10 +167,25 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     @Test
+    public void a_qualified_test_outcome_title_should_be_based_on_the_tested_method_name_with_a_qualifier() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+
+        TestOutcome qualifiedQutcome = outcome.withQualifier("with-this-value");
+        assertThat(qualifiedQutcome.getTitle(), is("Should do this [with-this-value]"));
+    }
+
+    @Test
     public void a_test_outcome_title_can_be_overriden_using_the_Title_annotation() {
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenario.class);
 
         assertThat(outcome.getTitle(), is("Really should do this!"));
+    }
+
+    @Test
+    public void a_qualified_test_outcome_title_should_contain_the_qualifier() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenario.class);
+        TestOutcome qualifiedQutcome = outcome.withQualifier("with-this-value");
+        assertThat(qualifiedQutcome.getTitle(), is("Really should do this! [with-this-value]"));
     }
 
     @Test

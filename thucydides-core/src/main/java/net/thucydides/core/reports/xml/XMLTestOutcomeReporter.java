@@ -48,19 +48,21 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
      */
     public File generateReportFor(final TestOutcome testOutcome) throws IOException {
 
-        LOGGER.debug("Generating XML report for {}/{}", testOutcome.getUserStory(),
-                                                        testOutcome.getMethodName());
+        TestOutcome storedTestOutcome = testOutcome.withQualifier(qualifier);
 
-        LOGGER.debug("Test outcome contents = {}", testOutcome);
+        LOGGER.debug("Generating XML report for {}/{}", storedTestOutcome.getUserStory(),
+                                                        storedTestOutcome.getMethodName());
+
+        LOGGER.debug("Test outcome contents = {}", storedTestOutcome);
 
         Preconditions.checkNotNull(outputDirectory);
 
         XStream xstream = new XStream();
         xstream.alias("acceptance-test-run", TestOutcome.class);
         xstream.registerConverter(usingXmlConverter());
-        String xmlContents = xstream.toXML(testOutcome);
+        String xmlContents = xstream.toXML(storedTestOutcome);
 
-        String reportFilename = reportFor(testOutcome);
+        String reportFilename = reportFor(storedTestOutcome);
         LOGGER.debug("Calculated report filename: {}", reportFilename);
 
         File report = new File(getOutputDirectory(), reportFilename);
@@ -72,19 +74,11 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
     }
 
     private TestOutcomeConverter usingXmlConverter() {
-        if (qualifier == null) {
-            return new TestOutcomeConverter();
-        } else {
-            return new TestOutcomeConverter(qualifier);
-        }
+        return new TestOutcomeConverter();
     }
 
     private String reportFor(final TestOutcome testOutcome) {
-        if (qualifier == null) {
-            return testOutcome.getReportName(XML);
-        } else {
-            return testOutcome.getReportName(XML, qualifier);
-        }
+        return testOutcome.withQualifier(qualifier).getReportName(XML);
     }
 
     public Optional<TestOutcome> loadReportFrom(final File reportFile) throws IOException {

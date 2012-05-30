@@ -42,7 +42,7 @@ public class ReportNamer {
         if (testOutcome.getUserStory() != null) {
             testName = NameConverter.underscore(testOutcome.getUserStory().getName());
         }
-        String scenarioName = NameConverter.underscore(testOutcome.getMethodName());
+        String scenarioName = NameConverter.underscore(testOutcome.getQualifiedMethodName());
         return withNoIssueNumbers(appendToIfNotNull(testName, scenarioName));
     }
 
@@ -67,16 +67,6 @@ public class ReportNamer {
         } else {
             return nextElement;
         }
-    }
-
-    public String getQualifiedTestNameFor(final TestOutcome testOutcome, final String qualifier) {
-        String userStory = "";
-        if (testOutcome.getUserStory() != null) {
-            userStory = NameConverter.underscore(testOutcome.getUserStory().getName()) + "_";
-        }
-        String normalizedQualifier = qualifier.replaceAll(" ", "_").toLowerCase();
-        String plainTextTestName = userStory + testOutcome.getMethodName() + "_" + normalizedQualifier;
-        return appendSuffixTo(DigestUtils.md5Hex(plainTextTestName));
     }
 
     public String getNormalizedTestNameFor(final Story userStory) {

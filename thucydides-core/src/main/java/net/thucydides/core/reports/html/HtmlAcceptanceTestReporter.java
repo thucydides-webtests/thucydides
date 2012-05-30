@@ -68,19 +68,21 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         Preconditions.checkNotNull(getOutputDirectory());
 
-        LOGGER.debug("Generating XML report for {}/{}", testOutcome.getTitle(), testOutcome.getMethodName());
+        TestOutcome storedTestOutcome = testOutcome.withQualifier(qualifier);
+
+        LOGGER.debug("Generating XML report for {}/{}", storedTestOutcome.getTitle(), storedTestOutcome.getMethodName());
 
         Map<String,Object> context = new HashMap<String,Object>();
-        addTestOutcomeToContext(testOutcome, context);
+        addTestOutcomeToContext(storedTestOutcome, context);
         addFormattersToContext(context);
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_REPORT).usingContext(context);
         copyResourcesToOutputDirectory();
 
-        if (containsScreenshots(testOutcome)) {
-            generateScreenshotReportsFor(testOutcome);
+        if (containsScreenshots(storedTestOutcome)) {
+            generateScreenshotReportsFor(storedTestOutcome);
         }
 
-        String reportFilename = reportFor(testOutcome);
+        String reportFilename = reportFor(storedTestOutcome);
         return writeReportToOutputDirectory(reportFilename, htmlContents);
     }
 
@@ -170,11 +172,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     }
 
     private String reportFor(final TestOutcome testOutcome) {
-        if (qualifier != null) {
-            return testOutcome.getReportName(HTML, qualifier);
-        } else {
-            return testOutcome.getReportName(HTML);
-        }
+        return testOutcome.withQualifier(qualifier).getReportName(HTML);
     }
 
 }
