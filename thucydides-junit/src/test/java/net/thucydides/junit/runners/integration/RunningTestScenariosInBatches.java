@@ -5,6 +5,7 @@ import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.samples.SampleNonWebSteps;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
 
 public class RunningTestScenariosInBatches {
 
@@ -38,8 +40,13 @@ public class RunningTestScenariosInBatches {
         }
     }
 
+    @Before
+    public void clearCounters() {
+        executedTests.clear();
+    }
+
     @Test
-    public void the_thread_for_a_given_batch_should_only_run_tests_in_that_batch() throws InitializationError, InterruptedException {
+    public void the_thread_for_batch_1_should_only_run_tests_in_that_batch() throws InitializationError, InterruptedException {
 
         MockEnvironmentVariables threadVariables = new MockEnvironmentVariables();
         threadVariables.setProperty("thucydides.batch.count", "3");
@@ -48,9 +55,38 @@ public class RunningTestScenariosInBatches {
 
         runTestCases(batchManager);
 
-        assertThat(executedTests, hasItems(0, 3, 6));
+        assertThat(executedTests.size(), is(3));
+        assertThat(executedTests, hasItems(1, 4, 7));
     }
 
+    @Test
+    public void the_thread_for_batch_2_should_only_run_tests_in_that_batch() throws InitializationError, InterruptedException {
+
+        MockEnvironmentVariables threadVariables = new MockEnvironmentVariables();
+        threadVariables.setProperty("thucydides.batch.count", "3");
+        threadVariables.setProperty("thucydides.batch.number", Integer.toString(2));
+        SystemVariableBasedBatchManager batchManager = new SystemVariableBasedBatchManager(threadVariables);
+
+        runTestCases(batchManager);
+
+        assertThat(executedTests.size(), is(3));
+        assertThat(executedTests, hasItems(2, 5, 8));
+    }
+
+
+    @Test
+    public void the_thread_for_batch_3_should_only_run_tests_in_that_batch() throws InitializationError, InterruptedException {
+
+        MockEnvironmentVariables threadVariables = new MockEnvironmentVariables();
+        threadVariables.setProperty("thucydides.batch.count", "3");
+        threadVariables.setProperty("thucydides.batch.number", Integer.toString(3));
+        SystemVariableBasedBatchManager batchManager = new SystemVariableBasedBatchManager(threadVariables);
+
+        runTestCases(batchManager);
+
+        assertThat(executedTests.size(), is(2));
+        assertThat(executedTests, hasItems(3, 6));
+    }
     // TEST CLASSES USED IN THE MAIN TESTS.
 
     @RunWith(ThucydidesRunner.class)
@@ -68,7 +104,7 @@ public class RunningTestScenariosInBatches {
         @Test
         public void happy_day_scenario() {
 
-            executedTests.add(testNumber);
+            executedTests.add(1);
 
             steps.stepThatSucceeds();
             steps.anotherStepThatSucceeds();
@@ -105,7 +141,7 @@ public class RunningTestScenariosInBatches {
         @Test
         public void happy_day_scenario() {
 
-            executedTests.add(testNumber);
+            executedTests.add(2);
 
             steps.stepThatSucceeds();
             steps.anotherStepThatSucceeds();
@@ -142,7 +178,7 @@ public class RunningTestScenariosInBatches {
         @Test
         public void happy_day_scenario() {
 
-            executedTests.add(testNumber);
+            executedTests.add(3);
 
             steps.stepThatSucceeds();
             steps.anotherStepThatSucceeds();
@@ -180,7 +216,7 @@ public class RunningTestScenariosInBatches {
         @Test
         public void happy_day_scenario() {
 
-            executedTests.add(testNumber);
+            executedTests.add(4);
 
             steps.stepThatSucceeds();
             steps.anotherStepThatSucceeds();
@@ -219,7 +255,7 @@ public class RunningTestScenariosInBatches {
         @Test
         public void happy_day_scenario() {
 
-            executedTests.add(testNumber);
+            executedTests.add(5);
 
             steps.stepThatSucceeds();
             steps.anotherStepThatSucceeds();
@@ -256,7 +292,7 @@ public class RunningTestScenariosInBatches {
         @Test
         public void happy_day_scenario() {
 
-            executedTests.add(testNumber);
+            executedTests.add(6);
 
             steps.stepThatSucceeds();
             steps.anotherStepThatSucceeds();
@@ -293,7 +329,7 @@ public class RunningTestScenariosInBatches {
         @Test
         public void happy_day_scenario() {
 
-            executedTests.add(testNumber);
+            executedTests.add(7);
 
             steps.stepThatSucceeds();
             steps.anotherStepThatSucceeds();
@@ -330,7 +366,7 @@ public class RunningTestScenariosInBatches {
         @Test
         public void happy_day_scenario() {
 
-            executedTests.add(testNumber);
+            executedTests.add(8);
 
             steps.stepThatSucceeds();
             steps.anotherStepThatSucceeds();

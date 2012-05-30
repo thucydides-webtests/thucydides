@@ -92,6 +92,7 @@ public class WhenRunningTestBatches extends AbstractTestStepRunnerTest {
     public void the_test_runner_records_the_steps_as_they_are_executed() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenario.class, webDriverFactory);
+
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
