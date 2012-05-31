@@ -50,6 +50,24 @@ public class WhenCoordinatingTestBatches {
 
     @Test
     public void should_flag_every_n_tests_to_be_run() {
+        environmentVariables.setProperty("thucydides.batch.size", "10");
+        environmentVariables.setProperty("thucydides.batch.number", "1");
+
+        SystemVariableBasedBatchManager batchManager = new SystemVariableBasedBatchManager(environmentVariables);
+
+        List<Integer> executedTests = new ArrayList<Integer>();
+        for(int testNumber = 1; testNumber <= 50; testNumber++) {
+            batchManager.registerTestCase("Test Case " + testNumber);
+            if (batchManager.shouldExecuteThisTest()) {
+                executedTests.add(testNumber);
+            }
+        }
+
+        assertThat(executedTests.size(), is(5));
+        assertThat(executedTests, hasItems(1,11,21,31,41));
+    }
+    @Test
+    public void should_support_the_old_batch_count_property() {
         environmentVariables.setProperty("thucydides.batch.count", "10");
         environmentVariables.setProperty("thucydides.batch.number", "1");
 
@@ -69,7 +87,7 @@ public class WhenCoordinatingTestBatches {
 
     @Test
     public void should_flag_every_2nd_tests_to_be_run() {
-        environmentVariables.setProperty("thucydides.batch.count", "10");
+        environmentVariables.setProperty("thucydides.batch.size", "10");
         environmentVariables.setProperty("thucydides.batch.number", "2");
 
         SystemVariableBasedBatchManager batchManager = new SystemVariableBasedBatchManager(environmentVariables);
@@ -88,8 +106,7 @@ public class WhenCoordinatingTestBatches {
 
     @Test
     public void should_handle_tests_being_run_in_parallel() {
-        environmentVariables.setProperty("thucydides.batch.count", "50");
-        environmentVariables.setProperty("thucydides.batch.count", "10");
+        environmentVariables.setProperty("thucydides.batch.size", "10");
 
         SystemVariableBasedBatchManager batchManager = new SystemVariableBasedBatchManager(environmentVariables);
 

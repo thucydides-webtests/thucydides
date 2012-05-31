@@ -160,9 +160,14 @@ public enum ThucydidesSystemProperty {
     ACTIVTE_HIGHLIGHTING("thucydides.activate.highlighting"),
 
     /**
-     *  If batch testing is being used, this is the size of the batches being executed.
+     *  A deprecated property that is synonymous with thucydides.batch.size
      */
     BATCH_COUNT("thucydides.batch.count"),
+
+    /**
+     *  If batch testing is being used, this is the size of the batches being executed.
+     */
+    BATCH_SIZE("thucydides.batch.size"),
 
     /**
      * If batch testing is being used, this is the number of the batch being run on this machine.

@@ -33,8 +33,16 @@ public class SystemVariableBasedBatchManager implements BatchManager {
      */
     @Inject
     public SystemVariableBasedBatchManager(EnvironmentVariables environmentVariables) {
-        this.batchCount = environmentVariables.getPropertyAsInteger(BATCH_COUNT.getPropertyName(), 0);
+        this.batchCount = getBatchCountFrom(environmentVariables);
         this.batchNumber = environmentVariables.getPropertyAsInteger(BATCH_NUMBER.getPropertyName(), 0);
+    }
+
+    private int getBatchCountFrom(EnvironmentVariables environmentVariables) {
+        int batchCountValue = environmentVariables.getPropertyAsInteger(BATCH_SIZE.getPropertyName(), 0);
+        if (batchCountValue == 0) {
+            batchCountValue = environmentVariables.getPropertyAsInteger(BATCH_COUNT.getPropertyName(), 0);
+        }
+        return batchCountValue;
     }
 
     @Override
