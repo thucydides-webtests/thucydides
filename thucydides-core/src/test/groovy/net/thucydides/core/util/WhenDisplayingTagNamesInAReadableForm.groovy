@@ -110,5 +110,6 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
             'author_id'         | 'Author'
             'someTest'          | 'Some test'
             'AnotherTest'       | 'Another test'
+            'AN_ENUM_NAME'      | 'An enum name'
     }
 }

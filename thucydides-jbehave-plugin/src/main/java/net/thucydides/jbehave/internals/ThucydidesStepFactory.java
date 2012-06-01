@@ -1,4 +1,4 @@
-package net.thucydides.jbehave;
+package net.thucydides.jbehave.internals;
 
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.Lists;
@@ -9,10 +9,8 @@ import net.thucydides.core.steps.StepFactory;
 import org.jbehave.core.configuration.Configuration;
 import org.jbehave.core.steps.AbstractStepsFactory;
 import org.jbehave.core.steps.CandidateSteps;
-import org.jbehave.core.steps.InjectableStepsFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -91,7 +89,7 @@ public class ThucydidesStepFactory extends AbstractStepsFactory {
     }
 
     public static ThucydidesStepFactory withStoriesFromPackage(String rootPackage) {
-        return new ThucydidesStepFactory(ThucydidesJBehavePlugin.defaultConfiguration(), rootPackage);
+        return new ThucydidesStepFactory(ThucydidesJBehave.defaultConfiguration(), rootPackage);
     }
 
     public ThucydidesStepFactory andConfiguration(Configuration configuration) {

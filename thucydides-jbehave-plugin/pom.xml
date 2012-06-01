@@ -1,22 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.0-SNAPSHOT</version>
+        <version>0.8.22-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>thucydides-jbehave</artifactId>
-
+    <artifactId>thucydides-jbehave-plugin</artifactId>
+    <name>thucydides-jbehave-plugin</name>
     <properties>
         <jbehave.core.version>3.6.4</jbehave.core.version>
         <jbehave.site.version>3.1.1</jbehave.site.version>
         <embeddables>**/*Stories.java</embeddables>
     </properties>
-
 
     <dependencies>
         <dependency>
@@ -36,6 +33,19 @@
             <artifactId>jbehave-site-resources</artifactId>
             <version>${jbehave.site.version}</version>
             <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.extcos</groupId>
+            <artifactId>extcos</artifactId>
+            <version>0.3b</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

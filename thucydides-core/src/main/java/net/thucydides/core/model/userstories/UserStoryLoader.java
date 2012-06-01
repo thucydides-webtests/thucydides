@@ -22,14 +22,6 @@ import java.util.Locale;
  */
 public class UserStoryLoader {
 
-    private static final class XmlFilenameFilter implements FilenameFilter {
-        public boolean accept(final File file, final String filename) {
-            return filename.toLowerCase(Locale.getDefault()).endsWith(".xml");
-        }
-    }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserStoryLoader.class);
-
     /**
      * Load the user stories from the XML test results in a specified directory.
      * Test results will be split across user stories if the user stories are specified in the 
@@ -41,26 +33,18 @@ public class UserStoryLoader {
         
         XMLTestOutcomeReporter testOutcomeReporter = new XMLTestOutcomeReporter();
 
-        File[] reportFiles = getAllXMLFilesFrom(reportDirectory);
+        List<TestOutcome> testOutcomes = testOutcomeReporter.loadReportsFrom(reportDirectory);
 
-        if (reportFiles == null) {
-            LOGGER.error("Could not find any Thucydides reports");
-            return stories;
-        }
-
-        for (File reportFile : reportFiles) {
-            Optional<TestOutcome> testOutcome = testOutcomeReporter.loadReportFrom(reportFile);
-            if (testOutcome.isPresent())
-                if (testOutcome.get().getUserStory() != null) {
-                    StoryTestResults storyResults = userStoryResultsFor(testOutcome.get(), stories);
-                    storyResults.recordTestRun(testOutcome.get());
-                }
+        for (TestOutcome testOutcome : testOutcomes) {
+            if (testOutcome.getUserStory() != null) {
+                StoryTestResults storyResults = userStoryResultsFor(testOutcome, stories);
+                storyResults.recordTestRun(testOutcome);
+            }
         }
         
         return stories;
     }
 
-    
     private StoryTestResults userStoryResultsFor(final TestOutcome testOutcome,
                                                  final List<StoryTestResults> storyResults) {
         Story userStory = testOutcome.getUserStory();
@@ -72,12 +56,5 @@ public class UserStoryLoader {
         StoryTestResults storyTestResults = new StoryTestResults(userStory);
         storyResults.add(storyTestResults);
         return storyTestResults;
-    }
-
-
-
-
-    private File[] getAllXMLFilesFrom(final File reportsDirectory) {
-        return reportsDirectory.listFiles(new XmlFilenameFilter());
     }
 }

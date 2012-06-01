@@ -1,9 +1,9 @@
-package net.thucydides.jbehave;
+package net.thucydides.jbehave.internals;
 
 import com.thoughtworks.paranamer.Paranamer;
-import com.wakaleo.jbehave.introspection.Extract;
 import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepFactory;
+import net.thucydides.jbehave.reflection.Extract;
 import org.jbehave.core.configuration.Keywords;
 import org.jbehave.core.parsers.RegexPrefixCapturingPatternParser;
 import org.jbehave.core.steps.InjectableStepsFactory;

@@ -1,4 +1,4 @@
-package net.thucydides.jbehave;
+package net.thucydides.jbehave.internals;
 
 import ch.lambdaj.function.convert.Converter;
 import net.thucydides.core.steps.StepFactory;

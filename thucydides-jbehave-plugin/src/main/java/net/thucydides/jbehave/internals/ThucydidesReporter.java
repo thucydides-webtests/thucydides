@@ -1,11 +1,14 @@
-package net.thucydides.jbehave;
+package net.thucydides.jbehave.internals;
 
+import net.thucydides.core.ThucydidesListeners;
 import net.thucydides.core.ThucydidesReports;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFailure;
+import net.thucydides.core.util.NameConverter;
+import net.thucydides.core.webdriver.Configuration;
 import org.jbehave.core.model.ExamplesTable;
 import org.jbehave.core.model.GivenStories;
 import org.jbehave.core.model.Meta;
@@ -29,6 +32,11 @@ public class ThucydidesReporter implements StoryReporter {
 
     private ThucydidesListeners thucydidesListeners;
     private ReportService reportService;
+    private final Configuration systemConfiguration;
+
+    public ThucydidesReporter(Configuration systemConfiguration) {
+        this.systemConfiguration = systemConfiguration;
+    }
 
     public void storyNotAllowed(Story story, String s) {
     }
@@ -39,9 +47,10 @@ public class ThucydidesReporter implements StoryReporter {
     public void beforeStory(Story story, boolean b) {
         System.out.println("Before story: " + story.getName());
         String storyName = removeSuffixFrom(story.getName());
-        thucydidesListeners = ThucydidesReports.setupListeners();
-        reportService  = ThucydidesReports.getReportService();
-        StepEventBus.getEventBus().testSuiteStarted(net.thucydides.core.model.Story.withId(storyName, storyName));
+        String storyTitle = NameConverter.humanize(storyName);
+        reportService  = ThucydidesReports.getReportService(systemConfiguration);
+        thucydidesListeners = ThucydidesReports.setupListeners(systemConfiguration);
+        StepEventBus.getEventBus().testSuiteStarted(net.thucydides.core.model.Story.withId(storyName, storyTitle));
     }
 
     private String removeSuffixFrom(String name) {
