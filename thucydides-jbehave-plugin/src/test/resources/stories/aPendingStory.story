@@ -1,5 +1,3 @@
-import org.jbehave.core.annotations.Then
-
 Scenario: A scenario with pending steps
 
 Given JBehave story with no implementation

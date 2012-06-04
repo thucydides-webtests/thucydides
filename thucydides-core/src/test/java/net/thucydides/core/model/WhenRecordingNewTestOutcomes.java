@@ -1,8 +1,6 @@
 package net.thucydides.core.model;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
@@ -22,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.extract;
@@ -46,7 +43,6 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static net.thucydides.core.model.TestResult.*;
 
 public class WhenRecordingNewTestOutcomes {
 

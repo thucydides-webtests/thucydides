@@ -13,6 +13,10 @@ public class StorySteps {
     public void givenIHaveAnImplementedJBehaveScenario() {
     }
 
+    @Given("I have a badly implemented JBehave scenario")
+    public void givenIHaveABadlyImplementedJBehaveScenario() {
+    }
+
     @Given("the scenario works")
     public void givenTheScenarioWorks() {
     }
@@ -27,12 +31,15 @@ public class StorySteps {
 
     @Given("the scenario fails")
     public void givenTheScenarioFails() {
+        assertThat(true,is(false));
     }
 
     @Then("I should get a failed result")
     public void thenIShouldGetAFailedResult() {
-        assertThat(true,is(false));
     }
+
+    @Then("I should skip subsequent results")
+    public void andIShouldSkipSubsequentResults() {}
 
     @Given("a JBehave story with a pending implementation")
     @Pending

@@ -25,4 +25,13 @@ public class StoryStepsWithThucydidesSteps {
     public void thenTheStepsShouldAppearInTheOutcome() {
     }
 
+
+    @When("one of the steps is pending")
+    public void whenOneOfTheStepsIsPending() {
+        steps.pendingStep();
+    }
+
+    @Then("the test outcome should be pending")
+    public void thenTheTestOutcomeShouldBePending() {
+    }
 }

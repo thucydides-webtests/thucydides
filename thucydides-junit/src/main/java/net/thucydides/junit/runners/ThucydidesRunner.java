@@ -204,16 +204,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             } finally {
                 StepEventBus.getEventBus().testSuiteFinished();
                 generateReports();
-                closeDrivers();
                 dropListeners(notifier);
+                closeDrivers();
             }
         }
     }
 
     private void dropListeners(final RunNotifier notifier) {
-        getStepListener().dropListeners();
         notifier.removeListener(getStepListener());
-
+        getStepListener().dropListeners();
     }
 
     private void generateReports() {

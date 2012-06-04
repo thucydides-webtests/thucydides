@@ -3,25 +3,12 @@ package net.thucydides.jbehave;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
-import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
-import net.thucydides.core.util.MockEnvironmentVariables;
-import net.thucydides.core.webdriver.Configuration;
-import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
-import org.jbehave.core.annotations.Then;
-import org.jbehave.core.reporters.StoryReporter;
-import org.jbehave.core.reporters.TxtOutput;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
+import static net.thucydides.core.matchers.PublicThucydidesMatchers.containsResults;
+import static net.thucydides.core.model.TestResult.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -204,6 +191,80 @@ public class WhenRunningJBehaveStories extends AbstractJBehaveStory {
         assertThat(steps.get(1).getDescription(), is("And the scenario has steps"));
         assertThat(steps.get(2).getDescription(), is("When I run the scenario"));
         assertThat(steps.get(3).getDescription(), is("Then the steps should appear in the outcome"));
+    }
+
+    @Test
+    public void failing_stories_should_be_reported_as_failing() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories pendingStory = new JUnitThucydidesStories() {
+            public void configure() {
+                findStoriesCalled("aFailingStory.story");
+            }
+        };
+
+        pendingStory.setSystemConfiguration(systemConfiguration);
+        pendingStory.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(pendingStory);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.size(), is(1));
+        assertThat(outcomes.get(0).getResult(), is(TestResult.FAILURE));
+    }
+
+    @Test
+    public void steps_after_a_failing_step_should_be_skipped() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new JUnitThucydidesStories() {
+            public void configure() {
+                findStoriesCalled("aComplexFailingStory.story");
+            }
+        };
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.size(), is(1));
+
+        // And
+        assertThat(outcomes.get(0), containsResults(SUCCESS, FAILURE, SKIPPED, SKIPPED, SKIPPED));
+
+    }
+
+    @Test
+    public void a_test_with_a_pending_step_should_be_pending() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new JUnitThucydidesStories() {
+            public void configure() {
+                findStoriesCalled("aStoryWithAPendingStep.story");
+            }
+        };
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.size(), is(1));
+
+        // And
+        assertThat(outcomes.get(0).getResult() , is(PENDING));
+        // And
+        assertThat(outcomes.get(0), containsResults(SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS, PENDING, PENDING, SUCCESS));
+
     }
 
 }

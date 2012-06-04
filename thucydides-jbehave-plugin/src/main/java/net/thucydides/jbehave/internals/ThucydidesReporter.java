@@ -128,8 +128,9 @@ public class ThucydidesReporter implements StoryReporter {
         StepEventBus.getEventBus().stepPending();
     }
 
-    public void notPerformed(String s) {
-        System.out.println("STEP SKIPPED " + s);
+    public void notPerformed(String stepTitle) {
+        System.out.println("STEP SKIPPED " + stepTitle);
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(stepTitle));
         StepEventBus.getEventBus().stepIgnored();
     }
 
