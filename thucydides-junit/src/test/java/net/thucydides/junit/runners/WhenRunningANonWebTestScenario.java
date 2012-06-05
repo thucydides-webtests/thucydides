@@ -11,23 +11,18 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.rules.DisableThucydidesHistoryRule;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
-import net.thucydides.samples.MultipleTestScenario;
 import net.thucydides.samples.NonWebTestScenarioWithParameterizedSteps;
-import net.thucydides.samples.SampleFailingScenario;
 import net.thucydides.samples.SampleNonWebScenarioWithError;
 import net.thucydides.samples.SamplePassingNonWebScenario;
 import net.thucydides.samples.SamplePassingNonWebScenarioWithEmptyTests;
 import net.thucydides.samples.SamplePassingNonWebScenarioWithIgnoredTests;
 import net.thucydides.samples.SamplePassingNonWebScenarioWithPendingTests;
 import net.thucydides.samples.SingleNonWebTestScenario;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
@@ -362,15 +357,6 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         assertThat(generatedHtmlReports, hasItems(md5("sample_passing_non_web_scenario_edge_case_1.html"),
                 md5("sample_passing_non_web_scenario_edge_case_2.html"),
                 md5("sample_passing_non_web_scenario_happy_day_scenario.html")));
-    }
-
-    @Test
-    public void running_tests_via_junit_should_work() {
-        Result result = JUnitCore.runClasses(SampleNonWebScenarioWithError.class,
-                                             SamplePassingNonWebScenario.class,
-                                             SampleFailingScenario.class,
-                                             SamplePassingNonWebScenarioWithPendingTests.class );
-        result.getRunCount();
     }
 
     private class XMLFileFilter implements FilenameFilter {
