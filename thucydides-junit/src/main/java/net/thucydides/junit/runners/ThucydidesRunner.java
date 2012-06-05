@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
@@ -14,6 +15,7 @@ import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepData;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
+import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
@@ -70,6 +72,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private boolean uniqueSession;
 
     private BatchManager batchManager;
+
+    private List<JUnitStepListener> currentListeners;
 
     public Pages getPages() {
         return pages;
@@ -130,6 +134,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this.batchManager = batchManager;
 
         batchManager.registerTestCase(klass);
+
+        currentListeners = Lists.newArrayList();
 
         loadLocalPreferences();
 
@@ -204,16 +210,18 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             } finally {
                 StepEventBus.getEventBus().testSuiteFinished();
                 generateReports();
-                closeDrivers();
                 dropListeners(notifier);
+                closeDrivers();
             }
         }
     }
 
     private void dropListeners(final RunNotifier notifier) {
+        JUnitStepListener listener = getStepListener();
+        System.out.println("Dropping listener " + listener);
+        notifier.removeListener(listener);
+        currentListeners.remove(listener);
         getStepListener().dropListeners();
-        notifier.removeListener(getStepListener());
-
     }
 
     private void generateReports() {
@@ -245,16 +253,21 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         initStepEventBus();
         if (webtestsAreSupported()) {
             initPagesObjectUsing(webdriverManager.getWebdriver(requestedDriver));
-            stepListener = initListenersUsing(getPages());
+            setStepListener(initListenersUsing(getPages()));
             initStepFactoryUsing(getPages());
         } else {
-            stepListener = initListeners();
+            setStepListener(initListeners());
             initStepFactory();
         }
     }
 
     private void initializeDriversAndListeners(RunNotifier notifier) {
-        notifier.addListener(getStepListener());
+        JUnitStepListener listener = getStepListener();
+        if (currentListeners.isEmpty()) {
+            System.out.println("Adding listener " + listener + " to " + this);
+            notifier.addListener(listener);
+            currentListeners.add(listener);
+        }
     }
 
     private void initStepEventBus() {
