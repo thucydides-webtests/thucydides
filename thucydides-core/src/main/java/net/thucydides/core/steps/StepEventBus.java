@@ -2,6 +2,7 @@ package net.thucydides.core.steps;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -399,5 +400,4 @@ public class StepEventBus {
             stepListener.testSuiteFinished();
         }
     }
-
 }

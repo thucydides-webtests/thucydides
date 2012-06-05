@@ -40,8 +40,13 @@ public class SampleNonWebSteps {
     @Step
     public void stepWithTwoParameters(String param, int i) {}
 
-    public void stepWithError() {
+    public void methodWithError() {
         String s = null;
         s.length();
+    }
+
+    @Step
+    public void stepWithFailingNonStepMethod() {
+        methodWithError();
     }
 }

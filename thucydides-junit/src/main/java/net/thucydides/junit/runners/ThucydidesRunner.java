@@ -76,8 +76,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private BatchManager batchManager;
 
-    private List<JUnitStepListener> currentListeners;
-
     private final Logger logger = LoggerFactory.getLogger(ThucydidesRunner.class);
 
     public Pages getPages() {
@@ -139,8 +137,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this.batchManager = batchManager;
 
         batchManager.registerTestCase(klass);
-
-        currentListeners = Lists.newArrayList();
 
         loadLocalPreferences();
 
@@ -233,7 +229,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private void dropListeners(final RunNotifier notifier) {
         JUnitStepListener listener = getStepListener();
         notifier.removeListener(listener);
-        currentListeners.remove(listener);
         getStepListener().dropListeners();
     }
 
@@ -276,10 +271,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private void initializeDriversAndListeners(RunNotifier notifier) {
         JUnitStepListener listener = getStepListener();
-        if (currentListeners.isEmpty()) {
-            notifier.addListener(listener);
-            currentListeners.add(listener);
-        }
+        notifier.addListener(listener);
     }
 
     private void initStepEventBus() {
