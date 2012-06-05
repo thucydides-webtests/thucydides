@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
@@ -71,6 +72,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private BatchManager batchManager;
 
+    private List<JUnitStepListener> currentListeners;
+
     public Pages getPages() {
         return pages;
     }
@@ -130,6 +133,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this.batchManager = batchManager;
 
         batchManager.registerTestCase(klass);
+
+        currentListeners = Lists.newArrayList();
 
         loadLocalPreferences();
 
@@ -211,7 +216,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private void dropListeners(final RunNotifier notifier) {
-        notifier.removeListener(getStepListener());
+        JUnitStepListener listener = getStepListener();
+        System.out.println("Dropping listener " + listener);
+        notifier.removeListener(listener);
+        currentListeners.remove(listener);
         getStepListener().dropListeners();
     }
 
@@ -244,16 +252,21 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         initStepEventBus();
         if (webtestsAreSupported()) {
             initPagesObjectUsing(webdriverManager.getWebdriver(requestedDriver));
-            stepListener = initListenersUsing(getPages());
+            setStepListener(initListenersUsing(getPages()));
             initStepFactoryUsing(getPages());
         } else {
-            stepListener = initListeners();
+            setStepListener(initListeners());
             initStepFactory();
         }
     }
 
     private void initializeDriversAndListeners(RunNotifier notifier) {
-        notifier.addListener(getStepListener());
+        JUnitStepListener listener = getStepListener();
+        if (currentListeners.isEmpty()) {
+            System.out.println("Adding listener " + listener + " to " + this);
+            notifier.addListener(listener);
+            currentListeners.add(listener);
+        }
     }
 
     private void initStepEventBus() {

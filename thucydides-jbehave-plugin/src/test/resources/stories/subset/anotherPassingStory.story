@@ -1,7 +1,3 @@
-package stories.subset
-
-import org.jbehave.core.annotations.Given
-
 Scenario: A scenario with groovy steps
 
 Given a date of 10/16/2010

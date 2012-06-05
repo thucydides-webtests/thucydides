@@ -382,6 +382,7 @@ public class WebDriverFactory {
             }
             if (dontAssumeUntrustedCertificateIssuer()) {
                 profile.setAssumeUntrustedCertificateIssuer(false);
+                profile.setAcceptUntrustedCertificates(true);
             }
         } catch (UnableToCreateProfileException e) {
 
