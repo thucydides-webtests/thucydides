@@ -39,4 +39,9 @@ public class SampleNonWebSteps {
 
     @Step
     public void stepWithTwoParameters(String param, int i) {}
+
+    public void stepWithError() {
+        String s = null;
+        s.length();
+    }
 }
