@@ -341,8 +341,18 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
         initializeTestSession();
         resetBroswerFromTimeToTime();
-        processTestMethodAnnotationsFor(method);
-        super.runChild(method, notifier);
+        if (isPending(method)) {
+            markAsPending(method, notifier);
+        } else {
+            processTestMethodAnnotationsFor(method, notifier);
+            super.runChild(method, notifier);
+        }
+    }
+
+    private void markAsPending(FrameworkMethod method, RunNotifier notifier) {
+        stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
+        StepEventBus.getEventBus().testPending();
+        notifier.fireTestIgnored(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
     }
 
     /**
@@ -351,10 +361,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * that they are included in the Thucydides reports
      * If a test method is pending, all the steps should be skipped.
      */
-    private void processTestMethodAnnotationsFor(FrameworkMethod method) {
-        if (isPending(method)) {
-            StepEventBus.getEventBus().testPending();
-        } else if (isIgnored(method)) {
+    private void processTestMethodAnnotationsFor(FrameworkMethod method, RunNotifier notifier) {
+        if (isIgnored(method)) {
             stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
             StepEventBus.getEventBus().testIgnored();
         }

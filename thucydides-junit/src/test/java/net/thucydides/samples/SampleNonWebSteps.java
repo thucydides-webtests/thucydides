@@ -24,7 +24,8 @@ public class SampleNonWebSteps {
     public void stepThatIsIgnored() {}
 
     @Step
-    public void stepThatSucceeds() {}
+    public void stepThatSucceeds() {
+    }
 
     @Step
     public void anotherStepThatSucceeds() {}

@@ -177,6 +177,20 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         assertThat(testOutcome1.getTestSteps().size(), is(3));
     }
 
+
+    @Test
+    public void pending_tests_should_be_recorded_as_pending() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePendingScenario.class, webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        TestOutcome testOutcome1 = executedSteps.get(0);
+
+        assertThat(testOutcome1.getResult(), is(TestResult.PENDING));
+        assertThat(testOutcome1.getTestSteps().size(), is(0));
+    }
+
     @Test
     public void private_annotated_fields_should_be_allowed() throws InitializationError {
 
