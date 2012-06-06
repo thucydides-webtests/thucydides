@@ -212,7 +212,7 @@ public class WhenManinpulatingWebElements {
     }
 
     @Test
-    public void when_webelement_is_null_it_should_succesd_wait_until_not_visible() {
+    public void when_webelement_is_null_it_should_succeed_wait_until_not_visible() {
         WebElementFacade webElementFacade = new WebElementFacade(driver, null, 100);
         webElementFacade.waitUntilNotVisible();
     }
