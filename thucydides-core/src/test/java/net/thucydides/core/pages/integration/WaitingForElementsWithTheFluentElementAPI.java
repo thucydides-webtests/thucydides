@@ -34,6 +34,15 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     }
 
     @Test
+    public void should_wait_for_field_to_disappear() {
+        StaticSitePage page = getFirefoxPage();
+        assertThat(page.element(page.placetitle).isCurrentlyVisible(), is(true));
+        page.element(page.placetitle).waitUntilNotVisible();
+
+        assertThat(page.element(page.placetitle).isCurrentlyVisible(), is(false));
+    }
+
+    @Test
     public void should_optionally_type_tab_after_entering_text_on_linux() {
 
         if (runningOnLinux()) {
