@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
 import static net.thucydides.core.matchers.dates.DateMatchers.isSameAs;
@@ -454,7 +455,7 @@ public class WhenRecordingTestResultStatistics {
 
     private void prepareDAOWithFixedClock() {
         when(clock.getCurrentTime()).thenReturn(JANUARY_1ST_2012);
-        testOutcomeHistoryDAO = new HibernateTestOutcomeHistoryDAO(injector.getInstance(EntityManager.class),
+        testOutcomeHistoryDAO = new HibernateTestOutcomeHistoryDAO(injector.getInstance(EntityManagerFactory.class),
                 environmentVariables,
                 tagProviderService,
                 clock);

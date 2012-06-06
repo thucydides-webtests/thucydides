@@ -64,7 +64,7 @@ public class WhenUsingTheTestStatisticsDatabase {
 
         HibernateTestOutcomeHistoryDAO dao = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
 
-        Map properties = dao.entityManager.getEntityManagerFactory().getProperties();
+        Map properties = dao.entityManagerFactory.getProperties();
 
         assertThat((String)properties.get("hibernate.connection.driver_class"), is("org.hsqldb.jdbc.JDBCDriver"));
         assertThat((String)properties.get("hibernate.connection.url"), is("jdbc:hsqldb:mem:test"));
@@ -79,7 +79,7 @@ public class WhenUsingTheTestStatisticsDatabase {
 
         assertThat(dao, is(notNullValue()));
 
-        assertThat(((HibernateTestOutcomeHistoryDAO)dao).entityManager, is(notNullValue()));
+        assertThat(((HibernateTestOutcomeHistoryDAO)dao).entityManagerFactory, is(notNullValue()));
     }
 
     @Test
