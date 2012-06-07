@@ -17,7 +17,7 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
 
     def "should determine the correct overall result for a set of tests"() {
         when:
-            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
+            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
         then:
             testOutcomes.result == result
         where:

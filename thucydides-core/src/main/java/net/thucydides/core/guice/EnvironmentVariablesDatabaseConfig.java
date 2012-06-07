@@ -54,13 +54,22 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
         return (environmentVariables.getProperty("thucydides.statistics.url") == null);
     }
 
+    private boolean isStatisticsDisabled() {
+        return (Boolean.valueOf(environmentVariables.getProperty(ThucydidesSystemProperty.RECORD_STATISTICS, "true")));
+    }
+
     @Override
     public void disable() {
         isActive = false;
     }
 
     @Override
+    public void enable() {
+        isActive = true;
+    }
+
+    @Override
     public boolean isActive() {
-        return isActive;
+        return isActive && !isStatisticsDisabled();
     }
 }

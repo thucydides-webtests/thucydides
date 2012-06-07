@@ -284,11 +284,17 @@ public class WebDriverFactory {
     }
 
     private void redimensionBrowser(final WebDriver driver) {
-        if (supportsScreenResizing(driver)) {
+        if (supportsScreenResizing(driver) && broswerDimensionsSpecified()) {
             resizeBrowserTo(driver,
                     getRequestedBrowserSize().height,
                     getRequestedBrowserSize().width);
         }
+    }
+
+    private boolean broswerDimensionsSpecified() {
+        String snapshotWidth = environmentVariables.getProperty(ThucydidesSystemProperty.SNAPSHOT_WIDTH);
+        String snapshotHeight = environmentVariables.getProperty(ThucydidesSystemProperty.SNAPSHOT_HEIGHT);
+        return (snapshotWidth != null) || (snapshotHeight != null);
     }
 
     private boolean supportsScreenResizing(final WebDriver driver) {
@@ -299,11 +305,13 @@ public class WebDriverFactory {
         return (!driver.getClass().getName().contains("Mock"));
     }
 
-    private void resizeBrowserTo(WebDriver driver, int height, int width) {
+    protected void resizeBrowserTo(WebDriver driver, int height, int width) {
 
         LOGGER.info("Setting browser dimensions to {}/{}", height, width);
 
-        if (usesFirefox(driver) || usesChrome(driver)) {
+        if (usesFirefox(driver) || usesInternetExplorer(driver)) {
+            driver.manage().window().setSize(new Dimension(width, height));
+        } else if (usesChrome(driver)) {
             ((JavascriptExecutor) driver).executeScript("window.open('about:blank','_blank','width=#{width},height=#{height}');");
             Set<String> windowHandles = driver.getWindowHandles();
             windowHandles.remove(driver.getWindowHandle());
@@ -324,6 +332,10 @@ public class WebDriverFactory {
 
     private boolean usesFirefox(WebDriver driver) {
         return (FirefoxDriver.class.isAssignableFrom(getDriverClass(driver)));
+    }
+
+    private boolean usesInternetExplorer(WebDriver driver) {
+        return (InternetExplorerDriver.class.isAssignableFrom(getDriverClass(driver)));
     }
 
     private boolean usesChrome(WebDriver driver) {

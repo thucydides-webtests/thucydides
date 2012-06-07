@@ -29,11 +29,11 @@ class WhenFindingTestClassesInThePath extends Specification {
 
         when:
 
-        testFinder = TestFinder.thatFinds().allTests().inPackage("net.thucydides.junit.sampletests")
+            testFinder = TestFinder.thatFinds().allTests().inPackage("net.thucydides.junit.sampletests")
 
         then:
 
-        testFinder.countTestMethods() == 3
+            testFinder.countTestMethods() == 3
 
     }
 

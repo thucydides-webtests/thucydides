@@ -151,6 +151,47 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
+    public void an_error_in_a_nested_non_step_method_should_cause_the_test_to_fail() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithFailingNestedNonStepMethod.class, webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(3));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+
+        assertThat(testOutcome1.getResult(), is(TestResult.FAILURE));
+    }
+
+    @Test
+    public void an_error_in_a_non_step_method_should_be_displayed_as_a_failing_step() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithFailingNonStepMethod.class, webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(3));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+
+        assertThat(testOutcome1.getResult(), is(TestResult.FAILURE));
+        assertThat(testOutcome1.getTestSteps().size(), is(3));
+    }
+
+
+    @Test
+    public void pending_tests_should_be_recorded_as_pending() throws InitializationError {
+
+        ThucydidesRunner runner = new ThucydidesRunner(SamplePendingScenario.class, webDriverFactory);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        TestOutcome testOutcome1 = executedSteps.get(0);
+
+        assertThat(testOutcome1.getResult(), is(TestResult.PENDING));
+        assertThat(testOutcome1.getTestSteps().size(), is(0));
+    }
+
+    @Test
     public void private_annotated_fields_should_be_allowed() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingScenarioWithPrivateFields.class, webDriverFactory);

@@ -24,7 +24,8 @@ public class SampleNonWebSteps {
     public void stepThatIsIgnored() {}
 
     @Step
-    public void stepThatSucceeds() {}
+    public void stepThatSucceeds() {
+    }
 
     @Step
     public void anotherStepThatSucceeds() {}
@@ -40,8 +41,13 @@ public class SampleNonWebSteps {
     @Step
     public void stepWithTwoParameters(String param, int i) {}
 
-    public void stepWithError() {
+    public void methodWithError() {
         String s = null;
         s.length();
+    }
+
+    @Step
+    public void stepWithFailingNonStepMethod() {
+        methodWithError();
     }
 }

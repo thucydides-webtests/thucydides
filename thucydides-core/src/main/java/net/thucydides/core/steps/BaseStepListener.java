@@ -605,7 +605,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void testIgnored() {
-        getCurrentTestOutcome().setAnnotatedResult(IGNORED);
+        if (getCurrentTestOutcome().getResult() != PENDING) {
+            getCurrentTestOutcome().setAnnotatedResult(IGNORED);
+        }
     }
 
     @Override

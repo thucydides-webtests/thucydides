@@ -8,7 +8,7 @@
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides</artifactId>
-    <version>0.8.23-SNAPSHOT</version>
+    <version>0.8.25-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>thucydides</name>
     <description>An Acceptance Testing framework for web applications
@@ -77,8 +77,8 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <skip>true</skip>
-                    <!--<parallel>classes</parallel>-->
-                    <!--<threadCount>2</threadCount>-->
+                    <parallel>classes</parallel>
+                    <threadCount>2</threadCount>
                 </configuration>
                 <executions>
                     <execution>

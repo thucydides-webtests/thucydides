@@ -373,6 +373,7 @@ public class CheckingVisibilityWithTheFluentElementAPI extends FluentElementAPIT
 
     @Test
     public void should_wait_for_element_to_be_visible_and_enabled_before_clicking() {
+
         page.element(page.checkbox).click();
 
     }

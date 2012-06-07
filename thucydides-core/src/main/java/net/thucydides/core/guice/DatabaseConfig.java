@@ -9,5 +9,6 @@ public interface DatabaseConfig {
     Properties getProperties();
     boolean isUsingLocalDatabase();
     void disable();
+    void enable();
     boolean isActive();
 }

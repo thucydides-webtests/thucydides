@@ -138,14 +138,6 @@ public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAP
         assertThat(page.element(page.radioButton2).isSelected(), is(false));
     }
 
-    @Test
-    public void should_wait_for_field_to_disappear() {
-        assertThat(page.element(page.placetitle).isCurrentlyVisible(), is(true));
-        page.element(page.placetitle).waitUntilNotVisible();
-
-        assertThat(page.element(page.placetitle).isCurrentlyVisible(), is(false));
-    }
-
     @Test(expected = ElementNotVisibleException.class)
     public void should_throw_exception_if_waiting_for_field_that_does_not_disappear() {
         assertThat(page.element(page.firstName).isCurrentlyVisible(), is(true));
