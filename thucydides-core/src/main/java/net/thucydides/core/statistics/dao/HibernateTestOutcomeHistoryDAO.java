@@ -273,6 +273,18 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     }
 
     @Override
+    public void truncateSchema() {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        try {
+            entityManager.createNativeQuery("TRUNCATE SCHEMA PUBLIC RESTART IDENTITY AND COMMIT NO CHECK").executeUpdate();
+            entityManager.getTransaction().commit();
+        }catch(Exception e) {
+            entityManager.getTransaction().rollback();
+        }
+    }
+
+    @Override
     public Long countTestRunsByTitle(String title) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         return (Long) entityManager.createQuery(COUNT_BY_NAME)
