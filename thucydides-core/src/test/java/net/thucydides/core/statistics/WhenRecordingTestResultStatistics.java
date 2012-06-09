@@ -27,22 +27,18 @@ import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
 import static net.thucydides.core.matchers.dates.DateMatchers.isSameAs;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 
 public class WhenRecordingTestResultStatistics {
@@ -113,6 +109,16 @@ public class WhenRecordingTestResultStatistics {
         prepareTestData(statisticsListener);
     }
 
+    @After
+    public void cleanup() {
+        ThucydidesModuleWithMockEnvironmentVariables guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
+        Injector injector = Guice.createInjector(guiceModule);
+        testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
+        testOutcomeHistoryDAO.truncateSchema();
+
+    }
+
+
     @Test
     public void should_be_able_to_obtain_the_statistics_listener_via_guice() {
         StepListener statisticsListener = injector.getInstance(Key.get(StepListener.class, Statistics.class));
@@ -169,9 +175,11 @@ public class WhenRecordingTestResultStatistics {
         ThucydidesModuleWithMockEnvironmentVariables guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
         Injector injector = Guice.createInjector(guiceModule);
         EnvironmentVariables environmentVariables = injector.getInstance(EnvironmentVariables.class);
+        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:defaultTestDatabase");
         environmentVariables.setProperty("thucydides.record.statistics", "false");
 
         TestOutcomeHistoryDAO testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
+        DatabaseConfig databaseConfig = injector.getInstance(DatabaseConfig.class);
         StatisticsListener statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables, databaseConfig);
         HibernateTestStatisticsProvider testStatisticsProvider = new HibernateTestStatisticsProvider(testOutcomeHistoryDAO);
 
