@@ -14,8 +14,8 @@ public class SampleScenarioWithFailingNonStepMethod {
     @Test
     public void happy_day_scenario() throws Throwable {
         steps.stepThatSucceeds();
-        steps.methodWithError();
         steps.anotherStepThatSucceeds();
+        steps.methodWithError();
     }
 
     @Test

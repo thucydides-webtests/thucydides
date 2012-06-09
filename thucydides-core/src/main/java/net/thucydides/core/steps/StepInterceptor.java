@@ -205,30 +205,11 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         } catch (Throwable generalException) {
             error = generalException;
             AssertionError assertionError = forError(error).convertToAssertion();
-            if (StepEventBus.getEventBus().areStepsRunning()) {
-                notifyOfTestFailure(method, args, error);
-            } else {
-                notifyStepStarted(method, args);
-                notifyOfStepFailure(method, args, assertionError);
-            }
+            notifyStepStarted(method, args);
+            notifyOfStepFailure(method, args, assertionError);
         }
         return result;
     }
-
-    /*
-           try {
-            result = invokeMethod(obj, method, args, proxy);
-        } catch (AssertionError assertionError) {
-            error = assertionError;
-            notifyOfTestFailure(method, args, assertionError);
-        }
-        catch (WebDriverException webdriverException) {
-            error = webdriverException;
-            notifyOfTestFailure(method, args, webdriverException);
-        }
-        return result;
-
-     */
 
     private Object defaultReturnValueFor(Method method) {
         if (method.getReturnType() == method.getDeclaringClass()) {

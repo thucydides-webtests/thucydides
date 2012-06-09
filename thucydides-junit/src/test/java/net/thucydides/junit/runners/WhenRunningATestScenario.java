@@ -161,6 +161,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome1 = executedSteps.get(0);
 
         assertThat(testOutcome1.getResult(), is(TestResult.FAILURE));
+        assertThat(testOutcome1.getTestSteps().get(2).getResult(), is(TestResult.FAILURE));
     }
 
     @Test

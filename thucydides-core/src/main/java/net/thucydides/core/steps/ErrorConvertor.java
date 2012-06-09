@@ -20,6 +20,11 @@ public class ErrorConvertor implements Serializable {
     }
 
     public String messageFrom(final Throwable error) {
-        return (error.getCause() != null) ? error.getCause().getMessage() : error.getMessage();
+        String message = (error.getCause() != null) ? error.getCause().getMessage() : error.getMessage();
+        if (message != null) {
+            return message;
+        } else {
+            return error.toString();
+        }
     }
 }
