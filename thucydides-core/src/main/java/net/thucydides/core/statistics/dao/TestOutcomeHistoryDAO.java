@@ -46,5 +46,5 @@ public interface TestOutcomeHistoryDAO {
 
     List<TestRunTag> findTagsMatching(TestRunTag tag);
 
-    void truncateSchema();
+    void deleteAll();
 }

@@ -27,7 +27,6 @@ import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.joda.time.DateTime;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -109,16 +108,6 @@ public class WhenRecordingTestResultStatistics {
         prepareTestData(statisticsListener);
     }
 
-    @After
-    public void cleanup() {
-        ThucydidesModuleWithMockEnvironmentVariables guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
-        Injector injector = Guice.createInjector(guiceModule);
-        testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
-        testOutcomeHistoryDAO.truncateSchema();
-
-    }
-
-
     @Test
     public void should_be_able_to_obtain_the_statistics_listener_via_guice() {
         StepListener statisticsListener = injector.getInstance(Key.get(StepListener.class, Statistics.class));
@@ -179,12 +168,11 @@ public class WhenRecordingTestResultStatistics {
         environmentVariables.setProperty("thucydides.record.statistics", "false");
 
         TestOutcomeHistoryDAO testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
+        testOutcomeHistoryDAO.deleteAll();
         DatabaseConfig databaseConfig = injector.getInstance(DatabaseConfig.class);
         StatisticsListener statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables, databaseConfig);
         HibernateTestStatisticsProvider testStatisticsProvider = new HibernateTestStatisticsProvider(testOutcomeHistoryDAO);
-
         prepareTestData(statisticsListener);
-
         prepareDAOWithFixedClock();
 
         when(testOutcome.getResult()).thenReturn(TestResult.SUCCESS);
