@@ -117,7 +117,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
         assertThat(page.element(page.focusmessage).getText(), is(""));
         page.blurActiveElement();
-
+        page.waitForTextToAppear("focus left firstname");
         page.element(page.focusmessage).shouldContainText("focus left firstname");
     }
 
