@@ -609,6 +609,7 @@ public abstract class PageObject {
 
     public void blurActiveElement() {
         getJavascriptExecutorFacade().executeScript("document.activeElement.blur();");
+        waitFor(100).millisecond();
     }
 
     protected JavascriptExecutorFacade getJavascriptExecutorFacade() {
