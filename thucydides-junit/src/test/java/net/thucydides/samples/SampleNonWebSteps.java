@@ -7,6 +7,9 @@ import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 @SuppressWarnings("serial")
 public class SampleNonWebSteps {
 
@@ -24,7 +27,8 @@ public class SampleNonWebSteps {
     public void stepThatIsIgnored() {}
 
     @Step
-    public void stepThatSucceeds() {}
+    public void stepThatSucceeds() {
+    }
 
     @Step
     public void anotherStepThatSucceeds() {}
@@ -39,4 +43,14 @@ public class SampleNonWebSteps {
 
     @Step
     public void stepWithTwoParameters(String param, int i) {}
+
+    public void methodWithError() {
+        String s = null;
+        s.length();
+    }
+
+    @Step
+    public void stepWithFailingNonStepMethod() {
+        methodWithError();
+    }
 }

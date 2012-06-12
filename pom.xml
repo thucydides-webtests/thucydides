@@ -8,7 +8,7 @@
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides</artifactId>
-    <version>0.8.22-SNAPSHOT</version>
+    <version>0.8.25-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>thucydides</name>
     <description>An Acceptance Testing framework for web applications
@@ -51,7 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <surefire.version>2.11</surefire.version>
         <junit.version>4.10</junit.version>
-        <selenium.version>2.22.0</selenium.version>
+        <selenium.version>2.23.1</selenium.version>
         <hamcrest.version>1.1</hamcrest.version>
         <checkstyle.rules>https://thucydides.sonar.cloudbees.com/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo%2520Way</checkstyle.rules>
     </properties>
@@ -77,8 +77,8 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <skip>true</skip>
-                    <!--<parallel>classes</parallel>-->
-                    <!--<threadCount>2</threadCount>-->
+                    <parallel>classes</parallel>
+                    <threadCount>2</threadCount>
                 </configuration>
                 <executions>
                     <execution>

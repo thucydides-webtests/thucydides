@@ -85,13 +85,6 @@ public class ThucydidesModule extends AbstractModule {
         return new LocalH2ServerDatabase(environmentVariables);
     }
 
-//    @Provides
-//    @Singleton
-//    @Inject
-//    public ReportService provideReportService(Configuration configuration) {
-//        return new ReportService(configuration);
-//    }
-
     @Provides
     @Singleton
     @Inject
@@ -132,15 +125,6 @@ public class ThucydidesModule extends AbstractModule {
                 localDatabase.stop();
             }
         });
-    }
-
-    @Provides
-    public EntityManager provideEntityManager(EntityManagerFactory entityManagerFactory) {
-        EntityManager entityManager = ENTITY_MANAGER_CACHE.get();
-        if (entityManager == null) {
-            ENTITY_MANAGER_CACHE.set(entityManager = entityManagerFactory.createEntityManager());
-        }
-        return entityManager;
     }
 
     /**

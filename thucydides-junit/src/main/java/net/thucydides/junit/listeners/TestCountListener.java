@@ -76,7 +76,6 @@ public class TestCountListener implements StepListener {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info("TEST NUMBER: {}", currentTestCount);
         }
-        System.out.println("TEST NUMBER: " + currentTestCount + "(" + description + ")");
     }
 
     @Override

@@ -1,17 +1,11 @@
 package net.thucydides.core.guice;
 
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
-import org.apache.commons.lang3.StringUtils;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -90,13 +84,22 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
         return (environmentVariables.getProperty("thucydides.statistics.url") == null);
     }
 
+    private boolean isStatisticsDisabled() {
+        return (! Boolean.valueOf(environmentVariables.getProperty(ThucydidesSystemProperty.RECORD_STATISTICS, "true")));
+    }
+
     @Override
     public void disable() {
         isActive = false;
     }
 
     @Override
+    public void enable() {
+        isActive = true;
+    }
+
+    @Override
     public boolean isActive() {
-        return isActive;
+        return isActive && !isStatisticsDisabled();
     }
 }

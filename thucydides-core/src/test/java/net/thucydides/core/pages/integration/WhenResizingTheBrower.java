@@ -60,6 +60,28 @@ public class WhenResizingTheBrower {
         assertThat(width, is(400));
     }
 
+
+    class StubbedWebDriverFactory extends WebDriverFactory {
+        StubbedWebDriverFactory(EnvironmentVariables environmentVariables) {
+            super(environmentVariables);
+        }
+
+        public boolean screenWasResized;
+        @Override
+        protected void resizeBrowserTo(WebDriver driver, int height, int width) {
+            screenWasResized = true;
+        }
+    };
+
+    @Test
+    public void should_not_resize_browser_if_dimension_are_not_provided() {
+        StubbedWebDriverFactory stubbedFactory = new StubbedWebDriverFactory(environmentVariables);
+        driver = stubbedFactory.newInstanceOf(SupportedWebDriver.FIREFOX);
+        page = new StaticSitePage(driver, 1000);
+        page.open();
+        assertThat(stubbedFactory.screenWasResized, is(false));
+    }
+
     @Test
     public void should_not_resize_htmlunit_automatically() {
         environmentVariables.setProperty("thucydides.browser.height", "200");

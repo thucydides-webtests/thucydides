@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import static net.thucydides.core.util.FileSeparatorUtil.changeSeparatorIfRequired;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,9 +44,10 @@ public class WhenManagingGlobalConfiguration {
 
     @Test
     public void the_unique_browser_value_can_be_defined_in_a_system_property() {
-        environmentVariables.setProperty("thucydides.outputDirectory","build/reports/thucydides");
+        String outputDirectory = changeSeparatorIfRequired("build/reports/thucydides");
+        environmentVariables.setProperty("thucydides.outputDirectory",outputDirectory);
 
-        assertThat(configuration.getOutputDirectory().getAbsoluteFile().toString(), endsWith("build/reports/thucydides"));
+        assertThat(configuration.getOutputDirectory().getAbsoluteFile().toString(), endsWith(outputDirectory));
     }
 
     @Test

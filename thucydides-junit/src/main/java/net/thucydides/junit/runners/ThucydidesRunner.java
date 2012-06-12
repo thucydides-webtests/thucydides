@@ -7,6 +7,7 @@ import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.guice.ThucydidesModule;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -31,6 +32,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +75,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private BatchManager batchManager;
 
-    private List<JUnitStepListener> currentListeners;
+    private final Logger logger = LoggerFactory.getLogger(ThucydidesRunner.class);
 
     public Pages getPages() {
         return pages;
@@ -133,8 +136,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this.batchManager = batchManager;
 
         batchManager.registerTestCase(klass);
-
-        currentListeners = Lists.newArrayList();
 
         loadLocalPreferences();
 
@@ -207,7 +208,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
                 initializeDriversAndListeners(notifier);
                 super.run(notifier);
             } finally {
-                StepEventBus.getEventBus().testSuiteFinished();
+                notifyTestSuiteFinished();
                 generateReports();
                 dropListeners(notifier);
                 closeDrivers();
@@ -215,11 +216,18 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         }
     }
 
+    private void notifyTestSuiteFinished() {
+        try {
+            StepEventBus.getEventBus().testSuiteFinished();
+        } catch (Throwable listenerException) {
+            // We report and ignore listener exceptions so as not to mess up the rest of the test mechanics.
+            logger.error("Test event bus error: " + listenerException.getMessage(), listenerException);
+        }
+    }
+
     private void dropListeners(final RunNotifier notifier) {
         JUnitStepListener listener = getStepListener();
-        System.out.println("Dropping listener " + listener);
         notifier.removeListener(listener);
-        currentListeners.remove(listener);
         getStepListener().dropListeners();
     }
 
@@ -262,11 +270,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private void initializeDriversAndListeners(RunNotifier notifier) {
         JUnitStepListener listener = getStepListener();
-        if (currentListeners.isEmpty()) {
-            System.out.println("Adding listener " + listener + " to " + this);
-            notifier.addListener(listener);
-            currentListeners.add(listener);
-        }
+        notifier.addListener(listener);
     }
 
     private void initStepEventBus() {
@@ -336,8 +340,18 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
         initializeTestSession();
         resetBroswerFromTimeToTime();
-        processTestMethodAnnotationsFor(method);
-        super.runChild(method, notifier);
+        if (isPending(method)) {
+            markAsPending(method, notifier);
+        } else {
+            processTestMethodAnnotationsFor(method, notifier);
+            super.runChild(method, notifier);
+        }
+    }
+
+    private void markAsPending(FrameworkMethod method, RunNotifier notifier) {
+        stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
+        StepEventBus.getEventBus().testPending();
+        notifier.fireTestIgnored(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
     }
 
     /**
@@ -346,10 +360,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * that they are included in the Thucydides reports
      * If a test method is pending, all the steps should be skipped.
      */
-    private void processTestMethodAnnotationsFor(FrameworkMethod method) {
-        if (isPending(method)) {
-            StepEventBus.getEventBus().testPending();
-        } else if (isIgnored(method)) {
+    private void processTestMethodAnnotationsFor(FrameworkMethod method, RunNotifier notifier) {
+        if (isIgnored(method)) {
             stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
             StepEventBus.getEventBus().testIgnored();
         }

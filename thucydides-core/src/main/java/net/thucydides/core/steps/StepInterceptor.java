@@ -204,13 +204,11 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     private Object invokeMethodAndNotifyFailures(Object obj, Method method, Object[] args, MethodProxy proxy, Object result) throws Throwable {
         try {
             result = invokeMethod(obj, method, args, proxy);
-        } catch (AssertionError assertionError) {
-            error = assertionError;
-            notifyOfTestFailure(method, args, assertionError);
-        }
-        catch (WebDriverException webdriverException) {
-            error = webdriverException;
-            notifyOfTestFailure(method, args, webdriverException);
+        } catch (Throwable generalException) {
+            error = generalException;
+            AssertionError assertionError = forError(error).convertToAssertion();
+            notifyStepStarted(method, args);
+            notifyOfStepFailure(method, args, assertionError);
         }
         return result;
     }

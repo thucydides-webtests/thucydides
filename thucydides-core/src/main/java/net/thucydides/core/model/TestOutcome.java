@@ -704,7 +704,7 @@ public class TestOutcome {
                 if (issueKey.startsWith("#")) {
                     issueKey = issueKey.substring(1);
                 }
-                if (StringUtils.isNumeric(issueKey)) {
+                if (StringUtils.isNumeric(issueKey) && (getProjectPrefix() != null)) {
                     Joiner joiner = Joiner.on("-");
                     issueKey = joiner.join(getProjectPrefix(), issueKey);
                 }
