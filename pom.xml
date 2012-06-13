@@ -379,6 +379,7 @@
                                         <exclude>**/samples/*.java</exclude>
                                         <exclude>**/Sample*.java</exclude>
                                         <exclude>**/*Sample.java</exclude>
+                                        <exclude>%regex[.*\$\d.*]</exclude>
                                         <exclude>%regex[.*integration.*]</exclude>
                                     </excludes>
                                 </configuration>
