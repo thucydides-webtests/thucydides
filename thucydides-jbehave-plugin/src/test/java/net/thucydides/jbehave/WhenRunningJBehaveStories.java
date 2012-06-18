@@ -108,6 +108,23 @@ public class WhenRunningJBehaveStories extends AbstractJBehaveStory {
     }
 
     @Test
+    public void pending_stories_should_report_the_given_when_then_steps() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories pendingStory = new AStorySample("aPendingBehavior.story");
+
+        pendingStory.setSystemConfiguration(systemConfiguration);
+        pendingStory.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(pendingStory);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.size(), is(1));
+        assertThat(outcomes.get(0).getStepCount(), is(4));
+    }
+    @Test
     public void implemented_pending_stories_should_be_reported_as_pending() throws Throwable {
 
         // Given

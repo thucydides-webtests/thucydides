@@ -25,18 +25,11 @@ import org.jbehave.core.model.Story;
 import org.jbehave.core.model.StoryDuration;
 import org.jbehave.core.reporters.StoryReporter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static ch.lambdaj.Lambda.convert;
 
-/**
- * A description goes here.
- * User: johnsmart
- * Date: 15/05/12
- * Time: 5:38 PM
- */
 public class ThucydidesReporter implements StoryReporter {
 
     private ThucydidesListeners thucydidesListeners;
@@ -54,8 +47,6 @@ public class ThucydidesReporter implements StoryReporter {
     }
 
     public void beforeStory(Story story, boolean b) {
-        System.out.println("Before story: " + story.getDescription());
-
         String storyName = removeSuffixFrom(story.getName());
         String storyTitle = NameConverter.humanize(storyName);
         reportService  = ThucydidesReports.getReportService(systemConfiguration);
@@ -161,7 +152,6 @@ public class ThucydidesReporter implements StoryReporter {
     }
 
     public void afterStory(boolean b) {
-        System.out.println("After story");
         StepEventBus.getEventBus().testSuiteFinished();
         generateReportsFor(thucydidesListeners.getResults());
     }
@@ -171,83 +161,68 @@ public class ThucydidesReporter implements StoryReporter {
     }
 
     public void narrative(Narrative narrative) {
-        System.out.println("NARRATIVE: " + narrative);
     }
 
     public void scenarioNotAllowed(Scenario scenario, String s) {
     }
 
     public void beforeScenario(String scenarioTitle) {
-        System.out.println("BEFORE SCENARIO: " + scenarioTitle);
         StepEventBus.getEventBus().testStarted(scenarioTitle);
     }
 
     public void scenarioMeta(Meta meta) {
-        System.out.println("SCENARIO META: " + meta);
         registerIssues(meta);
         registerFeatures(meta);
         registerTags(meta);
     }
 
     public void afterScenario() {
-        System.out.println("AFTER SCENARIO");
         StepEventBus.getEventBus().testFinished();
     }
 
     public void givenStories(GivenStories givenStories) {
-        System.out.println("GIVEN STORIES: " + givenStories);
     }
 
     public void givenStories(List<String> strings) {
-        System.out.println("GIVEN STORIES: " + strings);
     }
 
     public void beforeExamples(List<String> strings, ExamplesTable examplesTable) {
-        System.out.println("BEFORE EXAMPLES: " + strings);
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void example(Map<String, String> stringStringMap) {
-        System.out.println("EXAMPLE: " + stringStringMap);
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void afterExamples() {
-        System.out.println("AFTER EXAMPLES");
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void beforeStep(String stepTitle) {
-        System.out.println("BEFORE STEP: " + stepTitle);
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(stepTitle));
     }
 
     public void successful(String title) {
-        System.out.println("STEP SUCCESSFUL " + title);
         StepEventBus.getEventBus().updateCurrentStepTitle(title);
         StepEventBus.getEventBus().stepFinished();
     }
 
     public void ignorable(String title) {
-        System.out.println("STEP IGNORED " + title);
         StepEventBus.getEventBus().updateCurrentStepTitle(title);
         StepEventBus.getEventBus().stepIgnored();
     }
 
     public void pending(String stepTitle) {
-        System.out.println("STEP PENDING " + stepTitle);
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(stepTitle));
         StepEventBus.getEventBus().stepPending();
     }
 
     public void notPerformed(String stepTitle) {
-        System.out.println("STEP SKIPPED " + stepTitle);
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(stepTitle));
         StepEventBus.getEventBus().stepIgnored();
     }
 
     public void failed(String stepTitle, Throwable cause) {
-        System.out.println("STEP FAILED " + stepTitle);
         StepEventBus.getEventBus().updateCurrentStepTitle(stepTitle);
         StepEventBus.getEventBus().stepFailed(new StepFailure(ExecutedStepDescription.withTitle(stepTitle), cause));
     }
