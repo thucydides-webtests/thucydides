@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class AbstractJBehaveStory {
@@ -54,6 +56,13 @@ public class AbstractJBehaveStory {
 
     protected List<TestOutcome> loadTestOutcomes() throws IOException {
         XMLTestOutcomeReporter outcomeReporter = new XMLTestOutcomeReporter();
-        return outcomeReporter.loadReportsFrom(outputDirectory);
+        List<TestOutcome> testOutcomes = outcomeReporter.loadReportsFrom(outputDirectory);
+        Collections.sort(testOutcomes, new Comparator<TestOutcome>() {
+            @Override
+            public int compare(TestOutcome testOutcome, TestOutcome testOutcome1) {
+                return testOutcome.getTitle().compareTo(testOutcome1.getTitle());
+            }
+        });
+        return testOutcomes;
     }
 }
