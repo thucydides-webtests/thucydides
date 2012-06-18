@@ -3,12 +3,14 @@ package net.thucydides.jbehave;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestTag;
 import org.junit.Test;
 
 import java.util.List;
 
 import static net.thucydides.core.matchers.PublicThucydidesMatchers.containsResults;
 import static net.thucydides.core.model.TestResult.*;
+import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTag;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
@@ -16,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 
 public class WhenRunningJBehaveStories extends AbstractJBehaveStory {
 
-    private static final int TOTAL_NUMBER_OF_JBEHAVE_SCENARIOS = 15;
+    private static final int TOTAL_NUMBER_OF_JBEHAVE_SCENARIOS = 20;
 
     final static class AllStoriesSample extends JUnitThucydidesStories {}
 
@@ -276,7 +278,7 @@ public class WhenRunningJBehaveStories extends AbstractJBehaveStory {
 
         // Then
         List<TestOutcome> outcomes = loadTestOutcomes();
-        assertThat(outcomes.get(0).getIssueKeys(), hasItems("MYPROJ-3","MYPROJ-4","MYPROJ-5"));
+        assertThat(outcomes.get(0).getIssueKeys(), hasItems("MYPROJ-3", "MYPROJ-4", "MYPROJ-5"));
 
     }
 
@@ -314,6 +316,116 @@ public class WhenRunningJBehaveStories extends AbstractJBehaveStory {
         assertThat(outcomes.size(), is(2));
         assertThat(outcomes.get(0).getIssueKeys(), hasItems("MYPROJ-123", "MYPROJ-456"));
         assertThat(outcomes.get(1).getIssueKeys(), hasItems("MYPROJ-123", "MYPROJ-789"));
+    }
+
+
+    @Test
+    public void a_test_should_have_a_story_tag_matching_the_jbehave_story() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new AStorySample("aBehaviorWithAnIssue.story");
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.get(0), havingTag(TestTag.withName("A behavior with an issue").andType("story")));
+    }
+
+    @Test
+    public void a_test_should_have_features_defined_by_the_feature_meta_field() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new AStorySample("aBehaviorWithFeatures.story");
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.get(0), havingTag(TestTag.withName("a feature").andType("feature")));
+    }
+
+    @Test
+    public void a_test_should_have_features_defined_at_the_story_levelby_the_feature_meta_field() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new AStorySample("aBehaviorWithFeatures.story");
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.get(0), havingTag(TestTag.withName("a feature").andType("feature")));
+        assertThat(outcomes.get(0), havingTag(TestTag.withName("another feature").andType("feature")));
+    }
+
+
+    @Test
+    public void a_test_should_have_multiple_features_defined_at_the_story_level_by_the_feature_meta_field() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new AStorySample("aBehaviorWithMultipleFeatures.story");
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.get(0), havingTag(TestTag.withName("a feature").andType("feature")));
+        assertThat(outcomes.get(0), havingTag(TestTag.withName("another feature").andType("feature")));
+        assertThat(outcomes.get(0), havingTag(TestTag.withName("yet another feature").andType("feature")));
+    }
+
+
+    @Test
+    public void a_test_should_have_tags_defined_by_the_tag_meta_field() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new AStorySample("aBehaviorWithTags.story");
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.get(0), havingTag(TestTag.withName("a domain").andType("domain")));
+    }
+
+    @Test
+    public void a_test_should_have_storywide_tags_defined_by_the_tag_meta_field() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new AStorySample("aBehaviorWithTags.story");
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.get(0), havingTag(TestTag.withName("a domain").andType("domain")));
+        assertThat(outcomes.get(0), havingTag(TestTag.withName("a capability").andType("capability")));
+        assertThat(outcomes.get(0), havingTag(TestTag.withName("iteration 1").andType("iteration")));
     }
 
 }

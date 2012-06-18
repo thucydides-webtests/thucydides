@@ -3,17 +3,13 @@ package net.thucydides.jbehave;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
-import org.jbehave.core.failures.FailureStrategy;
-import org.jbehave.core.failures.PendingStepStrategy;
+import org.jbehave.core.annotations.Given;
 import org.junit.Test;
 
 import java.util.List;
 
-import static net.thucydides.core.matchers.PublicThucydidesMatchers.containsResults;
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.SKIPPED;
-import static net.thucydides.core.model.TestResult.SUCCESS;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class WhenRunningDataDrivenJBehaveStories extends AbstractJBehaveStory {
@@ -51,9 +47,9 @@ public class WhenRunningDataDrivenJBehaveStories extends AbstractJBehaveStory {
         // Then
         List<TestOutcome> outcomes = loadTestOutcomes();
         List<TestStep> steps = outcomes.get(0).getTestSteps();
-        assertThat(steps.get(0).getDescription(), is("Given a stock of ｟STK1｠ and a threshold of ｟10.0｠"));
-        assertThat(steps.get(3).getDescription(), is("Given a stock of ｟STK1｠ and a threshold of ｟11.0｠"));
-        assertThat(steps.get(6).getDescription(), is("Given a stock of ｟STK1｠ and a threshold of ｟12.0｠"));
+        assertThat(steps.get(0).getDescription(), containsString("10"));
+        assertThat(steps.get(3).getDescription(), containsString("11"));
+        assertThat(steps.get(6).getDescription(), containsString("12"));
     }
 
     @Test

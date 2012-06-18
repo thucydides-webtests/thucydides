@@ -15,6 +15,7 @@ import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.screenshots.Photographer;
@@ -96,6 +97,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private List<String> storywideIssues;
 
+    private List<TestTag> storywideTags;
 
 
     protected enum ScreenshotType {
@@ -114,6 +116,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
         this.screenshotProcessor = Injectors.getInjector().getInstance(ScreenshotProcessor.class);
         this.inFluentStepSequence = false;
         this.storywideIssues = Lists.newArrayList();
+        this.storywideTags = Lists.newArrayList();
     }
 
     /**
@@ -190,13 +193,18 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void testSuiteStarted(final Class<?> startedTestSuite) {
         testSuite = startedTestSuite;
         testedStory = findStoryFrom(startedTestSuite);
+        clearStorywideTagsAndIssues();
+    }
+
+    private void clearStorywideTagsAndIssues() {
         storywideIssues.clear();
+        storywideTags.clear();
     }
 
     public void testSuiteStarted(final Story story) {
         testSuite = null;
         testedStory = story;
-        storywideIssues.clear();
+        clearStorywideTagsAndIssues();
     }
 
     public boolean testSuiteRunning() {
@@ -207,10 +215,14 @@ public class BaseStepListener implements StepListener, StepPublisher {
         storywideIssues.addAll(issues);
     }
 
+    public void addTagsToCurrentStory(List<TestTag> tags) {
+        storywideTags.addAll(tags);
+    }
+
     @Override
     public void testSuiteFinished() {
         screenshotProcessor.waitUntilDone();
-        storywideIssues.clear();
+        clearStorywideTagsAndIssues();
     }
 
 
@@ -251,6 +263,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void testFinished(final TestOutcome result) {
         recordTestDuration();
         getCurrentTestOutcome().addIssues(storywideIssues);
+        getCurrentTestOutcome().addTags(storywideTags);
         currentStepStack.clear();
     }
 

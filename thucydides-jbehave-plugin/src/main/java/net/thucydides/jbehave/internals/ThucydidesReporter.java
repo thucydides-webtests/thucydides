@@ -1,18 +1,20 @@
 package net.thucydides.jbehave.internals;
 
+import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesListeners;
 import net.thucydides.core.ThucydidesReports;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFailure;
+import net.thucydides.core.util.Inflector;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.Configuration;
-import org.codehaus.plexus.util.StringUtils;
 import org.jbehave.core.model.ExamplesTable;
 import org.jbehave.core.model.GivenStories;
 import org.jbehave.core.model.Meta;
@@ -23,8 +25,11 @@ import org.jbehave.core.model.Story;
 import org.jbehave.core.model.StoryDuration;
 import org.jbehave.core.reporters.StoryReporter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static ch.lambdaj.Lambda.convert;
 
 /**
  * A description goes here.
@@ -57,16 +62,51 @@ public class ThucydidesReporter implements StoryReporter {
         thucydidesListeners = ThucydidesReports.setupListeners(systemConfiguration);
         StepEventBus.getEventBus().testSuiteStarted(net.thucydides.core.model.Story.withId(storyName, storyTitle));
         registerStoryIssues(story.getMeta());
+        registerStoryFeatures(story.getMeta());
+        registerStoryTags(story.getMeta());
     }
 
     private List<String> getIssueOrIssuesPropertyValues(Meta metaData) {
-        String issue = metaData.getProperty("issue");
-        String issues = metaData.getProperty("issues");
-        String allIssues = Joiner.on(',').skipNulls().join(issue, issues);
+        return getTagPropertyValues(metaData, "issue");
+    }
 
-        return Lists.newArrayList(Splitter.on(',').omitEmptyStrings().trimResults().split(allIssues));
+    private List<TestTag> getFeatureOrFeaturesPropertyValues(Meta metaData) {
+        List<String> features = getTagPropertyValues(metaData, "feature");
+        return convert(features, toFeatureTags());
+    }
 
+    private List<TestTag> getTagOrTagsPropertyValues(Meta metaData) {
+        List<String> tags = getTagPropertyValues(metaData, "tag");
+        return convert(tags, toTags());
+    }
 
+    private Converter<String, TestTag> toTags() {
+        return new Converter<String, TestTag>() {
+            @Override
+            public TestTag convert(String tag) {
+                List<String> tagParts = Lists.newArrayList(Splitter.on(":").trimResults().split(tag));
+                return TestTag.withName(tagParts.get(1)).andType(tagParts.get(0));
+            }
+        };
+    }
+
+    private Converter<String, TestTag> toFeatureTags() {
+        return new Converter<String, TestTag>() {
+            @Override
+            public TestTag convert(String featureName) {
+                return TestTag.withName(featureName).andType("feature");
+            }
+        };
+    }
+
+    private List<String> getTagPropertyValues(Meta metaData, String tagType) {
+        String singularTag = metaData.getProperty(tagType);
+        String pluralTagType = Inflector.getInstance().pluralize(tagType);
+
+        String multipleTags = metaData.getProperty(pluralTagType);
+        String allTags = Joiner.on(',').skipNulls().join(singularTag, multipleTags);
+
+        return Lists.newArrayList(Splitter.on(',').omitEmptyStrings().trimResults().split(allTags));
     }
 
     private void registerIssues(Meta metaData) {
@@ -85,6 +125,37 @@ public class ThucydidesReporter implements StoryReporter {
         }
     }
 
+    private void registerFeatures(Meta metaData) {
+        List<TestTag> features = getFeatureOrFeaturesPropertyValues(metaData);
+
+        if (!features.isEmpty()) {
+            StepEventBus.getEventBus().addTagsToCurrentTest(features);
+        }
+    }
+
+    private void registerStoryFeatures(Meta metaData) {
+        List<TestTag> features = getFeatureOrFeaturesPropertyValues(metaData);
+
+        if (!features.isEmpty()) {
+            StepEventBus.getEventBus().addTagsToCurrentStory(features);
+        }
+    }
+
+    private void registerTags(Meta metaData) {
+        List<TestTag> tags = getTagOrTagsPropertyValues(metaData);
+
+        if (!tags.isEmpty()) {
+            StepEventBus.getEventBus().addTagsToCurrentTest(tags);
+        }
+    }
+
+    private void registerStoryTags(Meta metaData) {
+        List<TestTag> tags = getTagOrTagsPropertyValues(metaData);
+
+        if (!tags.isEmpty()) {
+            StepEventBus.getEventBus().addTagsToCurrentStory(tags);
+        }
+    }
     private String removeSuffixFrom(String name) {
         return (name.contains(".")) ? name.substring(0, name.indexOf(".")) :  name;
     }
@@ -114,6 +185,8 @@ public class ThucydidesReporter implements StoryReporter {
     public void scenarioMeta(Meta meta) {
         System.out.println("SCENARIO META: " + meta);
         registerIssues(meta);
+        registerFeatures(meta);
+        registerTags(meta);
     }
 
     public void afterScenario() {

@@ -10,6 +10,7 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -415,5 +416,13 @@ public class StepEventBus {
 
     public void addIssuesToCurrentTest(List<String> issues) {
         baseStepListener.getCurrentTestOutcome().addIssues(issues);
+    }
+
+    public void addTagsToCurrentTest(List<TestTag> tags) {
+        baseStepListener.getCurrentTestOutcome().addTags(tags);
+    }
+
+    public void addTagsToCurrentStory(List<TestTag> tags) {
+        baseStepListener.addTagsToCurrentStory(tags);
     }
 }

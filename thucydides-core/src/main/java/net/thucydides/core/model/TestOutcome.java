@@ -670,9 +670,7 @@ public class TestOutcome {
     }
 
     public Set<TestTag> getTags() {
-        if (tags != null) {
-            return tags;
-        } else {
+        if (tags == null) {
             tags = getTagsUsingTagProviders(getTagProviderService().getTagProviders());
         }
         return ImmutableSet.copyOf(tags);
@@ -683,12 +681,17 @@ public class TestOutcome {
         for (TagProvider tagProvider : tagProviders) {
             tags.addAll(tagProvider.getTagsFor(this));
         }
-        return ImmutableSet.copyOf(tags);
+        return tags;
     }
 
     public void setTags(Set<TestTag> tags) {
-        Preconditions.checkArgument(this.tags == null, "Tags cannot be reassiged once set.");
-        this.tags = ImmutableSet.copyOf(tags);
+        this.tags = Sets.newHashSet(tags);
+    }
+
+
+    public void addTags(List<TestTag> tags) {
+        getTags();
+        this.tags.addAll(tags);
     }
 
     public List<String> getIssueKeys() {
@@ -727,6 +730,8 @@ public class TestOutcome {
             return getMethodName();
         }
     }
+
+
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {
