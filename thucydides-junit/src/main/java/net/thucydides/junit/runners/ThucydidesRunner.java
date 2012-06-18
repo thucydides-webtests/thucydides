@@ -201,6 +201,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     /**
      * Runs the tests in the acceptance test case.
      */
+
     @Override
     public void run(final RunNotifier notifier) {
         if (!skipThisTest()) {

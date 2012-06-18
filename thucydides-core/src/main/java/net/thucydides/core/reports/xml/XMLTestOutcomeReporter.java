@@ -113,8 +113,10 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
     public List<TestOutcome> loadReportsFrom(File outputDirectory) throws IOException {
         File[] reportFiles = getAllXMLFilesFrom(outputDirectory);
         List<TestOutcome> testOutcomes = Lists.newArrayList();
-        for (File reportFile : reportFiles) {
-            testOutcomes.addAll(loadReportFrom(reportFile).asSet());
+        if (reportFiles != null) {
+            for (File reportFile : reportFiles) {
+                testOutcomes.addAll(loadReportFrom(reportFile).asSet());
+            }
         }
         return testOutcomes;
     }

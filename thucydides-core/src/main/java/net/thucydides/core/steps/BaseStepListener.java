@@ -2,6 +2,7 @@ package net.thucydides.core.steps;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.IgnoredStepException;
@@ -93,6 +94,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private boolean inFluentStepSequence;
 
+    private List<String> storywideIssues;
+
+
+
     protected enum ScreenshotType {
         OPTIONAL_SCREENSHOT,
         MANDATORY_SCREENSHOT
@@ -108,6 +113,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
         this.configuration = Injectors.getInjector().getInstance(Configuration.class);
         this.screenshotProcessor = Injectors.getInjector().getInstance(ScreenshotProcessor.class);
         this.inFluentStepSequence = false;
+        this.storywideIssues = Lists.newArrayList();
     }
 
     /**
@@ -184,16 +190,27 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void testSuiteStarted(final Class<?> startedTestSuite) {
         testSuite = startedTestSuite;
         testedStory = findStoryFrom(startedTestSuite);
+        storywideIssues.clear();
     }
 
     public void testSuiteStarted(final Story story) {
         testSuite = null;
         testedStory = story;
+        storywideIssues.clear();
+    }
+
+    public boolean testSuiteRunning() {
+        return testedStory != null;
+    }
+
+    public void addIssuesToCurrentStory(List<String> issues) {
+        storywideIssues.addAll(issues);
     }
 
     @Override
     public void testSuiteFinished() {
         screenshotProcessor.waitUntilDone();
+        storywideIssues.clear();
     }
 
 
@@ -214,6 +231,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
         }
     }
 
+    public void updateCurrentStepTitle(String updatedStepTitle) {
+        getCurrentStep().setDescription(updatedStepTitle);
+    }
+
     private void setAnnotatedResult(String testMethod) {
         if (TestAnnotations.forClass(testSuite).isIgnored(testMethod)) {
             getCurrentTestOutcome().setAnnotatedResult(IGNORED);
@@ -229,6 +250,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
      */
     public void testFinished(final TestOutcome result) {
         recordTestDuration();
+        getCurrentTestOutcome().addIssues(storywideIssues);
         currentStepStack.clear();
     }
 

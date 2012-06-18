@@ -122,9 +122,9 @@ public class StepEventBus {
     }
 
     private void startSuiteForFirstTest(final Class<?> testClass) {
-        if ((classUnderTest == null) || (classUnderTest != testClass)) {
-            testSuiteStarted(testClass);
-        }
+//        if ((classUnderTest == null) || (classUnderTest != testClass)) {
+//            testSuiteStarted(testClass);
+//        }
     }
 
     private void startSuiteWithStoryForFirstTest(final Story story) {
@@ -192,7 +192,6 @@ public class StepEventBus {
         currentTestIsNotPending();
         resultTally = null;
         classUnderTest = null;
-        storyUnderTest = null;
         webdriverSuspensions.clear();
     }
 
@@ -266,6 +265,10 @@ public class StepEventBus {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.skippedStepStarted(executedStepDescription);
         }
+    }
+
+    private void updateCurrentStepTitleTo(String updatedStepTitle) {
+        getBaseStepListener().updateCurrentStepTitle(updatedStepTitle);
     }
 
     public void stepFinished() {
@@ -399,5 +402,18 @@ public class StepEventBus {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testSuiteFinished();
         }
+        storyUnderTest = null;
+    }
+
+    public void updateCurrentStepTitle(String stepTitle) {
+        getBaseStepListener().updateCurrentStepTitle(stepTitle);
+    }
+
+    public void addIssuesToCurrentStory(List<String> issues) {
+        baseStepListener.addIssuesToCurrentStory(issues);
+    }
+
+    public void addIssuesToCurrentTest(List<String> issues) {
+        baseStepListener.getCurrentTestOutcome().addIssues(issues);
     }
 }

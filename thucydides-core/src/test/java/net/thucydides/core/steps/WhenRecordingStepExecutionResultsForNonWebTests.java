@@ -128,6 +128,7 @@ public class WhenRecordingStepExecutionResultsForNonWebTests {
     @Test
     public void the_listener_should_record_the_tested_story_for_non_webtest_steps() {
 
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
         StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
 
         FlatScenarioStepsWithoutPages steps =  stepFactory.getStepLibraryFor(FlatScenarioStepsWithoutPages.class);
@@ -136,7 +137,7 @@ public class WhenRecordingStepExecutionResultsForNonWebTests {
         steps.step_two();
 
         StepEventBus.getEventBus().testFinished(testOutcome);
-
+        StepEventBus.getEventBus().testSuiteFinished();
         TestOutcome outcome = stepListener.getTestOutcomes().get(0);
         assertThat(outcome.getUserStory().getName(), is("My story"));
     }

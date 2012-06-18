@@ -48,7 +48,7 @@ public class AbstractJBehaveStory {
         try {
             stories.run();
         } catch(Throwable e) {
-            // Ignore
+            e.printStackTrace();
         }
     }
 

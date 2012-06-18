@@ -10,11 +10,13 @@ import java.util.List;
 import static net.thucydides.core.matchers.PublicThucydidesMatchers.containsResults;
 import static net.thucydides.core.model.TestResult.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
 public class WhenRunningJBehaveStories extends AbstractJBehaveStory {
 
-    private static final int TOTAL_NUMBER_OF_JBEHAVE_SCENARIOS = 10;
+    private static final int TOTAL_NUMBER_OF_JBEHAVE_SCENARIOS = 15;
 
     final static class AllStoriesSample extends JUnitThucydidesStories {}
 
@@ -216,7 +218,6 @@ public class WhenRunningJBehaveStories extends AbstractJBehaveStory {
 
         // And
         assertThat(outcomes.get(0), containsResults(SUCCESS, FAILURE, SKIPPED, SKIPPED, SKIPPED));
-
     }
 
     @Test
@@ -240,6 +241,79 @@ public class WhenRunningJBehaveStories extends AbstractJBehaveStory {
         // And
         assertThat(outcomes.get(0), containsResults(SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS, SUCCESS, PENDING, PENDING, SUCCESS));
 
+    }
+
+    @Test
+    public void a_test_should_be_associated_with_a_corresponding_issue_if_specified() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new AStorySample("aBehaviorWithAnIssue.story");
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.size(), is(1));
+        assertThat(outcomes.get(0).getIssueKeys(), hasItem("MYPROJ-456"));
+
+    }
+
+    @Test
+    public void a_test_can_be_associated_with_several_issues() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new AStorySample("aBehaviorWithMultipleIssues.story");
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.get(0).getIssueKeys(), hasItems("MYPROJ-3","MYPROJ-4","MYPROJ-5"));
+
+    }
+
+    @Test
+    public void a_test_story_can_be_associated_with_several_issues() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new AStorySample("aBehaviorWithMultipleIssues.story");
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.get(0).getIssueKeys(), hasItems("MYPROJ-1","MYPROJ-2","MYPROJ-3","MYPROJ-4","MYPROJ-5"));
+
+    }
+    @Test
+    public void all_the_scenarios_in_a_story_should_be_associated_with_a_corresponding_issue_if_specified_at_the_story_level() throws Throwable {
+
+        // Given
+        JUnitThucydidesStories story = new AStorySample("aBehaviorWithIssues.story");
+
+        story.setSystemConfiguration(systemConfiguration);
+        story.configuredEmbedder().configuration().storyReporterBuilder().withReporters(printOutput);
+
+        // When
+        run(story);
+
+        // Then
+        List<TestOutcome> outcomes = loadTestOutcomes();
+        assertThat(outcomes.size(), is(2));
+        assertThat(outcomes.get(0).getIssueKeys(), hasItems("MYPROJ-123", "MYPROJ-456"));
+        assertThat(outcomes.get(1).getIssueKeys(), hasItems("MYPROJ-123", "MYPROJ-789"));
     }
 
 }

@@ -1,5 +1,8 @@
 package net.thucydides.jbehave.internals;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesListeners;
 import net.thucydides.core.ThucydidesReports;
 import net.thucydides.core.model.TestOutcome;
@@ -9,6 +12,7 @@ import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.Configuration;
+import org.codehaus.plexus.util.StringUtils;
 import org.jbehave.core.model.ExamplesTable;
 import org.jbehave.core.model.GivenStories;
 import org.jbehave.core.model.Meta;
@@ -45,12 +49,40 @@ public class ThucydidesReporter implements StoryReporter {
     }
 
     public void beforeStory(Story story, boolean b) {
-        System.out.println("Before story: " + story.getName());
+        System.out.println("Before story: " + story.getDescription());
+
         String storyName = removeSuffixFrom(story.getName());
         String storyTitle = NameConverter.humanize(storyName);
         reportService  = ThucydidesReports.getReportService(systemConfiguration);
         thucydidesListeners = ThucydidesReports.setupListeners(systemConfiguration);
         StepEventBus.getEventBus().testSuiteStarted(net.thucydides.core.model.Story.withId(storyName, storyTitle));
+        registerStoryIssues(story.getMeta());
+    }
+
+    private List<String> getIssueOrIssuesPropertyValues(Meta metaData) {
+        String issue = metaData.getProperty("issue");
+        String issues = metaData.getProperty("issues");
+        String allIssues = Joiner.on(',').skipNulls().join(issue, issues);
+
+        return Lists.newArrayList(Splitter.on(',').omitEmptyStrings().trimResults().split(allIssues));
+
+
+    }
+
+    private void registerIssues(Meta metaData) {
+        List<String> issues = getIssueOrIssuesPropertyValues(metaData);
+
+        if (!issues.isEmpty()) {
+            StepEventBus.getEventBus().addIssuesToCurrentTest(issues);
+        }
+    }
+
+    private void registerStoryIssues(Meta metaData) {
+        List<String> issues = getIssueOrIssuesPropertyValues(metaData);
+
+        if (!issues.isEmpty()) {
+            StepEventBus.getEventBus().addIssuesToCurrentStory(issues);
+        }
     }
 
     private String removeSuffixFrom(String name) {
@@ -68,6 +100,7 @@ public class ThucydidesReporter implements StoryReporter {
     }
 
     public void narrative(Narrative narrative) {
+        System.out.println("NARRATIVE: " + narrative);
     }
 
     public void scenarioNotAllowed(Scenario scenario, String s) {
@@ -79,7 +112,8 @@ public class ThucydidesReporter implements StoryReporter {
     }
 
     public void scenarioMeta(Meta meta) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        System.out.println("SCENARIO META: " + meta);
+        registerIssues(meta);
     }
 
     public void afterScenario() {
@@ -88,22 +122,25 @@ public class ThucydidesReporter implements StoryReporter {
     }
 
     public void givenStories(GivenStories givenStories) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        System.out.println("GIVEN STORIES: " + givenStories);
     }
 
     public void givenStories(List<String> strings) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        System.out.println("GIVEN STORIES: " + strings);
     }
 
     public void beforeExamples(List<String> strings, ExamplesTable examplesTable) {
+        System.out.println("BEFORE EXAMPLES: " + strings);
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void example(Map<String, String> stringStringMap) {
+        System.out.println("EXAMPLE: " + stringStringMap);
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void afterExamples() {
+        System.out.println("AFTER EXAMPLES");
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -112,13 +149,15 @@ public class ThucydidesReporter implements StoryReporter {
         StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(stepTitle));
     }
 
-    public void successful(String s) {
-        System.out.println("STEP SUCCESSFUL " + s);
+    public void successful(String title) {
+        System.out.println("STEP SUCCESSFUL " + title);
+        StepEventBus.getEventBus().updateCurrentStepTitle(title);
         StepEventBus.getEventBus().stepFinished();
     }
 
-    public void ignorable(String s) {
-        System.out.println("STEP IGNORED " + s);
+    public void ignorable(String title) {
+        System.out.println("STEP IGNORED " + title);
+        StepEventBus.getEventBus().updateCurrentStepTitle(title);
         StepEventBus.getEventBus().stepIgnored();
     }
 
@@ -136,6 +175,7 @@ public class ThucydidesReporter implements StoryReporter {
 
     public void failed(String stepTitle, Throwable cause) {
         System.out.println("STEP FAILED " + stepTitle);
+        StepEventBus.getEventBus().updateCurrentStepTitle(stepTitle);
         StepEventBus.getEventBus().stepFailed(new StepFailure(ExecutedStepDescription.withTitle(stepTitle), cause));
     }
 
