@@ -12,13 +12,12 @@ import static net.thucydides.core.matchers.PublicThucydidesMatchers.containsResu
 import static net.thucydides.core.model.TestResult.*;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTag;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
 public class WhenRunningJBehaveStories extends AbstractJBehaveStory {
-
-    private static final int TOTAL_NUMBER_OF_JBEHAVE_SCENARIOS = 20;
 
     final static class AllStoriesSample extends JUnitThucydidesStories {}
 
@@ -47,7 +46,7 @@ public class WhenRunningJBehaveStories extends AbstractJBehaveStory {
 
         // Then
         List<TestOutcome> outcomes = loadTestOutcomes();
-        assertThat(outcomes.size(), is(TOTAL_NUMBER_OF_JBEHAVE_SCENARIOS));
+        assertThat(outcomes.size(), is(greaterThan(10)));
     }
 
     final static class StoriesInTheSubsetFolderSample extends JUnitThucydidesStories {
