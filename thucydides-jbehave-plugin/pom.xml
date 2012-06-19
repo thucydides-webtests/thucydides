@@ -6,16 +6,22 @@
         <groupId>net.thucydides</groupId>
         <version>0.9.0-alpha-5-SNAPSHOT</version>
     </parent>
-
+    <groupId>net.thucydides</groupId>
     <artifactId>thucydides-jbehave-plugin</artifactId>
     <name>thucydides-jbehave-plugin</name>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jbehave.core.version>3.6.4</jbehave.core.version>
         <jbehave.site.version>3.1.1</jbehave.site.version>
         <embeddables>**/*Stories.java</embeddables>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.jbehave</groupId>
             <artifactId>jbehave-groovy</artifactId>
@@ -34,18 +40,11 @@
             <version>${jbehave.site.version}</version>
             <type>zip</type>
         </dependency>
-
         <dependency>
             <groupId>net.sf.extcos</groupId>
             <artifactId>extcos</artifactId>
             <version>0.3b</version>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.thucydides</groupId>
-            <artifactId>thucydides-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
