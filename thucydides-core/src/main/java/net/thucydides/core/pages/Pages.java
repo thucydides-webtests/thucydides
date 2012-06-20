@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -81,13 +82,13 @@ public class Pages implements Serializable {
 
     private boolean currentUrlIs(String startingUrl) {
         String currentUrl = getDriver().getCurrentUrl();
-        if ((currentUrl != null) && (startingUrl != null)) {
-            try {
-                return new URL(currentUrl).equals(new URL(startingUrl));
-            } catch (MalformedURLException e) {
-                return false;
-            }
-        } else {
+        if (currentUrl == null || startingUrl == null) {
+            return false;
+        }
+
+        try {
+            return URI.create(currentUrl).equals(URI.create(startingUrl));
+        } catch (IllegalArgumentException e) {
             return false;
         }
     }
