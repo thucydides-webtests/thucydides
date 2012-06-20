@@ -9,11 +9,12 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
     def loader = new TestOutcomeLoader()
 
     def "should transform singular nouns into plurals"() {
-        given:
+        setup:
             def inflection = Inflector.instance
-        when:
+        given: "a word in its signular form"
+        when: "I find the plural form of that word"
             def pluralForm = inflection.of(singleForm).inPluralForm().toString();
-        then:
+        then: "the plural form should be gramatically correct"
             pluralForm == expectedPluralForm
         where:
             singleForm          | expectedPluralForm
