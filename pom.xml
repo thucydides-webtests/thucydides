@@ -471,7 +471,6 @@
         <module>thucydides-maven-plugin</module>
         <module>thucydides-maven-integration-tests</module>
         <module>thucydides-easyb</module>
-        <module>thucydides-jbehave-plugin</module>
         <!--<module>thucydides-arquillian</module>-->
     </modules>
 </project>
