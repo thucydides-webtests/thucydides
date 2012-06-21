@@ -76,8 +76,9 @@ public class WhenConfiguringTheStatisticsDatabase {
     }
 
     @Test
-    public void should_validate_but_not_update_an_existing_custom_database() throws SQLException {
+    public void should_validate_but_not_update_an_existing_custom_database() throws SQLException, ClassNotFoundException {
         String preexistingDatabaseUrl = "jdbc:hsqldb:mem:existing-database";
+        Class.forName("org.hsqldb.jdbcDriver");
         createPreexistingDatabaseFor(preexistingDatabaseUrl);
 
         environmentVariables.setProperty("thucydides.statistics.url",preexistingDatabaseUrl);
