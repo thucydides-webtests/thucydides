@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <bean id="widgetService" class="net.thucydides.core.steps.samples.WidgetService">
+        <property name="name"><value>Widgets</value></property>
+        <property name="quota"><value>1</value></property>
+    </bean>
+</beans>

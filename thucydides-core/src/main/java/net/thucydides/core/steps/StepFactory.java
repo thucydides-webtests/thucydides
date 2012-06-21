@@ -4,13 +4,16 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import net.sf.cglib.proxy.Enhancer;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.steps.di.DependencyInjectorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.ImmutableSet.copyOf;
@@ -27,6 +30,7 @@ public class StepFactory {
             = new HashMap<Class<?>, Object>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StepFactory.class);
+    private final DependencyInjectorService dependencyInjectorService;
 
     /**
      * Create a new step factory.
@@ -35,6 +39,7 @@ public class StepFactory {
      */
     public StepFactory(final Pages pages) {
         this.pages = pages;
+        this.dependencyInjectorService = Injectors.getInjector().getInstance(DependencyInjectorService.class);
     }
 
     /**
@@ -42,7 +47,7 @@ public class StepFactory {
      * This is to be used for non-webtest acceptance tests.
      */
     public StepFactory() {
-        this.pages = null;
+        this(null);
     }
 
     private static final Class<?>[] CONSTRUCTOR_ARG_TYPES = {Pages.class};
@@ -89,7 +94,16 @@ public class StepFactory {
 
         instantiateAnyNestedStepLibrariesIn(steps, scenarioStepsClass);
 
+        injectOtherDependenciesInto(steps);
+
         return steps;
+    }
+
+    private <T> void injectOtherDependenciesInto(T steps) {
+        List<DependencyInjector> dependencyInjectors = dependencyInjectorService.findDependencyInjectors();
+        for(DependencyInjector dependencyInjector : dependencyInjectors) {
+            dependencyInjector.injectDependenciesInto(steps);
+        }
     }
 
     private <T> T instantiateUniqueStepLibraryFor(Class<T> scenarioStepsClass) {
