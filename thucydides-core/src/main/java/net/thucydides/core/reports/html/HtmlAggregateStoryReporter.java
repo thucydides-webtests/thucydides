@@ -196,6 +196,8 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         List<TestResultSnapshot> history = getTestHistory().getHistory();
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("history", history);
+        context.put("allTestOutcomes", testOutcomes);
+        context.put("reportName", reportNameProvider);
         context.put("rowcount", history.size());
         addFormattersToContext(context);
         String htmlContents = mergeTemplate(HISTORY_TEMPLATE_PATH).usingContext(context);

@@ -23,6 +23,11 @@ public enum ThucydidesSystemProperty {
     BASE_URL("webdriver.base.url"),
 
     /**
+     * The URL to be used for remote drivers
+     */
+    REMOTE_URL("webdriver.remote.url"),
+
+    /**
      * A unique identifier for the project under test, used to record test statistics.
      */
     PROJECT_KEY("thucydides.project.key"),
@@ -276,5 +281,9 @@ public enum ThucydidesSystemProperty {
         } else {
             return value;
         }
+    }
+
+    public boolean isDefinedIn(EnvironmentVariables environmentVariables) {
+        return StringUtils.isNotEmpty(from(environmentVariables));
     }
 }

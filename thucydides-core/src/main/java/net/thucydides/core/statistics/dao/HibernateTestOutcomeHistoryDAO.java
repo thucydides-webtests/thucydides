@@ -162,8 +162,6 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
         }
-        LOGGER.info("TEST OUTCOMES STORED");
-        LOGGER.info("Tests in database: " + findAll().size());
     }
 
     @Override
