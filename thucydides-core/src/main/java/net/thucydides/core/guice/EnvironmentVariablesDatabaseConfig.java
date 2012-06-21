@@ -29,17 +29,14 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
                                               LocalDatabase localDatabase) {
         this.environmentVariables = environmentVariables;
         this.localDatabase = localDatabase;
-        this.providerConfig = new HibernateEnvironmentVariablesConfig(environmentVariables, localDatabase);
+        this.providerConfig = JPAProviderConfigFactory.getJPAProviderConfig(environmentVariables, localDatabase);
     }
 
     @Override
     public Properties getProperties() {
         Properties properties = new Properties();
         String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", localDatabase.getDriver());
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + driver);
         providerConfig.setProperties(properties);
-
-        System.out.println("##################################3" + properties);
 
         return properties;
     }
