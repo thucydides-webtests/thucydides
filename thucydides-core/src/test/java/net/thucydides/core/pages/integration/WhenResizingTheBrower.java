@@ -44,7 +44,7 @@ public class WhenResizingTheBrower {
         page.open();
 
         int width = ((Long)(((JavascriptExecutor)driver).executeScript("return window.innerWidth"))).intValue();
-        assertThat(width, is(400));
+        assertThat(width, is(392));
     }
 
     @Test
