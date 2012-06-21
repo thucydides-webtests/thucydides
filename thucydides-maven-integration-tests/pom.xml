@@ -4,7 +4,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>release-0.9.0-alpha-6-SNAPSHOT</version>
+        <version>0.9.0-alpha-6-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides.maven.plugins</groupId>
     <artifactId>thucydides-maven-integration-tests</artifactId>
@@ -62,7 +62,7 @@
         <dependency>
             <groupId>net.thucydides.maven.plugins</groupId>
             <artifactId>maven-thucydides-plugin</artifactId>
-            <version>release-0.9.0-alpha-6-SNAPSHOT</version>
+            <version>0.9.0-alpha-6-SNAPSHOT</version>
             <type>maven-plugin</type>
             <scope>compile</scope>
         </dependency>
