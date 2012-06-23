@@ -80,7 +80,7 @@ public class WhenConfiguringTheStatisticsDatabaseWithEclipseLink {
 
     @Test
     public void should_validate_but_not_update_an_existing_custom_database() throws SQLException, ClassNotFoundException {
-        String preexistingDatabaseUrl = "jdbc:hsqldb:mem:existing-database";
+        String preexistingDatabaseUrl = "jdbc:hsqldb:mem:existing-database-eclipselink";
         Class.forName("org.hsqldb.jdbcDriver");
         deletePreexistingDatabaseFor(preexistingDatabaseUrl);
         createPreexistingDatabaseFor(preexistingDatabaseUrl);
