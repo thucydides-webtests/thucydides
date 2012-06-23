@@ -15,12 +15,10 @@ public class JPAProviderConfigFactory {
 
     public static JPAProviderConfig getJPAProviderConfig(EnvironmentVariables environmentVariables,
                                                          LocalDatabase localDatabase) {
-
-        String providerProperty =  environmentVariables.getProperty(ThucydidesSystemProperty.JPA_PROVIDER,
+        String providerProperty =  environmentVariables.getProperty(ThucydidesSystemProperty.JPA_PROVIDER.name(),
                 JPAProvider.Hibernate.name());
 
         JPAProvider provider =  getJPAProviderFromProperty(providerProperty);
-
         return getJPAProviderConfig(provider, environmentVariables, localDatabase);
 
 
