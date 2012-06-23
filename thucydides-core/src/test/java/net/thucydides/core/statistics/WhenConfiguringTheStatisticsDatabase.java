@@ -79,6 +79,7 @@ public class WhenConfiguringTheStatisticsDatabase {
     public void should_validate_but_not_update_an_existing_custom_database() throws SQLException, ClassNotFoundException {
         String preexistingDatabaseUrl = "jdbc:hsqldb:mem:existing-database";
         Class.forName("org.hsqldb.jdbcDriver");
+        deletePreexistingDatabaseFor(preexistingDatabaseUrl);
         createPreexistingDatabaseFor(preexistingDatabaseUrl);
 
         environmentVariables.setProperty("thucydides.statistics.url",preexistingDatabaseUrl);
@@ -86,6 +87,7 @@ public class WhenConfiguringTheStatisticsDatabase {
         Properties properties = databaseConfig.getProperties();
 
         assertThat(properties.getProperty("hibernate.hbm2ddl.auto"), is("validate"));
+
     }
 
     @Rule
@@ -130,5 +132,12 @@ public class WhenConfiguringTheStatisticsDatabase {
         Connection connection = DriverManager.getConnection(preexistingDatabaseUrl, "SA", "");
         connection.prepareStatement("CREATE MEMORY TABLE PUBLIC.TESTRUN(ID BIGINT NOT NULL PRIMARY KEY,DURATION BIGINT NOT NULL,EXECUTIONDATE TIMESTAMP,RESULT INTEGER,TITLE VARCHAR(255))")
                   .executeUpdate();
+    }
+
+    private void deletePreexistingDatabaseFor (String preexistingDatabaseUrl) throws SQLException {
+        Connection connection = DriverManager.getConnection(preexistingDatabaseUrl, "SA", "");
+        connection.prepareStatement("DROP SCHEMA PUBLIC CASCADE")
+                .executeUpdate();
+        connection.commit();
     }
 }
