@@ -34,7 +34,6 @@ public class EclipseLinkEnvironmentVariablesConfig implements JPAProviderConfig 
     @Override
     public void setProperties(Properties properties) {
         String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", localDatabase.getDriver());
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + driver);
         String url = environmentVariables.getProperty("thucydides.statistics.url", localDatabase.getUrl());
         String username = environmentVariables.getProperty("thucydides.statistics.username", localDatabase.getUsername());
         String password = environmentVariables.getProperty("thucydides.statistics.password", localDatabase.getPassword());
@@ -59,9 +58,9 @@ public class EclipseLinkEnvironmentVariablesConfig implements JPAProviderConfig 
 
     private boolean databaseIsConfigured(Properties targetConfiguration) {
         Properties connectionProps = new Properties();
-        connectionProps.put("user", targetConfiguration.getProperty("hibernate.connection.username"));
-        connectionProps.put("password", targetConfiguration.getProperty("hibernate.connection.password"));
-        String jdbcConnection = targetConfiguration.getProperty("hibernate.connection.url");
+        connectionProps.put("user", targetConfiguration.getProperty("javax.persistence.jdbc.user"));
+        connectionProps.put("password", targetConfiguration.getProperty("javax.persistence.jdbc.password"));
+        String jdbcConnection = targetConfiguration.getProperty("javax.persistence.jdbc.url");
         try {
             Connection conn = DriverManager.getConnection(jdbcConnection, connectionProps);
             List<String> tables = getTablesFrom(conn);

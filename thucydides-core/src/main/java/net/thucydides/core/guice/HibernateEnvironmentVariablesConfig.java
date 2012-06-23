@@ -35,7 +35,6 @@ public class HibernateEnvironmentVariablesConfig implements JPAProviderConfig {
     public void setProperties(Properties properties) {
 
         String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", localDatabase.getDriver());
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + driver);
         String url = environmentVariables.getProperty("thucydides.statistics.url", localDatabase.getUrl());
         String username = environmentVariables.getProperty("thucydides.statistics.username", localDatabase.getUsername());
         String password = environmentVariables.getProperty("thucydides.statistics.password", localDatabase.getPassword());
