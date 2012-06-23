@@ -3,6 +3,7 @@ package net.thucydides.core.statistics.model;
 import com.google.common.collect.ImmutableSet;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import org.eclipse.persistence.annotations.ReadOnly;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 @Entity
 @Immutable
+@ReadOnly
 public class TestRun {
 
     @Id

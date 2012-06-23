@@ -1,5 +1,6 @@
 package net.thucydides.core.statistics.model;
 
+import org.eclipse.persistence.annotations.ReadOnly;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 @Entity
 @Immutable
+@ReadOnly
 public class TestRunTag {
 
     @Id
