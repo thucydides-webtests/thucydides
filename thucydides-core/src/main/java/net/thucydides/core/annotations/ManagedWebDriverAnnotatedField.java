@@ -1,5 +1,6 @@
 package net.thucydides.core.annotations;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -24,12 +25,24 @@ public class ManagedWebDriverAnnotatedField {
     /**
      * Find the first field in the class annotated with the <b>Managed</b> annotation.
      */
-    public static ManagedWebDriverAnnotatedField findFirstAnnotatedField(final Class<?> testClass) {
+    public static Optional<ManagedWebDriverAnnotatedField> findOptionalAnnotatedField(final Class<?> testClass) {
 
         try {
             Field annotatedField = Iterables.find(fieldsIn(testClass), withCorrectAnnotations());
-            return new ManagedWebDriverAnnotatedField(annotatedField);
+            return Optional.of(new ManagedWebDriverAnnotatedField(annotatedField));
         } catch(NoSuchElementException e) {
+            return Optional.absent();
+        }
+    }
+    /**
+     * Find the first field in the class annotated with the <b>Managed</b> annotation.
+     */
+    public static ManagedWebDriverAnnotatedField findFirstAnnotatedField(final Class<?> testClass) {
+
+        Optional<ManagedWebDriverAnnotatedField> optionalField = findOptionalAnnotatedField(testClass);
+        if (optionalField.isPresent()) {
+            return optionalField.get();
+        } else {
             throw new InvalidManagedWebDriverFieldException(NO_ANNOTATED_FIELD_ERROR);
         }
     }

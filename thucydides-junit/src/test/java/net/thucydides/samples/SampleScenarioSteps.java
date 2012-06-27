@@ -46,14 +46,12 @@ public class SampleScenarioSteps extends ScenarioSteps {
     @Step
     public void stepThatUsesABrowser() {
         IndexPage page = pages().get(IndexPage.class);
-        page.open();
         page.getTitle();
     }
 
     @Step
     public void stepThatOpensWikipedia() {
         WikipediaPage page = pages().get(WikipediaPage.class);
-        page.open();
         page.getTitle();
     }
 

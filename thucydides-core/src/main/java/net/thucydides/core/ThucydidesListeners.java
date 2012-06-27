@@ -9,6 +9,7 @@ import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.steps.StepPublisher;
 import net.thucydides.core.webdriver.Configuration;
+import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 import java.util.List;
@@ -35,6 +36,11 @@ public class ThucydidesListeners {
                 StepEventBus.getEventBus().registerListener(listener);
             }
         }
+    }
+
+    public ThucydidesListeners withDriver(WebDriver driver) {
+        baseStepListener.setDriver(driver);
+        return this;
     }
 
     public List<TestOutcome> getResults() {

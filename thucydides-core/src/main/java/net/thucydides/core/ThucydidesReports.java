@@ -1,6 +1,5 @@
 package net.thucydides.core;
 
-import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.webdriver.Configuration;
 

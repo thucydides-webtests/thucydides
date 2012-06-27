@@ -36,6 +36,10 @@ import java.util.concurrent.Future
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.steps.ExecutedStepDescription
 import net.thucydides.core.model.TestTag
+import net.thucydides.core.annotations.DefaultUrl
+import net.thucydides.core.pages.PageObject
+import org.openqa.selenium.WebElement
+import org.junit.Ignore
 
 public class WhenUsingTheThucydidesEasybPlugin {
 
@@ -236,42 +240,6 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
         assert tagger != null
     }
-
-    @Test
-    public void the_plugin_should_let_the_user_define_the_default_base_url() {
-
-        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
-
-        runStories(plugin, binding);
-
-        mockWebDriver.proxiedDriver.shouldHaveOpenedAt("http://www.google.co.nz")
-
-    }
-
-    @Test
-    public void the_user_should_be_able_to_override_the_default_base_url_using_a_system_property() {
-
-        plugin.getConfiguration().uses_default_base_url("http://www.google.co.nz");
-
-        System.setProperty("webdriver.base.url","http://www.wikipedia.org")
-        runStories(plugin, binding);
-
-        mockWebDriver.proxiedDriver.shouldHaveOpenedAt("http://www.wikipedia.org")
-
-    }
-
-
-    @Test
-    public void the_plugin_should_open_the_browser_to_the_system_defined_default_url() {
-
-        System.setProperty("webdriver.base.url", "http://www.google.com");
-        runStories(plugin, binding);
-
-        WebDriver driver = (WebDriver) binding.getVariable("driver");
-
-        driver.proxiedDriver.shouldHaveOpenedAt("http://www.google.com")
-    }
-
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none()

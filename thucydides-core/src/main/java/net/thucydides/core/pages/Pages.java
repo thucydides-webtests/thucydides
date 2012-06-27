@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -70,32 +67,7 @@ public class Pages implements Serializable {
         return proxyFactory;
     }
 
-    /**
-     * Opens a browser on the application home page, as defined by the base URL.
-     */
-    public void start() {
-        String startingUrl = getStartingUrl();
-        if (!currentUrlIs(startingUrl)) {
-            getDriver().get(startingUrl);
-        }
-    }
-
-    private boolean currentUrlIs(String startingUrl) {
-        String currentUrl = getDriver().getCurrentUrl();
-        if (currentUrl == null || startingUrl == null) {
-            return false;
-        }
-
-        try {
-            return URI.create(currentUrl).equals(URI.create(startingUrl));
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
     PageObject currentPage = null;
-
-    PagesEventListener eventListener = null;
 
     public <T extends PageObject> T getAt(final Class<T> pageObjectClass) {
         return currentPageAt(pageObjectClass);
@@ -113,6 +85,7 @@ public class Pages implements Serializable {
         } else {
             T pageCandidate = getCurrentPageOfType(pageObjectClass);
             pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
+            openBrowserIfRequiredFor(pageCandidate);
             cacheCurrentPage(pageCandidate);
             nextPage = pageCandidate;
             //nextPage.addJQuerySupport();
@@ -128,19 +101,38 @@ public class Pages implements Serializable {
             nextPage = (T) currentPage;
         } else {
             T pageCandidate = getCurrentPageOfType(pageObjectClass);
-            if (!pageCandidate.matchesAnyUrl()) {
-                String currentUrl = getDriver().getCurrentUrl();
-                if (!pageCandidate.compatibleWithUrl(currentUrl)) {
-                    thisIsNotThePageYourLookingFor(pageObjectClass);
-                }
-            }
             pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
+            openBrowserIfRequiredFor(pageCandidate);
+            checkUrlPatterns(pageObjectClass, pageCandidate);
             cacheCurrentPage(pageCandidate);
             nextPage = pageCandidate;
             nextPage.addJQuerySupport();
         }
         usePreviousPage = false;
         return nextPage;
+    }
+
+    private <T extends PageObject> void openBrowserIfRequiredFor(T pageCandidate) {
+        if (browserNotOpen()) {
+            pageCandidate.open();
+        }
+    }
+
+    private boolean browserNotOpen() {
+        if (getDriver() instanceof WebDriverFacade) {
+            return !((WebDriverFacade) getDriver()).isInstantiated();
+        } else {
+            return true;
+        }
+    }
+
+    private <T extends PageObject> void checkUrlPatterns(Class<T> pageObjectClass, T pageCandidate) {
+        if (!pageCandidate.matchesAnyUrl()) {
+            String currentUrl = getDriver().getCurrentUrl();
+            if (!pageCandidate.compatibleWithUrl(currentUrl)) {
+                thisIsNotThePageYourLookingFor(pageObjectClass);
+            }
+        }
     }
 
     private <T extends PageObject> boolean shouldUsePreviousPage(final Class<T> pageObjectClass) {
@@ -189,12 +181,18 @@ public class Pages implements Serializable {
         } catch (NoSuchMethodException e) {
             LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: {} ({})",
                     pageObjectClass, e.getMessage());
-            thisIsNotThePageYourLookingFor(pageObjectClass);
+            thisPageObjectLooksDodgy(pageObjectClass, "This page object does not appear have a constructor that takes a WebDriver parameter");
         } catch (Exception e) {
             LOGGER.info("Failed to instantiate page of type {} ({})", pageObjectClass, e.getMessage());
-            thisIsNotThePageYourLookingFor(pageObjectClass);
+            thisPageObjectLooksDodgy(pageObjectClass,"Failed to instantiate page (" + e.getMessage() +")");
         }
         return currentPage;
+    }
+
+    private void thisPageObjectLooksDodgy(final Class<? extends PageObject> pageObjectClass, String message) {
+
+        String errorDetails = "The page object " + pageObjectClass + " looks dodgy:\n" + message;
+        throw new WrongPageError(errorDetails);
     }
 
     private void thisIsNotThePageYourLookingFor(final Class<? extends PageObject> pageObjectClass) {
@@ -223,25 +221,6 @@ public class Pages implements Serializable {
      */
     public void setDefaultBaseUrl(final String defaultBaseUrl) {
         this.defaultBaseUrl = defaultBaseUrl;
-    }
-
-    public String getStartingUrl() {
-        return PageUrls.getUrlFrom(getDefaultBaseUrl());
-    }
-
-    public void notifyWhenDriverOpens() {
-        if (eventListener == null) {
-            eventListener = new PagesEventListener(this);
-            getProxyFactory().registerListener(eventListener);
-        }
-
-        if ((getDriver() != null) && !usingProxiedWebDriver()) {
-            start();
-        }
-    }
-
-    private boolean usingProxiedWebDriver() {
-        return (getDriver() instanceof WebDriverFacade);
     }
 
     public Pages onSamePage() {

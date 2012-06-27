@@ -443,7 +443,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
      */
     protected void injectAnnotatedPagesObjectInto(final Object testCase) {
-        getPages().notifyWhenDriverOpens();
         StepAnnotations.injectAnnotatedPagesObjectInto(testCase, pages);
     }
 

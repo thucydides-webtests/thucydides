@@ -12,6 +12,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
+import net.thucydides.core.webdriver.ThucydidesWebDriverSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.Service;
@@ -403,6 +404,7 @@ public class StepEventBus {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testSuiteFinished();
         }
+        ThucydidesWebDriverSupport.closeAllDrivers();
         storyUnderTest = null;
     }
 

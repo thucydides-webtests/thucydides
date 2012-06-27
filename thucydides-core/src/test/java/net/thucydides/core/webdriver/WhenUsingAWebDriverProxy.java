@@ -1,7 +1,5 @@
 package net.thucydides.core.webdriver;
 
-import net.thucydides.core.pages.Pages;
-import net.thucydides.core.pages.PagesEventListener;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.After;
@@ -21,7 +19,6 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import java.lang.reflect.InvocationTargetException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -363,17 +360,4 @@ public class WhenUsingAWebDriverProxy {
         verify(eventListener).driverCreatedIn(any(WebDriver.class));
     }
 
-    @Test
-    public void when_a_page_listener_is_registered_the_webdriver_proxy_should_update_the_page_object_with_the_driver() {
-
-        Pages pages = new Pages();
-        pages.setDriver(webDriverFacade);
-
-        PagesEventListener pagesEventListener = new PagesEventListener(pages);
-        WebdriverProxyFactory.getFactory().registerListener(pagesEventListener);
-
-        webDriverFacade.get("http://www.google.com");
-
-        assertThat(pages.getDriver(), is((WebDriver)webDriverFacade));
-    }
 }

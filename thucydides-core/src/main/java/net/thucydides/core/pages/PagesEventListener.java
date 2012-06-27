@@ -15,8 +15,5 @@ public class PagesEventListener implements ThucydidesWebDriverEventListener {
     }
 
     public void driverCreatedIn(final WebDriver driver) {
-        if (pages.getDriver() == driver) {
-            pages.start();
-        }
     }
 }

@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ManagedPages {
 
-    String defaultUrl();
+    String defaultUrl() default "";
 
 }

@@ -169,7 +169,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
         } else {
             createNewDriver();
             pages.setDriver(getDriver());
-            pages.notifyWhenDriverOpens();
         }
     }
 

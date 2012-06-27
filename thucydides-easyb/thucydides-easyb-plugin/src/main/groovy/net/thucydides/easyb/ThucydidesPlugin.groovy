@@ -307,7 +307,6 @@ public class ThucydidesPlugin extends BasePlugin {
             pages.setDefaultBaseUrl(getConfiguration().getDefaultBaseUrl())
         }
         pages.setDriver(getWebDriver());
-        pages.notifyWhenDriverOpens()
         return pages
     }
 

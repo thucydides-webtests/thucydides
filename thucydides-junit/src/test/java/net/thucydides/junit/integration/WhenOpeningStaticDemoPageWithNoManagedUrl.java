@@ -17,7 +17,7 @@ import org.openqa.selenium.WebDriver;
  *
  */
 @RunWith(ThucydidesRunner.class)
-public class WhenOpeningStaticDemoPageWithSamePage {
+public class WhenOpeningStaticDemoPageWithNoManagedUrl {
 
     @Managed(driver = "htmlunit")
     public WebDriver webdriver;
