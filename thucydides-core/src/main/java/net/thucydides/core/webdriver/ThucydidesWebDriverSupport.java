@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.IgnoredStepException;
 import net.thucydides.core.PendingStepException;
 import net.thucydides.core.annotations.TestCaseAnnotations;
@@ -27,11 +28,25 @@ public class ThucydidesWebDriverSupport {
     private static final ThreadLocal<WebdriverManager> webdriverManagerThreadLocal = new ThreadLocal<WebdriverManager>();
     private static final ThreadLocal<Pages> pagesThreadLocal = new ThreadLocal<Pages>();
     private static final ThreadLocal<StepFactory> stepFactoryThreadLocal = new ThreadLocal<StepFactory>();
+    private static final ThreadLocal<String> currentRequestedDriver = new ThreadLocal<String>();
 
-    public static void initialize() {
+    public static void initialize(String requestedDriver) {
+        setRequestedDriverIfPresent(requestedDriver);
         setupWebdriverManager();
         initPagesObjectUsing(getDriver());
         initStepFactoryUsing(getPages());
+    }
+
+    private static void setRequestedDriverIfPresent(String requestedDriver) {
+        if (requestedDriver != null) {
+            currentRequestedDriver.set(requestedDriver);
+        } else {
+            currentRequestedDriver.remove();
+        }
+    }
+
+    public static void initialize() {
+        initialize(null);
     }
 
     private static boolean webdriversInitialized() {
@@ -55,7 +70,11 @@ public class ThucydidesWebDriverSupport {
     }
 
     public static WebDriver getDriver() {
-        return getWebdriverManager().getWebdriver();
+        if (currentRequestedDriver.get() != null) {
+            return getWebdriverManager().getWebdriver(currentRequestedDriver.get());
+        } else {
+            return getWebdriverManager().getWebdriver();
+        }
     }
 
     public static void closeAllDrivers() {

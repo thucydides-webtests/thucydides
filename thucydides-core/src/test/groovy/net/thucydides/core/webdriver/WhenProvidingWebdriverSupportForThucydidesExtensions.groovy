@@ -5,6 +5,8 @@ import net.thucydides.core.annotations.Managed
 import org.openqa.selenium.WebDriver
 import net.thucydides.core.pages.Pages
 import net.thucydides.core.annotations.ManagedPages
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import org.openqa.selenium.firefox.FirefoxDriver
 
 class WhenProvidingWebdriverSupportForThucydidesExtensions extends Specification {
 
@@ -79,4 +81,17 @@ class WhenProvidingWebdriverSupportForThucydidesExtensions extends Specification
             ThucydidesWebDriverSupport.getDriver() != null
     }
 
+    def "the default driver should be firefox"() {
+        when: "we initialize Thucydides support"
+            ThucydidesWebDriverSupport.initialize()
+        then: "the provided driver should be firefox"
+            ThucydidesWebDriverSupport.driver.driverClass == FirefoxDriver
+    }
+
+    def "should be able to define the driver"() {
+        when: "we initialize Thucydides support with a specified driver"
+            ThucydidesWebDriverSupport.initialize("htmlunit")
+        then: "the provided driver should be of the specified type"
+            ThucydidesWebDriverSupport.driver.driverClass == HtmlUnitDriver
+    }
 }
