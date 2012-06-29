@@ -1,54 +1,68 @@
 package net.thucydides.core.annotations
 
-import net.thucydides.core.reports.TestOutcomeLoader
 import spock.lang.Specification
-import net.thucydides.core.screenshots.MultithreadScreenshotProcessor
-import net.thucydides.core.screenshots.QueuedScreenshot
+import org.openqa.selenium.WebDriver
+import spock.lang.Shared
 
 class WhenAnnotatingTestCases extends Specification {
 
-    def loader = new TestOutcomeLoader()
-    def screenshotData = new byte[10000]
-    File targetDirectory
 
     def setup() {
-        targetDirectory = File.createTempFile("tmp","screenshots")
-        targetDirectory.delete()
-        targetDirectory.mkdir()
-        targetDirectory.deleteOnExit()
     }
 
-    def "should process queued screenshots"() {
+    class AnnotatedTestClass {
+        @Managed
+        private WebDriver driver;
+    }
+
+    class AnnotatedTestClassWithUniqueSession {
+        @Managed(uniqueSession = true)
+        private WebDriver driver;
+    }
+    class AnnotatedParentTestClass {
+        @Managed
+        private WebDriver driver;
+    }
+
+    class AnnotatedChildClass extends AnnotatedParentTestClass {
+
+    }
+
+    def "should identify a test case or test step with the @Managed annotation"() {
+        expect:
+            TestCaseAnnotations.supportsWebTests(testclass) == expectedResult
+        where:
+            testclass           | expectedResult
+            AnnotatedTestClass  | true
+            AnnotatedChildClass | true
+    }
+
+    @Shared
+    def annotatedTestClass = new AnnotatedTestClass();
+    @Shared
+    def annotatedTestClassWithUniqueSession = new AnnotatedTestClassWithUniqueSession();
+
+    def "should identify test cases requesting a unique browser session"() {
+        expect:
+            TestCaseAnnotations.forTestCase(testObject).isUniqueSession() == uniqueSession
+        where:
+            testObject                           | uniqueSession
+            annotatedTestClass                  | false
+            annotatedTestClassWithUniqueSession | true
+    }
+
+    def "should inject webdriver instance into test objects"() {
+
         given:
-        def screenshotProcessor = new MultithreadScreenshotProcessor()
+            def driver = Mock(WebDriver)
         when:
-            (1..1000).each {
-                screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotData,
-                        new File(targetDirectory,"screenshot-${it}.png")))
-            }
-            screenshotProcessor.waitUntilDone()
+            TestCaseAnnotations.forTestCase(testObject).injectDriver(driver)
         then:
-            assert (screenshotProcessor.isEmpty())
-            assert targetDirectory.list().size() == 1000
+            testObject.driver == driver
+        where:
+            testObject                           | uniqueSession
+            annotatedTestClass                  | false
+            annotatedTestClassWithUniqueSession | true
     }
 
-    def "should process queued screenshots when tests are run in parallel"() {
-        given:
-            def screenshotProcessor = new MultithreadScreenshotProcessor()
-        when:
-            def thread = Thread.start {
-                for( i in 1..5 ) {
-                    (1..50).each {
-                        screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotData,
-                                new File(targetDirectory,"screenshot-${i}-${it}.png")))
-                    }
-                    screenshotProcessor.waitUntilDone()
-                }
-            }
-            thread.join()
-
-        then:
-            assert (screenshotProcessor.isEmpty())
-            assert targetDirectory.list().size() == 250
-    }
 }

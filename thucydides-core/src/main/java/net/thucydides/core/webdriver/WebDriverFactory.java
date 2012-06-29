@@ -133,14 +133,22 @@ public class WebDriverFactory {
             } else {
                 driver = newDriverInstanceFrom(driverClass);
             }
-
+            setImplicitTimeoutsIfSpecified(driver);
             redimensionBrowser(driver);
 
             activateJavascriptSupportFor(driver);
-
             return driver;
         } catch (Exception cause) {
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
+        }
+    }
+
+    private void setImplicitTimeoutsIfSpecified(WebDriver driver) {
+        if (ThucydidesSystemProperty.TIMEOUTS_IMPLICIT_WAIT.isDefinedIn(environmentVariables)) {
+            int timeout = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.TIMEOUTS_IMPLICIT_WAIT
+                                                                                            .getPropertyName(),0);
+
+            driver.manage().timeouts().implicitlyWait(timeout, TimeUnit.MILLISECONDS);
         }
     }
 
