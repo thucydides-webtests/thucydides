@@ -194,7 +194,7 @@ public class SystemPropertiesConfiguration implements Configuration {
 
     public int getRestartFrequency() {
         return environmentVariables.getPropertyAsInteger(
-                        ThucydidesSystemProperty.RESTART_BROWSER_FREQUENCY.getPropertyName(),3);
+                        ThucydidesSystemProperty.RESTART_BROWSER_FREQUENCY.getPropertyName(),0);
 
     }
 
