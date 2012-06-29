@@ -382,6 +382,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return !uniqueSession;
     }
 
+    protected boolean isUniqueSession() {
+        return uniqueSession;
+    }
+
     protected void resetBroswerFromTimeToTime() {
         if (restartBrowserBeforeTest()) {
             WebdriverProxyFactory.resetDriver(getDriver());
