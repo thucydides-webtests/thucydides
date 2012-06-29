@@ -29,5 +29,21 @@ public final class TestCaseAnnotations {
         webDriverField.setValue(testCase, driver);
     }
 
+    /**
+     * Does this class support web tests?
+     * Test cases that support web tests need to have at least a WebDriver field annotated with the @Managed
+     * annotation.
+     */
+    public static boolean supportsWebTests(Class clazz) {
+        return ManagedWebDriverAnnotatedField.hasManagedWebdriverField(clazz);
+    }
+
+    public boolean isUniqueSession() {
+        ManagedWebDriverAnnotatedField webDriverField = ManagedWebDriverAnnotatedField
+                .findFirstAnnotatedField(testCase.getClass());
+
+        return webDriverField.isUniqueSession();
+    }
+
 
 }

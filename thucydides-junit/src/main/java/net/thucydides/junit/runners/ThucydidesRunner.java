@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.guice.ThucydidesModule;
