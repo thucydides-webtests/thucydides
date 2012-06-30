@@ -22,7 +22,10 @@ import org.apache.commons.lang.StringUtils;
 import org.hamcrest.Matcher;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import static ch.lambdaj.Lambda.convert;
@@ -394,6 +397,24 @@ public class TestOutcomes {
     public Double getPercentagePassingStepCount() {
         int passingStepCount = countStepsWithResultThat(is(TestResult.SUCCESS));
         return (passingStepCount / (double) getEstimatedTotalStepCount());
+    }
+
+    public String getDecimalPercentagePassingStepCount() {
+        return formatAsDecimal(getPercentagePassingStepCount());
+    }
+
+    public String getDecimalPercentagePendingStepCount() {
+        return formatAsDecimal(getPercentagePendingStepCount());
+    }
+
+    public String getDecimalPercentageFailingStepCount() {
+        return formatAsDecimal(getPercentageFailingStepCount());
+    }
+
+    DecimalFormat decimalFormat = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.US));
+
+    private String formatAsDecimal(Double value) {
+        return decimalFormat.format(value);
     }
 
     /**
