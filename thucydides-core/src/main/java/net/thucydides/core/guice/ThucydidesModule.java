@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.issues.IssueTracking;
@@ -47,6 +48,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class ThucydidesModule extends AbstractModule {
 
@@ -107,7 +109,15 @@ public class ThucydidesModule extends AbstractModule {
     }
 
     private EntityManagerFactory createEntityManagerFactory(DatabaseConfig databaseConfig) throws SQLException {
-        return Persistence.createEntityManagerFactory("db-manager", databaseConfig.getProperties());
+
+        Properties databaseConfigProperties = databaseConfig.getProperties();
+        String jaProviderName = databaseConfigProperties.getProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName());
+
+        JPAProvider jpaProvider = JPAProvider.valueOf(jaProviderName);
+        String persistenceUnitName = jpaProvider.getPersistenceUnitName();
+        LOGGER.info("Persistence Unit used" + persistenceUnitName);
+
+        return Persistence.createEntityManagerFactory(persistenceUnitName, databaseConfig.getProperties());
     }
 
     private void startIfNotAlreadyRunning(LocalDatabase localDatabase) {
