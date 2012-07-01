@@ -23,6 +23,11 @@ public enum ThucydidesSystemProperty {
     BASE_URL("webdriver.base.url"),
 
     /**
+     * The URL to be used for remote drivers
+     */
+    REMOTE_URL("webdriver.remote.url"),
+
+    /**
      * A unique identifier for the project under test, used to record test statistics.
      */
     PROJECT_KEY("thucydides.project.key"),
@@ -186,6 +191,11 @@ public enum ThucydidesSystemProperty {
 
 
     /**
+     * How long webdriver waits for elements to appear by default, in milliseconds.
+     */
+    TIMEOUTS_IMPLICIT_WAIT("webdriver.timeouts.implicitywait"),
+
+    /**
      * Extension packages. This is a list of packages that will be scanned for custom TagProvider implementations.
      * To add a custom tag provider, just implement the TagProvider interface and specify the root package for this
      * provider in this parameter.
@@ -281,5 +291,9 @@ public enum ThucydidesSystemProperty {
         } else {
             return value;
         }
+    }
+
+    public boolean isDefinedIn(EnvironmentVariables environmentVariables) {
+        return StringUtils.isNotEmpty(from(environmentVariables));
     }
 }

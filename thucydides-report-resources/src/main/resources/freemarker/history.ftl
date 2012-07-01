@@ -2,12 +2,10 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>History</title>
+    <title>Home</title>
     <link rel="shortcut icon" href="favicon.ico">
-    </style>
-    <link href="css/core.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="css/core.css"/>
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
-
     <style type="text/css">a:link {
         text-decoration: none;
     }
@@ -173,17 +171,6 @@
 <body>
 <div id="topheader">
     <div id="topbanner">
-        <#--<div id="menu">-->
-            <#--<table border="0">-->
-                <#--<tr>-->
-                    <#--<td><a href="index.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>-->
-                    <#--<td><a href="features.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a>-->
-                    <#--</td>-->
-                    <#--<td><a href="stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a>-->
-                    <#--</td>-->
-                <#--</tr>-->
-            <#--</table>-->
-        <#--</div>-->
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
     </div>
 </div>
@@ -192,8 +179,7 @@
     <div id="contenttop">
         <div class="leftbg"></div>
         <div class="middlebg">
-            <div style="height:30px;"><span class="bluetext"><a href="index.html" class="bluetext">Home</a></span> > History
-            </div>
+            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > History</span>
         </div>
         <div class="rightbg"></div>
     </div>
@@ -201,21 +187,21 @@
     <div class="clr"></div>
 
     <!--/* starts second table*/-->
-    <div id="contentbody">
-        <div class="titlebar">
-            <div class="middlebgm"><span class="orangetext">Overview - History</span></div>
-            <div class="rightbgm"></div>
-        </div>
-    </div>
     <div class="menu">
         <ul>
             <li><a href="index.html">Test Results</a></li>
-            <#--<li><a href="treemap.html">Tree Map</a></li>-->
-            <#--<li><a href="dashboard.html">Progress</a></li>-->
-            <li><a href="#" class="current">History</a></li>
+        <#--<li><a href="treemap.html">Tree Map</a></li>-->
+        <#--<li><a href="dashboard.html">Progress</a></li>-->
+        <#foreach tagType in allTestOutcomes.tagTypes>
+            <#assign tagReport = reportName.forTagType(tagType) >
+            <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
+            <li><a href="${tagReport}">${tagTypeTitle}</a></li>
+        </#foreach>
+            <li><a href="history.html" class="current">History</a></li>
         </ul>
         <br style="clear:left"/>
     </div>
+
     <div class="clr"></div>
     <div id="beforetable"></div>
     <div id="results-dashboard">

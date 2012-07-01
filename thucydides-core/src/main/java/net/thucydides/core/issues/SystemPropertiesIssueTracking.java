@@ -19,8 +19,6 @@ public class SystemPropertiesIssueTracking implements IssueTracking {
     }
 
     public String getIssueTrackerUrl() {
-
-
         if (jiraUrlDefined()) {
             return environmentVariables.getProperty(ThucydidesSystemProperty.JIRA_URL.getPropertyName())
                                          + "/browse/" + getJiraProjectSuffix() + "{0}";

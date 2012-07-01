@@ -124,7 +124,7 @@ public class WebDriverFactory {
     protected synchronized WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {
             WebDriver driver;
-            if (isARemoteDriver(driverClass)) {
+            if (isARemoteDriver(driverClass) || shouldUseARemoteDriver()) {
                 driver = newRemoteDriver();
             } else if (isAFirefoxDriver(driverClass)) {
                 driver = firefoxDriverFrom(driverClass);
@@ -133,15 +133,27 @@ public class WebDriverFactory {
             } else {
                 driver = newDriverInstanceFrom(driverClass);
             }
-
+            setImplicitTimeoutsIfSpecified(driver);
             redimensionBrowser(driver);
 
             activateJavascriptSupportFor(driver);
-
             return driver;
         } catch (Exception cause) {
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
         }
+    }
+
+    private void setImplicitTimeoutsIfSpecified(WebDriver driver) {
+        if (ThucydidesSystemProperty.TIMEOUTS_IMPLICIT_WAIT.isDefinedIn(environmentVariables)) {
+            int timeout = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.TIMEOUTS_IMPLICIT_WAIT
+                                                                                            .getPropertyName(),0);
+
+            driver.manage().timeouts().implicitlyWait(timeout, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private boolean shouldUseARemoteDriver() {
+        return ThucydidesSystemProperty.REMOTE_URL.isDefinedIn(environmentVariables);
     }
 
     private WebDriver newDriverInstanceFrom(Class<? extends WebDriver> driverClass) throws IllegalAccessException, InstantiationException {
@@ -149,6 +161,27 @@ public class WebDriverFactory {
     }
 
     private WebDriver newRemoteDriver() throws MalformedURLException {
+        WebDriver driver = null;
+        if (saucelabsUrlIsDefined()) {
+            driver = buildSaucelabsDriver();
+        } else {
+            driver = buildRemoteDriver();
+        }
+        Augmenter augmenter = new Augmenter();
+        return augmenter.augment(driver);
+    }
+
+    private WebDriver buildRemoteDriver() throws MalformedURLException {
+        String remoteUrl = ThucydidesSystemProperty.REMOTE_URL.from(environmentVariables);
+        DesiredCapabilities capabilities = buildCapabilities();
+        return new RemoteWebDriver(new URL(remoteUrl), capabilities);
+    }
+
+    private boolean saucelabsUrlIsDefined() {
+        return ThucydidesSystemProperty.SAUCELABS_URL.isDefinedIn(environmentVariables);
+    }
+
+    private WebDriver buildSaucelabsDriver() throws MalformedURLException {
         String saucelabsUrl = ThucydidesSystemProperty.SAUCELABS_URL.from(environmentVariables);
         WebDriver driver = new RemoteWebDriver(new URL(saucelabsUrl), findSaucelabsCapabilities());
 
@@ -157,9 +190,7 @@ public class WebDriverFactory {
                     ThucydidesSystemProperty.SAUCELABS_IMPLICIT_TIMEOUT.getPropertyName(), 30);
             driver.manage().timeouts().implicitlyWait(implicitWait, TimeUnit.SECONDS);
         }
-
-        Augmenter augmenter = new Augmenter();
-        return augmenter.augment(driver);
+        return driver;
     }
 
     private DesiredCapabilities findSaucelabsCapabilities() {
@@ -233,6 +264,12 @@ public class WebDriverFactory {
     private Platform platformFrom(String platformValue) {
         return Platform.valueOf(platformValue.toUpperCase());
     }
+
+    private DesiredCapabilities buildCapabilities() {
+        String driver = ThucydidesSystemProperty.DRIVER.from(environmentVariables);
+        return capabilitiesForDriver(driver);
+    }
+
 
     private DesiredCapabilities capabilitiesForDriver(String driver) {
         if (driver == null) {

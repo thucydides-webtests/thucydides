@@ -173,8 +173,6 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         } finally {
             entityManager.close();
         }
-        LOGGER.info("TEST OUTCOMES STORED");
-        LOGGER.info("Tests in database: " + findAll().size());
     }
 
     @Override

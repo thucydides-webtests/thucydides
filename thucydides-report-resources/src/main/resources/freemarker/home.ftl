@@ -44,9 +44,9 @@
     <script class="code" type="text/javascript">$(document).ready(function () {
         var plot1 = $.jqplot('test_results_pie_chart', [
             [
-                ['Passing', ${testOutcomes.percentagePassingStepCount?string("0.##")}],
-                ['Pending', ${testOutcomes.percentagePendingStepCount?string("0.##")}],
-                ['Failing', ${testOutcomes.percentageFailingStepCount?string("0.##")}]
+                ['Passing', ${testOutcomes.decimalPercentagePassingStepCount}],
+                ['Pending', ${testOutcomes.decimalPercentagePendingStepCount}],
+                ['Failing', ${testOutcomes.decimalPercentageFailingStepCount}]
             ]
         ], {
             gridPadding:{top:0, bottom:38, left:0, right:0},

@@ -24,8 +24,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(ThucydidesRunner.class)
-@ContextConfiguration(locations = "/spring/config.xml")
-public class WhenInjectingSpringDependencies {
+public class WhenInjectingSpringDependenciesIntoStepLibraries {
 
     @Managed
     WebDriver driver;
@@ -33,37 +32,27 @@ public class WhenInjectingSpringDependencies {
     @ManagedPages(defaultUrl = "http://www.google.com")
     public Pages pages;
 
-    @Rule
-    public SpringIntegration springIntegration = new SpringIntegration();
-
-    @Autowired
-    public GizmoService gizmoService;
-
-    @Resource
-    public GizmoDao gizmoDao;
-
-    @Autowired
-    @Qualifier("premiumBazingaService")
-    public BazingaService premiumBazingaService;
+    @Steps
+    SpringEnabledStepLibrary springEnabledStepLibrary;
 
     @Test
-    public void shouldInstanciateGizmoService() {
-        assertThat(gizmoService, is(not(nullValue())));
+    public void shouldInstanciateGizmoServiceInStepLibraries() {
+        assertThat(springEnabledStepLibrary.gizmoService, is(not(nullValue())));
     }
 
     @Test
-    public void shouldInstanciateNestedServices() {
-        assertThat(gizmoService.getWidgetService(), is(not(nullValue())));
+    public void shouldInstanciateNestedServicesInStepLibraries() {
+        assertThat(springEnabledStepLibrary.gizmoService.getWidgetService(), is(not(nullValue())));
     }
 
     @Test
-    public void shouldInstanciateServicesUsingTheResourceannotation() {
-        assertThat(gizmoDao, is(not(nullValue())));
+    public void shouldInstanciateServicesUsingTheResourceannotationInStepLibraries() {
+        assertThat(springEnabledStepLibrary.gizmoDao, is(not(nullValue())));
     }
 
     @Test
-    public void shouldAllowQualifiers() {
-        assertThat(premiumBazingaService.getName(), is("Premium Bazingas"));
+    public void shouldAllowQualifiersInStepLibraries() {
+        assertThat(springEnabledStepLibrary.premiumBazingaService.getName(), is("Premium Bazingas"));
     }
 
 }

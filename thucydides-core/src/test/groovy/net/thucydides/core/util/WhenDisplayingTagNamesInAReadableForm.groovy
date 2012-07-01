@@ -8,12 +8,13 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
 
     def loader = new TestOutcomeLoader()
 
+    def inflection = Inflector.instance
+
     def "should transform singular nouns into plurals"() {
-        given:
-            def inflection = Inflector.instance
-        when:
+
+        when: "I find the plural form of a single word"
             def pluralForm = inflection.of(singleForm).inPluralForm().toString();
-        then:
+        then: "the plural form should be gramatically correct"
             pluralForm == expectedPluralForm
         where:
             singleForm          | expectedPluralForm
@@ -26,11 +27,9 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
     }
 
     def "should transform plural nouns into singles"() {
-        given:
-            def inflection = Inflector.instance
-        when:
+        when: "I find the singular form of a single word"
             def singleForm = inflection.of(pluralForm).inSingularForm().toString()
-        then:
+        then: "the singular form should be gramatically correct"
             singleForm == expectedSingleForm
         where:
             pluralForm          | expectedSingleForm
@@ -43,11 +42,9 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
     }
 
     def "should transform a number of object nouns into plural or singular based on the number"() {
-        given:
-            def inflection = Inflector.instance
-        when:
+        when: "we find the plural or singular form of a word"
             def pluralForm = inflection.of(count).times(singleForm).inPluralForm().toString()
-        then:
+        then: "the form should depend on the number of objects"
             pluralForm == expectedPluralForm
         where:
             count   | singleForm        | expectedPluralForm
@@ -57,8 +54,6 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
     }
 
     def "should transform camel-case to underscore"() {
-        given:
-            def inflection = Inflector.instance
         when:
             def underscoreForm = inflection.of(word).withUnderscores().toString()
         then:
@@ -71,8 +66,6 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
 
 
     def "should captialize first word"() {
-        given:
-            def inflection = Inflector.instance
         when:
             def capitalized = inflection.of(word).startingWithACapital().toString()
         then:
@@ -85,8 +78,6 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
     }
 
     def "should captialize all words"() {
-        given:
-            def inflection = Inflector.instance
         when:
             def capitalized = inflection.of(word).asATitle().toString()
         then:
@@ -98,8 +89,6 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
     }
 
     def "should convert variable expressions into human-readable form"() {
-        given:
-             def inflection = Inflector.instance
         when:
             def humanized = inflection.of(word).inHumanReadableForm().toString()
         then:

@@ -53,8 +53,12 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
 
     @Override
     protected boolean restartBrowserBeforeTest() {
-        int restartFrequency = getConfiguration().getRestartFrequency();
-        return (parameterSetNumber > 0) && (parameterSetNumber % restartFrequency == 0);
+        if (isUniqueSession()) {
+            return false;
+        } else {
+            int restartFrequency = getConfiguration().getRestartFrequency();
+            return (restartFrequency > 0) && (parameterSetNumber > 0) && (parameterSetNumber % restartFrequency == 0);
+        }
     }
 
     @Override

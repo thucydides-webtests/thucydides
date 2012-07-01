@@ -103,6 +103,8 @@ public class WebElementFacade {
 
         try {
             return (webElement != null) && (webElement.isDisplayed());
+        } catch (ElementNotVisibleException e) {
+            return false;
         } catch (NoSuchElementException e) {
             return false;
         } catch (StaleElementReferenceException se) {
