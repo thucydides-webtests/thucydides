@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.*;
+import net.thucydides.core.jpa.JPAProvider;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.statistics.service.ClasspathTagProviderService;

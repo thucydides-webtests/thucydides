@@ -1,4 +1,4 @@
-package net.thucydides.core.guice;
+package net.thucydides.core.jpa;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.statistics.database.LocalDatabase;

@@ -1,4 +1,4 @@
-package net.thucydides.core.guice;
+package net.thucydides.core.jpa;
 
 import java.util.Properties;
 

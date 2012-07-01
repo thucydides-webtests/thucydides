@@ -2,7 +2,7 @@ package net.thucydides.core.statistics;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.EnvironmentVariablesDatabaseConfig;
-import net.thucydides.core.guice.JPAProvider;
+import net.thucydides.core.jpa.JPAProvider;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.statistics.database.LocalH2ServerDatabase;
 import net.thucydides.core.util.EnvironmentVariables;

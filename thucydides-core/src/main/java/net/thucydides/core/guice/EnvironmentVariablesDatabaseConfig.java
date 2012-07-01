@@ -2,12 +2,12 @@ package net.thucydides.core.guice;
 
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.jpa.JPAProvider;
+import net.thucydides.core.jpa.JPAProviderConfig;
+import net.thucydides.core.jpa.JPAProviderConfigFactory;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -37,7 +37,7 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
         Properties properties = new Properties();
         String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", localDatabase.getDriver());
         properties.put(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(),
-                ThucydidesSystemProperty.JPA_PROVIDER.from(environmentVariables,JPAProvider.Hibernate.name()));
+                ThucydidesSystemProperty.JPA_PROVIDER.from(environmentVariables, JPAProvider.Hibernate.name()));
 
         providerConfig.setProperties(properties);
 

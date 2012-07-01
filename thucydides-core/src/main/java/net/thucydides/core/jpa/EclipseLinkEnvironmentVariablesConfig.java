@@ -1,6 +1,7 @@
-package net.thucydides.core.guice;
+package net.thucydides.core.jpa;
 
 import com.google.inject.Inject;
+import net.thucydides.core.jpa.JPAProviderConfig;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
 
