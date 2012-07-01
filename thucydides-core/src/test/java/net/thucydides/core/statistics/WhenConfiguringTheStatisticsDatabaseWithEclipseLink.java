@@ -32,7 +32,7 @@ public class WhenConfiguringTheStatisticsDatabaseWithEclipseLink {
     @Before
     public void initMocks() {
         environmentVariables = new MockEnvironmentVariables();
-        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.name(), JPAProvider.EclipseLink.name());
+        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.EclipseLink.name());
         localDatabase = new LocalH2ServerDatabase(environmentVariables);
         databaseConfig = new EnvironmentVariablesDatabaseConfig(environmentVariables, localDatabase);
     }
