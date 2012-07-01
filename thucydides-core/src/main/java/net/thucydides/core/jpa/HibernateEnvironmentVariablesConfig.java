@@ -17,13 +17,12 @@ import java.util.Properties;
  * Time: 7:42 PM
  * To change this template use File | Settings | File Templates.
  */
-public class HibernateEnvironmentVariablesConfig implements JPAProviderConfig {
+public class HibernateEnvironmentVariablesConfig extends AbstractJPAProviderConfig {
 
-    private static final int TABLE_NAME_COLUMN  = 3;
+
 
     private final EnvironmentVariables environmentVariables;
     private final LocalDatabase localDatabase;
-    private boolean isActive = true;
 
     @Inject
     public HibernateEnvironmentVariablesConfig(EnvironmentVariables environmentVariables,
@@ -72,18 +71,9 @@ public class HibernateEnvironmentVariablesConfig implements JPAProviderConfig {
         }
     }
 
-    private List<String> getTablesFrom(Connection conn) throws SQLException {
-        DatabaseMetaData md = conn.getMetaData();
-        ResultSet rs = md.getTables(null, null, "%", null);
-        List<String> tableNames = new ArrayList<String>();
-        while (rs.next()) {
-            tableNames.add(rs.getString(TABLE_NAME_COLUMN));
-        }
-        return tableNames;
-    }
-
+    @Override
     public boolean isUsingLocalDatabase() {
-        return (environmentVariables.getProperty("thucydides.statistics.url") == null);
+        return isUsingLocalDatabase(environmentVariables);
     }
 
 }

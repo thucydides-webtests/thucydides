@@ -12,4 +12,6 @@ import java.util.Properties;
 public interface JPAProviderConfig {
 
     public void setProperties(Properties properties);
+
+    boolean isUsingLocalDatabase();
 }

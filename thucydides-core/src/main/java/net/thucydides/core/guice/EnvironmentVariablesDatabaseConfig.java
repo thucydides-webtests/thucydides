@@ -45,7 +45,7 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
     }
 
     public boolean isUsingLocalDatabase() {
-        return (environmentVariables.getProperty("thucydides.statistics.url") == null);
+        return providerConfig.isUsingLocalDatabase();
     }
 
     private boolean isStatisticsDisabled() {

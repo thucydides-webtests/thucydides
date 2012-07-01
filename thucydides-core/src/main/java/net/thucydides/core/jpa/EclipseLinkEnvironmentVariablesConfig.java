@@ -17,13 +17,10 @@ import java.util.Properties;
  * Time: 11:08 PM
  * To change this template use File | Settings | File Templates.
  */
-public class EclipseLinkEnvironmentVariablesConfig implements JPAProviderConfig {
-
-    private static final int TABLE_NAME_COLUMN  = 3;
+public class EclipseLinkEnvironmentVariablesConfig extends AbstractJPAProviderConfig {
 
     private final EnvironmentVariables environmentVariables;
     private final LocalDatabase localDatabase;
-    private boolean isActive = true;
 
     @Inject
     public EclipseLinkEnvironmentVariablesConfig(EnvironmentVariables environmentVariables,
@@ -72,17 +69,8 @@ public class EclipseLinkEnvironmentVariablesConfig implements JPAProviderConfig 
         }
     }
 
-    private List<String> getTablesFrom(Connection conn) throws SQLException {
-        DatabaseMetaData md = conn.getMetaData();
-        ResultSet rs = md.getTables(null, null, "%", null);
-        List<String> tableNames = new ArrayList<String>();
-        while (rs.next()) {
-            tableNames.add(rs.getString(TABLE_NAME_COLUMN));
-        }
-        return tableNames;
-    }
-
+    @Override
     public boolean isUsingLocalDatabase() {
-        return (environmentVariables.getProperty("thucydides.statistics.url") == null);
+        return isUsingLocalDatabase(environmentVariables);
     }
 }
