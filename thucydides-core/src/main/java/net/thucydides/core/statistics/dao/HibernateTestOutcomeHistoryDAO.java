@@ -138,18 +138,27 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     @Override
     public List<TestRun> findAll() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return entityManager.createQuery(FIND_ALL_TEST_HISTORIES)
+        try {
+            return entityManager.createQuery(FIND_ALL_TEST_HISTORIES)
                             .setParameter("projectKey", getProjectKey())
                             .getResultList();
+        }finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public List<TestRun> findTestRunsByTitle(String title) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return (List<TestRun>) entityManager.createQuery(FIND_BY_NAME)
+
+        try {
+            return (List<TestRun>) entityManager.createQuery(FIND_BY_NAME)
                                             .setParameter("projectKey", getProjectKey())
                                             .setParameter("title", title)
-                                            .getResultList();
+                                       .getResultList();
+        }finally {
+            entityManager.close();
+        }
     }
 
     @Override
@@ -161,6 +170,8 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+        } finally {
+            entityManager.close();
         }
         LOGGER.info("TEST OUTCOMES STORED");
         LOGGER.info("Tests in database: " + findAll().size());
@@ -169,9 +180,13 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     @Override
     public void storeTestOutcome(TestOutcome testOutcome) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-        persistTestOutcome(entityManager, testOutcome);
-        entityManager.getTransaction().commit();
+        try {
+            entityManager.getTransaction().begin();
+            persistTestOutcome(entityManager, testOutcome);
+            entityManager.getTransaction().commit();
+        }finally {
+            entityManager.close();
+        }
     }
 
     private void persistTestOutcome(EntityManager entityManager, TestOutcome testOutcome) {
