@@ -26,7 +26,7 @@ import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
 
-public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
+public class JPATestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
 
     private static final String FIND_ALL_TEST_HISTORIES = "select t from TestRun t where t.projectKey = :projectKey order by t.executionDate";
     private static final String FIND_BY_NAME = "select t from TestRun t where t.title = :title and t.projectKey = :projectKey";
@@ -122,13 +122,13 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
 
     private TagProviderService tagProviderService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateTestOutcomeHistoryDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JPATestOutcomeHistoryDAO.class);
 
     @Inject
-    public HibernateTestOutcomeHistoryDAO(EntityManagerFactory entityManagerFactory,
-                                          EnvironmentVariables environmentVariables,
-                                          TagProviderService tagProviderService,
-                                          SystemClock clock) {
+    public JPATestOutcomeHistoryDAO(EntityManagerFactory entityManagerFactory,
+                                    EnvironmentVariables environmentVariables,
+                                    TagProviderService tagProviderService,
+                                    SystemClock clock) {
         this.entityManagerFactory = entityManagerFactory;
         this.environmentVariables = environmentVariables;
         this.clock = clock;
@@ -272,7 +272,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     }
 
     private List<TestRunTag> findTagsMatching(EntityManager entityManager, TestRunTag tag) {
-        return entityManager.createQuery(HibernateTestOutcomeHistoryDAO.FIND_TAG_BY_NAME_IGNORING_CASE)
+        return entityManager.createQuery(JPATestOutcomeHistoryDAO.FIND_TAG_BY_NAME_IGNORING_CASE)
                 .setParameter("name", tag.getName().toLowerCase())
                 .setParameter("type", tag.getType())
                 .setParameter("projectKey", tag.getProjectKey())

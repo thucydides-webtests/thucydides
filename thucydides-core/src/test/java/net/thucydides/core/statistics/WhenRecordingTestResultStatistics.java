@@ -13,7 +13,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
-import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
+import net.thucydides.core.statistics.dao.JPATestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.model.TestRun;
 import net.thucydides.core.statistics.model.TestRunTag;
@@ -56,7 +56,7 @@ public class WhenRecordingTestResultStatistics {
             bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
             bind(EnvironmentVariables.class).to(MockEnvironmentVariables.class).in(Singleton.class);
             bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
-            bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class);
+            bind(TestOutcomeHistoryDAO.class).to(JPATestOutcomeHistoryDAO.class);
             bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class);
             bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class);
             bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
@@ -101,7 +101,7 @@ public class WhenRecordingTestResultStatistics {
         environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:testDatabase");
         environmentVariables.setProperty("thucydides.record.statistics", "true");
 
-        testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
+        testOutcomeHistoryDAO = injector.getInstance(JPATestOutcomeHistoryDAO.class);
         statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables, databaseConfig);
         testStatisticsProvider = new HibernateTestStatisticsProvider(testOutcomeHistoryDAO);
         tagProviderService = new ClasspathTagProviderService();
@@ -141,7 +141,7 @@ public class WhenRecordingTestResultStatistics {
         EnvironmentVariables environmentVariables = injector.getInstance(EnvironmentVariables.class);
         environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:defaultTestDatabase");
 
-        TestOutcomeHistoryDAO testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
+        TestOutcomeHistoryDAO testOutcomeHistoryDAO = injector.getInstance(JPATestOutcomeHistoryDAO.class);
         StatisticsListener statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables, databaseConfig);
         HibernateTestStatisticsProvider testStatisticsProvider = new HibernateTestStatisticsProvider(testOutcomeHistoryDAO);
 
@@ -167,7 +167,7 @@ public class WhenRecordingTestResultStatistics {
         environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:defaultTestDatabase");
         environmentVariables.setProperty("thucydides.record.statistics", "false");
 
-        TestOutcomeHistoryDAO testOutcomeHistoryDAO = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
+        TestOutcomeHistoryDAO testOutcomeHistoryDAO = injector.getInstance(JPATestOutcomeHistoryDAO.class);
         testOutcomeHistoryDAO.deleteAll();
         DatabaseConfig databaseConfig = injector.getInstance(DatabaseConfig.class);
         StatisticsListener statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables, databaseConfig);
@@ -451,7 +451,7 @@ public class WhenRecordingTestResultStatistics {
 
     private void prepareDAOWithFixedClock() {
         when(clock.getCurrentTime()).thenReturn(JANUARY_1ST_2012);
-        testOutcomeHistoryDAO = new HibernateTestOutcomeHistoryDAO(injector.getInstance(EntityManagerFactory.class),
+        testOutcomeHistoryDAO = new JPATestOutcomeHistoryDAO(injector.getInstance(EntityManagerFactory.class),
                 environmentVariables,
                 tagProviderService,
                 clock);

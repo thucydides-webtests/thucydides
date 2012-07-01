@@ -61,7 +61,7 @@ public class WhenUsingTheTestStatisticsDatabase {
         environmentVariables.setProperty("thucydides.statistics.username", "admin");
         environmentVariables.setProperty("thucydides.statistics.password", "password");
 
-        HibernateTestOutcomeHistoryDAO dao = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
+        JPATestOutcomeHistoryDAO dao = injector.getInstance(JPATestOutcomeHistoryDAO.class);
 
         Map properties = dao.entityManagerFactory.getProperties();
 
@@ -80,7 +80,7 @@ public class WhenUsingTheTestStatisticsDatabase {
         environmentVariables.setProperty("thucydides.statistics.username", "admin");
         environmentVariables.setProperty("thucydides.statistics.password", "password");
 
-        HibernateTestOutcomeHistoryDAO dao = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
+        JPATestOutcomeHistoryDAO dao = injector.getInstance(JPATestOutcomeHistoryDAO.class);
 
         Map properties = dao.entityManagerFactory.getProperties();
 
@@ -97,7 +97,7 @@ public class WhenUsingTheTestStatisticsDatabase {
 
         assertThat(dao, is(notNullValue()));
 
-        assertThat(((HibernateTestOutcomeHistoryDAO)dao).entityManagerFactory, is(notNullValue()));
+        assertThat(((JPATestOutcomeHistoryDAO)dao).entityManagerFactory, is(notNullValue()));
     }
 
     @Test

@@ -25,7 +25,7 @@ import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
 import net.thucydides.core.statistics.Statistics;
 import net.thucydides.core.statistics.StatisticsListener;
 import net.thucydides.core.statistics.TestStatisticsProvider;
-import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
+import net.thucydides.core.statistics.dao.JPATestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.statistics.database.LocalH2ServerDatabase;
@@ -73,7 +73,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
         bind(ScreenshotProcessor.class).to(MultithreadScreenshotProcessor.class).in(Singleton.class);
         bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
-        bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class).in(Singleton.class);
+        bind(TestOutcomeHistoryDAO.class).to(JPATestOutcomeHistoryDAO.class).in(Singleton.class);
         bind(TestStatisticsProvider.class).to(HibernateTestStatisticsProvider.class).in(Singleton.class);
         bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
         bind(DependencyInjectorService.class).to(ClasspathDependencyInjectorService.class).in(Singleton.class);
