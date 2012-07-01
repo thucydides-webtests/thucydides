@@ -36,6 +36,9 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
     public Properties getProperties() {
         Properties properties = new Properties();
         String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", localDatabase.getDriver());
+        properties.put(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(),
+                ThucydidesSystemProperty.JPA_PROVIDER.from(environmentVariables,JPAProvider.Hibernate.name()));
+
         providerConfig.setProperties(properties);
 
         return properties;
