@@ -33,6 +33,7 @@ public class EclipseLinkEnvironmentVariablesConfig implements JPAProviderConfig 
 
     @Override
     public void setProperties(Properties properties) {
+
         String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", localDatabase.getDriver());
         String url = environmentVariables.getProperty("thucydides.statistics.url", localDatabase.getUrl());
         String username = environmentVariables.getProperty("thucydides.statistics.username", localDatabase.getUsername());
@@ -45,11 +46,11 @@ public class EclipseLinkEnvironmentVariablesConfig implements JPAProviderConfig 
         properties.put("javax.persistence.jdbc.password", password);
         properties.put("eclipselink.target-database", dialect);
         properties.put("eclipselink.connection-pool.default.initial", "1");
-        properties.put("eclipselink.connection-pool.default.max", "1");
+        properties.put("eclipselink.connection-pool.default.max", "10");
 
         boolean databaseIsConfigured = databaseIsConfigured(properties);
         if (isUsingLocalDatabase() || !databaseIsConfigured) {
-            properties.put("eclipselink.ddl-generation", "create-or-extend-tables"); //not yet supported till 2.4
+            properties.put("eclipselink.ddl-generation", "create-or-extend-tables");
         } else {
             properties.put("eclipselink.ddl-generation", "none");
         }
