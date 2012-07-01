@@ -9,7 +9,19 @@ package net.thucydides.core.guice;
  */
 public enum JPAProvider {
 
-    Hibernate,
-    EclipseLink
+    Hibernate ("db-manager"),
+    EclipseLink("db-manager-EclipseLink");
+
+    private String persistenceUnit;
+
+    JPAProvider(String persistenceUnit) {
+        this.persistenceUnit = persistenceUnit;
+    }
+
+    public String getPersistenceUnitName() {
+        return this.persistenceUnit;
+    }
+
+
 
 }
