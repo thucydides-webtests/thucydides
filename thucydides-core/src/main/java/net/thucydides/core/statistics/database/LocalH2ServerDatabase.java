@@ -52,6 +52,10 @@ public class LocalH2ServerDatabase implements LocalDatabase {
         return "org.hibernate.dialect.H2Dialect";
     }
 
+    public String getDBPlatform() {
+        return "org.eclipse.persistence.platform.database.H2Platform";
+    }
+
     public String getDatabaseName() {
         String projectKey = ThucydidesSystemProperty.PROJECT_KEY.from(environmentVariables, Thucydides.getDefaultProjectKey());
         return StringUtils.join(ImmutableList.of("stats", projectKey), "-");

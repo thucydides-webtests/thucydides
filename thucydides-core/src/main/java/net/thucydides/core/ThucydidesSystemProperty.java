@@ -255,7 +255,12 @@ public enum ThucydidesSystemProperty {
      * If provided, Thucydides will log information about the total number of tests to be executed,
      * and keep a tally of the executed tests.
      */
-    TEST_ROOT_PACKAGE("thucydides.test.root");
+    TEST_ROOT_PACKAGE("thucydides.test.root"),
+
+    /**
+     * The jpa provider to use. Defaults to hibernate but can have values defined by JpaProvider enum
+     */
+    JPA_PROVIDER("thucydides.jpa.provider");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 1000;

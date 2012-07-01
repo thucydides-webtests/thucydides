@@ -10,4 +10,9 @@
             <property name="hibernate.id.new_generator_mappings" value="true"/>
         </properties>
     </persistence-unit>
+    <persistence-unit name="db-manager-EclipseLink">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <class>net.thucydides.core.statistics.model.TestRun</class>
+        <class>net.thucydides.core.statistics.model.TestRunTag</class>
+    </persistence-unit>
 </persistence>
