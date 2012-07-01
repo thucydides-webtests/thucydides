@@ -14,4 +14,6 @@ public interface JPAProviderConfig {
     public void setProperties(Properties properties);
 
     boolean isUsingLocalDatabase();
+
+    JPAProvider getProvider();
 }

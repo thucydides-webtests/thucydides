@@ -24,6 +24,8 @@ public class HibernateEnvironmentVariablesConfig extends AbstractJPAProviderConf
     private final EnvironmentVariables environmentVariables;
     private final LocalDatabase localDatabase;
 
+    private static final JPAProvider PROVIDER = JPAProvider.Hibernate;
+
     @Inject
     public HibernateEnvironmentVariablesConfig(EnvironmentVariables environmentVariables,
                                               LocalDatabase localDatabase) {
@@ -75,5 +77,11 @@ public class HibernateEnvironmentVariablesConfig extends AbstractJPAProviderConf
     public boolean isUsingLocalDatabase() {
         return isUsingLocalDatabase(environmentVariables);
     }
+
+    @Override
+    public JPAProvider getProvider() {
+        return  PROVIDER;
+    }
+
 
 }

@@ -22,6 +22,9 @@ public class EclipseLinkEnvironmentVariablesConfig extends AbstractJPAProviderCo
     private final EnvironmentVariables environmentVariables;
     private final LocalDatabase localDatabase;
 
+    private static final JPAProvider PROVIDER = JPAProvider.EclipseLink;
+
+
     @Inject
     public EclipseLinkEnvironmentVariablesConfig(EnvironmentVariables environmentVariables,
                                                LocalDatabase localDatabase) {
@@ -72,5 +75,10 @@ public class EclipseLinkEnvironmentVariablesConfig extends AbstractJPAProviderCo
     @Override
     public boolean isUsingLocalDatabase() {
         return isUsingLocalDatabase(environmentVariables);
+    }
+
+    @Override
+    public JPAProvider getProvider() {
+        return  PROVIDER;
     }
 }

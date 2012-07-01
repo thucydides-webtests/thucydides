@@ -69,6 +69,7 @@ public class WhenUsingTheTestStatisticsDatabase {
         assertThat((String)properties.get("hibernate.connection.url"), is("jdbc:hsqldb:mem:test"));
         assertThat((String)properties.get("hibernate.connection.username"), is("admin"));
         assertThat((String)properties.get("hibernate.connection.password"), is("password"));
+        assertThat((String)properties.get("thucydides.jpa.provider"), is(JPAProvider.Hibernate.name()));
     }
 
     @Test
@@ -88,6 +89,8 @@ public class WhenUsingTheTestStatisticsDatabase {
         assertThat((String)properties.get("javax.persistence.jdbc.url"), is("jdbc:hsqldb:mem:test"));
         assertThat((String)properties.get("javax.persistence.jdbc.user"), is("admin"));
         assertThat((String)properties.get("javax.persistence.jdbc.password"), is("password"));
+        assertThat((String)properties.get("thucydides.jpa.provider"), is(JPAProvider.EclipseLink.name()));
+
     }
 
 
