@@ -37,10 +37,13 @@ import java.util.List;
 
 import static net.thucydides.core.matchers.dates.DateMatchers.isSameAs;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
-public class WhenRecordingTestResultStatistics {
+public class WhenRecordingTestResultStatisticsWithEclipseLink {
 
     Injector injector;
     EnvironmentVariables environmentVariables;
@@ -100,6 +103,7 @@ public class WhenRecordingTestResultStatistics {
         environmentVariables = injector.getInstance(EnvironmentVariables.class);
         environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:testDatabase");
         environmentVariables.setProperty("thucydides.record.statistics", "true");
+        environmentVariables.setProperty("thucydides.jpa.provider","EclipseLink");
 
         testOutcomeHistoryDAO = injector.getInstance(JPATestOutcomeHistoryDAO.class);
         statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables, databaseConfig);

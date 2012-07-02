@@ -97,7 +97,7 @@
     <div id="contentbody">
         <div class="titlebar">
             <div class="leftbgm"></div>
-            <div class="middlebgm"><span class="orangetext">Overview - Test Results</span></div>
+            <div class="middlebgm"><span class="orangetext">Overall Test Results</span></div>
             <div class="rightbgm"></div>
         </div>
     </div>
