@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Immutable
-@ReadOnly
+//@ReadOnly
 public class TestRunTag {
 
     @Id
@@ -47,7 +47,7 @@ public class TestRunTag {
         return type;
     }
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", cascade = CascadeType.PERSIST)
     private Set<TestRun> testRuns = new HashSet<TestRun>();
 
     public Set<TestRun> getTestRuns() {
