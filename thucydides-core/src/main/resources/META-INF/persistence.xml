@@ -14,5 +14,9 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <class>net.thucydides.core.statistics.model.TestRun</class>
         <class>net.thucydides.core.statistics.model.TestRunTag</class>
+        <properties>
+            <property name="eclipselink.cache.shared.default" value="false"/>
+            <property name="eclipselink.weaving" value="false"/>
+        </properties>
     </persistence-unit>
 </persistence>
