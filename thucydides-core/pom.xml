@@ -215,7 +215,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -234,5 +233,23 @@
             <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.4.0</version>
+        </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>EclipseLink Repo</id>
+            <!-- note that ampersands in this URL are escaped because this is in an xml file -
+                   un-escape them to use in browser
+            -->
+            <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
+            <!-- use this for javax.persistence
+           <snapshots>
+              <enabled>true</enabled>
+           </snapshots> -->
+        </repository>
+    </repositories>
 </project>

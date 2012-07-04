@@ -4,14 +4,15 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.issues.SystemPropertiesIssueTracking;
+import net.thucydides.core.jpa.JPAProvider;
 import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
-import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.reports.json.ColorScheme;
 import net.thucydides.core.reports.json.RelativeSizeColorScheme;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
@@ -24,7 +25,7 @@ import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
 import net.thucydides.core.statistics.Statistics;
 import net.thucydides.core.statistics.StatisticsListener;
 import net.thucydides.core.statistics.TestStatisticsProvider;
-import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
+import net.thucydides.core.statistics.dao.JPATestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.statistics.database.LocalH2ServerDatabase;
@@ -49,6 +50,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class ThucydidesModule extends AbstractModule {
 
@@ -70,9 +72,8 @@ public class ThucydidesModule extends AbstractModule {
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
         bind(ScreenshotProcessor.class).to(MultithreadScreenshotProcessor.class).in(Singleton.class);
-
         bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
-        bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class).in(Singleton.class);
+        bind(TestOutcomeHistoryDAO.class).to(JPATestOutcomeHistoryDAO.class).in(Singleton.class);
         bind(TestStatisticsProvider.class).to(HibernateTestStatisticsProvider.class).in(Singleton.class);
         bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
         bind(DependencyInjectorService.class).to(ClasspathDependencyInjectorService.class).in(Singleton.class);
@@ -111,7 +112,15 @@ public class ThucydidesModule extends AbstractModule {
     }
 
     private EntityManagerFactory createEntityManagerFactory(DatabaseConfig databaseConfig) throws SQLException {
-        return Persistence.createEntityManagerFactory("db-manager", databaseConfig.getProperties());
+
+        Properties databaseConfigProperties = databaseConfig.getProperties();
+        String jaProviderName = databaseConfigProperties.getProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName());
+
+        JPAProvider jpaProvider = JPAProvider.valueOf(jaProviderName);
+        String persistenceUnitName = jpaProvider.getPersistenceUnitName();
+        LOGGER.info("Persistence Unit used" + persistenceUnitName);
+
+        return Persistence.createEntityManagerFactory(persistenceUnitName, databaseConfig.getProperties());
     }
 
     private void startIfNotAlreadyRunning(LocalDatabase localDatabase) {
