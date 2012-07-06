@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import net.thucydides.core.jpa.JPAProviderConfig;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
+import org.eclipse.persistence.config.TargetDatabase;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class EclipseLinkEnvironmentVariablesConfig extends AbstractJPAProviderCo
         String url = environmentVariables.getProperty("thucydides.statistics.url", localDatabase.getUrl());
         String username = environmentVariables.getProperty("thucydides.statistics.username", localDatabase.getUsername());
         String password = environmentVariables.getProperty("thucydides.statistics.password", localDatabase.getPassword());
-        String dialect = environmentVariables.getProperty("thucydides.statistics.dialect", localDatabase.getDBPlatform());
+        String dialect = environmentVariables.getProperty("thucydides.statistics.dialect", TargetDatabase.Auto);
 
         properties.put("javax.persistence.jdbc.driver", driver);
         properties.put("javax.persistence.jdbc.url", url);

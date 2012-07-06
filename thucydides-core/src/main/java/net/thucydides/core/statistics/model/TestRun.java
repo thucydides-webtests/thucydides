@@ -1,9 +1,7 @@
 package net.thucydides.core.statistics.model;
 
-import com.google.common.collect.ImmutableSet;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
-import org.eclipse.persistence.annotations.ReadOnly;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.*;
@@ -13,7 +11,6 @@ import java.util.Set;
 
 @Entity
 @Immutable
-@ReadOnly
 public class TestRun {
 
     @Id
@@ -29,7 +26,7 @@ public class TestRun {
     private Date executionDate;
     private long duration;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "testrun_tags",
             joinColumns = {@JoinColumn(name = "testrun_id")},
@@ -82,5 +79,13 @@ public class TestRun {
 
     public TestRun at(final Date executionDate) {
         return new TestRun(getTitle(), getProjectKey(), getResult(), getDuration(), executionDate);
+    }
+
+    @Override
+    public String toString() {
+        return "TestRun{" +
+                "title='" + title + '\'' +
+                ", projectKey='" + projectKey + '\'' +
+                '}';
     }
 }

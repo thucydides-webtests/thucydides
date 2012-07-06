@@ -1,6 +1,5 @@
 package net.thucydides.core.statistics.model;
 
-import org.eclipse.persistence.annotations.ReadOnly;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.*;
@@ -9,7 +8,6 @@ import java.util.Set;
 
 @Entity
 @Immutable
-@ReadOnly
 public class TestRunTag {
 
     @Id
@@ -47,7 +45,7 @@ public class TestRunTag {
         return type;
     }
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", cascade = CascadeType.PERSIST)
     private Set<TestRun> testRuns = new HashSet<TestRun>();
 
     public Set<TestRun> getTestRuns() {
