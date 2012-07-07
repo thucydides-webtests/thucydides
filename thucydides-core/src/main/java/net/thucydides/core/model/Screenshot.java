@@ -1,5 +1,7 @@
 package net.thucydides.core.model;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 /**
  * Represents a screenshot stored during a test execution.
  */
@@ -56,5 +58,21 @@ public class Screenshot {
 
     public int getWidth() {
         return width;
+    }
+
+    public HtmlFormattedInfo getHtml() {
+        return new HtmlFormattedInfo(description);
+    }
+
+    public class HtmlFormattedInfo {
+        private final String description;
+
+        public HtmlFormattedInfo(String description) {
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return StringEscapeUtils.escapeHtml(description);
+        }
     }
 }
