@@ -72,10 +72,11 @@ public enum ThucydidesSystemProperty {
 
     /**
      * Should Thucydides take screenshots for every clicked button and every selected link?
-     * If this option is set to true (the default value), Thucydides will record screenshots for any action performed
+     * By default, a screenshot will be stored at the start and end of each step.
+     * If this option is set to true, Thucydides will record screenshots for any action performed
      * on a WebElementFacade, i.e. any time you use an expression like element(...).click(),
      * findBy(...).click() and so on.
-     * This will be overridden if the ONLY_SAVE_FAILING_SCREENSHOTS option is activated.
+     * This will be overridden if the ONLY_SAVE_FAILING_SCREENSHOTS option is set to true.
      */
     VERBOSE_SCREENSHOTS("thucydides.verbose.screenshots"),
 
@@ -258,8 +259,8 @@ public enum ThucydidesSystemProperty {
     TEST_ROOT_PACKAGE("thucydides.test.root");
 
     private String propertyName;
-    public static final int DEFAULT_HEIGHT = 1000;
-    public static final int DEFAULT_WIDTH = 800;
+    public static final int DEFAULT_HEIGHT = 700;
+    public static final int DEFAULT_WIDTH = 960;
 
     private ThucydidesSystemProperty(final String propertyName) {
         this.propertyName = propertyName;
