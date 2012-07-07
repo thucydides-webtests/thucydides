@@ -28,9 +28,12 @@ public class ThucydidesListeners {
                                          Listeners.getLoggingListener(),
                                          Listeners.getStatisticsListener());
 
-        // TODO: is this line really necessary?
         StepEventBus.getEventBus().dropAllListeners();
+        registerListeners();
+    }
 
+    private void registerListeners() {
+        StepEventBus.getEventBus().registerListener(baseStepListener);
         for (StepListener listener : stepListeners) {
             if (listener != null) {
                 StepEventBus.getEventBus().registerListener(listener);
@@ -41,6 +44,10 @@ public class ThucydidesListeners {
     public ThucydidesListeners withDriver(WebDriver driver) {
         baseStepListener.setDriver(driver);
         return this;
+    }
+
+    public BaseStepListener getBaseStepListener() {
+        return baseStepListener;
     }
 
     public List<TestOutcome> getResults() {

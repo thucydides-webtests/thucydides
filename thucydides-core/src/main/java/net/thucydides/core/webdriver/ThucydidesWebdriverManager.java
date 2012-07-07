@@ -27,8 +27,6 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
 
     private final Configuration configuration;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThucydidesWebdriverManager.class);
-
     @Inject
     public ThucydidesWebdriverManager(final WebDriverFactory webDriverFactory, final Configuration configuration) {
         this.webDriverFactory = webDriverFactory;
@@ -87,7 +85,13 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
     }
 
     public WebDriver getWebdriver(final String driver) {
-       return getThreadLocalWebDriver(configuration, webDriverFactory, driver);
+        if (StringUtils.isEmpty(driver)) {
+            return getWebdriver();
+        } else if (SystemPropertiesConfiguration.DEFAULT_WEBDRIVER_DRIVER.equalsIgnoreCase(driver)){
+            return getWebdriver();
+        } else {
+            return getThreadLocalWebDriver(configuration, webDriverFactory, driver);
+        }
     }
 
     private static WebDriver getThreadLocalWebDriver(final Configuration configuration,

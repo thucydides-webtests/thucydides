@@ -40,8 +40,6 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebDriverFacade.class);
 
-    private Optional<Dimension> requestedBrowserSize;
-
     public WebDriverFacade(final Class<? extends WebDriver> driverClass,
                            final WebDriverFactory webDriverFactory) {
         this.driverClass = driverClass;
@@ -256,9 +254,5 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
     @Override
     public Object executeAsyncScript(String script, Object... parameters) {
         return ((JavascriptExecutor) getProxiedDriver()).executeScript(script, parameters);
-    }
-
-    public void setScreenSize(Dimension requestedBrowserSize) {
-        this.requestedBrowserSize = Optional.fromNullable(requestedBrowserSize);
     }
 }

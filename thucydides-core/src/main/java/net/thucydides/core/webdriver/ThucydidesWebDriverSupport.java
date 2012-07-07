@@ -1,23 +1,12 @@
 package net.thucydides.core.webdriver;
 
-import com.google.common.base.Optional;
-import net.thucydides.core.IgnoredStepException;
-import net.thucydides.core.PendingStepException;
 import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.sessions.TestSessionVariables;
-import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.StepAnnotations;
-import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
-import net.thucydides.core.steps.StepListener;
-import net.thucydides.core.util.LocalPreferences;
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.WebDriver;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * A utility class that provides services to initialize web testing and reporting-related fields in arbitrary objects.
@@ -38,7 +27,7 @@ public class ThucydidesWebDriverSupport {
     }
 
     private static void setRequestedDriverIfPresent(String requestedDriver) {
-        if (requestedDriver != null) {
+        if (StringUtils.isNotEmpty(requestedDriver)) {
             currentRequestedDriver.set(requestedDriver);
         } else {
             currentRequestedDriver.remove();

@@ -21,15 +21,17 @@ public interface Configuration {
 
     boolean onlySaveFailingScreenshots();
 
-    public void setDefaultBaseUrl(final String defaultBaseUrl);
+    void setDefaultBaseUrl(final String defaultBaseUrl);
 
-    public int getRestartFrequency();
+    int getRestartFrequency();
     /**
      * This is the URL where test cases start.
      * The default value can be overriden using the webdriver.baseurl property.
      * It is also the base URL used to build relative paths.
      */
-    public String getBaseUrl();
+    String getBaseUrl();
 
     boolean takeVerboseScreenshots();
+
+    void setIfUndefined(String property, String value);
 }
