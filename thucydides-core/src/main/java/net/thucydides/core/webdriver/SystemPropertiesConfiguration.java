@@ -181,7 +181,14 @@ public class SystemPropertiesConfiguration implements Configuration {
     }
 
     public boolean takeVerboseScreenshots() {
-        return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.VERBOSE_SCREENSHOTS.getPropertyName(), true);
+        return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.VERBOSE_SCREENSHOTS.getPropertyName(), false);
+    }
+
+    @Override
+    public void setIfUndefined(String property, String value) {
+        if (getEnvironmentVariables().getProperty(property) == null) {
+            getEnvironmentVariables().setProperty(property, value);
+        }
     }
 
     /**
