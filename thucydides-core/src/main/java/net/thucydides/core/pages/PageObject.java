@@ -185,6 +185,11 @@ public abstract class PageObject {
         return waitForRenderedElements(xpathOrCssSelector(xpathOrCssSelector));
     }
 
+    public PageObject waitFor(ExpectedCondition expectedCondition) {
+        getRenderedView().waitFor(expectedCondition);
+        return this;
+    }
+
     public PageObject waitForRenderedElementsToBePresent(final By byElementCriteria) {
         getRenderedView().waitForPresenceOf(byElementCriteria);
         return this;

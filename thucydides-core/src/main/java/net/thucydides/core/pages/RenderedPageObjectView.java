@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
 import org.slf4j.Logger;
@@ -48,6 +49,13 @@ class RenderedPageObjectView {
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
     }
 
+    public FluentWait<WebDriver> doWait() {
+        return new FluentWait(driver)
+                    .withTimeout(waitForTimeout, TimeUnit.MILLISECONDS)
+                    .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
+                    .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
+    }
+
     private ExpectedCondition<Boolean> elementDisplayed(final By byElementCriteria) {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
@@ -68,6 +76,10 @@ class RenderedPageObjectView {
      */
     public void waitFor(final By byElementCriteria) {
         waitForCondition().until(elementDisplayed(byElementCriteria));
+    }
+
+    public void waitFor(final ExpectedCondition expectedCondition) {
+        doWait().until(expectedCondition);
     }
 
     /**

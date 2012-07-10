@@ -11,6 +11,8 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -93,6 +95,11 @@ public class CheckingVisibilityWithTheFluentElementAPI extends FluentElementAPIT
     @Test
     public void wait_for_hidden_elements_should_work_for_visible_elements() {
         page.waitForRenderedElementsToBePresent(By.name("firstname"));
+    }
+
+    @Test
+    public void should_wait_for_expected_condition() {
+        page.waitFor(ExpectedConditions.presenceOfElementLocated(By.name("city")));
     }
 
     @Test
