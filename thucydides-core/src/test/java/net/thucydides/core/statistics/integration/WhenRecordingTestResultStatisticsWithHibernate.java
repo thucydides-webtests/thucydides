@@ -1,4 +1,4 @@
-package net.thucydides.core.statistics;
+package net.thucydides.core.statistics.integration;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -13,6 +13,10 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
+import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
+import net.thucydides.core.statistics.Statistics;
+import net.thucydides.core.statistics.StatisticsListener;
+import net.thucydides.core.statistics.With;
 import net.thucydides.core.statistics.dao.JPATestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.model.TestRun;

@@ -1,6 +1,8 @@
 package net.thucydides.core.statistics;
 
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.EnvironmentVariablesDatabaseConfig;
+import net.thucydides.core.jpa.JPAProvider;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.statistics.database.LocalH2ServerDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -22,6 +24,7 @@ import static org.hamcrest.Matchers.is;
 
 public class WhenConfiguringTheStatisticsDatabase {
 
+    private static final String JDBC_URL_PROPERTY = "hibernate.connection.url";
     EnvironmentVariables environmentVariables;
     EnvironmentVariablesDatabaseConfig databaseConfig;
 
@@ -30,8 +33,9 @@ public class WhenConfiguringTheStatisticsDatabase {
     @Before
     public void initMocks() {
         environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.Hibernate.name());
         localDatabase = new LocalH2ServerDatabase(environmentVariables);
-        databaseConfig = new EnvironmentVariablesDatabaseConfig(environmentVariables, localDatabase);    
+        databaseConfig = new EnvironmentVariablesDatabaseConfig(environmentVariables, localDatabase);
     }
     
     @Test
@@ -46,8 +50,9 @@ public class WhenConfiguringTheStatisticsDatabase {
     public void should_define_a_local_hsqldb_database_by_default() {
         Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:"));
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-thucydides"));
+        assertThat(properties.getProperty(JDBC_URL_PROPERTY), containsString("jdbc:"));
+        assertThat(properties.getProperty(JDBC_URL_PROPERTY), containsString("stats-thucydides"));
+
     }
 
     @Test
@@ -55,8 +60,8 @@ public class WhenConfiguringTheStatisticsDatabase {
         environmentVariables.setProperty("thucydides.project.key","myproject");
         Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:"));
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-myproject"));
+        assertThat(properties.getProperty(JDBC_URL_PROPERTY), containsString("jdbc:"));
+        assertThat(properties.getProperty(JDBC_URL_PROPERTY), containsString("stats-myproject"));
     }
 
     @Test
@@ -64,8 +69,8 @@ public class WhenConfiguringTheStatisticsDatabase {
         environmentVariables.setProperty("thucydides.project.key","myproject");
         Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:"));
-        assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-myproject"));
+        assertThat(properties.getProperty(JDBC_URL_PROPERTY), containsString("jdbc:"));
+        assertThat(properties.getProperty(JDBC_URL_PROPERTY), containsString("stats-myproject"));
     }
 
     @Test
@@ -118,7 +123,7 @@ public class WhenConfiguringTheStatisticsDatabase {
         Properties properties = databaseConfig.getProperties();
 
         assertThat(properties.getProperty("hibernate.connection.driver_class"), is("org.postgresql.Driver"));
-        assertThat(properties.getProperty("hibernate.connection.url"), is("jdbc:postgresql:dbserver/stats"));
+        assertThat(properties.getProperty(JDBC_URL_PROPERTY), is("jdbc:postgresql:dbserver/stats"));
         assertThat(properties.getProperty("hibernate.connection.username"), is("admin"));
         assertThat(properties.getProperty("hibernate.connection.password"), is("password"));
         assertThat(properties.getProperty("hibernate.dialect"), is("org.hibernate.dialect.PostgresDialect"));
