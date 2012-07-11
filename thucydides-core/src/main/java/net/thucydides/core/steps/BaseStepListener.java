@@ -495,9 +495,13 @@ public class BaseStepListener implements StepListener, StepPublisher {
             ScreenshotAndHtmlSource lastScreenshotOfPreviousStep = lastScreenshotOf(getPreviousStep().get());
             ScreenshotAndHtmlSource firstScreenshotOfThisStep = getCurrentStep().getFirstScreenshot();
             if (haveIdenticalScreenshots(firstScreenshotOfThisStep, lastScreenshotOfPreviousStep)) {
-                getCurrentStep().removeScreenshot(1);
+                removeFirstScreenshotOfCurrentStep();
             }
         }
+    }
+
+    private void removeFirstScreenshotOfCurrentStep() {
+        getCurrentStep().removeScreenshot(0);
     }
 
     private boolean currentStepHasMoreThanOneScreenshot() {

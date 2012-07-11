@@ -47,7 +47,7 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
  * @author johnsmart
  */
 public class WebDriverFactory {
-
+    public static final String DEFAULT_DRIVER = "firefox";
 
     private final WebdriverInstanceFactory webdriverInstanceFactory;
 
@@ -273,7 +273,7 @@ public class WebDriverFactory {
 
     private DesiredCapabilities capabilitiesForDriver(String driver) {
         if (driver == null) {
-            driver = "firefox";
+            driver = DEFAULT_DRIVER;
         }
         SupportedWebDriver driverType = SupportedWebDriver.valueOf(driver.toUpperCase());
         switch (driverType) {

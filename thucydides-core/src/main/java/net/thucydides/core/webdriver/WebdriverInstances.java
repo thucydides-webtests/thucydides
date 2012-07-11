@@ -1,5 +1,7 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.ThucydidesSystemProperty;
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Collection;
@@ -61,7 +63,7 @@ public class WebdriverInstances {
 
     public WebDriver useDriver(final String driverName) {
         this.currentDriver = normalized(driverName);
-        return driverMap.get(normalized(driverName));
+        return driverMap.get(currentDriver);
     }
 
     public void closeAllDrivers() {
@@ -92,6 +94,10 @@ public class WebdriverInstances {
     }
 
     private String normalized(String name) {
-        return (name == null) ? null : name.toLowerCase();
+        if (StringUtils.isEmpty(name)) {
+            return WebDriverFactory.DEFAULT_DRIVER;
+        } else {
+            return name.toLowerCase();
+        }
     }
 }

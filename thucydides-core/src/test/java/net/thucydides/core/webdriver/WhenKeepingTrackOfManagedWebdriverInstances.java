@@ -9,6 +9,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -105,6 +108,20 @@ public class WhenKeepingTrackOfManagedWebdriverInstances {
         webdriverInstances.registerDriverCalled("firefox").forDriver(firefoxDriver);
 
         assertThat(webdriverInstances.driverIsRegisteredFor("firefox")).isTrue();
+    }
+
+    @Test
+    public void should_use_the_default_driver_if_not_specified() {
+        webdriverInstances.registerDriverCalled("firefox").forDriver(firefoxDriver);
+        WebDriver defaultDriver = webdriverInstances.useDriver(null);
+        assertEquals(firefoxDriver, defaultDriver);
+    }
+
+    @Test
+    public void should_use_the_default_driver_if_empty() {
+        webdriverInstances.registerDriverCalled("firefox").forDriver(firefoxDriver);
+        WebDriver defaultDriver = webdriverInstances.useDriver("");
+        assertEquals(firefoxDriver, defaultDriver);
     }
 
     @Test
