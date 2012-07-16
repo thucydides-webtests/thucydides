@@ -7,6 +7,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Helper class for finding and invoking constructors.
@@ -93,7 +97,7 @@ public final class InstanceBuilder {
     }
 
     private Field findField(final String property) {
-        Field[] fields = targetObject.getClass().getDeclaredFields();
+        List<Field> fields = getAllDeclaredFieldsIn(targetObject.getClass());
         for(Field field :fields) {
             if (field.getName().compareToIgnoreCase(property) == 0) {
                 field.setAccessible(true);
@@ -101,6 +105,16 @@ public final class InstanceBuilder {
             }
         }
         return null;
+    }
+
+    private List<Field> getAllDeclaredFieldsIn(Class targetClass) {
+        List<Field> parentFields
+                = (targetClass.getSuperclass() != null) ? getAllDeclaredFieldsIn(targetClass.getSuperclass()) : Collections.EMPTY_LIST;
+
+        List<Field> localFields = Arrays.asList(targetClass.getDeclaredFields());
+        List<Field> allFields = new ArrayList<Field>(localFields);
+        allFields.addAll(parentFields);
+        return allFields;
     }
 
     public static <T> InstanceBuilder inObject(final T newObject) {

@@ -315,8 +315,8 @@ public class WhenRunningStepsWithTestData {
         verify(driver).get("Mary");
     }
 
-    @Test(expected=FailedToInitializeTestData.class)
-    public void should_throw_exception_if_no_fields_are_set() throws IOException {
+    @Test
+    public void should_work_with_private_fields() throws IOException {
         TestStepsWithNoSettersAndInaccessibleFields steps
                 = (TestStepsWithNoSettersAndInaccessibleFields) factory.getStepLibraryFor(TestStepsWithNoSettersAndInaccessibleFields.class);
 
