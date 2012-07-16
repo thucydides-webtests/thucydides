@@ -1,12 +1,15 @@
 package net.thucydides.core.statistics.service;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.features.ApplicationFeature;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,6 +26,11 @@ public class FeatureStoryTagProvider implements TagProvider {
         addStoryTagIfPresent(testOutcome, tags);
         addFeatureTagIfPresent(testOutcome, tags);
         return ImmutableSet.copyOf(tags);
+    }
+
+    @Override
+    public List<TestTag> getCapabilityTags() {
+        return Collections.EMPTY_LIST;
     }
 
     private void addStoryTagIfPresent(TestOutcome testOutcome, Set<TestTag> tags) {

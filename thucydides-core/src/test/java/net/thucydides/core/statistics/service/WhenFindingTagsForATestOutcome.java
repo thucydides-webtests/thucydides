@@ -233,7 +233,7 @@ public class WhenFindingTagsForATestOutcome {
         assertThat(tags.size(), is(2));
     }
 
-    @WithTag(name="Online sales", type="pillar")
+    @WithTag(name="Online sales", type="capability")
     class SomeTestCaseWithTagsOnMethodAndClass {
         @WithTags(
                 {

@@ -1,6 +1,5 @@
 package net.thucydides.core.csv;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Constructor;
@@ -58,33 +57,17 @@ public final class InstanceBuilder {
 
     public void setPropertyValue(final String property,
                                      final String value) {
-        if (PropertyUtils.isWriteable(targetObject, property)) {
-            setPropertyValueViaSetter(property, value);
-        } else {
-            setFieldValueDirectly(property, value);
-        }
-    }
-
-    private void setPropertyValueViaSetter(final String property, final String value) {
-        try {
-            PropertyUtils.setProperty(targetObject, property, value);
-        } catch (Exception e) {
-            throw new FailedToInitializeTestData("Could not assign property value using setter", e);
-        }
-    }
-
-    private void setFieldValueDirectly(final String property, final String value) {
         try {
             Field field = findField(property);
+            field.setAccessible(true);
             field.set(targetObject, value);
         } catch (Exception e) {
             throw new FailedToInitializeTestData("Could not assign property value", e);
         }
-
     }
 
     private Field findField(final String property) {
-        Field[] fields = targetObject.getClass().getFields();
+        Field[] fields = targetObject.getClass().getDeclaredFields();
         for(Field field : fields) {
             if (field.getName().equals(property)) {
                 return field;
