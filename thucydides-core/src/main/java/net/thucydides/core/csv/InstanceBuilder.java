@@ -1,10 +1,19 @@
 package net.thucydides.core.csv;
 
+<<<<<<< HEAD
+=======
+import org.apache.commons.lang.StringUtils;
+>>>>>>> master
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Helper class for finding and invoking constructors.
@@ -19,7 +28,7 @@ public final class InstanceBuilder {
 
     public static <T> T newInstanceOf(final Class<T> clazz,
                                       final Object... constructorArgs)
-                                      throws InstantiationException, IllegalAccessException, InvocationTargetException {
+            throws InstantiationException, IllegalAccessException, InvocationTargetException {
 
         if ((constructorArgs.length == 0) &&(thereIsADefaultConstructorFor(clazz))) {
             return clazz.newInstance();
@@ -30,7 +39,7 @@ public final class InstanceBuilder {
 
     @SuppressWarnings("unchecked")
     public static <T> T invokeConstructorFor(final Class<T> clazz, final Object[] constructorArgs)
-                                    throws InvocationTargetException, IllegalAccessException, InstantiationException {
+            throws InvocationTargetException, IllegalAccessException, InstantiationException {
 
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
 
@@ -40,7 +49,7 @@ public final class InstanceBuilder {
             }
         }
         throw new IllegalStateException("No matching constructor found for " + clazz
-                                        + " with arguments: " + ArrayUtils.toString(constructorArgs));
+                + " with arguments: " + ArrayUtils.toString(constructorArgs));
 
     }
 
@@ -56,9 +65,21 @@ public final class InstanceBuilder {
     }
 
     public void setPropertyValue(final String property,
+<<<<<<< HEAD
                                      final String value) {
+=======
+                                 final String value) {
+        if (!setProperty(property, value)) {
+            throw new FailedToInitializeTestData("Could not find property field " + property);
+        }
+    }
+
+    private boolean setProperty(String property, String value) {
+>>>>>>> master
         try {
+            Method setter = findSetter(property);
             Field field = findField(property);
+<<<<<<< HEAD
             field.setAccessible(true);
             field.set(targetObject, value);
         } catch (Exception e) {
@@ -70,10 +91,51 @@ public final class InstanceBuilder {
         Field[] fields = targetObject.getClass().getDeclaredFields();
         for(Field field : fields) {
             if (field.getName().equals(property)) {
+=======
+            if (setter != null) {
+                setter.invoke(targetObject, value);
+                return true;
+            } else if (field != null) {
+                field.set(targetObject, value);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new FailedToInitializeTestData("Could not assign property value", e);
+        }
+    }
+
+    private Method findSetter(final String property) {
+        Method[] methods = targetObject.getClass().getMethods();
+        String setterMethod = "set" + StringUtils.capitalize(property);
+        for(Method method : methods) {
+            if (method.getName().equals(setterMethod)) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    private Field findField(final String property) {
+        List<Field> fields = getAllDeclaredFieldsIn(targetObject.getClass());
+        for(Field field :fields) {
+            if (field.getName().compareToIgnoreCase(property) == 0) {
+                field.setAccessible(true);
+>>>>>>> master
                 return field;
             }
         }
-        throw new FailedToInitializeTestData("Could not find property called " + property);
+        return null;
+    }
+
+    private List<Field> getAllDeclaredFieldsIn(Class targetClass) {
+        List<Field> parentFields
+                = (targetClass.getSuperclass() != null) ? getAllDeclaredFieldsIn(targetClass.getSuperclass()) : Collections.EMPTY_LIST;
+
+        List<Field> localFields = Arrays.asList(targetClass.getDeclaredFields());
+        List<Field> allFields = new ArrayList<Field>(localFields);
+        allFields.addAll(parentFields);
+        return allFields;
     }
 
     public static <T> InstanceBuilder inObject(final T newObject) {

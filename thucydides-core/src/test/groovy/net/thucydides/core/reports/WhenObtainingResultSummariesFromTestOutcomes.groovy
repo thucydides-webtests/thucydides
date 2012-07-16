@@ -66,6 +66,22 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             "/test-outcomes/all-pending"               | 0.0               | 0.0                | 1.0
     }
 
+
+    def "should calculate the formatted percentage of passing steps"() {
+        when:
+                def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
+        then:
+                testOutcomes.decimalPercentagePassingStepCount == percentagePassing &&
+                testOutcomes.decimalPercentageFailingStepCount == percentageFailing &&
+                testOutcomes.decimalPercentagePendingStepCount == percentagePending
+        where:
+        directory                                  | percentagePassing | percentageFailing  | percentagePending
+        "/test-outcomes/all-successful"            | "1"                 | "0"                | "0"
+        "/test-outcomes/containing-failure"        | "0.32"              | "0.24"             | "0.44"
+        "/test-outcomes/containing-pending"        | "0.6"               | "0"                | "0.4"
+        "/test-outcomes/all-pending"               | "0"                 | "0"                | "1"
+    }
+
     def "should provide a formatted version of the passing coverage"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
