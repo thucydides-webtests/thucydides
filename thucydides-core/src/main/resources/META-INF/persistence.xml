@@ -17,6 +17,7 @@
         <properties>
             <property name="eclipselink.cache.shared.default" value="false"/>
             <property name="eclipselink.weaving" value="false"/>
+            <property name="eclipselink.jpql.parser" value="org.eclipse.persistence.queries.ANTLRQueryBuilder"/>
         </properties>
     </persistence-unit>
 </persistence>
