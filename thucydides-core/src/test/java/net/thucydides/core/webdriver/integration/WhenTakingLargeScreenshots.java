@@ -71,6 +71,9 @@ public class WhenTakingLargeScreenshots {
 
         Photographer photographer = new Photographer(driver, screenshotDirectory);
         File screenshotFile = photographer.takeScreenshot("screenshot");
+
+		waitUntilFileIsWritten();
+
         ResizableImage image = ResizableImage.loadFrom(screenshotFile);
 
         assertThat(image.getWitdh(), is(greaterThan(750))); // In Windows the actual dimensions are slightly less
@@ -83,6 +86,8 @@ public class WhenTakingLargeScreenshots {
         Photographer photographer = new Photographer(driver, screenshotDirectory);
         File screenshotFile = photographer.takeScreenshot("screenshot");
 
+		waitUntilFileIsWritten();
+
         assertThat(screenshotFile.exists(), is(true));
     }
 
@@ -94,7 +99,15 @@ public class WhenTakingLargeScreenshots {
         Photographer photographer = new Photographer(driver, screenshotDirectory);
         File screenshotFile = photographer.takeScreenshot("screenshot");
 
+		waitUntilFileIsWritten();
+
         assertThat(screenshotFile.exists(), is(true));
+    }
+
+	private void waitUntilFileIsWritten() {
+        try {
+            Thread.sleep(1000);
+        } catch(InterruptedException e) {}
     }
 
     @Mock
