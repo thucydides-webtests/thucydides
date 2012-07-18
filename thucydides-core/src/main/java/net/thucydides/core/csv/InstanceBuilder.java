@@ -1,9 +1,6 @@
 package net.thucydides.core.csv;
 
-<<<<<<< HEAD
-=======
 import org.apache.commons.lang.StringUtils;
->>>>>>> master
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Constructor;
@@ -65,9 +62,6 @@ public final class InstanceBuilder {
     }
 
     public void setPropertyValue(final String property,
-<<<<<<< HEAD
-                                     final String value) {
-=======
                                  final String value) {
         if (!setProperty(property, value)) {
             throw new FailedToInitializeTestData("Could not find property field " + property);
@@ -75,23 +69,9 @@ public final class InstanceBuilder {
     }
 
     private boolean setProperty(String property, String value) {
->>>>>>> master
         try {
             Method setter = findSetter(property);
             Field field = findField(property);
-<<<<<<< HEAD
-            field.setAccessible(true);
-            field.set(targetObject, value);
-        } catch (Exception e) {
-            throw new FailedToInitializeTestData("Could not assign property value", e);
-        }
-    }
-
-    private Field findField(final String property) {
-        Field[] fields = targetObject.getClass().getDeclaredFields();
-        for(Field field : fields) {
-            if (field.getName().equals(property)) {
-=======
             if (setter != null) {
                 setter.invoke(targetObject, value);
                 return true;
@@ -121,7 +101,6 @@ public final class InstanceBuilder {
         for(Field field :fields) {
             if (field.getName().compareToIgnoreCase(property) == 0) {
                 field.setAccessible(true);
->>>>>>> master
                 return field;
             }
         }
