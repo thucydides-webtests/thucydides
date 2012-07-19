@@ -189,7 +189,7 @@ public class WhenRecordingTestResultStatistics {
 
         List<TestRun> testRuns = testStatisticsProvider.getAllTestHistories();
 
-        assertThat(testRuns.size(), is(31));
+        assertThat(testRuns.size(), greaterThanOrEqualTo(30));
     }
 
     @Test

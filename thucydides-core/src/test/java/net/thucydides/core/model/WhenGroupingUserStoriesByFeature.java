@@ -192,7 +192,7 @@ public class WhenGroupingUserStoriesByFeature {
 
     @Test
     public void a_user_story_can_return_the_corresponding_feature_class_using_id_and_name() {
-        net.thucydides.core.model.Story story = new net.thucydides.core.model.Story("story.class","AStory", "feature.class","AFeature");
+        net.thucydides.core.model.Story story = new net.thucydides.core.model.Story("story.class","AStory", "feature.class","AFeature", null);
 
         ApplicationFeature feature = new ApplicationFeature("feature.class","AFeature");
 

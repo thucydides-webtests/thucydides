@@ -4,7 +4,7 @@
 
 This document contains the main features we want to implement in the Thucydides framework. 
 Thucydides is a tool that lets you use WebDriver-based unit or BDD tests to generate documentation 
-about your acceptance tests, including a narrative description of test, along with the corresponding 
+about your acceptance tests, including a narrativeText description of test, along with the corresponding
 screen shots, and also a high-level summary of test stories grouped by use cases and features.
   
 ## Features

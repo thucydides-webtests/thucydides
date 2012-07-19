@@ -1,6 +1,7 @@
 package net.thucydides.core.screenshots;
 
 import com.google.common.base.Optional;
+import com.google.common.io.Files;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import org.apache.commons.io.FileUtils;
@@ -84,15 +85,27 @@ public class Photographer {
     public File takeScreenshot(final String prefix) {
         if (driverCanTakeSnapshots()) {
             try {
-                byte[] screenshotData = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-                Optional<File> savedScreenshot = saveScreenshotFile(screenshotData, prefix);
-                savePageSourceFor(savedScreenshot.get().getAbsolutePath());
-                return savedScreenshot.get();
+
+                //byte[] screenshotData = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+                //Optional<File> savedScreenshot = saveScreenshotFile(screenshotData, prefix);
+//                savePageSourceFor(savedScreenshot.get().getAbsolutePath());
+//                return savedScreenshot.get();
+
+                File screenshotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+                File storedScreenshot = targetScreenshot(prefix);
+                Files.move(screenshotFile,storedScreenshot);
+                savePageSourceFor(storedScreenshot.getAbsolutePath());
+                return storedScreenshot;
             } catch (Throwable e) {
                 getLogger().warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
             }
         }
         return null;
+    }
+
+    private File targetScreenshot(String prefix) {
+        targetDirectory.mkdirs();
+        return new File(targetDirectory, nextScreenshotName(prefix));
     }
 
     private Optional<File> saveScreenshotFile(byte[] screenshotData, String prefix) throws IOException {
