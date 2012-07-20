@@ -16,9 +16,9 @@ public class WhenManagingTheInternalClock {
         InternalSystemClock clock = new InternalSystemClock();
 
         long startTime = System.currentTimeMillis();
-        clock.pauseFor(50);
+        clock.pauseFor(100);
         long pauseLength = System.currentTimeMillis() - startTime;
-        assertThat(pauseLength, greaterThanOrEqualTo(50L));
+        assertThat(pauseLength, greaterThanOrEqualTo(100L));
     }
 
     @Test(expected = RuntimeException.class)
