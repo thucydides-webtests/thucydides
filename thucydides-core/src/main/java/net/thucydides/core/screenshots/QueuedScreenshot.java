@@ -4,19 +4,19 @@ import java.io.File;
 
 public class QueuedScreenshot {
 
-    private final byte[] screenshot;
     private final File filename;
+    private final File sourceFilename;
 
-    public QueuedScreenshot(byte[] screenshot, File filename) {
-        this.screenshot = screenshot;
-        this.filename = filename;
+    public QueuedScreenshot(File sourceFilename, File targetFilename) {
+        this.filename = targetFilename;
+        this.sourceFilename = sourceFilename;
     }
 
-    public byte[] getScreenshot() {
-        return screenshot;
-    }
-
-    public File getFilename() {
+    public File getDestinationFile() {
         return filename;
+    }
+
+    public File getSourceFile() {
+        return sourceFilename;
     }
 }
