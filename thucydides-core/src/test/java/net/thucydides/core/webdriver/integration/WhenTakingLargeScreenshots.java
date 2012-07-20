@@ -2,7 +2,9 @@ package net.thucydides.core.webdriver.integration;
 
 import com.google.common.base.Function;
 import net.thucydides.core.images.ResizableImage;
+import net.thucydides.core.screenshots.MultithreadScreenshotProcessor;
 import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.StaticTestSite;
@@ -70,7 +72,8 @@ public class WhenTakingLargeScreenshots {
 
         driver = testSite.open();
 
-        Photographer photographer = new Photographer(driver, screenshotDirectory);
+        ScreenshotProcessor screenshotProcessor = new MultithreadScreenshotProcessor(environmentVariables);
+        Photographer photographer = new Photographer(driver, screenshotDirectory,screenshotProcessor);
         File screenshotFile = photographer.takeScreenshot("screenshot");
 
 		waitUntilFileIsWritten(screenshotFile);
@@ -79,6 +82,29 @@ public class WhenTakingLargeScreenshots {
 
         assertThat(image.getWitdh(), is(greaterThan(750))); // In Windows the actual dimensions are slightly less
     }
+
+
+    @Test
+    public void should_resize_screenshot_if_requested() throws Exception {
+
+        environmentVariables.setProperty("thucydides.browser.width", "1000");
+        environmentVariables.setProperty("thucydides.browser.height", "800");
+
+        environmentVariables.setProperty("thucydides.resized.image.width", "600");
+
+        driver = testSite.open();
+
+        ScreenshotProcessor screenshotProcessor = new MultithreadScreenshotProcessor(environmentVariables);
+        Photographer photographer = new Photographer(driver, screenshotDirectory,screenshotProcessor);
+        File screenshotFile = photographer.takeScreenshot("screenshot");
+
+        waitUntilFileIsWritten(screenshotFile);
+
+        ResizableImage image = ResizableImage.loadFrom(screenshotFile);
+
+        assertThat(image.getWitdh(), is(600));
+    }
+
 
     @Test
     public void should_take_screenshots_correctly() throws IOException {

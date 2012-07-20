@@ -150,6 +150,11 @@ public enum ThucydidesSystemProperty {
     SNAPSHOT_WIDTH("thucydides.browser.width"),
 
     /**
+     * If set, resize screenshots to this size to save space.
+     */
+    RESIZED_WIDTH("thucydides.resized.image.width"),
+
+    /**
      * Public URL where the Thucydides reports will be displayed.
      * This is mainly for use by plugins.
      */
