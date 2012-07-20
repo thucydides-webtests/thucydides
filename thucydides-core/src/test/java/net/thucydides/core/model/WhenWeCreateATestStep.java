@@ -199,9 +199,9 @@ public class WhenWeCreateATestStep {
     @Test
     public void we_can_record_the_lifetime_of_a_test_step() throws InterruptedException {
         TestStep step = new TestStep("a narrative description");
-        Thread.sleep(10);
+        Thread.sleep(100);
         step.recordDuration();
-        assertThat(step.getDuration(), is(greaterThanOrEqualTo(10L)));
+        assertThat(step.getDuration(), is(greaterThanOrEqualTo(100L)));
     }
     
     @Test
