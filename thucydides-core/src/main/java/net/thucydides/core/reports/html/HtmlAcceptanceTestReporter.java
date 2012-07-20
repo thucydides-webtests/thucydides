@@ -87,7 +87,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     }
 
     private boolean containsScreenshots(TestOutcome testOutcome) {
-        return any(testOutcome.getTestSteps(), hasScreenshot());
+        return any(testOutcome.getFlattenedTestSteps(), hasScreenshot());
     }
 
     private Predicate<TestStep> hasScreenshot() {
