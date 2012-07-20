@@ -112,13 +112,13 @@ public class WhenScreenshotsAreTaken {
     }
 
     @Test
-    public void the_screenshot_should_be_stored_in_the_target_directory() throws IOException {
+    public void the_screenshot_should_be_stored_in_the_target_directory() throws IOException, InterruptedException{
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         
         String screenshotFile = photographer.takeScreenshot("screenshot").getName();
         photographer.getScreenshotProcessor().waitUntilDone();
-
+        Thread.sleep(250);
         File savedScreenshot = new File(screenshotDirectory, screenshotFile);
         assertThat(savedScreenshot.isFile(), is(true));
     }
