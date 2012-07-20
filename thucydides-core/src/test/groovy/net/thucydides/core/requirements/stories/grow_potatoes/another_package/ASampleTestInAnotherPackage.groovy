@@ -1,4 +1,4 @@
-package net.thucydides.core.capabilities.stories.grow_potatoes.another_package
+package net.thucydides.core.requirements.stories.grow_potatoes.another_package
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package net.thucydides.core.capabilities.stories.nocapacities
+package net.thucydides.core.requirements.stories.nocapacities
 
 import org.junit.Test
 

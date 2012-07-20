@@ -1,7 +1,6 @@
-package net.thucydides.core.capabilities.model;
+package net.thucydides.core.requirements.model;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,21 +10,21 @@ import java.util.List;
  * This report summarizes the state of the application in terms of what capabilities have been implemented.
  * Capabilities are implemented via <em>features</em>, which in turn are tested by scenarios.
  */
-public class Capability {
+public class Requirement {
 
     private final String name;
     private final String type;
     private final String narrativeText;
-    private final List<Capability> children;
+    private final List<Requirement> children;
 
-    public Capability(String name, String type, String narrativeText) {
+    public Requirement(String name, String type, String narrativeText) {
         this.name = name;
         this.type = type;
         this.narrativeText = narrativeText;
         this.children = Collections.EMPTY_LIST;
     }
 
-    public Capability(String name, String type, String narrativeText, List<Capability> children) {
+    public Requirement(String name, String type, String narrativeText, List<Requirement> children) {
         this.name = name;
         this.type = type;
         this.narrativeText = narrativeText;
@@ -44,7 +43,7 @@ public class Capability {
         return narrativeText;
     }
 
-    public List<Capability> getChildren() {
+    public List<Requirement> getChildren() {
         return ImmutableList.copyOf(children);
     }
 }

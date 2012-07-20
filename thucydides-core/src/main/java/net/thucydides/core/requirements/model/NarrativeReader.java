@@ -1,14 +1,12 @@
-package net.thucydides.core.capabilities.model;
+package net.thucydides.core.requirements.model;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Splitter;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.List;
 
 import static ch.lambdaj.Lambda.index;
 import static ch.lambdaj.Lambda.sort;

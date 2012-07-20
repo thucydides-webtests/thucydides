@@ -4,4 +4,4 @@
  * Capabilities are demonstrated and validated by the acceptance criteria, but not all capabilities
  * will have acceptance criteria defined (e.g. at the start of the project, or for legacy projects).
  */
-package net.thucydides.core.capabilities;
+package net.thucydides.core.requirements;

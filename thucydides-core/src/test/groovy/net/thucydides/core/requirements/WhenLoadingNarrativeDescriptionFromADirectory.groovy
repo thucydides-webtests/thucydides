@@ -1,8 +1,8 @@
-package net.thucydides.core.capabilities
+package net.thucydides.core.requirements
 
 import spock.lang.Specification
-import net.thucydides.core.capabilities.model.NarrativeReader
-import net.thucydides.core.capabilities.model.Narrative
+import net.thucydides.core.requirements.model.NarrativeReader
+import net.thucydides.core.requirements.model.Narrative
 import com.google.common.base.Optional
 
 class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {

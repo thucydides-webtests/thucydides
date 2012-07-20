@@ -1,13 +1,13 @@
-package net.thucydides.core.capabilities;
+package net.thucydides.core.requirements;
 
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.capabilities.model.Capability;
-import net.thucydides.core.capabilities.model.Narrative;
-import net.thucydides.core.capabilities.model.NarrativeReader;
+import net.thucydides.core.requirements.model.Requirement;
+import net.thucydides.core.requirements.model.Narrative;
+import net.thucydides.core.requirements.model.NarrativeReader;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
@@ -29,10 +29,10 @@ import java.util.List;
 import static ch.lambdaj.Lambda.convert;
 
 /**
- * Load a set of capabilities (epics/themes,...) from the directory structure.
+ * Load a set of requirements (epics/themes,...) from the directory structure.
  * This will typically be the directory structure containing the tests (for JUnit) or stories (e.g. for JBehave).
  */
-class FileSystemCapabilityProvider implements CapabilityProvider {
+class FileSystemRequirementsProvider implements RequirementsProvider {
 
     private final static String DEFAULT_ROOT_DIRECTORY = "stories";
     private final static List<String> DEFAULT_CAPABILITY_TYPES = ImmutableList.of("capability","feature");
@@ -43,52 +43,52 @@ class FileSystemCapabilityProvider implements CapabilityProvider {
     private final EnvironmentVariables environmentVariables;
 
     @Transient
-    private List<Capability> capabilities;
+    private List<Requirement> requirements;
 
-    public FileSystemCapabilityProvider() {
+    public FileSystemRequirementsProvider() {
         this(DEFAULT_ROOT_DIRECTORY);
     }
 
-    public FileSystemCapabilityProvider(String rootDirectory, int level) {
+    public FileSystemRequirementsProvider(String rootDirectory, int level) {
         this(rootDirectory, level, Injectors.getInjector().getInstance(EnvironmentVariables.class));
     }
 
-    public FileSystemCapabilityProvider(String rootDirectory, int level, EnvironmentVariables environmentVariables) {
+    public FileSystemRequirementsProvider(String rootDirectory, int level, EnvironmentVariables environmentVariables) {
         this.rootDirectoryPath = rootDirectory;
         this.level = level;
         this.narrativeReader = new NarrativeReader();
         this.environmentVariables = environmentVariables;
     }
 
-    public FileSystemCapabilityProvider(String rootDirectory) {
+    public FileSystemRequirementsProvider(String rootDirectory) {
         this(rootDirectory, 0);
     }
 
-    public List<Capability> getCapabilities() {
-        if (capabilities == null) {
+    public List<Requirement> getRequirements() {
+        if (requirements == null) {
             try {
                 URL rootDirectoryUrl = getClass().getClassLoader().getResources(rootDirectoryPath).nextElement();
                 File rootDirectory = new File(rootDirectoryUrl.getPath());
                 File[] capabilityDirectories = rootDirectory.listFiles(thatAreDirectories());
-                capabilities = loadCapabilitiesFrom(capabilityDirectories);
+                requirements = loadCapabilitiesFrom(capabilityDirectories);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Could not load capabilities from '" + rootDirectoryPath + "'", e);
+                throw new IllegalArgumentException("Could not load requirements from '" + rootDirectoryPath + "'", e);
             }
         }
-        return capabilities;
+        return requirements;
     }
 
     public List<TestTag> getTagsFor(final TestOutcome testOutcome) {
         String testOutcomePath = testOutcome.getPath();
         List<String> storyPathElements = IteratorUtils.toList(Splitter.on(".").split(stripRootPathFrom(testOutcomePath)).iterator());
-        return getMatchingCapabilities(getCapabilities(), storyPathElements);
+        return getMatchingCapabilities(getRequirements(), storyPathElements);
     }
 
-    private List<TestTag> getMatchingCapabilities(List<Capability> capabilities, List<String> storyPathElements) {
+    private List<TestTag> getMatchingCapabilities(List<Requirement> requirements, List<String> storyPathElements) {
         if (storyPathElements.isEmpty()) {
             return Collections.EMPTY_LIST;
         } else {
-            Optional<Capability> matchingCapability = findMatchingCapabilityIn(next(storyPathElements), capabilities);
+            Optional<Requirement> matchingCapability = findMatchingCapabilityIn(next(storyPathElements), requirements);
             if (matchingCapability.isPresent()) {
                 TestTag thisTag = TestTag.withName(matchingCapability.get().getName()).andType(matchingCapability.get().getType());
                 List<TestTag> remainingTags = getMatchingCapabilities(matchingCapability.get().getChildren(), tail(storyPathElements));
@@ -114,11 +114,11 @@ class FileSystemCapabilityProvider implements CapabilityProvider {
         return elements.subList(1, elements.size());
     }
 
-    private Optional<Capability> findMatchingCapabilityIn(String storyPathElement, List<Capability> capabilities) {
-        for(Capability capability : capabilities) {
+    private Optional<Requirement> findMatchingCapabilityIn(String storyPathElement, List<Requirement> requirements) {
+        for(Requirement requirement : requirements) {
             String normalizedStoryPathElement = Inflector.getInstance().humanize(storyPathElement);
-            if (capability.getName().equals(normalizedStoryPathElement)) {
-                return Optional.of(capability);
+            if (requirement.getName().equals(normalizedStoryPathElement)) {
+                return Optional.of(requirement);
             }
         }
         return Optional.absent();
@@ -133,31 +133,31 @@ class FileSystemCapabilityProvider implements CapabilityProvider {
         }
     }
 
-    private List<Capability> loadCapabilitiesFrom(File[] capabilityDirectories) {
+    private List<Requirement> loadCapabilitiesFrom(File[] capabilityDirectories) {
         return convert(capabilityDirectories, toCapabilities());
     }
 
-    private Converter<File,Capability> toCapabilities() {
-        return new Converter<File, Capability>() {
+    private Converter<File,Requirement> toCapabilities() {
+        return new Converter<File, Requirement>() {
 
             @Override
-            public Capability convert(File capabilityFileOrDirectory) {
+            public Requirement convert(File capabilityFileOrDirectory) {
                 return readCapabilityFrom(capabilityFileOrDirectory);
             }
         };
     }
 
-    private Capability readCapabilityFrom(File capabilityDirectory) {
+    private Requirement readCapabilityFrom(File capabilityDirectory) {
         Optional<Narrative> capabilityNarrative = narrativeReader.loadFrom(capabilityDirectory);
         if (capabilityNarrative.isPresent()) {
             String title = getTitleFromNarrativeOrDirectoryName(capabilityNarrative.get(), capabilityDirectory);
             String type = capabilityNarrative.get().getType();
-            List<Capability> children = readChildrenFrom(capabilityDirectory);
-            return new Capability(title, type, capabilityNarrative.get().getText(), children);
+            List<Requirement> children = readChildrenFrom(capabilityDirectory);
+            return new Requirement(title, type, capabilityNarrative.get().getText(), children);
         } else {
             String capabilityName = humanReadableVersionOf(capabilityDirectory.getName());
-            List<Capability> children = readChildrenFrom(capabilityDirectory);
-            return new Capability(capabilityName, getDefaultType(), capabilityName, children);
+            List<Requirement> children = readChildrenFrom(capabilityDirectory);
+            return new Requirement(capabilityName, getDefaultType(), capabilityName, children);
         }
     }
 
@@ -180,10 +180,10 @@ class FileSystemCapabilityProvider implements CapabilityProvider {
         }
     }
 
-    private List<Capability> readChildrenFrom(File capabilityDirectory) {
+    private List<Requirement> readChildrenFrom(File capabilityDirectory) {
         String childDirectory = rootDirectoryPath + "/" + capabilityDirectory.getName();
-        CapabilityProvider childReader = new FileSystemCapabilityProvider(childDirectory, level + 1, environmentVariables);
-        return childReader.getCapabilities();
+        RequirementsProvider childReader = new FileSystemRequirementsProvider(childDirectory, level + 1, environmentVariables);
+        return childReader.getRequirements();
     }
 
     private String getTitleFromNarrativeOrDirectoryName(Narrative capabilityNarrative, File capabilityDirectory) {
