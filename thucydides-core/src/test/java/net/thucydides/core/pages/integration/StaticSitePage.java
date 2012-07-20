@@ -89,6 +89,12 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
         protected WebElementFacade alertButton() {
             return element(alertButton);
         }
+
+        public void openAlert() {
+		    alertButton().click();
+		    waitABit(500);
+		}
+
         public StaticSitePage(WebDriver driver, int timeout) {
             super(driver, timeout);
         }
