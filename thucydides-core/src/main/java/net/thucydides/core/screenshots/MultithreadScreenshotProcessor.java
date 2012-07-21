@@ -132,7 +132,7 @@ public class MultithreadScreenshotProcessor implements ScreenshotProcessor {
                 BufferedImage image = ImageIO.read(queuedScreenshot.getSourceFile());
                 int width = image.getData().getWidth();
                 int height = image.getData().getHeight();
-                int targetWidth = 600;
+                int targetWidth = getResizedWidth();
                 int targetHeight = (int) (((double) targetWidth / (double) width) * (double) height);
 
                 BufferedImage resizedImage = resize(image, targetWidth, targetHeight);
