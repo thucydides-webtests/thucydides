@@ -39,7 +39,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     public void should_check_and_close_javascript_alerts() {
         StaticSitePage page = getFirefoxPage();
 
-        page.alertButton.click();
+		page.openAlert();
         page.getAlert().accept();
 
         assertThat(page.getTitle(), is("Thucydides Test Site"));
@@ -66,7 +66,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     }
 
     @Test
-    public void s_directly() {
+    public void should_be_able_to_set_focus_directly() {
         StaticSitePage page = getFirefoxPage();
 
         JavascriptExecutorFacade js = new JavascriptExecutorFacade(page.getDriver());
@@ -143,7 +143,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     @Test
     public void a_jquery_selector_should_be_described_by_the_corresponding_jquery_expression() {
         ByJQuerySelector jQuerySelector = ByJQuery.selector("a[title='Click Me']");
-        
+
         assertThat(jQuerySelector.toString(), containsString("a[title='Click Me']"));
     }
 

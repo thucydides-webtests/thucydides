@@ -43,9 +43,13 @@ public class Photographer {
     private static final ScreenshotSequence DEFAULT_SCREENSHOT_SEQUENCE = new ScreenshotSequence();
 
     public Photographer(final WebDriver driver, final File targetDirectory) {
+        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class));
+    }
+
+    public Photographer(final WebDriver driver, final File targetDirectory, final ScreenshotProcessor screenshotProcessor) {
         this.driver = driver;
         this.targetDirectory = targetDirectory;
-        this.screenshotProcessor = Injectors.getInjector().getInstance(ScreenshotProcessor.class);
+        this.screenshotProcessor = screenshotProcessor;
         this.screenshotSequence = DEFAULT_SCREENSHOT_SEQUENCE;
         this.digest = getMd5Digest();
     }
@@ -84,10 +88,11 @@ public class Photographer {
     public File takeScreenshot(final String prefix) {
         if (driverCanTakeSnapshots()) {
             try {
-                byte[] screenshotData = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-                Optional<File> savedScreenshot = saveScreenshotFile(screenshotData, prefix);
-                savePageSourceFor(savedScreenshot.get().getAbsolutePath());
-                return savedScreenshot.get();
+                File screenshotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+                File savedScreenshot = targetScreenshot(prefix);
+                screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile, savedScreenshot));
+                savePageSourceFor(savedScreenshot.getAbsolutePath());
+                return savedScreenshot;
             } catch (Throwable e) {
                 getLogger().warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
             }
@@ -95,16 +100,10 @@ public class Photographer {
         return null;
     }
 
-    private Optional<File> saveScreenshotFile(byte[] screenshotData, String prefix) throws IOException {
-        if (screenshotData == null) {
-            return Optional.absent();
-        } else {
-            //noinspection ResultOfMethodCallIgnored
-            targetDirectory.mkdirs();
-            File savedScreenshot = new File(targetDirectory, nextScreenshotName(prefix));
-            screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotData, savedScreenshot));
-            return Optional.of(savedScreenshot);
-        }
+
+    private File targetScreenshot(String prefix) {
+        targetDirectory.mkdirs();
+        return new File(targetDirectory, nextScreenshotName(prefix));
     }
 
     protected boolean driverCanTakeSnapshots() {

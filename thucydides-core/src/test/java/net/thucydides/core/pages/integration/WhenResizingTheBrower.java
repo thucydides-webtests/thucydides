@@ -12,7 +12,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class WhenResizingTheBrower {
 
@@ -44,7 +44,7 @@ public class WhenResizingTheBrower {
         page.open();
 
         int width = ((Long)(((JavascriptExecutor)driver).executeScript("return window.innerWidth"))).intValue();
-        assertThat(width, is(400));
+        assertThat(width, allOf(lessThanOrEqualTo(400), greaterThan(380)));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class WhenResizingTheBrower {
         page.open();
 
         int width = ((Long)(((JavascriptExecutor)driver).executeScript("return window.innerWidth"))).intValue();
-        assertThat(width, is(400));
+        assertThat(width, allOf(lessThanOrEqualTo(400), greaterThan(380)));
     }
 
 
