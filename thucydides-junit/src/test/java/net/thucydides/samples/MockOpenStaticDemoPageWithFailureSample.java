@@ -31,6 +31,7 @@ public class MockOpenStaticDemoPageWithFailureSample {
         steps.enter_values("Label 1", true);
         steps.should_have_selected_value("Label 2");
         steps.do_something();
+
     }    
     
     @Test

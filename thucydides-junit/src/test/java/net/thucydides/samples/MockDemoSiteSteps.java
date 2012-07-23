@@ -4,12 +4,8 @@ import net.thucydides.core.annotations.Step;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
 
-public class MockDemoSiteSteps extends ScenarioSteps {
-
-    public MockDemoSiteSteps(Pages pages) {
-        super(pages);
-    }
-
+public class MockDemoSiteSteps {
+	
     @Step
     public void enter_values(String selectValue, boolean checkboxValue) {
     }
