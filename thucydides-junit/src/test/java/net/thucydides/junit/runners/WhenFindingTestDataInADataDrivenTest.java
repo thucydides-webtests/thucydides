@@ -1,5 +1,7 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.junit.annotations.Qualifier;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.annotations.UseTestDataFrom;
@@ -263,6 +265,60 @@ public class WhenFindingTestDataInADataDrivenTest {
         assertThat(testScenarios.get(0).getAddress(), is("10 Main Street, Smithville"));
         assertThat(testScenarios.get(1).getName(), is("Jack Black"));
         assertThat(testScenarios.get(1).getAddress(), is("1 Main Street, Smithville"));
+    }
+
+    @UseTestDataFrom(value="$DATADIR/simple-semicolon-data.csv", separator=';')
+    final static class CSVDataDrivenTestScenarioFromSpecifiedDataDirectory {}
+
+    @Test
+    public void should_load_test_data_from_a_specified_directory() throws IOException {
+
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("thucydides.data.dir","test-data");
+        TestClass testClass = new TestClass(CSVDataDrivenTestScenarioFromSpecifiedDataDirectory.class);
+
+        List<PersonTestScenario> testScenarios
+                = DataDrivenAnnotations.forClass(testClass)
+                                       .usingEnvironmentVariables(environmentVariables)
+                                       .getDataAsInstancesOf(PersonTestScenario.class);
+
+        assertThat(testScenarios.size(), is(2));
+        assertThat(testScenarios.get(0).getName(), is("Joe Smith"));
+        assertThat(testScenarios.get(0).getAddress(), is("10 Main Street, Smithville"));
+        assertThat(testScenarios.get(1).getName(), is("Jack Black"));
+        assertThat(testScenarios.get(1).getAddress(), is("1 Main Street, Smithville"));
+    }
+
+    @UseTestDataFrom(value="does-not-exist/simple-semicolon-data.csv,test-data/simple-semicolon-data.csv", separator=';')
+    final static class CSVDataDrivenTestScenarioFromSeveralPossibleSources{}
+
+    @Test
+    public void should_load_test_data_from_several_possible_sources() throws IOException {
+
+        TestClass testClass = new TestClass(CSVDataDrivenTestScenarioFromSeveralPossibleSources.class);
+
+        List<PersonTestScenario> testScenarios
+                = DataDrivenAnnotations.forClass(testClass)
+                .getDataAsInstancesOf(PersonTestScenario.class);
+
+        assertThat(testScenarios.size(), is(2));
+        assertThat(testScenarios.get(0).getName(), is("Joe Smith"));
+        assertThat(testScenarios.get(0).getAddress(), is("10 Main Street, Smithville"));
+        assertThat(testScenarios.get(1).getName(), is("Jack Black"));
+        assertThat(testScenarios.get(1).getAddress(), is("1 Main Street, Smithville"));
+    }
+
+    @UseTestDataFrom(value="does-not-exist/simple-semicolon-data.csv,still-does-not-exist/simple-semicolon-data.csv", separator=';')
+    final static class CSVDataDrivenTestScenarioFromSeveralPossibleSourcesWithNoValidSource{}
+
+    @Test(expected = IllegalArgumentException.class)
+    public void should_load_test_data_from_several_possible_sources_with_no_valid_source() throws IOException {
+
+        TestClass testClass = new TestClass(CSVDataDrivenTestScenarioFromSeveralPossibleSourcesWithNoValidSource.class);
+
+        List<PersonTestScenario> testScenarios
+                = DataDrivenAnnotations.forClass(testClass)
+                .getDataAsInstancesOf(PersonTestScenario.class);
     }
 
 }

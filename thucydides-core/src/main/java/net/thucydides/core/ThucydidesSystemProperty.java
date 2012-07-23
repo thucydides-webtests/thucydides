@@ -261,7 +261,12 @@ public enum ThucydidesSystemProperty {
      * If provided, Thucydides will log information about the total number of tests to be executed,
      * and keep a tally of the executed tests.
      */
-    TEST_ROOT_PACKAGE("thucydides.test.root");
+    TEST_ROOT_PACKAGE("thucydides.test.root"),
+
+    /**
+     * The directory Thucydides will use to find CSV files for data-driven tests, if the $DATADIR variable is used.
+     */
+    DATA_DIRECTORY("thucydides.data.dir");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

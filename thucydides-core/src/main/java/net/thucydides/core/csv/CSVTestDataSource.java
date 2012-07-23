@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,16 @@ public class CSVTestDataSource implements TestDataSource {
     public CSVTestDataSource(final String path) throws IOException {
         this(path, CSVReader.DEFAULT_SEPARATOR);
     }
-    
+
+    public static boolean validTestDataPath(final String path) {
+        if (validFileSystemPath(path)) {
+            return true;
+        } else {
+            URL testDataUrl = CSVTestDataSource.class.getClassLoader().getResource(path);
+            return (testDataUrl != null ) && new File(testDataUrl.getFile()).exists();
+        }
+    }
+
     private Reader getDataFileFor(final String path) throws FileNotFoundException {
         if (isAClasspathResource(path)) {
             try {
@@ -49,11 +59,11 @@ public class CSVTestDataSource implements TestDataSource {
         return new FileReader(new File(path));
     }
 
-    private boolean isAClasspathResource(final String path) {
+    private static boolean isAClasspathResource(final String path) {
         return (!validFileSystemPath(path));
     }
 
-    private boolean validFileSystemPath(final String path) {
+    private static boolean validFileSystemPath(final String path) {
         File file = new File(path);
         return file.exists();
     }
