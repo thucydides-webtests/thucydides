@@ -1,4 +1,4 @@
-package net.thucydides.core.reports
+package net.thucydides.core.reports.integration
 
 import net.thucydides.core.model.TestOutcome
 import spock.lang.Specification
@@ -9,6 +9,8 @@ import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.withResul
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagName
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagType
 import net.thucydides.core.statistics.model.TestStatistics
+import net.thucydides.core.reports.TestOutcomeLoader
+import net.thucydides.core.reports.TestOutcomes
 
 class WhenProcessingTestOutcomes extends Specification {
 

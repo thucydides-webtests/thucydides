@@ -266,7 +266,12 @@ public enum ThucydidesSystemProperty {
     /**
      * The directory Thucydides will use to find CSV files for data-driven tests, if the $DATADIR variable is used.
      */
-    DATA_DIRECTORY("thucydides.data.dir");
+    DATA_DIRECTORY("thucydides.data.dir"),
+
+    /**
+     * The jpa provider to use. Defaults to hibernate but can have values defined by JpaProvider enum
+     */
+    JPA_PROVIDER("thucydides.jpa.provider");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

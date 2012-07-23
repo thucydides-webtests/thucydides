@@ -2,11 +2,7 @@ package net.thucydides.core.statistics.model;
 
 import org.hibernate.annotations.Immutable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +11,8 @@ import java.util.Set;
 public class TestRunTag {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
+    @SequenceGenerator(name="seq",sequenceName="HIBERNATE_SEQUENCE", allocationSize=1)
     private Long id;
 
     private String projectKey;
@@ -48,7 +45,7 @@ public class TestRunTag {
         return type;
     }
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", cascade = CascadeType.PERSIST)
     private Set<TestRun> testRuns = new HashSet<TestRun>();
 
     public Set<TestRun> getTestRuns() {
