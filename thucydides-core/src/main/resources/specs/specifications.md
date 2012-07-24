@@ -7,7 +7,7 @@ This document contains the main features we want to implement in the thucydides 
 This module is supposed to be test-framework neutral, so should be able to work with JUnit, easyb,
 and other testing frameworks. It takes care of features such as 
 
-  - recording the test narrative and test results
+  - recording the test narrativeText and test results
   - producing an XML report for an acceptance test
   
 ## Features

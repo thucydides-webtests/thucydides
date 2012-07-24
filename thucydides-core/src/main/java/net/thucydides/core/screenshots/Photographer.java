@@ -1,6 +1,7 @@
 package net.thucydides.core.screenshots;
 
 import com.google.common.base.Optional;
+import com.google.common.io.Files;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import org.apache.commons.io.FileUtils;
@@ -99,7 +100,6 @@ public class Photographer {
         }
         return null;
     }
-
 
     private File targetScreenshot(String prefix) {
         targetDirectory.mkdirs();

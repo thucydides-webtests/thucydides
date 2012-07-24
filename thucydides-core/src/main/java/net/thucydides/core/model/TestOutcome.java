@@ -332,6 +332,14 @@ public class TestOutcome {
         return getTitleFrom(userStory);
     }
 
+    public String getPath() {
+        if (userStory != null) {
+            return userStory.getPath();
+        } else {
+            return null;
+        }
+    }
+
     private String getTitleFrom(final Story userStory) {
         return userStory.getName();
     }

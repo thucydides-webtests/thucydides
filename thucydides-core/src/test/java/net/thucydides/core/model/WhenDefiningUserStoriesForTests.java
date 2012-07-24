@@ -107,4 +107,16 @@ public class WhenDefiningUserStoriesForTests {
 
     }
 
+    @Test
+    public void a_story_can_be_defined_using_a_name_and_a_path() {
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.withIdAndPath("storyId","story name","a.b.c");
+        assertThat(story.getPath(), is("a.b.c"));
+    }
+
+    @Test
+    public void a_story_path_for_a_class_is_derived_from_the_package() {
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyUserStories.PurchaseNewWidget.class);
+        assertThat(story.getPath(), is("net.thucydides.core.model"));
+    }
+
 }

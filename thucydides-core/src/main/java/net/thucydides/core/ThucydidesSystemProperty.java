@@ -259,14 +259,25 @@ public enum ThucydidesSystemProperty {
     /**
      * The root package for the tests in a given project.
      * If provided, Thucydides will log information about the total number of tests to be executed,
-     * and keep a tally of the executed tests.
+     * and keep a tally of the executed tests. It will also use this as the root package when determining the
+     * capabilities associated with a test.
      */
     TEST_ROOT_PACKAGE("thucydides.test.root"),
 
+  /**
+     * The hierarchy of capability types.
+     * This is the list of capability types to be used when reading capabilities from the file system
+     * and when organizing the reports. It is a comma-separated list of tags.The default value is: capability, feature
+     */
+    CAPABILITY_TYPES("thucydides.capability.types"),
+
     /**
-     * The directory Thucydides will use to find CSV files for data-driven tests, if the $DATADIR variable is used.
+     * The hierarchy of capability types.
+     * This is the list of capability types to be used when reading capabilities from the file system
+     * and when organizing the reports. It is a comma-separated list of tags.The default value is: capability, feature
      */
     DATA_DIRECTORY("thucydides.data.dir");
+
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

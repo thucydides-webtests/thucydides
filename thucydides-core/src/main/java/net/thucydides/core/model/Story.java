@@ -5,6 +5,10 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.EqualsUtils;
 import net.thucydides.core.util.NameConverter;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static ch.lambdaj.Lambda.joinFrom;
 import static net.thucydides.core.model.ReportType.ROOT;
 
 /**
@@ -16,6 +20,7 @@ public class Story {
     private final Class<?> userStoryClass;
     private final String qualifiedStoryClassName;
     private final String storyName;
+    private final String path;
     private final String qualifiedFeatureClassName;
     private final String featureName;
 
@@ -25,6 +30,7 @@ public class Story {
         this.storyName = NameConverter.humanize(getUserStoryClass().getSimpleName());
         this.qualifiedFeatureClassName = findFeatureClassName();
         this.featureName = findFeatureName();
+        this.path = userStoryClass.getPackage().getName();
     }
 
     private String findFeatureClassName() {
@@ -42,12 +48,14 @@ public class Story {
     }
 
     protected Story(final String qualifiedStoryClassName, final String storyName,
-                    final String qualifiedFeatureClassName, final String featureName) {
+                    final String qualifiedFeatureClassName, final String featureName,
+                    final String path) {
         this.userStoryClass = null;
         this.qualifiedStoryClassName = qualifiedStoryClassName;
         this.storyName = storyName;
         this.qualifiedFeatureClassName = qualifiedFeatureClassName;
         this.featureName = featureName;
+        this.path = path;
     }
 
     public String getId() {
@@ -67,16 +75,20 @@ public class Story {
      * of the original story class. This is used to deserialize stories from XML files.
      */
     public static Story withId(final String storyId, final String storyName) {
-        return new Story(storyId, storyName, null, null);
+        return new Story(storyId, storyName, null, null, null);
+    }
+
+    public static Story withIdAndPath(final String storyId, final String storyName, final String storyPath) {
+        return new Story(storyId, storyName, null, null, storyPath);
     }
 
     public static Story called(final String storyName) {
-        return new Story(storyName, storyName, null, null);
+        return new Story(storyName, storyName, null, null, null);
     }
 
     public static Story withId(final String storyId, final String storyName,
                                final String featureClassName, final String featureName) {
-        return new Story(storyId, storyName, featureClassName, featureName);
+        return new Story(storyId, storyName, featureClassName, featureName, null);
     }
 
 
@@ -182,5 +194,9 @@ public class Story {
         } else {
             return null;
         }
+    }
+
+    public String getPath() {
+        return path;
     }
 }
