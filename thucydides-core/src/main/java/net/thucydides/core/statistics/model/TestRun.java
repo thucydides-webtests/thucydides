@@ -1,10 +1,17 @@
 package net.thucydides.core.statistics.model;
 
+import com.google.common.collect.ImmutableSet;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import org.hibernate.annotations.Immutable;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,19 +21,16 @@ import java.util.Set;
 public class TestRun {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
-    @SequenceGenerator(name="seq",sequenceName="HIBERNATE_SEQUENCE", allocationSize=1)
+    @GeneratedValue
     private Long id;
 
     private String title;
     private String projectKey;
     private TestResult result;
-
-    @Temporal(TemporalType.TIMESTAMP)
     private Date executionDate;
     private long duration;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany
     @JoinTable(
             name = "testrun_tags",
             joinColumns = {@JoinColumn(name = "testrun_id")},
@@ -56,7 +60,6 @@ public class TestRun {
         return result;
     }
 
-
     public Date getExecutionDate() {
         return (executionDate == null) ? null : new Date(executionDate.getTime());
     }
@@ -79,13 +82,5 @@ public class TestRun {
 
     public TestRun at(final Date executionDate) {
         return new TestRun(getTitle(), getProjectKey(), getResult(), getDuration(), executionDate);
-    }
-
-    @Override
-    public String toString() {
-        return "TestRun{" +
-                "title='" + title + '\'' +
-                ", projectKey='" + projectKey + '\'' +
-                '}';
     }
 }

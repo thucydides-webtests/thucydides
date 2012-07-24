@@ -13,5 +13,4 @@ public interface LocalDatabase {
     String getUsername();
     String getPassword();
     String getDialect();
-    String getDBPlatform();
 }

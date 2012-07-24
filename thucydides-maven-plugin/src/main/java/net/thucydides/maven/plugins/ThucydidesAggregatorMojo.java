@@ -64,14 +64,6 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
      */
     public String projectKey;
 
-    /**
-     * Thucydides Jpa provider name
-     * @parameter expression="${thucydides.jpa.provider}" default-value="Hibernate"
-     *
-     */
-    public String jpaProvider;
-
-
     private HtmlAggregateStoryReporter reporter;
 
     protected void setOutputDirectory(final File outputDirectory) {
@@ -107,9 +99,6 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     private void configureEnvironmentVariables() {
         if (projectKey != null) {
             System.setProperty(ThucydidesSystemProperty.PROJECT_KEY.getPropertyName(), projectKey);
-        }
-        if (jpaProvider != null) {
-            System.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), jpaProvider);
         }
     }
 

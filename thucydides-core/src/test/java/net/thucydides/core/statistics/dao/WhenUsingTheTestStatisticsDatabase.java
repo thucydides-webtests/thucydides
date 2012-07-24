@@ -4,9 +4,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import net.thucydides.core.Thucydides;
-import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.guice.*;
-import net.thucydides.core.jpa.JPAProvider;
+import net.thucydides.core.guice.DatabaseConfig;
+import net.thucydides.core.guice.EnvironmentVariablesDatabaseConfig;
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.guice.ThucydidesModule;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.statistics.service.ClasspathTagProviderService;
@@ -54,15 +55,14 @@ public class WhenUsingTheTestStatisticsDatabase {
     }
 
     @Test
-    public void should_be_able_to_define_statistics_database_via_hibernate_system_properties() {
+    public void should_be_able_to_define_statistics_database_via_system_properties() {
 
-        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.Hibernate.name());
         environmentVariables.setProperty("thucydides.statistics.driver_class", "org.hsqldb.jdbc.JDBCDriver");
         environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:test");
         environmentVariables.setProperty("thucydides.statistics.username", "admin");
         environmentVariables.setProperty("thucydides.statistics.password", "password");
 
-        JPATestOutcomeHistoryDAO dao = injector.getInstance(JPATestOutcomeHistoryDAO.class);
+        HibernateTestOutcomeHistoryDAO dao = injector.getInstance(HibernateTestOutcomeHistoryDAO.class);
 
         Map properties = dao.entityManagerFactory.getProperties();
 
@@ -70,28 +70,6 @@ public class WhenUsingTheTestStatisticsDatabase {
         assertThat((String)properties.get("hibernate.connection.url"), is("jdbc:hsqldb:mem:test"));
         assertThat((String)properties.get("hibernate.connection.username"), is("admin"));
         assertThat((String)properties.get("hibernate.connection.password"), is("password"));
-        assertThat((String)properties.get("thucydides.jpa.provider"), is(JPAProvider.Hibernate.name()));
-    }
-
-    @Test
-    public void should_be_able_to_define_statistics_database_via_eclipselink_system_properties() {
-
-        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.EclipseLink.name());
-        environmentVariables.setProperty("thucydides.statistics.driver_class", "org.hsqldb.jdbc.JDBCDriver");
-        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:test");
-        environmentVariables.setProperty("thucydides.statistics.username", "admin");
-        environmentVariables.setProperty("thucydides.statistics.password", "password");
-
-        JPATestOutcomeHistoryDAO dao = injector.getInstance(JPATestOutcomeHistoryDAO.class);
-
-        Map properties = dao.entityManagerFactory.getProperties();
-
-        assertThat((String)properties.get("javax.persistence.jdbc.driver"), is("org.hsqldb.jdbc.JDBCDriver"));
-        assertThat((String)properties.get("javax.persistence.jdbc.url"), is("jdbc:hsqldb:mem:test"));
-        assertThat((String)properties.get("javax.persistence.jdbc.user"), is("admin"));
-        assertThat((String)properties.get("javax.persistence.jdbc.password"), is("password"));
-        assertThat((String)properties.get("thucydides.jpa.provider"), is(JPAProvider.EclipseLink.name()));
-
     }
 
 
@@ -101,7 +79,7 @@ public class WhenUsingTheTestStatisticsDatabase {
 
         assertThat(dao, is(notNullValue()));
 
-        assertThat(((JPATestOutcomeHistoryDAO)dao).entityManagerFactory, is(notNullValue()));
+        assertThat(((HibernateTestOutcomeHistoryDAO)dao).entityManagerFactory, is(notNullValue()));
     }
 
     @Test

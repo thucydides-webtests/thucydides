@@ -215,6 +215,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -233,61 +234,5 @@
             <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.4.0</version>
-            <optional>true</optional>
-        </dependency>
     </dependencies>
-    <repositories>
-        <repository>
-            <id>EclipseLink Repo</id>
-            <!-- note that ampersands in this URL are escaped because this is in an xml file -
-                   un-escape them to use in browser
-            -->
-            <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
-            <!-- use this for javax.persistence
-           <snapshots>
-              <enabled>true</enabled>
-           </snapshots> -->
-        </repository>
-    </repositories>
-    <build>
-    	<pluginManagement>
-    		<plugins>
-    			<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-    			<plugin>
-    				<groupId>org.eclipse.m2e</groupId>
-    				<artifactId>lifecycle-mapping</artifactId>
-    				<version>1.0.0</version>
-    				<configuration>
-    					<lifecycleMappingMetadata>
-    						<pluginExecutions>
-    							<pluginExecution>
-    								<pluginExecutionFilter>
-    									<groupId>
-    										org.codehaus.gmaven
-    									</groupId>
-    									<artifactId>
-    										gmaven-plugin
-    									</artifactId>
-    									<versionRange>
-    										[1.3,)
-    									</versionRange>
-    									<goals>
-    										<goal>testCompile</goal>
-    									</goals>
-    								</pluginExecutionFilter>
-    								<action>
-    									<ignore />
-    								</action>
-    							</pluginExecution>
-    						</pluginExecutions>
-    					</lifecycleMappingMetadata>
-    				</configuration>
-    			</plugin>
-    		</plugins>
-    	</pluginManagement>
-    </build>
 </project>

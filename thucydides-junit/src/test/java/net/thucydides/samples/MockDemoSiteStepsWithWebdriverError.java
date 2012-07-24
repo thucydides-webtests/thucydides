@@ -1,11 +1,17 @@
 package net.thucydides.samples;
 
 import net.thucydides.core.annotations.Step;
+import net.thucydides.core.pages.Pages;
+import net.thucydides.core.steps.ScenarioSteps;
 import org.openqa.selenium.NoSuchElementException;
 
-public class MockDemoSiteStepsWithWebdriverError {
+public class MockDemoSiteStepsWithWebdriverError extends ScenarioSteps {
 
-	@Step
+    public MockDemoSiteStepsWithWebdriverError(Pages pages) {
+        super(pages);
+    }
+
+    @Step
     public void enter_values(String selectValue, boolean checkboxValue) {
     }
 

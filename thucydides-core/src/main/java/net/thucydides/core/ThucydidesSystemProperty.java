@@ -276,12 +276,7 @@ public enum ThucydidesSystemProperty {
      * This is the list of capability types to be used when reading capabilities from the file system
      * and when organizing the reports. It is a comma-separated list of tags.The default value is: capability, feature
      */
-    DATA_DIRECTORY("thucydides.data.dir"),
-
-    /**
-     * The jpa provider to use. Defaults to hibernate but can have values defined by JpaProvider enum
-     */
-    JPA_PROVIDER("thucydides.jpa.provider");
+    DATA_DIRECTORY("thucydides.data.dir");
 
 
     private String propertyName;

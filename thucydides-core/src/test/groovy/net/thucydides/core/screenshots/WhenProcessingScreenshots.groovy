@@ -26,12 +26,11 @@ class WhenProcessingScreenshots extends Specification {
 
     }
 
-    int counter = 1;
     private File copySourceScreenshot(File sourceDirectory) {
         def screenshotsSourceDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots").getPath());
         def sampleScreenshot = new File(screenshotsSourceDirectory, "amazon.png")
         def timestamp = System.currentTimeMillis()
-        def screenshot = new File(sourceDirectory, "amazon-${counter++}.png")
+        def screenshot = new File(sourceDirectory, "amazon-${timestamp}.png")
         Files.copy(sampleScreenshot, screenshot)
         return screenshot;
     }

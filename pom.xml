@@ -114,8 +114,6 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
-                            <forkMode>pertest</forkMode>
-                            <argLine>-Xms256m -Xmx512m</argLine>
                             <excludes>
                                 <exclude>**/Abstract*.*</exclude>
                                 <exclude>**/samples/*.*</exclude>
