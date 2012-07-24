@@ -51,22 +51,6 @@ public class WhenFindingTagsForATestOutcome {
     }
 
     @Test
-    @Ignore
-    public void should_find_a_custom_tag_provider_in_a_specified_package() {
-        environmentVariables.setProperty("thucydides.ext.packages","some.other.place");
-        TagProviderService tagProviderService = new ClasspathTagProviderService();
-        List<TagProvider> tagProviders = tagProviderService.getTagProviders();
-
-        boolean containsAlternativeTagProvider = false;
-        for(TagProvider provider : tagProviders) {
-            if (provider instanceof AlternativeTagProvider) {
-                containsAlternativeTagProvider = true;
-            }
-        }
-        assertThat(containsAlternativeTagProvider, is(true));
-    }
-
-    @Test
     public void annotation_based_tag_should_return_no_tags_if_the_test_class_is_not_defined() {
         when(emptyTestOutcome.getTestCase()).thenReturn(null);
 

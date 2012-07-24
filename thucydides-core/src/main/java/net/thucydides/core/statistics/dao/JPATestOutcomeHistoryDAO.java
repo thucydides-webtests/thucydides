@@ -26,7 +26,7 @@ import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
 
-public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
+public class JPATestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
 
     private static final String FIND_ALL_TEST_HISTORIES = "select t from TestRun t where t.projectKey = :projectKey order by t.executionDate";
     private static final String FIND_BY_NAME = "select t from TestRun t where t.title = :title and t.projectKey = :projectKey";
@@ -122,13 +122,13 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
 
     private TagProviderService tagProviderService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateTestOutcomeHistoryDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JPATestOutcomeHistoryDAO.class);
 
     @Inject
-    public HibernateTestOutcomeHistoryDAO(EntityManagerFactory entityManagerFactory,
-                                          EnvironmentVariables environmentVariables,
-                                          TagProviderService tagProviderService,
-                                          SystemClock clock) {
+    public JPATestOutcomeHistoryDAO(EntityManagerFactory entityManagerFactory,
+                                    EnvironmentVariables environmentVariables,
+                                    TagProviderService tagProviderService,
+                                    SystemClock clock) {
         this.entityManagerFactory = entityManagerFactory;
         this.environmentVariables = environmentVariables;
         this.clock = clock;
@@ -138,18 +138,27 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     @Override
     public List<TestRun> findAll() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return entityManager.createQuery(FIND_ALL_TEST_HISTORIES)
+        try {
+            return entityManager.createQuery(FIND_ALL_TEST_HISTORIES)
                             .setParameter("projectKey", getProjectKey())
                             .getResultList();
+        }finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public List<TestRun> findTestRunsByTitle(String title) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return (List<TestRun>) entityManager.createQuery(FIND_BY_NAME)
+
+        try {
+            return (List<TestRun>) entityManager.createQuery(FIND_BY_NAME)
                                             .setParameter("projectKey", getProjectKey())
                                             .setParameter("title", title)
-                                            .getResultList();
+                                       .getResultList();
+        }finally {
+            entityManager.close();
+        }
     }
 
     @Override
@@ -159,17 +168,24 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         try {
             storeEachOutcomeIn(entityManager, testOutcomes);
             entityManager.getTransaction().commit();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
         }
     }
 
     @Override
     public void storeTestOutcome(TestOutcome testOutcome) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-        persistTestOutcome(entityManager, testOutcome);
-        entityManager.getTransaction().commit();
+        try {
+            entityManager.getTransaction().begin();
+            persistTestOutcome(entityManager, testOutcome);
+            entityManager.getTransaction().commit();
+        }finally {
+            entityManager.close();
+        }
     }
 
     private void persistTestOutcome(EntityManager entityManager, TestOutcome testOutcome) {
@@ -257,7 +273,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     }
 
     private List<TestRunTag> findTagsMatching(EntityManager entityManager, TestRunTag tag) {
-        return entityManager.createQuery(HibernateTestOutcomeHistoryDAO.FIND_TAG_BY_NAME_IGNORING_CASE)
+        return entityManager.createQuery(JPATestOutcomeHistoryDAO.FIND_TAG_BY_NAME_IGNORING_CASE)
                 .setParameter("name", tag.getName().toLowerCase())
                 .setParameter("type", tag.getType())
                 .setParameter("projectKey", tag.getProjectKey())
@@ -281,8 +297,11 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
                 entityManager.remove(entityManager.merge(testRun));
             }
             entityManager.getTransaction().commit();
-        }catch(Exception e) {
+        }catch(RuntimeException e) {
             entityManager.getTransaction().rollback();
+            throw e;
+        }finally {
+            entityManager.close();
         }
 
     }

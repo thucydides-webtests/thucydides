@@ -2,12 +2,12 @@ package net.thucydides.core.guice;
 
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.jpa.JPAProvider;
+import net.thucydides.core.jpa.JPAProviderConfig;
+import net.thucydides.core.jpa.JPAProviderConfigFactory;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -21,6 +21,7 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
 
     private final EnvironmentVariables environmentVariables;
     private final LocalDatabase localDatabase;
+    private final JPAProviderConfig providerConfig;
     private boolean isActive = true;
 
     @Inject
@@ -28,60 +29,23 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
                                               LocalDatabase localDatabase) {
         this.environmentVariables = environmentVariables;
         this.localDatabase = localDatabase;
+        this.providerConfig = JPAProviderConfigFactory.getJPAProviderConfig(environmentVariables, localDatabase);
     }
 
     @Override
     public Properties getProperties() {
         Properties properties = new Properties();
-
         String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", localDatabase.getDriver());
-        String url = environmentVariables.getProperty("thucydides.statistics.url", localDatabase.getUrl());
-        String username = environmentVariables.getProperty("thucydides.statistics.username", localDatabase.getUsername());
-        String password = environmentVariables.getProperty("thucydides.statistics.password", localDatabase.getPassword());
-        String dialect = environmentVariables.getProperty("thucydides.statistics.dialect", localDatabase.getDialect());
+        properties.put(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(),
+                ThucydidesSystemProperty.JPA_PROVIDER.from(environmentVariables, JPAProviderConfigFactory.DEFAULT_PROVIDER.name()));
 
-        properties.put("hibernate.connection.driver_class", driver);
-        properties.put("hibernate.connection.url", url);
-        properties.put("hibernate.connection.username", username);
-        properties.put("hibernate.connection.password", password);
-        properties.put("hibernate.dialect", dialect);
-        properties.put("hibernate.connection.pool_size", "1");
+        providerConfig.setProperties(properties);
 
-        boolean databaseIsConfigured = databaseIsConfigured(properties);
-        if (isUsingLocalDatabase() || !databaseIsConfigured) {
-            properties.put("hibernate.hbm2ddl.auto", "update");
-        } else {
-            properties.put("hibernate.hbm2ddl.auto", "validate");
-        }
         return properties;
     }
 
-    private boolean databaseIsConfigured(Properties targetConfiguration) {
-        Properties connectionProps = new Properties();
-        connectionProps.put("user", targetConfiguration.getProperty("hibernate.connection.username"));
-        connectionProps.put("password", targetConfiguration.getProperty("hibernate.connection.password"));
-        String jdbcConnection = targetConfiguration.getProperty("hibernate.connection.url");
-        try {
-            Connection conn = DriverManager.getConnection(jdbcConnection, connectionProps);
-            List<String> tables = getTablesFrom(conn);
-            return tables.contains("TESTRUN");
-        } catch (SQLException e) {
-            return false;
-        }
-    }
-
-    private List<String> getTablesFrom(Connection conn) throws SQLException {
-        DatabaseMetaData md = conn.getMetaData();
-        ResultSet rs = md.getTables(null, null, "%", null);
-        List<String> tableNames = new ArrayList<String>();
-        while (rs.next()) {
-            tableNames.add(rs.getString(TABLE_NAME_COLUMN));
-        }
-        return tableNames;
-    }
-
     public boolean isUsingLocalDatabase() {
-        return (environmentVariables.getProperty("thucydides.statistics.url") == null);
+        return providerConfig.isUsingLocalDatabase();
     }
 
     private boolean isStatisticsDisabled() {

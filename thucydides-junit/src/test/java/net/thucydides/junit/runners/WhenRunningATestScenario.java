@@ -295,12 +295,14 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
 
     @Test
-    public void tests_should_be_run_after_an_assertion_error() throws InitializationError {
+    public void tests_should_be_run_after_an_assertion_error() throws InitializationError, InterruptedException{
 
-        ThucydidesRunner runner = new ThucydidesRunner(MockOpenStaticDemoPageWithFailureSample.class);
+        ThucydidesRunner runner;
+        runner = new ThucydidesRunner(MockOpenStaticDemoPageWithFailureSample.class);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        
         assertThat(executedSteps.size(), is(3));
         TestOutcome testOutcome1 = executedSteps.get(0);
         TestOutcome testOutcome2 = executedSteps.get(1);
