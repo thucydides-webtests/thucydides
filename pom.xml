@@ -1,4 +1,4 @@
- <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -53,6 +53,8 @@
         <junit.version>4.10</junit.version>
         <selenium.version>2.25.0</selenium.version>
         <hamcrest.version>1.1</hamcrest.version>
+        <easyb.version>1.5</easyb.version>
+        <groovy.version>1.8.6</groovy.version>
         <checkstyle.rules>https://thucydides.sonar.cloudbees.com/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo%2520Way</checkstyle.rules>
     </properties>
     <build>
@@ -65,6 +67,19 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>1.3.1</version>
+                <executions>
+                    <execution>
+                        <id>versions</id>
+                        <goals>
+                            <goal>update-parent</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -132,9 +147,10 @@
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
-                <version>1.3</version>
+                <version>1.4</version>
                 <configuration>
                     <providerSelection>1.8</providerSelection>
+                    <source/>
                 </configuration>
                 <executions>
                     <execution>
@@ -158,7 +174,7 @@
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-all</artifactId>
-                        <version>1.8.6</version>
+                        <version>${groovy.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -220,6 +236,7 @@
                         <format>xml</format>
                     </formats>
                     <aggregate>true</aggregate>
+                    <check>true</check>
                 </configuration>
             </plugin>
             <plugin>
