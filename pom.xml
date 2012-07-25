@@ -359,6 +359,33 @@
     </dependencies>
     <profiles>
         <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>thucydides-test-utils</module>
+                <module>thucydides-report-resources</module>
+                <module>thucydides-sample-alternative-resources</module>
+                <module>thucydides-core</module>
+                <module>thucydides-junit</module>
+                <module>thucydides-maven-plugin</module>
+                <module>thucydides-easyb-plugin</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>integration-tests</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>thucydides-maven-integration-tests</module>
+                <module>thucydides-easyb-integration-tests</module>
+            </modules>
+        </profile>
+
+        <profile>
             <id>cobertura</id>
             <build>
                 <plugins>
@@ -479,15 +506,4 @@
             </build>
         </profile>
     </profiles>
-    <modules>
-        <module>thucydides-test-utils</module>
-        <module>thucydides-report-resources</module>
-        <module>thucydides-sample-alternative-resources</module>
-        <module>thucydides-core</module>
-        <module>thucydides-junit</module>
-        <module>thucydides-maven-plugin</module>
-        <module>thucydides-maven-integration-tests</module>
-        <module>thucydides-easyb-plugin</module>
-        <module>thucydides-easyb-integration-tests</module>
-    </modules>
 </project>
