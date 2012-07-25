@@ -23,12 +23,14 @@ import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.internal.Lock;
+import org.openqa.selenium.remote.Response;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static ch.lambdaj.Lambda.filter;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -92,6 +94,13 @@ public class WhenInstanciatingANewFirefoxDriver {
         public MockedFirefoxDriver(Capabilities capabilities) {}
 
         @Override
+        protected Response execute(String driverCommand, Map<String, ?> parameters) {return new Response();}
+
+
+        @Override
+        protected void startSession(Capabilities desiredCapabilities, Capabilities requiredCapabilities) {}
+
+        @Override
         protected void startClient() {}
 
         @Override
@@ -102,6 +111,7 @@ public class WhenInstanciatingANewFirefoxDriver {
             return null;
         }
     }
+
 
     @Test
     public void should_support_creating_a_firefox_driver() throws Exception {
