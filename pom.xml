@@ -489,6 +489,5 @@
         <module>thucydides-maven-integration-tests</module>
         <module>thucydides-easyb-plugin</module>
         <module>thucydides-easyb-integration-tests</module>
-        <!--<module>thucydides-arquillian</module>-->
     </modules>
 </project>
