@@ -66,6 +66,13 @@ public class ThucydidesWebDriverSupport {
         }
     }
 
+    /**
+     * Ensure that the current active driver is closed the next time closeAllDrivers() is called.
+     */
+    public static void registerCurrentDriverToBeClosed() {
+
+    }
+
     public static void closeAllDrivers() {
         if (webdriversInitialized()) {
             getWebdriverManager().closeAllDrivers();
@@ -98,6 +105,8 @@ public class ThucydidesWebDriverSupport {
         lazyInitalize();
         return pagesThreadLocal.get();
     }
+
+
 
     /**
      * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.

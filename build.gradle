@@ -1,0 +1,158 @@
+project.ext {
+	currentBranch = getCurrentBranch()
+    releaseBranch = "release-${versionNumber}"
+    workDirectory = createWorkDirectory()
+    project = 'thucydides'
+    artifacts = ['thucydides-report-resources','thucydides-core', 'thucydides-junit','thucydides-maven-plugin','thucydides-easyb-plugin']
+    mavenRepo = "~/.m2/repository"
+}
+
+task createBranch {
+    executeOnShell "git checkout -b ${project.ext.releaseBranch}"
+}
+
+task setNewVersion {
+    dependsOn createBranch
+    executeOnShell "mvn versions:set -DnewVersion=${versionNumber}"
+}
+
+task buildArtifacts {
+    dependsOn setNewVersion
+//    executeOnShell "mvn clean install -am -pl ${project.ext.artifacts.join(',')}"
+//    project.ext.artifacts.each {
+//        executeOnShell "cd $it && mvn source:jar javadoc:jar && cd .."
+//    }
+}
+
+task deployArtifacts {
+	dependsOn buildArtifacts
+    def parentPomFile = findParentArtifact()
+    def jarFiles = findChildArtifacts()
+    def javadocFiles = findJavadocArtifacts()
+    def sourceJarFiles = findSourceArtifacts()
+
+    def allArtifacts = jarFiles + javadocFiles + sourceJarFiles
+
+    deployFile(parentPomFile, parentPomFile)
+
+    allArtifacts.each { jarFile ->
+        def pomFile = jarFile.replace(".jar",".pom")
+        deployFile(pomFile, jarFile)
+    }
+}
+
+task listArtifacts {
+    def parentPomFile = findParentArtifact()
+    def jarFiles = findChildArtifacts()
+    def javadocFiles = findJavadocArtifacts()
+    def sourceJarFiles = findSourceArtifacts()
+
+    def allArtifacts = jarFiles + javadocFiles + sourceJarFiles
+    println allArtifacts
+}
+
+task pushNewBranch {
+    executeOnShell "git commit -a -m '[Release version ${versionNumber}]'"
+    executeOnShell "git push origin ${project.ext.releaseBranch}"
+}
+
+task checkoutOriginalBranch {
+    executeOnShell "git checkout ${project.ext.currentBranch}"
+}
+
+task release {
+	dependsOn deployArtifacts, pushNewBranch, checkoutOriginalBranch
+	println "RELEASING THUCYDIDES VERSION ${versionNumber}"
+}
+
+def deployFile(pomFilePath, artifactFilePath) {
+
+    println "Deploying $artifactFilePath"
+    def tempDirectory = project.ext.workDirectory
+    def toSonatypeStagingRepo = "-Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging"
+
+    def pomFile = new File(pomFilePath)
+    def artifactFile = new File(artifactFilePath)
+    def tempPom = new File(tempDirectory, pomFile.getName())
+    def tempArtifact = new File(tempDirectory, artifactFile.getName())
+
+    executeOnShell "cp ${pomFilePath.trim()} ${tempDirectory.path}"
+    executeOnShell "cp ${artifactFilePath.trim()} ${tempDirectory.path}"
+    executeOnShell "mvn gpg:sign-and-deploy-file $toSonatypeStagingRepo -DpomFile=${tempPom.path} -Dfile=${tempArtifact.path}"
+
+}
+
+def getCurrentBranch() {
+	def branches = executeOnShell('git branch',true)
+	def branch = branches.readLines().find { it.startsWith('*') }
+	branch.stripIndent(2)
+}
+
+def findParentArtifact() {
+    def parentPom = executeOnShell "find ~/.m2/repository -name '*.pom' | grep ${project.ext.project}-${versionNumber}.pom"
+    parentPom.trim()
+}
+
+def findChildArtifacts() {
+    findJarsWithQualifier(versionNumber, "~/.m2/repository")
+}
+
+def findJavadocArtifacts() {
+    findJarsWithQualifier("javadoc")
+}
+
+def findSourceArtifacts() {
+    findJarsWithQualifier("sources")
+}
+
+def findJarsWithQualifier(qualifier) {
+    findJarsWithQualifier(qualifier,".")
+}
+
+def findJarsWithQualifier(qualifier, directory) {
+
+    def artifactPaths = []
+
+    project.ext.artifacts.each {
+        def jarFile = executeOnShell "find ${directory} -name '*.jar' | grep ${it} | grep ${qualifier}.jar"
+        if (jarFile) {
+            artifactPaths.add jarFile.trim()
+        }
+
+    }
+    return artifactPaths
+}
+def executeOnShell(String command) {
+    return executeOnShell(command, false)
+}
+
+def createWorkDirectory() {
+    File dir = File.createTempFile( 'artifacts', '.dir' )
+    dir.delete()
+    dir.mkdir()
+    return dir
+}
+
+private def executeOnShell(String command, boolean failOnError) {
+    println "EXECUTING $command"
+    def output = new StringBuffer();
+    def process = new ProcessBuilder(addShellPrefix(command))
+            .redirectErrorStream(true)
+            .start()
+    process.inputStream.eachLine {println it; output.append(it).append("\n")}
+    process.waitFor();
+    if (failOnError && process.exitValue() != 0) {
+        throw new GradleException("$command failed to execute")
+    }
+    return output.toString()
+}
+
+private def addShellPrefix(String command) {
+    commandArray = new String[3]
+    commandArray[0] = "sh"
+    commandArray[1] = "-c"
+    commandArray[2] = command
+    return commandArray
+}
+
+

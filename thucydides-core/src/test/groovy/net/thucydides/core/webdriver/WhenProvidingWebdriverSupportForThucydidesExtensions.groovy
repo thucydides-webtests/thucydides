@@ -88,7 +88,7 @@ class WhenProvidingWebdriverSupportForThucydidesExtensions extends Specification
             ThucydidesWebDriverSupport.driver.driverClass == FirefoxDriver
     }
 
-    def "should not initialize agail if already initialized with a given driver"() {
+    def "should not initialize again if already initialized with a given driver"() {
         when: "we initialize Thucydides support"
             ThucydidesWebDriverSupport.initialize()
             def firstDriver = ThucydidesWebDriverSupport.driver;
