@@ -31,13 +31,16 @@ task deployArtifacts {
     def javadocFiles = findJavadocArtifacts()
     def sourceJarFiles = findSourceArtifacts()
 
-    def allArtifacts = jarFiles + javadocFiles + sourceJarFiles
+    def allArtifacts = jarFiles
 
     deployFile(parentPomFile, parentPomFile)
 
-    allArtifacts.each { jarFile ->
+    jarFiles.each { jarFile ->
+        def artifactName = new File(jarFile).name.replace(".jar","")
         def pomFile = jarFile.replace(".jar",".pom")
-        deployFile(pomFile, jarFile)
+        def sourceFile = sourceJarFiles.find { it.contains(artifactName)}
+        def javadocFile = javadocFiles.find { it.contains(artifactName)}
+        deployFiles(pomFile, jarFile, sourceFile, javadocFile)
     }
 }
 
@@ -56,6 +59,10 @@ task release {
 }
 
 def deployFile(pomFilePath, artifactFilePath) {
+    deployFiles(pomFilePath, artifactFilePath, null, null)
+}
+
+def deployFiles(pomFilePath, artifactFilePath, sourceFile, javadocFile) {
 
     println "Deploying $artifactFilePath"
     def tempDirectory = project.ext.workDirectory
@@ -69,6 +76,12 @@ def deployFile(pomFilePath, artifactFilePath) {
     executeOnShell "cp ${pomFilePath.trim()} ${tempDirectory.path}"
     executeOnShell "cp ${artifactFilePath.trim()} ${tempDirectory.path}"
     executeOnShell "mvn gpg:sign-and-deploy-file $toSonatypeStagingRepo -DpomFile=${tempPom.path} -Dfile=${tempArtifact.path}"
+    if (sourceFile) {
+        executeOnShell "mvn gpg:sign-and-deploy-file $toSonatypeStagingRepo -DpomFile=${tempPom.path} -Dfile=${sourceFile}"
+    }
+    if (javadocFile) {
+        executeOnShell "mvn gpg:sign-and-deploy-file $toSonatypeStagingRepo -DpomFile=${tempPom.path} -Dfile=${javadocFile}"
+    }
 
 }
 
