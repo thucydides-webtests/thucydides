@@ -18,10 +18,7 @@ task setNewVersion {
 
 task buildArtifacts {
     dependsOn setNewVersion
-    executeOnShell "mvn clean install -am -pl ${project.ext.artifacts.join(',')}"
-    project.ext.artifacts.each {
-        executeOnShell "cd $it && mvn source:jar javadoc:jar && cd .."
-    }
+    executeOnShell "mvn clean install javadoc:jar source:jar -T 2C -am -pl ${project.ext.artifacts.join(',')}"
 }
 
 task deployArtifacts {
@@ -63,8 +60,6 @@ def deployFile(pomFilePath, artifactFilePath) {
 def deployFiles(pomFilePath, artifactFilePath, sourceFile, javadocFile) {
 
     println "Deploying $artifactFilePath"
-    println " - sourceFile = $sourceFile"
-    println " - javadocFile = $javadocFile"
     def tempDirectory = project.ext.workDirectory
     def toSonatypeStagingRepo = "-Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging"
 
@@ -74,14 +69,16 @@ def deployFiles(pomFilePath, artifactFilePath, sourceFile, javadocFile) {
     def tempArtifact = new File(tempDirectory, artifactFile.getName())
 
     executeOnShell "cp ${pomFilePath.trim()} ${tempDirectory.path}"
-    executeOnShell "cp ${artifactFilePath.trim()} ${tempDirectory.path}"                            mvn
-    executeOnShell "mvn gpg:sign-and-deploy-file $toSonatypeStagingRepo -DpomFile=${tempPom.path} -Dfile=${tempArtifact.path}"
+    executeOnShell "cp ${artifactFilePath.trim()} ${tempDirectory.path}"
+
+    deployCmd = "mvn gpg:sign-and-deploy-file $toSonatypeStagingRepo -DpomFile=${tempPom.path} -Dfile=${tempArtifact.path}"
     if (sourceFile) {
-        executeOnShell "mvn gpg:sign-and-deploy-file $toSonatypeStagingRepo -DpomFile=${tempPom.path} -Dfile=${sourceFile}"
+        deployCmd += " -Dsources=$sourceFile"
     }
     if (javadocFile) {
-        executeOnShell "mvn gpg:sign-and-deploy-file $toSonatypeStagingRepo -DpomFile=${tempPom.path} -Dfile=${javadocFile}"
+        deployCmd += " -Djavadoc=$javadocFile"
     }
+    executeOnShell deployCmd
 
 }
 
