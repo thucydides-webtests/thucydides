@@ -32,6 +32,7 @@ class WhenProcessingScreenshots extends Specification {
         def timestamp = System.currentTimeMillis()
         def screenshot = new File(sourceDirectory, "amazon-${timestamp}.png")
         Files.copy(sampleScreenshot, screenshot)
+        Thread.sleep(100)
         return screenshot;
     }
 
@@ -39,7 +40,7 @@ class WhenProcessingScreenshots extends Specification {
         given:
             def screenshotProcessor = new MultithreadScreenshotProcessor(environmentVariables)
         when:
-            (1..100).each {
+            (1..10).each {
                 def screenshotFile = copySourceScreenshot(sourceDirectory)
                 def targetFile = new File(targetDirectory,"screenshot-${it}.png")
                 screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile,targetFile))
@@ -47,7 +48,7 @@ class WhenProcessingScreenshots extends Specification {
             screenshotProcessor.waitUntilDone()
         then:
             assert (screenshotProcessor.isEmpty())
-            assert targetDirectory.list().size() == 100
+            assert targetDirectory.list().size() == 10
     }
 
     def "should process queued screenshots when tests are run in parallel"() {
@@ -60,11 +61,12 @@ class WhenProcessingScreenshots extends Specification {
                         def screenshotFile = copySourceScreenshot(sourceDirectory)
                         def targetFile = new File(targetDirectory,"screenshot-${i}-${it}.png")
                         screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile,targetFile))
+                        screenshotProcessor.waitUntilDone()
                     }
-                    screenshotProcessor.waitUntilDone()
                 }
             }
             thread.join()
+            
 
         then:
             assert (screenshotProcessor.isEmpty())
