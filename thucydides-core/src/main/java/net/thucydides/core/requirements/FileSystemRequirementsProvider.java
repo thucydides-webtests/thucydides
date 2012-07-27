@@ -71,6 +71,7 @@ class FileSystemRequirementsProvider implements RequirementsProvider {
                 File rootDirectory = new File(rootDirectoryUrl.getPath());
                 File[] capabilityDirectories = rootDirectory.listFiles(thatAreDirectories());
                 requirements = loadCapabilitiesFrom(capabilityDirectories);
+                Collections.sort(requirements);
             } catch (IOException e) {
                 throw new IllegalArgumentException("Could not load requirements from '" + rootDirectoryPath + "'", e);
             }

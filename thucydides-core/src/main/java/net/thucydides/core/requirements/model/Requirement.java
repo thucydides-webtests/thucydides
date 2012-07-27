@@ -10,7 +10,7 @@ import java.util.List;
  * This report summarizes the state of the application in terms of what capabilities have been implemented.
  * Capabilities are implemented via <em>features</em>, which in turn are tested by scenarios.
  */
-public class Requirement {
+public class Requirement implements Comparable {
 
     private final String name;
     private final String type;
@@ -45,5 +45,10 @@ public class Requirement {
 
     public List<Requirement> getChildren() {
         return ImmutableList.copyOf(children);
+    }
+
+    @Override
+    public int compareTo(Object otherRequirement) {
+        return name.compareTo(((Requirement) otherRequirement).getName());
     }
 }
