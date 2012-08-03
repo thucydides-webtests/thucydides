@@ -36,8 +36,6 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
         System.out.println("Using tag providers: " + tagProviders);
         for (TagProvider tagProvider : tagProviders) {
             if (tagProvider instanceof RequirementsTagProvider) {
-                logger.info("FOUND REQUIREMENTS TAG PROVIDER " + tagProvider);
-                System.out.println("FOUND REQUIREMENTS TAG PROVIDER " + tagProviders);
                 requirementsTagProviders.add((RequirementsTagProvider)tagProvider);
             }
         }

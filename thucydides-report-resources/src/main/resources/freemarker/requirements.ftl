@@ -163,11 +163,11 @@
                                                 <#assign childrenTitle = inflection.of(requirements.childrenType).inPluralForm().asATitle()>
                                                 <th width="65" class="test-results-heading">${childrenTitle}</th>
                                             </#if>
-                                            <th width="65" class="test-results-heading">Tests</th>
-                                            <th width="65" class="test-results-heading">Pass</th>
-                                            <th width="65" class="test-results-heading">Fail</th>
-                                            <th width="65" class="test-results-heading">Pend</th>
-                                            <th width="65" class="test-results-heading">Skip</th>
+                                            <th width="50px" class="test-results-heading">Tests</th>
+                                            <th width="50px" class="test-results-heading">Pass</th>
+                                            <th width="50px" class="test-results-heading">Fail</th>
+                                            <th width="50px" class="test-results-heading">Pend</th>
+                                            <th width="150px" class="test-results-heading">Coverage</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -184,32 +184,66 @@
                                             <#assign status_rank = 2>
                                         </#if>
 
-                                        <tr class="test-${requirementOutcome.testOutcomes.result}">
-                                            <td>
+                                        <tr class="test-${requirementOutcome.testOutcomes.result} requirementRow">
+                                            <td class="requirementRowCell">
                                                 <img src="images/${status_icon}" class="summary-icon"/>
                                                 <span style="display:none">${status_rank}</span>
                                             </td>
-                                            <td class="cardNumber">${requirementOutcome.cardNumberWithLinks}</td>
+                                            <td class="cardNumber requirementRowCell">${requirementOutcome.cardNumberWithLinks}</td>
 
                                             <#--<#if (requirementOutcome.requirement.children?has_content)>-->
                                                 <#assign requirementReport = reportName.forRequirement(requirementOutcome.requirement) >
                                             <#--<#else>-->
                                                 <#--<#assign requirementReport = "#" >-->
                                             <#--</#if>-->
-                                            <td class="${requirementOutcome.testOutcomes.result}-text">
+                                            <td class="${requirementOutcome.testOutcomes.result}-text requirementRowCell">
                                                 <span class="requirementName"><a href="${requirementReport}">${requirementOutcome.requirement.displayName}</a></span>
                                                 <span class="requirementNarrative">${requirementOutcome.requirement.narrativeText}</span>
                                             </td>
 
                                             <#if (requirements.childrenType?has_content) >
-                                                <td class="bluetext">${requirementOutcome.requirement.childrenCount}</td>
+                                                <td class="bluetext requirementRowCell">${requirementOutcome.requirement.childrenCount}</td>
                                             </#if>
 
-                                            <td class="bluetext">${requirementOutcome.testOutcomes.total}</td>
-                                            <td class="greentext">${requirementOutcome.testOutcomes.successCount}</td>
-                                            <td class="redtext">${requirementOutcome.testOutcomes.failureCount}</td>
-                                            <td class="lightredtext">${requirementOutcome.testOutcomes.pendingCount}</td>
-                                            <td class="lightredtext">${requirementOutcome.testOutcomes.skipCount}</td>
+                                            <td class="bluetext requirementRowCell">${requirementOutcome.testOutcomes.total}</td>
+                                            <td class="greentext requirementRowCell">${requirementOutcome.testOutcomes.successCount}</td>
+                                            <td class="redtext requirementRowCell">${requirementOutcome.testOutcomes.failureCount}</td>
+                                            <td class="lightredtext requirementRowCell">${requirementOutcome.testOutcomes.pendingCount + requirementOutcome.testOutcomes.skipCount}</td>
+
+
+                                            <td width="150px" class="lightgreentext requirementRowCell">
+                                                <#assign redbar = (1-requirementOutcome.testOutcomes.percentagePendingStepCount)*120>
+                                                <#assign greenbar = requirementOutcome.testOutcomes.percentagePassingStepCount*120>
+                                                <#assign passing = requirementOutcome.testOutcomes.formatted.percentPassingCoverage>
+                                                <#assign failing = requirementOutcome.testOutcomes.formatted.percentFailingCoverage>
+                                                <#assign pending = requirementOutcome.testOutcomes.formatted.percentPendingCoverage>
+
+                                                <#assign tests = inflection.of(requirementOutcome.testOutcomes.total).times("test") >
+                                                <#assign pendingCaption = "${requirementOutcome.testOutcomes.pendingCount} out of ${requirementOutcome.testOutcomes.total} ${tests} pending (${pending})">
+                                                <#assign passingCaption = "${requirementOutcome.testOutcomes.successCount} out of ${requirementOutcome.testOutcomes.total} ${tests} passing (${passing})">
+                                                <#assign failingCaption = "${requirementOutcome.testOutcomes.failureCount} out of ${requirementOutcome.testOutcomes.total} ${tests} failing (${failing})">
+                                                <#assign tests = inflection.of(requirementOutcome.testOutcomes.total).times('test') >
+
+                                                <table>
+                                                    <tr>
+                                                        <td width="50px">${passing}</td>
+                                                        <td width="10px">
+                                                            <div class="percentagebar"
+                                                                 title="${pendingCaption}"
+                                                                 style="width: 120px;">
+                                                                <div class="failingbar"
+                                                                     style="width: ${redbar?string("0")}px;"
+                                                                     title="${failingCaption}">
+                                                                    <div class="passingbar"
+                                                                         style="width: ${greenbar?string("0")}px;"
+                                                                         title="${passingCaption}">
+                                                                    </div>
+                                                                </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+
                                         </tr>
                                     </#foreach>
                                     </tbody>

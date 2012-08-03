@@ -29,32 +29,52 @@ public class Formatter {
         this.issueTracking = issueTracking;
     }
 
-    public static List<String> issuesIn(final String value) {
-        List<String> issues = shortenedIssuesIn(value);
-        issues.addAll(fullIssuesIn(value));
-        return issues;
-    }
 
-    public static List<String> shortenedIssuesIn(final String value) {
-        Matcher matcher = shortIssueNumberPattern.matcher(value);
+    static class IssueExtractor {
+        private String workingCopy;
 
-        ArrayList<String> issues = Lists.newArrayList();
-		while (matcher.find()) {
-			issues.add(matcher.group());
-		}
-
-        return issues;
-    }
-
-    public static List<String> fullIssuesIn(final String value) {
-        Matcher unhashedMatcher = fullIssueNumberPattern.matcher(value);
-
-        ArrayList<String> issues = Lists.newArrayList();
-        while (unhashedMatcher.find()) {
-            issues.add(unhashedMatcher.group());
+        IssueExtractor(String initialValue) {
+            this.workingCopy = initialValue;
         }
 
-        return issues;
+
+        public List<String> getShortenedIssues() {
+            Matcher matcher = shortIssueNumberPattern.matcher(workingCopy);
+
+            ArrayList<String> issues = Lists.newArrayList();
+            while (matcher.find()) {
+                String issue = matcher.group();
+                issues.add(issue);
+                workingCopy = workingCopy.replaceFirst(issue,"");
+            }
+
+            return issues;
+        }
+
+        public List<String> getFullIssues() {
+            Matcher unhashedMatcher = fullIssueNumberPattern.matcher(workingCopy);
+
+            ArrayList<String> issues = Lists.newArrayList();
+            while (unhashedMatcher.find()) {
+                String issue = unhashedMatcher.group();
+                issues.add(issue);
+                workingCopy = workingCopy.replaceFirst(issue,"");
+            }
+
+            return issues;
+        }
+
+    }
+
+    public static List<String> issuesIn(final String value) {
+
+        IssueExtractor extractor = new IssueExtractor(value);
+
+        List<String> issuesWithHash = extractor.getShortenedIssues();
+        List<String> allIssues = extractor.getFullIssues();
+        allIssues.addAll(issuesWithHash);
+
+        return allIssues;
     }
 
     public String addLinks(final String value) {
@@ -81,6 +101,16 @@ public class Formatter {
             formattedValue = formattedValue.replaceAll(issue, issueLink);
         }
         return formattedValue;
+    }
+
+    public static List<String> shortenedIssuesIn(String value) {
+        IssueExtractor extractor = new IssueExtractor(value);
+        return extractor.getShortenedIssues();
+    }
+
+    public static List<String> fullIssuesIn(String value) {
+        IssueExtractor extractor = new IssueExtractor(value);
+        return extractor.getFullIssues();
     }
 
     private String insertFullIssueTrackingUrls(String value) {

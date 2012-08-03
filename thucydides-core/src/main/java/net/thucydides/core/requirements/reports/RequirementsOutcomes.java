@@ -55,11 +55,17 @@ public class RequirementsOutcomes {
     }
 
     public String getChildrenType() {
-        if (requirementOutcomes.isEmpty()) {
-            return null;
-        } else {
-            return requirementOutcomes.get(0).getRequirement().getChildType();
+        return typeOfFirstChildPresent();
+    }
+
+    private String typeOfFirstChildPresent() {
+        for(RequirementOutcome outcome : requirementOutcomes) {
+            if (!outcome.getRequirement().getChildren().isEmpty()) {
+                Requirement firstChildRequirement = outcome.getRequirement().getChildren().get(0);
+                return firstChildRequirement.getType();
+            }
         }
+        return null;
     }
 
     public TestOutcomes getTestOutcomes() {

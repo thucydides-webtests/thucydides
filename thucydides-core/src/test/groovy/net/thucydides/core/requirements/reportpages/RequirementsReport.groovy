@@ -36,9 +36,9 @@ class RequirementsReport extends PageObject {
     }
 
     List<RequirementRow> getRequirements() {
-        List<WebElement> rows = driver.findElements(By.cssSelector("#req-results-table tbody tr"));
+        List<WebElement> rows = driver.findElements(By.cssSelector("#req-results-table .requirementRow"));
         rows.collect {
-            List<WebElement> cells = it.findElements(By.tagName("td"))
+            List<WebElement> cells = it.findElements(By.cssSelector(".requirementRowCell"))
             def iconImage = it.findElement(By.cssSelector(".summary-icon")).getAttribute("src")
             new RequirementRow(id: cells[1].text,
                                description : cells[2].text,

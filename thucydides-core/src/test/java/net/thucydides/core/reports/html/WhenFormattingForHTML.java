@@ -100,9 +100,6 @@ public class WhenFormattingForHTML {
 
     @Test
     public void should_identify_issues_in_a_text() {
-        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker");
-        Formatter formatter = new Formatter(issueTracking);
-
         List<String> issues = Formatter.shortenedIssuesIn("A scenario about issue #123");
 
         assertThat(issues, hasItem("#123"));
@@ -110,9 +107,6 @@ public class WhenFormattingForHTML {
 
     @Test
     public void should_identify_multiple_issues_in_a_text() {
-        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker");
-        Formatter formatter = new Formatter(issueTracking);
-
         List<String> issues = Formatter.shortenedIssuesIn("A scenario about issue #123,#456, #789");
 
         assertThat(issues, hasItems("#123", "#456", "#789"));
