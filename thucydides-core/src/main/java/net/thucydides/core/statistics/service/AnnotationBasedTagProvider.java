@@ -27,9 +27,4 @@ public class AnnotationBasedTagProvider implements TagProvider {
 
         return Sets.newHashSet(tags);
     }
-
-    @Override
-    public List<TestTag> getCapabilityTags() {
-        return null;
-    }
 }

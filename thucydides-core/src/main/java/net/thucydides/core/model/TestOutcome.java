@@ -687,7 +687,10 @@ public class TestOutcome {
     private Set<TestTag> getTagsUsingTagProviders(List<TagProvider> tagProviders) {
         Set<TestTag> tags  = Sets.newHashSet();
         for (TagProvider tagProvider : tagProviders) {
-            tags.addAll(tagProvider.getTagsFor(this));
+            Set<TestTag> providedTags = tagProvider.getTagsFor(this);
+            if (providedTags != null) {
+                tags.addAll(tagProvider.getTagsFor(this));
+            }
         }
         return tags;
     }
@@ -929,26 +932,32 @@ public class TestOutcome {
     }
 
     public double getOverallStability() {
+        if (getStatistics() == null) return 0.0;
         return getStatistics().getOverallPassRate();
     }
 
     public double getRecentStability() {
+        if (getStatistics() == null) return 0.0;
         return getStatistics().getPassRate().overTheLast(RECENT_TEST_RUN_COUNT).testRuns();
     }
 
     public Long getRecentTestRunCount() {
+        if (getStatistics() == null) return 0L;
         return (getStatistics().getTotalTestRuns() > RECENT_TEST_RUN_COUNT) ? RECENT_TEST_RUN_COUNT :  getStatistics().getTotalTestRuns();
     }
 
     public int getRecentPassCount() {
+        if (getStatistics() == null) return 0;
         return getStatistics().countResults().overTheLast(RECENT_TEST_RUN_COUNT).whereTheOutcomeWas(TestResult.SUCCESS);
     }
 
     public int getRecentFailCount() {
+        if (getStatistics() == null) return 0;
         return getStatistics().countResults().overTheLast(RECENT_TEST_RUN_COUNT).whereTheOutcomeWas(TestResult.FAILURE);
     }
 
     public int getRecentPendingCount() {
+        if (getStatistics() == null) return 0;
         return getStatistics().countResults().overTheLast(RECENT_TEST_RUN_COUNT).whereTheOutcomeWas(TestResult.PENDING);
     }
 }

@@ -52,10 +52,21 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     public String jiraUrl;
 
     /**
+     * @parameter
+     */
+    public String jiraUsername;
+
+    /**
+     * @parameter
+     */
+    public String jiraPassword;
+
+    /**
      * JIRA project key, which will be prepended to the JIRA issue numbers.
      * @parameter
      */
     public String jiraProject;
+
 
     /**
      * Thucydides project key
@@ -115,6 +126,8 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
         getReporter().setIssueTrackerUrl(issueTrackerUrl);
         getReporter().setJiraUrl(jiraUrl);
         getReporter().setJiraProject(jiraProject);
+        getReporter().setJiraUsername(jiraUsername);
+        getReporter().setJiraPassword(jiraPassword);
         getReporter().generateReportsForTestResultsFrom(sourceDirectory);
     }
 }

@@ -18,6 +18,8 @@ import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.reports.saucelabs.SaucelabsLinkGenerator;
 import net.thucydides.core.reports.templates.FreeMarkerTemplateManager;
 import net.thucydides.core.reports.templates.TemplateManager;
+import net.thucydides.core.requirements.ClasspathRequirementsProviderService;
+import net.thucydides.core.requirements.RequirementsProviderService;
 import net.thucydides.core.screenshots.MultithreadScreenshotProcessor;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
@@ -75,6 +77,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class).in(Singleton.class);
         bind(TestStatisticsProvider.class).to(HibernateTestStatisticsProvider.class).in(Singleton.class);
         bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
+        bind(RequirementsProviderService.class).to(ClasspathRequirementsProviderService.class).in(Singleton.class);
         bind(DependencyInjectorService.class).to(ClasspathDependencyInjectorService.class).in(Singleton.class);
 
         bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class).in(Singleton.class);

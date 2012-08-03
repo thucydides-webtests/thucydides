@@ -28,11 +28,6 @@ public class FeatureStoryTagProvider implements TagProvider {
         return ImmutableSet.copyOf(tags);
     }
 
-    @Override
-    public List<TestTag> getCapabilityTags() {
-        return Collections.EMPTY_LIST;
-    }
-
     private void addStoryTagIfPresent(TestOutcome testOutcome, Set<TestTag> tags) {
         Story story = testOutcome.getUserStory();
         if (story != null) {

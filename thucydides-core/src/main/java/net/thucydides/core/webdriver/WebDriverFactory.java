@@ -479,12 +479,13 @@ public class WebDriverFactory {
      */
     public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver) {
         Configuration configuration = Injectors.getInjector().getInstance(Configuration.class);
-        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, configuration.getElementTimeout());
+        int elementTimeoutInSeconds = configuration.getElementTimeout();
+        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, elementTimeoutInSeconds);
         PageFactory.initElements(finder, pageObject);
     }
 
-    public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver, int timeout) {
-        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, timeout);
+    public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver, int timeoutInSeconds) {
+        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, timeoutInSeconds);
         PageFactory.initElements(finder, pageObject);
     }
 

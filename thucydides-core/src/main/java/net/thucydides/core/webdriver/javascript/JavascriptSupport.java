@@ -11,8 +11,12 @@ public class JavascriptSupport {
     }
 
     public static boolean javascriptIsSupportedIn(WebDriver driver) {
-        Class<? extends WebDriver> driverClass = getRealDriverClass(driver);
-        return javascriptIsSupportedIn(driverClass);
+        if (driver instanceof HtmlUnitDriver) {
+            return ((HtmlUnitDriver) driver).isJavascriptEnabled();
+        } else {
+            Class<? extends WebDriver> driverClass = getRealDriverClass(driver);
+            return javascriptIsSupportedIn(driverClass);
+        }
     }
 
     private static Class<? extends WebDriver> getRealDriverClass(WebDriver driver) {

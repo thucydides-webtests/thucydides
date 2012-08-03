@@ -11,6 +11,7 @@ import net.thucydides.core.requirements.model.NarrativeReader;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.statistics.service.TagProvider;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import org.apache.commons.collections.IteratorUtils;
@@ -23,8 +24,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static ch.lambdaj.Lambda.convert;
 
@@ -32,7 +36,7 @@ import static ch.lambdaj.Lambda.convert;
  * Load a set of requirements (epics/themes,...) from the directory structure.
  * This will typically be the directory structure containing the tests (for JUnit) or stories (e.g. for JBehave).
  */
-class FileSystemRequirementsProvider implements RequirementsProvider {
+public class FileSystemRequirementsTagProvider implements RequirementsTagProvider {
 
     private final static String DEFAULT_ROOT_DIRECTORY = "stories";
     private final static List<String> DEFAULT_CAPABILITY_TYPES = ImmutableList.of("capability","feature");
@@ -45,33 +49,38 @@ class FileSystemRequirementsProvider implements RequirementsProvider {
     @Transient
     private List<Requirement> requirements;
 
-    public FileSystemRequirementsProvider() {
+    public FileSystemRequirementsTagProvider() {
         this(DEFAULT_ROOT_DIRECTORY);
     }
 
-    public FileSystemRequirementsProvider(String rootDirectory, int level) {
+    public FileSystemRequirementsTagProvider(String rootDirectory, int level) {
         this(rootDirectory, level, Injectors.getInjector().getInstance(EnvironmentVariables.class));
     }
 
-    public FileSystemRequirementsProvider(String rootDirectory, int level, EnvironmentVariables environmentVariables) {
+    public FileSystemRequirementsTagProvider(String rootDirectory, int level, EnvironmentVariables environmentVariables) {
         this.rootDirectoryPath = rootDirectory;
         this.level = level;
         this.narrativeReader = new NarrativeReader();
         this.environmentVariables = environmentVariables;
     }
 
-    public FileSystemRequirementsProvider(String rootDirectory) {
+    public FileSystemRequirementsTagProvider(String rootDirectory) {
         this(rootDirectory, 0);
     }
 
     public List<Requirement> getRequirements() {
         if (requirements == null) {
             try {
-                URL rootDirectoryUrl = getClass().getClassLoader().getResources(rootDirectoryPath).nextElement();
-                File rootDirectory = new File(rootDirectoryUrl.getPath());
-                File[] capabilityDirectories = rootDirectory.listFiles(thatAreDirectories());
-                requirements = loadCapabilitiesFrom(capabilityDirectories);
-                Collections.sort(requirements);
+                Enumeration<URL> requirementResources = getClass().getClassLoader().getResources(rootDirectoryPath);
+                if (requirementResources.hasMoreElements()) {
+                    URL rootDirectoryUrl = requirementResources.nextElement();
+                    File rootDirectory = new File(rootDirectoryUrl.getPath());
+                    File[] capabilityDirectories = rootDirectory.listFiles(thatAreDirectories());
+                    requirements = loadCapabilitiesFrom(capabilityDirectories);
+                    Collections.sort(requirements);
+                } else {
+                    requirements = Collections.EMPTY_LIST;
+                }
             } catch (IOException e) {
                 throw new IllegalArgumentException("Could not load requirements from '" + rootDirectoryPath + "'", e);
             }
@@ -79,10 +88,15 @@ class FileSystemRequirementsProvider implements RequirementsProvider {
         return requirements;
     }
 
-    public List<TestTag> getTagsFor(final TestOutcome testOutcome) {
-        String testOutcomePath = testOutcome.getPath();
-        List<String> storyPathElements = IteratorUtils.toList(Splitter.on(".").split(stripRootPathFrom(testOutcomePath)).iterator());
-        return getMatchingCapabilities(getRequirements(), storyPathElements);
+    public Set<TestTag> getTagsFor(final TestOutcome testOutcome) {
+        Set<TestTag> tags = new HashSet<TestTag>();
+        if (testOutcome.getPath() != null) {
+            List<String> storyPathElements
+                    = IteratorUtils.toList(Splitter.on(".")
+                                                   .split(stripRootPathFrom(testOutcome.getPath())).iterator());
+            tags.addAll(getMatchingCapabilities(getRequirements(), storyPathElements));
+        }
+        return tags;
     }
 
     private List<TestTag> getMatchingCapabilities(List<Requirement> requirements, List<String> storyPathElements) {
@@ -127,7 +141,7 @@ class FileSystemRequirementsProvider implements RequirementsProvider {
 
     private String stripRootPathFrom(String testOutcomePath) {
         String rootPath = ThucydidesSystemProperty.TEST_ROOT_PACKAGE.from(environmentVariables);
-        if (testOutcomePath.startsWith(rootPath)) {
+        if (rootPath != null && testOutcomePath.startsWith(rootPath)) {
             return testOutcomePath.substring(rootPath.length() + 1);
         } else {
             return testOutcomePath;
@@ -151,15 +165,30 @@ class FileSystemRequirementsProvider implements RequirementsProvider {
     private Requirement readCapabilityFrom(File capabilityDirectory) {
         Optional<Narrative> capabilityNarrative = narrativeReader.loadFrom(capabilityDirectory);
         if (capabilityNarrative.isPresent()) {
-            String title = getTitleFromNarrativeOrDirectoryName(capabilityNarrative.get(), capabilityDirectory);
-            String type = capabilityNarrative.get().getType();
-            List<Requirement> children = readChildrenFrom(capabilityDirectory);
-            return new Requirement(title, type, capabilityNarrative.get().getText(), children);
+            return requirementWithNarrative(capabilityDirectory, capabilityNarrative);
         } else {
-            String capabilityName = humanReadableVersionOf(capabilityDirectory.getName());
-            List<Requirement> children = readChildrenFrom(capabilityDirectory);
-            return new Requirement(capabilityName, getDefaultType(), capabilityName, children);
+            return requirementFromDirectoryName(capabilityDirectory);
         }
+    }
+
+    private Requirement requirementFromDirectoryName(File capabilityDirectory) {
+        String shortName = humanReadableVersionOf(capabilityDirectory.getName());
+        List<Requirement> children = readChildrenFrom(capabilityDirectory);
+        return Requirement.named(shortName).withType(getDefaultType()).withNarrativeText(shortName).withChildren(children);
+    }
+
+    private Requirement requirementWithNarrative(File capabilityDirectory, Optional<Narrative> capabilityNarrative) {
+        String shortName = humanReadableVersionOf(capabilityDirectory.getName());
+        String displayName = getTitleFromNarrativeOrDirectoryName(capabilityNarrative.get(), capabilityDirectory);
+        String cardNumber = capabilityNarrative.get().getCardNumber().orNull();
+        String type = capabilityNarrative.get().getType();
+        List<Requirement> children = readChildrenFrom(capabilityDirectory);
+        return Requirement.named(shortName)
+                          .withOptionalDisplayName(displayName)
+                          .withOptionalCardNumber(cardNumber)
+                          .withType(type)
+                          .withNarrativeText(capabilityNarrative.get().getText())
+                          .withChildren(children);
     }
 
     private String getDefaultType() {
@@ -183,7 +212,7 @@ class FileSystemRequirementsProvider implements RequirementsProvider {
 
     private List<Requirement> readChildrenFrom(File capabilityDirectory) {
         String childDirectory = rootDirectoryPath + "/" + capabilityDirectory.getName();
-        RequirementsProvider childReader = new FileSystemRequirementsProvider(childDirectory, level + 1, environmentVariables);
+        RequirementsTagProvider childReader = new FileSystemRequirementsTagProvider(childDirectory, level + 1, environmentVariables);
         return childReader.getRequirements();
     }
 

@@ -1,6 +1,5 @@
 package net.thucydides.core.pages;
 
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.components.Dropdown;
@@ -31,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -41,7 +39,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static net.thucydides.core.webdriver.javascript.JavascriptSupport.isHeadlessDriver;
+import static net.thucydides.core.webdriver.javascript.JavascriptSupport.javascriptIsSupportedIn;
 
 /**
  * A base class representing a WebDriver page object.
@@ -54,7 +52,7 @@ public abstract class PageObject {
 
     private static final int ONE_SECOND = 1000;
 
-    private long waitForTimeout = 5 * ONE_SECOND;
+    private long waitForTimeoutInMilliseconds = 5 * ONE_SECOND;
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PageObject.class);
@@ -79,7 +77,7 @@ public abstract class PageObject {
 
     public PageObject(final WebDriver driver, final int ajaxTimeout) {
         this.driver = driver;
-        this.waitForTimeout = ajaxTimeout;
+        this.waitForTimeoutInMilliseconds = ajaxTimeout;
         this.webdriverClock = new SystemClock();
         this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
@@ -87,13 +85,22 @@ public abstract class PageObject {
 
         setupPageUrls();
 
-        WebDriverFactory.initElementsWithAjaxSupport(this, driver, ajaxTimeout);
+        int ajaxTimeoutInSeconds = ajaxTimeoutInSecondsWithAtLeast1Second(ajaxTimeout);
+        WebDriverFactory.initElementsWithAjaxSupport(this, driver, ajaxTimeoutInSeconds);
 
+    }
+
+    protected int ajaxTimeoutInSecondsWithAtLeast1Second(int ajaxTimeout) {
+        if (ajaxTimeout > 1000) {
+            return ajaxTimeout / 1000;
+        } else {
+            return 1;
+        }
     }
 
     public PageObject(final WebDriver driver) {
         this.driver = driver;
-        this.waitForTimeout = WAIT_FOR_TIMEOUT;
+        this.waitForTimeoutInMilliseconds = WAIT_FOR_TIMEOUT;
         this.webdriverClock = new SystemClock();
         this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
@@ -120,14 +127,14 @@ public abstract class PageObject {
         this.pageUrls = pageUrls;
     }
 
-    public void setWaitForTimeout(final long waitForTimeout) {
-        this.waitForTimeout = waitForTimeout;
-        getRenderedView().setWaitForTimeout(waitForTimeout);
+    public void setWaitForTimeout(final long waitForTimeoutInMilliseconds) {
+        this.waitForTimeoutInMilliseconds = waitForTimeoutInMilliseconds;
+        getRenderedView().setWaitForTimeoutInMilliseconds(this.waitForTimeoutInMilliseconds);
     }
 
     protected RenderedPageObjectView getRenderedView() {
         if (renderedView == null) {
-            renderedView = new RenderedPageObjectView(driver, waitForTimeout);
+            renderedView = new RenderedPageObjectView(driver, waitForTimeoutInMilliseconds);
         }
         return renderedView;
     }
@@ -256,7 +263,7 @@ public abstract class PageObject {
     }
 
     public PageObject waitForTextToDisappear(final String expectedText) {
-        return waitForTextToDisappear(expectedText, waitForTimeout);
+        return waitForTextToDisappear(expectedText, waitForTimeoutInMilliseconds);
     }
 
     /**
@@ -547,6 +554,11 @@ public abstract class PageObject {
         callWhenPageOpensMethods();
     }
 
+    final public void openAt(String startingUrl) {
+        openPageAtUrl(startingUrl);
+        callWhenPageOpensMethods();
+    }
+
     /**
      * Override this method
      */
@@ -585,7 +597,9 @@ public abstract class PageObject {
 
     private void openPageAtUrl(final String startingUrl) {
         getDriver().get(startingUrl);
-        addJQuerySupport();
+        if (javascriptIsSupportedIn(getDriver())) {
+            addJQuerySupport();
+        }
     }
 
     public void clickOn(final WebElement webElement) {
@@ -624,7 +638,7 @@ public abstract class PageObject {
      * Provides a fluent API for querying web elements.
      */
     public WebElementFacade element(WebElement webElement) {
-        return new WebElementFacade(driver, webElement, waitForTimeout);
+        return new WebElementFacade(driver, webElement, waitForTimeoutInMilliseconds);
     }
 
     /**
@@ -632,7 +646,7 @@ public abstract class PageObject {
      */
     public WebElementFacade element(By bySelector) {
         WebElement webElement = getDriver().findElement(bySelector);
-        return new WebElementFacade(driver, webElement, waitForTimeout);
+        return new WebElementFacade(driver, webElement, waitForTimeoutInMilliseconds);
     }
 
     public WebElementFacade find(By selector) {
@@ -701,14 +715,14 @@ public abstract class PageObject {
 
     public ThucydidesFluentWait<WebDriver> waitForWithRefresh() {
         return new FluentWaitWithRefresh<WebDriver>(driver, webdriverClock, sleeper)
-                .withTimeout(waitForTimeout, TimeUnit.MILLISECONDS)
+                .withTimeout(waitForTimeoutInMilliseconds, TimeUnit.MILLISECONDS)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
     }
 
     public ThucydidesFluentWait<WebDriver> waitForCondition() {
         return new NormalFluentWait<WebDriver>(driver, webdriverClock, sleeper)
-                .withTimeout(waitForTimeout, TimeUnit.MILLISECONDS)
+                .withTimeout(waitForTimeoutInMilliseconds, TimeUnit.MILLISECONDS)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
     }

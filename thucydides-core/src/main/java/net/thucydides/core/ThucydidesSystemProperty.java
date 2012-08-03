@@ -91,7 +91,7 @@ public enum ThucydidesSystemProperty {
     STEP_DELAY("thucycides.step.delay"),
 
     /**
-     * How long should the driver wait for elements not immediately visible.
+     * How long should the driver wait for elements not immediately visible, in seconds.
      */
     ELEMENT_TIMEOUT("thucydides.timeout"),
 
@@ -135,6 +135,16 @@ public enum ThucydidesSystemProperty {
      *  If defined, the JIRA project id will be prepended to issue numbers.
      */
     JIRA_PROJECT("jira.project"),
+
+    /**
+     *  If defined, the JIRA username required to connect to JIRA.
+     */
+    JIRA_USERNAME("jira.username"),
+
+    /**
+     *  If defined, the JIRA password required to connect to JIRA.
+     */
+    JIRA_PASSWORD("jira.password"),
 
     /**
      * Base directory in which history files are stored.

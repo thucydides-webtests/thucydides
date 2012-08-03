@@ -1,3 +1,4 @@
 net.thucydides.core.statistics.service.AnnotationBasedTagProvider
 net.thucydides.core.statistics.service.FeatureStoryTagProvider
+net.thucydides.core.requirements.FileSystemRequirementsTagProvider
 

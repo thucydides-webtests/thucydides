@@ -190,13 +190,14 @@
     <div class="menu">
         <ul>
             <li><a href="index.html">Test Results</a></li>
-        <#--<li><a href="treemap.html">Tree Map</a></li>-->
-        <#--<li><a href="dashboard.html">Progress</a></li>-->
-        <#foreach tagType in allTestOutcomes.tagTypes>
-            <#assign tagReport = reportName.forTagType(tagType) >
-            <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
-            <li><a href="${tagReport}">${tagTypeTitle}</a></li>
-        </#foreach>
+            <li><a href="requirements.html">Requirements</a></li>
+            <#--<li><a href="treemap.html">Tree Map</a></li>-->
+            <#--<li><a href="dashboard.html">Progress</a></li>-->
+            <#foreach tagType in allTestOutcomes.tagTypes>
+                <#assign tagReport = reportName.forTagType(tagType) >
+                <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
+                <li><a href="${tagReport}">${tagTypeTitle}</a></li>
+            </#foreach>
             <li><a href="history.html" class="current">History</a></li>
         </ul>
         <br style="clear:left"/>

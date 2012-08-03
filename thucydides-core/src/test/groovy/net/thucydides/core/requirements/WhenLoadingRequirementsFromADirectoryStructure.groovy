@@ -8,17 +8,27 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
 
     def "Should be able to load capabilities from the default directory structure"() {
         given: "We are using the default requirements provider"
-            RequirementsProvider capabilityProvider = new FileSystemRequirementsProvider("sample-story-directories/capabilities_and_features");
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features");
         when: "We load the available requirements"
             def capabilities = capabilityProvider.getRequirements()
             def capabilityNames = capabilities.collect {it.name}
         then: "the requirements should be loaded from the first-level sub-directories"
-            capabilityNames == ["Grow more apples", "Grow potatoes", "Grow zuchinnis"]
+            capabilityNames == ["Grow apples", "Grow potatoes", "Grow zuchinnis"]
+    }
+
+    def "Should be able to load issues from the default directory structure"() {
+        given: "We are using the default requirements provider"
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features");
+        when: "We load the available requirements"
+            def capabilities = capabilityProvider.getRequirements()
+            def ids = capabilities.collect {it.cardNumber}
+        then: "the card numbers should be read from the narratives if present "
+            ids == ["#123", null, null]
     }
 
     def "Should derive title from directory name if not present in narrative"() {
         given: "there is a capability.narrativeText file in a directory that does not have a title line"
-            def capabilityProvider = new FileSystemRequirementsProvider("sample-story-directories/capabilities_and_features")
+            def capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features")
         when: "We try to load the capability from the directory"
             def capabilities = capabilityProvider.getRequirements()
         then: "the capability should be found"
@@ -29,7 +39,7 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
 
     def "the capability type is derived from the .narrative file name"() {
         given: "We are using the default requirements provider"
-            RequirementsProvider capabilityProvider = new FileSystemRequirementsProvider("sample-story-directories/capabilities_and_features");
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features");
         when: "We load the available requirements"
             def capabilities = capabilityProvider.getRequirements()
         then: "the requirements should be of type 'capability"
@@ -39,7 +49,7 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
 
     def "when there is no .narrative file the capability is determined by a configurable convention"() {
         given: "We are using the default requirements provider"
-            RequirementsProvider capabilityProvider = new FileSystemRequirementsProvider("sample-story-directories/capabilities_and_features");
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features");
         when: "We load the available requirements"
             def capabilities = capabilityProvider.getRequirements()
         then: "the requirements should be of type 'capability"
@@ -49,7 +59,7 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
 
     def "capabilities can be nested"() {
         given: "We are using the default requirements provider"
-            RequirementsProvider capabilityProvider = new FileSystemRequirementsProvider("sample-story-directories/capabilities_and_features");
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features");
         when: "We load requirements with nested capability directories"
             def capabilities = capabilityProvider.getRequirements()
         then: "the nested requirements should be recorded"
@@ -62,7 +72,7 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
 
     def "nested capability types are set by convention if no .narrative files are present"() {
         given: "We are using the default requirements provider"
-            RequirementsProvider capabilityProvider = new FileSystemRequirementsProvider("sample-story-directories/capabilities_and_features");
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features");
         when: "We load requirements with nested capability directories and no .narrative files"
             def capabilities = capabilityProvider.getRequirements()
         then: "the nested capablities are of type 'feature'"
@@ -73,7 +83,7 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
     def "default nested capability types can be overriden using an environment variable"() {
         given: "We are using the default requirements provider"
             EnvironmentVariables vars = new MockEnvironmentVariables();
-            FileSystemRequirementsProvider capabilityProvider = new FileSystemRequirementsProvider("sample-story-directories/capabilities_and_features", 0, vars);
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features", 0, vars);
         and: "We define the capability type hierarchy in the environment variables"
             vars.setProperty("thucydides.capability.types","theme, epic, feature")
         when: "We load requirements with nested capability directories and no .narrative files"

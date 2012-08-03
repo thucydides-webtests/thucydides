@@ -15,50 +15,50 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
     def "Should associate a test case to capability based on it's package"() {
         given: "We are using the default requirements provider"
             EnvironmentVariables vars = new MockEnvironmentVariables();
-            FileSystemRequirementsProvider capabilityProvider = new FileSystemRequirementsProvider("stories", 0, vars);
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
         and: "We define the root package in the 'thucydides.test.root' property"
             vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
         when: "We load requirements with nested capability directories and no .narrative files"
             def testOutcome = new TestOutcome("someTest",ASampleTestWithACapability)
         then:
-            capabilityProvider.getTagsFor(testOutcome) == [TestTag.withName("Grow potatoes").andType("capability")]
+            capabilityProvider.getTagsFor(testOutcome) == [TestTag.withName("Grow potatoes").andType("capability")] as Set
     }
 
     def "Should associate a nested test case to capability based on it's package"() {
         given: "We are using the default requirements provider"
             EnvironmentVariables vars = new MockEnvironmentVariables();
-            FileSystemRequirementsProvider capabilityProvider = new FileSystemRequirementsProvider("stories", 0, vars);
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
         and: "We define the root package in the 'thucydides.test.root' property"
             vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
         when: "We load requirements with nested capability directories and no .narrative files"
             def testOutcome = new TestOutcome("someTest",ASampleNestedTestWithACapability)
         then:
             capabilityProvider.getTagsFor(testOutcome) == [TestTag.withName("Grow potatoes").andType("capability"),
-                                                           TestTag.withName("Grow new potatoes").andType("feature")]
+                                                           TestTag.withName("Grow new potatoes").andType("feature")]  as Set
     }
 
     def "Should associate a nested test case to the nearest above capacity"() {
         given: "We are using the default requirements provider"
             EnvironmentVariables vars = new MockEnvironmentVariables();
-            FileSystemRequirementsProvider capabilityProvider = new FileSystemRequirementsProvider("stories", 0, vars);
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
         and: "We define the root package in the 'thucydides.test.root' property"
             vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
         when: "We load requirements with nested capability directories and no .narrative files"
             def testOutcome = new TestOutcome("someTest",ASampleTestInAnotherPackage)
         then:
-            capabilityProvider.getTagsFor(testOutcome) == [TestTag.withName("Grow potatoes").andType("capability")]
+            capabilityProvider.getTagsFor(testOutcome) == [TestTag.withName("Grow potatoes").andType("capability")]  as Set
     }
 
     def "Should not associate a test case if there is no matching capability"() {
         given: "We are using the default requirements provider"
             EnvironmentVariables vars = new MockEnvironmentVariables();
-            FileSystemRequirementsProvider capabilityProvider = new FileSystemRequirementsProvider("stories", 0, vars);
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
         and: "We define the root package in the 'thucydides.test.root' property"
             vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
             when: "We load requirements with nested capability directories and no .narrative files"
             def testOutcome = new TestOutcome("someTest",ASampleTestWithNoCapability)
         then:
-            capabilityProvider.getTagsFor(testOutcome) == []
+            capabilityProvider.getTagsFor(testOutcome) == [] as Set
     }
 
 }

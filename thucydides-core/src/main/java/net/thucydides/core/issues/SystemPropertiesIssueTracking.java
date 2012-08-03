@@ -21,7 +21,16 @@ public class SystemPropertiesIssueTracking implements IssueTracking {
     public String getIssueTrackerUrl() {
         if (jiraUrlDefined()) {
             return environmentVariables.getProperty(ThucydidesSystemProperty.JIRA_URL.getPropertyName())
-                                         + "/browse/" + getJiraProjectSuffix() + "{0}";
+                                         + "/browse/" + "{0}";
+        } else {
+            return environmentVariables.getProperty(ThucydidesSystemProperty.ISSUE_TRACKER_URL.getPropertyName());
+        }
+    }
+
+    public String getShortenedIssueTrackerUrl() {
+        if (jiraUrlDefined()) {
+            return environmentVariables.getProperty(ThucydidesSystemProperty.JIRA_URL.getPropertyName())
+                    + "/browse/" + getJiraProjectSuffix() + "{0}";
         } else {
             return environmentVariables.getProperty(ThucydidesSystemProperty.ISSUE_TRACKER_URL.getPropertyName());
         }

@@ -17,6 +17,6 @@ class DisplayedElementLocatorFactory extends AjaxElementLocatorFactory {
 
     @Override
     public ElementLocator createLocator(Field field) {
-        return new DisplayedElementLocator(driver, field, timeOutInSeconds);    //To change body of overridden methods use File | Settings | File Templates.
+        return new DisplayedElementLocator(driver, field, timeOutInSeconds);
     }
 }

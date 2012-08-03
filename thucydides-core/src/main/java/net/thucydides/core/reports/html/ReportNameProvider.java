@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.NameConverter;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -50,5 +51,9 @@ public class ReportNameProvider {
 
     public ReportNameProvider inContext(String context) {
         return new ReportNameProvider(context);
+    }
+
+    public String forRequirement(Requirement parentRequirement) {
+        return reportNamer.getNormalizedTestNameFor("requirement_" + parentRequirement.getName());
     }
 }

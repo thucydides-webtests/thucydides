@@ -6,7 +6,7 @@ class WhenListingAllKnownRequirements extends Specification {
 
     def "Should be able to list all the available capabilities"() {
         given: "We are using the default requirements provider"
-            RequirementsProvider capabilityProvider = new FileSystemRequirementsProvider();
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider();
         when: "We obtain the list of requirements"
             def capabilities = capabilityProvider.getRequirements()
             def capabilityNames = capabilities.collect {it.name}

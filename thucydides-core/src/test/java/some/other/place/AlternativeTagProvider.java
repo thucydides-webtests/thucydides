@@ -12,9 +12,4 @@ public class AlternativeTagProvider implements TagProvider {
     public Set<TestTag> getTagsFor(TestOutcome testOutcome) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
-
-    @Override
-    public List<TestTag> getCapabilityTags() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 }

@@ -5,6 +5,8 @@ import net.thucydides.core.annotations.WithTagValuesOf;
 import net.thucydides.core.annotations.WithTags;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.requirements.FileSystemRequirementsTagProvider;
+import net.thucydides.core.requirements.FileSystemRequirementsTagProvider;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -48,6 +50,20 @@ public class WhenFindingTagsForATestOutcome {
             }
         }
         assertThat(containsAnnotationTagProvider, is(true));
+    }
+
+    @Test
+    public void should_also_find_the_file_system_requirements_provider_by_default() {
+        TagProviderService tagProviderService = new ClasspathTagProviderService();
+        List<TagProvider> tagProviders = tagProviderService.getTagProviders();
+
+        boolean containsRequirementsProvider = false;
+        for(TagProvider provider : tagProviders) {
+            if (provider instanceof FileSystemRequirementsTagProvider) {
+                containsRequirementsProvider = true;
+            }
+        }
+        assertThat(containsRequirementsProvider, is(true));
     }
 
     @Test

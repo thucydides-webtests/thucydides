@@ -1,3 +1,9 @@
+apply plugin: 'signing'
+
+signing {
+    sign configurations.archives
+}
+
 project.ext {
 	currentBranch = getCurrentBranch()
     releaseBranch = "release-${versionNumber}"

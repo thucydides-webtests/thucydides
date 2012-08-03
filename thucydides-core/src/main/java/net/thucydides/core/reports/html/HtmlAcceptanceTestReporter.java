@@ -62,7 +62,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     }
 
     /**
-     * Generate an XML report for a given test run.
+     * Generate an HTML report for a given test run.
      */
     public File generateReportFor(final TestOutcome testOutcome) throws IOException {
 
