@@ -11,7 +11,7 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
         given: "there is a capability.narrativeText file in a directory"
             File directoryContainingANarrative = directoryInClasspathAt("sample-story-directories/capabilities_and_features/grow_apples")
         when: "We try to load the narrativeText from the directory"
-            def reader = new NarrativeReader();
+            def reader = NarrativeReader.forRootDirectory("sample-story-directories/capabilities_and_features")
             Optional<Narrative> narrative = reader.loadFrom(directoryContainingANarrative)
         then: "the narrativeText should be found"
             narrative.present
@@ -20,10 +20,37 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
             narrative.get().text.contains("In order to make apple pies") &&
             narrative.get().text.contains("As a farmer") &&
             narrative.get().text.contains("I want to grow apples")
-        and: "the type should be derived from the file name"
+        and: "the narrative type should be derived from the directory"
             narrative.get().type == "capability"
     }
 
+    def "Should be able to derive the narrative type from the directory level"() {
+        given: "there is a narrative.txt file in a directory"
+            File directoryContainingANarrative = directoryInClasspathAt("sample-story-directories/capabilities_and_features/grow_apples/grow_red_apples")
+        when: "We try to load the narrativeText from the directory"
+            def reader = NarrativeReader.forRootDirectory("sample-story-directories/capabilities_and_features")
+            Optional<Narrative> narrative = reader.loadFrom(directoryContainingANarrative)
+        then: "the narrativeText should be found"
+            narrative.present
+        and: "the narrativeText title and description should be loaded"
+            narrative.get().title.get() == "Grow red apples"
+        and: "the type should be derived from the directory level"
+            narrative.get().type == "feature"
+    }
+
+    def "Should use the lowest requirement type for deeply nested requirements"() {
+        given: "there is a narrative.txt file in a directory"
+            File directoryContainingANarrative = directoryInClasspathAt("sample-story-directories/capabilities_and_features/grow_apples/grow_red_apples/grow_special_red_apples")
+        when: "We try to load the narrativeText from the directory"
+            def reader = NarrativeReader.forRootDirectory("sample-story-directories/capabilities_and_features")
+            Optional<Narrative> narrative = reader.loadFrom(directoryContainingANarrative)
+        then: "the narrativeText should be found"
+            narrative.present
+        and: "the narrativeText title and description should be loaded"
+            narrative.get().title.get() == "Grow special red apples"
+        and: "the type should be derived from lowest requirement type"
+            narrative.get().type == "feature"
+    }
 
     File directoryInClasspathAt(String path) {
         new File(getClass().getClassLoader().getResources(path).nextElement().getPath())

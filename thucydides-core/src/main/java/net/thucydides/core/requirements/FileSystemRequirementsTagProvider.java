@@ -4,6 +4,7 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
@@ -13,7 +14,6 @@ import net.thucydides.core.requirements.model.NarrativeReader;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
-import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.Transient;
@@ -28,10 +28,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import static ch.lambdaj.Lambda.convert;
-import static org.apache.commons.collections.IteratorUtils.*;
+import static net.thucydides.core.requirements.RequirementsPath.pathElements;
+import static net.thucydides.core.requirements.RequirementsPath.stripRootFromPath;
 
 /**
  * Load a set of requirements (epics/themes,...) from the directory structure.
@@ -40,11 +40,14 @@ import static org.apache.commons.collections.IteratorUtils.*;
  */
 public class FileSystemRequirementsTagProvider implements RequirementsTagProvider {
 
+    public final static List<String> DEFAULT_CAPABILITY_TYPES = ImmutableList.of("capability","feature");
+
     private final static String DEFAULT_ROOT_DIRECTORY = "stories";
     private final static String DEFAULT_RESOURCE_DIRECTORY = "src/test/resources";
-    private final static List<String> DEFAULT_CAPABILITY_TYPES = ImmutableList.of("capability","feature");
-    private final static Pattern PATH_SEPARATORS = Pattern.compile("[\\\\/.]");
+//    private final static Pattern PATH_SEPARATORS = Pattern.compile("[\\\\/.]");
     private static final String WORKING_DIR = "user.dir";
+    private static final List<Requirement> NO_REQUIREMENTS = Lists.newArrayList();
+    private static final List<TestTag> NO_TEST_TAGS = Lists.newArrayList();
 
     private final String rootDirectoryPath;
     private final NarrativeReader narrativeReader;
@@ -63,10 +66,11 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     }
 
     public FileSystemRequirementsTagProvider(String rootDirectory, int level, EnvironmentVariables environmentVariables) {
+        this.environmentVariables = environmentVariables;
         this.rootDirectoryPath = rootDirectory;
         this.level = level;
-        this.narrativeReader = new NarrativeReader();
-        this.environmentVariables = environmentVariables;
+        this.narrativeReader = NarrativeReader.forRootDirectory(rootDirectory)
+                                              .withCapabilityTypes(getCapabilityTypes());
     }
 
     public FileSystemRequirementsTagProvider(String rootDirectory) {
@@ -90,10 +94,10 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
                     requirements = loadCapabilitiesFrom(capabilityDirectories);
                     Collections.sort(requirements);
                 } else {
-                    requirements = Collections.EMPTY_LIST;
+                    requirements = NO_REQUIREMENTS;
                 }
             } catch (IOException e) {
-                requirements = Collections.EMPTY_LIST;
+                requirements = NO_REQUIREMENTS;
                 throw new IllegalArgumentException("Could not load requirements from '" + rootDirectoryPath + "'", e);
             }
         }
@@ -143,14 +147,9 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         return tags;
     }
 
-
-    List<String> pathElements(String path) {
-        return toList(Splitter.on(PATH_SEPARATORS).split(path).iterator());
-    }
-
     private List<TestTag> getMatchingCapabilities(List<Requirement> requirements, List<String> storyPathElements) {
         if (storyPathElements.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return NO_TEST_TAGS;
         } else {
             Optional<Requirement> matchingCapability = findMatchingCapabilityIn(next(storyPathElements), requirements);
             if (matchingCapability.isPresent()) {
@@ -158,18 +157,13 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
                 List<TestTag> remainingTags = getMatchingCapabilities(matchingCapability.get().getChildren(), tail(storyPathElements));
                 return concat(thisTag, remainingTags);
             } else {
-                return Collections.EMPTY_LIST;
+                return NO_TEST_TAGS;
             }
         }
     }
 
     private List<String> stripRootFrom(List<String> storyPathElements) {
-        List<String> rootElements = pathElements(rootDirectoryPath);
-        if (storyPathElements.subList(0, rootElements.size()).equals(rootElements)) {
-            return storyPathElements.subList(rootElements.size(), storyPathElements.size());
-        } else {
-            return storyPathElements;
-        }
+        return stripRootFromPath(rootDirectoryPath, storyPathElements);
     }
 
     private String stripRootPathFrom(String testOutcomePath) {
@@ -221,7 +215,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     }
 
     private Requirement readCapabilityFrom(File capabilityDirectory) {
-        Optional<Narrative> capabilityNarrative = narrativeReader.loadFrom(capabilityDirectory);
+        Optional<Narrative> capabilityNarrative = narrativeReader.loadFrom(capabilityDirectory, level);
         if (capabilityNarrative.isPresent()) {
             return requirementWithNarrative(capabilityDirectory, capabilityNarrative);
         } else {
@@ -262,7 +256,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         String capabilityTypes = ThucydidesSystemProperty.CAPABILITY_TYPES.from(environmentVariables);
         if (StringUtils.isNotEmpty(capabilityTypes)) {
             Iterator<String> types = Splitter.on(",").trimResults().split(capabilityTypes).iterator();
-            return toList(types);
+            return Lists.newArrayList(types);
         } else {
             return DEFAULT_CAPABILITY_TYPES;
         }
