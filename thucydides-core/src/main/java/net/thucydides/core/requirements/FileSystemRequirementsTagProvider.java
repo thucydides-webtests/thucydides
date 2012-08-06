@@ -142,7 +142,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     public Set<TestTag> getTagsFor(final TestOutcome testOutcome) {
         Set<TestTag> tags = new HashSet<TestTag>();
         if (testOutcome.getPath() != null) {
-            List<String> storyPathElements = stripRootFrom(pathElements(testOutcome.getPath()));
+            List<String> storyPathElements = stripRootFrom(pathElements(stripRootPathFrom(testOutcome.getPath())));
             tags.addAll(getMatchingCapabilities(getRequirements(), storyPathElements));
         }
         return tags;
@@ -175,7 +175,15 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         } else {
             return storyPathElements;
         }
+    }
 
+    private String stripRootPathFrom(String testOutcomePath) {
+        String rootPath = ThucydidesSystemProperty.TEST_ROOT_PACKAGE.from(environmentVariables);
+        if (rootPath != null && testOutcomePath.startsWith(rootPath)) {
+            return testOutcomePath.substring(rootPath.length() + 1);
+        } else {
+            return testOutcomePath;
+        }
     }
 
     private List<TestTag> concat(TestTag thisTag, List<TestTag> remainingTags) {
@@ -201,15 +209,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
             }
         }
         return Optional.absent();
-    }
-
-    private String stripRootPathFrom(String testOutcomePath) {
-        String rootPath = ThucydidesSystemProperty.TEST_ROOT_PACKAGE.from(environmentVariables);
-        if (rootPath != null && testOutcomePath.startsWith(rootPath)) {
-            return testOutcomePath.substring(rootPath.length() + 1);
-        } else {
-            return testOutcomePath;
-        }
     }
 
     private List<Requirement> loadCapabilitiesFrom(File[] capabilityDirectories) {
