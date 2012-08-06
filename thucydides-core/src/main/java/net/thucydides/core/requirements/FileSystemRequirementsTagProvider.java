@@ -4,17 +4,13 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.requirements.model.Requirement;
-import net.thucydides.core.requirements.model.Narrative;
-import net.thucydides.core.requirements.model.NarrativeReader;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
-import net.thucydides.core.resources.FileResources;
-import net.thucydides.core.resources.ResourceList;
-import net.thucydides.core.statistics.service.TagProvider;
+import net.thucydides.core.requirements.model.Narrative;
+import net.thucydides.core.requirements.model.NarrativeReader;
+import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import org.apache.commons.collections.IteratorUtils;
@@ -26,7 +22,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -36,6 +31,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import static ch.lambdaj.Lambda.convert;
+import static org.apache.commons.collections.IteratorUtils.*;
 
 /**
  * Load a set of requirements (epics/themes,...) from the directory structure.
@@ -82,7 +78,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
      * First, we look on the classpath. If we don't find anything on the classpath (e.g. if the task is
      * being run from the Maven plugin), we look in the src/main/resources and src/test/resources directories starting
      * at the working directory.
-     * @return
      */
     public List<Requirement> getRequirements() {
         if (requirements == null) {
@@ -150,7 +145,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
 
 
     List<String> pathElements(String path) {
-        return IteratorUtils.toList(Splitter.on(PATH_SEPARATORS).split(path).iterator());
+        return toList(Splitter.on(PATH_SEPARATORS).split(path).iterator());
     }
 
     private List<TestTag> getMatchingCapabilities(List<Requirement> requirements, List<String> storyPathElements) {
@@ -267,7 +262,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         String capabilityTypes = ThucydidesSystemProperty.CAPABILITY_TYPES.from(environmentVariables);
         if (StringUtils.isNotEmpty(capabilityTypes)) {
             Iterator<String> types = Splitter.on(",").trimResults().split(capabilityTypes).iterator();
-            return IteratorUtils.toList(types);
+            return toList(types);
         } else {
             return DEFAULT_CAPABILITY_TYPES;
         }
@@ -298,11 +293,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
                 return file.isDirectory();
             }
         };
-    }
-
-    private Pattern allFilesInDirectory(final String directory) {
-        String allFilesPattern = String.format(".*[\\\\/]%s[\\\\/].*", directory);
-        return Pattern.compile(allFilesPattern);
     }
 
 }
