@@ -51,7 +51,6 @@ public class Requirement implements Comparable {
     }
 
     public String getChildType() {
-        System.out.println("Get child type for children: " + children);
         return (!children.isEmpty()) ? children.get(0).getType() : null;
     }
 

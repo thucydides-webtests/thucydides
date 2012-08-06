@@ -4,6 +4,7 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.requirements.model.Narrative;
@@ -11,6 +12,8 @@ import net.thucydides.core.requirements.model.NarrativeReader;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.resources.FileResources;
+import net.thucydides.core.resources.ResourceList;
 import net.thucydides.core.statistics.service.TagProvider;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
@@ -23,23 +26,29 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static ch.lambdaj.Lambda.convert;
 
 /**
  * Load a set of requirements (epics/themes,...) from the directory structure.
  * This will typically be the directory structure containing the tests (for JUnit) or stories (e.g. for JBehave).
+ * By default, the tests
  */
 public class FileSystemRequirementsTagProvider implements RequirementsTagProvider {
 
     private final static String DEFAULT_ROOT_DIRECTORY = "stories";
+    private final static String DEFAULT_RESOURCE_DIRECTORY = "src/test/resources";
     private final static List<String> DEFAULT_CAPABILITY_TYPES = ImmutableList.of("capability","feature");
+    private final static Pattern PATH_SEPARATORS = Pattern.compile("[\\\\/.]");
+    private static final String WORKING_DIR = "user.dir";
 
     private final String rootDirectoryPath;
     private final NarrativeReader narrativeReader;
@@ -68,13 +77,20 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         this(rootDirectory, 0);
     }
 
+    /**
+     * We look for file system requirements in the root directory path (by default, 'stories').
+     * First, we look on the classpath. If we don't find anything on the classpath (e.g. if the task is
+     * being run from the Maven plugin), we look in the src/main/resources and src/test/resources directories starting
+     * at the working directory.
+     * @return
+     */
     public List<Requirement> getRequirements() {
         if (requirements == null) {
+            URL rootDirectoryPath = null;
             try {
-                Enumeration<URL> requirementResources = getClass().getClassLoader().getResources(rootDirectoryPath);
-                if (requirementResources.hasMoreElements()) {
-                    URL rootDirectoryUrl = requirementResources.nextElement();
-                    File rootDirectory = new File(rootDirectoryUrl.getPath());
+                Optional<String> directoryPath = getRootDirectoryPath();
+                if (directoryPath.isPresent()) {
+                    File rootDirectory = new File(directoryPath.get());
                     File[] capabilityDirectories = rootDirectory.listFiles(thatAreDirectories());
                     requirements = loadCapabilitiesFrom(capabilityDirectories);
                     Collections.sort(requirements);
@@ -82,21 +98,59 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
                     requirements = Collections.EMPTY_LIST;
                 }
             } catch (IOException e) {
+                requirements = Collections.EMPTY_LIST;
                 throw new IllegalArgumentException("Could not load requirements from '" + rootDirectoryPath + "'", e);
             }
         }
         return requirements;
     }
 
+    private Optional<String> getRootDirectoryPath() throws IOException {
+        Optional<String> rootDirectoryOnClasspath = getRootDirectoryFromClasspath();
+        if (rootDirectoryOnClasspath.isPresent()) {
+            return rootDirectoryOnClasspath;
+        } else {
+            return getRootDirectoryFromWorkingDirectory();
+        }
+    }
+
+
+    public Optional<String> getRootDirectoryFromClasspath() throws IOException {
+        Enumeration<URL> requirementResources = getDirectoriesFrom(rootDirectoryPath);
+        if (requirementResources.hasMoreElements()) {
+            return Optional.of(requirementResources.nextElement().getPath());
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    public Optional<String> getRootDirectoryFromWorkingDirectory() throws IOException {
+        File workingDirectory = new File(System.getProperty(WORKING_DIR));
+        File resourceDirectory = new File(workingDirectory, DEFAULT_RESOURCE_DIRECTORY);
+        File requirementsDirectory = new File(resourceDirectory, rootDirectoryPath);
+        if (requirementsDirectory.exists()) {
+            return Optional.of(requirementsDirectory.getAbsolutePath());
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Enumeration<URL> getDirectoriesFrom(String root) throws IOException {
+        return getClass().getClassLoader().getResources(root);
+    }
+
     public Set<TestTag> getTagsFor(final TestOutcome testOutcome) {
         Set<TestTag> tags = new HashSet<TestTag>();
         if (testOutcome.getPath() != null) {
-            List<String> storyPathElements
-                    = IteratorUtils.toList(Splitter.on(".")
-                                                   .split(stripRootPathFrom(testOutcome.getPath())).iterator());
+            List<String> storyPathElements = stripRootFrom(pathElements(testOutcome.getPath()));
             tags.addAll(getMatchingCapabilities(getRequirements(), storyPathElements));
         }
         return tags;
+    }
+
+
+    List<String> pathElements(String path) {
+        return IteratorUtils.toList(Splitter.on(PATH_SEPARATORS).split(path).iterator());
     }
 
     private List<TestTag> getMatchingCapabilities(List<Requirement> requirements, List<String> storyPathElements) {
@@ -112,6 +166,16 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
                 return Collections.EMPTY_LIST;
             }
         }
+    }
+
+    private List<String> stripRootFrom(List<String> storyPathElements) {
+        List<String> rootElements = pathElements(rootDirectoryPath);
+        if (storyPathElements.subList(0, rootElements.size()).equals(rootElements)) {
+            return storyPathElements.subList(rootElements.size(), storyPathElements.size());
+        } else {
+            return storyPathElements;
+        }
+
     }
 
     private List<TestTag> concat(TestTag thisTag, List<TestTag> remainingTags) {
@@ -236,4 +300,10 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
             }
         };
     }
+
+    private Pattern allFilesInDirectory(final String directory) {
+        String allFilesPattern = String.format(".*[\\\\/]%s[\\\\/].*", directory);
+        return Pattern.compile(allFilesPattern);
+    }
+
 }

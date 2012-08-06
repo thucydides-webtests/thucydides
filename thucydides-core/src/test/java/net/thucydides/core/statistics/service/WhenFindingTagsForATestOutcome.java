@@ -6,7 +6,6 @@ import net.thucydides.core.annotations.WithTags;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.requirements.FileSystemRequirementsTagProvider;
-import net.thucydides.core.requirements.FileSystemRequirementsTagProvider;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -20,7 +19,6 @@ import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.when;
@@ -270,5 +268,39 @@ public class WhenFindingTagsForATestOutcome {
         Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags.size(), is(3));
     }
+
+    @Mock TestOutcome testOutcome;
+
+    @Test
+    public void should_get_tags_from_story_path() {
+        FileSystemRequirementsTagProvider tagProvider = new FileSystemRequirementsTagProvider();
+
+        when(testOutcome.getPath()).thenReturn("stories.grow_potatoes.grow_new_potatoes.PlantNewPotatoes");
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
+        assertThat(tags, hasItem(TestTag.withName("Grow potatoes").andType("capability")));
+        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes").andType("feature")));
+    }
+
+
+    @Test
+    public void should_get_tags_from_story_path_with_file_separators() {
+        FileSystemRequirementsTagProvider tagProvider = new FileSystemRequirementsTagProvider();
+
+        when(testOutcome.getPath()).thenReturn("stories/grow_potatoes/grow_new_potatoes/PlantNewPotatoes");
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
+        assertThat(tags, hasItem(TestTag.withName("Grow potatoes").andType("capability")));
+        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes").andType("feature")));
+    }
+
+    @Test
+    public void should_get_tags_from_story_path_with_windows_file_separators() {
+        FileSystemRequirementsTagProvider tagProvider = new FileSystemRequirementsTagProvider();
+
+        when(testOutcome.getPath()).thenReturn("stories\\grow_potatoes\\grow_new_potatoes\\PlantNewPotatoes");
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
+        assertThat(tags, hasItem(TestTag.withName("Grow potatoes").andType("capability")));
+        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes").andType("feature")));
+    }
+
 }
 
