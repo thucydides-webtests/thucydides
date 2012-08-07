@@ -24,7 +24,7 @@ task setNewVersion {
 
 task buildArtifacts {
     dependsOn setNewVersion
-    executeOnShell "mvn clean install javadoc:jar source:jar -T 2C -am -pl ${project.ext.artifacts.join(',')}"
+    executeOnShell "mvn clean install javadoc:jar source:jar -am -pl ${project.ext.artifacts.join(',')}"
 }
 
 task deployArtifacts {
