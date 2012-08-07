@@ -1,8 +1,10 @@
 package net.thucydides.core.reports.html;
 
+import com.gargoylesoftware.htmlunit.TextUtil;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import net.thucydides.core.issues.IssueTracking;
+import org.apache.commons.io.IOUtils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -89,6 +91,11 @@ public class Formatter {
             formattedValue = insertShortenedIssueTrackingUrls(formattedValue);
         }
         return formattedValue;
+    }
+
+    public String addLineBreaks(final String text) {
+        return text.replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS,"<br>")
+                                      .replaceAll(IOUtils.LINE_SEPARATOR_UNIX,"<br>");
     }
 
     private String insertShortenedIssueTrackingUrls(String value) {

@@ -25,6 +25,8 @@ import static net.thucydides.core.requirements.RequirementsPath.fileSystemPathEl
 public class NarrativeReader {
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static final String TITLE_SEPARATOR = ":";
+    private static final String BACKSLASH = "\\\\";
+    private static final String FORWARDSLASH = "/";
 
     private final String rootDirectory;
     private final List<String> capabilityTypes;
@@ -77,15 +79,11 @@ public class NarrativeReader {
     }
 
     private String directoryLevelInRequirementsHierarchy(File narrativeFile, int requirementsLevel) {
-        System.out.println("directoryLevelInRequirementsHierarchy" + narrativeFile);
         String normalizedNarrativePath = normalized(narrativeFile.getAbsolutePath());
         String normalizedRootPath = normalized(rootDirectory);
-        System.out.println("normalizedNarrativePath = " + normalizedNarrativePath);
-        System.out.println("normalizedRootPath = " + normalizedRootPath);
         int rootDirectoryStart = normalizedNarrativePath.lastIndexOf(normalizedRootPath);
         int rootDirectoryEnd = (rootDirectoryStart >= 0) ? rootDirectoryStart + normalizedRootPath.length() : 0;
         String relativeNarrativePath = normalizedNarrativePath.substring(rootDirectoryEnd);
-        System.out.println("relativeNarrativePath = " + relativeNarrativePath);
         int directoryCount = fileSystemPathElements(relativeNarrativePath).size() - 1;
         int level = requirementsLevel + directoryCount - 1;
 
@@ -93,7 +91,7 @@ public class NarrativeReader {
     }
 
     private String normalized(String path) {
-        return path.replaceAll("\\\\", "/");
+        return path.replaceAll(BACKSLASH, FORWARDSLASH);
     }
 
     private String getRequirementTypeForLevel(int level) {

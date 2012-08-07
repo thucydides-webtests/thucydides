@@ -80,7 +80,7 @@
     <div class="menu">
         <ul>
             <li><a href="index.html">Test Results</a></li>
-            <li><a href="requirements.html" class="current">Requirements</a></li>
+            <li><a href="capabilities.html" class="current">Capabilitites</a></li>
             <#foreach tagType in allTestOutcomes.tagTypes>
                 <#assign tagReport = reportName.forTagType(tagType) >
                 <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
@@ -107,7 +107,7 @@
                     </#if>
                     <h2>${parentType}: ${issueNumber} ${parentTitle}</h2>
                     <div class="requirementNarrativeTitle">
-                        ${requirements.parentRequirement.get().narrativeText}
+                        ${formatter.addLineBreaks(requirements.parentRequirement.get().narrativeText)}
                     </div>
                 </div>
                 </#if>
@@ -198,7 +198,7 @@
                                             <#--</#if>-->
                                             <td class="${requirementOutcome.testOutcomes.result}-text requirementRowCell">
                                                 <span class="requirementName"><a href="${requirementReport}">${requirementOutcome.requirement.displayName}</a></span>
-                                                <span class="requirementNarrative">${requirementOutcome.requirement.narrativeText}</span>
+                                                <span class="requirementNarrative">${formatter.addLineBreaks(requirementOutcome.requirement.narrativeText)}</span>
                                             </td>
 
                                             <#if (requirements.childrenType?has_content) >

@@ -15,8 +15,8 @@ import java.util.Map;
 
 public class HtmlRequirementsReporter extends HtmlReporter {
 
-    private static final String DEFAULT_REQUIREMENTS_REPORT = "freemarker/requirements.ftl";
-    private static final String REPORT_NAME = "requirements.html";
+    private static final String DEFAULT_REQUIREMENTS_REPORT = "freemarker/capabilities.ftl";
+    private static final String REPORT_NAME = "capabilities.html";
 
     private final IssueTracking issueTracking;
 

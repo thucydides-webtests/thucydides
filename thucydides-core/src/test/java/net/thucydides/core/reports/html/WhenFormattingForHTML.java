@@ -133,6 +133,26 @@ public class WhenFormattingForHTML {
     }
 
     @Test
+    public void should_insert_line_breaks_into_text_values() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.addLineBreaks("Line one\nLine two\nLine three");
+
+        assertThat(formattedValue, is("Line one<br>Line two<br>Line three"));
+    }
+
+    @Test
+    public void should_insert_line_breaks_into_text_values_with_windows_line_breaks() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.addLineBreaks("Line one\r\nLine two\r\nLine three");
+
+        assertThat(formattedValue, is("Line one<br>Line two<br>Line three"));
+    }
+
+    @Test
     public void formatter_should_round_doubles_to_a_given_precision() {
         NumericalFormatter formatter = new NumericalFormatter();
         assertThat(formatter.rounded(1.234,1), is("1.2"));

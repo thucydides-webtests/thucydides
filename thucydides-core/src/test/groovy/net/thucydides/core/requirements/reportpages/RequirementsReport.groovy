@@ -17,7 +17,7 @@ class RequirementsReport extends PageObject {
     static RequirementsReport inDirectory(File directory) {
         def driver = new HtmlUnitDriver();
         def report = new RequirementsReport(driver)
-        report.openAt("file:///" +  directory.getAbsolutePath() + "/requirements.html");
+        report.openAt("file:///" +  directory.getAbsolutePath() + "/capabilities.html");
         return report
     }
 
