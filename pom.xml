@@ -369,7 +369,7 @@
                 <module>thucydides-sample-alternative-resources</module>
                 <module>thucydides-core</module>
                 <module>thucydides-junit</module>
-                <module>thucydides-maven-plugin</module>
+                <module>maven-thucydides-plugin</module>
                 <module>thucydides-easyb-plugin</module>
             </modules>
         </profile>
