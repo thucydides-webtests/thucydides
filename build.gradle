@@ -9,7 +9,7 @@ project.ext {
     releaseBranch = "release-${versionNumber}"
     workDirectory = createWorkDirectory()
     project = 'thucydides'
-    artifacts = ['thucydides-report-resources','thucydides-core', 'thucydides-junit','thucydides-maven-plugin','thucydides-easyb-plugin']
+    artifacts = ['thucydides-report-resources','thucydides-core', 'thucydides-junit','maven-thucydides-plugin','thucydides-easyb-plugin']
     mavenRepo = "~/.m2/repository"
 }
 

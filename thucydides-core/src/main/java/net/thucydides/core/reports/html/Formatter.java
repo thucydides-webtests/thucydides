@@ -22,7 +22,7 @@ public class Formatter {
     private final static Pattern shortIssueNumberPattern = Pattern.compile(ISSUE_NUMBER_REGEXP);
     private final static String FULL_ISSUE_NUMBER_REGEXP = "([A-Z][A-Z0-9-_]*)-\\d+";
     private final static Pattern fullIssueNumberPattern = Pattern.compile(FULL_ISSUE_NUMBER_REGEXP);
-    private final static String ISSUE_LINK_FORMAT = "<a href=\"{0}\">{1}</a>";
+    private final static String ISSUE_LINK_FORMAT = "<a target=\"_blank\" href=\"{0}\">{1}</a>";
 
     private final IssueTracking issueTracking;
 
