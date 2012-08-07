@@ -80,7 +80,7 @@
     <div class="menu">
         <ul>
             <li><a href="index.html">Test Results</a></li>
-            <li><a href="capabilities.html" class="current">Capabilitites</a></li>
+            <li><a href="capabilities.html" class="current">Requirements</a></li>
             <#foreach tagType in allTestOutcomes.tagTypes>
                 <#assign tagReport = reportName.forTagType(tagType) >
                 <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >

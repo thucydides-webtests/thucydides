@@ -118,7 +118,7 @@
     <div class="menu">
         <ul>
             <li><a href="index.html" class="current">Test Results</a></li>
-            <li><a href="capabilities.html">Capabilitites</a></li>
+            <li><a href="capabilities.html">Requirements</a></li>
             <#--<li><a href="treemap.html">Tree Map</a></li>-->
             <#--<li><a href="dashboard.html">Progress</a></li>-->
             <#foreach tagType in allTestOutcomes.tagTypes>
