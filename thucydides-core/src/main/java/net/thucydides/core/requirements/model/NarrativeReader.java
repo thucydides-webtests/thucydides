@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.requirements.FileSystemRequirementsTagProvider;
-import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,8 +13,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static net.thucydides.core.requirements.RequirementsPath.fileSystemPathElements;
-import static net.thucydides.core.requirements.RequirementsPath.pathElements;
-import static net.thucydides.core.requirements.RequirementsPath.stripRootFromPath;
 
 /**
  * Load a narrative text from a directory.
@@ -80,19 +77,23 @@ public class NarrativeReader {
     }
 
     private String directoryLevelInRequirementsHierarchy(File narrativeFile, int requirementsLevel) {
+        System.out.println("directoryLevelInRequirementsHierarchy" + narrativeFile);
         String normalizedNarrativePath = normalized(narrativeFile.getAbsolutePath());
         String normalizedRootPath = normalized(rootDirectory);
+        System.out.println("normalizedNarrativePath = " + normalizedNarrativePath);
+        System.out.println("normalizedRootPath = " + normalizedRootPath);
         int rootDirectoryStart = normalizedNarrativePath.lastIndexOf(normalizedRootPath);
         int rootDirectoryEnd = (rootDirectoryStart >= 0) ? rootDirectoryStart + normalizedRootPath.length() : 0;
         String relativeNarrativePath = normalizedNarrativePath.substring(rootDirectoryEnd);
+        System.out.println("relativeNarrativePath = " + relativeNarrativePath);
         int directoryCount = fileSystemPathElements(relativeNarrativePath).size() - 1;
         int level = requirementsLevel + directoryCount - 1;
 
         return getRequirementTypeForLevel(level);
     }
 
-    private String normalized(String absolutePath) {
-        return absolutePath.replaceAll(IOUtils.LINE_SEPARATOR, IOUtils.LINE_SEPARATOR_UNIX);
+    private String normalized(String path) {
+        return path.replaceAll("\\\\", "/");
     }
 
     private String getRequirementTypeForLevel(int level) {
