@@ -9,6 +9,7 @@ import net.thucydides.core.model.TestTag
 import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
+import net.thucydides.core.model.Story
 
 class WhenAssociatingATestOutcomeWithARequirement extends Specification {
 
@@ -59,6 +60,57 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
             def testOutcome = new TestOutcome("someTest",ASampleTestWithNoCapability)
         then:
             capabilityProvider.getTagsFor(testOutcome) == [] as Set
+    }
+
+    def "Should find the direct parent requirement of a test outcome"() {
+        given: "We are using the default requirements provider"
+            EnvironmentVariables vars = new MockEnvironmentVariables();
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
+        and: "We define the root package in the 'thucydides.test.root' property"
+            vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
+        when: "We load requirements with nested capability directories and no .narrative files"
+            def testOutcome = new TestOutcome("someTest",ASampleTestWithACapability)
+        then:
+            capabilityProvider.getParentRequirementOf(testOutcome).isPresent()
+            capabilityProvider.getParentRequirementOf(testOutcome).get().name == "Grow potatoes"
+    }
+
+    def "Should find the direct parent requirement of a test outcome for nested requirements"() {
+        given: "We are using the default requirements provider"
+            EnvironmentVariables vars = new MockEnvironmentVariables();
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
+        and: "We define the root package in the 'thucydides.test.root' property"
+            vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
+        when: "We load requirements with nested capability directories and no .narrative files"
+            def testOutcome = new TestOutcome("someTest",ASampleNestedTestWithACapability)
+        then:
+            capabilityProvider.getParentRequirementOf(testOutcome).isPresent()
+            capabilityProvider.getParentRequirementOf(testOutcome).get().name == "Grow new potatoes"
+    }
+
+    def "Should find the direct parent requirement of a test outcome related to a story"() {
+        given: "We are using the default requirements provider"
+            EnvironmentVariables vars = new MockEnvironmentVariables();
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
+        and: "We define the root package in the 'thucydides.test.root' property"
+            vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
+        when: "We load requirements with nested capability directories and no .narrative files"
+            def testOutcome = TestOutcome.forTestInStory("someTest", Story.withIdAndPath("PlantPotatoes","Plant potatoes","grow_potatoes/grow_new_potatoes/PlantPotatoes.story"))
+        then:
+            capabilityProvider.getParentRequirementOf(testOutcome).isPresent()
+            capabilityProvider.getParentRequirementOf(testOutcome).get().name == "Plant potatoes"
+    }
+
+    def "Should find no direct parent requirement of a test outcome if none is defined"() {
+        given: "We are using the default requirements provider"
+            EnvironmentVariables vars = new MockEnvironmentVariables();
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
+        and: "We define the root package in the 'thucydides.test.root' property"
+            vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
+        when: "We load requirements with nested capability directories and no .narrative files"
+            def testOutcome = new TestOutcome("someTest",ASampleTestWithNoCapability)
+        then:
+            !capabilityProvider.getParentRequirementOf(testOutcome).isPresent()
     }
 
 }

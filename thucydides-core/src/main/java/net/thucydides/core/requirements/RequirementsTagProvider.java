@@ -1,5 +1,6 @@
 package net.thucydides.core.requirements;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
@@ -17,4 +18,5 @@ import java.util.List;
  */
 public interface RequirementsTagProvider extends TagProvider {
     List<Requirement> getRequirements();
+    Optional<Requirement> getParentRequirementOf(final TestOutcome testOutcome);
 }

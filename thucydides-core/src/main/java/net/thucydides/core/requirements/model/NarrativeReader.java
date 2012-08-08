@@ -1,9 +1,11 @@
 package net.thucydides.core.requirements.model;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import net.thucydides.core.reports.html.Formatter;
+import com.google.common.collect.Lists;
 import net.thucydides.core.requirements.FileSystemRequirementsTagProvider;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +18,7 @@ import static net.thucydides.core.requirements.RequirementsPath.fileSystemPathEl
 
 /**
  * Load a narrative text from a directory.
- * A narrative is a text file that describes a capability, feature, or epic, or whatever terms you are using in your
+ * A narrative is a text file that describes a requirement, feature, or epic, or whatever terms you are using in your
  * project. The directory structure itself is used to organize capabilities into features, and so on. At the leaf
  * level, the directory will contain story files (e.g. JBehave stories, JUnit test cases, etc). At each level, a
  * "narrative.txt" file provides a description.
@@ -24,24 +26,23 @@ import static net.thucydides.core.requirements.RequirementsPath.fileSystemPathEl
  */
 public class NarrativeReader {
     private static final String NEW_LINE = System.getProperty("line.separator");
-    private static final String TITLE_SEPARATOR = ":";
     private static final String BACKSLASH = "\\\\";
     private static final String FORWARDSLASH = "/";
 
     private final String rootDirectory;
-    private final List<String> capabilityTypes;
+    private final List<String> requirementTypes;
 
-    protected NarrativeReader(String rootDirectory, List<String> capabilityTypes) {
+    protected NarrativeReader(String rootDirectory, List<String> requirementTypes) {
         this.rootDirectory = rootDirectory;
-        this.capabilityTypes = ImmutableList.copyOf(capabilityTypes);
+        this.requirementTypes = ImmutableList.copyOf(requirementTypes);
     }
 
     public static NarrativeReader forRootDirectory(String rootDirectory) {
         return new NarrativeReader(rootDirectory, FileSystemRequirementsTagProvider.DEFAULT_CAPABILITY_TYPES);
     }
 
-    public NarrativeReader withCapabilityTypes(List<String> capabilityTypes) {
-        return new NarrativeReader(this.rootDirectory, capabilityTypes);
+    public NarrativeReader withRequirementTypes(List<String> requirementTypes) {
+        return new NarrativeReader(this.rootDirectory, requirementTypes);
     }
 
     public Optional<Narrative> loadFrom(File directory) {
@@ -57,25 +58,120 @@ public class NarrativeReader {
         }
     }
 
+
+    public Optional<Narrative> loadFromStoryFile(File storyFile) {
+        return narrativeLoadedFrom(storyFile, "story");
+    }
+
     private Optional<Narrative> narrativeLoadedFrom(File narrativeFile, int requirementsLevel) {
+        String type = directoryLevelInRequirementsHierarchy(narrativeFile, requirementsLevel);
+        return narrativeLoadedFrom(narrativeFile, type);
+    }
+
+    private Optional<Narrative> narrativeLoadedFrom(File narrativeFile, String type) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(narrativeFile));
+            List<String> lines = readPreambleFrom(reader);
 
             String title = null;
-            String cardNumber = null;
-            Optional<String> titleLine = readOptionalTitleLine(reader);
+            String cardNumber = findCardNumberIn(lines);
+            Optional<String> titleLine = readOptionalTitleFrom(lines);
             if (titleLine.isPresent()) {
-                title = readTitleFrom(titleLine.get());
-                cardNumber = findCardNumberIn(titleLine.get());
+                title = titleLine.get();
             }
-            String text = readDescriptionFrom(reader);
-            String type = directoryLevelInRequirementsHierarchy(narrativeFile, requirementsLevel);
+            String text = readNarrativeFrom(lines);
             reader.close();
             return Optional.of(new Narrative(Optional.fromNullable(title), Optional.fromNullable(cardNumber), type, text));
         } catch(IOException ex) {
             ex.printStackTrace();
         }
         return Optional.absent();
+    }
+
+    private String findCardNumberIn(List<String> lines) {
+        String cardNumber = null;
+        for(String line: lines) {
+            String normalizedLine = line.toUpperCase();
+            if (normalizedLine.startsWith("@ISSUES")) {
+                String issueList = normalizedLine.replace("@ISSUES","").trim();
+                List<String> issues = Lists.newArrayList(Splitter.on(",").trimResults().split(issueList));
+                if (!issues.isEmpty()) {
+                    cardNumber = issues.get(0);
+                }
+            } else if (normalizedLine.startsWith("@ISSUE")) {
+                String issueNumber = normalizedLine.replace("@ISSUE","").trim();
+                if (!StringUtils.isEmpty(issueNumber)) {
+                    cardNumber = issueNumber;
+                }
+            }
+        }
+        return cardNumber;
+    }
+
+    private String readNarrativeFrom(List<String> lines) {
+
+        StringBuilder description = new StringBuilder();
+        for(String line : lines) {
+            if (!isNarrativeMarker(line) && !isIssueMarker(line)) {
+                description.append(line);
+                description.append(NEW_LINE);
+            }
+        }
+        return description.toString();
+
+    }
+
+    private boolean isIssueMarker(String line) {
+        return normalizedLine(line).startsWith("@issue:");
+    }
+
+    private Optional<String> readOptionalTitleFrom(List<String> lines) {
+        if (!lines.isEmpty()) {
+            String firstLine = lines.get(0);
+            if (!isNarrativeMarker(firstLine)) {
+                lines.remove(0);
+                return Optional.of(firstLine);
+            }
+        }
+        return Optional.absent();
+    }
+
+    private boolean isNarrativeMarker(String line) {
+        return normalizedLine(line).startsWith("narrative:");
+    }
+
+    private List<String> readPreambleFrom(BufferedReader reader) throws IOException {
+        List<String> usefulLines = Lists.newArrayList();
+
+        boolean preambleFinished = false;
+        while (!preambleFinished) {
+            String nextLine = reader.readLine();
+            if (nextLine == null) {
+                preambleFinished = true;
+            } else {
+                if (preambleFinishedAt(nextLine)) {
+                    preambleFinished = true;
+                } else if (thereIsUsefulInformationIn(nextLine)) {
+                    usefulLines.add(nextLine);
+                }
+            }
+        }
+        return usefulLines;
+    }
+
+    private boolean preambleFinishedAt(String nextLine) {
+        return normalizedLine(nextLine).startsWith("scenario:");
+    }
+
+    private String normalizedLine(String nextLine) {
+        return nextLine.trim().toLowerCase();
+    }
+
+    private boolean thereIsUsefulInformationIn(String nextLine) {
+        String normalizedText = normalizedLine(nextLine);
+        return !normalizedText.isEmpty()
+                && !normalizedText.startsWith("meta:")
+                && !(normalizedText.startsWith("@") && (!normalizedText.startsWith("@issue")));
     }
 
     private String directoryLevelInRequirementsHierarchy(File narrativeFile, int requirementsLevel) {
@@ -95,49 +191,11 @@ public class NarrativeReader {
     }
 
     private String getRequirementTypeForLevel(int level) {
-        if (level > capabilityTypes.size() - 1) {
-            return capabilityTypes.get(capabilityTypes.size() - 1);
+        if (level > requirementTypes.size() - 1) {
+            return requirementTypes.get(requirementTypes.size() - 1);
         } else {
-            return capabilityTypes.get(level);
+            return requirementTypes.get(level);
         }
-    }
-
-
-    private Optional<String> readOptionalTitleLine(BufferedReader reader) throws IOException {
-        String titleLine = reader.readLine();
-        if (titleLine.contains(TITLE_SEPARATOR)) {
-            return Optional.of(titleLine);
-        } else {
-            return Optional.absent();
-        }
-    }
-
-    private String findCardNumberIn(String titleLine) {
-        List<String> issues = Formatter.issuesIn(titleLine);
-        if (!issues.isEmpty()) {
-            return issues.get(0);
-        } else {
-            return null;
-        }
-    }
-
-    private String readTitleFrom(String titleLine) throws IOException {
-        int separatorAt = titleLine.indexOf(TITLE_SEPARATOR);
-        if (separatorAt > 0) {
-            return titleLine.substring(separatorAt + 1).trim();
-        } else {
-            return null;
-        }
-    }
-
-    private String readDescriptionFrom(BufferedReader reader) throws IOException {
-        StringBuilder description = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            description.append(line);
-            description.append(NEW_LINE);
-        }
-        return description.toString();
     }
 
     private FilenameFilter calledNarrativeDotTxt() {

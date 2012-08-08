@@ -5,10 +5,13 @@ import net.thucydides.core.annotations.Title;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.TestOutcomes;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,9 +39,13 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
 
 
     IssueTracking issueTracking;
+    
+    @Mock
+    TestOutcomes allTestOutcomes;
 
     @Before
     public void setupIssueTracker() {
+        MockitoAnnotations.initMocks(this);
         issueTracking = new SystemPropertiesIssueTracking(environmentVariables);
     }
 
@@ -50,7 +57,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
 
         recordSimpleTest(testOutcome);
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_a_simple_test_case") + ".html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
@@ -66,7 +73,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
 
         recordSimpleTest(testOutcome);
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_a_simple_test_case") + ".html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
@@ -81,7 +88,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
 
         recordSimpleTest(testOutcome);
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_a_simple_test_case") + ".html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
@@ -97,7 +104,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
 
         recordSimpleTest(testOutcome);
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_a_simple_test_case") + ".html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
@@ -112,7 +119,7 @@ public class WhenIncludingJIRALinksInReports extends AbstractReportGenerationTes
 
         recordSimpleTest(testOutcome);
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_should_do_this_too") + ".html");
         String reportContents = FileUtils.readFileToString(screenshotReport);

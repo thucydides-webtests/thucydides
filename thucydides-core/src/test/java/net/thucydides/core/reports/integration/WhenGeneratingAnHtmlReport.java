@@ -2,6 +2,7 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -9,25 +10,32 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
 
 import static net.thucydides.core.model.TestStepFactory.forAFailingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forAPendingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forASkippedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forASuccessfulTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
+    @Mock
+    TestOutcomes allTestOutcomes;
+    
     @Before
     public void setupWorkingDirectory() throws IOException {
+        
+        MockitoAnnotations.initMocks(this);
+        
         File screenshotsSourceDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots").getPath());
         File[] screenshots = screenshotsSourceDirectory.listFiles();
 
@@ -45,7 +53,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File htmlReport = reporter.generateReportFor(testOutcome);
+        File htmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         assertThat(htmlReport.exists(), is(true));
     }
@@ -56,7 +64,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         TestOutcome testOutcome = new TestOutcome("A simple test case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File htmlReport = reporter.generateReportFor(testOutcome);
+        File htmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         assertThat(htmlReport.getName(), is(DigestUtils.md5Hex("a_simple_test_case") + ".html"));
     }
@@ -67,7 +75,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         TestOutcome testOutcome = new TestOutcome("A simple test case (#ISSUE-123)");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File htmlReport = reporter.generateReportFor(testOutcome);
+        File htmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         assertThat(htmlReport.getName(), is(DigestUtils.md5Hex("a_simple_test_case") + ".html"));
     }
@@ -78,7 +86,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         TestOutcome testOutcome = new TestOutcome("A simple test case (#ISSUE-123, #ISSUE-145)");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File htmlReport = reporter.generateReportFor(testOutcome);
+        File htmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         assertThat(htmlReport.getName(), is(DigestUtils.md5Hex("a_simple_test_case") + ".html"));
     }
@@ -87,7 +95,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     public void css_stylesheets_should_also_be_copied_to_the_output_directory() throws Exception {
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
         
         File cssDir = new File(outputDirectory, "css");
         File cssStylesheet = new File(cssDir, "core.css");
@@ -101,7 +109,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File cssDir = new File(differentOutputDirectory, "css");
         File cssStylesheet = new File(cssDir, "core.css");
@@ -114,7 +122,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
         
         File report = new File(outputDirectory,DigestUtils.md5Hex("a_simple_test_case") + ".html");
         File cssDir = new File(outputDirectory, "css");
@@ -133,7 +141,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot,screenshotSource));
         testOutcome.recordStep(step1);
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_user_story_should_do_this") + ".html"));
     }
 
@@ -147,7 +155,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot,screenshotSource));
         testOutcome.recordStep(step1);
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_should_do_this") + "_screenshots.html");
         assertThat(screenshotReport.exists(), is(true));
@@ -162,7 +170,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         recordStepWithScreenshot(testOutcome, "View the results", "google_page_2.png");
         recordStepWithScreenshot(testOutcome, "Display a resulting page", "google_page_3.png");
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_search_for_cats") + "_screenshots.html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
@@ -179,7 +187,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         recordStepWithScreenshot(testOutcome, "View the results", "google_page_2.png");
         recordStepWithScreenshot(testOutcome, "Display a resulting page", "google_page_3.png");
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File screenshotReport = new File(outputDirectory,  DigestUtils.md5Hex("a_user_story_should_do_this") + "_screenshots.html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
@@ -196,7 +204,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         recordStepWithScreenshot(testOutcome, "View the results", "google_page_2.png");
         recordStepWithScreenshot(testOutcome, "Display a resulting page", "google_page_3.png");
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_should_do_this") + "_screenshots.html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
@@ -213,7 +221,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot,screenshotSource));
         testOutcome.recordStep(step1);
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File screenshotReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_should_do_this") + "_screenshots.html");
         String reportContents = FileUtils.readFileToString(screenshotReport);
@@ -232,7 +240,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot,screenshotSource));
         testOutcome.recordStep(step1);
 
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File testReport = new File(outputDirectory, DigestUtils.md5Hex("a_user_story_should_do_this") + ".html");
         String reportContents = FileUtils.readFileToString(testReport);
@@ -253,7 +261,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         reporter.setQualifier("qualifier");
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_user_story_should_do_this_qualifier") + ".html"));
 
     }
@@ -270,7 +278,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         reporter.setQualifier("a b c");
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_user_story_should_do_this_a_b_c") + ".html"));
 
     }
@@ -284,7 +292,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         final String alternativeResourceDirectory = "alt-report-resources";
         reporter.setResourceDirectory(alternativeResourceDirectory);
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
         
         File expectedCssStylesheet = new File(new File(outputDirectory,"css"), "alternative.css");
         assertThat(expectedCssStylesheet.exists(), is(true));
@@ -298,7 +306,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         final String alternativeResourceDirectory = "localresourcelist";
         reporter.setResourceDirectory(alternativeResourceDirectory);
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         File expectedCssStylesheet = new File(new File(outputDirectory,"css"), "localsample.css");
         assertThat(expectedCssStylesheet.exists(), is(true));
@@ -311,7 +319,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         environmentVariables.setProperty("thucydides.report.resources", "alt-report-resources");
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
         
         File expectedCssStylesheet = new File(new File(outputDirectory,"css"), "alternative.css");
         assertThat(expectedCssStylesheet.exists(), is(true));
@@ -325,7 +333,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         final String alternativeResourceDirectory = "alt-report-resources";
         reporter.setResourceDirectory(alternativeResourceDirectory);
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
         
         File defaultCssStylesheet = new File(new File(outputDirectory,"css"), "core.css");
         assertThat(defaultCssStylesheet.exists(), is(false));
@@ -361,7 +369,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         testOutcome.recordStep(forASkippedTestStepCalled("Step 15"));
 
         reporter.setOutputDirectory(new File("target/thucyidides"));
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
     }
     
     @Test
@@ -376,7 +384,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         testOutcome.recordStep(TestStepFactory.pendingTestStepCalled("step 6"));
 
         reporter.setOutputDirectory(new File("target/thucyidides"));
-        reporter.generateReportFor(testOutcome);
+        reporter.generateReportFor(testOutcome, allTestOutcomes);
     }
 
 }

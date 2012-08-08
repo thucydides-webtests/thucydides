@@ -9,6 +9,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -17,6 +18,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,8 +41,14 @@ public class WhenGeneratingAnXMLReport {
 
     private File outputDirectory;
 
+    @Mock
+    TestOutcomes allTestOutcomes;
+    
     @Before
     public void setupTestReporter() {
+        
+        MockitoAnnotations.initMocks(this);
+        
         reporter = new XMLTestOutcomeReporter();
         outputDirectory = temporaryDirectory.newFolder("temp");
         reporter.setOutputDirectory(outputDirectory);
@@ -159,7 +168,7 @@ public class WhenGeneratingAnXMLReport {
 
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -182,7 +191,7 @@ public class WhenGeneratingAnXMLReport {
 
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -206,7 +215,7 @@ public class WhenGeneratingAnXMLReport {
 
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -230,7 +239,7 @@ public class WhenGeneratingAnXMLReport {
         testOutcome.setSessionId("1234");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -258,7 +267,7 @@ public class WhenGeneratingAnXMLReport {
 
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -284,7 +293,7 @@ public class WhenGeneratingAnXMLReport {
 
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -310,7 +319,7 @@ public class WhenGeneratingAnXMLReport {
 
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -335,7 +344,7 @@ public class WhenGeneratingAnXMLReport {
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         reporter.setQualifier("qualifier");
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -359,7 +368,7 @@ public class WhenGeneratingAnXMLReport {
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         reporter.setQualifier("a_b");
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -370,7 +379,7 @@ public class WhenGeneratingAnXMLReport {
     public void should_generate_an_XML_report_with_a_name_based_on_the_test_run_title()
             throws Exception {
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_simple_test_case") + ".xml"));
     }
@@ -379,7 +388,7 @@ public class WhenGeneratingAnXMLReport {
     public void should_generate_an_XML_report_in_the_target_directory() throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         assertThat(xmlReport.getPath(), startsWith(outputDirectory.getPath()));
     }
@@ -433,7 +442,7 @@ public class WhenGeneratingAnXMLReport {
         testOutcome.recordStep(TestStepFactory.skippedTestStepCalled("step 8"));
         testOutcome.recordStep(TestStepFactory.pendingTestStepCalled("step 9"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -487,7 +496,7 @@ public class WhenGeneratingAnXMLReport {
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 3"));
         testOutcome.endGroup();
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -534,7 +543,7 @@ public class WhenGeneratingAnXMLReport {
         testOutcome.endGroup();
         testOutcome.endGroup();
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -569,7 +578,7 @@ public class WhenGeneratingAnXMLReport {
         testOutcome.endGroup();
         testOutcome.endGroup();
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -604,7 +613,7 @@ public class WhenGeneratingAnXMLReport {
         testOutcome.endGroup();
         testOutcome.endGroup();
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -638,7 +647,7 @@ public class WhenGeneratingAnXMLReport {
         testOutcome.recordStep(step1);
         testOutcome.recordStep(TestStepFactory.failingTestStepCalled("step 2"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
@@ -656,7 +665,7 @@ public class WhenGeneratingAnXMLReport {
 
         reporter.setQualifier("qualifier");
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_user_story_a_simple_test_case_qualifier") + ".xml"));
 
     }
@@ -671,7 +680,7 @@ public class WhenGeneratingAnXMLReport {
 
         testOutcome.recordStep(step);
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, containsString("<error>Oh nose!</error>"));
@@ -687,7 +696,7 @@ public class WhenGeneratingAnXMLReport {
 
         testOutcome.recordStep(step);
 
-        File xmlReport = reporter.generateReportFor(testOutcome);
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
         assertThat(generatedReportText, containsString("<exception>java.lang.IllegalArgumentException"));
