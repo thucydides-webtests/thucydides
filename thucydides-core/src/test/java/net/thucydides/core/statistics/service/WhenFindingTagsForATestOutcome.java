@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -320,14 +321,16 @@ public class WhenFindingTagsForATestOutcome {
     public void should_get_requirement_from_story_with_narrative_if_present() {
         FileSystemRequirementsTagProvider tagProvider = new FileSystemRequirementsTagProvider();
         Story userStory = Story.called("plant potatoes").withNarrative("Plant some potatoes");
-        when(testOutcome.getPath()).thenReturn("stories\\grow_potatoes\\grow_new_potatoes\\PlantSomePotatoes.story");
+        when(testOutcome.getPath()).thenReturn("stories\\grow_potatoes\\grow_new_potatoes\\PlantPotatoes.story");
         when(testOutcome.getUserStory()).thenReturn(userStory);
 
         Optional<Requirement> requirement = tagProvider.getParentRequirementOf(testOutcome);
 
         assertThat(requirement.isPresent(), is(true));
-        assertThat(requirement.get().getName(), is("plant potatoes"));
-        assertThat(requirement.get().getNarrativeText(), is("Plant some potatoes"));
+        assertThat(requirement.get().getName(), is("Plant potatoes"));
+        assertThat(requirement.get().getNarrativeText(), containsString("As a farmer"));
+        assertThat(requirement.get().getNarrativeText(), containsString("I want to plant potatoes"));
+        assertThat(requirement.get().getNarrativeText(), containsString("So that I can harvest them later on"));
     }
 }
 

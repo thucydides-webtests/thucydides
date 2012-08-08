@@ -143,19 +143,26 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     public Set<TestTag> getTagsFor(final TestOutcome testOutcome) {
         Set<TestTag> tags = new HashSet<TestTag>();
         if (testOutcome.getPath() != null) {
-            List<String> storyPathElements = stripRootFrom(pathElements(stripRootPathFrom(stripStorySuffixFrom(testOutcome.getPath()))));
+            List<String> storyPathElements = stripRootFrom(pathElements(stripRootPathFrom(testOutcome.getPath())));
             addStoryTagIfPresent(tags, storyPathElements);
+            storyPathElements = stripStorySuffixFrom(storyPathElements);
             tags.addAll(getMatchingCapabilities(getRequirements(), storyPathElements));
         }
         return tags;
     }
 
-    private String stripStorySuffixFrom(String path) {
-        if (path.toLowerCase().endsWith(".story")) {
-            return path.substring(0, path.length() - 6);
+    private List<String> stripStorySuffixFrom(List<String> pathElements) {
+        if ((!pathElements.isEmpty()) && (last(pathElements).toLowerCase().equals("story"))) {
+            return dropLastElement(pathElements);
         } else {
-            return path;
+            return pathElements;
         }
+    }
+
+    private List<String> dropLastElement(List<String> pathElements) {
+        List<String> strippedPathElements = Lists.newArrayList(pathElements);
+        strippedPathElements.remove(pathElements.size() - 1);
+        return strippedPathElements;
     }
 
     private void addStoryTagIfPresent(Set<TestTag> tags, List<String> storyPathElements) {
@@ -186,7 +193,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         System.out.println("Finding parent requirement of " + testOutcome.getPath());
 
         if (testOutcome.getPath() != null) {
-            List<String> storyPathElements = stripRootFrom(pathElements(stripRootPathFrom(stripStorySuffixFrom(testOutcome.getPath()))));
+            List<String> storyPathElements = stripStorySuffixFrom(stripRootFrom(pathElements(stripRootPathFrom(testOutcome.getPath()))));
             return lastRequirementFrom(storyPathElements);
         } else {
             return Optional.absent();
