@@ -51,7 +51,7 @@ public class WhenConfiguringTheJPAProvider {
     public void should_configure_EclipseLink_by_default() {
 
         JPAProviderConfig providerConfig = JPAProviderConfigFactory.getJPAProviderConfig(environmentVariables, localDatabase);
-        assertThat(providerConfig.getProvider(), is(JPAProvider.EclipseLink));
+        assertThat(providerConfig.getProvider(), is(JPAProvider.Hibernate));
     }
 
     @Test

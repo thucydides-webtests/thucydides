@@ -13,7 +13,7 @@ import net.thucydides.core.util.EnvironmentVariables;
  */
 public class JPAProviderConfigFactory {
 
-    public static final JPAProvider DEFAULT_PROVIDER = JPAProvider.EclipseLink;
+    public static final JPAProvider DEFAULT_PROVIDER = JPAProvider.Hibernate;
     public static JPAProviderConfig getJPAProviderConfig(EnvironmentVariables environmentVariables,
                                                          LocalDatabase localDatabase) {
         String providerProperty =  ThucydidesSystemProperty.JPA_PROVIDER.from(environmentVariables, DEFAULT_PROVIDER.name());
