@@ -1,6 +1,8 @@
 package net.thucydides.core.pages.components;
 
 import ch.lambdaj.function.convert.Converter;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.thucydides.core.matchers.BeanMatcher;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -20,9 +22,16 @@ import static ch.lambdaj.Lambda.convert;
  */
 public class HtmlTable {
     private final WebElement tableElement;
+    private List<String> headings;
 
     public HtmlTable(final WebElement tableElement) {
         this.tableElement = tableElement;
+        this.headings = null;
+    }
+
+    public HtmlTable(final WebElement tableElement, List<String> headings) {
+        this.tableElement = tableElement;
+        this.headings = headings;
     }
 
     public static HtmlTable inTable(final WebElement table) {
@@ -72,6 +81,26 @@ public class HtmlTable {
         }
     }
 
+    public static HtmlTableBuilder withColumns(String... headings) {
+        return new HtmlTableBuilder(Arrays.asList(headings));
+    }
+
+    public static class HtmlTableBuilder {
+        private final List<String> headings;
+
+        public HtmlTableBuilder(List<String> headings) {
+            this.headings = headings;
+        }
+
+        public List<Map<Object, String>> readRowsFrom(WebElement table) {
+            return new HtmlTable(table, headings).getRows();
+        }
+
+        public HtmlTable inTable(WebElement table) {
+            return new HtmlTable(table, headings);
+        }
+    }
+
     private class EnoughCellsCheck {
         private final int minimumNumberOfCells;
 
@@ -89,12 +118,15 @@ public class HtmlTable {
     }
 
     public List<String> getHeadings() {
-        List<String> thHeadings = convert(headingElements(), toTextValues());
-        if (thHeadings.isEmpty()) {
-            return convert(firstRowElements(), toTextValues());
-        } else {
-            return thHeadings;
+        if (headings == null) {
+            List<String> thHeadings = convert(headingElements(), toTextValues());
+            if (thHeadings.isEmpty()) {
+                headings = convert(firstRowElements(), toTextValues());
+            } else {
+                headings = thHeadings;
+            }
         }
+        return headings;
     }
 
     public List<WebElement> headingElements() {

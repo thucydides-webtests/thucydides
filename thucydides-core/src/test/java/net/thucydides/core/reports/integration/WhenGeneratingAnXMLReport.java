@@ -160,7 +160,7 @@ public class WhenGeneratingAnXMLReport {
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <test-step result='SUCCESS' duration='0'>\n"
                         + "    <description>step 1</description>\n"
                         + "  </test-step>\n"
@@ -183,7 +183,7 @@ public class WhenGeneratingAnXMLReport {
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <test-step result='SUCCESS' duration='0'>\n"
                         + "    <description>step 1</description>\n"
                         + "  </test-step>\n"
@@ -202,7 +202,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioWithTags.class);
         String expectedReport =
                 "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.SomeTestScenarioWithTags' name='Some test scenario with tags' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.SomeTestScenarioWithTags' name='Some test scenario with tags' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='Some test scenario with tags' type='story'/>\n"
                         + "    <tag name='simple story' type='story' />\n"
@@ -227,7 +227,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
         String expectedReport =
                 "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0' session-id='1234'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>\n"
@@ -251,7 +251,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", ATestScenarioWithIssues.class);
         String expectedReport =
                 "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <issues>\n"
                         + "    <issue>#456</issue>\n"
                         + "    <issue>#789</issue>\n"
@@ -279,7 +279,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioInAFeature.class);
         String expectedReport =
                 "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.AUserStoryInAFeature' name='A user story in a feature' path='net.thucydides.core.reports.integration'>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.AUserStoryInAFeature' name='A user story in a feature' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature'>\n"
                         + "    <feature id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature' name='A feature'/>\n"
                         + "  </user-story>\n"
                         + "  <tags>\n"
@@ -305,7 +305,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioInAFeature.class);
         String expectedReport =
                 "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.AUserStoryInAFeature' name='A user story in a feature' path='net.thucydides.core.reports.integration'>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.AUserStoryInAFeature' name='A user story in a feature' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature'>\n"
                         + "    <feature id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature' name='A feature'/>\n"
                         + "  </user-story>\n"
                         + "  <tags>\n"
@@ -332,7 +332,7 @@ public class WhenGeneratingAnXMLReport {
 
         String expectedReport =
                 "<acceptance-test-run title='A simple test case [qualifier]' name='a_simple_test_case' qualifier='qualifier' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>\n"
@@ -356,7 +356,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         String expectedReport =
                 "<acceptance-test-run title='A simple test case [a_b]' name='a_simple_test_case' qualifier='a_b' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>\n"
@@ -399,7 +399,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         String expectedReport =
                 "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='9' successful='2' failures='3' skipped='1' ignored='2' pending='1' result='FAILURE' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>\n"
@@ -473,7 +473,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
         String expectedReport =
                 "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='3' successful='3' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>\n"
@@ -508,7 +508,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
         String expectedReport =
                 "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='5' successful='5' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>\n"
@@ -555,7 +555,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
         String expectedReport =
                 "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>\n"
@@ -590,7 +590,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
         String expectedReport =
                 "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>\n"
@@ -624,7 +624,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         String expectedReport =
                 "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='2' successful='1' failures='1' skipped='0' ignored='0' pending='0' result='FAILURE' duration='0'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration'/>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>\n"

@@ -34,6 +34,10 @@ public class BeanMatchers {
         return new SimpleValueMatcher(value, matcher);
     }
 
+    public static SimpleValueMatcher checkThat(final Boolean value, final Matcher<? extends Object> matcher) {
+        return new SimpleValueMatcher(value, matcher);
+    }
+
     public static class BeanConstraint {
         private final String fieldName;
 

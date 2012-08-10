@@ -8,6 +8,7 @@ import net.thucydides.core.util.NameConverter;
 import java.util.Arrays;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.index;
 import static ch.lambdaj.Lambda.joinFrom;
 import static net.thucydides.core.model.ReportType.ROOT;
 
@@ -31,8 +32,18 @@ public class Story {
         this.storyName = NameConverter.humanize(getUserStoryClass().getSimpleName());
         this.qualifiedFeatureClassName = findFeatureClassName();
         this.featureName = findFeatureName();
-        this.path = userStoryClass.getPackage().getName();
+        this.path = pathOf(userStoryClass);
         this.narrative = null;
+    }
+
+    private String pathOf(Class<?> userStoryClass) {
+        String canonicalName = userStoryClass.getCanonicalName();
+        int lastDot = canonicalName.lastIndexOf(".");
+        if (lastDot > 0) {
+            return canonicalName.substring(0, lastDot);
+        } else {
+            return "";
+        }
     }
 
     private String findFeatureClassName() {

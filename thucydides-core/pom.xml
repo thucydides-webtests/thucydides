@@ -4,11 +4,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.12-SNAPSHOT</version>
+        <version>0.9.13-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-core</artifactId>
-    <version>0.9.12-SNAPSHOT</version>
+    <version>0.9.13-SNAPSHOT</version>
     <name>thucydides-core</name>
     <properties>
         <root.package>net.thucydides.core</root.package>
@@ -100,7 +100,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>11.0.1</version>
+            <version>13.0</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
