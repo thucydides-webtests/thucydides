@@ -59,7 +59,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
 
     /**
      * Thucydides project key
-     * @parameter expression="${thucydides.project.key}" default-value="default"
+     * @parameter expression="${thucydides.project.key}"
      *
      */
     public String projectKey;
