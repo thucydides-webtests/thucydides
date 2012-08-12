@@ -54,8 +54,9 @@ public class WhenUsingTheTestStatisticsDatabase {
     }
 
     @Test
-    public void should_be_able_to_define_statistics_database_via_system_properties() {
+    public void should_be_able_to_define_statistics_database_via_hibernate_system_properties() {
 
+        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.Hibernate.name());
         environmentVariables.setProperty("thucydides.statistics.driver_class", "org.hsqldb.jdbc.JDBCDriver");
         environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:test");
         environmentVariables.setProperty("thucydides.statistics.username", "admin");
