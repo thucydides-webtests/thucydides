@@ -2,7 +2,7 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.reports.history.TestHistoryInDatabase;
+import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -40,7 +40,7 @@ public class WhenGeneratingAnAggregateHtmlReport {
     WebDriver driver;
     
     @Mock
-    TestHistoryInDatabase testHistory;
+    TestHistory testHistory;
 
     @Before
     public void setupTestReporter() {
@@ -114,7 +114,7 @@ public class WhenGeneratingAnAggregateHtmlReport {
 
         reporter = new HtmlAggregateStoryReporter("project") {
             @Override
-            protected TestHistoryInDatabase getTestHistory() {
+            protected TestHistory getTestHistory() {
                 return testHistory;
             }
         };
