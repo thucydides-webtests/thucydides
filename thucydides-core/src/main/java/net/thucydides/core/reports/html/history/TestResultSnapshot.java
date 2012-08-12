@@ -39,7 +39,7 @@ public class TestResultSnapshot implements Comparable<TestResultSnapshot> {
                               final int skippedSteps,
                               final String buildId) {
 
-        this(time,specifiedSteps,passingSteps,failingSteps,skippedSteps,buildId, "project");
+        this(time,specifiedSteps,passingSteps,failingSteps,skippedSteps,buildId, Thucydides.getDefaultProjectKey());
     }
 
     public TestResultSnapshot(final int specifiedSteps,
