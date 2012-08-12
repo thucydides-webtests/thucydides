@@ -1,73 +1,81 @@
 package net.thucydides.core.reports.history;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import net.thucydides.core.annotations.Feature;
+import net.thucydides.core.guice.DatabaseConfig;
+import net.thucydides.core.guice.EnvironmentVariablesDatabaseConfig;
+import net.thucydides.core.guice.ThucydidesModule;
+import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStepFactory;
+import net.thucydides.core.pages.InternalSystemClock;
+import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.reports.TestOutcomes;
+import net.thucydides.core.reports.html.history.JPATestResultSnapshotDAO;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
+import net.thucydides.core.reports.html.history.TestResultSnapshotDAO;
+import net.thucydides.core.statistics.Statistics;
+import net.thucydides.core.statistics.StatisticsListener;
+import net.thucydides.core.statistics.dao.JPATestOutcomeHistoryDAO;
+import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
+import net.thucydides.core.statistics.service.ClasspathTagProviderService;
+import net.thucydides.core.statistics.service.TagProviderService;
+import net.thucydides.core.steps.ConsoleLoggingListener;
+import net.thucydides.core.steps.StepListener;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.MockitoAnnotations;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class WhenTrackingTestResultsOverTime {
 
     private TestHistory testHistory;
 
-    private File homeDirectory;
-
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
+    Injector injector;
+    ThucydidesModuleWithMockEnvironmentVariables guiceModule;
     MockEnvironmentVariables environmentVariables;
+
+
+    class ThucydidesModuleWithMockEnvironmentVariables extends ThucydidesModule {
+        @Override
+        protected void configure() {
+            clearEntityManagerCache();
+            bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
+            bind(EnvironmentVariables.class).to(MockEnvironmentVariables.class).in(Singleton.class);
+            bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
+            bind(TestOutcomeHistoryDAO.class).to(JPATestOutcomeHistoryDAO.class);
+            bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class);
+            bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class);
+            bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
+            bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);
+            bind(TestResultSnapshotDAO.class).to(JPATestResultSnapshotDAO.class).in(Singleton.class);
+        }
+    }
 
     @Before
     public void prepareTestHistory() {
         MockitoAnnotations.initMocks(this);
-        environmentVariables = new MockEnvironmentVariables();
 
-        homeDirectory = temporaryFolder.newFolder("home");
-        environmentVariables.setProperty("user.home", homeDirectory.getAbsolutePath());
+        guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
+        injector = Guice.createInjector(guiceModule);
+        environmentVariables = injector.getInstance(MockEnvironmentVariables.class);
+        TestResultSnapshotDAO testResultSnapshotDAO = injector.getInstance(TestResultSnapshotDAO.class);
 
-        testHistory = new TestHistory("project", environmentVariables);
+        testHistory = new TestHistory(environmentVariables, testResultSnapshotDAO);
         testHistory.clearHistory();
-
-    }
-
-    @Test
-    public void history_should_be_stored_in_a_project_directory_in_the_dot_thucydides_directory_by_default() {
-        File expectedDataDirectory = new File(new File(homeDirectory,".thucydides"),"project");
-        assertThat(testHistory.getDirectory(), is(expectedDataDirectory));
-    }
-
-    @Test
-    public void the_base_history_directory_can_be_overridden_using_a_system_property() {
-
-        File customHistoryDir = temporaryFolder.newFolder("history");
-
-        environmentVariables.setProperty("thucydides.history", customHistoryDir.getAbsolutePath());
-        testHistory = new TestHistory("project", environmentVariables);
-
-        TestOutcomes results  = getResults();
-        testHistory.updateData(results);
-        testHistory.updateData(results);
-
-        String[] historyFiles = new File(customHistoryDir,"project").list();
-
-        assertThat(historyFiles.length, is(2));
 
     }
 

@@ -61,7 +61,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     protected TestHistory getTestHistory() {
         if (testHistory == null) {
-            testHistory = new TestHistory(getProjectName());
+            testHistory = new TestHistory();
         }
         return testHistory;
     }

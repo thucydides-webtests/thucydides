@@ -168,8 +168,9 @@ public class JPATestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         try {
             storeEachOutcomeIn(entityManager, testOutcomes);
             entityManager.getTransaction().commit();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             entityManager.getTransaction().rollback();
+            throw e;
         } finally {
             entityManager.close();
         }
@@ -296,8 +297,11 @@ public class JPATestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
                 entityManager.remove(entityManager.merge(testRun));
             }
             entityManager.getTransaction().commit();
-        }catch(Exception e) {
+        }catch(RuntimeException e) {
             entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
         }
 
     }

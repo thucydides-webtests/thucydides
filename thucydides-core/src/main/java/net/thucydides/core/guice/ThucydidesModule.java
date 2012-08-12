@@ -13,6 +13,8 @@ import net.thucydides.core.jpa.JPAProvider;
 import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
+import net.thucydides.core.reports.html.history.JPATestResultSnapshotDAO;
+import net.thucydides.core.reports.html.history.TestResultSnapshotDAO;
 import net.thucydides.core.reports.json.ColorScheme;
 import net.thucydides.core.reports.json.RelativeSizeColorScheme;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
@@ -80,6 +82,7 @@ public class ThucydidesModule extends AbstractModule {
 
         bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class).in(Singleton.class);
         bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class).in(Singleton.class);
+        bind(TestResultSnapshotDAO.class).to(JPATestResultSnapshotDAO.class).in(Singleton.class);
     }
 
     @Provides
