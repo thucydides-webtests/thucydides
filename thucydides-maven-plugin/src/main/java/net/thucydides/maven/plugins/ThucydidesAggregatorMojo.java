@@ -1,5 +1,6 @@
 package net.thucydides.maven.plugins;
 
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.maven.plugin.AbstractMojo;
@@ -107,6 +108,8 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     private void configureEnvironmentVariables() {
         if (projectKey != null) {
             System.setProperty(ThucydidesSystemProperty.PROJECT_KEY.getPropertyName(), projectKey);
+        } else {
+            System.setProperty(ThucydidesSystemProperty.PROJECT_KEY.getPropertyName(), Thucydides.getDefaultProjectKey());
         }
         if (jpaProvider != null) {
             System.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), jpaProvider);
