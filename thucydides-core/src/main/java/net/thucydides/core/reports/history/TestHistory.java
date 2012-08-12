@@ -31,7 +31,6 @@ public class TestHistory {
         this.environmentVariables = environmentVariables;
         this.testResultSnapshotDAO = testResultSnapshotDAO;
         this.projectKey = getProjectKey();
-        System.out.println("Project key set as " + this.projectKey);
     }
 
     public void updateData(TestOutcomes testOutcomes) {
