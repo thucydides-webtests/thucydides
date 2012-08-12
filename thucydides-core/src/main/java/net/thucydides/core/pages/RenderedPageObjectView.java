@@ -105,7 +105,13 @@ class RenderedPageObjectView {
     public boolean elementIsDisplayed(final By byElementCriteria) {
         try {
             List<WebElement> matchingElements = driver.findElements(byElementCriteria);
-            return (matchingElementsArePresent(matchingElements)) && matchingElements.get(0).isDisplayed();
+            for(WebElement webElement : matchingElements) {
+                WebElementFacade element = new WebElementFacade(driver, webElement, 100);
+                if (element.isCurrentlyVisible()) {
+                    return true;
+                }
+            }
+            return false;
         } catch (NoSuchElementException noSuchElement) {
             LOGGER.trace("No such element " + noSuchElement);
             return false;
