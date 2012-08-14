@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.PagesAnnotatedField;
 
@@ -57,10 +58,19 @@ public final class StepAnnotations {
      */
     public static void injectAnnotatedPagesObjectInto(final Object testCase, final Pages pages) {
        PagesAnnotatedField pagesField = PagesAnnotatedField.findFirstAnnotatedField(testCase.getClass());
-       if (pagesField != null) {
-           pages.setDefaultBaseUrl(pagesField.getDefaultBaseUrl());
-           pagesField.setValue(testCase, pages);
-       }
+       pages.setDefaultBaseUrl(pagesField.getDefaultBaseUrl());
+       pagesField.setValue(testCase, pages);
+    }
+
+    /**
+     * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver, if the field is present.
+     */
+    public static void injectOptionalAnnotatedPagesObjectInto(final Object testCase, final Pages pages) {
+        Optional<PagesAnnotatedField> pagesField = PagesAnnotatedField.findOptionalAnnotatedField(testCase.getClass());
+        if (pagesField.isPresent()) {
+            pages.setDefaultBaseUrl(pagesField.get().getDefaultBaseUrl());
+            pagesField.get().setValue(testCase, pages);
+        }
     }
 
 }

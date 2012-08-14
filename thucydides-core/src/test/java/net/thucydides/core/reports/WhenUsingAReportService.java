@@ -5,6 +5,7 @@ import net.thucydides.core.model.TestOutcome;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -15,11 +16,13 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -50,7 +53,7 @@ public class WhenUsingAReportService {
 
         reportService.generateReportsFor(testOutcomeResults);
 
-        verify(reporter).generateReportFor(testOutcome);
+        verify(reporter).generateReportFor(eq(testOutcome), Matchers.any(TestOutcomes.class));
     }
 
 
@@ -75,7 +78,7 @@ public class WhenUsingAReportService {
 
         ReportService reportService = new ReportService(outputDirectory, new ArrayList<AcceptanceTestReporter>());
 
-        when(reporter.generateReportFor(testOutcome)).thenThrow(new IOException());
+        when(reporter.generateReportFor(eq(testOutcome), Matchers.any(TestOutcomes.class))).thenThrow(new IOException());
         reportService.subscribe(reporter);
 
         reportService.generateReportsFor(testOutcomeResults);

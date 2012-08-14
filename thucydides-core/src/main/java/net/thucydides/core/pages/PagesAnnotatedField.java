@@ -1,5 +1,6 @@
 package net.thucydides.core.pages;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.annotations.AnnotatedFields;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.reflection.FieldSetter;
@@ -27,13 +28,26 @@ public class PagesAnnotatedField {
      */
     public static PagesAnnotatedField findFirstAnnotatedField(final Class<?> testClass) {
 
+        Optional<PagesAnnotatedField> optionalAnnotatedField = findOptionalAnnotatedField(testClass);
+        if (optionalAnnotatedField.isPresent()) {
+            return optionalAnnotatedField.get();
+        } else {
+            throw new InvalidManagedPagesFieldException(NO_ANNOTATED_FIELD_ERROR);
+        }
+    }
+
+    /**
+     * Find the first field in the class annotated with the <b>Managed</b> annotation.
+     */
+    public static Optional<PagesAnnotatedField> findOptionalAnnotatedField(final Class<?> testClass) {
+
         for (Field field : AnnotatedFields.of(testClass).allFields()) {
             ManagedPages fieldAnnotation = annotationFrom(field);
             if (fieldAnnotation != null) {
-                return new PagesAnnotatedField(field, fieldAnnotation);
+                return Optional.of(new PagesAnnotatedField(field, fieldAnnotation));
             }
         }
-        throw new InvalidManagedPagesFieldException(NO_ANNOTATED_FIELD_ERROR);
+        return Optional.absent();
     }
 
     private static ManagedPages annotationFrom(final Field aField) {

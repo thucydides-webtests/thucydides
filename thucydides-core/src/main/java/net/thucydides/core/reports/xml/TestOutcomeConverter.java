@@ -36,6 +36,7 @@ public class TestOutcomeConverter implements Converter {
     private static final String TITLE_FIELD = "title";
     private static final String NAME_FIELD = "name";
     private static final String ID_FIELD = "id";
+    private static final String PATH_FIELD = "path";
     private static final String STEPS_FIELD = "steps";
     private static final String SUCCESSFUL_FIELD = "successful";
     private static final String FAILURES_FIELD = "failures";
@@ -150,6 +151,9 @@ public class TestOutcomeConverter implements Converter {
             writer.startNode(USER_STORY);
             writer.addAttribute(ID_FIELD, userStory.getId());
             writer.addAttribute(NAME_FIELD, userStory.getName());
+            if (userStory.getPath() != null) {
+                writer.addAttribute(PATH_FIELD, userStory.getPath());
+            }
             if (userStory.getFeatureClass() != null) {
                 writeFeatureNode(writer, userStory);
             }
@@ -294,6 +298,7 @@ public class TestOutcomeConverter implements Converter {
 
         String storyId = reader.getAttribute(ID_FIELD);
         String storyName = reader.getAttribute(NAME_FIELD);
+        String storyPath = reader.getAttribute(PATH_FIELD);
         ApplicationFeature feature = null;
 
         if (reader.hasMoreChildren()) {
@@ -306,7 +311,7 @@ public class TestOutcomeConverter implements Converter {
         }
         Story story;
         if (feature == null) {
-            story = Story.withId(storyId, storyName);
+            story = Story.withIdAndPath(storyId, storyName,storyPath);
         } else {
             story = Story.withId(storyId, storyName, feature.getId(), feature.getName());
         }

@@ -117,6 +117,24 @@ public class ReadingTableData extends FluentElementAPITestsBaseClass {
         assertThat(tableRows.get(2), allOf(hasEntry("First Name", "Bill"),hasEntry("Last Name", "Oddie"), hasEntry("Favorite Colour","Blue")));
     }
 
+    @Test
+    public void should_read_table_data_for_a_table_with_no_heading() {
+        List<Map<Object, String>> tableRows = HtmlTable.withColumns("First Name","Last Name", "Favorite Colour")
+                                                       .readRowsFrom(page.clients_with_no_headings);
+
+        assertThat(tableRows.size(), is(3));
+        assertThat(tableRows.get(0), allOf(hasEntry("First Name", "Tim"), hasEntry("Last Name", "Brooke-Taylor"), hasEntry("Favorite Colour", "Red")));
+        assertThat(tableRows.get(1), allOf(hasEntry("First Name", "Graeme"), hasEntry("Last Name", "Garden"), hasEntry("Favorite Colour", "Green")));
+        assertThat(tableRows.get(2), allOf(hasEntry("First Name", "Bill"),hasEntry("Last Name", "Oddie"), hasEntry("Favorite Colour","Blue")));
+    }
+
+    @Test
+    public void should_manipulate_table_data_for_a_table_with_no_heading() {
+        boolean containsRowElements = HtmlTable.withColumns("First Name","Last Name", "Favorite Colour")
+                 .inTable(page.clients_with_no_headings).containsRowElementsWhere(the("First Name", is("Tim")), the("Last Name", containsString("Taylor")));
+
+        assertThat(containsRowElements, is(true));
+    }
 
     @Test
     public void should_ignore_data_in_extra_cells() {
@@ -135,7 +153,6 @@ public class ReadingTableData extends FluentElementAPITestsBaseClass {
         HtmlTable table = new HtmlTable(page.table_with_merged_cells);
 
         List<Map<Object, String>> tableRows = table.getRows();
-
         assertThat(tableRows.size(), is(3));
         assertThat(tableRows.get(0), allOf(hasEntry("First Name", "Tim"),hasEntry("Last Name", "Brooke-Taylor"), hasEntry("Favorite Colour","Red")));
         assertThat(tableRows.get(1), allOf(hasEntry("First Name", "Graeme"),hasEntry("Last Name", "Garden"), hasEntry("Favorite Colour","Green")));

@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import com.google.common.collect.Lists;
 import net.thucydides.core.ListenerInWrongPackage;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Feature;
@@ -38,6 +39,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -192,6 +194,55 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
         assertThat(results.get(0).toString(), is("Step one, Step two"));
+    }
+
+    @Test
+    public void the_listener_should_record_issue_tags() {
+
+        StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+
+        steps.step_one();
+        steps.step_two();
+
+        StepEventBus.getEventBus().addIssuesToCurrentTest(Lists.newArrayList("issue-123","issue-456"));
+        StepEventBus.getEventBus().testFinished();
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        assertThat(results.size(), is(1));
+        assertThat(results.get(0).getIssueKeys(), hasItems("issue-123","issue-456"));
+    }
+
+    @Test
+    public void the_listener_should_record_issue_tags_for_multiple_scenarios_in_a_story() {
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().addIssuesToCurrentStory(Lists.newArrayList("issue-123"));
+
+        StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
+        StepEventBus.getEventBus().addIssuesToCurrentTest(Lists.newArrayList("issue-456"));
+
+        steps.step_one();
+        steps.step_two();
+
+        StepEventBus.getEventBus().testFinished();
+
+        StepEventBus.getEventBus().testStarted("app_should_still_work", MyTestCase.class);
+        StepEventBus.getEventBus().addIssuesToCurrentTest(Lists.newArrayList("issue-789"));
+
+        steps.step_one();
+        steps.step_two();
+
+        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testSuiteFinished();
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        assertThat(results.size(), is(2));
+        assertThat(results.get(0).getIssueKeys(), hasItems("issue-123","issue-456"));
+        assertThat(results.get(1).getIssueKeys(), hasItems("issue-123","issue-789"));
     }
 
     class SomePage extends PageObject {

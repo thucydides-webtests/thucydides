@@ -5,6 +5,11 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.EqualsUtils;
 import net.thucydides.core.util.NameConverter;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static ch.lambdaj.Lambda.index;
+import static ch.lambdaj.Lambda.joinFrom;
 import static net.thucydides.core.model.ReportType.ROOT;
 
 /**
@@ -16,8 +21,10 @@ public class Story {
     private final Class<?> userStoryClass;
     private final String qualifiedStoryClassName;
     private final String storyName;
+    private final String path;
     private final String qualifiedFeatureClassName;
     private final String featureName;
+    private final String narrative;
 
     protected Story(final Class<?> userStoryClass) {
         this.userStoryClass = userStoryClass;
@@ -25,6 +32,18 @@ public class Story {
         this.storyName = NameConverter.humanize(getUserStoryClass().getSimpleName());
         this.qualifiedFeatureClassName = findFeatureClassName();
         this.featureName = findFeatureName();
+        this.path = pathOf(userStoryClass);
+        this.narrative = null;
+    }
+
+    private String pathOf(Class<?> userStoryClass) {
+        String canonicalName = userStoryClass.getCanonicalName();
+        int lastDot = canonicalName.lastIndexOf(".");
+        if (lastDot > 0) {
+            return canonicalName.substring(0, lastDot);
+        } else {
+            return "";
+        }
     }
 
     private String findFeatureClassName() {
@@ -42,12 +61,22 @@ public class Story {
     }
 
     protected Story(final String qualifiedStoryClassName, final String storyName,
-                    final String qualifiedFeatureClassName, final String featureName) {
+                    final String qualifiedFeatureClassName, final String featureName,
+                    final String path) {
+        this(qualifiedStoryClassName, storyName, qualifiedFeatureClassName, featureName, path, null);
+    }
+
+    protected Story(final String qualifiedStoryClassName, final String storyName,
+                    final String qualifiedFeatureClassName, final String featureName,
+                    final String path,
+                    final String narrative) {
         this.userStoryClass = null;
         this.qualifiedStoryClassName = qualifiedStoryClassName;
         this.storyName = storyName;
         this.qualifiedFeatureClassName = qualifiedFeatureClassName;
         this.featureName = featureName;
+        this.path = path;
+        this.narrative = narrative;
     }
 
     public String getId() {
@@ -67,16 +96,24 @@ public class Story {
      * of the original story class. This is used to deserialize stories from XML files.
      */
     public static Story withId(final String storyId, final String storyName) {
-        return new Story(storyId, storyName, null, null);
+        return new Story(storyId, storyName, null, null, null, null);
+    }
+
+    public Story withNarrative(String narrative)  {
+        return new Story(this.qualifiedStoryClassName, this.storyName, this.qualifiedFeatureClassName, this.featureName, this.path, narrative);
+    }
+
+    public static Story withIdAndPath(final String storyId, final String storyName, final String storyPath) {
+        return new Story(storyId, storyName, null, null, storyPath, null);
     }
 
     public static Story called(final String storyName) {
-        return new Story(storyName, storyName, null, null);
+        return new Story(storyName, storyName, null, null, null, null);
     }
 
     public static Story withId(final String storyId, final String storyName,
                                final String featureClassName, final String featureName) {
-        return new Story(storyId, storyName, featureClassName, featureName);
+        return new Story(storyId, storyName, featureClassName, featureName, null, null);
     }
 
 
@@ -183,4 +220,14 @@ public class Story {
             return null;
         }
     }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getNarrative() {
+        return this.narrative;
+    }
+
+
 }

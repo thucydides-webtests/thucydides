@@ -1,5 +1,7 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.ThucydidesSystemProperty;
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Collection;
@@ -34,11 +36,15 @@ public class WebdriverInstances {
     public void closeCurrentDriver() {
         if (getCurrentDriver() != null) {
             WebDriver driver = getCurrentDriver();
-            driver.close();
-            driver.quit();
+            closeAndQuite(driver);
             driverMap.remove(currentDriver);
             currentDriver  = null;
         }
+    }
+
+    private void closeAndQuite(WebDriver driver) {
+        driver.close();
+        driver.quit();
     }
 
     public void resetCurrentDriver() {
@@ -52,19 +58,18 @@ public class WebdriverInstances {
     }
 
     public boolean driverIsRegisteredFor(String driverName) {
-        return driverMap.containsKey(driverName);
+        return driverMap.containsKey(normalized(driverName));
     }
 
     public WebDriver useDriver(final String driverName) {
-        this.currentDriver = driverName;
-        return driverMap.get(driverName);
+        this.currentDriver = normalized(driverName);
+        return driverMap.get(currentDriver);
     }
 
     public void closeAllDrivers() {
         Collection<WebDriver> openDrivers = driverMap.values();
         for(WebDriver driver : openDrivers) {
-            driver.close();
-            driver.quit();
+            closeAndQuite(driver);
         }
         driverMap.clear();
         currentDriver = null;
@@ -74,17 +79,25 @@ public class WebdriverInstances {
         private final String driverName;
 
         public InstanceRegistration(final String driverName) {
-            this.driverName = driverName;
+            this.driverName = normalized(driverName);
         }
 
 
         public void forDriver(final WebDriver driver) {
-            driverMap.put(driverName, driver);
-            currentDriver = driverName;
+            driverMap.put(normalized(driverName), driver);
+            currentDriver = normalized(driverName);
         }
     }
 
     public InstanceRegistration registerDriverCalled(final String driverName) {
-        return new InstanceRegistration(driverName);
+        return new InstanceRegistration(normalized(driverName));
+    }
+
+    private String normalized(String name) {
+        if (StringUtils.isEmpty(name)) {
+            return WebDriverFactory.DEFAULT_DRIVER;
+        } else {
+            return name.toLowerCase();
+        }
     }
 }

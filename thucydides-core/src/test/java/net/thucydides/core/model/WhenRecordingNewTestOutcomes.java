@@ -1,8 +1,6 @@
 package net.thucydides.core.model;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
@@ -22,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.extract;
@@ -46,7 +43,6 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static net.thucydides.core.model.TestResult.*;
 
 public class WhenRecordingNewTestOutcomes {
 
@@ -238,7 +234,7 @@ public class WhenRecordingNewTestOutcomes {
         when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenarioWithAnIssue.class).usingIssueTracking(issueTracking);
 
-        assertThat(outcome.getTitleWithLinks() , is("Really should do this! (<a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-ISSUE-123\">#ISSUE-123</a>)"));
+        assertThat(outcome.getTitleWithLinks() , is("Really should do this! (#<a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-ISSUE-123\">ISSUE-123</a>)"));
     }
 
     @Test
@@ -288,7 +284,7 @@ public class WhenRecordingNewTestOutcomes {
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
                 .usingIssueTracking(issueTracking);
 
-        assertThat(outcome.getFormattedIssues(), is("(<a href=\"http://my.jira/browse/ISSUE-123\">#ISSUE-123</a>)"));
+        assertThat(outcome.getFormattedIssues(), is("(#<a target=\"_blank\" href=\"http://my.jira/browse/ISSUE-123\">ISSUE-123</a>)"));
     }
 
     @Test

@@ -22,7 +22,7 @@ public class WhenOpeningStaticDemoPageWithSamePage {
     @Managed(driver = "htmlunit")
     public WebDriver webdriver;
 
-    @ManagedPages(defaultUrl = "classpath:static-site/index.html")
+    @ManagedPages
     public Pages pages;
     
     @Steps

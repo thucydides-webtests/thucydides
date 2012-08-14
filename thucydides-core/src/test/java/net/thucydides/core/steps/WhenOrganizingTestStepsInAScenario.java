@@ -78,14 +78,4 @@ public class WhenOrganizingTestStepsInAScenario {
         SimpleTestScenarioSteps steps = new SimpleTestScenarioSteps(pages);        
         assertThat(steps.getDriver(), is(driver));
     }
-
-    @Test
-    public void the_scenario_can_be_paused_during_the_test() {        
-        SimpleTestScenarioSteps steps = new SimpleTestScenarioSteps(pages);      
-        long startTime = System.currentTimeMillis();
-        steps.waitABit(100);
-        long endTime = System.currentTimeMillis();
-        assertThat(endTime, greaterThanOrEqualTo(startTime + 100));
-    }
-    
 }

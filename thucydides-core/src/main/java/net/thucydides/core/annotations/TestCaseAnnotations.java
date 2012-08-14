@@ -1,5 +1,6 @@
 package net.thucydides.core.annotations;
 
+import com.google.common.base.Optional;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -20,13 +21,14 @@ public final class TestCaseAnnotations {
     }
     
     /**
-     * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.
+     * Instantiate the @Managed-annotated WebDriver instance with current WebDriver if the annotated field is present.
      */
     public void injectDriver(final WebDriver driver) {
-        ManagedWebDriverAnnotatedField webDriverField = ManagedWebDriverAnnotatedField
-                .findFirstAnnotatedField(testCase.getClass());
-
-        webDriverField.setValue(testCase, driver);
+        Optional<ManagedWebDriverAnnotatedField> webDriverField
+                = ManagedWebDriverAnnotatedField.findOptionalAnnotatedField(testCase.getClass());
+        if (webDriverField.isPresent()) {
+            webDriverField.get().setValue(testCase, driver);
+        }
     }
 
     /**

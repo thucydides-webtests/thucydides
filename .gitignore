@@ -1,5 +1,7 @@
 test*.db
 .project
+.gradle
+.ignore 
 .settings
 target
 .idea
@@ -15,7 +17,6 @@ interpolated-*.xml
 out
 *.ignore      
 build
-*.gradle
 thucydides-arquillian
 
 *.sublime-project

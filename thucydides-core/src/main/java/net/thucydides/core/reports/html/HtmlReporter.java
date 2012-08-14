@@ -69,11 +69,16 @@ public abstract class HtmlReporter {
         return environmentVariables;
     }
 
-    protected void copyResourcesToOutputDirectory() throws IOException {
-        updateResourceDirectoryFromSystemPropertyIfDefined();
-        HtmlResourceCopier copier = new HtmlResourceCopier(getResourceDirectory());
+    private boolean alreadyCopied = false;
 
-        copier.copyHTMLResourcesTo(getOutputDirectory());
+    protected void copyResourcesToOutputDirectory() throws IOException {
+        if (!alreadyCopied) {
+            updateResourceDirectoryFromSystemPropertyIfDefined();
+            HtmlResourceCopier copier = new HtmlResourceCopier(getResourceDirectory());
+
+            copier.copyHTMLResourcesTo(getOutputDirectory());
+            alreadyCopied = true;
+        }
     }
 
     private void updateResourceDirectoryFromSystemPropertyIfDefined() {

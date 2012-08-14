@@ -24,6 +24,7 @@ import org.hamcrest.Matcher;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -105,6 +106,11 @@ public class TestOutcomes {
     public static TestOutcomes of(List<? extends TestOutcome> outcomes) {
         return new TestOutcomes(outcomes,
                 Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
+    }
+
+    public static TestOutcomes withNoResults() {
+        return new TestOutcomes(Collections.EMPTY_LIST,
+                                Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
     }
 
     protected TestStatisticsProvider getTestStatisticsProvider() {

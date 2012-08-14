@@ -14,6 +14,12 @@ import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.reports.json.JSONProgressResultTree;
 import net.thucydides.core.reports.json.JSONResultTree;
+import net.thucydides.core.requirements.ClasspathRequirementsProviderService;
+import net.thucydides.core.requirements.RequirementsProviderService;
+import net.thucydides.core.requirements.model.Requirement;
+import net.thucydides.core.requirements.reports.RequirementOutcome;
+import net.thucydides.core.requirements.reports.RequirementsOutcomes;
+import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
 import net.thucydides.core.util.Inflector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,17 +48,23 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private TestHistory testHistory;
     private String projectName;
     private ReportNameProvider reportNameProvider;
-
     private final IssueTracking issueTracking;
+    private final RequirmentsOutcomeFactory requirementsFactory;
+    private final HtmlRequirementsReporter htmlRequirementsReporter;
 
     public HtmlAggregateStoryReporter(final String projectName) {
         this(projectName, Injectors.getInjector().getInstance(IssueTracking.class));
     }
 
-    public HtmlAggregateStoryReporter(final String projectName, final IssueTracking issueTracking) {
+    public HtmlAggregateStoryReporter(final String projectName,
+                                      final IssueTracking issueTracking) {
         this.projectName = projectName;
         this.issueTracking = issueTracking;
         this.reportNameProvider = new ReportNameProvider();
+        this.htmlRequirementsReporter = new HtmlRequirementsReporter();
+
+        RequirementsProviderService requirementsProviderService = Injectors.getInjector().getInstance(RequirementsProviderService.class);
+        this.requirementsFactory = new RequirmentsOutcomeFactory(requirementsProviderService.getRequirementsProviders(), issueTracking);
     }
 
     public String getProjectName() {
@@ -84,7 +96,36 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateHistoryReportFor(allTestOutcomes);
         generateCoverageReportsFor(allTestOutcomes);
 
+        generateRequirementsReportsFor(allTestOutcomes);
+
         return allTestOutcomes;
+    }
+
+    public void generateRequirementsReportsFor(TestOutcomes allTestOutcomes) throws IOException {
+        RequirementsOutcomes requirementsOutcomes = requirementsFactory.buildRequirementsOutcomesFrom(allTestOutcomes);
+        htmlRequirementsReporter.setOutputDirectory(getOutputDirectory());
+        htmlRequirementsReporter.generateReportFor(requirementsOutcomes);
+
+        generateRequirementsReportsForChildRequirements(requirementsOutcomes);
+    }
+
+    private void generateRequirementsReportsForChildRequirements(RequirementsOutcomes requirementsOutcomes) throws IOException {
+        List<RequirementOutcome> requirementOutcomes = requirementsOutcomes.getRequirementOutcomes();
+        for (RequirementOutcome outcome : requirementOutcomes) {
+            Requirement requirement = outcome.getRequirement();
+            TestOutcomes testOutcomesForThisRequirement = outcome.getTestOutcomes().withTag(requirement.getName());
+            RequirementsOutcomes requirementOutcomesForThisRequirement = requirementsFactory.buildRequirementsOutcomesFrom(requirement, testOutcomesForThisRequirement);
+            generateNestedRequirementsReportsFor(requirement, requirementOutcomesForThisRequirement);
+        }
+    }
+
+    private void generateNestedRequirementsReportsFor(Requirement parentRequirement, RequirementsOutcomes requirementsOutcomes) throws IOException {
+        htmlRequirementsReporter.setOutputDirectory(getOutputDirectory());
+        String reportName = reportNameProvider.forRequirement(parentRequirement);
+        htmlRequirementsReporter.generateReportFor(requirementsOutcomes, requirementsOutcomes.getTestOutcomes(), reportName);
+
+        generateRequirementsReportsForChildRequirements(requirementsOutcomes);
+
     }
 
     private TestOutcomes loadTestOutcomesFrom(File sourceDirectory) throws IOException {
@@ -294,4 +335,18 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
             getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_PROJECT, jiraProject);
         }
     }
+
+    public void setJiraUsername(String jiraUsername) {
+        if (jiraUsername != null) {
+            getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_USERNAME, jiraUsername);
+        }
+    }
+
+    public void setJiraPassword(String jiraPassword) {
+        if (jiraPassword != null) {
+            getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_PASSWORD, jiraPassword);
+        }
+    }
+
 }
+

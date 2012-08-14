@@ -20,7 +20,7 @@ public interface AcceptanceTestReporter {
     /**
      * Generate reports for a given acceptance test run.
      */
-    File generateReportFor(final TestOutcome testOutcome) throws IOException;
+    File generateReportFor(final TestOutcome testOutcome, final TestOutcomes allTestOutcomes) throws IOException;
     
     /**
      * Define the output directory in which the reports will be written.

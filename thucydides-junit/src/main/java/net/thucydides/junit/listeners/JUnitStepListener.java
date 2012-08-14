@@ -65,10 +65,17 @@ public class JUnitStepListener extends RunListener {
      */
     @Override
     public void testStarted(final Description description) {
+        startTestSuiteForFirstTest(description);
         StepEventBus.getEventBus().clear();
         StepEventBus.getEventBus().testStarted(description.getMethodName(),
                                                description.getTestClass());
         startTest();
+    }
+
+    private void startTestSuiteForFirstTest(Description description) {
+        if (!getBaseStepListener().testSuiteRunning()) {
+            StepEventBus.getEventBus().testSuiteStarted(description.getTestClass());
+        }
     }
 
     @Override

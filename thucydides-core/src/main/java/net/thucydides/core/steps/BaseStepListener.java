@@ -2,6 +2,7 @@ package net.thucydides.core.steps;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.IgnoredStepException;
@@ -14,6 +15,7 @@ import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.screenshots.Photographer;
@@ -93,6 +95,11 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private boolean inFluentStepSequence;
 
+    private List<String> storywideIssues;
+
+    private List<TestTag> storywideTags;
+
+
     protected enum ScreenshotType {
         OPTIONAL_SCREENSHOT,
         MANDATORY_SCREENSHOT
@@ -108,6 +115,8 @@ public class BaseStepListener implements StepListener, StepPublisher {
         this.configuration = Injectors.getInjector().getInstance(Configuration.class);
         this.screenshotProcessor = Injectors.getInjector().getInstance(ScreenshotProcessor.class);
         this.inFluentStepSequence = false;
+        this.storywideIssues = Lists.newArrayList();
+        this.storywideTags = Lists.newArrayList();
     }
 
     /**
@@ -160,7 +169,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
         } else {
             createNewDriver();
             pages.setDriver(getDriver());
-            pages.notifyWhenDriverOpens();
         }
     }
 
@@ -184,16 +192,36 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void testSuiteStarted(final Class<?> startedTestSuite) {
         testSuite = startedTestSuite;
         testedStory = findStoryFrom(startedTestSuite);
+        clearStorywideTagsAndIssues();
+    }
+
+    private void clearStorywideTagsAndIssues() {
+        storywideIssues.clear();
+        storywideTags.clear();
     }
 
     public void testSuiteStarted(final Story story) {
         testSuite = null;
         testedStory = story;
+        clearStorywideTagsAndIssues();
+    }
+
+    public boolean testSuiteRunning() {
+        return testedStory != null;
+    }
+
+    public void addIssuesToCurrentStory(List<String> issues) {
+        storywideIssues.addAll(issues);
+    }
+
+    public void addTagsToCurrentStory(List<TestTag> tags) {
+        storywideTags.addAll(tags);
     }
 
     @Override
     public void testSuiteFinished() {
         screenshotProcessor.waitUntilDone();
+        clearStorywideTagsAndIssues();
     }
 
 
@@ -214,6 +242,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
         }
     }
 
+    public void updateCurrentStepTitle(String updatedStepTitle) {
+        getCurrentStep().setDescription(updatedStepTitle);
+    }
+
     private void setAnnotatedResult(String testMethod) {
         if (TestAnnotations.forClass(testSuite).isIgnored(testMethod)) {
             getCurrentTestOutcome().setAnnotatedResult(IGNORED);
@@ -229,6 +261,8 @@ public class BaseStepListener implements StepListener, StepPublisher {
      */
     public void testFinished(final TestOutcome result) {
         recordTestDuration();
+        getCurrentTestOutcome().addIssues(storywideIssues);
+        getCurrentTestOutcome().addTags(storywideTags);
         currentStepStack.clear();
     }
 
@@ -461,9 +495,13 @@ public class BaseStepListener implements StepListener, StepPublisher {
             ScreenshotAndHtmlSource lastScreenshotOfPreviousStep = lastScreenshotOf(getPreviousStep().get());
             ScreenshotAndHtmlSource firstScreenshotOfThisStep = getCurrentStep().getFirstScreenshot();
             if (haveIdenticalScreenshots(firstScreenshotOfThisStep, lastScreenshotOfPreviousStep)) {
-                getCurrentStep().removeScreenshot(1);
+                removeFirstScreenshotOfCurrentStep();
             }
         }
+    }
+
+    private void removeFirstScreenshotOfCurrentStep() {
+        getCurrentStep().removeScreenshot(0);
     }
 
     private boolean currentStepHasMoreThanOneScreenshot() {

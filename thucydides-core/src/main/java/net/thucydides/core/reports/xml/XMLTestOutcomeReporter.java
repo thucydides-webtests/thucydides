@@ -2,18 +2,23 @@ package net.thucydides.core.reports.xml;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.TestOutcomes;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Locale;
 
 import static net.thucydides.core.model.ReportType.XML;
 
@@ -46,7 +51,7 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
     /**
      * Generate an XML report for a given test run.
      */
-    public File generateReportFor(final TestOutcome testOutcome) throws IOException {
+    public File generateReportFor(final TestOutcome testOutcome, final TestOutcomes allTestOutcomes) throws IOException {
 
         TestOutcome storedTestOutcome = testOutcome.withQualifier(qualifier);
 
@@ -104,6 +109,27 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
 
     public void setOutputDirectory(final File outputDirectory) {
         this.outputDirectory = outputDirectory;
+    }
+
+    public List<TestOutcome> loadReportsFrom(File outputDirectory) throws IOException {
+        File[] reportFiles = getAllXMLFilesFrom(outputDirectory);
+        List<TestOutcome> testOutcomes = Lists.newArrayList();
+        if (reportFiles != null) {
+            for (File reportFile : reportFiles) {
+                testOutcomes.addAll(loadReportFrom(reportFile).asSet());
+            }
+        }
+        return testOutcomes;
+    }
+
+    private File[] getAllXMLFilesFrom(final File reportsDirectory) {
+        return reportsDirectory.listFiles(new XmlFilenameFilter());
+    }
+
+    private static final class XmlFilenameFilter implements FilenameFilter {
+        public boolean accept(final File file, final String filename) {
+            return filename.toLowerCase(Locale.getDefault()).endsWith(".xml");
+        }
     }
 
 }

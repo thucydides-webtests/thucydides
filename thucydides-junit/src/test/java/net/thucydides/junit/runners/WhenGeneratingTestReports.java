@@ -3,6 +3,7 @@ package net.thucydides.junit.runners;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportGenerationFailedError;
+import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.samples.AnnotatedSingleTestScenario;
 import org.junit.Before;
@@ -51,7 +52,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
 
         runner.run(new RunNotifier());
 
-        verify(mockReporter).generateReportFor(any(TestOutcome.class));
+        verify(mockReporter).generateReportFor(any(TestOutcome.class), any(TestOutcomes.class));
     }
 
 
@@ -81,8 +82,8 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
 
         runner.run(new RunNotifier());
 
-        verify(reporter1).generateReportFor(any(TestOutcome.class));
-        verify(reporter2).generateReportFor(any(TestOutcome.class));
+        verify(reporter1).generateReportFor(any(TestOutcome.class), any(TestOutcomes.class));
+        verify(reporter2).generateReportFor(any(TestOutcome.class), any(TestOutcomes.class));
     } 
     
     @Test(expected=ReportGenerationFailedError.class)
@@ -91,7 +92,7 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
 
         ThucydidesRunner runner = new ThucydidesRunner(AnnotatedSingleTestScenario.class);
 
-        when(mockReporter.generateReportFor(any(TestOutcome.class))).thenThrow(new IOException());
+        when(mockReporter.generateReportFor(any(TestOutcome.class), any(TestOutcomes.class))).thenThrow(new IOException());
         
         runner.subscribeReporter(mockReporter);
         runner.run(new RunNotifier());

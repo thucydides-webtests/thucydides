@@ -101,6 +101,51 @@ public class WhenManagingWebdriverInstances {
     }
 
     @Test
+    public void if_an_empty_driver_type_is_specified_the_default_driver_should_be_used() {
+
+        WebDriverFacade defaultDriver = (WebDriverFacade) webdriverManager.getWebdriver();
+        WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver("");
+
+        assertThat(driver, is(defaultDriver));
+    }
+
+    @Test
+    public void if_a_null_driver_type_is_specified_the_default_driver_should_be_used() {
+
+        WebDriverFacade defaultDriver = (WebDriverFacade) webdriverManager.getWebdriver();
+        WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver(null);
+
+        assertThat(driver, is(defaultDriver));
+    }
+
+    @Test
+    public void the_default_driver_should_be_the_firefox_driver() {
+
+        WebDriverFacade defaultDriver = (WebDriverFacade) webdriverManager.getWebdriver();
+        WebDriverFacade firefoxDriver = (WebDriverFacade) webdriverManager.getWebdriver("firefox");
+
+        assertThat(firefoxDriver, is(defaultDriver));
+    }
+
+    @Test
+    public void driver_names_should_be_case_insensitive() {
+
+        WebDriverFacade uppercaseFirefoxDriver = (WebDriverFacade) webdriverManager.getWebdriver("Firefox");
+        WebDriverFacade firefoxDriver = (WebDriverFacade) webdriverManager.getWebdriver("firefox");
+
+        assertThat(firefoxDriver, is(uppercaseFirefoxDriver));
+    }
+
+    @Test
+    public void driver_names_for_non_default_drivers_should_be_case_insensitive() {
+
+        WebDriverFacade uppercaseFirefoxDriver = (WebDriverFacade) webdriverManager.getWebdriver("HtmlUnit");
+        WebDriverFacade firefoxDriver = (WebDriverFacade) webdriverManager.getWebdriver("htmlunit");
+
+        assertThat(firefoxDriver, is(uppercaseFirefoxDriver));
+    }
+
+    @Test
     public void a_new_firefox_webdriver_instance_is_created_when_the_webdriver_system_property_is_set_to_firefox() {
 
         environmentVariables.setProperty("webdriver.driver","firefox");

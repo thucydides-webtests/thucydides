@@ -332,6 +332,14 @@ public class TestOutcome {
         return getTitleFrom(userStory);
     }
 
+    public String getPath() {
+        if (userStory != null) {
+            return userStory.getPath();
+        } else {
+            return null;
+        }
+    }
+
     private String getTitleFrom(final Story userStory) {
         return userStory.getName();
     }
@@ -670,9 +678,7 @@ public class TestOutcome {
     }
 
     public Set<TestTag> getTags() {
-        if (tags != null) {
-            return tags;
-        } else {
+        if (tags == null) {
             tags = getTagsUsingTagProviders(getTagProviderService().getTagProviders());
         }
         return ImmutableSet.copyOf(tags);
@@ -681,14 +687,22 @@ public class TestOutcome {
     private Set<TestTag> getTagsUsingTagProviders(List<TagProvider> tagProviders) {
         Set<TestTag> tags  = Sets.newHashSet();
         for (TagProvider tagProvider : tagProviders) {
-            tags.addAll(tagProvider.getTagsFor(this));
+            Set<TestTag> providedTags = tagProvider.getTagsFor(this);
+            if (providedTags != null) {
+                tags.addAll(tagProvider.getTagsFor(this));
+            }
         }
-        return ImmutableSet.copyOf(tags);
+        return tags;
     }
 
     public void setTags(Set<TestTag> tags) {
-        Preconditions.checkArgument(this.tags == null, "Tags cannot be reassiged once set.");
-        this.tags = ImmutableSet.copyOf(tags);
+        this.tags = Sets.newHashSet(tags);
+    }
+
+
+    public void addTags(List<TestTag> tags) {
+        getTags();
+        this.tags.addAll(tags);
     }
 
     public List<String> getIssueKeys() {
@@ -727,6 +741,8 @@ public class TestOutcome {
             return getMethodName();
         }
     }
+
+
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {
@@ -916,26 +932,32 @@ public class TestOutcome {
     }
 
     public double getOverallStability() {
+        if (getStatistics() == null) return 0.0;
         return getStatistics().getOverallPassRate();
     }
 
     public double getRecentStability() {
+        if (getStatistics() == null) return 0.0;
         return getStatistics().getPassRate().overTheLast(RECENT_TEST_RUN_COUNT).testRuns();
     }
 
     public Long getRecentTestRunCount() {
+        if (getStatistics() == null) return 0L;
         return (getStatistics().getTotalTestRuns() > RECENT_TEST_RUN_COUNT) ? RECENT_TEST_RUN_COUNT :  getStatistics().getTotalTestRuns();
     }
 
     public int getRecentPassCount() {
+        if (getStatistics() == null) return 0;
         return getStatistics().countResults().overTheLast(RECENT_TEST_RUN_COUNT).whereTheOutcomeWas(TestResult.SUCCESS);
     }
 
     public int getRecentFailCount() {
+        if (getStatistics() == null) return 0;
         return getStatistics().countResults().overTheLast(RECENT_TEST_RUN_COUNT).whereTheOutcomeWas(TestResult.FAILURE);
     }
 
     public int getRecentPendingCount() {
+        if (getStatistics() == null) return 0;
         return getStatistics().countResults().overTheLast(RECENT_TEST_RUN_COUNT).whereTheOutcomeWas(TestResult.PENDING);
     }
 }

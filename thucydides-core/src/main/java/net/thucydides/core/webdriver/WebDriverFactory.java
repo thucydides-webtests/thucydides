@@ -47,7 +47,7 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
  * @author johnsmart
  */
 public class WebDriverFactory {
-
+    public static final String DEFAULT_DRIVER = "firefox";
 
     private final WebdriverInstanceFactory webdriverInstanceFactory;
 
@@ -273,7 +273,7 @@ public class WebDriverFactory {
 
     private DesiredCapabilities capabilitiesForDriver(String driver) {
         if (driver == null) {
-            driver = "firefox";
+            driver = DEFAULT_DRIVER;
         }
         SupportedWebDriver driverType = SupportedWebDriver.valueOf(driver.toUpperCase());
         switch (driverType) {
@@ -479,12 +479,13 @@ public class WebDriverFactory {
      */
     public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver) {
         Configuration configuration = Injectors.getInjector().getInstance(Configuration.class);
-        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, configuration.getElementTimeout());
+        int elementTimeoutInSeconds = configuration.getElementTimeout();
+        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, elementTimeoutInSeconds);
         PageFactory.initElements(finder, pageObject);
     }
 
-    public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver, int timeout) {
-        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, timeout);
+    public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver, int timeoutInSeconds) {
+        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, timeoutInSeconds);
         PageFactory.initElements(finder, pageObject);
     }
 

@@ -784,7 +784,7 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 
 .test-results-heading
 {
-    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #88a717; font-weight:bold;
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #88a717; font-weight:bold; white-space: nowrap;
 }
 
 #test_list_tests label {
@@ -842,4 +842,29 @@ h4 {
 }
 
 .test-count {
+}
+
+.requirementName {
+    font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;
+    margin-bottom: 0.5em;
+}
+
+.requirementNarrative {
+    display:block;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal; font-style: italic;
+}
+
+.requirementNarrativeTitle {
+    color: #0d78ae;
+    font-family:euphemia, verdana, sans-serif;font-size: 16px; font-weight:normal; font-style: italic;
+    border: #6495ed solid thin;
+    padding: 8px;
+}
+
+.cardNumber
+{
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #88a717; white-space: nowrap;
+    padding: 8px;
 }

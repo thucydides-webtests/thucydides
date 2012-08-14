@@ -17,7 +17,6 @@ import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepData;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
-import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
@@ -203,6 +202,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     /**
      * Runs the tests in the acceptance test case.
      */
+
     @Override
     public void run(final RunNotifier notifier) {
         if (!skipThisTest()) {
@@ -448,7 +448,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
      */
     protected void injectAnnotatedPagesObjectInto(final Object testCase) {
-        getPages().notifyWhenDriverOpens();
         StepAnnotations.injectAnnotatedPagesObjectInto(testCase, pages);
     }
 

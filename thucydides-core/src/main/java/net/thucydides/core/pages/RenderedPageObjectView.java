@@ -1,6 +1,5 @@
 package net.thucydides.core.pages;
 
-import net.thucydides.core.scheduling.FluentWaitWithRefresh;
 import net.thucydides.core.scheduling.NormalFluentWait;
 import net.thucydides.core.scheduling.ThucydidesFluentWait;
 import org.openqa.selenium.By;
@@ -11,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 class RenderedPageObjectView {
 
     private final transient WebDriver driver;
-    private transient long waitForTimeout;
+    private transient long waitForTimeoutInMilliseconds;
     private final Clock webdriverClock;
     private final Sleeper sleeper;
 
@@ -36,16 +36,23 @@ class RenderedPageObjectView {
 
     public RenderedPageObjectView(final WebDriver driver, final long waitForTimeout) {
         this.driver = driver;
-        this.waitForTimeout = waitForTimeout;
+        this.waitForTimeoutInMilliseconds = waitForTimeout;
         this.webdriverClock = new SystemClock();
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
     }
 
     public ThucydidesFluentWait<WebDriver> waitForCondition() {
         return new NormalFluentWait<WebDriver>(driver, webdriverClock, sleeper)
-                .withTimeout(waitForTimeout, TimeUnit.MILLISECONDS)
+                .withTimeout(waitForTimeoutInMilliseconds, TimeUnit.MILLISECONDS)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
+    }
+
+    public FluentWait<WebDriver> doWait() {
+        return new FluentWait(driver)
+                    .withTimeout(waitForTimeoutInMilliseconds, TimeUnit.MILLISECONDS)
+                    .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
+                    .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
     }
 
     private ExpectedCondition<Boolean> elementDisplayed(final By byElementCriteria) {
@@ -68,6 +75,10 @@ class RenderedPageObjectView {
      */
     public void waitFor(final By byElementCriteria) {
         waitForCondition().until(elementDisplayed(byElementCriteria));
+    }
+
+    public void waitFor(final ExpectedCondition expectedCondition) {
+        doWait().until(expectedCondition);
     }
 
     /**
@@ -94,7 +105,13 @@ class RenderedPageObjectView {
     public boolean elementIsDisplayed(final By byElementCriteria) {
         try {
             List<WebElement> matchingElements = driver.findElements(byElementCriteria);
-            return (matchingElementsArePresent(matchingElements)) && matchingElements.get(0).isDisplayed();
+            for(WebElement webElement : matchingElements) {
+                WebElementFacade element = new WebElementFacade(driver, webElement, 100);
+                if (element.isCurrentlyVisible()) {
+                    return true;
+                }
+            }
+            return false;
         } catch (NoSuchElementException noSuchElement) {
             LOGGER.trace("No such element " + noSuchElement);
             return false;
@@ -284,7 +301,7 @@ class RenderedPageObjectView {
         waitForCondition().until(anyElementPresent(expectedElements));
     }
 
-    public void setWaitForTimeout(long waitForTimeout) {
-        this.waitForTimeout = waitForTimeout;
+    public void setWaitForTimeoutInMilliseconds(long waitForTimeoutInMilliseconds) {
+        this.waitForTimeoutInMilliseconds = waitForTimeoutInMilliseconds;
     }
 }

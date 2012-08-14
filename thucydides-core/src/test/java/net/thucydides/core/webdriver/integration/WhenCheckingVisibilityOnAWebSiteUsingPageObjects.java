@@ -2,9 +2,7 @@ package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.webdriver.StaticTestSite;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;

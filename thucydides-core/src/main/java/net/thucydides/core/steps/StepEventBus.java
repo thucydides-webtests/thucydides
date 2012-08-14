@@ -10,7 +10,9 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
+import net.thucydides.core.webdriver.ThucydidesWebDriverSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.Service;
@@ -122,9 +124,9 @@ public class StepEventBus {
     }
 
     private void startSuiteForFirstTest(final Class<?> testClass) {
-        if ((classUnderTest == null) || (classUnderTest != testClass)) {
-            testSuiteStarted(testClass);
-        }
+//        if ((classUnderTest == null) || (classUnderTest != testClass)) {
+//            testSuiteStarted(testClass);
+//        }
     }
 
     private void startSuiteWithStoryForFirstTest(final Story story) {
@@ -192,7 +194,6 @@ public class StepEventBus {
         currentTestIsNotPending();
         resultTally = null;
         classUnderTest = null;
-        storyUnderTest = null;
         webdriverSuspensions.clear();
     }
 
@@ -266,6 +267,10 @@ public class StepEventBus {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.skippedStepStarted(executedStepDescription);
         }
+    }
+
+    private void updateCurrentStepTitleTo(String updatedStepTitle) {
+        getBaseStepListener().updateCurrentStepTitle(updatedStepTitle);
     }
 
     public void stepFinished() {
@@ -399,5 +404,27 @@ public class StepEventBus {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testSuiteFinished();
         }
+        ThucydidesWebDriverSupport.closeAllDrivers();
+        storyUnderTest = null;
+    }
+
+    public void updateCurrentStepTitle(String stepTitle) {
+        getBaseStepListener().updateCurrentStepTitle(stepTitle);
+    }
+
+    public void addIssuesToCurrentStory(List<String> issues) {
+        baseStepListener.addIssuesToCurrentStory(issues);
+    }
+
+    public void addIssuesToCurrentTest(List<String> issues) {
+        baseStepListener.getCurrentTestOutcome().addIssues(issues);
+    }
+
+    public void addTagsToCurrentTest(List<TestTag> tags) {
+        baseStepListener.getCurrentTestOutcome().addTags(tags);
+    }
+
+    public void addTagsToCurrentStory(List<TestTag> tags) {
+        baseStepListener.addTagsToCurrentStory(tags);
     }
 }

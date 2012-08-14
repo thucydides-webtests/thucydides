@@ -9,7 +9,10 @@ import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
@@ -18,10 +21,12 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,20 +52,16 @@ public class WhenKeepingTrackOfVisitedPages {
         environmentVariables = new MockEnvironmentVariables();
         configuration = new SystemPropertiesConfiguration(environmentVariables);
     }
-    
-    @Test
-    public void the_pages_object_should_have_a_default_starting_point_url() {
 
-        final String baseUrl = "http://www.google.com";
-        final Pages pages = new Pages(driver, configuration);
+    static class SimplePage extends PageObject {
 
-        pages.setDefaultBaseUrl(baseUrl);
-
-        pages.start();
-        
-        verify(driver).get(baseUrl);    
+        public SimplePage(final WebDriver driver) {
+            super(driver);
+        }
     }
 
+    @Captor
+    ArgumentCaptor<String> driverUrl;
 
     @Test
     public void the_default_starting_point_url_can_refer_to_a_file_on_the_classpath() {
@@ -69,11 +70,10 @@ public class WhenKeepingTrackOfVisitedPages {
         final Pages pages = new Pages(driver, configuration);
         pages.setDefaultBaseUrl(baseUrl);
 
-        URL staticSiteUrl = Thread.currentThread().getContextClassLoader().getResource("static-site/index.html");
+        pages.get(SimplePage.class);
 
-        pages.start();
-
-        verify(driver).get(staticSiteUrl.toString());
+        verify(driver).get(driverUrl.capture());
+        assertThat(driverUrl.getValue(), containsString("static-site/index.html"));
     }
 
     @Test
@@ -85,10 +85,11 @@ public class WhenKeepingTrackOfVisitedPages {
         final Pages pages = new Pages(driver, Configuration);
         
         environmentVariables.setProperty("webdriver.base.url", systemDefinedBaseUrl);
-        
-        pages.start();
-        
-        verify(driver).get(systemDefinedBaseUrl);    
+
+        pages.get(SimplePage.class);
+
+        verify(driver).get(driverUrl.capture());
+        assertThat(driverUrl.getValue(), containsString(systemDefinedBaseUrl));
     }
 
     @Test
@@ -96,8 +97,6 @@ public class WhenKeepingTrackOfVisitedPages {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.apache.org");
         final Pages pages = new Pages(driver, configuration);
-        pages.start();
-
         assertThat(pages.isCurrentPageAt(ApacheHomePage.class), is(true));
     }
 
@@ -106,8 +105,6 @@ public class WhenKeepingTrackOfVisitedPages {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.google.org");
         final Pages pages = new Pages(driver, configuration);
-        pages.start();
-
         assertThat(pages.isCurrentPageAt(ApacheHomePage.class), is(false));
     }
 
@@ -116,7 +113,6 @@ public class WhenKeepingTrackOfVisitedPages {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.apache.org");
         final Pages pages = new Pages(driver, configuration);
-        pages.start();
 
         assertThat(pages.get(ApacheHomePage.class).getClass().getName(),
                     is(ApacheHomePage.class.getName()));
@@ -127,7 +123,6 @@ public class WhenKeepingTrackOfVisitedPages {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.apache.org");
         final Pages pages = new Pages(driver, configuration);
-        pages.start();
 
         assertThat(pages.getAt(ApacheHomePage.class).getClass().getName(),
                     is(ApacheHomePage.class.getName()));
@@ -138,7 +133,6 @@ public class WhenKeepingTrackOfVisitedPages {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.apache.org");
         final Pages pages = new Pages(driver, configuration);
-        pages.start();
 
         AnyPage currentPage = pages.getAt(AnyPage.class);
         assertThat(currentPage, is(not(nullValue())));
@@ -149,7 +143,6 @@ public class WhenKeepingTrackOfVisitedPages {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
         final Pages pages = new Pages(driver, configuration);
-        pages.start();
 
         pages.currentPageAt(ApacheHomePage.class);
     }
@@ -166,7 +159,6 @@ public class WhenKeepingTrackOfVisitedPages {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
         final Pages pages = new Pages(driver, configuration);
-        pages.start();
 
         pages.currentPageAt(InvalidHomePage.class);
     }
@@ -183,8 +175,6 @@ public class WhenKeepingTrackOfVisitedPages {
 
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
         final Pages pages = new Pages(driver, configuration);
-        pages.start();
-
         pages.currentPageAt(ExplodingHomePage.class);
     }
 
@@ -201,15 +191,6 @@ public class WhenKeepingTrackOfVisitedPages {
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
         final Pages pages = new Pages(driver, configuration);
         pages.currentPageAt(PageObjectWithNoDriverConstructor.class);
-    }
-
-    @Test
-    public void should_open_initial_page_when_driver_opens() {
-        Pages pages = new Pages(driver, configuration);
-        pages.setDefaultBaseUrl("http://www.google.com");
-        pages.notifyWhenDriverOpens();
-
-        verify(driver).get("http://www.google.com");
     }
 
     static final class GooglePage extends PageObject {
@@ -266,25 +247,9 @@ public class WhenKeepingTrackOfVisitedPages {
     public void should_not_open_initial_page_when_driver_opens_if_using_a_proxied_driver() {
         Pages pages = new Pages(driverProxy);
         pages.setDefaultBaseUrl("http://www.google.com");
-        pages.notifyWhenDriverOpens();
 
         verify(driver, never()).get("http://www.google.com");
     }
-
-    @Test
-    public void should_register_proxy_drivers_when_driver_opens() {
-        Pages pages = new Pages(driverProxy) {
-            @Override
-            protected WebdriverProxyFactory getProxyFactory() {
-                return proxyFactory;
-            }
-        };
-        pages.setDefaultBaseUrl("http://www.google.com");
-        pages.notifyWhenDriverOpens();
-
-        verify(proxyFactory).registerListener(any(PagesEventListener.class));
-    }
-
 
     class InvalidWebDriverClass extends FirefoxDriver {
         InvalidWebDriverClass() throws IllegalAccessException {

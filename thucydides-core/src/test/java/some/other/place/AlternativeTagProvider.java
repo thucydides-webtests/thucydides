@@ -4,6 +4,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.statistics.service.TagProvider;
 
+import java.util.List;
 import java.util.Set;
 
 public class AlternativeTagProvider implements TagProvider {

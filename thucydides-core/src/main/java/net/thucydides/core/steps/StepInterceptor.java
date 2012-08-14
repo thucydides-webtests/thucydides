@@ -73,8 +73,9 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     }
 
     private String domainPackageOf(Class callingClass) {
-        String methodPackage = callingClass.getPackage().getName();
-        return packageDomainName(methodPackage);
+        Package classPackage = callingClass.getPackage();
+        String classPackageName = (classPackage != null) ? classPackage.getName() : "";
+        return packageDomainName(classPackageName);
     }
 
     private String packageDomainName(String methodPackage) {
@@ -90,8 +91,9 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     }
 
     private String domainPackageOf(Method method) {
-        String methodPackage = method.getDeclaringClass().getPackage().getName();
-        return packageDomainName(methodPackage);
+        Package methodPackage = method.getDeclaringClass().getPackage();
+        String methodPackageName = (methodPackage != null) ? methodPackage.getName() : "";
+        return packageDomainName(methodPackageName);
     }
 
     private Method getRoot(Method method) {

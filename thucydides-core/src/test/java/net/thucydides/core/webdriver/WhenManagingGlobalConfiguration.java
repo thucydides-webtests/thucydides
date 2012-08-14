@@ -58,6 +58,21 @@ public class WhenManagingGlobalConfiguration {
     }
 
     @Test
+    public void system_properties_cannot_be_set_if_defined() {
+        environmentVariables.setProperty("thucydides.use.unique.browser","true");
+        configuration.setIfUndefined("thucydides.use.unique.browser", "false");
+
+        assertThat(configuration.getUseUniqueBrowser(), is(true));
+    }
+
+    @Test
+    public void system_properties_can_be_set_if_undefined() {
+        configuration.setIfUndefined("thucydides.use.unique.browser", "false");
+
+        assertThat(configuration.getUseUniqueBrowser(), is(false));
+    }
+
+    @Test
     public void the_default_unique_browser_value_should_be_false() {
         assertThat(configuration.getUseUniqueBrowser(), is(false));
     }

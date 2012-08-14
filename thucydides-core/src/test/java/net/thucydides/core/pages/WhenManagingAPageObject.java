@@ -619,33 +619,6 @@ public class WhenManagingAPageObject {
     }
 
     @Test
-    public void the_page_should_initially_open_at_the_systemwide_default_url() {
-
-        environmentVariables.setProperty("webdriver.base.url","http://www.google.com");
-
-        BasicPageObject page = new BasicPageObject(driver);
-
-        Pages pages = new Pages(driver, configuration);
-        pages.start();
-
-        verify(driver).get("http://www.google.com");
-    }
-
-
-    @Test
-    public void the_start_url_for_a_page_can_be_overridden_by_the_system_default_url() {
-        BasicPageObject page = new BasicPageObject(driver);
-        configuration.setDefaultBaseUrl("http://www.google.com");
-
-        Pages pages = new Pages(driver, configuration);
-        pages.setDefaultBaseUrl("http://www.google.co.nz");
-        pages.start();
-
-        verify(driver).get("http://www.google.com");
-    }
-
-
-    @Test
     public void page_should_detect_if_a_web_element_contains_a_string() {
 
         BasicPageObject page = new BasicPageObject(driver);

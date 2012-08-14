@@ -22,9 +22,10 @@ public class ClasspathTagProviderService implements TagProviderService {
     public List<TagProvider> getTagProviders() {
         List<TagProvider> tagProviders = Lists.newArrayList();
 
-        ServiceLoader<TagProvider> serviceLoader = ServiceLoader.load(TagProvider.class);
+        ServiceLoader<TagProvider> tagProviderServiceLoader = ServiceLoader.load(TagProvider.class);
 
-        for (TagProvider aServiceLoader : serviceLoader) {
+
+        for (TagProvider aServiceLoader : tagProviderServiceLoader) {
             logger.info("Using tag provider: {}", aServiceLoader.getClass());
             tagProviders.add(aServiceLoader);
         }

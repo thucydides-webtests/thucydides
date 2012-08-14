@@ -412,6 +412,53 @@ public class WhenDefiningPageUrls {
         }
     }
 
+
+    @DefaultUrl("http://localhost:8080/myapp/somepage")
+    final class PageObjectWithLongDefaultUrl extends PageObject {
+
+        public boolean pageFullyLoaded;
+
+        public PageObjectWithLongDefaultUrl(WebDriver driver) {
+            super(driver);
+        }
+    }
+
+    @Test
+    public void should_override_base_urls() {
+        PageObject page = new PageObjectWithLongDefaultUrl(webdriver);
+        PageUrls pageUrls = new PageUrls(page, configuration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","http://prod.server");
+        page.open();
+
+        verify(webdriver).get("http://prod.server/myapp/somepage");
+    }
+
+    @Test
+    public void should_not_override_base_url_if_empty() {
+        PageObject page = new PageObjectWithLongDefaultUrl(webdriver);
+        PageUrls pageUrls = new PageUrls(page, configuration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.clearProperty("webdriver.base.url");
+        page.open();
+
+        verify(webdriver).get("http://localhost:8080/myapp/somepage");
+    }
+
+    @Test
+    public void should_not_override_base_url_if_empty_string() {
+        PageObject page = new PageObjectWithLongDefaultUrl(webdriver);
+        PageUrls pageUrls = new PageUrls(page, configuration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","");
+        page.open();
+
+        verify(webdriver).get("http://localhost:8080/myapp/somepage");
+    }
+
     @Test
     public void annotated_OnOpenPage_methods_should_be_called_when_the_page_is_opened() {
         PageObjectWithOnOpenPageMethod page = new PageObjectWithOnOpenPageMethod(webdriver);

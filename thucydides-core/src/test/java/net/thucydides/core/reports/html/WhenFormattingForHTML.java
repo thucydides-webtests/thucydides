@@ -26,78 +26,95 @@ public class WhenFormattingForHTML {
     }
 
     @Test
-    public void should_include_issue_tracking_link() {
-        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
-        Formatter formatter = new Formatter(issueTracking);
+    public void should_include_issue_tracking_link_using_a_shortened_url() {
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/{0}");
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
 
+        Formatter formatter = new Formatter(issueTracking);
         String formattedValue = formatter.addLinks("Fixes issue #123");
 
-        assertThat(formattedValue, is("Fixes issue <a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">#123</a>"));
+        assertThat(formattedValue, is("Fixes issue <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">#123</a>"));
+    }
+
+    @Test
+    public void should_include_issue_tracking_link_using_a_full_url() {
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/{0}");
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
+
+        Formatter formatter = new Formatter(issueTracking);
+        String formattedValue = formatter.addLinks("Fixes issue ISSUE-123");
+
+        assertThat(formattedValue, is("Fixes issue <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">ISSUE-123</a>"));
+    }
+
+    @Test
+    public void should_include_issue_tracking_link_for_both_full_and_shortened_ids() {
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/{0}");
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/MYPROJECT-{0}");
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.addLinks("Fixes issue #1 and MYPROJECT-2");
+
+        assertThat(formattedValue, is("Fixes issue <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/MYPROJECT-1\">#1</a> and <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/MYPROJECT-2\">MYPROJECT-2</a>"));
     }
 
     @Test
     public void should_include_multiple_issue_tracking_links() {
-        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}");
         Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("A scenario with about issues #123 and #456");
 
-        assertThat(formattedValue, is("A scenario with about issues <a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">#123</a> and <a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-456\">#456</a>"));
+        assertThat(formattedValue, is("A scenario with about issues <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">#123</a> and <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-456\">#456</a>"));
     }
 
     @Test
     public void should_allow_letters_and_numbers_in_issue_number() {
-        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
         Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("A big story (#MYPROJECT-123,#MYPROJECT-456)");
 
-        assertThat(formattedValue, is("A big story (<a href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-123\">#MYPROJECT-123</a>,<a href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-456\">#MYPROJECT-456</a>)"));
+        assertThat(formattedValue, is("A big story (<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-123\">#MYPROJECT-123</a>,<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-456\">#MYPROJECT-456</a>)"));
     }
 
     @Test
     public void should_allow_dashes_in_issue_number() {
-        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
         Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("A big story (#MY-PROJECT-123,#MY-PROJECT-456)");
 
-        assertThat(formattedValue, is("A big story (<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY-PROJECT-123\">#MY-PROJECT-123</a>,<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY-PROJECT-456\">#MY-PROJECT-456</a>)"));
+        assertThat(formattedValue, is("A big story (<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MY-PROJECT-123\">#MY-PROJECT-123</a>,<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MY-PROJECT-456\">#MY-PROJECT-456</a>)"));
     }
 
     @Test
     public void should_allow_underscores_in_issue_number() {
-        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
         Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("A big story (#MY_PROJECT_123,#MY_PROJECT_456)");
 
-        assertThat(formattedValue, is("A big story (<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_123\">#MY_PROJECT_123</a>,<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_456\">#MY_PROJECT_456</a>)"));
+        assertThat(formattedValue, is("A big story (<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_123\">#MY_PROJECT_123</a>,<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_456\">#MY_PROJECT_456</a>)"));
     }
 
     @Test
     public void should_identify_issues_in_a_text() {
-        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker");
-        Formatter formatter = new Formatter(issueTracking);
-
-        List<String> issues = formatter.issuesIn("A scenario about issue #123");
+        List<String> issues = Formatter.shortenedIssuesIn("A scenario about issue #123");
 
         assertThat(issues, hasItem("#123"));
     }
 
     @Test
     public void should_identify_multiple_issues_in_a_text() {
-        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker");
-        Formatter formatter = new Formatter(issueTracking);
-
-        List<String> issues = formatter.issuesIn("A scenario about issue #123,#456, #789");
+        List<String> issues = Formatter.shortenedIssuesIn("A scenario about issue #123,#456, #789");
 
         assertThat(issues, hasItems("#123", "#456", "#789"));
     }
 
     @Test
     public void should_not_format_issues_if_no_issue_manage_url_is_provided() {
-        when(issueTracking.getIssueTrackerUrl()).thenReturn(null);
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
         Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("A scenario with about issues #123 and #456");
@@ -107,12 +124,32 @@ public class WhenFormattingForHTML {
 
     @Test
     public void should_not_format_issues_if_the_issue_manage_url_is_empty() {
-        when(issueTracking.getIssueTrackerUrl()).thenReturn(null);
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
         Formatter formatter = new Formatter(issueTracking);
 
         String formattedValue = formatter.addLinks("A scenario with about issues #123 and #456");
 
         assertThat(formattedValue, is("A scenario with about issues #123 and #456"));
+    }
+
+    @Test
+    public void should_insert_line_breaks_into_text_values() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.addLineBreaks("Line one\nLine two\nLine three");
+
+        assertThat(formattedValue, is("Line one<br>Line two<br>Line three"));
+    }
+
+    @Test
+    public void should_insert_line_breaks_into_text_values_with_windows_line_breaks() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.addLineBreaks("Line one\r\nLine two\r\nLine three");
+
+        assertThat(formattedValue, is("Line one<br>Line two<br>Line three"));
     }
 
     @Test
