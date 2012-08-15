@@ -100,7 +100,6 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
     private Optional<Requirement> getParentRequirementForOutcome(TestOutcome testOutcome) {
         for (RequirementsTagProvider tagProvider : getRequirementsTagProviders()) {
-            System.out.println("Checking with provider " + tagProvider);
             Optional<Requirement> requirement = tagProvider.getParentRequirementOf(testOutcome);
             if (requirement.isPresent()) {
                 return requirement;
@@ -150,7 +149,6 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         context.put("allTestOutcomes", allTestOutcomes);
         context.put("testOutcome", testOutcome);
         context.put("inflection", Inflector.getInstance());
-        System.out.println("Finding parent requirement for test outcome " + testOutcome.getTitle() +" : " + getParentRequirementForOutcome(testOutcome) );
         context.put("parentRequirement", getParentRequirementForOutcome(testOutcome));
     }
 

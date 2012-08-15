@@ -190,8 +190,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
 
     public Optional<Requirement> getParentRequirementOf(final TestOutcome testOutcome) {
 
-        System.out.println("Finding parent requirement of " + testOutcome.getPath());
-
         if (testOutcome.getPath() != null) {
             List<String> storyPathElements = stripStorySuffixFrom(stripRootFrom(pathElements(stripRootPathFrom(testOutcome.getPath()))));
             return lastRequirementFrom(storyPathElements);
