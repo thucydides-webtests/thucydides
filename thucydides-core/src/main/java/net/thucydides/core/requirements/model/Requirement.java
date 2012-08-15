@@ -2,6 +2,7 @@ package net.thucydides.core.requirements.model;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,14 +20,22 @@ public class Requirement implements Comparable {
     private final String narrativeText;
     private final String cardNumber;
     private final List<Requirement> children;
+    private final List<String> examples;
 
-    protected Requirement(String name, String displayName, String cardNumber, String type, String narrativeText, List<Requirement> children) {
+    protected Requirement(String name, String displayName, String cardNumber, String type, String narrativeText,
+                          List<Requirement> children) {
+        this(name,displayName,cardNumber, type, narrativeText, children, Collections.EMPTY_LIST);
+    }
+
+    protected Requirement(String name, String displayName, String cardNumber, String type, String narrativeText,
+                          List<Requirement> children, List<String> examples) {
         this.name = name;
         this.displayName = displayName;
         this.cardNumber = cardNumber;
         this.type = type;
         this.narrativeText = narrativeText;
         this.children = ImmutableList.copyOf(children);
+        this.examples = ImmutableList.copyOf(examples);
     }
 
     protected Requirement(String name, String displayName, String cardNumber, String type, String narrativeText) {
@@ -36,6 +45,7 @@ public class Requirement implements Comparable {
         this.type = type;
         this.narrativeText = narrativeText;
         this.children = Collections.EMPTY_LIST;
+        this.examples = Collections.EMPTY_LIST;
     }
 
     public String getName() {
@@ -66,6 +76,10 @@ public class Requirement implements Comparable {
         return ImmutableList.copyOf(children);
     }
 
+    public List<String> getExamples() {
+        return ImmutableList.copyOf(examples);
+    }
+
     public String getCardNumber() {
         return cardNumber;
     }
@@ -81,6 +95,16 @@ public class Requirement implements Comparable {
 
     public Requirement withChildren(List<Requirement> children) {
         return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children);
+    }
+
+    public Requirement withExample(String example) {
+        List<String> updatedExamples = Lists.newArrayList(examples);
+        updatedExamples.add(example);
+        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children, updatedExamples);
+    }
+
+    public Requirement withExamples(List<String> examples) {
+        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children, examples);
     }
 
     public static class RequirementBuilderNameStep {

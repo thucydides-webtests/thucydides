@@ -42,8 +42,39 @@ class WhenCreatingARequirement extends Specification {
                     .withOptionalCardNumber("CARD-1")
                     .withType("capability")
                     .withNarrativeText("as a someone I want something so that something else")
-        and: "we associate it with some comments"
-
+        and: "we associate it with some examples"
+            requirement = requirement.withExample("The client buys a blue widget and has it delivered.")
         then: "we should have a correctly instantiated requirement"
+            requirement.examples == ["The client buys a blue widget and has it delivered."]
     }
+
+    def "should be able to record several examples"() {
+        when: "we create a simple requirement using a builder"
+        def requirement = Requirement.named("some_requirement")
+                .withOptionalDisplayName("a longer name for display purposes")
+                .withOptionalCardNumber("CARD-1")
+                .withType("capability")
+                .withNarrativeText("as a someone I want something so that something else")
+        and: "we associate it with some examples"
+            requirement = requirement.withExample("The client buys a blue widget and has it delivered.")
+                                     .withExample("The client buys a red widget and has it delivered.")
+        then: "we should have a correctly instantiated requirement"
+            requirement.examples == ["The client buys a blue widget and has it delivered.",
+                                     "The client buys a red widget and has it delivered."]
+    }
+
+    def "should be able to record several examples at the same time"() {
+        when: "we create a simple requirement including some examples"
+        def requirement = Requirement.named("some_requirement")
+                .withOptionalDisplayName("a longer name for display purposes")
+                .withOptionalCardNumber("CARD-1")
+                .withType("capability")
+                .withNarrativeText("as a someone I want something so that something else")
+                .withExamples(["The client buys a blue widget and has it delivered.",
+                               "The client buys a red widget and has it delivered."])
+        then: "we should have a correctly instantiated requirement"
+            requirement.examples == ["The client buys a blue widget and has it delivered.",
+                                     "The client buys a red widget and has it delivered."]
+    }
+
 }
