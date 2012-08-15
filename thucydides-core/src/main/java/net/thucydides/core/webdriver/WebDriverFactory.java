@@ -1,5 +1,7 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -14,6 +16,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.UnableToCreateProfileException;
@@ -33,6 +36,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -130,6 +135,8 @@ public class WebDriverFactory {
                 driver = firefoxDriverFrom(driverClass);
             } else if (isAnHtmlUnitDriver(driverClass)) {
                 driver = htmlunitDriverFrom(driverClass);
+            } else if (isAChromeDriver(driverClass)) {
+                driver = chromeDriverFrom(driverClass);
             } else {
                 driver = newDriverInstanceFrom(driverClass);
             }
@@ -310,6 +317,17 @@ public class WebDriverFactory {
         }
     }
 
+    private WebDriver chromeDriverFrom(Class<? extends WebDriver> driverClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        ChromeOptions options = new ChromeOptions();
+        String chromeSwitches = environmentVariables.getProperty(ThucydidesSystemProperty.CHROME_SWITCHES);
+        if (StringUtils.isNotEmpty(chromeSwitches)) {
+            List<String> arguments =  Lists.newArrayList(Splitter.on(",").trimResults().split(chromeSwitches));
+            options.addArguments(arguments);
+        }
+        return webdriverInstanceFactory.newInstanceOf(driverClass, options);
+
+    }
+
     private boolean aProfileCouldBeCreated(FirefoxProfile profile) {
         return (profile != null);
     }
@@ -365,6 +383,10 @@ public class WebDriverFactory {
 
     private boolean isAFirefoxDriver(Class<? extends WebDriver> driverClass) {
         return (FirefoxDriver.class.isAssignableFrom(driverClass));
+    }
+
+    private boolean isAChromeDriver(Class<? extends WebDriver> driverClass) {
+        return (ChromeDriver.class.isAssignableFrom(driverClass));
     }
 
     private boolean usesFirefox(WebDriver driver) {

@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -18,7 +19,7 @@ public class WebdriverInstanceFactory {
     public WebDriver newInstanceOf(final Class<? extends WebDriver> webdriverClass) throws IllegalAccessException, InstantiationException {
         return webdriverClass.newInstance();
     }
-    
+
     public WebDriver newInstanceOf(final Class<? extends WebDriver> webdriverClass,
                                    final FirefoxProfile profile) throws IllegalAccessException,
             InstantiationException,
@@ -27,4 +28,11 @@ public class WebdriverInstanceFactory {
         return webdriverClass.getConstructor(new Class[]{FirefoxProfile.class}).newInstance(profile);
     }
 
+    public WebDriver newInstanceOf(final Class<? extends WebDriver> webdriverClass,
+                                   final ChromeOptions options) throws IllegalAccessException,
+            InstantiationException,
+            NoSuchMethodException,
+            InvocationTargetException {
+        return webdriverClass.getConstructor(new Class[]{ChromeOptions.class}).newInstance(options);
+    }
 }
