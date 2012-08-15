@@ -88,21 +88,15 @@ public class WhenStoringTestStatistics extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
-        TestOutcome testOutcome2 = executedSteps.get(1);
-        TestOutcome testOutcome3 = executedSteps.get(2);
 
-        assertThat(testOutcome1.getTitle(), is("Happy day scenario"));
-        assertThat(testOutcome1.getMethodName(), is("happy_day_scenario"));
-        assertThat(testOutcome1.getTestSteps().size(), is(4));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTitle(), is("Happy day scenario"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTestSteps().size(), is(4));
 
-        assertThat(testOutcome2.getTitle(), is("Edge case 1"));
-        assertThat(testOutcome2.getMethodName(), is("edge_case_1"));
-        assertThat(testOutcome2.getTestSteps().size(), is(3));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_1").getTitle(), is("Edge case 1"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_1").getTestSteps().size(), is(3));
 
-        assertThat(testOutcome3.getTitle(), is("Edge case 2"));
-        assertThat(testOutcome3.getMethodName(), is("edge_case_2"));
-        assertThat(testOutcome3.getTestSteps().size(), is(2));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_2").getTitle(), is("Edge case 2"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_2").getTestSteps().size(), is(2));
     }
 
 }

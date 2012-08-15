@@ -34,4 +34,16 @@ class WhenCreatingARequirement extends Specification {
             def requirementsTestCount = outcomes.requirementOutcomes.collect {it.testOutcomes.total}
             requirementsTestCount == [0,0,0]
     }
+
+    def "should be able to optionally record the examples used to define a requirement"() {
+        when: "we create a simple requirement using a builder"
+            def requirement = Requirement.named("some_requirement")
+                    .withOptionalDisplayName("a longer name for display purposes")
+                    .withOptionalCardNumber("CARD-1")
+                    .withType("capability")
+                    .withNarrativeText("as a someone I want something so that something else")
+        and: "we associate it with some comments"
+
+        then: "we should have a correctly instantiated requirement"
+    }
 }
