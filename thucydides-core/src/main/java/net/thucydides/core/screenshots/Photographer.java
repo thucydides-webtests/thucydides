@@ -1,6 +1,7 @@
 package net.thucydides.core.screenshots;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.webdriver.WebDriverFacade;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 /**
  * The photographer takes and stores screenshots during the test.
@@ -48,6 +50,9 @@ public class Photographer {
     }
 
     public Photographer(final WebDriver driver, final File targetDirectory, final ScreenshotProcessor screenshotProcessor) {
+        Preconditions.checkNotNull(targetDirectory);
+        Preconditions.checkNotNull(screenshotProcessor);
+
         this.driver = driver;
         this.targetDirectory = targetDirectory;
         this.screenshotProcessor = screenshotProcessor;
@@ -86,19 +91,49 @@ public class Photographer {
     /**
      * Take a screenshot of the current browser and store it in the output directory.
      */
-    public File takeScreenshot(final String prefix) {
+    public Optional<File> takeScreenshot(final String prefix) {
         if (driverCanTakeSnapshots()) {
             try {
-                File screenshotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-                File savedScreenshot = targetScreenshot(prefix);
-                screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile, savedScreenshot));
-                savePageSourceFor(savedScreenshot.getAbsolutePath());
-                return savedScreenshot;
+                File screenshotFile = null;
+                Object capturedScreenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+                if (isAFile(capturedScreenshot)) {
+                    screenshotFile = (File) capturedScreenshot;
+                } else if (isByteArray(capturedScreenshot)) {
+                    screenshotFile = saveScreenshotData((byte[]) capturedScreenshot);
+                }
+                if (screenshotFile != null) {
+                    File savedScreenshot = targetScreenshot(prefix);
+                    screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile, savedScreenshot));
+                    savePageSourceFor(savedScreenshot.getAbsolutePath());
+                    return Optional.of(savedScreenshot);
+                }
             } catch (Throwable e) {
                 getLogger().warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
             }
         }
-        return null;
+        return Optional.absent();
+    }
+
+    private File saveScreenshotData(byte[] capturedScreenshot) throws IOException {
+        File screenshotFile;
+        String screenshotTempFileName = "screenshot_" + UUID.randomUUID();
+        screenshotFile = new File(FileUtils.getTempDirectory(), screenshotTempFileName);
+        byte[] screenshotData = (byte[]) capturedScreenshot;
+        screenshotFile.deleteOnExit();
+        if (screenshotData.length > 0) {
+            FileUtils.writeByteArrayToFile(screenshotFile, screenshotData);
+        } else {
+            FileUtils.touch(screenshotFile);
+        }
+        return screenshotFile;
+    }
+
+    private boolean isAFile(Object screenshot) {
+        return (screenshot instanceof File);
+    }
+
+    private boolean isByteArray(Object screenshot) {
+        return (screenshot instanceof byte[]);
     }
 
     private File targetScreenshot(String prefix) {

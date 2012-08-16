@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver.integration;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.screenshots.MultithreadScreenshotProcessor;
 import net.thucydides.core.screenshots.Photographer;
@@ -74,7 +75,7 @@ public class WhenTakingLargeScreenshots {
 
         ScreenshotProcessor screenshotProcessor = new MultithreadScreenshotProcessor(environmentVariables);
         Photographer photographer = new Photographer(driver, screenshotDirectory,screenshotProcessor);
-        File screenshotFile = photographer.takeScreenshot("screenshot");
+        File screenshotFile = photographer.takeScreenshot("screenshot").get();
 
 		waitUntilFileIsWritten(screenshotFile);
 
@@ -96,7 +97,7 @@ public class WhenTakingLargeScreenshots {
 
         ScreenshotProcessor screenshotProcessor = new MultithreadScreenshotProcessor(environmentVariables);
         Photographer photographer = new Photographer(driver, screenshotDirectory,screenshotProcessor);
-        File screenshotFile = photographer.takeScreenshot("screenshot");
+        File screenshotFile = photographer.takeScreenshot("screenshot").get();
 
         waitUntilFileIsWritten(screenshotFile);
 
@@ -111,7 +112,7 @@ public class WhenTakingLargeScreenshots {
         driver = testSite.open("http:www.google.com", "screenshots/google.html");
 
         Photographer photographer = new Photographer(driver, screenshotDirectory);
-        File screenshotFile = photographer.takeScreenshot("screenshot");
+        File screenshotFile = photographer.takeScreenshot("screenshot").get();
 
 		waitUntilFileIsWritten(screenshotFile);
 
@@ -124,7 +125,7 @@ public class WhenTakingLargeScreenshots {
         driver = testSite.open("http://www.google.com", "screenshots/google.html", "chrome");
 
         Photographer photographer = new Photographer(driver, screenshotDirectory);
-        File screenshotFile = photographer.takeScreenshot("screenshot");
+        File screenshotFile = photographer.takeScreenshot("screenshot").get();
 
 		waitUntilFileIsWritten(screenshotFile);
 
@@ -160,9 +161,6 @@ public class WhenTakingLargeScreenshots {
                 return logger;
             }
         };
-        File screenshot = photographer.takeScreenshot("screenshot");  // should not throw an exception
-        if (screenshot == null) {
-            verify(logger).warn(contains("Failed to write screenshot"));
-        }
+        photographer.takeScreenshot("screenshot");
     }
 }

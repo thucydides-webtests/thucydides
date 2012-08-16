@@ -143,6 +143,16 @@ public class WhenFormattingForHTML {
     }
 
     @Test
+    public void should_return_empty_string_when_inserting_line_breaks_into_a_null_value() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.addLineBreaks(null);
+
+        assertThat(formattedValue, is(""));
+    }
+
+    @Test
     public void should_insert_line_breaks_into_text_values_with_windows_line_breaks() {
         when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
         Formatter formatter = new Formatter(issueTracking);
