@@ -87,9 +87,6 @@ public class WhenInstanciatingANewDriver {
     @Captor
     ArgumentCaptor<ChromeOptions> chromeOptionsArgument;
 
-    @Captor
-    ArgumentCaptor<Class<? extends WebDriver>> driverClassArgument;
-
     @Test
     public void should_pass_chrome_switches_when_creating_a_chrome_driver() throws Exception {
         environmentVariables.setProperty("chrome.switches","--homepage=about:blank,--no-first-run");

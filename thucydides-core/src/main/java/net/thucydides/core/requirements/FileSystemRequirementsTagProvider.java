@@ -198,6 +198,16 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         }
     }
 
+    @Override
+    public Optional<Requirement> getRequirementFor(TestTag testTag) {
+        for(Requirement requirement : getRequirements()) {
+            if (requirement.getName().equals(testTag.getName()) && requirement.getType().equals(testTag.getType())) {
+                return Optional.of(requirement);
+            }
+        }
+        return Optional.absent();
+    }
+
     private Optional<Requirement> lastRequirementFrom(List<String> storyPathElements) {
         if (storyPathElements.isEmpty()) {
             return Optional.absent();

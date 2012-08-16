@@ -10,6 +10,8 @@ import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
 import net.thucydides.core.model.Story
+import net.thucydides.core.requirements.model.Requirement
+import com.google.common.base.Optional
 
 class WhenAssociatingATestOutcomeWithARequirement extends Specification {
 
@@ -56,7 +58,7 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
             FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
         and: "We define the root package in the 'thucydides.test.root' property"
             vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
-            when: "We load requirements with nested capability directories and no .narrative files"
+        when: "We load requirements with nested capability directories and no .narrative files"
             def testOutcome = new TestOutcome("someTest",ASampleTestWithNoCapability)
         then:
             capabilityProvider.getTagsFor(testOutcome) == [] as Set
@@ -113,5 +115,31 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
             !capabilityProvider.getParentRequirementOf(testOutcome).isPresent()
     }
 
+    def "Should find the requirement for a given tag"() {
+        given: "We are using the default requirements provider"
+            EnvironmentVariables vars = new MockEnvironmentVariables();
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
+        and: "We define the root package in the 'thucydides.test.root' property"
+            vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
+        when: "We load requirements with nested capability directories and no .narrative files"
+            def growPotatoesTag = TestTag.withName("Grow potatoes").andType("capability")
+        then:
+            Optional<Requirement> requirement = capabilityProvider.getRequirementFor(growPotatoesTag)
+            requirement.get().getName() == "Grow potatoes"
+            requirement.get().getType() == "capability"
+    }
+
+    def "Should not find the requirement if there are no matching requirements for a tag"() {
+        given: "We are using the default requirements provider"
+            EnvironmentVariables vars = new MockEnvironmentVariables();
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
+        and: "We define the root package in the 'thucydides.test.root' property"
+            vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
+        when: "We load requirements with nested capability directories and no .narrative files"
+            def growPotatoesTag = TestTag.withName("Grow pink and purple potatoes").andType("capability")
+        then:
+            Optional<Requirement> requirement = capabilityProvider.getRequirementFor(growPotatoesTag)
+            requirement.absent()
+    }
 }
 

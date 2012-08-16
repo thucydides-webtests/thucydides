@@ -1,6 +1,5 @@
 package net.thucydides.core.requirements.model;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -20,15 +19,10 @@ public class Requirement implements Comparable {
     private final String narrativeText;
     private final String cardNumber;
     private final List<Requirement> children;
-    private final List<String> examples;
+    private final List<Example> examples;
 
     protected Requirement(String name, String displayName, String cardNumber, String type, String narrativeText,
-                          List<Requirement> children) {
-        this(name,displayName,cardNumber, type, narrativeText, children, Collections.EMPTY_LIST);
-    }
-
-    protected Requirement(String name, String displayName, String cardNumber, String type, String narrativeText,
-                          List<Requirement> children, List<String> examples) {
+                          List<Requirement> children, List<Example> examples) {
         this.name = name;
         this.displayName = displayName;
         this.cardNumber = cardNumber;
@@ -76,8 +70,16 @@ public class Requirement implements Comparable {
         return ImmutableList.copyOf(children);
     }
 
-    public List<String> getExamples() {
+    public List<Example> getExamples() {
         return ImmutableList.copyOf(examples);
+    }
+
+    public Boolean hasExamples() {
+        return !examples.isEmpty();
+    }
+
+    public int getExampleCount() {
+        return examples.size();
     }
 
     public String getCardNumber() {
@@ -94,16 +96,16 @@ public class Requirement implements Comparable {
     }
 
     public Requirement withChildren(List<Requirement> children) {
-        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children);
+        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children, examples);
     }
 
-    public Requirement withExample(String example) {
-        List<String> updatedExamples = Lists.newArrayList(examples);
+    public Requirement withExample(Example example) {
+        List<Example> updatedExamples = Lists.newArrayList(examples);
         updatedExamples.add(example);
         return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children, updatedExamples);
     }
 
-    public Requirement withExamples(List<String> examples) {
+    public Requirement withExamples(List<Example> examples) {
         return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children, examples);
     }
 

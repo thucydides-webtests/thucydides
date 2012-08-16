@@ -140,7 +140,7 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         File report = new File(outputDirectory,md5("context_a_feature_result_success") + ".html");
         driver.get(urlFor(report));
 
-        List<WebElement> passedLinks = driver.findElements(By.xpath("//a[.='passed']"));
+        List<WebElement> passedLinks = driver.findElements(By.linkText("passed"));
         assertThat(passedLinks.size(), is(0));
     }
 
