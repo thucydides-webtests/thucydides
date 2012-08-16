@@ -67,10 +67,35 @@
                     <showDeprecation>false</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <optimize>true</optimize>
-                    <compilerArguments>
-                        <source>1.5</source>
-                        <target>1.5</target>
-                    </compilerArguments>
+                    <!--<compilerArguments>-->
+                        <!--<source>1.5</source>-->
+                        <!--<target>1.5</target>-->
+                    <!--</compilerArguments>-->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin
+                </artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <source>1.5</source>
+                    <aggregate>true</aggregate>
+                    <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+                    <docletArtifact>
+                        <groupId>org.umlgraph</groupId>
+                        <artifactId>doclet</artifactId>
+                        <version>5.1</version>
+                    </docletArtifact>
+                    <additionalparam>-views -all -inferrel
+                        -inferdep
+                        -inferdepvis public
+                        -inferdepinpackage
+                        -hide java.*
+                        -collpackages java.util.*
+                        -qualify
+                    </additionalparam>
+                    <useStandardDocletOptions>true</useStandardDocletOptions>
                 </configuration>
             </plugin>
             <plugin>
@@ -181,32 +206,6 @@
                         <version>${groovy.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin
-                </artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <source>1.5</source>
-                    <aggregate>true</aggregate>
-                    <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-                    <docletArtifact>
-                        <groupId>org.umlgraph</groupId>
-                        <artifactId>doclet</artifactId>
-                        <version>5.1</version>
-                    </docletArtifact>
-                    <additionalparam>-views -all -inferrel
-                        -inferdep
-                        -inferdepvis public
-                        -inferdepinpackage
-                        -hide java.*
-                        -collpackages java.util.*
-                        -qualify
-                    </additionalparam>
-                    <useStandardDocletOptions>true</useStandardDocletOptions>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
