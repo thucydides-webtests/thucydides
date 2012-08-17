@@ -48,10 +48,10 @@ public class WhenConfiguringTheJPAProvider {
     }
 
     @Test
-    public void should_configure_Hibernate_by_default() {
+    public void should_configure_Default_Provider_by_default() {
 
         JPAProviderConfig providerConfig = JPAProviderConfigFactory.getJPAProviderConfig(environmentVariables, localDatabase);
-        assertThat(providerConfig.getProvider(), is(JPAProvider.Hibernate));
+        assertThat(providerConfig.getProvider(), is(JPAProviderConfigFactory.DEFAULT_PROVIDER));
     }
 
     @Test
