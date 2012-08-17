@@ -22,6 +22,11 @@ public class CustomRequirementsTagProvider implements RequirementsTagProvider {
     }
 
     @Override
+    public Optional<Requirement> getRequirementFor(TestTag testTag) {
+        return Optional.absent();
+    }
+
+    @Override
     public Set<TestTag> getTagsFor(TestOutcome testOutcome) {
         return Collections.EMPTY_SET;
     }

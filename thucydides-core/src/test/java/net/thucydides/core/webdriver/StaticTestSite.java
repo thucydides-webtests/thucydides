@@ -42,6 +42,7 @@ public class StaticTestSite {
     public WebDriver open(String driverType) {
         this.driverType = driverType;
         environmentVariables.setProperty("webdriver.driver", driverType);
+        environmentVariables.setProperty("chrome.switches","--homepage=about:blank,--no-first-run");
         return open();
     }
 

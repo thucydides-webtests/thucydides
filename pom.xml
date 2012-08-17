@@ -8,7 +8,7 @@
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides</artifactId>
-    <version>0.9.13-SNAPSHOT</version>
+    <version>0.9.17-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>thucydides</name>
     <description>An Acceptance Testing framework for web applications
@@ -62,10 +62,40 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.3.2</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <showDeprecation>false</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <optimize>true</optimize>
+                    <!--<compilerArguments>-->
+                        <!--<source>1.5</source>-->
+                        <!--<target>1.5</target>-->
+                    <!--</compilerArguments>-->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin
+                </artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <source>1.5</source>
+                    <aggregate>true</aggregate>
+                    <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+                    <docletArtifact>
+                        <groupId>org.umlgraph</groupId>
+                        <artifactId>doclet</artifactId>
+                        <version>5.1</version>
+                    </docletArtifact>
+                    <additionalparam>-views -all -inferrel
+                        -inferdep
+                        -inferdepvis public
+                        -inferdepinpackage
+                        -hide java.*
+                        -collpackages java.util.*
+                        -qualify
+                    </additionalparam>
+                    <useStandardDocletOptions>true</useStandardDocletOptions>
                 </configuration>
             </plugin>
             <plugin>
@@ -145,7 +175,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
@@ -179,32 +208,6 @@
                         <version>${groovy.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin
-                </artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <source>1.5</source>
-                    <aggregate>true</aggregate>
-                    <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-                    <docletArtifact>
-                        <groupId>org.umlgraph</groupId>
-                        <artifactId>doclet</artifactId>
-                        <version>5.1</version>
-                    </docletArtifact>
-                    <additionalparam>-views -all -inferrel
-                        -inferdep
-                        -inferdepvis public
-                        -inferdepinpackage
-                        -hide java.*
-                        -collpackages java.util.*
-                        -qualify
-                    </additionalparam>
-                    <useStandardDocletOptions>true</useStandardDocletOptions>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

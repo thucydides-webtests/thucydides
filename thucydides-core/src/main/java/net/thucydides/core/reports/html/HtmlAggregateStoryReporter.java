@@ -14,7 +14,6 @@ import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.reports.json.JSONProgressResultTree;
 import net.thucydides.core.reports.json.JSONResultTree;
-import net.thucydides.core.requirements.ClasspathRequirementsProviderService;
 import net.thucydides.core.requirements.RequirementsProviderService;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.requirements.reports.RequirementOutcome;

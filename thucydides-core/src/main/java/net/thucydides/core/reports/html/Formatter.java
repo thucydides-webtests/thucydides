@@ -94,8 +94,8 @@ public class Formatter {
     }
 
     public String addLineBreaks(final String text) {
-        return text.replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS,"<br>")
-                                      .replaceAll(IOUtils.LINE_SEPARATOR_UNIX,"<br>");
+        return (text != null) ?
+                text.replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS,"<br>").replaceAll(IOUtils.LINE_SEPARATOR_UNIX,"<br>") : "";
     }
 
     private String insertShortenedIssueTrackingUrls(String value) {

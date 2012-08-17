@@ -219,6 +219,10 @@ public enum ThucydidesSystemProperty {
     EXTENSION_PACKAGES("thucydides.ext.packages"),
 
     /**
+     * Arguments to be passed to the Chrome driver, separated by commas.
+     */
+    CHROME_SWITCHES("chrome.switches"),
+    /**
      * Enable JQuery integration.
      * If set to true (the default), JQuery will be injected into any page that does not already have it.
      * You can turn this option off for performance reasons if you are not using JQuery selectors.

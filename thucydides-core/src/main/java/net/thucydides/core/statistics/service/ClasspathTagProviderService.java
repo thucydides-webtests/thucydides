@@ -26,7 +26,7 @@ public class ClasspathTagProviderService implements TagProviderService {
 
 
         for (TagProvider aServiceLoader : tagProviderServiceLoader) {
-            logger.info("Using tag provider: {}", aServiceLoader.getClass());
+            logger.debug("Using tag provider: {}", aServiceLoader.getClass());
             tagProviders.add(aServiceLoader);
         }
         return tagProviders;

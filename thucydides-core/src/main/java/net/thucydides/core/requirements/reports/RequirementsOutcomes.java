@@ -42,6 +42,10 @@ public class RequirementsOutcomes {
         return parentRequirement;
     }
 
+    public int getRequirementCount() {
+        return requirementOutcomes.size();
+    }
+
     public List<RequirementOutcome> getRequirementOutcomes() {
         return ImmutableList.copyOf(requirementOutcomes);
     }

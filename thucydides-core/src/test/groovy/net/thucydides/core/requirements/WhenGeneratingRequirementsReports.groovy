@@ -48,7 +48,7 @@ class WhenGeneratingRequirementsReports extends Specification {
         and: "the title should reflect the requirements type"
             report.title == 'Capabilities'
         and: "the table title should reflect the requirements type"
-            report.tableTitle == 'Capabilities'
+            report.tableTitle.startsWith('Capabilities (')
         and: "card numbers should be displayed for requirement entries"
             rows[0].id == '#CAP-123'
     }

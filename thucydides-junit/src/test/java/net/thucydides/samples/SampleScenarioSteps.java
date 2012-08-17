@@ -203,7 +203,6 @@ public class SampleScenarioSteps extends ScenarioSteps {
 
     @Step
     public void enter_name_and_age(String name, String age) {
-
     }
 
     @Pending

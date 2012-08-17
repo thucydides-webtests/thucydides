@@ -2,7 +2,6 @@ package net.thucydides.core.steps;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.IgnoredStepException;
@@ -30,9 +29,14 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sort;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
@@ -42,8 +46,9 @@ import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.MANDATORY_SCREENSHOT;
+import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.OPTIONAL_SCREENSHOT;
 import static net.thucydides.core.util.NameConverter.underscore;
-import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.*;
 import static org.apache.commons.io.FileUtils.checksumCRC32;
 
 /**
@@ -481,8 +486,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
         if (currentStepExists() && browserIsOpen()) {
             try {
                 String stepDescription = getCurrentTestOutcome().getCurrentStep().getDescription();
-                ScreenshotAndHtmlSource screenshotAndHtmlSource = grabScreenshotFor(stepDescription);
-                takeScreenshotIfRequired(screenshotType, screenshotAndHtmlSource);
+                Optional<ScreenshotAndHtmlSource> screenshotAndHtmlSource = grabScreenshotFor(stepDescription);
+                if (screenshotAndHtmlSource.isPresent()) {
+                    takeScreenshotIfRequired(screenshotType, screenshotAndHtmlSource.get());
+                }
                 removeDuplicatedInitalScreenshotsIfPresent();
             } catch (ScreenshotException e) {
                 LOGGER.warn("Failed to take screenshot", e);
@@ -599,11 +606,14 @@ public class BaseStepListener implements StepListener, StepPublisher {
         }
     }
 
-    private ScreenshotAndHtmlSource grabScreenshotFor(final String testName) {
+    private Optional<ScreenshotAndHtmlSource> grabScreenshotFor(final String testName) {
         String snapshotName = underscore(testName);
-        File screenshot = getPhotographer().takeScreenshot(snapshotName);
-        File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot);
-        return new ScreenshotAndHtmlSource(screenshot, sourcecode);
+        Optional<File> screenshot = getPhotographer().takeScreenshot(snapshotName);
+        if (screenshot.isPresent()) {
+            File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot.get());
+            return Optional.of(new ScreenshotAndHtmlSource(screenshot.get(), sourcecode));
+        }
+        return Optional.absent();
     }
 
     public Photographer getPhotographer() {
@@ -616,7 +626,20 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public List<TestOutcome> getTestOutcomes() {
-        return ImmutableList.copyOf(testOutcomes);
+        List<TestOutcome> sortedOutcomes = Lists.newArrayList(testOutcomes);
+        Collections.sort(sortedOutcomes, byStartTimeAndName());
+        return ImmutableList.copyOf(sortedOutcomes);
+    }
+
+    private Comparator<? super TestOutcome> byStartTimeAndName() {
+        return new Comparator<TestOutcome>() {
+            @Override
+            public int compare(TestOutcome testOutcome1, TestOutcome testOutcome2) {
+                String creationTimeAndName1 = testOutcome1.getStartTime().getMillis() + "_" + testOutcome1.getMethodName();
+                String creationTimeAndName2 = testOutcome2.getStartTime().getMillis() + "_" + testOutcome2.getMethodName();
+                return creationTimeAndName1.compareTo(creationTimeAndName2);
+            }
+        };
     }
 
 

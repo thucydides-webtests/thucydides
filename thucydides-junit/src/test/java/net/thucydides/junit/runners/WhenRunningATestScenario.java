@@ -42,11 +42,6 @@ import static org.hamcrest.Matchers.is;
 
 public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
-    @Before
-    public void initMocks() {
-        MockitoAnnotations.initMocks(this);
-    }
-
     WebdriverInstanceFactory webdriverInstanceFactory;
 
     @Mock
@@ -116,38 +111,29 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
-        TestOutcome testOutcome2 = executedSteps.get(1);
-        TestOutcome testOutcome3 = executedSteps.get(2);
 
-        assertThat(testOutcome1.getTitle(), is("Happy day scenario"));
-        assertThat(testOutcome1.getMethodName(), is("happy_day_scenario"));
-        assertThat(testOutcome1.getTestSteps().size(), is(4));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTitle(), is("Happy day scenario"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTestSteps().size(), is(4));
 
-        assertThat(testOutcome2.getTitle(), is("Edge case 1"));
-        assertThat(testOutcome2.getMethodName(), is("edge_case_1"));
-        assertThat(testOutcome2.getTestSteps().size(), is(3));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_1").getTitle(), is("Edge case 1"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_1").getTestSteps().size(), is(3));
 
-        assertThat(testOutcome3.getTitle(), is("Edge case 2"));
-        assertThat(testOutcome3.getMethodName(), is("edge_case_2"));
-        assertThat(testOutcome3.getTestSteps().size(), is(2));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_2").getTitle(), is("Edge case 2"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_2").getTestSteps().size(), is(2));
     }
 
     @Test
-    public void the_test_runner_stores_state_between_steps() throws InitializationError {
+    public void the_test_runner_stores_state_between_steps() throws Exception {
 
         ThucydidesRunner runner = new ThucydidesRunner(SampleScenarioWithStateVariables.class, webDriverFactory);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
-        TestOutcome testOutcome2 = executedSteps.get(1);
-        TestOutcome testOutcome3 = executedSteps.get(2);
 
-        assertThat(testOutcome1.getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome2.getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome3.getResult(), is(TestResult.PENDING));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("joes_test"), is(TestResult.SUCCESS));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("jills_test"), is(TestResult.SUCCESS));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("no_ones_test"), is(TestResult.PENDING));
     }
 
     @Test
@@ -158,10 +144,10 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
 
-        assertThat(testOutcome1.getResult(), is(TestResult.FAILURE));
-        assertThat(testOutcome1.getTestSteps().get(2).getResult(), is(TestResult.FAILURE));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("happy_day_scenario"), is(TestResult.FAILURE));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTestSteps().get(2).getResult(),
+                   is(TestResult.FAILURE));
     }
 
     @Test
@@ -172,10 +158,9 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
 
-        assertThat(testOutcome1.getResult(), is(TestResult.FAILURE));
-        assertThat(testOutcome1.getTestSteps().size(), is(3));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("happy_day_scenario"), is(TestResult.FAILURE));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTestSteps().size(), is(3));
     }
 
 
@@ -200,21 +185,15 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
-        TestOutcome testOutcome2 = executedSteps.get(1);
-        TestOutcome testOutcome3 = executedSteps.get(2);
 
-        assertThat(testOutcome1.getTitle(), is("Happy day scenario"));
-        assertThat(testOutcome1.getMethodName(), is("happy_day_scenario"));
-        assertThat(testOutcome1.getTestSteps().size(), is(4));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTitle(), is("Happy day scenario"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTestSteps().size(), is(4));
 
-        assertThat(testOutcome2.getTitle(), is("Edge case 1"));
-        assertThat(testOutcome2.getMethodName(), is("edge_case_1"));
-        assertThat(testOutcome2.getTestSteps().size(), is(3));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_1").getTitle(), is("Edge case 1"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_1").getTestSteps().size(), is(3));
 
-        assertThat(testOutcome3.getTitle(), is("Edge case 2"));
-        assertThat(testOutcome3.getMethodName(), is("edge_case_2"));
-        assertThat(testOutcome3.getTestSteps().size(), is(2));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_2").getTitle(), is("Edge case 2"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_2").getTestSteps().size(), is(2));
     }
 
     @Test
@@ -225,21 +204,14 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
-        TestOutcome testOutcome2 = executedSteps.get(1);
-        TestOutcome testOutcome3 = executedSteps.get(2);
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTitle(), is("Happy day scenario"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTestSteps().size(), is(4));
 
-        assertThat(testOutcome1.getTitle(), is("Happy day scenario"));
-        assertThat(testOutcome1.getMethodName(), is("happy_day_scenario"));
-        assertThat(testOutcome1.getTestSteps().size(), is(4));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_1").getTitle(), is("Edge case 1"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_1").getTestSteps().size(), is(3));
 
-        assertThat(testOutcome2.getTitle(), is("Edge case 1"));
-        assertThat(testOutcome2.getMethodName(), is("edge_case_1"));
-        assertThat(testOutcome2.getTestSteps().size(), is(3));
-
-        assertThat(testOutcome3.getTitle(), is("Edge case 2"));
-        assertThat(testOutcome3.getMethodName(), is("edge_case_2"));
-        assertThat(testOutcome3.getTestSteps().size(), is(2));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_2").getTitle(), is("Edge case 2"));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("edge_case_2").getTestSteps().size(), is(2));
     }
 
     @Test
@@ -250,13 +222,10 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
-        TestOutcome testOutcome2 = executedSteps.get(1);
-        TestOutcome testOutcome3 = executedSteps.get(2);
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("happy_day_scenario"), is(TestResult.SUCCESS));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("edge_case_1"), is(TestResult.PENDING));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("edge_case_2"), is(TestResult.PENDING));
 
-        assertThat(testOutcome1.getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome2.getResult(), is(TestResult.PENDING));
-        assertThat(testOutcome3.getResult(), is(TestResult.PENDING));
     }
 
     @Test
@@ -267,13 +236,10 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
-        TestOutcome testOutcome2 = executedSteps.get(1);
-        TestOutcome testOutcome3 = executedSteps.get(2);
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("happy_day_scenario"), is(TestResult.SUCCESS));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("edge_case_1"), is(TestResult.IGNORED));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("edge_case_2"), is(TestResult.IGNORED));
 
-        assertThat(testOutcome1.getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome2.getResult(), is(TestResult.IGNORED));
-        assertThat(testOutcome3.getResult(), is(TestResult.IGNORED));
     }
 
     @Test
@@ -284,13 +250,10 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
-        TestOutcome testOutcome2 = executedSteps.get(1);
-        TestOutcome testOutcome3 = executedSteps.get(2);
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("happy_day_scenario"), is(TestResult.SUCCESS));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("edge_case_1"), is(TestResult.PENDING));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("edge_case_2"), is(TestResult.PENDING));
 
-        assertThat(testOutcome1.getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome2.getResult(), is(TestResult.PENDING));
-        assertThat(testOutcome3.getResult(), is(TestResult.PENDING));
     }
 
 
@@ -302,13 +265,10 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
-        TestOutcome testOutcome2 = executedSteps.get(1);
-        TestOutcome testOutcome3 = executedSteps.get(2);
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("the_user_opens_the_page"), is(TestResult.FAILURE));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("the_user_opens_another_page"), is(TestResult.SUCCESS));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("the_user_opens_a_third_page"), is(TestResult.SUCCESS));
 
-        assertThat(testOutcome1.getResult(), is(TestResult.FAILURE));
-        assertThat(testOutcome2.getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome3.getResult(), is(TestResult.SUCCESS));
     }
 
     @Test
@@ -319,14 +279,13 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
-        TestOutcome testOutcome2 = executedSteps.get(1);
-        TestOutcome testOutcome3 = executedSteps.get(2);
 
-        assertThat(testOutcome1.getResult(), is(TestResult.FAILURE));
-        assertThat(testOutcome1.getTestSteps().get(1).getResult(), is(TestResult.FAILURE));
-        assertThat(testOutcome2.getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome3.getResult(), is(TestResult.SUCCESS));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("the_user_opens_the_page"), is(TestResult.FAILURE));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("the_user_opens_the_page").getTestSteps().get(1).getResult(),
+                   is(TestResult.FAILURE));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("the_user_opens_another_page"), is(TestResult.SUCCESS));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("the_user_opens_a_third_page"), is(TestResult.SUCCESS));
+
     }
 
     @Test
@@ -337,15 +296,12 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
         assertThat(executedSteps.size(), is(3));
-        TestOutcome testOutcome1 = executedSteps.get(0);
-        TestOutcome testOutcome2 = executedSteps.get(1);
-        TestOutcome testOutcome3 = executedSteps.get(2);
 
-        assertThat(testOutcome1.getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome2.getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome3.getResult(), is(TestResult.FAILURE));
-        assertThat(testOutcome3.getTestSteps().size(), is(3));
-        assertThat(testOutcome3.getTestSteps().get(2).getResult(), is(TestResult.FAILURE));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("the_user_opens_the_page"), is(TestResult.SUCCESS));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("the_user_opens_another_page"), is(TestResult.SUCCESS));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("the_user_opens_a_third_page"), is(TestResult.FAILURE));
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("the_user_opens_a_third_page").getTestSteps().get(2).getResult(),
+                is(TestResult.FAILURE));
     }
 
 
@@ -402,9 +358,11 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
-        TestOutcome testOutcome = executedScenarios.get(0);
+        TestOutcome testOutcome = inTheTesOutcomes(executedScenarios).theOutcomeFor("failing_happy_day_scenario");
 
+        System.out.println("Test outcome: " + testOutcome);
         List<TestStep> steps = testOutcome.getTestSteps();
+
         assertThat(steps.size(), is(5));
         assertThat(steps.get(0).isSuccessful(), is(true));
         assertThat(steps.get(1).isIgnored(), is(true));
@@ -425,7 +383,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        TestStep failingStep = (TestStep) steps.get(4);
+        TestStep failingStep = steps.get(4);
         assertThat(failingStep.getErrorMessage(), containsString("Expected: is <2>"));
     }
 
@@ -455,7 +413,7 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
 
         List<TestStep> steps = testOutcome.getTestSteps();
-        TestStep failingStep = (TestStep) steps.get(3);
+        TestStep failingStep = steps.get(3);
         assertThat(failingStep.getException().getClass().toString(), containsString("StepFailureException"));
     }
 
@@ -505,14 +463,15 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
         assertThat(executedScenarios.size(), is(3));
 
-        TestOutcome testOutcome = executedScenarios.get(0);
-        assertThat(testOutcome.getTestSteps().size(), is(4));
+        assertThat(inTheTesOutcomes(executedScenarios).theResultFor("happy_day_scenario"), is(TestResult.PENDING));
+        assertThat(inTheTesOutcomes(executedScenarios).theOutcomeFor("happy_day_scenario").getTestSteps().size(), is(4));
+        assertThat(inTheTesOutcomes(executedScenarios).theResultFor("edge_case_1"), is(TestResult.PENDING));
+        assertThat(inTheTesOutcomes(executedScenarios).theOutcomeFor("edge_case_1").getTestSteps().size(), is(3));
+        assertThat(inTheTesOutcomes(executedScenarios).theResultFor("edge_case_2"), is(TestResult.SUCCESS));
+        assertThat(inTheTesOutcomes(executedScenarios).theOutcomeFor("edge_case_2").getTestSteps().size(), is(2));
 
-        TestOutcome testOutcome2 = executedScenarios.get(1);
-        assertThat(testOutcome2.getTestSteps().size(), is(3));
 
-        TestOutcome testOutcome3 = executedScenarios.get(2);
-        assertThat(testOutcome3.getTestSteps().size(), is(2));
+
     }
 
     @Test

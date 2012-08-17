@@ -32,7 +32,7 @@ class RequirementsReport extends PageObject {
     }
 
     String getTableTitle() {
-        find(By.tagName("h2")).text
+        find(By.xpath("//div[@id='tabs']//a[@href='#tabs-1']")).text
     }
 
     List<RequirementRow> getRequirements() {
