@@ -52,9 +52,9 @@ public class OpenJPAEnvironmentVariablesConfig extends AbstractJPAProviderConfig
 
         boolean databaseIsConfigured = databaseIsConfigured(properties);
         if (isUsingLocalDatabase() || !databaseIsConfigured) {
-            properties.put("eclipselink.ddl-generation", "create-or-extend-tables");
+            properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
         } else {
-            properties.put("eclipselink.ddl-generation", "none");
+            properties.put("openjpa.jdbc.SynchronizeMappings", "validate");
         }
 
     }

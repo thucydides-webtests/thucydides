@@ -70,4 +70,12 @@ public class WhenConfiguringTheJPAProvider {
         assertThat(providerConfig.getProvider(), is(JPAProvider.EclipseLink));
     }
 
+    @Test
+    public void should_be_able_to_configure_OpenJPA_from_system_property() {
+
+        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.EclipseLink.name());
+        JPAProviderConfig providerConfig = JPAProviderConfigFactory.getJPAProviderConfig(environmentVariables, localDatabase);
+        assertThat(providerConfig.getProvider(), is(JPAProvider.EclipseLink));
+    }
+
 }

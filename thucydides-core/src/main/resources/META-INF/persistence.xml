@@ -28,12 +28,13 @@
         <class>net.thucydides.core.statistics.model.TestRun</class>
         <class>net.thucydides.core.statistics.model.TestRunTag</class>
         <class>net.thucydides.core.reports.html.history.TestResultSnapshot</class>
-        <!--<properties>-->
+        <properties>
             <!--<property name="eclipselink.cache.shared.default" value="false"/>-->
             <!--<property name="eclipselink.weaving" value="false"/>-->
             <!--<property name="eclipselink.logging.level" value="FINEST"/>-->
             <!--<property name="eclipselink.jpql.parser" value="org.eclipse.persistence.queries.ANTLRQueryBuilder"/>-->
-        <!--</properties>-->
+            <property name="openjpa.Log" value="DefaultLevel=TRACE, Runtime=TRACE, Tool=TRACE"/>
+        </properties>
     </persistence-unit>
 
 </persistence>

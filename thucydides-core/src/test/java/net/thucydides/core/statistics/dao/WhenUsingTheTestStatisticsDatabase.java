@@ -94,6 +94,27 @@ public class WhenUsingTheTestStatisticsDatabase {
 
     }
 
+    @Test
+    public void should_be_able_to_define_statistics_database_via_openJPA_system_properties() {
+
+        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.OpenJPA.name());
+        environmentVariables.setProperty("thucydides.statistics.driver_class", "org.hsqldb.jdbc.JDBCDriver");
+        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:test");
+        environmentVariables.setProperty("thucydides.statistics.username", "admin");
+        environmentVariables.setProperty("thucydides.statistics.password", "password");
+
+        JPATestOutcomeHistoryDAO dao = injector.getInstance(JPATestOutcomeHistoryDAO.class);
+
+        Map properties = dao.entityManagerFactory.getProperties();
+
+        assertThat((String)properties.get("javax.persistence.jdbc.driver"), is("org.hsqldb.jdbc.JDBCDriver"));
+        assertThat((String)properties.get("javax.persistence.jdbc.url"), is("jdbc:hsqldb:mem:test"));
+        assertThat((String)properties.get("javax.persistence.jdbc.user"), is("admin"));
+        assertThat((String)properties.get("javax.persistence.jdbc.password"), is("password"));
+        assertThat((String)properties.get("thucydides.jpa.provider"), is(JPAProvider.OpenJPA.name()));
+
+    }
+
 
     @Test
     public void should_obtain_dao_instances_from_the_guice_persistence_module() {
