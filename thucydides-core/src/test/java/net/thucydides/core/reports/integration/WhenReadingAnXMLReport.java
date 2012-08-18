@@ -7,6 +7,8 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -24,7 +26,7 @@ import static org.hamcrest.Matchers.nullValue;
 public class WhenReadingAnXMLReport {
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private XMLTestOutcomeReporter outcomeReporter;
 

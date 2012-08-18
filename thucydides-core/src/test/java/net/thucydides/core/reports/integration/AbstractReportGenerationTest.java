@@ -9,6 +9,7 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -22,7 +23,7 @@ import java.net.URL;
 public class AbstractReportGenerationTest {
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     protected AcceptanceTestReporter reporter;
 

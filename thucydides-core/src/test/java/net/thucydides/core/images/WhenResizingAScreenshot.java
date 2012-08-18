@@ -1,5 +1,7 @@
 package net.thucydides.core.images;
 
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,7 +27,7 @@ import static org.mockito.Mockito.when;
 public class WhenResizingAScreenshot {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     @Before
     public void initMocks() {

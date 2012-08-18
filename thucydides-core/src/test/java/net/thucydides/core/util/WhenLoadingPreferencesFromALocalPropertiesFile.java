@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.is;
 public class WhenLoadingPreferencesFromALocalPropertiesFile {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     File homeDirectory;
     File thucydidesPropertiesFile;
@@ -72,7 +72,15 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
     }
     private void writeToPropertiesFile(String... lines) throws IOException {
         thucydidesPropertiesFile = new File(homeDirectory, "thucydides.properties");
-        thucydidesPropertiesFile.createNewFile();
+        thucydidesPropertiesFile.setReadable(true);
+        thucydidesPropertiesFile.setWritable(true);
+        thucydidesPropertiesFile.setExecutable(true);
+        
+        try {
+        	thucydidesPropertiesFile.createNewFile();
+        } catch (IOException e) {
+        	System.err.println(e);
+		}
         FileWriter outFile = new FileWriter(thucydidesPropertiesFile);
         PrintWriter out = new PrintWriter(outFile);
         for(String line : lines) {

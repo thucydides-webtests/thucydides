@@ -4,6 +4,8 @@ import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -31,7 +33,7 @@ import static org.mockito.Mockito.verify;
 public class WhenGeneratingAnAggregateHtmlReport {
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private HtmlAggregateStoryReporter reporter;
 
