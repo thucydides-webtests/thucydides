@@ -25,7 +25,7 @@ public class JPAProviderConfigFactory {
 
     private static JPAProvider getJPAProviderFromProperty(String providerProperty) {
 
-        JPAProvider provider = JPAProvider.Hibernate;
+        JPAProvider provider = DEFAULT_PROVIDER;
 
         try {
             provider   = JPAProvider.valueOf(providerProperty);
