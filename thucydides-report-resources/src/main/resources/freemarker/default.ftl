@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <title>${testOutcome.title}</title>
     <link rel="shortcut icon" href="favicon.ico">
-    <link href="css/core.css" rel="stylesheet" type="text/css"/>
-    <script src="scripts/jquery.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="css/core.css"/>
+    <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
     <style type="text/css">a:link {
         text-decoration: none;
     }
@@ -22,43 +22,45 @@
         text-decoration: none;
     }
     </style>
+
+
 </head>
 
 <body>
+<div id="topheader">
+    <div id="topbanner">
+        <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
+    </div>
+</div>
 
 <#-- HEADER
 -->
-<div id="topheader">
-    <div id="topbanner">
-        <#--<div id="menu">-->
-            <#--<table border="0">-->
-                <#--<tr>-->
-                    <#--<td><a href="index.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>-->
-                    <#--<td><a href="outcome_text.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a>-->
-                    <#--</td>-->
-                    <#--<td><a href="Stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a>-->
-                    <#--</td>-->
-                <#--</tr>-->
-            <#--</table>-->
-        <#--</div>-->
-        <div id="logo"><a href="index.html"><img src="images/logo.jpg" width="265" height="96" border="0"/></a></div>
-    </div>
-</div>
-<#-- END OF HEADER
--->
 <div class="middlecontent">
-<#-- BREADCRUMBS
--->
     <div id="contenttop">
-        <#--<div class="leftbg"></div>-->
         <div class="middlebg">
-            <div style="height:30px;"><span class="bluetext"><a href="index.html" class="bluetext">Home</a></span></div>
+            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > ${testOutcome.title} </span>
         </div>
         <div class="rightbg"></div>
     </div>
-<#-- END OF BREADCRUMBS
--->
-<div class="clr"></div>
+
+    <div class="clr"></div>
+
+    <!--/* starts second table*/-->
+    <div class="menu">
+        <ul>
+            <li><a href="index.html" class="current">Test Results</a></li>
+            <li><a href="capabilities.html">Requirements</a></li>
+            <#foreach tagType in allTestOutcomes.tagTypes>
+                <#assign tagReport = reportName.forTagType(tagType) >
+                <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
+                <li><a href="${tagReport}">${tagTypeTitle}</a></li>
+            </#foreach>
+            <li><a href="history.html">History</a></li>
+        </ul>
+        <br style="clear:left"/>
+    </div>
+
+    <div class="clr"></div>
 
 <#if testOutcome.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">    <#elseif testOutcome.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">    <#elseif testOutcome.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">    <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">    </#if>
 <#-- TEST TITLE-->
@@ -77,6 +79,25 @@
                         </td>
                         <td width="100"><span class="test-case-duration"><span class="greentext">${testOutcome.durationInSeconds}
                             seconds</span></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <#if (parentRequirement.isPresent())>
+                                <div>
+                                    <#assign parentTitle = inflection.of(parentRequirement.get().name).asATitle() >
+                                    <#assign parentType = inflection.of(parentRequirement.get().type).asATitle() >
+                                    <#if (parentRequirement.get().cardNumber?has_content) >
+                                        <#assign issueNumber = "[" + formatter.addLinks(parentRequirement.get().cardNumber) + "]" >
+                                    <#else>
+                                        <#assign issueNumber = "">
+                                    </#if>
+                                    <h3>${parentType}: ${issueNumber} ${parentTitle}</h3>
+                                    <div class="requirementNarrativeTitle">
+                                    ${formatter.addLineBreaks(parentRequirement.get().narrativeText)}
+                                    </div>
+                                </div>
+                            </#if>
                         </td>
                     </tr>
                     <tr>

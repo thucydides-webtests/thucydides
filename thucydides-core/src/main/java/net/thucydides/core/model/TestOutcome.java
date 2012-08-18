@@ -24,6 +24,7 @@ import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
@@ -959,5 +960,9 @@ public class TestOutcome {
     public int getRecentPendingCount() {
         if (getStatistics() == null) return 0;
         return getStatistics().countResults().overTheLast(RECENT_TEST_RUN_COUNT).whereTheOutcomeWas(TestResult.PENDING);
+    }
+
+    public DateTime getStartTime() {
+        return new DateTime(startTime);
     }
 }

@@ -7,6 +7,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.TestOutcomes;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
     /**
      * Generate an XML report for a given test run.
      */
-    public File generateReportFor(final TestOutcome testOutcome) throws IOException {
+    public File generateReportFor(final TestOutcome testOutcome, final TestOutcomes allTestOutcomes) throws IOException {
 
         TestOutcome storedTestOutcome = testOutcome.withQualifier(qualifier);
 

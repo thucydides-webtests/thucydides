@@ -231,7 +231,7 @@ public class WhenRecordingStepExecutionResults {
 
         StepEventBus.getEventBus().testFinished();
 
-        StepEventBus.getEventBus().testStarted("app_should_still_work", MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work_again", MyTestCase.class);
         StepEventBus.getEventBus().addIssuesToCurrentTest(Lists.newArrayList("issue-789"));
 
         steps.step_one();
@@ -395,17 +395,18 @@ public class WhenRecordingStepExecutionResults {
 
         StepEventBus.getEventBus().testSuiteFinished();
         StepEventBus.getEventBus().testSuiteStarted(MyOtherStory.class);
-        StepEventBus.getEventBus().testStarted("app should still work", MyOtherStory.class);
+        StepEventBus.getEventBus().testStarted("the app should work", MyOtherStory.class);
         StepEventBus.getEventBus().testFinished(testOutcome);
 
-        TestOutcome outcome = stepListener.getTestOutcomes().get(0);
-        assertThat(outcome.getUserStory().getName(), is("My story"));
+        TestOutcome outcome1 = stepListener.getTestOutcomes().get(0);
+        assertThat(outcome1.getUserStory().getName(), is("My story"));
 
         TestOutcome outcome2 = stepListener.getTestOutcomes().get(1);
         assertThat(outcome2.getUserStory().getName(), is("My story"));
 
         TestOutcome outcome3 = stepListener.getTestOutcomes().get(2);
         assertThat(outcome3.getUserStory().getName(), is("My other story"));
+
 
     }
 

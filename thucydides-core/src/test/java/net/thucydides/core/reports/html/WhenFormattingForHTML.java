@@ -33,7 +33,7 @@ public class WhenFormattingForHTML {
         Formatter formatter = new Formatter(issueTracking);
         String formattedValue = formatter.addLinks("Fixes issue #123");
 
-        assertThat(formattedValue, is("Fixes issue <a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">#123</a>"));
+        assertThat(formattedValue, is("Fixes issue <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">#123</a>"));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class WhenFormattingForHTML {
         Formatter formatter = new Formatter(issueTracking);
         String formattedValue = formatter.addLinks("Fixes issue ISSUE-123");
 
-        assertThat(formattedValue, is("Fixes issue <a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">ISSUE-123</a>"));
+        assertThat(formattedValue, is("Fixes issue <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">ISSUE-123</a>"));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class WhenFormattingForHTML {
 
         String formattedValue = formatter.addLinks("Fixes issue #1 and MYPROJECT-2");
 
-        assertThat(formattedValue, is("Fixes issue <a href=\"http://my.issue.tracker/MY-PROJECT/browse/MYPROJECT-1\">#1</a> and <a href=\"http://my.issue.tracker/MY-PROJECT/browse/MYPROJECT-2\">MYPROJECT-2</a>"));
+        assertThat(formattedValue, is("Fixes issue <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/MYPROJECT-1\">#1</a> and <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/MYPROJECT-2\">MYPROJECT-2</a>"));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class WhenFormattingForHTML {
 
         String formattedValue = formatter.addLinks("A scenario with about issues #123 and #456");
 
-        assertThat(formattedValue, is("A scenario with about issues <a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">#123</a> and <a href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-456\">#456</a>"));
+        assertThat(formattedValue, is("A scenario with about issues <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-123\">#123</a> and <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-456\">#456</a>"));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class WhenFormattingForHTML {
 
         String formattedValue = formatter.addLinks("A big story (#MYPROJECT-123,#MYPROJECT-456)");
 
-        assertThat(formattedValue, is("A big story (<a href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-123\">#MYPROJECT-123</a>,<a href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-456\">#MYPROJECT-456</a>)"));
+        assertThat(formattedValue, is("A big story (<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-123\">#MYPROJECT-123</a>,<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-456\">#MYPROJECT-456</a>)"));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class WhenFormattingForHTML {
 
         String formattedValue = formatter.addLinks("A big story (#MY-PROJECT-123,#MY-PROJECT-456)");
 
-        assertThat(formattedValue, is("A big story (<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY-PROJECT-123\">#MY-PROJECT-123</a>,<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY-PROJECT-456\">#MY-PROJECT-456</a>)"));
+        assertThat(formattedValue, is("A big story (<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MY-PROJECT-123\">#MY-PROJECT-123</a>,<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MY-PROJECT-456\">#MY-PROJECT-456</a>)"));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class WhenFormattingForHTML {
 
         String formattedValue = formatter.addLinks("A big story (#MY_PROJECT_123,#MY_PROJECT_456)");
 
-        assertThat(formattedValue, is("A big story (<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_123\">#MY_PROJECT_123</a>,<a href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_456\">#MY_PROJECT_456</a>)"));
+        assertThat(formattedValue, is("A big story (<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_123\">#MY_PROJECT_123</a>,<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_456\">#MY_PROJECT_456</a>)"));
     }
 
     @Test
@@ -140,6 +140,16 @@ public class WhenFormattingForHTML {
         String formattedValue = formatter.addLineBreaks("Line one\nLine two\nLine three");
 
         assertThat(formattedValue, is("Line one<br>Line two<br>Line three"));
+    }
+
+    @Test
+    public void should_return_empty_string_when_inserting_line_breaks_into_a_null_value() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.addLineBreaks(null);
+
+        assertThat(formattedValue, is(""));
     }
 
     @Test

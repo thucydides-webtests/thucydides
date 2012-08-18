@@ -74,9 +74,10 @@ public class ReportService {
      */
     public void generateReportsFor(final List<TestOutcome> testOutcomeResults) {
 
+        TestOutcomes allTestOutcomes = TestOutcomes.of(testOutcomeResults);
         for (AcceptanceTestReporter reporter : getSubscribedReporters()) {
             for(TestOutcome testOutcomeResult : testOutcomeResults) {
-                generateReportFor(testOutcomeResult, reporter);
+                generateReportFor(testOutcomeResult, allTestOutcomes, reporter);
             }
         }
     }
@@ -97,10 +98,11 @@ public class ReportService {
     }
 
     private void generateReportFor(final TestOutcome testOutcome,
+                                   final TestOutcomes allTestOutcomes,
                                    final AcceptanceTestReporter reporter) {
         try {
             reporter.setOutputDirectory(outputDirectory);
-            reporter.generateReportFor(testOutcome);
+            reporter.generateReportFor(testOutcome, allTestOutcomes);
         } catch (IOException e) {
             throw new ReportGenerationFailedError(
                     "Failed to generate reports using " + reporter, e);

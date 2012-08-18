@@ -20,6 +20,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Clock;
@@ -696,12 +697,22 @@ public abstract class PageObject {
     }
 
     public void addJQuerySupport() {
-        JQueryEnabledPage jQueryEnabledPage = JQueryEnabledPage.withDriver(getDriver());
-        if (!jQueryEnabledPage.isJQueryEnabled()) {
-            jQueryEnabledPage.injectJQuery();
-            jQueryEnabledPage.injectJQueryPlugins();
+        if (pageIsLoaded()) {
+            JQueryEnabledPage jQueryEnabledPage = JQueryEnabledPage.withDriver(getDriver());
+            if (!jQueryEnabledPage.isJQueryEnabled()) {
+                jQueryEnabledPage.injectJQuery();
+                jQueryEnabledPage.injectJQueryPlugins();
+            }
+            jquerySupportActivated = true;
         }
-        jquerySupportActivated = true;
+    }
+
+    private boolean pageIsLoaded() {
+        try {
+            return (getDriver().getCurrentUrl() != null);
+        } catch (WebDriverException e) {
+            return false;
+        }
     }
 
 

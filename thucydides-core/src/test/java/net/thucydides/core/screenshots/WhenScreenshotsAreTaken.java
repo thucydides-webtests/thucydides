@@ -52,17 +52,17 @@ public class WhenScreenshotsAreTaken {
 
         @Override
         protected boolean driverCanTakeSnapshots() {
-            return true;
+            return (driver != null);
         }
     }
 
     @Before
-    public void initMocks() {
+    public void initMocks() throws IOException {
         MockitoAnnotations.initMocks(this);
+        prepareTemporaryFilesAndDirectories();
         photographer = new Photographer(driver, screenshotDirectory);        
     }
 
-    @Before
     public void prepareTemporaryFilesAndDirectories() throws IOException {
         screenshotDirectory = temporaryDirectory.newFolder("screenshots");
         screenshotTaken = temporaryDirectory.newFile("aScreenshot.png");
@@ -70,45 +70,45 @@ public class WhenScreenshotsAreTaken {
 
     
     @Test
-    public void the_driver_should_not_take_screenshots_if_the_driver_is_not_available() throws IOException {
+    public void the_driver_should_not_take_screenshots_if_the_driver_is_not_available() throws Exception {
 
         Photographer photographer = new MockPhotographer(null, screenshotDirectory);
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         photographer.takeScreenshot("screenshot");
-        photographer.getScreenshotProcessor().waitUntilDone();
+        waitUntilScreenshotsProcessed();
 
         verify(driver,times(0)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     @Test
-    public void the_driver_should_capture_the_image() throws IOException {
+    public void the_driver_should_capture_the_image() throws Exception {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         photographer.takeScreenshot("screenshot");
-        photographer.getScreenshotProcessor().waitUntilDone();
+        waitUntilScreenshotsProcessed();
 
         verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
 
     @Test
-    public void should_not_take_a_snapshot_if_unsupported_by_the_driver() throws IOException {
+    public void should_not_take_a_snapshot_if_unsupported_by_the_driver() throws Exception {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         Photographer photographer = new Photographer(htmlDriver, screenshotDirectory);
         photographer.takeScreenshot("screenshot");
-        photographer.getScreenshotProcessor().waitUntilDone();
+        waitUntilScreenshotsProcessed();
 
         verify(driver,never()).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     @Test
-    public void the_driver_should_save_the_corresponding_source_code() throws IOException {
+    public void the_driver_should_save_the_corresponding_source_code() throws Exception {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         when(driver.getPageSource()).thenReturn("<html/>");
         photographer.takeScreenshot("screenshot");
-        photographer.getScreenshotProcessor().waitUntilDone();
+        waitUntilScreenshotsProcessed();
 
         verify(driver,times(1)).getPageSource();
     }
@@ -118,11 +118,15 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         
-        String screenshotFile = photographer.takeScreenshot("screenshot").getName();
-        photographer.getScreenshotProcessor().waitUntilDone();
-        Thread.sleep(250);
+        String screenshotFile = photographer.takeScreenshot("screenshot").get().getName();
+        waitUntilScreenshotsProcessed();
         File savedScreenshot = new File(screenshotDirectory, screenshotFile);
         assertThat(savedScreenshot.isFile(), is(true));
+    }
+
+    private void waitUntilScreenshotsProcessed() throws InterruptedException {
+        photographer.getScreenshotProcessor().waitUntilDone();
+        Thread.sleep(50);
     }
 
     @Test
@@ -130,9 +134,8 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         
-        String savedFileName = photographer.takeScreenshot("screenshot").getName();
-        photographer.getScreenshotProcessor().waitUntilDone();
-        Thread.sleep(250);
+        String savedFileName = photographer.takeScreenshot("screenshot").get().getName();
+        waitUntilScreenshotsProcessed();
         File savedScreenshot = new File(screenshotDirectory, savedFileName);
         
         assertThat(savedScreenshot.isFile(), is(true));
@@ -140,13 +143,13 @@ public class WhenScreenshotsAreTaken {
 
 
     @Test
-    public void the_photographer_should_provide_the_HTML_source_code_for_a_given_screenshot() throws IOException {
+    public void the_photographer_should_provide_the_HTML_source_code_for_a_given_screenshot() throws Exception {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         when(driver.getPageSource()).thenReturn("<html/>");
 
-        File screenshotFile = photographer.takeScreenshot("screenshot");
-        photographer.getScreenshotProcessor().waitUntilDone();
+        File screenshotFile = photographer.takeScreenshot("screenshot").get();
+        waitUntilScreenshotsProcessed();
 
         File htmlSource = photographer.getMatchingSourceCodeFor(screenshotFile);
 
@@ -159,56 +162,39 @@ public class WhenScreenshotsAreTaken {
     }
 
     @Test
-    public void successive_screenshots_should_have_different_names() throws IOException {
+    public void successive_screenshots_should_have_different_names() throws Exception {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         
-        String screenshotName1 = photographer.takeScreenshot("screenshot").getName();
-        String screenshotName2 = photographer.takeScreenshot("screenshot").getName();
-        photographer.getScreenshotProcessor().waitUntilDone();
+        String screenshotName1 = photographer.takeScreenshot("screenshot").get().getName();
+        String screenshotName2 = photographer.takeScreenshot("screenshot").get().getName();
+        waitUntilScreenshotsProcessed();
 
         assertThat(screenshotName1, is(not((screenshotName2))));
     }
 
     @Test
-    public void calling_api_generates_a_filename_safe_hashed_name_for_the_screenshot() throws IOException {
+    public void calling_api_generates_a_filename_safe_hashed_name_for_the_screenshot() throws Exception {
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
 
-        String screenshotFile = photographer.takeScreenshot("test1_finished").getName();
-        photographer.getScreenshotProcessor().waitUntilDone();
+        String screenshotFile = photographer.takeScreenshot("test1_finished").get().getName();
+        waitUntilScreenshotsProcessed();
 
         assertThat(screenshotFile, startsWith("screenshot-989da2d4"));
     }
     
     @Test
-    public void by_default_screenshot_files_start_with_Screenshot() throws IOException {
+    public void by_default_screenshot_files_start_with_Screenshot() throws Exception {
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
 
-        String screenshotFile = photographer.takeScreenshot("screenshot").getName();
-        photographer.getScreenshotProcessor().waitUntilDone();
+        String screenshotFile = photographer.takeScreenshot("screenshot").get().getName();
+        waitUntilScreenshotsProcessed();
 
         assertThat(screenshotFile, startsWith("screenshot"));
     }
 
     @Mock
     ScreenshotProcessor screenshotProcessor;
-
-    class MockProcessorPhotographer extends Photographer {
-
-        public MockProcessorPhotographer(final WebDriver driver, final File targetDirectory) {
-            super(driver, targetDirectory);
-        }
-
-        @Override
-        protected boolean driverCanTakeSnapshots() {
-            return true;
-        }
-
-        @Override
-        protected ScreenshotProcessor getScreenshotProcessor() {
-            return screenshotProcessor;
-        }
-    }
 
     @Test
     public void should_send_screenshots_to_screenshot_processor() {

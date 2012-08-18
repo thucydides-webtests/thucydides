@@ -1,15 +1,9 @@
-apply plugin: 'signing'
-
-signing {
-    sign configurations.archives
-}
-
 project.ext {
 	currentBranch = getCurrentBranch()
     releaseBranch = "release-${versionNumber}"
     workDirectory = createWorkDirectory()
     project = 'thucydides'
-    artifacts = ['thucydides-report-resources','thucydides-core', 'thucydides-junit','thucydides-maven-plugin','thucydides-easyb-plugin']
+    artifacts = ['thucydides-report-resources','thucydides-core', 'thucydides-junit','maven-thucydides-plugin','thucydides-easyb-plugin']
     mavenRepo = "~/.m2/repository"
 }
 
@@ -24,7 +18,8 @@ task setNewVersion {
 
 task buildArtifacts {
     dependsOn setNewVersion
-    executeOnShell "mvn clean install javadoc:jar source:jar -T 2C -am -pl ${project.ext.artifacts.join(',')}"
+    executeOnShell "mvn clean install -T 2C -DskipTests"
+    executeOnShell "mvn javadoc:jar source:jar -T 4C"
 }
 
 task deployArtifacts {

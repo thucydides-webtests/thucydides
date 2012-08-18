@@ -1,11 +1,14 @@
 package net.thucydides.core.statistics.service;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.annotations.WithTagValuesOf;
 import net.thucydides.core.annotations.WithTags;
+import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.requirements.FileSystemRequirementsTagProvider;
+import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -18,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -293,6 +297,17 @@ public class WhenFindingTagsForATestOutcome {
     }
 
     @Test
+    public void should_ignore_dot_story_suffix_in_path() {
+        FileSystemRequirementsTagProvider tagProvider = new FileSystemRequirementsTagProvider();
+
+        when(testOutcome.getPath()).thenReturn("stories/grow_potatoes/grow_new_potatoes/PlantNewPotatoes.story");
+        Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
+        assertThat(tags, hasItem(TestTag.withName("Grow potatoes").andType("capability")));
+        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes").andType("feature")));
+        assertThat(tags, hasItem(TestTag.withName("Plant new potatoes").andType("story")));
+    }
+
+    @Test
     public void should_get_tags_from_story_path_with_windows_file_separators() {
         FileSystemRequirementsTagProvider tagProvider = new FileSystemRequirementsTagProvider();
 
@@ -302,5 +317,20 @@ public class WhenFindingTagsForATestOutcome {
         assertThat(tags, hasItem(TestTag.withName("Grow new potatoes").andType("feature")));
     }
 
+    @Test
+    public void should_get_requirement_from_story_with_narrative_if_present() {
+        FileSystemRequirementsTagProvider tagProvider = new FileSystemRequirementsTagProvider();
+        Story userStory = Story.called("plant potatoes").withNarrative("Plant some potatoes");
+        when(testOutcome.getPath()).thenReturn("stories\\grow_potatoes\\grow_new_potatoes\\PlantPotatoes.story");
+        when(testOutcome.getUserStory()).thenReturn(userStory);
+
+        Optional<Requirement> requirement = tagProvider.getParentRequirementOf(testOutcome);
+
+        assertThat(requirement.isPresent(), is(true));
+        assertThat(requirement.get().getName(), is("Plant potatoes"));
+        assertThat(requirement.get().getNarrativeText(), containsString("As a farmer"));
+        assertThat(requirement.get().getNarrativeText(), containsString("I want to plant potatoes"));
+        assertThat(requirement.get().getNarrativeText(), containsString("So that I can harvest them later on"));
+    }
 }
 

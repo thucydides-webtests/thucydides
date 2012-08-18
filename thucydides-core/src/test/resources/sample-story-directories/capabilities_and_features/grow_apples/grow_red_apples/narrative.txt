@@ -1,4 +1,9 @@
-Requirement #123: Grow red apples
+Grow red apples
+
+Meta:
+@issue #123
+
+Narrative:
 In order to sell more apples
 As a farmer
 I want to sell red apples as they are more popular

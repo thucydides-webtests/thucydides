@@ -278,10 +278,6 @@ body {
     width:1025px; float:left; height:60px;
 }
 
-.table
-{
-    background-color:#f1f3e8; width:1025px;
-}
 
 .icon
 {
@@ -792,7 +788,7 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 }
 
 .dataTables_info {
-    font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;    
+    font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;
 }
 
 .currentTag {
@@ -867,4 +863,17 @@ h4 {
 {
     font-family:euphemia, verdana, sans-serif; font-size:14px; color: #88a717; white-space: nowrap;
     padding: 8px;
+}
+
+.table
+{
+    background-color:#f1f3e8; width:100%;
+}
+
+.capabilities-table {
+    padding: 0.5em 0 0 !important;
+}
+
+.test-results label {
+    font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;
 }

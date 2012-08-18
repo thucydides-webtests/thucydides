@@ -48,7 +48,7 @@ class WhenGeneratingRequirementsReports extends Specification {
         and: "the title should reflect the requirements type"
             report.title == 'Capabilities'
         and: "the table title should reflect the requirements type"
-            report.tableTitle == 'Capabilities'
+            report.tableTitle.startsWith('Capabilities (')
         and: "card numbers should be displayed for requirement entries"
             rows[0].id == '#CAP-123'
     }
@@ -112,7 +112,7 @@ class WhenGeneratingRequirementsReports extends Specification {
         testOutcome1.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
         testOutcome1.addTags(Lists.asList(TestTag.withName("Grow new potatoes").andType("feature")));
 
-        TestOutcome testOutcome2 = TestOutcome.forTestInStory("planting potatoes in the rain", Story.called("planting potatoes"))
+        TestOutcome testOutcome2 = TestOutcome.forTestInStory("planting potatoes in the rain", Story.called("planting potatoes").withNarrative("Planting some potatoes"))
         testOutcome2.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
         testOutcome2.addTags(Lists.asList(TestTag.withName("Grow new potatoes").andType("feature")));
 

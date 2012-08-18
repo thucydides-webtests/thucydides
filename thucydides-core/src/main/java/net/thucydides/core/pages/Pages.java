@@ -4,7 +4,9 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +116,15 @@ public class Pages implements Serializable {
 
     private <T extends PageObject> void openBrowserIfRequiredFor(T pageCandidate) {
         if (browserNotOpen()) {
+            openHeadlessDriverIfNotOpen();
             pageCandidate.open();
+        }
+    }
+
+
+    private void openHeadlessDriverIfNotOpen() {
+        if (browserIsHeadless()) {
+            driver.get("about:blank");
         }
     }
 
@@ -122,10 +132,17 @@ public class Pages implements Serializable {
         if (getDriver() instanceof WebDriverFacade) {
             return !((WebDriverFacade) getDriver()).isInstantiated();
         } else {
-            return true;
+            return StringUtils.isEmpty(getDriver().getCurrentUrl());
         }
     }
 
+    private boolean browserIsHeadless() {
+        if (getDriver() instanceof WebDriverFacade) {
+            return (((WebDriverFacade) getDriver()).getProxiedDriver() instanceof HtmlUnitDriver);
+        } else {
+            return (getDriver() instanceof HtmlUnitDriver);
+        }
+    }
     private <T extends PageObject> void checkUrlPatterns(Class<T> pageObjectClass, T pageCandidate) {
         if (!pageCandidate.matchesAnyUrl()) {
             String currentUrl = getDriver().getCurrentUrl();

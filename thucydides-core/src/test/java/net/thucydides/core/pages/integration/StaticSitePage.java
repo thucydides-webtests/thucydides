@@ -74,6 +74,8 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 
         protected WebElement clients;
 
+        protected WebElement clients_with_no_headings;
+
         protected WebElement clients_with_extra_cells;
 
         protected WebElement clients_with_missing_cells;

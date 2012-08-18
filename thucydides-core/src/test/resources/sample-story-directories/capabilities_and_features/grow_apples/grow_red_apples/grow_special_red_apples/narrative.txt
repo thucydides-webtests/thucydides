@@ -1,4 +1,8 @@
-Requirement #124: Grow special red apples
+Grow special red apples
+
+@Issue #124
+
+Narrative:
 In order to sell more apples
 As a farmer
 I want to sell red apples as they are more popular

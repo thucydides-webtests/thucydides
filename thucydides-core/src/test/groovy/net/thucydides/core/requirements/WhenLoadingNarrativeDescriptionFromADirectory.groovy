@@ -52,6 +52,23 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
             narrative.get().type == "feature"
     }
 
+    def "Should read requirements from .story files if present"() {
+        given: "there is a .story file in a directory"
+            File storyFile = directoryInClasspathAt("sample-story-directories/capabilities_and_features/grow_apples/grow_red_apples/grow_special_red_apples/PlantingAnAppleTree.story")
+        when: "We try to load the narrativeText from the directory"
+            def reader = NarrativeReader.forRootDirectory("sample-story-directories/capabilities_and_features")
+            Optional<Narrative> narrative = reader.loadFromStoryFile(storyFile)
+        then: "the narrativeText should be found"
+            narrative.present
+        and: "the narrative title and text should be loaded"
+            narrative.get().title.get() == "Planting a new apple tree"
+            narrative.get().getText().contains("As a farmer")
+            narrative.get().getText().contains("I want to plant an apple tree")
+            narrative.get().getText().contains("So that I can grow apples")
+        and: "the type should be story"
+            narrative.get().type == "story"
+    }
+
     File directoryInClasspathAt(String path) {
         new File(getClass().getClassLoader().getResources(path).nextElement().getPath())
     }
