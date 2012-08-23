@@ -11,7 +11,6 @@ import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
-import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.reports.json.ColorScheme;
 import net.thucydides.core.reports.json.RelativeSizeColorScheme;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
@@ -20,8 +19,8 @@ import net.thucydides.core.reports.templates.FreeMarkerTemplateManager;
 import net.thucydides.core.reports.templates.TemplateManager;
 import net.thucydides.core.requirements.ClasspathRequirementsProviderService;
 import net.thucydides.core.requirements.RequirementsProviderService;
-import net.thucydides.core.screenshots.MultithreadScreenshotProcessor;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
+import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor;
 import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
 import net.thucydides.core.statistics.Statistics;
 import net.thucydides.core.statistics.StatisticsListener;
@@ -71,7 +70,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(BatchManager.class).to(SystemVariableBasedBatchManager.class);
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
-        bind(ScreenshotProcessor.class).to(MultithreadScreenshotProcessor.class).in(Singleton.class);
+        bind(ScreenshotProcessor.class).to(SingleThreadScreenshotProcessor.class).in(Singleton.class);
 
         bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
         bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class).in(Singleton.class);

@@ -11,6 +11,9 @@ import net.thucydides.core.model.CoverageFormatter;
 import net.thucydides.core.model.TestDuration;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SKIPPED;
 import net.thucydides.core.model.TestResultList;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
@@ -303,7 +306,7 @@ public class TestOutcomes {
      */
     @SuppressWarnings("unchecked")
     public TestOutcomes getPendingTests() {
-        return TestOutcomes.of(filter(anyOf(withResult(TestResult.PENDING), withResult(TestResult.SKIPPED)), outcomes))
+        return TestOutcomes.of(filter(anyOf(withResult(PENDING), withResult(SKIPPED)), outcomes))
                 .withLabel(labelForTestsWithStatus("pending tests"))
                 .withRootOutcomes(getRootOutcomes());
 

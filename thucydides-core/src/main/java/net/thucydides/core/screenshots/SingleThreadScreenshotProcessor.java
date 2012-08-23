@@ -16,38 +16,33 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class MultithreadScreenshotProcessor implements ScreenshotProcessor {
+public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
 
-    List<Thread> screenshotThreads;
+    Thread screenshotThread;
     final Queue<QueuedScreenshot> queue;
-    final static int THREAD_COUNT = 5;
 
     private final EnvironmentVariables environmentVariables;
 
-    private final Logger logger = LoggerFactory.getLogger(MultithreadScreenshotProcessor.class);
+    private final Logger logger = LoggerFactory.getLogger(SingleThreadScreenshotProcessor.class);
 
     @Inject
-    public MultithreadScreenshotProcessor(EnvironmentVariables environmentVariables) {
+    public SingleThreadScreenshotProcessor(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
         this.queue = new ConcurrentLinkedQueue<QueuedScreenshot>();
-        this.screenshotThreads = Lists.newArrayList();
         start();
     }
 
     public void start() {
-        for (int i = 0; i < THREAD_COUNT; i++) {
-            Thread screenshotThread = new Thread(new Processor(queue));
-            screenshotThreads.add(screenshotThread);
-            screenshotThread.start();
-        }
+        screenshotThread = new Thread(new Processor(queue));
+        screenshotThread.start();
     }
 
 
     @Override
     public void waitUntilDone() {
-        while (!queue.isEmpty()) {
+        while (!isEmpty()) {
             try {
-                Thread.sleep(10);
+                Thread.sleep(20);
             } catch (InterruptedException ignore) {
             }
         }
@@ -66,8 +61,8 @@ public class MultithreadScreenshotProcessor implements ScreenshotProcessor {
         @Override
         public void run() {
             while (!done) {
-                saveQueuedScreenshot();
                 synchronized (queue) {
+                    saveQueuedScreenshot();
                     try {
                         queue.wait();
                     } catch (InterruptedException ignore) {
@@ -173,7 +168,7 @@ public class MultithreadScreenshotProcessor implements ScreenshotProcessor {
     }
 
     @Override
-    public boolean isEmpty() {
+    public synchronized boolean isEmpty() {
         return queue.isEmpty();
     }
 
