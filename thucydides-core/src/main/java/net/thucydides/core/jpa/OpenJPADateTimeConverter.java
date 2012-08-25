@@ -1,5 +1,6 @@
 package net.thucydides.core.jpa;
 
+import org.apache.openjpa.jdbc.identifier.DBIdentifier;
 import org.apache.openjpa.jdbc.kernel.JDBCStore;
 import org.apache.openjpa.jdbc.meta.JavaSQLTypes;
 import org.apache.openjpa.jdbc.meta.ValueMapping;
@@ -20,11 +21,17 @@ import java.sql.Timestamp;
  */
 public class OpenJPADateTimeConverter  extends AbstractValueHandler {
 
+    public OpenJPADateTimeConverter() {
+        System.out.println("sdlkjsalkdjalkjdlkajsdkljajdalkjdlkajsdjlajsdlkjalkds");
+    }
+
     @Override
     public Column[] map(ValueMapping valueMapping, String name, ColumnIO columnIO, boolean adapt) {
 
         Column date = new Column();
         date.setJavaType(JavaSQLTypes.TIMESTAMP);
+        DBIdentifier dbi = DBIdentifier.newColumn(name);
+        date.setIdentifier(dbi);
         return new Column[] { date };
 
     }
@@ -32,13 +39,15 @@ public class OpenJPADateTimeConverter  extends AbstractValueHandler {
     @Override
     public Object toDataStoreValue(ValueMapping vm, Object val, JDBCStore store) {
 
+        System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG " +val);
+
         if (val == null) {
             return null;
         }
 
         if (val instanceof DateTime) {
             Timestamp dataStoreDate = new Timestamp(((DateTime) val).getMillis());
-            return new Object[] { dataStoreDate };
+            return dataStoreDate ;
 
         } else {
             throw new IllegalStateException("Conversion exception, value is not of DateTime type.");
@@ -49,6 +58,7 @@ public class OpenJPADateTimeConverter  extends AbstractValueHandler {
     @Override
     public Object toObjectValue(ValueMapping vm, Object val) {
 
+        System.out.println("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK " + val);
         if (val == null) {
             return null;
         }

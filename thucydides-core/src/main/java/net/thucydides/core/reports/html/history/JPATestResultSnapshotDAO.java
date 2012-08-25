@@ -47,7 +47,10 @@ public class JPATestResultSnapshotDAO implements TestResultSnapshotDAO {
           entityManager.persist(testResultSnapshot);
           entityManager.getTransaction().commit();
       } catch (RuntimeException e) {
-          entityManager.getTransaction().rollback();
+          e.printStackTrace();
+          if (entityManager.getTransaction().isActive()) {
+            entityManager.getTransaction().rollback();
+          }
           throw e;
       } finally {
           entityManager.close();

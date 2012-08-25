@@ -110,8 +110,7 @@ public class WhenUsingTheTestStatisticsDatabase {
         assertThat((String)properties.get("javax.persistence.jdbc.driver"), is("org.hsqldb.jdbc.JDBCDriver"));
         assertThat((String)properties.get("javax.persistence.jdbc.url"), is("jdbc:hsqldb:mem:test"));
         assertThat((String)properties.get("javax.persistence.jdbc.user"), is("admin"));
-        assertThat((String)properties.get("javax.persistence.jdbc.password"), is("password"));
-        assertThat((String)properties.get("thucydides.jpa.provider"), is(JPAProvider.OpenJPA.name()));
+        assertThat((String)properties.get("VendorName"), is(JPAProvider.OpenJPA.name()));
 
     }
 

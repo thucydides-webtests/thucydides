@@ -1,7 +1,8 @@
 package net.thucydides.core.reports.html.history;
 
 import net.thucydides.core.Thucydides;
-import net.thucydides.core.ThucydidesSystemProperty;
+import org.apache.openjpa.persistence.Externalizer;
+import org.apache.openjpa.persistence.Factory;
 import org.apache.openjpa.persistence.jdbc.Strategy;
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Converter;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 public class TestResultSnapshot implements Comparable<TestResultSnapshot> {
@@ -18,11 +20,14 @@ public class TestResultSnapshot implements Comparable<TestResultSnapshot> {
     @SequenceGenerator(name="test_result_snapshot_seq",sequenceName="SNAPSHOT_SEQUENCE", allocationSize=1)
     private Long id;
 
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @Column(columnDefinition = "TIMESTAMP", nullable=false)
-    @Converter(name = "dateTimeConverter", converterClass = net.thucydides.core.jpa.EclipselinkDateTimeConverter.class )
-    @Convert("dateTimeConverter")
+    //@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    //@Column(columnDefinition = "TIMESTAMP", nullable=false)
+    //@Converter(name = "dateTimeConverter", converterClass = net.thucydides.core.jpa.EclipselinkDateTimeConverter.class )
+    //@Convert("dateTimeConverter")
     @Strategy(value="net.thucydides.core.jpa.OpenJPADateTimeConverter")
+    //@Externalizer("TestResultSnapshot.toTimeStamp")
+    //@Factory("TestResultSnapshot.toDateTime")
+    @org.apache.openjpa.persistence.Type(value=Timestamp.class)
     private DateTime time;
 
     private int specifiedSteps;
@@ -123,5 +128,23 @@ public class TestResultSnapshot implements Comparable<TestResultSnapshot> {
                 ", buildId='" + buildId + '\'' +
                 ", projectKey='" + projectKey + '\'' +
                 '}';
+    }
+
+    public static Timestamp toTimeStamp(DateTime time)  {
+        System.out.println("hlsajdlkajdkjajdalkdlkjadjalkjdlkajlkdjalkjdlkajdasdakds;lka;lkd;laks;ld " + time);
+        if (time == null) {
+            return null;
+        }
+
+        return new Timestamp(time.getMillis());
+    }
+
+    public static DateTime toDateTime(Timestamp time) {
+        System.out.println("444444444444444444444444444444444444444444444444444444444444444444444444444  " + time);
+        if (time == null) {
+            return null;
+        }
+
+        return new DateTime(time);
     }
 }
