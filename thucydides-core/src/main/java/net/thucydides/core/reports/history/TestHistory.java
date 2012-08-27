@@ -8,6 +8,7 @@ import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.reports.html.history.TestResultSnapshotDAO;
 import net.thucydides.core.util.EnvironmentVariables;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,8 +55,11 @@ public class TestHistory {
     public List<TestResultSnapshot> getHistory() {
 
         List<TestResultSnapshot> listOfSnapShots =  testResultSnapshotDAO.findAll();
-        Collections.sort(listOfSnapShots);
-        return listOfSnapShots;
+        List<TestResultSnapshot> sortableListOfSnapShots = new ArrayList<TestResultSnapshot>();
+        sortableListOfSnapShots.addAll(listOfSnapShots);
+
+        Collections.sort(sortableListOfSnapShots);
+        return sortableListOfSnapShots;
 
     }
 

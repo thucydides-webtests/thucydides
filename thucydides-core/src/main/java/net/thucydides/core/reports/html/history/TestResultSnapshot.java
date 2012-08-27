@@ -20,15 +20,9 @@ public class TestResultSnapshot implements Comparable<TestResultSnapshot> {
     @SequenceGenerator(name="test_result_snapshot_seq",sequenceName="SNAPSHOT_SEQUENCE", allocationSize=1)
     private Long id;
 
-    //@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    //@Column(columnDefinition = "TIMESTAMP", nullable=false)
-    //@Converter(name = "dateTimeConverter", converterClass = net.thucydides.core.jpa.EclipselinkDateTimeConverter.class )
-    //@Convert("dateTimeConverter")
-    @Strategy(value="net.thucydides.core.jpa.OpenJPADateTimeConverter")
-    //@Externalizer("TestResultSnapshot.toTimeStamp")
-    //@Factory("TestResultSnapshot.toDateTime")
-    @org.apache.openjpa.persistence.Type(value=Timestamp.class)
+    @Transient
     private DateTime time;
+    private Timestamp timestamp;
 
     private int specifiedSteps;
     private int passingSteps;
@@ -36,6 +30,9 @@ public class TestResultSnapshot implements Comparable<TestResultSnapshot> {
     private int skippedSteps;
     private String buildId;
     private String projectKey;
+
+
+
 
     public TestResultSnapshot() {}
 
@@ -75,6 +72,7 @@ public class TestResultSnapshot implements Comparable<TestResultSnapshot> {
                               final String buildId,
                               final String projectKey) {
         this.time = time;
+        this.timestamp = new Timestamp(time.getMillis());
         this.specifiedSteps = specifiedSteps;
         this.passingSteps = passingSteps;
         this.failingSteps = failingSteps;
@@ -84,7 +82,11 @@ public class TestResultSnapshot implements Comparable<TestResultSnapshot> {
     }
 
     public DateTime getTime() {
-        return time;
+        return new DateTime(timestamp);
+    }
+
+    public Timestamp getTimeStamp() {
+        return timestamp;
     }
 
     public int getSpecifiedSteps() {
@@ -130,21 +132,4 @@ public class TestResultSnapshot implements Comparable<TestResultSnapshot> {
                 '}';
     }
 
-    public static Timestamp toTimeStamp(DateTime time)  {
-        System.out.println("hlsajdlkajdkjajdalkdlkjadjalkjdlkajlkdjalkjdlkajdasdakds;lka;lkd;laks;ld " + time);
-        if (time == null) {
-            return null;
-        }
-
-        return new Timestamp(time.getMillis());
-    }
-
-    public static DateTime toDateTime(Timestamp time) {
-        System.out.println("444444444444444444444444444444444444444444444444444444444444444444444444444  " + time);
-        if (time == null) {
-            return null;
-        }
-
-        return new DateTime(time);
-    }
 }

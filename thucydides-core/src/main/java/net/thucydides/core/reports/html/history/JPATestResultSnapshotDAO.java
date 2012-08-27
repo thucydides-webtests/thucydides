@@ -27,7 +27,7 @@ public class JPATestResultSnapshotDAO implements TestResultSnapshotDAO {
     private final EnvironmentVariables environmentVariables;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JPATestResultSnapshotDAO.class);
-    private static final String FIND_ALL_TEST_RESULT_SNAPSHOTS = "select t from TestResultSnapshot t where t.projectKey = :projectKey order by t.time";
+    private static final String FIND_ALL_TEST_RESULT_SNAPSHOTS = "select t from TestResultSnapshot t where t.projectKey = :projectKey order by t.timestamp";
     private static final String CLEAR_ALL_TEST_RESULT_SNAPSHOTS = "delete from TestResultSnapshot t where t.projectKey = :projectKey";
 
 
