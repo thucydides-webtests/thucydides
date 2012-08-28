@@ -31,15 +31,16 @@ public final class StepData {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends ScenarioSteps> T run(final T steps) throws IOException {
+    public <T> T run(final T steps) throws IOException {
 
         useDefaultStepFactoryIfUnassigned();
         TestDataSource testdata = new CSVTestDataSource(testDataSource, separator);
 
-        Class<? extends ScenarioSteps> scenarioStepsClass = (Class<? extends ScenarioSteps>) steps.getClass().getSuperclass();
+        Class<?> scenarioStepsClass = (Class<?>) steps.getClass().getSuperclass();
         List<T> instanciatedSteps = (List<T>) testdata.getInstanciatedInstancesFrom(scenarioStepsClass, factory);
 
-        T stepsProxy = (T) DataDrivenStepFactory.newDataDrivenSteps(scenarioStepsClass, instanciatedSteps);
+        DataDrivenStepFactory dataDrivenStepFactory = new DataDrivenStepFactory(factory);
+        T stepsProxy = (T) dataDrivenStepFactory.newDataDrivenSteps(scenarioStepsClass, instanciatedSteps);
 
         return stepsProxy;
     }

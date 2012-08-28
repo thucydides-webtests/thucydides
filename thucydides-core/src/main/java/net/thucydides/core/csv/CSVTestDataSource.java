@@ -1,7 +1,6 @@
 package net.thucydides.core.csv;
 
 import au.com.bytecode.opencsv.CSVReader;
-import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.steps.StepFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,8 +113,7 @@ public class CSVTestDataSource implements TestDataSource {
         return resultsList;
     }
 
-    public <T extends ScenarioSteps> List<T> getInstanciatedInstancesFrom(final Class<T> clazz,
-                                                                          final StepFactory factory) {
+    public <T> List<T> getInstanciatedInstancesFrom(final Class<T> clazz, final StepFactory factory) {
         List<Map<String, String>> data = getData();
 
         List<T> resultsList = new ArrayList<T>();
@@ -134,9 +132,9 @@ public class CSVTestDataSource implements TestDataSource {
         return newObject;
     }
 
-    private <T extends ScenarioSteps> T newInstanceFrom(final Class<T> clazz,
-                                                        final StepFactory factory,
-                                                        final Map<String,String> rowData) {
+    private <T> T newInstanceFrom(final Class<T> clazz,
+                                  final StepFactory factory,
+                                  final Map<String,String> rowData) {
         T newObject = factory.getUniqueStepLibraryFor(clazz);
         assignPropertiesFromTestData(clazz, rowData, newObject);
         return newObject;

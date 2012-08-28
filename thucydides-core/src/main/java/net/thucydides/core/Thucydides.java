@@ -122,7 +122,7 @@ public class Thucydides {
         return webdriverManagerThreadLocal.get();
     }
 
-    private static StepFactory getStepFactory() {
+    public static StepFactory getStepFactory() {
         return stepFactoryThreadLocal.get();
     }
 
