@@ -47,8 +47,6 @@ public class OpenJPAEnvironmentVariablesConfig extends AbstractJPAProviderConfig
         properties.put("javax.persistence.jdbc.user", username);
         properties.put("javax.persistence.jdbc.password", password);
         properties.put("openjpa.jdbc.DBDictionary", dialect);
-//        properties.put("eclipselink.connection-pool.default.initial", "1");
-//        properties.put("eclipselink.connection-pool.default.max", "10");
 
         boolean databaseIsConfigured = databaseIsConfigured(properties);
         if (isUsingLocalDatabase() || !databaseIsConfigured) {
