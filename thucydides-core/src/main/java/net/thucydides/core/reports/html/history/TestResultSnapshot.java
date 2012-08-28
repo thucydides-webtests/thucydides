@@ -1,12 +1,6 @@
 package net.thucydides.core.reports.html.history;
 
 import net.thucydides.core.Thucydides;
-import org.apache.openjpa.persistence.Externalizer;
-import org.apache.openjpa.persistence.Factory;
-import org.apache.openjpa.persistence.jdbc.Strategy;
-import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;

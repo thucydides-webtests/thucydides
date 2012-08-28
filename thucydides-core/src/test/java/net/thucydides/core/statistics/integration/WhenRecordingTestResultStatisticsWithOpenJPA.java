@@ -328,7 +328,6 @@ public class WhenRecordingTestResultStatisticsWithOpenJPA {
     public void should_retrieve_a_list_of_all_available_tags_associated_with_the_latest_test_run_of_a_test() {
 
         List<TestRunTag> allTags = testStatisticsProvider.findAllTags();
-
         assertThat(allTags.size(), is(5));
     }
 
