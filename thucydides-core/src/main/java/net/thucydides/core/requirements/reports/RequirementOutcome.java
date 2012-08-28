@@ -1,6 +1,7 @@
 package net.thucydides.core.requirements.reports;
 
 import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.requirements.model.Requirement;
@@ -22,6 +23,13 @@ public class RequirementOutcome {
 
     public TestOutcomes getTestOutcomes() {
         return testOutcomes;
+    }
+
+    /**
+     * A Requirement is considered complete if it has associated tests and all of the tests are successfull.
+     */
+    public boolean isComplete() {
+        return getTestOutcomes().getResult() == TestResult.SUCCESS;
     }
 
     public String getCardNumberWithLinks() {

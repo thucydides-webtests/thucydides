@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.io.StreamException;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.reports.TestOutcomes;
-import net.thucydides.core.reports.html.history.TestResultSnapshot;
 import net.thucydides.core.util.EnvironmentVariables;
 
 import java.io.Closeable;

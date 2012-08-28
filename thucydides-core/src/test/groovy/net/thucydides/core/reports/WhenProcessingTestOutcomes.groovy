@@ -131,9 +131,9 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all passing tests"() {
         given:
-        TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
         when:
-        def tests = testOutcomes.passingTests.getTests()
+            def tests = testOutcomes.passingTests.getTests()
         then:
             tests.size() == 1
             tests everyItem(withResult(TestResult.SUCCESS))
@@ -177,16 +177,16 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should provide total test duration in seconds for a set of tests"() {
         when:
-        def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
         then:
-        testOutcomes.durationInSeconds == 1.78
+            testOutcomes.durationInSeconds == 1.78
     }
 
     def "should provide total test duration in seconds for a set of tests when the time is zero"() {
         when:
-        def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/with-no-steps"));
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/with-no-steps"));
         then:
-        testOutcomes.durationInSeconds == 0.0
+            testOutcomes.durationInSeconds == 0.0
     }
 
     def "should count tests in set"() {

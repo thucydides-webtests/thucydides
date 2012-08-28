@@ -1,4 +1,4 @@
-package net.thucydides.core.reports.html.history;
+package net.thucydides.core.reports.history;
 
 import org.joda.time.DateTime;
 

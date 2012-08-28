@@ -11,7 +11,7 @@ import net.thucydides.core.reports.TestOutcomeLoader;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.UserStoryTestReporter;
 import net.thucydides.core.reports.history.TestHistory;
-import net.thucydides.core.reports.html.history.TestResultSnapshot;
+import net.thucydides.core.reports.history.TestResultSnapshot;
 import net.thucydides.core.reports.json.JSONProgressResultTree;
 import net.thucydides.core.reports.json.JSONResultTree;
 import net.thucydides.core.requirements.RequirementsProviderService;
