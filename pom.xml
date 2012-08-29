@@ -134,6 +134,7 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
+                            <argLine>-Xms256m -Xmx512m -XX:PermSize=64m -XX:MaxPermSize=256m</argLine>
                             <includes>
                                 <include>**/When*.*</include>
                                 <include>**/*Test.*</include>

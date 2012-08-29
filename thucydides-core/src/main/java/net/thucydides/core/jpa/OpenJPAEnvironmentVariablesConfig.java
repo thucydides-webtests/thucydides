@@ -1,13 +1,12 @@
 package net.thucydides.core.jpa;
 
 import com.google.inject.Inject;
-import net.thucydides.core.jpa.JPAProviderConfig;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
-import org.eclipse.persistence.config.TargetDatabase;
 
-import java.sql.*;
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
@@ -18,17 +17,17 @@ import java.util.Properties;
  * Time: 11:08 PM
  * To change this template use File | Settings | File Templates.
  */
-public class EclipseLinkEnvironmentVariablesConfig extends AbstractJPAProviderConfig {
+public class OpenJPAEnvironmentVariablesConfig extends AbstractJPAProviderConfig {
 
     private final EnvironmentVariables environmentVariables;
     private final LocalDatabase localDatabase;
 
-    private static final JPAProvider PROVIDER = JPAProvider.EclipseLink;
+    private static final JPAProvider PROVIDER = JPAProvider.OpenJPA;
 
 
     @Inject
-    public EclipseLinkEnvironmentVariablesConfig(EnvironmentVariables environmentVariables,
-                                               LocalDatabase localDatabase) {
+    public OpenJPAEnvironmentVariablesConfig(EnvironmentVariables environmentVariables,
+                                             LocalDatabase localDatabase) {
         this.environmentVariables = environmentVariables;
         this.localDatabase = localDatabase;
     }
@@ -40,21 +39,19 @@ public class EclipseLinkEnvironmentVariablesConfig extends AbstractJPAProviderCo
         String url = environmentVariables.getProperty("thucydides.statistics.url", localDatabase.getUrl());
         String username = environmentVariables.getProperty("thucydides.statistics.username", localDatabase.getUsername());
         String password = environmentVariables.getProperty("thucydides.statistics.password", localDatabase.getPassword());
-        String dialect = environmentVariables.getProperty("thucydides.statistics.dialect", TargetDatabase.Auto);
+        String dialect = environmentVariables.getProperty("thucydides.statistics.dialect", localDatabase.getDBDictionary());
 
         properties.put("javax.persistence.jdbc.driver", driver);
         properties.put("javax.persistence.jdbc.url", url);
         properties.put("javax.persistence.jdbc.user", username);
         properties.put("javax.persistence.jdbc.password", password);
-        properties.put("eclipselink.target-database", dialect);
-        properties.put("eclipselink.connection-pool.default.initial", "1");
-        properties.put("eclipselink.connection-pool.default.max", "10");
+        properties.put("openjpa.jdbc.DBDictionary", dialect);
 
         boolean databaseIsConfigured = databaseIsConfigured(properties);
         if (isUsingLocalDatabase() || !databaseIsConfigured) {
-            properties.put("eclipselink.ddl-generation", "create-or-extend-tables");
+            properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
         } else {
-            properties.put("eclipselink.ddl-generation", "none");
+            properties.put("openjpa.jdbc.SynchronizeMappings", "validate");
         }
 
     }

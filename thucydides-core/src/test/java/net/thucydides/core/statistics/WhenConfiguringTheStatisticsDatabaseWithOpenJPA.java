@@ -22,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-public class WhenConfiguringTheStatisticsDatabaseWithEclipseLink {
+public class WhenConfiguringTheStatisticsDatabaseWithOpenJPA {
 
     EnvironmentVariables environmentVariables;
     EnvironmentVariablesDatabaseConfig databaseConfig;
@@ -32,7 +32,7 @@ public class WhenConfiguringTheStatisticsDatabaseWithEclipseLink {
     @Before
     public void initMocks() {
         environmentVariables = new MockEnvironmentVariables();
-        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.EclipseLink.name());
+        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.OpenJPA.name());
         localDatabase = new LocalH2ServerDatabase(environmentVariables);
         databaseConfig = new EnvironmentVariablesDatabaseConfig(environmentVariables, localDatabase);
     }
@@ -75,12 +75,12 @@ public class WhenConfiguringTheStatisticsDatabaseWithEclipseLink {
     public void should_update_the_default_local_database_automatically() {
         Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("eclipselink.ddl-generation"), is("create-or-extend-tables"));
+        assertThat(properties.getProperty("openjpa.jdbc.SynchronizeMappings"), is("buildSchema"));
     }
 
     @Test
     public void should_validate_but_not_update_an_existing_custom_database() throws SQLException, ClassNotFoundException {
-        String preexistingDatabaseUrl = "jdbc:hsqldb:mem:existing-database-eclipselink";
+        String preexistingDatabaseUrl = "jdbc:hsqldb:mem:existing-database-openJPA";
         Class.forName("org.hsqldb.jdbcDriver");
         deletePreexistingDatabaseFor(preexistingDatabaseUrl);
         createPreexistingDatabaseFor(preexistingDatabaseUrl);
@@ -89,7 +89,7 @@ public class WhenConfiguringTheStatisticsDatabaseWithEclipseLink {
 
         Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("eclipselink.ddl-generation"), is("none"));
+        assertThat(properties.getProperty("openjpa.jdbc.SynchronizeMappings"), is("validate"));
 
     }
 
@@ -106,7 +106,7 @@ public class WhenConfiguringTheStatisticsDatabaseWithEclipseLink {
 
         Properties properties = databaseConfig.getProperties();
 
-        assertThat(properties.getProperty("eclipselink.ddl-generation"), is("create-or-extend-tables"));
+        assertThat(properties.getProperty("openjpa.jdbc.SynchronizeMappings"), is("buildSchema"));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class WhenConfiguringTheStatisticsDatabaseWithEclipseLink {
         environmentVariables.setProperty("thucydides.statistics.url","jdbc:postgresql:dbserver/stats");
         environmentVariables.setProperty("thucydides.statistics.username","admin");
         environmentVariables.setProperty("thucydides.statistics.password","password");
-        environmentVariables.setProperty("thucydides.statistics.dialect","org.eclipse.persistence.platform.database.PostgreSQLPlatform");
+        environmentVariables.setProperty("thucydides.statistics.dialect","org.apache.openjpa.jdbc.sql.PostgresDictionary");
 
         Properties properties = databaseConfig.getProperties();
 
@@ -124,7 +124,7 @@ public class WhenConfiguringTheStatisticsDatabaseWithEclipseLink {
         assertThat(properties.getProperty("javax.persistence.jdbc.url"), is("jdbc:postgresql:dbserver/stats"));
         assertThat(properties.getProperty("javax.persistence.jdbc.user"), is("admin"));
         assertThat(properties.getProperty("javax.persistence.jdbc.password"), is("password"));
-        assertThat(properties.getProperty("eclipselink.target-database"), is("org.eclipse.persistence.platform.database.PostgreSQLPlatform"));
+        assertThat(properties.getProperty("openjpa.jdbc.DBDictionary"), is("org.apache.openjpa.jdbc.sql.PostgresDictionary"));
     }
 
     private void createEmptyDatabaseFor(String emptyDatabaseUrl) throws SQLException {
