@@ -3,7 +3,6 @@ package net.thucydides.core.jpa;
 import com.google.inject.Inject;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
-import org.eclipse.persistence.config.TargetDatabase;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

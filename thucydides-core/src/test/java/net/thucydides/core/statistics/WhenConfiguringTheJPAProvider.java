@@ -43,11 +43,6 @@ public class WhenConfiguringTheJPAProvider {
     }
 
     @Test
-    public void should_set_the_right_persistence_unit_name_for_EclipseLink() {
-        assertThat(JPAProvider.EclipseLink.getPersistenceUnitName(), is("db-manager-EclipseLink"));
-    }
-
-    @Test
     public void should_configure_Default_Provider_by_default() {
 
         JPAProviderConfig providerConfig = JPAProviderConfigFactory.getJPAProviderConfig(environmentVariables, localDatabase);
@@ -63,19 +58,11 @@ public class WhenConfiguringTheJPAProvider {
     }
 
     @Test
-    public void should_be_able_to_configure_EclipseLink_from_system_property() {
-
-        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.EclipseLink.name());
-        JPAProviderConfig providerConfig = JPAProviderConfigFactory.getJPAProviderConfig(environmentVariables, localDatabase);
-        assertThat(providerConfig.getProvider(), is(JPAProvider.EclipseLink));
-    }
-
-    @Test
     public void should_be_able_to_configure_OpenJPA_from_system_property() {
 
-        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.EclipseLink.name());
+        environmentVariables.setProperty(ThucydidesSystemProperty.JPA_PROVIDER.getPropertyName(), JPAProvider.OpenJPA.name());
         JPAProviderConfig providerConfig = JPAProviderConfigFactory.getJPAProviderConfig(environmentVariables, localDatabase);
-        assertThat(providerConfig.getProvider(), is(JPAProvider.EclipseLink));
+        assertThat(providerConfig.getProvider(), is(JPAProvider.OpenJPA));
     }
 
 }

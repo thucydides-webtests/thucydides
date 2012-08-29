@@ -10,7 +10,6 @@ package net.thucydides.core.jpa;
 public enum JPAProvider {
 
     Hibernate ("db-manager"),
-    EclipseLink("db-manager-EclipseLink"),
     OpenJPA("db-manager-OpenJPA");
 
     private String persistenceUnit;
