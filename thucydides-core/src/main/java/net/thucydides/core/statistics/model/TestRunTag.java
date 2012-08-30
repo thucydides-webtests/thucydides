@@ -11,8 +11,8 @@ import java.util.Set;
 public class TestRunTag {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
-    @SequenceGenerator(name="seq",sequenceName="HIBERNATE_SEQUENCE", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_run_tag_seq")
+    @SequenceGenerator(name="test_run_tag_seq",sequenceName="HIBERNATE_SEQUENCE", allocationSize=1)
     private Long id;
 
     private String projectKey;

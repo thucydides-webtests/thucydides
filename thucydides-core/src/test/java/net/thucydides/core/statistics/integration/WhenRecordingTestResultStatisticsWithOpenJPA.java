@@ -44,7 +44,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 
-public class WhenRecordingTestResultStatisticsWithEclipseLink {
+public class WhenRecordingTestResultStatisticsWithOpenJPA {
 
     Injector injector;
     EnvironmentVariables environmentVariables;
@@ -102,9 +102,9 @@ public class WhenRecordingTestResultStatisticsWithEclipseLink {
         guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
         injector = Guice.createInjector(guiceModule);
         environmentVariables = injector.getInstance(EnvironmentVariables.class);
-        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:testDatabase-eclipselink");
+        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:testDatabase-openJPA");
         environmentVariables.setProperty("thucydides.record.statistics", "true");
-        environmentVariables.setProperty("thucydides.jpa.provider","EclipseLink");
+        environmentVariables.setProperty("thucydides.jpa.provider","OpenJPA");
 
         testOutcomeHistoryDAO = injector.getInstance(JPATestOutcomeHistoryDAO.class);
         statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables, databaseConfig);
@@ -144,7 +144,7 @@ public class WhenRecordingTestResultStatisticsWithEclipseLink {
         ThucydidesModuleWithMockEnvironmentVariables guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
         Injector injector = Guice.createInjector(guiceModule);
         EnvironmentVariables environmentVariables = injector.getInstance(EnvironmentVariables.class);
-        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:defaultTestDatabase-eclipselink");
+        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:defaultTestDatabase-openJPA");
 
         TestOutcomeHistoryDAO testOutcomeHistoryDAO = injector.getInstance(JPATestOutcomeHistoryDAO.class);
         StatisticsListener statisticsListener = new StatisticsListener(testOutcomeHistoryDAO, environmentVariables, databaseConfig);
@@ -169,7 +169,7 @@ public class WhenRecordingTestResultStatisticsWithEclipseLink {
         ThucydidesModuleWithMockEnvironmentVariables guiceModule = new ThucydidesModuleWithMockEnvironmentVariables();
         Injector injector = Guice.createInjector(guiceModule);
         EnvironmentVariables environmentVariables = injector.getInstance(EnvironmentVariables.class);
-        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:defaultTestDatabase-eclipselink");
+        environmentVariables.setProperty("thucydides.statistics.url", "jdbc:hsqldb:mem:defaultTestDatabase-openJPA");
         environmentVariables.setProperty("thucydides.record.statistics", "false");
 
         TestOutcomeHistoryDAO testOutcomeHistoryDAO = injector.getInstance(JPATestOutcomeHistoryDAO.class);
@@ -328,7 +328,6 @@ public class WhenRecordingTestResultStatisticsWithEclipseLink {
     public void should_retrieve_a_list_of_all_available_tags_associated_with_the_latest_test_run_of_a_test() {
 
         List<TestRunTag> allTags = testStatisticsProvider.findAllTags();
-
         assertThat(allTags.size(), is(5));
     }
 

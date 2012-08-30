@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class JPATestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     private static final String FIND_ALL_TEST_HISTORIES = "select t from TestRun t where t.projectKey = :projectKey order by t.executionDate";
     private static final String FIND_BY_NAME = "select t from TestRun t where t.title = :title and t.projectKey = :projectKey";
     private static final String FIND_TAG_BY_NAME_IGNORING_CASE = "select t from TestRunTag t where lower(t.name) = :name and t.type = :type and t.projectKey = :projectKey";
-    private static final String FIND_ALL_TAGS  = "select t from TestRunTag t where t.projectKey = :projectKey order by lower(t.name)";
+    private static final String FIND_ALL_TAGS  = "select t, lower(t.name) as lower_name from TestRunTag t where t.projectKey = :projectKey order by lower_name";
     private static final String FIND_ALL_TAG_TYPES = "select distinct t.type from TestRunTag t where t.projectKey = :projectKey order by t.type";
     private static final String COUNT_BY_NAME = "select count(t) from TestRun t where t.title = :title and t.projectKey = :projectKey";
     private static final String COUNT_TESTS_BY_NAME_AND_RESULT
@@ -329,9 +330,16 @@ public class JPATestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     @Override
     public List<TestRunTag> findAllTags() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return entityManager.createQuery(FIND_ALL_TAGS)
-                            .setParameter("projectKey", getProjectKey())
-                            .getResultList();
+        List<Object[]> results =  entityManager.createQuery(FIND_ALL_TAGS)
+                .setParameter("projectKey", getProjectKey())
+                .getResultList();
+
+
+        List<TestRunTag> tags = new ArrayList<TestRunTag>();
+        for (Object[] row : results) {
+                tags.add((TestRunTag) row[0]);
+        }
+        return tags;
     }
 
     @Override

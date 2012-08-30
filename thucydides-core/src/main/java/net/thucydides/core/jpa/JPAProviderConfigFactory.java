@@ -13,7 +13,7 @@ import net.thucydides.core.util.EnvironmentVariables;
  */
 public class JPAProviderConfigFactory {
 
-    public static final JPAProvider DEFAULT_PROVIDER = JPAProvider.Hibernate;
+    public static final JPAProvider DEFAULT_PROVIDER = JPAProvider.OpenJPA;
     public static JPAProviderConfig getJPAProviderConfig(EnvironmentVariables environmentVariables,
                                                          LocalDatabase localDatabase) {
         String providerProperty =  ThucydidesSystemProperty.JPA_PROVIDER.from(environmentVariables, DEFAULT_PROVIDER.name());
@@ -25,7 +25,7 @@ public class JPAProviderConfigFactory {
 
     private static JPAProvider getJPAProviderFromProperty(String providerProperty) {
 
-        JPAProvider provider = JPAProvider.Hibernate;
+        JPAProvider provider = DEFAULT_PROVIDER;
 
         try {
             provider   = JPAProvider.valueOf(providerProperty);
@@ -39,7 +39,8 @@ public class JPAProviderConfigFactory {
     private static JPAProviderConfig getJPAProviderConfig(JPAProvider provider, EnvironmentVariables environmentVariables,
                                                           LocalDatabase localDatabase) {
         switch (provider) {
-            case EclipseLink: return new EclipseLinkEnvironmentVariablesConfig(environmentVariables, localDatabase);
+            case OpenJPA: return new OpenJPAEnvironmentVariablesConfig(environmentVariables, localDatabase);
+
             default: return new HibernateEnvironmentVariablesConfig(environmentVariables,localDatabase);
         }
     }
