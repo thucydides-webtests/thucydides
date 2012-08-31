@@ -1,5 +1,6 @@
 package net.thucydides.core.pages;
 
+import ch.lambdaj.function.convert.Converter;
 import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.components.Dropdown;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static ch.lambdaj.Lambda.convert;
 import static net.thucydides.core.webdriver.javascript.JavascriptSupport.javascriptIsSupportedIn;
 
 /**
@@ -652,6 +654,20 @@ public abstract class PageObject {
 
     public WebElementFacade find(By selector) {
         return element(selector);
+    }
+
+    public List<WebElementFacade> findAll(By bySelector) {
+        List<WebElement> matchingWebElements = driver.findElements(bySelector);
+        return convert(matchingWebElements, toWebElementFacades());
+    }
+
+    private Converter<WebElement, WebElementFacade> toWebElementFacades() {
+        return new Converter<WebElement, WebElementFacade>() {
+            @Override
+            public WebElementFacade convert(WebElement from) {
+                return element(from);
+            }
+        };
     }
 
     /**

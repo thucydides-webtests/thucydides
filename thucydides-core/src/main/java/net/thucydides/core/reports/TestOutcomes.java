@@ -16,6 +16,7 @@ import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import net.thucydides.core.model.TestResultList;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
 import net.thucydides.core.statistics.TestStatisticsProvider;
 import net.thucydides.core.statistics.With;
@@ -204,6 +205,10 @@ public class TestOutcomes {
 
     public TestOutcomes getRootOutcomes() {
         return rootOutcomes.or(this);
+    }
+
+    public TestOutcomes forRequirement(Requirement requirement) {
+        return withTag(requirement.getName());
     }
 
     private class TagFinder {

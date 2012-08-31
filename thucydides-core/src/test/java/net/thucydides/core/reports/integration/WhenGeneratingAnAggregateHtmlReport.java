@@ -1,7 +1,10 @@
 package net.thucydides.core.reports.integration;
 
+import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.reports.history.ProgressSnapshot;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.commons.io.FileUtils;
@@ -18,6 +21,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.extract;
@@ -27,6 +31,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class WhenGeneratingAnAggregateHtmlReport {
 
@@ -38,18 +43,22 @@ public class WhenGeneratingAnAggregateHtmlReport {
     private File outputDirectory;
 
     WebDriver driver;
-    
+
+    @Mock
+    IssueTracking issueTracking;
+
     @Mock
     TestHistory testHistory;
 
     @Before
     public void setupTestReporter() {
         MockitoAnnotations.initMocks(this);
-        reporter = new HtmlAggregateStoryReporter("project");
+        reporter = new HtmlAggregateStoryReporter("project", issueTracking, testHistory);
         outputDirectory = temporaryDirectory.newFolder("target/site/thucydides");
         reporter.setOutputDirectory(outputDirectory);
 
         driver = new HtmlUnitDriver();
+        when(testHistory.getProgress()).thenReturn(new ArrayList<ProgressSnapshot>());
     }
 
     @Test

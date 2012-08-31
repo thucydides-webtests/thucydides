@@ -9,7 +9,13 @@ import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.model.ReportType;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.requirements.model.Requirement;
+
+import static ch.lambdaj.Lambda.count;
 import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.on;
+import static org.hamcrest.CoreMatchers.is;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +38,7 @@ public class RequirementsOutcomes {
 
         List<RequirementOutcome> outcomes = Lists.newArrayList();
         for(Requirement requirement : requirements) {
-            TestOutcomes outcomesForRequirement = testOutcomes.withTag(requirement.getName());
+            TestOutcomes outcomesForRequirement = testOutcomes.forRequirement(requirement);
             outcomes.add(new RequirementOutcome(requirement,outcomesForRequirement, issueTracking));
         }
         this.requirementOutcomes = outcomes;
@@ -57,6 +63,21 @@ public class RequirementsOutcomes {
             return requirementOutcomes.get(0).getRequirement().getType();
         }
     }
+
+//    public RequirementsOutcomes forRequirementsOfType(String requirementsType) {
+//        List<RequirementOutcome> selectedRequirementOutcomes = Lists.newArrayList();
+//        for(RequirementOutcome requirementOutcome: getRequirementOutcomes()) {
+//            if (requirementOutcome.getRequirement().getType().equalsIgnoreCase(requirementsType)) {
+//                selectedRequirementOutcomes.add(requirementOutcome);
+//            } else {
+//                selectedRequirementOutcomes.addAll(getRequirementOutcomesOfType(requirementsType))
+//            }
+//        }
+//    }
+//
+//    private  List<RequirementOutcome> getRequirementOutcomesOfType(String requirementsType) {
+//
+//    }
 
     public String getChildrenType() {
         return typeOfFirstChildPresent();
@@ -91,5 +112,21 @@ public class RequirementsOutcomes {
                 "requirementOutcomes=" + requirementOutcomes +
                 ", parentRequirement=" + parentRequirement +
                 '}';
+    }
+
+    public int getCompletedRequirementsCount() {
+        int completedRequirements = 0;
+        for(RequirementOutcome requirementOutcome : requirementOutcomes) {
+            if (requirementOutcome.isComplete()) { completedRequirements++; }
+        }
+        return completedRequirements;
+    }
+
+    public int getFailingRequirementsCount() {
+        int failingRequirements = 0;
+        for(RequirementOutcome requirementOutcome : requirementOutcomes) {
+            if (requirementOutcome.isFailure()) { failingRequirements++; }
+        }
+        return failingRequirements;
     }
 }

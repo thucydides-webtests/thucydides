@@ -109,6 +109,10 @@ public class Requirement implements Comparable {
         return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children, examples);
     }
 
+    public boolean hasChildren() {
+        return (children != null) && (!children.isEmpty());
+    }
+
     public static class RequirementBuilderNameStep {
 
         final String name;

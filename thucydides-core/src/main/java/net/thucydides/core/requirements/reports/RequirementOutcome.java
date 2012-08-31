@@ -6,6 +6,8 @@ import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.requirements.model.Requirement;
 
+import java.util.List;
+
 public class RequirementOutcome {
     private final Requirement requirement;
     private final TestOutcomes testOutcomes;
@@ -26,10 +28,56 @@ public class RequirementOutcome {
     }
 
     /**
-     * A Requirement is considered complete if it has associated tests and all of the tests are successfull.
+     * Is this requirement complete?
+     * A Requirement is considered complete if it has associated tests to all of the tests are successful.
      */
     public boolean isComplete() {
-        return getTestOutcomes().getResult() == TestResult.SUCCESS;
+        return getTestOutcomes().getResult() == TestResult.SUCCESS && allChildRequirementsAreSuccessful();
+    }
+
+    public boolean isFailure() {
+        return getTestOutcomes().getResult() == TestResult.FAILURE || anyChildRequirementsAreFailures();
+    }
+
+    private boolean allChildRequirementsAreSuccessful() {
+        if (requirement.hasChildren()) {
+            return allChildRequirementsAreSuccessfulFor(requirement.getChildren());
+        } else {
+            return true;
+        }
+    }
+
+    private boolean anyChildRequirementsAreFailures() {
+        return anyChildRequirementsAreFailuresFor(requirement.getChildren());
+    }
+
+
+    private boolean allChildRequirementsAreSuccessfulFor(List<Requirement> requirements) {
+        for(Requirement childRequirement : requirements) {
+            RequirementOutcome childOutcomes = new RequirementOutcome(childRequirement,
+                                                                      testOutcomes.forRequirement(requirement),
+                                                                      issueTracking);
+            if (!childOutcomes.isComplete()) {
+                return false;
+            } else if (!allChildRequirementsAreSuccessfulFor(childRequirement.getChildren())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean anyChildRequirementsAreFailuresFor(List<Requirement> requirements) {
+        for(Requirement childRequirement : requirements) {
+            RequirementOutcome childOutcomes = new RequirementOutcome(childRequirement,
+                    testOutcomes.forRequirement(requirement),
+                    issueTracking);
+            if (childOutcomes.isFailure()) {
+                return true;
+            } else if (anyChildRequirementsAreFailuresFor(childRequirement.getChildren())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getCardNumberWithLinks() {
@@ -51,4 +99,5 @@ public class RequirementOutcome {
                 ", testOutcomes=" + testOutcomes +
                 '}';
     }
+
 }

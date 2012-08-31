@@ -114,7 +114,7 @@ public class Pages implements Serializable {
         return nextPage;
     }
 
-    private <T extends PageObject> void openBrowserIfRequiredFor(T pageCandidate) {
+    private <T extends PageObject> void  openBrowserIfRequiredFor(T pageCandidate) {
         if (browserNotOpen()) {
             openHeadlessDriverIfNotOpen();
             pageCandidate.open();

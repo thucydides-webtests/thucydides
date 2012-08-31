@@ -19,6 +19,7 @@ import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ import java.util.Map;
 
 /**
  * Generates an aggregate acceptance test report in HTML form.
- * Reads all the reports from the output directory and generates aggregate HTML reports
+ * Reads all the reports from the output directory to generates aggregate HTML reports
  * summarizing the results.
  */
 public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStoryTestReporter {
@@ -50,6 +51,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private final IssueTracking issueTracking;
     private final RequirmentsOutcomeFactory requirementsFactory;
     private final HtmlRequirementsReporter htmlRequirementsReporter;
+    private final HtmlProgressReporter htmlProgressReporter;
 
     public HtmlAggregateStoryReporter(final String projectName) {
         this(projectName, Injectors.getInjector().getInstance(IssueTracking.class));
@@ -57,11 +59,18 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     public HtmlAggregateStoryReporter(final String projectName,
                                       final IssueTracking issueTracking) {
+        this(projectName, issueTracking, new TestHistory(projectName));
+    }
+
+    public HtmlAggregateStoryReporter(final String projectName,
+                                      final IssueTracking issueTracking,
+                                      final TestHistory testHistory) {
         this.projectName = projectName;
         this.issueTracking = issueTracking;
+        this.testHistory = testHistory;
         this.reportNameProvider = new ReportNameProvider();
         this.htmlRequirementsReporter = new HtmlRequirementsReporter();
-
+        this.htmlProgressReporter = new HtmlProgressReporter(issueTracking, testHistory);
         RequirementsProviderService requirementsProviderService = Injectors.getInjector().getInstance(RequirementsProviderService.class);
         this.requirementsFactory = new RequirmentsOutcomeFactory(requirementsProviderService.getRequirementsProviders(), issueTracking);
     }
@@ -86,6 +95,9 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     public TestOutcomes generateReportsForTestResultsFrom(final File sourceDirectory) throws IOException {
         TestOutcomes allTestOutcomes = loadTestOutcomesFrom(sourceDirectory);
+        RequirementsOutcomes requirementsOutcomes = requirementsFactory.buildRequirementsOutcomesFrom(allTestOutcomes);
+
+        updateHistoryFor(requirementsOutcomes);
 
         copyResourcesToOutputDirectory();
 
@@ -95,16 +107,18 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateResultReportsFor(allTestOutcomes);
         generateHistoryReportFor(allTestOutcomes);
         generateCoverageReportsFor(allTestOutcomes);
-
-        generateRequirementsReportsFor(allTestOutcomes);
+        generateRequirementsReportsFor(requirementsOutcomes);
 
         return allTestOutcomes;
     }
 
-    public void generateRequirementsReportsFor(TestOutcomes allTestOutcomes) throws IOException {
-        RequirementsOutcomes requirementsOutcomes = requirementsFactory.buildRequirementsOutcomesFrom(allTestOutcomes);
+    public void generateRequirementsReportsFor(RequirementsOutcomes requirementsOutcomes) throws IOException {
+
         htmlRequirementsReporter.setOutputDirectory(getOutputDirectory());
         htmlRequirementsReporter.generateReportFor(requirementsOutcomes);
+
+        htmlProgressReporter.setOutputDirectory(getOutputDirectory());
+        htmlProgressReporter.generateReportFor(requirementsOutcomes);
 
         generateRequirementsReportsForChildRequirements(requirementsOutcomes);
     }
@@ -227,13 +241,11 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         return context;
     }
 
-    private void updateHistoryFor(final TestOutcomes testOutcomes) {
-        getTestHistory().updateData(testOutcomes);
+    private void updateHistoryFor(final RequirementsOutcomes requirementsOutcomes) {
+        getTestHistory().updateData(requirementsOutcomes);
     }
 
     private void generateHistoryReportFor(TestOutcomes testOutcomes) throws IOException {
-        updateHistoryFor(testOutcomes);
-
         List<TestResultSnapshot> history = getTestHistory().getHistory();
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("history", history);
@@ -269,46 +281,46 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         writeReportToOutputDirectory(tagType + "-coverage.js", javascriptCoverageData);
     }
 
-    private void generateOutcomeData(final TestOutcomes testOutcomes) throws IOException {
-        Map<String, Object> context = new HashMap<String, Object>();
+//    private void generateOutcomeData(final TestOutcomes testOutcomes) throws IOException {
+//        Map<String, Object> context = new HashMap<String, Object>();
+//
+//        List<String> tagTypes = testOutcomes.getTagTypes();
+//        for (String tagType : tagTypes) {
+//            generateOutcomeDataForTagType(tagType, testOutcomes.withTagType(tagType));
+//        }
+//    }
 
-        List<String> tagTypes = testOutcomes.getTagTypes();
-        for (String tagType : tagTypes) {
-            generateOutcomeDataForTagType(tagType, testOutcomes.withTagType(tagType));
-        }
-    }
+//    private void generateOutcomeDataForTagType(String tagType, TestOutcomes testOutcomes) throws IOException {
+//        Map<String, Object> context = new HashMap<String, Object>();
+//
+//        JSONResultTree resultTree = new JSONResultTree();
+//
+//        List<String> tags = testOutcomes.getTagsOfType(tagType);
+//        for(String tag : tags) {
+//            resultTree.addTestOutcomesForTag(tag, testOutcomes.withTag(tag));
+//        }
+//
+//        context.put("coverageData", resultTree.toJSON());
+//        addFormattersToContext(context);
+//
+//        String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
+//        writeReportToOutputDirectory("coverage-" + tagType +".js", javascriptCoverageData);
+//    }
 
-    private void generateOutcomeDataForTagType(String tagType, TestOutcomes testOutcomes) throws IOException {
-        Map<String, Object> context = new HashMap<String, Object>();
-
-        JSONResultTree resultTree = new JSONResultTree();
-
-        List<String> tags = testOutcomes.getTagsOfType(tagType);
-        for(String tag : tags) {
-            resultTree.addTestOutcomesForTag(tag, testOutcomes.withTag(tag));
-        }
-
-        context.put("coverageData", resultTree.toJSON());
-        addFormattersToContext(context);
-
-        String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
-        writeReportToOutputDirectory("coverage-" + tagType +".js", javascriptCoverageData);
-    }
-
-    private void generateProgressData(final List<FeatureResults> featureResults) throws IOException {
-        Map<String, Object> context = new HashMap<String, Object>();
-
-        JSONProgressResultTree resultTree = new JSONProgressResultTree();
-        for (FeatureResults feature : featureResults) {
-            resultTree.addFeature(feature);
-        }
-
-        context.put("progressData", resultTree.toJSON());
-        addFormattersToContext(context);
-
-        String javascriptCoverageData = mergeTemplate(PROGRESS_DATA_TEMPLATE_PATH).usingContext(context);
-        writeReportToOutputDirectory("progress.js", javascriptCoverageData);
-    }
+//    private void generateProgressData(final List<FeatureResults> featureResults) throws IOException {
+//        Map<String, Object> context = new HashMap<String, Object>();
+//
+//        JSONProgressResultTree resultTree = new JSONProgressResultTree();
+//        for (FeatureResults feature : featureResults) {
+//            resultTree.addFeature(feature);
+//        }
+//
+//        context.put("progressData", resultTree.toJSON());
+//        addFormattersToContext(context);
+//
+//        String javascriptCoverageData = mergeTemplate(PROGRESS_DATA_TEMPLATE_PATH).usingContext(context);
+//        writeReportToOutputDirectory("progress.js", javascriptCoverageData);
+//    }
 
     public void clearHistory() {
         getTestHistory().clearHistory();
