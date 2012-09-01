@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.csv.CSVTestDataSource;
 import net.thucydides.core.csv.TestDataSource;
 import net.thucydides.core.guice.Injectors;
@@ -36,7 +37,7 @@ public final class StepData {
         useDefaultStepFactoryIfUnassigned();
         TestDataSource testdata = new CSVTestDataSource(testDataSource, separator);
 
-        Class<?> scenarioStepsClass = (Class<?>) steps.getClass().getSuperclass();
+        Class<?> scenarioStepsClass = steps.getClass().getSuperclass();
         List<T> instanciatedSteps = (List<T>) testdata.getInstanciatedInstancesFrom(scenarioStepsClass, factory);
 
         DataDrivenStepFactory dataDrivenStepFactory = new DataDrivenStepFactory(factory);
@@ -61,6 +62,9 @@ public final class StepData {
     }
 
     public static StepFactory getDefaultStepFactory() {
+        if (factoryThreadLocal.get() == null) {
+            factoryThreadLocal.set(new StepFactory());
+        }
         return factoryThreadLocal.get();
     }
 

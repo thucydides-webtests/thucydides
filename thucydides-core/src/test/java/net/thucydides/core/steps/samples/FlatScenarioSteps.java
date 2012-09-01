@@ -7,6 +7,9 @@ import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Title;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
 import org.junit.Ignore;
 
 public class FlatScenarioSteps extends ScenarioSteps {
@@ -133,4 +136,16 @@ public class FlatScenarioSteps extends ScenarioSteps {
 
     }
 
+    @Given("some state")
+    public void given_some_state() {
+    }
+
+    @When("we do something")
+    public void when_we_do_something() {
+    }
+
+    @Then("this should happen")
+    public void then_this_should_happen() {
+
+    }
 }

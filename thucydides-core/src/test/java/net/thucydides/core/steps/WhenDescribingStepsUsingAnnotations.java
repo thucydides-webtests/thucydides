@@ -8,6 +8,7 @@ import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Title;
 import net.thucydides.core.annotations.UserStoryCode;
 import net.thucydides.core.pages.Pages;
+import org.jbehave.core.annotations.Given;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -59,6 +60,10 @@ public class WhenDescribingStepsUsingAnnotations {
         @TestsRequirements({"REQ-1","REQ-2"})
         @Step
         public void a_step_testing_several_requirements() {}
+
+        @Given("A step with a given annotation")
+        public void a_given_annotated_step() {}
+
     }
 
     @Test
@@ -88,6 +93,14 @@ public class WhenDescribingStepsUsingAnnotations {
         assertThat(annotatedStepDescription.getName(), is("A step with an annotation"));
     }
 
+    @Test
+    public void a_title_annotation_can_be_defined_in_a_given_annotation() {
+        ExecutedStepDescription description = new ExecutedStepDescription(SampleTestSteps.class, "a_given_annotated_step");
+
+        AnnotatedStepDescription annotatedStepDescription = AnnotatedStepDescription.from(description);
+
+        assertThat(annotatedStepDescription.getName(), is("Given a step with a given annotation"));
+    }
 
     @Test
     public void a_step_group_name_should_be_a_human_readable_version_of_the_method_name() {
