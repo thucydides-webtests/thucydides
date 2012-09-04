@@ -121,6 +121,8 @@ public class WhenScreenshotsAreTaken {
         String screenshotFile = photographer.takeScreenshot("screenshot").get().getName();
         waitUntilScreenshotsProcessed();
         File savedScreenshot = new File(screenshotDirectory, screenshotFile);
+        savedScreenshot.setReadable(true);
+        savedScreenshot.setWritable(true);
         assertThat(savedScreenshot.isFile(), is(true));
     }
 
