@@ -70,7 +70,9 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
         Thucydides.loadLocalPreferences();
 
     }
-    private void writeToPropertiesFile(String... lines) throws IOException {
+
+    @SuppressWarnings("static-access")
+	private void writeToPropertiesFile(String... lines) throws IOException, InterruptedException {
         thucydidesPropertiesFile = new File(homeDirectory, "thucydides.properties");
         thucydidesPropertiesFile.setReadable(true);
         thucydidesPropertiesFile.setWritable(true);
@@ -81,6 +83,7 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
         } catch (IOException e) {
         	System.err.println(e);
 		}
+        Thread.currentThread().sleep(100);
         FileWriter outFile = new FileWriter(thucydidesPropertiesFile);
         PrintWriter out = new PrintWriter(outFile);
         for(String line : lines) {
