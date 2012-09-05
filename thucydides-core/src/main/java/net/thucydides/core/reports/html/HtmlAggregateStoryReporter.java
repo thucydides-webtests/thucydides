@@ -7,6 +7,7 @@ import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.FeatureResults;
 import net.thucydides.core.model.NumericalFormatter;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomeLoader;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.UserStoryTestReporter;
@@ -237,6 +238,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         context.put("testOutcomes", testOutcomesForTagType);
         context.put("allTestOutcomes", testOutcomesForTagType.getRootOutcomes());
         context.put("reportName", reportName);
+        context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
         addFormattersToContext(context);
         return context;
     }

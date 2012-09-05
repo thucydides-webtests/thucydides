@@ -101,7 +101,7 @@ public class HtmlProgressReporter extends HtmlReporter {
 
     private ProgressSnapshot createEndOfSeriesEntry(ProgressSnapshot latestSnapshot, Optional<Point> intersection) {
         return ProgressSnapshot.forRequirementType(latestSnapshot.getRequirementType())
-                .atTime(latestSnapshot.getTime())
+                .atTime(latestSnapshot.getTime().plus(1).secondOfDay().getDateTime())
                 .and(0).failed()
                 .and(0).completed()
                 .and(latestSnapshot.getCompleted()).estimated()

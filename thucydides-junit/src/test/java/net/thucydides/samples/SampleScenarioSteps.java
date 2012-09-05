@@ -80,6 +80,10 @@ public class SampleScenarioSteps extends ScenarioSteps {
     }
 
     @Step
+    public void moreStepWithParameters(String option1, Integer option2) {
+    }
+
+    @Step
     public void stepThatFails() {
         assertThat(1, is(2));
     }

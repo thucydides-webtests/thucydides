@@ -19,7 +19,7 @@ task setNewVersion {
 task buildArtifacts {
     dependsOn setNewVersion
     executeOnShell "mvn clean install -T 2C -DskipTests"
-    executeOnShell "mvn javadoc:jar source:jar -T 4C"
+    executeOnShell "mvn javadoc:jar source:jar javadoc:aggregate -T 4C"
 }
 
 task deployArtifacts {

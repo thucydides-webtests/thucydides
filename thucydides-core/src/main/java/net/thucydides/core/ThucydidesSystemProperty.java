@@ -81,6 +81,13 @@ public enum ThucydidesSystemProperty {
     VERBOSE_SCREENSHOTS("thucydides.verbose.screenshots"),
 
     /**
+     * Should Thucydides display detailed information in the test result tables.
+     * If this is set to true, test result tables will display a breakdown of the steps by result.
+     * This is false by default.
+     */
+    SHOW_STEP_DETAILS("thucydides.reports.show.step.details"),
+
+    /**
      * Restart the browser every so often during data-driven tests.
      */
     RESTART_BROWSER_FREQUENCY("thucydides.restart.browser.frequency"),
