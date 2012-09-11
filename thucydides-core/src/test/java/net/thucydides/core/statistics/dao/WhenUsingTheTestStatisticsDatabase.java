@@ -2,6 +2,7 @@ package net.thucydides.core.statistics.dao;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.guice.DatabaseConfig;
@@ -16,12 +17,14 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.LocalPreferences;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.util.PropertiesFileLocalPreferences;
+import net.thucydides.core.util.SystemEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,12 +41,15 @@ public class WhenUsingTheTestStatisticsDatabase {
         @Override
         protected void configure() {
             clearEntityManagerCache();
-            bind(EnvironmentVariables.class).to(MockEnvironmentVariables.class).in(Singleton.class);
             bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
-            bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
             bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
             bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
             bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);
+        }
+
+        @Override
+        public EnvironmentVariables createEnvironmentVariables() {
+            return new MockEnvironmentVariables();
         }
     }
 

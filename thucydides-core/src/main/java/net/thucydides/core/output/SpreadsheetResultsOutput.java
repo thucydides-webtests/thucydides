@@ -53,9 +53,7 @@ public class SpreadsheetResultsOutput implements ResultsOutput {
             if (workbook != null) {
                 workbook.close();
             }
-        } catch (WriteException e) {
-            // Don't really care
-        }
+        } catch (WriteException ignoredException) {}
     }
 
     private void writeRow(List<String> columnValues,

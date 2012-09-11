@@ -54,7 +54,6 @@ public class WhenRecordingTestResultStatistics {
         protected void configure() {
             clearEntityManagerCache();
             bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
-            bind(EnvironmentVariables.class).to(MockEnvironmentVariables.class).in(Singleton.class);
             bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
             bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class);
             bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class);
@@ -62,7 +61,13 @@ public class WhenRecordingTestResultStatistics {
             bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
             bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);
         }
+
+        @Override
+        public EnvironmentVariables createEnvironmentVariables() {
+            return new MockEnvironmentVariables();
+        }
     }
+
 
     @Mock
     TestOutcome testOutcome;

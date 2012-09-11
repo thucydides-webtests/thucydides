@@ -139,11 +139,6 @@ public class Thucydides {
     }
 
 
-    public static void loadLocalPreferences() throws IOException {
-        LocalPreferences localPreferences = Injectors.getInjector().getInstance(LocalPreferences.class);
-        localPreferences.loadPreferences();
-    }
-
     public static void initializeTestSession() {
         getCurrentSession().clear();
     }
