@@ -297,7 +297,13 @@ public enum ThucydidesSystemProperty {
      * This is the list of capability types to be used when reading capabilities from the file system
      * and when organizing the reports. It is a comma-separated list of tags.The default value is: capability, feature
      */
-    DATA_DIRECTORY("thucydides.data.dir");
+    DATA_DIRECTORY("thucydides.data.dir"),
+
+    STATISTICS_DRIVER("thucydides.statistics.driver_class"),
+    STATISTICS_URL("thucydides.statistics.url"),
+    STATISTICS_USERNAME("thucydides.statistics.username"),
+    STATISTICS_PASSWORD("thucydides.statistics.password"),
+    STATISTICS_DIALECT("thucydides.statistics.dialect");
 
 
     private String propertyName;

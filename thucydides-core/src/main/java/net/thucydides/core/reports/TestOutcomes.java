@@ -265,7 +265,6 @@ public class TestOutcomes {
     private Converter<TestOutcome, TestOutcome> toOutcomesWithHistory() {
         return new Converter<TestOutcome, TestOutcome>() {
 
-            @Override
             public TestOutcome convert(TestOutcome testOutcome) {
                 TestStatistics statistics = testStatisticsProvider.statisticsForTests(With.title(testOutcome.getTitle()));
                 testOutcome.setStatistics(statistics);
