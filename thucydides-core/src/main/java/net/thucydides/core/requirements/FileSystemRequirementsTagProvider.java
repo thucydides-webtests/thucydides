@@ -58,11 +58,31 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     private List<Requirement> requirements;
 
     public FileSystemRequirementsTagProvider() {
-        this(DEFAULT_ROOT_DIRECTORY);
+        this(getDefaultRootDirectoryPathFrom(Injectors.getInjector().getInstance(EnvironmentVariables.class)));
+    }
+
+    public static String getDefaultRootDirectoryPathFrom(EnvironmentVariables environmentVariables) {
+        String rootPath = ThucydidesSystemProperty.TEST_ROOT_PACKAGE.from(environmentVariables);
+        if (StringUtils.isEmpty(rootPath)) {
+            return DEFAULT_ROOT_DIRECTORY;
+        } else {
+            return rootPath;
+        }
     }
 
     public FileSystemRequirementsTagProvider(String rootDirectory, int level) {
-        this(rootDirectory, level, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(filePathFormOf(rootDirectory), level, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+    }
+
+    /**
+     * Convert a package name to a file path if necessary.
+     */
+    private static String filePathFormOf(String rootDirectory) {
+        if (rootDirectory.contains(".")) {
+            return rootDirectory.replace(".","/");
+        } else {
+            return rootDirectory;
+        }
     }
 
     public FileSystemRequirementsTagProvider(String rootDirectory, int level, EnvironmentVariables environmentVariables) {
@@ -71,6 +91,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         this.level = level;
         this.narrativeReader = NarrativeReader.forRootDirectory(rootDirectory)
                 .withRequirementTypes(getRequirementTypes());
+        System.out.println("FileSystemRequirementsTagProvider for root directory " + rootDirectory);
     }
 
     public FileSystemRequirementsTagProvider(String rootDirectory) {
@@ -198,7 +219,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         }
     }
 
-    @Override
     public Optional<Requirement> getRequirementFor(TestTag testTag) {
         for(Requirement requirement : getRequirements()) {
             if (requirement.getName().equals(testTag.getName()) && requirement.getType().equals(testTag.getType())) {
@@ -296,7 +316,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     private Converter<File, Requirement> toRequirements() {
         return new Converter<File, Requirement>() {
 
-            @Override
             public Requirement convert(File requirementFileOrDirectory) {
                 return readRequirementFrom(requirementFileOrDirectory);
             }
@@ -306,7 +325,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     private Converter<File, Requirement> toStoryRequirements() {
         return new Converter<File, Requirement>() {
 
-            @Override
             public Requirement convert(File storyFile) {
                 return readRequirementsFromStoryFile(storyFile);
             }
@@ -398,7 +416,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
 
     private FileFilter thatAreDirectories() {
         return new FileFilter() {
-            @Override
             public boolean accept(File file) {
                 return file.isDirectory() && !file.getName().startsWith(".");
             }
@@ -407,7 +424,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
 
     private FileFilter thatAreStories() {
         return new FileFilter() {
-            @Override
             public boolean accept(File file) {
                 return file.getName().toLowerCase().endsWith(".story");
             }

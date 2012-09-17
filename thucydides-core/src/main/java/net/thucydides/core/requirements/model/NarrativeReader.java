@@ -201,7 +201,6 @@ public class NarrativeReader {
     private FilenameFilter calledNarrativeDotTxt() {
         return new FilenameFilter() {
 
-            @Override
             public boolean accept(File file, String name) {
                 return name.toLowerCase().equals("narrative.txt");
             }

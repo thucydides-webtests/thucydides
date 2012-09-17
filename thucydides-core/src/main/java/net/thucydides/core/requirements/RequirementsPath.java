@@ -1,7 +1,10 @@
 package net.thucydides.core.requirements;
 
 import com.google.common.base.Splitter;
+import org.hamcrest.text.StringStartsWith;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -14,11 +17,15 @@ public class RequirementsPath {
 
     public static List<String> stripRootFromPath(String root, List<String> storyPathElements) {
         List<String> rootElements = pathElements(root);
-        if (storyPathElements.subList(0, rootElements.size()).equals(rootElements)) {
+        if (thePathIn(storyPathElements).startsWith(rootElements)) {
             return storyPathElements.subList(rootElements.size(), storyPathElements.size());
         } else {
             return storyPathElements;
         }
+    }
+
+    private static PathStartsWith thePathIn(List<String> storyPathElements) {
+        return new PathStartsWith(storyPathElements);
     }
 
     public static List<String> pathElements(String path) {
@@ -29,4 +36,25 @@ public class RequirementsPath {
         return toList(Splitter.on(FILE_SYSTEM_PATH_SEPARATORS).omitEmptyStrings().trimResults().split(path).iterator());
     }
 
+    private static class PathStartsWith {
+        private List<String> storyPathElements;
+
+        public PathStartsWith(List<String> storyPathElements) {
+            this.storyPathElements = storyPathElements;
+        }
+
+        public boolean startsWith(List<String> rootElements) {
+            if (storyPathElements.size() >= rootElements.size()) {
+                int elementIndex = 0;
+                for(String pathElement : storyPathElements) {
+                    if (!pathElement.equals(rootElements.get(elementIndex++))) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 }
