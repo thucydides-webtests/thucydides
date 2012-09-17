@@ -47,7 +47,7 @@ public class MultithreadScreenshotProcessor implements ScreenshotProcessor {
     public void waitUntilDone() {
         while (!queue.isEmpty()) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (InterruptedException ignore) {
             }
         }

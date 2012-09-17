@@ -138,16 +138,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
         batchManager.registerTestCase(klass);
 
-        loadLocalPreferences();
-
-    }
-
-    private void loadLocalPreferences() throws InitializationError {
-        try {
-            Thucydides.loadLocalPreferences();
-        } catch (IOException e) {
-            throw new InitializationError(e);
-        }
     }
 
     private String getSpecifiedDriver(Class<?> klass) {

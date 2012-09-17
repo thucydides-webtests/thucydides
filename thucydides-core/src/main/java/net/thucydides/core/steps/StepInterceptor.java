@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import com.google.common.collect.ImmutableList;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import net.thucydides.core.IgnoredStepException;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -65,7 +67,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     private boolean baseClassMethod(final Method method, final Class callingClass) {
         boolean isACoreLanguageMethod = (OBJECT_METHODS.contains(method.getName()));
         boolean methodDoesNotComeFromThisClassOrARelatedParentClass = !declaredInSameDomain(method, callingClass);
-        return (isACoreLanguageMethod || methodDoesNotComeFromThisClassOrARelatedParentClass); 
+        return (isACoreLanguageMethod || methodDoesNotComeFromThisClassOrARelatedParentClass);
     }
 
     private boolean declaredInSameDomain(Method method, final Class callingClass) {
@@ -79,7 +81,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     }
 
     private String packageDomainName(String methodPackage) {
-        String[] packages = split(methodPackage,".");
+        String[] packages = split(methodPackage, ".");
 
         if (packages.length == 0) {
             return "";
@@ -177,8 +179,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private boolean aPreviousStepHasFailed() {
         boolean aPreviousStepHasFailed = false;
-        if (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed()
-                && !StepEventBus.getEventBus().isCurrentTestDataDriven()) {
+        if (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed() && !StepEventBus.getEventBus().isCurrentTestDataDriven()) {
             aPreviousStepHasFailed = true;
         }
 
@@ -221,16 +222,22 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         }
     }
 
-    private StepGroup getTestGroupAnnotationFor(final Method method) {
-        return method.getAnnotation(StepGroup.class);
+    private boolean isAnnotatedWithAValidStepAnnotation(final Method method) {
+        Annotation[] annotations = method.getAnnotations();
+        for (Annotation annotation : annotations) {
+            if (isAThucydidesStep(annotation) || (AnnotatedStepDescription.isACompatibleStep(annotation))) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private Step getTestAnnotationFor(final Method method) {
-        return method.getAnnotation(Step.class);
+    private boolean isAThucydidesStep(Annotation annotation) {
+        return (annotation instanceof Step) || (annotation instanceof StepGroup);
     }
 
     private boolean isATestStep(final Method method) {
-        return (getTestAnnotationFor(method) != null) || (getTestGroupAnnotationFor(method) != null);
+        return isAnnotatedWithAValidStepAnnotation(method);
     }
 
     private boolean isIgnored(final Method method) {

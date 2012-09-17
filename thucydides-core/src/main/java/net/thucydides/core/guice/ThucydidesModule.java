@@ -11,7 +11,6 @@ import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
-import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.reports.json.ColorScheme;
 import net.thucydides.core.reports.json.RelativeSizeColorScheme;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
@@ -20,8 +19,8 @@ import net.thucydides.core.reports.templates.FreeMarkerTemplateManager;
 import net.thucydides.core.reports.templates.TemplateManager;
 import net.thucydides.core.requirements.ClasspathRequirementsProviderService;
 import net.thucydides.core.requirements.RequirementsProviderService;
-import net.thucydides.core.screenshots.MultithreadScreenshotProcessor;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
+import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor;
 import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
 import net.thucydides.core.statistics.Statistics;
 import net.thucydides.core.statistics.StatisticsListener;
@@ -50,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class ThucydidesModule extends AbstractModule {
@@ -64,14 +64,12 @@ public class ThucydidesModule extends AbstractModule {
         bind(ColorScheme.class).to(RelativeSizeColorScheme.class).in(Singleton.class);
         bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
         bind(TemplateManager.class).to(FreeMarkerTemplateManager.class).in(Singleton.class);
-        bind(EnvironmentVariables.class).to(SystemEnvironmentVariables.class).in(Singleton.class);
         bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);
         bind(IssueTracking.class).to(SystemPropertiesIssueTracking.class).in(Singleton.class);
         bind(WebdriverManager.class).to(ThucydidesWebdriverManager.class);
         bind(BatchManager.class).to(SystemVariableBasedBatchManager.class);
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
-        bind(LocalPreferences.class).to(PropertiesFileLocalPreferences.class).in(Singleton.class);
-        bind(ScreenshotProcessor.class).to(MultithreadScreenshotProcessor.class).in(Singleton.class);
+        bind(ScreenshotProcessor.class).to(SingleThreadScreenshotProcessor.class).in(Singleton.class);
 
         bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
         bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class).in(Singleton.class);
@@ -82,6 +80,23 @@ public class ThucydidesModule extends AbstractModule {
 
         bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class).in(Singleton.class);
         bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class).in(Singleton.class);
+    }
+
+    @Provides
+    @Singleton
+    public EnvironmentVariables provideEnvironmentVariables() {
+        return createEnvironmentVariables();
+    }
+
+    protected EnvironmentVariables createEnvironmentVariables() {
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        LocalPreferences localPreferences = new PropertiesFileLocalPreferences(environmentVariables);
+        try {
+            localPreferences.loadPreferences();
+        } catch (IOException e) {
+            LOGGER.error("Could not load local preferences", e);
+        }
+        return environmentVariables;
     }
 
     @Provides

@@ -5,8 +5,9 @@ import com.thoughtworks.xstream.io.StreamException;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.reports.TestOutcomes;
-import net.thucydides.core.reports.html.history.TestResultSnapshot;
+import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.util.EnvironmentVariables;
+import org.joda.time.DateTime;
 
 import java.io.Closeable;
 import java.io.File;
@@ -29,18 +30,37 @@ public class TestHistory {
     private static final String BUILD_ID = "BUILD_ID";
     private final File dataDirectory;
     private final String projectName;
+    private final DateProvider dateProvider;
 
     protected EnvironmentVariables environmentVariables;
 
     public TestHistory(final String projectName) {
-        this(projectName, Injectors.getInjector().getInstance(EnvironmentVariables.class));
-    }
-    public TestHistory(final String projectName, final EnvironmentVariables environmentVariables) {
-        this.environmentVariables = environmentVariables;
-        this.projectName = projectName;
-        dataDirectory = new File(getBaseDirectoryPath());
+        this(projectName, Injectors.getInjector().getInstance(EnvironmentVariables.class), null);
     }
 
+    public TestHistory(final String projectName, File baseDirectory, DateProvider dateProvider) {
+        this(projectName, Injectors.getInjector().getInstance(EnvironmentVariables.class), baseDirectory, dateProvider);
+    }
+
+    public TestHistory(final String projectName, final EnvironmentVariables environmentVariables) {
+        this(projectName, environmentVariables, null);
+    }
+
+    public TestHistory(final String projectName,
+                       final EnvironmentVariables environmentVariables,
+                       final File baseDirectory) {
+        this(projectName, environmentVariables, baseDirectory, new SystemDateProvider());
+    }
+
+    private TestHistory(final String projectName,
+                       final EnvironmentVariables environmentVariables,
+                       final File baseDirectory,
+                       final DateProvider dateProvider) {
+        this.environmentVariables = environmentVariables;
+        this.projectName = projectName;
+        dataDirectory = (baseDirectory != null) ? baseDirectory : new File(getBaseDirectoryPath());
+        this.dateProvider = dateProvider;
+    }
 
     private String getBaseDirectoryPath() {
         String defaultBaseDirectory = new File(homeDirectory(), ".thucydides").getAbsolutePath();
@@ -50,6 +70,11 @@ public class TestHistory {
 
     private String homeDirectory() {
         return environmentVariables.getProperty("user.home");
+    }
+
+    public void updateData(RequirementsOutcomes requirementsOutcome) {
+        updateData(requirementsOutcome.getTestOutcomes());
+        updateProgressHistory(requirementsOutcome);
     }
 
     public void updateData(TestOutcomes testOutcomes) {
@@ -72,9 +97,43 @@ public class TestHistory {
         }
     }
 
+    public void updateProgressHistory(RequirementsOutcomes requirementsOutcome) {
+        String requirementType = requirementsOutcome.getType();
+        int totalRequirements = requirementsOutcome.getRequirementCount();
+        int completedRequirements = requirementsOutcome.getCompletedRequirementsCount();
+        int failingRequirements = requirementsOutcome.getFailingRequirementsCount();
+        String buildId = getEnvironmentVariables().getValue(BUILD_ID, "MANUAL");
+
+        ProgressSnapshot newSnapshot = ProgressSnapshot.forRequirementType(requirementType)
+                                                        .atTime(dateProvider.getCurrentTime())
+                                                        .with(completedRequirements).completed()
+                                                        .and(failingRequirements).failed()
+                                                        .outOf(totalRequirements)
+                                                        .forBuild(buildId);
+
+        try {
+            save(newSnapshot);
+        } catch (FileNotFoundException e) {
+            throw new IllegalArgumentException("Unable to store history data", e);
+        }
+    }
+
     private void save(TestResultSnapshot snapshot) throws FileNotFoundException {
         XStream xstream = new XStream();
-        File snapshotFile = new File(getDirectory(), historyPrefix() + snapshot.getTime().getMillis());
+        File snapshotFile = new File(getDirectory(), outcomesPrefix() + snapshot.getTime().getMillis());
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(snapshotFile);
+            xstream.toXML(snapshot, out);
+        } finally {
+            close(out);
+        }
+
+    }
+
+    private void save(ProgressSnapshot snapshot) throws FileNotFoundException {
+        XStream xstream = new XStream();
+        File snapshotFile = new File(getDirectory(), progressPrefix() + snapshot.getTime().getMillis());
         OutputStream out = null;
         try {
             out = new FileOutputStream(snapshotFile);
@@ -103,7 +162,7 @@ public class TestHistory {
     }
 
     public List<TestResultSnapshot> getHistory() {
-        File[] historyFiles = getHistoryFiles();
+        File[] historyFiles = getOutcomeFiles();
 
         List<TestResultSnapshot> resultSnapshots = new ArrayList<TestResultSnapshot>();
 
@@ -125,25 +184,70 @@ public class TestHistory {
         }
         Collections.sort(resultSnapshots);
         return resultSnapshots;
+    }
 
+    public List<ProgressSnapshot> getProgress() {
+        File[] historyFiles = getProgressFiles();
+
+        List<ProgressSnapshot> resultSnapshots = new ArrayList<ProgressSnapshot>();
+
+        XStream xstream = new XStream();
+        for(File historyFile : historyFiles) {
+            ProgressSnapshot snapshot = null;
+            InputStream inputStream = null;
+            try {
+                inputStream = new FileInputStream(historyFile);
+                snapshot = (ProgressSnapshot) xstream.fromXML(inputStream);
+            } catch (FileNotFoundException e) {
+                throw new IllegalArgumentException("Unable to read history data in " + historyFile, e);
+            } catch (StreamException streamException) {
+                throw new IllegalArgumentException("Unable to parse history data in " + historyFile, streamException);
+            } finally {
+                close(inputStream);
+            }
+            resultSnapshots.add(snapshot);
+        }
+        Collections.sort(resultSnapshots);
+        return resultSnapshots;
+    }
+
+
+    private File[] getOutcomeFiles() {
+        return getDirectory().listFiles(new FilenameFilter() {
+            public boolean accept(File directory, String filename) {
+                return filename.startsWith(outcomesPrefix());
+            }
+        });
+    }
+
+
+    private File[] getProgressFiles() {
+        return getDirectory().listFiles(new FilenameFilter() {
+            public boolean accept(File directory, String filename) {
+                return filename.startsWith(progressPrefix());
+            }
+        });
     }
 
     private File[] getHistoryFiles() {
         return getDirectory().listFiles(new FilenameFilter() {
             public boolean accept(File directory, String filename) {
-                return filename.startsWith(historyPrefix());
+                return filename.startsWith(outcomesPrefix()) || filename.startsWith(progressPrefix());
             }
         });
     }
 
-    private String historyPrefix() {
-        return "thucydides-";
+    private String outcomesPrefix() {
+        return "thucydides-outcome-";
+    }
+
+    private String progressPrefix() {
+        return "thucydides-progress-";
     }
 
     public void clearHistory() {
         File[] historyFiles = getHistoryFiles();
         for(File historyFile : historyFiles) {
-            //noinspection ResultOfMethodCallIgnored
             historyFile.delete();
         }
     }

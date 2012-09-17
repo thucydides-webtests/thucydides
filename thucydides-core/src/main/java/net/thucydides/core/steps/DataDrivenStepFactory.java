@@ -1,6 +1,7 @@
 package net.thucydides.core.steps;
 
 import net.sf.cglib.proxy.Enhancer;
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.pages.Pages;
 
 import java.util.List;
@@ -10,21 +11,16 @@ import java.util.List;
  */
 public class DataDrivenStepFactory {
 
-    private static final Class<?>[] CONSTRUCTOR_ARG_TYPES = {Pages.class};
+    private final StepFactory factory;
 
-    public static ScenarioSteps newDataDrivenSteps(final Class<? extends ScenarioSteps> scenarioStepsClass,
-                                                   final List<? extends ScenarioSteps> instantiatedSteps) {
+    public DataDrivenStepFactory(StepFactory factory) {
+        this.factory = factory;
+    }
 
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(scenarioStepsClass);
+    public Object newDataDrivenSteps(final Class<?> scenarioStepsClass,
+                                            final List<?> instantiatedSteps) {
 
         DataDrivenStepInterceptor stepInterceptor = new DataDrivenStepInterceptor(instantiatedSteps);
-        enhancer.setCallback(stepInterceptor);
-
-        Object[] arguments = new Object[1];
-        arguments[0] = instantiatedSteps.get(0).getPages();
-        ScenarioSteps steps = (ScenarioSteps) enhancer.create(CONSTRUCTOR_ARG_TYPES, arguments);
-
-        return steps;
+        return factory.instantiateNewStepLibraryFor(scenarioStepsClass, stepInterceptor);
     }
 }

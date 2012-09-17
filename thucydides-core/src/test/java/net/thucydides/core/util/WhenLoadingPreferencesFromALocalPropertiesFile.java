@@ -1,6 +1,7 @@
 package net.thucydides.core.util;
 
-import net.thucydides.core.Thucydides;
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.guice.ThucydidesModule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,6 +55,17 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
     }
 
     @Test
+    public void home_properties_should_override_classpath_properties() throws Exception {
+        writeToPropertiesFile("test.property = reset");
+
+        localPreferences.setHomeDirectory(homeDirectory);
+
+        localPreferences.loadPreferences();
+
+        assertThat(environmentVariables.getProperty("test.property"), is("reset"));
+    }
+
+    @Test
     public void local_preferences_should_not_override_system_preferences() throws Exception {
         writeToPropertiesFile("webdriver.driver = opera");
 
@@ -66,10 +78,11 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
     }
 
     @Test
-    public void local_preferences_are_instantiated_using_guice() throws IOException {
-        Thucydides.loadLocalPreferences();
-
+    public void local_preferences_should_be_loaded_with_the_environment_variables() {
+        EnvironmentVariables loadedEnvironmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        assertThat(loadedEnvironmentVariables.getProperty("test.property"), is("set"));
     }
+
 
     @SuppressWarnings("static-access")
 	private void writeToPropertiesFile(String... lines) throws IOException, InterruptedException {

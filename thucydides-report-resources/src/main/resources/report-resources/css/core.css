@@ -841,7 +841,8 @@ h4 {
 }
 
 .requirementName {
-    font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;
+    font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:bold;font-style: normal;
+    color: #0d78ae;
     margin-bottom: 0.5em;
 }
 

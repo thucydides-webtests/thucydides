@@ -2,7 +2,9 @@ package net.thucydides.maven.plugins;
 
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
+import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -68,6 +70,32 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
      */
     public String jiraProject;
 
+    /**
+     * @parameter
+     */
+    public String statisticsDriver;
+
+    /**
+     * @parameter
+     */
+    public String statisticsUsername;
+
+    /**
+     * @parameter
+     */
+    public String statisticsPassword;
+
+    /**
+     * @parameter
+     */
+    public String statisticsDialect;
+
+    /**
+     * @parameter
+     */
+    public String statisticsUrl;
+
+    EnvironmentVariables environmentVariables;
 
     /**
      * Thucydides project key
@@ -108,11 +136,34 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
         }
     }
 
+    private EnvironmentVariables getEnvironmentVariables() {
+        if (environmentVariables == null) {
+            environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        }
+        return environmentVariables;
+    }
+
     private void configureEnvironmentVariables() {
-        if (projectKey != null) {
-            System.setProperty(ThucydidesSystemProperty.PROJECT_KEY.getPropertyName(), projectKey);
+        updateSystemProperty(ThucydidesSystemProperty.PROJECT_KEY.getPropertyName(), projectKey, Thucydides.getDefaultProjectKey());
+
+        updateSystemProperty("thucydides.statistics.driver_class", statisticsDriver);
+        updateSystemProperty("thucydides.statistics.url", statisticsUrl);
+        updateSystemProperty("thucydides.statistics.username", statisticsUsername);
+        updateSystemProperty("thucydides.statistics.password", statisticsPassword);
+        updateSystemProperty("thucydides.statistics.dialect", statisticsDialect);
+    }
+
+    private void updateSystemProperty(String key, String value, String defaultValue) {
+        if (value != null) {
+            getEnvironmentVariables().setProperty(key, value);
         } else {
-            System.setProperty(ThucydidesSystemProperty.PROJECT_KEY.getPropertyName(), Thucydides.getDefaultProjectKey());
+            getEnvironmentVariables().setProperty(key, defaultValue);
+        }
+    }
+
+    private void updateSystemProperty(String key, String value) {
+        if (value != null) {
+            getEnvironmentVariables().setProperty(key, value);
         }
     }
 

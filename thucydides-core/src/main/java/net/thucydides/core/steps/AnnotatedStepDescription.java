@@ -1,5 +1,7 @@
 package net.thucydides.core.steps;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestsRequirement;
@@ -7,6 +9,8 @@ import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Title;
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +22,8 @@ import static net.thucydides.core.util.NameConverter.humanize;
  * Test steps and step groups can be described by various annotations.
  */
 public final class AnnotatedStepDescription {
+
+    private static final List<String> VALID_STEP_ANNOTATIONS = ImmutableList.of("Step", "Given", "When", "Then");
 
     private final ExecutedStepDescription description;
 
@@ -111,17 +117,45 @@ public final class AnnotatedStepDescription {
         return null;
     }
 
-    private String getAnnotatedStepName() {
-        return getNameFromStepAnnotationIn(getTestMethod());
+    private Optional<String> getAnnotatedStepName() {
+        Optional<String> stepAnnotatedName = getNameFromStepAnnotationIn(getTestMethod());
+        if (stepAnnotatedName.isPresent()) {
+            return stepAnnotatedName;
+        } else {
+            return getCompatibleStepNameFrom(getTestMethod());
+        }
     }
 
-    private String getNameFromStepAnnotationIn(final Method testMethod) {
+    public static boolean isACompatibleStep(Annotation annotation) {
+        return VALID_STEP_ANNOTATIONS.contains(annotation.annotationType().getSimpleName());
+    }
+
+    private Optional<String> getCompatibleStepNameFrom(Method testMethod) {
+        Annotation[] annotations = testMethod.getAnnotations();
+        for (Annotation annotation : annotations) {
+            if (isACompatibleStep(annotation)) {
+                try {
+                    String annotationType = annotation.annotationType().getSimpleName();
+                    String annotatedValue = (String)annotation.getClass().getMethod("value").invoke(annotation);
+                    if (StringUtils.isEmpty(annotatedValue)) {
+                        return Optional.absent();
+                    } else {
+                        return Optional.of(annotationType + " " + StringUtils.uncapitalize(annotatedValue));
+                    }
+
+                } catch (Exception ignoredException) {}
+            }
+        }
+        return Optional.absent();
+    }
+
+    private Optional<String> getNameFromStepAnnotationIn(final Method testMethod) {
         Step step = testMethod.getAnnotation(Step.class);
 
         if ((step != null) && (!StringUtils.isEmpty(step.value()))) {
-            return step.value();
+            return Optional.of(step.value());
         }
-        return null;
+        return Optional.absent();
     }
 
     public String getName() {
@@ -153,9 +187,9 @@ public final class AnnotatedStepDescription {
             return annotationTitle;
         }
 
-        String annotatedStepName = getAnnotatedStepName();
-        if (!StringUtils.isEmpty(annotatedStepName)) {
-            return annotatedStepName;
+        Optional<String> annotatedStepName = getAnnotatedStepName();
+        if (getAnnotatedStepName().isPresent() && (StringUtils.isNotEmpty(annotatedStepName.get()))) {
+            return annotatedStepName.get();
         }
 
         return humanize(description.getName());

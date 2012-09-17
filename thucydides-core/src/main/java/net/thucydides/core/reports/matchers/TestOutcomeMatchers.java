@@ -7,7 +7,11 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.exists;
+import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.on;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.is;
 
 public final class TestOutcomeMatchers {
 
@@ -18,12 +22,7 @@ public final class TestOutcomeMatchers {
             @Override
             public boolean matches(Object matchee) {
                 TestOutcome testOutcome =  (TestOutcome) matchee;
-                for (TestTag tag : testOutcome.getTags()) {
-                    if (tag.getType().equals(tagType))  {
-                        return true;
-                    }
-                }
-                return false;
+                return exists(testOutcome.getTags(), having(on(TestTag.class).getType(), is(tagType)));
             }
 
             @Override
@@ -40,12 +39,7 @@ public final class TestOutcomeMatchers {
             @Override
             public boolean matches(Object matchee) {
                 TestOutcome testOutcome =  (TestOutcome) matchee;
-                for (TestTag tag : testOutcome.getTags()) {
-                    if (tag.getName().equalsIgnoreCase(tagName))  {
-                        return true;
-                    }
-                }
-                return false;
+                return exists(testOutcome.getTags(), having(on(TestTag.class).getName(), equalToIgnoringCase(tagName)));
             }
 
             @Override
@@ -62,12 +56,7 @@ public final class TestOutcomeMatchers {
             @Override
             public boolean matches(Object matchee) {
                 TestOutcome testOutcome =  (TestOutcome) matchee;
-                for (TestTag tag : testOutcome.getTags()) {
-                    if (tag.equals(expectedTag))  {
-                        return true;
-                    }
-                }
-                return false;
+                return exists(testOutcome.getTags(), having(on(TestTag.class), is(expectedTag)));
             }
 
             @Override
@@ -77,21 +66,8 @@ public final class TestOutcomeMatchers {
         };
     }
     
-    public static Matcher<TestOutcome> withResult(final TestResult testResult) {
-
-        return new BaseMatcher<TestOutcome>() {
-
-            @Override
-            public boolean matches(Object matchee) {
-                TestOutcome testOutcome =  (TestOutcome) matchee;
-                return testOutcome.getResult().equals(testResult);
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("a test outcome with a result of ").appendValue(testResult);
-            }
-        };
+    public static Matcher<TestOutcome> withResult(final TestResult expectedResult) {
+        return having(on(TestOutcome.class).getResult(), is(expectedResult));
     }
 
 }

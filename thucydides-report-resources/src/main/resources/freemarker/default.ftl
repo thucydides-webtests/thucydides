@@ -50,6 +50,7 @@
         <ul>
             <li><a href="index.html" class="current">Test Results</a></li>
             <li><a href="capabilities.html">Requirements</a></li>
+            <li><a href="progress-report.html">Progress</a></li>
             <#foreach tagType in allTestOutcomes.tagTypes>
                 <#assign tagReport = reportName.forTagType(tagType) >
                 <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >

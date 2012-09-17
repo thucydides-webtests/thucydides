@@ -100,8 +100,16 @@ public class WhenSavingAndRestoringSystemProperties {
         Boolean value = environmentVariables.getPropertyAsBoolean("some.boolean.value", false);
         System.clearProperty("some.boolean.value");
         assertThat(value, is(true));
+    }
 
+    @Test
+    public void should_be_able_to_read_boolean_system_value_if_set_to_nothing() {
+        System.setProperty("some.boolean.value", "");
 
+        SystemEnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        Boolean value = environmentVariables.getPropertyAsBoolean("some.boolean.value", false);
+        System.clearProperty("some.boolean.value");
+        assertThat(value, is(true));
     }
 
 

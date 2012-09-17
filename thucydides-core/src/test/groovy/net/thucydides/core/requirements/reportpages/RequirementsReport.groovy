@@ -7,10 +7,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 
 /**
- * A description goes here.
- * User: john
- * Date: 30/07/12
- * Time: 9:14 PM
+ * Models the capabilities report page for testing purposes
  */
 class RequirementsReport extends PageObject {
 
@@ -46,6 +43,10 @@ class RequirementsReport extends PageObject {
                                tests: Integer.parseInt(cells[4].text),
                                icon: iconImage)
         }
+    }
+
+    def close() {
+        driver.close()
     }
 
     class RequirementRow {

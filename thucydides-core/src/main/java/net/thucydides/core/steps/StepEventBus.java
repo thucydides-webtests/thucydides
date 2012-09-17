@@ -233,7 +233,7 @@ public class StepEventBus {
         stepStack.pop();
     }
 
-    private void clearStepFailures() {
+    public void clearStepFailures() {
         stepFailed = false;
     }
 

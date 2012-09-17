@@ -11,8 +11,12 @@ import net.thucydides.core.model.CoverageFormatter;
 import net.thucydides.core.model.TestDuration;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SKIPPED;
 import net.thucydides.core.model.TestResultList;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
 import net.thucydides.core.statistics.TestStatisticsProvider;
 import net.thucydides.core.statistics.With;
@@ -203,6 +207,10 @@ public class TestOutcomes {
         return rootOutcomes.or(this);
     }
 
+    public TestOutcomes forRequirement(Requirement requirement) {
+        return withTag(requirement.getName());
+    }
+
     private class TagFinder {
         private final String tagType;
 
@@ -257,7 +265,6 @@ public class TestOutcomes {
     private Converter<TestOutcome, TestOutcome> toOutcomesWithHistory() {
         return new Converter<TestOutcome, TestOutcome>() {
 
-            @Override
             public TestOutcome convert(TestOutcome testOutcome) {
                 TestStatistics statistics = testStatisticsProvider.statisticsForTests(With.title(testOutcome.getTitle()));
                 testOutcome.setStatistics(statistics);
@@ -303,7 +310,7 @@ public class TestOutcomes {
      */
     @SuppressWarnings("unchecked")
     public TestOutcomes getPendingTests() {
-        return TestOutcomes.of(filter(anyOf(withResult(TestResult.PENDING), withResult(TestResult.SKIPPED)), outcomes))
+        return TestOutcomes.of(filter(anyOf(withResult(PENDING), withResult(SKIPPED)), outcomes))
                 .withLabel(labelForTestsWithStatus("pending tests"))
                 .withRootOutcomes(getRootOutcomes());
 

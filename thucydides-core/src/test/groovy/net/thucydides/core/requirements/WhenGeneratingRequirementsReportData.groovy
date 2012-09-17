@@ -9,6 +9,8 @@ import net.thucydides.core.requirements.reports.RequirementsOutcomes
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory
 import spock.lang.Specification
 import net.thucydides.core.issues.IssueTracking
+import net.thucydides.core.model.TestResult
+import net.thucydides.core.model.TestStep
 
 class WhenGeneratingRequirementsReportData extends Specification {
 
@@ -67,6 +69,52 @@ class WhenGeneratingRequirementsReportData extends Specification {
             requirementsTestCount == [2,0,0]
     }
 
+
+    def "a requirement with no associated tests is pending"() {
+        given: "there are no associated tests"
+            def noTestOutcomes = TestOutcomes.of(Collections.EMPTY_LIST)
+        and: "we read the requirements from the directory structure"
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+        when: "we generate the capability outcomes"
+            RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
+        then: "the overall outcome should all be pending"
+            outcomes.completedRequirementsCount == 0
+    }
+
+    def "a requirement with only pending tests is pending"() {
+        given: "there are no associated tests"
+            def noTestOutcomes = TestOutcomes.of(someTestResults())
+        and: "we read the requirements from the directory structure"
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+        when: "we generate the capability outcomes"
+            RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
+        then: "the overall outcome should all be pending"
+            outcomes.completedRequirementsCount == 0
+    }
+
+
+    def "a requirement with only passing tests is completed"() {
+        given: "there are some passing tests"
+            def noTestOutcomes = TestOutcomes.of(somePassingTestResults())
+        and: "we read the requirements from the directory structure"
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+        when: "we generate the capability outcomes"
+            RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
+        then: "requirements with passing tests should be completed"
+            outcomes.completedRequirementsCount == 1
+    }
+
+    def "a requirement with a failing tests is a failure"() {
+        given: "there are some passing tests"
+            def noTestOutcomes = TestOutcomes.of(someFailingTestResults())
+        and: "we read the requirements from the directory structure"
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+        when: "we generate the capability outcomes"
+            RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
+        then: "requirements with passing tests should be completed"
+            outcomes.failingRequirementsCount == 1
+    }
+
     def someTestResults() {
         TestOutcome testOutcome1 = TestOutcome.forTestInStory("planting potatoes in the sun", Story.called("planting potatoes"))
         testOutcome1.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
@@ -77,4 +125,43 @@ class WhenGeneratingRequirementsReportData extends Specification {
         return [testOutcome1, testOutcome2]
 
     }
+
+    def somePassingTestResults() {
+        TestOutcome testOutcome1 = TestOutcome.forTestInStory("planting potatoes in the sun", Story.called("planting potatoes"))
+        testOutcome1.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
+        testOutcome1.recordStep(TestStep.forStepCalled("step 1").withResult(TestResult.SUCCESS))
+
+        TestOutcome testOutcome2 = TestOutcome.forTestInStory("planting potatoes in the rain", Story.called("planting potatoes"))
+        testOutcome2.recordStep(TestStep.forStepCalled("step 2").withResult(TestResult.SUCCESS))
+        testOutcome2.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
+
+        TestOutcome testOutcome3 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
+        testOutcome2.recordStep(TestStep.forStepCalled("step 3").withResult(TestResult.SUCCESS))
+        testOutcome2.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+
+        return [testOutcome1, testOutcome2, testOutcome3]
+
+    }
+
+    def someFailingTestResults() {
+        TestOutcome testOutcome1 = TestOutcome.forTestInStory("planting potatoes in the sun", Story.called("planting potatoes"))
+        testOutcome1.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
+        testOutcome1.recordStep(TestStep.forStepCalled("step 1").withResult(TestResult.SUCCESS))
+
+        TestOutcome testOutcome2 = TestOutcome.forTestInStory("planting potatoes in the rain", Story.called("planting potatoes"))
+        testOutcome2.recordStep(TestStep.forStepCalled("step 2").withResult(TestResult.SUCCESS))
+        testOutcome2.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
+
+        TestOutcome testOutcome3 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
+        testOutcome3.recordStep(TestStep.forStepCalled("step 3").withResult(TestResult.SUCCESS))
+        testOutcome3.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+
+        TestOutcome testOutcome4 = TestOutcome.forTestInStory("Feed chickens cake", Story.called("Feed chickens"))
+        testOutcome4.recordStep(TestStep.forStepCalled("step 4").withResult(TestResult.FAILURE))
+        testOutcome4.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+
+        return [testOutcome1, testOutcome2, testOutcome3, testOutcome4]
+
+    }
+
 }

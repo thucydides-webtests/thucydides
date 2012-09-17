@@ -31,88 +31,88 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     private static final String FIND_ALL_TEST_HISTORIES = "select t from TestRun t where t.projectKey = :projectKey order by t.executionDate";
     private static final String FIND_BY_NAME = "select t from TestRun t where t.title = :title and t.projectKey = :projectKey";
     private static final String FIND_TAG_BY_NAME_IGNORING_CASE = "select t from TestRunTag t where lower(t.name) = :name and t.type = :type and t.projectKey = :projectKey";
-    private static final String FIND_ALL_TAGS  = "select t from TestRunTag t where t.projectKey = :projectKey order by lower(t.name)";
+    private static final String FIND_ALL_TAGS = "select t from TestRunTag t where t.projectKey = :projectKey order by lower(t.name)";
     private static final String FIND_ALL_TAG_TYPES = "select distinct t.type from TestRunTag t where t.projectKey = :projectKey order by t.type";
     private static final String COUNT_BY_NAME = "select count(t) from TestRun t where t.title = :title and t.projectKey = :projectKey";
     private static final String COUNT_TESTS_BY_NAME_AND_RESULT
             = "select count(t) from TestRun t where t.title = :title and t.projectKey = :projectKey and t.result = :result";
 
     private static final String COUNT_LATEST_TESTS_BY_TAG_AND_RESULT
-            = "select count(test) from TestRun test "+
+            = "select count(test) from TestRun test " +
             " left outer join test.tags as tag " +
             "where lower(tag.name) = :name " +
             "and test.result = :result " +
             "and test.projectKey = :projectKey " +
-            "and test.executionDate = "+
+            "and test.executionDate = " +
             "(select max(tt.executionDate) from TestRun tt where tt.id = test.id)";
 
     private static final String COUNT_LATEST_TESTS_BY_TAG_TYPE_AND_RESULT
-            = "select count(test) from TestRun test "+
+            = "select count(test) from TestRun test " +
             " left outer join test.tags as tag " +
             "where tag.type = :type " +
             "and test.result = :result " +
             "and test.projectKey = :projectKey " +
-            "and test.executionDate = "+
+            "and test.executionDate = " +
             "(select max(tt.executionDate) from TestRun tt where tt.id = test.id)";
 
     private static final String SELECT_LATEST_TEST_BY_TITLE
-            = "select t from TestRun t "+
+            = "select t from TestRun t " +
             "where t.title = :title " +
             "and t.projectKey = :projectKey " +
-            "and t.executionDate = "+
+            "and t.executionDate = " +
             "     (select max(tt.executionDate) from TestRun tt where tt.id = t.id)";
 
     private static final String SELECT_LATEST_TEST_BY_TAG
-            = "select test from TestRun test "+
+            = "select test from TestRun test " +
             " left outer join test.tags as tag " +
             "where lower(tag.name) = :name " +
             "and test.projectKey = :projectKey " +
-            "and test.executionDate = "+
+            "and test.executionDate = " +
             "(select max(tt.executionDate) from TestRun tt where tt.id = test.id)";
 
     private static final String SELECT_LATEST_TEST_BY_TAG_TYPE
-            = "select test from TestRun test "+
+            = "select test from TestRun test " +
             " left outer join test.tags as tag " +
             "where tag.type = :type " +
             "and test.projectKey = :projectKey " +
-            "and test.executionDate = "+
+            "and test.executionDate = " +
             "(select max(tt.executionDate) from TestRun tt where tt.id = test.id)";
 
     private static final String SELECT_TEST_RESULTS_BY_TAG
-            = "select test.result from TestRun test "+
+            = "select test.result from TestRun test " +
             " left outer join test.tags as tag " +
             "where lower(tag.name) = :name " +
             "and test.projectKey = :projectKey " +
             "order by test.executionDate desc";
 
     private static final String SELECT_TEST_RESULTS_BY_TAG_TYPE
-            = "select test.result from TestRun test "+
+            = "select test.result from TestRun test " +
             " left outer join test.tags as tag " +
             "where tag.type = :type " +
             "and test.projectKey = :projectKey " +
             "order by test.executionDate desc";
 
     private static final String COUNT_LATEST_TEST_BY_TAG
-            = "select count(test) from TestRun test "+
+            = "select count(test) from TestRun test " +
             " left outer join test.tags as tag " +
             "where lower(tag.name) = :name " +
             "and test.projectKey = :projectKey " +
-            "and test.executionDate = "+
+            "and test.executionDate = " +
             "(select max(tt.executionDate) from TestRun tt where tt.id = test.id)";
 
     private static final String COUNT_LATEST_TEST_BY_TAG_TYPE
-            = "select count(test) from TestRun test "+
+            = "select count(test) from TestRun test " +
             " left outer join test.tags as tag " +
             "where tag.type = :type " +
             "and test.projectKey = :projectKey " +
-            "and test.executionDate = "+
+            "and test.executionDate = " +
             "(select max(tt.executionDate) from TestRun tt where tt.id = test.id)";
 
     private static final String SELECT_TEST_RESULTS_BY_TITLE
             = "select test.result from TestRun test " +
-              "where test.title = :title " +
-              "and test.projectKey = :projectKey " +
-              "order by test.executionDate desc";
+            "where test.title = :title " +
+            "and test.projectKey = :projectKey " +
+            "order by test.executionDate desc";
 
     protected EntityManagerFactory entityManagerFactory;
 
@@ -138,18 +138,26 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     @Override
     public List<TestRun> findAll() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return entityManager.createQuery(FIND_ALL_TEST_HISTORIES)
-                            .setParameter("projectKey", getProjectKey())
-                            .getResultList();
+        try {
+            return entityManager.createQuery(FIND_ALL_TEST_HISTORIES)
+                    .setParameter("projectKey", getProjectKey())
+                    .getResultList();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public List<TestRun> findTestRunsByTitle(String title) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return (List<TestRun>) entityManager.createQuery(FIND_BY_NAME)
-                                            .setParameter("projectKey", getProjectKey())
-                                            .setParameter("title", title)
-                                            .getResultList();
+        try {
+            return (List<TestRun>) entityManager.createQuery(FIND_BY_NAME)
+                    .setParameter("projectKey", getProjectKey())
+                    .setParameter("title", title)
+                    .getResultList();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
@@ -161,15 +169,21 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+        } finally {
+            entityManager.close();
         }
     }
 
     @Override
     public void storeTestOutcome(TestOutcome testOutcome) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-        persistTestOutcome(entityManager, testOutcome);
-        entityManager.getTransaction().commit();
+        try {
+            entityManager.getTransaction().begin();
+            persistTestOutcome(entityManager, testOutcome);
+            entityManager.getTransaction().commit();
+        } finally {
+            entityManager.close();
+        }
     }
 
     private void persistTestOutcome(EntityManager entityManager, TestOutcome testOutcome) {
@@ -183,14 +197,14 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
 
 
     private void storeEachOutcomeIn(EntityManager entityManager, List<TestOutcome> testOutcomes) {
-        for(TestOutcome testOutcome : testOutcomes) {
+        for (TestOutcome testOutcome : testOutcomes) {
             persistTestOutcome(entityManager, testOutcome);
         }
     }
 
     private String getProjectKey() {
         return ThucydidesSystemProperty.PROJECT_KEY.from(environmentVariables,
-                                                         Thucydides.getDefaultProjectKey());
+                Thucydides.getDefaultProjectKey());
     }
 
     private TagAdder addTagsFrom(TestOutcome testResult, EntityManager entityManager) {
@@ -206,15 +220,15 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
             this.testOutcome = testOutcome;
             this.entityManager = entityManager;
         }
-        
+
         public void to(TestRun storedTestRun) {
-            for(TagProvider tagProvider : tagProviderService.getTagProviders()) {
+            for (TagProvider tagProvider : tagProviderService.getTagProviders()) {
                 List<TestRunTag> tagsToPersist = convert(tagProvider.getTagsFor(testOutcome), toTestRunTags());
                 List<TestRunTag> existingTags = findAndUpdateAnyExistingTags(storedTestRun, tagsToPersist);
 
                 tagsToPersist.removeAll(existingTags);
 
-                for(TestRunTag tag : tagsToPersist) {
+                for (TestRunTag tag : tagsToPersist) {
                     entityManager.persist(tag);
                     storedTestRun.getTags().add(tag);
                 }
@@ -228,13 +242,13 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
                 public TestRunTag convert(TestTag from) {
                     return new TestRunTag(getProjectKey(), from.getType(), from.getName());
                 }
-            }; 
+            };
         }
 
         private List<TestRunTag> findAndUpdateAnyExistingTags(TestRun storedTestRun, List<TestRunTag> tags) {
             List<TestRunTag> matchedTags = Lists.newArrayList();
 
-            for(TestRunTag tag : tags) {
+            for (TestRunTag tag : tags) {
                 Optional<TestRunTag> matchingStoredTag = tagInDatabaseWithIdenticalNameAs(tag);
                 if (matchingStoredTag.isPresent()) {
                     TestRunTag matchingTag = matchingStoredTag.get();
@@ -267,7 +281,11 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     @Override
     public List<TestRunTag> findTagsMatching(TestRunTag tag) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return findTagsMatching(entityManager, tag);
+        try {
+            return findTagsMatching(entityManager, tag);
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
@@ -275,158 +293,216 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
 
-            List<TestRun> testRuns  = findAll();
+            List<TestRun> testRuns = findAll();
             entityManager.getTransaction().begin();
-            for(TestRun testRun: testRuns) {
+            for (TestRun testRun : testRuns) {
                 entityManager.remove(entityManager.merge(testRun));
             }
             entityManager.getTransaction().commit();
-        }catch(Exception e) {
+        } catch (Exception e) {
             entityManager.getTransaction().rollback();
+        } finally {
+            entityManager.close();
         }
-
     }
 
     @Override
     public Long countTestRunsByTitle(String title) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return (Long) entityManager.createQuery(COUNT_BY_NAME)
-                                   .setParameter("title", title)
-                                   .setParameter("projectKey", getProjectKey())
-                                   .getSingleResult();
+        try {
+            return (Long) entityManager.createQuery(COUNT_BY_NAME)
+                    .setParameter("title", title)
+                    .setParameter("projectKey", getProjectKey())
+                    .getSingleResult();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public Long countTestRunsByTitleAndResult(String title, TestResult result) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return (Long) entityManager.createQuery(COUNT_TESTS_BY_NAME_AND_RESULT)
-                                   .setParameter("title", title)
-                                   .setParameter("result", result)
-                                   .setParameter("projectKey", getProjectKey())
-                                   .getSingleResult();
+        try {
+            return (Long) entityManager.createQuery(COUNT_TESTS_BY_NAME_AND_RESULT)
+                    .setParameter("title", title)
+                    .setParameter("result", result)
+                    .setParameter("projectKey", getProjectKey())
+                    .getSingleResult();
+        } finally {
+            entityManager.close();
+        }
     }
 
 
     @Override
     public List<TestRunTag> findAllTags() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return entityManager.createQuery(FIND_ALL_TAGS)
-                            .setParameter("projectKey", getProjectKey())
-                            .getResultList();
+        try {
+            return entityManager.createQuery(FIND_ALL_TAGS)
+                    .setParameter("projectKey", getProjectKey())
+                    .getResultList();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public List<TestRunTag> getLatestTagsForTestWithTitleByTitle(String title) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        List<TestRun> latestTestRuns = entityManager.createQuery(SELECT_LATEST_TEST_BY_TITLE)
-                                                   .setParameter("title", title)
-                                                   .setParameter("projectKey", getProjectKey())
-                                                   .getResultList();
-       if (latestTestRuns.isEmpty()) {
-           return Collections.emptyList();
-       } else {
-           return ImmutableList.copyOf(latestTestRuns.get(0).getTags());
-       }
+        try {
+            List<TestRun> latestTestRuns = entityManager.createQuery(SELECT_LATEST_TEST_BY_TITLE)
+                    .setParameter("title", title)
+                    .setParameter("projectKey", getProjectKey())
+                    .getResultList();
+            if (latestTestRuns.isEmpty()) {
+                return Collections.emptyList();
+            } else {
+                return ImmutableList.copyOf(latestTestRuns.get(0).getTags());
+            }
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public List<TestResult> getResultsTestWithTitle(String title) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return entityManager.createQuery(SELECT_TEST_RESULTS_BY_TITLE)
-                            .setParameter("title", title)
-                            .setParameter("projectKey", getProjectKey())
-                            .getResultList();
+        try {
+            return entityManager.createQuery(SELECT_TEST_RESULTS_BY_TITLE)
+                    .setParameter("title", title)
+                    .setParameter("projectKey", getProjectKey())
+                    .getResultList();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public List<TestResult> getResultsForTestsWithTag(String tag) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return entityManager.createQuery(SELECT_TEST_RESULTS_BY_TAG)
-                            .setParameter("name", tag.toLowerCase())
-                            .setParameter("projectKey", getProjectKey())
-                            .getResultList();
+        try {
+            return entityManager.createQuery(SELECT_TEST_RESULTS_BY_TAG)
+                    .setParameter("name", tag.toLowerCase())
+                    .setParameter("projectKey", getProjectKey())
+                    .getResultList();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public List<TestResult> getResultsForTestsWithTagType(String tagType) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return entityManager.createQuery(SELECT_TEST_RESULTS_BY_TAG_TYPE)
-                            .setParameter("type", tagType)
-                            .setParameter("projectKey", getProjectKey())
-                            .getResultList();
+        try {
+            return entityManager.createQuery(SELECT_TEST_RESULTS_BY_TAG_TYPE)
+                    .setParameter("type", tagType)
+                    .setParameter("projectKey", getProjectKey())
+                    .getResultList();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public Long countTestRunsByTag(String tag) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return (Long) entityManager.createQuery(COUNT_LATEST_TEST_BY_TAG)
-                                   .setParameter("name", tag.toLowerCase())
-                                   .setParameter("projectKey", getProjectKey())
-                                   .getSingleResult();
+        try {
+            return (Long) entityManager.createQuery(COUNT_LATEST_TEST_BY_TAG)
+                    .setParameter("name", tag.toLowerCase())
+                    .setParameter("projectKey", getProjectKey())
+                    .getSingleResult();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public Long countTestRunsByTagType(String tagType) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return (Long) entityManager.createQuery(COUNT_LATEST_TEST_BY_TAG_TYPE)
-                .setParameter("type", tagType)
-                .setParameter("projectKey", getProjectKey())
-                .getSingleResult();
+        try {
+            return (Long) entityManager.createQuery(COUNT_LATEST_TEST_BY_TAG_TYPE)
+                    .setParameter("type", tagType)
+                    .setParameter("projectKey", getProjectKey())
+                    .getSingleResult();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public Long countTestRunsByTagAndResult(String tag, TestResult result) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return (Long) entityManager.createQuery(COUNT_LATEST_TESTS_BY_TAG_AND_RESULT)
-                .setParameter("name", tag.toLowerCase())
-                .setParameter("result",result)
-                .setParameter("projectKey", getProjectKey())
-                .getSingleResult();
+        try {
+            return (Long) entityManager.createQuery(COUNT_LATEST_TESTS_BY_TAG_AND_RESULT)
+                    .setParameter("name", tag.toLowerCase())
+                    .setParameter("result", result)
+                    .setParameter("projectKey", getProjectKey())
+                    .getSingleResult();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public Long countTestRunsByTagTypeAndResult(String tagType, TestResult result) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return (Long) entityManager.createQuery(COUNT_LATEST_TESTS_BY_TAG_TYPE_AND_RESULT)
-                .setParameter("type", tagType)
-                .setParameter("result",result)
-                .setParameter("projectKey", getProjectKey())
-                .getSingleResult();
+
+        try {
+            return (Long) entityManager.createQuery(COUNT_LATEST_TESTS_BY_TAG_TYPE_AND_RESULT)
+                    .setParameter("type", tagType)
+                    .setParameter("result", result)
+                    .setParameter("projectKey", getProjectKey())
+                    .getSingleResult();
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Override
     public List<TestRunTag> getLatestTagsForTestsWithTag(String tag) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        List<TestRun> latestTestRuns = entityManager.createQuery(SELECT_LATEST_TEST_BY_TAG)
-                                                    .setParameter("name", tag.toLowerCase())
-                                                    .setParameter("projectKey", getProjectKey())
-                                                    .getResultList();
-        if (latestTestRuns.isEmpty()) {
-            return Collections.emptyList();
-        } else {
-            return ImmutableList.copyOf(latestTestRuns.get(0).getTags());
+        try {
+            List<TestRun> latestTestRuns = entityManager.createQuery(SELECT_LATEST_TEST_BY_TAG)
+                    .setParameter("name", tag.toLowerCase())
+                    .setParameter("projectKey", getProjectKey())
+                    .getResultList();
+            if (latestTestRuns.isEmpty()) {
+                return Collections.emptyList();
+            } else {
+                return ImmutableList.copyOf(latestTestRuns.get(0).getTags());
+            }
+        } finally {
+            entityManager.close();
         }
     }
 
     @Override
     public List<TestRunTag> getLatestTagsForTestsWithTagType(String tagType) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        List<TestRun> latestTestRuns = entityManager.createQuery(SELECT_LATEST_TEST_BY_TAG_TYPE)
-                                                    .setParameter("type", tagType)
-                                                    .setParameter("projectKey", getProjectKey())
-                                                    .getResultList();
-        if (latestTestRuns.isEmpty()) {
-            return Collections.emptyList();
-        } else {
-            return ImmutableList.copyOf(latestTestRuns.get(0).getTags());
+        try {
+            List<TestRun> latestTestRuns = entityManager.createQuery(SELECT_LATEST_TEST_BY_TAG_TYPE)
+                    .setParameter("type", tagType)
+                    .setParameter("projectKey", getProjectKey())
+                    .getResultList();
+            if (latestTestRuns.isEmpty()) {
+                return Collections.emptyList();
+            } else {
+                return ImmutableList.copyOf(latestTestRuns.get(0).getTags());
+            }
+        } finally {
+            entityManager.close();
         }
     }
 
     @Override
     public List<String> findAllTagTypes() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return entityManager.createQuery(FIND_ALL_TAG_TYPES)
-                            .setParameter("projectKey", getProjectKey())
-                            .getResultList();
+        try {
+            return entityManager.createQuery(FIND_ALL_TAG_TYPES)
+                    .setParameter("projectKey", getProjectKey())
+                    .getResultList();
+        } finally {
+            entityManager.close();
+        }
     }
 }

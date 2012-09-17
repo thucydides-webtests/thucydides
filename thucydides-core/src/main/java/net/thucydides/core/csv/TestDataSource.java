@@ -15,6 +15,6 @@ public interface TestDataSource {
 
     <T> List<T> getDataAsInstancesOf(Class<T> clazz, Object... constructorArgs);
 
-    <T extends ScenarioSteps> List<T> getInstanciatedInstancesFrom(Class<T> clazz, StepFactory factory);
+    <T> List<T> getInstanciatedInstancesFrom(Class<T> clazz, StepFactory factory);
 
 }

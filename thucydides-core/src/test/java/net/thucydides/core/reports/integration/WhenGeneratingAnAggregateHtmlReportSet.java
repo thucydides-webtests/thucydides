@@ -1,7 +1,9 @@
 package net.thucydides.core.reports.integration;
 
+import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.model.ReportType;
+import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import net.thucydides.core.reports.html.ReportProperties;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -10,6 +12,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -28,16 +31,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 
 public class WhenGeneratingAnAggregateHtmlReportSet {
 
     private static File outputDirectory;
 
     WebDriver driver;
-    
+
     @BeforeClass
     public static void generateReports() throws IOException {
-        HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter("project");
+        IssueTracking issueTracking = mock(IssueTracking.class);
+        TestHistory testHistory = mock(TestHistory.class);
+        HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter("project", issueTracking, testHistory);
         outputDirectory = newTemporaryDirectory();
         reporter.setOutputDirectory(outputDirectory);
 

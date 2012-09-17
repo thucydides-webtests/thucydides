@@ -43,7 +43,23 @@ public class TestStep {
         startTime = System.currentTimeMillis();
     }
 
+    public static TestStepBuilder forStepCalled(String description) {
+        return new TestStepBuilder(description);
+    }
 
+    public static class TestStepBuilder {
+        private final String description;
+
+        public TestStepBuilder(String description) {
+            this.description = description;
+        }
+
+        public TestStep withResult(TestResult result) {
+            TestStep step = new TestStep(description);
+            step.setResult(result);
+            return step;
+        }
+    }
     @Override
     public String toString() {
         if (!hasChildren()) {

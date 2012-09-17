@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.di.DependencyInjectorService;
@@ -26,9 +27,7 @@ public class StepFactory {
 
     private final Pages pages;
 
-    private final Map<Class<?>, Object> index
-            = new HashMap<Class<?>, Object>();
-
+    private final Map<Class<?>, Object> index = new HashMap<Class<?>, Object>();
     private static final Logger LOGGER = LoggerFactory.getLogger(StepFactory.class);
     private final DependencyInjectorService dependencyInjectorService;
 
@@ -87,8 +86,22 @@ public class StepFactory {
         return (T) index.get(scenarioStepsClass);
     }
 
-    private <T> T instantiateNewStepLibraryFor(Class<T> scenarioStepsClass) {
-        T steps = createProxyStepLibrary(scenarioStepsClass);
+    /**
+     * Create a new instance of a class containing test steps.
+     * This method will instrument the class appropriately and inject any nested step libraries or
+     * other dependencies.
+     */
+    public <T> T instantiateNewStepLibraryFor(Class<T> scenarioStepsClass) {
+        StepInterceptor stepInterceptor = new StepInterceptor(scenarioStepsClass);
+        return instantiateNewStepLibraryFor(scenarioStepsClass, stepInterceptor);
+    }
+
+    /**
+     * Create a new instance of a class containing test steps using custom interceptors.
+     */
+    public <T> T instantiateNewStepLibraryFor(Class<T> scenarioStepsClass,
+                                              MethodInterceptor interceptor) {
+        T steps = createProxyStepLibrary(scenarioStepsClass, interceptor);
 
         indexStepLibrary(scenarioStepsClass, steps);
 
@@ -107,7 +120,8 @@ public class StepFactory {
     }
 
     private <T> T instantiateUniqueStepLibraryFor(Class<T> scenarioStepsClass) {
-        T steps = createProxyStepLibrary(scenarioStepsClass);
+        StepInterceptor stepInterceptor = new StepInterceptor(scenarioStepsClass);
+        T steps = createProxyStepLibrary(scenarioStepsClass, stepInterceptor);
 
         instantiateAnyNestedStepLibrariesIn(steps, scenarioStepsClass);
 
@@ -115,11 +129,11 @@ public class StepFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T createProxyStepLibrary(Class<T> scenarioStepsClass) {
+    private <T> T createProxyStepLibrary(Class<T> scenarioStepsClass,
+                                         MethodInterceptor interceptor) {
         Enhancer e = new Enhancer();
         e.setSuperclass(scenarioStepsClass);
-        StepInterceptor stepInterceptor = new StepInterceptor(scenarioStepsClass);
-        e.setCallback(stepInterceptor);
+        e.setCallback(interceptor);
 
         if (isWebdriverStepClass(scenarioStepsClass)) {
             return webEnabledStepLibrary(scenarioStepsClass, e);

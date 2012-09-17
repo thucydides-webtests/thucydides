@@ -32,7 +32,7 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
         List<RequirementsTagProvider> requirementsTagProviders = new ArrayList<RequirementsTagProvider>();
 
         List<TagProvider> tagProviders = tagProviderService.getTagProviders();
-        logger.info("Using tag providers: {}", tagProviders);
+        logger.info("Using requirements providers: {}", tagProviders);
         for (TagProvider tagProvider : tagProviders) {
             if (tagProvider instanceof RequirementsTagProvider) {
                 requirementsTagProviders.add((RequirementsTagProvider)tagProvider);

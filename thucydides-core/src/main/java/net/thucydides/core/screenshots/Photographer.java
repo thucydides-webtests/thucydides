@@ -2,7 +2,6 @@ package net.thucydides.core.screenshots;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.io.Files;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import org.apache.commons.io.FileUtils;
@@ -118,7 +117,7 @@ public class Photographer {
         File screenshotFile;
         String screenshotTempFileName = "screenshot_" + UUID.randomUUID();
         screenshotFile = new File(FileUtils.getTempDirectory(), screenshotTempFileName);
-        byte[] screenshotData = (byte[]) capturedScreenshot;
+        byte[] screenshotData = capturedScreenshot;
         screenshotFile.deleteOnExit();
         if (screenshotData.length > 0) {
             FileUtils.writeByteArrayToFile(screenshotFile, screenshotData);

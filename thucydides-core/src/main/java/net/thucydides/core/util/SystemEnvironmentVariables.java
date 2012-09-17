@@ -1,5 +1,7 @@
 package net.thucydides.core.util;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Return system environment variable values.
  */
@@ -45,6 +47,8 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
     public Boolean getPropertyAsBoolean(String name, boolean defaultValue) {
         if (System.getProperty(name) == null) {
             return defaultValue;
+        } else if (StringUtils.isBlank(System.getProperty(name))) {
+            return true;
         } else {
             return Boolean.parseBoolean(System.getProperty(name,"false"));
         }

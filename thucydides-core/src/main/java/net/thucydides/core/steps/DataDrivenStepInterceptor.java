@@ -11,25 +11,29 @@ import java.util.List;
  */
 public class DataDrivenStepInterceptor implements MethodInterceptor {
 
-    private List<? extends ScenarioSteps> instantiatedSteps;
+    private List<?> instantiatedSteps;
 
-    public DataDrivenStepInterceptor(List<? extends ScenarioSteps> instantiatedSteps) {
+    public DataDrivenStepInterceptor(List<?> instantiatedSteps) {
         this.instantiatedSteps = instantiatedSteps;
     }
 
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
 
         DataDrivenStep.startDataDrivenStep();
-        for (ScenarioSteps steps : instantiatedSteps) {
-            runMethodAndIgnoreExceptions(steps, proxy, method, args);
+        Object lastResult = null;
+        for (Object steps : instantiatedSteps) {
+            lastResult = runMethodAndIgnoreExceptions(steps, proxy, method, args);
+            StepEventBus.getEventBus().clearStepFailures();
         }
         DataDrivenStep.endDataDrivenStep();
-        return null;
+        return lastResult;
     }
 
-    private void runMethodAndIgnoreExceptions(ScenarioSteps steps,  MethodProxy proxy, Method method, Object[] args) throws Throwable {
-         if (!method.getName().equals("finalize")) {
-            proxy.invoke(steps, args);
+    private Object runMethodAndIgnoreExceptions(Object steps,  MethodProxy proxy, Method method, Object[] args) throws Throwable {
+        Object result = null;
+        if (!method.getName().equals("finalize")) {
+            result = proxy.invoke(steps, args);
          }
+        return result;
     }
 }

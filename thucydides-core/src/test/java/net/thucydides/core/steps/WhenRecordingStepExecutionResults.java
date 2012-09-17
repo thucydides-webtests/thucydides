@@ -198,6 +198,24 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void the_listener_should_record_given_when_then_step_execution() {
+
+        StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+
+        steps.given_some_state();
+        steps.when_we_do_something();
+        steps.then_this_should_happen();
+
+        StepEventBus.getEventBus().testFinished();
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        assertThat(results.size(), is(1));
+        assertThat(results.get(0).toString(), is("Given some state, When we do something, Then this should happen"));
+    }
+
+    @Test
     public void the_listener_should_record_issue_tags() {
 
         StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);

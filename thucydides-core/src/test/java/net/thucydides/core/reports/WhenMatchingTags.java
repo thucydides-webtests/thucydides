@@ -70,20 +70,6 @@ public class WhenMatchingTags {
     }
 
     @Test
-    public void should_describe_expected_result_if_not_found() {
-        when(testOutcome.getResult()).thenReturn(TestResult.SUCCESS);
-
-        try {
-            assertThat(testOutcome, withResult(TestResult.FAILURE));
-        } catch (AssertionError error) {
-            assertThat(error.getMessage(), containsString("a test outcome with a result of <FAILURE>"));
-            return;
-        }
-        fail();
-    }
-
-
-    @Test
     public void should_not_match_test_outcome_if_tag_name_is_not_present() {
         when(testOutcome.getTags()).thenReturn(ImmutableSet.of(storyTag));
 

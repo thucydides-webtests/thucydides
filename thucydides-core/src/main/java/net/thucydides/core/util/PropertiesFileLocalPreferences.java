@@ -9,14 +9,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Properties;
 
 /**
- * Thucydides options can be loaded from the thucydides.properties file in the home directory and/or in the working directory.
- * <p/>
- * User: johnsmart
- * Date: 24/12/11
- * Time: 11:15 AM
+ * Loads Thucydides preferences from a local file called thucydides.properties.
+ * Thucydides options can be loaded from the thucydides.properties file in the home directory, in the working directory,
+ * or on the classpath. There can be multiple thucydides.properties files, in which case values from the file in the
+ * working directory override values on the classpath, and values in the home directory override values in the working
+ * directory. Values can always be overridden on the command line.
  */
 public class PropertiesFileLocalPreferences implements LocalPreferences {
 
@@ -42,15 +43,14 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
 
     @Override
     public void loadPreferences() throws IOException {
-        File homeDirectoryPreferencesFile = getLocalPreferencesFile();
-        File workingDirectoryPreferencesFile = getLocalWorkingPreferencesFile();
+        updatePreferencesFrom(preferencesFileInHomeDirectory());
+        updatePreferencesFrom(preferencesFileInWorkingDirectory());
         updatePreferencesFromClasspath();
-        updatePreferencesFrom(workingDirectoryPreferencesFile);
-        updatePreferencesFrom(homeDirectoryPreferencesFile);
     }
 
     private void updatePreferencesFromClasspath() throws IOException {
-        InputStream propertiesOnClasspath = getClass().getClassLoader().getResourceAsStream("/thucydides.properties");
+        InputStream propertiesOnClasspath
+                = Thread.currentThread().getContextClassLoader().getResourceAsStream("thucydides.properties");
         if (propertiesOnClasspath != null) {
             Properties localPreferences = new Properties();
             localPreferences.load(propertiesOnClasspath);
@@ -68,8 +68,9 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
     }
 
     private void setUndefinedSystemPropertiesFrom(Properties localPreferences) {
-        for (ThucydidesSystemProperty thucydidesProperty : ThucydidesSystemProperty.values()) {
-            String propertyName = thucydidesProperty.getPropertyName();
+        Enumeration propertyNames = localPreferences.propertyNames();
+        while (propertyNames.hasMoreElements()) {
+            String propertyName = (String) propertyNames.nextElement();
             String localPropertyValue = localPreferences.getProperty(propertyName);
             String currentPropertyValue = environmentVariables.getProperty(propertyName);
 
@@ -80,11 +81,12 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
         }
     }
 
-    private File getLocalPreferencesFile() {
+    private File preferencesFileInHomeDirectory() {
         return new File(homeDirectory, "thucydides.properties");
     }
 
-    private File getLocalWorkingPreferencesFile() {
+    private File preferencesFileInWorkingDirectory() {
         return new File(workingDirectory, "thucydides.properties");
     }
+
 }

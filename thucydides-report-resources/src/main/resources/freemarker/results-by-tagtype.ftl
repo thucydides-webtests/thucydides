@@ -83,6 +83,7 @@
         <ul>
             <li><a href="index.html">Test Results</a></li>
             <li><a href="capabilities.html">Requirements</a></li>
+            <li><a href="progress-report.html">Progress</a></li>
         <#--<li><a href="treemap.html">Tree Map</a></li>-->
             <#--<li><a href="dashboard.html">Progress</a></li>-->
             <#foreach type in allTestOutcomes.tagTypes>
@@ -120,12 +121,14 @@
                                 <thead>
                                     <tr>
                                         <th width="30" class="test-results-heading">&nbsp;</th>
-                                        <th width="525" class="test-results-heading">${tagTypeTitle}</th>
+                                        <th width="750" class="test-results-heading">${tagTypeTitle}</th>
                                         <th width="70" class="test-results-heading">Tests</th>
                                         <th width="70" class="test-results-heading">Steps</th>
+                                        <#if reportOptions.showStepDetails>
                                         <th width="65" class="test-results-heading">Fail</th>
                                         <th width="65" class="test-results-heading">Pend</th>
                                         <th width="65" class="test-results-heading">Skip</th>
+                                        </#if>
                                         <th width="65" class="test-results-heading">Stable</th>
                                         <th width="65" class="test-results-heading">Duration</th>
                                     </tr>
@@ -173,9 +176,12 @@
 
                                         <td class="lightgreentext">${outcomesForTag.total}</td>
                                         <td class="lightgreentext">${outcomesForTag.stepCount}</td>
+
+                                        <#if reportOptions.showStepDetails>
                                         <td class="redtext">${outcomesForTag.failureCount}</td>
                                         <td class="bluetext">${outcomesForTag.pendingCount}</td>
                                         <td class="bluetext">${outcomesForTag.skipCount}</td>
+                                        </#if>
                                         <td class="bluetext">
                                             <img src="images/${stability_icon}"  class="summary-icon"/>
                                             <span style="display:none">${stability_rank }</span>

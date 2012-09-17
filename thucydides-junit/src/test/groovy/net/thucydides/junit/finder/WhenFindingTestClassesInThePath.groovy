@@ -40,17 +40,13 @@ class WhenFindingTestClassesInThePath extends Specification {
     def "should order the set of all test cases by name"() {
 
         given:
-
             testFinder = TestFinder.thatFinds().allTests().inPackage("net.thucydides.junit.sampletests")
 
         when:
-
             def testClasses = testFinder.getClasses()
 
         then:
-
             testClasses == [SampleDataDrivenTestCase, SampleTestCase]
-
     }
 
     def "should order the set of all test methods by name"() {

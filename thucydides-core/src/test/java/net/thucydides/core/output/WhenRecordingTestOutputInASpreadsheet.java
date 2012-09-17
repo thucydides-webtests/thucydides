@@ -40,6 +40,19 @@ public class WhenRecordingTestOutputInASpreadsheet {
     }
 
     @Test
+    public void should_record_test_results_without_checks() throws Exception {
+
+        File outputDir = temporaryFolder.newFolder();
+        File outputFile = new File(outputDir, "testresults.xls");
+        ResultsOutput output = new SpreadsheetResultsOutput(outputFile, ImmutableList.of("A","B","C"));
+
+        output.recordResult(ImmutableList.of("a","b","c"));
+        output.recordResult(ImmutableList.of("d","e","f"));
+
+        assertThat(outputFile.exists(), is(true));
+    }
+
+    @Test
     public void should_reset_excel_spreadsheet_if_it_already_exists() throws Exception {
 
         File outputDir = temporaryFolder.newFolder();

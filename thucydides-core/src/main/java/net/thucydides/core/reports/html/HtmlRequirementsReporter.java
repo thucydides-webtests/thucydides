@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.NumericalFormatter;
+import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.util.Inflector;
@@ -45,6 +46,7 @@ public class HtmlRequirementsReporter extends HtmlReporter {
         context.put("testOutcomes", requirementsOutcomes.getTestOutcomes());
         context.put("allTestOutcomes", testOutcomes);
         context.put("reportName", new ReportNameProvider());
+        context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
         addFormattersToContext(context);
 
         String htmlContents = mergeTemplate(DEFAULT_REQUIREMENTS_REPORT).usingContext(context);

@@ -30,15 +30,14 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
         this.localDatabase = localDatabase;
     }
 
-    @Override
     public Properties getProperties() {
         Properties properties = new Properties();
 
-        String driver = environmentVariables.getProperty("thucydides.statistics.driver_class", localDatabase.getDriver());
-        String url = environmentVariables.getProperty("thucydides.statistics.url", localDatabase.getUrl());
-        String username = environmentVariables.getProperty("thucydides.statistics.username", localDatabase.getUsername());
-        String password = environmentVariables.getProperty("thucydides.statistics.password", localDatabase.getPassword());
-        String dialect = environmentVariables.getProperty("thucydides.statistics.dialect", localDatabase.getDialect());
+        String driver = ThucydidesSystemProperty.STATISTICS_DRIVER.from(environmentVariables, localDatabase.getDriver());
+        String url = ThucydidesSystemProperty.STATISTICS_URL.from(environmentVariables, localDatabase.getUrl());
+        String username = ThucydidesSystemProperty.STATISTICS_USERNAME.from(environmentVariables, localDatabase.getUsername());
+        String password = ThucydidesSystemProperty.STATISTICS_PASSWORD.from(environmentVariables, localDatabase.getPassword());
+        String dialect = ThucydidesSystemProperty.STATISTICS_DIALECT.from(environmentVariables, localDatabase.getDialect());
 
         properties.put("hibernate.connection.driver_class", driver);
         properties.put("hibernate.connection.url", url);
@@ -88,17 +87,14 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
         return (! Boolean.valueOf(environmentVariables.getProperty(ThucydidesSystemProperty.RECORD_STATISTICS, "true")));
     }
 
-    @Override
     public void disable() {
         isActive = false;
     }
 
-    @Override
     public void enable() {
         isActive = true;
     }
 
-    @Override
     public boolean isActive() {
         return isActive && !isStatisticsDisabled();
     }

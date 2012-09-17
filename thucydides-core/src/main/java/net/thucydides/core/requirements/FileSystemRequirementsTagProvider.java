@@ -400,7 +400,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         return new FileFilter() {
             @Override
             public boolean accept(File file) {
-                return file.isDirectory();
+                return file.isDirectory() && !file.getName().startsWith(".");
             }
         };
     }

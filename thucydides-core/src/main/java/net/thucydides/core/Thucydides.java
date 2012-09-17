@@ -122,7 +122,7 @@ public class Thucydides {
         return webdriverManagerThreadLocal.get();
     }
 
-    private static StepFactory getStepFactory() {
+    public static StepFactory getStepFactory() {
         return stepFactoryThreadLocal.get();
     }
 
@@ -138,11 +138,6 @@ public class Thucydides {
         return stepListenerThreadLocal.get();
     }
 
-
-    public static void loadLocalPreferences() throws IOException {
-        LocalPreferences localPreferences = Injectors.getInjector().getInstance(LocalPreferences.class);
-        localPreferences.loadPreferences();
-    }
 
     public static void initializeTestSession() {
         getCurrentSession().clear();
