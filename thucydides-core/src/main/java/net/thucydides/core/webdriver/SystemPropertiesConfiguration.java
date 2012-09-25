@@ -2,10 +2,8 @@ package net.thucydides.core.webdriver;
 
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.csv.CSVTestDataSource;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
-import net.thucydides.core.util.SystemEnvironmentVariables;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,7 +182,6 @@ public class SystemPropertiesConfiguration implements Configuration {
         return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.VERBOSE_SCREENSHOTS.getPropertyName(), false);
     }
 
-    @Override
     public void setIfUndefined(String property, String value) {
         if (getEnvironmentVariables().getProperty(property) == null) {
             getEnvironmentVariables().setProperty(property, value);

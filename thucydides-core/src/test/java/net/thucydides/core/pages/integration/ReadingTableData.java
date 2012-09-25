@@ -87,7 +87,6 @@ public class ReadingTableData extends FluentElementAPITestsBaseClass {
             return (StringUtils.equals(expectedValue, actualValue));
         }
 
-        @Override
         public void describeTo(Description description) {
             description.appendText(" A map containing an entry " + key + " => " + expectedValue);
         }

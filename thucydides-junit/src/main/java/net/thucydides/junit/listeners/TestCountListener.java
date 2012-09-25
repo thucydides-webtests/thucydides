@@ -34,7 +34,7 @@ public class TestCountListener implements StepListener {
     }
 
     private void logTotalTestCount() {
-        String rootPackage = ThucydidesSystemProperty.TEST_ROOT_PACKAGE.from(environmentVariables);
+        String rootPackage = ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT.from(environmentVariables);
         if (StringUtils.isNotEmpty(rootPackage)) {
             TestFinder finder = TestFinder.thatFinds().allTests().inPackage(rootPackage);
             int testMethodCount = finder.countTestMethods();

@@ -283,7 +283,7 @@ public enum ThucydidesSystemProperty {
      * and keep a tally of the executed tests. It will also use this as the root package when determining the
      * capabilities associated with a test.
      */
-    TEST_ROOT_PACKAGE("thucydides.test.root"),
+    THUCYDIDES_TEST_ROOT("thucydides.test.root"),
 
   /**
      * The hierarchy of capability types.

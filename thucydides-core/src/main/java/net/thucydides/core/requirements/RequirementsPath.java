@@ -46,8 +46,8 @@ public class RequirementsPath {
         public boolean startsWith(List<String> rootElements) {
             if (storyPathElements.size() >= rootElements.size()) {
                 int elementIndex = 0;
-                for(String pathElement : storyPathElements) {
-                    if (!pathElement.equals(rootElements.get(elementIndex++))) {
+                for(String pathElement : rootElements) {
+                    if (!pathElement.equals(storyPathElements.get(elementIndex++))) {
                         return false;
                     }
                 }

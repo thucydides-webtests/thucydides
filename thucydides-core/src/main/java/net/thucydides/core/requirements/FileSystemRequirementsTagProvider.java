@@ -62,7 +62,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     }
 
     public static String getDefaultRootDirectoryPathFrom(EnvironmentVariables environmentVariables) {
-        String rootPath = ThucydidesSystemProperty.TEST_ROOT_PACKAGE.from(environmentVariables);
+        String rootPath = ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT.from(environmentVariables);
         if (StringUtils.isEmpty(rootPath)) {
             return DEFAULT_ROOT_DIRECTORY;
         } else {
@@ -271,7 +271,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     }
 
     private String stripRootPathFrom(String testOutcomePath) {
-        String rootPath = ThucydidesSystemProperty.TEST_ROOT_PACKAGE.from(environmentVariables);
+        String rootPath = ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT.from(environmentVariables);
         if (rootPath != null && testOutcomePath.startsWith(rootPath)) {
             return testOutcomePath.substring(rootPath.length() + 1);
         } else {

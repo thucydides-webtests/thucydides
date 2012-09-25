@@ -233,7 +233,6 @@ public class HtmlTable {
 
     private Converter<WebElement, String> toTextValues() {
         return new Converter<WebElement, String>() {
-            @Override
             public String convert(WebElement from) {
                 return from.getText();
             }
