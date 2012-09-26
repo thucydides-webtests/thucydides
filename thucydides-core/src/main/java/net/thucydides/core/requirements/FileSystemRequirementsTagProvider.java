@@ -91,7 +91,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         this.level = level;
         this.narrativeReader = NarrativeReader.forRootDirectory(rootDirectory)
                 .withRequirementTypes(getRequirementTypes());
-        System.out.println("FileSystemRequirementsTagProvider for root directory " + rootDirectory);
     }
 
     public FileSystemRequirementsTagProvider(String rootDirectory) {

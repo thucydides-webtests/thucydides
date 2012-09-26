@@ -135,7 +135,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         this.tagProviderService = tagProviderService;
     }
 
-    @Override
+
     public List<TestRun> findAll() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -147,7 +147,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public List<TestRun> findTestRunsByTitle(String title) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -160,7 +160,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public void storeTestOutcomes(List<TestOutcome> testOutcomes) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
@@ -174,7 +174,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public void storeTestOutcome(TestOutcome testOutcome) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -238,7 +238,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         private Converter<TestTag, TestRunTag> toTestRunTags() {
             return new Converter<TestTag, TestRunTag>() {
 
-                @Override
+
                 public TestRunTag convert(TestTag from) {
                     return new TestRunTag(getProjectKey(), from.getType(), from.getName());
                 }
@@ -278,7 +278,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
                 .getResultList();
     }
 
-    @Override
+
     public List<TestRunTag> findTagsMatching(TestRunTag tag) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -288,7 +288,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public void deleteAll() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -306,7 +306,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public Long countTestRunsByTitle(String title) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -319,7 +319,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public Long countTestRunsByTitleAndResult(String title, TestResult result) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -334,7 +334,6 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
     }
 
 
-    @Override
     public List<TestRunTag> findAllTags() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -346,7 +345,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public List<TestRunTag> getLatestTagsForTestWithTitleByTitle(String title) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -364,7 +363,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public List<TestResult> getResultsTestWithTitle(String title) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -377,7 +376,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public List<TestResult> getResultsForTestsWithTag(String tag) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -390,7 +389,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public List<TestResult> getResultsForTestsWithTagType(String tagType) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -403,7 +402,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public Long countTestRunsByTag(String tag) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -416,7 +415,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public Long countTestRunsByTagType(String tagType) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -429,7 +428,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public Long countTestRunsByTagAndResult(String tag, TestResult result) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -443,7 +442,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public Long countTestRunsByTagTypeAndResult(String tagType, TestResult result) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
 
@@ -458,7 +457,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public List<TestRunTag> getLatestTagsForTestsWithTag(String tag) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -476,7 +475,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public List<TestRunTag> getLatestTagsForTestsWithTagType(String tagType) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -494,7 +493,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
         }
     }
 
-    @Override
+
     public List<String> findAllTagTypes() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {

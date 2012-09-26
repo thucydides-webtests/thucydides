@@ -122,8 +122,6 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <skip>true</skip>
-                    <!--<parallel>classes</parallel>-->
-                    <!--<threadCount>2</threadCount>-->
                 </configuration>
                 <executions>
                     <execution>
@@ -229,18 +227,30 @@
                     <configLocation>${checkstyle.rules}</configLocation>
                 </configuration>
             </plugin>
+            <!-- CODE COVERAGE -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.5.1</version>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.5.10.201208310627</version>
                 <configuration>
-                    <formats>
-                        <format>html</format>
-                        <format>xml</format>
-                    </formats>
-                    <aggregate>true</aggregate>
-                    <check>true</check>
+                    <destfile>${basedir}/target/coverage-reports/jacoco-unit.exec</destfile>
+                    <datafile>${basedir}/target/coverage-reports/jacoco-unit.exec</datafile>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
