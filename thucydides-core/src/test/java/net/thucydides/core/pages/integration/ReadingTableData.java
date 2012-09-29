@@ -128,6 +128,19 @@ public class ReadingTableData extends FluentElementAPITestsBaseClass {
     }
 
     @Test
+    public void should_read_table_data_from_a_nested_table() {
+        HtmlTable table = new HtmlTable(page.clients_with_nested_cells);
+        List<Map<Object, String>> tableRows = HtmlTable.rowsFrom(page.clients_with_nested_cells);
+
+        assertThat(tableRows.size(), is(3));
+        assertThat(tableRows.get(0), allOf(hasEntry("First Names", "TimothyTim"), hasEntry("Last Name", "Brooke-Taylor"), hasEntry("Favorite Colour", "Red")));
+        assertThat(tableRows.get(1), allOf(hasEntry("First Names", "GraemeGarry"), hasEntry("Last Name", "Garden"), hasEntry("Favorite Colour", "Green")));
+        assertThat(tableRows.get(2), allOf(hasEntry("First Names", "WilliamBill"),hasEntry("Last Name", "Oddie"), hasEntry("Favorite Colour","Blue")));
+
+    }
+
+
+    @Test
     public void should_manipulate_table_data_for_a_table_with_no_heading() {
         boolean containsRowElements = HtmlTable.withColumns("First Name","Last Name", "Favorite Colour")
                  .inTable(page.clients_with_no_headings).containsRowElementsWhere(the("First Name", is("Tim")), the("Last Name", containsString("Taylor")));
