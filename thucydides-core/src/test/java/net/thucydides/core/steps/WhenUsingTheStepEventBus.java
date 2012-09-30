@@ -9,6 +9,7 @@ import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.After;
 import org.junit.Before;
@@ -177,7 +178,7 @@ public class WhenUsingTheStepEventBus {
     Logger logger = LoggerFactory.getLogger(Thucydides.class);
 
     @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
+    public TemporaryFolder temp = new ExtendedTemporaryFolder();
 
     @Before
     public void initMocks() throws IOException {

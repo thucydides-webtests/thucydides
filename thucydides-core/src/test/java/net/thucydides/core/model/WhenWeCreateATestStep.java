@@ -1,6 +1,8 @@
 package net.thucydides.core.model;
 
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -18,7 +20,7 @@ import static org.hamcrest.Matchers.nullValue;
 public class WhenWeCreateATestStep {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
     
     @Test
     public void the_test_step_has_a_description() {

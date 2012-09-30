@@ -1,5 +1,7 @@
 package net.thucydides.core.csv;
 
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,7 +23,7 @@ import static org.hamcrest.Matchers.notNullValue;
 public class WhenLoadingTestDataFromACSVFile {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     File temporaryDirectory;
 
@@ -32,6 +34,9 @@ public class WhenLoadingTestDataFromACSVFile {
 
     protected File useTestDataIn(String filename, String... data) throws IOException {
         File testDataFile = new File(temporaryDirectory, filename);
+        testDataFile.setExecutable(true);
+        testDataFile.setReadable(true);
+        testDataFile.setWritable(true);
 
         BufferedWriter out = new BufferedWriter(new FileWriter(testDataFile));
 

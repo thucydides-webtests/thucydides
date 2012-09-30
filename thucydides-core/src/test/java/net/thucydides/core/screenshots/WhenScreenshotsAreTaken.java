@@ -1,5 +1,7 @@
 package net.thucydides.core.screenshots;
 
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,7 +30,7 @@ import static org.mockito.Mockito.when;
 public class WhenScreenshotsAreTaken {
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private File screenshotDirectory;
     private File screenshotTaken;
@@ -119,6 +121,8 @@ public class WhenScreenshotsAreTaken {
         String screenshotFile = photographer.takeScreenshot("screenshot").get().getName();
         waitUntilScreenshotsProcessed();
         File savedScreenshot = new File(screenshotDirectory, screenshotFile);
+        savedScreenshot.setReadable(true);
+        savedScreenshot.setWritable(true);
         assertThat(savedScreenshot.isFile(), is(true));
     }
 

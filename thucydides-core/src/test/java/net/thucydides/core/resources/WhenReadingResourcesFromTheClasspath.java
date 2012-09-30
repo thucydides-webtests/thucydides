@@ -1,5 +1,7 @@
 package net.thucydides.core.resources;
 
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -125,7 +127,7 @@ public class WhenReadingResourcesFromTheClasspath {
     }
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
 
     @Test

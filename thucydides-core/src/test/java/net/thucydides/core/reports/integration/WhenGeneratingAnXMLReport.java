@@ -12,6 +12,8 @@ import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -37,7 +39,7 @@ public class WhenGeneratingAnXMLReport {
     private AcceptanceTestReporter reporter;
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private File outputDirectory;
 

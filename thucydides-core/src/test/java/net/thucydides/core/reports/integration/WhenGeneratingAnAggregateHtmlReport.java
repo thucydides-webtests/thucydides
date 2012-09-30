@@ -7,6 +7,8 @@ import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.reports.history.ProgressSnapshot;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,7 +38,7 @@ import static org.mockito.Mockito.when;
 public class WhenGeneratingAnAggregateHtmlReport {
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private HtmlAggregateStoryReporter reporter;
 
