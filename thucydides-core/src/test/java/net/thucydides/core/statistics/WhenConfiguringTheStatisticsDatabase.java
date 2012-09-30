@@ -4,6 +4,7 @@ import net.thucydides.core.guice.EnvironmentVariablesDatabaseConfig;
 import net.thucydides.core.statistics.database.LocalDatabase;
 import net.thucydides.core.statistics.database.LocalH2ServerDatabase;
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
 import org.junit.Rule;
@@ -88,7 +89,7 @@ public class WhenConfiguringTheStatisticsDatabase {
     }
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
 
     @Test

@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -56,7 +57,7 @@ public class WhenInstanciatingANewFirefoxDriver {
     private MockEnvironmentVariables environmentVariables;
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     @Mock
     FirefoxProfileEnhancer firefoxProfileEnhancer;

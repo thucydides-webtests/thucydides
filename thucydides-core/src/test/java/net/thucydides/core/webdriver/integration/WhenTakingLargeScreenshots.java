@@ -7,6 +7,7 @@ import net.thucydides.core.screenshots.MultithreadScreenshotProcessor;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.StaticTestSite;
 import org.junit.After;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class WhenTakingLargeScreenshots {
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new TemporaryFolder();
+    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private File screenshotDirectory;
 

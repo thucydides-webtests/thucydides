@@ -4,6 +4,8 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -45,7 +47,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     }
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     @Test
     public void should_generate_an_HTML_report_for_an_acceptance_test_run() throws Exception {

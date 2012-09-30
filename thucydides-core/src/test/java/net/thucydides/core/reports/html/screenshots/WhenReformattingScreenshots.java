@@ -2,6 +2,8 @@ package net.thucydides.core.reports.html.screenshots;
 
 import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.model.Screenshot;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,7 +19,7 @@ import static org.hamcrest.Matchers.is;
 public class WhenReformattingScreenshots {
 
     @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    public TemporaryFolder folder = new ExtendedTemporaryFolder();
 
     private File screenshotDirectory;
 

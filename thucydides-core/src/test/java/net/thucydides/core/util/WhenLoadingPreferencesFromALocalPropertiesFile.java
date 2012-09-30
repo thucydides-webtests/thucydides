@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 public class WhenLoadingPreferencesFromALocalPropertiesFile {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     File homeDirectory;
     File thucydidesPropertiesFile;
@@ -83,9 +83,20 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
         assertThat(loadedEnvironmentVariables.getProperty("test.property"), is("set"));
     }
 
-    private void writeToPropertiesFile(String... lines) throws IOException {
+
+    @SuppressWarnings("static-access")
+	private void writeToPropertiesFile(String... lines) throws IOException, InterruptedException {
         thucydidesPropertiesFile = new File(homeDirectory, "thucydides.properties");
-        thucydidesPropertiesFile.createNewFile();
+        thucydidesPropertiesFile.setReadable(true);
+        thucydidesPropertiesFile.setWritable(true);
+        thucydidesPropertiesFile.setExecutable(true);
+        
+        try {
+        	thucydidesPropertiesFile.createNewFile();
+        } catch (IOException e) {
+        	System.err.println(e);
+		}
+        Thread.currentThread().sleep(100);
         FileWriter outFile = new FileWriter(thucydidesPropertiesFile);
         PrintWriter out = new PrintWriter(outFile);
         for(String line : lines) {

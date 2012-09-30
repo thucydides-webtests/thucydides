@@ -6,6 +6,7 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.samples.FlatScenarioStepsWithoutPages;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
@@ -42,7 +43,7 @@ public class WhenRecordingStepExecutionResultsForNonWebTests {
     StepFactory stepFactory;
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     File outputDirectory;
 

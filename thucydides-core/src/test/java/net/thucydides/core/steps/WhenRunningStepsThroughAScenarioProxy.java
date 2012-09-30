@@ -8,6 +8,7 @@ import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.samples.SomeTestScenario;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.junit.After;
 import org.junit.Before;
@@ -222,7 +223,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
     BaseStepListener baseStepListener;
 
     @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
+    public TemporaryFolder temp = new ExtendedTemporaryFolder();
 
     @Mock
     TestOutcome testOutcome;

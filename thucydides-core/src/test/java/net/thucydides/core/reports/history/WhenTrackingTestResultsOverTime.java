@@ -5,6 +5,7 @@ import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStepFactory;
 import net.thucydides.core.reports.TestOutcomes;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -29,7 +30,7 @@ public class WhenTrackingTestResultsOverTime {
     private File homeDirectory;
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     MockEnvironmentVariables environmentVariables;
 
