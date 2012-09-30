@@ -160,7 +160,7 @@ public class HtmlTable {
     }
 
     private boolean hasMatchingCellValuesIn(WebElement firstRow, List<String> headings) {
-        List<WebElement> cells = firstRow.findElements(By.tagName("td"));
+        List<WebElement> cells = firstRow.findElements(By.xpath("./td"));
         for(int cellIndex = 0; cellIndex < headings.size(); cellIndex++) {
             if ((cells.size() < cellIndex) || (!cells.get(cellIndex).getText().equals(headings.get(cellIndex)))) {
                 return false;
@@ -224,7 +224,7 @@ public class HtmlTable {
     }
 
     private List<WebElement> cellsIn(WebElement row) {
-        return row.findElements(By.tagName("td"));
+        return row.findElements(By.xpath("./td"));
     }
 
     private String cellValueAt(final int column, final List<WebElement> cells) {
