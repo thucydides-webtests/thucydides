@@ -8,6 +8,7 @@ import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -128,6 +129,19 @@ public class WhenDefiningPageUrls {
         page.open();
 
         verify(webdriver).get("http://staging.myapp.org/somepage");
+    }
+
+    @Ignore("To implement in next release")
+    @Test
+    public void the_webdriver_base_url_system_property_should_include_full_path() {
+        PageObject page = new PageObjectWithFullUrlAndPageDefinition(webdriver);
+        PageUrls pageUrls = new PageUrls(page, configuration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","http://staging.myapp.org/myapp-staging");
+        page.open();
+
+        verify(webdriver).get("http://staging.myapp.org/myapp-staging/somepage");
     }
 
     @Test

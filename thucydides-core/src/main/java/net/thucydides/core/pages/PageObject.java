@@ -477,7 +477,6 @@ public abstract class PageObject {
     private String replaceHost(final String starting, final String base) {
 
         String updatedUrl = starting;
-
         try {
             URL startingUrl = new URL(starting);
             URL baseUrl = new URL(base);
@@ -663,7 +662,6 @@ public abstract class PageObject {
 
     private Converter<WebElement, WebElementFacade> toWebElementFacades() {
         return new Converter<WebElement, WebElementFacade>() {
-            @Override
             public WebElementFacade convert(WebElement from) {
                 return element(from);
             }
