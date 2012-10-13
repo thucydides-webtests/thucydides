@@ -1,6 +1,8 @@
 package net.thucydides.core.model;
 
+import ch.lambdaj.Lambda;
 import com.google.common.base.Optional;
+import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
@@ -11,8 +13,7 @@ import java.util.regex.Pattern;
  */
 public class ErrorMessageFormatter {
     private final Optional<String> originalMessage;
-
-    Pattern LEADING_EXCEPTIONS = Pattern.compile("^<?[\\w\\.]*:");
+    Pattern LEADING_EXCEPTIONS = Pattern.compile("^<?([\\w]*\\.[\\w]*)+:");
 
     public ErrorMessageFormatter(String originalMessage) {
         this.originalMessage = Optional.fromNullable(originalMessage);
@@ -25,7 +26,21 @@ public class ErrorMessageFormatter {
      * @return
      */
     public String getShortErrorMessage() {
-        return (originalMessage.isPresent()) ? extractFirstLine() : "";
+        return (originalMessage.isPresent()) ? getUsefulMessageSummary() : "";
+    }
+
+    private String getUsefulMessageSummary() {
+        if (isHamcrestException()) {
+            return compressedHamcrestMessage();
+        } else {
+            return extractFirstLine();
+        }
+    }
+
+    private String compressedHamcrestMessage() {
+        String messageWithoutExceptions = removeLeadingExceptionFrom(originalMessage.get());
+        String words[] = StringUtils.split(messageWithoutExceptions);
+        return StringUtils.join(words," ");
     }
 
     private String extractFirstLine() {
@@ -50,6 +65,10 @@ public class ErrorMessageFormatter {
         } else {
             return message;
         }
+    }
+
+    private boolean isHamcrestException() {
+        return originalMessage.get().contains("Expected:");
     }
 
     private String replaceDoubleQuotesIn(final String message) {

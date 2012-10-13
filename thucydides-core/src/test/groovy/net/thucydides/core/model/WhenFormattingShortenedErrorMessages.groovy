@@ -18,7 +18,7 @@ class WhenFormattingShortenedErrorMessages extends Specification {
 
     def "should strip exceptions from the start of the message"() {
         expect:
-            shortenedErrorMessage == new ErrorMessageFormatter(fullErrorMessage).shortErrorMessage
+            new ErrorMessageFormatter(fullErrorMessage).shortErrorMessage == shortenedErrorMessage
         where:
             fullErrorMessage                                | shortenedErrorMessage
             "java.lang.AssertionError: oops!"               | "oops!"
@@ -26,4 +26,14 @@ class WhenFormattingShortenedErrorMessages extends Specification {
             "java.lang.AssertionError:\r\noops!"            | "oops!"
             "java.lang.AssertionError:\noops!\nMore stuff"  | "oops!"
     }
+
+    def "should display complete Hamcrest messages"() {
+        expect:
+            new ErrorMessageFormatter(fullErrorMessage).shortErrorMessage == shortenedErrorMessage
+        where:
+            fullErrorMessage                                            | shortenedErrorMessage
+            "Expected: is <10>\n   got: <0>"                            | "Expected: is <10> got: <0>"
+            "java.lang.AssertionError: Expected: is <10>\n   got: <0>"  | "Expected: is <10> got: <0>"
+    }
+
 }
