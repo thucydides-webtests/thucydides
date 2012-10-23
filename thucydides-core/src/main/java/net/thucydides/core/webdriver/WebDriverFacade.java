@@ -1,7 +1,6 @@
 package net.thucydides.core.webdriver;
 
 import com.gargoylesoftware.htmlunit.ScriptException;
-import com.sun.servicetag.SystemEnvironment;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.stubs.NavigationStub;
 import net.thucydides.core.webdriver.stubs.OptionsStub;
