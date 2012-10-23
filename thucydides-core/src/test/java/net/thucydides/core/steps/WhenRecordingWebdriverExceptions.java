@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -45,7 +46,9 @@ public class WhenRecordingWebdriverExceptions {
         } catch(AssertionError assertionError) {
             WebDriverException exception = new WebDriverException(assertionError);
             AssertionError convertedError = ErrorConvertor.forError(exception).convertToAssertion();
-            assertThat(convertedError.getMessage(), containsString("[red, blue, green]"));
+            assertThat(convertedError.getMessage(), allOf(containsString("red"),
+                                                          containsString("blue"),
+                                                          containsString("green")));
         }
     }
 

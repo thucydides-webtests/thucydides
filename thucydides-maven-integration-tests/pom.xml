@@ -62,7 +62,7 @@
         <dependency>
             <groupId>net.thucydides.maven.plugins</groupId>
             <artifactId>maven-thucydides-plugin</artifactId>
-            <version>0.9.2-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>maven-plugin</type>
             <scope>compile</scope>
         </dependency>

@@ -2,8 +2,7 @@ package net.thucydides.junit.finder;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import net.sf.extcos.ComponentQuery;
-import net.sf.extcos.ComponentScanner;
+import net.thucydides.core.reflection.ClassFinder;
 import net.thucydides.junit.annotations.UseTestDataFrom;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
@@ -48,14 +47,8 @@ public abstract class TestFinder {
         return new TestMethodFinder(this);
     }
 
-    protected Set<Class<?>> getAllTestClasses() {
-        ComponentScanner scanner = new ComponentScanner();
-
-        return scanner.getClasses(new ComponentQuery() {
-            protected void query() {
-                select().from(rootPackage).returning(allAnnotatedWith(RunWith.class));
-            }
-        });
+    protected List<Class<?>> getAllTestClasses() {
+        return ClassFinder.loadClasses().annotatedWith(RunWith.class).fromPackage(rootPackage);
     }
 
     protected Set<Class<?>> getNormalTestClasses() {
@@ -69,14 +62,8 @@ public abstract class TestFinder {
         return normalTestClasses;
     }
 
-    protected Set<Class<?>> getDataDrivenTestClasses() {
-        ComponentScanner scanner = new ComponentScanner();
-
-        return scanner.getClasses(new ComponentQuery() {
-            protected void query() {
-                select().from(rootPackage).returning(allAnnotatedWith(UseTestDataFrom.class));
-            }
-        });
+    protected List<Class<?>> getDataDrivenTestClasses() {
+        return ClassFinder.loadClasses().annotatedWith(UseTestDataFrom.class).fromPackage(rootPackage);
     }
 
     protected List<Class<?>> sorted(List<Class<?>> classes) {

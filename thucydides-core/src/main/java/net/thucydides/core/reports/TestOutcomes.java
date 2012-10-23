@@ -28,6 +28,8 @@ import org.hamcrest.Matcher;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -310,10 +312,24 @@ public class TestOutcomes {
      */
     @SuppressWarnings("unchecked")
     public TestOutcomes getPendingTests() {
-        return TestOutcomes.of(filter(anyOf(withResult(PENDING), withResult(SKIPPED)), outcomes))
+
+        List<TestOutcome> pendingOrSkippedOutcomes = outcomesWithResults(outcomes, PENDING, SKIPPED);
+        return TestOutcomes.of(pendingOrSkippedOutcomes)
                 .withLabel(labelForTestsWithStatus("pending tests"))
                 .withRootOutcomes(getRootOutcomes());
 
+    }
+
+    private List<TestOutcome> outcomesWithResults(List<? extends TestOutcome> outcomes,
+                                                  TestResult... possibleResults) {
+        List<TestOutcome> validOutcomes = Lists.newArrayList();
+        List<TestResult> possibleResultsList = Arrays.asList(possibleResults);
+        for(TestOutcome outcome : outcomes) {
+            if (possibleResultsList.contains(outcome.getResult())) {
+                validOutcomes.add(outcome);
+            }
+        }
+        return validOutcomes;
     }
 
     /**

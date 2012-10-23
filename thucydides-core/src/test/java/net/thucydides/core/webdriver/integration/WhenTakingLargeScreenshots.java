@@ -49,7 +49,7 @@ public class WhenTakingLargeScreenshots {
     private EnvironmentVariables environmentVariables;
 
     @Before
-    public void createScreenshotDir() {
+    public void createScreenshotDir() throws IOException {
 
         screenshotDirectory = temporaryDirectory.newFolder("screenshots");
         MockitoAnnotations.initMocks(this);

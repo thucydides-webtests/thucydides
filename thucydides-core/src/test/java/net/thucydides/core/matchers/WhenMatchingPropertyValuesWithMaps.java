@@ -124,25 +124,6 @@ public class WhenMatchingPropertyValuesWithMaps {
         assertThat(BeanMatcherAsserts.filterElements(persons, firstNameIsBill)).contains(billkidd, billoddie);
     }
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Test
-    public void should_fail_filter_with_descriptive_message_if_no_matching_elements_found() {
-
-        expectedException.expect(AssertionError.class);
-        expectedException.expectMessage(containsString("firstName is 'Bill'"));
-
-        List<Map<String,String>> persons = Arrays.asList(mappedPerson("Bill", "Kidd"),
-                mappedPerson("Graeam", "Garden"),
-                mappedPerson("Tim", "Brooke-Taylor"));
-
-        BeanMatcher firstNameIsBill = BeanMatchers.the("firstName", is("Bill"));
-        BeanMatcher lastNameIsOddie = BeanMatchers.the("lastName", is("Oddie"));
-
-        BeanMatcherAsserts.shouldMatch(persons, firstNameIsBill, lastNameIsOddie);
-    }
-
     @Test
     public void should_match_against_a_single_bean() {
         Map<String, String> person = mappedPerson("Bill", "Oddie");

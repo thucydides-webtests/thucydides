@@ -24,6 +24,9 @@ import net.thucydides.samples.SamplePassingScenarioWithTestSpecificData;
 import net.thucydides.samples.SampleScenarioSteps;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -42,7 +45,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.filter;
 import static net.thucydides.core.steps.StepData.withTestDataFrom;
+import static net.thucydides.core.util.FileSeparatorUtil.changeSeparatorIfRequired;
 import static net.thucydides.junit.util.FileFormating.md5;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -174,9 +179,9 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
-        assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
-        assertThat(reportContents, hasItem(containsString("Happy day scenario [B/2]")));
-        assertThat(reportContents, hasItem(containsString("Happy day scenario [c/3]")));
+        assertThat(reportContents, hasItemContainsString("Happy day scenario [a/1]"));
+        assertThat(reportContents, hasItemContainsString("Happy day scenario [B/2]"));
+        assertThat(reportContents, hasItemContainsString("Happy day scenario [c/3]"));
     }
 
     @Test
@@ -192,8 +197,31 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
-        assertThat(reportContents, hasItem(containsString("Jack Black")));
-        assertThat(reportContents, hasItem(containsString("Joe Smith")));
+        assertThat(reportContents, hasItemContainsString("Jack Black"));
+        assertThat(reportContents, hasItemContainsString("Joe Smith"));
+    }
+
+    private Matcher<? super List<String>> hasItemContainsString(String expectedValue) {
+        return new HasItemContainsString(expectedValue);
+    }
+
+    private static class HasItemContainsString extends TypeSafeMatcher<List<String>> {
+
+        private final String expectedValue;
+
+        private HasItemContainsString(String expectedValue) {
+            this.expectedValue = expectedValue;
+        }
+
+        @Override
+        protected boolean matchesSafely(List<String> values) {
+            return !filter(containsString(expectedValue), values).isEmpty();
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("Expecting a list containing a string that contains ").appendValue(expectedValue);
+        }
     }
 
 
@@ -435,9 +463,9 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
-        assertThat(reportContents, hasItem(containsString("Happy day scenario [a/1]")));
-        assertThat(reportContents, hasItem(containsString("Happy day scenario [b/2]")));
-        assertThat(reportContents, hasItem(containsString("Happy day scenario [c/3]")));
+        assertThat(reportContents, hasItemContainsString("Happy day scenario [a/1]"));
+        assertThat(reportContents, hasItemContainsString("Happy day scenario [b/2]"));
+        assertThat(reportContents, hasItemContainsString("Happy day scenario [c/3]"));
 
     }
 

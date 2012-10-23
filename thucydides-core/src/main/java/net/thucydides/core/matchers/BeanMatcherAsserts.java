@@ -101,9 +101,9 @@ public class BeanMatcherAsserts {
 
     public static <T> void shouldMatch(List<T> items, BeanMatcher... matchers) {
         if (!matches(items, matchers)) {
-            throw new AssertionError("Failed to find matching elements for " + Arrays.toString(matchers)
+            throw new AssertionError("Failed to find matching elements for " + join(matchers)
                                      + NEW_LINE
-                                     +"Elements where " + items);
+                                     +"Elements where " + join(items));
         }
     }
 

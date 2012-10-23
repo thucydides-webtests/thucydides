@@ -134,6 +134,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     @Test
     public void should_execute_javascript_within_browser() {
         StaticSitePage page = getFirefoxPage();
+        page.open();
         assertThat(page.element(page.firstName).hasFocus(), is(false));
         page.evaluateJavascript("document.getElementById('firstname').focus()");
         assertThat(page.element(page.firstName).hasFocus(), is(true));

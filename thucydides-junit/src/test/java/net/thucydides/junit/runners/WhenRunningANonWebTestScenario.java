@@ -294,7 +294,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
-    public void xml_test_results_are_written_to_the_output_directory() throws InitializationError {
+    public void xml_test_results_are_written_to_the_output_directory() throws Exception {
 
         File outputDirectory = temporaryFolder.newFolder("output");
 
@@ -312,7 +312,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
-    public void html_test_results_are_written_to_the_output_directory() throws InitializationError {
+    public void html_test_results_are_written_to_the_output_directory()  throws Exception {
 
         File outputDirectory = temporaryFolder.newFolder("output");
 

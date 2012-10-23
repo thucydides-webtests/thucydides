@@ -15,6 +15,7 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class WhenTrackingTestResultsOverTime {
     MockEnvironmentVariables environmentVariables;
 
     @Before
-    public void prepareTestHistory() {
+    public void prepareTestHistory() throws IOException {
         MockitoAnnotations.initMocks(this);
         environmentVariables = new MockEnvironmentVariables();
 
@@ -54,7 +55,7 @@ public class WhenTrackingTestResultsOverTime {
     }
 
     @Test
-    public void the_base_history_directory_can_be_overridden_using_a_system_property() {
+    public void the_base_history_directory_can_be_overridden_using_a_system_property() throws IOException {
 
         File customHistoryDir = temporaryFolder.newFolder("history");
 

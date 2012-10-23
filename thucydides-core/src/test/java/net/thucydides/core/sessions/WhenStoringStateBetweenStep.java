@@ -59,13 +59,8 @@ public class WhenStoringStateBetweenStep {
         assertThat(steps.retrieveName(), is("joe"));
     }
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Test
+    @Test(expected = AssertionError.class)
     public void should_throw_an_exception_if_no_variable_is_found() {
-        expectedException.expect(AssertionError.class);
-        expectedException.expectMessage("Session variable name expected but not found.");
         SampleSteps steps = new SampleSteps(pages);
         steps.retrieveName();
     }

@@ -664,9 +664,9 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
-    public void xml_test_results_are_written_to_the_output_directory() throws InitializationError {
+    public void xml_test_results_are_written_to_the_output_directory() throws Exception {
 
-        File outputDirectory = temporaryFolder.newFolder("output");
+        File outputDirectory = temporaryFolder.newFolder();
 
         ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingScenario.class,
                 webDriverFactory,
@@ -683,9 +683,9 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
-    public void xml_test_results_for_multiple_stories_are_written_to_the_output_directory() throws InitializationError {
+    public void xml_test_results_for_multiple_stories_are_written_to_the_output_directory() throws Exception {
 
-        File outputDirectory = temporaryFolder.newFolder("output");
+        File outputDirectory = temporaryFolder.newFolder();
 
         new TestableThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class,
                 webDriverFactory,
@@ -706,9 +706,9 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
-    public void xml_test_results_for_multiple_successful_stories_are_written_to_the_output_directory() throws InitializationError {
+    public void xml_test_results_for_multiple_successful_stories_are_written_to_the_output_directory() throws Exception {
 
-        File outputDirectory = temporaryFolder.newFolder("output");
+        File outputDirectory = temporaryFolder.newFolder();
 
         new TestableThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class,
                 webDriverFactory,
@@ -729,9 +729,9 @@ public class WhenRunningATestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
-    public void html_test_results_are_written_to_the_output_directory() throws InitializationError {
+    public void html_test_results_are_written_to_the_output_directory() throws Exception {
 
-        File outputDirectory = temporaryFolder.newFolder("output");
+        File outputDirectory = temporaryFolder.newFolder();
 
         ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingScenarioUsingHtmlUnit.class,
                 webDriverFactory,

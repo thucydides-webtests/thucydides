@@ -27,9 +27,9 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
-import static org.junit.matchers.JUnitMatchers.everyItem;
 
 /**
  * We record step execution results using a StepListener.
@@ -223,9 +223,6 @@ public class WhenRecordingStepExecutionResultsForNonWebTests {
 
         List<TestStep> stepOutomes = stepListener.getTestOutcomes().get(0).getTestSteps();
         assertThat(stepOutomes, everyItem(hasNoScreenshot()));
-        
-        List<Integer> a = null;
-        assertThat(a, everyItem(lessThan(1)));
     }
 
     private Matcher<TestStep> hasNoScreenshot() {

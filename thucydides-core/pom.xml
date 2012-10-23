@@ -28,8 +28,8 @@
         </dependency>
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <version>4.10</version>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
         </dependency>
         <dependency>
             <groupId>com.opera</groupId>
@@ -201,12 +201,6 @@
             <artifactId>asm</artifactId>
             <version>3.3.1</version>
         </dependency>
-        <dependency>
-            <groupId>net.sf.extcos</groupId>
-            <artifactId>extcos</artifactId>
-            <version>0.3b</version>
-        </dependency>
-
         <dependency>
             <artifactId>commons-collections</artifactId>
             <groupId>commons-collections</groupId>

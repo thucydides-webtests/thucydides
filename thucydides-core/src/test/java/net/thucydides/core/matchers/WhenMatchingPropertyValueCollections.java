@@ -172,23 +172,6 @@ public class WhenMatchingPropertyValueCollections {
         assertThat(filterElements(persons, firstNameIsBill)).contains(billkidd, billoddie);
     }
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Test
-    public void should_fail_filter_with_descriptive_message_if_no_matching_elements_found() {
-
-        expectedException.expect(AssertionError.class);
-        expectedException.expectMessage(containsString("firstName is 'Bill'"));
-
-        List<Person> persons = Arrays.asList(billkidd, tim, graeme);
-
-        BeanMatcher firstNameIsBill = the("firstName", is("Bill"));
-        BeanMatcher lastNameIsOddie = the("lastName", is("Oddie"));
-
-        shouldMatch(persons, firstNameIsBill, lastNameIsOddie);
-    }
-
     @Test
     public void should_check_the_size_of_a_collection() {
         List<Person> persons = Arrays.asList(billoddie, tim, graeme);

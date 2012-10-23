@@ -47,7 +47,7 @@ public class WhenGeneratingAnXMLReport {
     TestOutcomes allTestOutcomes;
     
     @Before
-    public void setupTestReporter() {
+    public void setupTestReporter() throws IOException {
         
         MockitoAnnotations.initMocks(this);
         

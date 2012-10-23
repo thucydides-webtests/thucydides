@@ -28,7 +28,7 @@ public class WhenLoadingTestDataFromACSVFile {
     File temporaryDirectory;
 
     @Before
-    public void setupTemporaryDirectory() {
+    public void setupTemporaryDirectory() throws IOException {
         temporaryDirectory = temporaryFolder.newFolder("testdata");
     }
 

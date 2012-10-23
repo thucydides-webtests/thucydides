@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -33,10 +34,10 @@ public class WhenReadingAnXMLReport {
     private File outputDirectory;
 
     @Before
-    public void setupTestReporter() {
+    public void setupTestReporter() throws IOException {
         outcomeReporter = new XMLTestOutcomeReporter();
 
-        outputDirectory = temporaryDirectory.newFolder("target/site/thucydides");
+        outputDirectory = temporaryDirectory.newFolder();
 
         outcomeReporter.setOutputDirectory(outputDirectory);
     }

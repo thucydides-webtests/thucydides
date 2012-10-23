@@ -35,11 +35,11 @@ public class AbstractReportGenerationTest {
     }
 
     @Before
-    public void setupTestReporter() {
+    public void setupTestReporter() throws IOException {
         environmentVariables = new MockEnvironmentVariables();
         IssueTracking issueTracking = new SystemPropertiesIssueTracking(environmentVariables);
         reporter = new HtmlAcceptanceTestReporter(environmentVariables, issueTracking);
-        outputDirectory = temporaryDirectory.newFolder("target/site/thucydides");
+        outputDirectory = temporaryDirectory.newFolder();
         reporter.setOutputDirectory(outputDirectory);
     }
 

@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Locale;
 
@@ -35,7 +36,7 @@ public class WhenGeneratingTheMavenReport {
     MavenProject project;
 
     @Before
-    public void setupPlugin() {
+    public void setupPlugin() throws IOException {
 
         MockitoAnnotations.initMocks(this);
 

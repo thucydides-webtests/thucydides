@@ -2,6 +2,9 @@ package net.thucydides.core.pages.jquery;
 
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -11,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.filter;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
@@ -54,14 +58,52 @@ public class WhenAddingJQuerySupportToPageObjects {
 
         page.injectJQuery();
 
-        assertThat(page.executedScripts, hasItem(containsString("jquery.min.js")));
+        assertThat(page, executedScript("jquery.min.js"));
+
+    }
+
+    private Matcher<? super TestableJQueryEnabledPage> executedScript(String scriptName) {
+        return new ExecutedScriptMatcher(scriptName, true);
+    }
+
+    private Matcher<? super TestableJQueryEnabledPage> didNotExecutedScript(String scriptName) {
+        return new ExecutedScriptMatcher(scriptName, false);
+    }
+
+    private static class ExecutedScriptMatcher extends TypeSafeMatcher<TestableJQueryEnabledPage> {
+        private final String scriptName;
+        private final boolean shouldHaveExecutedScript;
+
+        private ExecutedScriptMatcher(String scriptName, boolean shouldHaveExecutedScript) {
+            this.scriptName = scriptName;
+            this.shouldHaveExecutedScript = shouldHaveExecutedScript;
+        }
+
+
+        @Override
+        protected boolean matchesSafely(TestableJQueryEnabledPage page) {
+            if (shouldHaveExecutedScript) {
+                return !filter(containsString(scriptName), page.executedScripts).isEmpty();
+            } else {
+                return filter(containsString(scriptName), page.executedScripts).isEmpty();
+            }
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            if (shouldHaveExecutedScript) {
+                description.appendText("Should have executed script").appendValue(scriptName);
+            } else {
+                description.appendText("Should not have executed script").appendValue(scriptName);
+            }
+        }
     }
 
     @Test
     public void should_not_add_the_highlighting_plugin_by_default() {
         page.injectJQueryPlugins();
 
-        assertThat(page.executedScripts, not(hasItem(containsString("jquery-thucydides-plugin.js"))));
+        assertThat(page, didNotExecutedScript("jquery-thucydides-plugin.js"));
     }
 
 
@@ -71,7 +113,7 @@ public class WhenAddingJQuerySupportToPageObjects {
 
         page.injectJQueryPlugins();
 
-        assertThat(page.executedScripts, hasItem(containsString("jquery-thucydides-plugin.js")));
+        assertThat(page, executedScript("jquery-thucydides-plugin.js"));
     }
 
 
