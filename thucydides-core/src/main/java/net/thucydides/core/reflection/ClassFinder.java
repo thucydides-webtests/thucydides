@@ -1,19 +1,29 @@
 package net.thucydides.core.reflection;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import sun.tools.jar.resources.jar;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Load classes from a given package.
@@ -36,10 +46,6 @@ public class ClassFinder {
         return new ClassFinder(getDefaultClassLoader());
     }
 
-    public ClassFinder withClassLoader(ClassLoader classLoader) {
-        return new ClassFinder(classLoader);
-    }
-
     public ClassFinder annotatedWith(Class annotation) {
         return new ClassFinder(this.classLoader, annotation);
     }
@@ -51,25 +57,14 @@ public class ClassFinder {
      * @return The classes
      */
     public List<Class<?>> fromPackage(String packageName) {
-        String path = packageName.replace('.', '/');
-        Enumeration<URL> resources = classResourcesOn(path);
-        List<File> dirs = new ArrayList<File>();
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
-            dirs.add(new File(resource.getFile()));
-        }
-        Set<Class<?>> classes = new HashSet<Class<?>>();
-        for (File directory : dirs) {
-            classes.addAll(findClasses(directory, packageName));
-            classes.addAll(getClassesForPackage(packageName));
-        }
-        return filtered(new ArrayList<Class<?>>(classes));
+
+        return filtered(getClasses(packageName));
     }
 
-    private List<Class<?>> filtered(List<? extends Class<?>> classes) {
+    private List<Class<?>> filtered(Collection<Class<?>> classes) {
         List<Class<?>> matchingClasses = new ArrayList<Class<?>>();
 
-        for(Class clazz : classes) {
+        for (Class clazz : classes) {
             if (matchesConstraints(clazz)) {
                 matchingClasses.add(clazz);
             }
@@ -85,186 +80,85 @@ public class ClassFinder {
         }
     }
 
-    private Enumeration<URL> classResourcesOn(String path) {
-        try {
-            return getClassLoader().getResources(path);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Could not access class path at " + path, e);
-        }
+    private static ClassLoader getDefaultClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
     }
 
-    private List<Class<?>> getClassesForPackage(String packageName) {
-
-        PackageDirectory rootPackage = new PackageDirectory(packageName);
-        if (!rootPackage.exists()) {
-            return Collections.EMPTY_LIST;
-        } else {
-            List<Class<?>> classes = new ArrayList<Class<?>>();
-
-            if (rootPackage.directoryExists()) {
-                addClassesInPackageDirectory(rootPackage, classes);
-            } else {
-                addClassesFromJarAt(rootPackage, classes);
-            }
-            return classes;
-        }
-    }
-
-    private void addClassesFromJarAt(PackageDirectory rootPackage, List<Class<?>> classes) {
-        try {
-            JarFile jarFile = new JarFile(rootPackage.getJarPath());
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while(entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String entryName = entry.getName();
-                if (entryIsAClassIn(rootPackage, entryName)) {
-                    try {
-                        classes.add(Class.forName(classNameForJarEntry(entryName)));
-                    }
-                    catch (ClassNotFoundException e) {
-                        throw new RuntimeException("Could not load class", e);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(rootPackage.getName() + " (" + rootPackage.getDirectory() + ") does not appear to be a valid package", e);
-        }
-    }
-
-    private boolean entryIsAClassIn(PackageDirectory rootPackage, String entryName) {
-        return (entryName.startsWith(rootPackage.getRelativePath())
-                && entryName.length() > (rootPackage.getRelativePath().length() + 1)
-                && entryName.endsWith(".class"));
-    }
-
-    private String classNameForJarEntry(String entryName) {
-        return entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
-    }
-
-    private void addClassesInPackageDirectory(PackageDirectory rootPackage, List<Class<?>> classes) {
-        for(String filename : rootPackage.getDirectory().list()) {
-            if (filename.endsWith(".class")) {
-                String className = classNameFor(rootPackage.getName(), filename);
-                try {
-                    classes.add(Class.forName(className));
-                }
-                catch (ClassNotFoundException e) {
-                    throw new RuntimeException("ClassNotFoundException loading " + className);
-                }
-            }
-        }
-    }
-
-    private String classNameFor(String packageName, String filename) {
-        return packageName + '.' + filename.substring(0, filename.length() - 6);
+    private static boolean isNotAnInnerClass(String className) {
+        return (!className.contains("$"));
     }
 
     /**
-     * Recursive method used to find all classes in a given directory and subdirs.
-     *
-     * @param directory   The base directory
-     * @param packageName The package name for classes found inside the base directory
-     * @return The classes
+     * Scans all classes accessible from the context class loader which belong to the given package and subpackages. * Adapted from http://snippets.dzone.com/posts/show/4831 and extended to support use of JAR files * @param packageName The base package * @return The classes * @throws ClassNotFoundException * @throws IOException
      */
-    private List<Class<?>> findClasses(File directory, String packageName) {
-        List<Class<?>> classes = new ArrayList<Class<?>>();
-        if (!directory.exists()) {
+    public static List<Class<?>> getClasses(String packageName) {
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            assert classLoader != null;
+            String path = packageName.replace('.', '/');
+            Enumeration resources = classLoader.getResources(path);
+            List<String> dirs = Lists.newArrayList();
+            while (resources.hasMoreElements()) {
+                URL resource = (URL) resources.nextElement();
+                dirs.add(resource.getFile());
+            }
+            Set<String> classes = Sets.newTreeSet();
+            for (String directory : dirs) {
+                classes.addAll(findClasses(directory, packageName));
+            }
+            List<Class<?>> classList = Lists.newArrayList();
+            for (String className : classes) {
+                try {
+                    if (className.startsWith(packageName) && isNotAnInnerClass(className)) {
+                        classList.add(Class.forName(className));
+                    }
+                } catch (Throwable e) {
+                    System.out.println("Could not load class " + className);
+                    //throw new RuntimeException("Could not load class", e);
+                }
+            }
+            return classList;
+        } catch (Exception e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    /**
+     * Recursive method used to find all classes in a given directory and subdirs. * Adapted from http://snippets.dzone.com/posts/show/4831 and extended to support use of JAR files * @param directory The base directory * @param packageName The package name for classes found inside the base directory * @return The classes * @throws ClassNotFoundException
+     */
+    private static TreeSet findClasses(String directory, String packageName) throws Exception {
+        TreeSet classes = new TreeSet();
+        if (directory.startsWith("file:") && directory.contains("!")) {
+            String[] split = directory.split("!");
+            URL jar = new URL(split[0]);
+            ZipInputStream zip = new ZipInputStream(jar.openStream());
+            ZipEntry entry = null;
+            while ((entry = zip.getNextEntry()) != null) {
+                if (entry.getName().endsWith(".class")) {
+                    String className = classNameFor(entry);
+                    if (isNotAnInnerClass(className)) {
+                        classes.add(className);
+                    }
+                }
+            }
+        }
+        File dir = new File(directory);
+        if (!dir.exists()) {
             return classes;
         }
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                System.out.println("find classes in " + file);
-                if (file.isDirectory()) {
-                    classes.addAll(findClasses(file, packageName + "." + file.getName()));
-                } else if (file.getName().endsWith(".class") && isNotAnInnerClass(file.getName())) {
-                    classes.add(correspondingClass(packageName, file));
-                }
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                classes.addAll(findClasses(file.getAbsolutePath(), packageName + "." + file.getName()));
+            } else if (file.getName().endsWith(".class")) {
+                classes.add(packageName + '.' + file.getName().substring(0, file.getName().length() - 6));
             }
         }
         return classes;
     }
 
-    private Class<?> correspondingClass(String packageName, File file) {
-        try {
-            String fullyQualifiedClassName = packageName + '.' + simpleClassNameOf(file);
-            return getClassLoader().loadClass(fullyQualifiedClassName);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Could not find or access class for " + file, e);
-        }
-    }
-
-    private static ClassLoader getDefaultClassLoader() {
-        return Thread.currentThread().getContextClassLoader();
-    }
-
-    private String simpleClassNameOf(File file) {
-        return file.getName().substring(0, file.getName().length() - 6);
-    }
-
-    private boolean isNotAnInnerClass(String className) {
-        return (!className.contains("$"));
-    }
-
-    public ClassLoader getClassLoader() {
-        return classLoader;
-    }
-
-
-    private static class PackageDirectory {
-        private final Package rootPackage;
-        private final String packageName;
-        private final String relativePath;
-
-        private PackageDirectory(String packageName) {
-            this.packageName = packageName;
-            this.rootPackage = Package.getPackage(packageName);
-            this.relativePath =  packageName.replace('.','/');
-        }
-
-        public boolean exists() {
-            return (rootPackage != null);
-        }
-
-        public String getName() {
-            return packageName;
-        }
-
-        public String getRelativePath() {
-            return relativePath;
-        }
-
-        public String getFullPath() {
-            URL resource = ClassLoader.getSystemClassLoader().getResource(relativePath);
-            return resource.getFile();
-        }
-
-        public String getJarPath() {
-            return getFullPath().replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
-        }
-
-        public File getDirectory() {
-            URL resource = ClassLoader.getSystemClassLoader().getResource(relativePath);
-            try {
-                return new File(resource.toURI());
-            } catch (URISyntaxException e) {
-                throw new RuntimeException("Illegal URL for resource read from classpath: ",e);
-            }
-        }
-
-        public boolean isJarResource() {
-            URL resource = ClassLoader.getSystemClassLoader().getResource(relativePath);
-            try {
-                return resource.toURI().getScheme().equals("jar");
-            } catch (URISyntaxException e) {
-                throw new RuntimeException("Illegal URL for resource read from classpath: ",e);
-            }
-        }
-
-        public boolean directoryExists() {
-            return !isJarResource() && getDirectory().exists();
-        }
-
+    private static String classNameFor(ZipEntry entry) {
+        return entry.getName().replaceAll("[$].*", "").replaceAll("[.]class", "").replace('/', '.');
     }
 }
 

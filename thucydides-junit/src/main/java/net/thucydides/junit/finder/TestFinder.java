@@ -53,7 +53,6 @@ public abstract class TestFinder {
 
     protected Set<Class<?>> getNormalTestClasses() {
         Set<Class<?>> normalTestClasses = Sets.newHashSet();
-
         for(Class<?> testClass : getAllTestClasses()) {
             if (normalThucydidesTest(testClass)) {
                 normalTestClasses.add(testClass);

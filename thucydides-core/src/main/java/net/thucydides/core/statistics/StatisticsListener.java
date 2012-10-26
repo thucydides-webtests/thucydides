@@ -56,6 +56,7 @@ public class StatisticsListener implements StepListener {
     public void testFinished(TestOutcome result) {
 
         if (historyActivated()) {
+            System.out.println("TEST FINISHED: STORING OUTCOMES");
             if (!testOutcomes.contains(result)) {
                 testOutcomes.add(result);
             }
@@ -65,12 +66,18 @@ public class StatisticsListener implements StepListener {
     @Override
     public void testSuiteFinished() {
         if (historyActivated()) {
+            System.out.println("STORING OUTCOMES");
             synchronized (testOutcomes) {
-                List<TestOutcome> outcomesReadyToBeStored = ImmutableList.copyOf(testOutcomes);
-                testOutcomeHistoryDAO.storeTestOutcomes(outcomesReadyToBeStored);
-                testOutcomes.removeAll(outcomesReadyToBeStored);
+                storePending(testOutcomes);
             }
+            System.out.println("STORING OUTCOMES DONE");
         }
+    }
+
+    private void storePending(List<TestOutcome> testOutcomes) {
+        List<TestOutcome> outcomesReadyToBeStored = ImmutableList.copyOf(testOutcomes);
+        testOutcomeHistoryDAO.storeTestOutcomes(outcomesReadyToBeStored);
+        testOutcomes.removeAll(outcomesReadyToBeStored);
     }
 
 

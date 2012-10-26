@@ -179,7 +179,6 @@
         </dependency>
 
         <!-- Test statistics dependencies - may be refactored into a separate module at a later date -->
-
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time-hibernate</artifactId>

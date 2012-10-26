@@ -5,6 +5,7 @@ import net.thucydides.core.reflection.sampleclasses.SomeOtherClass
 import spock.lang.Specification
 import net.thucydides.core.reflection.sampleclasses.SomeTestClass
 import org.junit.runner.RunWith
+import net.thucydides.sampletests.SomeTest
 
 public class WhenLoadingClassesFromAPackage extends Specification {
 
@@ -48,15 +49,33 @@ public class WhenLoadingClassesFromAPackage extends Specification {
 
     def "should load all classes in a given package from a dependency"() {
         when:
-            List<Class> classes = ClassFinder.loadClasses().fromPackage("spock.lang");
+            List<Class> classes = ClassFinder.loadClasses().fromPackage("net.thucydides.sampletests");
         then:
-            !classes.isEmpty()
+            classes == [SomeTest]
 
     }
 
     def "should load all nested classes in a given package from a dependency"() {
         when:
              List<Class> classes = ClassFinder.loadClasses().fromPackage("net.thucydides.core");
+        then:
+            !classes.isEmpty()
+
+    }
+
+    def "should load all annotated classes in a given package from a dependency"() {
+        when:
+            List<Class> classes = ClassFinder.loadClasses().annotatedWith(RunWith.class).
+                                              fromPackage("net.thucydides.sampletests");
+        then:
+            classes == [SomeTest]
+
+    }
+
+    def "should load all annotated classes in a given package from a JAR dependency"() {
+        when:
+            List<Class> classes = ClassFinder.loadClasses().annotatedWith(RunWith.class).
+                fromPackage("spock.lang");
         then:
             !classes.isEmpty()
 

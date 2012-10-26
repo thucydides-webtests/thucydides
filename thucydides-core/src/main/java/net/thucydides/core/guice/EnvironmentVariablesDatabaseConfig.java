@@ -46,13 +46,19 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
         properties.put("hibernate.dialect", dialect);
         properties.put("hibernate.connection.pool_size", "1");
 
+        if (isActive()) {
+            configureDatabaseInitialisation(properties);
+        }
+        return properties;
+    }
+
+    private void configureDatabaseInitialisation(Properties properties) {
         boolean databaseIsConfigured = databaseIsConfigured(properties);
         if (isUsingLocalDatabase() || !databaseIsConfigured) {
             properties.put("hibernate.hbm2ddl.auto", "update");
         } else {
             properties.put("hibernate.hbm2ddl.auto", "validate");
         }
-        return properties;
     }
 
     private boolean databaseIsConfigured(Properties targetConfiguration) {
