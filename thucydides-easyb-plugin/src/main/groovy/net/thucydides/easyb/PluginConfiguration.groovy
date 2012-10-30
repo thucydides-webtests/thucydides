@@ -60,7 +60,7 @@ public class PluginConfiguration {
     }
 
     /**
-     * Override the normal web driver instance to be used for testing purposes.
+     * Override the normal web firefoxDriver instance to be used for testing purposes.
      */
     public void use_mock_driver(WebDriver webDriver) {
         WebdriverProxyFactory.getFactory().useMockDriver(webDriver);

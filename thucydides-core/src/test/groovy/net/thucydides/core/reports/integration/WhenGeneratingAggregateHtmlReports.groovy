@@ -132,7 +132,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
 
     private File outputDirectory;
 
-    WebDriver driver;
+    WebDriver firefoxDriver;
 
     @Mock
     IssueTracking issueTracking;
@@ -147,7 +147,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         outputDirectory = temporaryDirectory.newFolder("target/site/thucydides");
         reporter.setOutputDirectory(outputDirectory);
 
-        driver = new HtmlUnitDriver();
+        firefoxDriver = new HtmlUnitDriver();
         when(testHistory.getProgress()).thenReturn(new ArrayList<ProgressSnapshot>());
     }
 
@@ -160,9 +160,9 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         File report = new File(outputDirectory,"index.html");
 
         String reportUrl = "file:///" + report.getAbsolutePath();
-        driver.get(reportUrl);
+        firefoxDriver.get(reportUrl);
 
-        List<WebElement> tagTypes = driver.findElements(By.cssSelector(".tagTitle"));
+        List<WebElement> tagTypes = firefoxDriver.findElements(By.cssSelector(".tagTitle"));
         List<String> tagTypeNames = extract(tagTypes, on(WebElement.class).getText());
         assertThat(tagTypeNames, hasItem("A User Story In A Feature"));
         assertThat(tagTypeNames, hasItem("A Feature"));

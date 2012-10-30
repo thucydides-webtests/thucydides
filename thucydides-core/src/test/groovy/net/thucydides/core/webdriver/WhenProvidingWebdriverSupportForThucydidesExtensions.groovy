@@ -20,7 +20,7 @@ class WhenProvidingWebdriverSupportForThucydidesExtensions extends Specification
     def "should allow plugins to obtain a webdriver driver instance"() {
         when: "we initialize Thucydides support"
             ThucydidesWebDriverSupport.initialize()
-        then: "we can obtain a webdriver driver"
+        then: "we can obtain a webdriver firefoxDriver"
             ThucydidesWebDriverSupport.getDriver() != null
     }
 
@@ -77,14 +77,14 @@ class WhenProvidingWebdriverSupportForThucydidesExtensions extends Specification
     def "should provide access to the webdriver instance"() {
         when: "we initialize Thucydides support"
             ThucydidesWebDriverSupport.initialize()
-        then: "we should be able to access the current driver"
+        then: "we should be able to access the current firefoxDriver"
             ThucydidesWebDriverSupport.getDriver() != null
     }
 
     def "the default driver should be firefox"() {
         when: "we initialize Thucydides support"
             ThucydidesWebDriverSupport.initialize()
-        then: "the provided driver should be firefox"
+        then: "the provided firefoxDriver should be firefox"
             ThucydidesWebDriverSupport.driver.driverClass == FirefoxDriver
     }
 
@@ -95,14 +95,14 @@ class WhenProvidingWebdriverSupportForThucydidesExtensions extends Specification
         and: "we initialize support again"
             ThucydidesWebDriverSupport.initialize()
             def secondDriver = ThucydidesWebDriverSupport.driver;
-        then: "the driver should be unchanged"
+        then: "the firefoxDriver should be unchanged"
             secondDriver == firstDriver
     }
 
     def "should be able to define the driver"() {
-        when: "we initialize Thucydides support with a specified driver"
+        when: "we initialize Thucydides support with a specified firefoxDriver"
             ThucydidesWebDriverSupport.initialize("htmlunit")
-        then: "the provided driver should be of the specified type"
+        then: "the provided firefoxDriver should be of the specified type"
             ThucydidesWebDriverSupport.driver.driverClass == HtmlUnitDriver
     }
 }

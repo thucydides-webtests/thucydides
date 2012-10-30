@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 
+import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.After;
 import org.junit.Before;
@@ -62,7 +63,8 @@ public class WhenOpeningAndClosingBrowserSessions {
     public void createATestableDriverFactory() throws Exception {
         MockitoAnnotations.initMocks(this);
         initWendriverManager();
-        
+        StepEventBus.getEventBus().clearStepFailures();
+
         webDriver = new TransparentWebDriverFacade((WebDriverFacade)webdriverManager.getWebdriver());
     }
 

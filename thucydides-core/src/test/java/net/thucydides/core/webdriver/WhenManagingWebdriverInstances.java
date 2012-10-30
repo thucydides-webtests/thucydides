@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.After;
 import org.junit.Before;
@@ -85,6 +86,7 @@ public class WhenManagingWebdriverInstances {
         MockitoAnnotations.initMocks(this);
         environmentVariables = new MockEnvironmentVariables();
         initWebdriverManager();
+        StepEventBus.getEventBus().clearStepFailures();
     }
 
     @After

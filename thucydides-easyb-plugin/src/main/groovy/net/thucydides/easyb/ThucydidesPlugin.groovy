@@ -115,7 +115,7 @@ public class ThucydidesPlugin extends BasePlugin {
         }
         initializeTestSession();
         binding.setVariable("pages", pages)
-        binding.setVariable("driver", getWebDriver());
+        binding.setVariable("firefoxDriver", getWebDriver());
         binding.setVariable("thucydides", configuration);
 
 
@@ -340,7 +340,7 @@ public class ThucydidesPlugin extends BasePlugin {
         pages?.configuration?.defaultBaseUrl != null
     }
     /**
-     * The configuration manages output directories and driver types.
+     * The configuration manages output directories and firefoxDriver types.
      * They can be defined as system values, or have sensible defaults.
      */
     public PluginConfiguration getConfiguration() {
@@ -352,7 +352,7 @@ public class ThucydidesPlugin extends BasePlugin {
     }
 
     /**
-     * The configuration manages output directories and driver types.
+     * The configuration manages output directories and firefoxDriver types.
      * They can be defined as system values, or have sensible defaults.
      */
     protected Configuration getSystemConfiguration() {

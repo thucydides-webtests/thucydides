@@ -62,7 +62,7 @@ public class StaticTestSite {
         return driver;
     }
 
-    private static File fileInClasspathCalled(final String resourceName) {
+    public static File fileInClasspathCalled(final String resourceName) {
         return new File(Thread.currentThread().getContextClassLoader().getResource(resourceName).getPath());
     }
 }
