@@ -1,8 +1,15 @@
-package net.thucydides.core.webdriver;
+package net.thucydides.core.webdriver.integration;
 
 
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
+import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
+import net.thucydides.core.webdriver.TransparentWebDriverFacade;
+import net.thucydides.core.webdriver.WebDriverFacade;
+import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.core.webdriver.WebdriverInstanceFactory;
+import net.thucydides.core.webdriver.WebdriverManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,46 +33,28 @@ import static org.mockito.Mockito.when;
 
 public class WhenOpeningAndClosingBrowserSessions {
 
-    @Mock
-    WebdriverInstanceFactory webdriverInstanceFactory;
-
-    @Mock
-    FirefoxDriver firefoxDriver;
-
-    @Mock
-    ChromeDriver chromeDriver;
-
-    @Mock
-    InternetExplorerDriver ieDriver;
-
     WebdriverManager webdriverManager;
 
     WebDriverFactory factory;
 
     TransparentWebDriverFacade webDriver;
 
-    
+    WebdriverInstanceFactory webdriverInstanceFactory;
+
     private void initWendriverManager() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        when(webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class)).thenReturn(firefoxDriver);
-        when(webdriverInstanceFactory.newInstanceOf(ChromeDriver.class)).thenReturn(chromeDriver);
-        when(webdriverInstanceFactory.newInstanceOf(InternetExplorerDriver.class)).thenReturn(ieDriver);
-        when(webdriverInstanceFactory.newInstanceOf(eq(FirefoxDriver.class), any(FirefoxProfile.class))).thenReturn(firefoxDriver);
-
         MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        webdriverInstanceFactory = new WebdriverInstanceFactory();
         factory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
-
-        webdriverManager = new ThucydidesWebdriverManager(factory,
-                                                          new SystemPropertiesConfiguration(environmentVariables));
+        webdriverManager = new ThucydidesWebdriverManager(factory, new SystemPropertiesConfiguration(environmentVariables));
     }
 
 
     @Before
     public void createATestableDriverFactory() throws Exception {
-        MockitoAnnotations.initMocks(this);
         initWendriverManager();
         StepEventBus.getEventBus().clearStepFailures();
 
-        webDriver = new TransparentWebDriverFacade((WebDriverFacade)webdriverManager.getWebdriver());
+        webDriver = new TransparentWebDriverFacade((WebDriverFacade)webdriverManager.getWebdriver("htmlunit"));
     }
 
     @After
