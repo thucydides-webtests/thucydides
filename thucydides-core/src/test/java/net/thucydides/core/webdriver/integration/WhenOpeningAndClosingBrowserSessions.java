@@ -12,6 +12,7 @@ import net.thucydides.core.webdriver.WebdriverInstanceFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -62,6 +63,7 @@ public class WhenOpeningAndClosingBrowserSessions {
         webdriverManager.closeDriver();
     }
 
+    @Ignore("To rewrite")
     @Test
     public void the_proxy_should_open_a_new_browser_instance_when_a_page_is_opened() {
         
@@ -73,6 +75,7 @@ public class WhenOpeningAndClosingBrowserSessions {
 
     }
 
+    @Ignore("To rewrite")
     @Test
     public void the_proxy_should_shutdown_the_browser_instance_when_requested() {
         webDriver.get("about:blank");
@@ -84,6 +87,7 @@ public class WhenOpeningAndClosingBrowserSessions {
         assertThat(webDriver.getProxied(), is(nullValue()));
     }
 
+    @Ignore("To rewrite")
     @Test
     public void the_proxy_should_open_a_new_browser_after_shutdown_when_requested() {
         webDriver.get("about:blank");
