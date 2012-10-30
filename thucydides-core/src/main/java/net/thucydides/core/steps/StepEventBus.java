@@ -2,14 +2,11 @@ package net.thucydides.core.steps;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.webdriver.ThucydidesWebDriverSupport;
@@ -248,12 +245,12 @@ public class StepEventBus {
     /**
      * Start the execution of a test step.
      */
-    public void stepStarted(final ExecutedStepDescription executedStepDescription) {
+    public void stepStarted(final ExecutedStepDescription stepDescription) {
 
-        pushStep(executedStepDescription.getName());
+        pushStep(stepDescription.getName());
 
         for(StepListener stepListener : getAllListeners()) {
-            stepListener.stepStarted(executedStepDescription);
+            stepListener.stepStarted(stepDescription);
         }
     }
 
@@ -267,10 +264,6 @@ public class StepEventBus {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.skippedStepStarted(executedStepDescription);
         }
-    }
-
-    private void updateCurrentStepTitleTo(String updatedStepTitle) {
-        getBaseStepListener().updateCurrentStepTitle(updatedStepTitle);
     }
 
     public void stepFinished() {

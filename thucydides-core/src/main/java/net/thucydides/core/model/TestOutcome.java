@@ -3,7 +3,6 @@ package net.thucydides.core.model;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -28,7 +27,6 @@ import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -97,7 +95,7 @@ public class TestOutcome {
 
     private long duration;
 
-    private final long startTime;
+    private long startTime;
 
     private Throwable testFailureCause;
 
@@ -743,7 +741,28 @@ public class TestOutcome {
         }
     }
 
-
+    public static TestOutcome emptyCopyOf(TestOutcome baseTestOutcome) {
+        TestOutcome newTestOutcome = new TestOutcome(baseTestOutcome.methodName, baseTestOutcome.testCase);
+        newTestOutcome.additionalIssues = ImmutableSet.copyOf(baseTestOutcome.additionalIssues);
+        newTestOutcome.annotatedResult = baseTestOutcome.annotatedResult;
+        newTestOutcome.duration = baseTestOutcome.duration;
+        if (baseTestOutcome.issues != null) {
+            newTestOutcome.issues = ImmutableSet.copyOf(baseTestOutcome.issues);
+        }
+        newTestOutcome.issueTracking = baseTestOutcome.issueTracking;
+        newTestOutcome.linkGenerator = baseTestOutcome.linkGenerator;
+        newTestOutcome.qualifier = baseTestOutcome.qualifier;
+        newTestOutcome.sessionId = baseTestOutcome.sessionId;
+        newTestOutcome.startTime = baseTestOutcome.startTime;
+        newTestOutcome.statistics = baseTestOutcome.statistics;
+        newTestOutcome.storedTitle = baseTestOutcome.storedTitle;
+        newTestOutcome.tagProviderService = baseTestOutcome.tagProviderService;
+        if (baseTestOutcome.tags != null) {
+            newTestOutcome.tags = ImmutableSet.copyOf(baseTestOutcome.tags);
+        }
+        newTestOutcome.testFailureCause = baseTestOutcome.testFailureCause;
+        return newTestOutcome;
+    }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {
@@ -965,4 +984,5 @@ public class TestOutcome {
     public DateTime getStartTime() {
         return new DateTime(startTime);
     }
+
 }

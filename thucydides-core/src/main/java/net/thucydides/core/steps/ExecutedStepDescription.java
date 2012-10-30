@@ -51,6 +51,9 @@ public class ExecutedStepDescription implements Cloneable {
         return name;
     }
 
+    public ExecutedStepDescription withName(String newName) {
+        return new ExecutedStepDescription(this.stepsClass, newName, isAGroup);
+    }
     /**
      * We might not have the test class provided (e.g. at the end of a test).
      */

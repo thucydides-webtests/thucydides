@@ -1,6 +1,6 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.annotations.AnnotatedFields;
+import net.thucydides.core.annotations.Fields;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepProvider;
 
@@ -84,7 +84,7 @@ public abstract class StepIndex {
     }
 
     private Field getStepProviderField() {
-        for (Field field : AnnotatedFields.of(this.getClass()).allFields()) {
+        for (Field field : Fields.of(this.getClass()).allFields()) {
             if (field.isAnnotationPresent(StepProvider.class)) {
                 return field;
             }

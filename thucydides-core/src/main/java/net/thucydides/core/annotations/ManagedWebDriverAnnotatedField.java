@@ -93,7 +93,7 @@ public class ManagedWebDriverAnnotatedField {
     }
 
     private static ImmutableSet<Field> fieldsIn(Class clazz) {
-        return ImmutableSet.copyOf(AnnotatedFields.of(clazz).allFields());
+        return ImmutableSet.copyOf(Fields.of(clazz).allFields());
     }
 
     public boolean isUniqueSession() {

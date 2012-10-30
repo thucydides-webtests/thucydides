@@ -79,7 +79,7 @@ public class Thucydides {
     /**
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
      */
-    protected static void injectScenarioStepsInto(final Object testCase) {
+    public static void injectScenarioStepsInto(final Object testCase) {
         StepAnnotations.injectScenarioStepsInto(testCase, getStepFactory());
 
     }

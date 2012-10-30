@@ -392,6 +392,7 @@
                 <module>thucydides-junit</module>
                 <module>maven-thucydides-plugin</module>
                 <module>thucydides-easyb-plugin</module>
+                <module>thucydides-extensions</module>
             </modules>
         </profile>
 

@@ -56,7 +56,6 @@ public class StatisticsListener implements StepListener {
     public void testFinished(TestOutcome result) {
 
         if (historyActivated()) {
-            System.out.println("TEST FINISHED: STORING OUTCOMES");
             if (!testOutcomes.contains(result)) {
                 testOutcomes.add(result);
             }
@@ -66,11 +65,9 @@ public class StatisticsListener implements StepListener {
     @Override
     public void testSuiteFinished() {
         if (historyActivated()) {
-            System.out.println("STORING OUTCOMES");
             synchronized (testOutcomes) {
                 storePending(testOutcomes);
             }
-            System.out.println("STORING OUTCOMES DONE");
         }
     }
 

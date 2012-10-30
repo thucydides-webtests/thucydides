@@ -1,7 +1,7 @@
 package net.thucydides.core.pages;
 
 import com.google.common.base.Optional;
-import net.thucydides.core.annotations.AnnotatedFields;
+import net.thucydides.core.annotations.Fields;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.reflection.FieldSetter;
 import net.thucydides.core.steps.InvalidManagedPagesFieldException;
@@ -41,7 +41,7 @@ public class PagesAnnotatedField {
      */
     public static Optional<PagesAnnotatedField> findOptionalAnnotatedField(final Class<?> testClass) {
 
-        for (Field field : AnnotatedFields.of(testClass).allFields()) {
+        for (Field field : Fields.of(testClass).allFields()) {
             ManagedPages fieldAnnotation = annotationFrom(field);
             if (fieldAnnotation != null) {
                 return Optional.of(new PagesAnnotatedField(field, fieldAnnotation));

@@ -224,7 +224,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private void generateReports() {
-            generateReportsFor(getStepListener().getTestOutcomes());
+            generateReportsFor(getTestOutcomes());
     }
 
     private boolean skipThisTest() {

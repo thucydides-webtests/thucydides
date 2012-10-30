@@ -1,6 +1,6 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.annotations.AnnotatedFields;
+import net.thucydides.core.annotations.Fields;
 import net.thucydides.core.annotations.InvalidStepsFieldException;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.reflection.FieldSetter;
@@ -40,7 +40,7 @@ public class StepsAnnotatedField {
     public static List<StepsAnnotatedField> findOptionalAnnotatedFields(final Class<?> clazz) {
 
         List<StepsAnnotatedField> annotatedFields = new ArrayList<StepsAnnotatedField>();
-        for (Field field : AnnotatedFields.of(clazz).allFields()) {
+        for (Field field : Fields.of(clazz).allFields()) {
             if (fieldIsAnnotated(field)) {
                 annotatedFields.add( new StepsAnnotatedField(field));
             }

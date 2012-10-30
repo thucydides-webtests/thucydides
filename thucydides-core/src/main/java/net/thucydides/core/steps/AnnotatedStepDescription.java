@@ -74,11 +74,21 @@ public final class AnnotatedStepDescription {
     }
 
     private String withNoArguments(final String methodName) {
-        int firstSpace = methodName.indexOf(':');
-        if (firstSpace > 0) {
-            return methodName.substring(0, firstSpace);
+        String unqualifiedName = unqualified(methodName);
+        return stripFrom(':', unqualifiedName);
+    }
+
+    private String stripFrom(char boundaryChar, String text) {
+        int boundaryPosition = text.indexOf(boundaryChar);
+        if (boundaryPosition > 0) {
+            return text.substring(0, boundaryPosition);
+        } else {
+            return text;
         }
-        return methodName;
+    }
+
+    private String unqualified(String methodName) {
+        return StringUtils.stripStart(methodName,"[0123456789] ");
     }
 
     private Class<?> getTestClass() {

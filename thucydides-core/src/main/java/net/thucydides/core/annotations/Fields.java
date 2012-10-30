@@ -12,21 +12,21 @@ import java.util.Set;
  * Typical use:
  * <pre>
  *     <code>
- *         for (Field field : AnnotatedFields.of(someClass).allFields()) {
+ *         for (Field field : Fields.of(someClass).allFields()) {
  *             ...
  *         }
  *     </code>
  * </pre>
  */
-public class AnnotatedFields {
+public class Fields {
 
     private final Class<?> clazz;
 
-    public static AnnotatedFields of(final Class<?> testClass) {
-        return new AnnotatedFields(testClass);
+    public static Fields of(final Class<?> testClass) {
+        return new Fields(testClass);
     }
 
-    private AnnotatedFields(Class<?> clazz) {
+    private Fields(Class<?> clazz) {
         this.clazz = clazz;
     }
 
@@ -35,7 +35,7 @@ public class AnnotatedFields {
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
         fields.addAll(Arrays.asList(clazz.getFields()));
         if (clazz != Object.class) {
-            fields.addAll(AnnotatedFields.of(clazz.getSuperclass()).allFields());
+            fields.addAll(Fields.of(clazz.getSuperclass()).allFields());
         }
         return fields;
     }
