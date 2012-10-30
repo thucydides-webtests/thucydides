@@ -113,7 +113,7 @@ public class WhenManagingWebdriverInstances {
     @Test
     public void driver_names_for_non_default_drivers_should_be_case_insensitive() {
 
-        WebDriverFacade uppercaseFirefoxDriver = (WebDriverFacade) webdriverManager.getWebdriver("mlmlUnit");
+        WebDriverFacade uppercaseFirefoxDriver = (WebDriverFacade) webdriverManager.getWebdriver("hlmlUnit");
         WebDriverFacade firefoxDriver = (WebDriverFacade) webdriverManager.getWebdriver("htmlunit");
 
         assertThat(firefoxDriver, is(uppercaseFirefoxDriver));
