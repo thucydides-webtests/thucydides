@@ -1,7 +1,9 @@
 package net.thucydides.core.steps;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestsRequirement;
@@ -199,10 +201,26 @@ public final class AnnotatedStepDescription {
 
         Optional<String> annotatedStepName = getAnnotatedStepName();
         if (getAnnotatedStepName().isPresent() && (StringUtils.isNotEmpty(annotatedStepName.get()))) {
-            return annotatedStepName.get();
+            return annotatedStepNameWithParameters(annotatedStepName.get());
         }
 
         return humanize(description.getName());
+    }
+
+    private String annotatedStepNameWithParameters(String annotatedStepTemplate) {
+        String annotatedStepName = annotatedStepTemplate;
+
+        Iterable<String> parameters = getParamatersFrom(description.getName());
+        int counter = 0;
+        for(String parameter : parameters) {
+            annotatedStepName = annotatedStepName.replaceAll("\\{" + counter++ + "\\}", parameter);
+        }
+        return annotatedStepName;
+    }
+
+    private Iterable<String> getParamatersFrom(String name) {
+        String parameters = StringUtils.substringAfter(name,":");
+        return Splitter.on(",").trimResults().split(parameters);
     }
 
     public boolean isAGroup() {
