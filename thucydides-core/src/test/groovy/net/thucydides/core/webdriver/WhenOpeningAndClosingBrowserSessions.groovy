@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.nullValue
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.is
 import static org.hamcrest.Matchers.notNullValue
+import net.thucydides.core.steps.StepEventBus
 
 class WhenOpeningAndClosingBrowserSessions extends Specification {
 
@@ -65,6 +66,7 @@ class WhenOpeningAndClosingBrowserSessions extends Specification {
         remote.getCapabilities() >> capabilities
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables)
         webdriverManager = new ThucydidesWebdriverManager(webDriverFactory, new SystemPropertiesConfiguration(environmentVariables));
+        StepEventBus.eventBus.clear()
     }
 
     def "should open a new browser when a page is opened"() {
