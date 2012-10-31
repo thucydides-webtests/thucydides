@@ -168,9 +168,18 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
             storeEachOutcomeIn(entityManager, testOutcomes);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            LOGGER.warn("Failed to store test outcome in history database", e);
+            rollbackIfPossible(entityManager);
         } finally {
             entityManager.close();
+        }
+    }
+
+    private void rollbackIfPossible(EntityManager entityManager) {
+        try {
+            entityManager.getTransaction().rollback();
+        } catch (IllegalStateException couldNotRollback) {
+            LOGGER.warn("Could not rollback failed transaction", couldNotRollback);
         }
     }
 
@@ -300,7 +309,7 @@ public class HibernateTestOutcomeHistoryDAO implements TestOutcomeHistoryDAO {
             }
             entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            rollbackIfPossible(entityManager);
         } finally {
             entityManager.close();
         }
