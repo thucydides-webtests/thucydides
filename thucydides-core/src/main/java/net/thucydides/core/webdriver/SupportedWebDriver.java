@@ -7,6 +7,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
 /**
  * The list of supported web drivers.
  * These are the drivers that support screenshots. Note that
@@ -33,6 +35,11 @@ public enum SupportedWebDriver {
      * HTMLUnit - fast, but no screenshots.
      */
     HTMLUNIT(HtmlUnitDriver.class),
+
+    /**
+     * Remote web driver
+     */
+    REMOTE(RemoteWebDriver.class),
 
     /**
      * Internet Explorer

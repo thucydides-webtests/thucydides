@@ -1,20 +1,10 @@
 package net.thucydides.core.csv
 
-import net.thucydides.core.model.ErrorMessageFormatter
-import spock.lang.Specification
-
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.is
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.is
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.is
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.is
-import net.thucydides.core.steps.ScenarioSteps
-import net.thucydides.core.pages.Pages
-import net.thucydides.core.steps.StepFactory
 import net.thucydides.core.annotations.Step
+import net.thucydides.core.pages.Pages
+import net.thucydides.core.steps.ScenarioSteps
+import net.thucydides.core.steps.StepFactory
+import spock.lang.Specification
 
 class WhenInstantiatingDataDrivenClassesInGroovy extends Specification {
 

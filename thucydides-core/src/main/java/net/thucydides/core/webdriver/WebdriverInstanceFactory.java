@@ -1,12 +1,16 @@
 package net.thucydides.core.webdriver;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
 /**
  * Centralize instantiation of WebDriver drivers.
@@ -20,19 +24,19 @@ public class WebdriverInstanceFactory {
         return webdriverClass.newInstance();
     }
 
-    public WebDriver newInstanceOf(final Class<? extends WebDriver> webdriverClass,
-                                   final FirefoxProfile profile) throws IllegalAccessException,
-            InstantiationException,
-            NoSuchMethodException,
-            InvocationTargetException {
-        return webdriverClass.getConstructor(new Class[]{FirefoxProfile.class}).newInstance(profile);
+    public WebDriver newRemoteDriver(URL remoteUrl, DesiredCapabilities capabilities) {
+        return new RemoteWebDriver(remoteUrl, capabilities);
     }
 
-    public WebDriver newInstanceOf(final Class<? extends WebDriver> webdriverClass,
-                                   final ChromeOptions options) throws IllegalAccessException,
-            InstantiationException,
-            NoSuchMethodException,
-            InvocationTargetException {
-        return webdriverClass.getConstructor(new Class[]{ChromeOptions.class}).newInstance(options);
+    public WebDriver newFirefoxDriver(FirefoxProfile profile) {
+        return new FirefoxDriver(profile);
+    }
+
+    public WebDriver newChromeDriver(ChromeOptions options) {
+        return new ChromeDriver(options);
+    }
+
+    public WebDriver newHtmlUnitDriver(DesiredCapabilities caps) {
+        return new HtmlUnitDriver(caps);
     }
 }

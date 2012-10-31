@@ -129,14 +129,14 @@ public class WebDriverFactory {
     protected synchronized WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {
             WebDriver driver;
-            if (isARemoteDriver(driverClass) || shouldUseARemoteDriver()) {
+            if (isARemoteDriver(driverClass) || shouldUseARemoteDriver() || saucelabsUrlIsDefined()) {
                 driver = newRemoteDriver();
             } else if (isAFirefoxDriver(driverClass)) {
-                driver = firefoxDriverFrom(driverClass);
+                driver = firefoxDriver();
             } else if (isAnHtmlUnitDriver(driverClass)) {
                 driver = htmlunitDriverFrom(driverClass);
             } else if (isAChromeDriver(driverClass)) {
-                driver = chromeDriverFrom(driverClass);
+                driver = chromeDriver();
             } else {
                 driver = newDriverInstanceFrom(driverClass);
             }
@@ -180,8 +180,7 @@ public class WebDriverFactory {
 
     private WebDriver buildRemoteDriver() throws MalformedURLException {
         String remoteUrl = ThucydidesSystemProperty.REMOTE_URL.from(environmentVariables);
-        DesiredCapabilities capabilities = buildCapabilities();
-        return new RemoteWebDriver(new URL(remoteUrl), capabilities);
+        return webdriverInstanceFactory.newRemoteDriver(new URL(remoteUrl), buildCapabilities());
     }
 
     private boolean saucelabsUrlIsDefined() {
@@ -190,7 +189,7 @@ public class WebDriverFactory {
 
     private WebDriver buildSaucelabsDriver() throws MalformedURLException {
         String saucelabsUrl = ThucydidesSystemProperty.SAUCELABS_URL.from(environmentVariables);
-        WebDriver driver = new RemoteWebDriver(new URL(saucelabsUrl), findSaucelabsCapabilities());
+        WebDriver driver = webdriverInstanceFactory.newRemoteDriver(new URL(saucelabsUrl), findSaucelabsCapabilities());
 
         if (isNotEmpty(ThucydidesSystemProperty.SAUCELABS_IMPLICIT_TIMEOUT.from(environmentVariables))) {
             int implicitWait = environmentVariables.getPropertyAsInteger(
@@ -282,7 +281,24 @@ public class WebDriverFactory {
         if (driver == null) {
             driver = DEFAULT_DRIVER;
         }
-        SupportedWebDriver driverType = SupportedWebDriver.valueOf(driver.toUpperCase());
+        SupportedWebDriver driverType = driverTypeFor(driver);
+        if (driverType == null) {
+            throw new IllegalArgumentException("Unsupported remote driver type: " + driver);
+        }
+
+        if (driverType == SupportedWebDriver.REMOTE) {
+            return remoteCapabilities();
+        } else {
+            return realBrowserCapabilities(driverType);
+        }
+    }
+
+    private SupportedWebDriver driverTypeFor(String driver) {
+        return SupportedWebDriver.valueOf(driver.toUpperCase());
+    }
+
+    private DesiredCapabilities realBrowserCapabilities(SupportedWebDriver driverType) {
+
         switch (driverType) {
             case CHROME:
                 return DesiredCapabilities.chrome();
@@ -298,38 +314,39 @@ public class WebDriverFactory {
 
             case IEXPLORER:
                 return DesiredCapabilities.internetExplorer();
+
+            default:
+                DesiredCapabilities capabilities = new DesiredCapabilities();
+                capabilities.setJavascriptEnabled(true);
+                return capabilities;
         }
-        throw new IllegalArgumentException("Unsupported remote driver type: " + driver);
+    }
+
+    private DesiredCapabilities remoteCapabilities() {
+        String remoteBrowser = ThucydidesSystemProperty.REMOTE_BROWSER.from(environmentVariables, "firefox");
+        return realBrowserCapabilities(driverTypeFor(remoteBrowser));
     }
 
     private WebDriver htmlunitDriverFrom(Class<? extends WebDriver> driverClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         DesiredCapabilities caps = DesiredCapabilities.firefox();
         caps.setJavascriptEnabled(true);
-        return new HtmlUnitDriver(caps);
+        return webdriverInstanceFactory.newHtmlUnitDriver(caps);
     }
 
-    private WebDriver firefoxDriverFrom(Class<? extends WebDriver> driverClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    private WebDriver firefoxDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         FirefoxProfile profile = buildFirefoxProfile();
-        if (aProfileCouldBeCreated(profile)) {
-            return webdriverInstanceFactory.newInstanceOf(driverClass, profile);
-        } else {
-            return newDriverInstanceFrom(driverClass);
-        }
+        return webdriverInstanceFactory.newFirefoxDriver(profile);
     }
 
-    private WebDriver chromeDriverFrom(Class<? extends WebDriver> driverClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    private WebDriver chromeDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         ChromeOptions options = new ChromeOptions();
         String chromeSwitches = environmentVariables.getProperty(ThucydidesSystemProperty.CHROME_SWITCHES);
         if (StringUtils.isNotEmpty(chromeSwitches)) {
             List<String> arguments =  Lists.newArrayList(Splitter.on(",").trimResults().split(chromeSwitches));
             options.addArguments(arguments);
         }
-        return webdriverInstanceFactory.newInstanceOf(driverClass, options);
+        return webdriverInstanceFactory.newChromeDriver(options);
 
-    }
-
-    private boolean aProfileCouldBeCreated(FirefoxProfile profile) {
-        return (profile != null);
     }
 
     private Dimension getRequestedBrowserSize() {
@@ -430,33 +447,29 @@ public class WebDriverFactory {
         return new FirefoxProfile(profileDirectory);
     }
 
-    private FirefoxProfile buildFirefoxProfile() {
-        FirefoxProfile profile = null;
-        try {
-            String profileName = environmentVariables.getProperty("webdriver.firefox.profile");
-            if (profileName == null) {
-                profile = createNewFirefoxProfile();
-            } else {
-                profile = getProfileFrom(profileName);
-            }
+    protected FirefoxProfile buildFirefoxProfile() {
+        FirefoxProfile profile;
+        String profileName = environmentVariables.getProperty("webdriver.firefox.profile");
+        if (profileName == null) {
+            profile = createNewFirefoxProfile();
+        } else {
+            profile = getProfileFrom(profileName);
+        }
 
-            firefoxProfileEnhancer.allowWindowResizeFor(profile);
-            if (shouldEnableNativeEvents()) {
-                firefoxProfileEnhancer.enableNativeEventsFor(profile);
-            }
-            if (shouldActivateProxy()) {
-                activateProxyFor(profile, firefoxProfileEnhancer);
-            }
-            if (firefoxProfileEnhancer.shouldActivateFirebugs()) {
-                LOGGER.info("Adding Firebugs to Firefox profile");
-                firefoxProfileEnhancer.addFirebugsTo(profile);
-            }
-            if (dontAssumeUntrustedCertificateIssuer()) {
-                profile.setAssumeUntrustedCertificateIssuer(false);
-                profile.setAcceptUntrustedCertificates(true);
-            }
-        } catch (UnableToCreateProfileException e) {
-
+        firefoxProfileEnhancer.allowWindowResizeFor(profile);
+        if (shouldEnableNativeEvents()) {
+            firefoxProfileEnhancer.enableNativeEventsFor(profile);
+        }
+        if (shouldActivateProxy()) {
+            activateProxyFor(profile, firefoxProfileEnhancer);
+        }
+        if (firefoxProfileEnhancer.shouldActivateFirebugs()) {
+            LOGGER.info("Adding Firebugs to Firefox profile");
+            firefoxProfileEnhancer.addFirebugsTo(profile);
+        }
+        if (dontAssumeUntrustedCertificateIssuer()) {
+            profile.setAssumeUntrustedCertificateIssuer(false);
+            profile.setAcceptUntrustedCertificates(true);
         }
         return profile;
     }

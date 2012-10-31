@@ -34,22 +34,11 @@ public class WhenInstanciatingANewDriver {
 
     private WebDriverFactory webDriverFactory;
 
-    private WebDriver driver;
-
     @Mock
     WebdriverInstanceFactory webdriverInstanceFactory;
 
     @Mock
-    FirefoxDriver firefoxDriver;
-
-    @Mock
     ChromeDriver chromeDriver;
-
-    @Mock
-    InternetExplorerDriver ieDriver;
-
-    @Mock
-    FirefoxProfile profile;
 
     EnvironmentVariables environmentVariables;
 
@@ -57,31 +46,10 @@ public class WhenInstanciatingANewDriver {
     public void createATestableDriverFactory() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        when(webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class)).thenReturn(firefoxDriver);
-        when(webdriverInstanceFactory.newInstanceOf(eq(ChromeDriver.class), any(ChromeOptions.class))).thenReturn(chromeDriver);
-        when(webdriverInstanceFactory.newInstanceOf(InternetExplorerDriver.class)).thenReturn(ieDriver);
-        when(webdriverInstanceFactory.newInstanceOf(eq(FirefoxDriver.class), any(FirefoxProfile.class))).thenReturn(firefoxDriver);
+        when(webdriverInstanceFactory.newChromeDriver(any(ChromeOptions.class))).thenReturn(chromeDriver);
 
         environmentVariables = new MockEnvironmentVariables();
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
-    }
-
-    @Test
-    public void should_support_creating_a_firefox_driver() {
-         driver = webDriverFactory.newInstanceOf(SupportedWebDriver.FIREFOX);
-         assertThat(driver, instanceOf(FirefoxDriver.class));
-    }
-
-    @Test
-    public void should_support_creating_a_chrome_driver() {
-         driver = webDriverFactory.newInstanceOf(SupportedWebDriver.CHROME);
-         assertThat(driver, instanceOf(ChromeDriver.class));
-    }
-
-    @Test
-    public void should_support_creating_an_internet_explorer_driver() {
-         driver = webDriverFactory.newInstanceOf(SupportedWebDriver.IEXPLORER);
-         assertThat(driver, instanceOf(InternetExplorerDriver.class));
     }
 
     @Captor
@@ -91,9 +59,9 @@ public class WhenInstanciatingANewDriver {
     public void should_pass_chrome_switches_when_creating_a_chrome_driver() throws Exception {
         environmentVariables.setProperty("chrome.switches","--homepage=about:blank,--no-first-run");
 
-        driver = webDriverFactory.newInstanceOf(SupportedWebDriver.CHROME);
+        webDriverFactory.newInstanceOf(SupportedWebDriver.CHROME);
 
-        verify(webdriverInstanceFactory).newInstanceOf(eq(ChromeDriver.class), chromeOptionsArgument.capture());
+        verify(webdriverInstanceFactory).newChromeDriver(chromeOptionsArgument.capture());
         assertThat(argumentsFrom(chromeOptionsArgument), hasItems("--homepage=about:blank", "--no-first-run"));
     }
 

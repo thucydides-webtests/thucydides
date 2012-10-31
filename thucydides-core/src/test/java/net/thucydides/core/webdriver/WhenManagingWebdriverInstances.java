@@ -119,28 +119,6 @@ public class WhenManagingWebdriverInstances {
         assertThat(firefoxDriver, is(uppercaseFirefoxDriver));
     }
 
-    @Ignore("To redo")
-    @Test
-    public void a_new_htmlunit_webdriver_instance_is_created_when_the_webdriver_system_property_is_set_to_htmlunit() {
-
-        environmentVariables.setProperty("webdriver.driver","htmlunit");
-
-        WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver();
-        driver.get(staticSiteUrl());
-        assertThat(driver.proxiedWebDriver, instanceOf(HtmlUnitDriver.class));
-    }
-
-    @Ignore("To redo")
-    @Test
-    public void the_configured_driver_type_can_be_overriden_for_a_particular_test() {
-
-        environmentVariables.setProperty("webdriver.driver","firefox");
-
-        WebDriverFacade driver = (WebDriverFacade) webdriverManager.getWebdriver("htmlunit");
-        driver.get(staticSiteUrl());
-        assertThat(driver.proxiedWebDriver, instanceOf(HtmlUnitDriver.class));
-    }
-
 
     @Test
     public void the_default_output_directory_can_be_overrided_via_a_system_property() {

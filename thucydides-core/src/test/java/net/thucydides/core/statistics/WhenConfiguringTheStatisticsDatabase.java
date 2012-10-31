@@ -37,7 +37,7 @@ public class WhenConfiguringTheStatisticsDatabase {
     
     @Test
     public void should_define_an_h2_database_by_default() {
-        Properties properties = databaseConfig.getProperties();
+        Properties properties = databaseConfig.getConnectionProperties();
 
         assertThat(properties.getProperty("hibernate.connection.driver_class"), is("org.h2.Driver"));
     }
@@ -45,7 +45,7 @@ public class WhenConfiguringTheStatisticsDatabase {
 
     @Test
     public void should_define_a_local_hsqldb_database_by_default() {
-        Properties properties = databaseConfig.getProperties();
+        Properties properties = databaseConfig.getConnectionProperties();
 
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:"));
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-thucydides"));
@@ -54,7 +54,7 @@ public class WhenConfiguringTheStatisticsDatabase {
     @Test
     public void should_define_a_local_hsqldb_database_using_the_project_key_if_provided() {
         environmentVariables.setProperty("thucydides.project.key","myproject");
-        Properties properties = databaseConfig.getProperties();
+        Properties properties = databaseConfig.getConnectionProperties();
 
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:"));
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-myproject"));
@@ -63,7 +63,7 @@ public class WhenConfiguringTheStatisticsDatabase {
     @Test
     public void should_define_a_local_hsqldb_database_using_the_full_database_name_if_provided() {
         environmentVariables.setProperty("thucydides.project.key","myproject");
-        Properties properties = databaseConfig.getProperties();
+        Properties properties = databaseConfig.getConnectionProperties();
 
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("jdbc:"));
         assertThat(properties.getProperty("hibernate.connection.url"), containsString("stats-myproject"));
@@ -113,7 +113,7 @@ public class WhenConfiguringTheStatisticsDatabase {
         environmentVariables.setProperty("thucydides.statistics.password","password");
         environmentVariables.setProperty("thucydides.statistics.dialect","org.hibernate.dialect.PostgresDialect");
 
-        Properties properties = databaseConfig.getProperties();
+        Properties properties = databaseConfig.getConnectionProperties();
 
         assertThat(properties.getProperty("hibernate.connection.driver_class"), is("org.postgresql.Driver"));
         assertThat(properties.getProperty("hibernate.connection.url"), is("jdbc:postgresql:dbserver/stats"));

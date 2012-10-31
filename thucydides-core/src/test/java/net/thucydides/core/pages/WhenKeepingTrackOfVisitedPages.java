@@ -250,18 +250,4 @@ public class WhenKeepingTrackOfVisitedPages {
 
         verify(driver, never()).get("http://www.google.com");
     }
-
-    class InvalidWebDriverClass extends FirefoxDriver {
-        InvalidWebDriverClass() throws IllegalAccessException {
-            throw new IllegalAccessException();
-        }
-    }
-
-    @Test(expected = UnsupportedDriverException.class)
-    public void should_throw_exception_if_invalid_driver_used() {
-        WebDriverFacade facade = new WebDriverFacade(InvalidWebDriverClass.class, new WebDriverFactory());
-        facade.getProxiedDriver();
-    }
-
-
 }

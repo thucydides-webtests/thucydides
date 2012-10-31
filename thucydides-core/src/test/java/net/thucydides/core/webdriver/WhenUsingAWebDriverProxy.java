@@ -38,12 +38,6 @@ public class WhenUsingAWebDriverProxy {
     @Mock
     FirefoxDriver firefoxDriver;
 
-    @Mock
-    ChromeDriver chromeDriver;
-
-    @Mock
-    InternetExplorerDriver ieDriver;
-
     WebdriverManager webdriverManager;
 
     WebDriverFactory factory;
@@ -62,10 +56,7 @@ public class WhenUsingAWebDriverProxy {
     }
 
     private void initWendriverManager() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        when(webdriverInstanceFactory.newInstanceOf(FirefoxDriver.class)).thenReturn(firefoxDriver);
-        when(webdriverInstanceFactory.newInstanceOf(ChromeDriver.class)).thenReturn(chromeDriver);
-        when(webdriverInstanceFactory.newInstanceOf(InternetExplorerDriver.class)).thenReturn(ieDriver);
-        when(webdriverInstanceFactory.newInstanceOf(eq(FirefoxDriver.class), any(FirefoxProfile.class))).thenReturn(firefoxDriver);
+        when(webdriverInstanceFactory.newFirefoxDriver(any(FirefoxProfile.class))).thenReturn(firefoxDriver);
 
         MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
         factory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);

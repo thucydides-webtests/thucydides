@@ -30,7 +30,7 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
         this.localDatabase = localDatabase;
     }
 
-    public Properties getProperties() {
+    public Properties getConnectionProperties() {
         Properties properties = new Properties();
 
         String driver = ThucydidesSystemProperty.STATISTICS_DRIVER.from(environmentVariables, localDatabase.getDriver());
@@ -45,6 +45,11 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
         properties.put("hibernate.connection.password", password);
         properties.put("hibernate.dialect", dialect);
         properties.put("hibernate.connection.pool_size", "1");
+        return properties;
+    }
+
+    public Properties getProperties() {
+        Properties properties = getConnectionProperties();
 
         if (isActive()) {
             configureDatabaseInitialisation(properties);

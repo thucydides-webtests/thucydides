@@ -48,14 +48,10 @@ public class WhenRunningTestBatches extends AbstractTestStepRunnerTest {
 
         webdriverInstanceFactory = new WebdriverInstanceFactory() {
             @Override
-            public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass, FirefoxProfile profile) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+            public WebDriver newFirefoxDriver(FirefoxProfile profile) {
                 return firefoxDriver;
             }
 
-            @Override
-            public WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass) throws IllegalAccessException, InstantiationException {
-                return firefoxDriver;
-            }
         };
 
         environmentVariables = new MockEnvironmentVariables();
