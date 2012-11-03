@@ -1,6 +1,7 @@
 package net.thucydides.junit.pipeline;
 
 import au.com.bytecode.opencsv.CSVReader;
+import net.thucydides.core.csv.FieldName;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,16 +14,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CSVDataSets {
+public class CSVData {
 
     private final String path;
 
-    public static CSVDataSets fromFile(String path) throws FileNotFoundException {
-        return new CSVDataSets(path);
+    public static CSVData fromFile(String path) throws FileNotFoundException {
+        return new CSVData(path);
 
     }
 
-    public CSVDataSets(String path) {
+    public CSVData(String path) {
         this.path = path;
     }
 
@@ -77,10 +78,8 @@ public class CSVDataSets {
         return columnValue.trim();
     }
 
-    private String titleFrom(String columnValue) {
-        String columnValueWithoutSpaces = columnValue.replace(" ","").trim();
-        String lowerCaseInitialChar = String.valueOf(columnValueWithoutSpaces.charAt(0)).toLowerCase();
-        return lowerCaseInitialChar + columnValueWithoutSpaces.substring(1);
+    private String titleFrom(String columnName) {
+        return FieldName.from(columnName).inNormalizedForm();
     }
 
 }

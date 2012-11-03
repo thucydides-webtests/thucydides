@@ -8,6 +8,6 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ResultsOutput {
-    void recordResult(List<String> columnValues,
+    void recordResult(List<? extends Object> columnValues,
                       SimpleValueMatcher... check) throws IOException, WriteException, BiffException;
 }

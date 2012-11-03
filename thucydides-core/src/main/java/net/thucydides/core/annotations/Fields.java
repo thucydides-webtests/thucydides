@@ -2,6 +2,7 @@ package net.thucydides.core.annotations;
 
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,5 +40,18 @@ public class Fields {
         }
         return fields;
     }
+
+    public Set<Field> nonStaticFields() {
+        Set<Field> fields = allFields();
+        Set<Field> nonStaticFields = new HashSet<Field>();
+        for(Field field : fields) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                nonStaticFields.add(field);
+            }
+        }
+        return nonStaticFields;
+
+    }
+
 }
 

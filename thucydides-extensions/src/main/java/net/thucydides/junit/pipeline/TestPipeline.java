@@ -2,11 +2,15 @@ package net.thucydides.junit.pipeline;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.inject.Injector;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.Fields;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.steps.FilePathParser;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.junit.pipeline.converters.TypeConverter;
 import net.thucydides.junit.pipeline.converters.TypeConverters;
 import org.junit.Test;
@@ -25,9 +29,15 @@ import java.util.Set;
 
 public class TestPipeline {
 
-    private final Object[] NO_ARGS = new Object[0];
+    private final static Object[] NO_ARGS = new Object[0];
+
+    private final FilePathParser filePathParser;
 
     List<TestPipeline> pipelines = Lists.newArrayList();
+
+    public TestPipeline() {
+        filePathParser = new FilePathParser(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+    }
 
     @Managed
     protected WebDriver webDriver;
@@ -47,8 +57,9 @@ public class TestPipeline {
         }
     }
 
-    protected List<Map<String,String>> loadFromCSVFile(String csvFilename) throws IOException {
-        return CSVDataSets.fromFile(csvFilename).asMaps();
+    protected List<Map<String,String>> loadDataFrom(String filename) throws IOException {
+        String instantiatedFilename = filePathParser.getInstanciatedPath(filename);
+        return CSVData.fromFile(instantiatedFilename).asMaps();
     }
 
     private void initializePipelines() {
@@ -79,7 +90,7 @@ public class TestPipeline {
     }
 
     private void copyFieldValuesTo(TestPipeline pipeline) throws IllegalAccessException {
-        Set<Field> fields = Fields.of(pipeline.getClass()).allFields();
+        Set<Field> fields = Fields.of(pipeline.getClass()).nonStaticFields();
         for(Field field: fields) {
             field.setAccessible(true);
             Object sourceValue = field.get(this);
@@ -154,7 +165,7 @@ public class TestPipeline {
         try {
             return (Iterable<Map>) dataProvider.invoke(this, NO_ARGS);
         } catch (Exception e) {
-            return Collections.EMPTY_LIST;
+            throw new RuntimeException("Could not load dataset",e);
         }
     }
 

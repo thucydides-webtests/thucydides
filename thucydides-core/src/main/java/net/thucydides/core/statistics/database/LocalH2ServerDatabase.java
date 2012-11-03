@@ -33,9 +33,14 @@ public class LocalH2ServerDatabase implements LocalDatabase {
     }
 
     public String getUrl() {
-        return "jdbc:h2:/" + getDatabasePath() + ";AUTO_SERVER=TRUE";
-//        return "jdbc:h2:/" + getDatabasePath();
-//        return "jdbc:h2:/" + getDatabasePath() + ";FILE_LOCK=SERIALIZED";
+
+        String jdbcOptions = ThucydidesSystemProperty.THUCYDIDES_DATABASE_JDBC_OPTIONS.from(environmentVariables,"AUTO_SERVER=TRUE");
+
+        String jdbc = "jdbc:h2:file:/" + getDatabasePath();
+        if (StringUtils.isNotEmpty(jdbcOptions)) {
+            jdbc = jdbc + ";" + jdbcOptions;
+        }
+        return jdbc;
     }
 
     public String getDriver() {

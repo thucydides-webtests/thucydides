@@ -32,7 +32,7 @@ public class SpreadsheetResultsOutput implements ResultsOutput {
     }
 
     @Override
-    public synchronized void recordResult(List<String> columnValues,
+    public synchronized void recordResult(List<? extends Object> columnValues,
                                           SimpleValueMatcher... validityChecks) throws IOException {
 
         WritableWorkbook workbook = null;
@@ -56,7 +56,7 @@ public class SpreadsheetResultsOutput implements ResultsOutput {
         } catch (WriteException ignoredException) {}
     }
 
-    private void writeRow(List<String> columnValues,
+    private void writeRow(List<? extends Object> columnValues,
                           WritableSheet sheet,
                           SimpleValueMatcher... checks) throws WriteException {
 
@@ -67,8 +67,8 @@ public class SpreadsheetResultsOutput implements ResultsOutput {
 
         int row = sheet.getRows();
         int column = 0;
-        for (String columnValue : columnValues) {
-            Label resultCell = new Label(column++, row, columnValue, font);
+        for (Object columnValue : columnValues) {
+            Label resultCell = new Label(column++, row, columnValue.toString(), font);
             sheet.addCell(resultCell);
         }
     }

@@ -69,14 +69,16 @@ public class Pages implements Serializable {
         return proxyFactory;
     }
 
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
     PageObject currentPage = null;
 
     public <T extends PageObject> T getAt(final Class<T> pageObjectClass) {
-        return currentPageAt(pageObjectClass);
-    }
-
-    public Configuration getConfiguration() {
-       return configuration;
+        T pageCandidate = getCurrentPageOfType(pageObjectClass);
+        pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
+        return pageCandidate;
     }
 
     @SuppressWarnings("unchecked")

@@ -1,5 +1,7 @@
 package net.thucydides.core.csv;
 
+import net.thucydides.core.csv.converters.TypeConverter;
+import net.thucydides.core.csv.converters.TypeConverters;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -71,18 +73,31 @@ public final class InstanceBuilder {
     private boolean setProperty(String property, String value) {
         try {
             Method setter = findSetter(property);
-            Field field = findField(property);
             if (setter != null) {
-                setter.invoke(targetObject, value);
-                return true;
-            } else if (field != null) {
-                field.set(targetObject, value);
-                return true;
+               return setViaSetter(setter, value);
+            }
+            Field field = findField(property);
+            if (field != null) {
+                return setViaField(field, value);
             }
             return false;
         } catch (Exception e) {
             throw new FailedToInitializeTestData("Could not assign property value", e);
         }
+    }
+
+    private boolean setViaField(Field field, String value) throws IllegalAccessException {
+        TypeConverter converter = TypeConverters.getTypeConverterFor(field.getType());
+        Object valueToSet = converter.valueOf(value);
+        field.set(targetObject, valueToSet);
+        return true;
+    }
+
+    private boolean setViaSetter(Method setter, String value) throws InvocationTargetException, IllegalAccessException {
+        TypeConverter converter = TypeConverters.getTypeConverterFor(setter.getParameterTypes()[0]);
+        Object valueToSet = converter.valueOf(value);
+        setter.invoke(targetObject, valueToSet);
+        return true;
     }
 
     private Method findSetter(final String property) {

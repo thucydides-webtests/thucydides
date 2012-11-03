@@ -5,7 +5,6 @@ import net.thucydides.junit.runners.ThucydidesRunner
 import org.junit.runner.RunWith
 import org.junit.runner.notification.RunNotifier
 import spock.lang.Specification
-import spock.lang.IgnoreRest
 
 class WhenProcessingATestDataPipeline extends Specification {
 
@@ -72,11 +71,12 @@ class WhenProcessingATestDataPipeline extends Specification {
 
         @DataProvider
         def data() {
-            loadFromCSVFile("data.csv")
+            loadDataFrom("data.csv")
         }
 
         String name;
         int age;
+        String yearOfBirth
 
         @Stage(1)
         public void stage1() { totalAgeInTenYears = 0; age = age + 10 }

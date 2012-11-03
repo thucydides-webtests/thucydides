@@ -4,12 +4,12 @@ import com.google.common.base.Splitter;
 import net.thucydides.core.csv.CSVTestDataSource;
 import net.thucydides.core.csv.TestDataSource;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.steps.FilePathParser;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.annotations.UseTestDataFrom;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
-import net.thucydides.core.steps.TestDataSourcePath;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -58,7 +58,7 @@ public class DataDrivenAnnotations {
     public FrameworkMethod getTestDataMethod() throws Exception {
         FrameworkMethod method = findTestDataMethod();
         if (method == null) {
-            throw new IllegalArgumentException("No public static @TestDataSourcePath method on class "
+            throw new IllegalArgumentException("No public static @FilePathParser method on class "
                     + testClass.getName());
         }
         return method;
@@ -90,10 +90,8 @@ public class DataDrivenAnnotations {
     }
 
     protected String findTestDataSourcePaths() {
-        return new TestDataSourcePath(environmentVariables).getInstanciatedTestDataPath(findUseTestDataFromAnnotation().value());
+        return new FilePathParser(environmentVariables).getInstanciatedPath(findUseTestDataFromAnnotation().value());
     }
-
-
 
     private UseTestDataFrom findUseTestDataFromAnnotation() {
         return testClass.getJavaClass().getAnnotation(UseTestDataFrom.class);

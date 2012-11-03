@@ -2,6 +2,8 @@ package net.thucydides.core.matchers;
 
 import org.hamcrest.Matcher;
 
+import java.math.BigDecimal;
+
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.join;
 import static org.hamcrest.Matchers.hasEntry;
@@ -35,6 +37,10 @@ public class BeanMatchers {
     }
 
     public static SimpleValueMatcher checkThat(final Boolean value, final Matcher<? extends Object> matcher) {
+        return new SimpleValueMatcher(value, matcher);
+    }
+
+    public static SimpleValueMatcher checkThat(final BigDecimal value, final Matcher<? extends Object> matcher) {
         return new SimpleValueMatcher(value, matcher);
     }
 

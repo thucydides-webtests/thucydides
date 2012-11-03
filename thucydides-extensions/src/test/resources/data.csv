@@ -1,6 +1,6 @@
-Name, Age
-Bill, 20
-Tim, 30
-Graeme, 40
-Eric, 50
-John, 60
+Name, Age, YEAR OF BIRTH
+Bill, 20, 1960
+Tim, 30, 1970
+Graeme, 40, 1980
+Eric, 50, 1990
+John, 60, 2000

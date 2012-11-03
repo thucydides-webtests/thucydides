@@ -44,15 +44,9 @@ public enum ThucydidesSystemProperty {
     THUCYDIDES_HOME("thucydides.home"),
 
     /**
-     * The port used by Thucydides for the local statistics database.
+     * Additional options to be added to the JDBC connection for the default file-based database.
      */
-    THUCYDIDES_PORT("thucydides.database.port"),
-
-    /**
-     * Run the local Thucydides database as an in-memory server, as opposed to a file-based database.
-     * This is useful if the Thucydides tests are to be run in parallel on different JVM forks.
-     */
-    THUCYDIDES_USE_LOCAL_SERVER("thucydides.use.local.server"),
+    THUCYDIDES_DATABASE_JDBC_OPTIONS("thucydides.database.jdbc.options"),
 
     /**
      * Record test result statistics in a database for reporting purposes.

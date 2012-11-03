@@ -5,24 +5,23 @@ import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * A description goes here.
- * User: john
- * Date: 10/08/12
- * Time: 2:40 PM
+ * Builds a file path by substituting environment variables.
+ * Supported environment variables include $HOME, $USERDIR and $DATADIR.
+ * $DATADIR is provided by setting the thucydides.data.dir environment property.
  */
-public class TestDataSourcePath {
+public class FilePathParser {
     private final EnvironmentVariables environmentVariables;
 
-    public TestDataSourcePath(EnvironmentVariables environmentVariables) {
+    public FilePathParser(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
     }
 
-    public String getInstanciatedTestDataPath(String path) {
+    public String getInstanciatedPath(String path) {
         String testDataSource = operatingSystemLocalized(path);
         testDataSource = injectVariable(testDataSource, "HOME", System.getProperty("user.home"));
         testDataSource = injectVariable(testDataSource, "USERDIR", System.getProperty("user.dir"));
         testDataSource = injectVariable(testDataSource, "DATADIR",
-                ThucydidesSystemProperty.DATA_DIRECTORY.from(environmentVariables));
+                                        ThucydidesSystemProperty.DATA_DIRECTORY.from(environmentVariables));
 
         return testDataSource;
     }

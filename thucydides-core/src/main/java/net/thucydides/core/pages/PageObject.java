@@ -515,7 +515,7 @@ public abstract class PageObject {
         String startingUrl = pageUrls.getStartingUrl(parameterValues);
         LOGGER.debug("Opening page at url {}", startingUrl);
         openPageAtUrl(startingUrl);
-        callWhenPageOpensMethods();
+        initializePage();
         LOGGER.debug("Page opened");
     }
 
@@ -524,7 +524,7 @@ public abstract class PageObject {
         String startingUrl = pageUrls.getNamedUrl(urlTemplateName, parameterValues);
         LOGGER.debug("Opening page at url {}", startingUrl);
         openPageAtUrl(startingUrl);
-        callWhenPageOpensMethods();
+        initializePage();
         LOGGER.debug("Page opened");
     }
 
@@ -553,7 +553,31 @@ public abstract class PageObject {
     final public void open() {
         String startingUrl = updateUrlWithBaseUrlIfDefined(pageUrls.getStartingUrl());
         openPageAtUrl(startingUrl);
+        initializePage();
+    }
+
+    private void initializePage() {
+        checkUrlPatterns();
+        addJQuerySupport();
         callWhenPageOpensMethods();
+    }
+
+    private <T extends PageObject> void checkUrlPatterns() {
+        if (!matchesAnyUrl()) {
+            String currentUrl = getDriver().getCurrentUrl();
+            if (!compatibleWithUrl(currentUrl)) {
+                thisIsNotThePageYourLookingFor();
+            }
+        }
+    }
+
+    private void thisIsNotThePageYourLookingFor() {
+
+        String errorDetails = "This is not the page you're looking for:\n"
+                + "I was looking for a page compatible with " + this.getClass() + "\n"
+                + "I was at the URL " + getDriver().getCurrentUrl();
+
+        throw new WrongPageError(errorDetails);
     }
 
     final public void openAt(String startingUrl) {

@@ -5,11 +5,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.51-SNAPSHOT</version>
+        <version>0.9.67-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-core</artifactId>
-    <version>0.9.51-SNAPSHOT</version>
+    <version>0.9.67-SNAPSHOT</version>
     <name>thucydides-core</name>
     <properties>
         <root.package>net.thucydides.core</root.package>
@@ -20,6 +20,12 @@
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>2.2.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -218,9 +224,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>3.3.1</version>
+        <groupId>asm</groupId>
+        <artifactId>asm</artifactId>
+        <version>3.3.1</version>
         </dependency>
         <dependency>
             <artifactId>commons-collections</artifactId>

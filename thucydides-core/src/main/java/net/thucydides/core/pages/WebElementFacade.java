@@ -2,6 +2,7 @@ package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.thucydides.core.pages.jquery.JQueryEnabledPage;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
@@ -26,6 +27,7 @@ import org.openqa.selenium.support.ui.Wait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -80,9 +82,33 @@ public class WebElementFacade {
         return new  WebElementFacade(driver, nestedElement, timeoutInMilliseconds);
     }
 
+    public List<WebElementFacade> thenFindAll(String xpathOrCssSelector) {
+        List<WebElement> nestedElements = Lists.newArrayList();
+        if (PageObject.isXPath(xpathOrCssSelector)) {
+            nestedElements = driver.findElements((By.xpath(xpathOrCssSelector)));
+        } else {
+            nestedElements = driver.findElements((By.cssSelector(xpathOrCssSelector)));
+        }
+
+        return webElementFacadesFrom(nestedElements);
+    }
+
+    private List<WebElementFacade> webElementFacadesFrom(List<WebElement> nestedElements) {
+        List<WebElementFacade> results = Lists.newArrayList();
+        for(WebElement element : nestedElements) {
+            results.add(new  WebElementFacade(driver, element, timeoutInMilliseconds));
+        }
+        return results;
+    }
+
     public WebElementFacade then(By selector) {
         WebElement nestedElement = driver.findElement(selector);
-        return new  WebElementFacade(driver, nestedElement, timeoutInMilliseconds);
+        return new WebElementFacade(driver, nestedElement, timeoutInMilliseconds);
+    }
+
+    public List<WebElementFacade> thenFindAll(By selector) {
+        List<WebElement> nestedElements = driver.findElements(selector);
+        return webElementFacadesFrom(nestedElements);
     }
 
     public long getTimeoutInMilliseconds() {

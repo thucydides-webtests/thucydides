@@ -1,6 +1,5 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.Thucydides;
 import net.thucydides.core.csv.CSVTestDataSource;
 import net.thucydides.core.csv.TestDataSource;
 import net.thucydides.core.guice.Injectors;
@@ -22,9 +21,9 @@ public final class StepData {
     private static final ThreadLocal<StepFactory> factoryThreadLocal = new ThreadLocal<StepFactory>();
 
     public StepData(final String testDataSource) {
-        TestDataSourcePath testDataSourcePath
-                = new TestDataSourcePath(Injectors.getInjector().getInstance(EnvironmentVariables.class));
-        this.testDataSource = testDataSourcePath.getInstanciatedTestDataPath(testDataSource);
+        FilePathParser testDataSourcePath
+                = new FilePathParser(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this.testDataSource = testDataSourcePath.getInstanciatedPath(testDataSource);
     }
 
     public static StepData withTestDataFrom(final String testDataSource) {

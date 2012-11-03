@@ -3,7 +3,6 @@ package net.thucydides.core.steps;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Test;
-import org.junit.runners.model.TestClass;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -23,14 +22,14 @@ public class WhenObtainingADataDrivenTestSource {
         EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
         environmentVariables.setProperty("thucydides.data.dir","C:\\some\\dir");
 
-        TestDataSourcePath testDataSourcePath = new TestDataSourcePath(environmentVariables) {
+        FilePathParser testDataSourcePath = new FilePathParser(environmentVariables) {
             @Override
             protected String getFileSeparator() {
                 return "\\";
             }
         };
 
-        assertThat(testDataSourcePath.getInstanciatedTestDataPath("${DATADIR}/simple-semicolon-data.csv"), is("C:\\some\\dir\\simple-semicolon-data.csv"));
+        assertThat(testDataSourcePath.getInstanciatedPath("${DATADIR}/simple-semicolon-data.csv"), is("C:\\some\\dir\\simple-semicolon-data.csv"));
     }
 
     @Test
@@ -38,13 +37,13 @@ public class WhenObtainingADataDrivenTestSource {
         EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
         environmentVariables.setProperty("thucydides.data.dir","/some/dir");
 
-        TestDataSourcePath testDataSourcePath = new TestDataSourcePath(environmentVariables) {
+        FilePathParser testDataSourcePath = new FilePathParser(environmentVariables) {
             @Override
             protected String getFileSeparator() {
                 return "/";
             }
         };
 
-        assertThat(testDataSourcePath.getInstanciatedTestDataPath("${DATADIR}/simple-semicolon-data.csv"), is("/some/dir/simple-semicolon-data.csv"));
+        assertThat(testDataSourcePath.getInstanciatedPath("${DATADIR}/simple-semicolon-data.csv"), is("/some/dir/simple-semicolon-data.csv"));
     }
 }
