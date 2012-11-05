@@ -1,6 +1,7 @@
 package net.thucydides.core.matchers;
 
 import org.hamcrest.Matcher;
+import org.openqa.selenium.lift.match.ValueMatcher;
 
 import java.math.BigDecimal;
 
@@ -40,8 +41,8 @@ public class BeanMatchers {
         return new SimpleValueMatcher(value, matcher);
     }
 
-    public static SimpleValueMatcher checkThat(final BigDecimal value, final Matcher<? extends Object> matcher) {
-        return new SimpleValueMatcher(value, matcher);
+    public static BigDecimalValueMatcher checkThat(final BigDecimal value, final Matcher<? extends BigDecimal> matcher) {
+        return new BigDecimalValueMatcher(value, matcher);
     }
 
     public static class BeanConstraint {

@@ -46,7 +46,7 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
             FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories", 0, vars);
         and: "We define the root package in the 'thucydides.test.root' property"
             vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
-        when: "We load requirements with nested capability directories and no .narrative files"
+        when: "We load requirements with nested capability directories and a narrative files"
             def testOutcome = new TestOutcome("someTest",ASampleTestInAnotherPackage)
         then:
             capabilityProvider.getTagsFor(testOutcome) == [TestTag.withName("Grow potatoes").andType("capability")]  as Set
@@ -127,6 +127,7 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
             Optional<Requirement> requirement = capabilityProvider.getRequirementFor(growPotatoesTag)
             requirement.get().getName() == "Grow potatoes"
             requirement.get().getType() == "capability"
+            requirement.get().narrativeText.contains "I want to grow potatoes"
     }
 
     def "Should not find the requirement if there are no matching requirements for a tag"() {

@@ -14,9 +14,4 @@ public class SimpleValueMatcher {
     public boolean matches() {
         return matcher.matches(value);
     }
-
-    @Override
-    public String toString() {
-        return matcher.toString();
-    }
 }
