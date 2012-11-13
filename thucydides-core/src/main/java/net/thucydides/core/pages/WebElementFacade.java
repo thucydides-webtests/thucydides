@@ -72,12 +72,17 @@ public class WebElementFacade {
         return clock;
     }
 
+
     public WebElementFacade then(String xpathOrCssSelector) {
+        return findBy(xpathOrCssSelector);
+    }
+
+    public WebElementFacade findBy(String xpathOrCssSelector) {
         WebElement nestedElement = null;
         if (PageObject.isXPath(xpathOrCssSelector)) {
-            nestedElement = driver.findElement((By.xpath(xpathOrCssSelector)));
+            nestedElement = webElement.findElement((By.xpath(xpathOrCssSelector)));
         } else {
-            nestedElement = driver.findElement((By.cssSelector(xpathOrCssSelector)));
+            nestedElement = webElement.findElement((By.cssSelector(xpathOrCssSelector)));
         }
         return new  WebElementFacade(driver, nestedElement, timeoutInMilliseconds);
     }
@@ -85,9 +90,9 @@ public class WebElementFacade {
     public List<WebElementFacade> thenFindAll(String xpathOrCssSelector) {
         List<WebElement> nestedElements = Lists.newArrayList();
         if (PageObject.isXPath(xpathOrCssSelector)) {
-            nestedElements = driver.findElements((By.xpath(xpathOrCssSelector)));
+            nestedElements = webElement.findElements((By.xpath(xpathOrCssSelector)));
         } else {
-            nestedElements = driver.findElements((By.cssSelector(xpathOrCssSelector)));
+            nestedElements = webElement.findElements((By.cssSelector(xpathOrCssSelector)));
         }
 
         return webElementFacadesFrom(nestedElements);
@@ -101,9 +106,13 @@ public class WebElementFacade {
         return results;
     }
 
-    public WebElementFacade then(By selector) {
-        WebElement nestedElement = driver.findElement(selector);
+    public WebElementFacade findBy(By selector) {
+        WebElement nestedElement = webElement.findElement(selector);
         return new WebElementFacade(driver, nestedElement, timeoutInMilliseconds);
+    }
+
+    public WebElementFacade then(By bySelector) {
+        return findBy(bySelector);
     }
 
     public List<WebElementFacade> thenFindAll(By selector) {

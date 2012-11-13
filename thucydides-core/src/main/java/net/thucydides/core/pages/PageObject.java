@@ -667,6 +667,14 @@ public abstract class PageObject {
         return new WebElementFacade(driver, webElement, waitForTimeoutInMilliseconds);
     }
 
+    public WebElementFacade $(WebElement webElement) {
+        return element(webElement);
+    }
+
+    public WebElementFacade $(String xpathOrCssSelector) {
+        return element(xpathOrCssSelector);
+    }
+
     /**
      * Provides a fluent API for querying web elements.
      */

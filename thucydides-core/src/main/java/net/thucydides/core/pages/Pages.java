@@ -76,6 +76,10 @@ public class Pages implements Serializable {
     PageObject currentPage = null;
 
     public <T extends PageObject> T getAt(final Class<T> pageObjectClass) {
+        return getPage(pageObjectClass);
+    }
+
+    public <T extends PageObject> T getPage(final Class<T> pageObjectClass) {
         T pageCandidate = getCurrentPageOfType(pageObjectClass);
         pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
         return pageCandidate;

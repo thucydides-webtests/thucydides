@@ -8,7 +8,8 @@ public class TypeConverters {
     private static final List<TypeConverter> DEFAULT_TYPE_CONVERTERS = ImmutableList.of(
             new StringTypeConverter(),
             new IntegerTypeConverter(),
-            new BigDecimalTypeConverter()
+            new BigDecimalTypeConverter(),
+            new BooleanTypeConverter()
     );
 
     public static List<TypeConverter> getDefaultTypeConverters() {

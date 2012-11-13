@@ -30,6 +30,7 @@ public class StepFactory {
     private final Map<Class<?>, Object> index = new HashMap<Class<?>, Object>();
     private static final Logger LOGGER = LoggerFactory.getLogger(StepFactory.class);
     private final DependencyInjectorService dependencyInjectorService;
+    private boolean throwExceptionImmediately = false;
 
     /**
      * Create a new step factory.
@@ -93,6 +94,7 @@ public class StepFactory {
      */
     public <T> T instantiateNewStepLibraryFor(Class<T> scenarioStepsClass) {
         StepInterceptor stepInterceptor = new StepInterceptor(scenarioStepsClass);
+        stepInterceptor.setThowsExceptionImmediately(throwExceptionImmediately);
         return instantiateNewStepLibraryFor(scenarioStepsClass, stepInterceptor);
     }
 
@@ -121,6 +123,7 @@ public class StepFactory {
 
     private <T> T instantiateUniqueStepLibraryFor(Class<T> scenarioStepsClass) {
         StepInterceptor stepInterceptor = new StepInterceptor(scenarioStepsClass);
+        stepInterceptor.setThowsExceptionImmediately(throwExceptionImmediately);
         T steps = createProxyStepLibrary(scenarioStepsClass, stepInterceptor);
 
         instantiateAnyNestedStepLibrariesIn(steps, scenarioStepsClass);
@@ -217,4 +220,8 @@ public class StepFactory {
         StepAnnotations.injectNestedScenarioStepsInto(steps, this, scenarioStepsClass);
     }
 
+    public StepFactory thatThrowsExcpetionsImmediately() {
+        throwExceptionImmediately = true;
+        return this;
+    }
 }

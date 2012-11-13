@@ -4,6 +4,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import net.thucydides.core.IgnoredStepException;
 import net.thucydides.core.PendingStepException;
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
@@ -34,6 +35,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     private final Class<?> testStepClass;
     private Throwable error = null;
     private static final Logger LOGGER = LoggerFactory.getLogger(StepInterceptor.class);
+    private boolean throwExceptionImmediately = false;
 
     public StepInterceptor(final Class<?> testStepClass) {
         this.testStepClass = testStepClass;
@@ -349,11 +351,18 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     }
 
     private void notifyOfStepFailure(final Method method, final Object[] args,
-                                     final Throwable cause) throws Exception {
+                                     final Throwable cause) throws Throwable {
         ExecutedStepDescription description = ExecutedStepDescription.of(testStepClass, getTestNameFrom(method, args));
 
         StepFailure failure = new StepFailure(description, cause);
         StepEventBus.getEventBus().stepFailed(failure);
+        if (shouldThrowExceptionImmediately()) {
+            throw cause;
+        }
+    }
+
+    private boolean shouldThrowExceptionImmediately() {
+        return throwExceptionImmediately;
     }
 
     private void notifyOfTestFailure(final Method method, final Object[] args,
@@ -373,4 +382,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         StepEventBus.getEventBus().skippedStepStarted(description);
     }
 
+    public void setThowsExceptionImmediately(boolean throwExceptionImmediately) {
+        this.throwExceptionImmediately = throwExceptionImmediately;
+    }
 }

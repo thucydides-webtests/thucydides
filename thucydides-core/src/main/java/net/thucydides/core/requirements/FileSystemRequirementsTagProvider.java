@@ -161,7 +161,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     }
 
     public Set<TestTag> getTagsFor(final TestOutcome testOutcome) {
-        System.out.println("Get tags for test outcome " + testOutcome.getTitle());
         Set<TestTag> tags = new HashSet<TestTag>();
         if (testOutcome.getPath() != null) {
             List<String> storyPathElements = stripRootFrom(pathElements(stripRootPathFrom(testOutcome.getPath())));
@@ -169,7 +168,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
             storyPathElements = stripStorySuffixFrom(storyPathElements);
             tags.addAll(getMatchingCapabilities(getRequirements(), storyPathElements));
         }
-        System.out.println("Tags => " + tags);
         return tags;
     }
 
