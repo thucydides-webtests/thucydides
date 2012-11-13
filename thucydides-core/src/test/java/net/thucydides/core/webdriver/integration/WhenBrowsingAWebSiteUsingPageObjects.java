@@ -14,6 +14,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
@@ -260,6 +261,37 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         indexPage.setPageUrls(pageUrls);
 
         assertThat(indexPage.getTitle(), is("Thucydides Test Site"));
+    }
+
+    public class FluentPage extends PageObject {
+
+        public WebElement city;
+
+        public FluentPage(WebDriver driver) {
+            super(driver);
+        }
+
+        public void setCity(String cityValue) {
+            fluent().fill("#city").with(cityValue);
+        }
+
+        public String getCityValue() {
+            return $(city).getValue();
+        }
+    }
+
+
+    @Test
+    public void the_page_should_support_fluentlenium() {
+        WebDriver driver = new FirefoxDriver();
+        File baseDir = new File(System.getProperty("user.dir"));
+        File testSite = new File(baseDir,"src/test/resources/static-site/index.html");
+        driver.get("file://" + testSite.getAbsolutePath());
+        FluentPage page = new FluentPage(driver);
+
+        page.setCity("Sydney");
+        assertThat(page.getCityValue(), is("Sydney"));
+
     }
 
 }
