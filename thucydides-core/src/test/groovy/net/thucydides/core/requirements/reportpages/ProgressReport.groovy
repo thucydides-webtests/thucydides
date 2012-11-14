@@ -27,9 +27,9 @@ class ProgressReport extends PageObject {
         return element(By.id("progress-graph"))
     }
 
-    def getYAxes() {
-        def axesElements = findAll(By.cssSelector(".dygraph-axis-label-y"));
-        axesElements.collect { it.text }
+    List<String> getYAxes() {
+        def axesElements = findAll(".dygraph-axis-label-y");
+        axesElements.collect { WebElement axis -> axis.text }
     }
 
 

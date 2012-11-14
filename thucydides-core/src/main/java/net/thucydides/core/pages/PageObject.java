@@ -2,6 +2,7 @@ package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
 import net.thucydides.core.annotations.WhenPageOpens;
+import net.thucydides.core.fluent.ThucydidesFluentAdapter;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
@@ -814,6 +815,10 @@ public abstract class PageObject {
 
     private void notifyScreenChange() {
         StepEventBus.getEventBus().notifyScreenChange();
+    }
+
+    protected ThucydidesFluentAdapter fluent() {
+        return new ThucydidesFluentAdapter(getDriver());
     }
 
 }

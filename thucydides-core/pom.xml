@@ -5,11 +5,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.72-SNAPSHOT</version>
+        <version>0.9.72</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-core</artifactId>
-    <version>0.9.72-SNAPSHOT</version>
+    <version>0.9.72</version>
     <name>thucydides-core</name>
     <properties>
         <root.package>net.thucydides.core</root.package>
@@ -274,6 +274,11 @@
             <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.fluentlenium</groupId>
+            <artifactId>fluentlenium-core</artifactId>
+            <version>0.7.3</version>
         </dependency>
     </dependencies>
 </project>
