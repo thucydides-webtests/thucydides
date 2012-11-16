@@ -44,6 +44,7 @@ import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static net.thucydides.core.model.ReportType.HTML;
 import static net.thucydides.core.model.ReportType.ROOT;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
@@ -352,6 +353,10 @@ public class TestOutcome {
         return reportNamer.getSimpleTestNameFor(this);
     }
 
+    public String getHtmlReport() {
+        return getReportName(HTML);
+    }
+
     public String getReportName() {
         return getReportName(ROOT);
     }
@@ -389,7 +394,6 @@ public class TestOutcome {
 
     private Converter<ScreenshotAndHtmlSource, Screenshot> toScreenshotsFor(final TestStep currentStep) {
         return new Converter<ScreenshotAndHtmlSource, Screenshot>() {
-            @Override
             public Screenshot convert(ScreenshotAndHtmlSource from) {
                 return new Screenshot(from.getScreenshotFile().getName(),
                                       currentStep.getDescription(),
@@ -711,7 +715,6 @@ public class TestOutcome {
     private Converter<String, String> toIssueKeys() {
         return new Converter<String,String>() {
 
-            @Override
             public String convert(String issueNumber) {
                 String issueKey = issueNumber;
                 if (issueKey.startsWith("#")) {

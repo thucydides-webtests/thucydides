@@ -941,7 +941,8 @@ public class WhenRecordingNewTestOutcomes {
         Thread.sleep(10);
         testOutcome.recordDuration();
         assertThat(testOutcome.getDuration(), is(greaterThanOrEqualTo(10L)));
-        assertThat(testOutcome.getDuration(), is(lessThan(1000L)));
+        assertThat(testOutcome.getDuration(), is(lessThan(5000L)));
+        assertThat(testOutcome.getDurationInSeconds(), is(lessThan(5.0)));
     }
 
     class SimpleScenarioSteps extends ScenarioSteps {

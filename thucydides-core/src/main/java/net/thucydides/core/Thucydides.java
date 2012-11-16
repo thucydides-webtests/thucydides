@@ -81,7 +81,6 @@ public class Thucydides {
      */
     public static void injectScenarioStepsInto(final Object testCase) {
         StepAnnotations.injectScenarioStepsInto(testCase, getStepFactory());
-
     }
 
     /**

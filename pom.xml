@@ -55,7 +55,7 @@
         <selenium.version>2.25.0</selenium.version>
         <hamcrest.version>1.3</hamcrest.version>
         <easyb.version>1.5</easyb.version>
-        <groovy.version>1.8.6</groovy.version>
+        <groovy.version>2.0.5</groovy.version>
         <checkstyle.rules>https://thucydides.sonar.cloudbees.com/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo%2520Way</checkstyle.rules>
     </properties>
     <build>
@@ -344,7 +344,7 @@
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <version>0.7-groovy-1.8</version>
+            <version>0.7-groovy-2.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -390,6 +390,7 @@
                 <module>thucydides-sample-alternative-resources</module>
                 <module>thucydides-core</module>
                 <module>thucydides-junit</module>
+                <module>thucydides-spock</module>
                 <module>thucydides-extensions</module>
                 <module>maven-thucydides-plugin</module>
                 <module>thucydides-easyb-plugin</module>
