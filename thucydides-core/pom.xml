@@ -275,5 +275,10 @@
             <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.fluentlenium</groupId>
+            <artifactId>fluentlenium-core</artifactId>
+            <version>0.7.3</version>
+        </dependency>
     </dependencies>
 </project>
