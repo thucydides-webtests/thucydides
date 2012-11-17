@@ -29,9 +29,6 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.sort;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -223,7 +220,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
         storywideTags.addAll(tags);
     }
 
-    @Override
     public void testSuiteFinished() {
         screenshotProcessor.waitUntilDone();
         clearStorywideTagsAndIssues();
@@ -444,7 +440,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
         }
     }
 
-    @Override
     public void stepIgnored(String message) {
         getCurrentStep().testAborted(new IgnoredStepException(message));
         stepIgnored();
@@ -455,7 +450,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
         currentStepDone();
     }
 
-    @Override
     public void stepPending(String message) {
         getCurrentStep().testAborted(new PendingStepException(message));
         stepPending();
@@ -608,6 +602,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private Optional<ScreenshotAndHtmlSource> grabScreenshotFor(final String testName) {
         String snapshotName = underscore(testName);
+        // TODO: Use unique identifier instead of test name
         Optional<File> screenshot = getPhotographer().takeScreenshot(snapshotName);
         if (screenshot.isPresent()) {
             File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot.get());
@@ -633,7 +628,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private Comparator<? super TestOutcome> byStartTimeAndName() {
         return new Comparator<TestOutcome>() {
-            @Override
             public int compare(TestOutcome testOutcome1, TestOutcome testOutcome2) {
                 String creationTimeAndName1 = testOutcome1.getStartTime().getMillis() + "_" + testOutcome1.getMethodName();
                 String creationTimeAndName2 = testOutcome2.getStartTime().getMillis() + "_" + testOutcome2.getMethodName();
@@ -671,7 +665,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
         }
     }
 
-    @Override
     public void notifyScreenChange() {
         if (!configuration.onlySaveFailingScreenshots() && configuration.takeVerboseScreenshots()) {
             take(OPTIONAL_SCREENSHOT);

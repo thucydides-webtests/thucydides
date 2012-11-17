@@ -9,10 +9,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 public class WhenResizingTheBrower {
 
@@ -71,7 +75,7 @@ public class WhenResizingTheBrower {
         protected void resizeBrowserTo(WebDriver driver, int height, int width) {
             screenWasResized = true;
         }
-    };
+    }
 
     @Test
     public void should_not_resize_browser_if_dimension_are_not_provided() {
@@ -92,4 +96,21 @@ public class WhenResizingTheBrower {
         page.open();
 
     }
+
+    @Test
+    public void should_resize_safari_automatically() {
+        Platform current = Platform.getCurrent();
+            if (Platform.MAC.is(current)) {
+
+            environmentVariables.setProperty("thucydides.browser.height", "200");
+            environmentVariables.setProperty("thucydides.browser.width", "400");
+
+            driver = factory.newInstanceOf(SupportedWebDriver.SAFARI);
+            page = new StaticSitePage(driver, 1024);
+
+            int width = ((Long)(((JavascriptExecutor)driver).executeScript("return window.innerWidth"))).intValue();
+            assertThat(width, allOf(lessThanOrEqualTo(400), greaterThan(380)));
+        }
+    }
+
 }
