@@ -1,14 +1,11 @@
 package net.thucydides.junit.runners;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Injector;
-import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.guice.ThucydidesModule;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -37,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -311,7 +307,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             reportService = new ReportService(getOutputDirectory(), getDefaultReporters());
         }
         return reportService;
-//        return Injectors.getInjector().getInstance(ReportService.class);
     }
 
     /**
@@ -335,7 +330,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         if (isPending(method)) {
             markAsPending(method, notifier);
         } else {
-            processTestMethodAnnotationsFor(method, notifier);
+            processTestMethodAnnotationsFor(method);
             super.runChild(method, notifier);
         }
     }
@@ -352,7 +347,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * that they are included in the Thucydides reports
      * If a test method is pending, all the steps should be skipped.
      */
-    private void processTestMethodAnnotationsFor(FrameworkMethod method, RunNotifier notifier) {
+    private void processTestMethodAnnotationsFor(FrameworkMethod method) {
         if (isIgnored(method)) {
             stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
             StepEventBus.getEventBus().testIgnored();

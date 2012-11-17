@@ -1,5 +1,6 @@
 package net.thucydides.core.bootstrap;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.steps.StepEventBus;
 
@@ -12,9 +13,11 @@ import java.io.File;
 public final class ThucydidesAgent {
 
     private final ThucydidesContext context;
+    private final Optional<String> driver;
 
-    public ThucydidesAgent() {
+    public ThucydidesAgent(Optional<String> driver) {
         context = ThucydidesContext.getCurrentContext();
+        this.driver = driver;
     }
 
     /**

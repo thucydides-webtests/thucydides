@@ -1,5 +1,6 @@
 package net.thucydides.spock;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.bootstrap.ThucydidesAgent;
 import org.apache.commons.lang.StringUtils;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
@@ -16,9 +17,17 @@ public class ThucydidesEnabledExtension extends AbstractAnnotationDrivenExtensio
     }
 
     public void visitSpecAnnotation(ThucydidesEnabled annotation, SpecInfo spec) {
-        agent = new ThucydidesAgent();
+        agent = new ThucydidesAgent(optionalDriverFrom(annotation));
         spec.addListener(new ThucydidesRunListener(agent));
         spec.getInitializerMethod().addInterceptor(new ThucydidesInterceptor(agent));
+    }
+
+    private Optional<String> optionalDriverFrom(ThucydidesEnabled annotation) {
+        if (StringUtils.isEmpty(annotation.driver())) {
+            return Optional.absent();
+        } else {
+            return Optional.of(annotation.driver());
+        }
     }
 
     @Override

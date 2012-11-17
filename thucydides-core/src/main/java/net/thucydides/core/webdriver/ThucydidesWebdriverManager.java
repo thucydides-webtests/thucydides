@@ -66,7 +66,6 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
         inThisTestThread().closeAllDrivers();
     }
 
-    @Override
     public void resetDriver() {
         inThisTestThread().resetCurrentDriver();
     }

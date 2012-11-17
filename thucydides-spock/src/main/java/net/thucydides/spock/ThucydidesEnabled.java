@@ -8,4 +8,6 @@ import org.spockframework.runtime.extension.ExtensionAnnotation;
 @Target(ElementType.TYPE)
 
 @ExtensionAnnotation(ThucydidesEnabledExtension.class)
-public @interface ThucydidesEnabled {}
+public @interface ThucydidesEnabled {
+    String driver() default "";
+}
