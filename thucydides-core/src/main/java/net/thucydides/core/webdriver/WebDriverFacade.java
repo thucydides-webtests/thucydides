@@ -254,22 +254,18 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
         return (driverClass != null) && (proxiedWebDriver != null);
     }
 
-    @Override
     public Keyboard getKeyboard() {
         return ((HasInputDevices) getProxiedDriver()).getKeyboard();
     }
 
-    @Override
     public Mouse getMouse() {
         return ((HasInputDevices) getProxiedDriver()).getMouse();
     }
 
-    @Override
     public Object executeScript(String script, Object... parameters) {
         return ((JavascriptExecutor) getProxiedDriver()).executeScript(script, parameters);
     }
 
-    @Override
     public Object executeAsyncScript(String script, Object... parameters) {
         return ((JavascriptExecutor) getProxiedDriver()).executeScript(script, parameters);
     }

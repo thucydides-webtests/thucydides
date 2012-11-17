@@ -3,11 +3,8 @@ package net.thucydides.core.webdriver;
 import com.google.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Manage WebDriver instances.

@@ -26,6 +26,7 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.slf4j.Logger;
@@ -102,7 +103,6 @@ public class WebDriverFactory {
         if (driverType == null) {
             throw new IllegalArgumentException("Driver type cannot be null");
         }
-
         return newWebdriverInstance(driverType.getWebdriverClass());
     }
 
@@ -134,10 +134,13 @@ public class WebDriverFactory {
             } else if (isAFirefoxDriver(driverClass)) {
                 driver = firefoxDriver();
             } else if (isAnHtmlUnitDriver(driverClass)) {
-                driver = htmlunitDriverFrom(driverClass);
+                driver = htmlunitDriver();
             } else if (isAChromeDriver(driverClass)) {
                 driver = chromeDriver();
-            } else {
+            } else if (isASafariDriver(driverClass)) {
+                driver = safariDriver();
+            }
+            else {
                 driver = newDriverInstanceFrom(driverClass);
             }
             setImplicitTimeoutsIfSpecified(driver);
@@ -327,7 +330,7 @@ public class WebDriverFactory {
         return realBrowserCapabilities(driverTypeFor(remoteBrowser));
     }
 
-    private WebDriver htmlunitDriverFrom(Class<? extends WebDriver> driverClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    private WebDriver htmlunitDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         DesiredCapabilities caps = DesiredCapabilities.firefox();
         caps.setJavascriptEnabled(true);
         return webdriverInstanceFactory.newHtmlUnitDriver(caps);
@@ -346,6 +349,11 @@ public class WebDriverFactory {
             options.addArguments(arguments);
         }
         return webdriverInstanceFactory.newChromeDriver(options);
+
+    }
+
+    private WebDriver safariDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        return webdriverInstanceFactory.newSafariDriver();
 
     }
 
@@ -404,6 +412,10 @@ public class WebDriverFactory {
 
     private boolean isAChromeDriver(Class<? extends WebDriver> driverClass) {
         return (ChromeDriver.class.isAssignableFrom(driverClass));
+    }
+
+    private boolean isASafariDriver(Class<? extends WebDriver> driverClass) {
+        return (SafariDriver.class.isAssignableFrom(driverClass));
     }
 
     private boolean usesFirefox(WebDriver driver) {

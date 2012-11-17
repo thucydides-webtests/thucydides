@@ -17,6 +17,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.safari.SafariDriver;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,6 +41,9 @@ public class WhenInstanciatingANewDriver {
     @Mock
     ChromeDriver chromeDriver;
 
+    @Mock
+    SafariDriver safariDriver;
+
     EnvironmentVariables environmentVariables;
 
     @Before
@@ -47,6 +51,7 @@ public class WhenInstanciatingANewDriver {
         MockitoAnnotations.initMocks(this);
 
         when(webdriverInstanceFactory.newChromeDriver(any(ChromeOptions.class))).thenReturn(chromeDriver);
+        when(webdriverInstanceFactory.newSafariDriver()).thenReturn(safariDriver);
 
         environmentVariables = new MockEnvironmentVariables();
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
@@ -63,6 +68,12 @@ public class WhenInstanciatingANewDriver {
 
         verify(webdriverInstanceFactory).newChromeDriver(chromeOptionsArgument.capture());
         assertThat(argumentsFrom(chromeOptionsArgument), hasItems("--homepage=about:blank", "--no-first-run"));
+    }
+
+    @Test
+    public void should_create_safari_driver_instance() throws Exception {
+        webDriverFactory.newInstanceOf(SupportedWebDriver.SAFARI);
+        verify(webdriverInstanceFactory).newSafariDriver();
     }
 
     private List<String> argumentsFrom(ArgumentCaptor<ChromeOptions> chromeOptionsArgument) throws IOException, JSONException {

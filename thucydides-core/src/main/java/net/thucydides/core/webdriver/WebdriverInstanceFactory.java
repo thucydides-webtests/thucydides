@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -8,6 +9,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.safari.SafariDriver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -24,7 +26,7 @@ public class WebdriverInstanceFactory {
         return webdriverClass.newInstance();
     }
 
-    public WebDriver newRemoteDriver(URL remoteUrl, DesiredCapabilities capabilities) {
+    public WebDriver newRemoteDriver(URL remoteUrl, Capabilities capabilities) {
         return new RemoteWebDriver(remoteUrl, capabilities);
     }
 
@@ -34,6 +36,10 @@ public class WebdriverInstanceFactory {
 
     public WebDriver newChromeDriver(ChromeOptions options) {
         return new ChromeDriver(options);
+    }
+
+    public WebDriver newSafariDriver() {
+        return new SafariDriver();
     }
 
     public WebDriver newHtmlUnitDriver(DesiredCapabilities caps) {

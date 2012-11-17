@@ -1,4 +1,4 @@
-package net.thucydides.core.requirements
+package net.thucydides.core.requirements.integration
 
 import com.google.common.collect.Lists
 import net.thucydides.core.model.Story
@@ -19,6 +19,7 @@ import net.thucydides.core.requirements.reportpages.ProgressReport
 import net.thucydides.core.reports.history.TestHistory
 import net.thucydides.core.reports.history.DateProvider
 import org.joda.time.DateTime
+import net.thucydides.core.requirements.FileSystemRequirementsTagProvider
 
 class WhenGeneratingRequirementsReports extends Specification {
 

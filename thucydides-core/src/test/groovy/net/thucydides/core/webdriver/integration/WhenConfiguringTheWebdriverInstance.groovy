@@ -1,4 +1,4 @@
-package net.thucydides.core.webdriver
+package net.thucydides.core.webdriver.integration
 
 import net.thucydides.core.util.MockEnvironmentVariables
 import org.junit.Ignore
@@ -28,6 +28,9 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.allOf
 import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.containsString
+import net.thucydides.core.webdriver.WebdriverInstanceFactory
+import net.thucydides.core.webdriver.WebDriverFactory
+import net.thucydides.core.webdriver.SupportedWebDriver
 
 class WhenConfiguringTheWebdriverInstance extends Specification {
 
@@ -51,7 +54,7 @@ class WhenConfiguringTheWebdriverInstance extends Specification {
         WebDriver newHtmlUnitDriver(DesiredCapabilities caps) { return htmlunit }
 
         @Override
-        WebDriver newRemoteDriver(URL remoteUrl, DesiredCapabilities capabilities) { return remote }
+        WebDriver newRemoteDriver(URL remoteUrl, Capabilities capabilities) { return remote; }
 
         @Override
         WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass) {

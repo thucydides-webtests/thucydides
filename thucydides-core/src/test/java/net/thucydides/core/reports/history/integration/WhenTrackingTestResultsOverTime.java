@@ -1,10 +1,12 @@
-package net.thucydides.core.reports.history;
+package net.thucydides.core.reports.history.integration;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStepFactory;
 import net.thucydides.core.reports.TestOutcomes;
+import net.thucydides.core.reports.history.TestHistory;
+import net.thucydides.core.reports.history.TestResultSnapshot;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.joda.time.DateTime;

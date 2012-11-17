@@ -602,6 +602,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private Optional<ScreenshotAndHtmlSource> grabScreenshotFor(final String testName) {
         String snapshotName = underscore(testName);
+        // TODO: Use unique identifier instead of test name
         Optional<File> screenshot = getPhotographer().takeScreenshot(snapshotName);
         if (screenshot.isPresent()) {
             File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot.get());
