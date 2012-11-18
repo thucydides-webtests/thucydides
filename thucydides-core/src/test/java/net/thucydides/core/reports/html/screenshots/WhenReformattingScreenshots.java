@@ -8,7 +8,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 public class WhenReformattingScreenshots {
 
     @Rule
-    public TemporaryFolder folder = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder folder = new ExtendedTemporaryFolder();
 
     private File screenshotDirectory;
 
@@ -104,8 +103,6 @@ public class WhenReformattingScreenshots {
 
     @Test
     public void should_display_message_from_original_cause_if_present() {
-        String errorMessage = "Something broke";
-
         Exception exception = new Exception("Oops", new Exception("Something went wrong"));
         Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, exception);
 

@@ -1,7 +1,6 @@
 package net.thucydides.core.webdriver.integration;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.screenshots.MultithreadScreenshotProcessor;
 import net.thucydides.core.screenshots.Photographer;
@@ -14,7 +13,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
@@ -32,14 +30,12 @@ import java.util.concurrent.TimeUnit;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.contains;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class WhenTakingLargeScreenshots {
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private File screenshotDirectory;
 

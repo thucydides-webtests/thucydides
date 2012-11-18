@@ -11,7 +11,6 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
@@ -31,7 +30,7 @@ public class WhenTrackingTestResultsOverTime {
     private File homeDirectory;
 
     @Rule
-    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     MockEnvironmentVariables environmentVariables;
 

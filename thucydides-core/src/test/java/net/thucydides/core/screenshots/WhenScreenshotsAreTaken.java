@@ -5,7 +5,6 @@ import net.thucydides.core.util.ExtendedTemporaryFolder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
@@ -30,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class WhenScreenshotsAreTaken {
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private File screenshotDirectory;
     private File screenshotTaken;
