@@ -6,7 +6,6 @@ import net.thucydides.core.util.ExtendedTemporaryFolder;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 
@@ -17,7 +16,7 @@ import static org.hamcrest.Matchers.is;
 public class WhenRecordingTestOutputInASpreadsheet {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
     
     
     @Test

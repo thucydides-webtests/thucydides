@@ -129,7 +129,7 @@ public class WhenReadingResourcesFromTheClasspath {
     }
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
 
     @Test

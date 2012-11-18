@@ -11,7 +11,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -47,7 +46,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     }
 
     @Rule
-    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     @Test
     public void should_generate_an_HTML_report_for_an_acceptance_test_run() throws Exception {
