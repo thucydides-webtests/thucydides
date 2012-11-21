@@ -3,6 +3,7 @@ package net.thucydides.core.bootstrap;
 import com.google.common.base.Optional;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.steps.StepListener;
 
 import java.io.File;
 
@@ -15,8 +16,15 @@ public final class ThucydidesAgent {
     private final ThucydidesContext context;
     private final Optional<String> driver;
 
-    public ThucydidesAgent(Optional<String> driver) {
-        context = ThucydidesContext.getCurrentContext();
+    /**
+     * Create a new Thucydides agent instance.
+     * There is always a BaseStepListener configured in the context, but you can also specify other listeners,
+     * such as for logging (Listeners.getLoggingListener()) and to enable statistics (Listeners.getStatisticsListener())
+     * @param driver
+     * @param additionalListeners
+     */
+    public ThucydidesAgent(Optional<String> driver, StepListener... additionalListeners) {
+        context = ThucydidesContext.newContext(additionalListeners);
         this.driver = driver;
     }
 
@@ -34,6 +42,7 @@ public final class ThucydidesAgent {
      * @param name
      */
     public void testSuiteStarted(String name) {
+        notifyEventBus().clear();
         notifyEventBus().testSuiteStarted(Story.called(name));
     }
 
@@ -55,6 +64,7 @@ public final class ThucydidesAgent {
 
     public void testSuiteFinished() {
         notifyEventBus().testSuiteFinished();
+        context.dropListeners();
         context.generateReports();
     }
 

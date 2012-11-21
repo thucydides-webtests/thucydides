@@ -17,11 +17,11 @@ public class ThucydidesRunListener implements IRunListener {
 
     public void beforeSpec(SpecInfo spec) {
         agent.testSuiteStarted(spec.getName());
-        System.out.println("listener: beforeSpec");
+        System.out.println("listener: beforeSpec" + spec.getName());
     }
 
     public void beforeFeature(FeatureInfo feature) {
-        System.out.println("listener: beforeFeature");
+        System.out.println("listener: beforeFeature " + feature.getName());
         agent.testStarted(feature.getFeatureMethod().getName());
 
     }

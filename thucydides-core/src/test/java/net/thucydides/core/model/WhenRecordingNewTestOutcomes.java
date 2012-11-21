@@ -52,6 +52,23 @@ public class WhenRecordingNewTestOutcomes {
     class AUserStory {
     }
 
+    class SimpleTestScenario {
+        @Issue("#ISSUE-123")
+        public void should_do_this() {
+        }
+
+        @Issue("#ISSUE-456")
+        public void should_do_that() {
+        }
+
+        public void should_do_something_else() {
+        }
+
+        @Issue("#789")
+        public void should_do_some_other_thing() {
+        }
+    }
+
     @Story(AUserStory.class)
     @Issue("#ISSUE-123")
     class SomeTestScenario {
@@ -927,6 +944,19 @@ public class WhenRecordingNewTestOutcomes {
         TestOutcome testOutcome = TestOutcome.forTestInStory("some_test", story);
 
         assertThat(testOutcome.getStoryTitle(), is("My user story"));
+    }
+
+    @Test
+    public void the_complete_test_name_should_include_the_story_and_the_method_name() {
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyApp.MyUserStory.class);
+        TestOutcome testOutcome = TestOutcome.forTestInStory("some_test", story);
+        assertThat(testOutcome.getCompleteName(), is("My user story:some_test"));
+    }
+
+    @Test
+    public void the_complete_test_name_should_include_the_test_case_if_defined_and_the_method_name() {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SimpleTestScenario.class);
+        assertThat(testOutcome.getCompleteName(), is("Simple test scenario:should_do_this"));
     }
 
     @Test

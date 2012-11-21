@@ -27,20 +27,20 @@ public class MockOpenStaticDemoPageWithFailureSample {
     public MockDemoSiteSteps steps;
         
     @Test
-    public void the_user_opens_the_page() {
+    public void happy_day_scenario() {
         steps.enter_values("Label 1", true);
         steps.should_have_selected_value("Label 2");
         steps.do_something();
     }    
     
     @Test
-    public void the_user_opens_another_page() {
+    public void edge_case_1() {
         steps.enter_values("Label 2", true);
         steps.do_something_else();
     }
 
     @Test
-    public void the_user_opens_a_third_page() {
+    public void edge_case_2() {
         steps.enter_values("Label 3", true);
         steps.do_something_else();
     }

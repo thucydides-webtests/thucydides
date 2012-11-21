@@ -13,7 +13,6 @@ import org.junit.runners.model.TestClass;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -78,9 +77,7 @@ public class DataDrivenAnnotations {
     @SuppressWarnings("MalformedRegex")
     protected String findTestDataSource() {
         String paths = findTestDataSourcePaths();
-        Iterator pathElements = Splitter.on(DATASOURCE_PATH_SEPARATORS).split(paths).iterator();
-        while(pathElements.hasNext()) {
-            String path = (String) pathElements.next();
+        for (String path : Splitter.on(DATASOURCE_PATH_SEPARATORS).split(paths)) {
             if (CSVTestDataSource.validTestDataPath(path)) {
                 return path;
             }

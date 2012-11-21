@@ -58,6 +58,5 @@ public abstract class AbstractTestStepRunnerTest {
             }
             throw new AssertionError("No matching test method called " + methodName);
         }
-
     }
 }

@@ -4,6 +4,7 @@ import spock.lang.Specification
 import net.thucydides.core.annotations.Step
 import net.thucydides.core.annotations.Steps
 import net.thucydides.core.steps.StepEventBus
+import com.google.common.base.Optional
 
 /**
  * How to enrich a test class for use with Thucydides.
@@ -33,7 +34,7 @@ class WhenBootstrappingATestClass extends Specification {
         given: "a test class object with a field annotated with @Step"
             def testCase = new SampleTestClass()
         when: "we enrich the object"
-            ThucydidesAgent.enrich(testCase)
+            new ThucydidesAgent(Optional.absent()).enrich(testCase)
         then: "the step field should have been instantiated"
             testCase.steps != null
     }
@@ -42,7 +43,7 @@ class WhenBootstrappingATestClass extends Specification {
         given: "a test class object with a field annotated with @Step"
             def testCase = new SampleTestClass()
         when: "we enrich the object"
-            ThucydidesAgent.enrich(testCase)
+            new ThucydidesAgent(Optional.absent()).enrich(testCase)
         and: "we start the test"
             StepEventBus.getEventBus().testStarted("Test Something");
         and: "we call a @Step-annotated method in the step library"
@@ -56,7 +57,7 @@ class WhenBootstrappingATestClass extends Specification {
         given: "a test class object with a field annotated with @Step"
             def testCase = new SampleTestClass()
         when: "we run the test"
-            ThucydidesAgent.enrich(testCase)
+            new ThucydidesAgent(Optional.absent()).enrich(testCase)
             StepEventBus.getEventBus().testStarted("Test Something");
             testCase.testSomething()
         then:

@@ -216,7 +216,7 @@ public enum ThucydidesSystemProperty {
     /**
      * How long webdriver waits for elements to appear by default, in milliseconds.
      */
-    TIMEOUTS_IMPLICIT_WAIT("webdriver.timeouts.implicitywait"),
+    TIMEOUTS_IMPLICIT_WAIT("webdriver.timeouts.implicitly.wait"),
 
     /**
      * Extension packages. This is a list of packages that will be scanned for custom TagProvider implementations.

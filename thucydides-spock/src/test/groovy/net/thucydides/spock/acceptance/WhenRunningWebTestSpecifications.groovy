@@ -34,9 +34,10 @@ class WhenRunningWebTestSpecifications extends Specification {
 
     def "Instantiating step libraries in a Spock specification"() {
         given: "we want to generate Thucydides reports from a webdriver-enabled Spock specification"
-        when: "we run the specification"
-        then: "the @Steps field should have been instantiated"
+        when: "we run the specification using the 'driver' property in the @ThucydidesEnabled annotation"
+        then: "the @Steps field should be instantiated"
             steps != null
+        and: "the pages field of the step library should be instanciated"
             steps.pages != null
     }
     /*

@@ -1,5 +1,6 @@
 package net.thucydides.core.model;
 
+import ch.lambdaj.Lambda;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
@@ -287,7 +288,7 @@ public class TestOutcome {
 
     @Override
     public String toString() {
-        return join(extract(testSteps, on(TestStep.class).toString()));
+        return getTitle() + ":" + join(extract(testSteps, on(TestStep.class).toString()));
     }
 
     /**
@@ -765,6 +766,17 @@ public class TestOutcome {
         }
         newTestOutcome.testFailureCause = baseTestOutcome.testFailureCause;
         return newTestOutcome;
+    }
+
+    /**
+     * Returns the name of the test prefixed by the name of the story.
+     */
+    public String getCompleteName() {
+        if (StringUtils.isNotEmpty(getStoryTitle())) {
+            return getStoryTitle() + ":" + getMethodName();
+        } else {
+            return getTestCase() + ":" + getMethodName();
+        }
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
