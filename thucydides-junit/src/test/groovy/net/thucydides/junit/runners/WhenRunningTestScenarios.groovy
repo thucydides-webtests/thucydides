@@ -54,7 +54,7 @@ import net.thucydides.samples.SampleScenarioWithoutSteps
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration
 
-import static net.thucydides.junit.util.FileFormating.md5
+import static net.thucydides.junit.util.FileFormating.digest
 import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.samples.SampleFailingScenarioUsingHtmlUnit
 
@@ -465,9 +465,9 @@ class WhenRunningTestScenarios extends Specification {
             def xmlReports = temporaryDirectory.list().findAll {it.endsWith(".xml")}
         then:
             xmlReports.size() == 3
-            xmlReports.contains md5("sample_passing_scenario_edge_case_1.xml")
-            xmlReports.contains md5("sample_passing_scenario_edge_case_2.xml")
-            xmlReports.contains md5("sample_passing_scenario_happy_day_scenario.xml")
+            xmlReports.contains digest("sample_passing_scenario_edge_case_1.xml")
+            xmlReports.contains digest("sample_passing_scenario_edge_case_2.xml")
+            xmlReports.contains digest("sample_passing_scenario_happy_day_scenario.xml")
     }
 
     def "tests for multiple stories should be written to the output directory"() {
@@ -477,12 +477,12 @@ class WhenRunningTestScenarios extends Specification {
             def xmlReports = temporaryDirectory.list().findAll {it.endsWith(".xml")}
         then:
             xmlReports.size() == 6
-            xmlReports.contains md5("sample_passing_scenario_using_html_unit_edge_case_1.xml")
-            xmlReports.contains md5("sample_passing_scenario_using_html_unit_edge_case_2.xml")
-            xmlReports.contains md5("sample_passing_scenario_using_html_unit_happy_day_scenario.xml")
-            xmlReports.contains md5("sample_failing_scenario_using_html_unit_edge_case_1.xml")
-            xmlReports.contains md5("sample_failing_scenario_using_html_unit_edge_case_2.xml")
-            xmlReports.contains md5("sample_failing_scenario_using_html_unit_happy_day_scenario.xml")
+            xmlReports.contains digest("sample_passing_scenario_using_html_unit_edge_case_1.xml")
+            xmlReports.contains digest("sample_passing_scenario_using_html_unit_edge_case_2.xml")
+            xmlReports.contains digest("sample_passing_scenario_using_html_unit_happy_day_scenario.xml")
+            xmlReports.contains digest("sample_failing_scenario_using_html_unit_edge_case_1.xml")
+            xmlReports.contains digest("sample_failing_scenario_using_html_unit_edge_case_2.xml")
+            xmlReports.contains digest("sample_failing_scenario_using_html_unit_happy_day_scenario.xml")
     }
 
     def "HTML test results should be written to the output directory"() {
@@ -491,9 +491,9 @@ class WhenRunningTestScenarios extends Specification {
             def xmlReports = temporaryDirectory.list().findAll {it.endsWith(".html")}
         then:
             xmlReports.size() == 3
-            xmlReports.contains md5("sample_passing_scenario_using_html_unit_edge_case_1.html")
-            xmlReports.contains md5("sample_passing_scenario_using_html_unit_edge_case_2.html")
-            xmlReports.contains md5("sample_passing_scenario_using_html_unit_happy_day_scenario.html")
+            xmlReports.contains digest("sample_passing_scenario_using_html_unit_edge_case_1.html")
+            xmlReports.contains digest("sample_passing_scenario_using_html_unit_edge_case_2.html")
+            xmlReports.contains digest("sample_passing_scenario_using_html_unit_happy_day_scenario.html")
     }
 
 
