@@ -2,6 +2,7 @@ package net.thucydides.core.pages;
 
 import net.thucydides.core.scheduling.NormalFluentWait;
 import net.thucydides.core.scheduling.ThucydidesFluentWait;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
@@ -10,14 +11,18 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.google.common.collect.Lists.reverse;
 
 /**
  * A page view that handles checking and waiting for element visibility.
@@ -85,7 +90,9 @@ class RenderedPageObjectView {
      * This method will wait until an element is present on the screen, though not necessarily visible.
      */
     public void waitForPresenceOf(final By byElementCriteria) {
-        waitForCondition().until(elementPresent(byElementCriteria));
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        wait.until(ExpectedConditions.presenceOfElementLocated(byElementCriteria));
+//        waitForCondition().until(elementPresent(byElementCriteria));
     }
 
     public boolean elementIsPresent(final By byElementCriteria) {
@@ -166,13 +173,12 @@ class RenderedPageObjectView {
     }
 
     public boolean containsText(final String textValue) {
-        String textInBody = String.format("//body[contains(.,\"%s\")]",
-                textValue);
-        List<WebElement> elements = driver.findElements(By.xpath(textInBody));
+        String textInBody = ".//*[contains(.,'" + StringEscapeUtils.escapeXml(textValue) +"')]";
+        List<WebElement> elements = reverse(driver.findElements(By.xpath(textInBody)));
         if (foundNo(elements)) {
             return false;
         }
-        return true;
+        return elements.get(0).isDisplayed();
     }
 
     private boolean foundNo(List<WebElement> elements) {

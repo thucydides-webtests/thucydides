@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFailure;
 import org.junit.Before;
@@ -9,6 +10,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,11 +19,15 @@ import org.openqa.selenium.support.FindBy;
 import java.lang.reflect.Field;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.when;
 
 public class WhenLocatingWebElements {
 
     @Mock
     WebDriver driver;
+
+    @Mock
+    WebElement webElement;
 
     @Mock
     StepFailure failure;
@@ -44,10 +50,14 @@ public class WhenLocatingWebElements {
         field = SomePageObject.class.getField("someField");
 
         StepEventBus.getEventBus().clear();
+
+        when(driver.findElement(By.id("someId"))).thenReturn(webElement);
+        when(driver.findElements(By.id("someId"))).thenReturn(ImmutableList.of(webElement));
     }
 
     @Test(timeout = 500)
     public void should_find_element_immediately_if_a_previous_step_has_failed() {
+
         DisplayedElementLocator locator = new DisplayedElementLocator(driver, field, 5);
         StepEventBus.getEventBus().stepFailed(failure);
         locator.findElement();

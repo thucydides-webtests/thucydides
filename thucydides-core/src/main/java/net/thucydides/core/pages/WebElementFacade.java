@@ -207,7 +207,7 @@ public class WebElementFacade {
      * Throws an AssertionError if the element is not rendered.
      */
     public void shouldNotBeVisible() {
-        if (isVisible()) {
+        if (isCurrentlyVisible()) {
             throw new AssertionError("Element should not be visible");
         }
     }

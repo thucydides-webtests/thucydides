@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static net.thucydides.core.steps.ErrorConvertor.forError;
-import static org.apache.commons.lang.StringUtils.split;
+import static org.apache.commons.lang3.StringUtils.split;
 
 /**
  * Listen to step results and publish notification messages.

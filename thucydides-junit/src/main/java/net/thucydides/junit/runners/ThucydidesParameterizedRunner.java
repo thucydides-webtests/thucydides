@@ -5,7 +5,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Concurrent;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 

@@ -389,7 +389,6 @@ public class TestOutcome {
 
     private Converter<ScreenshotAndHtmlSource, Screenshot> toScreenshotsFor(final TestStep currentStep) {
         return new Converter<ScreenshotAndHtmlSource, Screenshot>() {
-            @Override
             public Screenshot convert(ScreenshotAndHtmlSource from) {
                 return new Screenshot(from.getScreenshotFile().getName(),
                                       currentStep.getDescription(),
@@ -711,7 +710,6 @@ public class TestOutcome {
     private Converter<String, String> toIssueKeys() {
         return new Converter<String,String>() {
 
-            @Override
             public String convert(String issueNumber) {
                 String issueKey = issueNumber;
                 if (issueKey.startsWith("#")) {

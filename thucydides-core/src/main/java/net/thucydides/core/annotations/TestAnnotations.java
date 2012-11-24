@@ -5,7 +5,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.html.Formatter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -249,7 +249,6 @@ public class TestAnnotations {
     private Converter<Object, TestTag> toTestTags() {
         return new Converter<Object, TestTag>() {
 
-            @Override
             public TestTag convert(Object tag) {
                 return convertToTestTag((WithTag) tag);
             }
@@ -259,7 +258,6 @@ public class TestAnnotations {
     private Converter<Object, TestTag> fromStringValuesToTestTags() {
         return new Converter<Object, TestTag>() {
 
-            @Override
             public TestTag convert(Object tagValue) {
                 return  TestTag.withValue((String) tagValue);
             }

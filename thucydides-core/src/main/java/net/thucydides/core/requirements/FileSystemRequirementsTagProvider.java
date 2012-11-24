@@ -15,7 +15,7 @@ import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import net.thucydides.core.util.NameConverter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Transient;
 import java.io.File;

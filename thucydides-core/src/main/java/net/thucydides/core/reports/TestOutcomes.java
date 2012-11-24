@@ -22,7 +22,7 @@ import net.thucydides.core.statistics.TestStatisticsProvider;
 import net.thucydides.core.statistics.With;
 import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.webdriver.Configuration;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
 
 import java.math.BigDecimal;

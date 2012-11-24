@@ -133,6 +133,19 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
         assertThat(page.containsText("Dissapearing text"), is(false));
     }
 
+
+    @Test
+    public void contains_text_should_fail_if_text_is_not_present() {
+        StaticSitePage page = getFirefoxPage();
+        assertThat(page.containsText("Not present"), is(false));
+    }
+
+    @Test
+    public void contains_text_should_fail_if_text_is_invisible() {
+        StaticSitePage page = getFirefoxPage();
+        assertThat(page.containsText("Invisible text"), is(false));
+    }
+
     @Test
     public void should_wait_for_text_in_element_to_dissapear() {
         StaticSitePage page = getFirefoxPage();

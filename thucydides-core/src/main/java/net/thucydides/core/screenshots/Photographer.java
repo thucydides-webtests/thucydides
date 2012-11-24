@@ -2,6 +2,7 @@ package net.thucydides.core.screenshots;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import net.thucydides.core.digest.Digest;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import org.apache.commons.io.FileUtils;
@@ -33,7 +34,6 @@ public class Photographer {
     private final WebDriver driver;
     private final File targetDirectory;
     private final ScreenshotSequence screenshotSequence;
-    private final MessageDigest digest;
 
     private final Logger logger = LoggerFactory.getLogger(Photographer.class);
     private ScreenshotProcessor screenshotProcessor;
@@ -56,17 +56,6 @@ public class Photographer {
         this.targetDirectory = targetDirectory;
         this.screenshotProcessor = screenshotProcessor;
         this.screenshotSequence = DEFAULT_SCREENSHOT_SEQUENCE;
-        this.digest = getMd5Digest();
-    }
-
-    private MessageDigest getMd5Digest() {
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            getLogger().error("Failed to create digest for screenshot name.", e);
-        }
-        return md;
     }
 
     protected long nextScreenshotNumber() {
@@ -75,16 +64,7 @@ public class Photographer {
 
     private String nextScreenshotName(final String prefix) {
         long nextScreenshotNumber = nextScreenshotNumber();
-        return "screenshot-" + getMD5DigestFrom(prefix) + nextScreenshotNumber + ".png";
-    }
-
-    private String getMD5DigestFrom(final String value) {
-        byte[] messageDigest = digest.digest(value.getBytes());
-        StringBuilder hexString = new StringBuilder();
-        for (byte aMessageDigest : messageDigest) {
-            hexString.append(Integer.toHexString(MESSAGE_DIGEST_MASK & aMessageDigest));
-        }
-        return hexString.toString();
+        return "screenshot-" + Digest.ofTextValue(prefix) + nextScreenshotNumber + ".png";
     }
 
     /**

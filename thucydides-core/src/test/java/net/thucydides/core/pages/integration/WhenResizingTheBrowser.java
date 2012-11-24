@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
-public class WhenResizingTheBrower {
+public class WhenResizingTheBrowser {
 
     private StaticSitePage page;
     private EnvironmentVariables environmentVariables;
