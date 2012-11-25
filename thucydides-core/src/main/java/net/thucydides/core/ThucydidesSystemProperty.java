@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 public enum ThucydidesSystemProperty {
 
     /**
-     * The WebDriver driver - firefox or chrome.
+     * The WebDriver driver - firefox, chrome, iexplorer, htmlunit, safari.
      */
     DRIVER("webdriver.driver"),    
     

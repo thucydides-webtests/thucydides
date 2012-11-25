@@ -136,22 +136,18 @@ public class ExtendedTemporaryFolder extends ExternalResource {
 	}
 	
 	public File newFile(String fileName) throws IOException {
-		logger.debug(">> Is windows:{}", isWindows());
 		if (isWindows()) {
 			synchronized (this) {
 				File file= new File(getRoot(), fileName);
-				try {
-					file.setWritable(true);
-					file.setReadable(true);
-					file.createNewFile();
-				} catch (IOException e) {
-					logger.error("Error when invoke newFile(fileName): {}", e.toString());
-					
-				}
+                file.setWritable(true);
+                file.setReadable(true);
+                file.createNewFile();
 				return file;
 			}
 		} else {
-			return File.createTempFile("junit", null, getRoot());
+            File file = new File(getRoot(), fileName);
+            file.createNewFile();
+            return file;
 		}
 	}
 }
