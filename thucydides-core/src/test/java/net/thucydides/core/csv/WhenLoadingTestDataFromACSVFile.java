@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.notNullValue;
 public class WhenLoadingTestDataFromACSVFile {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     File temporaryDirectory;
 

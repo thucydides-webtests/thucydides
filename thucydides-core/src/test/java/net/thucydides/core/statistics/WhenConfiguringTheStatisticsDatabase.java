@@ -89,7 +89,7 @@ public class WhenConfiguringTheStatisticsDatabase {
     }
 
     @Rule
-    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
 
     @Test

@@ -1,11 +1,9 @@
 package net.thucydides.core.util;
 
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.guice.ThucydidesModule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,7 +16,7 @@ import static org.hamcrest.Matchers.is;
 public class WhenLoadingPreferencesFromALocalPropertiesFile {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     File homeDirectory;
     File thucydidesPropertiesFile;

@@ -14,7 +14,6 @@ import net.thucydides.core.util.MockEnvironmentVariables;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +22,7 @@ import java.net.URL;
 public class AbstractReportGenerationTest {
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     protected AcceptanceTestReporter reporter;
 

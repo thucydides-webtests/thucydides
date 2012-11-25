@@ -178,7 +178,7 @@ public class WhenUsingTheStepEventBus {
     Logger logger = LoggerFactory.getLogger(Thucydides.class);
 
     @Rule
-    public TemporaryFolder temp = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temp = new ExtendedTemporaryFolder();
 
     @Before
     public void initMocks() throws IOException {

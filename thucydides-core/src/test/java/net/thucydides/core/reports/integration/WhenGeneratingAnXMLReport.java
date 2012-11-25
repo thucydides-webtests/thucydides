@@ -40,7 +40,7 @@ public class WhenGeneratingAnXMLReport {
     private AcceptanceTestReporter reporter;
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private File outputDirectory;
 
