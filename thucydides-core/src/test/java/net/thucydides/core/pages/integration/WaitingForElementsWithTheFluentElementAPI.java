@@ -1,11 +1,14 @@
 package net.thucydides.core.pages.integration;
 
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -16,6 +19,38 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+
+    private static WebDriver firefoxDriver;
+    private static WebDriver chromeDriver;
+
+    private static StaticSitePage firefoxPage;
+    private static StaticSitePage chromePage;
+
+    @BeforeClass
+    public static void openBrowsers() {
+        firefoxDriver = new FirefoxDriver();
+        chromeDriver = new ChromeDriver();
+
+        firefoxPage = new StaticSitePage(firefoxDriver, 1000);
+        firefoxPage.open();
+
+        chromePage = new StaticSitePage(chromeDriver, 1000);
+        chromePage.open();
+    }
+
+    @AfterClass
+    public static void quitBrowsers() {
+        firefoxDriver.quit();
+        chromeDriver.quit();
+    }
+
+    protected StaticSitePage getFirefoxPage() {
+        return firefoxPage;
+    }
+
+    protected StaticSitePage getChromePage() {
+        return chromePage;
+    }
 
     @Test
     public void should_obtain_text_value_from_input() {
@@ -63,6 +98,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     public void should_trigger_blur_event_when_focus_leaves_field_in_chrome() {
 
         StaticSitePage page = getChromePage();
+        page.getDriver().navigate().refresh();
 
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
 

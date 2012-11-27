@@ -19,6 +19,9 @@ public class WhenNamingHtmlTags {
     WebElement button;
 
     @Mock
+    WebElement buttonWithValue;
+
+    @Mock
     WebElement submitButton;
 
     @Mock
@@ -29,8 +32,9 @@ public class WhenNamingHtmlTags {
         MockitoAnnotations.initMocks(this);
 
         mockWebElement(unknownElementType).returnsTagAndText("unknown", "unknown text");
-        mockWebElement(button).returnsTagTypeAndText("input", "button", "Cancel");
-        mockWebElement(submitButton).returnsTagTypeAndText("input", "submit", "OK");
+        mockWebElement(button).returnsTagTypeAndText("input", "button", "Cancel","submit");
+        mockWebElement(buttonWithValue).returnsTagTypeAndText("input", "button", "","OK");
+        mockWebElement(submitButton).returnsTagTypeAndText("input", "submit", "OK","");
         mockWebElement(link).returnsTagAndText("a", "Cancel");
     }
 
@@ -40,12 +44,17 @@ public class WhenNamingHtmlTags {
 
     @Test
     public void should_render_unknown_tag_type_as_the_original_tag() {
-        assertThat(HtmlTag.from(unknownElementType).inHumanReadableForm(), is("unknown (unknown text)"));
+        assertThat(HtmlTag.from(unknownElementType).inHumanReadableForm(), is("unknown 'unknown text'"));
     }
 
     @Test
     public void should_render_a_button_using_the_contained_text() {
-        assertThat(HtmlTag.from(button).inHumanReadableForm(), is("button 'Cancel'"));
+        assertThat(HtmlTag.from(button).inHumanReadableForm(), is("button: input - submit 'Cancel'"));
+    }
+
+    @Test
+    public void should_render_a_value_button_using_the_value() {
+        assertThat(HtmlTag.from(buttonWithValue).inHumanReadableForm(), is("button: input - OK"));
     }
 
     @Test
@@ -55,7 +64,7 @@ public class WhenNamingHtmlTags {
 
     @Test
     public void should_render_a_submit_button_using_the_contained_text() {
-        assertThat(HtmlTag.from(submitButton).inHumanReadableForm(), is("button 'OK'"));
+        assertThat(HtmlTag.from(submitButton).inHumanReadableForm(), is("button: input 'OK'"));
     }
 
 
@@ -71,9 +80,10 @@ public class WhenNamingHtmlTags {
             when(webElement.getText()).thenReturn(text);
         }
 
-        public void returnsTagTypeAndText(String tag, String type, String text) {
+        public void returnsTagTypeAndText(String tag, String type, String text, String value) {
             when(webElement.getTagName()).thenReturn(tag);
             when(webElement.getAttribute("type")).thenReturn(type);
+            when(webElement.getAttribute("value")).thenReturn(value);
             when(webElement.getText()).thenReturn(text);
         }
     }

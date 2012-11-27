@@ -3,8 +3,6 @@ package net.thucydides.core.pages;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebElement;
 
-import static org.apache.commons.lang3.StringUtils.equals;
-
 public class HtmlTag {
     
     protected final WebElement webElement;
@@ -33,12 +31,19 @@ public class HtmlTag {
         return new StringMatcher(webElement.getAttribute("type"));
     }
 
-    protected static StringMatcher textFrom(WebElement webElement) {
-        return new StringMatcher(webElement.getText());
-    }                                                
-
     public String inHumanReadableForm() {
-        return webElement.getTagName() + " (" + webElement.getText() + ")";
+        String tagName = webElement.getTagName();
+        String value = webElement.getAttribute("value");
+        String text = webElement.getText();
+
+        StringBuilder elementDescription = new StringBuilder(tagName);
+        if (StringUtils.isNotEmpty(value)) {
+            elementDescription.append(" - ").append(value);
+        }
+        if (StringUtils.isNotEmpty(text)) {
+            elementDescription.append(" '").append(text).append("'");
+        }
+        return elementDescription.toString();
     }
 
     //
@@ -52,7 +57,7 @@ public class HtmlTag {
 
         @Override
         public String inHumanReadableForm() {
-            return "button '" + webElement.getText() + "'";
+            return "button: " + super.inHumanReadableForm();
         }
 
         public static boolean canHandleThis(WebElement webElement) {

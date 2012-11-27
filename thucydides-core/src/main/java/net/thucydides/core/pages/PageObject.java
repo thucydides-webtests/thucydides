@@ -191,9 +191,7 @@ public abstract class PageObject {
     }
 
     public PageObject waitForRenderedElements(final By byElementCriteria) {
-        WebDriverWait wait = waitOnPage();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(byElementCriteria));
-//        getRenderedView().waitOnPage(byElementCriteria);
+        getRenderedView().waitFor(byElementCriteria);
         return this;
     }
 
@@ -207,9 +205,8 @@ public abstract class PageObject {
     }
 
     public PageObject waitForRenderedElementsToBePresent(final By byElementCriteria) {
-        WebDriverWait wait = waitOnPage();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(byElementCriteria));
-//        getRenderedView().waitForPresenceOf(byElementCriteria);
+//        waitOnPage().until(ExpectedConditions.visibilityOfElementLocated(byElementCriteria));
+        getRenderedView().waitForPresenceOf(byElementCriteria);
         return this;
     }
 
