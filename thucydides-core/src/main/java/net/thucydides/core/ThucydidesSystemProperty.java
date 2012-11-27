@@ -303,7 +303,12 @@ public enum ThucydidesSystemProperty {
     STATISTICS_URL("thucydides.statistics.url"),
     STATISTICS_USERNAME("thucydides.statistics.username"),
     STATISTICS_PASSWORD("thucydides.statistics.password"),
-    STATISTICS_DIALECT("thucydides.statistics.dialect");
+    STATISTICS_DIALECT("thucydides.statistics.dialect"),
+
+    /**
+     *
+     */
+    TEST_REQUIREMENTS_ROOT("thucydides.test.requirements.basedir") ;
 
 
     private String propertyName;

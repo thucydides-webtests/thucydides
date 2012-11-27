@@ -132,7 +132,12 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         if (rootDirectoryOnClasspath.isPresent()) {
             return rootDirectoryOnClasspath;
         } else {
-            return getRootDirectoryFromWorkingDirectory();
+            rootDirectoryOnClasspath =  getRootDirectoryFromWorkingDirectory();
+            if (rootDirectoryOnClasspath.isPresent()) {
+                return rootDirectoryOnClasspath;
+            } else {
+                return getRootDirectoryFromRequirementsRoot();
+            }
         }
     }
 
@@ -146,7 +151,15 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     }
 
     public Optional<String> getRootDirectoryFromWorkingDirectory() throws IOException {
-        File workingDirectory = new File(System.getProperty(WORKING_DIR));
+        return getRootDirectoryFromParentDir(System.getProperty(WORKING_DIR));
+    }
+
+    private Optional<String>getRootDirectoryFromRequirementsRoot() {
+        return getRootDirectoryFromParentDir(ThucydidesSystemProperty.TEST_REQUIREMENTS_ROOT.from(environmentVariables,""));
+    }
+
+    private Optional<String> getRootDirectoryFromParentDir(String parentDir) {
+        File workingDirectory = new File(parentDir);
         File resourceDirectory = new File(workingDirectory, DEFAULT_RESOURCE_DIRECTORY);
         File requirementsDirectory = new File(resourceDirectory, rootDirectoryPath);
         if (requirementsDirectory.exists()) {
@@ -155,6 +168,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
             return Optional.absent();
         }
     }
+
 
     private Enumeration<URL> getDirectoriesFrom(String root) throws IOException {
         return getClass().getClassLoader().getResources(root);
