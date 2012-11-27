@@ -79,8 +79,9 @@ public class ReportNamer {
     }
 
     public String getNormalizedTestNameFor(String name) {
-        String testNameWithUnderscores = NameConverter.underscore(name);
-        return appendSuffixTo(Digest.ofTextValue(name));
+        String testNameWithUnderscores = NameConverter.underscore(name.toLowerCase());
+        System.out.println("getNormalizedTestNameFor: " + testNameWithUnderscores + " => " + appendSuffixTo(Digest.ofTextValue(testNameWithUnderscores)));
+        return appendSuffixTo(Digest.ofTextValue(testNameWithUnderscores));
     }
 
     private String appendSuffixTo(final String testNameWithUnderscores) {
