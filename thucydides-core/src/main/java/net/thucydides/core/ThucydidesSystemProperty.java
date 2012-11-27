@@ -306,7 +306,7 @@ public enum ThucydidesSystemProperty {
     STATISTICS_DIALECT("thucydides.statistics.dialect"),
 
     /**
-     *
+     *  req root
      */
     TEST_REQUIREMENTS_ROOT("thucydides.test.requirements.basedir") ;
 
