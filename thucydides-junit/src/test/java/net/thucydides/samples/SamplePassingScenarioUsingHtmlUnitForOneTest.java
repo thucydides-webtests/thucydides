@@ -23,8 +23,9 @@ public class SamplePassingScenarioUsingHtmlUnitForOneTest {
     public SampleScenarioSteps steps;
 
     @Test
-    @WithDriver("htmlunit")
+    @WithDriver("firefox")
     public void happy_day_scenario() throws Throwable {
+        steps.stepThatUsesABrowser();
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
         steps.stepThatIsPending();
@@ -32,14 +33,18 @@ public class SamplePassingScenarioUsingHtmlUnitForOneTest {
     }
 
     @Test
+    @WithDriver("htmlunit")
     public void edge_case_1() {
+        steps.stepThatUsesABrowser();
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();
         steps.stepThatIsPending();
     }
 
     @Test
+    @WithDriver("firefox")
     public void edge_case_2() {
+        steps.stepThatUsesABrowser();
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();
     }

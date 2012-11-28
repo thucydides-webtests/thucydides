@@ -5,7 +5,6 @@ import net.thucydides.core.util.ExtendedTemporaryFolder;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +19,7 @@ import static org.hamcrest.Matchers.nullValue;
 public class WhenWeCreateATestStep {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
     
     @Test
     public void the_test_step_has_a_description() {

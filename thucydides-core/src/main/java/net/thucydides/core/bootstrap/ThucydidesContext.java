@@ -1,7 +1,9 @@
 package net.thucydides.core.bootstrap;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.Listeners;
@@ -11,6 +13,8 @@ import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.core.webdriver.WebdriverManager;
+import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 import java.util.List;
@@ -45,20 +49,42 @@ class ThucydidesContext {
      */
     private File outputDirectory;
 
+    private String defaultDriver;
+
     private WebDriverFactory webDriverFactory;
+
+    private Pages pages;
 
     /**
      * Thucydides configuration data
      */
-    Configuration configuration;
+    private Configuration configuration;
+
+    private WebdriverManager webdriverManager;
 
     private ThucydidesContext(StepListener... additionalListeners) {
+        this(null, additionalListeners);
+    }
+
+    private ThucydidesContext(String defaultDriver, StepListener... additionalListeners) {
         configuration = Injectors.getInjector().getInstance(Configuration.class);
+        webdriverManager = Injectors.getInjector().getInstance(WebdriverManager.class);
         outputDirectory = configuration.getOutputDirectory();
-        stepFactory = new StepFactory();
+        this.defaultDriver = defaultDriver;
+        if (defaultDriver != null) {
+            webDriverFactory = new WebDriverFactory();
+            pages =  new Pages(getDriver());
+            stepFactory = new StepFactory(pages);
+        } else {
+            stepFactory = new StepFactory();
+        }
         registerStepListeners(additionalListeners);
         reportService = new ReportService(outputDirectory,
-                                          ReportService.getDefaultReporters());
+                ReportService.getDefaultReporters());
+    }
+
+    protected WebDriver getDriver() {
+        return webdriverManager.getWebdriver(defaultDriver);
     }
 
     public void setOutputDirectory(File outputDirectory) {
@@ -73,8 +99,9 @@ class ThucydidesContext {
         }
     }
 
-    public static ThucydidesContext newContext(StepListener... listeners) {
-        ThucydidesContext context = new ThucydidesContext(listeners);
+    public static ThucydidesContext newContext(Optional<String> driver, StepListener... listeners) {
+        ThucydidesContext context = null;
+        context = (driver.isPresent()) ? new ThucydidesContext(listeners) : new ThucydidesContext(driver.get(), listeners);
         contextThreadLocal.set(context);
         return context;
     }

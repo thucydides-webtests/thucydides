@@ -1,8 +1,10 @@
 package net.thucydides.core.webdriver;
 
+import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.WebElementFacade;
 import net.thucydides.core.steps.StepEventBus;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocator;
@@ -20,7 +22,7 @@ class DisplayedElementLocator extends AjaxElementLocator {
                                                                     "waitUntilEnabled",
                                                                     "shouldNotBeVisible");
 
-    private static final List<String> QUICK_CLASSES = Arrays.asList(WebElementFacade.class.getName());
+    private static final List<String> QUICK_CLASSES = Arrays.asList(WebElementFacade.class.getName(), PageObject.class.getName());
 
     private final Field field;
     private final WebDriver driver;
@@ -63,7 +65,12 @@ class DisplayedElementLocator extends AjaxElementLocator {
     public WebElement findElementImmediately() {
         Annotations annotations = new Annotations(field);
         By by = annotations.buildBy();
-        return driver.findElement(by);
+        List<WebElement> matchingElements = driver.findElements(by);
+        if (matchingElements.isEmpty()) {
+            throw new NoSuchElementException("No such element found for criteria " + by.toString());
+        } else {
+            return matchingElements.get(0);
+        }
     }
 
     @Override

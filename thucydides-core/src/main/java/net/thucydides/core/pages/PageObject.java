@@ -16,6 +16,7 @@ import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webelements.Checkbox;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -27,8 +28,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -202,6 +205,7 @@ public abstract class PageObject {
     }
 
     public PageObject waitForRenderedElementsToBePresent(final By byElementCriteria) {
+//        waitOnPage().until(ExpectedConditions.visibilityOfElementLocated(byElementCriteria));
         getRenderedView().waitForPresenceOf(byElementCriteria);
         return this;
     }
@@ -211,8 +215,7 @@ public abstract class PageObject {
     }
 
 
-    public PageObject waitForRenderedElementsToDisappear(
-            final By byElementCriteria) {
+    public PageObject waitForRenderedElementsToDisappear(final By byElementCriteria) {
         getRenderedView().waitForElementsToDisappear(byElementCriteria);
         return this;
     }
@@ -226,12 +229,18 @@ public abstract class PageObject {
      */
     public PageObject waitForTextToAppear(final String expectedText) {
         getRenderedView().waitForText(expectedText);
+//        waitOnPage().until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(.,'" + StringEscapeUtils.escapeXml(expectedText) +"')]")));
         return this;
     }
 
     public PageObject waitForTitleToAppear(final String expectedTitle) {
-        getRenderedView().waitForTitle(expectedTitle);
+        waitOnPage().until(ExpectedConditions.titleIs(expectedTitle));
+        //getRenderedView().waitForTitle(expectedTitle);
         return this;
+    }
+
+    private WebDriverWait waitOnPage() {
+        return new WebDriverWait(driver, waitForTimeoutInSeconds());
     }
 
     public PageObject waitForTitleToDisappear(final String expectedTitle) {
@@ -275,6 +284,7 @@ public abstract class PageObject {
      */
     public PageObject waitForTextToDisappear(final String expectedText,
                                              final long timeout) {
+
         getRenderedView().waitForTextToDisappear(expectedText, timeout);
         return this;
     }
@@ -444,8 +454,9 @@ public abstract class PageObject {
     }
 
     public void shouldBeVisible(final By byCriteria) {
-        WebElement element = getDriver().findElement(byCriteria);
-        shouldBeVisible(element);
+        waitOnPage().until(ExpectedConditions.visibilityOfElementLocated(byCriteria));
+//        WebElement element = getDriver().findElement(byCriteria);
+//        shouldBeVisible(element);
     }
 
     public void shouldNotBeVisible(final WebElement field) {
@@ -457,12 +468,14 @@ public abstract class PageObject {
     }
 
     public void shouldNotBeVisible(final By byCriteria) {
-        try {
-            WebElement element = getDriver().findElement(byCriteria);
-            shouldNotBeVisible(element);
-        } catch (NoSuchElementException e) {
-            // A non-existant element is not visible
+        List<WebElement> matchingElements = getDriver().findElements(byCriteria);
+        if (!matchingElements.isEmpty()) {
+            waitOnPage().until(ExpectedConditions.invisibilityOfElementLocated(byCriteria));
         }
+    }
+
+    private long waitForTimeoutInSeconds() {
+        return (waitForTimeoutInMilliseconds < 1000) ? 1 : (waitForTimeoutInMilliseconds/1000);
     }
 
     public String updateUrlWithBaseUrlIfDefined(final String startingUrl) {

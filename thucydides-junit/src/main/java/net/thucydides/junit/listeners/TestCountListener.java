@@ -10,7 +10,7 @@ import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.junit.finder.TestFinder;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,19 +58,19 @@ public class TestCountListener implements StepListener {
         return LoggingLevel.valueOf(logLevel);
     }
 
-    @Override
+
     public void testSuiteStarted(Class<?> storyClass) {
     }
 
-    @Override
+
     public void testSuiteStarted(Story story) {
     }
 
-    @Override
+
     public void testSuiteFinished() {
     }
 
-    @Override
+
     public void testStarted(String description) {
         int currentTestCount = testCount.addAndGet(1);
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
@@ -78,55 +78,55 @@ public class TestCountListener implements StepListener {
         }
     }
 
-    @Override
+
     public void testFinished(TestOutcome result) {
     }
 
-    @Override
+
     public void stepStarted(ExecutedStepDescription description) {
     }
 
-    @Override
+
     public void skippedStepStarted(ExecutedStepDescription description) {
     }
 
-    @Override
+
     public void stepFailed(StepFailure failure) {
     }
 
-    @Override
+
     public void lastStepFailed(StepFailure failure) {
     }
 
-    @Override
+
     public void stepIgnored() {
     }
 
-    @Override
+
     public void stepIgnored(String message) {
     }
 
-    @Override
+
     public void stepPending() {
     }
 
-    @Override
+
     public void stepPending(String message) {
     }
 
-    @Override
+
     public void stepFinished() {
     }
 
-    @Override
+
     public void testFailed(TestOutcome testOutcome, Throwable cause) {
     }
 
-    @Override
+
     public void testIgnored() {
     }
 
-    @Override
+
     public void notifyScreenChange() {
     }
 }

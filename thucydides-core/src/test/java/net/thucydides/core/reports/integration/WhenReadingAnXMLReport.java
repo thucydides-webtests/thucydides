@@ -13,7 +13,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +26,7 @@ import static org.hamcrest.Matchers.nullValue;
 public class WhenReadingAnXMLReport {
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private XMLTestOutcomeReporter outcomeReporter;
 

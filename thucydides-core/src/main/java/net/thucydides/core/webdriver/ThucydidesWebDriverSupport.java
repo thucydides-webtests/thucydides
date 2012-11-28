@@ -5,7 +5,7 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepFactory;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 
 /**

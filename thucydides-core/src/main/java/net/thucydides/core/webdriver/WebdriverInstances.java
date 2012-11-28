@@ -1,7 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import net.thucydides.core.ThucydidesSystemProperty;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Collection;

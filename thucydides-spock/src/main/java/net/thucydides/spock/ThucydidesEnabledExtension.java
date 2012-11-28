@@ -1,12 +1,9 @@
 package net.thucydides.spock;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import net.thucydides.core.bootstrap.ThucydidesAgent;
 import net.thucydides.core.steps.Listeners;
-import net.thucydides.core.steps.StepListener;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.FieldInfo;

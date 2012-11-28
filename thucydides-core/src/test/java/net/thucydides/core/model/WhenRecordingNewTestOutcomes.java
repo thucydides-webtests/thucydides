@@ -461,13 +461,13 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("The user opens the Google search page"));
 
         List<TestStep> testSteps = testOutcome.getTestSteps();
-        assertThat(testOutcome.toString(), is("The user opens the Google search page"));
+        assertThat(testOutcome.toString(), is("Should do this:The user opens the Google search page"));
 
         try {
             testSteps.add(new TestStep("Some other step"));
             fail("An UnsupportedOperationException exception should have been thrown");
         } catch (UnsupportedOperationException e) {
-            assertThat(testOutcome.toString(), is("The user opens the Google search page"));
+            assertThat(testOutcome.toString(), is("Should do this:The user opens the Google search page"));
         }
     }
 

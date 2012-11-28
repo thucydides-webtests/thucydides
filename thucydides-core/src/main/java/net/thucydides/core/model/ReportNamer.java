@@ -1,5 +1,6 @@
 package net.thucydides.core.model;
 
+import net.thucydides.core.digest.Digest;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -34,13 +35,13 @@ public class ReportNamer {
      */
     public String getNormalizedTestNameFor(final TestOutcome testOutcome) {
         String testName = getBaseTestNameFor(testOutcome);
-        return appendSuffixTo(DigestUtils.md5Hex(testName));
+        return appendSuffixTo(Digest.ofTextValue(testName));
     }
 
     private String getBaseTestNameFor(TestOutcome testOutcome) {
         String testName = "";
         if (testOutcome.getUserStory() != null) {
-            testName = NameConverter.underscore(testOutcome.getUserStory().getName());
+             testName = NameConverter.underscore(testOutcome.getUserStory().getName());
         }
         String scenarioName = NameConverter.underscore(testOutcome.getQualifiedMethodName());
         return withNoIssueNumbers(appendToIfNotNull(testName, scenarioName));
@@ -58,7 +59,7 @@ public class ReportNamer {
         }
         String scenarioName = NameConverter.underscore(testOutcome.getMethodName());
         testName = withNoIssueNumbers(withNoArguments(appendToIfNotNull(testName, scenarioName)));
-        return appendSuffixTo(DigestUtils.md5Hex(testName));
+        return appendSuffixTo(Digest.ofTextValue(testName));
     }
 
     private String appendToIfNotNull(final String baseString, final String nextElement) {
@@ -78,8 +79,8 @@ public class ReportNamer {
     }
 
     public String getNormalizedTestNameFor(String name) {
-        String testNameWithUnderscores = NameConverter.underscore(name);
-        return appendSuffixTo(DigestUtils.md5Hex(testNameWithUnderscores));
+        String testNameWithUnderscores = NameConverter.underscore(name.toLowerCase());
+        return appendSuffixTo(Digest.ofTextValue(testNameWithUnderscores));
     }
 
     private String appendSuffixTo(final String testNameWithUnderscores) {

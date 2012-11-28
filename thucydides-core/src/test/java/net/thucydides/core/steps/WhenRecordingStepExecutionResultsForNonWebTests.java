@@ -13,12 +13,10 @@ import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -43,7 +41,7 @@ public class WhenRecordingStepExecutionResultsForNonWebTests {
     StepFactory stepFactory;
 
     @Rule
-    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     File outputDirectory;
 
@@ -122,7 +120,7 @@ public class WhenRecordingStepExecutionResultsForNonWebTests {
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
-        assertThat(results.get(0).toString(), is("Step one, Step two"));
+        assertThat(results.get(0).toString(), is("App should work:Step one, Step two"));
     }
 
 
@@ -207,7 +205,7 @@ public class WhenRecordingStepExecutionResultsForNonWebTests {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
-        assertThat(testOutcome.toString(), is("Step one, Grouped steps [Nested step one, Nested step two, Nested step one, Nested step two]"));
+        assertThat(testOutcome.toString(), is("App should work:Step one, Grouped steps [Nested step one, Nested step two, Nested step one, Nested step two]"));
     }
 
     @Test

@@ -43,7 +43,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static net.thucydides.core.webdriver.javascript.JavascriptSupport.activateJavascriptSupportFor;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * Provides an instance of a supported WebDriver.
@@ -479,6 +479,7 @@ public class WebDriverFactory {
             LOGGER.info("Adding Firebugs to Firefox profile");
             firefoxProfileEnhancer.addFirebugsTo(profile);
         }
+        firefoxProfileEnhancer.configureJavaSupport(profile);
         if (dontAssumeUntrustedCertificateIssuer()) {
             profile.setAssumeUntrustedCertificateIssuer(false);
             profile.setAcceptUntrustedCertificates(true);

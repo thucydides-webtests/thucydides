@@ -1,5 +1,8 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.base.Optional;
+import net.thucydides.core.model.TakeScreenshots;
+
 import java.io.File;
 
 public interface Configuration {
@@ -31,7 +34,15 @@ public interface Configuration {
      */
     String getBaseUrl();
 
+    /**
+     * Take a screenshot for each action.
+     */
     boolean takeVerboseScreenshots();
+
+    /**
+     * How often should screenshots be taken.
+     */
+    Optional<TakeScreenshots> getScreenshotLevel();
 
     void setIfUndefined(String property, String value);
 }

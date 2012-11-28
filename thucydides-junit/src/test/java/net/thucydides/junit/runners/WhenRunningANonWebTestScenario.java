@@ -33,7 +33,7 @@ import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.List;
 
-import static net.thucydides.junit.util.FileFormating.md5;
+import static net.thucydides.junit.util.FileFormating.digest;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
@@ -304,9 +304,9 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
 
         List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new XMLFileFilter()));
         assertThat(generatedXMLReports.size(), is(3));
-        assertThat(generatedXMLReports, hasItems(md5("sample_passing_non_web_scenario_edge_case_1.xml"),
-                md5("sample_passing_non_web_scenario_edge_case_2.xml"),
-                md5("sample_passing_non_web_scenario_happy_day_scenario.xml")));
+        assertThat(generatedXMLReports, hasItems(digest("sample_passing_non_web_scenario_edge_case_1.xml"),
+                digest("sample_passing_non_web_scenario_edge_case_2.xml"),
+                digest("sample_passing_non_web_scenario_happy_day_scenario.xml")));
 
 
     }
@@ -322,9 +322,9 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
 
         List<String> generatedHtmlReports = Arrays.asList(outputDirectory.list(new HTMLFileFilter()));
         assertThat(generatedHtmlReports.size(), is(3));
-        assertThat(generatedHtmlReports, hasItems(md5("sample_passing_non_web_scenario_edge_case_1.html"),
-                md5("sample_passing_non_web_scenario_edge_case_2.html"),
-                md5("sample_passing_non_web_scenario_happy_day_scenario.html")));
+        assertThat(generatedHtmlReports, hasItems(digest("sample_passing_non_web_scenario_edge_case_1.html"),
+                digest("sample_passing_non_web_scenario_edge_case_2.html"),
+                digest("sample_passing_non_web_scenario_happy_day_scenario.html")));
     }
 
     private class XMLFileFilter implements FilenameFilter {

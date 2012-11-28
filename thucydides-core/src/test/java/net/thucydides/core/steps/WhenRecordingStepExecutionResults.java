@@ -25,7 +25,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
@@ -64,7 +63,7 @@ public class WhenRecordingStepExecutionResults {
     StepFactory stepFactory;
 
     @Rule
-    public TemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
     File outputDirectory;
 
@@ -194,7 +193,7 @@ public class WhenRecordingStepExecutionResults {
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
-        assertThat(results.get(0).toString(), is("Step one, Step two"));
+        assertThat(results.get(0).toString(), is("App should work:Step one, Step two"));
     }
 
     @Test
@@ -212,7 +211,7 @@ public class WhenRecordingStepExecutionResults {
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(1));
-        assertThat(results.get(0).toString(), is("Given some state, When we do something, Then this should happen"));
+        assertThat(results.get(0).toString(), is("App should work:Given some state, When we do something, Then this should happen"));
     }
 
     @Test
@@ -935,7 +934,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
-        assertThat(testOutcome.toString(), is("Step one, Grouped steps [Nested step one, Nested step two, Nested step one, Nested step two]"));
+        assertThat(testOutcome.toString(), is("App should work:Step one, Grouped steps [Nested step one, Nested step two, Nested step one, Nested step two]"));
     }
 
     @Test
@@ -951,7 +950,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
-        assertThat(testOutcome.toString(), is("Grouped steps [Nested step one, Nested step two, Nested step one, Nested step two]"));
+        assertThat(testOutcome.toString(), is("App should work:Grouped steps [Nested step one, Nested step two, Nested step one, Nested step two]"));
     }
 
     @Test
@@ -968,7 +967,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
-        assertThat(testOutcome.toString(), is("Step one, Deeply grouped steps [Step one, Step two, Grouped steps [Nested step one, Nested step two, Nested step one, Nested step two], Step two, Step one]"));
+        assertThat(testOutcome.toString(), is("App should work:Step one, Deeply grouped steps [Step one, Step two, Grouped steps [Nested step one, Nested step two, Nested step one, Nested step two], Step two, Step one]"));
     }
 
     @Test
@@ -985,7 +984,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
-        assertThat(testOutcome.toString(), is("Step one, Pending step"));
+        assertThat(testOutcome.toString(), is("App should work:Step one, Pending step"));
         assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.PENDING));
     }
 
@@ -1005,7 +1004,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
-        assertThat(testOutcome.toString(), is("Step one, Pending group [Step three, Step two, Step one]"));
+        assertThat(testOutcome.toString(), is("App should work:Step one, Pending group [Step three, Step two, Step one]"));
         assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.PENDING));
     }
 
@@ -1025,7 +1024,7 @@ public class WhenRecordingStepExecutionResults {
 
         StepEventBus.getEventBus().testFinished(testOutcome);
 
-        assertThat(testOutcome.toString(), is("Step one, Ignored group [Step three, Step two, Step one]"));
+        assertThat(testOutcome.toString(), is("App should work:Step one, Ignored group [Step three, Step two, Step one]"));
         assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.SKIPPED));
     }
 
@@ -1126,7 +1125,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
-        assertThat(testOutcome.toString(), is("Step one, Failing step, Step two"));
+        assertThat(testOutcome.toString(), is("App should work:Step one, Failing step, Step two"));
         assertThat(testOutcome.getTestSteps().get(2).getResult(), is(TestResult.SKIPPED));
     }
 
@@ -1144,7 +1143,7 @@ public class WhenRecordingStepExecutionResults {
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
-        assertThat(testOutcome.toString(), is("Step1 [Step one, Step two, Step three], "
+        assertThat(testOutcome.toString(), is("App should work:Step1 [Step one, Step two, Step three], "
                 + "Nested failing step [Failing step], Step2 [Step one, Step three]"));
 
         assertThat(testOutcome.getTestSteps().get(2).getResult(), is(TestResult.SKIPPED));
@@ -1165,7 +1164,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
-        assertThat(testOutcome.toString(), is("Step one, Ignored step, Step two"));
+        assertThat(testOutcome.toString(), is("App should work:Step one, Ignored step, Step two"));
         assertThat(testOutcome.getTestSteps().get(2).getResult(), is(TestResult.SUCCESS));
     }
 
@@ -1184,7 +1183,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
-        assertThat(testOutcome.toString(), is("Step1 [Step one, Step two, Step three], Step with nested failure [Step one, Failing step]"));
+        assertThat(testOutcome.toString(), is("App should work:Step1 [Step one, Step two, Step three], Step with nested failure [Step one, Failing step]"));
         assertThat(testOutcome.getResult(), is(TestResult.FAILURE));
     }
 
@@ -1215,7 +1214,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
-        assertThat(testOutcome.toString(), is("Annotated step group title [Step with long name, Step with long name and underscores]"));
+        assertThat(testOutcome.toString(), is("App should work:Annotated step group title [Step with long name, Step with long name and underscores]"));
     }
 
     @Test
@@ -1284,22 +1283,6 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
-    public void screenshots_should_not_be_taken_after_steps_if_screenshots_disabled() {
-
-        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
-        StepEventBus.getEventBus().testStarted("app_should_work");
-
-        environmentVariables.setProperty("thucydides.only.save.failing.screenshots", "true");
-
-        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
-        steps.step_one();
-        steps.step_two();
-        StepEventBus.getEventBus().testFinished(testOutcome);
-
-        verify(driver, never()).getScreenshotAs((OutputType<?>) anyObject());
-    }
-
-    @Test
     public void screenshots_should_not_be_taken_for_pending_steps() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
@@ -1325,23 +1308,6 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testFinished(testOutcome);
 
         verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
-    }
-
-    @Test
-    public void screenshots_should_still_be_taken_after_failing_steps_if_screenshots_disabled() {
-
-        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
-        StepEventBus.getEventBus().testStarted("app_should_work");
-
-        environmentVariables.setProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "true");
-
-        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
-        steps.step_one();
-        steps.step_two();
-        steps.failingStep();
-        StepEventBus.getEventBus().testFinished(testOutcome);
-
-        verify(driver, times(1)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
 

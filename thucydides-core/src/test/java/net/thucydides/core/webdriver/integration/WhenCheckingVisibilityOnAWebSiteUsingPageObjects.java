@@ -1,8 +1,6 @@
 package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.pages.PageObject;
-import net.thucydides.core.steps.StepEventBus;
-import net.thucydides.core.webdriver.StaticTestSite;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -12,12 +10,10 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import static net.thucydides.core.webdriver.StaticTestSite.fileInClasspathCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
 

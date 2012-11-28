@@ -223,7 +223,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
     BaseStepListener baseStepListener;
 
     @Rule
-    public TemporaryFolder temp = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temp = new ExtendedTemporaryFolder();
 
     @Mock
     TestOutcome testOutcome;

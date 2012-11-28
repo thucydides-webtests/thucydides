@@ -164,20 +164,6 @@ public class WhenManagingAPageObject {
         page.waitForRenderedElements(By.id("whatever"));
     }
 
-    @Test
-    public void page_will_wait_for_text_to_appear_if_requested() {
-
-        BasicPageObject page = new BasicPageObject(driver);
-        WebElement textBlock = mock(WebElement.class);
-
-        List<WebElement> emptyList = Arrays.asList();
-        List<WebElement> listWithElements = Arrays.asList(textBlock);
-
-        when(driver.findElements(any(By.class))).thenReturn(emptyList).thenReturn(listWithElements);
-
-        page.waitForTextToAppear("hi there");
-    }
-
     @Test(expected = TimeoutException.class)
     public void wait_for_text_to_appear_will_fail_if_the_text_doesnt_appear() {
 
@@ -370,8 +356,10 @@ public class WhenManagingAPageObject {
     public void should_contain_text_should_do_nothing_if_text_is_present() {
         WebElement textBlock = mock(WebElement.class);
         BasicPageObject page = new BasicPageObject(driver);
-        List<WebElement> emptyList = Arrays.asList(textBlock);
-        when(driver.findElements(any(By.class))).thenReturn(emptyList);
+        List<WebElement> matchingElements = Arrays.asList(textBlock);
+
+        when(driver.findElements(any(By.class))).thenReturn(matchingElements);
+        when(textBlock.isDisplayed()).thenReturn(true);
 
         page.shouldContainText("hi there");
     }

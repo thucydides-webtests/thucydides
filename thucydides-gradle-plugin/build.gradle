@@ -1,0 +1,18 @@
+apply plugin: 'groovy'
+
+
+repositories {
+    mavenCentral()
+    maven { url = "https://oss.sonatype.org/content/repositories/releases" }
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url = "https://oss.sonatype.org/content/groups/public" }
+    maven { url = "http://wakaleo.artifactoryonline.com/wakaleo/libs-releases" }
+    maven { url = "http://wakaleo.artifactoryonline.com/wakaleo/libs-snapshots" }
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'net.thucydides:thucydides-core:0.8.8'
+    groovy localGroovy()
+}
+

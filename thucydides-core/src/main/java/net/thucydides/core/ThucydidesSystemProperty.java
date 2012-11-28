@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 public enum ThucydidesSystemProperty {
 
     /**
-     * The WebDriver driver - firefox or chrome.
+     * The WebDriver driver - firefox, chrome, iexplorer, htmlunit, safari.
      */
     DRIVER("webdriver.driver"),    
     
@@ -67,6 +67,7 @@ public enum ThucydidesSystemProperty {
     /**
      * Should Thucydides only store screenshots for failing steps?
      * This can save disk space and speed up the tests somewhat. Useful for data-driven testing.
+     * @Deprecated This property is still supported, but thucydides.take.screenshots provides more fine-grained control.
      */
     ONLY_SAVE_FAILING_SCREENSHOTS("thucydides.only.save.failing.screenshots"),
 
@@ -77,8 +78,21 @@ public enum ThucydidesSystemProperty {
      * on a WebElementFacade, i.e. any time you use an expression like element(...).click(),
      * findBy(...).click() and so on.
      * This will be overridden if the ONLY_SAVE_FAILING_SCREENSHOTS option is set to true.
+     * @Deprecated This property is still supported, but thucydides.take.screenshots provides more fine-grained control.
      */
     VERBOSE_SCREENSHOTS("thucydides.verbose.screenshots"),
+
+    /**
+     *  Fine-grained control over when screenshots are to be taken.
+     *  This property accepts the following values:
+     *  <ul>
+     *      <li>FOR_EACH_ACTION</li>
+     *      <li>BEFORE_AND_AFTER_EACH_STEP</li>
+     *      <li>AFTER_EACH_STEP</li>
+     *      <li>FOR_FAILURES</li>
+     *  </ul>
+     */
+    THUCYDIDES_TAKE_SCREENSHOTS("thucydides.take.screenshots"),
 
     /**
      * Should Thucydides display detailed information in the test result tables.
@@ -185,6 +199,12 @@ public enum ThucydidesSystemProperty {
      */
     ACTIVATE_FIREBUGS("thucydides.activate.firebugs"),
 
+    /**
+     * Enable applets in Firefox.
+     * Applets slow down webdriver, so are disabled by default.
+     */
+    SECURITY_ENABLE_JAVA("security.enable_java"),
+
     ACTIVTE_HIGHLIGHTING("thucydides.activate.highlighting"),
 
     /**
@@ -216,7 +236,7 @@ public enum ThucydidesSystemProperty {
     /**
      * How long webdriver waits for elements to appear by default, in milliseconds.
      */
-    TIMEOUTS_IMPLICIT_WAIT("webdriver.timeouts.implicitly.wait"),
+    TIMEOUTS_IMPLICIT_WAIT("webdriver.timeouts.implicitlywait"),
 
     /**
      * Extension packages. This is a list of packages that will be scanned for custom TagProvider implementations.

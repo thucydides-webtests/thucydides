@@ -14,7 +14,6 @@ import java.io.File;
 public final class ThucydidesAgent {
 
     private final ThucydidesContext context;
-    private final Optional<String> driver;
 
     /**
      * Create a new Thucydides agent instance.
@@ -24,8 +23,7 @@ public final class ThucydidesAgent {
      * @param additionalListeners
      */
     public ThucydidesAgent(Optional<String> driver, StepListener... additionalListeners) {
-        context = ThucydidesContext.newContext(additionalListeners);
-        this.driver = driver;
+        context = ThucydidesContext.newContext(driver, additionalListeners);
     }
 
     /**

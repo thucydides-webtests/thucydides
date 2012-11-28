@@ -1,6 +1,6 @@
 package net.thucydides.core.csv.converters;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 

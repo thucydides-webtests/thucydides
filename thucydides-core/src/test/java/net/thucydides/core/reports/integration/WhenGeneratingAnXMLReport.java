@@ -5,6 +5,7 @@ import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.WithTag;
+import net.thucydides.core.digest.Digest;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestTag;
@@ -39,7 +40,7 @@ public class WhenGeneratingAnXMLReport {
     private AcceptanceTestReporter reporter;
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private File outputDirectory;
 
@@ -383,7 +384,7 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
 
-        assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_simple_test_case") + ".xml"));
+        assertThat(xmlReport.getName(), is(Digest.ofTextValue("a_simple_test_case") + ".xml"));
     }
 
     @Test
@@ -668,7 +669,7 @@ public class WhenGeneratingAnXMLReport {
         reporter.setQualifier("qualifier");
 
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
-        assertThat(xmlReport.getName(), is(DigestUtils.md5Hex("a_user_story_a_simple_test_case_qualifier") + ".xml"));
+        assertThat(xmlReport.getName(), is(Digest.ofTextValue("a_user_story_a_simple_test_case_qualifier") + ".xml"));
 
     }
 

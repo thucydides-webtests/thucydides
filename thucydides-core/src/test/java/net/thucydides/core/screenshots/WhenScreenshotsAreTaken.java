@@ -5,7 +5,6 @@ import net.thucydides.core.util.ExtendedTemporaryFolder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.OutputType;
@@ -30,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class WhenScreenshotsAreTaken {
 
     @Rule
-    public TemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
+    public ExtendedTemporaryFolder temporaryDirectory = new ExtendedTemporaryFolder();
 
     private File screenshotDirectory;
     private File screenshotTaken;
@@ -182,7 +181,7 @@ public class WhenScreenshotsAreTaken {
         String screenshotFile = photographer.takeScreenshot("test1_finished").get().getName();
         waitUntilScreenshotsProcessed();
 
-        assertThat(screenshotFile, startsWith("screenshot-989da2d4"));
+        assertThat(screenshotFile, startsWith("screenshot-ede8d449a1518998ce7f11e6d56967f66e8cc716b1d60882ea97808984179c151"));
     }
     
     @Test

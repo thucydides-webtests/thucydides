@@ -1,6 +1,5 @@
 package net.thucydides.core.screenshots;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
@@ -12,7 +11,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -38,7 +36,6 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
     }
 
 
-    @Override
     public void waitUntilDone() {
         while (!isEmpty()) {
             try {
@@ -58,7 +55,6 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
 
         boolean done = false;
 
-        @Override
         public void run() {
             while (!done) {
                 synchronized (queue) {
@@ -159,7 +155,6 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
         }
     }
 
-    @Override
     public void queueScreenshot(QueuedScreenshot queuedScreenshot) {
         queue.offer(queuedScreenshot);
         synchronized (queue) {
@@ -167,7 +162,6 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
         }
     }
 
-    @Override
     public synchronized boolean isEmpty() {
         return queue.isEmpty();
     }
