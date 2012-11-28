@@ -1,8 +1,10 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.model.TakeScreenshots;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 import static net.thucydides.core.ThucydidesSystemProperty.BASE_URL;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_TAKE_SCREENSHOTS;
 
 /**
  * Centralized configuration of the test runner. You can configure the output
@@ -180,6 +183,15 @@ public class SystemPropertiesConfiguration implements Configuration {
 
     public boolean takeVerboseScreenshots() {
         return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.VERBOSE_SCREENSHOTS.getPropertyName(), false);
+    }
+
+    public Optional<TakeScreenshots> getScreenshotLevel() {
+        String takeScreenshotsLevel = THUCYDIDES_TAKE_SCREENSHOTS.from(getEnvironmentVariables());
+        if (StringUtils.isNotEmpty(takeScreenshotsLevel)) {
+            return Optional.of(TakeScreenshots.valueOf(takeScreenshotsLevel.toUpperCase()));
+        } else {
+            return Optional.absent();
+        }
     }
 
     public void setIfUndefined(String property, String value) {

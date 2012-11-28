@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Screenshots {
     boolean onlyOnFailures() default false;
-    boolean forEachStep() default true;
+    boolean beforeAndAfterEachStep() default true;
+    boolean afterEachStep() default false;
     boolean forEachAction() default false;
 }

@@ -2,6 +2,7 @@ package net.thucydides.core.model;
 
 public enum TakeScreenshots {
     FOR_EACH_ACTION,
-    FOR_EACH_STEP,
+    BEFORE_AND_AFTER_EACH_STEP,
+    AFTER_EACH_STEP,
     FOR_FAILURES
 }

@@ -602,7 +602,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void takeInitialScreenshot() {
-        if ((currentStepExists()) && !configuration.onlySaveFailingScreenshots()) {
+        if ((currentStepExists()) && (screenshots.areAllowed(TakeScreenshots.BEFORE_AND_AFTER_EACH_STEP))) {
             take(OPTIONAL_SCREENSHOT);
         }
     }
@@ -626,7 +626,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
         if (result == FAILURE) {
             return screenshots.areAllowed(TakeScreenshots.FOR_FAILURES);
         } else {
-            return screenshots.areAllowed(TakeScreenshots.FOR_EACH_STEP);
+            return screenshots.areAllowed(TakeScreenshots.AFTER_EACH_STEP);
         }
     }
 
