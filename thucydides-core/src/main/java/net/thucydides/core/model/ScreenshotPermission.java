@@ -1,14 +1,11 @@
 package net.thucydides.core.model;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import net.thucydides.core.annotations.Screenshots;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScreenshotPermission {
 
@@ -25,13 +22,22 @@ public class ScreenshotPermission {
             return takeScreenshotLevel(takeScreenshots).isAtLeast(overrideLevel.get());
         }
 
+        Optional<TakeScreenshots> configuredLevel = configuration.getScreenshotLevel();
+        if (configuredLevel.isPresent()) {
+            return takeScreenshotLevel(takeScreenshots).isAtLeast(configuredLevel.get());
+        } else {
+            return legacyScreenshotConfiguration(takeScreenshots);
+        }
+    }
+
+    private boolean legacyScreenshotConfiguration(TakeScreenshots takeScreenshots) {
         if (configuration.onlySaveFailingScreenshots()) {
             return takeScreenshotLevel(takeScreenshots).isAtLeast(TakeScreenshots.FOR_FAILURES);
         }
         if (configuration.takeVerboseScreenshots()) {
             return takeScreenshotLevel(takeScreenshots).isAtLeast(TakeScreenshots.FOR_EACH_ACTION);
         }
-        return takeScreenshotLevel(takeScreenshots).isAtLeast(TakeScreenshots.FOR_EACH_STEP);
+        return takeScreenshotLevel(takeScreenshots).isAtLeast(TakeScreenshots.BEFORE_AND_AFTER_EACH_STEP);
     }
 
     private Optional<TakeScreenshots> methodOverride() {
@@ -53,10 +59,12 @@ public class ScreenshotPermission {
             return TakeScreenshots.FOR_FAILURES;
         } else if (screenshots.forEachAction()) {
             return TakeScreenshots.FOR_EACH_ACTION;
-        } else if (screenshots.forEachStep()) {
-            return TakeScreenshots.FOR_EACH_STEP;
+        } else if (screenshots.afterEachStep()) {
+            return TakeScreenshots.AFTER_EACH_STEP;
+        } else if (screenshots.beforeAndAfterEachStep()) {
+            return TakeScreenshots.BEFORE_AND_AFTER_EACH_STEP;
         } else {
-            return TakeScreenshots.FOR_EACH_STEP;
+            return TakeScreenshots.BEFORE_AND_AFTER_EACH_STEP;
         }
     }
 
