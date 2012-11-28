@@ -538,7 +538,6 @@ public class WebElementFacade {
         } catch (TimeoutException timeout) {
             throwErrorWithCauseIfPresent(timeout, "Expected hidden element was displayed");
         }
-        notifyScreenChange();
         return this;
     }
 
@@ -560,7 +559,6 @@ public class WebElementFacade {
     public WebElementFacade waitUntilEnabled() {
         try {
             waitForCondition().until(elementIsEnabled());
-            notifyScreenChange();
             return this;
         } catch (TimeoutException timeout) {
             throw new ElementNotVisibleException("Expected enabled element " + this + "was not enabled" , timeout);
@@ -570,7 +568,6 @@ public class WebElementFacade {
     public WebElementFacade waitUntilDisabled() {
         try {
             waitForCondition().until(elementIsNotEnabled());
-            notifyScreenChange();
             return this;
         } catch (TimeoutException timeout) {
             throw new ElementNotVisibleException("Expected disabled element " + this + "  was not disabled", timeout);

@@ -228,7 +228,6 @@ public class TestPipeline {
 
     private Comparator<Method> byStepOrder() {
         return new Comparator<Method>() {
-            @Override
             public int compare(Method methodA, Method methodB) {
                 return stageNumber(methodA) - stageNumber(methodB);
             }
