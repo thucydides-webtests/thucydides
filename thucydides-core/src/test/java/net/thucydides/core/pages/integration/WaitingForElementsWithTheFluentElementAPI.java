@@ -62,6 +62,8 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     @Test
     public void should_optionally_type_enter_after_entering_text() {
         StaticSitePage page = getChromePage();
+        chromeDriver.navigate().refresh();
+
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
 
         page.element(page.firstName).typeAndEnter("joe");
