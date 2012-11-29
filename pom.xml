@@ -55,7 +55,7 @@
         <selenium.version>2.26.0</selenium.version>
         <hamcrest.version>1.3</hamcrest.version>
         <easyb.version>1.5</easyb.version>
-        <groovy.version>1.8.6</groovy.version>
+        <groovy.version>1.8.8</groovy.version>
         <checkstyle.rules>https://thucydides.sonar.cloudbees.com/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo%2520Way</checkstyle.rules>
     </properties>
     <build>
