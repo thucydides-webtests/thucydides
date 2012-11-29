@@ -199,6 +199,12 @@ public enum ThucydidesSystemProperty {
      */
     ACTIVATE_FIREBUGS("thucydides.activate.firebugs"),
 
+    /**
+     * Enable applets in Firefox.
+     * Applets slow down webdriver, so are disabled by default.
+     */
+    SECURITY_ENABLE_JAVA("security.enable_java"),
+
     ACTIVTE_HIGHLIGHTING("thucydides.activate.highlighting"),
 
     /**
