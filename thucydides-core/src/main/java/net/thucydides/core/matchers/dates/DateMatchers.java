@@ -3,6 +3,7 @@ package net.thucydides.core.matchers.dates;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 import java.util.Collection;
 import java.util.Date;
@@ -15,6 +16,16 @@ public class DateMatchers {
     @Factory
     public static Matcher<Date> isSameAs(Date expectedDate){
         return new DateIsSameAsMatcher(expectedDate);
+    }
+
+    @Factory
+    public static Matcher<Date> isCloseTo(Date expected, Period within){
+        return new TimeIsCloseToAsMatcher(expected, within);
+    }
+
+    @Factory
+    public static Matcher<DateTime> isCloseTo(DateTime expected, Period within){
+        return new DateTimeIsCloseToAsMatcher(expected, within);
     }
 
     @Factory
