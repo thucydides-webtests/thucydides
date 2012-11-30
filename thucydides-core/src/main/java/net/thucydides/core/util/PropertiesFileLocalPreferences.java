@@ -41,7 +41,6 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
         this.homeDirectory = homeDirectory;
     }
 
-    @Override
     public void loadPreferences() throws IOException {
         updatePreferencesFrom(preferencesFileInHomeDirectory());
         updatePreferencesFrom(preferencesFileInWorkingDirectory());
@@ -59,7 +58,7 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
     }
 
     private void updatePreferencesFrom(File preferencesFile) throws IOException {
-        LOGGER.debug("Loading local Thucydides properties from " + preferencesFile.getAbsolutePath());
+        LOGGER.info("LOADING LOCAL THUCYDIDES PROPERTIES FROM {} ", preferencesFile.getAbsolutePath());
         if (preferencesFile.exists()) {
             Properties localPreferences = new Properties();
             localPreferences.load(new FileInputStream(preferencesFile));
@@ -75,7 +74,7 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
             String currentPropertyValue = environmentVariables.getProperty(propertyName);
 
             if ((currentPropertyValue == null) && (localPropertyValue != null)) {
-                LOGGER.debug(propertyName + "=" + localPropertyValue);
+                LOGGER.info(propertyName + "=" + localPropertyValue);
                 environmentVariables.setProperty(propertyName, localPropertyValue);
             }
         }
