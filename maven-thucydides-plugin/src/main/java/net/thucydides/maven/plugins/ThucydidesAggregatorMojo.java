@@ -74,7 +74,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
      * Base directory for requirements.
      * @parameter
      */
-    public String baseDir;
+    public String requirementsBaseDir;
 
 
     /**
@@ -159,8 +159,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
         updateSystemProperty("thucydides.statistics.password", statisticsPassword);
         updateSystemProperty("thucydides.statistics.dialect", statisticsDialect);
 
-        updateSystemProperty("thucydides.test.requirements.basedir", baseDir);
-
+        updateSystemProperty("thucydides.test.requirements.basedir", requirementsBaseDir);
     }
 
     private void updateSystemProperty(String key, String value, String defaultValue) {
