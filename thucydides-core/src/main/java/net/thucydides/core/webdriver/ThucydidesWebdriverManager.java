@@ -83,8 +83,8 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
     public WebDriver getWebdriver(final String driver) {
         if (StringUtils.isEmpty(driver)) {
             return getWebdriver();
-        } else if (SystemPropertiesConfiguration.DEFAULT_WEBDRIVER_DRIVER.equalsIgnoreCase(driver)){
-            return getWebdriver();
+//        } else if (SystemPropertiesConfiguration.DEFAULT_WEBDRIVER_DRIVER.equalsIgnoreCase(driver)){
+//            return getWebdriver();
         } else {
             return getThreadLocalWebDriver(configuration, webDriverFactory, driver);
         }

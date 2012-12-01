@@ -80,7 +80,6 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
             RequirementsProviderService requirementsProviderService = Injectors.getInjector().getInstance(RequirementsProviderService.class);
             requirementsTagProviders = requirementsProviderService.getRequirementsProviders();
             Collections.sort(requirementsTagProviders, new Comparator<RequirementsTagProvider>() {
-                @Override
                 public int compare(RequirementsTagProvider firstRquirementsTagProvider, RequirementsTagProvider secondRequirementsTagProvider) {
                     if ((firstRquirementsTagProvider instanceof FileSystemRequirementsTagProvider) && (secondRequirementsTagProvider instanceof FileSystemRequirementsTagProvider)) {
                         return firstRquirementsTagProvider.getClass().getName().compareTo(secondRequirementsTagProvider.getClass().getName());

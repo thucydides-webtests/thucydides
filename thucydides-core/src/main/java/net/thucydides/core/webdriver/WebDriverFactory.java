@@ -479,6 +479,7 @@ public class WebDriverFactory {
             LOGGER.info("Adding Firebugs to Firefox profile");
             firefoxProfileEnhancer.addFirebugsTo(profile);
         }
+        firefoxProfileEnhancer.configureJavaSupport(profile);
         if (dontAssumeUntrustedCertificateIssuer()) {
             profile.setAssumeUntrustedCertificateIssuer(false);
             profile.setAcceptUntrustedCertificates(true);

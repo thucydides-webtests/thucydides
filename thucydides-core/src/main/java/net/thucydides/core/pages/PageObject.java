@@ -16,7 +16,6 @@ import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webelements.Checkbox;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -191,9 +190,7 @@ public abstract class PageObject {
     }
 
     public PageObject waitForRenderedElements(final By byElementCriteria) {
-        WebDriverWait wait = waitOnPage();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(byElementCriteria));
-//        getRenderedView().waitOnPage(byElementCriteria);
+        getRenderedView().waitFor(byElementCriteria);
         return this;
     }
 
@@ -207,9 +204,8 @@ public abstract class PageObject {
     }
 
     public PageObject waitForRenderedElementsToBePresent(final By byElementCriteria) {
-        WebDriverWait wait = waitOnPage();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(byElementCriteria));
-//        getRenderedView().waitForPresenceOf(byElementCriteria);
+//        waitOnPage().until(ExpectedConditions.visibilityOfElementLocated(byElementCriteria));
+        getRenderedView().waitForPresenceOf(byElementCriteria);
         return this;
     }
 

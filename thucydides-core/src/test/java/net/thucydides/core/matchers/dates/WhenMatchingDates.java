@@ -40,7 +40,6 @@ public class WhenMatchingDates {
 
     @Test
     public void should_be_able_to_check_whether_two_dates_are_equal() {
-
         assertThat(firstOfJanuary2000, isSameAs(januaryFirst2000));
     }
 
@@ -113,6 +112,11 @@ public class WhenMatchingDates {
         Set<Date> someOtherDates = Sets.newHashSet(januaryFirst2000, januaryFirst2001);
 
         assertThat(someDates, not(containsSameDatesAs(someOtherDates)));
+    }
+
+    @Test
+    public void should_be_able_to_check_whether_two_times_are_close_together() {
+        assertThat(firstOfJanuary2000, isSameAs(januaryFirst2000));
     }
 
 }

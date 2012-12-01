@@ -130,6 +130,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     private Object skipTestStep(Object obj, Method method, Object[] args, MethodProxy proxy) throws Exception {
         Object skippedReturnObject = runSkippedMethod(obj, method, args, proxy);
         notifyStepSkippedFor(method, args);
+        LOGGER.info("SKIPPED STEP: {}", method.getName());
         return appropriateReturnObject(skippedReturnObject, obj, method);
     }
 
@@ -247,26 +248,31 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private Object runTestStep(final Object obj, final Method method,
                                final Object[] args, final MethodProxy proxy) throws Throwable {
-        LOGGER.trace("Running test step " + getTestNameFrom(method, args, false));
+        LOGGER.info("STARTING STEP: {}", method.getName());
         Object result = null;
         try {
             result = executeTestStepMethod(obj, method, args, proxy, result);
+            LOGGER.info("STEP DONE: {}", method.getName());
         } catch (AssertionError assertionError) {
             error = assertionError;
-            notifyOfStepFailure(method, args, assertionError);
+            logStepFailure(method, args, assertionError);
             return appropriateReturnObject(obj, method);
         } catch (WebDriverException webdriverException) {
             error = webdriverException;
-            AssertionError webdriverAssertionError = forError(error).convertToAssertion();
-            notifyOfStepFailure(method, args, webdriverAssertionError);
+            logStepFailure(method, args, forError(error).convertToAssertion());
+            return appropriateReturnObject(obj, method);
         } catch (Throwable generalException) {
             error = generalException;
-            AssertionError assertionError = forError(error).convertToAssertion();
-            notifyOfStepFailure(method, args, assertionError);
+            logStepFailure(method, args, forError(error).convertToAssertion());
+            return appropriateReturnObject(obj, method);
         }
 
-        LOGGER.trace("Test step done: " + getTestNameFrom(method, args, false));
         return result;
+    }
+
+    private void logStepFailure(Method method, Object[] args, AssertionError assertionError) throws Throwable {
+        notifyOfStepFailure(method, args, assertionError);
+        LOGGER.info("STEP FAILED: {} - {}", method.getName(), assertionError.getMessage());
     }
 
     private Object executeTestStepMethod(Object obj, Method method, Object[] args, MethodProxy proxy, Object result) throws Throwable {

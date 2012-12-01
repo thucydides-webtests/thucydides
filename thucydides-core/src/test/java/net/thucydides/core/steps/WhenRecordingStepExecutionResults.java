@@ -1283,22 +1283,6 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
-    public void screenshots_should_not_be_taken_after_steps_if_screenshots_disabled() {
-
-        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
-        StepEventBus.getEventBus().testStarted("app_should_work");
-
-        environmentVariables.setProperty("thucydides.only.save.failing.screenshots", "true");
-
-        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
-        steps.step_one();
-        steps.step_two();
-        StepEventBus.getEventBus().testFinished(testOutcome);
-
-        verify(driver, never()).getScreenshotAs((OutputType<?>) anyObject());
-    }
-
-    @Test
     public void screenshots_should_not_be_taken_for_pending_steps() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
@@ -1324,23 +1308,6 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testFinished(testOutcome);
 
         verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
-    }
-
-    @Test
-    public void screenshots_should_still_be_taken_after_failing_steps_if_screenshots_disabled() {
-
-        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
-        StepEventBus.getEventBus().testStarted("app_should_work");
-
-        environmentVariables.setProperty(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), "true");
-
-        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
-        steps.step_one();
-        steps.step_two();
-        steps.failingStep();
-        StepEventBus.getEventBus().testFinished(testOutcome);
-
-        verify(driver, times(1)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
 
