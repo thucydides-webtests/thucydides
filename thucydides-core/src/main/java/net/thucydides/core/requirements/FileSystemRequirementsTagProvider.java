@@ -128,20 +128,20 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     }
 
     private Optional<String> getRootDirectoryPath() throws IOException {
-        Optional<String> rootDirectoryOnClasspath = getRootDirectoryFromClasspath();
-        if (rootDirectoryOnClasspath.isPresent()) {
-            return rootDirectoryOnClasspath;
+
+        if (ThucydidesSystemProperty.TEST_REQUIREMENTS_ROOT.isDefinedIn(environmentVariables)){
+            return getRootDirectoryFromRequirementsBaseDir();
         } else {
-            rootDirectoryOnClasspath =  getRootDirectoryFromWorkingDirectory();
+            Optional<String> rootDirectoryOnClasspath = getRootDirectoryFromClasspath();
             if (rootDirectoryOnClasspath.isPresent()) {
                 return rootDirectoryOnClasspath;
             } else {
-                return getRootDirectoryFromRequirementsRoot();
+                return getRootDirectoryFromWorkingDirectory();
             }
         }
     }
 
-    public Optional<String> getRootDirectoryFromClasspath() throws IOException {
+    private Optional<String> getRootDirectoryFromClasspath() throws IOException {
         Enumeration<URL> requirementResources = getDirectoriesFrom(rootDirectoryPath);
         if (requirementResources.hasMoreElements()) {
             return Optional.of(requirementResources.nextElement().getPath());
@@ -150,11 +150,11 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         }
     }
 
-    public Optional<String> getRootDirectoryFromWorkingDirectory() throws IOException {
+    private Optional<String> getRootDirectoryFromWorkingDirectory() throws IOException {
         return getRootDirectoryFromParentDir(System.getProperty(WORKING_DIR));
     }
 
-    private Optional<String>getRootDirectoryFromRequirementsRoot() {
+    private Optional<String> getRootDirectoryFromRequirementsBaseDir() {
         return getRootDirectoryFromParentDir(ThucydidesSystemProperty.TEST_REQUIREMENTS_ROOT.from(environmentVariables,""));
     }
 
