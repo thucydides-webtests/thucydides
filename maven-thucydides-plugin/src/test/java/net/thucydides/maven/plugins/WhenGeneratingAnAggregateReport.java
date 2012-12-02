@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import java.io.File;
 import java.io.IOException;
 
+import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -52,6 +53,14 @@ public class WhenGeneratingAnAggregateReport {
         plugin.execute();
 
         verify(reporter).setOutputDirectory(outputDirectory);
+
+    }
+
+    @Test
+    public void the_requirements_base_dir_can_be_set_via_the_plugin_configuration() throws Exception {
+        plugin.requirementsBaseDir = "somedir";
+        plugin.execute();
+        assertEquals("somedir", plugin.environmentVariables.getProperty("thucydides.test.requirements.basedir"));
 
     }
 
