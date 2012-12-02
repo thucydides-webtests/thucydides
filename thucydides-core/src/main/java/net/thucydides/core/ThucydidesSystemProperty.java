@@ -326,7 +326,13 @@ public enum ThucydidesSystemProperty {
     STATISTICS_DIALECT("thucydides.statistics.dialect"),
 
     /**
-     *  req root
+     *  The base directory in which requirements are kept. It is assumed that this directory contains sub folders
+     *  src/test/resources. If this property is set, the requirements are read from src/test/resources under this folder
+     *  instead of the classpath or working directory.
+     *
+     *  This property is used to support situations where your working directory
+     *  is different from the requirements base dir (for example when building a multi-module project from parent pom with
+     *  requirements stored inside a sub-module : See Jira #Thucydides-100)
      */
     TEST_REQUIREMENTS_ROOT("thucydides.test.requirements.basedir") ;
 
