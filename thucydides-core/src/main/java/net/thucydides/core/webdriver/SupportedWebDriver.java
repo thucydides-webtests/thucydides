@@ -2,6 +2,7 @@ package net.thucydides.core.webdriver;
 
 import com.google.common.base.Joiner;
 import com.opera.core.systems.OperaDriver;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -67,11 +68,27 @@ public enum SupportedWebDriver {
         return Joiner.on(", ").join(SupportedWebDriver.values());
     }
 
+    public static SupportedWebDriver getClosestDriverValueTo(final String value) {
+        SupportedWebDriver closestDriver = null;
+        int closestDriverDistance = Integer.MAX_VALUE;
+        for(SupportedWebDriver supportedDriver : values()) {
+            int distance = StringUtils.getLevenshteinDistance(supportedDriver.toString(), value);
+            if (distance < closestDriverDistance) {
+                closestDriverDistance = distance;
+                closestDriver = supportedDriver;
+            }
+        }
+        return closestDriver;
+    }
+
     public static SupportedWebDriver getDriverTypeFor(final String value) throws UnsupportedDriverException {
         try {
             return SupportedWebDriver.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new UnsupportedDriverException("Unsupported browser type: " + value, e);
+            SupportedWebDriver closestMatchingDriver = getClosestDriverValueTo(value);
+            throw new UnsupportedDriverException("Unsupported browser type: " + value
+                                                 + ". Did you mean " + closestMatchingDriver.toString().toLowerCase()
+                                                 + "?", e);
         }
 
     }

@@ -31,7 +31,7 @@ public enum ThucydidesSystemProperty {
     /**
      * The driver to be used for remote drivers
      */
-    REMOTE_BROWSER("webdriver.remote."),
+    REMOTE_DRIVER("webdriver.remote.driver"),
 
     /**
      * A unique identifier for the project under test, used to record test statistics.

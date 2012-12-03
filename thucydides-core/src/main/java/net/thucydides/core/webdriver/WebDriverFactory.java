@@ -19,7 +19,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.firefox.UnableToCreateProfileException;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -37,7 +36,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -183,7 +181,7 @@ public class WebDriverFactory {
 
     private WebDriver buildRemoteDriver() throws MalformedURLException {
         String remoteUrl = ThucydidesSystemProperty.REMOTE_URL.from(environmentVariables);
-        return webdriverInstanceFactory.newRemoteDriver(new URL(remoteUrl), buildCapabilities());
+        return webdriverInstanceFactory.newRemoteDriver(new URL(remoteUrl), buildRemoteCapabilities());
     }
 
     private boolean saucelabsUrlIsDefined() {
@@ -274,8 +272,11 @@ public class WebDriverFactory {
         return Platform.valueOf(platformValue.toUpperCase());
     }
 
-    private DesiredCapabilities buildCapabilities() {
-        String driver = ThucydidesSystemProperty.DRIVER.from(environmentVariables);
+    private DesiredCapabilities buildRemoteCapabilities() {
+        String driver = ThucydidesSystemProperty.REMOTE_DRIVER.from(environmentVariables);
+        if (driver == null) {
+            driver = ThucydidesSystemProperty.DRIVER.from(environmentVariables);
+        }
         return capabilitiesForDriver(driver);
     }
 
@@ -297,7 +298,13 @@ public class WebDriverFactory {
     }
 
     private SupportedWebDriver driverTypeFor(String driver) {
-        return SupportedWebDriver.valueOf(driver.toUpperCase());
+        String normalizedDriverName = driver.toUpperCase();
+        if (!SupportedWebDriver.listOfSupportedDrivers().contains(normalizedDriverName)) {
+            SupportedWebDriver closestDriver = SupportedWebDriver.getClosestDriverValueTo(normalizedDriverName);
+            throw new AssertionError("Unsupported driver for webdriver.driver or webdriver.remote.driver: " + driver
+                                     + ". Did you mean " + closestDriver.toString().toLowerCase() + "?");
+        }
+        return SupportedWebDriver.valueOf(normalizedDriverName);
     }
 
     private DesiredCapabilities realBrowserCapabilities(SupportedWebDriver driverType) {
@@ -326,7 +333,7 @@ public class WebDriverFactory {
     }
 
     private DesiredCapabilities remoteCapabilities() {
-        String remoteBrowser = ThucydidesSystemProperty.REMOTE_BROWSER.from(environmentVariables, "firefox");
+        String remoteBrowser = ThucydidesSystemProperty.REMOTE_DRIVER.from(environmentVariables, "firefox");
         return realBrowserCapabilities(driverTypeFor(remoteBrowser));
     }
 
