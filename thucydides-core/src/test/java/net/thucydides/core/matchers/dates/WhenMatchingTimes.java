@@ -18,11 +18,20 @@ public class WhenMatchingTimes {
     Date januaryFirst2000At10_01am;
     Date januaryFirst2000At10_06am;
 
+    DateTime januaryFirst2001At10_00am;
+    DateTime januaryFirst2001At10_01am;
+    DateTime januaryFirst2001At10_06am;
+
     @Before
     public void setupDates() {
         januaryFirst2000At10_00am = new DateTime(2000,01,01,10,0).toDate();
         januaryFirst2000At10_01am = new DateTime(2000,01,01,10,1).toDate();
         januaryFirst2000At10_06am = new DateTime(2000,01,01,10,6).toDate();
+
+        januaryFirst2001At10_00am = new DateTime(2000,01,01,10,0);
+        januaryFirst2001At10_01am = new DateTime(2000,01,01,10,1);
+        januaryFirst2001At10_06am = new DateTime(2000,01,01,10,6);
+
     }
 
     @Test
@@ -35,5 +44,14 @@ public class WhenMatchingTimes {
         assertThat(januaryFirst2000At10_00am, not(isCloseTo(januaryFirst2000At10_06am, minutes(5))));
     }
 
+    @Test
+    public void should_be_able_to_check_whether_two_datetimes_are_within_a_specified_margin() {
+        assertThat(januaryFirst2001At10_00am, isCloseTo(januaryFirst2001At10_01am, minutes(5)));
+    }
+
+    @Test
+    public void should_be_able_to_check_whether_two_datetimes_are_far_apart() {
+        assertThat(januaryFirst2001At10_00am, not(isCloseTo(januaryFirst2001At10_06am, minutes(5))));
+    }
 
 }
