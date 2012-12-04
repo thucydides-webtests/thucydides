@@ -271,14 +271,12 @@ public class CheckingVisibilityWithTheFluentElementAPI extends FluentElementAPIT
         page.element(page.colors).shouldNotContainText("Red");
     }
 
-    @Ignore
     @Test
     public void should_detect_focus_on_input_fields() {
         page.evaluateJavascript("document.getElementById('lastname').focus()");
         assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
 
-    @Ignore
     @Test
     public void should_detect_focus_on_input_fields_using_page_API() {
         page.evaluateJavascript("document.getElementById('lastname').focus()");

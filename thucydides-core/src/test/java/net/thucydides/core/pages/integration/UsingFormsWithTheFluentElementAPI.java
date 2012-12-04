@@ -27,7 +27,6 @@ public class UsingFormsWithTheFluentElementAPI extends FluentElementAPITestsBase
     }
 
 
-    @Ignore
     @Test
     public void should_detect_focus_on_input_fields() {
         assertThat(page.element(page.lastName).hasFocus(), is(true));
@@ -48,7 +47,6 @@ public class UsingFormsWithTheFluentElementAPI extends FluentElementAPITestsBase
         assertThat(page.element("//textarea[@id='textField']").getText(), is("text value"));
     }
 
-    @Ignore
     @Test
     public void should_detect_focus_on_input_fields_using_page_API() {
         assertThat(page.hasFocus(page.lastName), is(true));

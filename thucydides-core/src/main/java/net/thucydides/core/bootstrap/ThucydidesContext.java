@@ -99,9 +99,13 @@ class ThucydidesContext {
         }
     }
 
+    public static ThucydidesContext newContext() {
+        return new ThucydidesContext();
+    }
+
     public static ThucydidesContext newContext(Optional<String> driver, StepListener... listeners) {
         ThucydidesContext context = null;
-        context = (driver.isPresent()) ? new ThucydidesContext(listeners) : new ThucydidesContext(driver.get(), listeners);
+        context = (driver.isPresent()) ? new ThucydidesContext(driver.get(), listeners) : new ThucydidesContext(listeners);
         contextThreadLocal.set(context);
         return context;
     }

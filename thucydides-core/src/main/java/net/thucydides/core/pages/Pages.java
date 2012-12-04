@@ -96,7 +96,6 @@ public class Pages implements Serializable {
             openBrowserIfRequiredFor(pageCandidate);
             cacheCurrentPage(pageCandidate);
             nextPage = pageCandidate;
-            //nextPage.addJQuerySupport();
         }
         usePreviousPage = false;
         return nextPage;

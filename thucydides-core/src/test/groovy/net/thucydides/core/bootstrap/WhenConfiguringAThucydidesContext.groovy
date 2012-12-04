@@ -3,6 +3,7 @@ package net.thucydides.core.bootstrap
 import spock.lang.Specification
 import net.thucydides.core.steps.Listeners
 import net.thucydides.core.steps.StepEventBus
+import com.google.common.base.Optional
 
 class WhenConfiguringAThucydidesContext extends Specification {
 
@@ -15,12 +16,8 @@ class WhenConfiguringAThucydidesContext extends Specification {
 
     def "a context can be configured with additional listeners"() {
         when:
-            def context = ThucydidesContext.newContext(Listeners.loggingListener)
+            def context = ThucydidesContext.newContext(Optional.absent(), Listeners.loggingListener)
         then:
             StepEventBus.eventBus.registeredListeners.contains Listeners.loggingListener
-    }
-
-    def "a context should "() {
-        TODO
     }
 }
