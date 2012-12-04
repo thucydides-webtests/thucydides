@@ -31,7 +31,7 @@ public enum ThucydidesSystemProperty {
     /**
      * The driver to be used for remote drivers
      */
-    REMOTE_BROWSER("webdriver.remote."),
+    REMOTE_DRIVER("webdriver.remote.driver"),
 
     /**
      * A unique identifier for the project under test, used to record test statistics.
@@ -323,7 +323,18 @@ public enum ThucydidesSystemProperty {
     STATISTICS_URL("thucydides.statistics.url"),
     STATISTICS_USERNAME("thucydides.statistics.username"),
     STATISTICS_PASSWORD("thucydides.statistics.password"),
-    STATISTICS_DIALECT("thucydides.statistics.dialect");
+    STATISTICS_DIALECT("thucydides.statistics.dialect"),
+
+    /**
+     *  The base directory in which requirements are kept. It is assumed that this directory contains sub folders
+     *  src/test/resources. If this property is set, the requirements are read from src/test/resources under this folder
+     *  instead of the classpath or working directory.
+     *
+     *  This property is used to support situations where your working directory
+     *  is different from the requirements base dir (for example when building a multi-module project from parent pom with
+     *  requirements stored inside a sub-module : See Jira #Thucydides-100)
+     */
+    TEST_REQUIREMENTS_ROOT("thucydides.test.requirements.basedir") ;
 
 
     private String propertyName;

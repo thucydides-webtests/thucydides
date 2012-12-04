@@ -46,6 +46,7 @@ public class JQueryEnabledPage {
 
 
     public void injectJQuery() {
+        executeScriptFrom("jquery/jquery.focus.test-fix.js");
         executeScriptFrom("jquery/jquery.min.js");
     }
 

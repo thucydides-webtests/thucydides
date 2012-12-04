@@ -71,6 +71,13 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     public String jiraProject;
 
     /**
+     * Base directory for requirements.
+     * @parameter
+     */
+    public String requirementsBaseDir;
+
+
+    /**
      * @parameter
      */
     public String statisticsDriver;
@@ -151,6 +158,8 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
         updateSystemProperty("thucydides.statistics.username", statisticsUsername);
         updateSystemProperty("thucydides.statistics.password", statisticsPassword);
         updateSystemProperty("thucydides.statistics.dialect", statisticsDialect);
+
+        updateSystemProperty("thucydides.test.requirements.basedir", requirementsBaseDir);
     }
 
     private void updateSystemProperty(String key, String value, String defaultValue) {
@@ -183,5 +192,6 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
         getReporter().setJiraUsername(jiraUsername);
         getReporter().setJiraPassword(jiraPassword);
         getReporter().generateReportsForTestResultsFrom(sourceDirectory);
+
     }
 }

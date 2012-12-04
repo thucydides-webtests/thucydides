@@ -39,7 +39,6 @@ public class WhenMatchingJodaTimeDates {
 
     @Test
     public void should_be_able_to_check_whether_two_dates_are_equal() {
-
         assertThat(dateTime0, isSameAs(dateTime1));
     }
 

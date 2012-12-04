@@ -173,12 +173,7 @@ class RenderedPageObjectView {
     }
 
     public boolean containsText(final String textValue) {
-        String textInBody = ".//*[contains(.,'" + StringEscapeUtils.escapeXml(textValue) +"')]";
-        List<WebElement> elements = reverse(driver.findElements(By.xpath(textInBody)));
-        if (foundNo(elements)) {
-            return false;
-        }
-        return elements.get(0).isDisplayed();
+        return driver.findElement(By.tagName("body")).getText().contains(textValue);
     }
 
     private boolean foundNo(List<WebElement> elements) {
