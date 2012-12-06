@@ -141,7 +141,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Test
     public void a_system_provided_url_should_override_the_default_url() throws InitializationError {
 
-        System.setProperty("webdriver.base.url", "http://www.wikipedia.com");
+        environmentVariables.setProperty("webdriver.base.url", "http://www.wikipedia.com");
         ThucydidesRunner runner = getTestRunnerUsing(SingleWikipediaTestScenario.class);
 
         runner.run(new RunNotifier());
@@ -152,8 +152,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
     @Override
     protected ThucydidesRunner getTestRunnerUsing(Class<?> testClass) throws InitializationError {
         Configuration configuration = new SystemPropertiesConfiguration(environmentVariables);
-        ThucydidesRunner runner = new ThucydidesRunner(testClass, webDriverFactory, configuration);
-        return runner;
+        return new ThucydidesRunner(testClass, webDriverFactory, configuration);
     }
 
 }

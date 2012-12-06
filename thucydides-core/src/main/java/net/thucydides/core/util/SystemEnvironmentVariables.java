@@ -2,22 +2,46 @@ package net.thucydides.core.util;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 /**
  * Return system environment variable values.
  */
 public class SystemEnvironmentVariables implements EnvironmentVariables {
 
+    private Properties systemProperties;
+    private Map<String, String> systemValues;
+
+    public SystemEnvironmentVariables() {
+        this(System.getProperties(), System.getenv());
+    }
+
+    protected SystemEnvironmentVariables(Properties systemProperties, Map<String, String> systemValues) {
+        this.systemProperties = copyOf(systemProperties);
+        this.systemValues = new HashMap<String, String>(systemValues);
+    }
+
+    private Properties copyOf(Properties sourceProperties) {
+        Properties copiedProperties = new Properties();
+        for(String propertyName : sourceProperties.stringPropertyNames()) {
+            copiedProperties.setProperty(propertyName, sourceProperties.getProperty(propertyName));
+        }
+        return copiedProperties;
+    }
+
     public String getValue(final String name) {
         return getValue(name, null);
     }
 
-    @Override
+    
     public String getValue(Enum<?> property) {
         return getValue(property.toString());
     }
 
     public String getValue(final String name, final String defaultValue) {
-        String value = System.getenv(name);
+        String value = systemValues.get(name);
         if (value == null) {
             return defaultValue;
         } else {
@@ -25,13 +49,13 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
         }
     }
 
-    @Override
+    
     public String getValue(Enum<?> property, String defaultValue) {
         return getValue(property.toString(), defaultValue);
     }
 
     public Integer getPropertyAsInteger(String property, Integer defaultValue) {
-        String value = System.getProperty(property);
+        String value = (String) systemProperties.get(property);
         if (value != null) {
             return Integer.valueOf(value);
         } else {
@@ -39,51 +63,55 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
         }
     }
 
-    @Override
+    
     public Integer getPropertyAsInteger(Enum<?> property, Integer defaultValue) {
         return getPropertyAsInteger(property.toString(), defaultValue);
     }
 
     public Boolean getPropertyAsBoolean(String name, boolean defaultValue) {
-        if (System.getProperty(name) == null) {
+        if (getProperty(name) == null) {
             return defaultValue;
-        } else if (StringUtils.isBlank(System.getProperty(name))) {
+        } else if (StringUtils.isBlank(getProperty(name))) {
             return true;
         } else {
-            return Boolean.parseBoolean(System.getProperty(name,"false"));
+            return Boolean.parseBoolean(getProperty(name, "false"));
         }
     }
 
-    @Override
+    
     public Boolean getPropertyAsBoolean(Enum<?> property, boolean defaultValue) {
         return getPropertyAsBoolean(property.toString(), defaultValue);
     }
 
     public String getProperty(final String name) {
-        return System.getProperty(name);
+        return (String) systemProperties.get(name);
     }
 
-    @Override
+    
     public String getProperty(Enum<?> property) {
         return getProperty(property.toString());
     }
 
     public String getProperty(final String name, final String defaultValue) {
-        return System.getProperty(name, defaultValue);
+        return systemProperties.getProperty(name, defaultValue);
     }
 
-    @Override
+    
     public String getProperty(Enum<?> property, String defaultValue) {
         return getProperty(property.toString(), defaultValue);
     }
 
-    @Override
+    
     public void setProperty(String name, String value) {
-        System.setProperty(name, value);
+        systemProperties.setProperty(name, value);
     }
 
-    @Override
+    
     public void clearProperty(String name) {
-        System.clearProperty(name);
+        systemProperties.remove(name);
+    }
+
+    public EnvironmentVariables copy() {
+        return new SystemEnvironmentVariables(systemProperties, systemValues);
     }
 }

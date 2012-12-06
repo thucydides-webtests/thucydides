@@ -32,4 +32,6 @@ public interface EnvironmentVariables {
     void setProperty(final String name, final String value);
 
     void clearProperty(final String name);
+
+    EnvironmentVariables copy();
 }

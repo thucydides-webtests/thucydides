@@ -93,7 +93,6 @@ public class Pages implements Serializable {
         } else {
             T pageCandidate = getCurrentPageOfType(pageObjectClass);
             pageCandidate.setDefaultBaseUrl(getDefaultBaseUrl());
-            openBrowserIfRequiredFor(pageCandidate);
             cacheCurrentPage(pageCandidate);
             nextPage = pageCandidate;
         }

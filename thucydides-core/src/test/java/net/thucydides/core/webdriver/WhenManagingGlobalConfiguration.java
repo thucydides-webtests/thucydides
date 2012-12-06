@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import static net.thucydides.core.util.FileSeparatorUtil.changeSeparatorIfRequired;
+
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,6 +9,7 @@ import org.junit.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 public class WhenManagingGlobalConfiguration {
 
@@ -23,10 +25,20 @@ public class WhenManagingGlobalConfiguration {
 
     @Test
     public void the_step_delay_value_can_be_defined_in_a_system_property() {
-        environmentVariables.setProperty("thucycides.step.delay","1000");
+        environmentVariables.setProperty("thucycides.step.delay", "1000");
 
         assertThat(configuration.getStepDelay(), is(1000));
     }
+
+    @Test
+    public void a_configuration_can_be_safely_copied() {
+        environmentVariables.setProperty("thucycides.step.delay", "1000");
+        Configuration copy = configuration.copy();
+        ((SystemPropertiesConfiguration) copy).getEnvironmentVariables().setProperty("thucycides.step.delay", "2000");
+        assertThat(copy.getStepDelay(), is(not(configuration.getStepDelay())));
+        assertThat(configuration.getStepDelay(), is(1000));
+    }
+
 
     @Test
     public void the_browser_restart_value_can_be_defined_in_a_system_property() {
@@ -34,7 +46,6 @@ public class WhenManagingGlobalConfiguration {
 
         assertThat(configuration.getRestartFrequency(), is(5));
     }
-
 
 
     @Test
@@ -45,21 +56,21 @@ public class WhenManagingGlobalConfiguration {
     @Test
     public void the_unique_browser_value_can_be_defined_in_a_system_property() {
         String outputDirectory = changeSeparatorIfRequired("build/reports/thucydides");
-        environmentVariables.setProperty("thucydides.outputDirectory",outputDirectory);
+        environmentVariables.setProperty("thucydides.outputDirectory", outputDirectory);
 
         assertThat(configuration.getOutputDirectory().getAbsoluteFile().toString(), endsWith(outputDirectory));
     }
 
     @Test
     public void the_output_directory_can_be_defined_in_a_system_property() {
-        environmentVariables.setProperty("thucydides.use.unique.browser","true");
+        environmentVariables.setProperty("thucydides.use.unique.browser", "true");
 
         assertThat(configuration.getUseUniqueBrowser(), is(true));
     }
 
     @Test
     public void system_properties_cannot_be_set_if_defined() {
-        environmentVariables.setProperty("thucydides.use.unique.browser","true");
+        environmentVariables.setProperty("thucydides.use.unique.browser", "true");
         configuration.setIfUndefined("thucydides.use.unique.browser", "false");
 
         assertThat(configuration.getUseUniqueBrowser(), is(true));

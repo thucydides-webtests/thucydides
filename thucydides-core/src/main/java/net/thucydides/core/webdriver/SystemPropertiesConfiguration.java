@@ -39,9 +39,7 @@ public class SystemPropertiesConfiguration implements Configuration {
      */
     public static final int DEFAULT_ELEMENT_TIMEOUT_SECONDS = 5;
 
-    public final Integer DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT = 5;
-
-    private String defaultBaseUrl;
+    public static final Integer DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT = 5;
 
     /**
      * Use this property to define the output directory in which reports will be
@@ -69,18 +67,27 @@ public class SystemPropertiesConfiguration implements Configuration {
      */
     private static final String DEFAULT_OUTPUT_DIRECTORY = "target/site/thucydides";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SystemPropertiesConfiguration.class);
+
     /**
      * HTML and XML reports will be generated in this directory.
      */
-    private File outputDirectory;    
+    private File outputDirectory;
+
+    private String defaultBaseUrl;
 
     private EnvironmentVariables environmentVariables;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SystemPropertiesConfiguration.class);
 
     @Inject
     public SystemPropertiesConfiguration(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
+    }
+
+    public SystemPropertiesConfiguration copy() {
+        SystemPropertiesConfiguration copy = new SystemPropertiesConfiguration(environmentVariables.copy());
+        copy.outputDirectory = outputDirectory;
+        copy.defaultBaseUrl = defaultBaseUrl;
+        return copy;
     }
 
     protected EnvironmentVariables getEnvironmentVariables() {

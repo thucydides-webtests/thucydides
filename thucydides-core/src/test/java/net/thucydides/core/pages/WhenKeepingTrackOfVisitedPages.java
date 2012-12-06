@@ -70,7 +70,7 @@ public class WhenKeepingTrackOfVisitedPages {
         final Pages pages = new Pages(driver, configuration);
         pages.setDefaultBaseUrl(baseUrl);
 
-        pages.get(SimplePage.class);
+        pages.get(SimplePage.class).open();
 
         verify(driver).get(driverUrl.capture());
         assertThat(driverUrl.getValue(), containsString("static-site/index.html"));
@@ -81,12 +81,11 @@ public class WhenKeepingTrackOfVisitedPages {
 
         final String systemDefinedBaseUrl = "http://www.google.com.au";
 
-        Configuration Configuration = new SystemPropertiesConfiguration(environmentVariables);
-        final Pages pages = new Pages(driver, Configuration);
-        
         environmentVariables.setProperty("webdriver.base.url", systemDefinedBaseUrl);
 
-        pages.get(SimplePage.class);
+        Configuration Configuration = new SystemPropertiesConfiguration(environmentVariables);
+        final Pages pages = new Pages(driver, Configuration);
+        pages.get(SimplePage.class).open();
 
         verify(driver).get(driverUrl.capture());
         assertThat(driverUrl.getValue(), containsString(systemDefinedBaseUrl));

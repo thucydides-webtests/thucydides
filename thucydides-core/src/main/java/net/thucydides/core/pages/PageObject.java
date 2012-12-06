@@ -479,7 +479,7 @@ public abstract class PageObject {
 
     public String updateUrlWithBaseUrlIfDefined(final String startingUrl) {
 
-        String baseUrl = pageUrls.getBaseUrl();
+        String baseUrl = pageUrls.getSystemBaseUrl();
         if ((baseUrl != null) && (!StringUtils.isEmpty(baseUrl))) {
             return replaceHost(startingUrl, baseUrl);
         } else {

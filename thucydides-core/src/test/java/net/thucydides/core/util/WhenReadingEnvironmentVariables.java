@@ -152,19 +152,9 @@ public class WhenReadingEnvironmentVariables {
     }
 
     @Test
-    public void should_be_able_to_set_system_properties() {
-        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
-        environmentVariables.setProperty("my.property","SomeValue");
-        String value = System.getProperty("my.property");
-
-        assertThat(value, is("SomeValue"));
-    }
-
-    @Test
     public void should_be_able_to_clear_a_set_system_properties() {
         EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
         environmentVariables.setProperty("my.property","SomeValue");
-        String value = System.getProperty("my.property");
         environmentVariables.clearProperty("my.property");
 
         assertThat(System.getProperty("my.property"), is(nullValue()));
@@ -248,6 +238,18 @@ public class WhenReadingEnvironmentVariables {
     public void mock_environment_values_allow_defaults() {
         MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
         assertThat(environmentVariables.getValue("env","default"), is("default"));
+    }
+
+    @Test
+    public void environment_variable_sets_can_be_safely_copied() {
+
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        environmentVariables.setProperty("some.property", "VALUE");
+
+        EnvironmentVariables environmentVariablesCopy = environmentVariables.copy();
+        environmentVariablesCopy.setProperty("some.property", "ANOTHER VALUE");
+
+        assertThat(environmentVariables.getProperty("some.property"), is("VALUE"));
     }
 
 }

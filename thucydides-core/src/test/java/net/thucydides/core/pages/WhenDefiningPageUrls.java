@@ -131,7 +131,6 @@ public class WhenDefiningPageUrls {
         verify(webdriver).get("http://staging.myapp.org/somepage");
     }
 
-    @Ignore("To implement in next release")
     @Test
     public void the_webdriver_base_url_system_property_should_include_full_path() {
         PageObject page = new PageObjectWithFullUrlAndPageDefinition(webdriver);
@@ -183,10 +182,9 @@ public class WhenDefiningPageUrls {
     @Test
     public void the_base_url_should_be_used_if_no_url_annotation_is_present() {
         PageObject page = new PageObjectWithNoUrlDefinition(webdriver);
+        configuration.setDefaultBaseUrl("http://www.google.com");
         PageUrls pageUrls = new PageUrls(page, configuration);
         page.setPageUrls(pageUrls);
-
-        configuration.setDefaultBaseUrl("http://www.google.com");
 
         page.open();
 
@@ -221,7 +219,7 @@ public class WhenDefiningPageUrls {
 
         verify(webdriver).get("http://www.google.com");
     }
-    
+
     @DefaultUrl("http://jira.mycompany.org")
     @NamedUrls(
       {

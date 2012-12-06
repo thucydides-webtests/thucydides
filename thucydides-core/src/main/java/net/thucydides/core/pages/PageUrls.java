@@ -1,11 +1,14 @@
 package net.thucydides.core.pages;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.webdriver.Configuration;
+import org.apache.commons.lang3.StringUtils;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -24,9 +27,9 @@ public class PageUrls {
 
     private final Configuration configuration;
 
-    public PageUrls(final Object pageObject, final Configuration Configuration) {
+    public PageUrls(final Object pageObject, final Configuration configuration) {
         this.pageObject = pageObject;
-        this.configuration = Configuration;
+        this.configuration = configuration;
     }
 
     public PageUrls(final Object pageObject) {
@@ -34,59 +37,76 @@ public class PageUrls {
     }
 
     public String getStartingUrl() {
+        Optional<String> declaredDefaultUrl = getDeclaredDefaultUrl();
+        String url;
+        if (declaredDefaultUrl.isPresent()) {
+            url = addBaseUrlTo(declaredDefaultUrl.get());
+        } else {
+            url = getBaseUrl();
+        }
+        return verified(url);
+    }
+
+    private Optional<String> getDeclaredDefaultUrl() {
         DefaultUrl urlAnnotation = pageObject.getClass().getAnnotation(DefaultUrl.class);
         if (urlAnnotation != null) {
-            String annotatedBaseUrl = urlAnnotation.value();
-            String startingUrl = getUrlFrom(annotatedBaseUrl);
-            return addDefaultBaseUrlIfRelative(startingUrl);
+            return Optional.fromNullable(urlAnnotation.value());
         } else {
-            return getDefaultUrl();
+            return Optional.absent();
         }
     }
 
-    public String getDeclaredDefaultUrl() {
-        String annotatedBaseUrl = null;
-        DefaultUrl urlAnnotation = pageObject.getClass().getAnnotation(DefaultUrl.class);
-        if (urlAnnotation != null) {
-            annotatedBaseUrl = urlAnnotation.value();
+    public String verified(String requestedUrl) {
+        if (isAClasspathResource(requestedUrl)) {
+            return obtainResourcePathFromClasspath(requestedUrl).toString();
+        } else {
+            try {
+                URL url = new URL(requestedUrl);
+                return url.toString();
+            } catch (MalformedURLException e) {
+                throw new AssertionError("Invalid URL: " + requestedUrl);
+            }
         }
-        return annotatedBaseUrl;
     }
 
     public static String getUrlFrom(final String annotatedBaseUrl) {
         if (annotatedBaseUrl == null) {
             return null;
         }
-
-        String classpathUrl = null;
-        if (annotatedBaseUrl.startsWith(CLASSPATH_URL_PREFIX)) {
+        if (isAClasspathResource(annotatedBaseUrl)) {
             URL baseUrl = obtainResourcePathFromClasspath(annotatedBaseUrl);
-            classpathUrl = baseUrl.toString();
-        }
-
-        if (classpathUrl != null) {
-            return classpathUrl;
+            return baseUrl.toString();
         } else {
             return annotatedBaseUrl;
         }
     }
 
-    private static URL obtainResourcePathFromClasspath(final String annotatedBaseUrl) {
-        String resourcePath = annotatedBaseUrl.substring(CLASSPATH_URL_PREFIX_LENGTH);
-        URL baseUrl = Thread.currentThread().getContextClassLoader().getResource(resourcePath);
-        if (baseUrl == null) {
-            throw new IllegalStateException("No matching web page could be found on the classpath for "
-                                            + annotatedBaseUrl);
-        }
-        return baseUrl;
+    private static boolean isAClasspathResource(String annotatedBaseUrl) {
+        return (annotatedBaseUrl != null) && (annotatedBaseUrl.startsWith(CLASSPATH_URL_PREFIX));
     }
 
-    private String getDefaultUrl() {
-        if (pageLevelDefaultBaseUrl != null) {
-            return pageLevelDefaultBaseUrl;
-        } else {
-            return configuration.getBaseUrl();
+    private static URL obtainResourcePathFromClasspath(final String classpathUrl) {
+        String resourcePath = classpathUrl.substring(CLASSPATH_URL_PREFIX_LENGTH);
+        URL resourceUrl = Thread.currentThread().getContextClassLoader().getResource(resourcePath);
+        if (resourceUrl == null) {
+            throw new IllegalStateException("No matching web page could be found on the classpath for " + classpathUrl);
         }
+        return resourceUrl;
+    }
+
+    private String getBaseUrl() {
+        String baseUrl;
+        if (StringUtils.isNotEmpty(getSystemBaseUrl())) {
+            baseUrl = getSystemBaseUrl();
+        } else {
+            baseUrl = pageLevelDefaultBaseUrl;
+        }
+
+        return removeTrailingSlash(getUrlFrom(baseUrl));
+    }
+
+    private String removeTrailingSlash(String baseUrl) {
+        return StringUtils.stripEnd(baseUrl, "/");
     }
 
     public String getStartingUrl(final String... parameterValues) {
@@ -100,12 +120,23 @@ public class PageUrls {
             NamedUrl[] namedUrlList = urlAnnotation.value();
             for (NamedUrl namedUrl : namedUrlList) {
                 if (namedUrl.name().equals(name)) {
-                    return namedUrl.url();
+                    return prefixedWithDefaultUrl(namedUrl.url());
                 }
             }
         }
         throw new IllegalArgumentException("No URL named " + name
                 + " was found in this class");
+    }
+
+    private String prefixedWithDefaultUrl(String url) {
+        Optional<String> declaredDefaultUrl = getDeclaredDefaultUrl();
+        if (declaredDefaultUrl.isPresent() && isARelativeUrl(url)) {
+            return StringUtils.stripEnd(declaredDefaultUrl.get(),"/")
+                   + "/"
+                   + StringUtils.stripStart(url,"/");
+        } else {
+            return url;
+        }
     }
 
     public String getNamedUrl(final String name,
@@ -122,19 +153,52 @@ public class PageUrls {
             String variable = String.format("{%d}", i + 1);
             url = url.replace(variable, parameterValues[i]);
         }
-        return addDefaultBaseUrlIfRelative(url);
+        return addBaseUrlTo(url);
     }
 
-    private String addDefaultBaseUrlIfRelative(final String url) {
-        if (isARelativeUrl(url)) {
-            if (getDefaultUrl() != null) {
-                return getDefaultUrl() + url;
-            }
-            if (getDeclaredDefaultUrl() != null) {
-                return getDeclaredDefaultUrl() + url;
-            }
+    private String addBaseUrlTo(final String url) {
+        if (isAClasspathResource(url) && baseUrlIsDefined()) {
+            return getBaseUrl();
         }
-        return url;
+        if (isARelativeUrl(url)) {
+            return updatedRelativeUrl(url);
+        }
+        return updatedFullUrl(url);
+    }
+
+    private boolean baseUrlIsDefined() {
+        return StringUtils.isNotEmpty(getBaseUrl());
+    }
+
+    private String updatedFullUrl(String url) {
+        if (isAClasspathResource(url)) {
+            return url;
+        } else {
+            String updatedUrl = url;
+            if (StringUtils.isNotEmpty(getBaseUrl())) {
+                try {
+                    updatedUrl = getBaseUrl() + pathFrom(url);
+                } catch (MalformedURLException e) {
+                    throw new AssertionError("Invalid URL: " + url);
+                }
+            }
+            return removeTrailingSlash(updatedUrl);
+        }
+    }
+
+    private String pathFrom(String url) throws MalformedURLException {
+        URL defaultUrl = new URL(url);
+        return url.substring(url.indexOf(defaultUrl.getAuthority()) + defaultUrl.getAuthority().length());
+    }
+
+    private String updatedRelativeUrl(String url) {
+        String updatedUrl;
+        if (StringUtils.isNotEmpty(getBaseUrl())) {
+            updatedUrl = getBaseUrl() + url;
+        } else {
+            updatedUrl = url;
+        }
+        return removeTrailingSlash(updatedUrl);
     }
 
     private boolean isARelativeUrl(final String url) {
@@ -146,7 +210,7 @@ public class PageUrls {
         pageLevelDefaultBaseUrl = defaultBaseUrl;
     }
 
-    public String getBaseUrl() {
+    public String getSystemBaseUrl() {
         return configuration.getBaseUrl();
     }
 }

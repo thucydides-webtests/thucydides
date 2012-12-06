@@ -45,4 +45,6 @@ public interface Configuration {
     Optional<TakeScreenshots> getScreenshotLevel();
 
     void setIfUndefined(String property, String value);
+
+    Configuration copy();
 }
