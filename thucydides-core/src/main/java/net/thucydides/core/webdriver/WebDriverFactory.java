@@ -37,6 +37,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -63,6 +64,8 @@ public class WebDriverFactory {
 
     private final EnvironmentVariables environmentVariables;
     private final FirefoxProfileEnhancer firefoxProfileEnhancer;
+
+    private final Integer EXTRA_TIME_TO_TAKE_SCREENSHOTS = 180;
 
     public WebDriverFactory() {
         this(new WebdriverInstanceFactory(), Injectors.getInjector().getInstance(EnvironmentVariables.class));
@@ -309,32 +312,56 @@ public class WebDriverFactory {
 
     private DesiredCapabilities realBrowserCapabilities(SupportedWebDriver driverType) {
 
+        DesiredCapabilities capabilities = null;
+
         switch (driverType) {
             case CHROME:
-                return DesiredCapabilities.chrome();
+                capabilities = DesiredCapabilities.chrome();
+                break;
 
             case FIREFOX:
-                return DesiredCapabilities.firefox();
+                capabilities = DesiredCapabilities.firefox();
+                break;
 
             case HTMLUNIT:
-                return DesiredCapabilities.htmlUnit();
+                capabilities = DesiredCapabilities.htmlUnit();
+                break;
 
             case OPERA:
-                return DesiredCapabilities.opera();
+                capabilities = DesiredCapabilities.opera();
+                break;
 
             case IEXPLORER:
-                return DesiredCapabilities.internetExplorer();
+                capabilities = DesiredCapabilities.internetExplorer();
+                break;
 
             default:
-                DesiredCapabilities capabilities = new DesiredCapabilities();
+                capabilities = new DesiredCapabilities();
                 capabilities.setJavascriptEnabled(true);
-                return capabilities;
         }
+        addExtraCatabilitiesTo(capabilities);
+        return capabilities;
     }
 
     private DesiredCapabilities remoteCapabilities() {
         String remoteBrowser = ThucydidesSystemProperty.REMOTE_DRIVER.from(environmentVariables, "firefox");
-        return realBrowserCapabilities(driverTypeFor(remoteBrowser));
+        DesiredCapabilities capabilities = realBrowserCapabilities(driverTypeFor(remoteBrowser));
+        capabilities.setCapability("idle-timeout",EXTRA_TIME_TO_TAKE_SCREENSHOTS);
+
+        Boolean recordScreenshotsInSaucelabs
+              = environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.SAUCELABS_RECORD_SCREENSHOTS, false);
+        capabilities.setCapability("record-screenshots",recordScreenshotsInSaucelabs);
+
+        addExtraCatabilitiesTo(capabilities);
+        return capabilities;
+    }
+
+    private void addExtraCatabilitiesTo(DesiredCapabilities capabilities) {
+        CapabilitySet capabilitySet = new CapabilitySet(environmentVariables);
+        Map<String, Object> extraCapabilities = capabilitySet.getCapabilities();
+        for(String capabilityName : extraCapabilities.keySet()) {
+            capabilities.setCapability(capabilityName, extraCapabilities.get(capabilityName));
+        }
     }
 
     private WebDriver htmlunitDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {

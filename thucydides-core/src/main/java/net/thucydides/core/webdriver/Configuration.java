@@ -2,6 +2,7 @@ package net.thucydides.core.webdriver;
 
 import com.google.common.base.Optional;
 import net.thucydides.core.model.TakeScreenshots;
+import net.thucydides.core.util.EnvironmentVariables;
 
 import java.io.File;
 
@@ -47,4 +48,5 @@ public interface Configuration {
     void setIfUndefined(String property, String value);
 
     Configuration copy();
+    Configuration withEnvironmentVariables(EnvironmentVariables environmentVariables);
 }

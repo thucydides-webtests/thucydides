@@ -83,7 +83,11 @@ public class SystemPropertiesConfiguration implements Configuration {
         this.environmentVariables = environmentVariables;
     }
 
-    public SystemPropertiesConfiguration copy() {
+    public Configuration copy() {
+        return withEnvironmentVariables(environmentVariables);
+    }
+
+    public Configuration withEnvironmentVariables(EnvironmentVariables environmentVariables) {
         SystemPropertiesConfiguration copy = new SystemPropertiesConfiguration(environmentVariables.copy());
         copy.outputDirectory = outputDirectory;
         copy.defaultBaseUrl = defaultBaseUrl;

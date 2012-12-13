@@ -14,12 +14,12 @@ public class MockEnvironmentVariables implements EnvironmentVariables {
     }
 
     protected MockEnvironmentVariables(Properties properties) {
-        this.properties = new Properties(properties);
+        this.properties = PropertiesUtil.copyOf(properties);
     }
 
     protected MockEnvironmentVariables(Properties properties, Properties values) {
-        this.properties = new Properties(properties);
-        this.values = new Properties(values);
+        this.properties = PropertiesUtil.copyOf(properties);
+        this.values = PropertiesUtil.copyOf(values);
     }
 
     public static EnvironmentVariables fromSystemEnvironment() {

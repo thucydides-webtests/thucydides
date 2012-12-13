@@ -72,6 +72,13 @@ public enum ThucydidesSystemProperty {
     ONLY_SAVE_FAILING_SCREENSHOTS("thucydides.only.save.failing.screenshots"),
 
     /**
+     * A set of user-defined capabilities to be used to configure the WebDriver driver.
+     * Capabilities should be passed in as a semi-colon-separated list of key:value pairs, e.g.
+     * "build:build-1234; max-duration:300; single-window:true; tags:[tag1,tag2,tag3]"
+     */
+    DRIVER_CAPABILITIES("thucydides.driver.capabilities"),
+
+    /**
      * Should Thucydides take screenshots for every clicked button and every selected link?
      * By default, a screenshot will be stored at the start and end of each step.
      * If this option is set to true, Thucydides will record screenshots for any action performed
@@ -281,6 +288,12 @@ public enum ThucydidesSystemProperty {
      * Override the default implicit timeout value for the Saucelabs driver.
      */
     SAUCELABS_IMPLICIT_TIMEOUT("saucelabs.implicit.timeout"),
+
+    /**
+     * Saucelabs records screenshots as well as videos by default. Since Thucydides also records screenshots,
+     * this feature is disabled by default. It can be reactivated using this system property.
+     */
+    SAUCELABS_RECORD_SCREENSHOTS("saucelabs.record.screenshots"),
 
     /**
      * Timeout (in seconds) for retrying file I/O.
