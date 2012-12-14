@@ -328,17 +328,18 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         initializeTestSession();
         resetBroswerFromTimeToTime();
         if (isPending(method)) {
-            markAsPending(method, notifier);
+            markAsPending(method);
+            notifier.fireTestIgnored(describeChild(method));
         } else {
             processTestMethodAnnotationsFor(method);
             super.runChild(method, notifier);
         }
     }
 
-    private void markAsPending(FrameworkMethod method, RunNotifier notifier) {
+    private void markAsPending(FrameworkMethod method) {
         stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
         StepEventBus.getEventBus().testPending();
-        notifier.fireTestIgnored(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
+        StepEventBus.getEventBus().testFinished();
     }
 
     /**
