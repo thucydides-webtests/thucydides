@@ -168,7 +168,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     }
 
     private boolean shouldSkipMethod(final Method methodOrStep, final Class callingClass) {
-        return (aPreviousStepHasFailed() && declaredInSameDomain(methodOrStep, callingClass));
+        return ((aPreviousStepHasFailed() || testIsPending()) && declaredInSameDomain(methodOrStep, callingClass));
     }
 
     private boolean shouldSkip(final Method methodOrStep) {
