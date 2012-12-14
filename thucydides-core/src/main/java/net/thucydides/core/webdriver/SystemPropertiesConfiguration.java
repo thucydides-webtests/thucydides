@@ -94,7 +94,7 @@ public class SystemPropertiesConfiguration implements Configuration {
         return copy;
     }
 
-    protected EnvironmentVariables getEnvironmentVariables() {
+    public EnvironmentVariables getEnvironmentVariables() {
         if (environmentVariables == null) {
             environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
         }

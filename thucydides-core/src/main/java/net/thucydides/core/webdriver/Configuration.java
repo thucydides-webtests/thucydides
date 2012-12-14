@@ -48,5 +48,8 @@ public interface Configuration {
     void setIfUndefined(String property, String value);
 
     Configuration copy();
+
     Configuration withEnvironmentVariables(EnvironmentVariables environmentVariables);
+
+    EnvironmentVariables getEnvironmentVariables();
 }
