@@ -560,14 +560,17 @@ public class WebDriverFactory {
      * Initialize a page object's fields using the specified WebDriver instance.
      */
     public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver) {
-        Configuration configuration = Injectors.getInjector().getInstance(Configuration.class);
-        int elementTimeoutInSeconds = configuration.getElementTimeout();
-        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, elementTimeoutInSeconds);
+        ElementLocatorFactory finder = getElementLocatorFactorySelector().getLocatorFor(driver);
         PageFactory.initElements(finder, pageObject);
     }
 
+    private static ElementLocatorFactorySelector getElementLocatorFactorySelector() {
+        Configuration configuration = Injectors.getInjector().getInstance(Configuration.class);
+        return new ElementLocatorFactorySelector(configuration);
+    }
+
     public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver, int timeoutInSeconds) {
-        ElementLocatorFactory finder = new DisplayedElementLocatorFactory(driver, timeoutInSeconds);
+        ElementLocatorFactory finder = getElementLocatorFactorySelector().withTimeout(timeoutInSeconds).getLocatorFor(driver);
         PageFactory.initElements(finder, pageObject);
     }
 

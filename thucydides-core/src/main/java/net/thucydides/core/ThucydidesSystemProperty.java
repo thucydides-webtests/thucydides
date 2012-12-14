@@ -326,6 +326,12 @@ public enum ThucydidesSystemProperty {
     CAPABILITY_TYPES("thucydides.capability.types"),
 
     /**
+     * Normally, Thucydides uses DisplayedElementLocatorFactory, an extension of the AjaxElementLocatorFactory
+     * when instantiating page objects. This is to ensure that web elements are available and usable before they are used.
+     * For alternative behaviour, you can set this value to AjaxElementLocatorFactory or DefaultElementLocatorFactory.
+     */
+    LOCATOR_FACTORY("thucydides.locator.factory"),
+    /**
      * The hierarchy of capability types.
      * This is the list of capability types to be used when reading capabilities from the file system
      * and when organizing the reports. It is a comma-separated list of tags.The default value is: capability, feature
