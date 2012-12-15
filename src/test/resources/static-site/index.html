@@ -87,23 +87,27 @@
 </head>
 <body onLoad="initFields()">
 <h2 id="visible">A visible title</h2>
-<div style="visibility:hidden;">
+<div style="display:none;">
     <h2 id="invisible">An invisible title</h2>
 </div>
 <p>Some test pages for the Thucydides tests</p>
-<form name="demo" action="index.html">
+<form name="demo" id="demo" action="index.html">
     <p>
     <h3 id="nametitle">Name</h3>
     <input name="firstname" id="firstname" value="<enter first name>" onblur="focusOff('firstname')" onfocus="focusOn('firstname')"/>
     <input name="lastname" id="lastname"/>
     </p>
     <p>
+        <span style="display:none">Invisible text</span>
     <h3 id="placetitle">Location</h3>
     <input name="city" id="city"/>
+    <input name="state" id="state"/>
     <input name="country" id="country" value="Australia"/>
+    <input id="specialField" name="specialField" value="Special"/>
     </p>
     <input id="buttonThatIsInitiallyDisabled" type="submit" value="Initially disabled" disabled="true"/>
     <input id="buttonThatIsInitiallyEnabled" type="submit" value="Initially enabled"/>
+    <input id="alertButton" type="button" value="Alert" onclick="alert('Alert!');"/>
 
     <input name="hiddenfield" type="hidden"/>
 
@@ -138,7 +142,7 @@
 
     <input type="file" name="upload"/>
 
-    <textarea rows="2" cols="20" name="textField">text value</textarea>
+    <textarea rows="2" cols="20" id="textField" name="textField">text value</textarea>
 
 </form>
 
@@ -171,9 +175,36 @@
     </tr>
     </thead>
     <tbody>
+    <tr colspan="3"><td>SPACER</td></tr>
     <tr><td><a href="#">Tim</a></td><td>Brooke-Taylor</td><td>Red</td></tr>
     <tr><td><a href="#">Graeme</a></td><td>Garden</td><td>Green</td></tr>
     <tr><td><a href="#">Bill</a></td><td>Oddie</td><td>Blue</td></tr>
+    </tbody>
+</table>
+
+
+<table id="clients_with_no_headings">
+    <tr><td><a href="#">Tim</a></td><td>Brooke-Taylor</td><td>Red</td></tr>
+    <tr><td><a href="#">Graeme</a></td><td>Garden</td><td>Green</td></tr>
+    <tr><td><a href="#">Bill</a></td><td>Oddie</td><td>Blue</td></tr>
+</table>
+
+
+<table id="clients_with_nested_cells">
+    <thead>
+    <tr>
+        <th>First Names</th>
+        <th>Last Name</th>
+        <th>Favorite Colour</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr><td><table><tr><td><a href="#">Timothy</a></td><td><a href="#">Tim</a></td></tr></table>
+    </td><td>Brooke-Taylor</td><td>Red</td></tr>
+    <tr><td><table><tr><td><a href="#">Graeme</a></td><td><a href="#">Garry</a></td></tr></table>
+    </td><td>Garden</td><td>Green</td></tr>
+    <tr><td><table><tr><td><a href="#">William</a></td><td><a href="#">Bill</a></td></tr></table>
+    </td><td>Oddie</td><td>Blue</td></tr>
     </tbody>
 </table>
 
@@ -207,6 +238,7 @@
     </tbody>
 </table>
 
+
 <table id="table_with_merged_cells">
     <thead>
     <tr>
@@ -218,11 +250,39 @@
     <tbody>
     <tr><td colspan="3">&nbsp;</td></tr>
     <tr><td>Tim</td><td>Brooke-Taylor</td><td>Red</td></tr>
-    <tr><td>Graeme</td><td>Garden</td></tr>
+    <tr><td>Graeme</td><td>Garden</td><td>Green</td></tr>
     <tr><td>Bill</td><td>Oddie</td><td>Blue</td></tr>
     </tbody>
 </table>
 
+<table id="table_with_empty_headers">
+    <thead>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Favorite Colour</th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr><td><a href="#">Tim</a></td><td>Brooke-Taylor</td><td>Red</td><td>Row 1, Cell 1</td><td>Row 1, Cell 2</td></tr>
+    <tr><td><a href="#">Graeme</a></td><td>Garden</td><td>Green</td><td>Row 2, Cell 1</td><td>Row 2, Cell 2</td></tr>
+    <tr><td><a href="#">Bill</a></td><td>Oddie</td><td>Blue</td><td>Row 3, Cell 1</td><td>Row 3, Cell 2</td></tr>
+    </tbody>
+</table>
+
+<table id="table_with_td_headers">
+    <tr>
+        <td>First Name</td>
+        <td>Last Name</td>
+        <td>Favorite Colour</td>
+    </tr>
+    <tr><td><a href="#">Tim</a></td><td>Brooke-Taylor</td><td>Red</td><td>Row 1, Cell 1</td><td>Row 1, Cell 2</td></tr>
+    <tr><td><a href="#">Graeme</a></td><td>Garden</td><td>Green</td><td>Row 2, Cell 1</td><td>Row 2, Cell 2</td></tr>
+    <tr><td><a href="#">Bill</a></td><td>Oddie</td><td>Blue</td><td>Row 3, Cell 1</td><td>Row 3, Cell 2</td></tr>
+    </tbody>
+</table>
 <a id="togglevisibility" href="#" onclick="toggle_visibility('toggledtext');">Click here to toggle visibility</a>
 <div id="toggledtext">Visible Text</div>
 </div>

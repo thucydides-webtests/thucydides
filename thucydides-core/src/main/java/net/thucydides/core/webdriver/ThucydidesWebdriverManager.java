@@ -1,10 +1,17 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Manage WebDriver instances.
@@ -24,10 +31,13 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
 
     private final Configuration configuration;
 
+    private final Set<WebDriver> allWebdriverInstances;
+
     @Inject
     public ThucydidesWebdriverManager(final WebDriverFactory webDriverFactory, final Configuration configuration) {
         this.webDriverFactory = webDriverFactory;
         this.configuration = configuration;
+        this.allWebdriverInstances =  Collections.synchronizedSet(new HashSet<WebDriver>());
     }
 
     /**
@@ -56,11 +66,32 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
     }
 
     public void closeDriver() {
-        inThisTestThread().closeCurrentDriver();
+        WebDriver driver = inThisTestThread().closeCurrentDriver();
+        if (driver != null) {
+            allWebdriverInstances.remove(driver);
+        }
+    }
+
+    public void closeAllCurrentDrivers() {
+        Set<WebDriver> closedDrivers = inThisTestThread().closeAllDrivers();
+        allWebdriverInstances.removeAll(closedDrivers);
     }
 
     public void closeAllDrivers() {
-        inThisTestThread().closeAllDrivers();
+        synchronized (allWebdriverInstances) {
+            for(WebDriver driver : allWebdriverInstances) {
+                closeSafely(driver);
+            }
+            allWebdriverInstances.clear();
+        }
+    }
+
+    private void closeSafely(WebDriver driver) {
+        try {
+            driver.close();
+            driver.quit();
+        } catch(Throwable dontCare) {
+        }
     }
 
     public void resetDriver() {
@@ -80,14 +111,19 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
         return null;
     }
 
-    public WebDriver getWebdriver(final String driver) {
-        if (StringUtils.isEmpty(driver)) {
-            return getWebdriver();
-//        } else if (SystemPropertiesConfiguration.DEFAULT_WEBDRIVER_DRIVER.equalsIgnoreCase(driver)){
-//            return getWebdriver();
+    public WebDriver getWebdriver(final String driverName) {
+        WebDriver activeDriver = null;
+        if (StringUtils.isEmpty(driverName)) {
+            activeDriver = getWebdriver();
         } else {
-            return getThreadLocalWebDriver(configuration, webDriverFactory, driver);
+            activeDriver = getThreadLocalWebDriver(configuration, webDriverFactory, driverName);
         }
+        registerDriverInGlobalDrivers(activeDriver);
+        return activeDriver;
+    }
+
+    private void registerDriverInGlobalDrivers(WebDriver activeDriver) {
+        allWebdriverInstances.add(activeDriver);
     }
 
     private static WebDriver getThreadLocalWebDriver(final Configuration configuration,
@@ -98,8 +134,8 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
         if (!inThisTestThread().driverIsRegisteredFor(driver)) {
             inThisTestThread().registerDriverCalled(driver)
                               .forDriver(newDriver(configuration, webDriverFactory, driver));
-        }
 
+        }
         return inThisTestThread().useDriver(driver);
     }
 
@@ -108,6 +144,14 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
             webdriverInstancesThreadLocal.set(new WebdriverInstances());
         }
         return webdriverInstancesThreadLocal.get();
+    }
+
+    public int getCurrentActiveWebdriverCount() {
+        return inThisTestThread().getActiveWebdriverCount();
+    }
+
+    public int getActiveWebdriverCount() {
+        return allWebdriverInstances.size();
     }
 
 }

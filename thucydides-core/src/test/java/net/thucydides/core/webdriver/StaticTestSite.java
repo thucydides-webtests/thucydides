@@ -36,7 +36,7 @@ public class StaticTestSite {
     }
 
     public void close() {
-        webdriverManager.closeAllDrivers();
+        webdriverManager.closeAllCurrentDrivers();
     }
 
     public WebDriver open(String driverType) {

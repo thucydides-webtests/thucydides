@@ -295,7 +295,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private void closeDrivers() {
-        getWebdriverManager().closeAllDrivers();
+        getWebdriverManager().closeAllCurrentDrivers();
     }
 
     protected WebdriverManager getWebdriverManager() {

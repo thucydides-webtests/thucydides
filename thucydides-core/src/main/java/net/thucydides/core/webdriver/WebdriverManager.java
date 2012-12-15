@@ -13,16 +13,21 @@ import org.openqa.selenium.remote.SessionId;
  */
 public interface WebdriverManager {
 
-    public WebDriver getWebdriver();
+    WebDriver getWebdriver();
 
-    public WebDriver getWebdriver(final String driver);
+    WebDriver getWebdriver(final String driver);
 
-    public SessionId getSessionId();
+    SessionId getSessionId();
 
-    public void closeDriver();
+    void closeDriver();
 
-    public void closeAllDrivers();
+    void closeAllCurrentDrivers();
 
-    public void resetDriver();
+    void closeAllDrivers();
 
+    void resetDriver();
+
+    int getCurrentActiveWebdriverCount();
+
+    int getActiveWebdriverCount();
 }

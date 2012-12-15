@@ -9,14 +9,12 @@ import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.steps.StepListener;
-import net.thucydides.core.util.LocalPreferences;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import org.openqa.selenium.WebDriver;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -94,7 +92,7 @@ public class Thucydides {
      * Indicate that the test run using this object is finished, and reports can be generated.
      */
     public static void done() {
-        getWebdriverManager().closeAllDrivers();
+        getWebdriverManager().closeAllCurrentDrivers();
 
     }
 

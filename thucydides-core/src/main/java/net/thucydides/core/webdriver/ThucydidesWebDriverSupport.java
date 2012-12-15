@@ -66,6 +66,12 @@ public class ThucydidesWebDriverSupport {
         }
     }
 
+    public static void closeCurrentDrivers() {
+        if (webdriversInitialized()) {
+            getWebdriverManager().closeAllCurrentDrivers();
+        }
+    }
+
     public static void closeAllDrivers() {
         if (webdriversInitialized()) {
             getWebdriverManager().closeAllDrivers();

@@ -10,11 +10,9 @@ import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -75,7 +73,7 @@ public class WhenUsingAWebDriverProxy {
         StepEventBus.getEventBus().clear();
         webDriverFacade = (WebDriverFacade) webdriverManager.getWebdriver();
         WebdriverProxyFactory.getFactory().clearMockDriver();
-        webdriverManager.closeAllDrivers();
+        webdriverManager.closeAllCurrentDrivers();
 
         facade = new MockFirefoxWebDriverFacade();
 

@@ -65,8 +65,8 @@ public class StepEventBus {
     private Set<StepListener> customListeners;
 
     private boolean stepFailed;
-
     private boolean pendingTest;
+    private boolean uniqueSession;
 
     private Class<?> classUnderTest;
     private Story storyUnderTest;
@@ -100,12 +100,18 @@ public class StepEventBus {
     }
 
     public void testStarted(final String testName) {
-
         clear();
-
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testStarted(testName);
         }
+    }
+
+    public boolean isUniqueSession() {
+        return uniqueSession;
+    }
+
+    public void setUniqueSession(boolean uniqueSession) {
+        this.uniqueSession = uniqueSession;
     }
 
     public void testStarted(final String newTestName, final Story story) {
@@ -115,15 +121,8 @@ public class StepEventBus {
 
     public void testStarted(final String newTestName, final Class<?> testClass) {
         if (newTestName != null) {
-            startSuiteForFirstTest(testClass);
             testStarted(newTestName);
         }
-    }
-
-    private void startSuiteForFirstTest(final Class<?> testClass) {
-//        if ((classUnderTest == null) || (classUnderTest != testClass)) {
-//            testSuiteStarted(testClass);
-//        }
     }
 
     private void startSuiteWithStoryForFirstTest(final Story story) {
@@ -397,7 +396,9 @@ public class StepEventBus {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.testSuiteFinished();
         }
-        ThucydidesWebDriverSupport.closeAllDrivers();
+        if (!isUniqueSession()) {
+            ThucydidesWebDriverSupport.closeAllDrivers();
+        }
         storyUnderTest = null;
     }
 

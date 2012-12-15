@@ -1,12 +1,14 @@
 package net.thucydides.core.webdriver;
 
-import net.thucydides.core.ThucydidesSystemProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * One or more WebDriver drivers that are being used in a test.
@@ -33,13 +35,15 @@ public class WebdriverInstances {
         return currentDriver;
     }
 
-    public void closeCurrentDriver() {
+    public WebDriver closeCurrentDriver() {
+        WebDriver closedDriver = null;
         if (getCurrentDriver() != null) {
-            WebDriver driver = getCurrentDriver();
-            closeAndQuite(driver);
+            closedDriver = getCurrentDriver();
+            closeAndQuite(closedDriver);
             driverMap.remove(currentDriver);
             currentDriver  = null;
         }
+        return closedDriver;
     }
 
     private void closeAndQuite(WebDriver driver) {
@@ -66,13 +70,19 @@ public class WebdriverInstances {
         return driverMap.get(currentDriver);
     }
 
-    public void closeAllDrivers() {
+    public Set<WebDriver> closeAllDrivers() {
         Collection<WebDriver> openDrivers = driverMap.values();
+        Set<WebDriver> closedDrivers = new HashSet<WebDriver>(openDrivers);
         for(WebDriver driver : openDrivers) {
             closeAndQuite(driver);
         }
         driverMap.clear();
         currentDriver = null;
+        return closedDrivers;
+    }
+
+    public int getActiveWebdriverCount() {
+        return driverMap.size();
     }
 
     public final class InstanceRegistration {

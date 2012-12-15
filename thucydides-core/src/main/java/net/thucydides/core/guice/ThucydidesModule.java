@@ -66,7 +66,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(TemplateManager.class).to(FreeMarkerTemplateManager.class).in(Singleton.class);
         bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);
         bind(IssueTracking.class).to(SystemPropertiesIssueTracking.class).in(Singleton.class);
-        bind(WebdriverManager.class).to(ThucydidesWebdriverManager.class);
+        bind(WebdriverManager.class).to(ThucydidesWebdriverManager.class).in(Singleton.class);;
         bind(BatchManager.class).to(SystemVariableBasedBatchManager.class);
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(ScreenshotProcessor.class).to(SingleThreadScreenshotProcessor.class).in(Singleton.class);

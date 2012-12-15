@@ -4,28 +4,18 @@ import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 
 import java.lang.reflect.InvocationTargetException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class WhenManagingWebdriverInstances {
 
@@ -57,7 +47,7 @@ public class WhenManagingWebdriverInstances {
         configuration = new SystemPropertiesConfiguration(environmentVariables);
         
         webdriverManager = new ThucydidesWebdriverManager(factory, configuration);
-        webdriverManager.closeAllDrivers();
+        webdriverManager.closeAllCurrentDrivers();
     }
 
 
@@ -71,7 +61,7 @@ public class WhenManagingWebdriverInstances {
 
     @After
     public void closeDriver() {
-        webdriverManager.closeAllDrivers();
+        webdriverManager.closeAllCurrentDrivers();
     }
 
     @Test
@@ -131,6 +121,45 @@ public class WhenManagingWebdriverInstances {
 
     private String staticSiteUrl() {
         return "file://" + Thread.currentThread().getContextClassLoader().getResource("static-site/index.html").toString();
+    }
+
+
+    @Test
+    public void should_close_drivers_in_current_thread() {
+        ThucydidesWebdriverManager aWebdriverManager = new ThucydidesWebdriverManager(factory, configuration);
+        aWebdriverManager.getWebdriver("firefox");
+        aWebdriverManager.getWebdriver("htmlunit");
+        aWebdriverManager.getWebdriver("chrome");
+
+        assertThat(aWebdriverManager.getCurrentActiveWebdriverCount(), is(3));
+        aWebdriverManager.closeAllCurrentDrivers();
+        assertThat(aWebdriverManager.getCurrentActiveWebdriverCount(), is(0));
+    }
+
+    @Test
+    public void should_close_individual_driver_in_current_thread() {
+        ThucydidesWebdriverManager aWebdriverManager = new ThucydidesWebdriverManager(factory, configuration);
+        aWebdriverManager.getWebdriver("firefox");
+        aWebdriverManager.getWebdriver("htmlunit");
+        aWebdriverManager.getWebdriver("chrome");
+
+        assertThat(aWebdriverManager.getCurrentActiveWebdriverCount(), is(3));
+        assertThat(aWebdriverManager.getActiveWebdriverCount(), is(3));
+        aWebdriverManager.closeDriver();
+        assertThat(aWebdriverManager.getCurrentActiveWebdriverCount(), is(2));
+        assertThat(aWebdriverManager.getActiveWebdriverCount(), is(2));
+    }
+
+    @Test
+    public void should_close_drivers_in_all_threads() {
+        ThucydidesWebdriverManager aWebdriverManager = new ThucydidesWebdriverManager(factory, configuration);
+        aWebdriverManager.getWebdriver("firefox");
+        aWebdriverManager.getWebdriver("htmlunit");
+        aWebdriverManager.getWebdriver("chrome");
+
+        assertThat(aWebdriverManager.getActiveWebdriverCount(), is(3));
+        aWebdriverManager.closeAllDrivers();
+        assertThat(aWebdriverManager.getActiveWebdriverCount(), is(0));
     }
 
 }

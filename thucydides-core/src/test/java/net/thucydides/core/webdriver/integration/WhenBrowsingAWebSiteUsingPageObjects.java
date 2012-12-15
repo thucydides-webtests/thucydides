@@ -24,8 +24,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
-public class
-    WhenBrowsingAWebSiteUsingPageObjects {
+public class WhenBrowsingAWebSiteUsingPageObjects {
 
   public class IndexPage extends PageObject {
 
