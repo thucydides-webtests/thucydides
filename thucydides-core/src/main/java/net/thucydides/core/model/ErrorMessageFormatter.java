@@ -3,6 +3,7 @@ package net.thucydides.core.model;
 import ch.lambdaj.Lambda;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
@@ -26,7 +27,11 @@ public class ErrorMessageFormatter {
      * @return
      */
     public String getShortErrorMessage() {
-        return (originalMessage.isPresent()) ? getUsefulMessageSummary() : "";
+        return escapedHtml((originalMessage.isPresent()) ? getUsefulMessageSummary() : "");
+    }
+
+    private String escapedHtml(String message) {
+        return StringEscapeUtils.escapeHtml4(message);
     }
 
     private String getUsefulMessageSummary() {

@@ -102,6 +102,15 @@ public class WhenReformattingScreenshots {
     }
 
     @Test
+    public void should_make_error_message_javascript_safe() {
+        String errorMessage = "Expected: \"red\" but: was red's color(\"reddish\")";
+
+        Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, new AssertionError(errorMessage));
+
+        assertThat(screenshot.getShortErrorMessage(), is("Expected: &quot;red&quot; but: was red's color(&quot;reddish&quot;)"));
+    }
+
+    @Test
     public void should_display_message_from_original_cause_if_present() {
         Exception exception = new Exception("Oops", new Exception("Something went wrong"));
         Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, exception);

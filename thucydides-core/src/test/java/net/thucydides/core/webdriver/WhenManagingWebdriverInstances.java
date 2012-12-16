@@ -162,4 +162,16 @@ public class WhenManagingWebdriverInstances {
         assertThat(aWebdriverManager.getActiveWebdriverCount(), is(0));
     }
 
+    @Test
+    public void should_close_drivers_in_all_threads_after_driver_resets() {
+        ThucydidesWebdriverManager aWebdriverManager = new ThucydidesWebdriverManager(factory, configuration);
+        aWebdriverManager.getWebdriver("firefox");
+        aWebdriverManager.getWebdriver("htmlunit");
+        aWebdriverManager.getWebdriver("chrome");
+
+        assertThat(aWebdriverManager.getActiveWebdriverCount(), is(3));
+        aWebdriverManager.resetDriver();
+        aWebdriverManager.closeAllDrivers();
+        assertThat(aWebdriverManager.getActiveWebdriverCount(), is(0));
+    }
 }
