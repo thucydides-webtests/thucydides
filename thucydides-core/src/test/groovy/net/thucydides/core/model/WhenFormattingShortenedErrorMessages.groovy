@@ -32,8 +32,8 @@ class WhenFormattingShortenedErrorMessages extends Specification {
             new ErrorMessageFormatter(fullErrorMessage).shortErrorMessage == shortenedErrorMessage
         where:
             fullErrorMessage                                            | shortenedErrorMessage
-            "Expected: is <10>\n   got: <0>"                            | "Expected: is <10> got: <0>"
-            "java.lang.AssertionError: Expected: is <10>\n   got: <0>"  | "Expected: is <10> got: <0>"
+            "Expected: is <10>\n   got: <0>"                            | "Expected: is &lt;10&gt; got: &lt;0&gt;"
+            "java.lang.AssertionError: Expected: is <10>\n   got: <0>"  | "Expected: is &lt;10&gt; got: &lt;0&gt;"
     }
 
 }
