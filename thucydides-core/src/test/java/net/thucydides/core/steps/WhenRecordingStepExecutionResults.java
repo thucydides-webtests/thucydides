@@ -1269,7 +1269,7 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
-    public void screenshots_should_be_taken_before_and_after_steps() {
+    public void screenshots_should_be_taken_before_and_after_steps_by_default() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
         StepEventBus.getEventBus().testStarted("app_should_work");
@@ -1280,6 +1280,33 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testFinished(testOutcome);
 
         verify(driver, times(4)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+    @Test
+    public void screenshots_should_be_taken_only_after_steps_if_requested() {
+
+        configureEventBus("thucydides.take.screenshots","AFTER_EACH_STEP");
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_two();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+    private void configureEventBus(String property, String value) {
+        environmentVariables.setProperty(property, value);
+        SystemPropertiesConfiguration configuration = new SystemPropertiesConfiguration(environmentVariables);
+
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory, configuration);
+        stepListener.setDriver(driver);
+        StepEventBus.getEventBus().clear();
+        StepEventBus.getEventBus().dropAllListeners();
+        StepEventBus.getEventBus().registerListener(stepListener);
     }
 
     @Test

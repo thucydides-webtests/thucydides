@@ -10,7 +10,9 @@ import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Screenshot;
+import net.thucydides.core.model.ScreenshotPermission;
 import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TakeScreenshots;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
@@ -76,6 +78,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
      */
     private final SystemClock clock;
 
+    private ScreenshotPermission screenshots;
     /**
      * The Java class (if any) containing the tests.
      */
@@ -121,6 +124,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
         this.storywideTags = Lists.newArrayList();
     }
 
+    protected ScreenshotPermission screenshots() {
+        if (screenshots == null) {
+            screenshots = new ScreenshotPermission(configuration);
+        }
+        return screenshots;
+    }
     /**
      * Create a step listener with a given web driver type.
      * @param driverClass a driver of this type will be used
@@ -388,7 +397,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     public void stepFinished() {
         updateSessionIdIfKnown();
-        takeScreenshotFor(SUCCESS);
+        takeEndOfStepScreenshotFor(SUCCESS);
         currentStepDone();
         markCurrentStepAs(SUCCESS);
         pauseIfRequired();
@@ -411,7 +420,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void stepFailed(StepFailure failure) {
-        takeScreenshotFor(FAILURE);
+        takeEndOfStepScreenshotFor(FAILURE);
         getCurrentTestOutcome().setTestFailureCause(failure.getException());
         markCurrentStepAs(FAILURE);
         recordFailureDetailsInFailingTestStep(failure);
@@ -419,7 +428,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void lastStepFailed(StepFailure failure) {
-        takeScreenshotFor(FAILURE);
+        takeEndOfStepScreenshotFor(FAILURE);
         getCurrentTestOutcome().lastStepFailedWith(failure);
     }
 
@@ -470,8 +479,8 @@ public class BaseStepListener implements StepListener, StepPublisher {
         return !currentStepStack.isEmpty();
     }
 
-    private void takeScreenshotFor(final TestResult result) {
-        if (shouldTakeScreenshotFor(result)) {
+    private void takeEndOfStepScreenshotFor(final TestResult result) {
+        if (shouldTakeEndOfStepScreenshotFor(result)) {
             take(OPTIONAL_SCREENSHOT);
         }
     }
@@ -597,7 +606,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void takeInitialScreenshot() {
-        if ((currentStepExists()) && !configuration.onlySaveFailingScreenshots()) {
+        if ((currentStepExists()) && (screenshots().areAllowed(TakeScreenshots.BEFORE_AND_AFTER_EACH_STEP))) {
             take(OPTIONAL_SCREENSHOT);
         }
     }
@@ -618,8 +627,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     }
 
-    private boolean shouldTakeScreenshotFor(final TestResult result) {
-        return !configuration.onlySaveFailingScreenshots() || (result == FAILURE);
+    private boolean shouldTakeEndOfStepScreenshotFor(final TestResult result) {
+        if (result == FAILURE) {
+            return screenshots().areAllowed(TakeScreenshots.FOR_FAILURES);
+        } else {
+            return screenshots().areAllowed(TakeScreenshots.AFTER_EACH_STEP);
+        }
     }
 
     public List<TestOutcome> getTestOutcomes() {
@@ -656,7 +669,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
         return getCurrentTestOutcome().getTestFailureCause();
     }
 
-    // TODO: should assign to testOutcome
     public void testFailed(TestOutcome testOutcome, final Throwable cause) {
         getCurrentTestOutcome().setTestFailureCause(cause);
     }
@@ -668,7 +680,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void notifyScreenChange() {
-        if (!configuration.onlySaveFailingScreenshots() && configuration.takeVerboseScreenshots()) {
+        if (screenshots().areAllowed(TakeScreenshots.FOR_EACH_ACTION)) {
             take(OPTIONAL_SCREENSHOT);
        }
     }
