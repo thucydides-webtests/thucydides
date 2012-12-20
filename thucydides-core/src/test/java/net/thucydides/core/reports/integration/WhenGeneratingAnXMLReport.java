@@ -1,11 +1,14 @@
 package net.thucydides.core.reports.integration;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.digest.Digest;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestTag;
@@ -26,6 +29,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static net.thucydides.core.hamcrest.XMLMatchers.isSimilarTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -163,6 +167,56 @@ public class WhenGeneratingAnXMLReport {
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
                         + "  </tags>"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
+                        + "  <test-step result='SUCCESS' duration='0'>\n"
+                        + "    <description>step 1</description>\n"
+                        + "  </test-step>\n"
+                        + "</acceptance-test-run>";
+
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }
+
+    @Test
+    public void should_generate_an_XML_report_for_an_acceptance_test_run_with_a_table()
+            throws Exception {
+
+        List<String> row1 = Lists.newArrayList("Joe", "Smith", "20");
+        List<String> row2 = Lists.newArrayList("Jack", "Jones", "21");
+
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+        DataTable table = DataTable.withHeaders(ImmutableList.of("firstName","lastName","age")).
+                                    andRows(ImmutableList.of(row1, row2)).build();
+        testOutcome.useExamplesFrom(table);
+
+        String expectedReport =
+                "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
+                        + "  <tags>\n"
+                        + "    <tag name='A user story' type='story'/>\n"
+                        + "  </tags>"
+                        + "  <examples>\n"
+                        + "    <headers>\n"
+                        + "      <header>firstName</header>\n"
+                        + "      <header>lastName</header>\n"
+                        + "      <header>age</header>\n"
+                        + "    </headers>\n"
+                        + "    <rows>\n"
+                        + "      <row>\n"
+                        + "        <value>Joe</value>\n"
+                        + "        <value>Smith</value>\n"
+                        + "        <value>20</value>\n"
+                        + "      </row>\n"
+                        + "      <row>\n"
+                        + "        <value>Jack</value>\n"
+                        + "        <value>Jones</value>\n"
+                        + "        <value>21</value>\n"
+                        + "      </row>\n"
+                        + "    </rows>\n"
+                        + "  </examples>\n"
                         + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <test-step result='SUCCESS' duration='0'>\n"
                         + "    <description>step 1</description>\n"

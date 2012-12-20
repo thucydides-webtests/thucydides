@@ -1,6 +1,7 @@
 package net.thucydides.core.steps;
 
 
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 
@@ -109,4 +110,9 @@ public interface StepListener {
     void testIgnored();
 
     void notifyScreenChange();
+
+    /**
+     * The current scenario is a data-driven scenario using test data from the specified table.
+     */
+    void useExamplesFrom(DataTable table);
 }

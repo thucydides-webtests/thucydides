@@ -2,11 +2,13 @@ package net.thucydides.core.reports.xml;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
@@ -64,6 +66,13 @@ public class TestOutcomeConverter implements Converter {
     private static final String DESCRIPTION = "description";
     private static final String DURATION = "duration";
     private static final String SESSION_ID = "session-id";
+    private static final String EXAMPLES = "examples";
+    private static final String HEADERS = "headers";
+    private static final String HEADER = "header";
+    private static final String ROWS = "rows";
+    private static final String ROW = "row";
+    private static final String VALUE = "value";
+
 
     public TestOutcomeConverter() {
     }
@@ -103,12 +112,13 @@ public class TestOutcomeConverter implements Converter {
         addUserStoryTo(writer, testOutcome.getUserStory());
         addIssuesTo(writer, testOutcome.getIssues());
         addTagsTo(writer, testOutcome.getTags());
-
+        addExamplesTo(writer, testOutcome.getDataTable());
         List<TestStep> steps = testOutcome.getTestSteps();
         for (TestStep step : steps) {
             writeStepTo(writer, step);
         }
     }
+
 
     private String titleFrom(final TestOutcome testOutcome) {
         return testOutcome.getTitle();
@@ -195,7 +205,50 @@ public class TestOutcomeConverter implements Converter {
         }
     }
 
-    
+    private void addExamplesTo(HierarchicalStreamWriter writer, DataTable dataTable) {
+        if ((dataTable != null) && (!dataTable.getRows().isEmpty())) {
+            writer.startNode(EXAMPLES);
+            writeHeaders(writer, dataTable);
+            writeRows(writer, dataTable);
+            writer.endNode();
+        }
+    }
+
+    private void writeHeaders(HierarchicalStreamWriter writer, DataTable dataTable) {
+        writer.startNode(HEADERS);
+        for(String header : dataTable.getHeaders()) {
+            writeHeader(writer, header);
+        }
+        writer.endNode();
+    }
+
+    private void writeRows(HierarchicalStreamWriter writer, DataTable dataTable) {
+        writer.startNode(ROWS);
+        for(List<String> rowData : dataTable.getRows()) {
+            writeRow(writer, rowData);
+        }
+        writer.endNode();
+    }
+
+    private void writeRow(HierarchicalStreamWriter writer, List<String> rowData) {
+        writer.startNode(ROW);
+        for(String cellValue : rowData) {
+            writeCellValue(writer, cellValue);
+        }
+        writer.endNode();
+    }
+
+    private void writeHeader(final HierarchicalStreamWriter writer, final String header) {
+        writer.startNode(HEADER);
+        writer.setValue(header);
+        writer.endNode();
+    }
+
+    private void writeCellValue(final HierarchicalStreamWriter writer, final String cellValue) {
+        writer.startNode(VALUE);
+        writer.setValue(cellValue);
+        writer.endNode();
+    }
 
     private void writeErrorForFailingTest(final HierarchicalStreamWriter writer, final TestStep step) {
         if (step.isFailure()) {
@@ -287,6 +340,8 @@ public class TestOutcomeConverter implements Converter {
                 readUserStory(reader, testOutcome);
             } else if (childNode.equals(TAGS)) {
                 readTags(reader, testOutcome);
+            } else if (childNode.equals(EXAMPLES)) {
+                readExamples(reader, testOutcome);
             }
             reader.moveUp();
         }
@@ -348,6 +403,64 @@ public class TestOutcomeConverter implements Converter {
             reader.moveUp();
         }
         testOutcome.setTags(tags);
+    }
+
+    private void readExamples(final HierarchicalStreamReader reader,
+                              final TestOutcome testOutcome) {
+        List<String> headers = Lists.newArrayList();
+        List<List<String>> rows = Lists.newArrayList();
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String childNode = reader.getNodeName();
+            if (childNode.equals(HEADERS)) {
+                headers = readHeaders(reader);
+            } else if (childNode.equals(ROWS)) {
+                rows = readRows(reader);
+            }
+            reader.moveUp();
+        }
+
+        DataTable table = DataTable.withHeaders(headers).andRows(rows).build();
+        testOutcome.useExamplesFrom(table);
+    }
+
+    private List<String> readHeaders(final HierarchicalStreamReader reader) {
+        List<String> headers = Lists.newArrayList();
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String childNode = reader.getNodeName();
+            if (childNode.equals(HEADER)) {
+                headers.add(reader.getValue());
+            }
+            reader.moveUp();
+        }
+        return headers;
+    }
+
+    private List<List<String>> readRows(final HierarchicalStreamReader reader) {
+        List<List<String>> rows = Lists.newArrayList();
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String childNode = reader.getNodeName();
+            if (childNode.equals(ROW)) {
+                rows.add(readRow(reader));
+            }
+            reader.moveUp();
+        }
+        return rows;
+    }
+
+    private List<String> readRow(final HierarchicalStreamReader reader) {
+        List<String> rowValues = Lists.newArrayList();
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String childNode = reader.getNodeName();
+            if (childNode.equals(VALUE)) {
+                rowValues.add(reader.getValue());
+            }
+            reader.moveUp();
+        }
+        return rowValues;
     }
 
     private TestTag readTag(HierarchicalStreamReader reader) {

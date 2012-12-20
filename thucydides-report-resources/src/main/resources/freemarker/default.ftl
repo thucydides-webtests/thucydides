@@ -117,6 +117,31 @@
     <div class="clr"></div>
 
     <div id="beforetable"></div>
+
+    <#if (testOutcome.isDataDriven())>
+    <h3>Examples:</h3>
+    <div class="datagrid">
+        <table class="example-table">
+            <thead>
+            <tr>
+                <#foreach header in testOutcome.dataTable.headers>
+                    <th>${inflection.of(header).asATitle()}</th>
+                </#foreach>
+            </tr>
+            </thead>
+            <tbody>
+            <#foreach row in testOutcome.dataTable.rows>
+                <tr>
+                <#foreach value in row>
+                    <td>${value}</td>
+                </#foreach>
+                </tr>
+            </#foreach>
+            </tbody>
+        </table>
+    </div>
+    </#if>
+
     <div id="tablecontents">
         <div>
             <table class="step-table">

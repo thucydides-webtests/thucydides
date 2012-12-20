@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.DatabaseConfig;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
@@ -124,5 +125,8 @@ public class StatisticsListener implements StepListener {
 
 
     public void notifyScreenChange() {
+    }
+
+    public void useExamplesFrom(DataTable table) {
     }
 }

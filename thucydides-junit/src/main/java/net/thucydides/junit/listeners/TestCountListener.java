@@ -3,6 +3,7 @@ package net.thucydides.junit.listeners;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.logging.LoggingLevel;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.steps.ExecutedStepDescription;
@@ -128,5 +129,8 @@ public class TestCountListener implements StepListener {
 
 
     public void notifyScreenChange() {
+    }
+
+    public void useExamplesFrom(DataTable table) {
     }
 }

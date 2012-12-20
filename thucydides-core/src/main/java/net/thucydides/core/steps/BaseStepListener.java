@@ -9,6 +9,7 @@ import net.thucydides.core.PendingStepException;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.ScreenshotPermission;
 import net.thucydides.core.model.Story;
@@ -103,7 +104,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
     private List<String> storywideIssues;
 
     private List<TestTag> storywideTags;
-
 
     protected enum ScreenshotType {
         OPTIONAL_SCREENSHOT,
@@ -683,5 +683,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
         if (screenshots().areAllowed(TakeScreenshots.FOR_EACH_ACTION)) {
             take(OPTIONAL_SCREENSHOT);
        }
+    }
+
+    /**
+     * The current scenario is a data-driven scenario using test data from the specified table.
+     */
+    public void useExamplesFrom(DataTable table) {
+        getCurrentTestOutcome().useExamplesFrom(table);
     }
 }

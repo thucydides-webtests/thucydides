@@ -144,6 +144,9 @@ public class TestOutcome {
      * run directly with a title using this constructor.
      * @param methodName The name of the Java method that implements this test.
      */
+
+    private DataTable dataTable;
+
     public TestOutcome(final String methodName) {
         this(methodName, null);
     }
@@ -779,6 +782,10 @@ public class TestOutcome {
         }
     }
 
+    public void useExamplesFrom(DataTable table) {
+        this.dataTable = table;
+    }
+
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {
             return step.getResult();
@@ -1000,4 +1007,11 @@ public class TestOutcome {
         return new DateTime(startTime);
     }
 
+    public boolean isDataDriven() {
+        return dataTable != null;
+    }
+
+    public DataTable getDataTable() {
+        return dataTable;
+    }
 }
