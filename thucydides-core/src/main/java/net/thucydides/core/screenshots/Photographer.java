@@ -2,6 +2,7 @@ package net.thucydides.core.screenshots;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.jhlabs.image.BoxBlurFilter;
 import net.thucydides.core.digest.Digest;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.webdriver.WebDriverFacade;
@@ -13,10 +14,13 @@ import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 /**
@@ -81,16 +85,41 @@ public class Photographer {
                     screenshotFile = saveScreenshotData((byte[]) capturedScreenshot);
                 }
                 if (screenshotFile != null) {
+                    screenshotFile = blur(screenshotFile);
+                }
+                if (screenshotFile != null) {
                     File savedScreenshot = targetScreenshot(prefix);
                     screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile, savedScreenshot));
                     savePageSourceFor(savedScreenshot.getAbsolutePath());
                     return Optional.of(savedScreenshot);
                 }
             } catch (Throwable e) {
+                e.printStackTrace();
                 getLogger().warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
             }
         }
         return Optional.absent();
+    }
+
+    protected File blur(File srcFile) throws Exception {
+        BufferedImage srcImage = ImageIO.read(srcFile);
+        BufferedImage destImage = deepCopy(srcImage);
+
+        BoxBlurFilter boxBlurFilter = new BoxBlurFilter();
+        boxBlurFilter.setRadius(7);
+        boxBlurFilter.setIterations(3);
+        destImage = boxBlurFilter.filter(srcImage, destImage);
+
+        WritableRaster raster = destImage.getRaster();
+        DataBufferByte destImageData   = (DataBufferByte) raster.getDataBuffer();
+        return  saveScreenshotData(destImageData.getData());
+    }
+
+    private BufferedImage deepCopy(BufferedImage srcImage) {
+        ColorModel cm = srcImage.getColorModel();
+        boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+        WritableRaster raster = srcImage.copyData(null);
+        return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
     }
 
     private File saveScreenshotData(byte[] capturedScreenshot) throws IOException {

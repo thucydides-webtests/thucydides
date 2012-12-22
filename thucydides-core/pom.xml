@@ -300,5 +300,10 @@
             <artifactId>xml-apis</artifactId>
             <version>1.3.04</version>
         </dependency>
+        <dependency>
+            <groupId>com.jhlabs</groupId>
+            <artifactId>filters</artifactId>
+            <version>2.0.235</version>
+        </dependency>
     </dependencies>
 </project>

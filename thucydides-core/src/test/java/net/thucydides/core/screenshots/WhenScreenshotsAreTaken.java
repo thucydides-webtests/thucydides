@@ -1,7 +1,6 @@
 package net.thucydides.core.screenshots;
 
 import net.thucydides.core.util.ExtendedTemporaryFolder;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,15 +15,10 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class WhenScreenshotsAreTaken {
 
@@ -106,6 +100,9 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         when(driver.getPageSource()).thenReturn("<html/>");
+        photographer = spy(photographer);
+        when(photographer.blur(screenshotTaken)).thenReturn(screenshotTaken);
+
         photographer.takeScreenshot("screenshot");
         waitUntilScreenshotsProcessed();
 
