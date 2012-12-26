@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
@@ -106,7 +106,6 @@ public class Photographer {
                     return Optional.of(savedScreenshot);
                 }
             } catch (Throwable e) {
-                e.printStackTrace();
                 getLogger().warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
             }
         }
@@ -116,15 +115,15 @@ public class Photographer {
     protected File blur(File srcFile) throws Exception {
         BufferedImage srcImage = ImageIO.read(srcFile);
         BufferedImage destImage = deepCopy(srcImage);
-
         BoxBlurFilter boxBlurFilter = new BoxBlurFilter();
         boxBlurFilter.setRadius(7);
         boxBlurFilter.setIterations(3);
         destImage = boxBlurFilter.filter(srcImage, destImage);
 
-        WritableRaster raster = destImage.getRaster();
-        DataBufferByte destImageData   = (DataBufferByte) raster.getDataBuffer();
-        return  saveScreenshotData(destImageData.getData());
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        ImageIO.write(destImage, "png", outStream);
+
+        return  saveScreenshotData(outStream.toByteArray());
     }
 
     private BufferedImage deepCopy(BufferedImage srcImage) {
