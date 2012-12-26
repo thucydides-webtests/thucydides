@@ -17,6 +17,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.startsWith;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
 
@@ -43,9 +44,18 @@ public class WhenScreenshotsAreTaken {
             super(driver, targetDirectory);
         }
 
+        public MockPhotographer(final WebDriver driver, final File targetDirectory, final boolean blurScreenshot) {
+            super(driver, targetDirectory, blurScreenshot);
+        }
+
         @Override
         protected boolean driverCanTakeSnapshots() {
             return (driver != null);
+        }
+
+        @Override
+        protected File blur(File srcFile) throws Exception {
+            return srcFile;
         }
     }
 
@@ -100,8 +110,6 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         when(driver.getPageSource()).thenReturn("<html/>");
-        photographer = spy(photographer);
-        when(photographer.blur(screenshotTaken)).thenReturn(screenshotTaken);
 
         photographer.takeScreenshot("screenshot");
         waitUntilScreenshotsProcessed();
@@ -204,5 +212,30 @@ public class WhenScreenshotsAreTaken {
 
         verify(screenshotProcessor).queueScreenshot((QueuedScreenshot) anyObject());
     }
+
+    @Test
+    public void should_blur_screenshots_if_blurScreenshots_flag_is_set() throws Exception {
+        Photographer photographer = new MockPhotographer(driver, screenshotDirectory, true);
+        photographer = spy(photographer);
+        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        photographer.takeScreenshot("screenshot");
+        waitUntilScreenshotsProcessed();
+
+        verify(photographer, times(1)).blur(any(File.class));
+        verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+    @Test
+    public void should_not_blur_screenshots_if_blurScreenshots_flag_is_not_set() throws Exception {
+        Photographer photographer = new MockPhotographer(driver, screenshotDirectory, false);
+        photographer = spy(photographer);
+        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        photographer.takeScreenshot("screenshot");
+        waitUntilScreenshotsProcessed();
+
+        verify(photographer, times(0)).blur(any(File.class));
+        verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
 
 }

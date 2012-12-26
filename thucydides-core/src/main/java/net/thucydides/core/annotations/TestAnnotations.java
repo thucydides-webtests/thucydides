@@ -264,4 +264,14 @@ public class TestAnnotations {
         };
     }
 
+    public boolean blurScreenshots(final String methodName) {
+        Optional<Method> method = getMethodCalled(methodName);
+        return method.isPresent() && blurScreenshots(method.get());
+    }
+
+    public static boolean blurScreenshots(final Method method) {
+        return method != null && (method.getAnnotation(BlurScreenshots.class) != null);
+    }
+
+
 }

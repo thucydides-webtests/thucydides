@@ -103,7 +103,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     private List<String> storywideIssues;
 
     private List<TestTag> storywideTags;
-
+    private boolean blurScreenshotsInTest;
 
     protected enum ScreenshotType {
         OPTIONAL_SCREENSHOT,
@@ -243,6 +243,8 @@ public class BaseStepListener implements StepListener, StepPublisher {
         testOutcomes.add(TestOutcome.forTestInStory(testMethod, testSuite, testedStory));
         updateSessionIdIfKnown();
         setAnnotatedResult(testMethod);
+
+        blurScreenshotsInTest = TestAnnotations.forClass(testSuite).blurScreenshots(testMethod);
     }
 
     private void updateSessionIdIfKnown() {
@@ -623,7 +625,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public Photographer getPhotographer() {
-        return new Photographer(driver, outputDirectory);
+        return new Photographer(driver, outputDirectory, blurScreenshotsInTest);
 
     }
 

@@ -38,6 +38,7 @@ public class Photographer {
     private final WebDriver driver;
     private final File targetDirectory;
     private final ScreenshotSequence screenshotSequence;
+    private boolean blurScreenshot = false;
 
     private final Logger logger = LoggerFactory.getLogger(Photographer.class);
     private ScreenshotProcessor screenshotProcessor;
@@ -49,10 +50,20 @@ public class Photographer {
     private static final ScreenshotSequence DEFAULT_SCREENSHOT_SEQUENCE = new ScreenshotSequence();
 
     public Photographer(final WebDriver driver, final File targetDirectory) {
-        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class));
+        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class), false);
+    }
+
+    public Photographer(final WebDriver driver, final File targetDirectory, final boolean blurScreenshot) {
+        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class), blurScreenshot);
     }
 
     public Photographer(final WebDriver driver, final File targetDirectory, final ScreenshotProcessor screenshotProcessor) {
+        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class), false);
+    }
+
+
+    public Photographer(final WebDriver driver, final File targetDirectory,
+                            final ScreenshotProcessor screenshotProcessor, final boolean blurScreenshot) {
         Preconditions.checkNotNull(targetDirectory);
         Preconditions.checkNotNull(screenshotProcessor);
 
@@ -60,6 +71,7 @@ public class Photographer {
         this.targetDirectory = targetDirectory;
         this.screenshotProcessor = screenshotProcessor;
         this.screenshotSequence = DEFAULT_SCREENSHOT_SEQUENCE;
+        this.blurScreenshot = blurScreenshot;
     }
 
     protected long nextScreenshotNumber() {
@@ -84,7 +96,7 @@ public class Photographer {
                 } else if (isByteArray(capturedScreenshot)) {
                     screenshotFile = saveScreenshotData((byte[]) capturedScreenshot);
                 }
-                if (screenshotFile != null) {
+                if (screenshotFile != null && blurScreenshot) {
                     screenshotFile = blur(screenshotFile);
                 }
                 if (screenshotFile != null) {
