@@ -140,8 +140,7 @@ public class WebDriverFactory {
                 driver = chromeDriver();
             } else if (isASafariDriver(driverClass)) {
                 driver = safariDriver();
-            }
-            else {
+            } else {
                 driver = newDriverInstanceFrom(driverClass);
             }
             setImplicitTimeoutsIfSpecified(driver);
