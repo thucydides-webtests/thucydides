@@ -3,7 +3,6 @@ package net.thucydides.core.model;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

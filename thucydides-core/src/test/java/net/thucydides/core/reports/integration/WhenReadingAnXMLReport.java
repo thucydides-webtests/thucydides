@@ -124,7 +124,7 @@ public class WhenReadingAnXMLReport {
                         + "      <header>age</header>\n"
                         + "    </headers>\n"
                         + "    <rows>\n"
-                        + "      <row>\n"
+                        + "      <row result='FAILURE'>\n"
                         + "        <value>Joe</value>\n"
                         + "        <value>Smith</value>\n"
                         + "        <value>20</value>\n"
@@ -148,8 +148,10 @@ public class WhenReadingAnXMLReport {
         DataTable table = testOutcome.get().getDataTable();
         assertThat(table.getHeaders(), hasItems("firstName","lastName","age"));
         assertThat(table.getRows().size(), is(2));
-        assertThat(table.getRows().get(0), hasItems("Joe","Smith","20"));
-        assertThat(table.getRows().get(1), hasItems("Jack","Jones","21"));
+        assertThat(table.getRows().get(0).getValues(), hasItems("Joe","Smith","20"));
+        assertThat(table.getRows().get(0).getResult(), is(TestResult.FAILURE));
+        assertThat(table.getRows().get(1).getValues(), hasItems("Jack","Jones","21"));
+        assertThat(table.getRows().get(1).getResult(), is(TestResult.SUCCESS));
     }
 
     @Test

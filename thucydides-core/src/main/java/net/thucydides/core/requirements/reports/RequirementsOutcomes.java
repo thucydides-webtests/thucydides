@@ -3,21 +3,10 @@ package net.thucydides.core.requirements.reports;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
-import net.thucydides.core.model.ReportNamer;
-import net.thucydides.core.model.ReportType;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.requirements.model.Requirement;
 
-import static ch.lambdaj.Lambda.count;
-import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.filter;
-import static ch.lambdaj.Lambda.having;
-import static ch.lambdaj.Lambda.on;
-import static org.hamcrest.CoreMatchers.is;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**

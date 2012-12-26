@@ -267,9 +267,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     /**
      * A test has finished.
-     * @param result the result of the test that just finished.
+     * @param outcome the result of the test that just finished.
      */
-    public void testFinished(final TestOutcome result) {
+    public void testFinished(final TestOutcome outcome) {
         recordTestDuration();
         getCurrentTestOutcome().addIssues(storywideIssues);
         getCurrentTestOutcome().addTags(storywideTags);
@@ -403,6 +403,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
         pauseIfRequired();
     }
 
+    private void updateExampleTableIfNecessary(TestResult result) {
+        if (getCurrentTestOutcome().isDataDriven()) {
+            getCurrentTestOutcome().getDataTable().currentRow().hasResult(result);
+        }
+    }
+
     private void finishGroup() {
         currentGroupStack.pop();
         getCurrentTestOutcome().endGroup();
@@ -417,6 +423,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private void markCurrentStepAs(final TestResult result) {
         getCurrentTestOutcome().getCurrentStep().setResult(result);
+        updateExampleTableIfNecessary(result);
     }
 
     public void stepFailed(StepFailure failure) {
@@ -690,5 +697,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
      */
     public void useExamplesFrom(DataTable table) {
         getCurrentTestOutcome().useExamplesFrom(table);
+    }
+
+    public void exampleStarted() {
+    }
+
+    public void exampleFinished() {
+        getCurrentTestOutcome().getDataTable().nextRow();
     }
 }

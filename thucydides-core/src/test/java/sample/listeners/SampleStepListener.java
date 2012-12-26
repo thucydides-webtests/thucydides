@@ -81,4 +81,12 @@ public class SampleStepListener implements StepListener {
 
     public void useExamplesFrom(DataTable table) {
     }
+
+    public void exampleStarted() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void exampleFinished() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

@@ -10,6 +10,7 @@ import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.digest.Digest;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -192,7 +193,7 @@ public class WhenGeneratingAnXMLReport {
         DataTable table = DataTable.withHeaders(ImmutableList.of("firstName","lastName","age")).
                                     andRows(ImmutableList.of(row1, row2)).build();
         testOutcome.useExamplesFrom(table);
-
+        table.row(0).hasResult(TestResult.FAILURE);
         String expectedReport =
                 "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
                         + "  <tags>\n"
@@ -205,7 +206,7 @@ public class WhenGeneratingAnXMLReport {
                         + "      <header>age</header>\n"
                         + "    </headers>\n"
                         + "    <rows>\n"
-                        + "      <row>\n"
+                        + "      <row result=\"FAILURE\">\n"
                         + "        <value>Joe</value>\n"
                         + "        <value>Smith</value>\n"
                         + "        <value>20</value>\n"

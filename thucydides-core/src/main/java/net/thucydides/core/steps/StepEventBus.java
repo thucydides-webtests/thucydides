@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import static net.thucydides.core.model.TestResult.SUCCESS;
+
 /**
  * An event bus for Step-related notifications.
  * Use this to integrate Thucydides listeners with testing tools.
@@ -313,7 +315,6 @@ public class StepEventBus {
 
     public void stepPending() {
         stepPending(null);
-
     }
 
     public void stepPending(String message) {
@@ -426,6 +427,18 @@ public class StepEventBus {
     public void useExamplesFrom(DataTable table) {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.useExamplesFrom(table);
+        }
+    }
+
+    public void exampleStarted() {
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.exampleStarted();
+        }
+    }
+
+    public void exampleFinished() {
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.exampleFinished();
         }
     }
 }

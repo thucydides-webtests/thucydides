@@ -9,6 +9,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import net.thucydides.core.model.DataTable;
+import net.thucydides.core.model.DataTableRow;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
@@ -224,15 +225,18 @@ public class TestOutcomeConverter implements Converter {
 
     private void writeRows(HierarchicalStreamWriter writer, DataTable dataTable) {
         writer.startNode(ROWS);
-        for(List<String> rowData : dataTable.getRows()) {
+        for(DataTableRow rowData : dataTable.getRows()) {
             writeRow(writer, rowData);
         }
         writer.endNode();
     }
 
-    private void writeRow(HierarchicalStreamWriter writer, List<String> rowData) {
+    private void writeRow(HierarchicalStreamWriter writer, DataTableRow rowData) {
         writer.startNode(ROW);
-        for(String cellValue : rowData) {
+        if (rowData.getResult() != TestResult.UNDEFINED) {
+            writer.addAttribute("result", rowData.getResult().toString());
+        }
+        for(String cellValue : rowData.getValues()) {
             writeCellValue(writer, cellValue);
         }
         writer.endNode();
@@ -408,7 +412,7 @@ public class TestOutcomeConverter implements Converter {
     private void readExamples(final HierarchicalStreamReader reader,
                               final TestOutcome testOutcome) {
         List<String> headers = Lists.newArrayList();
-        List<List<String>> rows = Lists.newArrayList();
+        List<DataTableRow> rows = Lists.newArrayList();
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             String childNode = reader.getNodeName();
@@ -420,7 +424,7 @@ public class TestOutcomeConverter implements Converter {
             reader.moveUp();
         }
 
-        DataTable table = DataTable.withHeaders(headers).andRows(rows).build();
+        DataTable table = DataTable.withHeaders(headers).andRowData(rows).build();
         testOutcome.useExamplesFrom(table);
     }
 
@@ -437,8 +441,8 @@ public class TestOutcomeConverter implements Converter {
         return headers;
     }
 
-    private List<List<String>> readRows(final HierarchicalStreamReader reader) {
-        List<List<String>> rows = Lists.newArrayList();
+    private List<DataTableRow> readRows(final HierarchicalStreamReader reader) {
+        List<DataTableRow> rows = Lists.newArrayList();
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             String childNode = reader.getNodeName();
@@ -450,9 +454,16 @@ public class TestOutcomeConverter implements Converter {
         return rows;
     }
 
-    private List<String> readRow(final HierarchicalStreamReader reader) {
+    private DataTableRow readRow(final HierarchicalStreamReader reader) {
         List<String> rowValues = Lists.newArrayList();
+        TestResult result = null;
+        String resultValue = reader.getAttribute("result");
         while (reader.hasMoreChildren()) {
+            if (resultValue != null) {
+                result = TestResult.valueOf(resultValue);
+            } else {
+                result = TestResult.SUCCESS;
+            }
             reader.moveDown();
             String childNode = reader.getNodeName();
             if (childNode.equals(VALUE)) {
@@ -460,7 +471,11 @@ public class TestOutcomeConverter implements Converter {
             }
             reader.moveUp();
         }
-        return rowValues;
+        DataTableRow newRow = new DataTableRow(rowValues);
+        if (result != null) {
+            newRow.setResult(result);
+        }
+        return newRow;
     }
 
     private TestTag readTag(HierarchicalStreamReader reader) {

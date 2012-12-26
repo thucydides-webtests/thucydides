@@ -266,4 +266,10 @@ public class ConsoleLoggingListener implements StepListener {
 
     public void useExamplesFrom(DataTable table) {
     }
+
+    public void exampleStarted() {
+    }
+
+    public void exampleFinished() {
+    }
 }

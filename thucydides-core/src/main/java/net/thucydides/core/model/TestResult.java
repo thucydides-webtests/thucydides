@@ -10,6 +10,10 @@ package net.thucydides.core.model;
  *
  */
 public enum TestResult {
+    /**
+     * Test result not known yet.
+     */
+    UNDEFINED,
     /** 
      * Test failure.
      * For a test case, this means one of the tests in the test case failed.

@@ -115,4 +115,14 @@ public interface StepListener {
      * The current scenario is a data-driven scenario using test data from the specified table.
      */
     void useExamplesFrom(DataTable table);
+
+    /**
+     * A new example has just started.
+     */
+    void exampleStarted();
+
+    /**
+     * An example has finished.
+     */
+    void exampleFinished();
 }

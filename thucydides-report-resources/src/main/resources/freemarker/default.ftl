@@ -131,8 +131,8 @@
             </thead>
             <tbody>
             <#foreach row in testOutcome.dataTable.rows>
-                <tr>
-                <#foreach value in row>
+                <tr class="test-${row.result}">
+                <#foreach value in row.values>
                     <td>${value}</td>
                 </#foreach>
                 </tr>

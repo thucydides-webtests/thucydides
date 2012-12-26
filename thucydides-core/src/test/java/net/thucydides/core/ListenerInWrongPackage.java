@@ -82,4 +82,12 @@ public class ListenerInWrongPackage implements StepListener {
     public void useExamplesFrom(DataTable table) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    public void exampleStarted() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void exampleFinished() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

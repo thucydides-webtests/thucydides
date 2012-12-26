@@ -129,4 +129,10 @@ public class StatisticsListener implements StepListener {
 
     public void useExamplesFrom(DataTable table) {
     }
+
+    public void exampleStarted() {
+    }
+
+    public void exampleFinished() {
+    }
 }
