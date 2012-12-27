@@ -4,11 +4,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.89-SNAPSHOT</version>
+        <version>0.9.90</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-extensions</artifactId>
-    <version>0.9.89-SNAPSHOT</version>
+    <version>0.9.90</version>
     <name>thucydides-extensions</name>
     <url>http://maven.apache.org</url>
     <dependencies>

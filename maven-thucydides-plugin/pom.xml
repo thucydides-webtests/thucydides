@@ -4,12 +4,12 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.89-SNAPSHOT</version>
+        <version>0.9.90</version>
     </parent>
     <groupId>net.thucydides.maven.plugins</groupId>
     <artifactId>maven-thucydides-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>0.9.89-SNAPSHOT</version>
+    <version>0.9.90</version>
     <name>Thucydides Maven Plugin</name>
     <dependencies>
         <dependency>

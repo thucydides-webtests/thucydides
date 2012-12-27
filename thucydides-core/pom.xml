@@ -5,11 +5,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.89-SNAPSHOT</version>
+        <version>0.9.90</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-core</artifactId>
-    <version>0.9.89-SNAPSHOT</version>
+    <version>0.9.90</version>
     <name>thucydides-core</name>
     <properties>
         <root.package>net.thucydides.core</root.package>
