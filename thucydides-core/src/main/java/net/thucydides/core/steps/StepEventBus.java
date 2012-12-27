@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -430,9 +431,9 @@ public class StepEventBus {
         }
     }
 
-    public void exampleStarted() {
+    public void exampleStarted(Map<String,String> data) {
         for(StepListener stepListener : getAllListeners()) {
-            stepListener.exampleStarted();
+            stepListener.exampleStarted(data);
         }
     }
 

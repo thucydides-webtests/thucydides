@@ -46,6 +46,10 @@ public class DataTable {
         return new RowValueAccessor(this, nextRowNumber());
     }
 
+    public boolean atLastRow() {
+        return (currentRow.get() == rows.size() - 1);
+    }
+
     public RowValueAccessor currentRow() {
         return new RowValueAccessor(this, currentRowNumber());
     }

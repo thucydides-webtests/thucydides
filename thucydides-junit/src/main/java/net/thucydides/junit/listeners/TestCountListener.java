@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestCountListener implements StepListener {
@@ -134,7 +135,8 @@ public class TestCountListener implements StepListener {
     public void useExamplesFrom(DataTable table) {
     }
 
-    public void exampleStarted() {
+    public void exampleStarted(Map<String, String> data) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void exampleFinished() {

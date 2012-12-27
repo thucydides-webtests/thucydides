@@ -15,6 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 public class ConsoleLoggingListener implements StepListener {
 
     // STAR WARS
@@ -267,7 +269,7 @@ public class ConsoleLoggingListener implements StepListener {
     public void useExamplesFrom(DataTable table) {
     }
 
-    public void exampleStarted() {
+    public void exampleStarted(Map<String,String> data) {
     }
 
     public void exampleFinished() {

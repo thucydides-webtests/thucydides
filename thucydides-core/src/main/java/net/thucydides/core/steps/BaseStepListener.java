@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import static net.thucydides.core.model.Stories.findStoryFrom;
@@ -692,17 +693,28 @@ public class BaseStepListener implements StepListener, StepPublisher {
        }
     }
 
+    int currentExample = 0;
     /**
      * The current scenario is a data-driven scenario using test data from the specified table.
      */
     public void useExamplesFrom(DataTable table) {
         getCurrentTestOutcome().useExamplesFrom(table);
+        currentExample = 0;
     }
 
-    public void exampleStarted() {
+    public void exampleStarted(Map<String,String> data) {
+        currentExample++;
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(exampleIntro(currentExample) + data));
+    }
+
+    private String exampleIntro(int exampleNumber) {
+        return String.format("Example %s) ", exampleNumber);
     }
 
     public void exampleFinished() {
-        getCurrentTestOutcome().getDataTable().nextRow();
+        if (!getCurrentTestOutcome().getDataTable().atLastRow()) {
+            getCurrentTestOutcome().getDataTable().nextRow();
+        }
+        stepFinished();
     }
 }

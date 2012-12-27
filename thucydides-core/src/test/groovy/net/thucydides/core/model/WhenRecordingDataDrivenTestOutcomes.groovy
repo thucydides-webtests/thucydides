@@ -13,6 +13,11 @@ import static net.thucydides.core.model.TestResult.SUCCESS
 import static net.thucydides.core.model.TestResult.UNDEFINED
 
 class WhenRecordingDataDrivenTestOutcomes extends Specification {
+
+    def setup() {
+        StepEventBus.eventBus.dropAllListeners()
+    }
+
     def "Test outcomes should not have a data-driven table by default"()  {
         when:
             def testOutcome = new TestOutcome("someTest")
@@ -134,17 +139,17 @@ class WhenRecordingDataDrivenTestOutcomes extends Specification {
                             ["Jack", "Smith",21],
                             ["Jack", "Smith",21]]).build())
 
-            eventBus.exampleStarted()
+            eventBus.exampleStarted(["firstName":"Joe","lastName":"Smith","age":20])
             eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step1"));
             eventBus.stepFinished()
             eventBus.exampleFinished()
 
-            eventBus.exampleStarted()
+            eventBus.exampleStarted(["firstName":"Jack","lastName":"Smith","age":21])
             eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step2"));
             eventBus.stepPending()
             eventBus.exampleFinished()
 
-            eventBus.exampleStarted()
+            eventBus.exampleStarted(["firstName":"Jack","lastName":"Smith","age":21])
             eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step3"));
             eventBus.stepFailed(failure);
 

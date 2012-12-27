@@ -9,6 +9,7 @@ import net.thucydides.core.steps.StepListener;
 import org.openqa.selenium.WebDriver;
 
 import java.util.List;
+import java.util.Map;
 
 public class SampleStepListener implements StepListener {
     public void testSuiteStarted(Class<?> storyClass) {
@@ -82,7 +83,7 @@ public class SampleStepListener implements StepListener {
     public void useExamplesFrom(DataTable table) {
     }
 
-    public void exampleStarted() {
+    public void exampleStarted(Map<String,String> data) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

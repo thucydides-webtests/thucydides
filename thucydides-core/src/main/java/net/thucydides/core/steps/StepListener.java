@@ -5,6 +5,8 @@ import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 
+import java.util.Map;
+
 /**
  * Represents a class interested in knowing about test execution flow and results.
  */
@@ -119,7 +121,7 @@ public interface StepListener {
     /**
      * A new example has just started.
      */
-    void exampleStarted();
+    void exampleStarted(Map<String,String> data);
 
     /**
      * An example has finished.

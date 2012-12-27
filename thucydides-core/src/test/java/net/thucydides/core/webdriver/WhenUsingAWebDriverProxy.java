@@ -87,9 +87,7 @@ public class WhenUsingAWebDriverProxy {
 
     @Test
     public void the_webdriver_proxy_should_handle_get() {
-
         facade.get("http://www.google.com");
-        System.out.println("FirefoxDriver = " + firefoxDriver);
         verify(firefoxDriver).get("http://www.google.com");
     }
 

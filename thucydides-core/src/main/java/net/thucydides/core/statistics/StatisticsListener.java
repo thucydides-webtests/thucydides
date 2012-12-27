@@ -16,6 +16,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Records test results in a database, for reporting on test statistics.
@@ -130,7 +131,7 @@ public class StatisticsListener implements StepListener {
     public void useExamplesFrom(DataTable table) {
     }
 
-    public void exampleStarted() {
+    public void exampleStarted(Map<String,String> data) {
     }
 
     public void exampleFinished() {

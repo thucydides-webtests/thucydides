@@ -51,11 +51,11 @@
             <li><a href="index.html" class="current">Test Results</a></li>
             <li><a href="capabilities.html">Requirements</a></li>
             <li><a href="progress-report.html">Progress</a></li>
-            <#foreach tagType in allTestOutcomes.tagTypes>
+            <#list allTestOutcomes.tagTypes as tagType>
                 <#assign tagReport = reportName.forTagType(tagType) >
                 <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
                 <li><a href="${tagReport}">${tagTypeTitle}</a></li>
-            </#foreach>
+            </#list>
             <li><a href="history.html">History</a></li>
         </ul>
         <br style="clear:left"/>
@@ -103,10 +103,10 @@
                     </tr>
                     <tr>
                         <td colspan="3">
-                            <#foreach tag in testOutcome.tags>
+                            <#list testOutcome.tags as tag>
                                 <#assign tagReport = reportName.forTag(tag.name) />
                                 <a class="tagLink" href="${tagReport}">${tag.name} (${tag.type})</a>
-                            </#foreach>
+                            </#list>
                         </td>
                     </tr>
                 </table>
@@ -124,19 +124,19 @@
         <table class="example-table">
             <thead>
             <tr>
-                <#foreach header in testOutcome.dataTable.headers>
+                <#list testOutcome.dataTable.headers as header>
                     <th>${inflection.of(header).asATitle()}</th>
-                </#foreach>
+                </#list>
             </tr>
             </thead>
             <tbody>
-            <#foreach row in testOutcome.dataTable.rows>
+            <#list testOutcome.dataTable.rows as row>
                 <tr class="test-${row.result}">
-                <#foreach value in row.values>
-                    <td>${value}</td>
-                </#foreach>
+                <#list row.values as value>
+                    <td><a href="#${row_index}">${value}</a></td>
+                </#list>
                 </tr>
-            </#foreach>
+            </#list>
             </tbody>
         </table>
     </div>
@@ -154,19 +154,18 @@
                 </tr>
                 <tr class="step-table-separator"><td colspan="5"></td></tr>
                 <#assign level = 1>
-                <#assign index = 0>
-                <#macro write_step(step)>
-                    <@step_details step=step level=level index=index />
-                    <#assign index = index + step.screenshotCount>
+                <#assign screenshotCount = 0>
+                <#macro write_step(step, step_number)>
+                    <@step_details step=step step_number=step_number level=level/>
                     <#if step.isAGroup()>
                         <#assign level = level + 1>
-                        <#foreach nestedStep in step.children>
-                            <@write_step step=nestedStep />
-                        </#foreach>
+                        <#list step.children as nestedStep>
+                            <@write_step step=nestedStep step_number=""/>
+                        </#list>
                         <#assign level = level-1>
                     </#if>
                 </#macro>
-                <#macro step_details(step, level, index)>
+                <#macro step_details(step, step_number, level)>
                     <#if step.result == "FAILURE">
                         <#assign step_outcome_icon = "fail.png">
                     <#elseif step.result == "SUCCESS">
@@ -188,15 +187,19 @@
                     </#if>
                     <#assign step_indent = level*20>
                         <tr class="test-${step.result}">
-                            <td width="40"><img style="margin-left: ${step_indent}px; margin-right: 5px;"
-                                                src="images/${step_outcome_icon}" class="${step_class_root}-icon"/></td>
+                            <td width="40">
+                                <#if step_number?has_content><a name="${step_number}"/></#if>
+                                <img style="margin-left: ${step_indent}px; margin-right: 5px;"
+                                                src="images/${step_outcome_icon}" class="${step_class_root}-icon"/>
+                            </td>
                             <td width="%"><span class="${step_class_root}-step">${step.description}</span></td>
                             <td width="100" class="${step.result}-text">
                                 <#if !step.isAGroup() && step.firstScreenshot??>
-                                    <a href="${testOutcome.screenshotReportName}.html#screenshots?screenshot=${index}">
+                                    <a href="${testOutcome.screenshotReportName}.html#screenshots?screenshot=${screenshotCount}">
                                         <img src="${step.firstScreenshot.screenshotFile.name}"
                                              class="screenshot"
                                              width="48" height="48"/>
+                                        <#assign screenshotCount = screenshotCount + step.screenshotCount />
                                     </a>
                                 </#if>
                             </td>
@@ -211,9 +214,9 @@
                         </#if>
                 </#macro>
                 <#-- Test step results -->
-                <#foreach step in testOutcome.testSteps>
-                    <@write_step step=step />
-                </#foreach>
+                <#list testOutcome.testSteps as step>
+                    <@write_step step=step step_number=step_index />
+                </#list>
                 </table>
             </div>
         <div id="beforefooter"></div>
