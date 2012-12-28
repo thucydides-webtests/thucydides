@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.DatabaseConfig;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
@@ -15,6 +16,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Records test results in a database, for reporting on test statistics.
@@ -124,5 +126,14 @@ public class StatisticsListener implements StepListener {
 
 
     public void notifyScreenChange() {
+    }
+
+    public void useExamplesFrom(DataTable table) {
+    }
+
+    public void exampleStarted(Map<String,String> data) {
+    }
+
+    public void exampleFinished() {
     }
 }

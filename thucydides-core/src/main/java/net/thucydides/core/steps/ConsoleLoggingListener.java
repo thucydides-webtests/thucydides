@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.logging.LoggingLevel;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -13,6 +14,8 @@ import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 public class ConsoleLoggingListener implements StepListener {
 
@@ -106,21 +109,21 @@ public class ConsoleLoggingListener implements StepListener {
         return LoggingLevel.valueOf(logLevel);
     }
 
-    @Override
+    
     public void testSuiteStarted(Class<?> storyClass) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info("Test Suite Started: " + NameConverter.humanize(storyClass.getSimpleName()));
         }
     }
 
-    @Override
+    
     public void testSuiteStarted(Story story) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info("Test Suite Started: " + NameConverter.humanize(story.getName()));
         }
     }
 
-    @Override
+    
     public void testSuiteFinished() {
     }
 
@@ -201,7 +204,7 @@ public class ConsoleLoggingListener implements StepListener {
         }
     }
 
-    @Override
+    
     public void skippedStepStarted(ExecutedStepDescription description) {
         stepStarted(description);
     }
@@ -218,7 +221,7 @@ public class ConsoleLoggingListener implements StepListener {
         }
     }
 
-    @Override
+    
     public void lastStepFailed(StepFailure failure) {
     }
 
@@ -228,7 +231,7 @@ public class ConsoleLoggingListener implements StepListener {
         }
     }
 
-    @Override
+    
     public void stepIgnored(String message) {
         if (loggingLevelIsAtLeast(getLoggingLevel().VERBOSE)) {
             getLogger().info("IGNORING STEP " + "(" + message + ")");
@@ -241,25 +244,34 @@ public class ConsoleLoggingListener implements StepListener {
         }
     }
 
-    @Override
+    
     public void stepPending(String message) {
         if (loggingLevelIsAtLeast(getLoggingLevel().VERBOSE)) {
             getLogger().info("PENDING STEP " + "(" + message + ")");
         }
     }
 
-    @Override
+    
     public void testFailed(TestOutcome testOutcome, Throwable cause) {
     }
 
-    @Override
+    
     public void testIgnored() {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info("TEST IGNORED");
         }
     }
 
-    @Override
+    
     public void notifyScreenChange() {
+    }
+
+    public void useExamplesFrom(DataTable table) {
+    }
+
+    public void exampleStarted(Map<String,String> data) {
+    }
+
+    public void exampleFinished() {
     }
 }

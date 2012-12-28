@@ -1,8 +1,11 @@
 package net.thucydides.core.steps;
 
 
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
+
+import java.util.Map;
 
 /**
  * Represents a class interested in knowing about test execution flow and results.
@@ -109,4 +112,19 @@ public interface StepListener {
     void testIgnored();
 
     void notifyScreenChange();
+
+    /**
+     * The current scenario is a data-driven scenario using test data from the specified table.
+     */
+    void useExamplesFrom(DataTable table);
+
+    /**
+     * A new example has just started.
+     */
+    void exampleStarted(Map<String,String> data);
+
+    /**
+     * An example has finished.
+     */
+    void exampleFinished();
 }

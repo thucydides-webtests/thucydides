@@ -1,5 +1,6 @@
 package net.thucydides.core;
 
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.steps.ExecutedStepDescription;
@@ -8,6 +9,7 @@ import net.thucydides.core.steps.StepListener;
 import org.openqa.selenium.WebDriver;
 
 import java.util.List;
+import java.util.Map;
 
 public class ListenerInWrongPackage implements StepListener {
     public void testSuiteStarted(Class<?> storyClass) {
@@ -18,7 +20,6 @@ public class ListenerInWrongPackage implements StepListener {
         
     }
 
-    @Override
     public void testSuiteFinished() {
     }
 
@@ -41,7 +42,6 @@ public class ListenerInWrongPackage implements StepListener {
         
     }
 
-    @Override
     public void lastStepFailed(StepFailure failure) {
     }
 
@@ -49,7 +49,6 @@ public class ListenerInWrongPackage implements StepListener {
         
     }
 
-    @Override
     public void stepIgnored(String message) {
     }
 
@@ -57,7 +56,6 @@ public class ListenerInWrongPackage implements StepListener {
         
     }
 
-    @Override
     public void stepPending(String message) {
     }
 
@@ -65,11 +63,9 @@ public class ListenerInWrongPackage implements StepListener {
         
     }
 
-    @Override
     public void testFailed(TestOutcome testOutcome, Throwable cause) {
     }
 
-    @Override
     public void testIgnored() {
     }
 
@@ -81,7 +77,18 @@ public class ListenerInWrongPackage implements StepListener {
         return null;  
     }
 
-    @Override
     public void notifyScreenChange() {
+    }
+
+    public void useExamplesFrom(DataTable table) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void exampleStarted(Map<String,String> data) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void exampleFinished() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

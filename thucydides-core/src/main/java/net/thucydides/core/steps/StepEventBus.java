@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
@@ -19,8 +20,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+
+import static net.thucydides.core.model.TestResult.SUCCESS;
 
 /**
  * An event bus for Step-related notifications.
@@ -312,7 +316,6 @@ public class StepEventBus {
 
     public void stepPending() {
         stepPending(null);
-
     }
 
     public void stepPending(String message) {
@@ -407,18 +410,36 @@ public class StepEventBus {
     }
 
     public void addIssuesToCurrentStory(List<String> issues) {
-        baseStepListener.addIssuesToCurrentStory(issues);
+        getBaseStepListener().addIssuesToCurrentStory(issues);
     }
 
     public void addIssuesToCurrentTest(List<String> issues) {
-        baseStepListener.getCurrentTestOutcome().addIssues(issues);
+        getBaseStepListener().getCurrentTestOutcome().addIssues(issues);
     }
 
     public void addTagsToCurrentTest(List<TestTag> tags) {
-        baseStepListener.getCurrentTestOutcome().addTags(tags);
+        getBaseStepListener().getCurrentTestOutcome().addTags(tags);
     }
 
     public void addTagsToCurrentStory(List<TestTag> tags) {
-        baseStepListener.addTagsToCurrentStory(tags);
+        getBaseStepListener().addTagsToCurrentStory(tags);
+    }
+
+    public void useExamplesFrom(DataTable table) {
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.useExamplesFrom(table);
+        }
+    }
+
+    public void exampleStarted(Map<String,String> data) {
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.exampleStarted(data);
+        }
+    }
+
+    public void exampleFinished() {
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.exampleFinished();
+        }
     }
 }

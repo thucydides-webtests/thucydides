@@ -26,6 +26,10 @@ public class TestResultList {
         return new TestResultList(testResults);
     }
 
+    public static TestResultList of(TestResult... testResults) {
+        return new TestResultList(Arrays.asList(testResults));
+    }
+
     public boolean isEmpty() {
         return testResults.isEmpty();
     }
