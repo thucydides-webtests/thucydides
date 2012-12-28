@@ -38,7 +38,7 @@ public class Photographer {
     private final WebDriver driver;
     private final File targetDirectory;
     private final ScreenshotSequence screenshotSequence;
-    private boolean blurScreenshot = false;
+    private Optional<BlurLevel> blurLevel;
 
     private final Logger logger = LoggerFactory.getLogger(Photographer.class);
     private ScreenshotProcessor screenshotProcessor;
@@ -50,20 +50,22 @@ public class Photographer {
     private static final ScreenshotSequence DEFAULT_SCREENSHOT_SEQUENCE = new ScreenshotSequence();
 
     public Photographer(final WebDriver driver, final File targetDirectory) {
-        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class), false);
+        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class),
+                Optional.<BlurLevel>absent());
     }
 
-    public Photographer(final WebDriver driver, final File targetDirectory, final boolean blurScreenshot) {
-        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class), blurScreenshot);
+    public Photographer(final WebDriver driver, final File targetDirectory, final Optional<BlurLevel> blurLevel) {
+        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class), blurLevel);
     }
 
     public Photographer(final WebDriver driver, final File targetDirectory, final ScreenshotProcessor screenshotProcessor) {
-        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class), false);
+        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class),
+                Optional.<BlurLevel>absent());
     }
 
 
     public Photographer(final WebDriver driver, final File targetDirectory,
-                            final ScreenshotProcessor screenshotProcessor, final boolean blurScreenshot) {
+                            final ScreenshotProcessor screenshotProcessor, Optional<BlurLevel> blurLevel) {
         Preconditions.checkNotNull(targetDirectory);
         Preconditions.checkNotNull(screenshotProcessor);
 
@@ -71,7 +73,7 @@ public class Photographer {
         this.targetDirectory = targetDirectory;
         this.screenshotProcessor = screenshotProcessor;
         this.screenshotSequence = DEFAULT_SCREENSHOT_SEQUENCE;
-        this.blurScreenshot = blurScreenshot;
+        this.blurLevel = blurLevel;
     }
 
     protected long nextScreenshotNumber() {
@@ -96,13 +98,15 @@ public class Photographer {
                 } else if (isByteArray(capturedScreenshot)) {
                     screenshotFile = saveScreenshotData((byte[]) capturedScreenshot);
                 }
-                if (screenshotFile != null && blurScreenshot) {
+                if (screenshotFile != null && blurLevel.isPresent()) {
                     screenshotFile = blur(screenshotFile);
                 }
                 if (screenshotFile != null) {
                     File savedScreenshot = targetScreenshot(prefix);
                     screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile, savedScreenshot));
-                    savePageSourceFor(savedScreenshot.getAbsolutePath());
+
+                    if (! blurLevel.isPresent()) savePageSourceFor(savedScreenshot.getAbsolutePath());
+
                     return Optional.of(savedScreenshot);
                 }
             } catch (Throwable e) {
@@ -116,7 +120,7 @@ public class Photographer {
         BufferedImage srcImage = ImageIO.read(srcFile);
         BufferedImage destImage = deepCopy(srcImage);
         BoxBlurFilter boxBlurFilter = new BoxBlurFilter();
-        boxBlurFilter.setRadius(7);
+        boxBlurFilter.setRadius(blurLevel.get().getRadius());
         boxBlurFilter.setIterations(3);
         destImage = boxBlurFilter.filter(srcImage, destImage);
 

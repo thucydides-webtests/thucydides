@@ -1,5 +1,6 @@
 package net.thucydides.core.screenshots;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
 import org.junit.Before;
 import org.junit.Rule;
@@ -44,8 +45,8 @@ public class WhenScreenshotsAreTaken {
             super(driver, targetDirectory);
         }
 
-        public MockPhotographer(final WebDriver driver, final File targetDirectory, final boolean blurScreenshot) {
-            super(driver, targetDirectory, blurScreenshot);
+        public MockPhotographer(final WebDriver driver, final File targetDirectory, final Optional<BlurLevel> blurLevel) {
+            super(driver, targetDirectory, blurLevel);
         }
 
         @Override
@@ -215,7 +216,7 @@ public class WhenScreenshotsAreTaken {
 
     @Test
     public void should_blur_screenshots_if_blurScreenshots_flag_is_set() throws Exception {
-        Photographer photographer = new MockPhotographer(driver, screenshotDirectory, true);
+        Photographer photographer = new MockPhotographer(driver, screenshotDirectory, Optional.of(BlurLevel.STRONG));
         photographer = spy(photographer);
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         photographer.takeScreenshot("screenshot");
@@ -227,7 +228,7 @@ public class WhenScreenshotsAreTaken {
 
     @Test
     public void should_not_blur_screenshots_if_blurScreenshots_flag_is_not_set() throws Exception {
-        Photographer photographer = new MockPhotographer(driver, screenshotDirectory, false);
+        Photographer photographer = new MockPhotographer(driver, screenshotDirectory, Optional.<BlurLevel>absent());
         photographer = spy(photographer);
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         photographer.takeScreenshot("screenshot");

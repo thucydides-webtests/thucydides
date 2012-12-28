@@ -5,6 +5,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.html.Formatter;
+import net.thucydides.core.screenshots.BlurLevel;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
@@ -264,14 +265,20 @@ public class TestAnnotations {
         };
     }
 
-    public boolean blurScreenshots(final String methodName) {
+    public Optional<BlurLevel> getBlurLevel(final String methodName) {
         Optional<Method> method = getMethodCalled(methodName);
-        return method.isPresent() && blurScreenshots(method.get());
+        if (method.isPresent()) {
+            return getBlurLevel(method.get());
+        }
+
+        return Optional.absent();
     }
 
-    public static boolean blurScreenshots(final Method method) {
-        return method != null && (method.getAnnotation(BlurScreenshots.class) != null);
+    public static Optional<BlurLevel> getBlurLevel (final Method method) {
+
+        if (method != null && method.getAnnotation(BlurScreenshots.class) != null) {
+            return Optional.of(BlurLevel.valueOf(method.getAnnotation(BlurScreenshots.class).value().toUpperCase()));
+        }
+        return Optional.absent();
     }
-
-
 }
