@@ -9,6 +9,7 @@ import net.thucydides.core.PendingStepException;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.ScreenshotPermission;
 import net.thucydides.core.model.Story;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import static net.thucydides.core.model.Stories.findStoryFrom;
@@ -103,6 +105,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     private List<String> storywideIssues;
 
     private List<TestTag> storywideTags;
+
     private boolean blurScreenshotsInTest;
 
     protected enum ScreenshotType {
@@ -269,9 +272,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     /**
      * A test has finished.
-     * @param result the result of the test that just finished.
+     * @param outcome the result of the test that just finished.
      */
-    public void testFinished(final TestOutcome result) {
+    public void testFinished(final TestOutcome outcome) {
         recordTestDuration();
         getCurrentTestOutcome().addIssues(storywideIssues);
         getCurrentTestOutcome().addTags(storywideTags);
@@ -405,6 +408,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
         pauseIfRequired();
     }
 
+    private void updateExampleTableIfNecessary(TestResult result) {
+        if (getCurrentTestOutcome().isDataDriven()) {
+            getCurrentTestOutcome().getDataTable().currentRow().hasResult(result);
+        }
+    }
+
     private void finishGroup() {
         currentGroupStack.pop();
         getCurrentTestOutcome().endGroup();
@@ -419,6 +428,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private void markCurrentStepAs(final TestResult result) {
         getCurrentTestOutcome().getCurrentStep().setResult(result);
+        updateExampleTableIfNecessary(result);
     }
 
     public void stepFailed(StepFailure failure) {
@@ -685,5 +695,30 @@ public class BaseStepListener implements StepListener, StepPublisher {
         if (screenshots().areAllowed(TakeScreenshots.FOR_EACH_ACTION)) {
             take(OPTIONAL_SCREENSHOT);
        }
+    }
+
+    int currentExample = 0;
+    /**
+     * The current scenario is a data-driven scenario using test data from the specified table.
+     */
+    public void useExamplesFrom(DataTable table) {
+        getCurrentTestOutcome().useExamplesFrom(table);
+        currentExample = 0;
+    }
+
+    public void exampleStarted(Map<String,String> data) {
+        currentExample++;
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(exampleIntro(currentExample) + data));
+    }
+
+    private String exampleIntro(int exampleNumber) {
+        return String.format("Example %s) ", exampleNumber);
+    }
+
+    public void exampleFinished() {
+        if (!getCurrentTestOutcome().getDataTable().atLastRow()) {
+            getCurrentTestOutcome().getDataTable().nextRow();
+        }
+        stepFinished();
     }
 }
