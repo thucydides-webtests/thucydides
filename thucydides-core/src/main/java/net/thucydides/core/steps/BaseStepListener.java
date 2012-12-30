@@ -86,8 +86,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private List<TestTag> storywideTags;
 
-    private Optional<BlurLevel> blurLevelOption;
-
     protected enum ScreenshotType {
         OPTIONAL_SCREENSHOT,
         MANDATORY_SCREENSHOT
@@ -226,8 +224,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
         testOutcomes.add(TestOutcome.forTestInStory(testMethod, testSuite, testedStory));
         updateSessionIdIfKnown();
         setAnnotatedResult(testMethod);
-
-        blurLevelOption = TestAnnotations.forClass(testSuite).getBlurLevel(testMethod);
     }
 
     private void updateSessionIdIfKnown() {
@@ -615,7 +611,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public Photographer getPhotographer() {
-        return new Photographer(driver, outputDirectory, blurLevelOption);
+        return new Photographer(driver, outputDirectory, new ScreenshotBlurCheck().blurLevel());
 
     }
 

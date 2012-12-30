@@ -9,6 +9,7 @@ package net.thucydides.core.screenshots;
  */
 public enum BlurLevel {
 
+    NONE (0),
     LIGHT (1),
     MEDIUM (5),
     HEAVY (10);

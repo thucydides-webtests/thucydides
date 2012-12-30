@@ -215,8 +215,8 @@ public class WhenScreenshotsAreTaken {
     }
 
     @Test
-    public void should_blur_screenshots_if_blurScreenshots_flag_is_set() throws Exception {
-        Photographer photographer = new MockPhotographer(driver, screenshotDirectory, Optional.of(BlurLevel.STRONG));
+    public void should_blur_screenshots_if_blurScreenshots_option_is_present() throws Exception {
+        Photographer photographer = new MockPhotographer(driver, screenshotDirectory, Optional.of(BlurLevel.HEAVY));
         photographer = spy(photographer);
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         photographer.takeScreenshot("screenshot");
@@ -227,7 +227,7 @@ public class WhenScreenshotsAreTaken {
     }
 
     @Test
-    public void should_not_blur_screenshots_if_blurScreenshots_flag_is_not_set() throws Exception {
+    public void should_not_blur_screenshots_if_blurScreenshots_option_is_absent() throws Exception {
         Photographer photographer = new MockPhotographer(driver, screenshotDirectory, Optional.<BlurLevel>absent());
         photographer = spy(photographer);
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
