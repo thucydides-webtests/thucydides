@@ -1,6 +1,5 @@
 package net.thucydides.core.model;
 
-import ch.lambdaj.Lambda;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
@@ -32,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -434,7 +434,6 @@ public class TestOutcome {
             } else {
                 leafTestSteps.add(step);
             }
-
         }
         return ImmutableList.copyOf(leafTestSteps);
     }
@@ -467,8 +466,7 @@ public class TestOutcome {
      * @return this TestOucome insstance - this is a convenience to allow method chaining.
      */
     public TestOutcome recordStep(final TestStep step) {
-        checkNotNull(step.getDescription(),
-                "The test step description was not defined.");
+        checkNotNull(step.getDescription(), "The test step description was not defined.");
         if (inGroup()) {
             getCurrentStepGroup().addChildStep(step);
         } else {
@@ -728,7 +726,7 @@ public class TestOutcome {
                     Joiner joiner = Joiner.on("-");
                     issueKey = joiner.join(getProjectPrefix(), issueKey);
                 }
-                return issueKey;  //To change body of implemented methods use File | Settings | File Templates.
+                return issueKey;
             }
 
 
@@ -784,6 +782,24 @@ public class TestOutcome {
 
     public void useExamplesFrom(DataTable table) {
         this.dataTable = table;
+    }
+
+    public void moveToNextRow() {
+        if (!dataTable.atLastRow()) {
+            dataTable.nextRow();
+        }
+    }
+
+    public void updateCurrentRowResult(TestResult result) {
+        dataTable.currentRow().hasResult(result);
+    }
+
+    public boolean dataIsPredefined() {
+        return dataTable.hasPredefinedRows();
+    }
+
+    public void addRow(Map<String, String> data) {
+        dataTable.addRow(data);
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {

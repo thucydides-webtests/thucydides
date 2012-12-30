@@ -17,9 +17,7 @@ import java.util.List;
 import static ch.lambdaj.Lambda.filter;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 public class WhenAddingJQuerySupportToPageObjects {
 
@@ -89,7 +87,6 @@ public class WhenAddingJQuerySupportToPageObjects {
             }
         }
 
-        @Override
         public void describeTo(Description description) {
             if (shouldHaveExecutedScript) {
                 description.appendText("Should have executed script").appendValue(scriptName);

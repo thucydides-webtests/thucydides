@@ -386,7 +386,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private void updateExampleTableIfNecessary(TestResult result) {
         if (getCurrentTestOutcome().isDataDriven()) {
-            getCurrentTestOutcome().getDataTable().currentRow().hasResult(result);
+            getCurrentTestOutcome().updateCurrentRowResult(result);
         }
     }
 
@@ -683,18 +683,19 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void exampleStarted(Map<String,String> data) {
+        if (getCurrentTestOutcome().isDataDriven() && !getCurrentTestOutcome().dataIsPredefined()) {
+            getCurrentTestOutcome().addRow(data);
+        }
         currentExample++;
-        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(exampleIntro(currentExample) + data));
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(exampleTitle(currentExample, data)));
     }
 
-    private String exampleIntro(int exampleNumber) {
-        return String.format("Example %s) ", exampleNumber);
+    private String exampleTitle(int exampleNumber, Map<String, String> data) {
+        return String.format("[%s] %s", exampleNumber, data);
     }
 
     public void exampleFinished() {
-        if (!getCurrentTestOutcome().getDataTable().atLastRow()) {
-            getCurrentTestOutcome().getDataTable().nextRow();
-        }
+        getCurrentTestOutcome().moveToNextRow();
         stepFinished();
     }
 }

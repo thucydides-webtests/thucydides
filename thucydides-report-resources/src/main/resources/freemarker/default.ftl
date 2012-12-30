@@ -209,7 +209,14 @@
                         <#if step.result == "FAILURE" && !step.isAGroup()>
                             <tr class="test-${step.result}">
                                 <td width="40">&nbsp</td>
-                                <td width="%" colspan="4"><span class="error-message" title="${step.errorMessage?html!''}">${step.shortErrorMessage!''}</span></td>
+                                <#if step.errorMessage?has_content>
+                                    <#assign errorMessageTitle = step.errorMessage?html>
+                                <#else>
+                                    <#assign errorMessageTitle = "">
+                                </#if>
+                                <td width="%" colspan="4">
+                                    <span class="error-message" title="${errorMessageTitle}">${step.shortErrorMessage!''}</span>
+                                </td>
                             </tr>
                         </#if>
                 </#macro>

@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static ch.lambdaj.Lambda.convert;
@@ -14,16 +15,17 @@ import static ch.lambdaj.Lambda.convert;
  * A table of test data
  */
 public class DataTable {
-    final List<String> headers;
-    final List<DataTableRow> rows;
+    private final List<String> headers;
+    private final List<DataTableRow> rows;
+    private final boolean predefinedRows;
+    private AtomicInteger currentRow = new AtomicInteger(0);
 
-    AtomicInteger currentRow = new AtomicInteger(0);
-
-    final static List<DataTableRow> NO_ROWS = Lists.newArrayList();
+    private final static List<DataTableRow> NO_ROWS = Lists.newArrayList();
 
     private DataTable(List<String> headers, List<DataTableRow> rows) {
         this.headers = headers;
-        this.rows = ImmutableList.copyOf(rows);
+        this.rows = new CopyOnWriteArrayList(rows);
+        this.predefinedRows = !rows.isEmpty();
     }
 
     public static DataTableBuilder withHeaders(List<String> headers) {
@@ -47,7 +49,7 @@ public class DataTable {
     }
 
     public boolean atLastRow() {
-        return (currentRow.get() == rows.size() - 1);
+        return ((rows.isEmpty()) || (currentRow.get() == rows.size() - 1));
     }
 
     public RowValueAccessor currentRow() {
@@ -60,6 +62,16 @@ public class DataTable {
 
     private int currentRowNumber() {
         return currentRow.intValue();
+    }
+
+    public void addRow(Map<String, String> data) {
+        DataTableRow newRow = new DataTableRow(ImmutableList.copyOf(data.values()));
+        rows.add(newRow);
+        currentRow.set(rows.size() - 1);
+    }
+
+    public boolean hasPredefinedRows() {
+        return predefinedRows;
     }
 
     public static class DataTableBuilder {

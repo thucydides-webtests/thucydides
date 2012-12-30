@@ -98,6 +98,19 @@ class WhenRecordingDataDrivenTestOutcomes extends Specification {
             table.rows.collect {it.result} ==[FAILURE, PENDING]
     }
 
+    def "should be able to add rows incrementally"() {
+        given:
+            def table = DataTable.withHeaders(["firstName","lastName","age"]).build();
+        when:
+            table.addRow(["firstName":"Joe",  "lastName":"Smith","age":20])
+            table.currentRow().hasResult(FAILURE)
+            table.nextRow()
+            table.addRow(["firstName":"Jack", "lastName":"Jones","age":21])
+            table.currentRow().hasResult(PENDING)
+        then:
+            table.rows.collect {it.result} ==[FAILURE, PENDING]
+    }
+
     def screenshotProcessor = Mock(ScreenshotProcessor)
     def outputDirectory = Mock(File);
 
@@ -150,6 +163,40 @@ class WhenRecordingDataDrivenTestOutcomes extends Specification {
             eventBus.exampleFinished()
 
             eventBus.exampleStarted(["firstName":"Jack","lastName":"Smith","age":21])
+            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step3"));
+            eventBus.stepFailed(failure);
+
+            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step4"));
+            eventBus.stepIgnored()
+            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step5"));
+            eventBus.stepIgnored()
+            eventBus.exampleFinished()
+
+            eventBus.testFinished()
+        then:
+            listener.testOutcomes[0].dataTable.rows.collect { it.result } == [SUCCESS, PENDING, FAILURE]
+    }
+
+    def "Should be able to update the table results incrementally via the event bus"() {
+        given:
+            def eventBus = new StepEventBus(screenshotProcessor)
+            def BaseStepListener listener = new BaseStepListener(outputDirectory)
+            eventBus.registerListener(listener)
+        when:
+            eventBus.testStarted("aDataDrivenTest")
+            eventBus.useExamplesFrom(DataTable.withHeaders(["firstName","lastName","age"]).build())
+
+            eventBus.exampleStarted(["firstName":"Joe","lastName":"Smith","age":20])
+            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step1"));
+            eventBus.stepFinished()
+            eventBus.exampleFinished()
+
+            eventBus.exampleStarted(["firstName":"Jack","lastName":"Smith","age":21])
+            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step2"));
+            eventBus.stepPending()
+            eventBus.exampleFinished()
+
+            eventBus.exampleStarted(["firstName":"John","lastName":"Smith","age":22])
             eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step3"));
             eventBus.stepFailed(failure);
 
