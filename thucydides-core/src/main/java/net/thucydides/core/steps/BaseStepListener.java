@@ -9,21 +9,10 @@ import net.thucydides.core.PendingStepException;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.model.DataTable;
-import net.thucydides.core.model.Screenshot;
-import net.thucydides.core.model.ScreenshotPermission;
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TakeScreenshots;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
-import net.thucydides.core.model.TestTag;
+import net.thucydides.core.model.*;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.SystemClock;
-import net.thucydides.core.screenshots.Photographer;
-import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
-import net.thucydides.core.screenshots.ScreenshotException;
-import net.thucydides.core.screenshots.ScreenshotProcessor;
+import net.thucydides.core.screenshots.*;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
@@ -34,19 +23,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 import static net.thucydides.core.model.Stories.findStoryFrom;
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.IGNORED;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SKIPPED;
-import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.model.TestResult.*;
 import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.MANDATORY_SCREENSHOT;
 import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.OPTIONAL_SCREENSHOT;
 import static net.thucydides.core.util.NameConverter.underscore;
@@ -631,7 +611,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public Photographer getPhotographer() {
-        return new Photographer(driver, outputDirectory);
+        return new Photographer(driver, outputDirectory, new ScreenshotBlurCheck().blurLevel());
 
     }
 

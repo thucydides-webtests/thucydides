@@ -1,7 +1,7 @@
 package net.thucydides.core.screenshots;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,15 +16,11 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.startsWith;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class WhenScreenshotsAreTaken {
 
@@ -49,9 +45,18 @@ public class WhenScreenshotsAreTaken {
             super(driver, targetDirectory);
         }
 
+        public MockPhotographer(final WebDriver driver, final File targetDirectory, final Optional<BlurLevel> blurLevel) {
+            super(driver, targetDirectory, blurLevel);
+        }
+
         @Override
         protected boolean driverCanTakeSnapshots() {
             return (driver != null);
+        }
+
+        @Override
+        protected File blur(File srcFile) throws Exception {
+            return srcFile;
         }
     }
 
@@ -106,6 +111,7 @@ public class WhenScreenshotsAreTaken {
 
         when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
         when(driver.getPageSource()).thenReturn("<html/>");
+
         photographer.takeScreenshot("screenshot");
         waitUntilScreenshotsProcessed();
 
@@ -207,5 +213,30 @@ public class WhenScreenshotsAreTaken {
 
         verify(screenshotProcessor).queueScreenshot((QueuedScreenshot) anyObject());
     }
+
+    @Test
+    public void should_blur_screenshots_if_blurScreenshots_option_is_present() throws Exception {
+        Photographer photographer = new MockPhotographer(driver, screenshotDirectory, Optional.of(BlurLevel.HEAVY));
+        photographer = spy(photographer);
+        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        photographer.takeScreenshot("screenshot");
+        waitUntilScreenshotsProcessed();
+
+        verify(photographer, times(1)).blur(any(File.class));
+        verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+    @Test
+    public void should_not_blur_screenshots_if_blurScreenshots_option_is_absent() throws Exception {
+        Photographer photographer = new MockPhotographer(driver, screenshotDirectory, Optional.<BlurLevel>absent());
+        photographer = spy(photographer);
+        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        photographer.takeScreenshot("screenshot");
+        waitUntilScreenshotsProcessed();
+
+        verify(photographer, times(0)).blur(any(File.class));
+        verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
 
 }
