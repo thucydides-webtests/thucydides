@@ -18,13 +18,10 @@ import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
-
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -186,8 +183,8 @@ public class WhenGeneratingAnXMLReport {
     public void should_generate_an_XML_report_for_an_acceptance_test_run_with_a_table()
             throws Exception {
 
-        List<String> row1 = Lists.newArrayList("Joe", "Smith", "20");
-        List<String> row2 = Lists.newArrayList("Jack", "Jones", "21");
+        List<? extends Object> row1 = Lists.newArrayList("Joe", "Smith", "20");
+        List<? extends String> row2 = Lists.newArrayList("Jack", "Jones", "21");
 
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
         DataTable table = DataTable.withHeaders(ImmutableList.of("firstName","lastName","age")).

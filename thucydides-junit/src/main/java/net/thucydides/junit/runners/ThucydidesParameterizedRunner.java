@@ -1,6 +1,7 @@
 package net.thucydides.junit.runners;
 
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -10,6 +11,7 @@ import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,15 +82,15 @@ public class ThucydidesParameterizedRunner extends Suite {
     }
 
     private void buildTestRunnersForEachDataSetUsing(final WebDriverFactory webDriverFactory) throws Throwable {
-        List<Object[]> parametersList = getTestAnnotations().getParametersList();
-        for (int i = 0; i < parametersList.size(); i++) {
+        DataTable parametersTable = getTestAnnotations().getParametersTable();
+        for (int i = 0; i < parametersTable.getRows().size(); i++) {
             Class<?> testClass = getTestClass().getJavaClass();
             ThucydidesRunner runner = new TestClassRunnerForParameters(testClass,
                                                                        configuration,
                                                                        webDriverFactory,
-                                                                       parametersList,
+                                                                       parametersTable,
                                                                        i);
-            runner.useQualifier(from(parametersList.get(i)));
+            runner.useQualifier(from(parametersTable.getRows().get(i).getValues()));
             runners.add(runner);
         }
     }
@@ -116,7 +118,7 @@ public class ThucydidesParameterizedRunner extends Suite {
         return DataDrivenAnnotations.forClass(getTestClass());
     }
 
-    private String from(final Object[] testData) {
+    private String from(final Collection<? extends Object> testData) {
         StringBuffer testDataQualifier = new StringBuffer();
         boolean firstEntry = true;
         for (Object testDataValue : testData) {

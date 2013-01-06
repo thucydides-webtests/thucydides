@@ -1,6 +1,7 @@
 package net.thucydides.junit.listeners;
 
 import com.google.inject.Key;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.Listeners;
@@ -14,23 +15,31 @@ public class JUnitStepListenerBuilder {
     private final File outputDirectory;
     private final Pages pageFactory;
     private final int parameterSetNumber;
-
+    private final DataTable parametersTable;
 
     public JUnitStepListenerBuilder(File outputDirectory) {
-        this(outputDirectory, null, -1);
+        this(outputDirectory, null, -1, null);
     }
 
     public JUnitStepListenerBuilder(File outputDirectory,
                                     Pages pageFactory) {
-        this(outputDirectory, pageFactory, -1);
+        this(outputDirectory, pageFactory, -1, null);
     }
 
     public JUnitStepListenerBuilder(File outputDirectory,
                                     Pages pageFactory,
                                     int parameterSetNumber) {
+        this(outputDirectory, pageFactory, parameterSetNumber, null);
+    }
+
+    public JUnitStepListenerBuilder(File outputDirectory,
+                                    Pages pageFactory,
+                                    int parameterSetNumber,
+                                    DataTable parametersTable) {
         this.outputDirectory = outputDirectory;
         this.pageFactory = pageFactory;
         this.parameterSetNumber = parameterSetNumber;
+        this.parametersTable = parametersTable;
     }
 
     public JUnitStepListenerBuilder and() {
@@ -44,6 +53,11 @@ public class JUnitStepListenerBuilder {
     public JUnitStepListenerBuilder withParameterSetNumber(int parameterSetNumber) {
         return new JUnitStepListenerBuilder(outputDirectory, pageFactory, parameterSetNumber);
     }
+
+    public JUnitStepListenerBuilder withParametersTable(DataTable parametersTable) {
+        return new JUnitStepListenerBuilder(outputDirectory, pageFactory, parameterSetNumber, parametersTable);
+    }
+
 
     public JUnitStepListener build() {
         if (parameterSetNumber >= 0) {
@@ -66,6 +80,7 @@ public class JUnitStepListenerBuilder {
 
     private JUnitStepListener newParameterizedJUnitStepListener() {
         return new ParameterizedJUnitStepListener(parameterSetNumber,
+                parametersTable,
                 buildBaseStepListener(),
                 Listeners.getLoggingListener(),
                 newTestCountListener(),

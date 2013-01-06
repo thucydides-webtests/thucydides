@@ -798,7 +798,7 @@ public class TestOutcome {
         return dataTable.hasPredefinedRows();
     }
 
-    public void addRow(Map<String, String> data) {
+    public void addRow(Map<String, ? extends Object> data) {
         dataTable.addRow(data);
     }
 

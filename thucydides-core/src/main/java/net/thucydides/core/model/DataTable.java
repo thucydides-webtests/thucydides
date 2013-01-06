@@ -4,6 +4,7 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -64,7 +65,7 @@ public class DataTable {
         return currentRow.intValue();
     }
 
-    public void addRow(Map<String, String> data) {
+    public void addRow(Map<String, ? extends Object> data) {
         DataTableRow newRow = new DataTableRow(ImmutableList.copyOf(data.values()));
         rows.add(newRow);
         currentRow.set(rows.size() - 1);
@@ -91,7 +92,7 @@ public class DataTable {
             return new DataTable(headers, rows);
         }
 
-        public DataTableBuilder andRows(List<List<String>> rows) {
+        public DataTableBuilder andRows(List<List<? extends Object>> rows) {
             return new DataTableBuilder(headers, convert(rows, toDataTableRows()));
         }
 
@@ -99,25 +100,25 @@ public class DataTable {
             return new DataTableBuilder(headers, rows);
         }
 
-        public DataTableBuilder andMappedRows(List<Map<String,String>> mappedRows) {
-            List<List<String>> rowData = Lists.newArrayList();
-            for(Map<String,String> mappedRow : mappedRows) {
+        public DataTableBuilder andMappedRows(List<Map<String,? extends Object>> mappedRows) {
+            List<List<Object>> rowData = Lists.newArrayList();
+            for(Map<String,? extends Object> mappedRow : mappedRows) {
                 rowData.add(rowDataFrom(mappedRow));
             }
             return new DataTableBuilder(headers, convert(rowData, toDataTableRows()));
         }
 
-        private Converter<List<String>, DataTableRow> toDataTableRows() {
-            return new Converter<List<String>, DataTableRow>() {
+        private Converter<List<Object>, DataTableRow> toDataTableRows() {
+            return new Converter<List<Object>, DataTableRow>() {
 
-                public DataTableRow convert(List<String> cellValues) {
+                public DataTableRow convert(List<Object> cellValues) {
                     return new DataTableRow(cellValues);
                 }
             };
         }
 
-        private List<String> rowDataFrom(Map<String, String> mappedRow) {
-            List<String> rowData = Lists.newArrayList();
+        private List<Object> rowDataFrom(Map<String, ? extends Object> mappedRow) {
+            List<Object> rowData = Lists.newArrayList();
             for(String header : headers) {
                 rowData.add(mappedRow.get(header));
             }
@@ -135,6 +136,27 @@ public class DataTable {
 
         public void hasResult(TestResult result) {
             dataTable.rows.get(rowNumber).updateResult(result);
+        }
+
+        public Map<String, Object> getData() {
+            Map<String, Object> rowData = new HashMap<String, Object>();
+            int i = 0;
+            for (Object value : dataTable.rows.get(rowNumber).getValues()) {
+                rowData.put(dataTable.headers.get(i), value);
+            }
+
+            return rowData;
+        }
+
+        public Map<String, String> toStringMap() {
+            Map<String, String> rowData = new HashMap<String, String>();
+            int i = 0;
+            for (Object value : dataTable.rows.get(rowNumber).getValues()) {
+                rowData.put(dataTable.headers.get(i), value.toString());
+            }
+
+            return rowData;
+
         }
     }
 }

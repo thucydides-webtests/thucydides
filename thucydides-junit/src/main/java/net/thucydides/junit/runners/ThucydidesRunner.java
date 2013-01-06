@@ -261,7 +261,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         notifier.addListener(listener);
     }
 
-    private void initStepEventBus() {
+    protected void initStepEventBus() {
         StepEventBus.getEventBus().clear();
     }
 

@@ -1,20 +1,32 @@
 package net.thucydides.core.model;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
 public class DataTableRow {
-    private final List<String> cellValues;
+    private final List<? extends Object> cellValues;
     private TestResult result;
 
-    public DataTableRow(List<String> cellValues) {
+    public DataTableRow(List<? extends Object> cellValues) {
         this.cellValues = ImmutableList.copyOf(cellValues);
         this.result = TestResult.UNDEFINED;
     }
 
-    public List<String> getValues() {
+    public List<? extends Object> getValues() {
         return ImmutableList.copyOf(cellValues);
+    }
+
+    public List<String> getStringValues() {
+
+        return Lists.transform(cellValues, new Function<Object, String>() {
+            @Override
+            public String apply(Object o) {
+                return o== null ? "" : o.toString();
+            }
+        });
     }
 
     public TestResult getResult() {

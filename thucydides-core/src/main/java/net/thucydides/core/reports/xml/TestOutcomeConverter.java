@@ -1,7 +1,6 @@
 package net.thucydides.core.reports.xml;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -236,8 +235,8 @@ public class TestOutcomeConverter implements Converter {
         if (rowData.getResult() != TestResult.UNDEFINED) {
             writer.addAttribute("result", rowData.getResult().toString());
         }
-        for(String cellValue : rowData.getValues()) {
-            writeCellValue(writer, cellValue);
+        for(Object cellValue : rowData.getValues()) {
+            writeCellValue(writer, cellValue.toString());
         }
         writer.endNode();
     }
