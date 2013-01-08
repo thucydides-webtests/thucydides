@@ -84,7 +84,7 @@ public class DataDrivenAnnotations {
         String[] columnNames = new String[numberOfColumns];
         if (columnNamesString.equals("")) {
             for (int i =0; i < numberOfColumns; i++) {
-                columnNames[i] = "Parameter " + i+1;
+                columnNames[i] = "Parameter " + (i+1);
             }
         } else {
             columnNames = StringUtils.split(columnNamesString, ",", numberOfColumns);

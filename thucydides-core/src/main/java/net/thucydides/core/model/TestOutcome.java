@@ -216,6 +216,7 @@ public class TestOutcome {
                           final Story userStory,
                           final Throwable testFailureCause,
                           final TestResult annotatedResult,
+                          final DataTable dataTable,
                           final Optional<String> qualifier) {
         this.startTime = startTime;
         this.duration = duration;
@@ -230,6 +231,7 @@ public class TestOutcome {
         this.testFailureCause = testFailureCause;
         this.qualifier = qualifier;
         this.annotatedResult = annotatedResult;
+        this.dataTable = dataTable;
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
     }
@@ -258,6 +260,7 @@ public class TestOutcome {
                                    this.userStory,
                                    this.testFailureCause,
                                    this.annotatedResult,
+                                   this.dataTable,
                                    Optional.fromNullable(qualifier));
         } else {
             return this;
