@@ -3,6 +3,7 @@ package net.thucydides.junit.runners;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.DataTableRow;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.listeners.JUnitStepListener;
@@ -35,6 +36,8 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
                                         .and().withParameterSetNumber(parameterSetNumber)
                                         .and().withParametersTable(parametersTable)
                                         .and().build());
+       StepEventBus.getEventBus().useExamplesFrom(parametersTable);
+
        return getStepListener();
    }
 
