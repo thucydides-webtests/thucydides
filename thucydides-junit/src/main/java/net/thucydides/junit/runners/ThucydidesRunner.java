@@ -219,7 +219,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         getStepListener().dropListeners();
     }
 
-    private void generateReports() {
+    protected void generateReports() {
             generateReportsFor(getTestOutcomes());
     }
 

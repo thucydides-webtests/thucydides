@@ -143,6 +143,7 @@ public class DataTable {
             int i = 0;
             for (Object value : dataTable.rows.get(rowNumber).getValues()) {
                 rowData.put(dataTable.headers.get(i), value);
+                i++;
             }
 
             return rowData;
@@ -153,6 +154,7 @@ public class DataTable {
             int i = 0;
             for (Object value : dataTable.rows.get(rowNumber).getValues()) {
                 rowData.put(dataTable.headers.get(i), value.toString());
+                i++;
             }
 
             return rowData;

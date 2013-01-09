@@ -26,6 +26,7 @@ public class ParameterizedJUnitStepListener extends JUnitStepListener {
     public void testStarted(final Description description) {
         if (testingThisDataSet(description)) {
             super.testStarted(description);
+            StepEventBus.getEventBus().useExamplesFrom(parametersTable);
             StepEventBus.getEventBus().exampleStarted(parametersTable.row(parameterSetNumber).toStringMap());
         }
     }

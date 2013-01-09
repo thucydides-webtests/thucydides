@@ -3,14 +3,19 @@ package net.thucydides.junit.runners;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Concurrent;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +32,7 @@ public class ThucydidesParameterizedRunner extends Suite {
     private final List<Runner> runners = new ArrayList<Runner>();
 
     private final Configuration configuration;
+    private ReportService reportService;
 
     /**
      * Only used for testing.
@@ -144,7 +150,55 @@ public class ThucydidesParameterizedRunner extends Suite {
         return runners;
     }
 
-    public List<TestOutcome> getTestOutcomes() {
+    @Override
+    public void run(final RunNotifier notifier) {
+        try {
+            super.run(notifier);
+        } finally {
+            generateReports();
+        }
+    }
+
+    private void generateReports() {
+        generateReportsFor(getTestOutcomes());
+    }
+
+    private void generateReportsFor(List<TestOutcome> testOutcomes) {
+        getReportService().generateReportsFor(testOutcomes);
+    }
+
+    private ReportService getReportService() {
+        if (reportService == null) {
+            reportService = new ReportService(getOutputDirectory(), getDefaultReporters());
+        }
+        return reportService;
+
+    }
+
+    private Collection<AcceptanceTestReporter> getDefaultReporters() {
+        return ReportService.getDefaultReporters();
+    }
+
+    private File getOutputDirectory() {
+        return this.configuration.getOutputDirectory();
+    }
+
+    public void subscribeReporter(final AcceptanceTestReporter reporter) {
+        getReportService().subscribe(reporter);
+    }
+
+
+    private List<TestOutcome> getTestOutcomes() {
+        List<TestOutcome> allOutcomes = getTestOutcomesForAllParameterSets();
+        TestOutcome finalOutCome = allOutcomes.get(0);
+        finalOutCome.endGroup(); //pop group stack so next item gets added as a sibling
+        finalOutCome.recordStep(allOutcomes.get(1).getTestSteps().get(0));
+
+        return Arrays.asList(new TestOutcome[]{finalOutCome});
+    }
+
+
+    public List<TestOutcome> getTestOutcomesForAllParameterSets() {
         List<TestOutcome> testOutcomes = new ArrayList<TestOutcome>();
 
         testOutcomes.addAll( ((ThucydidesRunner) runners.get(0)).getTestOutcomes());

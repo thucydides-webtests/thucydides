@@ -82,7 +82,7 @@ public class WhenRunningADataDrivenTestScenario {
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
         runner.run(new RunNotifier());
 
-        List<TestOutcome> executedScenarios = runner.getTestOutcomes();
+        List<TestOutcome> executedScenarios = runner.getTestOutcomesForAllParameterSets();
 
         assertThat(executedScenarios.size(), is(10));
     }
@@ -93,7 +93,7 @@ public class WhenRunningADataDrivenTestScenario {
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleCSVDataDrivenScenario.class);
         runner.run(new RunNotifier());
 
-        List<TestOutcome> executedScenarios = runner.getTestOutcomes();
+        List<TestOutcome> executedScenarios = runner.getTestOutcomesForAllParameterSets();
 
         assertThat(executedScenarios.size(), is(3));
     }
