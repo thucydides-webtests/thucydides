@@ -20,8 +20,8 @@ import com.google.inject.Singleton;
 public class SystemVariableBasedBatchManager implements BatchManager {
 
     private final AtomicInteger testCaseCount = new AtomicInteger(0);
-    private final int batchCount;
-    private final int batchNumber;
+    protected final int batchCount;
+    protected final int batchNumber;
 
     private Set<String> registeredTestCases = new CopyOnWriteArraySet<String>();
 
@@ -67,11 +67,15 @@ public class SystemVariableBasedBatchManager implements BatchManager {
     }
 
     @Override
-    public boolean shouldExecuteThisTest() {
+    public boolean shouldExecuteThisTest(int testCount) {
         if (batchCount > 0) {
-            return (testCaseCount.get() % batchCount == (batchNumber % batchCount));
+            return (testCaseCount.get() % batchCount == getActualBatchNumber());
         } else {
             return true;
         }
+    }
+    
+    protected int getActualBatchNumber() {
+        return batchNumber % batchCount;
     }
 }
