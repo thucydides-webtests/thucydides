@@ -402,10 +402,21 @@ public class WebElementFacade {
     }
 
     private void waitUntilElementAvailable() {
+        if (driverIsDisabled()) {
+            return;
+        }
         waitUntilEnabled();
     }
 
+    private boolean driverIsDisabled() {
+        return StepEventBus.getEventBus().webdriverCallsAreSuspended();
+    }
+
     public boolean isPresent() {
+        if (driverIsDisabled()) {
+            return false;
+        }
+
         try {
             return (webElement != null) && (webElement.isDisplayed() || !webElement.isDisplayed());
         } catch (NoSuchElementException e) {
@@ -433,6 +444,10 @@ public class WebElementFacade {
     }
 
     public WebElementFacade waitUntilVisible() {
+        if (driverIsDisabled()) {
+            return this;
+        }
+
         try {
             waitForCondition().until(elementIsDisplayed());
         } catch (Throwable error) {
@@ -442,6 +457,10 @@ public class WebElementFacade {
     }
 
     public WebElementFacade waitUntilPresent() {
+        if (driverIsDisabled()) {
+            return this;
+        }
+
         try {
             waitForCondition().until(elementIsPresent());
         } catch (TimeoutException timeout) {
@@ -533,6 +552,10 @@ public class WebElementFacade {
     }
 
     public WebElementFacade waitUntilNotVisible() {
+        if (driverIsDisabled()) {
+            return this;
+        }
+
         try {
             waitForCondition().until(elementIsNotDisplayed());
         } catch (TimeoutException timeout) {
@@ -557,6 +580,10 @@ public class WebElementFacade {
     }
 
     public WebElementFacade waitUntilEnabled() {
+        if (driverIsDisabled()) {
+            return this;
+        }
+
         try {
             waitForCondition().until(elementIsEnabled());
             return this;
@@ -566,6 +593,10 @@ public class WebElementFacade {
     }
 
     public WebElementFacade waitUntilDisabled() {
+        if (driverIsDisabled()) {
+            return this;
+        }
+
         try {
             waitForCondition().until(elementIsNotEnabled());
             return this;
