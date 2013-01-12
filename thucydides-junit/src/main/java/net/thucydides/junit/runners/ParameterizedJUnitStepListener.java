@@ -32,7 +32,7 @@ public class ParameterizedJUnitStepListener extends JUnitStepListener {
     }
 
     private DataTable dataTable() {
-        return DataTable.withHeaders(parametersTable.getHeaders()).andCopyRowDataFrom(parametersTable).build();
+        return DataTable.withHeaders(parametersTable.getHeaders()).andCopyRowDataFrom(parametersTable.getRows().get(parameterSetNumber)).build();
     }
 
     private boolean testingThisDataSet(Description description) {

@@ -72,6 +72,15 @@ public class DataTable {
         currentRow.set(rows.size() - 1);
     }
 
+    public void addRows(List<DataTableRow> rows) {
+        for(DataTableRow row : rows) {
+            DataTableRow newRow = new DataTableRow(ImmutableList.copyOf(row.getValues()));
+            newRow.setResult(row.getResult());
+            this.rows.add(newRow);
+        }
+        currentRow.set(rows.size() -1);
+    }
+
     public boolean hasPredefinedRows() {
         return predefinedRows;
     }
@@ -89,11 +98,9 @@ public class DataTable {
             this.rows = rows;
         }
 
-        public DataTableBuilder andCopyRowDataFrom(DataTable baseTable) {
+        public DataTableBuilder andCopyRowDataFrom(DataTableRow row) {
             List<DataTableRow> rows = new ArrayList<DataTableRow>();
-            for (DataTableRow row : baseTable.getRows()) {
-                rows.add(new DataTableRow(row.getValues()));
-            }
+            rows.add(new DataTableRow(row.getValues()));
             return new DataTableBuilder(headers, rows);
         }
 

@@ -217,6 +217,9 @@ public class ThucydidesParameterizedRunner extends Suite {
                 TestStep nextStep = testSteps.get(0);
                 nextStep.setDescription(normalizeTestStepDescription(nextStep.getDescription(), scenarioOutcomes.get(normalizedMethodName).getTestSteps().size() + 1));
                 scenarioOutcomes.get(normalizedMethodName).recordStep(nextStep);
+
+                scenarioOutcomes.get(normalizedMethodName).getDataTable().addRows(testOutcome.getDataTable().getRows());
+
             } else {
                  TestOutcome scenarioOutcome = getScenarioOutcome(testOutcome);
                  scenarioOutcomes.put(scenarioOutcome.getMethodName(), scenarioOutcome);

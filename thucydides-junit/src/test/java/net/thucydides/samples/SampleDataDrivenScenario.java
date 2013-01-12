@@ -13,8 +13,6 @@ import org.openqa.selenium.WebDriver;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.fail;
-
 @RunWith(ThucydidesParameterizedRunner.class)
 public class SampleDataDrivenScenario {
 
@@ -53,8 +51,7 @@ public class SampleDataDrivenScenario {
         
     @Test
     public void happy_day_scenario() {
-        //steps.stepWithParameters(option1,option2);
-        steps.stepThatFails();
+        steps.stepWithParameters(option1,option2);
     }
 
     @Test
