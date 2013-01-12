@@ -3,6 +3,7 @@ package net.thucydides.junit.runners;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.webdriver.Configuration;
@@ -18,7 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Run a Thucydides test suite using a set of data.
@@ -160,7 +163,7 @@ public class ThucydidesParameterizedRunner extends Suite {
     }
 
     private void generateReports() {
-        generateReportsFor(getTestOutcomes());
+        generateReportsFor(aggregateTestOutcomesByTestMethods());
     }
 
     private void generateReportsFor(List<TestOutcome> testOutcomes) {
@@ -195,6 +198,47 @@ public class ThucydidesParameterizedRunner extends Suite {
         finalOutCome.recordStep(allOutcomes.get(1).getTestSteps().get(0));
 
         return Arrays.asList(new TestOutcome[]{finalOutCome});
+    }
+
+
+    public List<TestOutcome> aggregateTestOutcomesByTestMethods() {
+        List<TestOutcome> allOutcomes = getTestOutcomesForAllParameterSets();
+        Map<String, TestOutcome> scenarioOutcomes = new HashMap<String,TestOutcome>();
+
+        TestOutcome firstParameterizedOutcome = allOutcomes.remove(0);
+
+        TestOutcome firstScenarioOutcome = getScenarioOutcome(firstParameterizedOutcome);
+        scenarioOutcomes.put(firstScenarioOutcome.getMethodName(), firstScenarioOutcome);
+
+        for(TestOutcome testOutcome : allOutcomes) {
+            String normalizedMethodName = normalizeMethodName(testOutcome.getMethodName());
+            if (scenarioOutcomes.containsKey(normalizedMethodName)) {
+                List<TestStep> testSteps = testOutcome.getTestSteps();
+                TestStep nextStep = testSteps.get(0);
+                nextStep.setDescription(normalizeTestStepDescription(nextStep.getDescription(), scenarioOutcomes.get(normalizedMethodName).getTestSteps().size() + 1));
+                scenarioOutcomes.get(normalizedMethodName).recordStep(nextStep);
+            } else {
+                 TestOutcome scenarioOutcome = getScenarioOutcome(testOutcome);
+                 scenarioOutcomes.put(scenarioOutcome.getMethodName(), scenarioOutcome);
+            }
+        }
+        List<TestOutcome> aggregatedScenarioOutcomes = new ArrayList<TestOutcome>();
+        aggregatedScenarioOutcomes.addAll(scenarioOutcomes.values());
+        return aggregatedScenarioOutcomes;
+    }
+
+    private String normalizeTestStepDescription(String description, int index) {
+        return StringUtils.replace(description,"[1]","[" + index + "]");
+    }
+
+    private TestOutcome getScenarioOutcome(TestOutcome parameterizedOutcome) {
+        TestOutcome scenarioOutcome = parameterizedOutcome.withMethodName(normalizeMethodName(parameterizedOutcome.getMethodName()));
+        scenarioOutcome.endGroup(); //pop group stack so next item gets added as sibling
+        return scenarioOutcome;
+    }
+
+    private String normalizeMethodName(String methodName) {
+        return methodName.replaceAll("\\[\\d\\]","");
     }
 
 

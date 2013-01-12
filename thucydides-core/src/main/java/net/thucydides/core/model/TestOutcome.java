@@ -267,6 +267,28 @@ public class TestOutcome {
         }
     }
 
+
+    public TestOutcome withMethodName(String methodName) {
+        if (methodName != null) {
+            return new TestOutcome(this.startTime,
+                    this.duration,
+                    this.storedTitle,
+                    methodName,
+                    this.testCase,
+                    this.testSteps,
+                    this.issues,
+                    this.additionalIssues,
+                    this.tags,
+                    this.userStory,
+                    this.testFailureCause,
+                    this.annotatedResult,
+                    this.dataTable,
+                    this.qualifier);
+        } else {
+            return this;
+        }
+    }
+
     private void initializeStoryFrom(final Class<?> testCase) {
         Story story;
         if (Story.testedInTestCase(testCase) != null) {

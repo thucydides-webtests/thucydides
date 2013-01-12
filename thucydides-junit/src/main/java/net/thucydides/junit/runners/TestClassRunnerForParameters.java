@@ -92,7 +92,4 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
         //do not generate reports at example level
     }
 
-
-
-
     }

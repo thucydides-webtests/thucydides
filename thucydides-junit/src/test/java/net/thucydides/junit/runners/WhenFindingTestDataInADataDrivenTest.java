@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.junit.annotations.Qualifier;
@@ -31,6 +32,18 @@ public class WhenFindingTestDataInADataDrivenTest {
         }
     }
 
+    final static class DataDrivenTestScenarioWithParamNames {
+
+        @TestData(columnNames = "param-A,param-B")
+        public static Collection<Object[]> testData() {
+            return Arrays.asList(new Object[][]{
+                    {"a", 1},
+                    {"b", 2},
+                    {"c", 3}
+            });
+        }
+    }
+
     @UseTestDataFrom("test-data/simple-data.csv")
     final static class CSVDataDrivenTestScenario {}
 
@@ -46,10 +59,35 @@ public class WhenFindingTestDataInADataDrivenTest {
     @Test
     public void the_parameterized_data_method_returns_the_set_of_test_data() throws Throwable {
         TestClass testClass = new TestClass(DataDrivenTestScenario.class);
-        Collection<Object[]> testData = DataDrivenAnnotations.forClass(testClass).getParametersList();
+        DataTable testDataTable = DataDrivenAnnotations.forClass(testClass).getParametersTable();
 
-        assertThat(testData.size(), is(3));
+        assertThat(testDataTable.getRows().size(), is(3));
 
+    }
+
+    @Test
+    public void testData_without_parameter_names_defines_default_parameter_names() throws Throwable {
+        TestClass testClass = new TestClass(DataDrivenTestScenario.class);
+        DataTable testDataTable = DataDrivenAnnotations.forClass(testClass).getParametersTable();
+        List<String> parameterNames = testDataTable.getHeaders();
+
+        assertThat(parameterNames.size(), is(2));
+        int i = 0;
+        for (String parameterName : parameterNames) {
+            assertThat(parameterName, is("Parameter " + (i+1)) );
+            i++;
+        }
+    }
+
+    @Test
+    public void testData_with_parameter_names_uses_defined_parameter_names() throws Throwable {
+        TestClass testClass = new TestClass(DataDrivenTestScenarioWithParamNames.class);
+        DataTable testDataTable = DataDrivenAnnotations.forClass(testClass).getParametersTable();
+        List<String> parameterNames = testDataTable.getHeaders();
+
+        assertThat(parameterNames.size(), is(2));
+        assertThat(parameterNames.get(0), is("param-A"));
+        assertThat(parameterNames.get(1), is("param-B"));
     }
 
     @Test

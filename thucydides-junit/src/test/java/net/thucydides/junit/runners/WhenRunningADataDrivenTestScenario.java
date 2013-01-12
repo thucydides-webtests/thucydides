@@ -4,6 +4,7 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
+import net.thucydides.core.model.DataTableRow;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
@@ -84,7 +85,26 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomesForAllParameterSets();
 
-        assertThat(executedScenarios.size(), is(10));
+        assertThat(executedScenarios.size(), is(20));
+
+        for (TestOutcome to : executedScenarios) {
+            System.out.println("############ " + to.getMethodName());
+            System.out.println("$$$$$$$$$$$$$$ " + to.getResult());
+            for(DataTableRow row : to.getDataTable().getRows()) {
+                System.out.println("@@@@@@@@@@@@@@ " + row.getValues() + " ---> " + row.getResult());
+            }
+        }
+    }
+
+    @Test
+    public void a_data_driven_test_driver_should_aggregate_test_outcomes() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
+
+        assertThat(aggregatedScenarios.size(), is(2));
     }
 
     @Test
@@ -100,7 +120,7 @@ public class WhenRunningADataDrivenTestScenario {
 
 
     @Test
-    public void a_separate_xml_report_should_be_generated_from_each_row_of_data() throws Throwable  {
+    public void a_single_xml_report_should_be_generated_for_the_entire_test_case() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
         environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
@@ -111,7 +131,7 @@ public class WhenRunningADataDrivenTestScenario {
         runner.run(new RunNotifier());
 
         File[] reports = outputDirectory.listFiles(new XMLFileFilter());
-        assertThat(reports.length, is(10));
+        assertThat(reports.length, is(1));
     }
 
     @Test

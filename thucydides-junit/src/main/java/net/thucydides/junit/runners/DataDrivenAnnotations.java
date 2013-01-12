@@ -52,11 +52,6 @@ public class DataDrivenAnnotations {
         return new DataDrivenAnnotations(this.testClass, environmentVariables);
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Object[]> getParametersList() throws Throwable {
-        return (List<Object[]>) getTestDataMethod().getMethod().invoke(null);
-    }
-
     public DataTable getParametersTable() throws Throwable {
         Method testDataMethod = getTestDataMethod().getMethod();
         String columnNamesString = testDataMethod.getAnnotation(TestData.class).columnNames();

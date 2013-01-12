@@ -4,6 +4,7 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +87,14 @@ public class DataTable {
         public DataTableBuilder(List<String> headers, List<DataTableRow> rows) {
             this.headers = headers;
             this.rows = rows;
+        }
+
+        public DataTableBuilder andCopyRowDataFrom(DataTable baseTable) {
+            List<DataTableRow> rows = new ArrayList<DataTableRow>();
+            for (DataTableRow row : baseTable.getRows()) {
+                rows.add(new DataTableRow(row.getValues()));
+            }
+            return new DataTableBuilder(headers, rows);
         }
 
         public DataTable build() {
