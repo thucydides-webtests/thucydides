@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -12,14 +13,18 @@ import org.junit.runners.model.Statement;
 class TestClassRunnerForInstanciatedTestCase extends ThucydidesRunner {
     private final int parameterSetNumber;
     private final Object instanciatedTest;
+    private final DataTable parametersTable;
+
 
     TestClassRunnerForInstanciatedTestCase(final Object instanciatedTest,
                                            Configuration configuration,
                                            WebDriverFactory webDriverFactory,
+                                           final DataTable parametersTable,
                                            final int parameterSetNumber) throws InitializationError {
         super(instanciatedTest.getClass(), webDriverFactory, configuration);
         this.instanciatedTest = instanciatedTest;
         this.parameterSetNumber = parameterSetNumber;
+        this.parametersTable    = parametersTable;
     }
 
     @Override
@@ -27,6 +32,7 @@ class TestClassRunnerForInstanciatedTestCase extends ThucydidesRunner {
         setStepListener(JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
                 .and().withPageFactory(pageFactory)
                 .and().withParameterSetNumber(parameterSetNumber)
+                .and().withParametersTable(parametersTable)
                 .and().build());
         return getStepListener();
     }

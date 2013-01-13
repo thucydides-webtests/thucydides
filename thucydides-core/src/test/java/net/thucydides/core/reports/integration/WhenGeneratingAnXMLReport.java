@@ -27,6 +27,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.thucydides.core.hamcrest.XMLMatchers.isSimilarTo;
@@ -183,8 +184,8 @@ public class WhenGeneratingAnXMLReport {
     public void should_generate_an_XML_report_for_an_acceptance_test_run_with_a_table()
             throws Exception {
 
-        List<? extends Object> row1 = Lists.newArrayList("Joe", "Smith", "20");
-        List<? extends String> row2 = Lists.newArrayList("Jack", "Jones", "21");
+        List<Object> row1 = new ArrayList<Object>(); row1.addAll(Lists.newArrayList("Joe", "Smith", "20"));
+        List<Object> row2 = new ArrayList<Object>(); row2.addAll(Lists.newArrayList("Jack", "Jones", "21"));
 
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
         DataTable table = DataTable.withHeaders(ImmutableList.of("firstName","lastName","age")).

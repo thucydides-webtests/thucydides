@@ -107,12 +107,14 @@ public class ThucydidesParameterizedRunner extends Suite {
     private void buildTestRunnersFromADataSourceUsing(final WebDriverFactory webDriverFactory) throws Throwable {
 
         List<?> testCases = getTestAnnotations().getDataAsInstancesOf(getTestClass().getJavaClass());
+        DataTable parametersTable = getTestAnnotations().getParametersTableFromTestDataSource();
 
         for (int i = 0; i < testCases.size(); i++) {
             Object testCase = testCases.get(i);
             ThucydidesRunner runner = new TestClassRunnerForInstanciatedTestCase(testCase,
                                                                                  configuration,
                                                                                  webDriverFactory,
+                                                                                 parametersTable,
                                                                                  i);
             runner.useQualifier(getQualifierFor(testCase));
             runners.add(runner);
@@ -127,7 +129,7 @@ public class ThucydidesParameterizedRunner extends Suite {
         return DataDrivenAnnotations.forClass(getTestClass());
     }
 
-    private String from(final Collection<? extends Object> testData) {
+    private String from(final Collection testData) {
         StringBuffer testDataQualifier = new StringBuffer();
         boolean firstEntry = true;
         for (Object testDataValue : testData) {

@@ -7,15 +7,15 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 public class DataTableRow {
-    private final List<? extends Object> cellValues;
+    private final List cellValues;
     private TestResult result;
 
-    public DataTableRow(List<? extends Object> cellValues) {
+    public DataTableRow(List cellValues) {
         this.cellValues = ImmutableList.copyOf(cellValues);
         this.result = TestResult.UNDEFINED;
     }
 
-    public List<? extends Object> getValues() {
+    public List getValues() {
         return ImmutableList.copyOf(cellValues);
     }
 

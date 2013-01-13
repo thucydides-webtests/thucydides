@@ -52,6 +52,17 @@ public class DataDrivenAnnotations {
         return new DataDrivenAnnotations(this.testClass, environmentVariables);
     }
 
+    public DataTable getParametersTableFromTestDataSource() throws Throwable {
+        TestDataSource testDataSource = new CSVTestDataSource(findTestDataSource(), findTestDataSeparator());
+        List<Map<String, String>> testData = testDataSource.getData();
+        List<String> headers = testDataSource.getHeaders();
+        return DataTable.withHeaders(headers)
+                        .andMappedRows(testData)
+                        .build();
+
+
+    }
+
     public DataTable getParametersTable() throws Throwable {
         Method testDataMethod = getTestDataMethod().getMethod();
         String columnNamesString = testDataMethod.getAnnotation(TestData.class).columnNames();
@@ -59,15 +70,15 @@ public class DataDrivenAnnotations {
         return createParametersTable(columnNamesString, convertToList(parametersList));
     }
 
-    private List<List<? extends Object>> convertToList(List<Object[]> parametersList) {
-        List<List<? extends Object>> convertedParamatersList = new ArrayList<List<? extends Object>>();
+    private List<List<Object>> convertToList(List<Object[]> parametersList) {
+        List<List<Object>> convertedParamatersList = new ArrayList<List<Object>>();
         for (Object[] parameters : parametersList) {
             convertedParamatersList.add(Arrays.asList(parameters));
         }
         return convertedParamatersList;
     }
 
-    private DataTable createParametersTable(String columnNamesString, List<List<? extends Object>> parametersList) {
+    private DataTable createParametersTable(String columnNamesString, List<List<Object>> parametersList) {
         int numberOfColumns =  parametersList.isEmpty() ? 0 : parametersList.get(0).size();
         List<String> columnNames = split(columnNamesString, numberOfColumns);
         return DataTable.withHeaders(columnNames)

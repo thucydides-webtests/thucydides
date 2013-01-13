@@ -1,6 +1,5 @@
 package net.thucydides.core.csv;
 
-import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.steps.StepFactory;
 
 import java.util.List;
@@ -11,6 +10,9 @@ import java.util.Map;
  * Test data can come from a number of sources, such as CSV files, Excel spreadsheet, arrays, etc.
  */
 public interface TestDataSource {
+
+    List<String> getHeaders();
+
     List<Map<String, String>> getData();
 
     <T> List<T> getDataAsInstancesOf(Class<T> clazz, Object... constructorArgs);

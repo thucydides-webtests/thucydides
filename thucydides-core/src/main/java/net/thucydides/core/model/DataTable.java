@@ -108,7 +108,7 @@ public class DataTable {
             return new DataTable(headers, rows);
         }
 
-        public DataTableBuilder andRows(List<List<? extends Object>> rows) {
+        public DataTableBuilder andRows(List<List<Object>> rows) {
             return new DataTableBuilder(headers, convert(rows, toDataTableRows()));
         }
 
@@ -116,7 +116,7 @@ public class DataTable {
             return new DataTableBuilder(headers, rows);
         }
 
-        public DataTableBuilder andMappedRows(List<Map<String,? extends Object>> mappedRows) {
+        public DataTableBuilder andMappedRows(List<? extends Map<String,? extends Object>> mappedRows) {
             List<List<Object>> rowData = Lists.newArrayList();
             for(Map<String,? extends Object> mappedRow : mappedRows) {
                 rowData.add(rowDataFrom(mappedRow));
