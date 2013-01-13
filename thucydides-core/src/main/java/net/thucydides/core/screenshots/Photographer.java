@@ -59,8 +59,7 @@ public class Photographer {
     }
 
     public Photographer(final WebDriver driver, final File targetDirectory, final ScreenshotProcessor screenshotProcessor) {
-        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class),
-                Optional.<BlurLevel>absent());
+        this(driver, targetDirectory, screenshotProcessor, Optional.<BlurLevel>absent());
     }
 
 

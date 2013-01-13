@@ -5,6 +5,7 @@ import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.screenshots.MultithreadScreenshotProcessor;
 import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
+import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
@@ -92,8 +93,8 @@ public class WhenTakingLargeScreenshots {
 
         driver = testSite.open();
 
-        ScreenshotProcessor screenshotProcessor = new MultithreadScreenshotProcessor(environmentVariables);
-        Photographer photographer = new Photographer(driver, screenshotDirectory,screenshotProcessor);
+        ScreenshotProcessor screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables);
+        Photographer photographer = new Photographer(driver, screenshotDirectory, screenshotProcessor);
         File screenshotFile = photographer.takeScreenshot("screenshot").get();
 
         waitUntilFileIsWritten(screenshotFile);

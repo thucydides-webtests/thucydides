@@ -1,5 +1,6 @@
 package net.thucydides.core.requirements.reportpages
 
+import net.thucydides.core.pages.WebElementFacade
 import org.openqa.selenium.WebDriver
 import net.thucydides.core.pages.PageObject
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -29,7 +30,8 @@ class RequirementsReport extends PageObject {
     }
 
     String getTableTitle() {
-        find(By.xpath("//div[@id='tabs']//a[@href='#tabs-1']")).text
+        List<WebElementFacade> titleTab = findAll(By.xpath("//div[@id='tabs']//a[@href='#tabs-1']"));
+        return (!titleTab.isEmpty()) ? titleTab.get(0).getText() : ""
     }
 
     List<RequirementRow> getRequirements() {
