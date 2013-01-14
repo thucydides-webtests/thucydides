@@ -16,7 +16,6 @@ import org.junit.runners.Suite;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -190,16 +189,6 @@ public class ThucydidesParameterizedRunner extends Suite {
 
     public void subscribeReporter(final AcceptanceTestReporter reporter) {
         getReportService().subscribe(reporter);
-    }
-
-
-    private List<TestOutcome> getTestOutcomes() {
-        List<TestOutcome> allOutcomes = getTestOutcomesForAllParameterSets();
-        TestOutcome finalOutCome = allOutcomes.get(0);
-        finalOutCome.endGroup(); //pop group stack so next item gets added as a sibling
-        finalOutCome.recordStep(allOutcomes.get(1).getTestSteps().get(0));
-
-        return Arrays.asList(new TestOutcome[]{finalOutCome});
     }
 
 

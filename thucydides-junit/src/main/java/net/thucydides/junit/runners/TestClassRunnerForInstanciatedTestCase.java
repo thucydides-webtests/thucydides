@@ -57,4 +57,10 @@ class TestClassRunnerForInstanciatedTestCase extends ThucydidesRunner {
         return childrenInvoker(notifier);
     }
 
+    @Override
+    protected void generateReports() {
+        //do not generate reports at example level
+    }
+
+
 }
