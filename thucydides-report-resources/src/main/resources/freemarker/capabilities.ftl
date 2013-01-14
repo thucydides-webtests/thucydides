@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <#assign pageTitle = inflection.of(requirements.type).inPluralForm().asATitle() >
 <#assign requirementTypeTitle = inflection.of(requirements.type).asATitle() >
 <head>
@@ -170,6 +170,9 @@
                                 <td class="label subtopic">Failing tests:</td><td class="value">${requirements.failingTestCount}</td>
                             <tr/>
                             <tr>
+                                <td class="label subtopic">Pending tests:</td><td class="value">${requirements.pendingTestCount}</td>
+                            <tr/>
+                            <tr>
                                 <td class="label">Estimated unimplemented tests:</td><td class="value">${requirements.estimatedUnimplementedTests}</td>
                             <tr/>
                         </table>
@@ -210,19 +213,22 @@
                     <#--</tr>-->
                 <#--</table>-->
 
+                <#if (requirements.requirementOutcomes?has_content || testOutcomes.total > 0)>
                 <div id="tabs">
+                    <#if (requirements.requirementOutcomes?has_content || (requirements.parentRequirement.isPresent() && requirements.parentRequirement.get().hasExamples()))>
                    <ul>
-                        <#--<#if (requirements.requirementOutcomes?has_content || testOutcomes.total > 0)>-->
+                        <#if (requirements.requirementOutcomes?has_content)>
                             <li><a href="#tabs-1">
-                            <#if (requirements.requirementOutcomes?has_content)>${pageTitle} (${requirements.requirementCount})<#else>Tests (${testOutcomes.total})</#if>
+                                ${pageTitle} (${requirements.requirementCount})
                             </a></li>
-                        <#--</#if> -->
+                        </#if>
                         <#if (requirements.parentRequirement.isPresent() && requirements.parentRequirement.get().hasExamples())>
-                        <li><a href="#tabs-2">Examples (${requirements.parentRequirement.get().exampleCount})</a></li>
+                            <li><a href="#tabs-2">Examples (${requirements.parentRequirement.get().exampleCount})</a></li>
                         </#if>
                     </ul>
-                    <div id="tabs-1" class="capabilities-table">
+                    </#if>
                     <#if (requirements.requirementOutcomes?has_content)>
+                    <div id="tabs-1" class="capabilities-table">
                         <#--- Requirements -->
                             <div id="req_list_tests" class="table">
                                 <div class="test-results">
@@ -340,13 +346,14 @@ Estimated unimplemented or pending requirements: ${pending}">
                                     </table>
                                 </div>
                             </div>
+                        </div>
                     </#if>
                     <#if testOutcomes.tests?has_content >
                         <#--- Test Results -->
 
                         <div id="test-tabs">
                             <ul>
-                                <li><a href="#test-tabs-1">TESTS</a></li>
+                                <li><a href="#test-tabs-1">Tests (${testOutcomes.total})</a></li>
                             </ul>
                             <div id="test_list_tests" class="table">
                                 <div class="test-results">
@@ -424,7 +431,8 @@ Estimated unimplemented or pending requirements: ${pending}">
                         </div>
                     </#if>
                     </div>
-                    <#if (requirements.parentRequirement.isPresent() && requirements.parentRequirement.get().hasExamples())>
+                </#if>
+                <#if (requirements.parentRequirement.isPresent() && requirements.parentRequirement.get().hasExamples())>
                     <div id="tabs-2" class="capabilities-table">
                         <#-- Examples -->
                         <div id="examples" class="table">

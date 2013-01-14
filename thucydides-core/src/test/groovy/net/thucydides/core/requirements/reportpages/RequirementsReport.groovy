@@ -30,7 +30,7 @@ class RequirementsReport extends PageObject {
     }
 
     String getTableTitle() {
-        List<WebElementFacade> titleTab = findAll(By.xpath("//div[@id='tabs']//a[@href='#tabs-1']"));
+        List<WebElementFacade> titleTab = findAll(By.cssSelector("a[href='#tabs-1']"));
         return (!titleTab.isEmpty()) ? titleTab.get(0).getText() : ""
     }
 
