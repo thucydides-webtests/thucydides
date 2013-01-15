@@ -90,7 +90,7 @@ public class ThucydidesParameterizedRunner extends Suite {
     }
 
     private void buildTestRunnersForEachDataSetUsing(final WebDriverFactory webDriverFactory) throws Throwable {
-        DataTable parametersTable = getTestAnnotations().getParametersTable();
+        DataTable parametersTable = getTestAnnotations().getParametersTableFromTestDataAnnotation();
         for (int i = 0; i < parametersTable.getRows().size(); i++) {
             Class<?> testClass = getTestClass().getJavaClass();
             ThucydidesRunner runner = new TestClassRunnerForParameters(testClass,

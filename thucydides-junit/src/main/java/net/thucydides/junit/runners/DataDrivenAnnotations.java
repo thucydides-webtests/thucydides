@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Splitter;
 import net.thucydides.core.csv.CSVTestDataSource;
 import net.thucydides.core.csv.TestDataSource;
@@ -16,8 +17,12 @@ import org.junit.runners.model.TestClass;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
+
+import static ch.lambdaj.Lambda.convert;
 
 public class DataDrivenAnnotations {
 
@@ -59,32 +64,33 @@ public class DataDrivenAnnotations {
         return DataTable.withHeaders(headers)
                         .andMappedRows(testData)
                         .build();
-
-
     }
 
-    public DataTable getParametersTable() throws Throwable {
+    public DataTable getParametersTableFromTestDataAnnotation() throws Throwable {
         Method testDataMethod = getTestDataMethod().getMethod();
         String columnNamesString = testDataMethod.getAnnotation(TestData.class).columnNames();
         List<Object[]> parametersList = (List<Object[]>) testDataMethod.invoke(null);
-        return createParametersTable(columnNamesString, convertToList(parametersList));
+
+        return createParametersTableFrom(columnNamesString, convert(parametersList, toListOfObjects()));
     }
 
-    private List<List<Object>> convertToList(List<Object[]> parametersList) {
-        List<List<Object>> convertedParamatersList = new ArrayList<List<Object>>();
-        for (Object[] parameters : parametersList) {
-            convertedParamatersList.add(Arrays.asList(parameters));
-        }
-        return convertedParamatersList;
+    private Converter<Object[], List<Object>> toListOfObjects() {
+        return new Converter<Object[], List<Object>>() {
+
+            public List<Object> convert(Object[] parameters) {
+                return Arrays.asList(parameters);
+            }
+        };
     }
 
-    private DataTable createParametersTable(String columnNamesString, List<List<Object>> parametersList) {
+    private DataTable createParametersTableFrom(String columnNamesString, List<List<Object>> parametersList) {
         int numberOfColumns =  parametersList.isEmpty() ? 0 : parametersList.get(0).size();
         List<String> columnNames = split(columnNamesString, numberOfColumns);
         return DataTable.withHeaders(columnNames)
                                     .andRows(parametersList)
                                     .build();
     }
+
 
     private List<String> split(String columnNamesString, int numberOfColumns) {
         String[] columnNames = new String[numberOfColumns];

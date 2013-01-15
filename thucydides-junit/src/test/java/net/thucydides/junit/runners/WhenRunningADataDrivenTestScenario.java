@@ -150,7 +150,7 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
     @Test
-    public void xml_report_names_should_reflect_the_test_scenario() throws Throwable  {
+    public void xml_report_names_should_reflect_the_test_scenarios() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
         environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
@@ -166,7 +166,7 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
     @Test
-    public void xml_report_names_should_reflect_the_test_data_from_the_csv_file() throws Throwable  {
+    public void xml_report_names_should_reflect_the_test_scenarios_when_data_is_read_from_csv_file() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
         environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
@@ -177,8 +177,8 @@ public class WhenRunningADataDrivenTestScenario {
         runner.run(new RunNotifier());
 
         List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
-        assertThat(reportFilenames, hasItem(digest("sample_c_s_v_data_driven_scenario_data_driven_test[0]_joe_smith.xml")));
-        assertThat(reportFilenames, hasItem(digest("sample_c_s_v_data_driven_scenario_data_driven_test[1]_jack_black.xml")));
+        assertThat(reportFilenames, hasItem(digest("sample_c_s_v_data_driven_scenario_data_driven_test.xml")));
+        assertThat(reportFilenames, hasItem(digest("sample_c_s_v_data_driven_scenario_another_data_driven_test.xml")));
     }
 
     @Test

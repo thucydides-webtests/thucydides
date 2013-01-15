@@ -59,7 +59,7 @@ public class WhenFindingTestDataInADataDrivenTest {
     @Test
     public void the_parameterized_data_method_returns_the_set_of_test_data() throws Throwable {
         TestClass testClass = new TestClass(DataDrivenTestScenario.class);
-        DataTable testDataTable = DataDrivenAnnotations.forClass(testClass).getParametersTable();
+        DataTable testDataTable = DataDrivenAnnotations.forClass(testClass).getParametersTableFromTestDataAnnotation();
 
         assertThat(testDataTable.getRows().size(), is(3));
 
@@ -68,7 +68,7 @@ public class WhenFindingTestDataInADataDrivenTest {
     @Test
     public void testData_without_parameter_names_defines_default_parameter_names() throws Throwable {
         TestClass testClass = new TestClass(DataDrivenTestScenario.class);
-        DataTable testDataTable = DataDrivenAnnotations.forClass(testClass).getParametersTable();
+        DataTable testDataTable = DataDrivenAnnotations.forClass(testClass).getParametersTableFromTestDataAnnotation();
         List<String> parameterNames = testDataTable.getHeaders();
 
         assertThat(parameterNames.size(), is(2));
@@ -82,7 +82,7 @@ public class WhenFindingTestDataInADataDrivenTest {
     @Test
     public void testData_with_parameter_names_uses_defined_parameter_names() throws Throwable {
         TestClass testClass = new TestClass(DataDrivenTestScenarioWithParamNames.class);
-        DataTable testDataTable = DataDrivenAnnotations.forClass(testClass).getParametersTable();
+        DataTable testDataTable = DataDrivenAnnotations.forClass(testClass).getParametersTableFromTestDataAnnotation();
         List<String> parameterNames = testDataTable.getHeaders();
 
         assertThat(parameterNames.size(), is(2));
