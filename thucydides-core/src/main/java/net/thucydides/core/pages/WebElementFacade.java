@@ -3,8 +3,13 @@ package net.thucydides.core.pages;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.jquery.JQueryEnabledPage;
 import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.SystemEnvironmentVariables;
+import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -16,6 +21,7 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.internal.seleniumemulation.Click;
 import org.openqa.selenium.remote.server.handler.BySelector;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -49,6 +55,7 @@ public class WebElementFacade {
     private final Clock webdriverClock;
     private JavascriptExecutorFacade javascriptExecutorFacade;
     private InternalSystemClock clock = new InternalSystemClock();
+    private final EnvironmentVariables environmentVariables;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebElementFacade.class);
 
@@ -61,6 +68,7 @@ public class WebElementFacade {
         this.webdriverClock = new SystemClock();
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
         this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
+        this.environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
 
     }
 
@@ -78,6 +86,7 @@ public class WebElementFacade {
     }
 
     public WebElementFacade findBy(String xpathOrCssSelector) {
+        logIfVerbose("findBy " + xpathOrCssSelector);
         WebElement nestedElement = null;
         if (PageObject.isXPath(xpathOrCssSelector)) {
             nestedElement = webElement.findElement((By.xpath(xpathOrCssSelector)));
@@ -88,6 +97,7 @@ public class WebElementFacade {
     }
 
     public List<WebElementFacade> thenFindAll(String xpathOrCssSelector) {
+        logIfVerbose("findAll " + xpathOrCssSelector);
         List<WebElement> nestedElements = Lists.newArrayList();
         if (PageObject.isXPath(xpathOrCssSelector)) {
             nestedElements = webElement.findElements((By.xpath(xpathOrCssSelector)));
@@ -107,6 +117,7 @@ public class WebElementFacade {
     }
 
     public WebElementFacade findBy(By selector) {
+        logIfVerbose("findBy " + selector);
         WebElement nestedElement = webElement.findElement(selector);
         return new WebElementFacade(driver, nestedElement, timeoutInMilliseconds);
     }
@@ -116,6 +127,7 @@ public class WebElementFacade {
     }
 
     public List<WebElementFacade> thenFindAll(By selector) {
+        logIfVerbose("findAll " + selector);
         List<WebElement> nestedElements = driver.findElements(selector);
         return webElementFacadesFrom(nestedElements);
     }
@@ -319,6 +331,7 @@ public class WebElementFacade {
      * @param value
      */
     public WebElementFacade type(final String value) {
+        logIfVerbose("Type '" + value + "'");
         enableHighlightingIfRequired();
         waitUntilElementAvailable();
         clear();
@@ -333,6 +346,7 @@ public class WebElementFacade {
      * @param value
      */
     public WebElementFacade typeAndEnter(final String value) {
+        logIfVerbose("Type and enter '" + value + "'");
         waitUntilElementAvailable();
         clear();
         webElement.sendKeys(value, Keys.ENTER);
@@ -347,6 +361,7 @@ public class WebElementFacade {
      * @param value
      */
     public WebElementFacade typeAndTab(final String value) {
+        logIfVerbose("Type and tab '" + value + "'");
         enableHighlightingIfRequired();
         waitUntilElementAvailable();
         clear();
@@ -364,6 +379,7 @@ public class WebElementFacade {
     }
 
     public WebElementFacade selectByVisibleText(final String label) {
+        logIfVerbose("Select label '" + label + "'");
         waitUntilElementAvailable();
         Select select = new Select(webElement);
         select.selectByVisibleText(label);
@@ -378,6 +394,7 @@ public class WebElementFacade {
     }
 
     public WebElementFacade selectByValue(String value) {
+        logIfVerbose("Select value '" + value + "'");
         enableHighlightingIfRequired();
         waitUntilElementAvailable();
         Select select = new Select(webElement);
@@ -393,6 +410,7 @@ public class WebElementFacade {
     }
 
     public WebElementFacade selectByIndex(int indexValue) {
+        logIfVerbose("Select by index '" + indexValue + "'");
         enableHighlightingIfRequired();
         waitUntilElementAvailable();
         Select select = new Select(webElement);
@@ -640,9 +658,23 @@ public class WebElementFacade {
     }
 
     private void logClick() {
-        LOGGER.info("Click on " + humanizedTabfNameFor(webElement));
+        logIfVerbose("click");
     }
 
+    private void logIfVerbose(String logMessage) {
+        if (useVerboseLogging()) {
+            LOGGER.info(humanizedTabfNameFor(webElement) + ":" + logMessage);
+        }
+    }
+
+    private boolean useVerboseLogging() {
+        return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.VERBOSE_STEPS.getPropertyName(),false);
+    }
+
+
+    private EnvironmentVariables getEnvironmentVariables() {
+        return environmentVariables;
+    }
 
     private String humanizedTabfNameFor(WebElement webElement) {
         return HtmlTag.from(webElement).inHumanReadableForm();

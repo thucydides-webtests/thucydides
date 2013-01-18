@@ -90,6 +90,11 @@ public enum ThucydidesSystemProperty {
     VERBOSE_SCREENSHOTS("thucydides.verbose.screenshots"),
 
     /**
+     * If set to true, WebElementFacade events and other step actions will be logged to the console.
+     */
+    VERBOSE_STEPS("thucydides.verbose.steps"),
+
+    /**
      *  Fine-grained control over when screenshots are to be taken.
      *  This property accepts the following values:
      *  <ul>
