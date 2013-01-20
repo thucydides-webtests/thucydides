@@ -88,6 +88,29 @@ public class WhenReadingAnXMLReport {
     }
 
     @Test
+    public void should_unescape_newline_in_the_title_and_qualifier_of_a_qualified_acceptance_test_report_from_xml_file() throws Exception {
+        String storedReportXML =
+                "<acceptance-test-run title='Should do this [a qualifier with &amp;#10; a new line]' qualifier='a qualifier with &amp;#10; a new line' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
+                        + "  <issues>\n"
+                        + "    <issue>#456</issue>\n"
+                        + "    <issue>#789</issue>\n"
+                        + "    <issue>#123</issue>\n"
+                        + "  </issues>\n"
+                        + "  <test-step result='SUCCESS'>\n"
+                        + "    <description>step 1</description>\n"
+                        + "  </test-step>\n"
+                        + "</acceptance-test-run>";
+
+        File report = temporaryDirectory.newFile("saved-report.xml");
+        FileUtils.writeStringToFile(report, storedReportXML);
+
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+        assertThat(testOutcome.get().getQualifier().get(), is("a qualifier with \n a new line"));
+        assertThat(testOutcome.get().getTitle(), containsString("[a qualifier with \n a new line]"));
+    }
+
+    @Test
     public void should_load_tags_from_xml_file() throws Exception {
         String storedReportXML =
         "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
