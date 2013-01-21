@@ -205,9 +205,11 @@ public class ThucydidesParameterizedRunner extends Suite {
             String normalizedMethodName = normalizeMethodName(testOutcome.getMethodName());
             if (scenarioOutcomes.containsKey(normalizedMethodName)) {
                 List<TestStep> testSteps = testOutcome.getTestSteps();
-                TestStep nextStep = testSteps.get(0);
-                nextStep.setDescription(normalizeTestStepDescription(nextStep.getDescription(), scenarioOutcomes.get(normalizedMethodName).getTestSteps().size() + 1));
-                scenarioOutcomes.get(normalizedMethodName).recordStep(nextStep);
+                if (! testSteps.isEmpty()) {
+                    TestStep nextStep = testSteps.get(0);
+                    nextStep.setDescription(normalizeTestStepDescription(nextStep.getDescription(), scenarioOutcomes.get(normalizedMethodName).getTestSteps().size() + 1));
+                    scenarioOutcomes.get(normalizedMethodName).recordStep(nextStep);
+                }
 
                 scenarioOutcomes.get(normalizedMethodName).getDataTable().addRows(testOutcome.getDataTable().getRows());
 

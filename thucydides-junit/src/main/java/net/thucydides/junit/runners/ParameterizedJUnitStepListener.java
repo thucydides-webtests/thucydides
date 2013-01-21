@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.StepEventBus;
@@ -26,12 +27,22 @@ public class ParameterizedJUnitStepListener extends JUnitStepListener {
     public void testStarted(final Description description) {
         if (testingThisDataSet(description)) {
             super.testStarted(description);
-            StepEventBus.getEventBus().useExamplesFrom(dataTable());
-            StepEventBus.getEventBus().exampleStarted(parametersTable.row(parameterSetNumber).toStringMap());
+            StepEventBus.getEventBus().useExamplesFrom(dataTableRow());
+            if (!isIgnored(description) && !isPending(description))
+                StepEventBus.getEventBus().exampleStarted(parametersTable.row(parameterSetNumber).toStringMap());
         }
     }
 
-    private DataTable dataTable() {
+    private boolean isPending(Description description) {
+        return  TestAnnotations.forClass(description.getTestClass()).isPending(description.getMethodName());
+    }
+
+    private boolean isIgnored(Description description) {
+        return  TestAnnotations.forClass(description.getTestClass()).isIgnored(description.getMethodName());
+    }
+
+
+    private DataTable dataTableRow() {
         return DataTable.withHeaders(parametersTable.getHeaders()).andCopyRowDataFrom(parametersTable.getRows().get(parameterSetNumber)).build();
     }
 

@@ -90,9 +90,14 @@ public class WhenRunningADataDrivenTestScenario {
         for (TestOutcome to : executedScenarios) {
             System.out.println("############ " + to.getMethodName());
             System.out.println("$$$$$$$$$$$$$$ " + to.getResult());
-            for(DataTableRow row : to.getDataTable().getRows()) {
+            /*for(DataTableRow row : to.getDataTable().getRows()) {
                 System.out.println("@@@@@@@@@@@@@@ " + row.getValues() + " ---> " + row.getResult());
+            } */
+
+            for(TestStep ts : to.getTestSteps()){
+                System.out.println("@@@@@@@@@@@@@ " + ts.getDescription() + " ----> " + ts.getResult());
             }
+
         }
 
 
