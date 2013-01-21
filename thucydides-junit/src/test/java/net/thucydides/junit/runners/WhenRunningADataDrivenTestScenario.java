@@ -4,7 +4,6 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.model.DataTableRow;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
@@ -19,6 +18,8 @@ import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.samples.SampleCSVDataDrivenScenario;
+import net.thucydides.samples.SampleDataDrivenIgnoredScenario;
+import net.thucydides.samples.SampleDataDrivenPendingScenario;
 import net.thucydides.samples.SampleDataDrivenScenario;
 import net.thucydides.samples.SampleParallelDataDrivenScenario;
 import net.thucydides.samples.SamplePassingScenarioWithTestSpecificData;
@@ -80,46 +81,65 @@ public class WhenRunningADataDrivenTestScenario {
     @Test
     public void a_data_driven_test_driver_should_run_one_test_per_row_of_data() throws Throwable  {
 
-        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
+        ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenScenario.class);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomesForAllParameterSets();
-
         assertThat(executedScenarios.size(), is(20));
-
-        for (TestOutcome to : executedScenarios) {
-            System.out.println("############ " + to.getMethodName());
-            System.out.println("$$$$$$$$$$$$$$ " + to.getResult());
-            /*for(DataTableRow row : to.getDataTable().getRows()) {
-                System.out.println("@@@@@@@@@@@@@@ " + row.getValues() + " ---> " + row.getResult());
-            } */
-
-            for(TestStep ts : to.getTestSteps()){
-                System.out.println("@@@@@@@@@@@@@ " + ts.getDescription() + " ----> " + ts.getResult());
-            }
-
-        }
-
-
     }
 
     @Test
     public void a_data_driven_test_driver_should_aggregate_test_outcomes() throws Throwable  {
 
-        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
+        ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenScenario.class);
         runner.run(new RunNotifier());
 
         List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
-
         assertThat(aggregatedScenarios.size(), is(2));
+    }
 
-        for (TestOutcome to : aggregatedScenarios) {
-            System.out.println("############ " + to.getMethodName());
-            System.out.println("$$$$$$$$$$$$$$ " + to.getResult());
-            for(DataTableRow row : to.getDataTable().getRows()) {
-                System.out.println("@@@@@@@@@@@@@@ " + row.getValues() + " ---> " + row.getResult());
-            }
-        }
+    @Test
+    public void an_ignored_data_driven_test_should_have_result_status_as_ignored() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenIgnoredScenario.class);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
+        assertThat(aggregatedScenarios.size(), is(1));
+        assertThat(aggregatedScenarios.get(0).getResult(), is(TestResult.IGNORED));
+    }
+
+    @Test
+    public void an_ignored_data_driven_test_should_have_zero_test_steps() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenIgnoredScenario.class);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
+        assertThat(aggregatedScenarios.size(), is(1));
+        assertThat(aggregatedScenarios.get(0).getTestSteps().size(), is(0));
+    }
+
+    @Test
+    public void a_pending_data_driven_test_should_have_result_status_as_pending() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenPendingScenario.class);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
+        assertThat(aggregatedScenarios.size(), is(1));
+        assertThat(aggregatedScenarios.get(0).getResult(), is(TestResult.PENDING));
+    }
+
+    @Test
+    public void a_pending_data_driven_test_should_have_zero_test_steps() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenPendingScenario.class);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
+        assertThat(aggregatedScenarios.size(), is(1));
+        assertThat(aggregatedScenarios.get(0).getTestSteps().size(), is(0));
     }
 
     @Test
@@ -659,4 +679,16 @@ public class WhenRunningADataDrivenTestScenario {
         WebDriverFactory factory = new WebDriverFactory(environmentVariables);
         return new ThucydidesParameterizedRunner(testClass, configuration, factory);
     }
+
+    protected ThucydidesParameterizedRunner getStubbedTestRunnerUsing(Class<?> testClass) throws Throwable {
+        Configuration configuration = new SystemPropertiesConfiguration(environmentVariables);
+        WebDriverFactory factory = new WebDriverFactory(environmentVariables);
+        return new ThucydidesParameterizedRunner(testClass, configuration, factory) {
+            @Override
+            public void generateReports() {
+                //do nothing
+            }
+        };
+    }
+
 }

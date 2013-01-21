@@ -56,7 +56,7 @@ public class ThucydidesParameterizedRunner extends Suite {
             buildTestRunnersFromADataSourceUsing(webDriverFactory);
         }
     }
-    
+
     private void scheduleParallelTestRunsFor(final Class<?> klass) {
         setScheduler(new ParameterizedRunnerScheduler(klass, getThreadCountFor(klass)));
     }
@@ -163,7 +163,7 @@ public class ThucydidesParameterizedRunner extends Suite {
         }
     }
 
-    private void generateReports() {
+    public void generateReports() {
         generateReportsFor(aggregateTestOutcomesByTestMethods());
     }
 
@@ -193,7 +193,13 @@ public class ThucydidesParameterizedRunner extends Suite {
 
 
     public List<TestOutcome> aggregateTestOutcomesByTestMethods() {
+        List<TestOutcome> aggregatedScenarioOutcomes = new ArrayList<TestOutcome>();
         List<TestOutcome> allOutcomes = getTestOutcomesForAllParameterSets();
+
+        if (allOutcomes.isEmpty()) {
+            return aggregatedScenarioOutcomes;
+        }
+
         Map<String, TestOutcome> scenarioOutcomes = new HashMap<String,TestOutcome>();
 
         TestOutcome firstParameterizedOutcome = allOutcomes.remove(0);
@@ -218,7 +224,6 @@ public class ThucydidesParameterizedRunner extends Suite {
                  scenarioOutcomes.put(scenarioOutcome.getMethodName(), scenarioOutcome);
             }
         }
-        List<TestOutcome> aggregatedScenarioOutcomes = new ArrayList<TestOutcome>();
         aggregatedScenarioOutcomes.addAll(scenarioOutcomes.values());
         return aggregatedScenarioOutcomes;
     }
