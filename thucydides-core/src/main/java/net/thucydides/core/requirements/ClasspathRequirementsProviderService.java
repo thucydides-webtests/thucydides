@@ -16,6 +16,8 @@ import java.util.ServiceLoader;
  * Custom requirements providers can be placed on the classpath along with a file in the META-INF.services
  * directory called net.thucydides.core.statistics.service.TagProvider.old that lists the fully qualified class
  * name for the class.
+ *
+ * The
  */
 public class ClasspathRequirementsProviderService implements RequirementsProviderService {
     private final Logger logger = LoggerFactory.getLogger(ClasspathRequirementsProviderService.class);
@@ -38,6 +40,13 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
                 requirementsTagProviders.add((RequirementsTagProvider)tagProvider);
             }
         }
+        if ((requirementsTagProviders.size() > 1) && (lastProviderIsDefault(requirementsTagProviders))) {
+            requirementsTagProviders.remove(requirementsTagProviders.size() - 1);
+        }
         return requirementsTagProviders;
+    }
+
+    private boolean lastProviderIsDefault(List<RequirementsTagProvider> requirementsTagProviders) {
+        return (requirementsTagProviders.get(requirementsTagProviders.size() - 1) instanceof FileSystemRequirementsTagProvider);
     }
 }

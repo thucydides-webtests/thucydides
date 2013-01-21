@@ -45,7 +45,6 @@ public class SystemVariableBasedBatchManager implements BatchManager {
         return batchCountValue;
     }
 
-    @Override
     public int getCurrentTestCaseNumber() {
         return testCaseCount.get();
     }
@@ -66,7 +65,6 @@ public class SystemVariableBasedBatchManager implements BatchManager {
         }
     }
 
-    @Override
     public boolean shouldExecuteThisTest() {
         if (batchCount > 0) {
             return (testCaseCount.get() % batchCount == (batchNumber % batchCount));

@@ -11,18 +11,18 @@ import java.lang.reflect.Field;
 
 /**
  * The Pages object keeps track of the Page Objects used during the tests.
- * 
+ *
  * @author johnsmart
- * 
+ *
  */
 public class PagesAnnotatedField {
 
-    private static final String NO_ANNOTATED_FIELD_ERROR 
+    private static final String NO_ANNOTATED_FIELD_ERROR
     = "No Pages field annotated with @ManagedPages was found in the test case.";
 
     private Field field;
     private ManagedPages annotation;
-    
+
     /**
      * Find the first field in the class annotated with the <b>Managed</b> annotation.
      */
@@ -62,12 +62,12 @@ public class PagesAnnotatedField {
         return (fieldIsAnnotatedCorrectly(field) && fieldIsRightType(field));
     }
 
-    private static boolean fieldIsRightType(final Field field) {
-        return (field.getType().isAssignableFrom(Pages.class));
+    static boolean fieldIsRightType(final Field field) {
+        return (Pages.class.isAssignableFrom(field.getType()));
     }
 
     private static boolean fieldIsAnnotatedCorrectly(final Field field) {
-        
+
         boolean pagesAnnotationFound = false;
         for (Annotation annotation : field.getAnnotations()) {
             if (annotation instanceof ManagedPages) {

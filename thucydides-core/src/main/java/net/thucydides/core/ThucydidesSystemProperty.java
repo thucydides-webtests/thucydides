@@ -90,6 +90,11 @@ public enum ThucydidesSystemProperty {
     VERBOSE_SCREENSHOTS("thucydides.verbose.screenshots"),
 
     /**
+     * If set to true, WebElementFacade events and other step actions will be logged to the console.
+     */
+    VERBOSE_STEPS("thucydides.verbose.steps"),
+
+    /**
      *  Fine-grained control over when screenshots are to be taken.
      *  This property accepts the following values:
      *  <ul>
@@ -136,10 +141,15 @@ public enum ThucydidesSystemProperty {
 
     /**
      * The estimated number of steps in a pending scenario.
-     * The estimated number of steps in a pending sceario.
      * This is used for stories where no scenarios have been defined.
      */
     ESTIMATED_AVERAGE_STEP_COUNT("thucydides.estimated.average.step.count"),
+
+    /**
+     * The estimated number of tests in a typical story.
+     * Used to estimate functional coverage in the requirements reports.
+     */
+    ESTIMATED_TESTS_PER_REQUIREMENT("thucydides.estimated.tests.per.requirement"),
 
     /**
      *  Base URL for the issue tracking system to be referred to in the reports.

@@ -1,8 +1,10 @@
 package net.thucydides.core.steps;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.inject.internal.util.$ImmutableList;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.thucydides.core.guice.Injectors;
@@ -116,9 +118,15 @@ public class StepFactory {
 
     private <T> void injectOtherDependenciesInto(T steps) {
         List<DependencyInjector> dependencyInjectors = dependencyInjectorService.findDependencyInjectors();
+        dependencyInjectors.addAll(getDefaultDependencyInjectors());
+
         for(DependencyInjector dependencyInjector : dependencyInjectors) {
             dependencyInjector.injectDependenciesInto(steps);
         }
+    }
+
+    private List<DependencyInjector> getDefaultDependencyInjectors() {
+        return ImmutableList.of((DependencyInjector)new PageObjectDependencyInjector(pages));
     }
 
     private <T> T instantiateUniqueStepLibraryFor(Class<T> scenarioStepsClass) {

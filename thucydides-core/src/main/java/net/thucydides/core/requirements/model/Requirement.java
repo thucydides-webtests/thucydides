@@ -2,6 +2,7 @@ package net.thucydides.core.requirements.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import net.thucydides.core.model.TestTag;
 
 import java.util.Collections;
 import java.util.List;
@@ -86,7 +87,6 @@ public class Requirement implements Comparable {
         return cardNumber;
     }
 
-    @Override
     public int compareTo(Object otherRequirement) {
         return name.compareTo(((Requirement) otherRequirement).getName());
     }
@@ -111,6 +111,19 @@ public class Requirement implements Comparable {
 
     public boolean hasChildren() {
         return (children != null) && (!children.isEmpty());
+    }
+
+    public List<Requirement> getNestedChildren() {
+        List<Requirement> nestedChildren = Lists.newArrayList();
+        for(Requirement child : children) {
+            nestedChildren.add(child);
+            nestedChildren.addAll(child.getNestedChildren());
+        }
+        return ImmutableList.copyOf(nestedChildren);
+    }
+
+    public TestTag asTag() {
+        return TestTag.withName(getName()).andType(getType());
     }
 
     public static class RequirementBuilderNameStep {

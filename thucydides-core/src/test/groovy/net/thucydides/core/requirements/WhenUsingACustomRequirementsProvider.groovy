@@ -11,15 +11,30 @@ class WhenUsingACustomRequirementsProvider extends Specification {
     def "Should be able to find a requirements provider on the classpath"() {
         when: "We have a custom requirements provider and a corresponding services file in the META-INF/services directory"
             List<RequirementsTagProvider> requirementsProviders = requirementsProviderService.getRequirementsProviders();
-        then: "We can obtain the custom requirements provider"
-            requirementsProviders.find{ it.class.simpleName == "CustomRequirementsTagProvider"}
+        then: "We can obtain a custom requirements provider if it is present"
+            requirementsProviders.collect { it.class.simpleName } == ["FileSystemRequirementsTagProvider"]
     }
 
-    def "Should be able to find the default file system requirements provider on the classpath"() {
+    def "Should return the default file system requirements provider on the classpath if no others are present"() {
+        given:
+            def tagProviderService = Mock(ClasspathTagProviderService)
+            def requirementsProviderService = new ClasspathRequirementsProviderService(tagProviderService)
+            tagProviderService.getTagProviders() >> [ new FileSystemRequirementsTagProvider()]
         when: "We get the list of default requirements providers"
             List<RequirementsTagProvider> requirementsProviders = requirementsProviderService.getRequirementsProviders();
         then: "We obtain the default requirements provider"
-            requirementsProviders.find{ it.class.simpleName == "FileSystemRequirementsTagProvider"}
+            requirementsProviders.collect { it.class.simpleName } == ["FileSystemRequirementsTagProvider"]
+    }
+
+    def "Should not return the default file system requirements provider on the classpath if others are defined"() {
+        given:
+            def tagProviderService = Mock(ClasspathTagProviderService)
+            def requirementsProviderService = new ClasspathRequirementsProviderService(tagProviderService)
+            tagProviderService.getTagProviders() >> [ new CustomRequirementsTagProvider(), new FileSystemRequirementsTagProvider()]
+        when: "We get the list of default requirements providers"
+            List<RequirementsTagProvider> requirementsProviders = requirementsProviderService.getRequirementsProviders();
+        then: "We obtain the default requirements provider"
+            requirementsProviders.collect { it.class.simpleName } == ["CustomRequirementsTagProvider"]
     }
 
 }
