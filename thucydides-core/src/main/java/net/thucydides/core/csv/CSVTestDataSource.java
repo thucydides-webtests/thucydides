@@ -1,7 +1,9 @@
 package net.thucydides.core.csv;
 
 import au.com.bytecode.opencsv.CSVReader;
+import ch.lambdaj.function.convert.Converter;
 import net.thucydides.core.steps.StepFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,11 +15,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static ch.lambdaj.Lambda.convert;
 
 /**
  * Test data from a CSV file.
@@ -34,7 +37,13 @@ public class CSVTestDataSource implements TestDataSource {
         this.separator = separatorValue;
         List<String[]> csvDataRows = getCSVDataFrom(getDataFileFor(path));
         String[] titleRow = csvDataRows.get(0);
-        this.headers = Arrays.asList(titleRow);
+
+        this.headers = convert(titleRow, new Converter<String, String>() {
+            @Override
+            public String convert(String str) {
+                return StringUtils.strip(str);
+            }
+        });
 
         testData = loadTestDataFrom(csvDataRows);
 

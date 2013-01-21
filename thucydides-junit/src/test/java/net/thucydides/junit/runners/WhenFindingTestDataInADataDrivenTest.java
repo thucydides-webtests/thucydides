@@ -99,6 +99,19 @@ public class WhenFindingTestDataInADataDrivenTest {
     }
 
     @Test
+    public void should_be_able_to_get_data_Table_from_csv() throws Throwable {
+        TestClass testClass = new TestClass(CSVDataDrivenTestScenario.class);
+        DataTable testDataTable = DataDrivenAnnotations.forClass(testClass).getParametersTableFromTestDataSource();
+
+        List<String> parameterNames = testDataTable.getHeaders();
+
+        assertThat(parameterNames.size(), is(3));
+        assertThat(parameterNames.get(0), is("NAME"));
+        assertThat(parameterNames.get(1), is("AGE"));
+        assertThat(parameterNames.get(2), is("ADDRESS"));
+    }
+
+    @Test
     public void should_be_able_to_count_the_number_of_data_entries_using_a_class_directory() throws Throwable {
         int dataEntries = DataDrivenAnnotations.forClass(CSVDataDrivenTestScenario.class).countDataEntries();
 
@@ -304,6 +317,21 @@ public class WhenFindingTestDataInADataDrivenTest {
         assertThat(testScenarios.get(1).getName(), is("Jack Black"));
         assertThat(testScenarios.get(1).getAddress(), is("1 Main Street, Smithville"));
     }
+
+    @Test
+    public void should_be_able_to_get_data_Table_from_a_semicolon_delimited_csv() throws Throwable {
+        TestClass testClass = new TestClass(CSVDataDrivenTestScenarioUsingSemiColons.class);
+        DataTable testDataTable = DataDrivenAnnotations.forClass(testClass).getParametersTableFromTestDataSource();
+
+        List<String> parameterNames = testDataTable.getHeaders();
+
+        assertThat(parameterNames.size(), is(3));
+        assertThat(parameterNames.get(0), is("NAME"));
+        assertThat(parameterNames.get(1), is("AGE"));
+        assertThat(parameterNames.get(2), is("ADDRESS"));
+    }
+
+
 
     @UseTestDataFrom(value="$DATADIR/simple-semicolon-data.csv", separator=';')
     final static class CSVDataDrivenTestScenarioFromSpecifiedDataDirectory {}
