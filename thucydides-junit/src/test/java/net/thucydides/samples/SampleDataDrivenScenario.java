@@ -6,6 +6,7 @@ import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.runners.ThucydidesParameterizedRunner;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -51,12 +52,14 @@ public class SampleDataDrivenScenario {
         
     @Test
     public void happy_day_scenario() {
-        steps.stepWithParameters(option1,option2);
+        steps.stepWithParameters(option1, option2);
     }
 
     @Test
+    @Ignore
     public void not_so_happy_day_scenario() {
-        steps.stepThatFails();
+        steps.stepWithParameters(option1,option2);
     }
+
 
 }

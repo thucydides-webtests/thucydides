@@ -94,6 +94,8 @@ public class WhenRunningADataDrivenTestScenario {
                 System.out.println("@@@@@@@@@@@@@@ " + row.getValues() + " ---> " + row.getResult());
             }
         }
+
+
     }
 
     @Test
@@ -105,6 +107,14 @@ public class WhenRunningADataDrivenTestScenario {
         List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
 
         assertThat(aggregatedScenarios.size(), is(2));
+
+        for (TestOutcome to : aggregatedScenarios) {
+            System.out.println("############ " + to.getMethodName());
+            System.out.println("$$$$$$$$$$$$$$ " + to.getResult());
+            for(DataTableRow row : to.getDataTable().getRows()) {
+                System.out.println("@@@@@@@@@@@@@@ " + row.getValues() + " ---> " + row.getResult());
+            }
+        }
     }
 
     @Test
