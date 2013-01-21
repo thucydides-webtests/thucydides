@@ -84,7 +84,7 @@ public class WhenRunningADataDrivenTestScenario {
         ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenScenario.class);
         runner.run(new RunNotifier());
 
-        List<TestOutcome> executedScenarios = runner.getTestOutcomesForAllParameterSets();
+        List<TestOutcome> executedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).getTestOutcomesForAllParameterSets();
         assertThat(executedScenarios.size(), is(20));
     }
 
@@ -94,7 +94,7 @@ public class WhenRunningADataDrivenTestScenario {
         ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenScenario.class);
         runner.run(new RunNotifier());
 
-        List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
+        List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
         assertThat(aggregatedScenarios.size(), is(2));
     }
 
@@ -104,7 +104,7 @@ public class WhenRunningADataDrivenTestScenario {
         ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenIgnoredScenario.class);
         runner.run(new RunNotifier());
 
-        List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
+        List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
         assertThat(aggregatedScenarios.size(), is(1));
         assertThat(aggregatedScenarios.get(0).getResult(), is(TestResult.IGNORED));
     }
@@ -115,7 +115,7 @@ public class WhenRunningADataDrivenTestScenario {
         ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenIgnoredScenario.class);
         runner.run(new RunNotifier());
 
-        List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
+        List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
         assertThat(aggregatedScenarios.size(), is(1));
         assertThat(aggregatedScenarios.get(0).getTestSteps().size(), is(0));
     }
@@ -126,7 +126,7 @@ public class WhenRunningADataDrivenTestScenario {
         ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenPendingScenario.class);
         runner.run(new RunNotifier());
 
-        List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
+        List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
         assertThat(aggregatedScenarios.size(), is(1));
         assertThat(aggregatedScenarios.get(0).getResult(), is(TestResult.PENDING));
     }
@@ -137,7 +137,7 @@ public class WhenRunningADataDrivenTestScenario {
         ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenPendingScenario.class);
         runner.run(new RunNotifier());
 
-        List<TestOutcome> aggregatedScenarios = runner.aggregateTestOutcomesByTestMethods();
+        List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
         assertThat(aggregatedScenarios.size(), is(1));
         assertThat(aggregatedScenarios.get(0).getTestSteps().size(), is(0));
     }
@@ -148,7 +148,7 @@ public class WhenRunningADataDrivenTestScenario {
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleCSVDataDrivenScenario.class);
         runner.run(new RunNotifier());
 
-        List<TestOutcome> executedScenarios = runner.getTestOutcomesForAllParameterSets();
+        List<TestOutcome> executedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).getTestOutcomesForAllParameterSets();
 
         assertThat(executedScenarios.size(), is(6));
     }

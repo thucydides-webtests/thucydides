@@ -28,7 +28,7 @@ public class ParameterizedJUnitStepListener extends JUnitStepListener {
         if (testingThisDataSet(description)) {
             super.testStarted(description);
             StepEventBus.getEventBus().useExamplesFrom(dataTableRow());
-            if (!isIgnored(description) && !isPending(description))
+            if (! ignoredOrPending(description))
                 StepEventBus.getEventBus().exampleStarted(parametersTable.row(parameterSetNumber).toStringMap());
         }
     }
@@ -41,6 +41,9 @@ public class ParameterizedJUnitStepListener extends JUnitStepListener {
         return  TestAnnotations.forClass(description.getTestClass()).isIgnored(description.getMethodName());
     }
 
+    private boolean ignoredOrPending(Description description) {
+        return isIgnored(description) || isPending(description);
+    }
 
     private DataTable dataTableRow() {
         return DataTable.withHeaders(parametersTable.getHeaders()).andCopyRowDataFrom(parametersTable.getRows().get(parameterSetNumber)).build();
@@ -68,9 +71,12 @@ public class ParameterizedJUnitStepListener extends JUnitStepListener {
 
     @Override
     public void testIgnored(final Description description) throws Exception {
-        if (testingThisDataSet(description)) {
+        if (testingThisDataSet(description))
+        {
             super.testIgnored(description);
-            StepEventBus.getEventBus().exampleFinished();
+            if (!ignoredOrPending(description)){
+                StepEventBus.getEventBus().exampleFinished();
+            }
         }
     }
 
