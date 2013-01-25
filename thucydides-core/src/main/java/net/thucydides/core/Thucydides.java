@@ -49,7 +49,7 @@ public class Thucydides {
 
     private static void initStepListener() {
         Configuration configuration = Injectors.getInjector().getInstance(Configuration.class);
-        File outputDirectory = configuration.loadOutputDirectoryFromSystemProperties();
+        File outputDirectory = configuration.getOutputDirectory();
         StepListener listener  = new BaseStepListener(outputDirectory, getPages());
         stepListenerThreadLocal.set(listener);
         StepEventBus.getEventBus().registerListener(getStepListener());

@@ -24,7 +24,7 @@ public class WhenObtainingTheOutputDirectory {
 
     @Test
     public void the_default_output_directory_is_in_the_default_maven_site_directory() {
-        File outputDirectory = configuration.loadOutputDirectoryFromSystemProperties();
+        File outputDirectory = configuration.getOutputDirectory();
 
         assertThat(outputDirectory.getPath(), is(changeSeparatorIfRequired("target/site/thucydides")));
     }
@@ -32,7 +32,7 @@ public class WhenObtainingTheOutputDirectory {
     @Test
     public void the_default_output_directory_can_be_overriden_if_the_maven_output_directory_is_overridden() {
         environmentVariables.setProperty("project.build.directory","build");
-        File outputDirectory = configuration.loadOutputDirectoryFromSystemProperties();
+        File outputDirectory = configuration.getOutputDirectory();
 
         assertThat(outputDirectory.getPath(), is(changeSeparatorIfRequired("build/site/thucydides")));
     }
@@ -40,7 +40,7 @@ public class WhenObtainingTheOutputDirectory {
     @Test
     public void the_default_output_directory_can_be_overriden_if_the_maven_site_output_directory_is_overridden() {
         environmentVariables.setProperty("project.reporting.OutputDirectory","custom-reports-directory");
-        File outputDirectory = configuration.loadOutputDirectoryFromSystemProperties();
+        File outputDirectory = configuration.getOutputDirectory();
 
         assertThat(outputDirectory.getPath(), is(changeSeparatorIfRequired("custom-reports-directory/thucydides")));
     }
@@ -48,7 +48,7 @@ public class WhenObtainingTheOutputDirectory {
     @Test
     public void the_default_output_directory_can_be_overriden_using_a_thucydides_system_property() {
         environmentVariables.setProperty("thucydides.outputDirectory","thucydides-reports");
-        File outputDirectory = configuration.loadOutputDirectoryFromSystemProperties();
+        File outputDirectory = configuration.getOutputDirectory();
 
         assertThat(outputDirectory.getPath(), is("thucydides-reports"));
     }
@@ -58,7 +58,7 @@ public class WhenObtainingTheOutputDirectory {
         environmentVariables.setProperty("project.build.directory","build");
         environmentVariables.setProperty("project.reporting.OutputDirectory","custom-reports-directory");
         environmentVariables.setProperty("thucydides.outputDirectory","thucydides-reports");
-        File outputDirectory = configuration.loadOutputDirectoryFromSystemProperties();
+        File outputDirectory = configuration.getOutputDirectory();
 
         assertThat(outputDirectory.getPath(), is("thucydides-reports"));
     }

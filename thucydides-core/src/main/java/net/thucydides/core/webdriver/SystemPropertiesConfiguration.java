@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TakeScreenshots;
+import net.thucydides.core.steps.FilePathParser;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -76,11 +77,14 @@ public class SystemPropertiesConfiguration implements Configuration {
 
     private String defaultBaseUrl;
 
-    private EnvironmentVariables environmentVariables;
+    private final EnvironmentVariables environmentVariables;
+
+    private final FilePathParser filePathParser;
 
     @Inject
     public SystemPropertiesConfiguration(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
+        filePathParser = new FilePathParser(environmentVariables);
     }
 
     public Configuration copy() {
@@ -95,9 +99,9 @@ public class SystemPropertiesConfiguration implements Configuration {
     }
 
     public EnvironmentVariables getEnvironmentVariables() {
-        if (environmentVariables == null) {
-            environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
-        }
+//        if (environmentVariables == null) {
+//            environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+//        }
         return environmentVariables;
     }
 
@@ -105,7 +109,7 @@ public class SystemPropertiesConfiguration implements Configuration {
      * Get the currently-configured browser type.
      */
     public SupportedWebDriver getDriverType() {
-        String driverType = getEnvironmentVariables().getProperty(WEBDRIVER_DRIVER, DEFAULT_WEBDRIVER_DRIVER);
+        String driverType = environmentVariables.getProperty(WEBDRIVER_DRIVER, DEFAULT_WEBDRIVER_DRIVER);
         return lookupSupportedDriverTypeFor(driverType);
     }
 
@@ -113,13 +117,14 @@ public class SystemPropertiesConfiguration implements Configuration {
      * Where should the reports go?
      */
     public File loadOutputDirectoryFromSystemProperties() {
-        String defaultMavenRelativeTargetDirectory = getMavenBuildDirectory();
-        String systemDefinedDirectory = getEnvironmentVariables().getProperty(OUTPUT_DIRECTORY_PROPERTY, defaultMavenRelativeTargetDirectory);
+        String systemDirectoryProperty = environmentVariables.getProperty(OUTPUT_DIRECTORY_PROPERTY, getMavenBuildDirectory());
+        String instantiatedPath = filePathParser.getInstanciatedPath(systemDirectoryProperty);
+        String systemDefinedDirectory = (instantiatedPath != null) ? instantiatedPath : DEFAULT_OUTPUT_DIRECTORY;
 
-        if (systemDefinedDirectory == null) {
-            systemDefinedDirectory = DEFAULT_OUTPUT_DIRECTORY;
-        }
-        return new File(systemDefinedDirectory);
+        File newOutputDirectory = new File(systemDefinedDirectory);
+        newOutputDirectory.mkdirs();
+        LOGGER.info("Writing reports to " + newOutputDirectory);
+        return newOutputDirectory;
     }
 
     private String getMavenBuildDirectory() {
@@ -177,9 +182,9 @@ public class SystemPropertiesConfiguration implements Configuration {
      * 
      */
     public File getOutputDirectory() {
-        outputDirectory = loadOutputDirectoryFromSystemProperties();
-        outputDirectory.mkdirs();
-        LOGGER.info("Writing reports to " + outputDirectory);
+        if (outputDirectory == null) {
+            outputDirectory = loadOutputDirectoryFromSystemProperties();
+        }
         return outputDirectory;
     }
 

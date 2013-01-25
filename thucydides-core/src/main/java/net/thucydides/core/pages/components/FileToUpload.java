@@ -40,11 +40,7 @@ public class FileToUpload {
     }
 
     public static boolean isOnTheWindowsFileSystem(final String filename) {
-        if (SystemUtils.IS_OS_WINDOWS) {
-            return new File(filename).exists();
-        } else {
-            return false;
-        }
+        return (SystemUtils.IS_OS_WINDOWS) && new File(filename).exists();
     }
 
     public static boolean isAFullWindowsPath(final String filename) {
@@ -52,11 +48,7 @@ public class FileToUpload {
     }
 
     public static boolean isOnTheUnixFileSystem(final String filename) {
-        if (SystemUtils.IS_OS_UNIX) {
-            return new File(filename).exists();
-        } else {
-            return false;
-        }
+        return (SystemUtils.IS_OS_UNIX) && new File(filename).exists();
     }
 
     private String getFileFromResourcePath(final String filename) {

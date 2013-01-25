@@ -74,6 +74,7 @@ public class TestOutcomeConverter implements Converter {
     private static final String VALUE = "value";
     public static final String NEW_LINE_CHAR = "\n";
     public static final String ESCAPE_CHAR_FOR_NEW_LINE = "&#10;";
+    private static final String DEFAULT_ERROR_MESSAGE = "Unspecified failure";
 
 
     public TestOutcomeConverter() {
@@ -274,16 +275,14 @@ public class TestOutcomeConverter implements Converter {
         if (step.isFailure()) {
             writeErrorMessageAndException(writer, step);
         }
-
     }
 
     private void writeErrorMessageAndException(final HierarchicalStreamWriter writer,
                                                final TestStep step) {
-        if ((step.getErrorMessage() != null) && (!StringUtils.isEmpty(step.getErrorMessage()))) {
-            writeErrorMessageNode(writer, step.getErrorMessage());
-            if (step.getException() != null) {
-                writeExceptionNode(writer, step.getException());
-            }
+        String errorMessage = StringUtils.isEmpty(step.getErrorMessage()) ? DEFAULT_ERROR_MESSAGE : step.getErrorMessage();
+        writeErrorMessageNode(writer, errorMessage);
+        if (step.getException() != null) {
+            writeExceptionNode(writer, step.getException());
         }
     }
 

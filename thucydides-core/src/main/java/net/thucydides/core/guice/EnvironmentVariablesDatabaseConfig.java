@@ -95,7 +95,7 @@ public class EnvironmentVariablesDatabaseConfig implements DatabaseConfig {
     }
 
     private boolean isStatisticsDisabled() {
-        return (! Boolean.valueOf(environmentVariables.getProperty(ThucydidesSystemProperty.RECORD_STATISTICS, "true")));
+        return (!Boolean.valueOf(environmentVariables.getProperty(ThucydidesSystemProperty.RECORD_STATISTICS, "true")));
     }
 
     public void disable() {
