@@ -198,6 +198,11 @@ body {
     background-color: #e5f2eb;
 }
 
+.caption
+{
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #0d78ae; padding-left: 25px; font-style: italic
+}
+
 .bluetext
 {
     font-family:euphemia, verdana, sans-serif; font-size:16px; color: #0d78ae;

@@ -499,12 +499,15 @@ public class WhenGeneratingAnXMLReport {
                         + "  </test-step>\n"
                         + "  <test-step result='FAILURE' duration='0'>\n"
                         + "    <description>step 5</description>\n"
+                        + "    <error>Unspecified failure</error>\n"
                         + "  </test-step>\n"
                         + "  <test-step result='FAILURE' duration='0'>\n"
                         + "    <description>step 6</description>\n"
+                        + "    <error>Unspecified failure</error>\n"
                         + "  </test-step>\n"
                         + "  <test-step result='FAILURE' duration='0'>\n"
                         + "    <description>step 7</description>\n"
+                        + "    <error>Unspecified failure</error>\n"
                         + "  </test-step>\n"
                         + "  <test-step result='SKIPPED' duration='0'>\n"
                         + "    <description>step 8</description>\n"
@@ -718,6 +721,7 @@ public class WhenGeneratingAnXMLReport {
                         + "  </test-step>\n"
                         + "  <test-step result='FAILURE' duration='0'>\n"
                         + "    <description>step 2</description>\n"
+                        + "    <error>Unspecified failure</error>"
                         + "  </test-step>\n"
                         + "</acceptance-test-run>";
 
