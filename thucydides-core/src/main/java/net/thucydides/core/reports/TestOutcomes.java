@@ -437,6 +437,19 @@ public class TestOutcomes {
         return (passingStepCount / (double) getEstimatedTotalStepCount());
     }
 
+    public Double getPercentagePassingTestCount() {
+        return (getPassingTests().getTotal() / (double) getTotal());
+    }
+
+    public Double getPercentageFailingTestCount() {
+        return (getFailingTests().getTotal() / (double) getTotal());
+    }
+
+    public Double getPercentagePendingTestCount() {
+        int notPassingOrFailing = getTotal() - getPassingTests().getTotal() - getFailingTests().getTotal();
+        return (notPassingOrFailing / (double) getTotal());
+    }
+
     public String getDecimalPercentagePassingStepCount() {
         return formatAsDecimal(getPercentagePassingStepCount());
     }
@@ -447,6 +460,18 @@ public class TestOutcomes {
 
     public String getDecimalPercentageFailingStepCount() {
         return formatAsDecimal(getPercentageFailingStepCount());
+    }
+
+    public String getDecimalPercentagePassingTestCount() {
+        return formatAsDecimal(getPercentagePassingTestCount());
+    }
+
+    public String getDecimalPercentagePendingTestCount() {
+        return formatAsDecimal(getPercentagePendingTestCount());
+    }
+
+    public String getDecimalPercentageFailingTestCount() {
+        return formatAsDecimal(getPercentageFailingTestCount());
     }
 
     DecimalFormat decimalFormat = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.US));

@@ -44,9 +44,12 @@
     <script class="code" type="text/javascript">$(document).ready(function () {
         var plot1 = $.jqplot('test_results_pie_chart', [
             [
-                ['Passing', ${testOutcomes.decimalPercentagePassingStepCount}],
-                ['Pending', ${testOutcomes.decimalPercentagePendingStepCount}],
-                ['Failing', ${testOutcomes.decimalPercentageFailingStepCount}]
+                <#--['Passing', ${testOutcomes.decimalPercentagePassingStepCount}],-->
+                <#--['Pending', ${testOutcomes.decimalPercentagePendingStepCount}],-->
+                <#--['Failing', ${testOutcomes.decimalPercentageFailingStepCount}]-->
+                ['Passing', ${testOutcomes.decimalPercentagePassingTestCount}],
+                ['Pending', ${testOutcomes.decimalPercentagePendingTestCount}],
+                ['Failing', ${testOutcomes.decimalPercentageFailingTestCount}]
             ]
         ], {
             gridPadding:{top:0, bottom:38, left:0, right:0},
@@ -165,7 +168,7 @@
                                     <#else>failed</#if>
                                 </span>
                             </div>
-                            <h3>Coverage</h3>
+                            <h3>Test Results</h3>
                             <div id="pie_chart">
                                 <div id="test_results_pie_chart"  style="margin-top:20px; margin-left:20px; width:375px; height:375px;"></div>
                             </div>
