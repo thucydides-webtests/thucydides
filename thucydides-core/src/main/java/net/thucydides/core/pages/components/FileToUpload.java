@@ -1,6 +1,7 @@
 package net.thucydides.core.pages.components;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.WebElement;
 
 import java.io.File;
@@ -26,10 +27,10 @@ public class FileToUpload {
 
 
     private boolean isOnTheClasspath(final String filename) {
-        if (filename.startsWith("/") && !isAFullWindowsPath(filename)) {
-            return (resourceOnClasspath(filename) != null);
-        } else {
+        if (isOnTheUnixFileSystem(filename) || isOnTheWindowsFileSystem(filename)) {
             return false;
+        } else {
+            return (resourceOnClasspath(filename) != null);
         }
     }
 
@@ -38,8 +39,24 @@ public class FileToUpload {
         return cldr.getResource(filename);
     }
 
+    public static boolean isOnTheWindowsFileSystem(final String filename) {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            return new File(filename).exists();
+        } else {
+            return false;
+        }
+    }
+
     public static boolean isAFullWindowsPath(final String filename) {
         return fullWindowsPath.matcher(filename).find();
+    }
+
+    public static boolean isOnTheUnixFileSystem(final String filename) {
+        if (SystemUtils.IS_OS_UNIX) {
+            return new File(filename).exists();
+        } else {
+            return false;
+        }
     }
 
     private String getFileFromResourcePath(final String filename) {
