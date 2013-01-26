@@ -280,6 +280,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     protected JUnitStepListener initListeners() {
 
         return JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
+                                                                       .and().withTestClass(getTestClass().getJavaClass())
                                                                        .and().build();
     }
 
