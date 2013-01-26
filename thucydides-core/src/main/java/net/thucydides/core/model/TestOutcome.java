@@ -275,7 +275,7 @@ public class TestOutcome {
                     this.storedTitle,
                     methodName,
                     this.testCase,
-                    this.testSteps,
+                    this.getTestSteps(),
                     this.issues,
                     this.additionalIssues,
                     this.tags,
@@ -810,7 +810,7 @@ public class TestOutcome {
     }
 
     public void moveToNextRow() {
-        if (!dataTable.atLastRow()) {
+        if (dataTable != null && !dataTable.atLastRow()) {
             dataTable.nextRow();
         }
     }

@@ -13,13 +13,16 @@ public class ParameterizedJUnitStepListener extends JUnitStepListener {
 
     final int parameterSetNumber;
     private final DataTable parametersTable;
+    private final Class<?> testClass;
 
 
     public ParameterizedJUnitStepListener(final int parameterSetNumber, final DataTable parametersTable,
-                                          BaseStepListener baseStepListener, StepListener... listeners) {
-        super(baseStepListener, listeners);
+                                          final Class<?> testClass, BaseStepListener baseStepListener,
+                                          StepListener... listeners) {
+        super(testClass, baseStepListener, listeners);
         this.parameterSetNumber = parameterSetNumber;
         this.parametersTable = parametersTable;
+        this.testClass = testClass;
 
     }
 
@@ -50,7 +53,8 @@ public class ParameterizedJUnitStepListener extends JUnitStepListener {
     }
 
     private boolean testingThisDataSet(Description description) {
-        return (description.getMethodName().endsWith("[" + parameterSetNumber + "]"));
+        return ((description.getTestClass().equals(testClass)) &&
+                (description.getMethodName().endsWith("[" + parameterSetNumber + "]")));
     }
 
     @Override

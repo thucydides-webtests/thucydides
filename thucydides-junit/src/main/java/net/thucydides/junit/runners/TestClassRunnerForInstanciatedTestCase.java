@@ -33,6 +33,7 @@ class TestClassRunnerForInstanciatedTestCase extends ThucydidesRunner {
                 .and().withPageFactory(pageFactory)
                 .and().withParameterSetNumber(parameterSetNumber)
                 .and().withParametersTable(parametersTable)
+                .and().withTestClass(getTestClass().getJavaClass())
                 .and().build());
         return getStepListener();
     }

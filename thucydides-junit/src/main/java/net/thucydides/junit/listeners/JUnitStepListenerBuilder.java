@@ -16,6 +16,7 @@ public class JUnitStepListenerBuilder {
     private final Pages pageFactory;
     private final int parameterSetNumber;
     private final DataTable parametersTable;
+    private final Class<?> testClass;
 
     public JUnitStepListenerBuilder(File outputDirectory) {
         this(outputDirectory, null, -1, null);
@@ -36,10 +37,19 @@ public class JUnitStepListenerBuilder {
                                     Pages pageFactory,
                                     int parameterSetNumber,
                                     DataTable parametersTable) {
+        this(outputDirectory, pageFactory, parameterSetNumber, parametersTable, null);
+    }
+
+    public JUnitStepListenerBuilder(File outputDirectory,
+                                    Pages pageFactory,
+                                    int parameterSetNumber,
+                                    DataTable parametersTable,
+                                    Class<?> testClass) {
         this.outputDirectory = outputDirectory;
         this.pageFactory = pageFactory;
         this.parameterSetNumber = parameterSetNumber;
         this.parametersTable = parametersTable;
+        this.testClass = testClass;
     }
 
     public JUnitStepListenerBuilder and() {
@@ -58,6 +68,9 @@ public class JUnitStepListenerBuilder {
         return new JUnitStepListenerBuilder(outputDirectory, pageFactory, parameterSetNumber, parametersTable);
     }
 
+    public JUnitStepListenerBuilder withTestClass(Class<?> testClass) {
+        return new JUnitStepListenerBuilder(outputDirectory, pageFactory, parameterSetNumber, parametersTable, testClass);
+    }
 
     public JUnitStepListener build() {
         if (parameterSetNumber >= 0) {
@@ -81,6 +94,7 @@ public class JUnitStepListenerBuilder {
     private JUnitStepListener newParameterizedJUnitStepListener() {
         return new ParameterizedJUnitStepListener(parameterSetNumber,
                 parametersTable,
+                testClass,
                 buildBaseStepListener(),
                 Listeners.getLoggingListener(),
                 newTestCountListener(),
@@ -92,7 +106,8 @@ public class JUnitStepListenerBuilder {
     }
 
     private JUnitStepListener newStandardJunitStepListener() {
-        return new JUnitStepListener(buildBaseStepListener(),
+        return new JUnitStepListener(testClass,
+                buildBaseStepListener(),
                 Listeners.getLoggingListener(),
                 newTestCountListener(),
                 Listeners.getStatisticsListener());
