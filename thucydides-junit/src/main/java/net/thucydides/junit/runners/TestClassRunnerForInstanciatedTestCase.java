@@ -29,7 +29,7 @@ class TestClassRunnerForInstanciatedTestCase extends ThucydidesRunner {
 
     @Override
     protected JUnitStepListener initListenersUsing(final Pages pageFactory) {
-        setStepListener(JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
+        setStepListener(JUnitStepListener.withOutputDirectory(getConfiguration().getOutputDirectory())
                 .and().withPageFactory(pageFactory)
                 .and().withParameterSetNumber(parameterSetNumber)
                 .and().withParametersTable(parametersTable)

@@ -17,6 +17,9 @@ public class FilePathParser {
     }
 
     public String getInstanciatedPath(String path) {
+        if (path == null) {
+            return path;
+        }
         String testDataSource = operatingSystemLocalized(path);
         testDataSource = injectVariable(testDataSource, "HOME", System.getProperty("user.home"));
         testDataSource = injectVariable(testDataSource, "USERDIR", System.getProperty("user.dir"));
