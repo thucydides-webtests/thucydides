@@ -219,7 +219,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         getStepListener().dropListeners();
     }
 
-    private void generateReports() {
+    protected void generateReports() {
             generateReportsFor(getTestOutcomes());
     }
 
@@ -261,7 +261,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         notifier.addListener(listener);
     }
 
-    private void initStepEventBus() {
+    protected void initStepEventBus() {
         StepEventBus.getEventBus().clear();
     }
 
@@ -273,12 +273,13 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
         return JUnitStepListener.withOutputDirectory(getConfiguration().getOutputDirectory())
                                  .and().withPageFactory(pageFactory)
+                                 .and().withTestClass(getTestClass().getJavaClass())
                                  .and().build();
     }
 
     protected JUnitStepListener initListeners() {
-
         return JUnitStepListener.withOutputDirectory(getConfiguration().getOutputDirectory())
+                                                                       .and().withTestClass(getTestClass().getJavaClass())
                                                                        .and().build();
     }
 
@@ -337,7 +338,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private void markAsPending(FrameworkMethod method) {
-        stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
+        stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), testName(method)));
         StepEventBus.getEventBus().testPending();
         StepEventBus.getEventBus().testFinished();
     }
@@ -350,7 +351,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     private void processTestMethodAnnotationsFor(FrameworkMethod method) {
         if (isIgnored(method)) {
-            stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), method.getName()));
+            stepListener.testStarted(Description.createTestDescription(method.getMethod().getDeclaringClass(), testName(method)));
             StepEventBus.getEventBus().testIgnored();
         }
     }

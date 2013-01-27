@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
@@ -36,8 +37,9 @@ public class WhenListeningForTestEvents {
 
     StepFactory stepFactory;
 
-    class SampleFailingScenario {
+    class ScenarioWithSomeFailingTests {
         public void failingTest() {}
+        public void passingTest() {}
     }
 
     class MyStory {}
@@ -65,17 +67,38 @@ public class WhenListeningForTestEvents {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+        Mockito.<Class<?>>when(failureDescription.getTestClass()).thenReturn(ScenarioWithSomeFailingTests.class);
+
     }
 
     private JUnitStepListener listener;
 
+    private JUnitStepListener failureTestListener;
+
     @Before
-    public void setupListener() throws Exception {
+    public void setupListeners() throws Exception {
+        setupDefaultListener();
+        setupFailureListener();
+    }
+
+    private void setupDefaultListener() throws Exception {
         listener = JUnitStepListener.withOutputDirectory(outputDirectory)
-                                    .and().withPageFactory(pages).build();
+                                    .and().withPageFactory(pages)
+                                    .and().withTestClass(MyTestCase.class)
+                                    .and().build();
         stepFactory = new StepFactory(pages);
         listener.testRunStarted(Description.createSuiteDescription(MyTestCase.class));
         listener.testStarted(Description.createTestDescription(MyTestCase.class,"app_should_work"));
+    }
+
+    private void setupFailureListener() throws Exception {
+        failureTestListener = JUnitStepListener.withOutputDirectory(outputDirectory)
+                .and().withPageFactory(pages)
+                .and().withTestClass(ScenarioWithSomeFailingTests.class)
+                .and().build();
+        stepFactory = new StepFactory(pages);
+        failureTestListener.testRunStarted(Description.createSuiteDescription(ScenarioWithSomeFailingTests.class));
+        failureTestListener.testStarted(Description.createTestDescription(ScenarioWithSomeFailingTests.class,"app_should_work"));
     }
 
     @Test
@@ -86,15 +109,14 @@ public class WhenListeningForTestEvents {
 
     @Test
     public void a_junit_listener_should_record_test_results() throws Exception {
-
         Failure failure = new Failure(failureDescription, new AssertionError("Test failed."));
-        listener.testRunStarted(Description.createSuiteDescription(SampleFailingScenario.class));
-        listener.testStarted(Description.createTestDescription(SampleFailingScenario.class, "failingTest"));
+        failureTestListener.testRunStarted(Description.createSuiteDescription(ScenarioWithSomeFailingTests.class));
+        failureTestListener.testStarted(Description.createTestDescription(ScenarioWithSomeFailingTests.class, "failingTest"));
 
-        listener.testFailure(failure);
+        failureTestListener.testFailure(failure);
 
-        assertThat(listener.hasRecordedFailures(), is(true));
-        assertThat(listener.getError().getMessage(), is("Test failed."));
+        assertThat(failureTestListener.hasRecordedFailures(), is(true));
+        assertThat(failureTestListener.getError().getMessage(), is("Test failed."));
     }
 
     @Test
@@ -105,8 +127,8 @@ public class WhenListeningForTestEvents {
         steps.step1();
         steps.failingStep();
 
-        assertThat(listener.hasRecordedFailures(), is(true));
-        assertThat(listener.getError().getMessage(), is("Step failed"));
+        assertThat(failureTestListener.hasRecordedFailures(), is(true));
+        assertThat(failureTestListener.getError().getMessage(), is("Step failed"));
     }
 
     @Test
@@ -116,8 +138,8 @@ public class WhenListeningForTestEvents {
 
         steps.failingNormalMethod();
 
-        assertThat(listener.hasRecordedFailures(), is(true));
-        assertThat(listener.getError().getMessage(), is("Method failed"));
+        assertThat(failureTestListener.hasRecordedFailures(), is(true));
+        assertThat(failureTestListener.getError().getMessage(), is("Method failed"));
     }
 
 
@@ -127,9 +149,9 @@ public class WhenListeningForTestEvents {
         Throwable cause = new AssertionError("Test failed");
         Failure failure = new Failure(failureDescription, cause);
 
-        listener.testFailure(failure);
+        failureTestListener.testFailure(failure);
 
-        assertThat(listener.getError(), is(cause));
+        assertThat(failureTestListener.getError(), is(cause));
     }
 
     @Test
@@ -137,13 +159,13 @@ public class WhenListeningForTestEvents {
 
         Failure failure = new Failure(failureDescription, new AssertionError("Test failed"));
 
-        listener.testFailure(failure);
+        failureTestListener.testFailure(failure);
 
-        assertThat(listener.hasRecordedFailures(), is(true));
+        assertThat(failureTestListener.hasRecordedFailures(), is(true));
 
-        listener.testStarted(Description.createTestDescription(MyTestCase.class,"app_should_still_work"));
+        failureTestListener.testStarted(Description.createTestDescription(ScenarioWithSomeFailingTests.class,"app_should_still_work"));
 
-        assertThat(listener.hasRecordedFailures(), is(false));
+        assertThat(failureTestListener.hasRecordedFailures(), is(false));
     }
 
     @Test
@@ -151,13 +173,13 @@ public class WhenListeningForTestEvents {
 
         Failure failure = new Failure(failureDescription, new AssertionError("Test failed"));
 
-        listener.testFailure(failure);
+        failureTestListener.testFailure(failure);
 
-        assertThat(listener.getError(), is(not(nullValue())));
+        assertThat(failureTestListener.getError(), is(not(nullValue())));
 
-        listener.testStarted(Description.createTestDescription(MyTestCase.class,"app_should_still_work"));
+        failureTestListener.testStarted(Description.createTestDescription(ScenarioWithSomeFailingTests.class,"app_should_still_work"));
 
-        assertThat(listener.getError(), is(nullValue()));
+        assertThat(failureTestListener.getError(), is(nullValue()));
     }
 
 }
