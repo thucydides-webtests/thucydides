@@ -140,4 +140,9 @@ public class JUnitStepListener extends RunListener {
     private boolean testingThisTest(Description description) {
         return description.getTestClass().equals(testClass);
     }
+
+    protected Class<?> getTestClass() {
+        return testClass;
+    }
+
 }
