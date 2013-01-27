@@ -1,7 +1,9 @@
 package net.thucydides.core.csv;
 
 import au.com.bytecode.opencsv.CSVReader;
+import ch.lambdaj.function.convert.Converter;
 import net.thucydides.core.steps.StepFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static ch.lambdaj.Lambda.convert;
+
 /**
  * Test data from a CSV file.
  */
@@ -25,12 +29,24 @@ public class CSVTestDataSource implements TestDataSource {
     
     private final List<Map<String, String>> testData;
     private final char separator;
+    private final List<String> headers;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVTestDataSource.class);
 
     public CSVTestDataSource(final String path, final char separatorValue) throws IOException {
         this.separator = separatorValue;
-        testData = loadTestDataFrom(getDataFileFor(path));
+        List<String[]> csvDataRows = getCSVDataFrom(getDataFileFor(path));
+        String[] titleRow = csvDataRows.get(0);
+
+        this.headers = convert(titleRow, new Converter<String, String>() {
+            @Override
+            public String convert(String str) {
+                return StringUtils.strip(str);
+            }
+        });
+
+        testData = loadTestDataFrom(csvDataRows);
+
     }
 
     public CSVTestDataSource(final String path) throws IOException {
@@ -67,10 +83,22 @@ public class CSVTestDataSource implements TestDataSource {
         return file.exists();
     }
 
+    protected List<String[]> getCSVDataFrom(final Reader testDataReader) throws IOException {
+
+        CSVReader reader = new CSVReader(testDataReader, separator);
+        return reader.readAll();
+    }
+
+
     protected List<Map<String, String>> loadTestDataFrom(final Reader testDataReader) throws IOException {
 
         CSVReader reader = new CSVReader(testDataReader, separator);
         List<String[]> rows = reader.readAll();
+
+        return loadTestDataFrom(rows);
+    }
+
+    protected List<Map<String, String>> loadTestDataFrom(List<String[]> rows) throws IOException {
 
         List<Map<String, String>> loadedData = new ArrayList<Map<String, String>>();
         String[] titleRow = rows.get(0);
@@ -81,6 +109,7 @@ public class CSVTestDataSource implements TestDataSource {
         }
         return loadedData;
     }
+
 
     private Map<String, String> dataEntryFrom(final String[] titleRow, final String[] dataRow) {
         Map<String, String> dataset = new HashMap<String, String>();
@@ -98,6 +127,10 @@ public class CSVTestDataSource implements TestDataSource {
 
     public List<Map<String, String>> getData() {
         return testData;
+    }
+
+    public List<String> getHeaders() {
+        return headers;
     }
 
     /**

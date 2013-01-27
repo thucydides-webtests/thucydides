@@ -2,11 +2,11 @@ package net.thucydides.samples;
 
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
+import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.runners.ThucydidesParameterizedRunner;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(ThucydidesParameterizedRunner.class)
-public class SampleDataDrivenScenario {
+public class SampleDataDrivenPendingScenario {
 
 
     @TestData
@@ -36,7 +36,7 @@ public class SampleDataDrivenScenario {
     private String option1;
     private Integer option2;
 
-    public SampleDataDrivenScenario(String option1, Integer option2) {
+    public SampleDataDrivenPendingScenario(String option1, Integer option2) {
         this.option1 = option1;
         this.option2 = option2;
     }
@@ -51,13 +51,8 @@ public class SampleDataDrivenScenario {
     public SampleScenarioSteps steps;
         
     @Test
-    public void happy_day_scenario() {
-        steps.stepWithParameters(option1, option2);
-    }
-
-    @Test
-    @Ignore
-    public void not_so_happy_day_scenario() {
+    @Pending
+    public void pending_scenario() {
         steps.stepWithParameters(option1,option2);
     }
 

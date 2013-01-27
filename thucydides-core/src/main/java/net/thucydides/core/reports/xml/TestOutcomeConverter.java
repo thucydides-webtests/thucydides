@@ -253,8 +253,8 @@ public class TestOutcomeConverter implements Converter {
         if (rowData.getResult() != TestResult.UNDEFINED) {
             writer.addAttribute("result", rowData.getResult().toString());
         }
-        for(String cellValue : rowData.getValues()) {
-            writeCellValue(writer, cellValue);
+        for(Object cellValue : rowData.getValues()) {
+            writeCellValue(writer, cellValue.toString());
         }
         writer.endNode();
     }

@@ -1,5 +1,7 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.model.DataTable;
+import net.thucydides.core.model.DataTableRow;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -13,15 +15,15 @@ import java.util.List;
 
 class TestClassRunnerForParameters extends ThucydidesRunner {
     private final int parameterSetNumber;
-    private final List<Object[]> parameterList;
+    private final DataTable parametersTable;
 
     TestClassRunnerForParameters(final Class<?> type,
                                  final Configuration configuration,
                                  final WebDriverFactory webDriverFactory,
-                                 final List<Object[]> parameterList,
+                                 final DataTable parametersTable,
                                  final int i) throws InitializationError {
         super(type, webDriverFactory, configuration);
-        this.parameterList = parameterList;
+        this.parametersTable = parametersTable;
         parameterSetNumber = i;
     }
 
@@ -30,6 +32,8 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
        setStepListener(JUnitStepListener.withOutputDirectory(getConfiguration().getOutputDirectory())
                                         .and().withPageFactory(pageFactory)
                                         .and().withParameterSetNumber(parameterSetNumber)
+                                        .and().withParametersTable(parametersTable)
+                                        .and().withTestClass(getTestClass().getJavaClass())
                                         .and().build());
        return getStepListener();
    }
@@ -41,7 +45,8 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
 
     private Object[] computeParams() throws Exception {
         try {
-            return parameterList.get(parameterSetNumber);
+            DataTableRow row = parametersTable.getRows().get(parameterSetNumber);
+            return row.getValues().toArray();
         } catch (ClassCastException cause) {
             throw new Exception(String.format(
                     "%s.%s() must return a Collection of arrays.",
@@ -63,7 +68,7 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
 
     @Override
     protected String getName() {
-        String firstParameter = parameterList.get(parameterSetNumber)[0].toString();
+        String firstParameter = parametersTable.getRows().get(parameterSetNumber).getValues().get(0).toString();
         return String.format("[%s]", firstParameter);
     }
 
@@ -82,4 +87,9 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
         return childrenInvoker(notifier);
     }
 
-}
+    @Override
+    protected void generateReports() {
+        //do not generate reports at example level
+    }
+
+    }
