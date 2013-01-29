@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(ThucydidesParameterizedRunner.class)
-public class SampleDataDrivenScenario {
+public class SampleDataDrivenIgnoredScenario {
 
 
     @TestData
@@ -36,7 +36,7 @@ public class SampleDataDrivenScenario {
     private String option1;
     private Integer option2;
 
-    public SampleDataDrivenScenario(String option1, Integer option2) {
+    public SampleDataDrivenIgnoredScenario(String option1, Integer option2) {
         this.option1 = option1;
         this.option2 = option2;
     }
@@ -51,13 +51,8 @@ public class SampleDataDrivenScenario {
     public SampleScenarioSteps steps;
         
     @Test
-    public void happy_day_scenario() {
-        steps.stepWithParameters(option1, option2);
-    }
-
-    @Test
     @Ignore
-    public void not_so_happy_day_scenario() {
+    public void ignored_scenario() {
         steps.stepWithParameters(option1,option2);
     }
 

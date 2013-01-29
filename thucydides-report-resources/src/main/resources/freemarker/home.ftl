@@ -42,11 +42,11 @@
     </style>
 
     <script class="code" type="text/javascript">$(document).ready(function () {
-        var plot1 = $.jqplot('test_results_pie_chart', [
+        var test_results_plot = $.jqplot('test_results_pie_chart', [
             [
-                ['Passing', ${testOutcomes.decimalPercentagePassingStepCount}],
-                ['Pending', ${testOutcomes.decimalPercentagePendingStepCount}],
-                ['Failing', ${testOutcomes.decimalPercentageFailingStepCount}]
+                ['Passing', ${testOutcomes.decimalPercentagePassingTestCount}],
+                ['Pending', ${testOutcomes.decimalPercentagePendingTestCount}],
+                ['Failing', ${testOutcomes.decimalPercentageFailingTestCount}]
             ]
         ], {
             gridPadding:{top:0, bottom:38, left:0, right:0},
@@ -69,6 +69,36 @@
                 {label:'${testOutcomes.successCount} / ${testOutcomes.total} tests passed' },
                 {label:'${testOutcomes.pendingCount} / ${testOutcomes.total} tests pending'},
                 {label:'${testOutcomes.failureCount} / ${testOutcomes.total} tests failed'}
+            ]
+        });
+
+        var weighted_test_results_plot = $.jqplot('weighted_test_results_pie_chart', [
+            [
+            ['Passing', ${testOutcomes.decimalPercentagePassingStepCount}],
+            ['Pending', ${testOutcomes.decimalPercentagePendingStepCount}],
+            ['Failing', ${testOutcomes.decimalPercentageFailingStepCount}]
+            ]
+        ], {
+            gridPadding:{top:0, bottom:38, left:0, right:0},
+            seriesColors:['#00C000', 'orange', 'red'],
+            seriesDefaults:{
+                renderer:$.jqplot.PieRenderer,
+                trendline:{ show:false },
+                rendererOptions:{ padding:8, showDataLabels:true }
+            },
+            legend:{
+                show:true,
+                placement:'outside',
+                rendererOptions:{
+                    numberRows:1
+                },
+                location:'s',
+                marginTop:'15px'
+            },
+            series:[
+                {label:'${testOutcomes.successCount} / ${testOutcomes.total} tests passed (${testOutcomes.decimalPercentagePassingStepCount}% of all test steps)' },
+                {label:'${testOutcomes.pendingCount} / ${testOutcomes.total} tests pending (${testOutcomes.decimalPercentagePendingStepCount}% of all test steps)'},
+                {label:'${testOutcomes.failureCount} / ${testOutcomes.total} tests failed (${testOutcomes.decimalPercentageFailingStepCount}% of all test steps)'}
             ]
         });
 
@@ -165,9 +195,20 @@
                                     <#else>failed</#if>
                                 </span>
                             </div>
-                            <h3>Coverage</h3>
-                            <div id="pie_chart">
-                                <div id="test_results_pie_chart"  style="margin-top:20px; margin-left:20px; width:375px; height:375px;"></div>
+
+                            <div id="test-results-tabs">
+                                <ul>
+                                    <li><a href="#test-results-tabs-1">Test Count</a></li>
+                                    <li><a href="#test-results-tabs-2">Weighted Tests</a></li>
+                                </ul>
+                                <div id="test-results-tabs-1">
+                                    <span class="caption">Total number of tests that pass, fail, or are pending.</span>
+                                    <div id="test_results_pie_chart"  style="margin-top:20px; margin-left:20px; width:375px; height:375px;"></div>
+                                </div>
+                                <div id="test-results-tabs-2">
+                                    <span class="caption">Total number of tests, weighted by test steps.</span>
+                                    <div id="weighted_test_results_pie_chart"  style="margin-top:20px; margin-left:20px; width:375px; height:375px;"></div>
+                                </div>
                             </div>
                         </td>
                         <td width="25px">&nbsp;</td>

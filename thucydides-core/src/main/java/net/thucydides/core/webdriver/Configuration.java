@@ -9,8 +9,6 @@ import java.io.File;
 public interface Configuration {
     SupportedWebDriver getDriverType();
 
-    File loadOutputDirectoryFromSystemProperties();
-
     int getStepDelay();
 
     int getElementTimeout();

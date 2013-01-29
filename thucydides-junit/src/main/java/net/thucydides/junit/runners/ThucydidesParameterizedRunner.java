@@ -1,15 +1,21 @@
 package net.thucydides.junit.runners;
 
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.annotations.Concurrent;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +31,8 @@ public class ThucydidesParameterizedRunner extends Suite {
     private final List<Runner> runners = new ArrayList<Runner>();
 
     private final Configuration configuration;
+    private ReportService reportService;
+    private final ParameterizedTestsOutcomeAggregator parameterizedTestsOutcomeAggregator = ParameterizedTestsOutcomeAggregator.from(this);
 
     /**
      * Only used for testing.
@@ -46,7 +54,7 @@ public class ThucydidesParameterizedRunner extends Suite {
             buildTestRunnersFromADataSourceUsing(webDriverFactory);
         }
     }
-    
+
     private void scheduleParallelTestRunsFor(final Class<?> klass) {
         setScheduler(new ParameterizedRunnerScheduler(klass, getThreadCountFor(klass)));
     }
@@ -80,15 +88,15 @@ public class ThucydidesParameterizedRunner extends Suite {
     }
 
     private void buildTestRunnersForEachDataSetUsing(final WebDriverFactory webDriverFactory) throws Throwable {
-        List<Object[]> parametersList = getTestAnnotations().getParametersList();
-        for (int i = 0; i < parametersList.size(); i++) {
+        DataTable parametersTable = getTestAnnotations().getParametersTableFromTestDataAnnotation();
+        for (int i = 0; i < parametersTable.getRows().size(); i++) {
             Class<?> testClass = getTestClass().getJavaClass();
             ThucydidesRunner runner = new TestClassRunnerForParameters(testClass,
                                                                        configuration,
                                                                        webDriverFactory,
-                                                                       parametersList,
+                                                                       parametersTable,
                                                                        i);
-            runner.useQualifier(from(parametersList.get(i)));
+            runner.useQualifier(from(parametersTable.getRows().get(i).getValues()));
             runners.add(runner);
         }
     }
@@ -96,12 +104,14 @@ public class ThucydidesParameterizedRunner extends Suite {
     private void buildTestRunnersFromADataSourceUsing(final WebDriverFactory webDriverFactory) throws Throwable {
 
         List<?> testCases = getTestAnnotations().getDataAsInstancesOf(getTestClass().getJavaClass());
+        DataTable parametersTable = getTestAnnotations().getParametersTableFromTestDataSource();
 
         for (int i = 0; i < testCases.size(); i++) {
             Object testCase = testCases.get(i);
             ThucydidesRunner runner = new TestClassRunnerForInstanciatedTestCase(testCase,
                                                                                  configuration,
                                                                                  webDriverFactory,
+                                                                                 parametersTable,
                                                                                  i);
             runner.useQualifier(getQualifierFor(testCase));
             runners.add(runner);
@@ -116,7 +126,7 @@ public class ThucydidesParameterizedRunner extends Suite {
         return DataDrivenAnnotations.forClass(getTestClass());
     }
 
-    private String from(final Object[] testData) {
+    private String from(final Collection testData) {
         StringBuffer testDataQualifier = new StringBuffer();
         boolean firstEntry = true;
         for (Object testDataValue : testData) {
@@ -142,18 +152,47 @@ public class ThucydidesParameterizedRunner extends Suite {
         return runners;
     }
 
-    public List<TestOutcome> getTestOutcomes() {
-        List<TestOutcome> testOutcomes = new ArrayList<TestOutcome>();
-
-        testOutcomes.addAll( ((ThucydidesRunner) runners.get(0)).getTestOutcomes());
-        for (Runner runner : runners) {
-            for(TestOutcome testOutcome : ((ThucydidesRunner) runner).getTestOutcomes()) {
-                if (!testOutcomes.contains(testOutcome)) {
-                    testOutcomes.add(testOutcome);
-                }
-            }
+    @Override
+    public void run(final RunNotifier notifier) {
+        try {
+            super.run(notifier);
+        } finally {
+            generateReports();
         }
-        return testOutcomes;
     }
+
+    public void generateReports() {
+        generateReportsFor(parameterizedTestsOutcomeAggregator.aggregateTestOutcomesByTestMethods());
+    }
+
+    private void generateReportsFor(List<TestOutcome> testOutcomes) {
+        getReportService().generateReportsFor(testOutcomes);
+    }
+
+    private ReportService getReportService() {
+        if (reportService == null) {
+            reportService = new ReportService(getOutputDirectory(), getDefaultReporters());
+        }
+        return reportService;
+
+    }
+
+    private Collection<AcceptanceTestReporter> getDefaultReporters() {
+        return ReportService.getDefaultReporters();
+    }
+
+    private File getOutputDirectory() {
+        return this.configuration.getOutputDirectory();
+    }
+
+    public void subscribeReporter(final AcceptanceTestReporter reporter) {
+        getReportService().subscribe(reporter);
+    }
+
+    public List<Runner> getRunners() {
+        return runners;
+    }
+
+
 
 }

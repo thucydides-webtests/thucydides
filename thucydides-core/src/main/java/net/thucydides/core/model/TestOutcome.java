@@ -216,6 +216,7 @@ public class TestOutcome {
                           final Story userStory,
                           final Throwable testFailureCause,
                           final TestResult annotatedResult,
+                          final DataTable dataTable,
                           final Optional<String> qualifier) {
         this.startTime = startTime;
         this.duration = duration;
@@ -230,6 +231,7 @@ public class TestOutcome {
         this.testFailureCause = testFailureCause;
         this.qualifier = qualifier;
         this.annotatedResult = annotatedResult;
+        this.dataTable = dataTable;
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
     }
@@ -258,7 +260,30 @@ public class TestOutcome {
                                    this.userStory,
                                    this.testFailureCause,
                                    this.annotatedResult,
+                                   this.dataTable,
                                    Optional.fromNullable(qualifier));
+        } else {
+            return this;
+        }
+    }
+
+
+    public TestOutcome withMethodName(String methodName) {
+        if (methodName != null) {
+            return new TestOutcome(this.startTime,
+                    this.duration,
+                    this.storedTitle,
+                    methodName,
+                    this.testCase,
+                    this.getTestSteps(),
+                    this.issues,
+                    this.additionalIssues,
+                    this.tags,
+                    this.userStory,
+                    this.testFailureCause,
+                    this.annotatedResult,
+                    this.dataTable,
+                    this.qualifier);
         } else {
             return this;
         }
@@ -785,7 +810,7 @@ public class TestOutcome {
     }
 
     public void moveToNextRow() {
-        if (!dataTable.atLastRow()) {
+        if (dataTable != null && !dataTable.atLastRow()) {
             dataTable.nextRow();
         }
     }
@@ -798,7 +823,7 @@ public class TestOutcome {
         return dataTable.hasPredefinedRows();
     }
 
-    public void addRow(Map<String, String> data) {
+    public void addRow(Map<String, ? extends Object> data) {
         dataTable.addRow(data);
     }
 

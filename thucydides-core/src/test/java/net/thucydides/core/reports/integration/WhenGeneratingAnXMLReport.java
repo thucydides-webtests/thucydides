@@ -18,18 +18,16 @@ import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
-
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.thucydides.core.hamcrest.XMLMatchers.isSimilarTo;
@@ -186,8 +184,8 @@ public class WhenGeneratingAnXMLReport {
     public void should_generate_an_XML_report_for_an_acceptance_test_run_with_a_table()
             throws Exception {
 
-        List<String> row1 = Lists.newArrayList("Joe", "Smith", "20");
-        List<String> row2 = Lists.newArrayList("Jack", "Jones", "21");
+        List<Object> row1 = new ArrayList<Object>(); row1.addAll(Lists.newArrayList("Joe", "Smith", "20"));
+        List<Object> row2 = new ArrayList<Object>(); row2.addAll(Lists.newArrayList("Jack", "Jones", "21"));
 
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
         DataTable table = DataTable.withHeaders(ImmutableList.of("firstName","lastName","age")).
@@ -254,6 +252,33 @@ public class WhenGeneratingAnXMLReport {
 
         assertThat(generatedReportText, isSimilarTo(expectedReport));
     }
+
+    @Test
+    public void should_escape_new_lines_in_title_and_qualifier_attributes()
+            throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class).withQualifier("a qualifier with \n a new line");
+        String expectedReport =
+                "<acceptance-test-run title='Should do this [a qualifier with &amp;#10;" +
+                        " a new line]' name='should_do_this' qualifier='a qualifier with &amp;#10;" +
+                        " a new line' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
+                        + "  <tags>\n"
+                        + "    <tag name='A user story' type='story'/>\n"
+                        + "  </tags>"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
+                        + "  <test-step result='SUCCESS' duration='0'>\n"
+                        + "    <description>step 1</description>\n"
+                        + "  </test-step>\n"
+                        + "</acceptance-test-run>";
+
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport));
+    }
+
+
     @Test
     public void should_store_tags_in_the_XML_reports()
             throws Exception {
@@ -475,12 +500,15 @@ public class WhenGeneratingAnXMLReport {
                         + "  </test-step>\n"
                         + "  <test-step result='FAILURE' duration='0'>\n"
                         + "    <description>step 5</description>\n"
+                        + "    <error>Unspecified failure</error>\n"
                         + "  </test-step>\n"
                         + "  <test-step result='FAILURE' duration='0'>\n"
                         + "    <description>step 6</description>\n"
+                        + "    <error>Unspecified failure</error>\n"
                         + "  </test-step>\n"
                         + "  <test-step result='FAILURE' duration='0'>\n"
                         + "    <description>step 7</description>\n"
+                        + "    <error>Unspecified failure</error>\n"
                         + "  </test-step>\n"
                         + "  <test-step result='SKIPPED' duration='0'>\n"
                         + "    <description>step 8</description>\n"
@@ -694,6 +722,7 @@ public class WhenGeneratingAnXMLReport {
                         + "  </test-step>\n"
                         + "  <test-step result='FAILURE' duration='0'>\n"
                         + "    <description>step 2</description>\n"
+                        + "    <error>Unspecified failure</error>"
                         + "  </test-step>\n"
                         + "</acceptance-test-run>";
 

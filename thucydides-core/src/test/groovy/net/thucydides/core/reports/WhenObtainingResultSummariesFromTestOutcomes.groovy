@@ -69,9 +69,9 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
 
     def "should calculate the formatted percentage of passing steps"() {
         when:
-                def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
+        def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
         then:
-                testOutcomes.decimalPercentagePassingStepCount == percentagePassing &&
+        testOutcomes.decimalPercentagePassingStepCount == percentagePassing &&
                 testOutcomes.decimalPercentageFailingStepCount == percentageFailing &&
                 testOutcomes.decimalPercentagePendingStepCount == percentagePending
         where:
@@ -81,6 +81,22 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         "/test-outcomes/containing-pending"        | "0.6"               | "0"                | "0.4"
         "/test-outcomes/all-pending"               | "0"                 | "0"                | "1"
     }
+
+    def "should calculate the formatted percentage of passing tests"() {
+        when:
+        def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
+        then:
+        testOutcomes.decimalPercentagePassingTestCount == percentagePassing &&
+                testOutcomes.decimalPercentageFailingTestCount == percentageFailing &&
+                testOutcomes.decimalPercentagePendingTestCount == percentagePending
+        where:
+        directory                                  | percentagePassing | percentageFailing  | percentagePending
+        "/test-outcomes/all-successful"            | "1"                 | "0"                | "0"
+        "/test-outcomes/containing-failure"        | "0.33"              | "0.33"             | "0.33"
+        "/test-outcomes/containing-pending"        | "0.67"              | "0"                | "0.33"
+        "/test-outcomes/all-pending"               | "0"                 | "0"                | "1"
+    }
+
 
     def "should provide a formatted version of the passing coverage"() {
         when:

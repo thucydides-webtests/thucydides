@@ -219,7 +219,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         getStepListener().dropListeners();
     }
 
-    private void generateReports() {
+    protected void generateReports() {
             generateReportsFor(getTestOutcomes());
     }
 
@@ -261,7 +261,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         notifier.addListener(listener);
     }
 
-    private void initStepEventBus() {
+    protected void initStepEventBus() {
         StepEventBus.getEventBus().clear();
     }
 
@@ -271,14 +271,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     protected JUnitStepListener initListenersUsing(final Pages pageFactory) {
 
-        return JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
+        return JUnitStepListener.withOutputDirectory(getConfiguration().getOutputDirectory())
                                  .and().withPageFactory(pageFactory)
+                                 .and().withTestClass(getTestClass().getJavaClass())
                                  .and().build();
     }
 
     protected JUnitStepListener initListeners() {
-
-        return JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
+        return JUnitStepListener.withOutputDirectory(getConfiguration().getOutputDirectory())
+                                                                       .and().withTestClass(getTestClass().getJavaClass())
                                                                        .and().build();
     }
 

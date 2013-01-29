@@ -1,7 +1,6 @@
 package net.thucydides.core.reports.xml;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -73,6 +72,9 @@ public class TestOutcomeConverter implements Converter {
     private static final String ROWS = "rows";
     private static final String ROW = "row";
     private static final String VALUE = "value";
+    public static final String NEW_LINE_CHAR = "\n";
+    public static final String ESCAPE_CHAR_FOR_NEW_LINE = "&#10;";
+    private static final String DEFAULT_ERROR_MESSAGE = "Unspecified failure";
 
 
     public TestOutcomeConverter() {
@@ -94,10 +96,10 @@ public class TestOutcomeConverter implements Converter {
         TestOutcome testOutcome = (TestOutcome) value;
         Preconditions.checkNotNull(testOutcome, "The test run was null - WTF?");
 
-        writer.addAttribute(TITLE_FIELD, titleFrom(testOutcome));
+        writer.addAttribute(TITLE_FIELD, escape(titleFrom(testOutcome)));
         writer.addAttribute(NAME_FIELD, nameFrom(testOutcome));
         if (testOutcome.getQualifier() != null && testOutcome.getQualifier().isPresent()) {
-            writer.addAttribute(QUALIFIER_FIELD, testOutcome.getQualifier().get());
+            writer.addAttribute(QUALIFIER_FIELD, escape(testOutcome.getQualifier().get()));
         }
         writer.addAttribute(STEPS_FIELD, Integer.toString(testOutcome.countTestSteps()));
         writer.addAttribute(SUCCESSFUL_FIELD, Integer.toString(testOutcome.getSuccessCount()));
@@ -120,10 +122,26 @@ public class TestOutcomeConverter implements Converter {
         }
     }
 
+    private String escape(String attribute) {
+
+        if (StringUtils.isNotEmpty(attribute)) {
+            attribute = StringUtils.replace(attribute, NEW_LINE_CHAR, ESCAPE_CHAR_FOR_NEW_LINE);
+        }
+        return attribute;
+    }
+
+
+    private String unescape(String attribute) {
+        if (StringUtils.isNotEmpty(attribute)) {
+            attribute = StringUtils.replace(attribute, ESCAPE_CHAR_FOR_NEW_LINE, NEW_LINE_CHAR);
+        }
+        return attribute;
+    }
 
     private String titleFrom(final TestOutcome testOutcome) {
         return testOutcome.getTitle();
     }
+
 
     private String nameFrom(final TestOutcome testOutcome) {
         if (testOutcome.getMethodName() != null) {
@@ -132,7 +150,6 @@ public class TestOutcomeConverter implements Converter {
             return testOutcome.getTitle();
         }
     }
-
 
     private void writeStepTo(final HierarchicalStreamWriter writer, final TestStep step) {
         if (step.isAGroup()) {
@@ -180,6 +197,7 @@ public class TestOutcomeConverter implements Converter {
         writer.endNode();
     }
 
+
     private void addIssuesTo(final HierarchicalStreamWriter writer, final Set<String> issues) {
         if (!issues.isEmpty()) {
             writer.startNode(ISSUES);
@@ -191,7 +209,6 @@ public class TestOutcomeConverter implements Converter {
             writer.endNode();
         }
     }
-
 
     private void addTagsTo(HierarchicalStreamWriter writer, Set<TestTag> tags) {
         if (!CollectionUtils.isEmpty(tags)) {
@@ -236,8 +253,8 @@ public class TestOutcomeConverter implements Converter {
         if (rowData.getResult() != TestResult.UNDEFINED) {
             writer.addAttribute("result", rowData.getResult().toString());
         }
-        for(String cellValue : rowData.getValues()) {
-            writeCellValue(writer, cellValue);
+        for(Object cellValue : rowData.getValues()) {
+            writeCellValue(writer, cellValue.toString());
         }
         writer.endNode();
     }
@@ -258,16 +275,14 @@ public class TestOutcomeConverter implements Converter {
         if (step.isFailure()) {
             writeErrorMessageAndException(writer, step);
         }
-
     }
 
     private void writeErrorMessageAndException(final HierarchicalStreamWriter writer,
                                                final TestStep step) {
-        if ((step.getErrorMessage() != null) && (!StringUtils.isEmpty(step.getErrorMessage()))) {
-            writeErrorMessageNode(writer, step.getErrorMessage());
-            if (step.getException() != null) {
-                writeExceptionNode(writer, step.getException());
-            }
+        String errorMessage = StringUtils.isEmpty(step.getErrorMessage()) ? DEFAULT_ERROR_MESSAGE : step.getErrorMessage();
+        writeErrorMessageNode(writer, errorMessage);
+        if (step.getException() != null) {
+            writeExceptionNode(writer, step.getException());
         }
     }
 
@@ -318,9 +333,9 @@ public class TestOutcomeConverter implements Converter {
 
         String methodName = reader.getAttribute(NAME_FIELD);
         TestOutcome testOutcome = new TestOutcome(methodName);
-        testOutcome.setTitle(reader.getAttribute(TITLE_FIELD));
+        testOutcome.setTitle(unescape(reader.getAttribute(TITLE_FIELD)));
         if (reader.getAttribute(QUALIFIER_FIELD) != null) {
-            testOutcome = testOutcome.withQualifier(reader.getAttribute(QUALIFIER_FIELD));
+            testOutcome = testOutcome.withQualifier(unescape(reader.getAttribute(QUALIFIER_FIELD)));
         }
         Long duration = readDuration(reader);
         testOutcome.setDuration(duration);

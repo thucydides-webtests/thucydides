@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -12,21 +13,27 @@ import org.junit.runners.model.Statement;
 class TestClassRunnerForInstanciatedTestCase extends ThucydidesRunner {
     private final int parameterSetNumber;
     private final Object instanciatedTest;
+    private final DataTable parametersTable;
+
 
     TestClassRunnerForInstanciatedTestCase(final Object instanciatedTest,
                                            Configuration configuration,
                                            WebDriverFactory webDriverFactory,
+                                           final DataTable parametersTable,
                                            final int parameterSetNumber) throws InitializationError {
         super(instanciatedTest.getClass(), webDriverFactory, configuration);
         this.instanciatedTest = instanciatedTest;
         this.parameterSetNumber = parameterSetNumber;
+        this.parametersTable    = parametersTable;
     }
 
     @Override
     protected JUnitStepListener initListenersUsing(final Pages pageFactory) {
-        setStepListener(JUnitStepListener.withOutputDirectory(getConfiguration().loadOutputDirectoryFromSystemProperties())
+        setStepListener(JUnitStepListener.withOutputDirectory(getConfiguration().getOutputDirectory())
                 .and().withPageFactory(pageFactory)
                 .and().withParameterSetNumber(parameterSetNumber)
+                .and().withParametersTable(parametersTable)
+                .and().withTestClass(getTestClass().getJavaClass())
                 .and().build());
         return getStepListener();
     }
@@ -50,5 +57,11 @@ class TestClassRunnerForInstanciatedTestCase extends ThucydidesRunner {
     protected Statement classBlock(final RunNotifier notifier) {
         return childrenInvoker(notifier);
     }
+
+    @Override
+    protected void generateReports() {
+        //do not generate reports at example level
+    }
+
 
 }
