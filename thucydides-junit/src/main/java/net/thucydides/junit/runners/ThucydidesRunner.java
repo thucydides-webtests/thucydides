@@ -224,7 +224,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private boolean skipThisTest() {
-        return (batchManager != null) && (!batchManager.shouldExecuteThisTest());
+        return (batchManager != null) && (!batchManager.shouldExecuteThisTest(getDescription().testCount()));
     }
 
     /**
