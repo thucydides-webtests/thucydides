@@ -509,14 +509,14 @@ public class WebDriverFactory {
             activateProxyFor(profile, firefoxProfileEnhancer);
         }
         if (firefoxProfileEnhancer.shouldActivateFirebugs()) {
-            LOGGER.info("Adding Firebugs to Firefox profile");
             firefoxProfileEnhancer.addFirebugsTo(profile);
         }
-        firefoxProfileEnhancer.configureJavaSupport(profile);
         if (dontAssumeUntrustedCertificateIssuer()) {
             profile.setAssumeUntrustedCertificateIssuer(false);
             profile.setAcceptUntrustedCertificates(true);
         }
+        firefoxProfileEnhancer.configureJavaSupport(profile);
+        firefoxProfileEnhancer.addPreferences(profile);
         return profile;
     }
 

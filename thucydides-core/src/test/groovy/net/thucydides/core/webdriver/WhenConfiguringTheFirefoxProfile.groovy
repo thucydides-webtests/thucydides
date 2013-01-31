@@ -29,4 +29,71 @@ class WhenConfiguringTheFirefoxProfile extends Specification {
         then:
             profile.untrustedCertIssuer
     }
+
+    def "should add custom preferences to the profile"() {
+
+        given: "the user provides custom firefox preference values"
+            environmentVariables.setProperty("firefox.preferences","browser.download.dir=c:\\downloads")
+        when:
+            FirefoxProfile profile = webDriverFactory.buildFirefoxProfile()
+        then:
+            profile.additionalPrefs.allPrefs["browser.download.dir"] == "c:\\downloads"
+    }
+
+    def "should convert custom preferences to the correct types"() {
+
+        given: "the user provides custom firefox preference values"
+            environmentVariables.setProperty("firefox.preferences",
+                "browser.download.folderList=2;browser.download.manager.showWhenStarting=false;browser.download.dir=c:\\downloads")
+        when:
+            FirefoxProfile profile = webDriverFactory.buildFirefoxProfile()
+        then:
+            profile.additionalPrefs.allPrefs["browser.download.folderList"] == 2 &&
+            profile.additionalPrefs.allPrefs["browser.download.manager.showWhenStarting"] == false
+
+    }
+
+
+    def "should assume that a preference field without a value is a boolean"() {
+
+        given: "the user provides a boolean firefox preference value"
+            environmentVariables.setProperty("firefox.preferences",
+                    "app.update.silent")
+        when:
+            FirefoxProfile profile = webDriverFactory.buildFirefoxProfile()
+        then:
+            profile.additionalPrefs.allPrefs["app.update.silent"] == true
+
+    }
+
+    def "badly-formed preferences should be ignored"() {
+
+        given: "the user provides a boolean firefox preference value"
+            environmentVariables.setProperty("firefox.preferences", "some=illegal=value")
+        when:
+            FirefoxProfile profile = webDriverFactory.buildFirefoxProfile()
+        then:
+            profile.additionalPrefs.allPrefs["some=illegal=value"] == null
+
+    }
+
+    def "should accept boolean preference fields in any case"() {
+
+        given: "the user provides a boolean firefox preference value"
+            environmentVariables.setProperty("firefox.preferences", "app.update.silent=" +value)
+        when:
+            FirefoxProfile profile = webDriverFactory.buildFirefoxProfile()
+        then:
+            profile.additionalPrefs.allPrefs["app.update.silent"] == expectedPreference
+        where:
+         value  | expectedPreference
+         "true" | true
+         "TRUE" | true
+         "True" | true
+         "false"| false
+         "FALSE"| false
+         "False"| false
+
+    }
+
 }
