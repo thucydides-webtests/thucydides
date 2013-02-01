@@ -93,6 +93,7 @@ public class StepEventBus {
             registeredListeners.add(listener);
             if (listener.getClass().isAssignableFrom(BaseStepListener.class)) {
                 baseStepListener = (BaseStepListener) listener;
+                baseStepListener.setEventBus(this);
             }
         }
         return this;

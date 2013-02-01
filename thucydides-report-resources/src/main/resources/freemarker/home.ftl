@@ -107,6 +107,9 @@
             "aaSorting": [[ 1, "asc" ]],
             "bJQueryUI": true
         } );
+
+        // Pie charts
+        $('#test-results-tabs').tabs()
     })
     ;
     </script>

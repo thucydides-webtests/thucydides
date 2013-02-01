@@ -1052,6 +1052,25 @@ public class TestOutcome {
         return dataTable != null;
     }
 
+    public String getDataDrivenSampleScenario() {
+        if (!isDataDriven() || getTestSteps().isEmpty() || !getTestSteps().get(0).hasChildren()) {
+            return "";
+        }
+        TestStep firstExample = getTestSteps().get(0);
+        StringBuilder sampleScenario = new StringBuilder();
+        for(TestStep topLevelChildStep : firstExample.getChildren()) {
+            sampleScenario.append(topLevelChildStep.getDescription());
+            if (topLevelChildStep != lastOf(firstExample.getChildren())) {
+                sampleScenario.append("\n");
+            }
+        }
+        return sampleScenario.toString();
+    }
+
+    private TestStep lastOf(List<TestStep> children) {
+        return children.get(children.size() - 1);
+    }
+
     public DataTable getDataTable() {
         return dataTable;
     }

@@ -155,26 +155,35 @@ class WhenRecordingDataDrivenTestOutcomes extends Specification {
             eventBus.exampleStarted(["firstName":"Joe","lastName":"Smith","age":20])
             eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step1"));
             eventBus.stepFinished()
+            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step2"));
+            eventBus.stepFinished()
+            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step3"));
+            eventBus.stepFinished()
             eventBus.exampleFinished()
 
             eventBus.exampleStarted(["firstName":"Jack","lastName":"Smith","age":21])
+            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step1"));
+            eventBus.stepFinished()
             eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step2"));
+            eventBus.stepFinished()
+            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step3"));
             eventBus.stepPending()
             eventBus.exampleFinished()
 
             eventBus.exampleStarted(["firstName":"Jack","lastName":"Smith","age":21])
+            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step1"));
+            eventBus.stepFinished()
+            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step2"));
+            eventBus.stepFinished()
             eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step3"));
             eventBus.stepFailed(failure);
-
-            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step4"));
-            eventBus.stepIgnored()
-            eventBus.stepStarted(ExecutedStepDescription.of(SomeTest.class,"step5"));
-            eventBus.stepIgnored()
             eventBus.exampleFinished()
 
             eventBus.testFinished()
-        then:
+        then: "all scenarios should be recorded"
             listener.testOutcomes[0].dataTable.rows.collect { it.result } == [SUCCESS, PENDING, FAILURE]
+        and: "should provide a sample scenario"
+            listener.testOutcomes[0].dataDrivenSampleScenario == "Step1\nStep2\nStep3"
     }
 
     def "Should be able to update the table results incrementally via the event bus"() {

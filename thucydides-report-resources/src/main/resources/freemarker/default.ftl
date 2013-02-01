@@ -6,6 +6,10 @@
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="css/core.css"/>
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
+
+    <script src="scripts/jquery.js" type="text/javascript"></script>
+    <script src="scripts/imgpreview.full.jquery.js" type="text/javascript"></script>
+
     <style type="text/css">a:link {
         text-decoration: none;
     }
@@ -78,8 +82,7 @@
                         <td width="%"><span class="test-case-title"><span
                                 class="${outcome_text}">${testOutcome.titleWithLinks}<span class="related-issue-title">${testOutcome.formattedIssues}</span></span></span>
                         </td>
-                        <td width="100"><span class="test-case-duration"><span class="greentext">${testOutcome.durationInSeconds}
-                            seconds</span></span>
+                        <td width="100"><span class="test-case-duration"><span class="greentext">${testOutcome.durationInSeconds}s</span></span>
                         </td>
                     </tr>
                     <tr>
@@ -116,30 +119,38 @@
 
     <div class="clr"></div>
 
+    <#if (testOutcome.isDataDriven())>
+        <div class="story-title">
+            <h3>Scenario:</h3>
+            <div class="scenario">${formatter.addLineBreaks(testOutcome.dataDrivenSampleScenario)}</div>
+
+        </div>
+    </#if>
+
     <div id="beforetable"></div>
 
     <#if (testOutcome.isDataDriven())>
-    <h3>Examples:</h3>
-    <div class="datagrid">
-        <table class="example-table">
-            <thead>
-            <tr>
-                <#list testOutcome.dataTable.headers as header>
-                    <th>${inflection.of(header).asATitle()}</th>
-                </#list>
-            </tr>
-            </thead>
-            <tbody>
-            <#list testOutcome.dataTable.rows as row>
-                <tr class="test-${row.result}">
-                <#list row.values as value>
-                    <td><a href="#${row_index}">${value}</a></td>
-                </#list>
+        <h3>Examples:</h3>
+        <div class="datagrid">
+            <table class="example-table">
+                <thead>
+                <tr>
+                    <#list testOutcome.dataTable.headers as header>
+                        <th>${inflection.of(header).asATitle()}</th>
+                    </#list>
                 </tr>
-            </#list>
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                <#list testOutcome.dataTable.rows as row>
+                    <tr class="test-${row.result}">
+                    <#list row.values as value>
+                        <td><a href="#${row_index}">${value}</a></td>
+                    </#list>
+                    </tr>
+                </#list>
+                </tbody>
+            </table>
+        </div>
     </#if>
 
     <div id="tablecontents">
@@ -158,11 +169,23 @@
                 <#macro write_step(step, step_number)>
                     <@step_details step=step step_number=step_number level=level/>
                     <#if step.isAGroup()>
+                        <#if level == 1>
+                        <tr>
+                            <td colspan="5">
+                                <table id="stepSection${step_number}" style="display:none; width:100%">
+
+                        </#if>
                         <#assign level = level + 1>
                         <#list step.children as nestedStep>
                             <@write_step step=nestedStep step_number=""/>
                         </#list>
                         <#assign level = level-1>
+
+                        <#if level == 1>
+                                </table>
+                            </td>
+                        <tr>
+                        </#if>
                     </#if>
                 </#macro>
                 <#macro step_details(step, step_number, level)>
@@ -186,13 +209,32 @@
                         <#assign step_class_root = "top-level">
                     </#if>
                     <#assign step_indent = level*20>
+                    <#if level == 1 && step.isAGroup()>
+                        <#assign showAccordion = true/>
+                    <#else>
+                        <#assign showAccordion = false/>
+                    </#if>
                         <tr class="test-${step.result}">
                             <td width="40">
                                 <#if step_number?has_content><a name="${step_number}"/></#if>
-                                <img style="margin-left: ${step_indent}px; margin-right: 5px;"
-                                                src="images/${step_outcome_icon}" class="${step_class_root}-icon"/>
+                                <#if showAccordion>
+                                    <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="height:30px; display:block">
+                                        <img src="images/plus.png" width="24" class="imgstepSection${step_number}" style="margin-left: 20px; float:left;  padding-right:5px"/>
+                                    </a>
+                                <#else>
+                                    <img style="margin-left: ${step_indent}px; margin-right: 5px;"
+                                         src="images/${step_outcome_icon}" class="${step_class_root}-icon"/>
+                                </#if>
                             </td>
-                            <td width="%"><span class="${step_class_root}-step">${step.description}</span></td>
+                            <td width="%">
+                                <#if showAccordion>
+                                    <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="height:30px;display:block">
+                                </#if>
+                                    <span class="${step_class_root}-step">${formatter.asHtml(step.description)}</span>
+                                <#if showAccordion>
+                                    </a>
+                                </#if>
+                            </td>
                             <td width="100" class="${step.result}-text">
                                 <#if !step.isAGroup() && step.firstScreenshot??>
                                     <a href="${testOutcome.screenshotReportName}.html#screenshots?screenshot=${screenshotCount}">
@@ -204,7 +246,7 @@
                                 </#if>
                             </td>
                             <td width="150"><span class="${step_class_root}-step">${step.result}</span></td>
-                            <td width="100"><span class="${step_class_root}-step">${step.durationInSeconds} seconds</span></td>
+                            <td width="100"><span class="${step_class_root}-step">${step.durationInSeconds}s</span></td>
                         </tr>
                         <#if step.result == "FAILURE" && !step.isAGroup()>
                             <tr class="test-${step.result}">
@@ -230,19 +272,35 @@
         <div id="bottomfooter"></div>
 
 
-        <script src="scripts/imgpreview.full.jquery.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            function toggleDiv(divId) {
+                $("#"+divId).toggle();
+                var imgsrc=$(".img"+divId).attr('src');
+                if(imgsrc=='images/plus.png'){
+                    $(".img"+divId).attr("src", function() {
+                        return "images/minus.png";
+                    });
+
+                }
+                else{
+                    $(".img"+divId).attr("src", function() {
+                        return "images/plus.png";
+                    });
+                }
+            }
+        </script>
 
         <script type="text/javascript">
             //<![CDATA[
-            jQuery.noConflict();
-            (function($) {
+
+            function($) {
                 $('a').imgPreview({
                     imgCSS: {
                         width: '500px'
                     },
                     distanceFromCursor: {top:10, left:-200}
                 });
-            })(jQuery);
+            }
             //]]>
         </script>
         <div id="imgPreviewContainer" style="position: absolute; top: 612px; left: 355px; display: none; " class=""><img
