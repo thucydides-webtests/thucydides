@@ -266,6 +266,14 @@ public enum ThucydidesSystemProperty {
      * Arguments to be passed to the Chrome driver, separated by commas.
      */
     CHROME_SWITCHES("chrome.switches"),
+
+
+    /**
+     * Preferences to be passed to the Firefox driver, separated by semi-colons (commas often appear in the preference
+     * values.
+     */
+    FIREFOX_PREFERENCES("firefox.preferences"),
+
     /**
      * Enable JQuery integration.
      * If set to true (the default), JQuery will be injected into any page that does not already have it.

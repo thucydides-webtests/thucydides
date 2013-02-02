@@ -41,7 +41,7 @@ public class WhenCoordinatingTestBatches {
 
         int executedTests = 0;
         for(int i = 0; i < 50; i++) {
-            if (batchManager.shouldExecuteThisTest()) {
+            if (batchManager.shouldExecuteThisTest(1)) {
                 executedTests++;
             }
         }
@@ -59,7 +59,7 @@ public class WhenCoordinatingTestBatches {
         List<Integer> executedTests = new ArrayList<Integer>();
         for(int testNumber = 1; testNumber <= 50; testNumber++) {
             batchManager.registerTestCase("Test Case " + testNumber);
-            if (batchManager.shouldExecuteThisTest()) {
+            if (batchManager.shouldExecuteThisTest(1)) {
                 executedTests.add(testNumber);
             }
         }
@@ -77,7 +77,7 @@ public class WhenCoordinatingTestBatches {
         List<Integer> executedTests = new ArrayList<Integer>();
         for(int testNumber = 1; testNumber <= 50; testNumber++) {
             batchManager.registerTestCase("Test Case " + testNumber);
-            if (batchManager.shouldExecuteThisTest()) {
+            if (batchManager.shouldExecuteThisTest(1)) {
                 executedTests.add(testNumber);
             }
         }
@@ -96,7 +96,7 @@ public class WhenCoordinatingTestBatches {
         List<Integer> executedTests = new ArrayList<Integer>();
         for(int testNumber = 1; testNumber <= 50; testNumber++) {
             batchManager.registerTestCase("Test Case " + testNumber);
-            if (batchManager.shouldExecuteThisTest()) {
+            if (batchManager.shouldExecuteThisTest(1)) {
                 executedTests.add(testNumber);
             }
         }
@@ -114,7 +114,7 @@ public class WhenCoordinatingTestBatches {
         List<Integer> executedTests = new ArrayList<Integer>();
         for(int testNumber = 1; testNumber <= 50; testNumber++) {
             batchManager.registerTestCase("Test Case " + testNumber);
-            if (batchManager.shouldExecuteThisTest()) {
+            if (batchManager.shouldExecuteThisTest(1)) {
                 executedTests.add(testNumber);
             }
         }
@@ -148,7 +148,7 @@ public class WhenCoordinatingTestBatches {
     private void runFiftyTestCases(SystemVariableBasedBatchManager batchManager, List<Integer> executedTests) {
         for(int testNumber = 0; testNumber < 50; testNumber++) {
             batchManager.registerTestCase("Test Case " + counter.getAndIncrement());
-            if (batchManager.shouldExecuteThisTest()) {
+            if (batchManager.shouldExecuteThisTest(1)) {
                 executedTests.add(testNumber);
             }
         }
@@ -185,15 +185,11 @@ public class WhenCoordinatingTestBatches {
 
         List<TestRunnerThread> threads = new ArrayList<TestRunnerThread>();
 
-        List<List<Integer>> executedTestResults = new ArrayList<List<Integer>>();
         for(int i = 1; i <= 10; i++) {
             MockEnvironmentVariables threadVariables = new MockEnvironmentVariables();
             threadVariables.setProperty("thucydides.batch.count", "10");
             threadVariables.setProperty("thucydides.batch.number", Integer.toString(i));
             SystemVariableBasedBatchManager batchManager = new SystemVariableBasedBatchManager(threadVariables);
-            List<Integer> executedTests = new ArrayList<Integer>();
-            executedTestResults.add(executedTests);
-            runFiftyTestCases(batchManager, executedTests);
             threads.add(new TestRunnerThread(batchManager));
         }
 

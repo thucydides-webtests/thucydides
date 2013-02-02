@@ -253,7 +253,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
         TestStep firstStep = testOutcome.getTestSteps().get(0);
 
-        assertThat(firstStep.getDescription(), is("Step with a parameter: <span class='single-parameter'>foo</span>"));
+        assertThat(firstStep.getDescription(), is("Step with a parameter: {foo}"));
     }
 
     @Test

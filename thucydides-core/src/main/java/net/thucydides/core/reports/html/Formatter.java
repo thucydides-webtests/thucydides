@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import net.thucydides.core.issues.IssueTracking;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -95,7 +96,11 @@ public class Formatter {
 
     public String addLineBreaks(final String text) {
         return (text != null) ?
-                text.replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS,"<br>").replaceAll(IOUtils.LINE_SEPARATOR_UNIX,"<br>") : "";
+                asHtml(text).replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS,"<br>").replaceAll(IOUtils.LINE_SEPARATOR_UNIX, "<br>") : "";
+    }
+
+    public String asHtml(String text) {
+        return StringEscapeUtils.escapeHtml4(text);
     }
 
     private String insertShortenedIssueTrackingUrls(String value) {

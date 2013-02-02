@@ -55,6 +55,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
      */
     private final Stack<TestStep> currentGroupStack;
 
+    private StepEventBus eventBus;
     /**
      * Clock used to pause test execution.
      */
@@ -85,6 +86,17 @@ public class BaseStepListener implements StepListener, StepPublisher {
     private List<String> storywideIssues;
 
     private List<TestTag> storywideTags;
+
+    public void setEventBus(StepEventBus eventBus) {
+        this.eventBus = eventBus;
+    }
+
+    public StepEventBus getEventBus() {
+        if (eventBus == null) {
+            eventBus = StepEventBus.getEventBus();
+        }
+        return eventBus;
+    }
 
     protected enum ScreenshotType {
         OPTIONAL_SCREENSHOT,
@@ -687,7 +699,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
             getCurrentTestOutcome().addRow(data);
         }
         currentExample++;
-        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(exampleTitle(currentExample, data)));
+        getEventBus().stepStarted(ExecutedStepDescription.withTitle(exampleTitle(currentExample, data)));
     }
 
     private String exampleTitle(int exampleNumber, Map<String, String> data) {
@@ -696,6 +708,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     public void exampleFinished() {
         getCurrentTestOutcome().moveToNextRow();
-        stepFinished();
+        getEventBus().stepFinished();
     }
 }

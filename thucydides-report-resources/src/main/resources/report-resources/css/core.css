@@ -237,6 +237,12 @@ body {
     font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-weight:normal;
 }
 
+.caption
+{
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #0d78ae; padding-left: 25px; font-style: italic
+}
+
+
 .textmiddle
 {
     vertical-align:middle;
@@ -976,3 +982,11 @@ table.coverage_data td {
     border-spacing: 0px;
     border-bottom: solid #d3d3d3 1px;
 }
+.scenario{
+	color:#0D78AE;
+	font-size:16px;
+	font-family:euphemia,verdana,sans-serif;
+	border:1px solid #0D78AE;
+	border-radius:5px;
+	-webkit-border-radius:5px;
+	padding:5px;}

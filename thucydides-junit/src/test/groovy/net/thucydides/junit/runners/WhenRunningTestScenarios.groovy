@@ -341,7 +341,7 @@ class WhenRunningTestScenarios extends Specification {
         def outcome = runner.testOutcomes[0]
         def firstStep = outcome.testSteps[0]
         then:
-        firstStep.description == "Step with a parameter: <span class='single-parameter'>foo</span>"
+        firstStep.description == "Step with a parameter: {foo}"
     }
 
     def "steps with multiple parameters should contain the parameter values in the description"() {

@@ -7,5 +7,5 @@ public interface BatchManager {
 
     public void registerTestCase(String testCaseName);
 
-    boolean shouldExecuteThisTest();
+    boolean shouldExecuteThisTest(int testCount);
 }
