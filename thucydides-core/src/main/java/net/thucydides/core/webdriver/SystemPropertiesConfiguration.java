@@ -3,7 +3,6 @@ package net.thucydides.core.webdriver;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TakeScreenshots;
 import net.thucydides.core.steps.FilePathParser;
 import net.thucydides.core.util.EnvironmentVariables;
