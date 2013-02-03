@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import com.google.common.base.Optional;
+import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.model.TakeScreenshots;
 import net.thucydides.core.util.EnvironmentVariables;
 
@@ -42,6 +43,11 @@ public interface Configuration {
      * How often should screenshots be taken.
      */
     Optional<TakeScreenshots> getScreenshotLevel();
+
+    /**
+     * Batch manager
+     */
+    BatchManager getBatchManager();
 
     void setIfUndefined(String property, String value);
 

@@ -92,7 +92,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this(klass,
             injector.getInstance(WebdriverManager.class),
             injector.getInstance(Configuration.class),
-            injector.getInstance(BatchManager.class));
+            injector.getInstance(Configuration.class).getBatchManager());
     }
 
     public ThucydidesRunner(final Class<?> klass,
@@ -106,7 +106,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this(klass,
                 new ThucydidesWebdriverManager(webDriverFactory, configuration),
                 configuration,
-                Injectors.getInjector().getInstance(BatchManager.class));
+                configuration.getBatchManager());
 
     }
 
