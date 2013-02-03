@@ -1,10 +1,13 @@
 package net.thucydides.junit.runners;
 
 import com.google.inject.Injector;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.batches.BatchManager;
+import net.thucydides.core.batches.BatchStrategy;
+import net.thucydides.core.batches.UnsupportedBatchStrategyException;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
@@ -14,6 +17,7 @@ import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepData;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
@@ -92,7 +96,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this(klass,
             injector.getInstance(WebdriverManager.class),
             injector.getInstance(Configuration.class),
-            injector.getInstance(Configuration.class).getBatchManager());
+            getBatchManager(injector.getInstance(Configuration.class)));
     }
 
     public ThucydidesRunner(final Class<?> klass,
@@ -106,7 +110,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this(klass,
                 new ThucydidesWebdriverManager(webDriverFactory, configuration),
                 configuration,
-                configuration.getBatchManager());
+                getBatchManager(configuration));
 
     }
 
@@ -144,12 +148,32 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         }
     }
 
+    private static BatchManager getBatchManager(Configuration configuration) {
+        EnvironmentVariables environmentVariables = configuration.getEnvironmentVariables();
+        String batchManagerProperty = ThucydidesSystemProperty.BATCH_STRATEGY.from(environmentVariables,
+                BatchStrategy.DIVIDE_EQUALLY.name());
+        try {
+            return BatchStrategy.valueOf(batchManagerProperty).instance(environmentVariables);
+        } catch (Exception e) {
+            throw new UnsupportedBatchStrategyException(batchManagerProperty + " is not a supported batch strategy.", e);
+        }
+    }
+
+
+
     /**
      * The getConfiguration().manages output directories and driver types.
      * They can be defined as system values, or have sensible defaults.
      */
     protected Configuration getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Batch Manager used for running tests in parallel batches
+     */
+    protected BatchManager getBatchManager() {
+        return batchManager;
     }
 
     /**

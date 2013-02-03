@@ -3,9 +3,6 @@ package net.thucydides.core.webdriver;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.batches.BatchManager;
-import net.thucydides.core.batches.BatchStrategy;
-import net.thucydides.core.batches.UnsupportedBatchStrategyException;
 import net.thucydides.core.model.TakeScreenshots;
 import net.thucydides.core.steps.FilePathParser;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -262,17 +259,4 @@ public class SystemPropertiesConfiguration implements Configuration {
                 + SupportedWebDriver.listOfSupportedDrivers());
     }
 
-    @Override
-    public BatchManager getBatchManager() {
-
-        String batchManagerProperty = ThucydidesSystemProperty.BATCH_STRATEGY.from(getEnvironmentVariables(),
-                BatchStrategy.DIVIDE_EQUALLY.name());
-
-        try {
-            return BatchStrategy.valueOf(batchManagerProperty).instance(getEnvironmentVariables());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new UnsupportedBatchStrategyException(batchManagerProperty + " is not a supported batch strategy.", e);
-        }
-    }
 }

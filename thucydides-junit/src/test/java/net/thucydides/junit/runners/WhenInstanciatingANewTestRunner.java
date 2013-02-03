@@ -1,5 +1,9 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.batches.BatchStrategy;
+import net.thucydides.core.batches.SystemVariableBasedBatchManager;
+import net.thucydides.core.batches.TestCountBasedBatchManager;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
@@ -16,6 +20,7 @@ import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -133,6 +138,25 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
         assertThat(outputDirectory.getPath(), is("target" + FILE_SEPARATOR
                 + "reports" + FILE_SEPARATOR
                 + "thucydides"));
+
+    }
+
+    @Test
+    public void a_batch_runner_is_set_by_default() throws InitializationError {
+        ThucydidesRunner  runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
+
+        assertThat(runner.getBatchManager(), instanceOf(SystemVariableBasedBatchManager.class));
+
+    }
+
+    @Test
+    public void a_batch_runner_can_be_overridden_using_system_property() throws InitializationError {
+
+        environmentVariables.setProperty(ThucydidesSystemProperty.BATCH_STRATEGY.getPropertyName(), BatchStrategy.DIVIDE_BY_TEST_COUNT.name());
+
+        ThucydidesRunner  runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
+
+        assertThat(runner.getBatchManager(), instanceOf(TestCountBasedBatchManager.class));
 
     }
 
