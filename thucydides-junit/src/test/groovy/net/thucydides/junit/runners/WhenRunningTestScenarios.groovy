@@ -352,7 +352,7 @@ class WhenRunningTestScenarios extends Specification {
         def outcome = runner.testOutcomes[0]
         def firstStep = outcome.testSteps[1]
         then:
-        firstStep.description == "Step with two parameters: <span class='parameters'>foo, 2</span>"
+        firstStep.description == "Step with two parameters: {foo, 2}"
     }
 
     def "should be able to override scenario titles using the @Title annotation"() {
