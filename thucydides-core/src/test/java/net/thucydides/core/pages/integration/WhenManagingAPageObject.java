@@ -60,6 +60,11 @@ public class WhenManagingAPageObject {
             return mockButton;
         }
 
+        public void invokeWaitABit(long time) {
+            waitABit(500);
+        }
+
+
     }
 
     @Test
@@ -131,7 +136,7 @@ public class WhenManagingAPageObject {
     public void page_can_delay_requests_for_a_short_period() {
         long start = System.currentTimeMillis();
         BasicPageObject page = new BasicPageObject(driver);
-        page.waitABit(500);
+        page.invokeWaitABit(500);
 
         assertThat((int) (System.currentTimeMillis() - start), greaterThanOrEqualTo(500));
     }

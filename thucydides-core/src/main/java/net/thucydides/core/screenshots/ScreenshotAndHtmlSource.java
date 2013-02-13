@@ -1,5 +1,6 @@
 package net.thucydides.core.screenshots;
 
+import com.google.common.base.Optional;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -18,12 +19,17 @@ public class ScreenshotAndHtmlSource {
         this.sourcecode = sourcecode;
     }
 
+    public ScreenshotAndHtmlSource(File screenshot) {
+        this.screenshot = screenshot;
+        this.sourcecode = null;
+    }
+
     public File getScreenshotFile() {
         return screenshot;
     }
 
-    public File getSourcecode() {
-        return sourcecode;
+    public Optional<File> getSourcecode() {
+        return Optional.fromNullable(sourcecode);
     }
 
     public boolean wasTaken() {

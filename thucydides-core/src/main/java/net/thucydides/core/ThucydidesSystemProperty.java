@@ -371,8 +371,13 @@ public enum ThucydidesSystemProperty {
      *  is different from the requirements base dir (for example when building a multi-module project from parent pom with
      *  requirements stored inside a sub-module : See Jira #Thucydides-100)
      */
-    TEST_REQUIREMENTS_ROOT("thucydides.test.requirements.basedir") ;
+    TEST_REQUIREMENTS_ROOT("thucydides.test.requirements.basedir"),
 
+    /**
+     * Set to true if you want the HTML source code to be recorded as well as the screenshots.
+     * This is not currently used in the reports.
+     */
+    THUCYDIDES_STORE_HTML_SOURCE("thucydides.store.html.source");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

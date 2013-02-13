@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 import static net.thucydides.core.ThucydidesSystemProperty.BASE_URL;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_STORE_HTML_SOURCE;
 import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_TAKE_SCREENSHOTS;
 
 /**
@@ -208,6 +209,10 @@ public class SystemPropertiesConfiguration implements Configuration {
         } else {
             return Optional.absent();
         }
+    }
+
+    public boolean storeHtmlSourceCode() {
+        return getEnvironmentVariables().getPropertyAsBoolean(THUCYDIDES_STORE_HTML_SOURCE, false);
     }
 
     public void setIfUndefined(String property, String value) {

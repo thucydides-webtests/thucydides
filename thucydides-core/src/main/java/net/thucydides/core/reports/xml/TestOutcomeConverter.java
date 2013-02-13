@@ -308,7 +308,9 @@ public class TestOutcomeConverter implements Converter {
             for(ScreenshotAndHtmlSource screenshotAndHtmlSource : step.getScreenshots()) {
                 writer.startNode(SCREENSHOT_FIELD);
                 writer.addAttribute(SCREENSHOT_IMAGE, screenshotAndHtmlSource.getScreenshotFile().getName());
-                writer.addAttribute(SCREENSHOT_SOURCE, screenshotAndHtmlSource.getSourcecode().getName());
+                if (screenshotAndHtmlSource.getSourcecode().isPresent()) {
+                    writer.addAttribute(SCREENSHOT_SOURCE, screenshotAndHtmlSource.getSourcecode().get().getName());
+                }
                 writer.endNode();
             }
             writer.endNode();
@@ -561,7 +563,11 @@ public class TestOutcomeConverter implements Converter {
                 if (childNode.equals(SCREENSHOT_FIELD)) {
                     String screenshot = reader.getAttribute(SCREENSHOT_IMAGE);
                     String source = reader.getAttribute(SCREENSHOT_SOURCE);
-                    step.addScreenshot(new ScreenshotAndHtmlSource(new File(screenshot), new File(source)));
+                    if (source != null) {
+                        step.addScreenshot(new ScreenshotAndHtmlSource(new File(screenshot), new File(source)));
+                    } else {
+                        step.addScreenshot(new ScreenshotAndHtmlSource(new File(screenshot)));
+                    }
                 }
                 reader.moveUp();
             }

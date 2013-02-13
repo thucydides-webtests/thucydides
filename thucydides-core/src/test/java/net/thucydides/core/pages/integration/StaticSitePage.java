@@ -9,7 +9,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
 @DefaultUrl("classpath:static-site/index.html")
-    public class StaticSitePage extends PageObject {
+public class StaticSitePage extends PageObject {
 
         @FindBy(name = "firstname")
         protected WebElement firstName;

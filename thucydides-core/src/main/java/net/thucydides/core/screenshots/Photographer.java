@@ -3,8 +3,10 @@ package net.thucydides.core.screenshots;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.jhlabs.image.BoxBlurFilter;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.digest.Digest;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
@@ -42,6 +44,7 @@ public class Photographer {
 
     private final Logger logger = LoggerFactory.getLogger(Photographer.class);
     private ScreenshotProcessor screenshotProcessor;
+    private EnvironmentVariables environmentVariables;
 
     protected Logger getLogger() {
         return logger;
@@ -73,6 +76,7 @@ public class Photographer {
         this.screenshotProcessor = screenshotProcessor;
         this.screenshotSequence = DEFAULT_SCREENSHOT_SEQUENCE;
         this.blurLevel = blurLevel;
+        this.environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
     }
 
     protected long nextScreenshotNumber() {
@@ -104,7 +108,9 @@ public class Photographer {
                     File savedScreenshot = targetScreenshot(prefix);
                     screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile, savedScreenshot));
 
-                    if (! blurLevel.isPresent()) savePageSourceFor(savedScreenshot.getAbsolutePath());
+                    if (!blurLevel.isPresent() && shouldSavePageSource()) {
+                        savePageSourceFor(savedScreenshot.getAbsolutePath());
+                    }
 
                     return Optional.of(savedScreenshot);
                 }
@@ -113,6 +119,10 @@ public class Photographer {
             }
         }
         return Optional.absent();
+    }
+
+    private boolean shouldSavePageSource() {
+        return environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.THUCYDIDES_STORE_HTML_SOURCE, false);
     }
 
     protected File blur(File srcFile) throws Exception {
