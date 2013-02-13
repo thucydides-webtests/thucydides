@@ -285,7 +285,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
 
     private String stripRootPathFrom(String testOutcomePath) {
         String rootPath = ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT.from(environmentVariables);
-        if (rootPath != null && testOutcomePath.startsWith(rootPath)) {
+        if (rootPath != null && testOutcomePath.startsWith(rootPath) && (!testOutcomePath.equals(rootPath))) {
             return testOutcomePath.substring(rootPath.length() + 1);
         } else {
             return testOutcomePath;
