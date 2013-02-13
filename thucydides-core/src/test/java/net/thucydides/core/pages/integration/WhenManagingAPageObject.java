@@ -1,5 +1,6 @@
-package net.thucydides.core.pages;
+package net.thucydides.core.pages.integration;
 
+import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;

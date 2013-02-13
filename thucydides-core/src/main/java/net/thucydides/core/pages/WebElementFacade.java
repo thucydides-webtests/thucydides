@@ -126,6 +126,10 @@ public class WebElementFacade {
         return findBy(bySelector);
     }
 
+    public String getAttribute(String name) {
+        return webElement.getAttribute(name);
+    }
+
     public List<WebElementFacade> thenFindAll(By selector) {
         logIfVerbose("findAll " + selector);
         List<WebElement> nestedElements = driver.findElements(selector);
