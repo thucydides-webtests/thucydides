@@ -217,7 +217,33 @@ public class WhenReadingAnXMLReport {
         assertThat(testStep.getResult(), is(TestResult.SUCCESS));
         assertThat(testStep.getDescription(), is("step 1"));
         assertThat(testStep.getScreenshots().get(0).getScreenshotFile().getName(), is("step_1.png"));
-        assertThat(testStep.getScreenshots().get(0).getSourcecode().getName(), is("step_1.html"));
+        assertThat(testStep.getScreenshots().get(0).getSourcecode().get().getName(), is("step_1.html"));
+    }
+
+    @Test
+    public void should_load_test_step_details_with_no_screenshot_source_from_xml_file() throws Exception {
+        String storedReportXML =
+                "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
+                        + "  <test-step result='SUCCESS'>\n"
+                        + "    <screenshots>"
+                        + "      <screenshot image='step_1.png'/>"
+                        + "    </screenshots>"
+                        + "    <description>step 1</description>\n"
+                        + "  </test-step>\n"
+                        + "</acceptance-test-run>";
+
+        File report = temporaryDirectory.newFile("saved-report.xml");
+        FileUtils.writeStringToFile(report, storedReportXML);
+
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+
+        TestStep testStep = (TestStep) testOutcome.get().getTestSteps().get(0);
+        assertThat(testOutcome.get().getTestSteps().size(), is(1));
+        assertThat(testStep.getResult(), is(TestResult.SUCCESS));
+        assertThat(testStep.getDescription(), is("step 1"));
+        assertThat(testStep.getScreenshots().get(0).getScreenshotFile().getName(), is("step_1.png"));
+        assertThat(testStep.getScreenshots().get(0).getSourcecode().isPresent(), is(false));
     }
 
 
