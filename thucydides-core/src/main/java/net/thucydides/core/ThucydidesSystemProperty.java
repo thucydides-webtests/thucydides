@@ -377,7 +377,13 @@ public enum ThucydidesSystemProperty {
      * Set to true if you want the HTML source code to be recorded as well as the screenshots.
      * This is not currently used in the reports.
      */
-    THUCYDIDES_STORE_HTML_SOURCE("thucydides.store.html.source");
+    THUCYDIDES_STORE_HTML_SOURCE("thucydides.store.html.source"),
+
+    /**
+     * If set to true, a copy of the original screenshot will be kept when screenshots are scaled for the reports.
+     * False by default to conserve disk space.
+     */
+    THUCYDIDES_KEEP_UNSCALED_SCREENSHOTS("thucydides.keep.unscaled.screenshots");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

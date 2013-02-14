@@ -631,8 +631,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public Photographer getPhotographer() {
-        return new Photographer(driver, outputDirectory, new ScreenshotBlurCheck().blurLevel());
-
+        ScreenshotBlurCheck blurCheck = new ScreenshotBlurCheck();
+        if (blurCheck.blurLevel().isPresent()) {
+           return new Photographer(driver, outputDirectory, blurCheck.blurLevel().get());
+        } else {
+            return new Photographer(driver, outputDirectory);
+        }
     }
 
     private boolean shouldTakeEndOfStepScreenshotFor(final TestResult result) {

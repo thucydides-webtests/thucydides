@@ -2,7 +2,11 @@ package net.thucydides.core.reports.html.screenshots;
 
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.model.Screenshot;
+import org.apache.commons.io.FileUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -13,18 +17,27 @@ public class ScreenshotFormatter {
 
     private final Screenshot screenshot;
     private final File sourceDirectory;
+    private final boolean shouldKeepOriginalScreenshots;
 
-    private ScreenshotFormatter(final Screenshot screenshot, final File sourceDirectory) {
+    private ScreenshotFormatter(final Screenshot screenshot,
+                                final File sourceDirectory,
+                                final boolean shouldKeepOriginalScreenshots) {
         this.screenshot = screenshot;
         this.sourceDirectory = sourceDirectory;
+        this.shouldKeepOriginalScreenshots = shouldKeepOriginalScreenshots;
     }
 
     public static ScreenshotFormatter forScreenshot(final Screenshot screenshot) {
-        return new ScreenshotFormatter(screenshot, null);
+        return new ScreenshotFormatter(screenshot, null, false);
     }
 
     public ScreenshotFormatter inDirectory(final File sourceDirectory) {
-        return new ScreenshotFormatter(screenshot, sourceDirectory);
+        return new ScreenshotFormatter(screenshot, sourceDirectory, shouldKeepOriginalScreenshots);
+    }
+
+
+    public ScreenshotFormatter keepOriginals(boolean shouldKeepOriginalScreenshots) {
+        return new ScreenshotFormatter(screenshot, sourceDirectory, shouldKeepOriginalScreenshots);
     }
 
     public Screenshot expandToHeight(final int targetHeight) throws IOException {
@@ -41,10 +54,25 @@ public class ScreenshotFormatter {
     }
 
     private File resizedImage(File screenshotFile, int maxHeight) throws IOException {
+        String resizedScreenshotFilename = "scaled_" + screenshotFile.getName();
         ResizableImage scaledImage = ResizableImage.loadFrom(screenshotFile).rescaleCanvas(maxHeight);
-        File scaledFile = new File(sourceDirectory, "scaled_" + screenshotFile.getName());
+
+        File scaledFile = new File(sourceDirectory, resizedScreenshotFilename);
         scaledImage.saveTo(scaledFile);
-        return scaledFile;
+
+        if (shouldKeepOriginalScreenshots) {
+            saveCopyOf(screenshotFile);
+        }
+        screenshotFile.delete();
+
+        FileUtils.moveFile(scaledFile, screenshotFile);
+        return screenshotFile;
     }
+
+    private void saveCopyOf(File screenshotFile) throws IOException {
+        String backupScreenshotFilename = "original_" + screenshotFile.getName();
+        FileUtils.copyFile(screenshotFile, new File(sourceDirectory, backupScreenshotFilename));
+    }
+
 }
 

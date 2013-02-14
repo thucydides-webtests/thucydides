@@ -43,7 +43,6 @@ public class MultithreadScreenshotProcessor implements ScreenshotProcessor {
     }
 
 
-    @Override
     public void waitUntilDone() {
         while (!queue.isEmpty()) {
             try {
@@ -63,7 +62,6 @@ public class MultithreadScreenshotProcessor implements ScreenshotProcessor {
 
         boolean done = false;
 
-        @Override
         public void run() {
             while (!done) {
                 saveQueuedScreenshot();
@@ -164,7 +162,6 @@ public class MultithreadScreenshotProcessor implements ScreenshotProcessor {
         }
     }
 
-    @Override
     public void queueScreenshot(QueuedScreenshot queuedScreenshot) {
         queue.offer(queuedScreenshot);
         synchronized (queue) {
@@ -172,7 +169,6 @@ public class MultithreadScreenshotProcessor implements ScreenshotProcessor {
         }
     }
 
-    @Override
     public boolean isEmpty() {
         return queue.isEmpty();
     }

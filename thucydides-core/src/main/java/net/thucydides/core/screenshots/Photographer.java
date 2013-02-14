@@ -53,21 +53,31 @@ public class Photographer {
     private static final ScreenshotSequence DEFAULT_SCREENSHOT_SEQUENCE = new ScreenshotSequence();
 
     public Photographer(final WebDriver driver, final File targetDirectory) {
-        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class),
-                Optional.<BlurLevel>absent());
+        this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class), null);
     }
 
-    public Photographer(final WebDriver driver, final File targetDirectory, final Optional<BlurLevel> blurLevel) {
+    public Photographer(final WebDriver driver, final File targetDirectory, final BlurLevel blurLevel) {
         this(driver, targetDirectory, Injectors.getInjector().getInstance(ScreenshotProcessor.class), blurLevel);
     }
 
     public Photographer(final WebDriver driver, final File targetDirectory, final ScreenshotProcessor screenshotProcessor) {
-        this(driver, targetDirectory, screenshotProcessor, Optional.<BlurLevel>absent());
+        this(driver, targetDirectory, screenshotProcessor, null);
     }
 
 
-    public Photographer(final WebDriver driver, final File targetDirectory,
-                            final ScreenshotProcessor screenshotProcessor, Optional<BlurLevel> blurLevel) {
+    public Photographer(final WebDriver driver,
+                        final File targetDirectory,
+                        final ScreenshotProcessor screenshotProcessor,
+                        BlurLevel blurLevel) {
+        this(driver, targetDirectory, screenshotProcessor, blurLevel,
+             Injectors.getInjector().getInstance(EnvironmentVariables.class));
+    }
+
+    public Photographer(final WebDriver driver,
+                            final File targetDirectory,
+                            final ScreenshotProcessor screenshotProcessor,
+                            BlurLevel blurLevel,
+                            EnvironmentVariables environmentVariables) {
         Preconditions.checkNotNull(targetDirectory);
         Preconditions.checkNotNull(screenshotProcessor);
 
@@ -75,8 +85,8 @@ public class Photographer {
         this.targetDirectory = targetDirectory;
         this.screenshotProcessor = screenshotProcessor;
         this.screenshotSequence = DEFAULT_SCREENSHOT_SEQUENCE;
-        this.blurLevel = blurLevel;
-        this.environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        this.blurLevel = Optional.fromNullable(blurLevel);
+        this.environmentVariables = environmentVariables;
     }
 
     protected long nextScreenshotNumber() {

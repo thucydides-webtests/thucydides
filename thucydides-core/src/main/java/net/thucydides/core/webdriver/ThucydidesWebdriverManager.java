@@ -16,7 +16,7 @@ import java.util.Set;
  * duration of the tests.
  * A webdriver manager needs to be thread-safe. Tests can potentially be run in parallel, and different
  * tests can use different drivers.
- *                                                  ˜
+ *
  * @author johnsmart
  *
  */
