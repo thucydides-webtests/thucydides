@@ -4,8 +4,7 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.issues.IssueTracking;
@@ -20,7 +19,6 @@ import net.thucydides.core.requirements.FileSystemRequirementsTagProvider;
 import net.thucydides.core.requirements.RequirementsProviderService;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
-import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
@@ -38,6 +36,8 @@ import java.util.Map;
 import static ch.lambdaj.Lambda.convert;
 import static com.google.common.collect.Iterables.any;
 import static net.thucydides.core.model.ReportType.HTML;
+
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_KEEP_UNSCALED_SCREENSHOTS;
 
 /**
  * Generates acceptance test results in XML form.
@@ -126,7 +126,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         copyResourcesToOutputDirectory();
 
         if (containsScreenshots(storedTestOutcome)) {
-            generateScreenshotReportsFor(storedTestOutcome);
+            generateScreenshotReportsFor(storedTestOutcome, allTestOutcomes);
         }
 
         String reportFilename = reportFor(storedTestOutcome);
@@ -159,7 +159,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         context.put("reportName", new ReportNameProvider());
     }
 
-    private void generateScreenshotReportsFor(final TestOutcome testOutcome) throws IOException {
+    private void generateScreenshotReportsFor(final TestOutcome testOutcome, final TestOutcomes allTestOutcomes) throws IOException {
 
         Preconditions.checkNotNull(getOutputDirectory());
 
@@ -168,9 +168,11 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         String screenshotReport = testOutcome.getReportName() + "_screenshots.html";
 
         Map<String,Object> context = new HashMap<String,Object>();
+        addTestOutcomeToContext(testOutcome, allTestOutcomes, context);
+        addFormattersToContext(context);
         context.put("screenshots", screenshots);
-        context.put("testOutcome", testOutcome);
         context.put("reportName", new ReportNameProvider());
+        context.put("narrativeView", testOutcome.getReportName());
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_SCREENSHOT).usingContext(context);
         writeReportToOutputDirectory(screenshotReport, htmlContents);
 
@@ -191,6 +193,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
             try {
                 return ScreenshotFormatter.forScreenshot(screenshot)
                                           .inDirectory(getOutputDirectory())
+                                          .keepOriginals(shouldKeepOriginalScreenshots())
                                           .expandToHeight(maxHeight);
             } catch (IOException e) {
                 LOGGER.error("Failed to write scaled screenshot for {}: {}", screenshot, e);
@@ -198,6 +201,10 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
             }
         }
     };
+
+    private boolean shouldKeepOriginalScreenshots() {
+        return getEnvironmentVariables().getPropertyAsBoolean(THUCYDIDES_KEEP_UNSCALED_SCREENSHOTS, false);
+    }
 
     private int maxScreenshotHeightIn(List<Screenshot> screenshots) throws IOException {
         int maxHeight = 0;

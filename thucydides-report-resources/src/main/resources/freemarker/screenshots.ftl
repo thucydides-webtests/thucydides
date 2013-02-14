@@ -80,61 +80,95 @@
 <body>
 <div id="topheader">
     <div id="topbanner">
-        <#--<div id="menu">-->
-            <#--<table border="0">-->
-                <#--<tr>-->
-                    <#--<td><a href="index.html"><img src="images/menu_h.png" width="105" height="28" border="0"/></a></td>-->
-                    <#--<td><a href="features.html"><img src="images/menu_f.png" width="105" height="28" border="0"/></a>-->
-                    <#--</td>-->
-                    <#--<td><a href="stories.html"><img src="images/menu_s.png" width="105" height="28" border="0"/></a>-->
-                    <#--</td>-->
-                <#--</tr>-->
-            <#--</table>-->
-        <#--</div>-->
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
     </div>
 </div>
 
+<#-- HEADER
+-->
+<#if testOutcome.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">    <#elseif testOutcome.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">    <#elseif testOutcome.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">    <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">    </#if>
 <div class="middlecontent">
     <div id="contenttop">
         <div class="middlebg">
-            <div style="height:30px;"><span class="bluetext"><a href="index.html" class="bluetext">Home</a></span></div>
+            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > <a href="${narrativeView}.html">${testOutcome.title}</a> > Screenshots </span>
         </div>
         <div class="rightbg"></div>
     </div>
+
+    <div class="clr"></div>
+
+    <!--/* starts second table*/-->
+    <div class="menu">
+        <ul>
+            <li><a href="index.html" class="current">Test Results</a></li>
+            <li><a href="capabilities.html">Requirements</a></li>
+            <li><a href="progress-report.html">Progress</a></li>
+        <#list allTestOutcomes.tagTypes as tagType>
+            <#assign tagReport = reportName.forTagType(tagType) >
+            <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
+            <li><a href="${tagReport}">${tagTypeTitle}</a></li>
+        </#list>
+            <li><a href="history.html">History</a></li>
+        </ul>
+        <br style="clear:left"/>
+    </div>
+
     <div class="clr"></div>
     <div id="contentbody">
-        <a name="screenshots"/>
         <div class="titlebar">
-            <div class="story-title">
-             <#if testOutcome.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">    <#elseif testOutcome.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">    <#elseif testOutcome.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">    <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">    </#if>
-                <table width="1005">
-                    <td width="50"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25"
-                                        height="25"/>
+        <div class="story-title">
+            <table width="1005">
+                <td width="50"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25" height="25"/> </td>
+            <#if (testOutcome.videoLink)??>
+                <td width="25"><a href="${testOutcome.videoLink}"><img class="story-outcome-icon" src="images/video.png" width="25" height="25" alt="Video"/></a></td>
+            </#if>
+                <td width="%"><span class="test-case-title"><span
+                        class="${outcome_text}">${testOutcome.titleWithLinks}<span class="related-issue-title">${testOutcome.formattedIssues}</span></span></span>
+                </td>
+                <td width="100"><span class="test-case-duration"><span class="greentext">${testOutcome.durationInSeconds}s</span></span>
+                </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                    <#if (parentRequirement.isPresent())>
+                        <div>
+                            <#assign parentTitle = inflection.of(parentRequirement.get().name).asATitle() >
+                            <#assign parentType = inflection.of(parentRequirement.get().type).asATitle() >
+                            <#if (parentRequirement.get().cardNumber?has_content) >
+                                <#assign issueNumber = "[" + formatter.addLinks(parentRequirement.get().cardNumber) + "]" >
+                            <#else>
+                                <#assign issueNumber = "">
+                            </#if>
+                            <h3>${parentType}: ${issueNumber} ${parentTitle}</h3>
+                            <div class="requirementNarrativeTitle">
+                            ${formatter.addLineBreaks(parentRequirement.get().narrativeText)}
+                            </div>
+                        </div>
+                    </#if>
                     </td>
-                <#if (testOutcome.videoLink)??>
-                    <td width="25"><a href="${testOutcome.videoLink}"><img class="story-outcome-icon" src="images/video.png" width="25" height="25" alt="Video"/></a></td>
-                </#if>
-                    <td width="%"><span class="test-case-title"><span
-                            class="${outcome_text}">${testOutcome.titleWithLinks}<span class="related-issue-title">${testOutcome.formattedIssues}</span></span></span>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                    <#list testOutcome.tags as tag>
+                        <#assign tagReport = reportName.forTag(tag.name) />
+                        <a class="tagLink" href="${tagReport}">${tag.name} (${tag.type})</a>
+                    </#list>
                     </td>
-                    <td width="100"><span class="test-case-duration"><span class="greentext">${testOutcome.duration / 1000}
-                        seconds</span></span>
-                    </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                        <#foreach tag in testOutcome.tags>
-                            <#assign tagReport = reportName.forTag(tag.name) />
-                            <a class="tagLink" href="${tagReport}">${tag.name} (${tag.type})</a>
-                        </#foreach>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+                </tr>
+            </table>
         </div>
     </div>
+    </div>
+
     <div class="clr"></div>
+
+    <#if (testOutcome.isDataDriven())>
+        <div class="story-title">
+            <h3>Scenario:</h3>
+            <div class="scenario">${formatter.addLineBreaks(testOutcome.dataDrivenSampleScenario)}</div>
+
+        </div>
+    </#if>
 
 
     <div id="beforetable"></div>

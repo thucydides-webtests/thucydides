@@ -18,7 +18,7 @@
         text-decoration: none;
     }
 
-    a:hover {              ˜
+    a:hover {
         text-decoration: none;
     }
 
