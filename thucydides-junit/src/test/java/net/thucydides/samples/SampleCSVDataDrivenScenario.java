@@ -49,12 +49,10 @@ public class SampleCSVDataDrivenScenario {
 
     @Test
     public void data_driven_test() {
-        System.out.println(getName() + "/" + getAge() + "/" + getAddress());
     }
 
     @Test
     public void another_data_driven_test() {
-        System.out.println(getName() + "/" + getAge() + "/" + getAddress());
     }
 
 

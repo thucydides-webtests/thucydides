@@ -38,22 +38,18 @@ public class SampleTestSpecificCSVDataDrivenScenario {
 
     @Before
     public void setup() {
-        System.out.println("Setup");
     }
 
     @After
     public void teardown() {
-        System.out.println("Teardown");
     }
 
     @Test
     public void data_driven_test() {
-        System.out.println(getName() + "/" + getAge() + "/" + getAddress());
     }
 
     @Test
     public void another_data_driven_test() {
-        System.out.println(getName() + "/" + getAge() + "/" + getAddress());
     }
 
     public String getName() {
