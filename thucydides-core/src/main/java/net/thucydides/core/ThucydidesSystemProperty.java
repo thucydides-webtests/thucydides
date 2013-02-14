@@ -225,6 +225,12 @@ public enum ThucydidesSystemProperty {
     ACTIVTE_HIGHLIGHTING("thucydides.activate.highlighting"),
 
     /**
+     * Batch strategy to use for parallel batches.
+     * Allowed values - DIVIDE_EQUALLY (default) and DIVIDE_BY_TEST_COUNT
+     */
+    BATCH_STRATEGY("thucydides.batch.strategy"),
+
+    /**
      *  A deprecated property that is synonymous with thucydides.batch.size
      */
     BATCH_COUNT("thucydides.batch.count"),
