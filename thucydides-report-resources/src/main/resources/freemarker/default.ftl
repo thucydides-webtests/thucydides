@@ -230,7 +230,7 @@
                                 <#if showAccordion>
                                     <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="height:30px;display:block">
                                 </#if>
-                                    <span class="${step_class_root}-step">${formatter.asHtml(step.description)}</span>
+                                    <span class="${step_class_root}-step">${formatter.htmlCompatible(step.description)}</span>
                                 <#if showAccordion>
                                     </a>
                                 </#if>

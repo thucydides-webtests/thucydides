@@ -137,7 +137,7 @@ public class WhenFormattingForHTML {
         when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
         Formatter formatter = new Formatter(issueTracking);
 
-        String formattedValue = formatter.addLineBreaks("Line one\nLine two\nLine three");
+        String formattedValue = formatter.htmlCompatible("Line one\nLine two\nLine three");
 
         assertThat(formattedValue, is("Line one<br>Line two<br>Line three"));
     }
@@ -147,7 +147,7 @@ public class WhenFormattingForHTML {
         when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
         Formatter formatter = new Formatter(issueTracking);
 
-        String formattedValue = formatter.addLineBreaks(null);
+        String formattedValue = formatter.htmlCompatible(null);
 
         assertThat(formattedValue, is(""));
     }
@@ -157,9 +157,29 @@ public class WhenFormattingForHTML {
         when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
         Formatter formatter = new Formatter(issueTracking);
 
-        String formattedValue = formatter.addLineBreaks("Line one\r\nLine two\r\nLine three");
+        String formattedValue = formatter.htmlCompatible("Line one\r\nLine two\r\nLine three");
 
         assertThat(formattedValue, is("Line one<br>Line two<br>Line three"));
+    }
+
+    @Test
+    public void should_not_escape_html_tags() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.htmlCompatible("<ul style='margin-left:5%'><li>Line one</li><li>Line two</li><li>Line three</li></ul>");
+
+        assertThat(formattedValue, is("<ul style='margin-left:5%'><li>Line one</li><li>Line two</li><li>Line three</li></ul>"));
+    }
+
+    @Test
+    public void should_display_foreign_letters_as_html_entities() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.htmlCompatible("François");
+
+        assertThat(formattedValue, is("Fran&ccedil;ois"));
     }
 
     @Test

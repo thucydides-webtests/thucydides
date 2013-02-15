@@ -6,6 +6,10 @@ import com.google.inject.Inject;
 import net.thucydides.core.issues.IssueTracking;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.text.translate.AggregateTranslator;
+import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
+import org.apache.commons.lang3.text.translate.EntityArrays;
+import org.apache.commons.lang3.text.translate.LookupTranslator;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -96,11 +100,16 @@ public class Formatter {
 
     public String addLineBreaks(final String text) {
         return (text != null) ?
-                asHtml(text).replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS,"<br>").replaceAll(IOUtils.LINE_SEPARATOR_UNIX, "<br>") : "";
+                text.replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS,"<br>").replaceAll(IOUtils.LINE_SEPARATOR_UNIX, "<br>") : "";
     }
 
-    public String asHtml(String text) {
-        return StringEscapeUtils.escapeHtml4(text);
+    private final CharSequenceTranslator ESCAPE_SPECIAL_CHARS = new AggregateTranslator(
+            new LookupTranslator(EntityArrays.ISO8859_1_ESCAPE()),
+            new LookupTranslator(EntityArrays.HTML40_EXTENDED_ESCAPE())
+    );
+
+    public String htmlCompatible(String text) {
+        return addLineBreaks(ESCAPE_SPECIAL_CHARS.translate(text));
     }
 
     private String insertShortenedIssueTrackingUrls(String value) {
