@@ -156,6 +156,10 @@ public class Thucydides {
         throw new IgnoredStepException(reason);
     }
 
+    public static void takeScreenshot() {
+        StepEventBus.getEventBus().takeScreenshot();
+    }
+
     /**
      * The current working directory name is used as a default project key if no other key is provided.
      */

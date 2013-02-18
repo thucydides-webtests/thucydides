@@ -256,6 +256,4 @@ public class WhenScreenshotsAreTaken {
         verify(photographer, times(0)).blur(any(File.class));
         verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());
     }
-
-
 }

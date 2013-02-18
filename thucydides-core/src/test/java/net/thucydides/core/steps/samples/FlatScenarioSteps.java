@@ -21,7 +21,12 @@ public class FlatScenarioSteps extends ScenarioSteps {
     @Step
     public void step_one(){
     }
-    
+
+    @Step
+    public void step_with_screenshot(){
+        Thucydides.takeScreenshot();
+    }
+
     @Step
     public void step_two() {
     }

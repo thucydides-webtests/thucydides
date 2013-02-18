@@ -490,8 +490,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
             try {
                 String stepDescription = getCurrentTestOutcome().getCurrentStep().getDescription();
                 String testName = getCurrentTestOutcome().getTitle();
-                Optional<ScreenshotAndHtmlSource> screenshotAndHtmlSource
-                        = grabScreenshotFor(testName + ":" + stepDescription);
+                Optional<ScreenshotAndHtmlSource> screenshotAndHtmlSource = grabScreenshotFor(testName + ":" + stepDescription);
                 if (screenshotAndHtmlSource.isPresent()) {
                     takeScreenshotIfRequired(screenshotType, screenshotAndHtmlSource.get());
                 }
@@ -695,6 +694,13 @@ public class BaseStepListener implements StepListener, StepPublisher {
         if (screenshots().areAllowed(TakeScreenshots.FOR_EACH_ACTION)) {
             take(OPTIONAL_SCREENSHOT);
        }
+    }
+
+    /**
+     * Take a screenshot now.
+     */
+    public void takeScreenshot() {
+        take(MANDATORY_SCREENSHOT);
     }
 
     int currentExample = 0;

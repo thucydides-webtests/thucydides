@@ -91,7 +91,7 @@ public class StepEventBus {
     public StepEventBus registerListener(final StepListener listener) {
         if (!registeredListeners.contains(listener)) {
             registeredListeners.add(listener);
-            if (listener.getClass().isAssignableFrom(BaseStepListener.class)) {
+            if (BaseStepListener.class.isAssignableFrom(listener.getClass())) {
                 baseStepListener = (BaseStepListener) listener;
                 baseStepListener.setEventBus(this);
             }
@@ -442,5 +442,12 @@ public class StepEventBus {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.exampleFinished();
         }
+    }
+
+    /**
+     * Forces Thucydides to take a screenshot now.
+     */
+    public void takeScreenshot() {
+        getBaseStepListener().takeScreenshot();
     }
 }

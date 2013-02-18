@@ -1298,6 +1298,21 @@ public class WhenRecordingStepExecutionResults {
         verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
+    @Test
+    public void screenshots_should_be_taken_at_arbitrary_times_if_requested() {
+
+        configureEventBus("thucydides.take.screenshots","AFTER_EACH_STEP");
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_with_screenshot();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
     private void configureEventBus(String property, String value) {
         environmentVariables.setProperty(property, value);
         SystemPropertiesConfiguration configuration = new SystemPropertiesConfiguration(environmentVariables);
