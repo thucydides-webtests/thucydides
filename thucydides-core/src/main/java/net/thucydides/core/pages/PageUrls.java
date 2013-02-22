@@ -102,11 +102,7 @@ public class PageUrls {
             baseUrl = pageLevelDefaultBaseUrl;
         }
 
-        return removeTrailingSlash(getUrlFrom(baseUrl));
-    }
-
-    private String removeTrailingSlash(String baseUrl) {
-        return StringUtils.stripEnd(baseUrl, "/");
+        return getUrlFrom(baseUrl);
     }
 
     public String getStartingUrl(final String... parameterValues) {
@@ -177,13 +173,17 @@ public class PageUrls {
             String updatedUrl = url;
             if (StringUtils.isNotEmpty(getBaseUrl())) {
                 try {
-                    updatedUrl = getBaseUrl() + pathFrom(url);
+                    updatedUrl = removeDoubleSlashesFrom(getBaseUrl() + pathFrom(url));
                 } catch (MalformedURLException e) {
                     throw new AssertionError("Invalid URL: " + url);
                 }
             }
-            return removeTrailingSlash(updatedUrl);
+            return updatedUrl;
         }
+    }
+
+    private String removeDoubleSlashesFrom(String url) {
+        return url.replaceAll("[^:]//","/");
     }
 
     private String pathFrom(String url) throws MalformedURLException {
@@ -198,7 +198,7 @@ public class PageUrls {
         } else {
             updatedUrl = url;
         }
-        return removeTrailingSlash(updatedUrl);
+        return updatedUrl;
     }
 
     private boolean isARelativeUrl(final String url) {

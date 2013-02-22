@@ -57,6 +57,12 @@ public class WhenDefiningPageUrls {
         }
     }
 
+    @DefaultUrl("http://test.myapp.org/somepage/")
+    final class PageObjectWithAURrlWithATrainingSlash extends PageObject {
+        public PageObjectWithAURrlWithATrainingSlash(WebDriver driver) {
+            super(driver);
+        }
+    }
     @Test
     public void the_url_annotation_should_determine_where_the_page_will_open_to() {
         PageObject page = new PageObjectWithFullUrlDefinition(webdriver);
@@ -131,6 +137,16 @@ public class WhenDefiningPageUrls {
     }
 
     @Test
+    public void the_webdriver_base_url_should_conserve_trailing_slashes() {
+        PageObject page = new PageObjectWithAURrlWithATrainingSlash(webdriver);
+        PageUrls pageUrls = new PageUrls(page, configuration);
+        page.setPageUrls(pageUrls);
+        page.open();
+
+        verify(webdriver).get("http://test.myapp.org/somepage/");
+    }
+
+    @Test
     public void the_webdriver_base_url_system_property_should_include_full_path() {
         PageObject page = new PageObjectWithFullUrlAndPageDefinition(webdriver);
         PageUrls pageUrls = new PageUrls(page, configuration);
@@ -178,6 +194,17 @@ public class WhenDefiningPageUrls {
         verify(webdriver).get("http://www.wikipedia.org");
     }
 
+    @Test
+    public void the_base_url_is_overrided_by_the_webdriver_base_url_system_property_even_with_trailing_slashes() {
+        PageObject page = new PageObjectWithFullUrlDefinition(webdriver);
+        PageUrls pageUrls = new PageUrls(page, configuration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","http://www.wikipedia.org/");
+        page.open();
+
+        verify(webdriver).get("http://www.wikipedia.org/");
+    }
     @Test
     public void the_base_url_should_be_used_if_no_url_annotation_is_present() {
         PageObject page = new PageObjectWithNoUrlDefinition(webdriver);
@@ -243,15 +270,15 @@ public class WhenDefiningPageUrls {
     }
 
     @DefaultUrl("/clients")
-    final class PageObjectWithRelaticeUrlDefinition extends PageObject {
-        public PageObjectWithRelaticeUrlDefinition(WebDriver driver) {
+    final class PageObjectWithRelativeUrlDefinition extends PageObject {
+        public PageObjectWithRelativeUrlDefinition(WebDriver driver) {
             super(driver);
         }
     }
 
     @Test
     public void the_url_annotation_can_be_relative_to_the_base_url() {
-        PageObject page = new PageObjectWithRelaticeUrlDefinition(webdriver);
+        PageObject page = new PageObjectWithRelativeUrlDefinition(webdriver);
         PageUrls pageUrls = new PageUrls(page, configuration);
         page.setPageUrls(pageUrls);
 
@@ -262,6 +289,25 @@ public class WhenDefiningPageUrls {
         verify(webdriver).get("http://myapp.mycompany.com/clients");
     }
 
+    @DefaultUrl("/clients/")
+    final class PageObjectWithRelativeUrlDefinitionAndATrailingSlash extends PageObject {
+        public PageObjectWithRelativeUrlDefinitionAndATrailingSlash(WebDriver driver) {
+            super(driver);
+        }
+    }
+
+    @Test
+    public void the_url_annotation_can_be_relative_to_the_base_url_with_a_trailing_slash() {
+        PageObject page = new PageObjectWithRelativeUrlDefinitionAndATrailingSlash(webdriver);
+        PageUrls pageUrls = new PageUrls(page, configuration);
+        page.setPageUrls(pageUrls);
+
+        configuration.setDefaultBaseUrl("http://myapp.mycompany.com");
+
+        page.open();
+
+        verify(webdriver).get("http://myapp.mycompany.com/clients/");
+    }
 
     @DefaultUrl("http://jira.mycompany.org")
     @NamedUrls(
@@ -441,6 +487,18 @@ public class WhenDefiningPageUrls {
         page.setPageUrls(pageUrls);
 
         environmentVariables.setProperty("webdriver.base.url","http://prod.server");
+        page.open();
+
+        verify(webdriver).get("http://prod.server/myapp/somepage");
+    }
+
+    @Test
+    public void overriding_base_urls_should_allow_for_trailing_slashes() {
+        PageObject page = new PageObjectWithLongDefaultUrl(webdriver);
+        PageUrls pageUrls = new PageUrls(page, configuration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","http://prod.server/");
         page.open();
 
         verify(webdriver).get("http://prod.server/myapp/somepage");
