@@ -4,6 +4,8 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.pages.PageObject;
+import net.thucydides.core.pages.WebElementFacade;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
@@ -15,6 +17,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -32,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -558,9 +562,10 @@ public class WebDriverFactory {
     /**
      * Initialize a page object's fields using the specified WebDriver instance.
      */
-    public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver) {
+    public static void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver) {
         ElementLocatorFactory finder = getElementLocatorFactorySelector().getLocatorFor(driver);
         PageFactory.initElements(finder, pageObject);
+        initWebElementFacades(new WebElementFacadeFieldDecorator(finder), pageObject, driver);
     }
 
     private static ElementLocatorFactorySelector getElementLocatorFactorySelector() {
@@ -568,9 +573,35 @@ public class WebDriverFactory {
         return new ElementLocatorFactorySelector(configuration);
     }
 
-    public static void initElementsWithAjaxSupport(final Object pageObject, final WebDriver driver, int timeoutInSeconds) {
+    public static void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver, int timeoutInSeconds) {
         ElementLocatorFactory finder = getElementLocatorFactorySelector().withTimeout(timeoutInSeconds).getLocatorFor(driver);
         PageFactory.initElements(finder, pageObject);
+        initWebElementFacades(new WebElementFacadeFieldDecorator(finder), pageObject, driver);
+
+    }
+
+    private static void initWebElementFacades(WebElementFacadeFieldDecorator decorator, PageObject page, final WebDriver driver) {
+        Class<?> proxyIn = page.getClass();
+        while (proxyIn != Object.class) {
+            proxyFields(decorator, page, proxyIn, driver);
+            proxyIn = proxyIn.getSuperclass();
+        }
+    }
+
+    private static void proxyFields(WebElementFacadeFieldDecorator decorator, PageObject page, Class<?> proxyIn, final WebDriver driver) {
+        Field[] fields = proxyIn.getDeclaredFields();
+        for (Field field : fields) {
+            WebElement webElementValue = decorator.decorate(page.getClass().getClassLoader(), field);
+            if (webElementValue != null) {
+                try {
+                    WebElementFacade facadeValue = new WebElementFacade(driver, webElementValue,page.waitForTimeoutInMilliseconds());
+                    field.setAccessible(true);
+                    field.set(page, facadeValue);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
 }
