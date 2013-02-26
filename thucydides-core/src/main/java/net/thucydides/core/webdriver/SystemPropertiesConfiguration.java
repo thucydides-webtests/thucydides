@@ -68,8 +68,6 @@ public class SystemPropertiesConfiguration implements Configuration {
      */
     private static final String DEFAULT_OUTPUT_DIRECTORY = "target/site/thucydides";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SystemPropertiesConfiguration.class);
-
     /**
      * HTML and XML reports will be generated in this directory.
      */
@@ -123,7 +121,6 @@ public class SystemPropertiesConfiguration implements Configuration {
 
         File newOutputDirectory = new File(systemDefinedDirectory);
         newOutputDirectory.mkdirs();
-        LOGGER.info("Writing reports to " + newOutputDirectory);
         return newOutputDirectory;
     }
 

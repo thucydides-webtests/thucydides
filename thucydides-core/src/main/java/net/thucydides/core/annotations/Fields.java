@@ -1,6 +1,8 @@
 package net.thucydides.core.annotations;
 
 
+import com.google.common.base.Optional;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -53,5 +55,13 @@ public class Fields {
 
     }
 
+    public Optional<Field> withName(String pages) {
+        for(Field field : allFields()) {
+            if (field.getName().equals(pages)){
+                return Optional.of(field);
+            }
+        }
+        return Optional.absent();
+    }
 }
 

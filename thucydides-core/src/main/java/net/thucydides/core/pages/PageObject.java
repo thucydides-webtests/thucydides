@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
+import com.google.inject.Injector;
 import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.fluent.ThucydidesFluentAdapter;
 import net.thucydides.core.guice.Injectors;
@@ -67,6 +68,8 @@ public abstract class PageObject {
 
     private WebDriver driver;
 
+    private Pages pages;
+
     private MatchingPageExpressions matchingPageExpressions;
 
     private RenderedPageObjectView renderedView;
@@ -111,11 +114,19 @@ public abstract class PageObject {
         this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
         this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
+        this.pages = Injectors.getInjector().getInstance(Pages.class);
 
         setupPageUrls();
 
         WebDriverFactory.initElementsWithAjaxSupport(this, driver);
+    }
 
+    public void setPages(Pages pages) {
+        this.pages = pages;
+    }
+
+    public <T extends PageObject> T switchToPage(final Class<T> pageObjectClass) {
+        return pages.getPage(pageObjectClass);
     }
 
     public FileToUpload upload(final String filename) {

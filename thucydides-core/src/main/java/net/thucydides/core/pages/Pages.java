@@ -1,9 +1,13 @@
 package net.thucydides.core.pages;
 
+import com.google.common.base.Optional;
+import net.thucydides.core.annotations.Fields;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.reflection.FieldValue;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -12,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -199,6 +205,11 @@ public class Pages implements Serializable {
             constructorArgs[0] = WebDriver.class;
             Constructor<? extends PageObject> constructor = pageObjectClass.getConstructor(constructorArgs);
             currentPage = (T) constructor.newInstance(driver);
+
+            if (hasPageFactoryProperty(currentPage)) {
+                setPageFactory(currentPage);
+            }
+
         } catch (NoSuchMethodException e) {
             LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: {} ({})",
                     pageObjectClass, e.getMessage());
@@ -209,6 +220,19 @@ public class Pages implements Serializable {
         }
         return currentPage;
     }
+
+    private boolean hasPageFactoryProperty(Object pageObject) {
+        Optional<Field> pagesField = Fields.of(pageObject.getClass()).withName("pages");
+        return ((pagesField.isPresent()) && (pagesField.get().getType() == Pages.class) && (Modifier.isStatic(pagesField.get().getModifiers())));
+    }
+
+    private void setPageFactory(Object pageObject) throws IllegalAccessException {
+        Optional<Field> pagesField = Fields.of(pageObject.getClass()).withName("pages");
+        if (pagesField.isPresent()) {
+            pagesField.get().set(pageObject, this);
+        }
+    }
+
 
     private void thisPageObjectLooksDodgy(final Class<? extends PageObject> pageObjectClass, String message) {
 
