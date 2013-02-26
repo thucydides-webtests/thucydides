@@ -565,7 +565,7 @@ public class WebDriverFactory {
     public static void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver) {
         ElementLocatorFactory finder = getElementLocatorFactorySelector().getLocatorFor(driver);
         PageFactory.initElements(finder, pageObject);
-        initFacadeElements(new WebElementFacadeFieldDecorator(finder),pageObject, driver);
+        initWebElementFacades(new WebElementFacadeFieldDecorator(finder), pageObject, driver);
     }
 
     private static ElementLocatorFactorySelector getElementLocatorFactorySelector() {
@@ -576,11 +576,11 @@ public class WebDriverFactory {
     public static void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver, int timeoutInSeconds) {
         ElementLocatorFactory finder = getElementLocatorFactorySelector().withTimeout(timeoutInSeconds).getLocatorFor(driver);
         PageFactory.initElements(finder, pageObject);
-        initFacadeElements(new WebElementFacadeFieldDecorator(finder),pageObject, driver);
+        initWebElementFacades(new WebElementFacadeFieldDecorator(finder), pageObject, driver);
 
     }
 
-    private static void initFacadeElements(WebElementFacadeFieldDecorator decorator, PageObject page, final WebDriver driver) {
+    private static void initWebElementFacades(WebElementFacadeFieldDecorator decorator, PageObject page, final WebDriver driver) {
         Class<?> proxyIn = page.getClass();
         while (proxyIn != Object.class) {
             proxyFields(decorator, page, proxyIn, driver);
