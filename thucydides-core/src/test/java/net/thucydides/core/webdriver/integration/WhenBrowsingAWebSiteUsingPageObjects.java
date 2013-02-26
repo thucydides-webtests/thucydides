@@ -15,6 +15,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.support.FindBy;
 
 import java.io.File;
 import java.util.Set;
@@ -23,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
 
 public class WhenBrowsingAWebSiteUsingPageObjects {
 
@@ -33,6 +35,11 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     public WebElement checkbox;
 
     public WebElement color;
+
+    public WebElementFacade firstname;
+
+    @FindBy(name = "specialField")
+    public WebElementFacade extra;
 
     WebElementFacade checkbox() {
       return element(checkbox);
@@ -242,6 +249,21 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
   public void should_fail_if_none_of_the_requested_texts_appear_on_a_page() {
     indexPage.waitForAllTextToAppear("Label that is not present", "Another label that is not present");
   }
+
+  @Test
+  public void should_initialize_a_web_element_facade_by_name_or_id()
+  {
+    assertNotNull(indexPage.firstname);
+    assertThat(indexPage.firstname.getValue(), is("<enter first name>"));
+  }
+
+  @Test
+  public void should_initialize_a_web_element_facade_by_annotation()
+  {
+    assertNotNull(indexPage.extra);
+    assertThat(indexPage.extra.getValue(), is("Special"));
+  }
+
 
   @Test
   public void the_page_can_be_read_from_a_file_on_the_classpath() {

@@ -488,6 +488,11 @@ public abstract class PageObject {
         return (waitForTimeoutInMilliseconds < 1000) ? 1 : (waitForTimeoutInMilliseconds/1000);
     }
 
+    public long waitForTimeoutInMilliseconds() {
+        return waitForTimeoutInMilliseconds;
+    }
+
+
     public String updateUrlWithBaseUrlIfDefined(final String startingUrl) {
 
         String baseUrl = pageUrls.getSystemBaseUrl();
