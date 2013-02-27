@@ -283,7 +283,11 @@ public class WebElementFacade {
     public void shouldContainText(String textValue) {
         if (!containsText(textValue)) {
             String errorMessage = String.format(
-                    "The text '%s' was not found in the web element", textValue);
+                    "The text '%s' was not found in the web element. Element text '%s'.", textValue, webElement.getText());
+            throw new AssertionError(errorMessage);
+        }
+    }
+
             throw new AssertionError(errorMessage);
         }
     }
