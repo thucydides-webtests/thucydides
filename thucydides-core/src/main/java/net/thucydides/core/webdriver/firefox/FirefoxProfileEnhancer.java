@@ -71,6 +71,10 @@ public class FirefoxProfileEnhancer {
         profile.setPreference(FIREFOX_NETWORK_PROXY_TYPE, "1");
     }
 
+    public void activateNativeEventsFor(FirefoxProfile profile, boolean enabled) {
+        profile.setEnableNativeEvents(enabled);
+    }
+
     static class PreferenceValue {
         private final String key;
         private final Object value;

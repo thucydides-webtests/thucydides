@@ -506,9 +506,7 @@ public class WebDriverFactory {
         }
 
         firefoxProfileEnhancer.allowWindowResizeFor(profile);
-        if (shouldEnableNativeEvents()) {
-            firefoxProfileEnhancer.enableNativeEventsFor(profile);
-        }
+        firefoxProfileEnhancer.activateNativeEventsFor(profile, shouldEnableNativeEvents());
         if (shouldActivateProxy()) {
             activateProxyFor(profile, firefoxProfileEnhancer);
         }
