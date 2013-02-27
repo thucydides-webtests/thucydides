@@ -41,6 +41,11 @@ public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAP
     }
 
     @Test
+    public void should_contain_only_text_passes_if_field_contains_only_text() {
+        page.element(page.nonEmptyLabel).shouldContainOnlyText("This div tag has text");
+    }
+
+    @Test
     public void should_contain_entry_passes_if_dropdown_contains_text() {
         page.element(page.colors).shouldContainSelectedOption("Red");
     }
@@ -93,6 +98,11 @@ public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAP
     @Test(expected = AssertionError.class)
     public void should_contain_text_throws_exception_if_field_does_not_contain_text() {
         page.element(page.colors).shouldContainText("Magenta");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void should_contain_only_text_throws_exception_if_field_does_not_contain_only_text() {
+        page.element(page.colors).shouldContainOnlyText("Magenta");
     }
 
     @Test(expected = NoSuchElementException.class)

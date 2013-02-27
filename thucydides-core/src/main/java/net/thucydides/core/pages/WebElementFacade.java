@@ -255,6 +255,13 @@ public class WebElementFacade {
     }
 
     /**
+     * Does this element exactly match  given text?
+     */
+    public boolean containsOnlyText(final String value) {
+        return ((webElement != null) && (webElement.getText().equals(value)));
+    }
+
+    /**
      * Does this dropdown contain the specified value.
      */
     public boolean containsSelectOption(final String value) {
@@ -288,6 +295,15 @@ public class WebElementFacade {
         }
     }
 
+    /**
+     * Check that an element exactly matches a text value
+     *
+     * @param textValue
+     */
+    public void shouldContainOnlyText(String textValue) {
+        if (!containsOnlyText(textValue)) {
+            String errorMessage = String.format(
+                    "The text '%s' does not match the elements text '%s'.", textValue, webElement.getText());
             throw new AssertionError(errorMessage);
         }
     }
