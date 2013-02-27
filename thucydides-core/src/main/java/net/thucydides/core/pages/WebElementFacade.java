@@ -304,7 +304,7 @@ public class WebElementFacade {
     public void shouldNotContainText(String textValue) {
         if (containsText(textValue)) {
             String errorMessage = String.format(
-                    "The text '%s' was not found in the web element", textValue);
+                    "The text '%s' was found in the web element when it should not have. Element text '%s'.", textValue, webElement.getText());
             throw new AssertionError(errorMessage);
         }
     }
