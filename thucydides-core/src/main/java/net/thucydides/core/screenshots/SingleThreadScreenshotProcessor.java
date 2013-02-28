@@ -114,7 +114,7 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
                 Files.move(queuedScreenshot.getSourceFile(),
                            queuedScreenshot.getDestinationFile());
             } catch (Throwable e) {
-                logger.warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
+                logger.warn("Failed to move the screenshot to the destination directory: " + e.getMessage());
             }
         }
 
@@ -130,7 +130,8 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
                 ImageIO.write(resizedImage, "png", queuedScreenshot.getDestinationFile());
                 queuedScreenshot.getSourceFile().delete();
             } catch (Throwable e) {
-                logger.warn("Failed to write screenshot (possibly an out of memory error): " + e.getMessage());
+                logger.warn("Failed to resize screenshot: using original size " + e.getMessage());
+                moveScreenshot(queuedScreenshot);
             }
         }
 

@@ -16,7 +16,7 @@ class WhenConfiguringTheFirefoxProfile extends Specification {
 
     def "a firefox instance will not assume untrusted certificates if specifically requested not to"() {
         when: "we don't want firefox to assume untrusted certificates"
-            environmentVariables.setProperty(SystemPropertiesConfiguration.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER, "false");
+            environmentVariables.setProperty(SystemPropertiesConfiguration.REFUSE_UNTRUSTED_CERTIFICATES, "false");
             def profile = webDriverFactory.buildFirefoxProfile()
         then: "the firefox profile will not assume them"
             profile.acceptUntrustedCerts

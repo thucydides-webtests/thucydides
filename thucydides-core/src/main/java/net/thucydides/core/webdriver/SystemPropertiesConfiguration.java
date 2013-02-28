@@ -7,8 +7,6 @@ import net.thucydides.core.model.TakeScreenshots;
 import net.thucydides.core.steps.FilePathParser;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -60,8 +58,8 @@ public class SystemPropertiesConfiguration implements Configuration {
      * issuer, but has expired or is being served served for a different host (e.g. production certificate served in
      * a testing environment) set this to false.
      */
-    public static final String ASSUME_UNTRUSTED_CERTIFICATE_ISSUER
-            = ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER.getPropertyName();
+    public static final String REFUSE_UNTRUSTED_CERTIFICATES
+            = ThucydidesSystemProperty.REFUSE_UNTRUSTED_CERTIFICATES.getPropertyName();
 
     /**
      * By default, reports will go here.

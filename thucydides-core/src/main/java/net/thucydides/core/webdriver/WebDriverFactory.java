@@ -513,8 +513,11 @@ public class WebDriverFactory {
         if (firefoxProfileEnhancer.shouldActivateFirebugs()) {
             firefoxProfileEnhancer.addFirebugsTo(profile);
         }
-        if (dontAssumeUntrustedCertificateIssuer()) {
+        if (refuseUntrustedCertificates()) {
             profile.setAssumeUntrustedCertificateIssuer(false);
+            profile.setAcceptUntrustedCertificates(false);
+        } else {
+            profile.setAssumeUntrustedCertificateIssuer(true);
             profile.setAcceptUntrustedCertificates(true);
         }
         firefoxProfileEnhancer.configureJavaSupport(profile);
@@ -553,8 +556,8 @@ public class WebDriverFactory {
         return profile;
     }
 
-    private boolean dontAssumeUntrustedCertificateIssuer() {
-        return !(environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.ASSUME_UNTRUSTED_CERTIFICATE_ISSUER.getPropertyName(), true));
+    private boolean refuseUntrustedCertificates() {
+        return environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.REFUSE_UNTRUSTED_CERTIFICATES.getPropertyName(), false);
     }
 
     /**

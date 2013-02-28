@@ -132,7 +132,7 @@ public enum ThucydidesSystemProperty {
      * Don't accept sites using untrusted certificates.
      * By default, Thucydides accepts untrusted certificates - use this to change this behaviour.
      */
-    ASSUME_UNTRUSTED_CERTIFICATE_ISSUER("refuse.untrusted.certificates"),
+    REFUSE_UNTRUSTED_CERTIFICATES("refuse.untrusted.certificates"),
 
     /**
      * Use the same browser for all tests (the "Highlander" rule)
