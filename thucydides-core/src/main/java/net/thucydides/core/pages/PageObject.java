@@ -1,7 +1,6 @@
 package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
-import com.google.inject.Injector;
 import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.fluent.ThucydidesFluentAdapter;
 import net.thucydides.core.guice.Injectors;
@@ -126,6 +125,10 @@ public abstract class PageObject {
     }
 
     public <T extends PageObject> T switchToPage(final Class<T> pageObjectClass) {
+        if (pages.getDriver() == null) {
+            pages.setDriver(driver);
+        }
+
         return pages.getPage(pageObjectClass);
     }
 
