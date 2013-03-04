@@ -1,14 +1,7 @@
 package net.thucydides.core.pages
 
-import net.thucydides.core.annotations.DefaultUrl
-import net.thucydides.core.annotations.NamedUrl
-import net.thucydides.core.annotations.NamedUrls
-import net.thucydides.core.util.EnvironmentVariables
-import net.thucydides.core.util.MockEnvironmentVariables
-import net.thucydides.core.webdriver.SystemPropertiesConfiguration
 import org.openqa.selenium.WebDriver
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class WhenSwitchingPages extends Specification {
 
@@ -42,5 +35,6 @@ class WhenSwitchingPages extends Specification {
             def pageB = pageA.switchToPageB()
         then:
             pageB instanceof PageObjectB
+            pageB.getDriver() != null
     }
 }
