@@ -112,7 +112,7 @@ public class NarrativeReader {
 
         StringBuilder description = new StringBuilder();
         for(String line : lines) {
-            if (!isNarrativeMarker(line) && !isIssueMarker(line)) {
+            if (!isNarrativeMarker(line) && !isAnnotation(line)) {
                 description.append(line);
                 description.append(NEW_LINE);
             }
@@ -121,8 +121,8 @@ public class NarrativeReader {
 
     }
 
-    private boolean isIssueMarker(String line) {
-        return normalizedLine(line).startsWith("@issue:");
+    private boolean isAnnotation(String line) {
+        return normalizedLine(line).startsWith("@");
     }
 
     private Optional<String> readOptionalTitleFrom(List<String> lines) {
