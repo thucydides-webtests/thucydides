@@ -159,7 +159,9 @@
                 <tr class="step-titles">
                     <th width="40">&nbsp;</th>
                     <th width="%" class="greentext">Steps</th>
-                    <th width="150" class="greentext">Screenshot</th>
+                    <#if testOutcome.hasScreenshots()>
+                        <th width="150" class="greentext">Screenshot</th>
+                    </#if>
                     <th width="150" class="greentext">Outcome</th>
                     <th width="75" class="greentext">Duration</th>
                 </tr>
@@ -235,6 +237,7 @@
                                     </a>
                                 </#if>
                             </td>
+                            <#if testOutcome.hasScreenshots()>
                             <td width="100" class="${step.result}-text">
                                 <#if !step.isAGroup() && step.firstScreenshot??>
                                     <a href="${testOutcome.screenshotReportName}.html#screenshots?screenshot=${screenshotCount}">
@@ -245,6 +248,7 @@
                                     </a>
                                 </#if>
                             </td>
+                            </#if>
                             <td width="150"><span class="${step_class_root}-step">${step.result}</span></td>
                             <td width="100"><span class="${step_class_root}-step">${step.durationInSeconds}s</span></td>
                         </tr>

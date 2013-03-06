@@ -404,6 +404,10 @@ public class TestOutcome {
         return ImmutableList.copyOf(testSteps);
     }
 
+    public boolean hasScreenshots() {
+        return !getScreenshots().isEmpty();
+    }
+
     public List<Screenshot> getScreenshots() {
         List<Screenshot> screenshots = new ArrayList<Screenshot>();
 
