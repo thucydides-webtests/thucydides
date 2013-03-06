@@ -67,6 +67,8 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
             narrative.get().getText().contains("So that I can grow apples")
         and: "the type should be story"
             narrative.get().type == "story"
+        and: "meta data is skipped"
+            !narrative.get().getText().contains("Meta") && !narrative.get().getText().contains("issue")
     }
 
     File directoryInClasspathAt(String path) {
