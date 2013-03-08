@@ -3,6 +3,7 @@ package net.thucydides.core.reports.integration;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 
+import static net.thucydides.core.model.TestResult.ERROR;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -17,6 +18,10 @@ public class TestStepFactory {
 
     public static TestStep failingTestStepCalled(String description) {
         return createNewTestStep(description, FAILURE);
+    }
+
+    public static TestStep errorTestStepCalled(String description) {
+        return createNewTestStep(description, ERROR);
     }
 
     public static TestStep skippedTestStepCalled(String description) {

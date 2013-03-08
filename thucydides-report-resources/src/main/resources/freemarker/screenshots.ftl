@@ -86,7 +86,12 @@
 
 <#-- HEADER
 -->
-<#if testOutcome.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">    <#elseif testOutcome.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">    <#elseif testOutcome.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">    <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">    </#if>
+<#if testOutcome.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">
+<#elseif testOutcome.result == "ERROR"><#assign outcome_icon = "error.png"><#assign outcome_text = "error-color">
+<#elseif testOutcome.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">
+<#elseif testOutcome.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">
+<#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">
+</#if>
 <div class="middlecontent">
     <div id="contenttop">
         <div class="middlebg">

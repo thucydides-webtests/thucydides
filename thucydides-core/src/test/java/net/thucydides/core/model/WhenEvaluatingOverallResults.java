@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static net.thucydides.core.model.TestResult.ERROR;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -51,6 +52,11 @@ public class WhenEvaluatingOverallResults {
                 { Arrays.asList(IGNORED, PENDING),          PENDING },
                 { Arrays.asList(PENDING),                   PENDING },
                 { Arrays.asList(PENDING, PENDING),          PENDING },
+                { Arrays.asList(ERROR),                     ERROR },
+                { Arrays.asList(PENDING,ERROR),             ERROR },
+                { Arrays.asList(IGNORED,ERROR),             ERROR },
+                { Arrays.asList(SKIPPED,ERROR),             ERROR },
+                { Arrays.asList(SUCCESS,ERROR),             ERROR },
         });
     }
 

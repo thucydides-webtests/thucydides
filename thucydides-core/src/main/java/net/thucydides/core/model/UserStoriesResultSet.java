@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sum;
 
 /**
@@ -83,17 +82,29 @@ public class UserStoriesResultSet {
         return sum;
     }
 
-    public Double getPercentageFailingStepCount() {
-        if (getTotalStepCount() > 0) {
-            return roundedTo1DecimalPlace(((double)getFailingStepCount()) / ((double)getTotalStepCount()));
-        } else {
-            return 0.0;
+    public Integer getErrorStepCount() {
+        int sum = 0;
+        for(StoryTestResults story : stories) {
+            sum += story.countStepsInErrorTests();
         }
+        return sum;
+    }
+
+    public Double getPercentageFailingStepCount() {
+        return asPercentage(getFailingStepCount());
+    }
+
+    public Double getPercentageErrorStepCount() {
+        return asPercentage(getErrorStepCount());
     }
 
     public Double getPercentagePassingStepCount() {
+        return asPercentage(getPassingStepCount());
+    }
+
+    private Double asPercentage(double stepCount) {
         if (getTotalStepCount() > 0) {
-            return roundedTo1DecimalPlace(((double)getPassingStepCount()) / ((double)getTotalStepCount()));
+            return roundedTo1DecimalPlace((stepCount) / ((double)getTotalStepCount()));
         } else {
             return 0.0;
         }
@@ -110,7 +121,8 @@ public class UserStoriesResultSet {
     public CoverageFormatter getFormatted() {
         return new CoverageFormatter(getPercentagePassingStepCount(),
                 getPercentagePendingStepCount(),
-                getPercentageFailingStepCount());
+                getPercentageFailingStepCount(),
+                getPercentageErrorStepCount());
     }
 
 }

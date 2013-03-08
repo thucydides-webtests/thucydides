@@ -47,6 +47,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static net.thucydides.core.model.ReportType.HTML;
 import static net.thucydides.core.model.ReportType.ROOT;
+import static net.thucydides.core.model.TestResult.ERROR;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -478,7 +479,7 @@ public class TestOutcome {
      */
     public TestResult getResult() {
         if (testFailureCause != null) {
-            return FAILURE;
+            return new FailureAnalysis().resultFor(testFailureCause);
         }
 
         if (annotatedResult != null) {
@@ -853,6 +854,10 @@ public class TestOutcome {
         return count(failingSteps()).in(getLeafTestSteps());
     }
 
+    public Integer getErrorCount() {
+        return count(errorSteps()).in(getLeafTestSteps());
+    }
+
     public Integer getIgnoredCount() {
         return count(ignoredSteps()).in(getLeafTestSteps());
     }
@@ -876,6 +881,10 @@ public class TestOutcome {
 
     public Boolean isFailure() {
         return (getResult() == FAILURE);
+    }
+
+    public Boolean isError() {
+        return (getResult() == ERROR);
     }
 
     public Boolean isPending() {
@@ -988,6 +997,15 @@ public class TestOutcome {
             @Override
             boolean apply(TestStep step) {
                 return step.isFailure();
+            }
+        };
+    }
+
+    StepFilter errorSteps() {
+        return new StepFilter() {
+            @Override
+            boolean apply(TestStep step) {
+                return step.isError();
             }
         };
     }

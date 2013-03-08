@@ -150,6 +150,18 @@ public class FeatureResults {
         return ((double) stepCount) / getEstimatedTotalSteps();
     }
 
+    public Double getPercentErrorCoverage() {
+        if (getEstimatedTotalSteps() == 0) {
+            return 0.0;
+        }
+
+        int stepCount = 0;
+        for(StoryTestResults story : storyTestResultsList) {
+            stepCount += (story.getPercentErrorCoverage() * story.getEstimatedTotalStepCount());
+        }
+        return ((double) stepCount) / getEstimatedTotalSteps();
+    }
+
     public Double getPercentPendingCoverage() {
         if (getEstimatedTotalSteps() == 0) {
             return 0.0;
@@ -165,7 +177,8 @@ public class FeatureResults {
     public CoverageFormatter getFormatted() {
         return new CoverageFormatter(getPercentPassingCoverage(),
                                      getPercentPendingCoverage(),
-                                     getPercentFailingCoverage());
+                                     getPercentFailingCoverage(),
+                                     getPercentErrorCoverage());
     }
 
     public TestResult getResult() {

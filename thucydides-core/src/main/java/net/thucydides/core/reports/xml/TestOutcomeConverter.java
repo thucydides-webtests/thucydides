@@ -42,6 +42,7 @@ public class TestOutcomeConverter implements Converter {
     private static final String STEPS_FIELD = "steps";
     private static final String SUCCESSFUL_FIELD = "successful";
     private static final String FAILURES_FIELD = "failures";
+    private static final String ERRORS_FIELD = "errors";
     private static final String SKIPPED_FIELD = "skipped";
     private static final String IGNORED_FIELD = "ignored";
     private static final String PENDING_FIELD = "pending";
@@ -104,6 +105,9 @@ public class TestOutcomeConverter implements Converter {
         writer.addAttribute(STEPS_FIELD, Integer.toString(testOutcome.countTestSteps()));
         writer.addAttribute(SUCCESSFUL_FIELD, Integer.toString(testOutcome.getSuccessCount()));
         writer.addAttribute(FAILURES_FIELD, Integer.toString(testOutcome.getFailureCount()));
+        if (testOutcome.getErrorCount() > 0) {
+            writer.addAttribute(ERRORS_FIELD, Integer.toString(testOutcome.getErrorCount()));
+        }
         writer.addAttribute(SKIPPED_FIELD, Integer.toString(testOutcome.getSkippedCount()));
         writer.addAttribute(IGNORED_FIELD, Integer.toString(testOutcome.getIgnoredCount()));
         writer.addAttribute(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
@@ -272,7 +276,7 @@ public class TestOutcomeConverter implements Converter {
     }
 
     private void writeErrorForFailingTest(final HierarchicalStreamWriter writer, final TestStep step) {
-        if (step.isFailure()) {
+        if (step.isFailure() || step.isError()) {
             writeErrorMessageAndException(writer, step);
         }
     }

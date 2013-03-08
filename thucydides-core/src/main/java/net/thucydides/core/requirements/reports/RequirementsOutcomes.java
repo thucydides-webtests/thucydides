@@ -216,6 +216,10 @@ public class RequirementsOutcomes {
         return testOutcomes.getFailureCount();
     }
 
+    public int getErrorTestCount() {
+        return testOutcomes.getErrorCount();
+    }
+
     public int getPassingTestCount() {
         return testOutcomes.getSuccessCount();
     }
@@ -240,8 +244,12 @@ public class RequirementsOutcomes {
         return ((double) getFailingTestCount()) / ((double) totalEstimatedAndImplementedTests());
     }
 
+    public double getPercentageErrorTestCount() {
+        return ((double) getErrorTestCount()) / ((double) totalEstimatedAndImplementedTests());
+    }
+
     public double getPercentagePendingTestCount() {
-        return 1 - getPercentageFailingTestCount() - getPercentagePassingTestCount();
+        return 1 - getPercentageFailingTestCount() - getPercentagePassingTestCount() - getPercentageErrorTestCount();
     }
 
     /**
@@ -250,7 +258,8 @@ public class RequirementsOutcomes {
     public CoverageFormatter getFormatted() {
         return new CoverageFormatter(getPercentagePassingTestCount(),
                 getPercentagePendingTestCount(),
-                getPercentageFailingTestCount());
+                getPercentageFailingTestCount(),
+                getPercentageErrorTestCount());
     }
 
     private int totalEstimatedAndImplementedTests() {

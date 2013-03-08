@@ -18,7 +18,7 @@ import org.mockito.MockitoAnnotations;
 import java.io.File;
 import java.io.IOException;
 
-import static net.thucydides.core.model.TestStepFactory.forAFailingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forABrokenTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forAPendingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forASkippedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forASuccessfulTestStepCalled;
@@ -358,8 +358,8 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         testOutcome.startGroup("Yet another group");
         testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 6"));
         testOutcome.endGroup();
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 7", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 8", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 7", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 8", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 9"));
         testOutcome.recordStep(forAPendingTestStepCalled("Step 10"));
         testOutcome.recordStep(forAPendingTestStepCalled("Step 11"));

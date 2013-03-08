@@ -265,7 +265,7 @@ public class WhenTrackingTestResultsOverTime {
     private TestOutcome thatIsFailingFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(TestStepFactory.forAFailingTestStepCalled("Step " + i, new AssertionError()));
+            testOutcome.recordStep(TestStepFactory.forABrokenTestStepCalled("Step " + i, new AssertionError()));
         }
         return testOutcome;
     }

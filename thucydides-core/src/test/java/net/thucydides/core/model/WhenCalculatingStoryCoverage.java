@@ -13,7 +13,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-import static net.thucydides.core.model.TestStepFactory.forAFailingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forABrokenTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forAPendingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forASuccessfulTestStepCalled;
@@ -538,7 +538,7 @@ public class WhenCalculatingStoryCoverage {
     private TestOutcome thatIsFailingFor(Story story, int stepCount) {
         TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
         for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(forAFailingTestStepCalled("Step " + i, new AssertionError()));
+            testOutcome.recordStep(forABrokenTestStepCalled("Step " + i, new AssertionError()));
         }
         return testOutcome;
     }

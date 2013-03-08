@@ -10,6 +10,7 @@ import java.util.List;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.join;
 import static ch.lambdaj.Lambda.on;
+import static net.thucydides.core.model.TestResult.ERROR;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -45,6 +46,7 @@ public class TestStep {
     public static TestStepBuilder forStepCalled(String description) {
         return new TestStepBuilder(description);
     }
+
 
     public static class TestStepBuilder {
         private final String description;
@@ -156,6 +158,10 @@ public class TestStep {
         return  getResult() == FAILURE;
     }
 
+    public Boolean isError() {
+        return getResult() == ERROR;
+    }
+
     public Boolean isIgnored() {
         return  getResult() == IGNORED;
     }
@@ -185,7 +191,7 @@ public class TestStep {
      * @param exception why the test failed.
      */
     public void failedWith(final Throwable exception) {
-        setResult(TestResult.FAILURE);
+        setResult(new FailureAnalysis().resultFor(exception));
         this.cause = exception;
     }
 

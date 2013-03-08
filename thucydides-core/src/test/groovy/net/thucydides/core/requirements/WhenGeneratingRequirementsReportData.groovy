@@ -188,13 +188,15 @@ class WhenGeneratingRequirementsReportData extends Specification {
         then: "the percentage of failing, passing and total steps should include estimations for requirements with no tests"
             outcomes.requirementOutcomes[0].percentagePassingTestCount == 0.25
             outcomes.requirementOutcomes[0].percentageFailingTestCount == 0.0
-            outcomes.requirementOutcomes[0].percentagePendingStepCount == 0.75
+            outcomes.requirementOutcomes[0].percentageErrorTestCount == 0.0
+            outcomes.requirementOutcomes[0].percentagePendingTestCount == 0.75
         and: "the number of requirements should be available"
             outcomes.requirementOutcomes[0].flattenedRequirementCount == 5
         and: "the number of implemented tests should be available"
             outcomes.requirementOutcomes[0].testCount == 2
             outcomes.requirementOutcomes[0].passingTestCount == 2
             outcomes.requirementOutcomes[0].failingTestCount == 0
+            outcomes.requirementOutcomes[0].errorTestCount == 0
             outcomes.requirementOutcomes[0].pendingTestCount == 0
         and: "the number of requirements without tests should be available"
             outcomes.requirementOutcomes[0].requirementsWithoutTestsCount == 2
@@ -203,6 +205,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
         and: "the results should be available as formatted values"
             outcomes.requirementOutcomes[0].formatted.percentPassingCoverage == "25%"
             outcomes.requirementOutcomes[0].formatted.percentFailingCoverage == "0%"
+            outcomes.requirementOutcomes[0].formatted.percentErrorCoverage == "0%"
             outcomes.requirementOutcomes[0].formatted.percentPendingCoverage == "75%"
     }
 

@@ -11,9 +11,6 @@ import net.thucydides.core.model.CoverageFormatter;
 import net.thucydides.core.model.TestDuration;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
-import static net.thucydides.core.model.TestResult.SUCCESS;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SKIPPED;
 import net.thucydides.core.model.TestResultList;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.requirements.model.Requirement;
@@ -25,10 +22,8 @@ import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -43,11 +38,12 @@ import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTag;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagName;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagType;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.withResult;
-import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isOneOf;
 
@@ -295,6 +291,12 @@ public class TestOutcomes {
                 .withRootOutcomes(getRootOutcomes());
     }
 
+    public TestOutcomes getErrorTests() {
+        return TestOutcomes.of(filter(withResult(TestResult.ERROR), outcomes))
+                .withLabel(labelForTestsWithStatus("failing tests"))
+                .withRootOutcomes(getRootOutcomes());
+    }
+
     private String labelForTestsWithStatus(String status) {
         if (StringUtils.isEmpty(label)) {
             return status;
@@ -415,6 +417,14 @@ public class TestOutcomes {
     }
 
     /**
+     *
+     * @return how many tests contain at least one test with an error
+     */
+    public int getErrorCount() {
+        return select(outcomes, having(on(TestOutcome.class).isError())).size();
+    }
+
+    /**
      * @return How many test cases contain at least one pending test.
      */
     public int getPendingCount() {
@@ -445,8 +455,15 @@ public class TestOutcomes {
         return (getFailingTests().getTotal() / (double) getTotal());
     }
 
+    public Double getPercentageErrorTestCount() {
+        return (getErrorTests().getTotal() / (double) getTotal());
+    }
+
     public Double getPercentagePendingTestCount() {
-        int notPassingOrFailing = getTotal() - getPassingTests().getTotal() - getFailingTests().getTotal();
+        int notPassingOrFailing = getTotal()
+                                 - getPassingTests().getTotal()
+                                 - getFailingTests().getTotal()
+                                 - getErrorTests().getTotal();
         return (notPassingOrFailing / (double) getTotal());
     }
 
@@ -462,6 +479,11 @@ public class TestOutcomes {
         return formatAsDecimal(getPercentageFailingStepCount());
     }
 
+    public String getDecimalPercentageErrorStepCount() {
+        return formatAsDecimal(getPercentageErrorStepCount());
+    }
+
+
     public String getDecimalPercentagePassingTestCount() {
         return formatAsDecimal(getPercentagePassingTestCount());
     }
@@ -472,6 +494,10 @@ public class TestOutcomes {
 
     public String getDecimalPercentageFailingTestCount() {
         return formatAsDecimal(getPercentageFailingTestCount());
+    }
+
+    public String getDecimalPercentageErrorTestCount() {
+        return formatAsDecimal(getPercentageErrorTestCount());
     }
 
     DecimalFormat decimalFormat = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.US));
@@ -489,12 +515,19 @@ public class TestOutcomes {
         return (failingStepCount / (double) getEstimatedTotalStepCount());
     }
 
+    public Double getPercentageErrorStepCount() {
+        int errorStepCount = countStepsWithResultThat(is(TestResult.ERROR));
+        return (errorStepCount / (double) getEstimatedTotalStepCount());
+    }
+
     /**
      * @return The percent of pending steps, based on the real and estimated test size in terms of the relative number
      *         of steps.
      */
     public Double getPercentagePendingStepCount() {
-        int passingOrFailingSteps = countStepsWithResultThat(isOneOf(TestResult.SUCCESS, TestResult.FAILURE));
+        int passingOrFailingSteps = countStepsWithResultThat(isOneOf(TestResult.SUCCESS,
+                                                                     TestResult.FAILURE,
+                                                                     TestResult.ERROR));
         if (passingOrFailingSteps == 0) {
             return 1.0;
         } else {
@@ -509,8 +542,21 @@ public class TestOutcomes {
     public CoverageFormatter getFormatted() {
         return new CoverageFormatter(getPercentagePassingStepCount(),
                 getPercentagePendingStepCount(),
-                getPercentageFailingStepCount());
+                getPercentageFailingStepCount(),
+                getPercentageErrorStepCount());
     }
+
+
+    /**
+     * @return Formatted version of the test coverage metrics
+     */
+    public CoverageFormatter getFormattedTestCount() {
+        return new CoverageFormatter(getPercentagePassingTestCount(),
+                getPercentagePendingTestCount(),
+                getPercentageFailingTestCount(),
+                getPercentageErrorTestCount());
+    }
+
 
     private int countStepsWithResultThat(Matcher<TestResult> matchingResult) {
         List<? extends TestOutcome> matchingTests = select(outcomes, having(on(TestOutcome.class).getResult(), matchingResult));

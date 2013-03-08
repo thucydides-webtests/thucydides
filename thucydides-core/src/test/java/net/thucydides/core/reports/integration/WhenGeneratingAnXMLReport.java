@@ -481,7 +481,7 @@ public class WhenGeneratingAnXMLReport {
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         String expectedReport =
-                "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='9' successful='2' failures='3' skipped='1' ignored='2' pending='1' result='FAILURE' duration='0'>\n"
+                "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='9' successful='2' failures='2' errors='1' skipped='1' ignored='2' pending='1' result='ERROR' duration='0'>\n"
                         + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
@@ -506,7 +506,7 @@ public class WhenGeneratingAnXMLReport {
                         + "    <description>step 6</description>\n"
                         + "    <error>Unspecified failure</error>\n"
                         + "  </test-step>\n"
-                        + "  <test-step result='FAILURE' duration='0'>\n"
+                        + "  <test-step result='ERROR' duration='0'>\n"
                         + "    <description>step 7</description>\n"
                         + "    <error>Unspecified failure</error>\n"
                         + "  </test-step>\n"
@@ -524,7 +524,7 @@ public class WhenGeneratingAnXMLReport {
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 4"));
         testOutcome.recordStep(TestStepFactory.failingTestStepCalled("step 5"));
         testOutcome.recordStep(TestStepFactory.failingTestStepCalled("step 6"));
-        testOutcome.recordStep(TestStepFactory.failingTestStepCalled("step 7"));
+        testOutcome.recordStep(TestStepFactory.errorTestStepCalled("step 7"));
         testOutcome.recordStep(TestStepFactory.skippedTestStepCalled("step 8"));
         testOutcome.recordStep(TestStepFactory.pendingTestStepCalled("step 9"));
 

@@ -15,11 +15,15 @@ public enum TestResult {
      */
     UNDEFINED,
     /** 
-     * Test failure.
+     * Test failure, due to an assertion error
      * For a test case, this means one of the tests in the test case failed.
      */
-    FAILURE,    
-    
+    FAILURE,
+
+    /**
+     *  Test failure, due to some other exception.
+     */
+     ERROR,
     /**
      * The test or test case ran as expected.
      */

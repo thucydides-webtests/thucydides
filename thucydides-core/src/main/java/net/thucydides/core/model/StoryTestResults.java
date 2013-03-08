@@ -89,15 +89,15 @@ public class StoryTestResults {
      */
     public int countStepsInSuccessfulTests() {
         List<TestOutcome> successfulTests = select(testOutcomes, having(on(TestOutcome.class).isSuccess()));
-        try {
-            return (successfulTests.isEmpty()) ? 0 : sum(successfulTests, on(TestOutcome.class).getNestedStepCount());
-        } catch(Exception e) {
-            return 0;
-        }
+        return countStepsIn(successfulTests);
     }
 
     public int countStepsInFailingTests() {
         List<TestOutcome> tests = select(testOutcomes, having(on(TestOutcome.class).isFailure()));
+        return countStepsIn(tests);
+    }
+
+    private int countStepsIn(List<TestOutcome> tests) {
         try {
             return (tests.isEmpty()) ? 0 : sum(tests, on(TestOutcome.class).getNestedStepCount());
         } catch(Exception e) {
@@ -105,13 +105,14 @@ public class StoryTestResults {
         }
     }
 
+    public int countStepsInErrorTests() {
+        List<TestOutcome> tests = select(testOutcomes, having(on(TestOutcome.class).isError()));
+        return countStepsIn(tests);
+    }
+
     public int countStepsInSkippedTests() {
         List<TestOutcome> tests = select(testOutcomes, having(on(TestOutcome.class).isSkipped()));
-        try {
-            return (tests.isEmpty()) ? 0 : sum(tests, on(TestOutcome.class).getNestedStepCount());
-        } catch(Exception e) {
-            return 0;
-        }
+        return countStepsIn(tests);
     }
 
     public List<TestOutcome> getTestOutcomes() {
@@ -165,6 +166,13 @@ public class StoryTestResults {
         return (countStepsInFailingTests() / (double) getEstimatedTotalStepCount());
     }
 
+    public Double getPercentErrorCoverage() {
+        if (getEstimatedTotalStepCount() == 0) {
+            return 0.0;
+        }
+        return (countStepsInErrorTests() / (double) getEstimatedTotalStepCount());
+    }
+
     public Double getPercentPendingCoverage() {
         if (getEstimatedTotalStepCount() == 0) {
             return 0.0;
@@ -216,7 +224,8 @@ public class StoryTestResults {
     public CoverageFormatter getFormatted() {
         return new CoverageFormatter(getPercentPassingCoverage(),
                                      getPercentPendingCoverage(),
-                                     getPercentFailingCoverage());
+                                     getPercentFailingCoverage(),
+                                     getPercentErrorCoverage());
     }
 
 

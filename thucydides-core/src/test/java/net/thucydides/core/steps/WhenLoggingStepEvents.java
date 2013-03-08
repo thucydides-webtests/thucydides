@@ -349,7 +349,7 @@ public class WhenLoggingStepEvents {
 
     private TestOutcome failingTestOutcome() {
         TestOutcome testOutcome = TestOutcome.forTest("some_test", SomeTestClass.class);
-        testOutcome.recordStep(TestStepFactory.forAFailingTestStepCalled("do_something", new AssertionError("something broke")));
+        testOutcome.recordStep(TestStepFactory.forABrokenTestStepCalled("do_something", new AssertionError("something broke")));
         return testOutcome;
     }
 

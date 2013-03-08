@@ -185,6 +185,11 @@ body {
     background-color: #f0e3e3;
 }
 
+
+.test-ERROR {
+    background-color: #ffcdce
+}
+
 .test-SKIPPED {
     background-color: #eeeadd;
 }
@@ -302,6 +307,10 @@ body {
 }
 
 .failure-color {
+    color: #fc2a1c;
+}
+
+.error-color  {
     color: #CC0033;
 }
 
@@ -369,6 +378,10 @@ body {
 }
 
 .FAILURE-text {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #fd3e03; font-style:italic;
+}
+
+.ERROR-text {
     font-family:euphemia, verdana, sans-serif; font-size:14px; color: #fd3e03; font-style:italic;
 }
 
@@ -603,14 +616,18 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 }
 
 .percentagebar {
-    background-color: orange; border: thin solid gray; height: 1.1em;
+    background-color: #a2f2f2; border: thin solid gray; height: 1.1em;
+}
+
+.errorbar {
+    background-color: #fc6e1f; height: 1.1em;
 }
 
 .failingbar {
-    background-color: red; height: 1.1em;
+    background-color: #f8001f; height: 1.1em;
 }
 .passingbar {
-    background-color: #00F000; height: 1.1em;
+    background-color: #30cb23; height: 1.1em;
 }
 
 #accordion {
@@ -660,7 +677,7 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 
 .test-summary-table {
     border: 1px solid #BBB;
-    width: 600px;
+    width: 530px;
     margin-bottom: 20px;
     background-color: white;
 }
@@ -925,6 +942,7 @@ h4 {
 .datagrid table tbody td:first-child { border-left: none; }
 .datagrid table tbody tr:last-child td { border-bottom: none; }
 .datagrid table tbody tr.test-FAILURE td { background: #ffcdce; color: red; }
+.datagrid table tbody tr.test-ERROR td { background: #fed6c2; color: red; }
 .datagrid table tbody tr.test-SKIPPED td { background: #eeeadd;}
 .datagrid table tbody tr.test-IGNORED td { background: #eeeadd;}
 .datagrid table tbody tr.test-PENDING td { background: #e5f2eb;}
@@ -940,7 +958,7 @@ h4 {
     width: 225px;
 }
 #coverage_summary {
-    width:750px;
+    width:700px;
     float: right;
     display: inline-block;
     padding: 10px;
@@ -989,4 +1007,19 @@ table.coverage_data td {
 	border:1px solid #0D78AE;
 	border-radius:5px;
 	-webkit-border-radius:5px;
-	padding:5px;}
+	padding:5px;
+}
+
+.related-tags-section {
+    vertical-align: top;
+    padding-top: 20px;
+    padding-left: 20px;
+}
+
+#test_results_pie_chart {
+    margin-top:20px; margin-left:20px; width:375px; height:375px;
+}
+
+#weighted_test_results_pie_chart {
+    margin-top:20px; margin-left:20px; width:375px; height:375px;
+}

@@ -4,7 +4,7 @@ import net.thucydides.core.annotations.Feature;
 import org.junit.Before;
 import org.junit.Test;
 
-import static net.thucydides.core.model.TestStepFactory.forAFailingTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forABrokenTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forAPendingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forASkippedTestStepCalled;
@@ -289,7 +289,7 @@ public class WhenRecordingUserStoryTestResults {
         TestOutcome testOutcome
                 = TestOutcome.forTestInStory("a test", story)
                     .withStep(forASuccessfulTestStepCalled("Step 1"))
-                    .andStep(forAFailingTestStepCalled("Step 2", new AssertionError("Oh bother!")))
+                    .andStep(forABrokenTestStepCalled("Step 2", new AssertionError("Oh bother!")))
                     .andStep(forASkippedTestStepCalled("Step 3"));
         return testOutcome;
     }

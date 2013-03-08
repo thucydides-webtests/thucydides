@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import java.util.Arrays;
 import java.util.List;
 
+import static net.thucydides.core.model.TestResult.ERROR;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -37,6 +38,10 @@ public class TestResultList {
     public TestResult getOverallResult() {
         if (testResults.isEmpty()) {
             return PENDING;
+        }
+
+        if (testResults.contains(ERROR)) {
+            return ERROR;
         }
 
         if (testResults.contains(FAILURE)) {

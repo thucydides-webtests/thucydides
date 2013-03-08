@@ -1,10 +1,8 @@
 package net.thucydides.core.requirements.reports;
 
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.CoverageFormatter;
 import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.requirements.model.Requirement;
@@ -137,8 +135,8 @@ public class RequirementOutcome {
         return ((double) getFailingTestCount()) / ((double) totalEstimatedAndImplementedTests());
     }
 
-    public double getPercentagePendingStepCount() {
-        return 1 - getPercentageFailingTestCount() - getPercentagePassingTestCount();
+    public double getPercentageErrorTestCount() {
+        return ((double) getErrorTestCount()) / ((double) totalEstimatedAndImplementedTests());
     }
 
     public int getEstimatedUnimplementedTests() {
@@ -152,6 +150,10 @@ public class RequirementOutcome {
 
     public int getFailingTestCount() {
         return testOutcomes.getFailureCount();
+    }
+
+    public int getErrorTestCount() {
+        return testOutcomes.getErrorCount();
     }
 
     public int getPendingTestCount() {
@@ -168,7 +170,8 @@ public class RequirementOutcome {
     public CoverageFormatter getFormatted() {
         return new CoverageFormatter(getPercentagePassingTestCount(),
                                      getPercentagePendingTestCount(),
-                                     getPercentageFailingTestCount());
+                                     getPercentageFailingTestCount(),
+                                     getPercentageErrorTestCount());
     }
 
     public boolean testsRequirement(Requirement requirement) {

@@ -112,7 +112,7 @@ class WhenGeneratingRequirementsReports extends Specification {
             rows[1].children == 0
             rows[2].children == 0
         and: "the icons should reflect the test results"
-            rows[0].icon.contains("orange") == true
+            rows[0].icon.contains("yellow") == true
             rows[1].icon.contains("green") == true
             rows[2].icon.contains("red") == true
     }

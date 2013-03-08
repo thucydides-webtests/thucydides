@@ -46,11 +46,13 @@
             [
                 ['Passing', ${testOutcomes.decimalPercentagePassingTestCount}],
                 ['Pending', ${testOutcomes.decimalPercentagePendingTestCount}],
-                ['Failing', ${testOutcomes.decimalPercentageFailingTestCount}]
+                ['Failing', ${testOutcomes.decimalPercentageFailingTestCount}],
+                ['Errors',  ${testOutcomes.decimalPercentageErrorTestCount}]
             ]
         ], {
+
             gridPadding:{top:0, bottom:38, left:0, right:0},
-            seriesColors:['#00C000', 'orange', 'red'],
+            seriesColors:['#30cb23', '#a2f2f2', '#f8001f','#fc6e1f'],
             seriesDefaults:{
                 renderer:$.jqplot.PieRenderer,
                 trendline:{ show:false },
@@ -68,7 +70,8 @@
             series:[
                 {label:'${testOutcomes.successCount} / ${testOutcomes.total} tests passed' },
                 {label:'${testOutcomes.pendingCount} / ${testOutcomes.total} tests pending'},
-                {label:'${testOutcomes.failureCount} / ${testOutcomes.total} tests failed'}
+                {label:'${testOutcomes.failureCount} / ${testOutcomes.total} tests failed'},
+                {label:'${testOutcomes.errorCount} / ${testOutcomes.total} errors'}
             ]
         });
 
@@ -76,11 +79,13 @@
             [
             ['Passing', ${testOutcomes.decimalPercentagePassingStepCount}],
             ['Pending', ${testOutcomes.decimalPercentagePendingStepCount}],
-            ['Failing', ${testOutcomes.decimalPercentageFailingStepCount}]
+            ['Failing', ${testOutcomes.decimalPercentageFailingStepCount}],
+            ['Errors', ${testOutcomes.decimalPercentageErrorStepCount}]
             ]
         ], {
-            gridPadding:{top:0, bottom:38, left:0, right:0},
-            seriesColors:['#00C000', 'orange', 'red'],
+
+        gridPadding:{top:0, bottom:38, left:0, right:0},
+            seriesColors:['#30cb23', '#a2f2f2', '#f8001f','#fc6e1f'],
             seriesDefaults:{
                 renderer:$.jqplot.PieRenderer,
                 trendline:{ show:false },
@@ -98,7 +103,8 @@
             series:[
                 {label:'${testOutcomes.successCount} / ${testOutcomes.total} tests passed (${testOutcomes.decimalPercentagePassingStepCount}% of all test steps)' },
                 {label:'${testOutcomes.pendingCount} / ${testOutcomes.total} tests pending (${testOutcomes.decimalPercentagePendingStepCount}% of all test steps)'},
-                {label:'${testOutcomes.failureCount} / ${testOutcomes.total} tests failed (${testOutcomes.decimalPercentageFailingStepCount}% of all test steps)'}
+                {label:'${testOutcomes.failureCount} / ${testOutcomes.total} tests failed (${testOutcomes.decimalPercentageFailingStepCount}% of all test steps)'},
+                {label:'${testOutcomes.errorCount} / ${testOutcomes.total} errors (${testOutcomes.decimalPercentageErrorStepCount}% of all test steps)'}
             ]
         });
 
@@ -178,6 +184,7 @@
                                 <span class="test-count-title">${testOutcomes.total} tests:</span>
                                 <#assign successReport = reportName.withPrefix(testOutcomes.label).forTestResult("success") >
                                 <#assign failureReport = reportName.withPrefix(testOutcomes.label).forTestResult("failure") >
+                                <#assign errorReport = reportName.withPrefix(testOutcomes.label).forTestResult("error") >
                                 <#assign pendingReport = reportName.withPrefix(testOutcomes.label).forTestResult("pending") >
                                 <span class="test-count">
                                     ${testOutcomes.successCount}
@@ -195,7 +202,13 @@
                                     ${testOutcomes.failureCount}
                                     <#if (testOutcomes.failureCount > 0 && report.shouldDisplayResultLink)>
                                         <a href="${failureReport}">failed</a>
-                                    <#else>failed</#if>
+                                    <#else>failed</#if>,
+                                </span>
+                                <span class="test-count">
+                                    ${testOutcomes.errorCount}
+                                    <#if (testOutcomes.errorCount > 0 && report.shouldDisplayResultLink)>
+                                        <a href="${errorReport}">with errors</a>
+                                    <#else>errors</#if>
                                 </span>
                             </div>
 
@@ -205,101 +218,46 @@
                                     <li><a href="#test-results-tabs-2">Weighted Tests</a></li>
                                 </ul>
                                 <div id="test-results-tabs-1">
-                                    <span class="caption">Total number of tests that pass, fail, or are pending.</span>
-                                    <div id="test_results_pie_chart"  style="margin-top:20px; margin-left:20px; width:375px; height:375px;"></div>
+                                    <table>
+                                        <tr>
+                                            <td colspan="2">
+                                                <span class="caption">Total number of tests that pass, fail, or are pending.</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div id="test_results_pie_chart"></div>
+                                            </td>
+                                            <td class="related-tags-section">
+                                                <div>
+                                                    <@list_tags weighted="false"/>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                                 <div id="test-results-tabs-2">
-                                    <span class="caption">Total number of tests, weighted by test steps.</span>
-                                    <div id="weighted_test_results_pie_chart"  style="margin-top:20px; margin-left:20px; width:375px; height:375px;"></div>
+                                    <table>
+                                        <tr>
+                                            <td colspan="2">
+                                                <span class="caption">Total number of tests, weighted by test steps.</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div id="weighted_test_results_pie_chart"></div>
+                                            </td>
+                                            <td class="related-tags-section">
+                                                <div>
+                                                    <@list_tags weighted="true"/>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </td>
-                        <td width="25px">&nbsp;</td>
-                        <td width="625px" valign="top">
-                        <h4>${tagsTitle}</h4>
-                        <#foreach tagType in testOutcomes.tagTypes>
-                            <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
-                            <#assign outcomesForType = testOutcomes.withTagType(tagType) >
-                            <#assign tagNames = testOutcomes.getTagsOfTypeExcluding(tagType, testOutcomes.label) >
-                            <#if tagNames?has_content >
-                            <table class="test-summary-table">
-                                <tr>
-                                    <td colspan="3">
-                                        <div class="tagTypeTitle">
-                                            ${tagTypeTitle}
-                                        </div>
-                                    </td>
-                                </tr>
-                                <#foreach tagName in tagNames  >
-                                    <#assign tagTitle = inflection.of(tagName).asATitle() >
-                                    <#assign tagReport = reportName.forTag(tagName) >
-                                    <#assign outcomesForTag = outcomesForType.withTag(tagName) >
-                                    <#if outcomesForTag.result == "FAILURE">
-                                        <#assign outcome_icon = "fail.png">
-                                        <#assign outcome_text = "failing-color">
-                                    <#elseif outcomesForTag.result == "SUCCESS">
-                                        <#assign outcome_icon = "success.png">
-                                        <#assign outcome_text = "success-color">
-                                    <#elseif outcomesForTag.result == "PENDING" || outcomesForTag.result == "IGNORED" >
-                                        <#assign outcome_icon = "pending.png">
-                                        <#assign outcome_text = "pending-color">
-                                    <#else>
-                                        <#assign outcome_icon = "ignor.png">
-                                        <#assign outcome_text = "ignore-color">
-                                    </#if>
-                                    <tr>
-                                        <td class="bluetext" width="350px">
-                                            <div class="tagTitle">
-                                                <#--<img src="images/${outcome_icon}" class="summary-icon">-->
-                                                <span class="${outcomesForTag.result}-text">
-                                                    <#if testOutcomes.label == tagName>
-                                                       <a href="${tagReport}" class="currentTag">${tagTitle}</a>
-                                                    <#else>
-                                                       <a href="${tagReport}">${tagTitle}</a>
-                                                    </#if>
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td width="150px" class="lightgreentext">
-                                            <#assign redbar = (1-outcomesForTag.percentagePendingStepCount)*150>
-                                            <#assign greenbar = outcomesForTag.percentagePassingStepCount*150>
-                                            <#assign passing = outcomesForTag.formatted.percentPassingCoverage>
-                                            <#assign failing = outcomesForTag.formatted.percentFailingCoverage>
-                                            <#assign pending = outcomesForTag.formatted.percentPendingCoverage>
 
-                                            <#assign tests = inflection.of(outcomesForTag.total).times("test") >
-                                            <#assign pendingCaption = "${outcomesForTag.pendingCount} out of ${outcomesForTag.total} ${tests} pending (${pending})">
-                                            <#assign passingCaption = "${outcomesForTag.successCount} out of ${outcomesForTag.total} ${tests} passing (${passing})">
-                                            <#assign failingCaption = "${outcomesForTag.failureCount} out of ${outcomesForTag.total} ${tests} failing (${failing})">
-                                            <#assign tests = inflection.of(outcomesForTag.total).times('test') >
-
-                                            <table>
-                                                <tr>
-                                                    <td width="50px">${passing}</td>
-                                                    <td width="10px">
-                                                        <a href="${tagReport}">
-                                                            <div class="percentagebar"
-                                                                 title="${pendingCaption}"
-                                                                 style="width: 150px;">
-                                                                <div class="failingbar"
-                                                                     style="width: ${redbar?string("0")}px;"
-                                                                     title="${failingCaption}">
-                                                                    <div class="passingbar"
-                                                                         style="width: ${greenbar?string("0")}px;"
-                                                                         title="${passingCaption}">
-                                                                    </div>
-                                                                </div>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    </#foreach>
-                                </table>
-                            </#if>
-                        </#foreach>
-                        </td>
                     </tr>
                 </table>
                 <#--- Test Results -->
@@ -317,10 +275,11 @@
                                         <th width="70" class="test-results-heading">Steps</th>
 
                                         <#if reportOptions.showStepDetails>
-                                        <th width="65" class="test-results-heading">Fail</th>
-                                        <th width="65" class="test-results-heading">Pend</th>
-                                        <th width="65" class="test-results-heading">Ignore</th>
-                                        <th width="65" class="test-results-heading">Skip</th>
+                                            <th width="65" class="test-results-heading">Fail</th>
+                                            <th width="65" class="test-results-heading">Error</th>
+                                            <th width="65" class="test-results-heading">Pend</th>
+                                            <th width="65" class="test-results-heading">Ignore</th>
+                                            <th width="65" class="test-results-heading">Skip</th>
                                         </#if>
 
                                         <th width="65" class="test-results-heading">Stable</th>
@@ -334,6 +293,8 @@
                                         <#assign testrun_outcome_icon = "pending.png">
                                     <#elseif testOutcome.result == "FAILURE">
                                         <#assign testrun_outcome_icon = "fail.png">
+                                    <#elseif testOutcome.result == "ERROR">
+                                        <#assign testrun_outcome_icon = "cross.png">
                                     <#elseif testOutcome.result == "SUCCESS">
                                         <#assign testrun_outcome_icon = "success.png">
                                     <#else>
@@ -366,6 +327,7 @@
 
                                         <#if reportOptions.showStepDetails>
                                         <td class="redtext">${testOutcome.failureCount}</td>
+                                        <td class="redtext">${testOutcome.errorCount}</td>
                                         <td class="bluetext">${testOutcome.pendingCount}</td>
                                         <td class="bluetext">${testOutcome.skippedCount}</td>
                                         <td class="bluetext">${testOutcome.ignoredCount}</td>
@@ -395,6 +357,115 @@
 </div>
 <div id="beforefooter"></div>
 <div id="bottomfooter"></div>
+<#macro list_tags(weighted)>
+    <h4>${tagsTitle}</h4>
+    <#foreach tagType in testOutcomes.tagTypes>
+        <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
+        <#assign outcomesForType = testOutcomes.withTagType(tagType) >
+        <#assign tagNames = testOutcomes.getTagsOfTypeExcluding(tagType, testOutcomes.label) >
+        <#if tagNames?has_content >
+        <table class="test-summary-table">
+            <tr>
+                <td colspan="3">
+                    <div class="tagTypeTitle">
+                    ${tagTypeTitle}
+                    </div>
+                </td>
+            </tr>
+            <#foreach tagName in tagNames>
+                <#assign tagTitle = inflection.of(tagName).asATitle() >
+                <#assign tagReport = reportName.forTag(tagName) >
+                <#assign outcomesForTag = outcomesForType.withTag(tagName) >
+                <#if outcomesForTag.result == "FAILURE">
+                    <#assign outcome_icon = "fail.png">
+                    <#assign outcome_text = "failure-color">
+                <#elseif outcomesForTag.result == "ERROR">
+                    <#assign outcome_icon = "cross.png">
+                    <#assign outcome_text = "error-color">
+                <#elseif outcomesForTag.result == "SUCCESS">
+                    <#assign outcome_icon = "success.png">
+                    <#assign outcome_text = "success-color">
+                <#elseif outcomesForTag.result == "PENDING" || outcomesForTag.result == "IGNORED" >
+                    <#assign outcome_icon = "pending.png">
+                    <#assign outcome_text = "pending-color">
+                <#else>
+                    <#assign outcome_icon = "ignor.png">
+                    <#assign outcome_text = "ignore-color">
+                </#if>
+                <tr>
+                    <td class="bluetext" width="300px">
+                        <div class="tagTitle">
+                                <span class="${outcomesForTag.result}-text">
+                                    <#if testOutcomes.label == tagName>
+                                        <a href="${tagReport}" class="currentTag">${tagTitle}</a>
+                                    <#else>
+                                        <a href="${tagReport}">${tagTitle}</a>
+                                    </#if>
+                                </span>
+                        </div>
+                    </td>
+                    <td width="150px" class="lightgreentext">
+                        <#if weighted == "true">
+                            <#assign percentPending = outcomesForTag.percentagePendingStepCount/>
+                            <#assign percentError = outcomesForTag.percentageErrorStepCount/>
+                            <#assign percentFailing = outcomesForTag.percentageFailingStepCount/>
+                            <#assign percentPassing = outcomesForTag.percentagePassingStepCount/>
+                            <#assign passing = outcomesForTag.formatted.percentPassingCoverage>
+                            <#assign failing = outcomesForTag.formatted.percentFailingCoverage>
+                            <#assign error = outcomesForTag.formatted.percentErrorCoverage>
+                            <#assign pending = outcomesForTag.formatted.percentPendingCoverage>
+                        <#else>
+                            <#assign percentPending = outcomesForTag.percentagePendingTestCount/>
+                            <#assign percentError = outcomesForTag.percentageErrorTestCount/>
+                            <#assign percentFailing = outcomesForTag.percentageFailingTestCount/>
+                            <#assign percentPassing = outcomesForTag.percentagePassingTestCount/>
 
+                            <#assign passing = outcomesForTag.formattedTestCount.percentPassingCoverage>
+                            <#assign failing = outcomesForTag.formattedTestCount.percentFailingCoverage>
+                            <#assign error = outcomesForTag.formattedTestCount.percentErrorCoverage>
+                            <#assign pending = outcomesForTag.formattedTestCount.percentPendingCoverage>
+                        </#if>
+
+                        <#assign errorbar = (percentPassing + percentFailing + percentError)*150>
+                        <#assign failingbar = (percentPassing + percentFailing)*150>
+                        <#assign passingbar = (percentPassing)*150>
+
+                        <#assign tests = inflection.of(outcomesForTag.total).times('test') >
+                        <#assign pendingCaption = "${outcomesForTag.pendingCount} out of ${outcomesForTag.total} ${tests} pending">
+                        <#assign passingCaption = "${outcomesForTag.successCount} out of ${outcomesForTag.total} ${tests} passing">
+                        <#assign failingCaption = "${outcomesForTag.failureCount} out of ${outcomesForTag.total} ${tests} failing">
+                        <#assign errorCaption = "${outcomesForTag.errorCount} out of ${outcomesForTag.total} ${tests} broken">
+
+                        <table>
+                            <tr>
+                                <td width="50px">${passing}</td>
+                                <td width="150px">
+                                    <a href="${tagReport}">
+                                        <div class="percentagebar"
+                                             title="${pendingCaption}"
+                                             style="width: 150px;">
+                                            <div class="errorbar"
+                                                 style="width: ${errorbar?string("0")}px;"
+                                                 title="${errorCaption}">
+                                                <div class="failingbar"
+                                                     style="width: ${failingbar?string("0")}px;"
+                                                     title="${failingCaption}">
+                                                    <div class="passingbar"
+                                                         style="width: ${passingbar?string("0")}px;"
+                                                         title="${passingCaption}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </#foreach>
+        </table>
+        </#if>
+    </#foreach>
+</#macro>
 </body>
 </html>

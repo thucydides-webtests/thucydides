@@ -14,6 +14,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import spock.lang.Specification
 import net.thucydides.samples.*
 
+import static net.thucydides.core.model.TestResult.ERROR
 import static net.thucydides.core.model.TestResult.FAILURE
 import static net.thucydides.core.model.TestResult.IGNORED
 import static net.thucydides.core.model.TestResult.PENDING
@@ -101,8 +102,8 @@ class WhenRunningTestScenarios extends Specification {
         then:
         outcomes.size() == 3
         and:
-        results["happy_day_scenario"].result == FAILURE
-        results["happy_day_scenario"].testSteps[2].result == FAILURE
+        results["happy_day_scenario"].result == ERROR
+        results["happy_day_scenario"].testSteps[2].result == ERROR
     }
 
     def "an error in a non-step method should be displayed as a failing step"() {
@@ -115,7 +116,7 @@ class WhenRunningTestScenarios extends Specification {
         then:
         outcomes.size() == 3
         and:
-        results["happy_day_scenario"].result == FAILURE
+        results["happy_day_scenario"].result == ERROR
         results["happy_day_scenario"].testSteps.size() == 3
     }
 
@@ -188,7 +189,7 @@ class WhenRunningTestScenarios extends Specification {
         SamplePassingScenarioWithIgnoredTests   | SUCCESS | IGNORED | IGNORED
         SamplePassingScenarioWithEmptyTests     | SUCCESS | PENDING | PENDING
         MockOpenStaticDemoPageWithFailureSample | FAILURE | SUCCESS | SUCCESS
-        MockOpenPageWithWebdriverErrorSample    | FAILURE | SUCCESS | SUCCESS
+        MockOpenPageWithWebdriverErrorSample    | ERROR | SUCCESS | SUCCESS
     }
 
     def "failing tests with no steps should still record the error"() {
@@ -234,7 +235,7 @@ class WhenRunningTestScenarios extends Specification {
         then:
         def steps = results["failing_happy_day_scenario"].getTestSteps()
         def stepResults = steps.collect {it.result}
-        stepResults == [SUCCESS, IGNORED, SUCCESS, FAILURE, SKIPPED]
+        stepResults == [SUCCESS, IGNORED, SUCCESS, ERROR, SKIPPED]
     }
 
     def "should record error message in the failing test step"() {

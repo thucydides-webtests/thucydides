@@ -48,11 +48,12 @@
             [
                 ['Passing', ${requirements.percentagePassingTestCount}],
                 ['Pending', ${requirements.percentagePendingTestCount}],
-                ['Failing', ${requirements.percentageFailingTestCount}]
+                ['Failing', ${requirements.percentageFailingTestCount}],
+                ['Errors',  ${requirements.percentageErrorTestCount}]
             ]
         ], {
             gridPadding:{top:0, bottom:38, left:0, right:0},
-            seriesColors:['#00C000', 'orange', 'red'],
+            seriesColors:['#30cb23', '#a2f2f2', '#f8001f','#fc6e1f'],
             seriesDefaults:{
                 renderer:$.jqplot.PieRenderer,
                 trendline:{ show:false },
@@ -70,7 +71,8 @@
             series:[
                 {label:'${requirements.formatted.percentPassingCoverage} requirements tested successfully' },
                 {label:'${requirements.formatted.percentPendingCoverage} requirements untested'},
-                {label:'${requirements.formatted.percentFailingCoverage} requirements failing'}
+                {label:'${requirements.formatted.percentFailingCoverage} requirements failing'},
+                {label:'${requirements.formatted.percentErrorCoverage} requirements with errors'}
             ]
         });
         // Results table
@@ -117,7 +119,7 @@
             <li><a href="index.html">Test Results</a></li>
             <li><a href="capabilities.html" class="current">Requirements</a></li>
             <li><a href="progress-report.html">Progress</a></li>
-        <#foreach tagType in allTestOutcomes.tagTypes>
+            <#foreach tagType in allTestOutcomes.tagTypes>
                 <#assign tagReport = reportName.forTagType(tagType) >
                 <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
                 <li><a href="${tagReport}">${tagTypeTitle}</a></li>
@@ -151,14 +153,14 @@
 
                 <#if (requirements.totalTestCount > 0 || requirements.flattenedRequirementCount > 0)>
                 <div id="requirements-summary">
-                    <div id="coverage_pie_chart"  style="margin-top:10px; margin-left:10px; width:200px; height:200px;"></div>
+                    <div id="coverage_pie_chart"  style="margin-top:10px; margin-left:10px; width:250px; height:250px;"></div>
                     <div id="coverage_summary">
                         <table class="coverage_data">
                             <tr>
-                                <td class="label">Child Requirements:</td><td class="value">${requirements.flattenedRequirementCount}</td>
+                                <td class="label">Total requirement count:</td><td class="value">${requirements.flattenedRequirementCount}</td>
                             </tr>
                             <tr>
-                                <td class="label subtopic">Child requirements without tests:</td><td class="value">${requirements.requirementsWithoutTestsCount}</td>
+                                <td class="label subtopic">Untested requirements:</td><td class="value">${requirements.requirementsWithoutTestsCount}</td>
                             <tr/>
                             <tr>
                                 <td class="label">Tests:</td><td class="value">${requirements.totalTestCount}</td>
@@ -168,6 +170,9 @@
                             <tr/>
                             <tr>
                                 <td class="label subtopic">Failing tests:</td><td class="value">${requirements.failingTestCount}</td>
+                            <tr/>
+                            <tr>
+                                <td class="label subtopic">Tests with errors:</td><td class="value">${requirements.errorTestCount}</td>
                             <tr/>
                             <tr>
                                 <td class="label subtopic">Pending tests:</td><td class="value">${requirements.pendingTestCount}</td>
@@ -180,38 +185,6 @@
                 </div>
                 <div class="clr"></div>
                 </#if>
-                <#--<table class='overview'>-->
-                    <#--<tr>-->
-                        <#--<td width="375px" valign="top">-->
-                            <#--<div class="test-count-summary">-->
-                                <#--<span class="test-count-title">${testOutcomes.total} tests:</span>-->
-                                <#--<#assign successReport = reportName.withPrefix(testOutcomes.label).forTestResult("success") >-->
-                                <#--<#assign failureReport = reportName.withPrefix(testOutcomes.label).forTestResult("failure") >-->
-                                <#--<#assign pendingReport = reportName.withPrefix(testOutcomes.label).forTestResult("pending") >-->
-                                <#--<span class="test-count">-->
-                                    <#--${testOutcomes.successCount}-->
-                                    <#--<#if (testOutcomes.successCount > 0)>-->
-                                        <#--<a href="${successReport}">passed</a>-->
-                                    <#--<#else>passed</#if>,-->
-                                <#--</span>-->
-                                <#--<span class="test-count">-->
-                                <#--${testOutcomes.pendingCount}-->
-                                <#--<#if (testOutcomes.pendingCount > 0)>-->
-                                    <#--<a href="${pendingReport}">pending</a>-->
-                                <#--<#else>pending</#if>,-->
-                                <#--</span>-->
-                                <#--<span class="test-count">-->
-                                    <#--${testOutcomes.failureCount}-->
-                                    <#--<#if (testOutcomes.failureCount > 0)>-->
-                                        <#--<a href="${failureReport}">failed</a>-->
-                                    <#--<#else>failed</#if>-->
-                                <#--</span>-->
-                            <#--</div>-->
-                        <#--</td>-->
-                        <#--<td width="25px">&nbsp;</td>-->
-                        <#--<td width="625px" valign="top"></td>-->
-                    <#--</tr>-->
-                <#--</table>-->
 
                 <#if (requirements.requirementOutcomes?has_content || testOutcomes.total > 0)>
                 <div id="tabs">
@@ -245,6 +218,7 @@
                                                 <th width="50px" class="test-results-heading">Tests</th>
                                                 <th width="50px" class="test-results-heading">Pass</th>
                                                 <th width="50px" class="test-results-heading">Fail</th>
+                                                <th width="50px" class="test-results-heading">Error</th>
                                                 <th width="50px" class="test-results-heading">Pend</th>
                                                 <th width="150px" class="test-results-heading">Coverage</th>
                                             </tr>
@@ -253,19 +227,22 @@
 
                                         <#foreach requirementOutcome in requirements.requirementOutcomes>
                                             <#if requirementOutcome.testOutcomes.stepCount == 0 || requirementOutcome.testOutcomes.result == "PENDING" || requirementOutcome.testOutcomes.result == "IGNORED">
-                                                <#assign status_icon = "traffic-orange.gif">
+                                                <#assign status_icon = "traffic-yellow.gif">
                                                 <#assign status_rank = 0>
+                                            <#elseif requirementOutcome.testOutcomes.result == "ERROR">
+                                                <#assign status_icon = "traffic-orange.gif">
+                                                <#assign status_rank = 1>
                                             <#elseif requirementOutcome.testOutcomes.result == "FAILURE">
                                                 <#assign status_icon = "traffic-red.gif">
-                                                <#assign status_rank = 1>
+                                                <#assign status_rank = 2>
                                             <#elseif requirementOutcome.testOutcomes.result == "SUCCESS">
                                                 <#assign status_icon = "traffic-green.gif">
-                                                <#assign status_rank = 2>
+                                                <#assign status_rank = 3>
                                             </#if>
 
                                             <tr class="test-${requirementOutcome.testOutcomes.result} requirementRow">
                                                 <td class="requirementRowCell">
-                                                    <img src="images/${status_icon}" class="summary-icon"/>
+                                                    <img src="images/${status_icon}" class="summary-icon" title="${requirementOutcome.testOutcomes.result}"/>
                                                     <span style="display:none">${status_rank}</span>
                                                 </td>
                                                 <td class="cardNumber requirementRowCell">${requirementOutcome.cardNumberWithLinks}</td>
@@ -283,15 +260,25 @@
                                                 <td class="bluetext requirementRowCell">${requirementOutcome.testOutcomes.total}</td>
                                                 <td class="greentext requirementRowCell">${requirementOutcome.testOutcomes.successCount}</td>
                                                 <td class="redtext requirementRowCell">${requirementOutcome.testOutcomes.failureCount}</td>
-                                                <td class="lightredtext requirementRowCell">${requirementOutcome.testOutcomes.pendingCount + requirementOutcome.testOutcomes.skipCount}</td>
+                                                <td class="lightredtext requirementRowCell">${requirementOutcome.testOutcomes.errorCount}</td>
+                                                <td class="bluetext requirementRowCell">${requirementOutcome.testOutcomes.pendingCount + requirementOutcome.testOutcomes.skipCount}</td>
 
 
                                                 <td width="150px" class="lightgreentext requirementRowCell">
-                                                    <#assign redbar = (1-requirementOutcome.percentagePendingTestCount)*120>
-                                                    <#assign greenbar = requirementOutcome.percentagePassingTestCount*120>
+
+
+                                                    <#assign percentPending = requirementOutcome.percentagePendingTestCount/>
+                                                    <#assign percentError = requirementOutcome.percentageErrorTestCount/>
+                                                    <#assign percentFailing = requirementOutcome.percentageFailingTestCount/>
+                                                    <#assign percentPassing = requirementOutcome.percentagePassingTestCount/>
                                                     <#assign passing = requirementOutcome.formatted.percentPassingCoverage>
                                                     <#assign failing = requirementOutcome.formatted.percentFailingCoverage>
+                                                    <#assign error = requirementOutcome.formatted.percentErrorCoverage>
                                                     <#assign pending = requirementOutcome.formatted.percentPendingCoverage>
+
+                                                    <#assign errorbar = (percentPassing + percentFailing + percentError)*150>
+                                                    <#assign failingbar = (percentPassing + percentFailing)*150>
+                                                    <#assign passingbar = percentPassing*150>
 
                                                     <#assign tests = inflection.of(requirementOutcome.testOutcomes.total).times("test") >
 
@@ -312,6 +299,7 @@
 Tests implemented: ${requirementOutcome.testCount}
   - Passing tests: ${requirementOutcome.passingTestCount} (${passing} of specified requirements)
   - Failing tests: ${requirementOutcome.failingTestCount} (${failing} of specified requirements)
+  - Tests with errors: ${requirementOutcome.errorTestCount} (${error} of specified requirements)
 
 Requirements specified:     ${requirementOutcome.flattenedRequirementCount}
 Requirements with no tests: ${requirementOutcome.requirementsWithoutTestsCount}
@@ -323,16 +311,20 @@ Estimated unimplemented or pending requirements: ${pending}">
                                                     <table>
                                                         <tr>
                                                             <td width="50px">${passing}</td>
-                                                            <td width="10px">
+                                                            <td width="150px">
                                                                 <div class="percentagebar"
                                                                      title="${overviewCaption}"
-                                                                     style="width: 120px;">
-                                                                    <div class="failingbar"
-                                                                         style="width: ${redbar?string("0")}px;"
+                                                                     style="width: 150px;">
+                                                                    <div class="errorbar"
+                                                                         style="width: ${errorbar?string("0")}px;"
                                                                          title="${overviewCaption}">
-                                                                        <div class="passingbar"
-                                                                             style="width: ${greenbar?string("0")}px;"
+                                                                        <div class="failingbar"
+                                                                             style="width: ${failingbar?string("0")}px;"
                                                                              title="${overviewCaption}">
+                                                                            <div class="passingbar"
+                                                                                 style="width: ${passingbar?string("0")}px;"
+                                                                                 title="${overviewCaption}">
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                             </td>
@@ -365,6 +357,7 @@ Estimated unimplemented or pending requirements: ${pending}">
                                             <th width="70" class="test-results-heading">Steps</th>
                                             <#if reportOptions.showStepDetails>
                                             <th width="65" class="test-results-heading">Fail</th>
+                                            <th width="65" class="test-results-heading">Errors</th>
                                             <th width="65" class="test-results-heading">Pend</th>
                                             <th width="65" class="test-results-heading">Ignore</th>
                                             <th width="65" class="test-results-heading">Skip</th>
@@ -380,6 +373,8 @@ Estimated unimplemented or pending requirements: ${pending}">
                                                     <#assign testrun_outcome_icon = "pending.png">
                                                 <#elseif testOutcome.result == "FAILURE">
                                                     <#assign testrun_outcome_icon = "fail.png">
+                                                <#elseif testOutcome.result == "ERROR">
+                                                    <#assign testrun_outcome_icon = "cross.png">
                                                 <#elseif testOutcome.result == "SUCCESS">
                                                     <#assign testrun_outcome_icon = "success.png">
                                                 <#else>
@@ -411,6 +406,7 @@ Estimated unimplemented or pending requirements: ${pending}">
                                                 <td class="lightgreentext">${testOutcome.nestedStepCount}</td>
                                                 <#if reportOptions.showStepDetails>
                                                 <td class="redtext">${testOutcome.failureCount}</td>
+                                                <td class="redtext">${testOutcome.errorCount}</td>
                                                 <td class="bluetext">${testOutcome.pendingCount}</td>
                                                 <td class="bluetext">${testOutcome.skippedCount}</td>
                                                 <td class="bluetext">${testOutcome.ignoredCount}</td>

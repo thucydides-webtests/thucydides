@@ -24,6 +24,7 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             directory                                  | result
             "/test-outcomes/all-successful"            | TestResult.SUCCESS
             "/test-outcomes/containing-failure"        | TestResult.FAILURE
+            "/test-outcomes/containing-errors"         | TestResult.ERROR
             "/test-outcomes/containing-pending"        | TestResult.PENDING
             "/test-outcomes/containing-skipped"        | TestResult.SUCCESS
     }
@@ -34,16 +35,18 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         then:
             testOutcomes.successCount == successCount &&
             testOutcomes.failureCount == failureCount &&
+            testOutcomes.errorCount == errorCount &&
             testOutcomes.pendingCount == pendingCount &&
             testOutcomes.skipCount == skipCount
         where:
-            directory                                  | successCount | failureCount | pendingCount | skipCount
-            "/test-outcomes/all-successful"            | 3            | 0            | 0            | 0
-            "/test-outcomes/containing-failure"        | 1            | 1            | 1            | 0
-            "/test-outcomes/containing-pending"        | 2            | 0            | 1            | 0
-            "/test-outcomes/containing-skipped"        | 3            | 0            | 0            | 1
+            directory                                  | successCount | failureCount | errorCount   | pendingCount | skipCount
+            "/test-outcomes/all-successful"            | 3            | 0            | 0            | 0            | 0
+            "/test-outcomes/containing-failure"        | 1            | 1            | 0            | 1            | 0
+            "/test-outcomes/containing-errors"         | 1            | 1            | 1            | 0            | 0
+            "/test-outcomes/containing-pending"        | 2            | 0            | 0            | 1            | 0
+            "/test-outcomes/containing-skipped"        | 3            | 0            | 0            | 0            | 1
     }
-    
+
     def "should count the number steps in a set of test outcomes"() {
         when:
            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
@@ -82,6 +85,14 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         "/test-outcomes/all-pending"               | "0"                 | "0"                | "1"
     }
 
+    def "should provide a formatted version of the passing coverage"() {
+        when:
+        def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
+        then:
+        testOutcomes.formatted.percentPassingCoverage == "32%"
+    }
+
+
     def "should calculate the formatted percentage of passing tests"() {
         when:
         def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
@@ -97,19 +108,14 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         "/test-outcomes/all-pending"               | "0"                 | "0"                | "1"
     }
 
-
-    def "should provide a formatted version of the passing coverage"() {
-        when:
-            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
-        then:
-            testOutcomes.formatted.percentPassingCoverage == "32%"
-    }
-
     def "should provide a formatted version of the failing coverage metrics"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
         then:
             testOutcomes.formatted.percentFailingCoverage == "24%"
+        and:
+            testOutcomes.formattedTestCount.percentFailingCoverage == "33.3%"
+
     }
 
     def "should provide a formatted version of the pending coverage metrics"() {
@@ -117,6 +123,8 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
         then:
             testOutcomes.formatted.percentPendingCoverage == "44%"
+        and:
+            testOutcomes.formattedTestCount.percentPendingCoverage == "33.3%"
     }
 
     def "should return 0% passing coverage if there are no steps"() {
@@ -124,6 +132,8 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/with-no-steps"));
         then:
             testOutcomes.formatted.percentPassingCoverage == "0%"
+        and:
+            testOutcomes.formattedTestCount.percentPassingCoverage == "0%"
     }
 
     def "should return 0% failing coverage if there are no steps"() {

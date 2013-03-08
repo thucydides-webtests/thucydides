@@ -195,6 +195,9 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         if (testOutcomesForThisTag.getFailureCount() > 0) {
             generateResultReport(testOutcomesForThisTag.getFailingTests(), reportName, tagType, "failure");
         }
+        if (testOutcomesForThisTag.getErrorCount() > 0) {
+            generateResultReport(testOutcomesForThisTag.getErrorTests(), reportName, tagType, "error");
+        }
     }
 
     private void generateResultReport(TestOutcomes testOutcomes, ReportNameProvider reportName, String tagType, String testResult) throws IOException {

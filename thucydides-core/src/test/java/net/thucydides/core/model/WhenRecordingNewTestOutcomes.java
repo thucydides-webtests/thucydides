@@ -11,13 +11,17 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.statistics.model.TestRunTag;
 import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriverException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,15 +29,16 @@ import java.util.List;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.on;
 import static net.thucydides.core.matchers.ThucydidesMatchers.hasFilenames;
+import static net.thucydides.core.model.TestResult.ERROR;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SUCCESS;
-import static net.thucydides.core.model.TestStepFactory.forAFailingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forABrokenTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forAPendingTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forASkippedTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forASuccessfulTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -536,7 +541,7 @@ public class WhenRecordingNewTestOutcomes {
     public void the_acceptance_test_case_is_a_failure_if_one_test_has_failed() {
 
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 2", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 3"));
 
         assertThat(testOutcome.getResult(), is(FAILURE));
@@ -544,10 +549,21 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     @Test
+    public void the_acceptance_test_case_is_an_error_if_one_test_has_thrown_a_non_assertion_exception() {
+
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 2", new WebDriverException("Oh bother!")));
+        testOutcome.recordStep(forASkippedTestStepCalled("Step 3"));
+
+        assertThat(testOutcome.getResult(), is(ERROR));
+        assertThat(testOutcome.isError(), is(true));
+    }
+
+    @Test
     public void if_a_step_fails_the_error_message_should_be_returned_with_the_result() {
 
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 2", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 3"));
 
 
@@ -559,11 +575,42 @@ public class WhenRecordingNewTestOutcomes {
     public void the_acceptance_test_case_is_failing_if_multiple_tests_have_failed() {
 
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 2", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 3", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
 
         assertThat(testOutcome.getResult(), is(FAILURE));
+    }
+
+    @Test
+    public void the_acceptance_test_case_is_failing_if_a_test_step_failed() {
+
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 2", new StepFailureException("Oh bother",new AssertionError("Oh bother!"))));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
+
+        assertThat(testOutcome.getResult(), is(FAILURE));
+    }
+
+    @Test
+    public void the_acceptance_test_case_is_in_error_if_a_test_step_has_an_error() {
+
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 2", new StepFailureException("Oh bother",new NoSuchElementException("Can't find element"))));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
+
+        assertThat(testOutcome.getResult(), is(ERROR));
+    }
+
+    @Test
+    public void the_acceptance_test_case_is_in_error_if_multiple_tests_have_failed_or_are_broken() {
+
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 2", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 3", new WebDriverException("Oh deary me!")));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
+
+        assertThat(testOutcome.getResult(), is(ERROR));
     }
 
     @Test
@@ -588,7 +635,7 @@ public class WhenRecordingNewTestOutcomes {
 
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
         testOutcome.recordStep(forAPendingTestStepCalled("Step 2"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 3", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
 
         assertThat(testOutcome.getResult(), is(FAILURE));
@@ -610,7 +657,7 @@ public class WhenRecordingNewTestOutcomes {
 
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
         testOutcome.recordStep(forAPendingTestStepCalled("Step 2"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 3", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 4"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 5"));
 
@@ -622,7 +669,7 @@ public class WhenRecordingNewTestOutcomes {
 
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
         testOutcome.recordStep(forAPendingTestStepCalled("Step 2"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 3", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 4"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 5"));
         testOutcome.recordStep(forAPendingTestStepCalled("Step 6"));
@@ -657,7 +704,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 4", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 5"));
 
         assertThat(testOutcome.getSuccessCount(), is(2));
@@ -669,8 +716,8 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 6"));
 
         assertThat(testOutcome.getFailureCount(), is(2));
@@ -682,8 +729,8 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 6"));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 7"));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 8"));
@@ -698,8 +745,8 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 6"));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 7"));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 8"));
@@ -715,8 +762,8 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 3"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 4", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 4", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 6"));
         testOutcome.recordStep(forAPendingTestStepCalled("Step 7"));
         testOutcome.recordStep(forAPendingTestStepCalled("Step 8"));
@@ -817,15 +864,15 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 7", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 7", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forAPendingTestStepCalled("Step 10"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Another group"));
         testOutcome.startGroup();
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 5"));
         testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 6"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 7", new AssertionError("Oh bother!")));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 8", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 7", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 8", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 9"));
         testOutcome.recordStep(forAPendingTestStepCalled("Step 10"));
         testOutcome.recordStep(forAPendingTestStepCalled("Step 11"));
@@ -855,7 +902,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.startGroup("A group");
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 3", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 3", new AssertionError("Oh bother!")));
         testOutcome.recordStep(forASkippedTestStepCalled("Step 4"));
         testOutcome.recordStep(forAnIgnoredTestStepCalled("Step 5"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
@@ -902,7 +949,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
         testOutcome.startGroup("Another group");
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testOutcome.endGroup();
         testOutcome.endGroup();
 
@@ -917,7 +964,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
         testOutcome.startGroup("Another group");
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
-        testOutcome.recordStep(forAFailingTestStepCalled("Step 5", new AssertionError("Oh bother!")));
+        testOutcome.recordStep(forABrokenTestStepCalled("Step 5", new AssertionError("Oh bother!")));
         testOutcome.endGroup();
         testOutcome.endGroup();
 

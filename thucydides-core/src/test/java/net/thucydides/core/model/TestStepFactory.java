@@ -19,7 +19,7 @@ public class TestStepFactory {
         return createNewNestedTestSteps(description, SUCCESS);
     }
 
-    public static TestStep forAFailingTestStepCalled(String description, AssertionError assertionError) {
+    public static TestStep forABrokenTestStepCalled(String description, Throwable assertionError) {
         return createNewTestStep(description, FAILURE, assertionError);
     }
 
@@ -35,7 +35,7 @@ public class TestStepFactory {
         return createNewTestStep(description, PENDING);
     }
 
-    public static TestStep createNewTestStep(String description, TestResult result, AssertionError assertionError) {
+    public static TestStep createNewTestStep(String description, TestResult result, Throwable assertionError) {
         TestStep step = new TestStep(description);
         step.failedWith(assertionError);
         return step;

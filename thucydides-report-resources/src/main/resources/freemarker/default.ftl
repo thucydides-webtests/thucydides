@@ -67,7 +67,12 @@
 
     <div class="clr"></div>
 
-<#if testOutcome.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">    <#elseif testOutcome.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">    <#elseif testOutcome.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">    <#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">    </#if>
+<#if testOutcome.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">
+<#elseif testOutcome.result == "ERROR"><#assign outcome_icon = "cross.png"><#assign outcome_text = "error-color">
+<#elseif testOutcome.result == "SUCCESS"><#assign outcome_icon = "success.png"><#assign outcome_text = "success-color">
+<#elseif testOutcome.result == "PENDING"><#assign outcome_icon = "pending.png"><#assign outcome_text = "pending-color">
+<#else><#assign outcome_icon = "ignor.png"><#assign outcome_text = "ignore-color">
+</#if>
 <#-- TEST TITLE-->
     <div id="contentbody">
         <div class="titlebar">
@@ -193,6 +198,8 @@
                 <#macro step_details(step, step_number, level)>
                     <#if step.result == "FAILURE">
                         <#assign step_outcome_icon = "fail.png">
+                    <#elseif step.result == "ERROR">
+                        <#assign step_outcome_icon = "cross.png">
                     <#elseif step.result == "SUCCESS">
                         <#assign step_outcome_icon = "success.png">
                     <#elseif step.result == "PENDING">
@@ -252,7 +259,7 @@
                             <td width="150"><span class="${step_class_root}-step">${step.result}</span></td>
                             <td width="100"><span class="${step_class_root}-step">${step.durationInSeconds}s</span></td>
                         </tr>
-                        <#if step.result == "FAILURE" && !step.isAGroup()>
+                        <#if (step.result == "FAILURE" || step.result == "ERROR") && !step.isAGroup()>
                             <tr class="test-${step.result}">
                                 <td width="40">&nbsp</td>
                                 <#if step.errorMessage?has_content>
