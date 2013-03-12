@@ -149,7 +149,7 @@
                 <#list testOutcome.dataTable.rows as row>
                     <tr class="test-${row.result}">
                     <#list row.values as value>
-                        <td><a href="#${row_index}">${value}</a></td>
+                        <td><a href="#${row_index}">${formatter.htmlCompatible(value)}</a></td>
                     </#list>
                     </tr>
                 </#list>
@@ -227,7 +227,7 @@
                             <td width="40">
                                 <#if step_number?has_content><a name="${step_number}"/></#if>
                                 <#if showAccordion>
-                                    <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="height:30px; display:block">
+                                    <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="display:block">
                                         <img src="images/plus.png" width="24" class="imgstepSection${step_number}" style="margin-left: 20px; float:left;  padding-right:5px"/>
                                     </a>
                                 <#else>
@@ -237,7 +237,7 @@
                             </td>
                             <td width="%">
                                 <#if showAccordion>
-                                    <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="height:30px;display:block">
+                                    <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="display:block">
                                 </#if>
                                     <span class="${step_class_root}-step">${formatter.htmlCompatible(step.description)}</span>
                                 <#if showAccordion>
@@ -317,11 +317,9 @@
         <div id="imgPreviewContainer" style="position: absolute; top: 612px; left: 355px; display: none; " class=""><img
                 src="" style="display: none; "></div>
         <div id="imgPreviewContainer2" style="position: absolute; top: 925px; left: 320px; display: none; " class="">
-            <img
-                    style="width: 200px; display: none; " src=""></div>
+            <img style="width: 200px; display: none; " src=""></div>
         <div id="imgPreviewWithStyles" style="position: absolute; top: 1272px; left: 321px; display: none; " class="">
-            <img
-                    style="height: 200px; opacity: 1; display: none; " src=""></div>
+            <img style="height: 200px; opacity: 1; display: none; " src=""></div>
         <div id="imgPreviewWithStyles2" style="display: none; position: absolute; "><img style="height: 200px; "></div>
         <div id="imgPreviewWithStyles3" style="display: none; position: absolute; "><img style="height: 200px; "></div>
 

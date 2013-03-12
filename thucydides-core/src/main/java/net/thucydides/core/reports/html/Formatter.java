@@ -1,11 +1,9 @@
 package net.thucydides.core.reports.html;
 
-import com.gargoylesoftware.htmlunit.TextUtil;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import net.thucydides.core.issues.IssueTracking;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.translate.AggregateTranslator;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.apache.commons.lang3.text.translate.EntityArrays;
@@ -28,6 +26,7 @@ public class Formatter {
     private final static String FULL_ISSUE_NUMBER_REGEXP = "([A-Z][A-Z0-9-_]*)-\\d+";
     private final static Pattern fullIssueNumberPattern = Pattern.compile(FULL_ISSUE_NUMBER_REGEXP);
     private final static String ISSUE_LINK_FORMAT = "<a target=\"_blank\" href=\"{0}\">{1}</a>";
+    private static final String ELIPSE = "&hellip;";
 
     private final IssueTracking issueTracking;
 
@@ -108,8 +107,20 @@ public class Formatter {
             new LookupTranslator(EntityArrays.HTML40_EXTENDED_ESCAPE())
     );
 
-    public String htmlCompatible(String text) {
-        return addLineBreaks(ESCAPE_SPECIAL_CHARS.translate(text));
+    public String htmlCompatible(Object text) {
+        return addLineBreaks(ESCAPE_SPECIAL_CHARS.translate(text != null? text.toString() : ""));
+    }
+
+    public String truncatedHtmlCompatible(String text, int length) {
+        return addLineBreaks(ESCAPE_SPECIAL_CHARS.translate(truncate(text,length)));
+    }
+
+    private String truncate(String text, int length) {
+        if (text.length() > length) {
+            return text.substring(0,length).trim() + ELIPSE;
+        } else {
+            return text;
+        }
     }
 
     private String insertShortenedIssueTrackingUrls(String value) {

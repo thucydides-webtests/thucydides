@@ -173,16 +173,6 @@ public class WhenFormattingForHTML {
     }
 
     @Test
-    public void should_display_foreign_letters_as_html_entities() {
-        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
-        Formatter formatter = new Formatter(issueTracking);
-
-        String formattedValue = formatter.htmlCompatible("François");
-
-        assertThat(formattedValue, is("Fran&ccedil;ois"));
-    }
-
-    @Test
     public void formatter_should_round_doubles_to_a_given_precision() {
         NumericalFormatter formatter = new NumericalFormatter();
         assertThat(formatter.rounded(1.234,1), is("1.2"));
