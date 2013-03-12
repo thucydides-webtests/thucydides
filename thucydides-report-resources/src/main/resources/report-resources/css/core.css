@@ -765,7 +765,6 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 
 .step-table td {
     padding: 5px;
-    word-wrap:break-word
 }
 
 .step-table-separator td {
@@ -1002,13 +1001,13 @@ table.coverage_data td {
     border-bottom: solid #d3d3d3 1px;
 }
 .scenario{
-	color:#0D78AE;
-	font-size:16px;
-	font-family:euphemia,verdana,sans-serif;
-	border:1px solid #0D78AE;
-	border-radius:5px;
-	-webkit-border-radius:5px;
-	padding:5px;
+    color:#0D78AE;
+    font-size:16px;
+    font-family:euphemia,verdana,sans-serif;
+    border:1px solid #0D78AE;
+    border-radius:5px;
+    -webkit-border-radius:5px;
+    padding:5px;
 }
 
 .related-tags-section {
@@ -1023,4 +1022,16 @@ table.coverage_data td {
 
 #weighted_test_results_pie_chart {
     margin-top:20px; margin-left:20px; width:375px; height:375px;
+}
+.read-more-link{
+
+}
+.read-more-link img{
+    margin-bottom:-5px;
+}
+.read-more-text{
+    display:none;
+}
+.read-more-text div{
+    display:block
 }

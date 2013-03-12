@@ -93,6 +93,24 @@
     })
     ;
     </script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".read-more-link").click(function() {
+                $(this).next("div.read-more-text").toggle();
+                var isrc=$(this).find("img").attr('src');
+                if(isrc=='images/plus.png') {
+                    $(this).find("img").attr("src", function() {
+                        return "images/minus.png";
+                    });
+                } else {
+                    $(this).find("img").attr("src", function() {
+                        return "images/plus.png";
+                    });
+                }
+            });
+        });
+    </script>
 </head>
 
 <body>
@@ -250,7 +268,8 @@
                                                 <#assign requirementReport = reportName.forRequirement(requirementOutcome.requirement) >
                                                 <td class="${requirementOutcome.testOutcomes.result}-text requirementRowCell">
                                                     <span class="requirementName"><a href="${requirementReport}">${requirementOutcome.requirement.displayName}</a></span>
-                                                    <span class="requirementNarrative">${formatter.addLineBreaks(requirementOutcome.requirement.narrativeText)}</span>
+                                                    <a href="javaScript:void(0)" class="read-more-link"><img src="images/plus.png" height="20" /></a>
+                                                    <div class="requirementNarrative read-more-text">${formatter.addLineBreaks(requirementOutcome.requirement.narrativeText)}</div>
                                                 </td>
 
                                                 <#if (requirements.childrenType?has_content) >
