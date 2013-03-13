@@ -10,7 +10,7 @@ import static net.thucydides.core.model.TestResult.FAILURE;
  */
 public class FailureAnalysis {
     public TestResult resultFor(Throwable testFailureCause) {
-        if (testFailureCause.getClass().isAssignableFrom(AssertionError.class)) {
+        if (AssertionError.class.isAssignableFrom(testFailureCause.getClass())) {
             return FAILURE;
         } else if (failingStepException(testFailureCause)) {
             return FAILURE;
@@ -20,8 +20,8 @@ public class FailureAnalysis {
     }
 
     private boolean failingStepException(Throwable testFailureCause) {
-        return ((testFailureCause.getClass().isAssignableFrom(StepFailureException.class))
+        return ((StepFailureException.class.isAssignableFrom(testFailureCause.getClass()))
                 && (testFailureCause.getCause() != null)
-                && (testFailureCause.getCause().getClass().isAssignableFrom(AssertionError.class)));
+                && (AssertionError.class.isAssignableFrom(testFailureCause.getCause().getClass())));
     }
 }
