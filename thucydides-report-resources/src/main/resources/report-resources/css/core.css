@@ -1035,3 +1035,19 @@ table.coverage_data td {
 .read-more-text div{
     display:block
 }
+
+.example-table{
+    padding-bottom: 20px;
+}
+
+.example-table table {
+    color:#0d78ae;
+    font-family:euphemia, verdana, sans-serif;
+    font-size:14px;
+    width: 1008px;
+    min-width: 1008px;
+}
+
+.example-table label {
+    font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;
+}

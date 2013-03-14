@@ -136,8 +136,8 @@
 
     <#if (testOutcome.isDataDriven())>
         <h3>Examples:</h3>
-        <div class="datagrid">
-            <table class="example-table">
+        <div class="example-table">
+            <table>
                 <thead>
                 <tr>
                     <#list testOutcome.dataTable.headers as header>
@@ -299,6 +299,16 @@
                     });
                 }
             }
+        </script>
+
+        <script type="text/javascript">
+            $('.example-table table').dataTable( {
+                "aaSorting": [[ 1, "asc" ]],
+                "bJQueryUI": true,
+                "sScrollX": "100%",
+                "sScrollXInner": "120%",
+                "bScrollCollapse": true
+            } );
         </script>
 
         <script type="text/javascript">
