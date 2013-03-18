@@ -30,6 +30,7 @@ import static net.thucydides.core.model.TestResult.*;
 import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.MANDATORY_SCREENSHOT;
 import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.OPTIONAL_SCREENSHOT;
 import static net.thucydides.core.util.NameConverter.underscore;
+import net.thucydides.core.webdriver.firefox.JSErrorCollector;
 import static org.apache.commons.io.FileUtils.checksumCRC32;
 
 /**
@@ -389,6 +390,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void stepFinished() {
+        JSErrorCollector.assertJSError(driver);   
         updateSessionIdIfKnown();
         takeEndOfStepScreenshotFor(SUCCESS);
         currentStepDone();
