@@ -136,7 +136,6 @@ public class TestCountListener implements StepListener {
     }
 
     public void exampleStarted(Map<String, String> data) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void exampleFinished() {

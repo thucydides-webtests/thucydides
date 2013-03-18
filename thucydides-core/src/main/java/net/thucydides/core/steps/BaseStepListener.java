@@ -725,7 +725,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void exampleFinished() {
+        currentStepDone();
         getCurrentTestOutcome().moveToNextRow();
-        getEventBus().stepFinished();
     }
 }

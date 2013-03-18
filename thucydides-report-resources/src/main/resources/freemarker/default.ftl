@@ -8,7 +8,11 @@
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
 
     <script src="scripts/jquery.js" type="text/javascript"></script>
+    <script type="text/javascript" src="datatables/media/js/jquery.dataTables.min.js"></script>
     <script src="scripts/imgpreview.full.jquery.js" type="text/javascript"></script>
+
+    <link type="text/css" href="jqueryui/css/start/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
+    <script type="text/javascript" src="jqueryui/js/jquery-ui-1.8.18.custom.min.js"></script>
 
     <style type="text/css">a:link {
         text-decoration: none;

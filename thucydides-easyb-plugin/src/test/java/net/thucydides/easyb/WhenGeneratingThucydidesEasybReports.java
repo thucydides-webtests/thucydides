@@ -218,7 +218,7 @@ public class WhenGeneratingThucydidesEasybReports {
 
         TestOutcome testOutcome = stepListener.getTestOutcomes().get(0);
 
-        assertThat(testOutcome.getResult(), is(ERROR));
+        assertThat(testOutcome.getResult(), is(FAILURE));
     }
 
 

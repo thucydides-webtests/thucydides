@@ -1,16 +1,21 @@
 package net.thucydides.core.steps;
 
+import ch.lambdaj.function.convert.Converter;
+import com.google.common.collect.Lists;
 import net.thucydides.core.csv.CSVTestDataSource;
 import net.thucydides.core.csv.TestDataSource;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.util.EnvironmentVariables;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
+import static ch.lambdaj.Lambda.convert;
 
 /**
  * Data-driven test step execution.
- * These methods let you load
  */
 public final class StepData {
 
@@ -36,6 +41,8 @@ public final class StepData {
         useDefaultStepFactoryIfUnassigned();
         TestDataSource testdata = new CSVTestDataSource(testDataSource, separator);
 
+        StepEventBus.getEventBus().useExamplesFrom(dataTable(testdata));
+
         Class<?> scenarioStepsClass = steps.getClass().getSuperclass();
         List<T> instanciatedSteps = (List<T>) testdata.getInstanciatedInstancesFrom(scenarioStepsClass, factory);
 
@@ -43,6 +50,23 @@ public final class StepData {
         T stepsProxy = (T) dataDrivenStepFactory.newDataDrivenSteps(scenarioStepsClass, instanciatedSteps);
 
         return stepsProxy;
+    }
+
+    private DataTable dataTable(TestDataSource testdata) {
+        return DataTable.withHeaders(testdata.getHeaders())
+                        .andRows(rowsFrom(testdata)).build();
+    }
+
+    private List<List<Object>> rowsFrom(TestDataSource testdata) {
+        List<List<Object>> rows = Lists.newArrayList();
+        for (Map<String,String> rowData : testdata.getData()) {
+            List<Object> row = Lists.newArrayList();
+            for(String header : testdata.getHeaders()) {
+                row.add(rowData.get(header));
+            }
+            rows.add(row);
+        }
+        return rows;
     }
 
     private void useDefaultStepFactoryIfUnassigned() {

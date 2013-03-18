@@ -459,7 +459,6 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificData.class);
-//        runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
 

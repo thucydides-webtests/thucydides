@@ -418,10 +418,6 @@ public class StepEventBus {
         getBaseStepListener().getCurrentTestOutcome().addIssues(issues);
     }
 
-    public void addTagsToCurrentTest(List<TestTag> tags) {
-        getBaseStepListener().getCurrentTestOutcome().addTags(tags);
-    }
-
     public void addTagsToCurrentStory(List<TestTag> tags) {
         getBaseStepListener().addTagsToCurrentStory(tags);
     }
@@ -450,4 +446,5 @@ public class StepEventBus {
     public void takeScreenshot() {
         getBaseStepListener().takeScreenshot();
     }
+
 }

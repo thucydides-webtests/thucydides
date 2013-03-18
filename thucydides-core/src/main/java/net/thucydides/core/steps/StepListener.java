@@ -39,7 +39,6 @@ public interface StepListener {
     /**
      * Called when a test finishes.
      *
-     * @param result
      */
     void testFinished(final TestOutcome result);
 
