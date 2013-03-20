@@ -1,9 +1,12 @@
-GivenStories: GivenThereIsAGarden.story
+GivenStories:preconditions.stories
+
+Meta:
+@issue 123
 
 Narrative:
 As a farmer
-I want to plant potatoes
-So that I can harvest them later on
+I want to plant an apple tree
+So that I can grow apples
 
 Scenario: scenario description
 Given a system state

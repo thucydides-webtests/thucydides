@@ -438,7 +438,12 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     private FileFilter thatAreStories() {
         return new FileFilter() {
             public boolean accept(File file) {
-                return file.getName().toLowerCase().endsWith(".story");
+                String filename = file.getName().toLowerCase();
+                if (filename.startsWith("given") || filename.startsWith("precondition")) {
+                    return false;
+                } else {
+                    return file.getName().toLowerCase().endsWith(".story");
+                }
             }
         };
     }

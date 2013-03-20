@@ -8,6 +8,7 @@ import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.Pages;
@@ -39,6 +40,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -242,6 +244,7 @@ public class WhenRecordingStepExecutionResults {
 
         StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
         StepEventBus.getEventBus().addIssuesToCurrentTest(Lists.newArrayList("issue-456"));
+        StepEventBus.getEventBus().addTagsToCurrentStory(Lists.newArrayList(TestTag.withName("iteration-1").andType("iteration")));
 
         steps.step_one();
         steps.step_two();
@@ -259,7 +262,8 @@ public class WhenRecordingStepExecutionResults {
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
         assertThat(results.size(), is(2));
-        assertThat(results.get(0).getIssueKeys(), hasItems("issue-123","issue-456"));
+        assertThat(results.get(0).getIssueKeys(), hasItems("issue-123", "issue-456"));
+        assertThat(results.get(0).getTags(), hasItem(TestTag.withName("iteration-1").andType("iteration")));
         assertThat(results.get(1).getIssueKeys(), hasItems("issue-123","issue-789"));
     }
 

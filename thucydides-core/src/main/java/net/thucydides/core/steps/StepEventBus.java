@@ -418,6 +418,10 @@ public class StepEventBus {
         getBaseStepListener().getCurrentTestOutcome().addIssues(issues);
     }
 
+    public void addTagsToCurrentTest(List<TestTag> tags) {
+        getBaseStepListener().getCurrentTestOutcome().addTags(tags);
+    }
+
     public void addTagsToCurrentStory(List<TestTag> tags) {
         getBaseStepListener().addTagsToCurrentStory(tags);
     }

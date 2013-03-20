@@ -52,16 +52,16 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
             narrative.get().type == "feature"
     }
 
-    def "Should read requirements from .story files if present"() {
+    def "Should ignore GivenStories clause in requirements from .story files"() {
         given: "there is a .story file in a directory"
-            File storyFile = directoryInClasspathAt("sample-story-directories/capabilities_and_features/grow_apples/grow_red_apples/grow_special_red_apples/PlantingAnAppleTree.story")
+            File storyFile = directoryInClasspathAt("sample-story-directories/capabilities_and_features/grow_apples/grow_red_apples/grow_special_red_apples/PlantingAnotherAppleTree.story")
         when: "We try to load the narrativeText from the directory"
             def reader = NarrativeReader.forRootDirectory("sample-story-directories/capabilities_and_features")
             Optional<Narrative> narrative = reader.loadFromStoryFile(storyFile)
         then: "the narrativeText should be found"
             narrative.present
-        and: "the narrative title and text should be loaded"
-            narrative.get().title.get() == "Planting a new apple tree"
+        and: "the narrative text should be loaded"
+            !narrative.get().title.isPresent()
             narrative.get().getText().contains("As a farmer")
             narrative.get().getText().contains("I want to plant an apple tree")
             narrative.get().getText().contains("So that I can grow apples")
@@ -70,6 +70,9 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
         and: "meta data is skipped"
             !narrative.get().getText().contains("Meta") && !narrative.get().getText().contains("issue")
     }
+
+
+
 
     File directoryInClasspathAt(String path) {
         new File(getClass().getClassLoader().getResources(path).nextElement().getPath())

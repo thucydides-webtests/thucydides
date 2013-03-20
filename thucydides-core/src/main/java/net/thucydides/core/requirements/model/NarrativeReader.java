@@ -112,7 +112,7 @@ public class NarrativeReader {
 
         StringBuilder description = new StringBuilder();
         for(String line : lines) {
-            if (!isNarrativeMarker(line) && !isAnnotation(line)) {
+            if (!isMarkup(line) && !isAnnotation(line)) {
                 description.append(line);
                 description.append(NEW_LINE);
             }
@@ -128,7 +128,7 @@ public class NarrativeReader {
     private Optional<String> readOptionalTitleFrom(List<String> lines) {
         if (!lines.isEmpty()) {
             String firstLine = lines.get(0);
-            if (!isNarrativeMarker(firstLine)) {
+            if (!isMarkup(firstLine)) {
                 lines.remove(0);
                 return Optional.of(firstLine);
             }
@@ -136,8 +136,11 @@ public class NarrativeReader {
         return Optional.absent();
     }
 
-    private boolean isNarrativeMarker(String line) {
-        return normalizedLine(line).startsWith("narrative:");
+    private boolean isMarkup(String line) {
+        String normalizedLine = normalizedLine(line);
+        return normalizedLine.startsWith("narrative:")
+                || normalizedLine.startsWith("givenstory:")
+                || normalizedLine.startsWith("givenstories:");
     }
 
     private List<String> readPreambleFrom(BufferedReader reader) throws IOException {

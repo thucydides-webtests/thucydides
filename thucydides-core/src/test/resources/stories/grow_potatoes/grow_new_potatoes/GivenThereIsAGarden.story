@@ -1,5 +1,3 @@
-GivenStories: GivenThereIsAGarden.story
-
 Narrative:
 As a farmer
 I want to plant potatoes
