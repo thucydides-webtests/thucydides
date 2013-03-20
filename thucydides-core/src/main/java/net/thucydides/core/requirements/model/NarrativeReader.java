@@ -130,10 +130,14 @@ public class NarrativeReader {
             String firstLine = lines.get(0);
             if (!isMarkup(firstLine)) {
                 lines.remove(0);
-                return Optional.of(firstLine);
+                return Optional.of(stripFeatureFrom(firstLine));
             }
         }
         return Optional.absent();
+    }
+
+    private String stripFeatureFrom(String firstLine) {
+        return (firstLine.toLowerCase().startsWith("feature:")) ? firstLine.substring(8).trim() : firstLine;
     }
 
     private boolean isMarkup(String line) {
