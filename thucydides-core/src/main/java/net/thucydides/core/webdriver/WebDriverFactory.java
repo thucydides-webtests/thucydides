@@ -563,25 +563,25 @@ public class WebDriverFactory {
     /**
      * Initialize a page object's fields using the specified WebDriver instance.
      */
-    public static void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver) {
+    public void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver) {
         ElementLocatorFactory finder = getElementLocatorFactorySelector().getLocatorFor(driver);
         PageFactory.initElements(finder, pageObject);
         initWebElementFacades(new WebElementFacadeFieldDecorator(finder), pageObject, driver);
     }
 
-    private static ElementLocatorFactorySelector getElementLocatorFactorySelector() {
+    private ElementLocatorFactorySelector getElementLocatorFactorySelector() {
         Configuration configuration = Injectors.getInjector().getInstance(Configuration.class);
         return new ElementLocatorFactorySelector(configuration);
     }
 
-    public static void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver, int timeoutInSeconds) {
+    public void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver, int timeoutInSeconds) {
         ElementLocatorFactory finder = getElementLocatorFactorySelector().withTimeout(timeoutInSeconds).getLocatorFor(driver);
         PageFactory.initElements(finder, pageObject);
         initWebElementFacades(new WebElementFacadeFieldDecorator(finder), pageObject, driver);
 
     }
 
-    private static void initWebElementFacades(WebElementFacadeFieldDecorator decorator, PageObject page, final WebDriver driver) {
+    private void initWebElementFacades(WebElementFacadeFieldDecorator decorator, PageObject page, final WebDriver driver) {
         Class<?> proxyIn = page.getClass();
         while (proxyIn != Object.class) {
             proxyFields(decorator, page, proxyIn, driver);
@@ -589,7 +589,7 @@ public class WebDriverFactory {
         }
     }
 
-    private static void proxyFields(WebElementFacadeFieldDecorator decorator, PageObject page, Class<?> proxyIn, final WebDriver driver) {
+    private void proxyFields(WebElementFacadeFieldDecorator decorator, PageObject page, Class<?> proxyIn, final WebDriver driver) {
         Field[] fields = proxyIn.getDeclaredFields();
         for (Field field : fields) {
             WebElement webElementValue = decorator.decorate(page.getClass().getClassLoader(), field);

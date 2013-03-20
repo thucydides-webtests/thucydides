@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import com.google.inject.Guice;
 import com.google.inject.Injector;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
@@ -9,6 +10,7 @@ import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.BatchStrategy;
 import net.thucydides.core.batches.UnsupportedBatchStrategyException;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.guice.ThucydidesModule;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -88,7 +90,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * @throws InitializationError if some JUnit-related initialization problem occurred
      */
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
-        this(klass, Injectors.getInjector());
+        this(klass, Injectors.setInjector(Guice.createInjector(new ThucydidesModule())));
     }
 
     public ThucydidesRunner(final Class<?> klass,

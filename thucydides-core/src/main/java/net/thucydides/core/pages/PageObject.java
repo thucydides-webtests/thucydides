@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
+import com.google.common.base.Predicate;
 import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.fluent.ThucydidesFluentAdapter;
 import net.thucydides.core.guice.Injectors;
@@ -83,41 +84,37 @@ public abstract class PageObject {
 
     private boolean jquerySupportActivated = false;
 
-    public PageObject(final WebDriver driver, final int ajaxTimeout) {
-        this.driver = driver;
-        this.waitForTimeoutInMilliseconds = ajaxTimeout;
+    protected PageObject(final WebDriver driver, Predicate<PageObject> callback) {
         this.webdriverClock = new SystemClock();
         this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
+        this.driver = driver;
         this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
 
         setupPageUrls();
-
-        int ajaxTimeoutInSeconds = ajaxTimeoutInSecondsWithAtLeast1Second(ajaxTimeout);
-        WebDriverFactory.initElementsWithAjaxSupport(this, driver, ajaxTimeoutInSeconds);
-
+        callback.apply(this); //need to handle return value
     }
 
-    protected int ajaxTimeoutInSecondsWithAtLeast1Second(int ajaxTimeout) {
-        if (ajaxTimeout > 1000) {
-            return ajaxTimeout / 1000;
-        } else {
-            return 1;
-        }
+    public PageObject(final WebDriver driver, final int ajaxTimeout) {
+        this(driver, new Predicate<PageObject>() {
+            protected int ajaxTimeoutInSecondsWithAtLeast1Second(int ajaxTimeout) {
+                if (ajaxTimeout > 1000) {
+                    return ajaxTimeout / 1000;
+                } else {
+                    return 1;
+                }
+            }
+            public boolean apply(PageObject page) {
+                page.waitForTimeoutInMilliseconds = ajaxTimeout;
+                int ajaxTimeoutInSeconds = ajaxTimeoutInSecondsWithAtLeast1Second(ajaxTimeout);
+                Injectors.getInjector().getInstance(WebDriverFactory.class).initElementsWithAjaxSupport(page, driver, ajaxTimeoutInSeconds);
+                return true;
+            }
+        });
     }
 
     public PageObject(final WebDriver driver) {
-        this.driver = driver;
-        this.waitForTimeoutInMilliseconds = WAIT_FOR_TIMEOUT;
-        this.webdriverClock = new SystemClock();
-        this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
-        this.sleeper = Sleeper.SYSTEM_SLEEPER;
-        this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
-        this.pages = Injectors.getInjector().getInstance(Pages.class);
-
-        setupPageUrls();
-
-        WebDriverFactory.initElementsWithAjaxSupport(this, driver);
+        this(driver, (int)WAIT_FOR_TIMEOUT);
     }
 
     public void setPages(Pages pages) {
@@ -837,13 +834,10 @@ public abstract class PageObject {
             element(field).type(value);
         }
 
-        public void into(final WebElementFacade field) {
-            field.type(value);
-        }
-
         public void intoField(final By bySelector) {
             WebElement field = getDriver().findElement(bySelector);
-            into(field);
+            element(field).type(value);
+
         }
     }
 

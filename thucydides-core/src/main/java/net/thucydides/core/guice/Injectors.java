@@ -13,8 +13,17 @@ public class Injectors {
 
     public static synchronized Injector getInjector() {
         if (injector == null) {
-            injector = Guice.createInjector(new ThucydidesModule());
+        	throw new RuntimeException("Injector has not been initialized yet");
         }
         return injector;
+    }
+    
+    public static synchronized Injector setInjector(Injector injector){
+    	if (Injectors.injector == null) {
+    		Injectors.injector = injector;
+    	} else {
+    		throw new IllegalStateException("injector is already set. Cannot reset it");
+    	}
+    	return injector;
     }
 }
