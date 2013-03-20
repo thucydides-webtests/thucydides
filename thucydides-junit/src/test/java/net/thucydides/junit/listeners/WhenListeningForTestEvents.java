@@ -139,7 +139,7 @@ public class WhenListeningForTestEvents {
         steps.failingNormalMethod();
 
         assertThat(failureTestListener.hasRecordedFailures(), is(true));
-        assertThat(failureTestListener.getError().getMessage(), is("Method failed"));
+        assertThat(failureTestListener.getError().getMessage(), is("java.lang.AssertionError: Method failed"));
     }
 
 

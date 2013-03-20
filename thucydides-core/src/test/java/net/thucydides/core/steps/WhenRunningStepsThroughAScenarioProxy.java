@@ -557,7 +557,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         ArgumentCaptor<StepFailure> argument = ArgumentCaptor.forClass(StepFailure.class);
         verify(listener).stepFailed(argument.capture());
-        assertThat(argument.getValue().getMessage(), is("Oops!"));
+        assertThat(argument.getValue().getMessage(), is("java.lang.AssertionError: Oops!"));
     }
 
     @Test

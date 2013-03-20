@@ -7,8 +7,8 @@ public class WebdriverAssertionError extends AssertionError {
 
     private static final long serialVersionUID = 1L;
 
-    public WebdriverAssertionError(String message, Throwable cause) {
-        super(message);
+    public WebdriverAssertionError(Throwable cause) {
+        super(cause);
         this.setStackTrace(cause.getStackTrace());
     }
 }

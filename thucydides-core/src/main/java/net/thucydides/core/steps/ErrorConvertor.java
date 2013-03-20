@@ -16,7 +16,7 @@ public class ErrorConvertor implements Serializable {
     }
 
     public AssertionError convertToAssertion() {
-        return new WebdriverAssertionError(messageFrom(throwable), throwable);
+        return new WebdriverAssertionError(throwable);
     }
 
     public String messageFrom(final Throwable error) {

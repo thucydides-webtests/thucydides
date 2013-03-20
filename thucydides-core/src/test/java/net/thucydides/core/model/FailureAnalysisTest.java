@@ -21,7 +21,7 @@ public class FailureAnalysisTest {
 
     @Test
     public void a_webdriverassertion_with_assertionerror_cause_is_a_failure() {
-        assertEquals(TestResult.FAILURE, fixture.resultFor(new WebdriverAssertionError("expect failure", new AssertionError("wrapped assertion error"))));
+        assertEquals(TestResult.FAILURE, fixture.resultFor(new WebdriverAssertionError(new AssertionError("wrapped assertion error"))));
     }
 
     @Test
@@ -31,6 +31,6 @@ public class FailureAnalysisTest {
 
     @Test
     public void a_webdriverassertion_with_a_non_assertion_cause_is_an_error() throws Exception {
-        assertEquals(TestResult.ERROR, fixture.resultFor(new WebdriverAssertionError("expect error", new NullPointerException())));
+        assertEquals(TestResult.ERROR, fixture.resultFor(new WebdriverAssertionError(new NullPointerException())));
     }
 }
