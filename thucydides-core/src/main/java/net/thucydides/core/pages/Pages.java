@@ -221,12 +221,13 @@ public class Pages implements Serializable {
 
     private boolean hasPageFactoryProperty(Object pageObject) {
         Optional<Field> pagesField = Fields.of(pageObject.getClass()).withName("pages");
-        return ((pagesField.isPresent()) && (pagesField.get().getType() == Pages.class) && (Modifier.isStatic(pagesField.get().getModifiers())));
+        return ((pagesField.isPresent()) && (pagesField.get().getType() == Pages.class));
     }
 
     private void setPageFactory(Object pageObject) throws IllegalAccessException {
         Optional<Field> pagesField = Fields.of(pageObject.getClass()).withName("pages");
         if (pagesField.isPresent()) {
+            pagesField.get().setAccessible(true);
             pagesField.get().set(pageObject, this);
         }
     }

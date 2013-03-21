@@ -13,7 +13,7 @@ public class Injectors {
 
     public static synchronized Injector getInjector() {
         if (injector == null) {
-        	throw new RuntimeException("Injector has not been initialized yet");
+            injector = Guice.createInjector(new ThucydidesModule());
         }
         return injector;
     }

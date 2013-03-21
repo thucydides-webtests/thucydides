@@ -834,10 +834,13 @@ public abstract class PageObject {
             element(field).type(value);
         }
 
+        public void into(final WebElementFacade field) {
+            field.type(value);
+        }
+
         public void intoField(final By bySelector) {
             WebElement field = getDriver().findElement(bySelector);
-            element(field).type(value);
-
+            into(field);
         }
     }
 
