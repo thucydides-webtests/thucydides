@@ -5,8 +5,6 @@ import spock.lang.Specification
 
 class WhenSwitchingPages extends Specification {
 
-    static class UnannotatedPageObject {}
-
     static class PageObjectA extends PageObject {
 
         PageObjectA(WebDriver driver) {
