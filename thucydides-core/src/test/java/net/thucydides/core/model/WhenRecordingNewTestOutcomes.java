@@ -610,7 +610,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forABrokenTestStepCalled("Step 3", new WebDriverException("Oh deary me!")));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
 
-        assertThat(testOutcome.getResult(), is(ERROR));
+        assertThat(testOutcome.getResult(), is(FAILURE));
     }
 
     @Test

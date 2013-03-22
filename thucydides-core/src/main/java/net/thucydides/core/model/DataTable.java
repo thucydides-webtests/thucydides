@@ -85,6 +85,10 @@ public class DataTable {
         return predefinedRows;
     }
 
+    public int getSize() {
+        return rows.size();
+    }
+
     public static class DataTableBuilder {
         final List<String> headers;
         final List<DataTableRow> rows;

@@ -419,10 +419,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
         updateExampleTableIfNecessary(result);
     }
 
+    FailureAnalysis failureAnalysis = new FailureAnalysis();
+
     public void stepFailed(StepFailure failure) {
         takeEndOfStepScreenshotFor(FAILURE);
         getCurrentTestOutcome().setTestFailureCause(failure.getException());
-        markCurrentStepAs(FAILURE);
+        markCurrentStepAs(failureAnalysis.resultFor(failure));
         recordFailureDetailsInFailingTestStep(failure);
         currentStepDone();
     }

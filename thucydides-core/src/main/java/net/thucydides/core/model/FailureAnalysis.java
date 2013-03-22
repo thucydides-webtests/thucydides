@@ -1,11 +1,14 @@
 package net.thucydides.core.model;
 
+import net.thucydides.core.PendingStepException;
+import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.apache.regexp.RETest;
 
 import static net.thucydides.core.model.TestResult.ERROR;
 import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.PENDING;
 
 /**
  * Determine whether a given type of exception should result in a failure or an error.
@@ -18,12 +21,22 @@ import static net.thucydides.core.model.TestResult.FAILURE;
  */
 public class FailureAnalysis {
     public TestResult resultFor(Throwable testFailureCause) {
-        if (isFailureError(testFailureCause)) {
+        if (PendingStepException.class.isAssignableFrom(testFailureCause.getClass())) {
+            return PENDING;
+        } else if (isFailureError(testFailureCause)) {
             return FAILURE;
         } else if (failingStepException(testFailureCause)) {
             return FAILURE;
         } else {
             return ERROR;
+        }
+    }
+
+    public TestResult resultFor(StepFailure stepFailure) {
+        if (stepFailure.getException() == null) {
+            return FAILURE;
+        } else {
+            return resultFor(stepFailure.getException());
         }
     }
 

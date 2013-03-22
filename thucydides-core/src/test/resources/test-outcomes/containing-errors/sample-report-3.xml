@@ -26,7 +26,7 @@
     <description>The customer selects a run option.</description>
     <screenshot>the_customer_selects_a_run_option5.png</screenshot>
   </test-step>
-  <test-step result="FAILURE">
+  <test-step result="ERROR">
     <description>The customer provides email address for registration.</description>
   </test-step>
 </acceptance-test-run>
