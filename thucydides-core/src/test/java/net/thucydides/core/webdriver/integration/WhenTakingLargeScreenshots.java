@@ -79,7 +79,7 @@ public class WhenTakingLargeScreenshots {
 
         ResizableImage image = ResizableImage.loadFrom(screenshotFile);
 
-        assertThat(image.getWitdh(), is(greaterThan(750))); // In Windows the actual dimensions are slightly less
+        assertThat(image.getWitdh(), is(greaterThan(700))); // In Windows the actual dimensions are slightly less
     }
 
 

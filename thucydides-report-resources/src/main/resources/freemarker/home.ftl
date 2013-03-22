@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>Home</title>
+    <title>Thucydides Reports</title>
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="css/core.css"/>
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
@@ -146,7 +146,7 @@
     <div id="contenttop">
         <#--<div class="leftbg"></div>-->
         <div class="middlebg">
-            <span class="bluetext"><a href="index.html" class="bluetext">Home</a>${resultsContext}</span>
+            <span class="bluetext"><a href="index.html" class="bluetext">Thucydides Reports</a>${resultsContext}</span>
         </div>
         <div class="rightbg"></div>
     </div>
@@ -181,11 +181,13 @@
                     <tr>
                         <td width="375px" valign="top">
                             <div class="test-count-summary">
-                                <span class="test-count-title">${testOutcomes.total} tests:</span>
+                                <span class="test-count-title">${testOutcomes.total} test scenarios <#if (testOutcomes.hasDataDrivenTests())>(including ${testOutcomes.totalDataRows} rows of test data)</#if>:</span>
                                 <#assign successReport = reportName.withPrefix(testOutcomes.label).forTestResult("success") >
                                 <#assign failureReport = reportName.withPrefix(testOutcomes.label).forTestResult("failure") >
                                 <#assign errorReport = reportName.withPrefix(testOutcomes.label).forTestResult("error") >
                                 <#assign pendingReport = reportName.withPrefix(testOutcomes.label).forTestResult("pending") >
+
+
                                 <span class="test-count">
                                     ${testOutcomes.successCount}
                                     <#if (testOutcomes.successCount > 0 && report.shouldDisplayResultLink)>

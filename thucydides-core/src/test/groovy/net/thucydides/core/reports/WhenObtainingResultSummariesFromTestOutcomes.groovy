@@ -42,7 +42,7 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             directory                                  | successCount | failureCount | errorCount   | pendingCount | skipCount
             "/test-outcomes/all-successful"            | 3            | 0            | 0            | 0            | 0
             "/test-outcomes/containing-failure"        | 1            | 1            | 0            | 1            | 0
-            "/test-outcomes/containing-errors"         | 1            | 1            | 1            | 0            | 0
+            "/test-outcomes/containing-errors"         | 1            | 0            | 2            | 0            | 0
             "/test-outcomes/containing-pending"        | 2            | 0            | 0            | 1            | 0
             "/test-outcomes/containing-skipped"        | 3            | 0            | 0            | 0            | 1
     }
@@ -148,6 +148,57 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/with-no-steps"));
         then:
             testOutcomes.formatted.percentPendingCoverage == "100%"
+    }
+
+
+    def "should count lines in data-driven tests as individual tests"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/datadriven"));
+        then:
+            testOutcomes.total == 14
+            testOutcomes.totalTestScenarios == 2
+    }
+
+
+    def "should count results in lines of data-driven tests as individual tests"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/datadriven"));
+        then:
+            testOutcomes.successCount == 12
+            testOutcomes.failureCount == 2
+    }
+
+    def "should count percentage results in lines of data-driven tests as individual tests"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/datadriven"));
+        then:
+            testOutcomes.formatted.percentPassingCoverage == "85.7%"
+            testOutcomes.formatted.percentFailingCoverage == "14.3%"
+    }
+
+
+    def "should count results correctly in mixed data-driven and normal tests"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/somedatadriven"));
+        then:
+            testOutcomes.successCount == 1
+            testOutcomes.failureCount == 2
+            testOutcomes.pendingCount == 3
+            testOutcomes.errorCount == 1
+            testOutcomes.total  == 7
+            testOutcomes.totalTestScenarios  == 4
+    }
+
+    def "should count percentage results correctly in mixed data-driven and normal tests"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/somedatadriven"));
+        then:
+            testOutcomes.hasDataDrivenTests()
+            testOutcomes.totalDataRows == 5
+            testOutcomes.percentagePassingTestCount == 0.14285714285714285
+            testOutcomes.percentageFailingTestCount == 0.2857142857142857
+            testOutcomes.percentageErrorTestCount == 0.14285714285714285
+            testOutcomes.percentagePendingTestCount == 0.42857142857142855
     }
 
 }

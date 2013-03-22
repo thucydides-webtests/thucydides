@@ -66,7 +66,6 @@ public class WhenTrackingTestResultsOverTime {
         TestOutcomes results  = getResults();
         testHistory.updateData(results);
         testHistory.updateData(results);
-
         String[] historyFiles = new File(customHistoryDir,"project").list();
 
         assertThat(historyFiles.length, is(2));

@@ -20,7 +20,6 @@ import net.thucydides.core.statistics.With;
 import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
-import org.hamcrest.Matcher;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -35,17 +34,18 @@ import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
+import static net.thucydides.core.model.TestResult.ERROR;
+import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
+import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTag;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagName;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagType;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.withResult;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isOneOf;
 
 /**
  * A set of test outcomes, which lets you perform query operations on the test outcomes.
@@ -369,9 +369,16 @@ public class TestOutcomes {
     }
 
     /**
-     * @return The total number of test runs in this set.
+     * @return The total number of test runs in this set (including rows in data-driven tests).
      */
     public int getTotal() {
+        return sum(outcomes, on(TestOutcome.class).getTestCount());
+    }
+
+    /**
+     * The total number of test scenarios (a data-driven test is counted as one test scenario).
+     */
+    public int getTotalTestScenarios() {
         return outcomes.size();
     }
 
@@ -406,14 +413,14 @@ public class TestOutcomes {
      * @return The number of successful tests in this set.
      */
     public int getSuccessCount() {
-        return select(outcomes, having(on(TestOutcome.class).isSuccess())).size();
+        return sum(outcomes, on(TestOutcome.class).countResults(SUCCESS));
     }
 
     /**
      * @return How many test cases contain at least one failing test.
      */
     public int getFailureCount() {
-        return select(outcomes, having(on(TestOutcome.class).isFailure())).size();
+        return sum(outcomes, on(TestOutcome.class).countResults(FAILURE));
     }
 
     /**
@@ -421,21 +428,21 @@ public class TestOutcomes {
      * @return how many tests contain at least one test with an error
      */
     public int getErrorCount() {
-        return select(outcomes, having(on(TestOutcome.class).isError())).size();
+        return sum(outcomes, on(TestOutcome.class).countResults(ERROR));
     }
 
     /**
      * @return How many test cases contain at least one pending test.
      */
     public int getPendingCount() {
-        return select(outcomes, having(on(TestOutcome.class).isPending())).size();
+        return sum(outcomes, on(TestOutcome.class).countResults(PENDING));
     }
 
     /**
      * @return How many tests have been skipped.
      */
     public int getSkipCount() {
-        return select(outcomes, having(on(TestOutcome.class).isSkipped())).size();
+        return sum(outcomes, on(TestOutcome.class).countResults(SKIPPED));
     }
 
     /**
@@ -443,28 +450,26 @@ public class TestOutcomes {
      *         of steps.
      */
     public Double getPercentagePassingStepCount() {
-        int passingStepCount = countStepsWithResultThat(is(TestResult.SUCCESS));
+        int passingStepCount = countStepsWithResult(TestResult.SUCCESS);
         return (passingStepCount / (double) getEstimatedTotalStepCount());
     }
 
     public Double getPercentagePassingTestCount() {
-        return (getPassingTests().getTotal() / (double) getTotal());
+        return (countTestsWithResult(TestResult.SUCCESS) / (double) getTotal());
     }
 
     public Double getPercentageFailingTestCount() {
-        return (getFailingTests().getTotal() / (double) getTotal());
+        return (countTestsWithResult(TestResult.FAILURE)/ (double) getTotal());
     }
 
     public Double getPercentageErrorTestCount() {
-        return (getErrorTests().getTotal() / (double) getTotal());
+        return (countTestsWithResult(TestResult.ERROR) / (double) getTotal());
     }
 
     public Double getPercentagePendingTestCount() {
-        int notPassingOrFailing = getTotal()
-                                 - getPassingTests().getTotal()
-                                 - getFailingTests().getTotal()
-                                 - getErrorTests().getTotal();
-        return (notPassingOrFailing / (double) getTotal());
+        return ((countTestsWithResult(TestResult.IGNORED)
+                 + countTestsWithResult(TestResult.SKIPPED)
+                 + countTestsWithResult(TestResult.PENDING)) / (double) getTotal());
     }
 
     public String getDecimalPercentagePassingStepCount() {
@@ -511,12 +516,12 @@ public class TestOutcomes {
      *         of steps.
      */
     public Double getPercentageFailingStepCount() {
-        int failingStepCount = countStepsWithResultThat(is(TestResult.FAILURE));
+        int failingStepCount = countStepsWithResult(TestResult.FAILURE);
         return (failingStepCount / (double) getEstimatedTotalStepCount());
     }
 
     public Double getPercentageErrorStepCount() {
-        int errorStepCount = countStepsWithResultThat(is(TestResult.ERROR));
+        int errorStepCount = countStepsWithResult(TestResult.ERROR);
         return (errorStepCount / (double) getEstimatedTotalStepCount());
     }
 
@@ -525,9 +530,9 @@ public class TestOutcomes {
      *         of steps.
      */
     public Double getPercentagePendingStepCount() {
-        int passingOrFailingSteps = countStepsWithResultThat(isOneOf(TestResult.SUCCESS,
-                                                                     TestResult.FAILURE,
-                                                                     TestResult.ERROR));
+        int passingOrFailingSteps = countStepsWithResult(TestResult.SUCCESS)
+                                    + countStepsWithResult(TestResult.FAILURE)
+                                    + countStepsWithResult(TestResult.ERROR);
         if (passingOrFailingSteps == 0) {
             return 1.0;
         } else {
@@ -558,9 +563,12 @@ public class TestOutcomes {
     }
 
 
-    private int countStepsWithResultThat(Matcher<TestResult> matchingResult) {
-        List<? extends TestOutcome> matchingTests = select(outcomes, having(on(TestOutcome.class).getResult(), matchingResult));
-        return (matchingTests.isEmpty()) ? 0 : sum(matchingTests, on(TestOutcome.class).getNestedStepCount());
+    private int countStepsWithResult(TestResult expectedResult) {
+        return sum(outcomes, on(TestOutcome.class).countNestedStepsWithResult(expectedResult));
+    }
+
+    private int countTestsWithResult(TestResult expectedResult) {
+        return sum(outcomes, on(TestOutcome.class).countResults(expectedResult));
     }
 
     private Integer getEstimatedTotalStepCount() {
@@ -584,7 +592,7 @@ public class TestOutcomes {
         if (outcomes.isEmpty()) {
             return 0.0;
         } else {
-            return sum(outcomes, on(TestOutcome.class).getRecentStability()) / outcomes.size();
+            return sum(outcomes, on(TestOutcome.class).getRecentStability()) / getTestCount();
         }
     }
 
@@ -592,7 +600,7 @@ public class TestOutcomes {
         if (outcomes.isEmpty()) {
             return 0.0;
         } else {
-            return sum(outcomes, on(TestOutcome.class).getOverallStability()) / outcomes.size();
+            return sum(outcomes, on(TestOutcome.class).getOverallStability()) / getTestCount();
         }
     }
 
@@ -600,8 +608,20 @@ public class TestOutcomes {
         return getTotal() - totalImplementedTests();
     }
 
-    private int totalImplementedTests() {
-        return filter(having(on(TestOutcome.class).getTestSteps().isEmpty(), is(false)), outcomes).size();
+    public int getTestCount() {
+        return sum(outcomes, on(TestOutcome.class).getTestCount());
     }
 
+    private int totalImplementedTests() {
+        return sum(outcomes, on(TestOutcome.class).getImplementedTestCount());
+    }
+
+    public boolean hasDataDrivenTests() {
+        return !filter(having(on(TestOutcome.class).isDataDriven(), is(true)), outcomes).isEmpty();
+    }
+
+    public int getTotalDataRows() {
+        List datadrivenTestOutcomes = filter(having(on(TestOutcome.class).isDataDriven(), is(true)), outcomes);
+        return sum(datadrivenTestOutcomes, on(TestOutcome.class).getDataTable().getSize());
+    }
 }

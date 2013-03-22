@@ -37,6 +37,7 @@ import java.util.Stack;
 
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.join;
 import static ch.lambdaj.Lambda.on;
@@ -54,6 +55,7 @@ import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Represents the results of a test (or "scenario") execution. This
@@ -831,6 +833,45 @@ public class TestOutcome {
     public void addRow(Map<String, ? extends Object> data) {
         dataTable.addRow(data);
     }
+
+    public int getTestCount() {
+        return isDataDriven() ? getDataTable().getSize() : 1;
+    }
+
+    public int getImplementedTestCount() {
+        return (getStepCount() > 0) ? getTestCount() : 0;
+    }
+
+    public int countResults(TestResult expectedResult) {
+        if (isDataDriven()) {
+            return countDataRowsWithResult(expectedResult);
+        } else {
+            return (getResult() == expectedResult) ? 1 : 0;
+        }
+    }
+
+    private int countDataRowsWithResult(TestResult expectedResult) {
+        List<DataTableRow> matchingRows
+                = filter(having(on(DataTableRow.class).getResult(), is(expectedResult)),
+                         getDataTable().getRows());
+        return matchingRows.size();
+    }
+
+    public int countNestedStepsWithResult(TestResult expectedResult) {
+        if (isDataDriven()) {
+            return countDataRowStepsWithResult(expectedResult);
+        } else {
+            return (getResult() == expectedResult) ? getNestedStepCount() : 0;
+        }
+    }
+
+    private int countDataRowStepsWithResult(TestResult expectedResult) {
+        int rowsWithResult = countDataRowsWithResult(expectedResult);
+        int totalRows = getDataTable().getSize();
+        int totalSteps = getNestedStepCount();
+        return totalSteps * rowsWithResult / totalRows;
+    }
+
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {

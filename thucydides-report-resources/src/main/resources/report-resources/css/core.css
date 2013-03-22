@@ -182,12 +182,12 @@ body {
 }
 
 .test-FAILURE {
-    background-color: #f0e3e3;
+    background-color: #fd989b;
 }
 
 
 .test-ERROR {
-    background-color: #ffcdce
+    background-color: #f5ad59
 }
 
 .test-SKIPPED {
