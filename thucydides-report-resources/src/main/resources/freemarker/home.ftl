@@ -291,7 +291,7 @@
                                 <tbody>
                                 <#assign testResultSet = testOutcomes.tests >
                                 <#foreach testOutcome in testResultSet>
-                                    <#if testOutcome.stepCount == 0 || testOutcome.result == "PENDING" || testOutcome.result == "IGNORED">
+                                    <#if testOutcome.result == "PENDING" || testOutcome.result == "IGNORED">
                                         <#assign testrun_outcome_icon = "pending.png">
                                     <#elseif testOutcome.result == "FAILURE">
                                         <#assign testrun_outcome_icon = "fail.png">
