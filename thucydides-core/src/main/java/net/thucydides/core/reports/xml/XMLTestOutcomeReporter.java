@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -62,7 +63,7 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
 
         Preconditions.checkNotNull(outputDirectory);
 
-        XStream xstream = new XStream();
+        XStream xstream = new XStream(new DomDriver("UTF-8"));;
         xstream.alias("acceptance-test-run", TestOutcome.class);
         xstream.registerConverter(usingXmlConverter());
         String xmlContents = xstream.toXML(storedTestOutcome);

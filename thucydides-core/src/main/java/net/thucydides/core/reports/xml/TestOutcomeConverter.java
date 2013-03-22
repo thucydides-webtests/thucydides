@@ -97,6 +97,7 @@ public class TestOutcomeConverter implements Converter {
         TestOutcome testOutcome = (TestOutcome) value;
         Preconditions.checkNotNull(testOutcome, "The test run was null - WTF?");
 
+
         writer.addAttribute(TITLE_FIELD, escape(titleFrom(testOutcome)));
         writer.addAttribute(NAME_FIELD, nameFrom(testOutcome));
         if (testOutcome.getQualifier() != null && testOutcome.getQualifier().isPresent()) {
