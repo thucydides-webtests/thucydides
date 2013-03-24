@@ -5,7 +5,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link PagesAnnotatedField}.
