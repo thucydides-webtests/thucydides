@@ -5,7 +5,7 @@ import spock.lang.Specification
 import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
 import com.google.common.io.Files
-import net.thucydides.core.screenshots.MultithreadScreenshotProcessor
+
 import net.thucydides.core.screenshots.QueuedScreenshot
 import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor
 
@@ -41,7 +41,7 @@ class WhenProcessingScreenshots extends Specification {
 
     def "should process queued screenshots"() {
         given:
-            def screenshotProcessor = new MultithreadScreenshotProcessor(environmentVariables)
+            def screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables)
         when:
             (1..10).each {
                 def screenshotFile = copySourceScreenshot(sourceDirectory)
@@ -56,7 +56,7 @@ class WhenProcessingScreenshots extends Specification {
 
     def "should process queued screenshots when tests are run in parallel"() {
         given:
-            def screenshotProcessor = new MultithreadScreenshotProcessor(environmentVariables)
+            def screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables)
         when:
             def thread = Thread.start {
                 for( i in 1..5 ) {

@@ -1,8 +1,15 @@
 package net.thucydides.core.model;
 
+import com.google.common.collect.ImmutableSet;
 import net.thucydides.core.annotations.Feature;
+import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.webdriver.Configuration;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.util.Set;
 
 import static net.thucydides.core.model.TestStepFactory.forABrokenTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
@@ -12,9 +19,11 @@ import static net.thucydides.core.model.TestStepFactory.forASuccessfulNestedTest
 import static net.thucydides.core.model.TestStepFactory.forASuccessfulTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 
 public class WhenRecordingUserStoryTestResults {
 
@@ -30,6 +39,7 @@ public class WhenRecordingUserStoryTestResults {
 
     @Before
     public void init() {
+        MockitoAnnotations.initMocks(this);
         userStory = Story.from(WidgetFeature.PurchaseNewWidget.class);
         storyTestResults = new StoryTestResults(userStory);
     }
@@ -248,6 +258,55 @@ public class WhenRecordingUserStoryTestResults {
 
         assertThat(testResults.countStepsInSuccessfulTests(), is(4));
     }
+
+
+    @Test
+    public void a_story_should_have_a_capitalized_title() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults testResults = new StoryTestResults(story);
+
+        assertThat(testResults.getTitle(), is("Purchase new widget"));
+    }
+
+    class StoryTestResultsWithIssues extends StoryTestResults {
+
+        StoryTestResultsWithIssues(Story story, Configuration configuration, IssueTracking issueTracking) {
+            super(story, configuration, issueTracking);
+        }
+
+        @Override
+        public Set<String> getIssues() {
+            return ImmutableSet.of("ISSUE-1","ISSUE-2");
+        }
+    }
+
+
+    @Mock
+    Configuration configuration;
+
+    @Mock
+    IssueTracking issueTracking;
+
+    @Test
+    public void should_return_title_with_links() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults testResults = new StoryTestResultsWithIssues(story, configuration, issueTracking);
+
+        assertThat(testResults.getTitleWithLinks(), is("Purchase new widget"));
+    }
+
+    @Test
+    public void should_return_links_for_issues() {
+        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
+        StoryTestResults testResults = new StoryTestResultsWithIssues(story, configuration, issueTracking);
+
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.jira.server/MYPROJECT/{0}");
+
+        assertThat(testResults.getFormattedIssues(), containsString("http://my.jira.server/MYPROJECT/ISSUE-1"));
+        assertThat(testResults.getFormattedIssues(), containsString("http://my.jira.server/MYPROJECT/ISSUE-2"));
+    }
+
+
 
     @Test
     public void a_story_should_be_able_to_formate_percentage_passing_coverage() {

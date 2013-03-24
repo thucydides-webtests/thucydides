@@ -57,6 +57,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  */
 public class WebDriverFactory {
     public static final String DEFAULT_DRIVER = "firefox";
+    public static final String REMOTE_DRIVER = "remote";
 
     private final WebdriverInstanceFactory webdriverInstanceFactory;
 
@@ -289,7 +290,7 @@ public class WebDriverFactory {
 
     private DesiredCapabilities capabilitiesForDriver(String driver) {
         if (driver == null) {
-            driver = DEFAULT_DRIVER;
+            driver = REMOTE_DRIVER;
         }
         SupportedWebDriver driverType = driverTypeFor(driver);
         if (driverType == null) {
@@ -558,15 +559,6 @@ public class WebDriverFactory {
 
     private boolean refuseUntrustedCertificates() {
         return environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.REFUSE_UNTRUSTED_CERTIFICATES.getPropertyName(), false);
-    }
-
-    /**
-     * Initialize a page object's fields using the specified WebDriver instance.
-     */
-    public static void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver) {
-        ElementLocatorFactory finder = getElementLocatorFactorySelector().getLocatorFor(driver);
-        PageFactory.initElements(finder, pageObject);
-        initWebElementFacades(new WebElementFacadeFieldDecorator(finder), pageObject, driver);
     }
 
     private static ElementLocatorFactorySelector getElementLocatorFactorySelector() {

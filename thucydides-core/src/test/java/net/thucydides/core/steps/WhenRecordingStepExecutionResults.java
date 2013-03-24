@@ -69,7 +69,8 @@ public class WhenRecordingStepExecutionResults {
 
     File outputDirectory;
 
-    byte[] screenshot;
+    byte[] screenshot1;
+    byte[] screenshot2;
 
     @Mock
     FirefoxDriver driver;
@@ -109,7 +110,8 @@ public class WhenRecordingStepExecutionResults {
     public void createStepListenerAndFactory() throws IOException {
         MockitoAnnotations.initMocks(this);
         outputDirectory = temporaryFolder.newFolder("thucydides");
-        screenshot = new byte[10000];
+        screenshot1 = new byte[10000];
+        screenshot2 = new byte[12000];
         stepFactory = new StepFactory(pages);
 
         environmentVariables = new MockEnvironmentVariables();
@@ -118,7 +120,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory, configuration);
         stepListener.setDriver(driver);
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
-        when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot);
+        when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot1).thenReturn(screenshot2);
 
         StepEventBus.getEventBus().clear();
         StepEventBus.getEventBus().registerListener(stepListener);
@@ -1284,6 +1286,36 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testFinished(testOutcome);
 
         verify(driver, times(4)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+    @Test
+    public void subsequent_identical_screenshots_should_not_be_duplicated_between_steps() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_with_two_screenshots();
+        steps.step_two();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        assertThat(stepListener.getCurrentTestOutcome().getTestSteps().get(1).getScreenshotCount(), is(1));
+    }
+
+    @Test
+    public void subsequent_identical_screenshots_should_not_be_duplicated_within_a_step() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_with_four_identical_screenshots();
+        steps.step_two();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        assertThat(stepListener.getCurrentTestOutcome().getTestSteps().get(1).getScreenshotCount(), is(1));
     }
 
     @Test

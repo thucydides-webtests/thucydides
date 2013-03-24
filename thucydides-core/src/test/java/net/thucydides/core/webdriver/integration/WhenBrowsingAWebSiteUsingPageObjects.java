@@ -52,8 +52,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
   public class IndexPageWithShortTimeout extends PageObject {
 
-    public WebElement multiselect;
-
     public WebElement checkbox;
 
     public IndexPageWithShortTimeout(WebDriver driver, int timeout) {

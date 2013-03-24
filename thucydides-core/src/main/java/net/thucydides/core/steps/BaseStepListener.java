@@ -369,8 +369,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private Optional<TestStep> getPreviousStep() {
-        if (currentStepStack.size() > 1) {
-            return Optional.of(currentStepStack.get(currentStepStack.size() - 2));
+        if (getCurrentTestOutcome().getTestSteps().size() > 1) {
+            List<TestStep> currentTestSteps = getCurrentTestOutcome().getTestSteps();
+            return Optional.of(currentTestSteps.get(currentTestSteps.size() - 2));
         } else {
             return Optional.absent();
         }

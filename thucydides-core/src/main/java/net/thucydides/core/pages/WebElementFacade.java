@@ -87,7 +87,7 @@ public class WebElementFacade {
 
     public WebElementFacade findBy(String xpathOrCssSelector) {
         logIfVerbose("findBy " + xpathOrCssSelector);
-        WebElement nestedElement = null;
+        WebElement nestedElement;
         if (PageObject.isXPath(xpathOrCssSelector)) {
             nestedElement = webElement.findElement((By.xpath(xpathOrCssSelector)));
         } else {
@@ -122,6 +122,10 @@ public class WebElementFacade {
         return new WebElementFacade(driver, nestedElement, timeoutInMilliseconds);
     }
 
+    public WebElementFacade find(By bySelector) {
+        return findBy(bySelector);
+    }
+
     public WebElementFacade then(By bySelector) {
         return findBy(bySelector);
     }
@@ -132,7 +136,7 @@ public class WebElementFacade {
 
     public List<WebElementFacade> thenFindAll(By selector) {
         logIfVerbose("findAll " + selector);
-        List<WebElement> nestedElements = driver.findElements(selector);
+        List<WebElement> nestedElements = webElement.findElements(selector);
         return webElementFacadesFrom(nestedElements);
     }
 

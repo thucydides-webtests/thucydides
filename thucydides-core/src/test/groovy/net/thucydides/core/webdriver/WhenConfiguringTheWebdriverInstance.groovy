@@ -1,4 +1,4 @@
-package net.thucydides.core.webdriver.integration
+package net.thucydides.core.webdriver
 
 import net.thucydides.core.util.MockEnvironmentVariables
 import org.junit.Ignore

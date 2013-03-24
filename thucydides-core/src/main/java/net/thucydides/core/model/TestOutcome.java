@@ -778,29 +778,6 @@ public class TestOutcome {
         }
     }
 
-    public static TestOutcome emptyCopyOf(TestOutcome baseTestOutcome) {
-        TestOutcome newTestOutcome = new TestOutcome(baseTestOutcome.methodName, baseTestOutcome.testCase);
-        newTestOutcome.additionalIssues = ImmutableSet.copyOf(baseTestOutcome.additionalIssues);
-        newTestOutcome.annotatedResult = baseTestOutcome.annotatedResult;
-        newTestOutcome.duration = baseTestOutcome.duration;
-        if (baseTestOutcome.issues != null) {
-            newTestOutcome.issues = ImmutableSet.copyOf(baseTestOutcome.issues);
-        }
-        newTestOutcome.issueTracking = baseTestOutcome.issueTracking;
-        newTestOutcome.linkGenerator = baseTestOutcome.linkGenerator;
-        newTestOutcome.qualifier = baseTestOutcome.qualifier;
-        newTestOutcome.sessionId = baseTestOutcome.sessionId;
-        newTestOutcome.startTime = baseTestOutcome.startTime;
-        newTestOutcome.statistics = baseTestOutcome.statistics;
-        newTestOutcome.storedTitle = baseTestOutcome.storedTitle;
-        newTestOutcome.tagProviderService = baseTestOutcome.tagProviderService;
-        if (baseTestOutcome.tags != null) {
-            newTestOutcome.tags = ImmutableSet.copyOf(baseTestOutcome.tags);
-        }
-        newTestOutcome.testFailureCause = baseTestOutcome.testFailureCause;
-        return newTestOutcome;
-    }
-
     /**
      * Returns the name of the test prefixed by the name of the story.
      */
