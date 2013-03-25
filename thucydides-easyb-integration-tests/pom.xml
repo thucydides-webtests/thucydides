@@ -15,7 +15,7 @@
     </properties>
     <build>
         <plugins>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
                 <version>1.3</version>
@@ -30,7 +30,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
             <plugin>
                 <groupId>org.easyb</groupId>
                 <artifactId>maven-easyb-plugin</artifactId>

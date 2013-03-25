@@ -1,7 +1,8 @@
 package net.thucydides.core.guice;
-
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * Somewhere to hold the Guice injector.
@@ -18,11 +19,9 @@ public class Injectors {
         return injector;
     }
     
-    public static synchronized Injector setInjector(Injector injector){
-    	if (Injectors.injector == null) {
-    		Injectors.injector = injector;
-    	} else {
-    		throw new IllegalStateException("injector is already set. Cannot reset it");
+    public static synchronized Injector getInjector(Module module){
+    	if (injector == null) {
+    		injector = Guice.createInjector(module);
     	}
     	return injector;
     }
