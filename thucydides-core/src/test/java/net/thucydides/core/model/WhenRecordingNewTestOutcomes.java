@@ -199,6 +199,24 @@ public class WhenRecordingNewTestOutcomes {
         assertThat(outcome.getTitle(), is("Really should do this!"));
     }
 
+
+    @Test
+    public void a_test_outcome_result_can_be_overridden() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenario.class);
+        outcome.setAnnotatedResult(TestResult.IGNORED);
+
+        assertThat(outcome.getResult(), is(TestResult.IGNORED));
+    }
+
+    @Test
+    public void once_a_test_outcome_result_is_marked_pending_it_cannot_be_redefinedn() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenario.class);
+        outcome.setAnnotatedResult(TestResult.PENDING);
+        outcome.setAnnotatedResult(TestResult.IGNORED);
+
+        assertThat(outcome.getResult(), is(TestResult.PENDING));
+    }
+
     @Test
     public void a_qualified_test_outcome_title_should_contain_the_qualifier() {
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenario.class);

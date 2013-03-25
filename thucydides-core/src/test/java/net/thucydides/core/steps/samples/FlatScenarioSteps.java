@@ -7,6 +7,7 @@ import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.Title;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.steps.StepEventBus;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
@@ -24,6 +25,20 @@ public class FlatScenarioSteps extends ScenarioSteps {
 
     @Step
     public void step_with_screenshot(){
+        Thucydides.takeScreenshot();
+    }
+
+    @Step
+    public void step_with_two_screenshots(){
+        Thucydides.takeScreenshot();
+        Thucydides.takeScreenshot();
+    }
+
+    @Step
+    public void step_with_four_identical_screenshots(){
+        Thucydides.takeScreenshot();
+        Thucydides.takeScreenshot();
+        Thucydides.takeScreenshot();
         Thucydides.takeScreenshot();
     }
 
@@ -55,6 +70,10 @@ public class FlatScenarioSteps extends ScenarioSteps {
     @Ignore
     @Step
     public void ignoredStep() {}
+
+    @Ignore("Just can't be bothered, really")
+    @Step
+    public void ignoredStepWithReason() {}
 
     @Pending
     @Step
@@ -152,5 +171,9 @@ public class FlatScenarioSteps extends ScenarioSteps {
     @Then("this should happen")
     public void then_this_should_happen() {
 
+    }
+    @Step
+    public void step_with_screen_changes() {
+        StepEventBus.getEventBus().notifyScreenChange();
     }
 }

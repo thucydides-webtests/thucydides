@@ -12,6 +12,9 @@ import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.screenshots.BlurLevel;
+import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
 import net.thucydides.core.steps.samples.FluentScenarioSteps;
@@ -39,6 +42,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
@@ -48,6 +52,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,7 +74,8 @@ public class WhenRecordingStepExecutionResults {
 
     File outputDirectory;
 
-    byte[] screenshot;
+    byte[] screenshot1;
+    byte[] screenshot2;
 
     @Mock
     FirefoxDriver driver;
@@ -109,7 +115,8 @@ public class WhenRecordingStepExecutionResults {
     public void createStepListenerAndFactory() throws IOException {
         MockitoAnnotations.initMocks(this);
         outputDirectory = temporaryFolder.newFolder("thucydides");
-        screenshot = new byte[10000];
+        screenshot1 = new byte[10000];
+        screenshot2 = new byte[12000];
         stepFactory = new StepFactory(pages);
 
         environmentVariables = new MockEnvironmentVariables();
@@ -118,7 +125,7 @@ public class WhenRecordingStepExecutionResults {
         stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory, configuration);
         stepListener.setDriver(driver);
         when(driver.getCurrentUrl()).thenReturn("http://www.google.com");
-        when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot);
+        when(driver.getScreenshotAs(any(OutputType.class))).thenReturn(screenshot1).thenReturn(screenshot2);
 
         StepEventBus.getEventBus().clear();
         StepEventBus.getEventBus().registerListener(stepListener);
@@ -1287,6 +1294,36 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
+    public void subsequent_identical_screenshots_should_not_be_duplicated_between_steps() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_with_two_screenshots();
+        steps.step_two();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        assertThat(stepListener.getCurrentTestOutcome().getTestSteps().get(1).getScreenshotCount(), is(1));
+    }
+
+    @Test
+    public void subsequent_identical_screenshots_should_not_be_duplicated_within_a_step() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_one();
+        steps.step_with_four_identical_screenshots();
+        steps.step_two();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        assertThat(stepListener.getCurrentTestOutcome().getTestSteps().get(1).getScreenshotCount(), is(1));
+    }
+
+    @Test
     public void screenshots_should_be_taken_only_after_steps_if_requested() {
 
         configureEventBus("thucydides.take.screenshots","AFTER_EACH_STEP");
@@ -1316,6 +1353,52 @@ public class WhenRecordingStepExecutionResults {
 
         verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
     }
+
+    @Test
+    public void screenshots_should_be_taken_on_screen_changes_if_in_verbose_mode() {
+
+        configureEventBus("thucydides.take.screenshots","FOR_EACH_ACTION");
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_with_screen_changes();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        verify(driver, times(3)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+    @Test
+    public void screenshots_should_not_be_taken_on_screen_changes_if_not_in_verbose_mode() {
+
+        configureEventBus("thucydides.take.screenshots","AFTER_EACH_STEP");
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_with_screen_changes();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        verify(driver, times(1)).getScreenshotAs((OutputType<?>) anyObject());
+    }
+
+    @Test
+    public void html_source_should_not_be_recorded_by_default() {
+
+        configureEventBus("thucydides.take.screenshots","FOR_EACH_ACTION");
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+        steps.step_with_screenshot();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        verify(driver, never()).getPageSource();
+    }
+
 
     private void configureEventBus(String property, String value) {
         environmentVariables.setProperty(property, value);
@@ -1389,6 +1472,57 @@ public class WhenRecordingStepExecutionResults {
         assertThat(testOutcome.getTestSteps().get(0).getChildren().get(0).getScreenshots().size(), is(0));
         assertThat(testOutcome.getTestSteps().get(0).getChildren().get(1).getScreenshots().size(), is(0));
 
+    }
+
+
+    @Test
+    public void screenshot_source_will_not_be_stored_by_default() {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        NestedScenarioSteps steps = stepFactory.getStepLibraryFor(NestedScenarioSteps.class);
+        steps.step1();
+        steps.step2();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        TestOutcome testOutcome = results.get(0);
+        TestStep firstStep = testOutcome.getTestSteps().get(0).getChildren().get(0);
+        ScreenshotAndHtmlSource screenshot = firstStep.getScreenshots().get(0);
+        assertThat(screenshot.getSourcecode().isPresent(), is(false));
+    }
+
+    @Test
+    public void screenshot_source_will_be_stored_if_configured() {
+
+        environmentVariables.setProperty("thucydides.store.html.source","true");
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        NestedScenarioSteps steps = stepFactory.getStepLibraryFor(NestedScenarioSteps.class);
+        steps.step1();
+        steps.step2();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        TestOutcome testOutcome = results.get(0);
+        TestStep firstStep = testOutcome.getTestSteps().get(0).getChildren().get(0);
+        ScreenshotAndHtmlSource screenshot = firstStep.getScreenshots().get(0);
+        assertThat(screenshot.getSourcecode().isPresent(), is(true));
+    }
+
+    @Test
+    public void blurred_screenshots_will_be_stored_if_configured() throws IOException {
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work");
+
+        NestedScenarioSteps steps = stepFactory.getStepLibraryFor(NestedScenarioSteps.class);
+        steps.blurred_step();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        verify(driver, times(2)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
     @Test

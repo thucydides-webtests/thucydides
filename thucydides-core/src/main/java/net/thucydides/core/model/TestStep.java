@@ -47,6 +47,9 @@ public class TestStep {
         return new TestStepBuilder(description);
     }
 
+    public boolean hasScreenshots() {
+        return !getScreenshots().isEmpty();
+    }
 
     public static class TestStepBuilder {
         private final String description;

@@ -38,6 +38,7 @@ import java.util.Stack;
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.flatten;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.join;
 import static ch.lambdaj.Lambda.on;
@@ -411,6 +412,13 @@ public class TestOutcome {
         return !getScreenshots().isEmpty();
     }
 
+    public List<ScreenshotAndHtmlSource> getScreenshotAndHtmlSources() {
+        List<TestStep> testStepsWithScreenshots = select(getFlattenedTestSteps(),
+                                                         having(on(TestStep.class).needsScreenshots()));
+
+        return flatten(extract(testStepsWithScreenshots, on(TestStep.class).getScreenshots()));
+    }
+
     public List<Screenshot> getScreenshots() {
         List<Screenshot> screenshots = new ArrayList<Screenshot>();
 
@@ -627,7 +635,9 @@ public class TestOutcome {
     }
 
     public void setAnnotatedResult(final TestResult annotatedResult) {
-        this.annotatedResult = annotatedResult;
+        if (this.annotatedResult != PENDING) {
+            this.annotatedResult = annotatedResult;
+        }
     }
 
     private Set<String> issues() {
@@ -776,29 +786,6 @@ public class TestOutcome {
         } else {
             return getMethodName();
         }
-    }
-
-    public static TestOutcome emptyCopyOf(TestOutcome baseTestOutcome) {
-        TestOutcome newTestOutcome = new TestOutcome(baseTestOutcome.methodName, baseTestOutcome.testCase);
-        newTestOutcome.additionalIssues = ImmutableSet.copyOf(baseTestOutcome.additionalIssues);
-        newTestOutcome.annotatedResult = baseTestOutcome.annotatedResult;
-        newTestOutcome.duration = baseTestOutcome.duration;
-        if (baseTestOutcome.issues != null) {
-            newTestOutcome.issues = ImmutableSet.copyOf(baseTestOutcome.issues);
-        }
-        newTestOutcome.issueTracking = baseTestOutcome.issueTracking;
-        newTestOutcome.linkGenerator = baseTestOutcome.linkGenerator;
-        newTestOutcome.qualifier = baseTestOutcome.qualifier;
-        newTestOutcome.sessionId = baseTestOutcome.sessionId;
-        newTestOutcome.startTime = baseTestOutcome.startTime;
-        newTestOutcome.statistics = baseTestOutcome.statistics;
-        newTestOutcome.storedTitle = baseTestOutcome.storedTitle;
-        newTestOutcome.tagProviderService = baseTestOutcome.tagProviderService;
-        if (baseTestOutcome.tags != null) {
-            newTestOutcome.tags = ImmutableSet.copyOf(baseTestOutcome.tags);
-        }
-        newTestOutcome.testFailureCause = baseTestOutcome.testFailureCause;
-        return newTestOutcome;
     }
 
     /**

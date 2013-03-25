@@ -1,12 +1,17 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.webdriver.WebdriverManager;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.SessionId;
 
 import java.io.File;
 
@@ -128,6 +133,12 @@ public class WhenTallyingTestStepResults {
     @Story(MyStory.class)
     class MyTestCase {
         public void app_should_work() {}
+        @Ignore
+        public void ignored_test() {}
+        @Pending
+        public void pending_test() {}
+
+        public void normal_test() {}
     }
 
     @Test
@@ -137,6 +148,32 @@ public class WhenTallyingTestStepResults {
         stepListener.testStarted("app_should_work");
         assertThat(stepListener.getCurrentTestOutcome().getUserStory().getName(), is("My story"));
     }
+
+    @Test
+    public void pending_tests_should_be_marked_as_pending() {
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        stepListener.testSuiteStarted(MyTestCase.class);
+        stepListener.testStarted("pending_test");
+        assertThat(stepListener.getCurrentTestOutcome().getResult() , is(TestResult.PENDING));
+    }
+
+    @Test
+    public void ignored_tests_should_be_marked_as_ignored() {
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        stepListener.testSuiteStarted(MyTestCase.class);
+        stepListener.testStarted("ignored_test");
+        assertThat(stepListener.getCurrentTestOutcome().getResult() , is(TestResult.IGNORED));
+    }
+
+    @Test
+    public void tests_can_be_marked_as_ignored_externally() {
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        stepListener.testSuiteStarted(MyTestCase.class);
+        stepListener.testStarted("normal_test");
+        stepListener.testIgnored();
+        assertThat(stepListener.getCurrentTestOutcome().getResult() , is(TestResult.IGNORED));
+    }
+
 
     @Test
     public void a_test_suite_can_be_started_directly_using_a_story_class_without_a_test_class() {
@@ -156,12 +193,55 @@ public class WhenTallyingTestStepResults {
     }
 
     @Test
+    public void we_can_check_if_a_test_suite_is_currently_running() {
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyStory.class);
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+
+        assertThat(stepListener.testSuiteRunning(), is(false));
+        stepListener.testSuiteStarted(story);
+        assertThat(stepListener.testSuiteRunning(), is(true));
+        stepListener.testStarted("the app should work");
+        stepListener.testSuiteFinished();
+        assertThat(stepListener.testSuiteRunning(), is(false));
+    }
+
+
+    @Mock
+    WebdriverManager webdriverManager;
+
+    @Test
+    public void should_record_remote_session_id() {
+
+        when(webdriverManager.getSessionId()).thenReturn(new SessionId("SESSION-ID"));
+        BaseStepListener stepListener = new BaseStepListener(outputDirectory, webdriverManager);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyStory.class);
+        stepListener.testSuiteStarted(story);
+        stepListener.testStarted("the app should work");
+        assertThat(stepListener.getCurrentTestOutcome().getSessionId() , is("SESSION-ID"));
+    }
+
+
+    @Test
     public void a_test_can_be_started_using_a_story_instance_without_a_test_class() {
+
         BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
         net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyStory.class);
         stepListener.testSuiteStarted(story);
         stepListener.testStarted("the app should work");
         assertThat(stepListener.getCurrentTestOutcome().getUserStory().getName(), is("My story"));
+    }
+
+
+    @Test
+    public void should_be_able_to_update_a_step_title_if_it_is_not_known_initially() {
+
+        BaseStepListener stepListener = new BaseStepListener(FirefoxDriver.class, outputDirectory);
+        net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyStory.class);
+        stepListener.testSuiteStarted(story);
+        stepListener.testStarted("the app should work");
+        stepListener.stepStarted(ExecutedStepDescription.withTitle("provisory title"));
+        stepListener.updateCurrentStepTitle("final title");
+        assertThat(stepListener.getCurrentTestOutcome().getTestSteps().get(0).getDescription() , is("final title"));
     }
 
     @Test

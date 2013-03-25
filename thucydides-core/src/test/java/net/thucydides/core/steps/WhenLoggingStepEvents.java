@@ -278,16 +278,6 @@ public class WhenLoggingStepEvents {
     }
 
     @Test
-    public void should_log_skipped_step_with_message_if_in_verbose_mode() {
-        environmentVariables.setProperty("thucydides.logging", "VERBOSE");
-
-        consoleLoggingListener.stepIgnored("for some reason");
-
-        verify(logger).info(contains("IGNORING STEP (for some reason)"));
-    }
-
-
-    @Test
     public void should_log_pending_step_if_in_verbose_mode() {
         environmentVariables.setProperty("thucydides.logging", "VERBOSE");
 
@@ -312,8 +302,8 @@ public class WhenLoggingStepEvents {
         consoleLoggingListener.stepFinished();
         consoleLoggingListener.stepFailed(stepFailure);
         consoleLoggingListener.stepIgnored();
-        consoleLoggingListener.stepIgnored("for some reason");
         consoleLoggingListener.stepPending();
+        consoleLoggingListener.stepPending("for some reason");
         consoleLoggingListener.stepPending("for some reason");
 
         verify(logger,never()).info(contains("STEP"));

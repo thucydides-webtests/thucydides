@@ -57,6 +57,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  */
 public class WebDriverFactory {
     public static final String DEFAULT_DRIVER = "firefox";
+    public static final String REMOTE_DRIVER = "remote";
 
     private final WebdriverInstanceFactory webdriverInstanceFactory;
 
@@ -289,7 +290,7 @@ public class WebDriverFactory {
 
     private DesiredCapabilities capabilitiesForDriver(String driver) {
         if (driver == null) {
-            driver = DEFAULT_DRIVER;
+            driver = REMOTE_DRIVER;
         }
         SupportedWebDriver driverType = driverTypeFor(driver);
         if (driverType == null) {

@@ -2,6 +2,7 @@ package net.thucydides.core.model;
 
 import com.google.common.base.Optional;
 import net.thucydides.core.annotations.Screenshots;
+import net.thucydides.core.reflection.StackTraceAnalyser;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -43,10 +44,7 @@ public class ScreenshotPermission {
     private Optional<TakeScreenshots> methodOverride() {
         StackTraceElement[] stackTrace = new Throwable().getStackTrace();
         for (StackTraceElement stackTraceElement : stackTrace) {
-            Method callingMethod = null;
-            try {
-                callingMethod = findMethodIn(stackTraceElement);
-            } catch (ClassNotFoundException ignored) {}
+            Method callingMethod = StackTraceAnalyser.forStackTraceElement(stackTraceElement).getMethod();
             if (callingMethod != null && callingMethod.getAnnotation(Screenshots.class) != null) {
                 return Optional.of(screenshotLevelFrom(callingMethod.getAnnotation(Screenshots.class)));
             }
@@ -66,24 +64,6 @@ public class ScreenshotPermission {
         } else {
             return TakeScreenshots.BEFORE_AND_AFTER_EACH_STEP;
         }
-    }
-
-
-    private Method findMethodIn(StackTraceElement stackTraceElement) throws ClassNotFoundException {
-        if (allowedClassName(stackTraceElement.getClassName())) {
-            Class callingClass = Class.forName(stackTraceElement.getClassName());
-            Method[] methods = ArrayUtils.addAll(callingClass.getDeclaredMethods(), callingClass.getMethods());
-            for (Method method : methods) {
-                if (stackTraceElement.getMethodName().equals(method.getName())) {
-                    return method;
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean allowedClassName(String className) {
-        return !((className.startsWith("sun.")) || (className.startsWith("java.")));
     }
 
     private TakeScreenshotsComparer takeScreenshotLevel(TakeScreenshots takeScreenshots) {

@@ -1,5 +1,6 @@
 package net.thucydides.core.steps.samples;
 
+import net.thucydides.core.annotations.BlurScreenshots;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
@@ -43,4 +44,8 @@ public class NestedScenarioSteps extends ScenarioSteps {
         innerSteps.failingStep();
     }
 
+    @Step
+    @BlurScreenshots("HEAVY")
+    public void blurred_step() {
+    }
 }
