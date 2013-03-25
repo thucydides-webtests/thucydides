@@ -31,7 +31,7 @@ public class StackTraceAnalyser {
 
     public static Method extractMethod(StackTraceElement stackTraceElement, Class callingClass)  {
         Class targetClass;
-        if (stackTraceElement.getFileName().equals("<generated>")) {
+        if (isInstrumentedMethod(stackTraceElement)) {
             targetClass = callingClass.getSuperclass();
         } else {
             targetClass = callingClass;
@@ -41,6 +41,10 @@ public class StackTraceAnalyser {
         } catch (NoSuchMethodException e) {
             return null;
         }
+    }
+
+    private static boolean isInstrumentedMethod(StackTraceElement stackTraceElement) {
+        return (stackTraceElement.getFileName()) != null && (stackTraceElement.getFileName().equals("<generated>"));
     }
 
     private boolean allowedClassName(String className) {

@@ -635,7 +635,9 @@ public class TestOutcome {
     }
 
     public void setAnnotatedResult(final TestResult annotatedResult) {
-        this.annotatedResult = annotatedResult;
+        if (this.annotatedResult != PENDING) {
+            this.annotatedResult = annotatedResult;
+        }
     }
 
     private Set<String> issues() {

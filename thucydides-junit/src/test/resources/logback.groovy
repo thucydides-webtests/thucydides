@@ -1,8 +1,7 @@
-import static ch.qos.logback.classic.Level.WARN
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.core.ConsoleAppender
 
-import static ch.qos.logback.classic.Level.INFO
+import static ch.qos.logback.classic.Level.WARN
 
 appender("STDOUT", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
@@ -11,5 +10,4 @@ appender("STDOUT", ConsoleAppender) {
 }
 
 root(WARN, ["STDOUT"])
-logger("net.thucydides", INFO)
 logger("org.hibernate", WARN, ["STDOUT"])

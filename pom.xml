@@ -186,22 +186,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-                <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                <!--<version>2.3.2</version>-->
-                <!--<configuration>-->
-                    <!--<compilerId>groovy-eclipse-compiler</compilerId>-->
-                    <!--&lt;!&ndash; set verbose to be true if you want lots of uninteresting messages &ndash;&gt;-->
-                    <!--&lt;!&ndash; <verbose>true</verbose> &ndash;&gt;-->
-                <!--</configuration>-->
-                <!--<dependencies>-->
-                    <!--<dependency>-->
-                        <!--<groupId>org.codehaus.groovy</groupId>-->
-                        <!--<artifactId>groovy-eclipse-compiler</artifactId>-->
-                        <!--<version>2.7.0-01</version>-->
-                    <!--</dependency>-->
-                <!--</dependencies>-->
-            <!--</plugin>-->
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
