@@ -38,6 +38,7 @@ import java.util.Stack;
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.flatten;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.join;
 import static ch.lambdaj.Lambda.on;
@@ -409,6 +410,13 @@ public class TestOutcome {
 
     public boolean hasScreenshots() {
         return !getScreenshots().isEmpty();
+    }
+
+    public List<ScreenshotAndHtmlSource> getScreenshotAndHtmlSources() {
+        List<TestStep> testStepsWithScreenshots = select(getFlattenedTestSteps(),
+                                                         having(on(TestStep.class).needsScreenshots()));
+
+        return flatten(extract(testStepsWithScreenshots, on(TestStep.class).getScreenshots()));
     }
 
     public List<Screenshot> getScreenshots() {

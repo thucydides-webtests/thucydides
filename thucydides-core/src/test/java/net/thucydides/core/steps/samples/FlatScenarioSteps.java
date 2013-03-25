@@ -71,6 +71,10 @@ public class FlatScenarioSteps extends ScenarioSteps {
     @Step
     public void ignoredStep() {}
 
+    @Ignore("Just can't be bothered, really")
+    @Step
+    public void ignoredStepWithReason() {}
+
     @Pending
     @Step
     public void pendingStep() {}
@@ -167,5 +171,9 @@ public class FlatScenarioSteps extends ScenarioSteps {
     @Then("this should happen")
     public void then_this_should_happen() {
 
+    }
+    @Step
+    public void step_with_screen_changes() {
+        StepEventBus.getEventBus().notifyScreenChange();
     }
 }

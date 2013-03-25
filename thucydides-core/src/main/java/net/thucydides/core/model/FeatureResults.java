@@ -28,24 +28,7 @@ public class FeatureResults {
         this.namer = ReportNamer.forReportType(ReportType.HTML);
         storyTestResultsList = new ArrayList<StoryTestResults>();
     }
-          
-    
-    public void foo() {
 
-        
-        List<Integer> ages = ImmutableList.of(10,15,18,21,25,30,40,50);
-        
-        List<Integer> adults = new ArrayList<Integer>();
-        for(int age : ages) {
-            if (age >= 18) {
-                adults.add(age);
-            }
-        }
-        
-        List<Integer> adultAges = filter(greaterThanOrEqualTo(18), ages);
-        
-        
-    }
     public ApplicationFeature getFeature() {
         return feature;
     }
@@ -66,17 +49,17 @@ public class FeatureResults {
         return sum(extract(storyTestResultsList, on(StoryTestResults.class).getFailureCount())).intValue();
     }
 
-    public Integer getPassingSteps() {
-        return sum(extract(storyTestResultsList, on(StoryTestResults.class).countStepsInSuccessfulTests())).intValue();
-    }
-
-    public Integer getFailingSteps() {
-        return sum(extract(storyTestResultsList, on(StoryTestResults.class).countStepsInFailingTests())).intValue();
-    }
-
-    public Integer getSkippedSteps() {
-        return sum(extract(storyTestResultsList, on(StoryTestResults.class).countStepsInSkippedTests())).intValue();
-    }
+//    public Integer getPassingSteps() {
+//        return sum(extract(storyTestResultsList, on(StoryTestResults.class).countStepsInSuccessfulTests())).intValue();
+//    }
+//
+//    public Integer getFailingSteps() {
+//        return sum(extract(storyTestResultsList, on(StoryTestResults.class).countStepsInFailingTests())).intValue();
+//    }
+//
+//    public Integer getSkippedSteps() {
+//        return sum(extract(storyTestResultsList, on(StoryTestResults.class).countStepsInSkippedTests())).intValue();
+//    }
 
     public Integer getSkippedTests() {
         return sum(extract(storyTestResultsList, on(StoryTestResults.class).getSkipCount())).intValue();
@@ -115,9 +98,9 @@ public class FeatureResults {
         return ImmutableList.copyOf(storyTestResultsList);
     }
 
-    public String getStoryReportName() {
-        return "stories_" + namer.getNormalizedTestNameFor(feature);
-    }
+//    public String getStoryReportName() {
+//        return "stories_" + namer.getNormalizedTestNameFor(feature);
+//    }
 
     public int countStepsInSuccessfulTests() {
         if (storyTestResultsList.size() == 0) {

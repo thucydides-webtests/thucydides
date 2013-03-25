@@ -231,13 +231,6 @@ public class ConsoleLoggingListener implements StepListener {
         }
     }
 
-    
-    public void stepIgnored(String message) {
-        if (loggingLevelIsAtLeast(getLoggingLevel().VERBOSE)) {
-            getLogger().info("IGNORING STEP " + "(" + message + ")");
-        }
-    }
-
     public void stepPending() {
         if (loggingLevelIsAtLeast(getLoggingLevel().VERBOSE)) {
             getLogger().info("PENDING STEP");

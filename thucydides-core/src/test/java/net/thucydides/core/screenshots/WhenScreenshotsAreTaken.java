@@ -1,9 +1,12 @@
 package net.thucydides.core.screenshots;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.resources.FileResources;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,6 +40,8 @@ public class WhenScreenshotsAreTaken {
 
     private File screenshotDirectory;
     private File screenshotTaken;
+    private File originalScreenshot;
+    private File expectedResizedScreenshot;
 
     @Mock
     private FirefoxDriver driver;
@@ -63,7 +68,7 @@ public class WhenScreenshotsAreTaken {
         }
 
         @Override
-        protected File blur(File srcFile) throws Exception {
+        protected File blur(File srcFile) throws IOException {
             return srcFile;
         }
     }
@@ -80,10 +85,12 @@ public class WhenScreenshotsAreTaken {
 
     public void prepareTemporaryFilesAndDirectories() throws IOException {
         screenshotDirectory = temporaryDirectory.newFolder("screenshots");
-        screenshotTaken = temporaryDirectory.newFile("aScreenshot.png");
+        originalScreenshot = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots/google_page_1.png").getFile());
+        expectedResizedScreenshot = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots/resized_google_page_1.png").getFile());
+        screenshotTaken = temporaryDirectory.newFile("google_page_1.png");
+        FileUtils.copyFile(originalScreenshot, screenshotTaken);
     }
 
-    
     @Test
     public void the_driver_should_not_take_screenshots_if_the_driver_is_not_available() throws Exception {
 
@@ -105,6 +112,27 @@ public class WhenScreenshotsAreTaken {
         verify(driver,times(1)).getScreenshotAs((OutputType<?>) anyObject());
     }
 
+    @Test
+    public void should_blur_screenshot_if_requested() throws Exception {
+
+        Photographer outOfFocusPhotographer = new Photographer(driver, screenshotDirectory, BlurLevel.HEAVY);
+        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        Optional<File> blurredScreenshot = outOfFocusPhotographer.takeScreenshot("screenshot");
+        waitUntilScreenshotsProcessed();
+
+        assertThat(FileUtils.contentEquals(blurredScreenshot.get(), expectedResizedScreenshot), is(false));
+    }
+
+    @Test
+    public void should_not_blur_screenshot_by_default() throws Exception {
+
+        Photographer outOfFocusPhotographer = new Photographer(driver, screenshotDirectory);
+        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
+        Optional<File> blurredScreenshot = outOfFocusPhotographer.takeScreenshot("screenshot");
+        waitUntilScreenshotsProcessed();
+
+        assertThat(FileUtils.contentEquals(blurredScreenshot.get(), expectedResizedScreenshot), is(true));
+    }
 
     @Test
     public void should_not_take_a_snapshot_if_unsupported_by_the_driver() throws Exception {

@@ -33,8 +33,12 @@ public class WhenWeCreateATestStep {
 
         File screenshot = temporaryFolder.newFile("screenshot.png");
         File source = temporaryFolder.newFile("screenshot.html");
+
+        assertThat(step.hasScreenshots(), is(false));
+
         step.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
 
+        assertThat(step.hasScreenshots(), is(true));
         assertThat(step.getScreenshots().get(0).getScreenshotFile(), is(screenshot));
         assertThat(step.getScreenshots().get(0).getSourcecode().get(), is(source));
     }

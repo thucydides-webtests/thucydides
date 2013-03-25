@@ -35,7 +35,6 @@ import java.util.UUID;
  */
 public class Photographer {
 
-    private static final int MESSAGE_DIGEST_MASK = 0xFF;
     private static final int PNG_SUFFIX_LENGTH = ".png".length();
     private final WebDriver driver;
     private final File targetDirectory;
@@ -89,6 +88,10 @@ public class Photographer {
         this.environmentVariables = environmentVariables;
     }
 
+    public Optional<BlurLevel> getBlurLevel() {
+        return blurLevel;
+    }
+
     protected long nextScreenshotNumber() {
         return screenshotSequence.next();
     }
@@ -135,7 +138,7 @@ public class Photographer {
         return environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.THUCYDIDES_STORE_HTML_SOURCE, false);
     }
 
-    protected File blur(File srcFile) throws Exception {
+    protected File blur(File srcFile) throws IOException {
         BufferedImage srcImage = ImageIO.read(srcFile);
         BufferedImage destImage = deepCopy(srcImage);
         BoxBlurFilter boxBlurFilter = new BoxBlurFilter();

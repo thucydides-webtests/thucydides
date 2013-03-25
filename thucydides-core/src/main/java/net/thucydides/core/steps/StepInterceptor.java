@@ -253,16 +253,12 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         try {
             result = executeTestStepMethod(obj, method, args, proxy, result);
             LOGGER.info("STEP DONE: {}", method.getName());
-        } catch (AssertionError assertionError) {
-            error = assertionError;
-            logStepFailure(method, args, assertionError);
+        } catch (AssertionError failedAssertion) {
+            error = failedAssertion;
+            logStepFailure(method, args, failedAssertion);
             return appropriateReturnObject(obj, method);
-        } catch (WebDriverException webdriverException) {
-            error = webdriverException;
-            logStepFailure(method, args, forError(error).convertToAssertion());
-            return appropriateReturnObject(obj, method);
-        } catch (Throwable generalException) {
-            error = generalException;
+        } catch (Throwable testErrorException) {
+            error = testErrorException;
             logStepFailure(method, args, forError(error).convertToAssertion());
             return appropriateReturnObject(obj, method);
         }
@@ -365,11 +361,6 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private boolean shouldThrowExceptionImmediately() {
         return throwExceptionImmediately;
-    }
-
-    private void notifyOfTestFailure(final Method method, final Object[] args,
-                                     final Throwable cause) throws Exception {
-        StepEventBus.getEventBus().testFailed(cause);
     }
 
     private void notifyStepStarted(final Method method, final Object[] args) {

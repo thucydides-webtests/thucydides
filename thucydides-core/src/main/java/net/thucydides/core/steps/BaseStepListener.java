@@ -4,33 +4,52 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.thucydides.core.IgnoredStepException;
+import com.google.inject.Injector;
 import net.thucydides.core.PendingStepException;
-import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.model.*;
+import net.thucydides.core.model.DataTable;
+import net.thucydides.core.model.FailureAnalysis;
+import net.thucydides.core.model.ScreenshotPermission;
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TakeScreenshots;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.SystemClock;
-import net.thucydides.core.screenshots.*;
+import net.thucydides.core.screenshots.Photographer;
+import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import net.thucydides.core.screenshots.ScreenshotBlurCheck;
+import net.thucydides.core.screenshots.ScreenshotException;
+import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
+import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.SessionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 import static net.thucydides.core.model.Stories.findStoryFrom;
-import static net.thucydides.core.model.TestResult.*;
+import static net.thucydides.core.model.TestResult.FAILURE;
+import static net.thucydides.core.model.TestResult.IGNORED;
+import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.SKIPPED;
+import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.MANDATORY_SCREENSHOT;
 import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.OPTIONAL_SCREENSHOT;
 import static net.thucydides.core.util.NameConverter.underscore;
-import static org.apache.commons.io.FileUtils.checksumCRC32;
 
 /**
  * Observes the test run and stores test run details for later reporting.
@@ -71,6 +90,8 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private WebDriver driver;
 
+    private WebdriverManager webdriverManager;
+
     private File outputDirectory;
 
     private WebdriverProxyFactory proxyFactory;
@@ -104,28 +125,28 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public BaseStepListener(final File outputDirectory) {
+        this(outputDirectory, Injectors.getInjector());
+    }
+
+    public BaseStepListener(final File outputDirectory, Injector injector) {
         this.proxyFactory = WebdriverProxyFactory.getFactory();
-        this.testOutcomes = new ArrayList<TestOutcome>();
+        this.testOutcomes = Lists.newArrayList();
         this.currentStepStack = new Stack<TestStep>();
         this.currentGroupStack = new Stack<TestStep>();
         this.outputDirectory = outputDirectory;
-        this.clock = Injectors.getInjector().getInstance(SystemClock.class);
-        this.configuration = Injectors.getInjector().getInstance(Configuration.class);
-        this.screenshotProcessor = Injectors.getInjector().getInstance(ScreenshotProcessor.class);
         this.inFluentStepSequence = false;
         this.storywideIssues = Lists.newArrayList();
         this.storywideTags = Lists.newArrayList();
+        this.webdriverManager = injector.getInstance(WebdriverManager.class);
+        this.clock = injector.getInstance(SystemClock.class);
+        this.configuration = injector.getInstance(Configuration.class);
+        this.screenshotProcessor = injector.getInstance(ScreenshotProcessor.class);
     }
 
-    protected ScreenshotPermission screenshots() {
-        if (screenshots == null) {
-            screenshots = new ScreenshotPermission(configuration);
-        }
-        return screenshots;
-    }
     /**
      * Create a step listener with a given web driver type.
-     * @param driverClass a driver of this type will be used
+     *
+     * @param driverClass     a driver of this type will be used
      * @param outputDirectory reports and screenshots are generated here
      */
     public BaseStepListener(final Class<? extends WebDriver> driverClass, final File outputDirectory) {
@@ -142,25 +163,32 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public BaseStepListener(final File outputDirectory,
-                            final Configuration configuration) {
+                            final WebdriverManager webdriverManager) {
         this(outputDirectory);
-        this.driver = getProxyFactory().proxyFor(null);
-        this.configuration = configuration;
+        this.webdriverManager = webdriverManager;
     }
 
     /**
      * Create a step listener using the driver from a given page factory.
      * If the pages factory is null, a new driver will be created based on the default system values.
+     *
      * @param outputDirectory reports and screenshots are generated here
-     * @param pages a pages factory.
+     * @param pages           a pages factory.
      */
     public BaseStepListener(final File outputDirectory, final Pages pages) {
-         this(outputDirectory);
-         if (pages != null) {
-             setDriverUsingPagesDriverIfDefined(pages);
-         } else {
-             createNewDriver();
-         }
+        this(outputDirectory);
+        if (pages != null) {
+            setDriverUsingPagesDriverIfDefined(pages);
+        } else {
+            createNewDriver();
+        }
+    }
+
+    protected ScreenshotPermission screenshots() {
+        if (screenshots == null) {
+            screenshots = new ScreenshotPermission(configuration);
+        }
+        return screenshots;
     }
 
     private void createNewDriver() {
@@ -191,6 +219,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     /**
      * A test suite (containing a series of tests) starts.
+     *
      * @param startedTestSuite the class implementing the test suite (e.g. a JUnit test case)
      */
     public void testSuiteStarted(final Class<?> startedTestSuite) {
@@ -204,14 +233,17 @@ public class BaseStepListener implements StepListener, StepPublisher {
         storywideTags.clear();
     }
 
+    private boolean suiteStarted = false;
+
     public void testSuiteStarted(final Story story) {
         testSuite = null;
         testedStory = story;
+        suiteStarted = true;
         clearStorywideTagsAndIssues();
     }
 
     public boolean testSuiteRunning() {
-        return testedStory != null;
+        return suiteStarted;
     }
 
     public void addIssuesToCurrentStory(List<String> issues) {
@@ -225,11 +257,13 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void testSuiteFinished() {
         screenshotProcessor.waitUntilDone();
         clearStorywideTagsAndIssues();
+        suiteStarted = false;
     }
 
 
     /**
      * An individual test starts.
+     *
      * @param testMethod the name of the test method in the test suite class.
      */
     public void testStarted(final String testMethod) {
@@ -239,9 +273,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void updateSessionIdIfKnown() {
-        String sessionId = Thucydides.getCurrentSessionID();
+        SessionId sessionId = webdriverManager.getSessionId();
         if (sessionId != null) {
-            getCurrentTestOutcome().setSessionId(sessionId);
+            getCurrentTestOutcome().setSessionId(sessionId.toString());
         }
     }
 
@@ -260,6 +294,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     /**
      * A test has finished.
+     *
      * @param outcome the result of the test that just finished.
      */
     public void testFinished(final TestOutcome outcome) {
@@ -278,6 +313,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     /**
      * A step within a test is called.
      * This step might be nested in another step, in which case the original step becomes a group of steps.
+     *
      * @param description the description of the test that is about to be run
      */
     public void stepStarted(final ExecutedStepDescription description) {
@@ -301,7 +337,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
             startNewGroupIfNested();
             setDefaultResultFromAnnotations(step, description);
-    
+
             currentStepStack.push(step);
             recordStepToCurrentTestOutcome(step);
         }
@@ -452,11 +488,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
         }
     }
 
-    public void stepIgnored(String message) {
-        getCurrentStep().testAborted(new IgnoredStepException(message));
-        stepIgnored();
-    }
-
     public void stepPending() {
         markCurrentStepAs(PENDING);
         currentStepDone();
@@ -469,7 +500,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     private void currentStepDone() {
         if ((!inFluentStepSequence) && currentStepExists()) {
-            TestStep finishedStep =  currentStepStack.pop();
+            TestStep finishedStep = currentStepStack.pop();
             finishedStep.recordDuration();
 
             if (finishedStep == getCurrentGroup()) {
@@ -505,10 +536,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void removeDuplicatedInitalScreenshotsIfPresent() {
-        if (currentStepHasMoreThanOneScreenshot() && getPreviousStep().isPresent()) {
+        if (currentStepHasMoreThanOneScreenshot() && getPreviousStep().isPresent() && getPreviousStep().get().hasScreenshots()) {
             ScreenshotAndHtmlSource lastScreenshotOfPreviousStep = lastScreenshotOf(getPreviousStep().get());
             ScreenshotAndHtmlSource firstScreenshotOfThisStep = getCurrentStep().getFirstScreenshot();
-            if (haveIdenticalScreenshots(firstScreenshotOfThisStep, lastScreenshotOfPreviousStep)) {
+            if (firstScreenshotOfThisStep.hasIdenticalScreenshotsAs(lastScreenshotOfPreviousStep)) {
                 removeFirstScreenshotOfCurrentStep();
             }
         }
@@ -523,10 +554,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private ScreenshotAndHtmlSource lastScreenshotOf(TestStep testStep) {
-        if (!testStep.getScreenshots().isEmpty()) {
-            return testStep.getScreenshots().get(testStep.getScreenshots().size() - 1);
-        }
-        return null;
+        return testStep.getScreenshots().get(testStep.getScreenshots().size() - 1);
     }
 
     private void takeScreenshotIfRequired(ScreenshotType screenshotType, ScreenshotAndHtmlSource screenshotAndHtmlSource) {
@@ -548,59 +576,24 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private boolean shouldTakeOptionalScreenshot(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
-        return (screenshotAndHtmlSource.wasTaken()
-                && (!sameAsPreviousScreenshot(screenshotAndHtmlSource)));
+        return (screenshotAndHtmlSource.wasTaken() && previousScreenshot().isPresent()
+                && (!screenshotAndHtmlSource.hasIdenticalScreenshotsAs(previousScreenshot().get())));
     }
 
-    private boolean sameAsPreviousScreenshot(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
-        try {
-            Optional<Screenshot> screenshot = latestScreenshot();
-            if (screenshot.isPresent()) {
-                File screenshotTargetDirectory = new File(screenshotAndHtmlSource.getScreenshotFile().getParent());
-                File screenshotFile = new File(screenshotTargetDirectory, screenshot.get().getFilename());
-                return (checksumCRC32(screenshotFile) == checksumCRC32(screenshotAndHtmlSource.getScreenshotFile()));
-            }
-        } catch (IOException e) {
-            LOGGER.warn("Failed to compare screenshots: " + e.getMessage());
-        }
-        return false;
-    }
-
-    private boolean haveIdenticalScreenshots(ScreenshotAndHtmlSource screenshotAndHtmlSource,
-                                             ScreenshotAndHtmlSource anotherScreenshotAndHtmlSource) {
-        if (noScreenshotIn(screenshotAndHtmlSource) || noScreenshotIn(anotherScreenshotAndHtmlSource)) {
-            return false;
-        }
-        try {
-            File screenshotTargetDirectory = new File(screenshotAndHtmlSource.getScreenshotFile().getParent());
-            File screenshot = new File(screenshotTargetDirectory,
-                                       screenshotAndHtmlSource.getScreenshotFile().getName());
-            File anotherScreenshot = new File(screenshotTargetDirectory,
-                                              anotherScreenshotAndHtmlSource.getScreenshotFile().getName());
-            return (checksumCRC32(screenshot) == checksumCRC32(anotherScreenshot));
-        } catch (IOException e) {
-            LOGGER.warn("Failed to compare screenshots: " + e.getMessage());
-        }
-        return false;
-    }
-
-    private boolean noScreenshotIn(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
-        return ((screenshotAndHtmlSource == null) || (screenshotAndHtmlSource.getScreenshotFile() == null));
-    }
-
-    private Optional<Screenshot> latestScreenshot() {
-        List<Screenshot> screenshotsToDate = getCurrentTestOutcome().getScreenshots();
-        if (!screenshotsToDate.isEmpty()) {
+    private Optional<ScreenshotAndHtmlSource> previousScreenshot() {
+        List<ScreenshotAndHtmlSource> screenshotsToDate = getCurrentTestOutcome().getScreenshotAndHtmlSources();
+        if (screenshotsToDate.isEmpty()) {
+            return Optional.absent();
+        } else {
             return Optional.of(screenshotsToDate.get(screenshotsToDate.size() - 1));
         }
-        return Optional.absent();
     }
 
     private boolean browserIsOpen() {
         if (driver == null) {
             return false;
         }
-        if (driver instanceof  WebDriverFacade) {
+        if (driver instanceof WebDriverFacade) {
             return (((WebDriverFacade) driver).isInstantiated());
         } else {
             return (driver.getCurrentUrl() != null);
@@ -635,7 +628,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public Photographer getPhotographer() {
         ScreenshotBlurCheck blurCheck = new ScreenshotBlurCheck();
         if (blurCheck.blurLevel().isPresent()) {
-           return new Photographer(driver, outputDirectory, blurCheck.blurLevel().get());
+            return new Photographer(driver, outputDirectory, blurCheck.blurLevel().get());
         } else {
             return new Photographer(driver, outputDirectory);
         }
@@ -688,15 +681,13 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void testIgnored() {
-        if (getCurrentTestOutcome().getResult() != PENDING) {
-            getCurrentTestOutcome().setAnnotatedResult(IGNORED);
-        }
+        getCurrentTestOutcome().setAnnotatedResult(IGNORED);
     }
 
     public void notifyScreenChange() {
         if (screenshots().areAllowed(TakeScreenshots.FOR_EACH_ACTION)) {
             take(OPTIONAL_SCREENSHOT);
-       }
+        }
     }
 
     /**
@@ -707,6 +698,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     int currentExample = 0;
+
     /**
      * The current scenario is a data-driven scenario using test data from the specified table.
      */
@@ -715,7 +707,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
         currentExample = 0;
     }
 
-    public void exampleStarted(Map<String,String> data) {
+    public void exampleStarted(Map<String, String> data) {
         if (getCurrentTestOutcome().isDataDriven() && !getCurrentTestOutcome().dataIsPredefined()) {
             getCurrentTestOutcome().addRow(data);
         }
