@@ -6,6 +6,7 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.WebElementFacade;
+import net.thucydides.core.pages.WebElementFacadeImpl;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
@@ -565,45 +566,13 @@ public class WebDriverFactory {
      * Initialize a page object's fields using the specified WebDriver instance.
      */
     public void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver) {
-        ElementLocatorFactory finder = getElementLocatorFactorySelector().getLocatorFor(driver);
-        PageFactory.initElements(finder, pageObject);
-        initWebElementFacades(new WebElementFacadeFieldDecorator(finder), pageObject, driver);
+    	Injectors.getInjector().getInstance(ElementProxyCreator.class).proxyElements(pageObject, driver);
     }
-
-    private ElementLocatorFactorySelector getElementLocatorFactorySelector() {
-        Configuration configuration = Injectors.getInjector().getInstance(Configuration.class);
-        return new ElementLocatorFactorySelector(configuration);
-    }
-
     public void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver, int timeoutInSeconds) {
-        ElementLocatorFactory finder = getElementLocatorFactorySelector().withTimeout(timeoutInSeconds).getLocatorFor(driver);
-        PageFactory.initElements(finder, pageObject);
-        initWebElementFacades(new WebElementFacadeFieldDecorator(finder), pageObject, driver);
+    	Injectors.getInjector().getInstance(ElementProxyCreator.class).proxyElements(pageObject, driver, timeoutInSeconds);
 
     }
 
-    private void initWebElementFacades(WebElementFacadeFieldDecorator decorator, PageObject page, final WebDriver driver) {
-        Class<?> proxyIn = page.getClass();
-        while (proxyIn != Object.class) {
-            proxyFields(decorator, page, proxyIn, driver);
-            proxyIn = proxyIn.getSuperclass();
-        }
-    }
-
-    private void proxyFields(WebElementFacadeFieldDecorator decorator, PageObject page, Class<?> proxyIn, final WebDriver driver) {
-        Field[] fields = proxyIn.getDeclaredFields();
-        for (Field field : fields) {
-            WebElement webElementValue = decorator.decorate(page.getClass().getClassLoader(), field);
-            if (webElementValue != null) {
-                try {
-                    WebElementFacade facadeValue = new WebElementFacade(driver, webElementValue,page.waitForTimeoutInMilliseconds());
-                    field.setAccessible(true);
-                    field.set(page, facadeValue);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
+    
 
 }

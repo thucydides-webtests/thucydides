@@ -93,7 +93,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
         this(klass, Injectors.getInjector());
-//    	this(klass, new ThucydidesModule());
     }
     
     public ThucydidesRunner(Class<?> klass, Module module) throws InitializationError {

@@ -113,7 +113,7 @@ class RenderedPageObjectView {
         try {
             List<WebElement> matchingElements = driver.findElements(byElementCriteria);
             for(WebElement webElement : matchingElements) {
-                WebElementFacade element = new WebElementFacade(driver, webElement, 100);
+                WebElementFacade element = new WebElementFacadeImpl(driver, webElement, 100);
                 if (element.isCurrentlyVisible()) {
                     return true;
                 }
