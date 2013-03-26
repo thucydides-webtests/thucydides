@@ -24,6 +24,7 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             directory                                  | result
             "/test-outcomes/all-successful"            | TestResult.SUCCESS
             "/test-outcomes/containing-failure"        | TestResult.FAILURE
+            "/test-outcomes/containing-nostep-errors"  | TestResult.FAILURE
             "/test-outcomes/containing-errors"         | TestResult.ERROR
             "/test-outcomes/containing-pending"        | TestResult.PENDING
             "/test-outcomes/containing-skipped"        | TestResult.SUCCESS
@@ -42,6 +43,7 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             directory                                  | successCount | failureCount | errorCount   | pendingCount | skipCount
             "/test-outcomes/all-successful"            | 3            | 0            | 0            | 0            | 0
             "/test-outcomes/containing-failure"        | 1            | 1            | 0            | 1            | 0
+            "/test-outcomes/containing-nostep-errors"  | 1            | 2            | 1            | 1            | 0
             "/test-outcomes/containing-errors"         | 1            | 0            | 2            | 0            | 0
             "/test-outcomes/containing-pending"        | 2            | 0            | 0            | 1            | 0
             "/test-outcomes/containing-skipped"        | 3            | 0            | 0            | 0            | 1
@@ -53,7 +55,7 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         then:
             testOutcomes.stepCount == 17
     }
-    
+
     def "should calculate the percentage of passing steps"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
@@ -99,13 +101,16 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         then:
         testOutcomes.decimalPercentagePassingTestCount == percentagePassing &&
                 testOutcomes.decimalPercentageFailingTestCount == percentageFailing &&
+                testOutcomes.decimalPercentageErrorTestCount == percentageErroring &&
                 testOutcomes.decimalPercentagePendingTestCount == percentagePending
         where:
-        directory                                  | percentagePassing | percentageFailing  | percentagePending
-        "/test-outcomes/all-successful"            | "1"                 | "0"                | "0"
-        "/test-outcomes/containing-failure"        | "0.33"              | "0.33"             | "0.33"
-        "/test-outcomes/containing-pending"        | "0.67"              | "0"                | "0.33"
-        "/test-outcomes/all-pending"               | "0"                 | "0"                | "1"
+        directory                                 | percentagePassing | percentageFailing | percentageErroring | percentagePending
+        "/test-outcomes/all-successful"           | "1"               | "0"               | "0"                | "0"
+        "/test-outcomes/containing-failure"       | "0.33"            | "0.33"            | "0"                | "0.33"
+        "/test-outcomes/containing-pending"       | "0.67"            | "0"               | "0"                | "0.33"
+        "/test-outcomes/containing-nostep-errors" | "0.2"             | "0.4"             | "0.2"              | "0.2"
+        "/test-outcomes/containing-errors"        | "0.33"            | "0"               | "0.67"             | "0"
+        "/test-outcomes/all-pending"              | "0"               | "0"               | "0"                | "1"
     }
 
     def "should provide a formatted version of the failing coverage metrics"() {
