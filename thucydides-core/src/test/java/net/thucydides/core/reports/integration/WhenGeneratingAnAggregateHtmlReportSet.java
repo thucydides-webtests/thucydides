@@ -5,14 +5,14 @@ import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import net.thucydides.core.reports.html.ReportProperties;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
@@ -24,8 +24,7 @@ import static ch.lambdaj.Lambda.on;
 import static net.thucydides.core.matchers.FileMatchers.exists;
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 
 public class WhenGeneratingAnAggregateHtmlReportSet {
@@ -42,13 +41,13 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         outputDirectory = newTemporaryDirectory();
         reporter.setOutputDirectory(outputDirectory);
 
-        File sourceDirectory = directoryInClasspathCalled("/test-outcomes/containing-failure");
+        File sourceDirectory = directoryInClasspathCalled("/test-outcomes/containing-nostep-errors");
         reporter.generateReportsForTestResultsFrom(sourceDirectory);
     }
 
     @AfterClass
     public static void deleteReportDirectory() {
-        outputDirectory.delete();
+        //outputDirectory.delete();
     }
 
     private static File newTemporaryDirectory() throws IOException {
@@ -133,6 +132,21 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         List<WebElement> tagTypes = driver.findElements(By.cssSelector(".tagTitle"));
         List<String> tagTypeNames = extract(tagTypes, on(WebElement.class).getText());
         assertThat(tagTypeNames, hasItems("A Story","A Feature", "An Epic", "Another Different Story"));
+    }
+
+    @Test
+    public void aggregate_dashboard_should_contain_correct_test_counts() throws Exception {
+
+        File report = new File(outputDirectory,"index.html");
+        driver.get(urlFor(report));
+
+        List<WebElement> testCounts = driver.findElements(By.cssSelector(".test-count"));
+        assertThat(testCounts, hasSize(4));
+        Matcher<Iterable<? super WebElement>> passedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("1 passed ,")));
+        Matcher<Iterable<? super WebElement>> pendingMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("1 pending ,")));
+        Matcher<Iterable<? super WebElement>> failedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("2 failed ,")));
+        Matcher<Iterable<? super WebElement>> errorMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("1 with errors")));
+        assertThat(testCounts, allOf(passedMatcher, pendingMatcher, failedMatcher, errorMatcher));
     }
 
     @Test

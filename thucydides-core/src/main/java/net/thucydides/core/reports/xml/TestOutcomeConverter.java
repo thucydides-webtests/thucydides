@@ -112,7 +112,7 @@ public class TestOutcomeConverter implements Converter {
         writer.addAttribute(SKIPPED_FIELD, Integer.toString(testOutcome.getSkippedCount()));
         writer.addAttribute(IGNORED_FIELD, Integer.toString(testOutcome.getIgnoredCount()));
         writer.addAttribute(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
-        writer.addAttribute(RESULT_FIELD, testOutcome.getResult().toString());
+        writer.addAttribute(RESULT_FIELD, testOutcome.getResult().name());
         writer.addAttribute(DURATION, Long.toString(testOutcome.getDuration()));
         if (isNotEmpty(testOutcome.getSessionId())) {
             writer.addAttribute(SESSION_ID, testOutcome.getSessionId());
@@ -341,6 +341,7 @@ public class TestOutcomeConverter implements Converter {
         String methodName = reader.getAttribute(NAME_FIELD);
         TestOutcome testOutcome = new TestOutcome(methodName);
         testOutcome.setTitle(unescape(reader.getAttribute(TITLE_FIELD)));
+        TestResult savedTestResult = TestResult.valueOf(reader.getAttribute(RESULT_FIELD));
         if (reader.getAttribute(QUALIFIER_FIELD) != null) {
             testOutcome = testOutcome.withQualifier(unescape(reader.getAttribute(QUALIFIER_FIELD)));
         }
@@ -349,6 +350,9 @@ public class TestOutcomeConverter implements Converter {
         String sessionId = readSessionId(reader);
         testOutcome.setSessionId(sessionId);
         readChildren(reader, testOutcome);
+        if(testOutcome.getStepCount().equals(0)) {
+            testOutcome.setAnnotatedResult(savedTestResult);
+        }
         return testOutcome;
     }
 
