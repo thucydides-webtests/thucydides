@@ -14,24 +14,6 @@
     <link type="text/css" href="jqueryui/css/start/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
     <script type="text/javascript" src="jqueryui/js/jquery-ui-1.8.18.custom.min.js"></script>
 
-    <style type="text/css">a:link {
-        text-decoration: none;
-    }
-
-    a:visited {
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: none;
-    }
-
-    a:active {
-        text-decoration: none;
-    }
-    </style>
-
-
 </head>
 
 <body>
