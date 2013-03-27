@@ -6,22 +6,6 @@
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="css/core.css"/>
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
-    <style type="text/css">a:link {
-        text-decoration: none;
-    }
-
-    a:visited {
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: none;
-    }
-
-    a:active {
-        text-decoration: none;
-    }
-    </style>
 
     <!--[if IE]>
     <script language="javascript" type="text/javascript" src="jit/Extras/excanvas.js"></script><![endif]-->
