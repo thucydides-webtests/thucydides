@@ -2,6 +2,7 @@ package net.thucydides.core.pages.integration;
 
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.WebElementFacade;
+import net.thucydides.core.pages.WebElementFacadeImpl;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
@@ -406,7 +407,7 @@ public class WhenManagingAPageObject {
     @Test
     public void should_provide_a_fluent_api_for_entering_a_value_in_a_field_using_webelementfacade() {
         WebElement field = mock(WebElement.class);
-        WebElementFacade facade = new WebElementFacade(driver, field, 0L);
+        WebElementFacade facade = new WebElementFacadeImpl(driver, field, 0L);
         BasicPageObject page = new BasicPageObject(driver);
         when(field.isEnabled()).thenReturn(true);
         when(field.getTagName()).thenReturn("input");

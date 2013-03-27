@@ -107,7 +107,7 @@ public abstract class PageObject {
             public boolean apply(PageObject page) {
                 page.waitForTimeoutInMilliseconds = ajaxTimeout;
                 int ajaxTimeoutInSeconds = ajaxTimeoutInSecondsWithAtLeast1Second(ajaxTimeout);
-                WebDriverFactory.initElementsWithAjaxSupport(page, driver, ajaxTimeoutInSeconds);
+                Injectors.getInjector().getInstance(WebDriverFactory.class).initElementsWithAjaxSupport(page, driver, ajaxTimeoutInSeconds);
                 return true;
             }
         });
@@ -692,8 +692,8 @@ public abstract class PageObject {
     /**
      * Provides a fluent API for querying web elements.
      */
-    public WebElementFacade element(WebElement webElement) {
-        return new WebElementFacade(driver, webElement, waitForTimeoutInMilliseconds);
+    public WebElementFacadeImpl element(WebElement webElement) {
+        return new WebElementFacadeImpl(driver, webElement, waitForTimeoutInMilliseconds);
     }
 
     public WebElementFacade $(WebElement webElement) {
@@ -709,21 +709,21 @@ public abstract class PageObject {
      */
     public WebElementFacade element(By bySelector) {
         WebElement webElement = getDriver().findElement(bySelector);
-        return new WebElementFacade(driver, webElement, waitForTimeoutInMilliseconds);
+        return new WebElementFacadeImpl(driver, webElement, waitForTimeoutInMilliseconds);
     }
 
     public WebElementFacade find(By selector) {
         return element(selector);
     }
 
-    public List<WebElementFacade> findAll(By bySelector) {
+    public List<WebElementFacadeImpl> findAll(By bySelector) {
         List<WebElement> matchingWebElements = driver.findElements(bySelector);
         return convert(matchingWebElements, toWebElementFacades());
     }
 
-    private Converter<WebElement, WebElementFacade> toWebElementFacades() {
-        return new Converter<WebElement, WebElementFacade>() {
-            public WebElementFacade convert(WebElement from) {
+    private Converter<WebElement, WebElementFacadeImpl> toWebElementFacades() {
+        return new Converter<WebElement, WebElementFacadeImpl>() {
+            public WebElementFacadeImpl convert(WebElement from) {
                 return element(from);
             }
         };

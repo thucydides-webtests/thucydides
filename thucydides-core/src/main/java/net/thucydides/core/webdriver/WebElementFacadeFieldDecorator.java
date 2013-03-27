@@ -1,6 +1,6 @@
 package net.thucydides.core.webdriver;
 
-import net.thucydides.core.pages.WebElementFacade;
+import net.thucydides.core.pages.WebElementFacadeImpl;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.DefaultFieldDecorator;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
@@ -19,7 +19,7 @@ public class WebElementFacadeFieldDecorator extends DefaultFieldDecorator {
     @Override
     public WebElement decorate(ClassLoader classLoader, Field field) {
 
-        if (! WebElementFacade.class.isAssignableFrom(field.getType())) {
+        if (! WebElementFacadeImpl.class.isAssignableFrom(field.getType())) {
             return null;
         }
 
