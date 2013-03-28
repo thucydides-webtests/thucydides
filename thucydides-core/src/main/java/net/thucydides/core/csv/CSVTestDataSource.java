@@ -54,7 +54,7 @@ public class CSVTestDataSource implements TestDataSource {
     }
 
     public static boolean validTestDataPath(final String path) {
-        if (validFileSystemPath(path)) {
+        if (validFileSystemPath(path) || isAClasspathResource(path)) {
             return true;
         } else {
             URL testDataUrl = CSVTestDataSource.class.getClassLoader().getResource(path);
@@ -64,18 +64,19 @@ public class CSVTestDataSource implements TestDataSource {
 
     private Reader getDataFileFor(final String path) throws FileNotFoundException {
         if (isAClasspathResource(path)) {
-            try {
-                return new InputStreamReader(getClass().getClassLoader().getResourceAsStream(path));
-            } catch(Throwable e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new FileNotFoundException("Could not load test data from " + path);
-            }
+        		return new InputStreamReader(getClass().getClassLoader().getResourceAsStream(path));
+        } else if (validFileSystemPath(path)){
+        	return new FileReader(new File(path));
         }
-        return new FileReader(new File(path));
+    	throw new FileNotFoundException("Could not load test data from " + path);
     }
 
     private static boolean isAClasspathResource(final String path) {
-        return (!validFileSystemPath(path));
+    	if (CSVTestDataSource.class.getClassLoader().getResourceAsStream(path) == null){
+    		return false;
+    	}
+        return true;
+        
     }
 
     private static boolean validFileSystemPath(final String path) {
