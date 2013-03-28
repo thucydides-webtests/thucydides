@@ -1,7 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import net.thucydides.core.pages.PageObject;
-import net.thucydides.core.pages.WebElementFacade;
+import net.thucydides.core.pages.WebElementFacadeImpl;
 import net.thucydides.core.steps.StepEventBus;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -22,7 +22,7 @@ class DisplayedElementLocator extends AjaxElementLocator {
                                                                     "waitUntilEnabled",
                                                                     "shouldNotBeVisible");
 
-    private static final List<String> QUICK_CLASSES = Arrays.asList(WebElementFacade.class.getName(), PageObject.class.getName());
+    private static final List<String> QUICK_CLASSES = Arrays.asList(WebElementFacadeImpl.class.getName(), PageObject.class.getName());
 
     private final Field field;
     private final WebDriver driver;

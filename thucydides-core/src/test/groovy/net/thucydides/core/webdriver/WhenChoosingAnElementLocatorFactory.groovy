@@ -5,15 +5,27 @@ import net.thucydides.core.util.MockEnvironmentVariables
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory
 import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory
+import net.thucydides.core.webdriver.smart.SmartElementLocatorFactory
 import spock.lang.Specification
 
 class WhenChoosingAnElementLocatorFactory extends Specification {
 
     EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
     def driver = Mock(WebDriver)
-
-    def "should choose the DisplayedElementLocatorFactory factory by default"() {
+	
+	def "should choose the SmartElementLocatorFactory factory by default"() {
         given:
+            def configuration = new SystemPropertiesConfiguration(environmentVariables);
+            def selectorFactory = new ElementLocatorFactorySelector(configuration);
+        when:
+            def locator = selectorFactory.getLocatorFor(driver)
+        then:
+            locator.class == SmartElementLocatorFactory
+    }
+    
+    def "should choose the DisplayedElementLocatorFactory factory if requested"() {
+        given:
+        	environmentVariables.setProperty("thucydides.locator.factory","DisplayedElementLocatorFactory")
             def configuration = new SystemPropertiesConfiguration(environmentVariables);
             def selectorFactory = new ElementLocatorFactorySelector(configuration);
         when:

@@ -40,9 +40,13 @@ import net.thucydides.core.util.LocalPreferences;
 import net.thucydides.core.util.PropertiesFileLocalPreferences;
 import net.thucydides.core.util.SystemEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.ElementProxyCreator;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
+import net.thucydides.core.webdriver.ThucydidesElementProxyCreator;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebdriverManager;
+import net.thucydides.core.webdriver.smart.SmartElementProxyCreator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +70,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(TemplateManager.class).to(FreeMarkerTemplateManager.class).in(Singleton.class);
         bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);
         bind(IssueTracking.class).to(SystemPropertiesIssueTracking.class).in(Singleton.class);
-        bind(WebdriverManager.class).to(ThucydidesWebdriverManager.class).in(Singleton.class);;
+        bind(WebdriverManager.class).to(ThucydidesWebdriverManager.class).in(Singleton.class);
         bind(BatchManager.class).to(SystemVariableBasedBatchManager.class);
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(ScreenshotProcessor.class).to(SingleThreadScreenshotProcessor.class).in(Singleton.class);
@@ -80,6 +84,7 @@ public class ThucydidesModule extends AbstractModule {
 
         bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class).in(Singleton.class);
         bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class).in(Singleton.class);
+        bind(ElementProxyCreator.class).to(SmartElementProxyCreator.class).in(Singleton.class);
     }
 
     @Provides

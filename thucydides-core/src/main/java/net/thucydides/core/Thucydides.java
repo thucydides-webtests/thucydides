@@ -56,7 +56,7 @@ public class Thucydides {
     }
 
     private static void setupWebDriverFactory() {
-        factoryThreadLocal.set(new WebDriverFactory());
+        factoryThreadLocal.set(Injectors.getInjector().getInstance(WebDriverFactory.class));
     }
 
     private static void initPagesObjectUsing(final WebDriver driver) {

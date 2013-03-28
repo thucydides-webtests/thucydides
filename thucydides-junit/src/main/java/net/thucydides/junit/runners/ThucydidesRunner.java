@@ -1,6 +1,9 @@
 package net.thucydides.junit.runners;
 
+import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
+
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
@@ -9,6 +12,7 @@ import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.BatchStrategy;
 import net.thucydides.core.batches.UnsupportedBatchStrategyException;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.guice.ThucydidesModule;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -90,6 +94,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
         this(klass, Injectors.getInjector());
     }
+    
+    public ThucydidesRunner(Class<?> klass, Module module) throws InitializationError {
+    	this(klass, Injectors.getInjector(module));
+	}
 
     public ThucydidesRunner(final Class<?> klass,
                             final Injector injector) throws InitializationError {
@@ -140,7 +148,9 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     }
 
-    private String getSpecifiedDriver(Class<?> klass) {
+    
+
+	private String getSpecifiedDriver(Class<?> klass) {
         if (ManagedWebDriverAnnotatedField.hasManagedWebdriverField(klass)) {
             return ManagedWebDriverAnnotatedField.findFirstAnnotatedField(klass).getDriver();
         } else {
@@ -158,8 +168,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             throw new UnsupportedBatchStrategyException(batchManagerProperty + " is not a supported batch strategy.", e);
         }
     }
-
-
 
     /**
      * The getConfiguration().manages output directories and driver types.

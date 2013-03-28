@@ -1,7 +1,8 @@
 package net.thucydides.core.guice;
-
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * Somewhere to hold the Guice injector.
@@ -16,5 +17,12 @@ public class Injectors {
             injector = Guice.createInjector(new ThucydidesModule());
         }
         return injector;
+    }
+    
+    public static synchronized Injector getInjector(Module module){
+    	if (injector == null) {
+    		injector = Guice.createInjector(module);
+    	}
+    	return injector;
     }
 }
