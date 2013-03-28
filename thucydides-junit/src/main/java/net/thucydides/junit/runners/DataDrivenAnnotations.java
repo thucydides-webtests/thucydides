@@ -28,7 +28,7 @@ public class DataDrivenAnnotations {
 
     private final EnvironmentVariables environmentVariables;
 
-    private final Pattern DATASOURCE_PATH_SEPARATORS = Pattern.compile("[:;,]");
+    private final Pattern DATASOURCE_PATH_SEPARATORS = Pattern.compile("[;,]");
 
     public static DataDrivenAnnotations forClass(final Class testClass) {
         return new DataDrivenAnnotations(testClass);
