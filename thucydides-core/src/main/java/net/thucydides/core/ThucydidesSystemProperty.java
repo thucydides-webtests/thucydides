@@ -350,9 +350,9 @@ public enum ThucydidesSystemProperty {
     CAPABILITY_TYPES("thucydides.capability.types"),
 
     /**
-     * Normally, Thucydides uses DisplayedElementLocatorFactory, an extension of the AjaxElementLocatorFactory
+     * Normally, Thucydides uses SmartElementLocatorFactory, an extension of the AjaxElementLocatorFactory
      * when instantiating page objects. This is to ensure that web elements are available and usable before they are used.
-     * For alternative behaviour, you can set this value to AjaxElementLocatorFactory or DefaultElementLocatorFactory.
+     * For alternative behaviour, you can set this value to DisplayedElementLocatorFactory, AjaxElementLocatorFactory or DefaultElementLocatorFactory.
      */
     LOCATOR_FACTORY("thucydides.locator.factory"),
     /**

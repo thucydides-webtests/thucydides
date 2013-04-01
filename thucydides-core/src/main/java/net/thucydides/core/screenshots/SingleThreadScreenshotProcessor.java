@@ -43,6 +43,11 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
             } catch (InterruptedException ignore) {
             }
         }
+        //wait for just a bit longer so Windows can catch up
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException ignore) {
+        }
     }
 
     class Processor implements Runnable {
