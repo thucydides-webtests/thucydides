@@ -98,15 +98,14 @@ public abstract class SmartBy extends By{
 							public List<WebElement> apply(WebDriver driver){
 	        					try{
 	            					return (List<WebElement>) ((JavascriptExecutor)driver)
-	            							.executeScript("return $(arguments[0]).get();", jQuerySelector);
+	            							.executeScript("var elements = $(arguments[0]).get(); return ((elements.length) ? elements : null)", jQuerySelector);
 	        					} catch (WebDriverException e) {
 	        						return null;
 	        					}
 	        				}
 						});
 	    	} catch (TimeoutException e){
-	    		throw new NoSuchElementException("Cannot locate an element using "
-  			          + toString());
+	    		throw new NoSuchElementException("Cannot locate elements using " + toString());
 	    	}
 	    	return elements;
 	    	
@@ -114,8 +113,23 @@ public abstract class SmartBy extends By{
 
         @Override 
         public WebElement findElement(SearchContext context) {
-        	return this.findElements(context).get(0);
-                 
+        	WebElement element;
+	    	try{
+		    	element = (new WebDriverWait((WebDriver)context, 1))
+	        			.until(new ExpectedCondition<WebElement>() {
+							public WebElement apply(WebDriver driver){
+	        					try{
+	            					return (WebElement) ((JavascriptExecutor)driver)
+	            							.executeScript("return $(arguments[0]).get(0)", jQuerySelector);
+	        					} catch (WebDriverException e) {
+	        						return null;
+	        					}
+	        				}
+						});
+	    	} catch (TimeoutException e){
+	    		throw new NoSuchElementException("Cannot locate an element using " + toString());
+	    	}
+	    	return element;
         } 
 
 	    @Override
