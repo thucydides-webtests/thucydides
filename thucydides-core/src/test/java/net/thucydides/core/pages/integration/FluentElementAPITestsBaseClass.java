@@ -33,7 +33,6 @@ public class FluentElementAPITestsBaseClass {
             WebDriver driver = getStaticTestSite().open("firefox");
             firefoxPage = new StaticSitePage(driver, 1000);
             firefoxPage.open();
-            firefoxPage.addJQuerySupport();
         }
         return firefoxPage;
     }
@@ -61,7 +60,6 @@ public class FluentElementAPITestsBaseClass {
             WebDriver driver = getStaticTestSite().open("chrome");
             chromePage = new StaticSitePage(driver, 1000);
             chromePage.open();
-            chromePage.addJQuerySupport();
         }
         return chromePage;
     }
