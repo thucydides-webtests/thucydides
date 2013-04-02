@@ -42,14 +42,14 @@ public class WhenKeepingTrackOfManagedWebdriverInstances {
     }
 
     @Test
-    public void should_be_able_to_close_a_driver() {
+    public void should_be_able_to_quit_a_driver() {
         WebDriver firefoxDriver = mock(FirefoxDriver.class);
 
         webdriverInstances.registerDriverCalled("firefox").forDriver(firefoxDriver);
 
         webdriverInstances.closeCurrentDriver();
         
-        verify(firefoxDriver).close();
+        verify(firefoxDriver).quit();
     }
 
     @Test
@@ -61,14 +61,14 @@ public class WhenKeepingTrackOfManagedWebdriverInstances {
     }
 
     @Test
-    public void should_be_able_to_close_all_drivers() {
+    public void should_be_able_to_quit_all_drivers() {
         webdriverInstances.registerDriverCalled("firefox").forDriver(firefoxDriver);
         webdriverInstances.registerDriverCalled("iexplorer").forDriver(iexplorerDriver);
 
         webdriverInstances.closeAllDrivers();
 
-        verify(firefoxDriver).close();
-        verify(iexplorerDriver).close();
+        verify(firefoxDriver).quit();
+        verify(iexplorerDriver).quit();
     }
 
     @Test
