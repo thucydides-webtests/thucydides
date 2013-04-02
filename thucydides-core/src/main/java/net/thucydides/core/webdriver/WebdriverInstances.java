@@ -39,15 +39,15 @@ public class WebdriverInstances {
         WebDriver closedDriver = null;
         if (getCurrentDriver() != null) {
             closedDriver = getCurrentDriver();
-            closeAndQuite(closedDriver);
+            closeAndQuit(closedDriver);
             driverMap.remove(currentDriver);
             currentDriver  = null;
         }
         return closedDriver;
     }
 
-    private void closeAndQuite(WebDriver driver) {
-        driver.close();
+    private void closeAndQuit(WebDriver driver) {
+    	//close is not necessary when quitting
         driver.quit();
     }
 
@@ -74,7 +74,7 @@ public class WebdriverInstances {
         Collection<WebDriver> openDrivers = driverMap.values();
         Set<WebDriver> closedDrivers = new HashSet<WebDriver>(openDrivers);
         for(WebDriver driver : openDrivers) {
-            closeAndQuite(driver);
+            closeAndQuit(driver);
         }
         driverMap.clear();
         currentDriver = null;
