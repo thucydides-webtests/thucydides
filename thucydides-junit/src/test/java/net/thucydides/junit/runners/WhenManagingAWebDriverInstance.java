@@ -117,12 +117,12 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
 
 
     @Test
-    public void the_driver_should_be_closed_after_the_tests() throws InitializationError {
+    public void the_driver_should_be_quit_after_the_tests() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SingleTestScenario.class, webDriverFactory);
         
         runner.run(new RunNotifier());
-        verify(firefoxDriver).close();
+        verify(firefoxDriver).quit();
     }
 
     @Test

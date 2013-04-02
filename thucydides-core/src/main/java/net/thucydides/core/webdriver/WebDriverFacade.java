@@ -183,7 +183,12 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
 
     public void close() {
         if (proxyInstanciated()) {
-            getDriverInstance().close();
+        	//if there is only one window closing it means quitting the web driver
+        	if (getDriverInstance().getWindowHandles().size() == 1){
+        		this.quit();
+        	} else{
+        		getDriverInstance().close();
+        	}
         }
     }
 
