@@ -1,6 +1,7 @@
 package net.thucydides.core.requirements.reports;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
@@ -34,8 +35,10 @@ public class RequirmentsOutcomeFactory {
     }
 
     public RequirementsOutcomes buildRequirementsOutcomesFrom(TestOutcomes testOutcomes) {
-        List<Requirement> allRequirements = flatten(extract(requirementsTagProviders,
-                                                            on(RequirementsTagProvider.class).getRequirements()));
+        List<Requirement> allRequirements = Lists.newArrayList();
+        for(RequirementsTagProvider tagProvider : requirementsTagProviders) {
+            allRequirements.addAll(tagProvider.getRequirements());
+        }
         return new RequirementsOutcomes(allRequirements, testOutcomes, issueTracking, environmentVariables);
     }
 

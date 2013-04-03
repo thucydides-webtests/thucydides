@@ -54,6 +54,7 @@ body {
     margin:0 auto;
     width: auto !important; /*IE6 hack*/
     width:1024px;
+
     /*IE6 hack*/
     /*border: 1px solid #FF0000;
     background-color:#999999;*/
@@ -695,6 +696,7 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
     width: 530px;
     margin-bottom: 20px;
     background-color: white;
+
 }
 
 

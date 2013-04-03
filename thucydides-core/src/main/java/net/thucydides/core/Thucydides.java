@@ -15,7 +15,6 @@ import net.thucydides.core.webdriver.WebdriverManager;
 import org.openqa.selenium.WebDriver;
 
 import java.io.File;
-import java.util.Map;
 
 /**
  * A utility class that provides services to initialize web testing and reporting-related fields in arbitrary objects.
@@ -140,7 +139,7 @@ public class Thucydides {
         getCurrentSession().clear();
     }
 
-    public static Map getCurrentSession() {
+    public static SessionMap getCurrentSession() {
 
         if (testSessionThreadLocal.get() == null) {
             testSessionThreadLocal.set(new TestSessionVariables());
