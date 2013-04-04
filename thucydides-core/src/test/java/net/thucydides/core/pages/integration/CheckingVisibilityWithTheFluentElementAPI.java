@@ -310,6 +310,12 @@ public class CheckingVisibilityWithTheFluentElementAPI extends FluentElementAPIT
         assertThat(page.element(page.firstName).hasFocus(), is(true));
     }
 
+    @Test(expected = AssertionError.class)
+    public void should_throw_exception_if_javascript_error_detected(){
+        page.open();
+        net.thucydides.core.webdriver.firefox.JSErrorCollector.assertJSError(htmlUnitDriver);
+    }
+    
     @Test
     public void should_clear_field_before_entering_text() {
         page.open();
