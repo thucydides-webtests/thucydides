@@ -522,6 +522,7 @@ public class WebDriverFactory {
             profile.setAssumeUntrustedCertificateIssuer(true);
             profile.setAcceptUntrustedCertificates(true);
         }
+        firefoxProfileEnhancer.addJSErrorCollectorTo(profile);
         firefoxProfileEnhancer.configureJavaSupport(profile);
         firefoxProfileEnhancer.addPreferences(profile);
         return profile;

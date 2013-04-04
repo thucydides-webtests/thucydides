@@ -21,6 +21,8 @@ public class FirefoxProfileEnhancer {
     private static final String MAX_FIREBUGS_VERSION = "999.99.0";
     private static final String FIREBUGS_XPI_FILE = "/firefox/firebug-" + FIREBUGS_VERSION + ".xpi";
 
+    private static final String JSERRORCOLLECTOR_XPI_FILE = "/firefox/JSErrorCollector.xpi";
+    
     private static final String FIREFINDER_VERSION = "1.1-fx";
     private static final String MAX_FIREFINDER_VERSION = "999.9";
     private static final String FIREFINDER_XPI_FILE = "/firefox/firefinder_for_firebug-" + FIREFINDER_VERSION + ".xpi";
@@ -49,6 +51,14 @@ public class FirefoxProfileEnhancer {
 
         } catch (IOException e) {
             LOGGER.warn("Failed to add Firebugs extension to Firefox");
+        }
+    }
+
+    public void addJSErrorCollectorTo(FirefoxProfile profile) {
+        try {
+            profile.addExtension(this.getClass(), JSERRORCOLLECTOR_XPI_FILE);
+        } catch (IOException e) {
+            LOGGER.warn("Failed to add JSErrorCollector extension to Firefox");
         }
     }
 
