@@ -25,6 +25,7 @@ import net.thucydides.core.screenshots.ScreenshotBlurCheck;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.firefox.JSErrorCollector;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
@@ -426,6 +427,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void stepFinished() {
+        JSErrorCollector.assertJSError(driver);
         updateSessionIdIfKnown();
         takeEndOfStepScreenshotFor(SUCCESS);
         currentStepDone();
