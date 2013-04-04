@@ -20,7 +20,7 @@ public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 
 	public abstract WebElementFacade findBy(String xpathOrCssSelector);
 
-	public abstract List<WebElementFacadeImpl> thenFindAll(
+	public abstract List<WebElementFacade> thenFindAll(
 			String xpathOrCssSelector);
 
 	public abstract WebElementFacade findBy(By selector);
@@ -31,7 +31,7 @@ public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 
 	public abstract String getAttribute(String name);
 
-	public abstract List<WebElementFacadeImpl> thenFindAll(By selector);
+	public abstract List<WebElementFacade> thenFindAll(By selector);
 
 	public abstract long getTimeoutInMilliseconds();
 

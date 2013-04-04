@@ -692,7 +692,7 @@ public abstract class PageObject {
     /**
      * Provides a fluent API for querying web elements.
      */
-    public WebElementFacadeImpl element(WebElement webElement) {
+    public WebElementFacade element(WebElement webElement) {
         return new WebElementFacadeImpl(driver, webElement, waitForTimeoutInMilliseconds);
     }
 
@@ -716,14 +716,14 @@ public abstract class PageObject {
         return element(selector);
     }
 
-    public List<WebElementFacadeImpl> findAll(By bySelector) {
+    public List<WebElementFacade> findAll(By bySelector) {
         List<WebElement> matchingWebElements = driver.findElements(bySelector);
         return convert(matchingWebElements, toWebElementFacades());
     }
 
-    private Converter<WebElement, WebElementFacadeImpl> toWebElementFacades() {
-        return new Converter<WebElement, WebElementFacadeImpl>() {
-            public WebElementFacadeImpl convert(WebElement from) {
+    private Converter<WebElement, WebElementFacade> toWebElementFacades() {
+        return new Converter<WebElement, WebElementFacade>() {
+            public WebElementFacade convert(WebElement from) {
                 return element(from);
             }
         };

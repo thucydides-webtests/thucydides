@@ -131,7 +131,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
     }
 
     @Override
-	public List<WebElementFacadeImpl> thenFindAll(String xpathOrCssSelector) {
+	public List<WebElementFacade> thenFindAll(String xpathOrCssSelector) {
         logIfVerbose("findAll " + xpathOrCssSelector);
         List<WebElement> nestedElements = Lists.newArrayList();
         if (PageObject.isXPath(xpathOrCssSelector)) {
@@ -143,8 +143,8 @@ public class WebElementFacadeImpl implements WebElementFacade {
         return webElementFacadesFrom(nestedElements);
     }
 
-    private List<WebElementFacadeImpl> webElementFacadesFrom(List<WebElement> nestedElements) {
-        List<WebElementFacadeImpl> results = Lists.newArrayList();
+    private List<WebElementFacade> webElementFacadesFrom(List<WebElement> nestedElements) {
+        List<WebElementFacade> results = Lists.newArrayList();
         for(WebElement element : nestedElements) {
             results.add(new  WebElementFacadeImpl(driver, element, timeoutInMilliseconds));
         }
@@ -174,7 +174,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
     }
 
     @Override
-	public List<WebElementFacadeImpl> thenFindAll(By selector) {
+	public List<WebElementFacade> thenFindAll(By selector) {
         logIfVerbose("findAll " + selector);
         List<WebElement> nestedElements = webElement.findElements(selector);
         return webElementFacadesFrom(nestedElements);
