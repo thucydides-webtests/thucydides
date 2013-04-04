@@ -3,6 +3,7 @@ package net.thucydides.core.model;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.convertMap;
 
 /**
  * A table of test data
@@ -87,6 +89,16 @@ public class DataTable {
 
     public int getSize() {
         return rows.size();
+    }
+
+    public Map<String, String> getRowValues(int rowNumber) {
+        Map<String,Object> rowValues = row(rowNumber).getData();
+        Map<String,String> rowValuesAsStrings = Maps.newHashMap();
+
+        for(String key : rowValues.keySet()) {
+            rowValuesAsStrings.put(key, rowValues.get(key).toString());
+        }
+        return rowValuesAsStrings;
     }
 
     public static class DataTableBuilder {

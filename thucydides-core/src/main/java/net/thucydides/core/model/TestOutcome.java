@@ -859,7 +859,6 @@ public class TestOutcome {
         return totalSteps * rowsWithResult / totalRows;
     }
 
-
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {
             return step.getResult();

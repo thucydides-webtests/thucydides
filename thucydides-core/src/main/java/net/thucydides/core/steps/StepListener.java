@@ -117,6 +117,11 @@ public interface StepListener {
     void exampleStarted(Map<String,String> data);
 
     /**
+     * A new example has just started (should only be used for pre-populated example tables).
+     */
+    void exampleStarted();
+
+    /**
      * An example has finished.
      */
     void exampleFinished();

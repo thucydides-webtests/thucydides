@@ -479,7 +479,6 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificData.class);
-//        runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
 
@@ -488,12 +487,10 @@ public class WhenRunningADataDrivenTestScenario {
         List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
 
         TestStep step1 = dataDrivenSteps.get(0);
-        TestStep setNameStep1 = step1.getFlattenedSteps().get(0);
         TestStep step2 = dataDrivenSteps.get(1);
-        TestStep setNameStep2 = step2.getFlattenedSteps().get(0);
 
-        assertThat(setNameStep1.getDescription(), containsString("Joe Smith"));
-        assertThat(setNameStep2.getDescription(), containsString("Jack Black"));
+        assertThat(step1.getDescription(), containsString("Joe Smith"));
+        assertThat(step2.getDescription(), containsString("Jack Black"));
 
 
     }

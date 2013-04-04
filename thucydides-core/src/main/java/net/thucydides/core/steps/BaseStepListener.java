@@ -698,6 +698,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     int currentExample = 0;
+    DataTable exampleData = null;
 
     /**
      * The current scenario is a data-driven scenario using test data from the specified table.
@@ -705,6 +706,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void useExamplesFrom(DataTable table) {
         getCurrentTestOutcome().useExamplesFrom(table);
         currentExample = 0;
+        exampleData = table;
     }
 
     public void exampleStarted(Map<String, String> data) {
@@ -713,6 +715,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
         }
         currentExample++;
         getEventBus().stepStarted(ExecutedStepDescription.withTitle(exampleTitle(currentExample, data)));
+    }
+
+    public void exampleStarted() {
+        exampleStarted(exampleData.getRowValues(currentExample));
     }
 
     private String exampleTitle(int exampleNumber, Map<String, String> data) {

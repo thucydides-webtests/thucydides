@@ -87,6 +87,11 @@ public class SampleStepListener implements StepListener {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    public void exampleStarted() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void exampleFinished() {
         //To change body of implemented methods use File | Settings | File Templates.
     }

@@ -265,6 +265,10 @@ public class ConsoleLoggingListener implements StepListener {
     public void exampleStarted(Map<String,String> data) {
     }
 
+    @Override
+    public void exampleStarted() {
+    }
+
     public void exampleFinished() {
     }
 }

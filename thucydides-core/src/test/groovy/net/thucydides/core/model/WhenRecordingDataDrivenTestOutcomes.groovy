@@ -54,6 +54,17 @@ class WhenRecordingDataDrivenTestOutcomes extends Specification {
 
     }
 
+    def "Should be able to read data from individual rows"() {
+        when:
+        def table = DataTable.withHeaders(["firstName","lastName","age"]).
+                andRows([["Joe", "Smith",20],
+                        ["Jack", "Jones",21]]).build();
+        then:
+        table.getRowValues(0) == ["lastName":"Smith","firstName":"Joe","age":"20"]
+        table.getRowValues(1) == ["lastName":"Jones","firstName":"Jack","age":"21"]
+
+    }
+
     def "Should be able to build a data table with headings and mapped rows"() {
         when:
         def table = DataTable.withHeaders(["firstName","lastName","age"]).

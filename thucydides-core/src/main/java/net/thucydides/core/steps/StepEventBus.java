@@ -438,6 +438,12 @@ public class StepEventBus {
         }
     }
 
+    public void exampleStarted() {
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.exampleStarted();
+        }
+    }
+
     public void exampleFinished() {
         for(StepListener stepListener : getAllListeners()) {
             stepListener.exampleFinished();

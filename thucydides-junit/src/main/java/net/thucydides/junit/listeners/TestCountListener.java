@@ -138,6 +138,8 @@ public class TestCountListener implements StepListener {
     public void exampleStarted(Map<String, String> data) {
     }
 
-    public void exampleFinished() {
-    }
+    @Override
+    public void exampleStarted() {}
+
+    public void exampleFinished() {}
 }

@@ -3,17 +3,23 @@ package net.thucydides.core.steps;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.csv.FailedToInitializeTestData;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.util.ExtendedTemporaryFolder;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 
+import java.io.File;
 import java.io.IOException;
 
 import static net.thucydides.core.steps.StepData.setDefaultStepFactory;
 import static net.thucydides.core.steps.StepData.withTestDataFrom;
+import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
@@ -28,6 +34,8 @@ public class WhenRunningStepsWithTestData {
 
     @Mock
     StepListener listener;
+
+    BaseStepListener baseStepListener;
 
     private StepFactory factory;
 
@@ -176,14 +184,28 @@ public class WhenRunningStepsWithTestData {
         }
     }
 
+    @Rule
+    public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
+    private File outputDirectory;
+
     @Before
-    public void initMocks() {
+    public void initMocks() throws IOException {
         MockitoAnnotations.initMocks(this);
         factory = new StepFactory(new Pages(driver));
+        outputDirectory = temporaryFolder.newFolder();
+        baseStepListener = new BaseStepListener(outputDirectory);
 
         StepEventBus.getEventBus().clear();
         StepEventBus.getEventBus().registerListener(listener);
+        StepEventBus.getEventBus().registerListener(baseStepListener);
+
         setDefaultStepFactory(null);
+    }
+
+    @After
+    public void finishTest() {
+        StepEventBus.getEventBus().clear();
+        StepEventBus.getEventBus().dropAllListeners();
     }
 
     @Test
@@ -191,16 +213,48 @@ public class WhenRunningStepsWithTestData {
 
         TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
 
+        StepEventBus.getEventBus().testStarted("data driven test");
         withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).step1();
 
         verify(driver, times(3)).get(anyString());
     }
 
+
+    @Test
+    public void should_record_each_row_as_a_step() throws IOException {
+
+        TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
+
+        StepEventBus.getEventBus().testStarted("data driven test");
+        withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).step1();
+        StepEventBus.getEventBus().testFinished();
+        TestOutcome outcome = baseStepListener.getTestOutcomes().get(0);
+        assertThat(outcome.getStepCount()).isEqualTo(3);
+    }
+
+    @Test
+    public void should_record_each_row_executed_in_a_step_as_a_nested_step() throws IOException {
+
+        TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
+
+        StepEventBus.getEventBus().testStarted("data driven test");
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle("a step"));
+        withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).step1();
+        StepEventBus.getEventBus().stepFinished();
+        StepEventBus.getEventBus().testFinished();
+
+        TestOutcome outcome = baseStepListener.getTestOutcomes().get(0);
+        assertThat(outcome.getStepCount()).isEqualTo(1);
+        assertThat(outcome.getTestSteps().get(0).getChildren()).hasSize(3);
+
+
+    }
     @Test
     public void should_pass_test_data_into_invoked_methods() throws IOException {
 
         TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
 
+        StepEventBus.getEventBus().testStarted("data driven test");
         withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).step1();
 
         verify(driver).get("Bill");
@@ -213,6 +267,7 @@ public class WhenRunningStepsWithTestData {
 
         TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
 
+        StepEventBus.getEventBus().testStarted("data driven test");
         withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).fail_sometimes();
 
         verify(driver).get("Bill");
@@ -225,6 +280,7 @@ public class WhenRunningStepsWithTestData {
 
         TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
 
+        StepEventBus.getEventBus().testStarted("data driven test");
         withTestDataFrom("testdata/test.csv")
                 .usingFactory(factory)
                 .run(steps).fail_sometimes();
@@ -240,6 +296,7 @@ public class WhenRunningStepsWithTestData {
 
         setDefaultStepFactory(factory);
 
+        StepEventBus.getEventBus().testStarted("data driven test");
         withTestDataFrom("testdata/test.csv")
                 .run(steps).step1();
 
@@ -253,6 +310,7 @@ public class WhenRunningStepsWithTestData {
 
         TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
 
+        StepEventBus.getEventBus().testStarted("data driven test");
         withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).step1();
 
         verify(driver).get("Bill");
@@ -267,6 +325,7 @@ public class WhenRunningStepsWithTestData {
 
         setDefaultStepFactory(factory);
 
+        StepEventBus.getEventBus().testStarted("data driven test");
         withTestDataFrom("testdata/test.csv").run(steps).step1();
 
         verify(driver).get("Bill");
@@ -281,6 +340,7 @@ public class WhenRunningStepsWithTestData {
 
         setDefaultStepFactory(factory);
 
+        StepEventBus.getEventBus().testStarted("data driven test");
         withTestDataFrom("testdata/semicolon-test.csv").separatedBy(';').run(steps).step1();
 
         verify(driver).get("Bill");
@@ -296,6 +356,7 @@ public class WhenRunningStepsWithTestData {
 
         setDefaultStepFactory(factory);
 
+        StepEventBus.getEventBus().testStarted("data driven test");
         withTestDataFrom("testdata/test.csv").run(steps).name_and_dob();
 
         withTestDataFrom("testdata/test.csv").run(differentSteps).nameStep();
@@ -311,6 +372,7 @@ public class WhenRunningStepsWithTestData {
 
         setDefaultStepFactory(factory);
 
+        StepEventBus.getEventBus().testStarted("data driven test");
         withTestDataFrom("testdata/test.csv").run(steps).nameStep();
 
         verify(driver).get("Bill");
@@ -323,6 +385,7 @@ public class WhenRunningStepsWithTestData {
         TestStepsWithNoSettersAndInaccessibleFields steps
                 = factory.getStepLibraryFor(TestStepsWithNoSettersAndInaccessibleFields.class);
 
+        StepEventBus.getEventBus().testStarted("data driven test");
         setDefaultStepFactory(factory);
 
         withTestDataFrom("testdata/test.csv").run(steps).nameStep();

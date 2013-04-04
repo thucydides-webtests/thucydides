@@ -22,6 +22,7 @@ public class DataDrivenStepInterceptor implements MethodInterceptor {
         DataDrivenStep.startDataDrivenStep();
         Object lastResult = null;
         for (Object steps : instantiatedSteps) {
+            StepEventBus.getEventBus().exampleStarted();
             lastResult = runMethodAndIgnoreExceptions(steps, proxy, method, args);
             StepEventBus.getEventBus().exampleFinished();
             StepEventBus.getEventBus().clearStepFailures();
