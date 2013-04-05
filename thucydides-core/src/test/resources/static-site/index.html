@@ -82,8 +82,10 @@
         document.getElementById('focusmessage').textContent = 'focus left ' + field;
     }
 
-    function erroneous_javascript() {
-        var foo = random_function_name_that_does_not_exist(42);
+    function broken_function() {
+        document.getElementById('focusmessage').textContent = 'called broken function';
+        function_does_not_exist();
+        document.getElementById('focusmessage').textContent = 'done calling broken function';
     }
 //-->
 </script>
@@ -111,6 +113,7 @@
     <input id="buttonThatIsInitiallyDisabled" type="submit" value="Initially disabled" disabled="true"/>
     <input id="buttonThatIsInitiallyEnabled" type="submit" value="Initially enabled"/>
     <input id="alertButton" type="button" value="Alert" onclick="alert('Alert!');"/>
+    <input id="badJavascript" type="button" value="Broken" onclick="broken_function();"/>
 
     <input name="hiddenfield" type="hidden"/>
 

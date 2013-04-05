@@ -15,8 +15,16 @@
  */
 package net.thucydides.core.webdriver.firefox;
 
-import java.util.List;
+import ch.lambdaj.function.convert.Converter;
+import com.google.common.collect.Lists;
+import net.thucydides.core.util.StringConstants;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+
+import java.util.List;
+import java.util.Map;
+
+import static ch.lambdaj.Lambda.convert;
 
 /**
  *
@@ -24,16 +32,55 @@ import org.openqa.selenium.WebDriver;
  */
 public class JSErrorCollector {
 
-    public static void assertJSError(WebDriver webdriver){
-        final List<JavaScriptError> jsErrors = JavaScriptError.readErrors(webdriver);
+    private static final String COLLECT_JAVASCRIPT_ERRORS = "return window.JSErrorCollector_errors ? window.JSErrorCollector_errors.pump() : []";
+
+    private final WebDriver webdriver;
+
+    public JSErrorCollector(WebDriver webdriver) {
+        this.webdriver = webdriver;
+    }
+
+    public void checkForJavascriptErrors(){
+        final List<JavaScriptError> jsErrors = readErrors(webdriver);
         if(!jsErrors.isEmpty()){
-            String errorString="";
-            for(int i=0; i< jsErrors.size(); i++){
-                errorString = jsErrors.get(i).getErrorMessage() + " @Line " +
-                        jsErrors.get(i).getLineNumber() + " of " +
-                        jsErrors.get(i).getSourceName();
+            StringBuffer errorMessages = new StringBuffer();
+            for(JavaScriptError jsError : jsErrors){
+                errorMessages.append(errorMessageFrom(jsError)).append(StringConstants.NEWLINE);
             }
-            throw new AssertionError(errorString);
+            throw new AssertionError(errorMessages.toString());
         }
+    }
+
+    private String errorMessageFrom(JavaScriptError jsError) {
+        return jsError.getErrorMessage() + " @Line " +
+               jsError.getLineNumber() + " of " +
+               jsError.getSourceName();
+    }
+
+    private final List<JavaScriptError> NO_ERRORS = Lists.newArrayList();
+
+    /**
+     * Gets the collected JavaScript errors that have occurred since last call to this method.
+     * @param driver the driver providing the possibility to retrieved JavaScript errors
+     * @return the errors or an empty list if the driver doesn't provide access to the JavaScript errors
+     */
+    @SuppressWarnings("unchecked")
+    private List<JavaScriptError> readErrors(final WebDriver driver) {
+        if (JavascriptExecutor.class.isAssignableFrom(driver.getClass())) {
+            final List<Object> errors = (List<Object>) ((JavascriptExecutor) driver).executeScript(COLLECT_JAVASCRIPT_ERRORS);
+            return convert(errors,toJavascriptErrors());
+        } else {
+            return NO_ERRORS;
+        }
+    }
+
+    private Converter<Object, JavaScriptError> toJavascriptErrors() {
+        return new Converter<Object, JavaScriptError>() {
+
+            @Override
+            public JavaScriptError convert(Object rawError) {
+                return new JavaScriptError((Map<String, Object>) rawError);
+            }
+        };
     }
 } 

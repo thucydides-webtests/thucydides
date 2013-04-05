@@ -427,12 +427,18 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void stepFinished() {
-        JSErrorCollector.assertJSError(driver);
+        checkForJavascriptErrors();
         updateSessionIdIfKnown();
         takeEndOfStepScreenshotFor(SUCCESS);
         currentStepDone();
         markCurrentStepAs(SUCCESS);
         pauseIfRequired();
+    }
+
+    public void checkForJavascriptErrors() {
+        if (browserIsOpen()) {
+            new JSErrorCollector(driver).checkForJavascriptErrors();
+        }
     }
 
     private void updateExampleTableIfNecessary(TestResult result) {

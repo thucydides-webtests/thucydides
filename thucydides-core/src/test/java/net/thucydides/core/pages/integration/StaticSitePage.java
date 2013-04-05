@@ -33,6 +33,8 @@ public class StaticSitePage extends PageObject {
 
         protected WebElement doesNotExist;
 
+        protected WebElement badJavascript;
+
         protected WebElement textField;
 
         protected WebElement checkbox;
@@ -154,6 +156,10 @@ public class StaticSitePage extends PageObject {
                     return (!buttonThatIsInitiallyEnabled.isEnabled() && !readonlyField.isEnabled());
                 }
             };
+        }
+
+        public void triggerBrokenJavascript() {
+            badJavascript.click();
         }
 
     }
