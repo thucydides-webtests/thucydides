@@ -14,11 +14,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
 
 
-public class SmartElementHandler implements InvocationHandler{
-	/* Replaces DefaultLocatingElementHandler. */
+public class SmartElementHandler implements InvocationHandler{	
     private final ElementLocator locator;
     private final WebDriver driver;
     private final Class<?> implementerClass;
+    private final long timeoutInMilliseconds;
     
     private Class<?> getImplementer(Class<?> interfaceType){
     	implementedBy implBy = interfaceType.getAnnotation(implementedBy.class);
@@ -29,9 +29,8 @@ public class SmartElementHandler implements InvocationHandler{
     	return implementerClass;
     }
 
-    /* Generates a handler to retrieve the WebElement from a locator for 
-       a given WebElement interface descendant. */
-    public <T> SmartElementHandler(Class<T> interfaceType, ElementLocator locator, WebDriver driver) {
+    public SmartElementHandler(Class<?> interfaceType, ElementLocator locator,
+			WebDriver driver, long timeoutInMilliseconds) {
     	this.driver = driver;
         this.locator = locator;
         if (!WebElementFacade.class.isAssignableFrom(interfaceType)) {
@@ -39,14 +38,14 @@ public class SmartElementHandler implements InvocationHandler{
         }
         
         this.implementerClass = getImplementer(interfaceType);
-
+        this.timeoutInMilliseconds = timeoutInMilliseconds; 
     }
 
-    public Object invoke(Object object, Method method, Object[] objects) throws Throwable {
+	public Object invoke(Object object, Method method, Object[] objects) throws Throwable {
     	try {
 	    	if (method.isAnnotationPresent(DelayElementLocation.class)) {
 	    		Constructor<?> constructor = implementerClass.getConstructor(WebDriver.class, ElementLocator.class, long.class);
-	            Object webElementFacadeExt = constructor.newInstance(driver, locator, 5000);
+	            Object webElementFacadeExt = constructor.newInstance(driver, locator, timeoutInMilliseconds);
 	            return method.invoke(implementerClass.cast(webElementFacadeExt), objects);
 	        }
 	        WebElement element = locator.findElement();
@@ -56,7 +55,7 @@ public class SmartElementHandler implements InvocationHandler{
 	        }
 	        
 	        Constructor<?> constructor = implementerClass.getConstructor(WebDriver.class,WebElement.class, long.class);
-	        Object webElementFacadeExt = constructor.newInstance(driver, element, 5000);
+	        Object webElementFacadeExt = constructor.newInstance(driver, element, timeoutInMilliseconds);
 	        //try {
 	            return method.invoke(implementerClass.cast(webElementFacadeExt), objects);
         } catch (InvocationTargetException e) {

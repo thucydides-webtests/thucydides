@@ -16,7 +16,7 @@ public class SmartElementProxyCreator implements ElementProxyCreator {
 	@Override
 	public void proxyElements(PageObject pageObject, WebDriver driver) {
 		ElementLocatorFactory finder = getElementLocatorFactorySelector().getLocatorFor(driver);
-        FieldDecorator decorator = new SmartFieldDecorator(finder, driver);
+        FieldDecorator decorator = new SmartFieldDecorator(finder, driver, pageObject);
         PageFactory.initElements(decorator, pageObject);
 
 	}
@@ -25,7 +25,7 @@ public class SmartElementProxyCreator implements ElementProxyCreator {
 	public void proxyElements(PageObject pageObject, WebDriver driver,
 			int timeoutInSeconds) {
 		ElementLocatorFactory finder = getElementLocatorFactorySelector().withTimeout(timeoutInSeconds).getLocatorFor(driver);
-        FieldDecorator decorator = new SmartFieldDecorator(finder, driver);
+        FieldDecorator decorator = new SmartFieldDecorator(finder, driver, pageObject);
         PageFactory.initElements(decorator, pageObject);
 
 	}
