@@ -5,6 +5,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.TestAnnotations;
@@ -24,6 +25,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.ListableBeanFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -253,19 +255,19 @@ public class TestOutcome {
     public TestOutcome withQualifier(String qualifier) {
         if (qualifier != null) {
             return new TestOutcome(this.startTime,
-                                   this.duration,
-                                   this.storedTitle,
-                                   this.methodName,
-                                   this.testCase,
-                                   this.testSteps,
-                                   this.issues,
-                                   this.additionalIssues,
-                                   this.tags,
-                                   this.userStory,
-                                   this.testFailureCause,
-                                   this.annotatedResult,
-                                   this.dataTable,
-                                   Optional.fromNullable(qualifier));
+                    this.duration,
+                    this.storedTitle,
+                    this.methodName,
+                    this.testCase,
+                    this.testSteps,
+                    this.issues,
+                    this.additionalIssues,
+                    this.tags,
+                    this.userStory,
+                    this.testFailureCause,
+                    this.annotatedResult,
+                    this.dataTable,
+                    Optional.fromNullable(qualifier));
         } else {
             return this;
         }
@@ -414,7 +416,7 @@ public class TestOutcome {
 
     public List<ScreenshotAndHtmlSource> getScreenshotAndHtmlSources() {
         List<TestStep> testStepsWithScreenshots = select(getFlattenedTestSteps(),
-                                                         having(on(TestStep.class).needsScreenshots()));
+                having(on(TestStep.class).needsScreenshots()));
 
         return flatten(extract(testStepsWithScreenshots, on(TestStep.class).getScreenshots()));
     }
@@ -423,7 +425,7 @@ public class TestOutcome {
         List<Screenshot> screenshots = new ArrayList<Screenshot>();
 
         List<TestStep> testStepsWithScreenshots = select(getFlattenedTestSteps(),
-                                                         having(on(TestStep.class).needsScreenshots()));
+                having(on(TestStep.class).needsScreenshots()));
 
         for (TestStep currentStep : testStepsWithScreenshots) {
             screenshots.addAll(screenshotsIn(currentStep));
@@ -440,9 +442,9 @@ public class TestOutcome {
         return new Converter<ScreenshotAndHtmlSource, Screenshot>() {
             public Screenshot convert(ScreenshotAndHtmlSource from) {
                 return new Screenshot(from.getScreenshotFile().getName(),
-                                      currentStep.getDescription(),
-                                      widthOf(from.getScreenshotFile()),
-                                      currentStep.getException());
+                        currentStep.getDescription(),
+                        widthOf(from.getScreenshotFile()),
+                        currentStep.getException());
             }
         };
     }
@@ -840,7 +842,7 @@ public class TestOutcome {
     private int countDataRowsWithResult(TestResult expectedResult) {
         List<DataTableRow> matchingRows
                 = filter(having(on(DataTableRow.class).getResult(), is(expectedResult)),
-                         getDataTable().getRows());
+                getDataTable().getRows());
         return matchingRows.size();
     }
 
@@ -1100,6 +1102,12 @@ public class TestOutcome {
 
     public boolean isDataDriven() {
         return dataTable != null;
+    }
+
+    final private List<String> NO_HEADERS = Lists.newArrayList();
+
+    public List<String> getExampleFields() {
+        return (isDataDriven()) ? getDataTable().getHeaders() : NO_HEADERS;
     }
 
     public String getDataDrivenSampleScenario() {
