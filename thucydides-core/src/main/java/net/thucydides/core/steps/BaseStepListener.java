@@ -279,8 +279,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
         }
     }
 
-    public void updateCurrentStepTitle(String updatedStepTitle) {
-        getCurrentStep().setDescription(updatedStepTitle);
+    public void currentStepTitleIs(String updatedStepTitle) {
+        if (currentStepExists()) {
+            getCurrentStep().setDescription(updatedStepTitle);
+        } else {
+            stepStarted(ExecutedStepDescription.withTitle(updatedStepTitle));
+        }
     }
 
     private void setAnnotatedResult(String testMethod) {

@@ -252,6 +252,7 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
         StepEventBus.getEventBus().addIssuesToCurrentTest(Lists.newArrayList("issue-456"));
         StepEventBus.getEventBus().addTagsToCurrentStory(Lists.newArrayList(TestTag.withName("iteration-1").andType("iteration")));
+        StepEventBus.getEventBus().addTagsToCurrentTest(Lists.newArrayList(TestTag.withName("fast").andType("speed")));
 
         steps.step_one();
         steps.step_two();
@@ -271,13 +272,26 @@ public class WhenRecordingStepExecutionResults {
         assertThat(results.size(), is(2));
         assertThat(results.get(0).getIssueKeys(), hasItems("issue-123", "issue-456"));
         assertThat(results.get(0).getTags(), hasItem(TestTag.withName("iteration-1").andType("iteration")));
+        assertThat(results.get(0).getTags(), hasItem(TestTag.withName("fast").andType("speed")));
         assertThat(results.get(1).getIssueKeys(), hasItems("issue-123","issue-789"));
     }
 
-    class SomePage extends PageObject {
-        SomePage(WebDriver driver) {
-            super(driver);
-        }
+    @Test
+    public void the_listener_should_be_able_to_update_step_names() {
+
+        FlatScenarioSteps steps = stepFactory.getStepLibraryFor(FlatScenarioSteps.class);
+
+        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
+        StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
+        steps.step_one();
+        steps.step_two();
+        StepEventBus.getEventBus().currentStepTitleIs("new_step_name");
+        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testSuiteFinished();
+
+        List<TestOutcome> results = stepListener.getTestOutcomes();
+        assertThat(results.size(), is(1));
+        assertThat(results.get(0).getTestSteps().get(2).getDescription(), is("new_step_name"));
     }
 
     @Test
