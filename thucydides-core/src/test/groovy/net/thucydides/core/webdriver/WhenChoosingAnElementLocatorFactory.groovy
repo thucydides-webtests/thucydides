@@ -7,6 +7,7 @@ import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory
 import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory
 import net.thucydides.core.webdriver.smart.SmartElementLocatorFactory
 import spock.lang.Specification
+import spock.lang.Unroll;
 
 class WhenChoosingAnElementLocatorFactory extends Specification {
 
@@ -23,37 +24,19 @@ class WhenChoosingAnElementLocatorFactory extends Specification {
             locator.class == SmartElementLocatorFactory
     }
     
-    def "should choose the DisplayedElementLocatorFactory factory if requested"() {
+	@Unroll
+    def "should choose the #factoryName factory if requested"() {
         given:
-        	environmentVariables.setProperty("thucydides.locator.factory","DisplayedElementLocatorFactory")
+        	environmentVariables.setProperty("thucydides.locator.factory", factoryName)
             def configuration = new SystemPropertiesConfiguration(environmentVariables);
             def selectorFactory = new ElementLocatorFactorySelector(configuration);
         when:
             def locator = selectorFactory.getLocatorFor(driver)
         then:
-            locator.class == DisplayedElementLocatorFactory
-    }
-
-    def "should choose the AjaxElementLocatorFactory factory if requested"() {
-        given:
-            environmentVariables.setProperty("thucydides.locator.factory","AjaxElementLocatorFactory")
-            def configuration = new SystemPropertiesConfiguration(environmentVariables);
-            def selectorFactory = new ElementLocatorFactorySelector(configuration);
-        when:
-            def locator = selectorFactory.getLocatorFor(driver)
-        then:
-            locator.class == AjaxElementLocatorFactory
-    }
-
-    def "should choose the DefaultElementLocatorFactory factory if requested"() {
-        given:
-            environmentVariables.setProperty("thucydides.locator.factory","DefaultElementLocatorFactory")
-            def configuration = new SystemPropertiesConfiguration(environmentVariables);
-            def selectorFactory = new ElementLocatorFactorySelector(configuration);
-        when:
-            def locator = selectorFactory.getLocatorFor(driver)
-        then:
-            locator.class == DefaultElementLocatorFactory
+            locator.class == locatorFactoryClass
+		where:
+			factoryName << ["DisplayedElementLocatorFactory", "AjaxElementLocatorFactory", "DefaultElementLocatorFactory"]
+			locatorFactoryClass << [DisplayedElementLocatorFactory, AjaxElementLocatorFactory, DefaultElementLocatorFactory]
     }
 
     def "should throw exception with meaningful error if an invalid factory class is specified"() {
