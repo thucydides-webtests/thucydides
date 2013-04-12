@@ -82,8 +82,6 @@ public abstract class PageObject {
     private final Clock webdriverClock;
     private final JavascriptExecutorFacade javascriptExecutorFacade;
 
-    private boolean jquerySupportActivated = false;
-
     protected PageObject(final WebDriver driver, Predicate<PageObject> callback) {
         this.webdriverClock = new SystemClock();
         this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
@@ -185,11 +183,7 @@ public abstract class PageObject {
      * with and without trailing slashes
      */
     public final boolean compatibleWithUrl(final String currentUrl) {
-        if (thereAreNoPatternsDefined()) {
-            return true;
-        } else {
-            return matchUrlAgainstEachPattern(currentUrl);
-        }
+        return thereAreNoPatternsDefined() || matchUrlAgainstEachPattern(currentUrl);
     }
 
     private boolean matchUrlAgainstEachPattern(final String currentUrl) {
@@ -215,7 +209,6 @@ public abstract class PageObject {
     }
 
     public PageObject waitForRenderedElementsToBePresent(final By byElementCriteria) {
-//        waitOnPage().until(ExpectedConditions.visibilityOfElementLocated(byElementCriteria));
         getRenderedView().waitForPresenceOf(byElementCriteria);
         return this;
     }
@@ -239,13 +232,11 @@ public abstract class PageObject {
      */
     public PageObject waitForTextToAppear(final String expectedText) {
         getRenderedView().waitForText(expectedText);
-//        waitOnPage().until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(.,'" + StringEscapeUtils.escapeXml(expectedText) +"')]")));
         return this;
     }
 
     public PageObject waitForTitleToAppear(final String expectedTitle) {
         waitOnPage().until(ExpectedConditions.titleIs(expectedTitle));
-        //getRenderedView().waitForTitle(expectedTitle);
         return this;
     }
 
@@ -526,7 +517,7 @@ public abstract class PageObject {
     }
 
     private String hostComponentFrom(final String protocol, final String host, final int port) {
-        StringBuffer hostComponent = new StringBuffer(protocol);
+        StringBuilder hostComponent = new StringBuilder(protocol);
         hostComponent.append("://");
         hostComponent.append(host);
         if (port > 0) {
@@ -591,7 +582,7 @@ public abstract class PageObject {
         callWhenPageOpensMethods();
     }
 
-    private <T extends PageObject> void checkUrlPatterns() {
+    private void checkUrlPatterns() {
         if (!matchesAnyUrl()) {
             String currentUrl = getDriver().getCurrentUrl();
             if (!compatibleWithUrl(currentUrl)) {
@@ -778,7 +769,6 @@ public abstract class PageObject {
                 jQueryEnabledPage.injectJQuery();
                 jQueryEnabledPage.injectJQueryPlugins();
             }
-            jquerySupportActivated = true;
         }
     }
 

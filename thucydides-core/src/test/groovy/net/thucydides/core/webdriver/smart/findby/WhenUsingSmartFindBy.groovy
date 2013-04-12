@@ -5,27 +5,76 @@ import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
 
 import org.openqa.selenium.NoSuchElementException
-
+import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-
+import spock.lang.Shared
 import spock.lang.Specification
 
 class WhenUsingSmartFindBy extends Specification {
-	
-	def "element can be found by SmartBy with jquery"(){
-		
-		given: "webdriver navigates to the page with the element"
-			def driver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
-			def page = new StaticSitePageWithFacades(driver, 1);
-			page.setWaitForTimeout(750);
-			page.open();
-			
-		when: "element is tried to be found using jquery selector"
+
+    @Shared
+    def driver =  new WebDriverFacade(FirefoxDriver.class, new WebDriverFactory());
+
+    @Shared
+    def page = new StaticSitePageWithFacades(driver, 1)
+
+    def setupSpec() {
+        page.waitForTimeout = 250
+        page.open()
+    }
+
+	def "should be able to find an element using jquery"(){
+
+		when: "we try to find an element using a jquery selector"
 			def element = driver.findElement(SmartBy.jquery("#firstname"))
-			
-		then: "elemnt is found"
-			notThrown(NoSuchElementException)
-		
+
+        then: "we should find the element"
+            element.getAttribute("value")  == "<enter first name>"
 	}
+
+    def "should be able to find a nested element using jquery"(){
+
+        when: "we try to find an element using a jquery selector"
+        def element = driver.findElement(SmartBy.jquery("#firstname"))
+
+        then: "we should find the element"
+        element.getAttribute("value")  == "<enter first name>"
+    }
+
+    def "should be able to find multiple elements using jquery"(){
+
+        when: "we try to find several elements using a jquery selector"
+            def optionList = driver.findElements(SmartBy.jquery("#multiselect option"))
+
+        then: "we should find a list of elements"
+            optionList.size == 5
+    }
+
+
+    def "an element should fail gracefully if the jquery search fails"(){
+
+        when: "we try to find an element using a jquery selector"
+            driver.findElement(SmartBy.jquery("#does_not_exist"))
+
+        then: "element should be found"
+            thrown(NoSuchElementException)
+    }
+
+    def "an element should fail gracefully if the jquery search for multiple elements fails"(){
+
+        when: "we try to find an element using a jquery selector"
+            driver.findElements(SmartBy.jquery("#does_not_exist"))
+
+        then: "element should be found"
+            thrown(NoSuchElementException)
+    }
+
+    def cleanupSpec() {
+        if (driver) {
+            driver.close()
+        }
+    }
+
+
 
 }
