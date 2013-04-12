@@ -1,12 +1,8 @@
 package net.thucydides.core.util
 
-import net.thucydides.core.reports.TestOutcomeLoader
-
 import spock.lang.Specification
 
 class WhenDisplayingTagNamesInAReadableForm extends Specification {
-
-    def loader = new TestOutcomeLoader()
 
     def inflection = Inflector.instance
 

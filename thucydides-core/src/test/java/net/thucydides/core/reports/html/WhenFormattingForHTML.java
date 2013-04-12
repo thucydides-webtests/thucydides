@@ -1,5 +1,7 @@
 package net.thucydides.core.reports.html;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.NumericalFormatter;
 import org.junit.Before;
@@ -170,6 +172,16 @@ public class WhenFormattingForHTML {
         String formattedValue = formatter.htmlCompatible("<ul style='margin-left:5%'><li>Line one</li><li>Line two</li><li>Line three</li></ul>");
 
         assertThat(formattedValue, is("<ul style='margin-left:5%'><li>Line one</li><li>Line two</li><li>Line three</li></ul>"));
+    }
+
+    @Test
+    public void should_escape_table_fields() {
+        Formatter formatter = new Formatter(issueTracking);
+
+        List<String> fields = ImmutableList.of("name","age");
+        String formattedValue = formatter.formatWithFields("Given a person named <name>\nand aged <age>", fields);
+
+        assertThat(formattedValue, is("Given a person named &lt;name&gt;<br>and aged &lt;age&gt;"));
     }
 
     @Test

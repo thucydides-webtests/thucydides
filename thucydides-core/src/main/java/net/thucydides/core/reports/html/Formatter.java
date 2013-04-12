@@ -157,6 +157,14 @@ public class Formatter {
         return formattedValue;
     }
 
+    public String formatWithFields(String textToFormat, List<String> fields) {
+        String textWithEscapedFields = textToFormat;
+        for(String field : fields) {
+            textWithEscapedFields = textWithEscapedFields.replaceAll("<" + field + ">", "&lt;" + field + "&gt;");
+        }
+        return addLineBreaks(textWithEscapedFields);
+    }
+
     private String stripLeadingHashFrom(final String issue) {
         return issue.substring(1);
     }
