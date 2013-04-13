@@ -63,13 +63,9 @@ public class WhenTrackingTestResultsOverTime {
         environmentVariables.setProperty("thucydides.history", customHistoryDir.getAbsolutePath());
         testHistory = new TestHistory("project", environmentVariables);
 
-        TestOutcomes results  = getResults();
-        testHistory.updateData(results);
-        testHistory.updateData(results);
-        String[] historyFiles = new File(customHistoryDir,"project").list();
+        File expectedHistoryDir = new File(customHistoryDir,"project");
 
-        assertThat(historyFiles.length, is(2));
-
+        assertThat(testHistory.getDirectory().getAbsolutePath(), is(expectedHistoryDir.getAbsolutePath()));
     }
 
     @Test
