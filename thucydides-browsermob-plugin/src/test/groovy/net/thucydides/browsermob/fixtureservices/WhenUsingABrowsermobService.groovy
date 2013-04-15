@@ -1,5 +1,6 @@
 package net.thucydides.browsermob.fixtureservices
 
+import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
 import org.openqa.selenium.remote.DesiredCapabilities
 import spock.lang.Specification
@@ -7,6 +8,7 @@ import spock.lang.Specification
 class WhenUsingABrowsermobService extends Specification {
 
     BrowserMobFixtureService service
+    BrowserMobFixtureService service2
 
     def capabilities = Mock(DesiredCapabilities)
     def environmentVariables = new MockEnvironmentVariables()
@@ -82,10 +84,87 @@ class WhenUsingABrowsermobService extends Specification {
             1 * capabilities.setCapability('proxy', _)
     }
 
+    def "initial port used should be the default port"() {
+        given:
+            service = new BrowserMobFixtureService(environmentVariables)
+        when:
+            service.setup()
+        then:
+            service.port == BrowserMobFixtureService.DEFAULT_PORT
+    }
+
+
+    def "default initial port can be overridden using the environment variables"() {
+        given:
+            environmentVariables.setProperty("browser.mob.proxy","7777")
+            service = new BrowserMobFixtureService(environmentVariables)
+        when:
+            service.setup()
+        then:
+            service.port == 7777
+    }
+
+    def "should find the next available port if the initial port is being"() {
+        given:
+            environmentVariables.setProperty("browser.mob.proxy","8888")
+            service = new BrowserMobFixtureService(environmentVariables)
+            service.setup()
+
+        and:
+            service2 = new BrowserMobFixtureService(environmentVariables)
+        when:
+            service2.setup()
+        then:
+            service2.port != 8888
+    }
+
+    class BrowserMobFixtureServiceWithNoPorts extends BrowserMobFixtureService {
+
+        BrowserMobFixtureServiceWithNoPorts(EnvironmentVariables environmentVariables) {
+            super(environmentVariables)
+        }
+
+        @Override
+        protected boolean isAvailable(int portNumber) { false }
+
+
+    }
+
+    def "should fail elegantly if no ports are available"() {
+        given:
+            service = new BrowserMobFixtureServiceWithNoPorts(environmentVariables)
+        when:
+            service.setup()
+        then:
+            thrown(IllegalStateException)
+    }
+
+
+    Vector<BrowserMobFixtureService> services = []
+
+    def "should cater for several browser mob services in different threads"() {
+        given:
+            def threads = Thread.start {
+                for( i in 1..10 ) {
+                    def service =  new BrowserMobFixtureService(environmentVariables)
+                    service.setup()
+                    services << service
+                }
+            }
+        when:
+            threads.join()
+        then:
+            noExceptionThrown()
+    }
+
     def cleanup() {
         if (service) {
             service.shutdown()
         }
+        if (service2) {
+            service2.shutdown()
+        }
+        services.each { it.shutdown() }
     }
 
 }

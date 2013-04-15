@@ -29,7 +29,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -352,7 +351,6 @@ public class WhenRunningADataDrivenTestScenario {
 
     }
 
-    @Ignore("Come back to this one")
     @Test
     public void when_a_step_fails_with_an_error_for_a_row_the_other_rows_should_be_executed() throws Throwable  {
 
@@ -370,7 +368,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
         assertThat(dataDrivenSteps.size(), is(3));
-        assertThat(dataDrivenSteps.get(1).getResult(), is(TestResult.FAILURE));
+        assertThat(dataDrivenSteps.get(1).getResult(), is(TestResult.ERROR));
         assertThat(dataDrivenSteps.get(2).getResult(), is(TestResult.SUCCESS));
     }
 

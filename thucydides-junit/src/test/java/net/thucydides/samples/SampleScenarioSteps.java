@@ -194,9 +194,8 @@ public class SampleScenarioSteps extends ScenarioSteps {
         assertThat(Integer.parseInt(age), is(lessThan(35)));
     }
 
-
+    @Step
     public void data_driven_test_step_that_breaks() {
-        LOGGER.info("Testing with data name=" +name +", age=" + age);
         if (Integer.parseInt(age) > 35) {
             throw new ElementNotVisibleException("A webdriver issue");
         }

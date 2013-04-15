@@ -12,16 +12,24 @@ import org.browsermob.proxy.ProxyServer;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.UnknownHostException;
 import java.util.List;
 
 public class BrowserMobFixtureService implements FixtureService {
 
-    private static int DEFAULT_PORT = 5555;
+    public static final int DEFAULT_PORT = 5555;
+
+    private static final int PORT_RANGE = 1000;
+    private static final int MIN_AVAILABLE_PORT = 49152;
+    private static final int MAX_AVAILABLE_PORT = MIN_AVAILABLE_PORT + PORT_RANGE;
 
     private final EnvironmentVariables environmentVariables;
 
-    private ProxyServer proxyServer;
+    private int port = 0;
+
+    private ThreadLocal<ProxyServer> threadLocalproxyServer = new  ThreadLocal<ProxyServer>();
 
     public BrowserMobFixtureService() {
         this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
@@ -34,34 +42,39 @@ public class BrowserMobFixtureService implements FixtureService {
     @Override
     public void setup() throws Exception {
         if (useBrowserMobProxyManager()) {
-            initializeProxy(getBrowserMobProxyPort());
+            initializeProxy(getAvailablePort());
         }
     }
 
+    protected ProxyServer getProxyServer() {
+        return threadLocalproxyServer.get();
+    }
+
     private void initializeProxy(int port) throws Exception {
-        proxyServer = new ProxyServer(port);
-        proxyServer.start();
+        setPort(port);
+        threadLocalproxyServer.set(new ProxyServer(port));
+        threadLocalproxyServer.get().start();
     }
 
     @Override
     public void shutdown() throws Exception {
-        if (proxyServer != null) {
-            proxyServer.stop();
-            proxyServer = null;
+        if (threadLocalproxyServer.get() != null) {
+            threadLocalproxyServer.get().stop();
+            threadLocalproxyServer.remove();
         }
     }
 
     @Override
     public void addCapabilitiesTo(DesiredCapabilities capabilities) {
         try {
-            capabilities.setCapability(CapabilityType.PROXY, proxyServer.seleniumProxy());
+            capabilities.setCapability(CapabilityType.PROXY, threadLocalproxyServer.get().seleniumProxy());
         } catch (UnknownHostException e) {
             throw new IllegalArgumentException(e);
         }
     }
 
     private boolean useBrowserMobProxyManager() {
-        String browserMobFilter = environmentVariables.getProperty(BrowserMobSystemProperties.BROWSER_MOB_FILTER.getName());
+        String browserMobFilter = environmentVariables.getProperty(BrowserMobSystemProperties.BROWSER_MOB_FILTER);
         return (StringUtils.isEmpty(browserMobFilter) || shouldActivateBrowserMobWithDriver(browserMobFilter, environmentVariables));
     }
 
@@ -71,7 +84,49 @@ public class BrowserMobFixtureService implements FixtureService {
         return StringUtils.isEmpty(currentDriver) || allowedBrowsers.contains(currentDriver.toLowerCase());
     }
 
-    public int getBrowserMobProxyPort() {
-        return environmentVariables.getPropertyAsInteger(BrowserMobSystemProperties.BROWSER_MOB_PROXY, DEFAULT_PORT);
+    private void setPort(int port) {
+        this.port = port;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    protected int getAvailablePort() {
+        int defaultPort = environmentVariables.getPropertyAsInteger(BrowserMobSystemProperties.BROWSER_MOB_PROXY, DEFAULT_PORT);
+        if (isAvailable(defaultPort)) {
+            return defaultPort;
+        } else {
+            return nextAvailablePort(MIN_AVAILABLE_PORT);
+        }
+    }
+
+    private int nextAvailablePort(int portNumber) {
+        if (portNumber > MAX_AVAILABLE_PORT) {
+            throw new IllegalStateException("No available ports found");
+        }
+        if (isAvailable(portNumber)) {
+            return portNumber;
+        } else {
+            return nextAvailablePort(portNumber + 1);
+        }
+    }
+
+    protected boolean isAvailable(int portNumber) {
+        ServerSocket socket = null;
+        boolean available = false;
+        try {
+            socket = new ServerSocket(portNumber);
+            available = true;
+        } catch (IOException e) {
+            available = false;
+        } finally {
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException ignored) {}
+            }
+        }
+        return available;
     }
 }

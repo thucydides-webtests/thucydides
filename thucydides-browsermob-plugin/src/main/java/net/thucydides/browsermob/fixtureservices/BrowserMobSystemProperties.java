@@ -13,5 +13,8 @@ public enum BrowserMobSystemProperties {
      */
     BROWSER_MOB_PROXY;
 
-    public String getName() {return toString().toLowerCase().replaceAll("_",".");}
+    @Override
+    public String toString() {
+        {return super.toString().toLowerCase().replaceAll("_",".");}
+    }
 }
