@@ -1,10 +1,12 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.reflection.MethodFinder;
 import net.thucydides.junit.annotations.Qualifier;
 import net.thucydides.junit.internals.MethodInvoker;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.List;
 
 /**
  * When running data-driven tests, each set of test data needs a way to distinguish it from the others.
@@ -33,7 +35,7 @@ public class QualifierFinder {
     }
 
     private Method getQualifiedMethod() {
-        Method[] methods = testCase.getClass().getDeclaredMethods();
+        List<Method> methods = MethodFinder.inClass(testCase.getClass()).getAllMethods();
         for (Method each : methods) {
             if (each.getAnnotation(Qualifier.class) != null) {
                 checkModifiersFor(each);

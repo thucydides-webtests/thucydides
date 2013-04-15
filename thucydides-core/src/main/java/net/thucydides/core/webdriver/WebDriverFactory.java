@@ -3,10 +3,10 @@ package net.thucydides.core.webdriver;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.browsermob.fixtureservices.FixtureProviderService;
+import net.thucydides.browsermob.fixtureservices.FixtureService;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.PageObject;
-import net.thucydides.core.pages.WebElementFacade;
-import net.thucydides.core.pages.WebElementFacadeImpl;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
@@ -14,11 +14,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -30,13 +30,10 @@ import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -70,6 +67,7 @@ public class WebDriverFactory {
 
     private final EnvironmentVariables environmentVariables;
     private final FirefoxProfileEnhancer firefoxProfileEnhancer;
+    private final FixtureProviderService fixtureProviderService;
 
     private final Integer EXTRA_TIME_TO_TAKE_SCREENSHOTS = 180;
 
@@ -91,10 +89,19 @@ public class WebDriverFactory {
     public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
                             EnvironmentVariables environmentVariables,
                             FirefoxProfileEnhancer firefoxProfileEnhancer) {
+        this(webdriverInstanceFactory, environmentVariables, firefoxProfileEnhancer, Injectors.getInjector().getInstance(FixtureProviderService.class));
+    }
+
+    public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
+                            EnvironmentVariables environmentVariables,
+                            FirefoxProfileEnhancer firefoxProfileEnhancer,
+                            FixtureProviderService fixtureProviderService) {
         this.webdriverInstanceFactory = webdriverInstanceFactory;
         this.environmentVariables = environmentVariables;
         this.firefoxProfileEnhancer = firefoxProfileEnhancer;
+        this.fixtureProviderService = fixtureProviderService;
     }
+
 
     protected ProfilesIni getAllProfiles() {
         if (allProfiles == null) {
@@ -146,6 +153,8 @@ public class WebDriverFactory {
                 driver = chromeDriver();
             } else if (isASafariDriver(driverClass)) {
                 driver = safariDriver();
+            } else if (isAnInternetExplorerDriver(driverClass)) {
+                driver = internetExplorerDriver();
             } else {
                 driver = newDriverInstanceFrom(driverClass);
             }
@@ -208,7 +217,7 @@ public class WebDriverFactory {
         return driver;
     }
 
-    private DesiredCapabilities findSaucelabsCapabilities() {
+    private Capabilities findSaucelabsCapabilities() {
 
         String driver = ThucydidesSystemProperty.DRIVER.from(environmentVariables);
         DesiredCapabilities capabilities = capabilitiesForDriver(driver);
@@ -280,7 +289,7 @@ public class WebDriverFactory {
         return Platform.valueOf(platformValue.toUpperCase());
     }
 
-    private DesiredCapabilities buildRemoteCapabilities() {
+    private Capabilities buildRemoteCapabilities() {
         String driver = ThucydidesSystemProperty.REMOTE_DRIVER.from(environmentVariables);
         if (driver == null) {
             driver = ThucydidesSystemProperty.DRIVER.from(environmentVariables);
@@ -299,9 +308,9 @@ public class WebDriverFactory {
         }
 
         if (driverType == SupportedWebDriver.REMOTE) {
-            return remoteCapabilities();
+            return (DesiredCapabilities) enhancedCapabilities(remoteCapabilities());
         } else {
-            return realBrowserCapabilities(driverType);
+            return (DesiredCapabilities) enhancedCapabilities(realBrowserCapabilities(driverType));
         }
     }
 
@@ -344,7 +353,6 @@ public class WebDriverFactory {
                 capabilities = new DesiredCapabilities();
                 capabilities.setJavascriptEnabled(true);
         }
-        addExtraCatabilitiesTo(capabilities);
         return capabilities;
     }
 
@@ -355,45 +363,71 @@ public class WebDriverFactory {
 
         Boolean recordScreenshotsInSaucelabs
               = environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.SAUCELABS_RECORD_SCREENSHOTS, false);
-        capabilities.setCapability("record-screenshots",recordScreenshotsInSaucelabs);
+        capabilities.setCapability("record-screenshots", recordScreenshotsInSaucelabs);
 
-        addExtraCatabilitiesTo(capabilities);
         return capabilities;
     }
 
-    private void addExtraCatabilitiesTo(DesiredCapabilities capabilities) {
+    private Capabilities addExtraCatabilitiesTo(DesiredCapabilities capabilities) {
         CapabilitySet capabilitySet = new CapabilitySet(environmentVariables);
         Map<String, Object> extraCapabilities = capabilitySet.getCapabilities();
         for(String capabilityName : extraCapabilities.keySet()) {
             capabilities.setCapability(capabilityName, extraCapabilities.get(capabilityName));
         }
+        addCapabilitiesFromFixtureServicesTo(capabilities);
+        return capabilities;
+    }
+
+    private void addCapabilitiesFromFixtureServicesTo(DesiredCapabilities capabilities) {
+        for(FixtureService fixtureService : fixtureProviderService.getFixtureServices()) {
+            fixtureService.addCapabilitiesTo(capabilities);
+        }
     }
 
     private WebDriver htmlunitDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        DesiredCapabilities caps = DesiredCapabilities.firefox();
-        caps.setJavascriptEnabled(true);
-        return webdriverInstanceFactory.newHtmlUnitDriver(caps);
+        DesiredCapabilities capabilities = DesiredCapabilities.htmlUnit();
+        capabilities.setJavascriptEnabled(true);
+        return webdriverInstanceFactory.newHtmlUnitDriver(enhancedCapabilities(capabilities));
     }
 
     private WebDriver firefoxDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         FirefoxProfile profile = buildFirefoxProfile();
-        return webdriverInstanceFactory.newFirefoxDriver(profile);
+        DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+        capabilities.setCapability(FirefoxDriver.PROFILE, profile);
+        return webdriverInstanceFactory.newFirefoxDriver(enhancedCapabilities(capabilities));
     }
 
     private WebDriver chromeDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        ChromeOptions options = new ChromeOptions();
         String chromeSwitches = environmentVariables.getProperty(ThucydidesSystemProperty.CHROME_SWITCHES);
+
+        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+        capabilities.setCapability(ChromeOptions.CAPABILITY, optionsFromSwitches(chromeSwitches));
+        capabilities.setCapability("chrome.switches", chromeSwitches);
+
+        return webdriverInstanceFactory.newChromeDriver(enhancedCapabilities(capabilities));
+
+    }
+
+    private ChromeOptions optionsFromSwitches(String chromeSwitches) {
+        ChromeOptions options = new ChromeOptions();
         if (StringUtils.isNotEmpty(chromeSwitches)) {
             List<String> arguments =  Lists.newArrayList(Splitter.on(",").trimResults().split(chromeSwitches));
             options.addArguments(arguments);
         }
-        return webdriverInstanceFactory.newChromeDriver(options);
-
+        return options;
     }
 
     private WebDriver safariDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        return webdriverInstanceFactory.newSafariDriver();
+        return webdriverInstanceFactory.newSafariDriver(enhancedCapabilities(DesiredCapabilities.safari()));
 
+    }
+
+    private WebDriver internetExplorerDriver() {
+        return webdriverInstanceFactory.newInternetExplorerDriver(enhancedCapabilities(DesiredCapabilities.internetExplorer()));
+    }
+
+    private Capabilities enhancedCapabilities(DesiredCapabilities capabilities) {
+        return addExtraCatabilitiesTo(capabilities);
     }
 
     private Dimension getRequestedBrowserSize() {
@@ -403,14 +437,14 @@ public class WebDriverFactory {
     }
 
     private void redimensionBrowser(final WebDriver driver) {
-        if (supportsScreenResizing(driver) && broswerDimensionsSpecified()) {
+        if (supportsScreenResizing(driver) && browserDimensionsSpecified()) {
             resizeBrowserTo(driver,
                     getRequestedBrowserSize().height,
                     getRequestedBrowserSize().width);
         }
     }
 
-    private boolean broswerDimensionsSpecified() {
+    private boolean browserDimensionsSpecified() {
         String snapshotWidth = environmentVariables.getProperty(ThucydidesSystemProperty.SNAPSHOT_WIDTH);
         String snapshotHeight = environmentVariables.getProperty(ThucydidesSystemProperty.SNAPSHOT_HEIGHT);
         return (snapshotWidth != null) || (snapshotHeight != null);
@@ -457,6 +491,10 @@ public class WebDriverFactory {
         return (SafariDriver.class.isAssignableFrom(driverClass));
     }
 
+    private boolean isAnInternetExplorerDriver(Class<? extends WebDriver> driverClass) {
+        return (InternetExplorerDriver.class.isAssignableFrom(driverClass));
+    }
+
     private boolean usesFirefox(WebDriver driver) {
         return (FirefoxDriver.class.isAssignableFrom(getDriverClass(driver)));
     }
@@ -483,10 +521,6 @@ public class WebDriverFactory {
         return (HtmlUnitDriver.class.isAssignableFrom(driverClass));
     }
 
-    private boolean isAnInternetExplorerDriver(Class<? extends WebDriver> driverClass) {
-        return (InternetExplorerDriver.class.isAssignableFrom(driverClass));
-    }
-
     protected FirefoxProfile createNewFirefoxProfile() {
         FirefoxProfile profile = new FirefoxProfile();
         profile.setAlwaysLoadNoFocusLib(true);
@@ -499,8 +533,14 @@ public class WebDriverFactory {
     }
 
     protected FirefoxProfile buildFirefoxProfile() {
-        FirefoxProfile profile;
         String profileName = environmentVariables.getProperty("webdriver.firefox.profile");
+        DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
+        if (StringUtils.isNotEmpty(profileName)) {
+            firefoxCapabilities.setCapability(FirefoxDriver.PROFILE,profileName);
+        }
+
+
+        FirefoxProfile profile;
         if (profileName == null) {
             profile = createNewFirefoxProfile();
         } else {
@@ -565,14 +605,11 @@ public class WebDriverFactory {
     /**
      * Initialize a page object's fields using the specified WebDriver instance.
      */
-    public void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver) {
-    	Injectors.getInjector().getInstance(ElementProxyCreator.class).proxyElements(pageObject, driver);
-    }
     public void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver, int timeoutInSeconds) {
     	Injectors.getInjector().getInstance(ElementProxyCreator.class).proxyElements(pageObject, driver, timeoutInSeconds);
 
     }
 
-    
+
 
 }

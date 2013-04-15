@@ -50,10 +50,10 @@ class WhenConfiguringTheWebdriverInstance extends Specification {
         WebDriver newFirefoxDriver(FirefoxProfile profile) { return firefox }
 
         @Override
-        WebDriver newChromeDriver(ChromeOptions options) { return chrome }
+        WebDriver newChromeDriver(Capabilities capabilities) { return chrome }
 
         @Override
-        WebDriver newHtmlUnitDriver(DesiredCapabilities caps) { return htmlunit }
+        WebDriver newHtmlUnitDriver(Capabilities caps) { return htmlunit }
 
         @Override
         WebDriver newRemoteDriver(URL remoteUrl, Capabilities capabilities) {
@@ -62,9 +62,13 @@ class WhenConfiguringTheWebdriverInstance extends Specification {
         }
 
         @Override
+        WebDriver newInternetExplorerDriver(Capabilities capabilities) {
+            return iexplore;
+        }
+
+        @Override
         WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass) {
             switch (webdriverClass) {
-                case InternetExplorerDriver : return iexplore
                 case OperaDriver : return opera
             }
         }

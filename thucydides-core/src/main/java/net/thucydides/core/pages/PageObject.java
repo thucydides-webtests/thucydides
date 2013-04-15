@@ -8,6 +8,7 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.components.Dropdown;
 import net.thucydides.core.pages.components.FileToUpload;
 import net.thucydides.core.pages.jquery.JQueryEnabledPage;
+import net.thucydides.core.reflection.MethodFinder;
 import net.thucydides.core.scheduling.FluentWaitWithRefresh;
 import net.thucydides.core.scheduling.NormalFluentWait;
 import net.thucydides.core.scheduling.ThucydidesFluentWait;
@@ -623,7 +624,7 @@ public abstract class PageObject {
     }
 
     private List<Method> methodsAnnotatedWithWhenPageOpens() {
-        Method[] methods = this.getClass().getDeclaredMethods();
+        List<Method> methods = MethodFinder.inClass(this.getClass()).getAllMethods();
         List<Method> annotatedMethods = new ArrayList<Method>();
         for (Method method : methods) {
             if (method.getAnnotation(WhenPageOpens.class) != null) {

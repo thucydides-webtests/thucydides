@@ -4,6 +4,7 @@ import net.thucydides.core.pages.integration.StaticSitePageWithFacades
 import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
 import org.openqa.selenium.NoSuchElementException
+import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import spock.lang.Shared
@@ -12,13 +13,12 @@ import spock.lang.Specification
 class WhenUsingSmartFindBy extends Specification {
 
     @Shared
-    def driver =  new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
+    def driver =  new WebDriverFacade(ChromeDriver.class, new WebDriverFactory());
 
     @Shared
     def page = new StaticSitePageWithFacades(driver, 1)
 
     def setupSpec() {
-        page.waitForTimeout = 250
         page.open()
     }
 

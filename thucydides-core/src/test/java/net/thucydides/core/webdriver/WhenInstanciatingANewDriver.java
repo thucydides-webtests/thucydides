@@ -11,6 +11,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -50,15 +51,15 @@ public class WhenInstanciatingANewDriver {
     public void createATestableDriverFactory() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        when(webdriverInstanceFactory.newChromeDriver(any(ChromeOptions.class))).thenReturn(chromeDriver);
-        when(webdriverInstanceFactory.newSafariDriver()).thenReturn(safariDriver);
+        when(webdriverInstanceFactory.newChromeDriver(any(Capabilities.class))).thenReturn(chromeDriver);
+        when(webdriverInstanceFactory.newSafariDriver(any(Capabilities.class))).thenReturn(safariDriver);
 
         environmentVariables = new MockEnvironmentVariables();
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
     }
 
     @Captor
-    ArgumentCaptor<ChromeOptions> chromeOptionsArgument;
+    ArgumentCaptor<Capabilities> chromeOptionsArgument;
 
     @Test
     public void should_pass_chrome_switches_when_creating_a_chrome_driver() throws Exception {
@@ -73,11 +74,11 @@ public class WhenInstanciatingANewDriver {
     @Test
     public void should_create_safari_driver_instance() throws Exception {
         webDriverFactory.newInstanceOf(SupportedWebDriver.SAFARI);
-        verify(webdriverInstanceFactory).newSafariDriver();
+        verify(webdriverInstanceFactory).newSafariDriver(any(Capabilities.class));
     }
 
-    private List<String> argumentsFrom(ArgumentCaptor<ChromeOptions> chromeOptionsArgument) throws IOException, JSONException {
-        JSONArray argumentsPassed = (JSONArray) chromeOptionsArgument.getValue().toJson().get("args");
+    private List<String> argumentsFrom(ArgumentCaptor<Capabilities> chromeOptionsArgument) throws IOException, JSONException {
+        JSONArray argumentsPassed = ((ChromeOptions)chromeOptionsArgument.getValue().getCapability("chromeOptions")).toJson().getJSONArray("args");
         List<String> arguments = Lists.newArrayList();
         for(int i = 0; i < argumentsPassed.length(); i++) {
             arguments.add((String)argumentsPassed.get(i));

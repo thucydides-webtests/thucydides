@@ -3,15 +3,12 @@ package net.thucydides.core.webdriver;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 /**
@@ -30,19 +27,23 @@ public class WebdriverInstanceFactory {
         return new RemoteWebDriver(remoteUrl, capabilities);
     }
 
-    public WebDriver newFirefoxDriver(FirefoxProfile profile) {
-        return new FirefoxDriver(profile);
+    public WebDriver newFirefoxDriver(Capabilities capabilities) {
+        return new FirefoxDriver(capabilities);
     }
 
-    public WebDriver newChromeDriver(ChromeOptions options) {
-        return new ChromeDriver(options);
+    public WebDriver newChromeDriver(Capabilities capabilities) {
+        return new ChromeDriver(capabilities);
     }
 
-    public WebDriver newSafariDriver() {
-        return new SafariDriver();
+    public WebDriver newSafariDriver(Capabilities capabilities) {
+        return new SafariDriver(capabilities);
     }
 
-    public WebDriver newHtmlUnitDriver(DesiredCapabilities caps) {
-        return new HtmlUnitDriver(caps);
+    public WebDriver newInternetExplorerDriver(Capabilities capabilities) {
+        return new InternetExplorerDriver(capabilities);
+    }
+
+    public WebDriver newHtmlUnitDriver(Capabilities capabilities) {
+        return new HtmlUnitDriver(capabilities);
     }
 }

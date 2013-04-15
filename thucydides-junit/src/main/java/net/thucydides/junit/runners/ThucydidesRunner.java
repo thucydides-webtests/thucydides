@@ -225,6 +225,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     public void run(final RunNotifier notifier) {
         if (!skipThisTest()) {
             try {
+                setupFixtureServices();
                 initializeDriversAndListeners(notifier);
                 super.run(notifier);
             } finally {
@@ -232,8 +233,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
                 generateReports();
                 dropListeners(notifier);
                 closeDrivers();
+                shutdownFixtureServices();
             }
         }
+    }
+
+    private void setupFixtureServices() {
+    }
+
+    private void shutdownFixtureServices() {
     }
 
     private void notifyTestSuiteFinished() {

@@ -6,6 +6,8 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.SystemVariableBasedBatchManager;
+import net.thucydides.browsermob.fixtureservices.ClasspathFixtureProviderService;
+import net.thucydides.browsermob.fixtureservices.FixtureProviderService;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.logging.ThucydidesLogging;
@@ -42,7 +44,6 @@ import net.thucydides.core.util.SystemEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.ElementProxyCreator;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
-import net.thucydides.core.webdriver.ThucydidesElementProxyCreator;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.core.webdriver.smart.SmartElementProxyCreator;
@@ -81,6 +82,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
         bind(RequirementsProviderService.class).to(ClasspathRequirementsProviderService.class).in(Singleton.class);
         bind(DependencyInjectorService.class).to(ClasspathDependencyInjectorService.class).in(Singleton.class);
+        bind(FixtureProviderService.class).to(ClasspathFixtureProviderService.class).in(Singleton.class);
 
         bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class).in(Singleton.class);
         bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class).in(Singleton.class);
