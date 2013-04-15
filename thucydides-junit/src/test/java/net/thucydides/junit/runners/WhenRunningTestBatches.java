@@ -15,6 +15,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -48,7 +49,7 @@ public class WhenRunningTestBatches extends AbstractTestStepRunnerTest {
 
         webdriverInstanceFactory = new WebdriverInstanceFactory() {
             @Override
-            public WebDriver newFirefoxDriver(FirefoxProfile profile) {
+            public WebDriver newFirefoxDriver(Capabilities profile) {
                 return firefoxDriver;
             }
 

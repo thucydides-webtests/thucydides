@@ -1,37 +1,16 @@
 package net.thucydides.core.webdriver
 
+import com.opera.core.systems.OperaDriver
 import net.thucydides.core.util.MockEnvironmentVariables
-import org.junit.Ignore
-import org.junit.Test
+import org.openqa.selenium.Capabilities
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxProfile
-import org.openqa.selenium.ie.InternetExplorerDriver
-import spock.lang.Specification
-
-import java.lang.reflect.InvocationTargetException
-
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.instanceOf
-import static org.mockito.Matchers.any
-import static org.mockito.Matchers.eq
-import static org.mockito.Mockito.verify
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.openqa.selenium.remote.DesiredCapabilities
+import org.openqa.selenium.ie.InternetExplorerDriver
 import org.openqa.selenium.remote.RemoteWebDriver
-import org.openqa.selenium.Capabilities
-import com.opera.core.systems.OperaDriver
-
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.allOf
-import static org.hamcrest.Matchers.containsString
-import static org.hamcrest.Matchers.containsString
-import net.thucydides.core.webdriver.WebdriverInstanceFactory
-import net.thucydides.core.webdriver.WebDriverFactory
-import net.thucydides.core.webdriver.SupportedWebDriver
-import net.thucydides.core.webdriver.UnsupportedDriverException
+import spock.lang.Specification
 
 class WhenConfiguringTheWebdriverInstance extends Specification {
 
@@ -47,7 +26,7 @@ class WhenConfiguringTheWebdriverInstance extends Specification {
 
     def webdriverInstanceFactory = new WebdriverInstanceFactory() {
         @Override
-        WebDriver newFirefoxDriver(FirefoxProfile profile) { return firefox }
+        WebDriver newFirefoxDriver(Capabilities capabilities) { return firefox }
 
         @Override
         WebDriver newChromeDriver(Capabilities capabilities) { return chrome }

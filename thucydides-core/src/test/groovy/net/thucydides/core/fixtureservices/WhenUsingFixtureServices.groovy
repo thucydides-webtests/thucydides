@@ -1,5 +1,9 @@
 package net.thucydides.browsermob.fixtureservices
 
+import net.thucydides.core.fixtureservices.ClasspathFixtureProviderService
+import net.thucydides.core.fixtureservices.FixtureProviderService
+import net.thucydides.core.fixtureservices.FixtureService
+import net.thucydides.core.fixtureservices.SampleFixtureService
 import net.thucydides.core.util.MockEnvironmentVariables
 import net.thucydides.core.webdriver.SupportedWebDriver
 import net.thucydides.core.webdriver.WebDriverFactory
@@ -8,12 +12,6 @@ import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer
 import org.openqa.selenium.WebDriver
 import spock.lang.Specification
 
-/**
- * A description goes here.
- * User: john
- * Date: 15/04/13
- * Time: 12:59 PM
- */
 class WhenUsingFixtureServices extends Specification {
     def "should load fixture services from the classpath"() {
         given:

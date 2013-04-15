@@ -1,6 +1,5 @@
 package net.thucydides.core.fixtureservices;
 
-import net.thucydides.browsermob.fixtureservices.FixtureService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class SampleFixtureService implements FixtureService {

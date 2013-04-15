@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -54,7 +55,7 @@ public class WhenUsingAWebDriverProxy {
     }
 
     private void initWendriverManager() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        when(webdriverInstanceFactory.newFirefoxDriver(any(FirefoxProfile.class))).thenReturn(firefoxDriver);
+        when(webdriverInstanceFactory.newFirefoxDriver(any(Capabilities.class))).thenReturn(firefoxDriver);
 
         MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
         factory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
