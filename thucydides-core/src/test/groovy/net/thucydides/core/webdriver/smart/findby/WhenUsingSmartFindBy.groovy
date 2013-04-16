@@ -3,7 +3,9 @@ package net.thucydides.core.webdriver.smart.findby
 import net.thucydides.core.pages.integration.StaticSitePageWithFacades
 import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
+import org.openqa.selenium.ElementNotVisibleException
 import org.openqa.selenium.NoSuchElementException
+import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.firefox.FirefoxDriver
 import spock.lang.Shared
 import spock.lang.Specification
@@ -55,7 +57,7 @@ class WhenUsingSmartFindBy extends Specification {
             driver.findElement(By.jquery("#does_not_exist"))
 
         then: "element should be found"
-            thrown(NoSuchElementException)
+            thrown(WebDriverException)
     }
 
     def "an element should fail gracefully if the jquery search for multiple elements fails"(){
@@ -64,7 +66,7 @@ class WhenUsingSmartFindBy extends Specification {
             driver.findElements(By.jquery("#does_not_exist"))
 
         then: "element should be found"
-            thrown(NoSuchElementException)
+            thrown(WebDriverException)
     }
 
     def cleanupSpec() {
