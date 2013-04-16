@@ -13,7 +13,7 @@ import spock.lang.Specification
 class WhenUsingSmartFindBy extends Specification {
 
     @Shared
-    def driver =  new WebDriverFacade(ChromeDriver.class, new WebDriverFactory());
+    def driver =  new WebDriverFacade(HtmlUnitDriver, new WebDriverFactory());
 
     @Shared
     def page = new StaticSitePageWithFacades(driver, 1)
