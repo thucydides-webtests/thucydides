@@ -389,7 +389,14 @@ public enum ThucydidesSystemProperty {
      * If set to true, a copy of the original screenshot will be kept when screenshots are scaled for the reports.
      * False by default to conserve disk space.
      */
-    THUCYDIDES_KEEP_UNSCALED_SCREENSHOTS("thucydides.keep.unscaled.screenshots");
+    THUCYDIDES_KEEP_UNSCALED_SCREENSHOTS("thucydides.keep.unscaled.screenshots"),
+
+    /**
+     * If provided, only classes and/or methods with tags in this list will be executed. The parameter expects
+     * a tag or comma-separated list of tags in the shortened form.
+     * For example, -Dtags="iteration:I1" or -Dtags="color:red,flavor:strawberry"
+     */
+    TAGS("tags");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

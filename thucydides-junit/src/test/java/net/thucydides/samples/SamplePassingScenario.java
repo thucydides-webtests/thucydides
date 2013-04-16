@@ -4,7 +4,7 @@ import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.annotations.WithTag;
-import net.thucydides.core.annotations.WithTags;
+import net.thucydides.core.annotations.WithTagValuesOf;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
+@WithTag("module:M1")
 public class SamplePassingScenario {
     
     @Managed
@@ -24,7 +25,7 @@ public class SamplePassingScenario {
     public SampleScenarioSteps steps;
 
     @Test
-    @WithTag(name = "simple scenario", type = "story")
+    @WithTagValuesOf({"story:simple scenario", "iteration:I1"})
     public void happy_day_scenario() throws Throwable {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
@@ -33,7 +34,7 @@ public class SamplePassingScenario {
     }
 
     @Test
-    @WithTag(name = "simple scenario", type = "story")
+    @WithTagValuesOf({"story:simple scenario", "iteration:I1"})
     public void edge_case_1() {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();
@@ -41,7 +42,7 @@ public class SamplePassingScenario {
     }
 
     @Test
-    @WithTag(name = "simple scenario", type = "story")
+    @WithTagValuesOf({"story:simple scenario", "iteration:I2"})
     public void edge_case_2() {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();

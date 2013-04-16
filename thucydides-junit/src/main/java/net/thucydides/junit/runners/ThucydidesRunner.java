@@ -1,6 +1,5 @@
 package net.thucydides.junit.runners;
 
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -12,7 +11,6 @@ import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.BatchStrategy;
 import net.thucydides.core.batches.UnsupportedBatchStrategyException;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.guice.ThucydidesModule;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -21,6 +19,7 @@ import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepData;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
+import net.thucydides.core.tags.TagScanner;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SupportedWebDriver;
@@ -76,6 +75,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Retrieve the runner getConfiguration().from an external source.
      */
     private Configuration configuration;
+    private TagScanner tagScanner;
     private boolean uniqueSession;
 
     private BatchManager batchManager;
@@ -137,6 +137,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this.webdriverManager = webDriverManager;
         this.configuration = configuration;
         this.requestedDriver = getSpecifiedDriver(klass);
+        this.tagScanner = new TagScanner(configuration.getEnvironmentVariables());
 
         if (TestCaseAnnotations.supportsWebTests(klass)) {
             checkRequestedDriverType();
@@ -264,6 +265,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private boolean skipThisTest() {
+        return testNotInCurrentBatch();
+    }
+
+    private boolean testNotInCurrentBatch() {
         return (batchManager != null) && (!batchManager.shouldExecuteThisTest(getDescription().testCount()));
     }
 
@@ -366,6 +371,9 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 
+        if (shouldSkipTest(method)) {
+            return;
+        }
         initializeTestSession();
         resetBroswerFromTimeToTime();
         if (isPending(method)) {
@@ -375,6 +383,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             processTestMethodAnnotationsFor(method);
             super.runChild(method, notifier);
         }
+    }
+
+    private boolean shouldSkipTest(FrameworkMethod method) {
+        return !tagScanner.shouldRunMethod(getTestClass().getJavaClass(), method.getName());
     }
 
     private void markAsPending(FrameworkMethod method) {

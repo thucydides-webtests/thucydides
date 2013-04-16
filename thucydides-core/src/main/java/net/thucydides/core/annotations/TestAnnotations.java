@@ -5,6 +5,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.html.Formatter;
+import net.thucydides.core.tags.TagConverters;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
@@ -14,6 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
+import static net.thucydides.core.tags.TagConverters.fromStringValuesToTestTags;
+import static net.thucydides.core.tags.TagConverters.toTestTags;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
 
 /**
@@ -226,6 +229,8 @@ public class TestAnnotations {
         }
     }
 
+
+
     private List<TestTag> getTagsFor(String methodName) {
         List<TestTag> tags = new ArrayList<TestTag>();
 
@@ -244,23 +249,5 @@ public class TestAnnotations {
         } else {
             return TestTag.withValue(withTag.value());
         }
-    }
-
-    private Converter<Object, TestTag> toTestTags() {
-        return new Converter<Object, TestTag>() {
-
-            public TestTag convert(Object tag) {
-                return convertToTestTag((WithTag) tag);
-            }
-        };
-    }
-
-    private Converter<Object, TestTag> fromStringValuesToTestTags() {
-        return new Converter<Object, TestTag>() {
-
-            public TestTag convert(Object tagValue) {
-                return  TestTag.withValue((String) tagValue);
-            }
-        };
     }
 }

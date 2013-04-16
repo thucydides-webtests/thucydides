@@ -13,6 +13,7 @@ import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import spock.lang.Specification
 import net.thucydides.samples.*
+import spock.lang.Unroll
 
 import static net.thucydides.core.model.TestResult.ERROR
 import static net.thucydides.core.model.TestResult.FAILURE
@@ -29,6 +30,7 @@ class WhenRunningTestScenarios extends Specification {
     def htmlUnitDriver = Mock(HtmlUnitDriver)
     def webdriverInstanceFactory = Mock(WebdriverInstanceFactory)
     def environmentVariables = new MockEnvironmentVariables()
+    def configuration = new SystemPropertiesConfiguration(environmentVariables)
     def webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables)
 
     def setup() {
@@ -442,6 +444,42 @@ class WhenRunningTestScenarios extends Specification {
         xmlReports.contains digest("sample_passing_scenario_using_html_unit_edge_case_1.html")
         xmlReports.contains digest("sample_passing_scenario_using_html_unit_edge_case_2.html")
         xmlReports.contains digest("sample_passing_scenario_using_html_unit_happy_day_scenario.html")
+    }
+
+
+    @Unroll
+    def "should be able to only run tests with a given tag at the class level"() {
+        given:
+            environmentVariables.setProperty("tags",tag)
+            def webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables)
+            def runner = new ThucydidesRunner(SamplePassingScenario, webDriverFactory, configuration)
+        when:
+            runner.run(new RunNotifier())
+        then:
+            runner.testOutcomes.size() == testcount
+        where:
+            tag                     | testcount
+            "module:M1"             | 3
+            "module:M2"             | 0
+            "module:M1, module:M2"  | 3
+    }
+
+    @Unroll
+    def "should be able to only run tests with a given tag at the test level"() {
+        given:
+            environmentVariables.setProperty("tags",tag)
+            def webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables)
+            def runner = new ThucydidesRunner(SamplePassingScenario, webDriverFactory, configuration)
+        when:
+            runner.run(new RunNotifier())
+        then:
+            runner.testOutcomes.size() == testcount
+        where:
+            tag                           | testcount
+            "iteration:I1"                | 2
+            "iteration:I2"                | 1
+            "iteration:I1, iteration:I2"  | 3
+            "iteration:I3"                | 0
     }
 
 }

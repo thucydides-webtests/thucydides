@@ -50,7 +50,7 @@
     </developers>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <surefire.version>2.11</surefire.version>
+        <surefire.version>2.14.1</surefire.version>
         <junit.version>4.11</junit.version>
         <selenium.version>2.32.0</selenium.version>
         <hamcrest.version>1.3</hamcrest.version>
@@ -152,6 +152,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
+                            <forkCount>2C</forkCount>
                             <skip>false</skip>
                             <excludes>
                                 <exclude>**/Abstract*.*</exclude>
