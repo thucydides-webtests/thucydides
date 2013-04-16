@@ -4,11 +4,10 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.thucydides.core.webdriver.smart.findby.By;
 import net.thucydides.core.webdriver.smart.findby.FindBy;
 import net.thucydides.core.webdriver.smart.findby.How;
-import net.thucydides.core.webdriver.smart.findby.SmartBy;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.support.ByIdOrName;
 import org.openqa.selenium.support.FindBys;
 import org.openqa.selenium.support.pagefactory.Annotations;
@@ -33,10 +32,10 @@ public class SmartAnnotations extends Annotations {
 	  }
 	
 //	@Override
-	public By buildBy() {
+	public org.openqa.selenium.By buildBy() {
 	    assertValidAnnotations();
 
-	    By ans = null;
+	    org.openqa.selenium.By ans = null;
 	    
 	    //default implementation in case if org.openqa.selenium.support.FindBy was used
 	    org.openqa.selenium.support.FindBy findBy = field.getAnnotation(org.openqa.selenium.support.FindBy.class);
@@ -70,10 +69,10 @@ public class SmartAnnotations extends Annotations {
     }
 
 	
-	protected By buildByFromFindBy(FindBy myFindBy) {
+	protected org.openqa.selenium.By buildByFromFindBy(FindBy myFindBy) {
 	    assertValidFindBy(myFindBy);
 
-	    By ans = buildByFromShortFindBy(myFindBy);
+	    org.openqa.selenium.By ans = buildByFromShortFindBy(myFindBy);
 	    if (ans == null) {
 	      ans = buildByFromLongFindBy(myFindBy);
 	    }
@@ -81,40 +80,40 @@ public class SmartAnnotations extends Annotations {
 	    return ans;
 	}
 
-	protected By buildByFromLongFindBy(FindBy myFindBy) {
+	protected org.openqa.selenium.By buildByFromLongFindBy(FindBy myFindBy) {
 	    How how = myFindBy.how();
 	    String using = myFindBy.using();
 
 	    switch (how) {
 	      case CLASS_NAME:
-	        return By.className(using);
+	        return org.openqa.selenium.By.className(using);
 
 	      case CSS:
-	        return By.cssSelector(using);
+	        return org.openqa.selenium.By.cssSelector(using);
 
 	      case ID:
-	        return By.id(using);
+	        return org.openqa.selenium.By.id(using);
 
 	      case ID_OR_NAME:
 	        return new ByIdOrName(using);
 
 	      case LINK_TEXT:
-	        return By.linkText(using);
+	        return org.openqa.selenium.By.linkText(using);
 
 	      case NAME:
-	        return By.name(using);
+	        return org.openqa.selenium.By.name(using);
 
 	      case PARTIAL_LINK_TEXT:
-	        return By.partialLinkText(using);
+	        return org.openqa.selenium.By.partialLinkText(using);
 
 	      case TAG_NAME:
-	        return By.tagName(using);
+	        return org.openqa.selenium.By.tagName(using);
 
 	      case XPATH:
-	        return By.xpath(using);
+	        return org.openqa.selenium.By.xpath(using);
 	        
 	      case SCLOCATOR:
-		        return SmartBy.sclocator(using);
+		        return By.sclocator(using);
 
 	      default:
 	        // Note that this shouldn't happen (eg, the above matches all
@@ -123,36 +122,36 @@ public class SmartAnnotations extends Annotations {
 	    }
 	}
 
-	protected By buildByFromShortFindBy(FindBy myFindBy) {
+	protected org.openqa.selenium.By buildByFromShortFindBy(FindBy myFindBy) {
 	    if (!"".equals(myFindBy.className()))
-	      return By.className(myFindBy.className());
+	      return org.openqa.selenium.By.className(myFindBy.className());
 
 	    if (!"".equals(myFindBy.css()))
-	      return By.cssSelector(myFindBy.css());
+	      return org.openqa.selenium.By.cssSelector(myFindBy.css());
 
 	    if (!"".equals(myFindBy.id()))
-	      return By.id(myFindBy.id());
+	      return org.openqa.selenium.By.id(myFindBy.id());
 
 	    if (!"".equals(myFindBy.linkText()))
-	      return By.linkText(myFindBy.linkText());
+	      return org.openqa.selenium.By.linkText(myFindBy.linkText());
 
 	    if (!"".equals(myFindBy.name()))
-	      return By.name(myFindBy.name());
+	      return org.openqa.selenium.By.name(myFindBy.name());
 
 	    if (!"".equals(myFindBy.partialLinkText()))
-	      return By.partialLinkText(myFindBy.partialLinkText());
+	      return org.openqa.selenium.By.partialLinkText(myFindBy.partialLinkText());
 
 	    if (!"".equals(myFindBy.tagName()))
-	      return By.tagName(myFindBy.tagName());
+	      return org.openqa.selenium.By.tagName(myFindBy.tagName());
 
 	    if (!"".equals(myFindBy.xpath()))
-	      return By.xpath(myFindBy.xpath());
+	      return org.openqa.selenium.By.xpath(myFindBy.xpath());
 	    
 	    if (!"".equals(myFindBy.sclocator()))
-		      return SmartBy.sclocator(myFindBy.sclocator());
+		      return By.sclocator(myFindBy.sclocator());
 	    
 	    if (!"".equals(myFindBy.jquery()))
-		      return SmartBy.jquery(myFindBy.jquery());
+		      return By.jquery(myFindBy.jquery());
 
 	    // Fall through
 	    return null;

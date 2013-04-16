@@ -781,15 +781,6 @@ public abstract class PageObject {
         }
     }
 
-
-    private boolean driverIsEnabled() {
-        if (WebDriverFacade.class.isAssignableFrom(getDriver().getClass())) {
-            WebDriverFacade driverFacade = (WebDriverFacade) getDriver();
-            return driverFacade.isEnabled();
-        }
-        return true;
-    }
-
     public ThucydidesFluentWait<WebDriver> waitForWithRefresh() {
         return new FluentWaitWithRefresh<WebDriver>(driver, webdriverClock, sleeper)
                 .withTimeout(waitForTimeoutInMilliseconds, TimeUnit.MILLISECONDS)

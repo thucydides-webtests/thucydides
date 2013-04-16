@@ -115,7 +115,6 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
             return;
         }
         openIgnoringHtmlUnitScriptErrors(url);
-
     }
 
     private void openIgnoringHtmlUnitScriptErrors(final String url) {

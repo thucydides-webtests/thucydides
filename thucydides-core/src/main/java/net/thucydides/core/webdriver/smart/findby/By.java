@@ -3,7 +3,6 @@ package net.thucydides.core.webdriver.smart.findby;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
@@ -14,18 +13,18 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public abstract class SmartBy extends By {
+public abstract class By extends org.openqa.selenium.By {
 
     /**
      * @param scLocator The scLocator to use
      * @return a MyBy which locates elements via AutoTest
      */
-    public static SmartBy sclocator(final String scLocator) {
+    public static By sclocator(final String scLocator) {
         Preconditions.checkNotNull(scLocator);
         return new ByScLocator(scLocator);
     }
 
-    public static class ByScLocator extends SmartBy {
+    public static class ByScLocator extends By {
         private final String scLocator;
 
         public ByScLocator(String scLocator) {
@@ -71,12 +70,12 @@ public abstract class SmartBy extends By {
      * @param jQuerySelector The jquery to use
      * @return a By selector object which locates elements via jQuery
      */
-    public static SmartBy jquery(final String jQuerySelector) {
+    public static By jquery(final String jQuerySelector) {
         Preconditions.checkNotNull(jQuerySelector);
         return new ByjQuerySelector(jQuerySelector);
     }
 
-    public static class ByjQuerySelector extends SmartBy {
+    public static class ByjQuerySelector extends By {
         private final String jQuerySelector;
 
         public ByjQuerySelector(String jQuerySelector) {
