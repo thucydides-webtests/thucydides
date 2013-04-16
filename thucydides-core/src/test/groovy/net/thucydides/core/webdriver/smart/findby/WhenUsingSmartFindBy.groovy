@@ -7,6 +7,7 @@ import org.openqa.selenium.ElementNotVisibleException
 import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.firefox.FirefoxDriver
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
