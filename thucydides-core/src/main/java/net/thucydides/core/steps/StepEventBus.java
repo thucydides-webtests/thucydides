@@ -404,8 +404,8 @@ public class StepEventBus {
         storyUnderTest = null;
     }
 
-    public void currentStepTitleIs(String stepTitle) {
-        getBaseStepListener().currentStepTitleIs(stepTitle);
+    public void updateCurrentStepTitle(String stepTitle) {
+        getBaseStepListener().updateCurrentStepTitle(stepTitle);
     }
 
     public void addIssuesToCurrentStory(List<String> issues) {

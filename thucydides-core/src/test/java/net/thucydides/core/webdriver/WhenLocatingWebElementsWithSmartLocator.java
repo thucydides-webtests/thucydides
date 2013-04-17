@@ -3,7 +3,7 @@ package net.thucydides.core.webdriver;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFailure;
-import net.thucydides.core.webdriver.smart.SmartAjaxElementLocator;
+import net.thucydides.core.annotations.locators.SmartAjaxElementLocator;
 
 import org.junit.Before;
 import org.junit.Rule;

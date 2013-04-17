@@ -89,7 +89,12 @@ public class ClassFinder {
     }
 
     /**
-     * Scans all classes accessible from the context class loader which belong to the given package and subpackages. * Adapted from http://snippets.dzone.com/posts/show/4831 and extended to support use of JAR files * @param packageName The base package * @return The classes * @throws ClassNotFoundException * @throws IOException
+     * Scans all classes accessible from the context class loader which belong to the given package and subpackages.
+     * Adapted from http://snippets.dzone.com/posts/show/4831 and extended to support use of JAR files
+     * @param packageName The base package
+     * @return The classes
+     * @throws ClassNotFoundException
+     * @throws IOException
      */
     public static List<Class<?>> getClasses(String packageName) {
         try {

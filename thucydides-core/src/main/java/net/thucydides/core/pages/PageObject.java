@@ -62,8 +62,7 @@ public abstract class PageObject {
 
     private long waitForTimeoutInMilliseconds = 5 * ONE_SECOND;
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(PageObject.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PageObject.class);
 
     private static final long WAIT_FOR_TIMEOUT = 30000;
 

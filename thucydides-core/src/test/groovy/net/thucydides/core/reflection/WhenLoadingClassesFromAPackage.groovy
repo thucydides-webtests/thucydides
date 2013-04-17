@@ -2,6 +2,7 @@ package net.thucydides.core.reflection;
 
 import net.thucydides.core.reflection.sampleclasses.SomeClass
 import net.thucydides.core.reflection.sampleclasses.SomeOtherClass
+import net.thucydides.jbehave.SomeBoilerplateSteps
 import spock.lang.Specification
 import net.thucydides.core.reflection.sampleclasses.SomeTestClass
 import org.junit.runner.RunWith
@@ -69,15 +70,6 @@ public class WhenLoadingClassesFromAPackage extends Specification {
                                               fromPackage("net.thucydides.sampletests");
         then:
             classes == [SomeTest]
-
-    }
-
-    def "should load all annotated classes in a given package from a JAR dependency"() {
-        when:
-            List<Class> classes = ClassFinder.loadClasses().annotatedWith(RunWith.class).
-                fromPackage("spock.lang");
-        then:
-            !classes.isEmpty()
 
     }
 

@@ -1,4 +1,4 @@
-package net.thucydides.core.webdriver.smart;
+package net.thucydides.core.annotations.locators;
 
 import java.lang.reflect.Field;
 

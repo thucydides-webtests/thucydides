@@ -46,7 +46,7 @@ import net.thucydides.core.webdriver.ElementProxyCreator;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebdriverManager;
-import net.thucydides.core.webdriver.smart.SmartElementProxyCreator;
+import net.thucydides.core.annotations.locators.SmartElementProxyCreator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -455,21 +455,37 @@ public class TestOutcomes {
     }
 
     public Double getPercentagePassingTestCount() {
-        return (countTestsWithResult(TestResult.SUCCESS) / (double) getTotal());
+        if (getTotal() > 0) {
+            return (countTestsWithResult(TestResult.SUCCESS) / (double) getTotal());
+        } else {
+            return 0.0;
+        }
     }
 
     public Double getPercentageFailingTestCount() {
-        return (countTestsWithResult(TestResult.FAILURE)/ (double) getTotal());
+        if (getTotal() > 0) {
+            return (countTestsWithResult(TestResult.FAILURE)/ (double) getTotal());
+        } else {
+            return 0.0;
+        }
     }
 
     public Double getPercentageErrorTestCount() {
-        return (countTestsWithResult(TestResult.ERROR) / (double) getTotal());
+        if (getTotal() > 0) {
+            return (countTestsWithResult(TestResult.ERROR) / (double) getTotal());
+        } else {
+            return 0.0;
+        }
     }
 
     public Double getPercentagePendingTestCount() {
-        return ((countTestsWithResult(TestResult.IGNORED)
-                 + countTestsWithResult(TestResult.SKIPPED)
-                 + countTestsWithResult(TestResult.PENDING)) / (double) getTotal());
+        if (getTotal() > 0) {
+            return ((countTestsWithResult(TestResult.IGNORED)
+                     + countTestsWithResult(TestResult.SKIPPED)
+                     + countTestsWithResult(TestResult.PENDING)) / (double) getTotal());
+        } else {
+            return 0.0;
+        }
     }
 
     public String getDecimalPercentagePassingStepCount() {

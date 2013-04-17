@@ -183,10 +183,13 @@ public class SampleScenarioSteps extends ScenarioSteps {
         this.address = address;
     }
 
-    @StepGroup
+    @Step
     public void data_driven_test_step() {
         enter_name_and_age(name, age);
         enter_address(address);
+        nestedSteps.stepThatSucceeds();
+        nestedSteps.anotherStepThatSucceeds();
+        nestedSteps.groupOfSteps();
     }
 
     @Step

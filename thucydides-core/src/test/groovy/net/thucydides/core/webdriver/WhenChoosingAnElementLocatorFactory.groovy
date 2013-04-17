@@ -5,7 +5,7 @@ import net.thucydides.core.util.MockEnvironmentVariables
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory
 import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory
-import net.thucydides.core.webdriver.smart.SmartElementLocatorFactory
+import net.thucydides.core.annotations.locators.SmartElementLocatorFactory
 import spock.lang.Specification
 import spock.lang.Unroll;
 

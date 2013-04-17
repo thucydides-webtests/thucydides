@@ -13,11 +13,14 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Locale;
 
@@ -57,13 +60,13 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
         TestOutcome storedTestOutcome = testOutcome.withQualifier(qualifier);
 
         LOGGER.debug("Generating XML report for {}/{}", storedTestOutcome.getUserStory(),
-                                                        storedTestOutcome.getMethodName());
+                storedTestOutcome.getMethodName());
 
         LOGGER.debug("Test outcome contents = {}", storedTestOutcome);
 
         Preconditions.checkNotNull(outputDirectory);
 
-        XStream xstream = new XStream(new DomDriver("UTF-8"));;
+        XStream xstream = new XStream();
         xstream.alias("acceptance-test-run", TestOutcome.class);
         xstream.registerConverter(usingXmlConverter());
         String xmlContents = xstream.toXML(storedTestOutcome);
@@ -71,10 +74,31 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
         String reportFilename = reportFor(storedTestOutcome);
         LOGGER.debug("Calculated report filename: {}", reportFilename);
 
+        BufferedWriter bw = null;
+        OutputStreamWriter osw = null;
         File report = new File(getOutputDirectory(), reportFilename);
+        FileOutputStream fos = new FileOutputStream(report, false);
+        try
+        {
+            if (report.length() < 1L) {
+                byte[] bom = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
+                fos.write(bom);
+            }
 
-        LOGGER.debug("Writing XML report to {}", report.getAbsolutePath());
-        FileUtils.writeStringToFile(report, xmlContents);
+            osw = new OutputStreamWriter(fos, "UTF-8");
+            bw = new BufferedWriter(osw);
+            if (xmlContents != null) {
+                byte[] utf8Bytes = xmlContents.getBytes();
+                String encodedString = new String(utf8Bytes, "UTF-8");
+                bw.write(encodedString);
+            }
+
+            LOGGER.debug("Writing XML report to {}", report.getAbsolutePath()); } catch (IOException ex) { throw ex;
+        } finally {
+            bw.close();
+            osw.close();
+            fos.close();
+        }
 
         return report;
     }

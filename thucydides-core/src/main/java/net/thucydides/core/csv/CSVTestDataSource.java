@@ -2,6 +2,7 @@ package net.thucydides.core.csv;
 
 import au.com.bytecode.opencsv.CSVReader;
 import ch.lambdaj.function.convert.Converter;
+import com.google.common.base.Preconditions;
 import net.thucydides.core.steps.StepFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -63,6 +64,7 @@ public class CSVTestDataSource implements TestDataSource {
     }
 
     private Reader getDataFileFor(final String path) throws FileNotFoundException {
+        Preconditions.checkNotNull(path,"Test data source was not defined");
         if (isAClasspathResource(path)) {
         		return new InputStreamReader(getClass().getClassLoader().getResourceAsStream(path));
         } else if (validFileSystemPath(path)){

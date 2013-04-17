@@ -1,12 +1,12 @@
-package net.thucydides.core.webdriver.smart;
+package net.thucydides.core.annotations.locators;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.thucydides.core.webdriver.smart.findby.By;
-import net.thucydides.core.webdriver.smart.findby.FindBy;
-import net.thucydides.core.webdriver.smart.findby.How;
+import net.thucydides.core.annotations.findby.By;
+import net.thucydides.core.annotations.findby.FindBy;
+import net.thucydides.core.annotations.findby.How;
 
 import org.openqa.selenium.support.ByIdOrName;
 import org.openqa.selenium.support.FindBys;

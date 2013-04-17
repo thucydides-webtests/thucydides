@@ -9,8 +9,11 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
@@ -96,9 +99,44 @@ public abstract class HtmlReporter {
     protected File writeReportToOutputDirectory(final String reportFilename,
                                                 final String htmlContents) throws IOException {
         File report = new File(getOutputDirectory(), reportFilename);
-        FileUtils.writeStringToFile(report, htmlContents);
-        LOGGER.debug("Writing HTML report to {}", report.getAbsolutePath());
+//        FileUtils.writeStringToFile(report, htmlContents);
+
+        BufferedWriter bw = null;
+        OutputStreamWriter osw = null;
+
+        FileOutputStream fos = new FileOutputStream(report, false);
+        try
+        {
+            if (report.length() < 1L) {
+                byte[] bom = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
+                fos.write(bom);
+            }
+
+            osw = new OutputStreamWriter(fos, "UTF-8");
+            bw = new BufferedWriter(osw);
+            if (htmlContents != null) {
+                byte[] utf8Bytes = htmlContents.getBytes();
+                String encodedString = new String(utf8Bytes, "UTF-8");
+                bw.write(encodedString);
+            }
+
+            try
+            {
+                bw.close();
+                fos.close();
+            }
+            catch (Exception ex) {}
+
+            LOGGER.debug("Writing HTML report to {}", report.getAbsolutePath()); } catch (IOException ex) { throw ex;
+        } finally {
+            try {
+                bw.close();
+                fos.close();
+            }
+            catch (Exception ex) {}
+        }
         return report;
+
     }
 
     protected Merger mergeTemplate(final String templateFile) {

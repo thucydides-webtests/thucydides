@@ -1,4 +1,4 @@
-package net.thucydides.core.webdriver.smart;
+package net.thucydides.core.annotations.locators;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
@@ -22,8 +22,7 @@ public class SmartElementProxyCreator implements ElementProxyCreator {
 	}
 
 	@Override
-	public void proxyElements(PageObject pageObject, WebDriver driver,
-			int timeoutInSeconds) {
+	public void proxyElements(PageObject pageObject, WebDriver driver, int timeoutInSeconds) {
 		ElementLocatorFactory finder = getElementLocatorFactorySelector().withTimeout(timeoutInSeconds).getLocatorFor(driver);
         FieldDecorator decorator = new SmartFieldDecorator(finder, driver, pageObject);
         PageFactory.initElements(decorator, pageObject);

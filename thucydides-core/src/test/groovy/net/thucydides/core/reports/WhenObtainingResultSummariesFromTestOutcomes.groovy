@@ -206,4 +206,14 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             testOutcomes.percentagePendingTestCount == 0.42857142857142855
     }
 
+    def "should count percentage results correctly with no results"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes"));
+        then:
+            testOutcomes.percentagePassingTestCount == 0.0
+            testOutcomes.percentageFailingTestCount == 0.0
+            testOutcomes.percentageErrorTestCount == 0.0
+            testOutcomes.percentagePendingTestCount == 0.0
+    }
+
 }

@@ -1,4 +1,4 @@
-package net.thucydides.core.webdriver.smart.findby;
+package net.thucydides.core.annotations.findby;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

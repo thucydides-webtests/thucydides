@@ -1,4 +1,4 @@
-package net.thucydides.core.webdriver.smart.findby;
+package net.thucydides.core.annotations.findby;
 
 public enum How {
 	  CLASS_NAME,

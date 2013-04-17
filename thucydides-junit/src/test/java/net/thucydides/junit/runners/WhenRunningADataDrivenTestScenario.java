@@ -17,6 +17,7 @@ import net.thucydides.junit.annotations.Concurrent;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.samples.NestedDatadrivenSteps;
 import net.thucydides.samples.SampleCSVDataDrivenScenario;
 import net.thucydides.samples.SampleDataDrivenIgnoredScenario;
 import net.thucydides.samples.SampleDataDrivenPendingScenario;
@@ -391,6 +392,25 @@ public class WhenRunningADataDrivenTestScenario {
         }
     }
 
+    @RunWith(ThucydidesRunner.class)
+    public static class ScenarioWithNestedTestSpecificData {
+
+        @Managed(driver="htmlunit")
+        public WebDriver webdriver;
+
+        @ManagedPages(defaultUrl = "http://www.google.com")
+        public Pages pages;
+
+        @Steps
+        public NestedDatadrivenSteps steps;
+
+
+        @Test
+        public void happy_day_scenario() throws Throwable {
+            steps.run_data_driven_tests();
+        }
+    }
+
 
     @RunWith(ThucydidesRunner.class)
     public static class ScenarioWithTestSpecificDataAndAFailingTestSample {
@@ -470,6 +490,26 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
     @Test
+    public void when_test_data_is_provided_for_a_nested_step_then_a_step_should_be_reported_for_each_data_row() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                outputDirectory.getAbsolutePath());
+
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithNestedTestSpecificData.class);
+
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(1));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+
+        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
+        assertThat(dataDrivenSteps.size(), is(3));
+
+    }
+
+    @Test
     public void test_step_data_should_appear_in_the_step_titles() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
@@ -477,7 +517,6 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificData.class);
-//        runner.setWebDriverFactory(webDriverFactory);
 
         runner.run(new RunNotifier());
 

@@ -10,10 +10,7 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.features.ApplicationFeature;
-import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.screenshots.BlurLevel;
-import net.thucydides.core.screenshots.Photographer;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
@@ -42,7 +39,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
@@ -52,7 +48,6 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -285,7 +280,7 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testStarted("app_should_work", MyTestCase.class);
         steps.step_one();
         steps.step_two();
-        StepEventBus.getEventBus().currentStepTitleIs("new_step_name");
+        StepEventBus.getEventBus().updateCurrentStepTitle("new_step_name");
         StepEventBus.getEventBus().testFinished();
         StepEventBus.getEventBus().testSuiteFinished();
 

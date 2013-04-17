@@ -240,7 +240,7 @@ public class WhenTallyingTestStepResults {
         stepListener.testSuiteStarted(story);
         stepListener.testStarted("the app should work");
         stepListener.stepStarted(ExecutedStepDescription.withTitle("provisory title"));
-        stepListener.currentStepTitleIs("final title");
+        stepListener.updateCurrentStepTitle("final title");
         assertThat(stepListener.getCurrentTestOutcome().getTestSteps().get(0).getDescription() , is("final title"));
     }
 
@@ -251,7 +251,7 @@ public class WhenTallyingTestStepResults {
         net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyStory.class);
         stepListener.testSuiteStarted(story);
         stepListener.testStarted("the app should work");
-        stepListener.currentStepTitleIs("final title");
+        stepListener.updateCurrentStepTitle("final title");
         assertThat(stepListener.getCurrentTestOutcome().getTestSteps().get(0).getDescription() , is("final title"));
     }
 

@@ -1,4 +1,4 @@
-package net.thucydides.core.webdriver.smart;
+package net.thucydides.core.annotations.locators;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -12,7 +12,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.pagefactory.Annotations;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.SlowLoadableComponent;
 import org.openqa.selenium.support.ui.SystemClock;

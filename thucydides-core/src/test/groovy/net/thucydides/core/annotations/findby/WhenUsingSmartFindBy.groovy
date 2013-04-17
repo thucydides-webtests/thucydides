@@ -1,13 +1,10 @@
-package net.thucydides.core.webdriver.smart.findby
+package net.thucydides.core.annotations.findby
 
 import net.thucydides.core.pages.integration.StaticSitePageWithFacades
 import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
-import org.openqa.selenium.ElementNotVisibleException
-import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.firefox.FirefoxDriver
-import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
