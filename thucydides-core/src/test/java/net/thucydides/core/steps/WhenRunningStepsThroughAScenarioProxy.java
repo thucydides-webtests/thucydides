@@ -356,8 +356,6 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
     @Test
     public void the_proxy_should_notify_listeners_when_tests_have_finished() {
-        ArgumentCaptor<ExecutedStepDescription> argument = ArgumentCaptor.forClass(ExecutedStepDescription.class);
-
         SimpleTestScenarioSteps steps =  factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
         steps.step_one();
@@ -369,8 +367,6 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
     @Test
     public void the_proxy_should_notify_listeners_when_tests_have_finished_with_description_details() {
-        ArgumentCaptor<ExecutedStepDescription> argument = ArgumentCaptor.forClass(ExecutedStepDescription.class);
-
         SimpleTestScenarioSteps steps =  factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
         steps.step_one();
@@ -381,8 +377,6 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
     @Test
     public void the_proxy_should_notify_listeners_when_test_groups_start_and_finish() {
-        ArgumentCaptor<ExecutedStepDescription> argument = ArgumentCaptor.forClass(ExecutedStepDescription.class);
-
         SimpleTestScenarioSteps steps =  factory.getStepLibraryFor(SimpleTestScenarioSteps.class);
 
         steps.step_group1();

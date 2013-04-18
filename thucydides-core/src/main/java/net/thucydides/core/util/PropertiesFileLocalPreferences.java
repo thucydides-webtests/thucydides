@@ -48,12 +48,18 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
     }
 
     private void updatePreferencesFromClasspath() throws IOException {
-        InputStream propertiesOnClasspath
-                = Thread.currentThread().getContextClassLoader().getResourceAsStream("thucydides.properties");
-        if (propertiesOnClasspath != null) {
-            Properties localPreferences = new Properties();
-            localPreferences.load(propertiesOnClasspath);
-            setUndefinedSystemPropertiesFrom(localPreferences);
+        InputStream propertiesOnClasspath = null;
+        try {
+            propertiesOnClasspath = Thread.currentThread().getContextClassLoader().getResourceAsStream("thucydides.properties");
+            if (propertiesOnClasspath != null) {
+                Properties localPreferences = new Properties();
+                localPreferences.load(propertiesOnClasspath);
+                setUndefinedSystemPropertiesFrom(localPreferences);
+            }
+        } finally {
+            if (propertiesOnClasspath != null) {
+                propertiesOnClasspath.close();
+            }
         }
     }
 
