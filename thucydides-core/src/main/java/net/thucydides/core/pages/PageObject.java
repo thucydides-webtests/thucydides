@@ -14,6 +14,7 @@ import net.thucydides.core.scheduling.NormalFluentWait;
 import net.thucydides.core.scheduling.ThucydidesFluentWait;
 import net.thucydides.core.steps.StepDelayer;
 import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.webdriver.DefaultPageObjectInitialiser;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
@@ -94,21 +95,7 @@ public abstract class PageObject {
     }
 
     public PageObject(final WebDriver driver, final int ajaxTimeout) {
-        this(driver, new Predicate<PageObject>() {
-            protected int ajaxTimeoutInSecondsWithAtLeast1Second(int ajaxTimeout) {
-                if (ajaxTimeout > 1000) {
-                    return ajaxTimeout / 1000;
-                } else {
-                    return 1;
-                }
-            }
-            public boolean apply(PageObject page) {
-                page.waitForTimeoutInMilliseconds = ajaxTimeout;
-                int ajaxTimeoutInSeconds = ajaxTimeoutInSecondsWithAtLeast1Second(ajaxTimeout);
-                Injectors.getInjector().getInstance(WebDriverFactory.class).initElementsWithAjaxSupport(page, driver, ajaxTimeoutInSeconds);
-                return true;
-            }
-        });
+        this(driver, new DefaultPageObjectInitialiser(driver, ajaxTimeout));
     }
 
     public PageObject(final WebDriver driver) {

@@ -8,7 +8,6 @@ public interface ElementProxyCreator {
 
 	void proxyElements(PageObject pageObject, WebDriver driver);
 
-	void proxyElements(PageObject pageObject, WebDriver driver,
-			int timeoutInSeconds);
+	void proxyElements(PageObject pageObject, WebDriver driver, int timeoutInSeconds);
 
 }

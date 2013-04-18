@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import com.google.common.collect.ImmutableList;
+import net.thucydides.core.annotations.locators.SmartAjaxElementLocator;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFailure;
 import org.junit.Before;
@@ -33,8 +34,6 @@ public class WhenLocatingWebElements {
 
     Field field;
 
-    DisplayedElementLocator locator;
-
     static class SomePageObject {
 
         @FindBy(id="someId")
@@ -57,7 +56,7 @@ public class WhenLocatingWebElements {
     @Test(timeout = 500)
     public void should_find_element_immediately_if_a_previous_step_has_failed() {
 
-        DisplayedElementLocator locator = new DisplayedElementLocator(driver, field, 5);
+        SmartAjaxElementLocator locator = new SmartAjaxElementLocator(driver, field, 5);
         StepEventBus.getEventBus().stepFailed(failure);
         locator.findElement();
     }
@@ -71,7 +70,7 @@ public class WhenLocatingWebElements {
         expectedException.expect(NoSuchElementException.class);
         expectedException.expectMessage(containsString("Timed out after 1 second"));
 
-        DisplayedElementLocator locator = new DisplayedElementLocator(driver, field, 1);
+        SmartAjaxElementLocator locator = new SmartAjaxElementLocator(driver, field, 1);
         locator.findElement();
     }
 

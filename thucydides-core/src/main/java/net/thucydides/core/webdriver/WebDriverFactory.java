@@ -68,6 +68,7 @@ public class WebDriverFactory {
     private final EnvironmentVariables environmentVariables;
     private final FirefoxProfileEnhancer firefoxProfileEnhancer;
     private final FixtureProviderService fixtureProviderService;
+    private final ElementProxyCreator proxyCreator;
 
     private final Integer EXTRA_TIME_TO_TAKE_SCREENSHOTS = 180;
 
@@ -89,19 +90,30 @@ public class WebDriverFactory {
     public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
                             EnvironmentVariables environmentVariables,
                             FirefoxProfileEnhancer firefoxProfileEnhancer) {
-        this(webdriverInstanceFactory, environmentVariables, firefoxProfileEnhancer, Injectors.getInjector().getInstance(FixtureProviderService.class));
+        this(webdriverInstanceFactory, environmentVariables, firefoxProfileEnhancer,
+            Injectors.getInjector().getInstance(FixtureProviderService.class),
+            Injectors.getInjector().getInstance(ElementProxyCreator.class));
     }
 
     public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
                             EnvironmentVariables environmentVariables,
                             FirefoxProfileEnhancer firefoxProfileEnhancer,
                             FixtureProviderService fixtureProviderService) {
+        this(webdriverInstanceFactory, environmentVariables, firefoxProfileEnhancer, fixtureProviderService,
+                Injectors.getInjector().getInstance(ElementProxyCreator.class));
+    }
+
+    public WebDriverFactory(WebdriverInstanceFactory webdriverInstanceFactory,
+                            EnvironmentVariables environmentVariables,
+                            FirefoxProfileEnhancer firefoxProfileEnhancer,
+                            FixtureProviderService fixtureProviderService,
+                            ElementProxyCreator proxyCreator) {
         this.webdriverInstanceFactory = webdriverInstanceFactory;
         this.environmentVariables = environmentVariables;
         this.firefoxProfileEnhancer = firefoxProfileEnhancer;
         this.fixtureProviderService = fixtureProviderService;
+        this.proxyCreator = proxyCreator;
     }
-
 
     protected ProfilesIni getAllProfiles() {
         if (allProfiles == null) {
@@ -606,7 +618,7 @@ public class WebDriverFactory {
      * Initialize a page object's fields using the specified WebDriver instance.
      */
     public void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver, int timeoutInSeconds) {
-    	Injectors.getInjector().getInstance(ElementProxyCreator.class).proxyElements(pageObject, driver, timeoutInSeconds);
+    	proxyCreator.proxyElements(pageObject, driver, timeoutInSeconds);
 
     }
 

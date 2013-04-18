@@ -27,7 +27,9 @@ class WhenChoosingAnElementLocatorFactory extends Specification {
 	@Unroll
     def "should choose the #factoryName factory if requested"() {
         given:
-        	environmentVariables.setProperty("thucydides.locator.factory", factoryName)
+            if (factoryName) {
+        	    environmentVariables.setProperty("thucydides.locator.factory", factoryName)
+            }
             def configuration = new SystemPropertiesConfiguration(environmentVariables);
             def selectorFactory = new ElementLocatorFactorySelector(configuration);
         when:
@@ -35,8 +37,8 @@ class WhenChoosingAnElementLocatorFactory extends Specification {
         then:
             locator.class == locatorFactoryClass
 		where:
-			factoryName << ["DisplayedElementLocatorFactory", "AjaxElementLocatorFactory", "DefaultElementLocatorFactory"]
-			locatorFactoryClass << [DisplayedElementLocatorFactory, AjaxElementLocatorFactory, DefaultElementLocatorFactory]
+			factoryName << ["","SmartElementLocatorFactory","AjaxElementLocatorFactory", "DefaultElementLocatorFactory"]
+			locatorFactoryClass << [SmartElementLocatorFactory, SmartElementLocatorFactory, AjaxElementLocatorFactory, DefaultElementLocatorFactory]
     }
 
     def "should throw exception with meaningful error if an invalid factory class is specified"() {
@@ -45,7 +47,7 @@ class WhenChoosingAnElementLocatorFactory extends Specification {
             def configuration = new SystemPropertiesConfiguration(environmentVariables);
             def selectorFactory = new ElementLocatorFactorySelector(configuration);
         when:
-            def locator = selectorFactory.getLocatorFor(driver)
+            selectorFactory.getLocatorFor(driver)
         then:
             IllegalArgumentException e = thrown()
         and:
