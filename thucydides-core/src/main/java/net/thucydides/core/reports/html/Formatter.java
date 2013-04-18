@@ -1,6 +1,8 @@
 package net.thucydides.core.reports.html;
 
+import ch.lambdaj.Lambda;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import net.thucydides.core.issues.IssueTracking;
 import org.apache.commons.io.IOUtils;
@@ -11,9 +13,13 @@ import org.apache.commons.lang3.text.translate.LookupTranslator;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static ch.lambdaj.Lambda.join;
 
 /**
  * Format text for HTML reports.
@@ -107,8 +113,16 @@ public class Formatter {
             new LookupTranslator(EntityArrays.HTML40_EXTENDED_ESCAPE())
     );
 
-    public String htmlCompatible(Object text) {
-        return addLineBreaks(ESCAPE_SPECIAL_CHARS.translate(text != null? text.toString() : ""));
+    public String htmlCompatible(Object fieldValue) {
+        return addLineBreaks(ESCAPE_SPECIAL_CHARS.translate(fieldValue != null? stringFormOf(fieldValue) : ""));
+    }
+
+    private String stringFormOf(Object fieldValue) {
+        if (Iterable.class.isAssignableFrom(fieldValue.getClass())) {
+            return "[" + join(fieldValue) + "]";
+        } else {
+            return fieldValue.toString();
+        }
     }
 
     public String truncatedHtmlCompatible(String text, int length) {
