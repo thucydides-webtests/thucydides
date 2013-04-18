@@ -421,7 +421,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
         if (currentGroupStack.isEmpty()) {
             return null;
         } else {
-            return currentGroupStack.peek();
+            return currentGroupStack.peek();// findLastChildIn(currentGroupStack.peek());
         }
     }
 
@@ -502,12 +502,17 @@ public class BaseStepListener implements StepListener, StepPublisher {
         stepPending();
     }
 
+    public void assumptionViolated(String message) {
+        getCurrentStep().testAborted(new PendingStepException(message));
+        stepPending();
+    }
+
     private void currentStepDone() {
         if ((!inFluentStepSequence) && currentStepExists()) {
             TestStep finishedStep = currentStepStack.pop();
             finishedStep.recordDuration();
 
-            if (finishedStep == getCurrentGroup()) {
+            if ((finishedStep == getCurrentGroup())) {
                 finishGroup();
             }
         }

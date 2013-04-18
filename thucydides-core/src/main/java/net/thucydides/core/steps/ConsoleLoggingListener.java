@@ -267,4 +267,11 @@ public class ConsoleLoggingListener implements StepListener {
 
     public void exampleFinished() {
     }
+
+    @Override
+    public void assumptionViolated(String message) {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
+            getLogger().info("ASSUMPTION VIOLATED");
+        }
+    }
 }

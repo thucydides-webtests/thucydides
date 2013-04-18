@@ -1,5 +1,6 @@
 package net.thucydides.core.steps;
 
+import com.google.common.base.Preconditions;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import net.thucydides.core.IgnoredStepException;
@@ -9,6 +10,7 @@ import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestAnnotations;
+import org.junit.internal.AssumptionViolatedException;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -279,7 +281,11 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             notifyStepPending(pendingStep.getMessage());
         } catch(IgnoredStepException ignoredStep) {
             notifyStepIgnored(ignoredStep.getMessage());
+        } catch(AssumptionViolatedException assumptionViolated) {
+            notifyAssumptionViolated(assumptionViolated.getMessage());
         }
+
+        Preconditions.checkArgument(true);
         return result;
     }
 
@@ -298,6 +304,10 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private void notifyStepPending(String message) {
         StepEventBus.getEventBus().stepPending(message);
+    }
+
+    private void notifyAssumptionViolated(String message) {
+        StepEventBus.getEventBus().assumptionViolated(message);
     }
 
     private void notifyStepIgnored(String message) {

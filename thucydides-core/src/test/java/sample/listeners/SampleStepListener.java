@@ -90,4 +90,9 @@ public class SampleStepListener implements StepListener {
     public void exampleFinished() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public void assumptionViolated(String message) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

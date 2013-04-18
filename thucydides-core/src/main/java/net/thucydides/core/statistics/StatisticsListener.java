@@ -136,4 +136,8 @@ public class StatisticsListener implements StepListener {
 
     public void exampleFinished() {
     }
+
+    @Override
+    public void assumptionViolated(String message) {
+    }
 }

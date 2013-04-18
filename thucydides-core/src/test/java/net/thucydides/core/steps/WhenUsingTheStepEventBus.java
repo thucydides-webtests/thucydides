@@ -12,6 +12,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,6 +41,11 @@ public class WhenUsingTheStepEventBus {
 
         public SimpleTestScenarioSteps(Pages pages) {
             super(pages);
+        }
+
+        @Step
+        public void assumption_failed() {
+            Assume.assumeTrue(false);
         }
 
         @Step
@@ -158,6 +164,22 @@ public class WhenUsingTheStepEventBus {
 
         public void some_test() {}
     }
+
+    static class SampleTestScenarioWithFailedAssumption {
+
+        @Steps
+        SimpleTestScenarioSteps steps;
+
+        public void sampleTest() {
+            steps.assumption_failed();
+            steps.step1();
+            steps.step2();
+            steps.step3();
+        }
+
+        public void some_test() {}
+    }
+
     @Mock
     WebDriver driver;
     
@@ -509,6 +531,29 @@ public class WhenUsingTheStepEventBus {
                 + "----> STEP IGNORED\n"
                 + "---> STEP DONE\n"
                 + "TEST DONE\n";
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
+    }
+
+    @Test
+    public void should_skip_steps_after_a_failed_assumption() {
+        SampleTestScenarioWithFailedAssumption sampleTest = factory.getStepLibraryFor(SampleTestScenarioWithFailedAssumption.class);
+
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenarioWithFailedAssumption.class);
+        sampleTest.sampleTest();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        String expectedSteps =
+                "TEST a_test\n" +
+                        "-assumption_failed\n" +
+                        "---> ASSUMPTION VIOLATED\n" +
+                        "-step1\n" +
+                        "---> STEP IGNORED\n" +
+                        "-step2\n" +
+                        "---> STEP IGNORED\n" +
+                        "-step3\n" +
+                        "---> STEP IGNORED\n" +
+                        "TEST DONE\n";
+
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 

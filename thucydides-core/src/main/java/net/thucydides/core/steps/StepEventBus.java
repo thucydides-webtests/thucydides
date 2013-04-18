@@ -331,6 +331,17 @@ public class StepEventBus {
         }
     }
 
+
+    public void assumptionViolated(String message) {
+        testPending();
+        stepDone();
+        getResultTally().logIgnoredTest();
+
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.assumptionViolated(message);
+        }
+    }
+
     public void dropListener(final StepListener stepListener) {
         registeredListeners.remove(stepListener);
     }

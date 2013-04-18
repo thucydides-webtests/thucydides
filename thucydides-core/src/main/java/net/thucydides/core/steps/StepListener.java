@@ -120,4 +120,6 @@ public interface StepListener {
      * An example has finished.
      */
     void exampleFinished();
+
+    void assumptionViolated(String message);
 }

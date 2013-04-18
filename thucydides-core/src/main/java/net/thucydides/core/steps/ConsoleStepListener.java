@@ -1,6 +1,7 @@
 package net.thucydides.core.steps;
 
 
+import net.thucydides.core.PendingStepException;
 import net.thucydides.core.model.TestOutcome;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -78,6 +79,11 @@ public class ConsoleStepListener extends BaseStepListener {
         buffer.append("--> STEP PENDING").append("\n");
     }
 
+    public void assumptionViolated(String message) {
+        pop();
+        writeIndent(buffer);
+        buffer.append("--> ASSUMPTION VIOLATED").append("\n");
+    }
 
     public void testFailed(Throwable cause) {
         buffer.append("--> TEST FAILED").append("\n");
