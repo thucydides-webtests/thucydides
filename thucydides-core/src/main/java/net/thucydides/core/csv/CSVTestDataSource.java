@@ -3,6 +3,7 @@ package net.thucydides.core.csv;
 import au.com.bytecode.opencsv.CSVReader;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import net.thucydides.core.steps.StepFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -89,16 +90,13 @@ public class CSVTestDataSource implements TestDataSource {
     protected List<String[]> getCSVDataFrom(final Reader testDataReader) throws IOException {
 
         CSVReader reader = new CSVReader(testDataReader, separator);
-        return reader.readAll();
-    }
-
-
-    protected List<Map<String, String>> loadTestDataFrom(final Reader testDataReader) throws IOException {
-
-        CSVReader reader = new CSVReader(testDataReader, separator);
-        List<String[]> rows = reader.readAll();
-
-        return loadTestDataFrom(rows);
+        List<String[]> rows = Lists.newArrayList();
+        try {
+            rows = reader.readAll();
+        } finally {
+            reader.close();
+        }
+        return rows;
     }
 
     protected List<Map<String, String>> loadTestDataFrom(List<String[]> rows) throws IOException {
