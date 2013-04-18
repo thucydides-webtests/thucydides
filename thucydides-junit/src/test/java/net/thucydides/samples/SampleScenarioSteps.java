@@ -193,6 +193,12 @@ public class SampleScenarioSteps extends ScenarioSteps {
     }
 
     @Step
+    public void simple_data_driven_test_step() {
+        enter_name_and_age(name, age);
+        enter_address(address);
+    }
+
+    @Step
     public void data_driven_test_step_that_fails() {
         assertThat(Integer.parseInt(age), is(lessThan(35)));
     }

@@ -387,7 +387,7 @@ public class WhenRunningADataDrivenTestScenario {
 
 
         @Test
-        public void happy_day_scenario() throws Throwable {
+        public void check_each_row() throws Throwable {
             withTestDataFrom("test-data/simple-data.csv").run(steps).data_driven_test_step();
         }
     }
@@ -406,11 +406,31 @@ public class WhenRunningADataDrivenTestScenario {
 
 
         @Test
-        public void happy_day_scenario() throws Throwable {
-            steps.run_data_driven_tests();
+        public void check_each_row() throws Throwable {
+            steps.check_each_row();
         }
     }
 
+
+    @RunWith(ThucydidesRunner.class)
+    public static class ScenarioWithDeeplyNestedTestSpecificData {
+
+        @Managed(driver="htmlunit")
+        public WebDriver webdriver;
+
+        @ManagedPages(defaultUrl = "http://www.google.com")
+        public Pages pages;
+
+        @Steps
+        public NestedDatadrivenSteps steps;
+
+        @Test
+        public void happy_day_scenario() throws Throwable {
+            steps.do_something();
+            steps.run_data_driven_tests();
+            steps.do_something_else();
+        }
+    }
 
     @RunWith(ThucydidesRunner.class)
     public static class ScenarioWithTestSpecificDataAndAFailingTestSample {
@@ -504,11 +524,30 @@ public class WhenRunningADataDrivenTestScenario {
         assertThat(executedSteps.size(), is(1));
         TestOutcome testOutcome1 = executedSteps.get(0);
 
-        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
+        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps().get(0).getChildren();
         assertThat(dataDrivenSteps.size(), is(3));
 
     }
 
+    @Test
+    public void when_test_data_is_provided_for_a_deeply_nested_step_then_a_step_should_be_reported_for_each_data_row() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                outputDirectory.getAbsolutePath());
+
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithDeeplyNestedTestSpecificData.class);
+
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+        assertThat(executedSteps.size(), is(1));
+        TestOutcome testOutcome1 = executedSteps.get(0);
+
+        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
+        assertThat(dataDrivenSteps.size(), is(3));
+
+    }
     @Test
     public void test_step_data_should_appear_in_the_step_titles() throws Throwable  {
 
