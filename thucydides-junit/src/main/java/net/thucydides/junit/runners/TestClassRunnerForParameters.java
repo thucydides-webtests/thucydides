@@ -1,10 +1,14 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.Thucydides;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.DataTableRow;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.junit.guice.ThucydidesJUnitModule;
 import net.thucydides.junit.listeners.JUnitStepListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
@@ -27,16 +31,16 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
         parameterSetNumber = i;
     }
 
-   @Override
-   protected JUnitStepListener initListenersUsing(final Pages pageFactory) {
-       setStepListener(JUnitStepListener.withOutputDirectory(getConfiguration().getOutputDirectory())
-                                        .and().withPageFactory(pageFactory)
-                                        .and().withParameterSetNumber(parameterSetNumber)
-                                        .and().withParametersTable(parametersTable)
-                                        .and().withTestClass(getTestClass().getJavaClass())
-                                        .and().build());
-       return getStepListener();
-   }
+    @Override
+    protected JUnitStepListener initListenersUsing(final Pages pageFactory) {
+        setStepListener(JUnitStepListener.withOutputDirectory(getConfiguration().getOutputDirectory())
+                .and().withPageFactory(pageFactory)
+                .and().withParameterSetNumber(parameterSetNumber)
+                .and().withParametersTable(parametersTable)
+                .and().withTestClass(getTestClass().getJavaClass())
+                .and().build());
+        return getStepListener();
+    }
 
     @Override
     public Object createTest() throws Exception {
@@ -58,12 +62,15 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
 
     @Override
     protected boolean restartBrowserBeforeTest() {
+        int restartFrequency = getConfiguration().getRestartFrequency();
         if (isUniqueSession()) {
             return false;
-        } else {
-            int restartFrequency = getConfiguration().getRestartFrequency();
-            return (restartFrequency > 0) && (parameterSetNumber > 0) && (parameterSetNumber % restartFrequency == 0);
+        } else if (restartFrequency > 0) {
+            if (parameterSetNumber > 0) {
+                return (restartFrequency > 0) && (parameterSetNumber % restartFrequency == 0);
+            }
         }
+        return false;
     }
 
     @Override
@@ -92,4 +99,4 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
         //do not generate reports at example level
     }
 
-    }
+}

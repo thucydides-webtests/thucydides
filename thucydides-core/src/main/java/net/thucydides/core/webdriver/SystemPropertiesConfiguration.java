@@ -229,6 +229,11 @@ public class SystemPropertiesConfiguration implements Configuration {
 
     }
 
+    @Override
+    public int getCurrentTestCount() {
+        return 0;
+    }
+
     /**
      * This is the URL where test cases start.
      * The default value can be overriden using the webdriver.baseurl property.

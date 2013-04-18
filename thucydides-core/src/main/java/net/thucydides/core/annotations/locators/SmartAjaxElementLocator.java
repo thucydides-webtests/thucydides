@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.WebElementFacadeImpl;
 import net.thucydides.core.steps.StepEventBus;
@@ -32,7 +33,7 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 
 	/**
 	 * Main constructor.
-	 * 
+	 *
 	 * @param driver The WebDriver to use when locating elements
 	 * @param field The field representing this element
 	 * @param timeOutInSeconds How long to wait for the element to appear. Measured in seconds.
@@ -60,24 +61,18 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 	}
 
 	private boolean shouldFindElementImmediately() {
-		if (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed()) {
-			return true;
-		}
-		if (calledFromAQuickMethod()) {
-			return true;
-		}
-		return false;
+		return aPreviousStepHasFailed() || (calledFromAQuickMethod());
 	}
 
 	private boolean calledFromAQuickMethod() {
-		for(StackTraceElement elt : Thread.currentThread().getStackTrace()){
-		if (QUICK_METHODS.contains(elt.getMethodName())
-		&&  QUICK_CLASSES.contains(elt.getClassName())) {
-		return true;
-		}
-		}
-		return false;
-	}
+        for (StackTraceElement elt : Thread.currentThread().getStackTrace()) {
+            if (QUICK_METHODS.contains(elt.getMethodName())
+                    && QUICK_CLASSES.contains(elt.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 	public WebElement findElementImmediately() {
 		SmartAnnotations annotations = new SmartAnnotations(field);
@@ -96,7 +91,7 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * Will poll the interface on a regular basis until the element is present.
 	 */
 
@@ -111,13 +106,18 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 		}
 	}
 
+    private final static List<WebElement> EMPTY_LIST_OF_WEBELEMENTS = Lists.newArrayList();
+
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * Will poll the interface on a regular basis until at least one element is present.
 	 */
 	@Override
 	public List<WebElement> findElements() {
+        if (aPreviousStepHasFailed()) {
+            return EMPTY_LIST_OF_WEBELEMENTS;
+        }
 		SlowLoadingElementList list = new SlowLoadingElementList(clock, timeOutInSeconds);
 		try {
 			return list.get().getElements();
@@ -128,10 +128,15 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 		}
 	}
 
-	/**
+
+    private boolean aPreviousStepHasFailed() {
+        return (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed());
+    }
+
+    /**
 	 * By default, we sleep for 250ms between polls. You may override this method in order to change
 	 * how it sleeps.
-	 * 
+	 *
 	 * @return Duration to sleep in milliseconds
 	 */
 	protected long sleepFor() {

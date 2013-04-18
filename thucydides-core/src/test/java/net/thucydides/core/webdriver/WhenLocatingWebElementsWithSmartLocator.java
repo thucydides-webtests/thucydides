@@ -66,16 +66,16 @@ public class WhenLocatingWebElementsWithSmartLocator {
 
     @Test(timeout = 500)
     public void should_find_elements_immediately_if_a_previous_step_has_failed() {
-
         SmartAjaxElementLocator locator = new SmartAjaxElementLocator(driver, field, 5);
         StepEventBus.getEventBus().stepFailed(failure);
         locator.findElements();
     }
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void should_wait_for_find_element_immediately_if_no_previous_step_has_failed() {
+    public void should_wait_for_find_element_if_no_previous_step_has_failed() {
 
         expectedException.expect(NoSuchElementException.class);
         expectedException.expectMessage(containsString("Timed out after 1 second"));
@@ -85,7 +85,7 @@ public class WhenLocatingWebElementsWithSmartLocator {
     }
 
     @Test
-    public void should_wait_for_find_elemenst_immediately_if_no_previous_step_has_failed() {
+    public void should_wait_for_find_elements_if_no_previous_step_has_failed() {
 
         expectedException.expect(NoSuchElementException.class);
         expectedException.expectMessage(containsString("Timed out after 1 second"));

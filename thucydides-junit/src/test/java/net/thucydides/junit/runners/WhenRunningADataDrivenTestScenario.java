@@ -331,6 +331,29 @@ public class WhenRunningADataDrivenTestScenario {
 
 
     @Test
+    public void browser_should_be_restarted_periodically_if_requested() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(), outputDirectory.getAbsolutePath());
+        environmentVariables.setProperty("thucydides.restart.browser.frequency","2");
+
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
+
+        runner.run(new RunNotifier());
+
+//        List<TestOutcome> executedSteps = runner.getTestOutcomes();
+//        assertThat(executedSteps.size(), is(1));
+//        TestOutcome testOutcome1 = executedSteps.get(0);
+//
+//        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
+//        assertThat(dataDrivenSteps.size(), is(3));
+//        assertThat(dataDrivenSteps.get(1).getResult(), is(TestResult.FAILURE));
+//        assertThat(dataDrivenSteps.get(2).getResult(), is(TestResult.SUCCESS));
+
+    }
+
+
+    @Test
     public void when_a_step_fails_for_a_row_the_other_rows_should_not_be_skipped() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");

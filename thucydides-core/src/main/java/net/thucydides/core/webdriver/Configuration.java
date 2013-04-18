@@ -31,6 +31,9 @@ public interface Configuration {
      * The default value can be overriden using the webdriver.baseurl property.
      * It is also the base URL used to build relative paths.
      */
+
+    int getCurrentTestCount();
+
     String getBaseUrl();
 
     /**
