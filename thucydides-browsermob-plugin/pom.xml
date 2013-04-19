@@ -4,7 +4,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.115-SNAPSHOT</version>
+        <version>0.9.115</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-browsermob-plugin</artifactId>
@@ -15,7 +15,7 @@
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-core</artifactId>
-            <version>0.9.115-SNAPSHOT</version>
+            <version>0.9.115</version>
         </dependency>
         <dependency>
             <groupId>biz.neustar</groupId>
