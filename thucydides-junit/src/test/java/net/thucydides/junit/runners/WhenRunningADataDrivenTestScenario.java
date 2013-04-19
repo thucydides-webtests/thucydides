@@ -22,6 +22,7 @@ import net.thucydides.samples.SampleCSVDataDrivenScenario;
 import net.thucydides.samples.SampleDataDrivenIgnoredScenario;
 import net.thucydides.samples.SampleDataDrivenPendingScenario;
 import net.thucydides.samples.SampleDataDrivenScenario;
+import net.thucydides.samples.SampleDataDrivenWebScenario;
 import net.thucydides.samples.SampleParallelDataDrivenScenario;
 import net.thucydides.samples.SamplePassingScenarioWithTestSpecificData;
 import net.thucydides.samples.SampleScenarioSteps;

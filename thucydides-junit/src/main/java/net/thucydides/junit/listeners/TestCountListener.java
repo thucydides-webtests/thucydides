@@ -6,6 +6,7 @@ import net.thucydides.core.logging.LoggingLevel;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.statistics.TestCount;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
@@ -16,23 +17,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestCountListener implements StepListener {
 
     private final Logger logger;
     private final EnvironmentVariables environmentVariables;
-    private final AtomicInteger testCount = new AtomicInteger();
+    private final TestCount testCount;
 
-    protected TestCountListener(EnvironmentVariables environmentVariables, Logger logger) {
+    protected TestCountListener(EnvironmentVariables environmentVariables, Logger logger, TestCount testCount) {
         this.logger = logger;
         this.environmentVariables = environmentVariables;
-
+        this.testCount = testCount;
         logTotalTestCount();
     }
 
-    public TestCountListener(EnvironmentVariables environmentVariables) {
-        this(environmentVariables, LoggerFactory.getLogger(Thucydides.class));
+    public TestCountListener(EnvironmentVariables environmentVariables, TestCount testCount) {
+        this(environmentVariables, LoggerFactory.getLogger(Thucydides.class), testCount);
     }
 
     private void logTotalTestCount() {
@@ -74,7 +74,7 @@ public class TestCountListener implements StepListener {
 
 
     public void testStarted(String description) {
-        int currentTestCount = testCount.addAndGet(1);
+        int currentTestCount = testCount.getNextTest();
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info("TEST NUMBER: {}", currentTestCount);
         }
@@ -103,11 +103,6 @@ public class TestCountListener implements StepListener {
 
     public void stepIgnored() {
     }
-
-
-    public void stepIgnored(String message) {
-    }
-
 
     public void stepPending() {
     }

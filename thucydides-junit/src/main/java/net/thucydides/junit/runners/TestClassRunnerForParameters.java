@@ -1,14 +1,10 @@
 package net.thucydides.junit.runners;
 
-import net.thucydides.core.Thucydides;
-import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.DataTableRow;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
-import net.thucydides.junit.guice.ThucydidesJUnitModule;
 import net.thucydides.junit.listeners.JUnitStepListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
@@ -62,16 +58,14 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
 
     @Override
     protected boolean restartBrowserBeforeTest() {
-        int restartFrequency = getConfiguration().getRestartFrequency();
-        if (isUniqueSession()) {
-            return false;
-        } else if (restartFrequency > 0) {
-            if (parameterSetNumber > 0) {
-                return (restartFrequency > 0) && (parameterSetNumber % restartFrequency == 0);
-            }
+        if (super.restartBrowserBeforeTest()) {
+            return true;
+        } else if (parameterSetNumber > 0) {
+            return (restartFrequency() > 0) && (parameterSetNumber % restartFrequency() == 0);
         }
         return false;
     }
+
 
     @Override
     protected String getName() {

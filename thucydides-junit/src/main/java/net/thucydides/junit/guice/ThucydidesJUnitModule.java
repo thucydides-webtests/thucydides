@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.statistics.TestCount;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.junit.listeners.TestCountListener;
@@ -21,7 +22,8 @@ public class ThucydidesJUnitModule extends AbstractModule {
 
         public StepListener get() {
             EnvironmentVariables environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
-            return new TestCountListener(environmentVariables);
+            TestCount testCount = Injectors.getInjector().getInstance(TestCount.class);
+            return new TestCountListener(environmentVariables, testCount);
         }
     }
 }

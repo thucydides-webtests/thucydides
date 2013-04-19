@@ -23,9 +23,11 @@ import net.thucydides.core.requirements.ClasspathRequirementsProviderService;
 import net.thucydides.core.requirements.RequirementsProviderService;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor;
+import net.thucydides.core.statistics.AtomicTestCount;
 import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
 import net.thucydides.core.statistics.Statistics;
 import net.thucydides.core.statistics.StatisticsListener;
+import net.thucydides.core.statistics.TestCount;
 import net.thucydides.core.statistics.TestStatisticsProvider;
 import net.thucydides.core.statistics.dao.HibernateTestOutcomeHistoryDAO;
 import net.thucydides.core.statistics.dao.TestOutcomeHistoryDAO;
@@ -87,6 +89,8 @@ public class ThucydidesModule extends AbstractModule {
         bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class).in(Singleton.class);
         bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class).in(Singleton.class);
         bind(ElementProxyCreator.class).to(SmartElementProxyCreator.class).in(Singleton.class);
+
+        bind(TestCount.class).to(AtomicTestCount.class).in(Singleton.class);
     }
 
     @Provides
