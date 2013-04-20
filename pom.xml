@@ -128,6 +128,8 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
+                            <forkCount>2C</forkCount>
+                            <argLine>-Xmx512m</argLine>
                             <includes>
                                 <include>**/When*.*</include>
                                 <include>**/*Test.*</include>
@@ -153,6 +155,7 @@
                         </goals>
                         <configuration>
                             <forkCount>2C</forkCount>
+                            <argLine>-Xmx512m</argLine>
                             <skip>false</skip>
                             <excludes>
                                 <exclude>**/Abstract*.*</exclude>

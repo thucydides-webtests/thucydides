@@ -422,13 +422,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     protected boolean restartBrowserBeforeTest() {
-        if (isUniqueSession()) {
-            return false;
-        } else if (shouldRestartEveryNthTest()) {
-            return (currentTestNumber() % restartFrequency() == 0);
-        } else {
-            return false;
-        }
+        return notAUniqueSession() || dueForPeriodicBrowserReset();
+    }
+
+    private boolean dueForPeriodicBrowserReset() {
+        return shouldRestartEveryNthTest() && (currentTestNumber() % restartFrequency() == 0);
+    }
+
+    private boolean notAUniqueSession() {
+        return !isUniqueSession();
     }
 
     protected int restartFrequency() {
