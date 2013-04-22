@@ -46,7 +46,7 @@ class WhenAnnotatingTestCases extends Specification {
         expect:
             TestCaseAnnotations.forTestCase(testObject).isUniqueSession() == uniqueSession
         where:
-            testObject                           | uniqueSession
+            testObject                          | uniqueSession
             annotatedTestClass                  | false
             annotatedTestClassWithUniqueSession | true
     }
@@ -60,7 +60,7 @@ class WhenAnnotatingTestCases extends Specification {
         then:
             testObject.driver == driver
         where:
-            testObject                           | uniqueSession
+            testObject                           | isUniqueSession
             annotatedTestClass                  | false
             annotatedTestClassWithUniqueSession | true
     }

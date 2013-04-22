@@ -41,7 +41,7 @@ public class SampleDataDrivenScenario {
         this.option2 = option2;
     }
 
-    @Managed(driver="htmlunit", uniqueSession = true)
+    @Managed(driver="htmlunit")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "classpath:static-site/index.html")

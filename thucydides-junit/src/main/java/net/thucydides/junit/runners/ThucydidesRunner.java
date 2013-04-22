@@ -425,14 +425,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private boolean dueForPeriodicBrowserReset() {
-        System.out.println("  Current test number: " + currentTestNumber());
-        System.out.println("  restartFrequency: " + restartFrequency());
-        System.out.println("  currentTestNumber() % restartFrequency(): " + currentTestNumber() % restartFrequency());
         return shouldRestartEveryNthTest() && (currentTestNumber() % restartFrequency() == 0);
     }
 
     private boolean notAUniqueSession() {
-        System.out.println("  Unique session: " + isUniqueSession());
         return !isUniqueSession();
     }
 
@@ -450,11 +446,11 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     protected boolean isUniqueSession() {
-        return TestCaseAnnotations.uniqueSession(getTestClass().getJavaClass());
+        return TestCaseAnnotations.isUniqueSession(getTestClass().getJavaClass());
     }
 
     protected void resetBroswerFromTimeToTime() {
-        if (restartBrowserBeforeTest()) {
+        if (isAWebTest() && restartBrowserBeforeTest()) {
             WebdriverProxyFactory.resetDriver(getDriver());
         }
     }
@@ -536,4 +532,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
 
+    public boolean isAWebTest() {
+        return TestCaseAnnotations.isWebTest(getTestClass().getJavaClass());
+    }
 }

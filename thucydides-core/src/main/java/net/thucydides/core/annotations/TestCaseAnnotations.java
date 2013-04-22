@@ -1,7 +1,6 @@
 package net.thucydides.core.annotations;
 
 import com.google.common.base.Optional;
-import org.junit.runners.model.TestClass;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -42,12 +41,17 @@ public final class TestCaseAnnotations {
     }
 
     public boolean isUniqueSession() {
-        return uniqueSession(testCase.getClass());
+        return isUniqueSession(testCase.getClass());
     }
 
 
-    public static boolean uniqueSession(Class<?> testClass) {
+    public static boolean isUniqueSession(Class<?> testClass) {
         ManagedWebDriverAnnotatedField webDriverField = ManagedWebDriverAnnotatedField.findFirstAnnotatedField(testClass);
         return webDriverField.isUniqueSession();
     }
+
+    public static boolean isWebTest(Class<?> testClass) {
+        return ManagedWebDriverAnnotatedField.findOptionalAnnotatedField(testClass).isPresent();
+    }
+
 }

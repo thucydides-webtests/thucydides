@@ -26,6 +26,7 @@ import net.thucydides.samples.SampleDataDrivenWebScenario;
 import net.thucydides.samples.SampleParallelDataDrivenScenario;
 import net.thucydides.samples.SamplePassingScenarioWithTestSpecificData;
 import net.thucydides.samples.SampleScenarioSteps;
+import net.thucydides.samples.SampleSingleSessionDataDrivenScenario;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -338,7 +339,7 @@ public class WhenRunningADataDrivenTestScenario {
         environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(), outputDirectory.getAbsolutePath());
         environmentVariables.setProperty("thucydides.restart.browser.frequency","5");
 
-        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleSingleSessionDataDrivenScenario.class);
 
         runner.run(new RunNotifier());
     }
