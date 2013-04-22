@@ -56,15 +56,15 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
         }
     }
 
-    @Override
-    protected boolean restartBrowserBeforeTest() {
-        if (super.restartBrowserBeforeTest()) {
-            return true;
-        } else if (parameterSetNumber > 0) {
-            return (restartFrequency() > 0) && (parameterSetNumber % restartFrequency() == 0);
-        }
-        return false;
-    }
+//    @Override
+//    protected boolean restartBrowserBeforeTest() {
+//        if (super.restartBrowserBeforeTest()) {
+//            return true;
+//        } else if (parameterSetNumber > 0) {
+//            return (restartFrequency() > 0) && (parameterSetNumber % restartFrequency() == 0);
+//        }
+//        return false;
+//    }
 
 
     @Override

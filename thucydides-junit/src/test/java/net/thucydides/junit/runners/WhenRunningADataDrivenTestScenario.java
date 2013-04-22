@@ -336,21 +336,11 @@ public class WhenRunningADataDrivenTestScenario {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
         environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(), outputDirectory.getAbsolutePath());
-        environmentVariables.setProperty("thucydides.restart.browser.frequency","2");
+        environmentVariables.setProperty("thucydides.restart.browser.frequency","5");
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
 
         runner.run(new RunNotifier());
-
-//        List<TestOutcome> executedSteps = runner.getTestOutcomes();
-//        assertThat(executedSteps.size(), is(1));
-//        TestOutcome testOutcome1 = executedSteps.get(0);
-//
-//        List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
-//        assertThat(dataDrivenSteps.size(), is(3));
-//        assertThat(dataDrivenSteps.get(1).getResult(), is(TestResult.FAILURE));
-//        assertThat(dataDrivenSteps.get(2).getResult(), is(TestResult.SUCCESS));
-
     }
 
 

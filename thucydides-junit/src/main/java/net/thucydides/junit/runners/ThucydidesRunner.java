@@ -78,7 +78,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      */
     private Configuration configuration;
     private TagScanner tagScanner;
-    private boolean uniqueSession;
 
     private BatchManager batchManager;
 
@@ -426,10 +425,14 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private boolean dueForPeriodicBrowserReset() {
+        System.out.println("  Current test number: " + currentTestNumber());
+        System.out.println("  restartFrequency: " + restartFrequency());
+        System.out.println("  currentTestNumber() % restartFrequency(): " + currentTestNumber() % restartFrequency());
         return shouldRestartEveryNthTest() && (currentTestNumber() % restartFrequency() == 0);
     }
 
     private boolean notAUniqueSession() {
+        System.out.println("  Unique session: " + isUniqueSession());
         return !isUniqueSession();
     }
 
@@ -447,7 +450,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     protected boolean isUniqueSession() {
-        return uniqueSession;
+        return TestCaseAnnotations.uniqueSession(getTestClass().getJavaClass());
     }
 
     protected void resetBroswerFromTimeToTime() {
@@ -467,8 +470,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             initPagesObjectUsing(driverFor(method));
             injectAnnotatedPagesObjectInto(test);
             initStepFactoryUsing(getPages());
-            uniqueSession = TestCaseAnnotations.forTestCase(test).isUniqueSession();
-
         }
 
         injectScenarioStepsInto(test);

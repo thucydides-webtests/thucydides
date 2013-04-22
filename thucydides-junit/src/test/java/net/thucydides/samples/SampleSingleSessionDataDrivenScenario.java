@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(ThucydidesParameterizedRunner.class)
-public class SampleDataDrivenScenario {
+public class SampleSingleSessionDataDrivenScenario {
 
 
     @TestData
@@ -36,12 +36,12 @@ public class SampleDataDrivenScenario {
     private String option1;
     private Integer option2;
 
-    public SampleDataDrivenScenario(String option1, Integer option2) {
+    public SampleSingleSessionDataDrivenScenario(String option1, Integer option2) {
         this.option1 = option1;
         this.option2 = option2;
     }
 
-    @Managed(driver="htmlunit", uniqueSession = true)
+    @Managed(driver="htmlunit")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "classpath:static-site/index.html")
