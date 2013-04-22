@@ -39,14 +39,9 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
     public void waitUntilDone() {
         while (!isEmpty()) {
             try {
-                Thread.sleep(20);
+                Thread.sleep(10);
             } catch (InterruptedException ignore) {
             }
-        }
-        //wait for just a bit longer so Windows can catch up
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException ignore) {
         }
     }
 

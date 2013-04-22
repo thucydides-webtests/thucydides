@@ -8,10 +8,10 @@ import com.google.common.io.Files
 
 import net.thucydides.core.screenshots.QueuedScreenshot
 import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor
+import spock.lang.Timeout
 
 class WhenProcessingScreenshots extends Specification {
 
-    def loader = new TestOutcomeLoader()
     File targetDirectory
     File sourceDirectory
     EnvironmentVariables environmentVariables = new MockEnvironmentVariables()
@@ -54,6 +54,8 @@ class WhenProcessingScreenshots extends Specification {
             assert targetDirectory.list().size() == 10
     }
 
+
+    @Timeout(30)
     def "should process queued screenshots when tests are run in parallel"() {
         given:
             def screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables)
@@ -74,43 +76,6 @@ class WhenProcessingScreenshots extends Specification {
         then:
             assert (screenshotProcessor.isEmpty())
             assert targetDirectory.list().size() == 100
-    }
-
-    def "should process queued screenshots using a single threaded processor"() {
-        given:
-            def screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables)
-        when:
-            (1..10).each {
-                def screenshotFile = copySourceScreenshot(sourceDirectory)
-                def targetFile = new File(targetDirectory,"screenshot-${it}.png")
-                screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile,targetFile))
-            }
-            screenshotProcessor.waitUntilDone()
-        then:
-            assert (screenshotProcessor.isEmpty())
-            assert targetDirectory.list().size() == 10
-    }
-
-    def "should process queued screenshots when tests are run in parallel using a single threaded processor"() {
-        given:
-        def screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables)
-        when:
-        def thread = Thread.start {
-            for( i in 1..5 ) {
-                (1..20).each {
-                    def screenshotFile = copySourceScreenshot(sourceDirectory)
-                    def targetFile = new File(targetDirectory,"screenshot-${i}-${it}.png")
-                    screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile,targetFile))
-                    screenshotProcessor.waitUntilDone()
-                }
-            }
-        }
-        thread.join()
-
-
-        then:
-        assert (screenshotProcessor.isEmpty())
-        assert targetDirectory.list().size() == 100
     }
 
 }
