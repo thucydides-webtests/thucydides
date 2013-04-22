@@ -5,7 +5,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.115-SNAPSHOT</version>
+        <version>0.9.120-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-junit</artifactId>
