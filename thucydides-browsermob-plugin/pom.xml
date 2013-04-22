@@ -8,7 +8,7 @@
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-browsermob-plugin</artifactId>
-    <version>0.9.116-SNAPSHOT</version>
+    <version>0.9.116</version>
     <packaging>jar</packaging>
     <name>thucydides-browsermob-plugin</name>
 
