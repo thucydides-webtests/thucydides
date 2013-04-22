@@ -4,20 +4,23 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.TestOutcomes;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Locale;
 
@@ -53,29 +56,21 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
      * Generate an XML report for a given test run.
      */
     public File generateReportFor(final TestOutcome testOutcome, final TestOutcomes allTestOutcomes) throws IOException {
-
         TestOutcome storedTestOutcome = testOutcome.withQualifier(qualifier);
-
-        LOGGER.debug("Generating XML report for {}/{}", storedTestOutcome.getUserStory(),
-                                                        storedTestOutcome.getMethodName());
-
-        LOGGER.debug("Test outcome contents = {}", storedTestOutcome);
-
         Preconditions.checkNotNull(outputDirectory);
-
-        XStream xstream = new XStream(new DomDriver("UTF-8"));;
+        XStream xstream = new XStream();
         xstream.alias("acceptance-test-run", TestOutcome.class);
         xstream.registerConverter(usingXmlConverter());
-        String xmlContents = xstream.toXML(storedTestOutcome);
 
         String reportFilename = reportFor(storedTestOutcome);
-        LOGGER.debug("Calculated report filename: {}", reportFilename);
 
         File report = new File(getOutputDirectory(), reportFilename);
-
-        LOGGER.debug("Writing XML report to {}", report.getAbsolutePath());
-        FileUtils.writeStringToFile(report, xmlContents);
-
+        OutputStream outputStream = new FileOutputStream(report);
+        OutputStreamWriter writer = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
+        xstream.toXML(storedTestOutcome, writer);
+        writer.flush();
+        writer.close();
+        outputStream.close();
         return report;
     }
 
@@ -88,18 +83,20 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
     }
 
     public Optional<TestOutcome> loadReportFrom(final File reportFile) throws IOException {
-
         InputStream input = null;
+        InputStreamReader reader = null;
         try {
             XStream xstream = new XStream();
             xstream.alias("acceptance-test-run", TestOutcome.class);
             xstream.registerConverter(usingXmlConverter());
             input = new FileInputStream(reportFile);
-            return Optional.of((TestOutcome) xstream.fromXML(input));
+            reader = new InputStreamReader(input, Charset.forName("UTF-8"));
+            return Optional.of((TestOutcome) xstream.fromXML(reader));
         } catch (CannotResolveClassException e) {
             LOGGER.warn("Tried to load a file that is not a thucydides report: " + reportFile);
             return Optional.absent();
         } finally {
+            reader.close();
             input.close();
         }
     }

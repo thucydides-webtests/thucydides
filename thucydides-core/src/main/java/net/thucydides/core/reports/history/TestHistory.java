@@ -7,7 +7,6 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.util.EnvironmentVariables;
-import org.joda.time.DateTime;
 
 import java.io.Closeable;
 import java.io.File;
@@ -17,7 +16,12 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -122,10 +126,16 @@ public class TestHistory {
         XStream xstream = new XStream();
         File snapshotFile = new File(getDirectory(), outcomesPrefix() + snapshot.getTime().getMillis());
         OutputStream out = null;
+        Writer writer = null;
+
         try {
             out = new FileOutputStream(snapshotFile);
-            xstream.toXML(snapshot, out);
+            writer = new OutputStreamWriter(out, Charset.forName("UTF-8"));
+            xstream.toXML(snapshot, writer);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } finally {
+            close(writer);
             close(out);
         }
 
@@ -135,13 +145,76 @@ public class TestHistory {
         XStream xstream = new XStream();
         File snapshotFile = new File(getDirectory(), progressPrefix() + snapshot.getTime().getMillis());
         OutputStream out = null;
+        Writer writer = null;
         try {
             out = new FileOutputStream(snapshotFile);
-            xstream.toXML(snapshot, out);
+            writer = new OutputStreamWriter(out, Charset.forName("UTF-8"));
+            xstream.toXML(snapshot, writer);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+
         } finally {
+            close(writer);
             close(out);
         }
 
+    }
+
+    public List<TestResultSnapshot> getHistory() {
+        File[] historyFiles = getOutcomeFiles();
+
+        List<TestResultSnapshot> resultSnapshots = new ArrayList<TestResultSnapshot>();
+
+        XStream xstream = new XStream();
+        for (File historyFile : historyFiles) {
+            TestResultSnapshot snapshot = null;
+            InputStream inputStream = null;
+            Reader reader = null;
+            try {
+                inputStream = new FileInputStream(historyFile);
+                reader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+                snapshot = (TestResultSnapshot) xstream.fromXML(reader);
+            } catch (FileNotFoundException e) {
+                throw new IllegalArgumentException("Unable to read history data in " + historyFile, e);
+            } catch (StreamException streamException) {
+                throw new IllegalArgumentException("Unable to parse history data in " + historyFile, streamException);
+            } finally {
+                close(reader);
+                close(inputStream);
+            }
+            resultSnapshots.add(snapshot);
+        }
+        Collections.sort(resultSnapshots);
+        return resultSnapshots;
+    }
+
+    public List<ProgressSnapshot> getProgress() {
+        File[] historyFiles = getProgressFiles();
+
+        List<ProgressSnapshot> resultSnapshots = new ArrayList<ProgressSnapshot>();
+
+        XStream xstream = new XStream();
+        for (File historyFile : historyFiles) {
+            ProgressSnapshot snapshot = null;
+            InputStream inputStream = null;
+            Reader reader = null;
+            try {
+                inputStream = new FileInputStream(historyFile);
+                reader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+                snapshot = (ProgressSnapshot) xstream.fromXML(reader);
+
+            } catch (FileNotFoundException e) {
+                throw new IllegalArgumentException("Unable to read history data in " + historyFile, e);
+            } catch (StreamException streamException) {
+                throw new IllegalArgumentException("Unable to parse history data in " + historyFile, streamException);
+            } finally {
+                close(reader);
+                close(inputStream);
+            }
+            resultSnapshots.add(snapshot);
+        }
+        Collections.sort(resultSnapshots);
+        return resultSnapshots;
     }
 
     private void close(Closeable stream) {
@@ -160,57 +233,6 @@ public class TestHistory {
         }
         return projectDirectory;
     }
-
-    public List<TestResultSnapshot> getHistory() {
-        File[] historyFiles = getOutcomeFiles();
-
-        List<TestResultSnapshot> resultSnapshots = new ArrayList<TestResultSnapshot>();
-
-        XStream xstream = new XStream();
-        for(File historyFile : historyFiles) {
-            TestResultSnapshot snapshot = null;
-            InputStream inputStream = null;
-            try {
-                inputStream = new FileInputStream(historyFile);
-                snapshot = (TestResultSnapshot) xstream.fromXML(inputStream);
-            } catch (FileNotFoundException e) {
-                throw new IllegalArgumentException("Unable to read history data in " + historyFile, e);
-            } catch (StreamException streamException) {
-                throw new IllegalArgumentException("Unable to parse history data in " + historyFile, streamException);
-            } finally {
-                close(inputStream);
-            }
-            resultSnapshots.add(snapshot);
-        }
-        Collections.sort(resultSnapshots);
-        return resultSnapshots;
-    }
-
-    public List<ProgressSnapshot> getProgress() {
-        File[] historyFiles = getProgressFiles();
-
-        List<ProgressSnapshot> resultSnapshots = new ArrayList<ProgressSnapshot>();
-
-        XStream xstream = new XStream();
-        for(File historyFile : historyFiles) {
-            ProgressSnapshot snapshot = null;
-            InputStream inputStream = null;
-            try {
-                inputStream = new FileInputStream(historyFile);
-                snapshot = (ProgressSnapshot) xstream.fromXML(inputStream);
-            } catch (FileNotFoundException e) {
-                throw new IllegalArgumentException("Unable to read history data in " + historyFile, e);
-            } catch (StreamException streamException) {
-                throw new IllegalArgumentException("Unable to parse history data in " + historyFile, streamException);
-            } finally {
-                close(inputStream);
-            }
-            resultSnapshots.add(snapshot);
-        }
-        Collections.sort(resultSnapshots);
-        return resultSnapshots;
-    }
-
 
     private File[] getOutcomeFiles() {
         return getDirectory().listFiles(new FilenameFilter() {
