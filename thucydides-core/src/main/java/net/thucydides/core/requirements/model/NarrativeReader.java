@@ -9,9 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import static net.thucydides.core.requirements.RequirementsPath.fileSystemPathElements;
@@ -70,7 +72,7 @@ public class NarrativeReader {
 
     private Optional<Narrative> narrativeLoadedFrom(File narrativeFile, String type) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(narrativeFile));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(narrativeFile), "UTF-8"));
             List<String> lines = readPreambleFrom(reader);
 
             String title = null;
