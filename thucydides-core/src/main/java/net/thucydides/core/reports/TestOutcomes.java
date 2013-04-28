@@ -113,7 +113,7 @@ public class TestOutcomes {
 
     public static TestOutcomes withNoResults() {
         return new TestOutcomes(Collections.EMPTY_LIST,
-                                Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
+                Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
     }
 
     protected TestStatisticsProvider getTestStatisticsProvider() {
@@ -260,6 +260,16 @@ public class TestOutcomes {
         return TestOutcomes.of(filter(havingTag(tag), outcomes)).withLabel(tag.getName()).withRootOutcomes(getRootOutcomes());
     }
 
+    public TestOutcomes withTags(List<TestTag> tags) {
+        List<? extends TestOutcome> filteredOutcomes = outcomes;
+        TestOutcomes filtered = TestOutcomes.of(outcomes);
+        for(TestTag tag : tags) {
+            filtered = TestOutcomes.of(filter(havingTag(tag), filteredOutcomes)).withLabel(tag.getName()).withRootOutcomes(getRootOutcomes());
+            filteredOutcomes = filtered.getOutcomes();
+        }
+        return filtered;
+    }
+
     /**
      * Return a copy of the current test outcomes, with test run history and statistics.
      *
@@ -382,6 +392,10 @@ public class TestOutcomes {
         return outcomes.size();
     }
 
+    public List<? extends TestOutcome> getOutcomes() {
+        return ImmutableList.copyOf(outcomes);
+    }
+
     /**
      * @return The overall result for the tests in this test outcome set.
      */
@@ -481,8 +495,8 @@ public class TestOutcomes {
     public Double getPercentagePendingTestCount() {
         if (getTotal() > 0) {
             return ((countTestsWithResult(TestResult.IGNORED)
-                     + countTestsWithResult(TestResult.SKIPPED)
-                     + countTestsWithResult(TestResult.PENDING)) / (double) getTotal());
+                    + countTestsWithResult(TestResult.SKIPPED)
+                    + countTestsWithResult(TestResult.PENDING)) / (double) getTotal());
         } else {
             return 0.0;
         }
@@ -547,8 +561,8 @@ public class TestOutcomes {
      */
     public Double getPercentagePendingStepCount() {
         int passingOrFailingSteps = countStepsWithResult(TestResult.SUCCESS)
-                                    + countStepsWithResult(TestResult.FAILURE)
-                                    + countStepsWithResult(TestResult.ERROR);
+                + countStepsWithResult(TestResult.FAILURE)
+                + countStepsWithResult(TestResult.ERROR);
         if (passingOrFailingSteps == 0) {
             return 1.0;
         } else {

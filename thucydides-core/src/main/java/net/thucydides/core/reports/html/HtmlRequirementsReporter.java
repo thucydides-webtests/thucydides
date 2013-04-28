@@ -20,12 +20,18 @@ public class HtmlRequirementsReporter extends HtmlReporter {
     private static final String REPORT_NAME = "capabilities.html";
 
     private final IssueTracking issueTracking;
+    private final String relativeLink;
 
     public HtmlRequirementsReporter() {
-        this(Injectors.getInjector().getInstance(IssueTracking.class));
+        this("", Injectors.getInjector().getInstance(IssueTracking.class));
     }
 
-    public HtmlRequirementsReporter(final IssueTracking issueTracking) {
+    public HtmlRequirementsReporter(final String relativeLink) {
+        this(relativeLink, Injectors.getInjector().getInstance(IssueTracking.class));
+    }
+
+    public HtmlRequirementsReporter(final String relativeLink, final IssueTracking issueTracking) {
+        this.relativeLink = relativeLink;
         this.issueTracking = issueTracking;
     }
 
@@ -47,6 +53,7 @@ public class HtmlRequirementsReporter extends HtmlReporter {
         context.put("allTestOutcomes", testOutcomes);
         context.put("reportName", new ReportNameProvider());
         context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
+        context.put("relativeLink", relativeLink);
         addFormattersToContext(context);
 
         String htmlContents = mergeTemplate(DEFAULT_REQUIREMENTS_REPORT).usingContext(context);
