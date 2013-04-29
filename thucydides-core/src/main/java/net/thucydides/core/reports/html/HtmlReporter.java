@@ -2,6 +2,7 @@ package net.thucydides.core.reports.html;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.reports.ThucydidesReporter;
 import net.thucydides.core.reports.templates.ReportTemplate;
 import net.thucydides.core.reports.templates.TemplateManager;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -23,15 +24,12 @@ import java.util.Map;
  *
  * @author johnsmart
  */
-public abstract class HtmlReporter {
+public abstract class HtmlReporter extends ThucydidesReporter {
 
     private static final String DEFAULT_RESOURCE_DIRECTORY = "report-resources";
     private String resourceDirectory = DEFAULT_RESOURCE_DIRECTORY;
-    private File outputDirectory;
     private final TemplateManager templateManager;
     private final EnvironmentVariables environmentVariables;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlReporter.class);
 
     public HtmlReporter() {
         this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
@@ -45,17 +43,6 @@ public abstract class HtmlReporter {
 
     private TemplateManager getTemplateManager() {
         return templateManager;
-    }
-
-    /**
-     * HTML reports will be generated here.
-     */
-    public File getOutputDirectory() {
-        return outputDirectory;
-    }
-
-    public void setOutputDirectory(final File outputDirectory) {
-        this.outputDirectory = outputDirectory;
     }
 
     /**

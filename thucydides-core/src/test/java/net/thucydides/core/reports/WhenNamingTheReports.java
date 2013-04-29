@@ -44,6 +44,12 @@ public class WhenNamingTheReports {
     }
 
     @Test
+    public void the_html_report_filename_should_be_based_on_the_test_case_name() {
+        TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+        assertThat(testOutcome.getHtmlReport(), is(Digest.ofTextValue("a_user_story_a_simple_test_case") + ".html"));
+    }
+
+    @Test
     public void the_report_screenshot_filename_should_be_based_on_the_test_case_name() {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         assertThat(testOutcome.getScreenshotReportName(), is(Digest.ofTextValue("a_user_story_a_simple_test_case") + "_screenshots"));

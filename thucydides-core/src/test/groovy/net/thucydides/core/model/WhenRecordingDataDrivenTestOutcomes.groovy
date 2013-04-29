@@ -181,9 +181,12 @@ class WhenRecordingDataDrivenTestOutcomes extends Specification {
 
             eventBus.testFinished()
         then: "all scenarios should be recorded"
-            listener.testOutcomes[0].dataTable.rows.collect { it.result } == [SUCCESS, PENDING, FAILURE]
+            def testOutcomeWithExamples =  listener.testOutcomes[0]
+            testOutcomeWithExamples.dataTable.rows.collect { it.result } == [SUCCESS, PENDING, FAILURE]
+        and: "should provide the list of data fields"
+            testOutcomeWithExamples.exampleFields == ["firstName","lastName","age"]
         and: "should provide a sample scenario"
-            listener.testOutcomes[0].dataDrivenSampleScenario == "Step1\nStep2\nStep3"
+            testOutcomeWithExamples.dataDrivenSampleScenario == "Step1\nStep2\nStep3"
     }
 
     def "Should be able to update the table results incrementally via the event bus"() {

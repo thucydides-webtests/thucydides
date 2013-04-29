@@ -15,6 +15,7 @@ import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +30,7 @@ import java.util.List;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.on;
 import static net.thucydides.core.matchers.ThucydidesMatchers.hasFilenames;
+import static net.thucydides.core.matchers.dates.DateMatchers.isBetween;
 import static net.thucydides.core.model.TestResult.ERROR;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.IGNORED;
@@ -172,6 +174,14 @@ public class WhenRecordingNewTestOutcomes {
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 
         assertThat(outcome.getMethodName(), is("should_do_this"));
+    }
+
+    @Test
+    public void a_test_outcome_should_record_the_start_time() {
+        DateTime beforeDate = DateTime.now();
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+        DateTime afterDate = DateTime.now();
+        assertThat(outcome.getStartTime(), isBetween(beforeDate, afterDate));
     }
 
     /**
@@ -519,6 +529,15 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("step_3"));
 
         assertThat(testOutcome.getScreenshots(), hasFilenames("step_1.png", "step_2.png", "step_3.png"));
+    }
+
+    @Test
+    public void should_know_if_an_outcome_has_screenshots() {
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_1"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_2"));
+        testOutcome.recordStep(forASuccessfulTestStepCalled("step_3"));
+
+        assertThat(testOutcome.hasScreenshots(), is(true));
     }
 
     @Test

@@ -25,7 +25,6 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.ListableBeanFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -145,14 +144,14 @@ public class TestOutcome {
      * An optional qualifier used to distinguish different runs of this test in data-driven tests.
      */
     private Optional<String> qualifier;
+
+    private DataTable dataTable;
+
     /**
      * The title is immutable once set. For convenience, you can create a test
      * run directly with a title using this constructor.
      * @param methodName The name of the Java method that implements this test.
      */
-
-    private DataTable dataTable;
-
     public TestOutcome(final String methodName) {
         this(methodName, null);
     }
@@ -558,7 +557,6 @@ public class TestOutcome {
 
     /**
      * Creates a new step with this name and immediately turns it into a step group.
-     * TODO: Review where this is used, as it is mainly for backward compatibility.
      */
     @Deprecated
     public void startGroup(final String groupName) {
@@ -819,7 +817,7 @@ public class TestOutcome {
         return dataTable.hasPredefinedRows();
     }
 
-    public void addRow(Map<String, ? extends Object> data) {
+    public void addRow(Map<String, ?> data) {
         dataTable.addRow(data);
     }
 
@@ -860,7 +858,6 @@ public class TestOutcome {
         int totalSteps = getNestedStepCount();
         return totalSteps * rowsWithResult / totalRows;
     }
-
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {
@@ -939,7 +936,7 @@ public class TestOutcome {
     }
 
     public Long getDuration() {
-        if ((duration == 0) && (testSteps != null) && (testSteps.size() > 0)) {
+        if ((duration == 0) && (testSteps.size() > 0)) {
             return sum(testSteps, on(TestStep.class).getDuration());
         } else {
             return duration;
