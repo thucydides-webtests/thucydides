@@ -10,6 +10,7 @@ import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomeLoader;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.UserStoryTestReporter;
+import net.thucydides.core.reports.csv.CSVReporter;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.history.TestResultSnapshot;
 import net.thucydides.core.reports.json.JSONResultTree;
@@ -124,7 +125,13 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateResultReportsFor(testOutcomes);
         generateHistoryReportFor(testOutcomes);
         generateCoverageReportsFor(testOutcomes);
+        generateCSVReportFor(testOutcomes);
         generateRequirementsReportsFor(requirementsOutcomes);
+    }
+
+    private void generateCSVReportFor(TestOutcomes testOutcomes) throws IOException {
+        CSVReporter reporter = new CSVReporter(getOutputDirectory(), getEnvironmentVariables());
+        reporter.generateReportFor(testOutcomes);
     }
 
     public void generateRequirementsReportsFor(RequirementsOutcomes requirementsOutcomes) throws IOException {
@@ -166,6 +173,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         ReportNameProvider defaultNameProvider = new ReportNameProvider();
         Map<String, Object> context = buildContext(testOutcomes, defaultNameProvider);
         context.put("report", ReportProperties.forAggregateResultsReport());
+        context.put("csvReport", "results.csv");
         generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, "index.html");
     }
 

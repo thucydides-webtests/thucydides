@@ -15,7 +15,7 @@
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-core</artifactId>
-            <version>0.9.116</version>
+            <version>0.9.122</version>
         </dependency>
         <dependency>
             <groupId>biz.neustar</groupId>

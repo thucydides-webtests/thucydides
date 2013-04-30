@@ -212,6 +212,9 @@
                                         <a href="${relativeLink}${errorReport}">with errors</a>
                                     <#else>errors</#if>
                                 </span>
+                            <#if (csvReport! != '')>
+                                <a href="${csvReport}">[Download CSV]</a>
+                            </#if>
                         </div>
 
                         <div id="test-results-tabs">

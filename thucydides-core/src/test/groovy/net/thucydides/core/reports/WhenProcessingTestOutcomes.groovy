@@ -1,6 +1,7 @@
 package net.thucydides.core.reports
 
 import net.thucydides.core.model.TestOutcome
+import net.thucydides.core.model.TestTag
 import spock.lang.Specification
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled
 import static org.junit.matchers.JUnitMatchers.everyItem
@@ -120,14 +121,48 @@ class WhenProcessingTestOutcomes extends Specification {
             tests everyItem(havingTagType("feature"))
     }
 
-    def "should list tests for a given tag"() {
+    def "should list tests for a given issue using a tag notation"() {
         given:
             TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
-            def tests = testOutcomes.withTag("a story").getTests()
+            def tests = testOutcomes.withTag(TestTag.withValue("issue:ISSUE-1")).getTests()
         then:
-            tests everyItem(havingTagName("a story"))
+            tests.size() == 1 && tests[0].hasIssue("ISSUE-1")
     }
+
+    def "should list tests for a given set of tags"() {
+        given:
+            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+        when:
+            def tags = [TestTag.withValue("story:a story"), TestTag.withValue("story:another story")]
+            def tests = testOutcomes.withTags(tags).getTests()
+        then:
+            tests.each { test ->
+                assert test.tags.contains(TestTag.withValue("story:a story")) || test.tags.contains(TestTag.withValue("story:another story"))
+            }
+    }
+
+    def "should list tests for a given set of issue numbers"() {
+        given:
+            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+        when:
+            def tags = [TestTag.withValue("issue:ISSUE-1"), TestTag.withValue("issue:ISSUE-2")]
+            def tests = testOutcomes.withTags(tags).getTests()
+        then:
+            tests.each { test ->
+                assert test.hasIssue("ISSUE-1") || test.hasIssue("ISSUE-2")
+            }
+    }
+
+    def "should list tests for a given tag"() {
+        given:
+        TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+        when:
+        def tests = testOutcomes.withTag("a story").getTests()
+        then:
+        tests everyItem(havingTagName("a story"))
+    }
+
 
     def "should list all passing tests"() {
         given:

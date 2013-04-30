@@ -868,6 +868,14 @@ public class TestOutcome {
         return Optional.absent();
     }
 
+    public boolean hasIssue(String issue) {
+        return getIssues().contains(issue);
+    }
+
+    public boolean hasTag(TestTag tag) {
+        return getTags().contains(tag);
+    }
+
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {
             return step.getResult();

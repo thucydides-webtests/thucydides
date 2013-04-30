@@ -2,6 +2,9 @@
   <user-story id="net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.AUserStoryInAFeature" name="A user story in a feature">
      <feature id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature' name='A feature'/>
   </user-story>
+    <issues>
+        <issue>ISSUE-1</issue>
+    </issues>
   <tags>
       <tag name="A Feature" type="feature"/>
       <tag name="a story" type="story"/>
