@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +42,6 @@ import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
-import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTag;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagName;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagType;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.withResult;
@@ -102,7 +102,7 @@ public class TestOutcomes {
         return Injectors.getInjector().getInstance(HibernateTestStatisticsProvider.class);
     }
 
-    protected TestOutcomes withLabel(String label) {
+    public TestOutcomes withLabel(String label) {
         return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, label, defaultTestStatisticsProvider());
     }
 
@@ -257,17 +257,33 @@ public class TestOutcomes {
     }
 
     public TestOutcomes withTag(TestTag tag) {
-        return TestOutcomes.of(filter(havingTag(tag), outcomes)).withLabel(tag.getName()).withRootOutcomes(getRootOutcomes());
+        List<? extends TestOutcome> matchingTags = matchingOutcomes(outcomes, tag);
+        return TestOutcomes.of(matchingTags).withLabel(tag.getName()).withRootOutcomes(getRootOutcomes());
     }
 
     public TestOutcomes withTags(List<TestTag> tags) {
-        List<? extends TestOutcome> filteredOutcomes = outcomes;
-        TestOutcomes filtered = TestOutcomes.of(outcomes);
-        for(TestTag tag : tags) {
-            filtered = TestOutcomes.of(filter(havingTag(tag), filteredOutcomes)).withLabel(tag.getName()).withRootOutcomes(getRootOutcomes());
-            filteredOutcomes = filtered.getOutcomes();
+        List<TestOutcome> filteredOutcomes = new ArrayList();
+        for (TestTag tag : tags) {
+            filteredOutcomes.addAll(matchingOutcomes(outcomes, tag));
         }
-        return filtered;
+        return TestOutcomes.of(filteredOutcomes);
+    }
+
+    private List<? extends TestOutcome> matchingOutcomes(List<? extends TestOutcome> outcomes, TestTag tag) {
+        List<TestOutcome> matchingOutcomes = Lists.newArrayList();
+        for (TestOutcome outcome : outcomes) {
+            if (isAnIssue(tag) && (outcome.hasIssue(tag.getName()))) {
+                matchingOutcomes.add(outcome);
+            }
+            if (outcome.hasTag(tag)) {
+                matchingOutcomes.add(outcome);
+            }
+        }
+        return matchingOutcomes;
+    }
+
+    private boolean isAnIssue(TestTag tag) {
+        return tag.getType().equalsIgnoreCase("issue");
     }
 
     /**
@@ -345,7 +361,7 @@ public class TestOutcomes {
                                                   TestResult... possibleResults) {
         List<TestOutcome> validOutcomes = Lists.newArrayList();
         List<TestResult> possibleResultsList = Arrays.asList(possibleResults);
-        for(TestOutcome outcome : outcomes) {
+        for (TestOutcome outcome : outcomes) {
             if (possibleResultsList.contains(outcome.getResult())) {
                 validOutcomes.add(outcome);
             }
@@ -438,7 +454,6 @@ public class TestOutcomes {
     }
 
     /**
-     *
      * @return how many tests contain at least one test with an error
      */
     public int getErrorCount() {
@@ -478,7 +493,7 @@ public class TestOutcomes {
 
     public Double getPercentageFailingTestCount() {
         if (getTotal() > 0) {
-            return (countTestsWithResult(TestResult.FAILURE)/ (double) getTotal());
+            return (countTestsWithResult(TestResult.FAILURE) / (double) getTotal());
         } else {
             return 0.0;
         }
