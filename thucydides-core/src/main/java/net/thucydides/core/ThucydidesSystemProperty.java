@@ -396,7 +396,12 @@ public enum ThucydidesSystemProperty {
      * a tag or comma-separated list of tags in the shortened form.
      * For example, -Dtags="iteration:I1" or -Dtags="color:red,flavor:strawberry"
      */
-    TAGS("tags");
+    TAGS("tags"),
+
+    /**
+     * Add extra columns to the CSV output, obtained from tag values.
+     */
+    THUCYDIDES_EXTRA_COLUMNS("thucydides.csv.extra.columns");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

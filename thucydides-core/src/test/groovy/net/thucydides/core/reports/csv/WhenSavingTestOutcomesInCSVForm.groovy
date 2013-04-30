@@ -1,9 +1,12 @@
-package net.thucydides.core.reports
+package net.thucydides.core.reports.csv
 
 import au.com.bytecode.opencsv.CSVReader
 import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.core.model.TestOutcome
+import net.thucydides.core.reports.TestOutcomeLoader
+import net.thucydides.core.reports.TestOutcomes
 import net.thucydides.core.reports.csv.CSVReporter
+import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
 
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled
@@ -37,6 +40,24 @@ class WhenSavingTestOutcomesInCSVForm extends Specification {
         then: "there should be a row for each test result"
             def lines = linesIn(csvResults)
             lines.size() == 4
+    }
+
+    def environmentVariables = new MockEnvironmentVariables()
+
+    def "should store user-configurable extra columns"() {
+        given: "a set of test results"
+            def loader = new TestOutcomeLoader()
+            def testOutcomeList = loader.loadFrom(directoryInClasspathCalled("/tagged-test-outcomes"));
+        and: "we want to store extra columns from tag values"
+            environmentVariables.setProperty("thucydides.csv.extra.columns","feature, epic")
+        when: "we store these outcomes as a CSV file"
+            def csvReporter = new CSVReporter(temporaryDirectory, environmentVariables)
+            File csvResults = csvReporter.generateReportFor(TestOutcomes.of(testOutcomeList))
+        then: "the results should contain a column for each additional column"
+            linesIn(csvResults)[0] == ["Story", "Title", "Result", "Date", "Stability", "Duration (s)", "Feature", "Epic"]
+        and: "the extra column data should come from the tags"
+           linesIn(csvResults)[1][6] == "" && linesIn(csvResults)[1][7] == "an epic" &&
+           linesIn(csvResults)[2][6] == "A Feature" && linesIn(csvResults)[2][7] == ""
     }
 
     def linesIn(File csvResults) {

@@ -859,6 +859,15 @@ public class TestOutcome {
         return totalSteps * rowsWithResult / totalRows;
     }
 
+    public Optional<String> getTagValue(String tagType) {
+        for(TestTag tag : getTags()) {
+            if (tag.getType().equalsIgnoreCase(tagType)) {
+                return Optional.of(tag.getName());
+            }
+        }
+        return Optional.absent();
+    }
+
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {
             return step.getResult();
