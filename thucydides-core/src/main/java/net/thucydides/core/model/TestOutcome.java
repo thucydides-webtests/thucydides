@@ -363,7 +363,7 @@ public class TestOutcome {
     }
 
     public String getStoryTitle() {
-        return getTitleFrom(userStory);
+        return (userStory != null) ? getTitleFrom(userStory) : "";
     }
 
     public String getPath() {

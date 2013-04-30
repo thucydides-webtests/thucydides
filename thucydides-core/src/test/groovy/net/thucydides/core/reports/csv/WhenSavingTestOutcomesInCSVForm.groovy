@@ -24,7 +24,7 @@ class WhenSavingTestOutcomesInCSVForm extends Specification {
             def testOutcomeList = TestOutcomes.withNoResults()
         when: "we store these outcomes as a CSV file"
             def csvReporter = new CSVReporter(temporaryDirectory)
-            File csvResults = csvReporter.generateReportFor(testOutcomeList)
+            File csvResults = csvReporter.generateReportFor(testOutcomeList, "results.csv")
         then: "the CSV file contains a single line"
             csvResults.text.readLines().size() == 1
         and: "the first line should contain the test outcome headings"
@@ -36,7 +36,7 @@ class WhenSavingTestOutcomesInCSVForm extends Specification {
             def testOutcomeList = loader.loadFrom(directoryInClasspathCalled("/tagged-test-outcomes"));
         when: "we store these outcomes as a CSV file"
             def csvReporter = new CSVReporter(temporaryDirectory)
-            File csvResults = csvReporter.generateReportFor(TestOutcomes.of(testOutcomeList))
+            File csvResults = csvReporter.generateReportFor(TestOutcomes.of(testOutcomeList), "results.csv")
         then: "there should be a row for each test result"
             def lines = linesIn(csvResults)
             lines.size() == 4
@@ -52,7 +52,7 @@ class WhenSavingTestOutcomesInCSVForm extends Specification {
             environmentVariables.setProperty("thucydides.csv.extra.columns","feature, epic")
         when: "we store these outcomes as a CSV file"
             def csvReporter = new CSVReporter(temporaryDirectory, environmentVariables)
-            File csvResults = csvReporter.generateReportFor(TestOutcomes.of(testOutcomeList))
+            File csvResults = csvReporter.generateReportFor(TestOutcomes.of(testOutcomeList), "results.csv")
         then: "the results should contain a column for each additional column"
             linesIn(csvResults)[0] == ["Story", "Title", "Result", "Date", "Stability", "Duration (s)", "Feature", "Epic"]
         and: "the extra column data should come from the tags"

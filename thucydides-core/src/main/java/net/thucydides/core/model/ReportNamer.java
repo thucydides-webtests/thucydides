@@ -70,10 +70,6 @@ public class ReportNamer {
         return getNormalizedTestNameFor(userStory.getName());
     }
 
-    public String getNormalizedTestNameFor(final ApplicationFeature feature) {
-        return getNormalizedTestNameFor(feature.getName());
-    }
-
     public String getNormalizedTestNameFor(String name) {
         String testNameWithUnderscores = NameConverter.underscore(name.toLowerCase());
         return appendSuffixTo(Digest.ofTextValue(testNameWithUnderscores));

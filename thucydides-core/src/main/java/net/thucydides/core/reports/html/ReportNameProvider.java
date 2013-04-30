@@ -12,17 +12,25 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class ReportNameProvider {
 
     private final Optional<String> context;
-    private final ReportNamer reportNamer = ReportNamer.forReportType(ReportType.HTML);
+    private final ReportNamer reportNamer;
+
+    private final static Optional<String> NO_CONTEXT = Optional.absent();
 
     public ReportNameProvider() {
-        this.context = Optional.absent();
+        this(NO_CONTEXT, ReportType.HTML);
     }
+
     public ReportNameProvider(String context) {
-       if (isEmpty(context))
-           this.context =  Optional.absent();
-        else {
-           this.context = Optional.of(context);
-       }
+       this(Optional.fromNullable(context), ReportType.HTML);
+    }
+
+    protected ReportNameProvider(Optional<String> context, ReportType type) {
+        this.context = context;
+        this.reportNamer = ReportNamer.forReportType(type);
+    }
+
+    public ReportNameProvider forCSVFiles() {
+        return new ReportNameProvider(this.context, ReportType.CSV);
     }
 
     public String forTestResult(String result) {
@@ -34,7 +42,7 @@ public class ReportNameProvider {
     }
 
     public String forTagType(String tagType) {
-        return reportNamer.getNormalizedTestNameFor("tagtype_" + tagType);
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tagtype_" + tagType);
     }
 
     public ReportNameProvider withPrefix(String prefix) {
@@ -49,11 +57,7 @@ public class ReportNameProvider {
         }
     }
 
-    public ReportNameProvider inContext(String context) {
-        return new ReportNameProvider(context);
-    }
-
     public String forRequirement(Requirement parentRequirement) {
-        return reportNamer.getNormalizedTestNameFor("requirement_" + parentRequirement.getName());
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "requirement_" + parentRequirement.getName());
     }
 }

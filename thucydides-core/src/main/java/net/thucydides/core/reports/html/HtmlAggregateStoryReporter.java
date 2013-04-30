@@ -83,6 +83,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         this.reportNameProvider = new ReportNameProvider();
         this.htmlRequirementsReporter = new HtmlRequirementsReporter(relativeLink);
         this.htmlProgressReporter = new HtmlProgressReporter(issueTracking, testHistory);
+
         RequirementsProviderService requirementsProviderService = Injectors.getInjector().getInstance(RequirementsProviderService.class);
         this.requirementsFactory = new RequirmentsOutcomeFactory(requirementsProviderService.getRequirementsProviders(), issueTracking);
     }
@@ -125,13 +126,12 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateResultReportsFor(testOutcomes);
         generateHistoryReportFor(testOutcomes);
         generateCoverageReportsFor(testOutcomes);
-        generateCSVReportFor(testOutcomes);
         generateRequirementsReportsFor(requirementsOutcomes);
     }
 
-    private void generateCSVReportFor(TestOutcomes testOutcomes) throws IOException {
-        CSVReporter reporter = new CSVReporter(getOutputDirectory(), getEnvironmentVariables());
-        reporter.generateReportFor(testOutcomes);
+    private void generateCSVReportFor(TestOutcomes testOutcomes, String reportName) throws IOException {
+        CSVReporter csvReporter = new CSVReporter(getOutputDirectory(), getEnvironmentVariables());
+        csvReporter.generateReportFor(testOutcomes, reportName);
     }
 
     public void generateRequirementsReportsFor(RequirementsOutcomes requirementsOutcomes) throws IOException {
@@ -170,11 +170,14 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     private void generateAggregateReportFor(TestOutcomes testOutcomes) throws IOException {
 
+
         ReportNameProvider defaultNameProvider = new ReportNameProvider();
         Map<String, Object> context = buildContext(testOutcomes, defaultNameProvider);
         context.put("report", ReportProperties.forAggregateResultsReport());
         context.put("csvReport", "results.csv");
+
         generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, "index.html");
+        generateCSVReportFor(testOutcomes,"results.csv");
     }
 
     private void generateTagReportsFor(TestOutcomes testOutcomes) throws IOException {
@@ -226,8 +229,13 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Map<String, Object> context = buildContext(testOutcomes, reportName);
         context.put("report", ReportProperties.forTestResultsReport());
         context.put("currentTagType", tagType);
+
+        String csvReport = reportName.forCSVFiles().forTestResult(testResult);
+        context.put("csvReport", csvReport);
+
         String report = reportName.forTestResult(testResult);
         generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, report);
+        generateCSVReportFor(testOutcomes, csvReport);
     }
 
     private void generateTagReport(TestOutcomes testOutcomes, ReportNameProvider reportName, TestTag tag) throws IOException {
@@ -235,8 +243,13 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Map<String, Object> context = buildContext(testOutcomesForTag, reportName);
         context.put("report", ReportProperties.forTagResultsReport());
         context.put("currentTagType", tag.getType());
+
+        String csvReport = reportName.forCSVFiles().forTag(tag.getName());
+        context.put("csvReport", csvReport);
+
         String report = reportName.forTag(tag.getName());
         generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, report);
+        generateCSVReportFor(testOutcomesForTag, csvReport);
     }
 
     private void generateTagTypeReport(TestOutcomes testOutcomes, ReportNameProvider reportName, String tagType) throws IOException {
@@ -246,8 +259,12 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         context.put("report", ReportProperties.forTagTypeResultsReport());
         context.put("tagType", tagType);
 
+        String csvReport = reportName.forCSVFiles().forTagType(tagType);
+        context.put("csvReport", csvReport);
+
         String report = reportName.forTagType(tagType);
         generateReportPage(context, TAGTYPE_TEMPLATE_PATH, report);
+        generateCSVReportFor(testOutcomesForTagType, csvReport);
     }
 
     private void generateAssociatedTagReportsForTag(TestOutcomes testOutcomes, String sourceTag) throws IOException {

@@ -31,7 +31,6 @@ import static ch.lambdaj.Lambda.on;
  * Stores test outcomes as CSV files
  */
 public class CSVReporter extends ThucydidesReporter {
-    private static final String CSV_RESULTS_FILE = "results.csv";
     private static final String[] TITLE_LINE = {"Story", "Title", "Result", "Date", "Stability", "Duration (s)"};
     private static final String[] OF_STRINGS = new String[]{};
 
@@ -51,12 +50,12 @@ public class CSVReporter extends ThucydidesReporter {
         return ImmutableList.copyOf(Splitter.on(",").omitEmptyStrings().trimResults().split(columns));
     }
 
-    public File generateReportFor(TestOutcomes testOutcomes) throws IOException {
-        CSVWriter writer = new CSVWriter(new FileWriter(getOutputFile()));
+    public File generateReportFor(TestOutcomes testOutcomes, String reportName) throws IOException {
+        CSVWriter writer = new CSVWriter(new FileWriter(getOutputFile(reportName)));
         writeTitleRow(writer);
         writeEachRow(testOutcomes.withHistory(), writer);
         writer.close();
-        return getOutputFile();
+        return getOutputFile(reportName);
     }
 
     private void writeTitleRow(CSVWriter writer) {
@@ -100,7 +99,7 @@ public class CSVReporter extends ThucydidesReporter {
         return extraValues;
     }
 
-    private File getOutputFile() {
-        return new File(getOutputDirectory(), CSV_RESULTS_FILE);
+    private File getOutputFile(String reportName) {
+        return new File(getOutputDirectory(), reportName);
     }
 }

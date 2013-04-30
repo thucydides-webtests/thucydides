@@ -10,6 +10,9 @@ public enum ReportType {
     /** XML reports. */
     XML("xml"),
 
+    /** CSV files. */
+    CSV("csv"),
+
     /** HTML reports. */
     HTML("html");
 
