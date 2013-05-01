@@ -73,6 +73,7 @@ import static org.hamcrest.Matchers.is;
 public class TestOutcome {
 
     private static final int RECENT_TEST_RUN_COUNT = 10;
+    private static final String ISSUES = "issues";
     /**
      * The name of the method implementing this test.
      */
@@ -860,9 +861,13 @@ public class TestOutcome {
     }
 
     public Optional<String> getTagValue(String tagType) {
-        for(TestTag tag : getTags()) {
-            if (tag.getType().equalsIgnoreCase(tagType)) {
-                return Optional.of(tag.getName());
+        if (tagType.equalsIgnoreCase(ISSUES) && !getIssueKeys().isEmpty()) {
+            return Optional.of(Joiner.on(",").join(getIssueKeys()));
+        } else {
+            for(TestTag tag : getTags()) {
+                if (tag.getType().equalsIgnoreCase(tagType)) {
+                    return Optional.of(tag.getName());
+                }
             }
         }
         return Optional.absent();
