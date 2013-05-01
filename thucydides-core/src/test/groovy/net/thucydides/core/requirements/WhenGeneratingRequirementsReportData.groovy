@@ -116,6 +116,17 @@ class WhenGeneratingRequirementsReportData extends Specification {
             outcomes.failingRequirementsCount == 1
     }
 
+    def "a requirement with a pending test is pending"() {
+        given: "there are some passing tests"
+        def noTestOutcomes = TestOutcomes.of(somePendingTestResults())
+        and: "we read the requirements from the directory structure"
+        RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+        when: "we generate the capability outcomes"
+        RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
+        then: "requirements with pending tests should be pending"
+        outcomes.pendingRequirementsCount == 2
+    }
+
     def "should report on the number of passing, failing and pending tests for a requirement"() {
         given: "there are some test results"
             def noTestOutcomes = TestOutcomes.of(someVariedTestResults())
@@ -236,6 +247,24 @@ class WhenGeneratingRequirementsReportData extends Specification {
         return [testOutcome1, testOutcome2, testOutcome3]
 
     }
+
+    def somePendingTestResults() {
+        TestOutcome testOutcome1 = TestOutcome.forTestInStory("planting potatoes in the sun", Story.called("planting potatoes"))
+        testOutcome1.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
+        testOutcome1.recordStep(TestStep.forStepCalled("step 1").withResult(TestResult.PENDING))
+
+        TestOutcome testOutcome2 = TestOutcome.forTestInStory("planting potatoes in the rain", Story.called("planting potatoes"))
+        testOutcome2.recordStep(TestStep.forStepCalled("step 2").withResult(TestResult.SUCCESS))
+        testOutcome2.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
+
+        TestOutcome testOutcome3 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
+        testOutcome2.recordStep(TestStep.forStepCalled("step 3").withResult(TestResult.SUCCESS))
+        testOutcome2.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+
+        return [testOutcome1, testOutcome2, testOutcome3]
+
+    }
+
 
     def someFailingTestResults() {
         TestOutcome testOutcome1 = TestOutcome.forTestInStory("planting potatoes in the sun", Story.called("planting potatoes"))

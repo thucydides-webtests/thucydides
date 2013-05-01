@@ -49,6 +49,10 @@ public class RequirementOutcome {
         return getTestOutcomes().getResult() == TestResult.FAILURE || anyChildRequirementsAreFailures();
     }
 
+    public boolean isPending() {
+        return getTestOutcomes().getResult() == TestResult.PENDING || anyChildRequirementsArePending();
+    }
+
     public int getFlattenedRequirementCount() {
         return requirement.getNestedChildren().size() + 1;
     }
@@ -70,6 +74,10 @@ public class RequirementOutcome {
         return anyChildRequirementsAreFailuresFor(requirement.getChildren());
     }
 
+
+    private boolean anyChildRequirementsArePending() {
+        return anyChildRequirementsArePendingFor(requirement.getChildren());
+    }
 
     private boolean allChildRequirementsAreSuccessfulFor(List<Requirement> requirements) {
         for(Requirement childRequirement : requirements) {
@@ -93,6 +101,20 @@ public class RequirementOutcome {
             if (childOutcomes.isFailure()) {
                 return true;
             } else if (anyChildRequirementsAreFailuresFor(childRequirement.getChildren())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean anyChildRequirementsArePendingFor(List<Requirement> requirements) {
+        for(Requirement childRequirement : requirements) {
+            RequirementOutcome childOutcomes = new RequirementOutcome(childRequirement,
+                    testOutcomes.forRequirement(requirement),
+                    issueTracking);
+            if (childOutcomes.isPending()) {
+                return true;
+            } else if (anyChildRequirementsArePendingFor(childRequirement.getChildren())) {
                 return true;
             }
         }

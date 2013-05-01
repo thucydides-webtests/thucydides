@@ -147,6 +147,16 @@ public class RequirementsOutcomes {
         return failingRequirements;
     }
 
+    public int getPendingRequirementsCount() {
+        int total = 0;
+        for (RequirementOutcome requirementOutcome : requirementOutcomes) {
+            if (requirementOutcome.isPending()) {
+                total++;
+            }
+        }
+        return total;
+    }
+
     public int getRequirementsWithoutTestsCount() {
         int requirementsWithNoTests = 0;
         List<RequirementOutcome> flattenedRequirementOutcomes = getFlattenedRequirementOutcomes();
