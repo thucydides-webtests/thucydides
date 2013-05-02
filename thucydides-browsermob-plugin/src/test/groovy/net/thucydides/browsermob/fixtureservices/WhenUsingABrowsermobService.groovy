@@ -1,5 +1,7 @@
 package net.thucydides.browsermob.fixtureservices
 
+import net.thucydides.core.fixtureservices.ClasspathFixtureProviderService
+import net.thucydides.core.fixtureservices.FixtureException
 import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
 import org.openqa.selenium.remote.DesiredCapabilities
@@ -12,6 +14,17 @@ class WhenUsingABrowsermobService extends Specification {
 
     def capabilities = Mock(DesiredCapabilities)
     def environmentVariables = new MockEnvironmentVariables()
+
+    def "should find the browsermob service if it is on the classpath"() {
+        given:
+            def classpathFixtureProviderService = new ClasspathFixtureProviderService();
+        when:
+            def services = classpathFixtureProviderService.getFixtureServices()
+        then:
+            services.find {
+                it.class == BrowserMobFixtureService
+            }
+    }
 
     def "should start a browsermob server"() {
         given:
@@ -136,7 +149,7 @@ class WhenUsingABrowsermobService extends Specification {
         when:
             service.setup()
         then:
-            thrown(IllegalStateException)
+            thrown(FixtureException)
     }
 
 

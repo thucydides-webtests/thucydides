@@ -3,6 +3,7 @@ package net.thucydides.core.webdriver;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.fixtureservices.FixtureException;
 import net.thucydides.core.fixtureservices.FixtureProviderService;
 import net.thucydides.core.fixtureservices.FixtureService;
 import net.thucydides.core.guice.Injectors;
@@ -388,6 +389,18 @@ public class WebDriverFactory {
         }
         addCapabilitiesFromFixtureServicesTo(capabilities);
         return capabilities;
+    }
+
+    public void setupFixtureServices() throws FixtureException {
+        for(FixtureService fixtureService : fixtureProviderService.getFixtureServices()) {
+            fixtureService.setup();
+        }
+    }
+
+    public void shutdownFixtureServices() {
+        for(FixtureService fixtureService : fixtureProviderService.getFixtureServices()) {
+            fixtureService.shutdown();
+        }
     }
 
     private void addCapabilitiesFromFixtureServicesTo(DesiredCapabilities capabilities) {

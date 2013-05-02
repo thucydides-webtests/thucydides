@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import com.gargoylesoftware.htmlunit.ScriptException;
+import net.thucydides.core.fixtureservices.FixtureService;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.stubs.NavigationStub;
 import net.thucydides.core.webdriver.stubs.OptionsStub;
@@ -84,6 +85,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
 
     private WebDriver newDriverInstance() {
         try {
+            webDriverFactory.setupFixtureServices();
             return webDriverFactory.newWebdriverInstance(driverClass);
         } catch (UnsupportedDriverException e) {
             LOGGER.error("FAILED TO CREATE NEW DRIVER INSTANCE " + driverClass + ": " + e.getMessage(), e);
@@ -183,11 +185,12 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
     public void close() {
         if (proxyInstanciated()) {
         	//if there is only one window closing it means quitting the web driver
-        	if (getDriverInstance().getWindowHandles().size() == 1){
+        	if (getDriverInstance().getWindowHandles() != null && getDriverInstance().getWindowHandles().size() == 1){
         		this.quit();
         	} else{
         		getDriverInstance().close();
         	}
+            webDriverFactory.shutdownFixtureServices();
         }
     }
 

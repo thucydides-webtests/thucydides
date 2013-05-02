@@ -4,6 +4,7 @@ package net.thucydides.browsermob.fixtureservices;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.fixtureservices.FixtureException;
 import net.thucydides.core.fixtureservices.FixtureService;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -40,9 +41,13 @@ public class BrowserMobFixtureService implements FixtureService {
     }
 
     @Override
-    public void setup() throws Exception {
+    public void setup() throws FixtureException {
         if (useBrowserMobProxyManager()) {
-            initializeProxy(getAvailablePort());
+            try {
+                initializeProxy(getAvailablePort());
+            } catch (Exception e) {
+                throw new FixtureException("Failed to initialize proxy", e);
+            }
         }
     }
 
@@ -57,9 +62,13 @@ public class BrowserMobFixtureService implements FixtureService {
     }
 
     @Override
-    public void shutdown() throws Exception {
+    public void shutdown() {
         if (threadLocalproxyServer.get() != null) {
-            threadLocalproxyServer.get().stop();
+            try {
+                threadLocalproxyServer.get().stop();
+            } catch (Exception e) {
+                throw new FixtureException("Could not shut down BrowserMob proxy", e);
+            }
             threadLocalproxyServer.remove();
         }
     }

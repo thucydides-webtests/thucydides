@@ -6,10 +6,13 @@ import net.thucydides.core.fixtureservices.FixtureService
 import net.thucydides.core.fixtureservices.SampleFixtureService
 import net.thucydides.core.util.MockEnvironmentVariables
 import net.thucydides.core.webdriver.SupportedWebDriver
+import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
 import net.thucydides.core.webdriver.WebdriverInstanceFactory
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import spock.lang.Specification
 
 class WhenUsingFixtureServices extends Specification {
@@ -40,5 +43,37 @@ class WhenUsingFixtureServices extends Specification {
         then:
             1 * fixtureService.addCapabilitiesTo(_)
 
+    }
+
+    def "fixture service should be setup whenever a driver instance is created"() {
+        given:
+            fixtureProviderService.getFixtureServices() >> [fixtureService]
+            webdriverInstanceFactory.newFirefoxDriver(_) >> driver
+            webdriverInstanceFactory.newWebdriverInstance(_) >> driver
+            def webdriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables,
+                                                        firefoxProfileEnhancer,fixtureProviderService)
+        and:
+            def webdriver = new WebDriverFacade(FirefoxDriver, webdriverFactory)
+        when:
+            webdriver.get("http://some.site")
+            webdriver.get("http://some.other.site")
+        then:
+            1 * fixtureService.setup()
+    }
+
+    def "fixture service should be shut down whenever a driver instance is closed"() {
+        given:
+            fixtureProviderService.getFixtureServices() >> [fixtureService]
+            webdriverInstanceFactory.newFirefoxDriver(_) >> driver
+            webdriverInstanceFactory.newWebdriverInstance(_) >> driver
+            def webdriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables,
+                    firefoxProfileEnhancer,fixtureProviderService)
+        and:
+            def webdriver = new WebDriverFacade(FirefoxDriver, webdriverFactory)
+        when:
+            webdriver.get("http://some.site")
+            webdriver.close()
+        then:
+            1 * fixtureService.shutdown()
     }
 }
