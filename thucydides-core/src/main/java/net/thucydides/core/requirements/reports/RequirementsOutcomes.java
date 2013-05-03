@@ -7,6 +7,7 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.CoverageFormatter;
 import net.thucydides.core.reports.TestOutcomes;
+import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 
@@ -22,34 +23,50 @@ public class RequirementsOutcomes {
     private final Optional<Requirement> parentRequirement;
     private final EnvironmentVariables environmentVariables;
     private final IssueTracking issueTracking;
+    private final List<RequirementsTagProvider> requirementsTagProviders;
 
     public final static Integer DEFAULT_TESTS_PER_REQUIREMENT = 4;
 
     public RequirementsOutcomes(List<Requirement> requirements,
                                 TestOutcomes testOutcomes,
                                 IssueTracking issueTracking,
-                                EnvironmentVariables environmentVariables) {
-        this(null, requirements, testOutcomes, issueTracking, environmentVariables);
+                                EnvironmentVariables environmentVariables,
+                                List<RequirementsTagProvider> requirementsTagProviders) {
+        this(null, requirements, testOutcomes, issueTracking, environmentVariables, requirementsTagProviders);
     }
 
     public RequirementsOutcomes(Requirement parentRequirement, List<Requirement> requirements, TestOutcomes testOutcomes,
-                                IssueTracking issueTracking, EnvironmentVariables environmentVariables) {
+                                IssueTracking issueTracking, EnvironmentVariables environmentVariables,
+                                List<RequirementsTagProvider> requirementsTagProviders) {
         this.testOutcomes = testOutcomes;
         this.parentRequirement = Optional.fromNullable(parentRequirement);
         this.environmentVariables = environmentVariables;
         this.issueTracking = issueTracking;
-        this.requirementOutcomes = buildRequirementOutcomes(requirements);
+        this.requirementsTagProviders = requirementsTagProviders;
+        this.requirementOutcomes = buildRequirementOutcomes(requirements, requirementsTagProviders);
     }
 
-    private List<RequirementOutcome> buildRequirementOutcomes(List<Requirement> requirements) {
+    private List<RequirementOutcome> buildRequirementOutcomes(List<Requirement> requirements,
+                                                              List<RequirementsTagProvider> requirementsTagProviders) {
         List<RequirementOutcome> outcomes = Lists.newArrayList();
+        System.out.println("BUILDING REQUIREMENTS OUTCOMES: " + requirements);
         for (Requirement requirement : requirements) {
-            TestOutcomes outcomesForRequirement = testOutcomes.forRequirement(requirement);
-            int requirementsWithoutTests = countRequirementsWithoutTestsIn(requirement);
-            int estimatedUnimplementedTests = requirementsWithoutTests * estimatedTestsPerRequirement();
-            outcomes.add(new RequirementOutcome(requirement, outcomesForRequirement, requirementsWithoutTests, estimatedUnimplementedTests, issueTracking));
+            buildRequirements(outcomes, requirementsTagProviders, requirement);
         }
         return outcomes;
+    }
+
+    private void buildRequirements(List<RequirementOutcome> outcomes, List<RequirementsTagProvider> requirementsTagProviders, Requirement requirement) {
+        System.out.println("PROCESSING " + requirement.getType() + " REQUIREMENT " + requirement.getName());
+
+        TestOutcomes outcomesForRequirement = testOutcomes.forRequirement(requirement);
+
+        System.out.println("  - Test outcomes: " + outcomesForRequirement.getTotal());
+
+        int requirementsWithoutTests = countRequirementsWithoutTestsIn(requirement);
+        int estimatedUnimplementedTests = requirementsWithoutTests * estimatedTestsPerRequirement();
+        outcomes.add(new RequirementOutcome(requirement, outcomesForRequirement, requirementsWithoutTests,
+                                            estimatedUnimplementedTests, issueTracking));
     }
 
     private int countRequirementsWithoutTestsIn(Requirement rootRequirement) {
@@ -213,7 +230,10 @@ public class RequirementsOutcomes {
                 for (Requirement childRequirement : requirement.getChildren()) {
                     TestOutcomes testOutcomesForChildRequirement = requirementOutcome.getTestOutcomes().withTag(childRequirement.getName());
                     List<Requirement> childRequirements = childRequirement.getChildren();
-                    RequirementsOutcomes childOutcomes = new RequirementsOutcomes(childRequirement, childRequirements, testOutcomesForChildRequirement, issueTracking, environmentVariables);
+                    RequirementsOutcomes childOutcomes =
+                            new RequirementsOutcomes(childRequirement, childRequirements,
+                                                     testOutcomesForChildRequirement, issueTracking,
+                                                     environmentVariables, requirementsTagProviders);
                     flattenedOutcomes.addAll(getFlattenedRequirementOutcomes(childOutcomes.getRequirementOutcomes()));
                 }
             }

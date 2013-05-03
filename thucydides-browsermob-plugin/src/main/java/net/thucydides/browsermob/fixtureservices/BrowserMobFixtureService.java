@@ -75,11 +75,18 @@ public class BrowserMobFixtureService implements FixtureService {
 
     @Override
     public void addCapabilitiesTo(DesiredCapabilities capabilities) {
+        if (!proxyServerRunning()) {
+            setup();
+        }
         try {
             capabilities.setCapability(CapabilityType.PROXY, threadLocalproxyServer.get().seleniumProxy());
         } catch (UnknownHostException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    private boolean proxyServerRunning() {
+        return (threadLocalproxyServer.get() != null);
     }
 
     private boolean useBrowserMobProxyManager() {

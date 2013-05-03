@@ -5,6 +5,7 @@ import net.thucydides.core.model.CoverageFormatter;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.Formatter;
+import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
 
 import java.util.List;
@@ -17,7 +18,8 @@ public class RequirementOutcome {
     private final int estimatedUnimplementedTests;
 
     public RequirementOutcome(Requirement requirement, TestOutcomes testOutcomes,
-                              int requirementsWithoutTests, int estimatedUnimplementedTests, IssueTracking issueTracking) {
+                              int requirementsWithoutTests, int estimatedUnimplementedTests,
+                              IssueTracking issueTracking) {
         this.requirement = requirement;
         this.testOutcomes = testOutcomes;
         this.requirementsWithoutTests = requirementsWithoutTests;
@@ -96,8 +98,7 @@ public class RequirementOutcome {
     private boolean anyChildRequirementsAreFailuresFor(List<Requirement> requirements) {
         for(Requirement childRequirement : requirements) {
             RequirementOutcome childOutcomes = new RequirementOutcome(childRequirement,
-                    testOutcomes.forRequirement(requirement),
-                    issueTracking);
+                    testOutcomes.forRequirement(requirement), issueTracking);
             if (childOutcomes.isFailure()) {
                 return true;
             } else if (anyChildRequirementsAreFailuresFor(childRequirement.getChildren())) {
@@ -110,8 +111,7 @@ public class RequirementOutcome {
     private boolean anyChildRequirementsArePendingFor(List<Requirement> requirements) {
         for(Requirement childRequirement : requirements) {
             RequirementOutcome childOutcomes = new RequirementOutcome(childRequirement,
-                    testOutcomes.forRequirement(requirement),
-                    issueTracking);
+                    testOutcomes.forRequirement(requirement), issueTracking);
             if (childOutcomes.isPending()) {
                 return true;
             } else if (anyChildRequirementsArePendingFor(childRequirement.getChildren())) {

@@ -99,11 +99,15 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     }
 
     private Optional<Requirement> getParentRequirementForOutcome(TestOutcome testOutcome) {
-        for (RequirementsTagProvider tagProvider : getRequirementsTagProviders()) {
-            Optional<Requirement> requirement = tagProvider.getParentRequirementOf(testOutcome);
-            if (requirement.isPresent()) {
-                return requirement;
+        try {
+            for (RequirementsTagProvider tagProvider : getRequirementsTagProviders()) {
+                Optional<Requirement> requirement = tagProvider.getParentRequirementOf(testOutcome);
+                if (requirement.isPresent()) {
+                    return requirement;
+                }
             }
+        } catch(RuntimeException handleTagProvidersElegantly) {
+            LOGGER.error("Tag provider failure", handleTagProvidersElegantly);
         }
         return Optional.absent();
     }

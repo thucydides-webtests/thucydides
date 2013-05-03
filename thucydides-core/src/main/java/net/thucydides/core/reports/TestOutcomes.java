@@ -131,7 +131,6 @@ public class TestOutcomes {
         Set<String> tagTypes = Sets.newHashSet();
         for (TestOutcome outcome : outcomes) {
             addTagTypesFrom(outcome, tagTypes);
-            //tagTypes.addAll(extract(outcome.getTags(), on(TestTag.class).getType().toLowerCase()));
         }
         return sort(ImmutableList.copyOf(tagTypes), on(String.class));
     }

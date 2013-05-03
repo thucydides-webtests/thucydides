@@ -39,12 +39,12 @@ public class RequirmentsOutcomeFactory {
         for(RequirementsTagProvider tagProvider : requirementsTagProviders) {
             allRequirements.addAll(tagProvider.getRequirements());
         }
-        return new RequirementsOutcomes(allRequirements, testOutcomes, issueTracking, environmentVariables);
+        return new RequirementsOutcomes(allRequirements, testOutcomes, issueTracking, environmentVariables, requirementsTagProviders);
     }
 
     public RequirementsOutcomes buildRequirementsOutcomesFrom(Requirement parentRequirement, TestOutcomes testOutcomes) {
         List<Requirement> childRequirements = parentRequirement.getChildren();
-        return new RequirementsOutcomes(parentRequirement, childRequirements, testOutcomes, issueTracking, environmentVariables);
+        return new RequirementsOutcomes(parentRequirement, childRequirements, testOutcomes, issueTracking, environmentVariables, requirementsTagProviders);
     }
 
 }
