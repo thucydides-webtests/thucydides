@@ -4,7 +4,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.123-6-SNAPSHOT</version>
+        <version>0.9.125</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-browsermob-plugin</artifactId>
