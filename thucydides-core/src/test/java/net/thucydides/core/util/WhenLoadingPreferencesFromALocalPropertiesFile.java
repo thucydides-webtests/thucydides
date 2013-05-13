@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 public class WhenLoadingPreferencesFromALocalPropertiesFile {
 
@@ -76,15 +77,57 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
     }
 
     @Test
+    public void should_load_preferences_from_a_designated_properties_file_if_specified() throws Exception {
+        writeToPropertiesFileCalled("myprops.properties", "webdriver.driver = safari");
+
+        environmentVariables.setProperty("properties", "myprops.properties");
+
+        localPreferences.setHomeDirectory(homeDirectory);
+
+        localPreferences.loadPreferences();
+
+        assertThat(environmentVariables.getProperty("webdriver.driver"), is("safari"));
+    }
+
+    @Test
+    public void should_load_preferences_from_a_designated_properties_filepath_if_specified() throws Exception {
+        String fullPath = writeToPropertiesFileCalled("myprops.properties", "webdriver.driver = safari");
+
+        environmentVariables.setProperty("properties", fullPath);
+
+        localPreferences.setHomeDirectory(homeDirectory);
+
+        localPreferences.loadPreferences();
+
+        assertThat(environmentVariables.getProperty("webdriver.driver"), is("safari"));
+    }
+
+    @Test
+    public void should_ignore_preferences_if_specified_file_does_not_exist() throws Exception {
+
+        environmentVariables.setProperty("properties", "noexistant.properties");
+
+        localPreferences.setHomeDirectory(homeDirectory);
+
+        localPreferences.loadPreferences();
+
+        assertThat(environmentVariables.getProperty("webdriver.driver"), is(nullValue()));
+    }
+
+    @Test
     public void local_preferences_should_be_loaded_with_the_environment_variables() {
         EnvironmentVariables loadedEnvironmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
         assertThat(loadedEnvironmentVariables.getProperty("test.property"), is("set"));
     }
 
 
+    private String writeToPropertiesFile(String... lines) throws IOException, InterruptedException {
+        return writeToPropertiesFileCalled("thucydides.properties", lines);
+    }
+
     @SuppressWarnings("static-access")
-	private void writeToPropertiesFile(String... lines) throws IOException, InterruptedException {
-        thucydidesPropertiesFile = new File(homeDirectory, "thucydides.properties");
+    private String writeToPropertiesFileCalled(String filename, String... lines) throws IOException, InterruptedException {
+        thucydidesPropertiesFile = new File(homeDirectory, filename);
         thucydidesPropertiesFile.setReadable(true);
         thucydidesPropertiesFile.setWritable(true);
         thucydidesPropertiesFile.setExecutable(true);
@@ -101,5 +144,6 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
             out.println(line);
         }
         out.close();
+        return thucydidesPropertiesFile.getAbsolutePath();
     }
 }

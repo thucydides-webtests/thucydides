@@ -44,13 +44,14 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
     public void loadPreferences() throws IOException {
         updatePreferencesFrom(preferencesFileInHomeDirectory());
         updatePreferencesFrom(preferencesFileInWorkingDirectory());
+        updatePreferencesFrom(preferencesFileWithAbsolutePath());
         updatePreferencesFromClasspath();
     }
 
     private void updatePreferencesFromClasspath() throws IOException {
         InputStream propertiesOnClasspath = null;
         try {
-            propertiesOnClasspath = Thread.currentThread().getContextClassLoader().getResourceAsStream("thucydides.properties");
+            propertiesOnClasspath = Thread.currentThread().getContextClassLoader().getResourceAsStream(defaultPropertiesFileName());
             if (propertiesOnClasspath != null) {
                 Properties localPreferences = new Properties();
                 localPreferences.load(propertiesOnClasspath);
@@ -87,11 +88,19 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
     }
 
     private File preferencesFileInHomeDirectory() {
-        return new File(homeDirectory, "thucydides.properties");
+        return new File(homeDirectory, defaultPropertiesFileName());
     }
 
     private File preferencesFileInWorkingDirectory() {
-        return new File(workingDirectory, "thucydides.properties");
+        return new File(workingDirectory, defaultPropertiesFileName());
+    }
+
+    private File preferencesFileWithAbsolutePath() {
+        return new File(defaultPropertiesFileName());
+    }
+
+    private String defaultPropertiesFileName() {
+        return ThucydidesSystemProperty.PROPERTIES.from(environmentVariables,"thucydides.properties");
     }
 
 }

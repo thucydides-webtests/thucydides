@@ -362,6 +362,11 @@ public enum ThucydidesSystemProperty {
      */
     DATA_DIRECTORY("thucydides.data.dir"),
 
+    /**
+     * Allows you to override the default thucydides.properties location for properties file.
+     */
+    PROPERTIES("properties"),
+
     STATISTICS_DRIVER("thucydides.statistics.driver_class"),
     STATISTICS_URL("thucydides.statistics.url"),
     STATISTICS_USERNAME("thucydides.statistics.username"),
