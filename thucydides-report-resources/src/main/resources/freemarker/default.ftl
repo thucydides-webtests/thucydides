@@ -320,7 +320,7 @@
         "aaSorting": [[ 1, "asc" ]],
         "bJQueryUI": true,
         "sScrollX": "100%",
-        "sScrollXInner": "120%",
+        "sScrollXInner": "100%",
         "bScrollCollapse": true
     } );
 </script>
