@@ -1,5 +1,6 @@
 package net.thucydides.core.pages;
 
+import net.thucydides.core.annotations.At;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.thucydides.core.annotations.NamedUrl;
 import net.thucydides.core.annotations.NamedUrls;
@@ -19,6 +20,7 @@ import static net.thucydides.core.pages.PageObject.withParameters;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class WhenDefiningPageUrls {
 
@@ -595,4 +597,38 @@ public class WhenDefiningPageUrls {
         assertThat(page.pageFullyLoaded, is(true));
     }
 
+    
+    @DefaultUrl("/clients")
+    @At(".*/clients")
+    final class PageObjectWithRelativeUrlAndPattern extends PageObject {
+        public PageObjectWithRelativeUrlAndPattern(WebDriver driver) {
+            super(driver);
+        }
+    }
+    
+    @Test(expected = WrongPageError.class)
+    public void open_should_fail_on_mismatched_url() {
+        when(webdriver.getCurrentUrl()).thenReturn("http://sso.mycompany.com/login");
+        
+        PageObject page = new PageObjectWithRelativeUrlAndPattern(webdriver);
+        PageUrls pageUrls = new PageUrls(page, configuration);
+        page.setPageUrls(pageUrls);
+        configuration.setDefaultBaseUrl("http://myapp.mycompany.com");
+
+        page.open();
+    }
+
+    @Test
+    public void open_unchecked_should_not_fail_on_mismatched_url() {
+        when(webdriver.getCurrentUrl()).thenReturn("http://sso.mycompany.com/login");
+        
+        PageObject page = new PageObjectWithRelativeUrlAndPattern(webdriver);
+        PageUrls pageUrls = new PageUrls(page, configuration);
+        page.setPageUrls(pageUrls);
+        configuration.setDefaultBaseUrl("http://myapp.mycompany.com");
+
+        page.openUnchecked();
+
+        verify(webdriver).get("http://myapp.mycompany.com/clients");
+    }
 }

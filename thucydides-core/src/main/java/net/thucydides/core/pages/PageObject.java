@@ -82,6 +82,11 @@ public abstract class PageObject {
     private final Sleeper sleeper;
     private final Clock webdriverClock;
     private final JavascriptExecutorFacade javascriptExecutorFacade;
+    
+    private enum OpenMode {
+    	CHECK_URL_PATTERNS,
+    	IGNORE_URL_PATTERNS
+    }
 
     protected PageObject(final WebDriver driver, Predicate<PageObject> callback) {
         this.webdriverClock = new SystemClock();
@@ -519,21 +524,48 @@ public abstract class PageObject {
      * represented in the URL using {0}, {1}, etc.
      */
     public final void open(final String... parameterValues) {
+    	open(OpenMode.CHECK_URL_PATTERNS, parameterValues);
+    }
+
+    /**
+     * Opens page without checking URL patterns. Same as {@link #open(String...))} otherwise.
+     */
+    public final void openUnchecked(final String... parameterValues) {
+    	open(OpenMode.IGNORE_URL_PATTERNS, parameterValues);
+    }
+
+    private void open(final OpenMode openMode, final String... parameterValues) {
         String startingUrl = pageUrls.getStartingUrl(parameterValues);
         LOGGER.debug("Opening page at url {}", startingUrl);
         openPageAtUrl(startingUrl);
+        checkUrlPatterns(openMode);
         initializePage();
         LOGGER.debug("Page opened");
     }
 
     public final void open(final String urlTemplateName,
-                           final String[] parameterValues) {
-        String startingUrl = pageUrls.getNamedUrl(urlTemplateName, parameterValues);
-        LOGGER.debug("Opening page at url {}", startingUrl);
-        openPageAtUrl(startingUrl);
-        initializePage();
-        LOGGER.debug("Page opened");
+            final String[] parameterValues) {
+    	open(OpenMode.CHECK_URL_PATTERNS, urlTemplateName, parameterValues);
     }
+
+    /**
+     * Opens page without checking URL patterns. Same as {@link #open(String, String[])} otherwise.
+     */
+    public final void openUnchecked(final String urlTemplateName,
+            final String[] parameterValues) {
+    	open(OpenMode.IGNORE_URL_PATTERNS, urlTemplateName, parameterValues);
+    }
+
+	private void open(final OpenMode openMode, final String urlTemplateName,
+			final String[] parameterValues) {
+		String startingUrl = pageUrls.getNamedUrl(urlTemplateName,
+				parameterValues);
+		LOGGER.debug("Opening page at url {}", startingUrl);
+		openPageAtUrl(startingUrl);
+		checkUrlPatterns(openMode);
+		initializePage();
+		LOGGER.debug("Page opened");
+	}
 
     /**
      * Open the webdriver browser to the base URL, determined by the DefaultUrl
@@ -558,25 +590,38 @@ public abstract class PageObject {
      * it will open http://stage.acme.com/client/list. It will then invoke the waitUntilTitleAppears() method.
      */
     final public void open() {
+    	open(OpenMode.CHECK_URL_PATTERNS);
+    }
+
+    /**
+     * Opens page without checking URL patterns. Same as {@link #open()} otherwise.
+     */
+    final public void openUnchecked() {
+    	open(OpenMode.IGNORE_URL_PATTERNS);
+    }
+
+    private void open(final OpenMode openMode) {
         String startingUrl = updateUrlWithBaseUrlIfDefined(pageUrls.getStartingUrl());
         openPageAtUrl(startingUrl);
+        checkUrlPatterns(openMode);
         initializePage();
     }
 
     private void initializePage() {
-        checkUrlPatterns();
         addJQuerySupport();
         callWhenPageOpensMethods();
     }
 
-    private void checkUrlPatterns() {
-        if (!matchesAnyUrl()) {
-            String currentUrl = getDriver().getCurrentUrl();
-            if (!compatibleWithUrl(currentUrl)) {
-                thisIsNotThePageYourLookingFor();
-            }
-        }
-    }
+	private void checkUrlPatterns(final OpenMode openMode) {
+		if (openMode == OpenMode.CHECK_URL_PATTERNS) {
+			if (!matchesAnyUrl()) {
+				String currentUrl = getDriver().getCurrentUrl();
+				if (!compatibleWithUrl(currentUrl)) {
+					thisIsNotThePageYourLookingFor();
+				}
+			}
+		}
+	}
 
     private void thisIsNotThePageYourLookingFor() {
 
