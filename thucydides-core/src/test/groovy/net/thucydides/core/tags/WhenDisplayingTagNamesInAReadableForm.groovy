@@ -1,5 +1,6 @@
-package net.thucydides.core.util
+package net.thucydides.core.tags
 
+import net.thucydides.core.util.Inflector
 import spock.lang.Specification
 
 class WhenDisplayingTagNamesInAReadableForm extends Specification {
@@ -7,7 +8,6 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
     def inflection = Inflector.instance
 
     def "should transform singular nouns into plurals"() {
-
         when: "I find the plural form of a single word"
             def pluralForm = inflection.of(singleForm).inPluralForm().toString();
         then: "the plural form should be gramatically correct"
@@ -59,7 +59,6 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
                     'aWord'        | 'a_word'
                     'AnotherWord'  | 'another_word'
     }
-
 
     def "should captialize first word"() {
         when:
