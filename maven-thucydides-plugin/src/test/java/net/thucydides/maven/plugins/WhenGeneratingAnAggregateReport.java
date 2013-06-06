@@ -43,7 +43,6 @@ public class WhenGeneratingAnAggregateReport {
         plugin = new ThucydidesAggregatorMojo();
         plugin.setOutputDirectory(outputDirectory);
         plugin.setSourceDirectory(sourceDirectory);
-        plugin.setProject(project);
         plugin.setReporter(reporter);
     }
 

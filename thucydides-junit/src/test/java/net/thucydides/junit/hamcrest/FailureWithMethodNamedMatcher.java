@@ -18,7 +18,7 @@ public class FailureWithMethodNamedMatcher extends TypeSafeMatcher<Failure> {
     }
 
     public void describeTo(Description description) {
-        description.appendText("a Failure with a method name that ");
+        description.appendText("a TestException with a method name that ");
         matcher.describeTo(description);
     }
 

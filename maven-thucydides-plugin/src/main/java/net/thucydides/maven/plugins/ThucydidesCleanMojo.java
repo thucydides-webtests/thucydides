@@ -11,7 +11,7 @@ import org.apache.maven.project.MavenProject;
  * @goal clean
  */
 public class ThucydidesCleanMojo extends AbstractMojo {
-        /**
+    /**
      * @parameter expression="${project}"
      * @required
      * @readonly

@@ -40,7 +40,7 @@ import static net.thucydides.core.model.ReportType.HTML;
 import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_KEEP_UNSCALED_SCREENSHOTS;
 
 /**
- * Generates acceptance test results in XML form.
+ * Generates acceptance test results in HTML form.
  * 
  */
 public class HtmlAcceptanceTestReporter extends HtmlReporter implements AcceptanceTestReporter {

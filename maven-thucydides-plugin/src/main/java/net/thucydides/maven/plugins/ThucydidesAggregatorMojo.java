@@ -7,7 +7,6 @@ import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,20 +15,13 @@ import java.io.IOException;
  * Generate aggregate XML acceptance test reports.
  * 
  * @goal aggregate
- * @phase verify
+ * @requiresProject false
  */
 public class ThucydidesAggregatorMojo extends AbstractMojo {
 
     /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    public MavenProject project;
-
-    /**
      * Aggregate reports are generated here
-     * @parameter expression="${thucydides.outputDirectory}" default-value="${project.build.directory}/site/thucydides/"
+     * @parameter expression="${thucydides.outputDirectory}" default-value="target/site/thucydides/"
      * @required
      */
     public File outputDirectory;
@@ -37,7 +29,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     /**
      * Thucydides test reports are read from here
      *
-     * @parameter expression="${thucydides.sourceDirectory}" default-value="${project.build.directory}/site/thucydides/"
+     * @parameter expression="${thucydides.sourceDirectory}" default-value="target/site/thucydides/"
      * @required
      */
     public File sourceDirectory;
@@ -114,10 +106,6 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
 
     protected void setOutputDirectory(final File outputDirectory) {
         this.outputDirectory = outputDirectory;
-    }
-
-    protected void setProject(final MavenProject project) {
-        this.project = project;
     }
 
     protected void setSourceDirectory(final File sourceDirectory) {

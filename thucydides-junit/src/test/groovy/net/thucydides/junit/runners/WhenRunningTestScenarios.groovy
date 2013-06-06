@@ -203,7 +203,7 @@ class WhenRunningTestScenarios extends Specification {
         then:
         outcomes.size() == 1
         outcomes[0].result == FAILURE
-        outcomes[0].testFailureCause.message == "Failure without any steps."
+        outcomes[0].testFailureCause.message == "TestException without any steps."
     }
 
     def "should skip test steps after a failure"() {

@@ -18,7 +18,7 @@ public class FailureWithMessageMatcher extends TypeSafeMatcher<Failure> {
     }
 
     public void describeTo(Description description) {
-        description.appendText("a Failure with a message that ");
+        description.appendText("a TestException with a message that ");
         matcher.describeTo(description);
     }
 

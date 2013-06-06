@@ -23,6 +23,6 @@ public class SampleFailingScenarioWithEmptyTests {
 
     @Test
     public void happy_day_scenario() throws Throwable {
-        throw new AssertionError("Failure without any steps.");
+        throw new AssertionError("TestException without any steps.");
     }
 }
