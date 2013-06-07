@@ -170,7 +170,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     private void generateAggregateReportFor(TestOutcomes testOutcomes) throws IOException {
 
-
         ReportNameProvider defaultNameProvider = new ReportNameProvider();
         Map<String, Object> context = buildContext(testOutcomes, defaultNameProvider);
         context.put("report", ReportProperties.forAggregateResultsReport());

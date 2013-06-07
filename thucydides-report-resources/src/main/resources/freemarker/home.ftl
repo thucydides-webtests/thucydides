@@ -137,6 +137,7 @@
 <#else>
     <#assign tagsTitle = 'Related tags' >
     <#assign resultsContext = '> ' + testOutcomes.label>
+    <#assign reportName = reportName.withPrefix(testOutcomes.label)>
     <#if (currentTagType! != '')>
         <#assign pageTitle = inflection.of(currentTagType!"").asATitle() + ': ' +  inflection.of(testOutcomes.label).asATitle() >
     <#else>
@@ -182,10 +183,10 @@
                     <td width="375px" valign="top">
                         <div class="test-count-summary">
                             <span class="test-count-title">${testOutcomes.total} test scenarios <#if (testOutcomes.hasDataDrivenTests())>(including ${testOutcomes.totalDataRows} rows of test data)</#if>:</span>
-                        <#assign successReport = reportName.withPrefix(testOutcomes.label).forTestResult("success") >
-                        <#assign failureReport = reportName.withPrefix(testOutcomes.label).forTestResult("failure") >
-                        <#assign errorReport = reportName.withPrefix(testOutcomes.label).forTestResult("error") >
-                        <#assign pendingReport = reportName.withPrefix(testOutcomes.label).forTestResult("pending") >
+                            <#assign successReport = reportName.forTestResult("success") >
+                            <#assign failureReport = reportName.forTestResult("failure") >
+                            <#assign errorReport = reportName.forTestResult("error") >
+                            <#assign pendingReport = reportName.forTestResult("pending") >
 
 
                             <span class="test-count">

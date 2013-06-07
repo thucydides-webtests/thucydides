@@ -4,6 +4,7 @@ import net.thucydides.core.digest.Digest;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
+import net.thucydides.core.reports.html.ReportNameProvider;
 import net.thucydides.core.reports.html.ReportProperties;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -70,8 +71,25 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
 
     @Test
     public void should_generate_overall_passed_failed_and_pending_reports() throws Exception {
-        assertThat(new File(outputDirectory, digest("result_success") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("result_pending") + ".html"), exists());
+        ReportNameProvider reportName = new ReportNameProvider();
+        String expectedSuccessReport = reportName.forTestResult("success");
+        String expectedPendingReport = reportName.forTestResult("pending");
+
+        assertThat(new File(outputDirectory, expectedSuccessReport), exists());
+        assertThat(new File(outputDirectory, expectedPendingReport), exists());
+    }
+
+    @Test
+    public void should_display_overall_passed_failed_and_pending_report_links_in_home_page() throws Exception {
+        ReportNameProvider reportName = new ReportNameProvider();
+        String expectedSuccessReport = reportName.forTestResult("success");
+        String expectedPendingReport = reportName.forTestResult("pending");
+
+        File report = new File(outputDirectory,"index.html");
+        driver.get(urlFor(report));
+
+        driver.findElement(By.cssSelector("a[href='" + expectedSuccessReport +"']"));
+        driver.findElement(By.cssSelector("a[href='" + expectedPendingReport +"']"));
     }
 
     private String digest(String value) {
