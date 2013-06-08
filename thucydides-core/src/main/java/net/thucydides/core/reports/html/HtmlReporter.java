@@ -2,11 +2,14 @@ package net.thucydides.core.reports.html;
 
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.ThucydidesReporter;
 import net.thucydides.core.reports.templates.ReportTemplate;
 import net.thucydides.core.reports.templates.TemplateManager;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.io.FileUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +33,8 @@ public abstract class HtmlReporter extends ThucydidesReporter {
     private String resourceDirectory = DEFAULT_RESOURCE_DIRECTORY;
     private final TemplateManager templateManager;
     private final EnvironmentVariables environmentVariables;
+
+    protected static final String TIMESTAMP_FORMAT = "dd-MM-YYYY HH:mm";
 
     public HtmlReporter() {
         this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
@@ -91,6 +96,17 @@ public abstract class HtmlReporter extends ThucydidesReporter {
         return report;
     }
 
+    protected String timestampFrom(TestOutcomes rootOutcomes) {
+        return timestampFrom(rootOutcomes.getRootOutcomes().getStartTime());
+    }
+
+    protected String timestampFrom(DateTime startTime) {
+        return startTime == null ? "" : startTime.toString(TIMESTAMP_FORMAT);
+    }
+
+    protected void addTimestamp(TestOutcome testOutcome, Map<String, Object> context) {
+        context.put("timestamp", timestampFrom(testOutcome.getStartTime()));
+    }
 
     protected Merger mergeTemplate(final String templateFile) {
         return new Merger(templateFile);

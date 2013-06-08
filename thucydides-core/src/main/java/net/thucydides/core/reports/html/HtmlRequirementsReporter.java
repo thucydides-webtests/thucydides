@@ -51,6 +51,7 @@ public class HtmlRequirementsReporter extends HtmlReporter {
         context.put("requirements", requirementsOutcomes);
         context.put("testOutcomes", requirementsOutcomes.getTestOutcomes());
         context.put("allTestOutcomes", testOutcomes);
+        context.put("timestamp", timestampFrom(testOutcomes));
         context.put("reportName", new ReportNameProvider());
         context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
         context.put("relativeLink", relativeLink);

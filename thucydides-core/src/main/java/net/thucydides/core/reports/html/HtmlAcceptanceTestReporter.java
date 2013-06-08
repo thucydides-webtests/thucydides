@@ -22,6 +22,7 @@ import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,6 +127,8 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         Map<String,Object> context = new HashMap<String,Object>();
         addTestOutcomeToContext(storedTestOutcome, allTestOutcomes, context);
         addFormattersToContext(context);
+        addTimestamp(testOutcome, context);
+
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_REPORT).usingContext(context);
         copyResourcesToOutputDirectory();
 

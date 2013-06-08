@@ -60,6 +60,8 @@ public class HtmlProgressReporter extends HtmlReporter {
         context.put("testOutcomes", requirementsOutcomes.getTestOutcomes());
         context.put("allTestOutcomes", testOutcomes);
         context.put("reportName", new ReportNameProvider());
+        context.put("timestamp", timestampFrom(testOutcomes));
+
         addFormattersToContext(context);
 
         String htmlContents = mergeTemplate(DEFAULT_PROGRESS_REPORT).usingContext(context);

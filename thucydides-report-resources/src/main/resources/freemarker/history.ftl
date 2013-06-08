@@ -184,7 +184,9 @@
                 <li><a href="${tagReport}">${tagTypeTitle}</a></li>
             </#foreach>
             <li><a href="history.html" class="current">History</a></li>
+
         </ul>
+        <span class="date-and-time">Tests run ${timestamp}</span>
         <br style="clear:left"/>
     </div>
 

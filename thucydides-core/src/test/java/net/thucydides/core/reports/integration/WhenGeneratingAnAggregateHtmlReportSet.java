@@ -110,7 +110,6 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         assertThat(driver.findElement(By.cssSelector(".date-and-time")).getText(), is("Tests run 01-01-2013 00:00"));
     }
 
-
     private String digest(String value) {
         return Digest.ofTextValue(value);
     }

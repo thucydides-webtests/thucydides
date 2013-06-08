@@ -43,7 +43,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final String COVERAGE_DATA_TEMPLATE_PATH = "freemarker/coverage.ftl";
     private static final String TEST_OUTCOME_TEMPLATE_PATH = "freemarker/home.ftl";
     private static final String TAGTYPE_TEMPLATE_PATH = "freemarker/results-by-tagtype.ftl";
-    private static final String TIMESTAMP_FORMAT = "dd-MM-YYYY HH:mm";
 
     private TestHistory testHistory;
     private String projectName;
@@ -287,23 +286,17 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         return context;
     }
 
-    private String timestampFrom(TestOutcomes rootOutcomes) {
-        DateTime startTime = rootOutcomes.getRootOutcomes().getStartTime();
-        return startTime == null ? "" : startTime.toString(TIMESTAMP_FORMAT);
-    }
-
     private void updateHistoryFor(final RequirementsOutcomes requirementsOutcomes) {
         getTestHistory().updateData(requirementsOutcomes);
     }
 
     private void generateHistoryReportFor(TestOutcomes testOutcomes) throws IOException {
         List<TestResultSnapshot> history = getTestHistory().getHistory();
-        Map<String, Object> context = new HashMap<String, Object>();
+        Map<String, Object> context = buildContext(testOutcomes, reportNameProvider);
         context.put("history", history);
-        context.put("allTestOutcomes", testOutcomes);
-        context.put("reportName", reportNameProvider);
         context.put("rowcount", history.size());
         addFormattersToContext(context);
+
         String htmlContents = mergeTemplate(HISTORY_TEMPLATE_PATH).usingContext(context);
         LOGGER.debug("Writing history page");
         writeReportToOutputDirectory("history.html", htmlContents);
