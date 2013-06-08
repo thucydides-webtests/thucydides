@@ -120,6 +120,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         updateHistoryFor(requirementsOutcomes);
 
         copyResourcesToOutputDirectory();
+        copyTestResultsToOutputDirectory();
 
         generateAggregateReportFor(testOutcomes);
         generateTagReportsFor(testOutcomes);

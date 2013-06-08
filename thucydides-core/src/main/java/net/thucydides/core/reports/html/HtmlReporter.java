@@ -10,14 +10,10 @@ import net.thucydides.core.reports.templates.TemplateManager;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileFilter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.Map;
@@ -30,6 +26,7 @@ import java.util.Map;
 public abstract class HtmlReporter extends ThucydidesReporter {
 
     private static final String DEFAULT_RESOURCE_DIRECTORY = "report-resources";
+    private static final String DEFAULT_SOURCE_DIR = "target/site/thucydides";
     private String resourceDirectory = DEFAULT_RESOURCE_DIRECTORY;
     private final TemplateManager templateManager;
     private final EnvironmentVariables environmentVariables;
@@ -70,11 +67,38 @@ public abstract class HtmlReporter extends ThucydidesReporter {
     protected void copyResourcesToOutputDirectory() throws IOException {
         if (!alreadyCopied) {
             updateResourceDirectoryFromSystemPropertyIfDefined();
-            HtmlResourceCopier copier = new HtmlResourceCopier(getResourceDirectory());
+            copyResources();
 
-            copier.copyHTMLResourcesTo(getOutputDirectory());
             alreadyCopied = true;
         }
+    }
+
+    private void copyResources() throws IOException {
+        HtmlResourceCopier copier = new HtmlResourceCopier(getResourceDirectory());
+        copier.copyHTMLResourcesTo(getOutputDirectory());
+    }
+
+    protected void copyTestResultsToOutputDirectory() throws IOException {
+        File testResultsSource = getSourceDirectoryOrDefault();
+        if ((!getOutputDirectory().equals(testResultsSource))) {
+            FileUtils.copyDirectory(testResultsSource, getOutputDirectory(), withXMLorHTMLorCSVFiles());
+        }
+    }
+
+    private FileFilter withXMLorHTMLorCSVFiles() {
+        return new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.getName().endsWith(".xml")
+                        || file.getName().endsWith(".html")
+                        || file.getName().endsWith(".csv");
+            }
+        };
+    }
+
+    private File getSourceDirectoryOrDefault() {
+        String source = (getSourceDirectory() != null) ? getSourceDirectory().getAbsolutePath() : DEFAULT_SOURCE_DIR;
+        return new File(source);
     }
 
     private void updateResourceDirectoryFromSystemPropertyIfDefined() {

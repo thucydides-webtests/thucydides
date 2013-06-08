@@ -21,7 +21,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
 
     /**
      * Aggregate reports are generated here
-     * @parameter expression="${thucydides.outputDirectory}" default-value="target/site/thucydides/"
+     * @parameter expression="${thucydides.outputDirectory}" default-value="${project.build.directory}/site/thucydides/"
      * @required
      */
     public File outputDirectory;
@@ -29,7 +29,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     /**
      * Thucydides test reports are read from here
      *
-     * @parameter expression="${thucydides.sourceDirectory}" default-value="target/site/thucydides/"
+     * @parameter expression="${thucydides.sourceDirectory}" default-value="${project.build.directory}/site/thucydides/"
      * @required
      */
     public File sourceDirectory;
@@ -177,12 +177,22 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     }
 
     private void generateHtmlStoryReports() throws IOException {
+        getReporter().setSourceDirectory(sourceOfTestResult());
         getReporter().setOutputDirectory(outputDirectory);
         getReporter().setIssueTrackerUrl(issueTrackerUrl);
         getReporter().setJiraUrl(jiraUrl);
         getReporter().setJiraProject(jiraProject);
         getReporter().setJiraUsername(jiraUsername);
         getReporter().setJiraPassword(jiraPassword);
-        getReporter().generateReportsForTestResultsFrom(sourceDirectory);
+        getReporter().generateReportsForTestResultsFrom(sourceOfTestResult());
+    }
+
+    private File sourceOfTestResult() {
+        if ((sourceDirectory != null) && (sourceDirectory.exists())) {
+            return sourceDirectory;
+        } else {
+            return outputDirectory;
+        }
+
     }
 }
