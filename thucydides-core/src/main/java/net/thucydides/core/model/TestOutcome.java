@@ -881,6 +881,10 @@ public class TestOutcome {
         return getTags().contains(tag);
     }
 
+    public void setStartTime(DateTime startTime) {
+        this.startTime = startTime.getMillis();
+    }
+
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
         public TestResult convert(final TestStep step) {
             return step.getResult();

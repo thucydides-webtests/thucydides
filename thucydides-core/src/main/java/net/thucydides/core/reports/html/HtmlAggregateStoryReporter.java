@@ -20,6 +20,7 @@ import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
 import net.thucydides.core.util.Inflector;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final String COVERAGE_DATA_TEMPLATE_PATH = "freemarker/coverage.ftl";
     private static final String TEST_OUTCOME_TEMPLATE_PATH = "freemarker/home.ftl";
     private static final String TAGTYPE_TEMPLATE_PATH = "freemarker/results-by-tagtype.ftl";
+    private static final String TIMESTAMP_FORMAT = "dd-MM-YYYY HH:mm";
 
     private TestHistory testHistory;
     private String projectName;
@@ -280,8 +282,14 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         context.put("allTestOutcomes", testOutcomesForTagType.getRootOutcomes());
         context.put("reportName", reportName);
         context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
+        context.put("timestamp", timestampFrom(testOutcomesForTagType.getRootOutcomes()));
         addFormattersToContext(context);
         return context;
+    }
+
+    private String timestampFrom(TestOutcomes rootOutcomes) {
+        DateTime startTime = rootOutcomes.getRootOutcomes().getStartTime();
+        return startTime == null ? "" : startTime.toString(TIMESTAMP_FORMAT);
     }
 
     private void updateHistoryFor(final RequirementsOutcomes requirementsOutcomes) {

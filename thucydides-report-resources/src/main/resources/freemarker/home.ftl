@@ -169,6 +169,7 @@
     </#foreach>
         <li><a href="history.html">History</a></li>
     </ul>
+    <span class="date-and-time">Tests run ${timestamp}</span>
     <br style="clear:left"/>
 </div>
 

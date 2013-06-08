@@ -20,6 +20,7 @@ import net.thucydides.core.statistics.With;
 import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -34,6 +35,7 @@ import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.min;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
@@ -211,6 +213,10 @@ public class TestOutcomes {
 
     public boolean containsTag(TestTag testTag) {
         return getTags().contains(testTag);
+    }
+
+    public DateTime getStartTime() {
+        return min(outcomes, on(TestOutcome.class).getStartTime());
     }
 
     private class TagFinder {

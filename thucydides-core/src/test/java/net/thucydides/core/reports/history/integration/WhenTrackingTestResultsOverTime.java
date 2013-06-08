@@ -31,6 +31,9 @@ public class WhenTrackingTestResultsOverTime {
 
     private File homeDirectory;
 
+    private final static DateTime EARLY_DATE = new DateTime(2013,01,01,0,0);
+    private final static DateTime LATE_DATE = new DateTime(2013,01,02,0,0);
+
     @Rule
     public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
 
@@ -82,6 +85,13 @@ public class WhenTrackingTestResultsOverTime {
         assertThat(data.get(0).getSpecifiedSteps(), is(130));
     }
 
+    @Test
+    public void should_calculate_overall_starttime_from_timestamped_results() {
+
+        TestOutcomes results  = getResults();
+
+        assertThat(results.getStartTime(), is(EARLY_DATE));
+    }
 
     @Test
     public void snapshots_should_be_ordered_by_date() {
@@ -238,6 +248,7 @@ public class WhenTrackingTestResultsOverTime {
         for(int i = 1; i <= stepCount; i++ ){
             testOutcome.recordStep(TestStepFactory.forASuccessfulTestStepCalled("Step " + i));
         }
+        testOutcome.setStartTime(EARLY_DATE);
         return testOutcome;
     }
 
@@ -246,6 +257,7 @@ public class WhenTrackingTestResultsOverTime {
         for(int i = 1; i <= stepCount; i++ ){
             testOutcome.recordStep(TestStepFactory.forAPendingTestStepCalled("Step " + i));
         }
+        testOutcome.setStartTime(LATE_DATE);
         return testOutcome;
     }
 
@@ -262,6 +274,7 @@ public class WhenTrackingTestResultsOverTime {
         for(int i = 1; i <= stepCount; i++ ){
             testOutcome.recordStep(TestStepFactory.forABrokenTestStepCalled("Step " + i, new AssertionError()));
         }
+        testOutcome.setStartTime(LATE_DATE);
         return testOutcome;
     }
 

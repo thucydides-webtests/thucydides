@@ -22,6 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 public class WhenReadingAnXMLReport {
@@ -45,7 +46,7 @@ public class WhenReadingAnXMLReport {
     @Test
     public void should_load_acceptance_test_report_from_xml_file() throws Exception {
         String storedReportXML =
-            "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+            "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'  timestamp='2013-01-01T00:00:00.000-05:00'>\n"
           + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
             + "  <issues>\n"
             + "    <issue>#456</issue>\n"
@@ -62,6 +63,7 @@ public class WhenReadingAnXMLReport {
 
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
         assertThat(testOutcome.get().getIssues(), hasItems("#123", "#456", "#789"));
+        assertThat(testOutcome.get().getStartTime(), notNullValue());
     }
 
     @Test

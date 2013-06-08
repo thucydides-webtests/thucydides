@@ -1068,3 +1068,7 @@ table.coverage_data td {
 .example-table label {
     font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;
 }
+
+.date-and-time {
+    float:right; padding: 10px;
+}

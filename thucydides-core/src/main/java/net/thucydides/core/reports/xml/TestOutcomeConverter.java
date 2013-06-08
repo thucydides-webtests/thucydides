@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.xml;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.thoughtworks.xstream.converters.Converter;
@@ -18,6 +19,7 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -66,6 +68,7 @@ public class TestOutcomeConverter implements Converter {
     private static final String SCREENSHOT_SOURCE = "source";
     private static final String DESCRIPTION = "description";
     private static final String DURATION = "duration";
+    private static final String TIMESTAMP = "timestamp";
     private static final String SESSION_ID = "session-id";
     private static final String EXAMPLES = "examples";
     private static final String HEADERS = "headers";
@@ -114,6 +117,7 @@ public class TestOutcomeConverter implements Converter {
         writer.addAttribute(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
         writer.addAttribute(RESULT_FIELD, testOutcome.getResult().name());
         writer.addAttribute(DURATION, Long.toString(testOutcome.getDuration()));
+        writer.addAttribute(TIMESTAMP, formattedTimestamp(testOutcome.getStartTime()));
         if (isNotEmpty(testOutcome.getSessionId())) {
             writer.addAttribute(SESSION_ID, testOutcome.getSessionId());
         }
@@ -125,6 +129,10 @@ public class TestOutcomeConverter implements Converter {
         for (TestStep step : steps) {
             writeStepTo(writer, step);
         }
+    }
+
+    private String formattedTimestamp(DateTime startTime) {
+        return startTime.toString();
     }
 
     private String escape(String attribute) {
@@ -347,6 +355,10 @@ public class TestOutcomeConverter implements Converter {
         }
         Long duration = readDuration(reader);
         testOutcome.setDuration(duration);
+        Optional<DateTime> startTime = readTimestamp(reader);
+        if (startTime.isPresent()) {
+            testOutcome.setStartTime(startTime.get());
+        }
         String sessionId = readSessionId(reader);
         testOutcome.setSessionId(sessionId);
         readChildren(reader, testOutcome);
@@ -534,6 +546,13 @@ public class TestOutcomeConverter implements Converter {
         } else {
             return 0;
         }
+    }
+
+    private static final Optional<DateTime> NO_TIMESTAMP = Optional.absent();
+
+    private Optional<DateTime> readTimestamp(HierarchicalStreamReader reader) {
+        String timestamp = reader.getAttribute(TIMESTAMP);
+        return (timestamp != null) ? Optional.of(DateTime.parse(reader.getAttribute(TIMESTAMP))) : NO_TIMESTAMP;
     }
 
     private String readSessionId(HierarchicalStreamReader reader) {

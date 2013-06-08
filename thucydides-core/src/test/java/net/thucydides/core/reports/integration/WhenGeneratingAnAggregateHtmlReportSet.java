@@ -92,6 +92,25 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         driver.findElement(By.cssSelector("a[href='" + expectedPendingReport +"']"));
     }
 
+    @Test
+    public void should_display_the_date_and_time_of_tests_on_the_home_page() throws Exception {
+        File report = new File(outputDirectory,"index.html");
+        driver.get(urlFor(report));
+        assertThat(driver.findElement(By.cssSelector(".date-and-time")).getText(), is("Tests run 01-01-2013 00:00"));
+    }
+
+    @Test
+    public void should_display_the_date_and_time_of_tests_on_the_other_pages() throws Exception {
+        ReportNameProvider reportName = new ReportNameProvider();
+        String expectedSuccessReport = reportName.forTestResult("success");
+
+        File report = new File(outputDirectory, expectedSuccessReport);
+
+        driver.get(urlFor(report));
+        assertThat(driver.findElement(By.cssSelector(".date-and-time")).getText(), is("Tests run 01-01-2013 00:00"));
+    }
+
+
     private String digest(String value) {
         return Digest.ofTextValue(value);
     }
