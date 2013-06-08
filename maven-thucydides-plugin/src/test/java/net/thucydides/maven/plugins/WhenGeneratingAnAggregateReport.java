@@ -69,7 +69,7 @@ public class WhenGeneratingAnAggregateReport {
 
         plugin.execute();
 
-        verify(reporter).generateReportsForTestResultsFrom(sourceDirectory);
+        verify(reporter).generateReportsForTestResultsFrom(outputDirectory);
     }
 
 
@@ -99,7 +99,7 @@ public class WhenGeneratingAnAggregateReport {
     @Test(expected = MojoExecutionException.class)
     public void if_the_report_cant_be_written_the_plugin_execution_should_fail() throws Exception {
 
-        doThrow(new IOException("IO error")).when(reporter).generateReportsForTestResultsFrom(sourceDirectory);
+        doThrow(new IOException("IO error")).when(reporter).generateReportsForTestResultsFrom(outputDirectory);
 
         plugin.execute();
     }

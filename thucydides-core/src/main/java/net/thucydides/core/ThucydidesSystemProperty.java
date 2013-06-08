@@ -406,7 +406,12 @@ public enum ThucydidesSystemProperty {
     /**
      * Add extra columns to the CSV output, obtained from tag values.
      */
-    THUCYDIDES_EXTRA_COLUMNS("thucydides.csv.extra.columns");
+    THUCYDIDES_EXTRA_COLUMNS("thucydides.csv.extra.columns"),
+
+    /**
+     * If set to true, Asciidoc formatting will be supported in the narrative texts.
+     */
+    THUCYDIDES_NARRATIVE_FORMAT("narrative.format");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

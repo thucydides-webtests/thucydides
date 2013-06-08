@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.NumericalFormatter;
+import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -99,6 +101,40 @@ public class WhenFormattingForHTML {
 
         assertThat(formattedValue, is("A big story (<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_123\">#MY_PROJECT_123</a>,<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MY_PROJECT_456\">#MY_PROJECT_456</a>)"));
     }
+
+
+
+    @Test
+    public void formatter_should_render_asciidoc() {
+        Formatter formatter = new Formatter(issueTracking);
+        String formatted = formatter.renderAsciidoc("a quick *brown* fox");
+        assertThat(formatted, is("<div class=\"paragraph\"><p>a quick <strong>brown</strong> fox</p></div>"));
+    }
+
+    @Test
+    public void formatter_should_render_multiline_asciidoc() {
+        Formatter formatter = new Formatter(issueTracking);
+        String formatted = formatter.renderAsciidoc("a quick *brown* fox\njumped over a log");
+        assertThat(formatted, is("<div class=\"paragraph\"><p>a quick <strong>brown</strong> fox<br>jumped over a log</p></div>"));
+    }
+
+    @Test
+    public void formatter_should_render_asciidoc_if_configured() {
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("narrative.format","asciidoc");
+        Formatter formatter = new Formatter(issueTracking, environmentVariables);
+        String formatted = formatter.renderDescription("a quick *brown* fox\njumped over a log");
+        assertThat(formatted, is("<div class=\"paragraph\"><p>a quick <strong>brown</strong> fox<br>jumped over a log</p></div>"));
+    }
+
+    @Test
+    public void formatter_should_not_render_asciidoc_not_if_configured() {
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        Formatter formatter = new Formatter(issueTracking, environmentVariables);
+        String formatted = formatter.renderDescription("a quick *brown* fox\njumped over a log");
+        assertThat(formatted, is("a quick *brown* fox<br>jumped over a log"));
+    }
+
 
     @Test
     public void should_identify_issues_in_a_text() {
@@ -243,4 +279,5 @@ public class WhenFormattingForHTML {
         NumericalFormatter formatter = new NumericalFormatter();
         assertThat(formatter.percentage(0.5, 1), is("50%"));
     }
+
 }

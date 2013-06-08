@@ -165,7 +165,7 @@
     </#if>
     <h2>${parentType}: ${issueNumber} ${parentTitle}</h2>
     <div class="requirementNarrativeTitle">
-    ${formatter.addLineBreaks(requirements.parentRequirement.get().narrativeText)}
+    ${formatter.renderDescription(requirements.parentRequirement.get().narrativeText)}
     </div>
 </div>
 </#if>
@@ -270,7 +270,7 @@
                             <td class="${requirementOutcome.testOutcomes.result}-text requirementRowCell">
                                 <a href="javaScript:void(0)" class="read-more-link"><img src="images/plus.png" height="20" /></a>
                                 <span class="requirementName"><a href="${requirementReport}">${requirementOutcome.requirement.displayName}</a></span>
-                                <div class="requirementNarrative read-more-text">${formatter.addLineBreaks(requirementOutcome.requirement.narrativeText)}</div>
+                                <div class="requirementNarrative read-more-text">${formatter.renderDescription(requirementOutcome.requirement.narrativeText)}</div>
                             </td>
 
                             <#if (requirements.childrenType?has_content) >

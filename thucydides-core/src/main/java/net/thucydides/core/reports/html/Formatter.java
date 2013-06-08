@@ -1,19 +1,24 @@
 package net.thucydides.core.reports.html;
 
-import ch.lambdaj.Lambda;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.text.translate.AggregateTranslator;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.apache.commons.lang3.text.translate.LookupTranslator;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Options;
+
+import static org.asciidoctor.Asciidoctor.Factory.create;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -33,14 +38,32 @@ public class Formatter {
     private final static Pattern fullIssueNumberPattern = Pattern.compile(FULL_ISSUE_NUMBER_REGEXP);
     private final static String ISSUE_LINK_FORMAT = "<a target=\"_blank\" href=\"{0}\">{1}</a>";
     private static final String ELIPSE = "&hellip;";
+    private static final String ASCIIDOC = "asciidoc";
 
     private final IssueTracking issueTracking;
+    private final EnvironmentVariables environmentVariables;
 
     @Inject
-    public Formatter(IssueTracking issueTracking) {
+    public Formatter(IssueTracking issueTracking, EnvironmentVariables environmentVariables) {
         this.issueTracking = issueTracking;
+        this.environmentVariables = environmentVariables;
     }
 
+    public Formatter(IssueTracking issueTracking) {
+        this(issueTracking, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+    }
+
+    public String renderAsciidoc(String text) {
+        Asciidoctor asciidoctor = create();
+        Options options = new Options();
+        options.setCompact(true);
+        text = addAsciidocLineBreaks(text);
+        return stripNewLines(asciidoctor.render(text, options));
+    }
+
+    private String stripNewLines(String render) {
+        return render.replaceAll("\n","");
+    }
 
     static class IssueExtractor {
         private String workingCopy;
@@ -57,7 +80,7 @@ public class Formatter {
             while (matcher.find()) {
                 String issue = matcher.group();
                 issues.add(issue);
-                workingCopy = workingCopy.replaceFirst(issue,"");
+                workingCopy = workingCopy.replaceFirst(issue, "");
             }
 
             return issues;
@@ -70,7 +93,7 @@ public class Formatter {
             while (unhashedMatcher.find()) {
                 String issue = unhashedMatcher.group();
                 issues.add(issue);
-                workingCopy = workingCopy.replaceFirst(issue,"");
+                workingCopy = workingCopy.replaceFirst(issue, "");
             }
 
             return issues;
@@ -103,9 +126,25 @@ public class Formatter {
         return formattedValue;
     }
 
+
+    public String renderDescription(final String text) {
+        String format = environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_NARRATIVE_FORMAT,"");
+        if (format.equalsIgnoreCase(ASCIIDOC)) {
+            return renderAsciidoc(text);
+        } else {
+            return addLineBreaks(text);
+        }
+    }
+
     public String addLineBreaks(final String text) {
         return (text != null) ?
-                text.replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS,"<br>").replaceAll(IOUtils.LINE_SEPARATOR_UNIX, "<br>") : "";
+                text.replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS, "<br>").replaceAll(IOUtils.LINE_SEPARATOR_UNIX, "<br>") : "";
+    }
+
+    public String addAsciidocLineBreaks(final String text) {
+        return (text != null) ?
+                text.replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS, " +" + IOUtils.LINE_SEPARATOR_WINDOWS)
+                    .replaceAll(IOUtils.LINE_SEPARATOR_UNIX, " +" + IOUtils.LINE_SEPARATOR_UNIX) : "";
     }
 
     private final CharSequenceTranslator ESCAPE_SPECIAL_CHARS = new AggregateTranslator(
@@ -114,7 +153,7 @@ public class Formatter {
     );
 
     public String htmlCompatible(Object fieldValue) {
-        return addLineBreaks(ESCAPE_SPECIAL_CHARS.translate(fieldValue != null? stringFormOf(fieldValue) : ""));
+        return addLineBreaks(ESCAPE_SPECIAL_CHARS.translate(fieldValue != null ? stringFormOf(fieldValue) : ""));
     }
 
     private String stringFormOf(Object fieldValue) {
@@ -126,12 +165,12 @@ public class Formatter {
     }
 
     public String truncatedHtmlCompatible(String text, int length) {
-        return addLineBreaks(ESCAPE_SPECIAL_CHARS.translate(truncate(text,length)));
+        return addLineBreaks(ESCAPE_SPECIAL_CHARS.translate(truncate(text, length)));
     }
 
     private String truncate(String text, int length) {
         if (text.length() > length) {
-            return text.substring(0,length).trim() + ELIPSE;
+            return text.substring(0, length).trim() + ELIPSE;
         } else {
             return text;
         }
@@ -141,7 +180,7 @@ public class Formatter {
         String formattedValue = value;
         String issueUrlFormat = issueTracking.getShortenedIssueTrackerUrl();
         List<String> issues = shortenedIssuesIn(value);
-        for(String issue : issues) {
+        for (String issue : issues) {
             String issueUrl = MessageFormat.format(issueUrlFormat, stripLeadingHashFrom(issue));
             String issueLink = MessageFormat.format(ISSUE_LINK_FORMAT, issueUrl, issue);
             formattedValue = formattedValue.replaceAll(issue, issueLink);
@@ -163,7 +202,7 @@ public class Formatter {
         String formattedValue = value;
         String issueUrlFormat = issueTracking.getIssueTrackerUrl();
         List<String> issues = fullIssuesIn(value);
-        for(String issue : issues) {
+        for (String issue : issues) {
             String issueUrl = MessageFormat.format(issueUrlFormat, issue);
             String issueLink = MessageFormat.format(ISSUE_LINK_FORMAT, issueUrl, issue);
             formattedValue = formattedValue.replaceAll(issue, issueLink);
@@ -173,7 +212,7 @@ public class Formatter {
 
     public String formatWithFields(String textToFormat, List<String> fields) {
         String textWithEscapedFields = textToFormat;
-        for(String field : fields) {
+        for (String field : fields) {
             textWithEscapedFields = textWithEscapedFields.replaceAll("<" + field + ">", "&lt;" + field + "&gt;");
         }
         return addLineBreaks(textWithEscapedFields);
