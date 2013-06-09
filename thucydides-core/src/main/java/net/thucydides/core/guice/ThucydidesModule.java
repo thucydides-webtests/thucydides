@@ -15,6 +15,9 @@ import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.reports.json.ColorScheme;
 import net.thucydides.core.reports.json.RelativeSizeColorScheme;
+import net.thucydides.core.reports.renderer.Asciidoc;
+import net.thucydides.core.reports.renderer.AsciidocMarkupRenderer;
+import net.thucydides.core.reports.renderer.MarkupRenderer;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.reports.saucelabs.SaucelabsLinkGenerator;
 import net.thucydides.core.reports.templates.FreeMarkerTemplateManager;
@@ -91,6 +94,8 @@ public class ThucydidesModule extends AbstractModule {
         bind(ElementProxyCreator.class).to(SmartElementProxyCreator.class).in(Singleton.class);
 
         bind(TestCount.class).to(AtomicTestCount.class).in(Singleton.class);
+
+        bind(MarkupRenderer.class).annotatedWith(Asciidoc.class).to(AsciidocMarkupRenderer.class).in(Singleton.class);
     }
 
     @Provides

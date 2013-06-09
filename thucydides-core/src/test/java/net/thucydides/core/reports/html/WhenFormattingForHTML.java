@@ -108,14 +108,14 @@ public class WhenFormattingForHTML {
     public void formatter_should_render_asciidoc() {
         Formatter formatter = new Formatter(issueTracking);
         String formatted = formatter.renderAsciidoc("a quick *brown* fox");
-        assertThat(formatted, is("<div class=\"paragraph\"><p>a quick <strong>brown</strong> fox</p></div>"));
+        assertThat(formatted, is("a quick <strong>brown</strong> fox"));
     }
 
     @Test
     public void formatter_should_render_multiline_asciidoc() {
         Formatter formatter = new Formatter(issueTracking);
         String formatted = formatter.renderAsciidoc("a quick *brown* fox\njumped over a log");
-        assertThat(formatted, is("<div class=\"paragraph\"><p>a quick <strong>brown</strong> fox<br>jumped over a log</p></div>"));
+        assertThat(formatted, is("a quick <strong>brown</strong> fox<br>jumped over a log"));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class WhenFormattingForHTML {
         environmentVariables.setProperty("narrative.format","asciidoc");
         Formatter formatter = new Formatter(issueTracking, environmentVariables);
         String formatted = formatter.renderDescription("a quick *brown* fox\njumped over a log");
-        assertThat(formatted, is("<div class=\"paragraph\"><p>a quick <strong>brown</strong> fox<br>jumped over a log</p></div>"));
+        assertThat(formatted, is("a quick <strong>brown</strong> fox<br>jumped over a log"));
     }
 
     @Test

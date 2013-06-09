@@ -3,9 +3,16 @@ package net.thucydides.core.reports.html;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.logging.ThucydidesLogging;
+import net.thucydides.core.reports.renderer.Asciidoc;
+import net.thucydides.core.reports.renderer.AsciidocMarkupRenderer;
+import net.thucydides.core.reports.renderer.MarkupRenderer;
+import net.thucydides.core.statistics.Statistics;
+import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.text.translate.AggregateTranslator;
@@ -42,11 +49,14 @@ public class Formatter {
 
     private final IssueTracking issueTracking;
     private final EnvironmentVariables environmentVariables;
+    private final MarkupRenderer asciidocRenderer;
 
     @Inject
     public Formatter(IssueTracking issueTracking, EnvironmentVariables environmentVariables) {
         this.issueTracking = issueTracking;
         this.environmentVariables = environmentVariables;
+        this.asciidocRenderer = Injectors.getInjector().getInstance(Key.get(MarkupRenderer.class, Asciidoc.class));
+
     }
 
     public Formatter(IssueTracking issueTracking) {
@@ -54,11 +64,7 @@ public class Formatter {
     }
 
     public String renderAsciidoc(String text) {
-        Asciidoctor asciidoctor = create();
-        Options options = new Options();
-        options.setCompact(true);
-        text = addAsciidocLineBreaks(text);
-        return stripNewLines(asciidoctor.render(text, options));
+        return stripNewLines(asciidocRenderer.render(text));
     }
 
     private String stripNewLines(String render) {
@@ -139,12 +145,6 @@ public class Formatter {
     public String addLineBreaks(final String text) {
         return (text != null) ?
                 text.replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS, "<br>").replaceAll(IOUtils.LINE_SEPARATOR_UNIX, "<br>") : "";
-    }
-
-    public String addAsciidocLineBreaks(final String text) {
-        return (text != null) ?
-                text.replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS, " +" + IOUtils.LINE_SEPARATOR_WINDOWS)
-                    .replaceAll(IOUtils.LINE_SEPARATOR_UNIX, " +" + IOUtils.LINE_SEPARATOR_UNIX) : "";
     }
 
     private final CharSequenceTranslator ESCAPE_SPECIAL_CHARS = new AggregateTranslator(
