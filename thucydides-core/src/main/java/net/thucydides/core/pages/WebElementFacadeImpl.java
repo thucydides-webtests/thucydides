@@ -870,12 +870,5 @@ public class WebElementFacadeImpl implements WebElementFacade {
 		return  ((Locatable) webElement).getCoordinates();
 	}
 
-	@Override
-	@Deprecated
-	public Point getLocationOnScreenOnceScrolledIntoView() {
-		// TODO Auto-generated method stub
-		return ((Locatable) webElement).getLocationOnScreenOnceScrolledIntoView();
-	}
-
 }
 
