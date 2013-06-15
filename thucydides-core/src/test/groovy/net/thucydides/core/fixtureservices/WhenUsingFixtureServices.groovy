@@ -1,4 +1,4 @@
-package net.thucydides.browsermob.fixtureservices
+package net.thucydides.core.fixtureservices
 
 import net.thucydides.core.fixtureservices.ClasspathFixtureProviderService
 import net.thucydides.core.fixtureservices.FixtureProviderService
