@@ -716,7 +716,7 @@ public abstract class PageObject {
      * Provides a fluent API for querying web elements.
      */
     public WebElementFacade element(WebElement webElement) {
-        return new WebElementFacadeImpl(driver, webElement, waitForTimeoutInMilliseconds);
+        return WebElementFacadeImpl.wrapWebElement(driver, webElement, waitForTimeoutInMilliseconds);
     }
 
     public WebElementFacade $(WebElement webElement) {
@@ -732,7 +732,7 @@ public abstract class PageObject {
      */
     public WebElementFacade element(By bySelector) {
         WebElement webElement = getDriver().findElement(bySelector);
-        return new WebElementFacadeImpl(driver, webElement, waitForTimeoutInMilliseconds);
+        return WebElementFacadeImpl.wrapWebElement(driver, webElement, waitForTimeoutInMilliseconds);
     }
 
     public WebElementFacade find(By selector) {

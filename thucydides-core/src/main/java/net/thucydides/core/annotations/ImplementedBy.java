@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface implementedBy {
+public @interface ImplementedBy {
 
 	Class<?> value();
 

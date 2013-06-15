@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import net.thucydides.core.annotations.DelayElementLocation;
-import net.thucydides.core.annotations.implementedBy;
+import net.thucydides.core.annotations.ImplementedBy;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -13,7 +13,7 @@ import org.openqa.selenium.internal.Locatable;
 import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.support.ui.Wait;
 
-@implementedBy(WebElementFacadeImpl.class)
+@ImplementedBy(WebElementFacadeImpl.class)
 public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 
 	public abstract WebElementFacade then(String xpathOrCssSelector);

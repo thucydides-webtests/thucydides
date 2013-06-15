@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import net.thucydides.core.annotations.DelayElementLocation;
-import net.thucydides.core.annotations.implementedBy;
+import net.thucydides.core.annotations.ImplementedBy;
 import net.thucydides.core.pages.WebElementFacade;
 
 import org.openqa.selenium.WebDriver;
@@ -21,7 +21,7 @@ public class SmartElementHandler implements InvocationHandler{
     private final long timeoutInMilliseconds;
     
     private Class<?> getImplementer(Class<?> interfaceType){
-    	implementedBy implBy = interfaceType.getAnnotation(implementedBy.class);
+    	ImplementedBy implBy = interfaceType.getAnnotation(ImplementedBy.class);
     	Class<?> implementerClass = implBy.value();
     	if (!interfaceType.isAssignableFrom(implementerClass)) {
     		throw new RuntimeException("implementer Class does not implement the interface " + interfaceType.getName());
@@ -43,21 +43,13 @@ public class SmartElementHandler implements InvocationHandler{
 
 	public Object invoke(Object object, Method method, Object[] objects) throws Throwable {
     	try {
-	    	if (method.isAnnotationPresent(DelayElementLocation.class)) {
-	    		Constructor<?> constructor = implementerClass.getConstructor(WebDriver.class, ElementLocator.class, long.class);
-	            Object webElementFacadeExt = constructor.newInstance(driver, locator, timeoutInMilliseconds);
-	            return method.invoke(implementerClass.cast(webElementFacadeExt), objects);
-	        }
-	        WebElement element = locator.findElement();
-	
 	        if ("getWrappedElement".equals(method.getName())) {
-	            return element;
+	            return locator.findElement();
 	        }
+	        Constructor<?> constructor = implementerClass.getConstructor(WebDriver.class, ElementLocator.class, long.class);
+	        Object webElementFacadeExt = constructor.newInstance(driver, locator, timeoutInMilliseconds);
 	        
-	        Constructor<?> constructor = implementerClass.getConstructor(WebDriver.class,WebElement.class, long.class);
-	        Object webElementFacadeExt = constructor.newInstance(driver, element, timeoutInMilliseconds);
-	        //try {
-	            return method.invoke(implementerClass.cast(webElementFacadeExt), objects);
+	        return method.invoke(implementerClass.cast(webElementFacadeExt), objects);
         } catch (InvocationTargetException e) {
             // Unwrap the underlying exception
             throw e.getCause();

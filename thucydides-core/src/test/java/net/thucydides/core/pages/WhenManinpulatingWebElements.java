@@ -11,6 +11,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.pagefactory.ElementLocator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +41,7 @@ public class WhenManinpulatingWebElements {
     public void stale_element_should_not_be_considered_visible() {
         when(webElement.isDisplayed()).thenThrow(new StaleElementReferenceException("Stale element"));
 
-        WebElementFacade elementFacade = new WebElementFacadeImpl(driver, webElement, 100);
+        WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
 
         assertThat(elementFacade.isVisible(), is(false));
 
@@ -49,7 +50,7 @@ public class WhenManinpulatingWebElements {
     @Test
     public void web_element_facade_should_be_printed_as_the_web_element() {
         when(webElement.toString()).thenReturn("<web element>");
-        WebElementFacade elementFacade = new WebElementFacadeImpl(driver, webElement, 100);
+        WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
 
         assertThat(elementFacade.toString(), is("<web element>"));
 
@@ -88,7 +89,7 @@ public class WhenManinpulatingWebElements {
 
     @Test
     public void timeout_can_be_redefined() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, webElement, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
         WebElementFacade webElementFacadeWithDifferentTimeout = webElementFacade.withTimeoutOf(2, TimeUnit.SECONDS);
 
         assertThat(webElementFacadeWithDifferentTimeout.getTimeoutInMilliseconds(), is(2000L));
@@ -108,7 +109,7 @@ public class WhenManinpulatingWebElements {
     public void stale_element_should_not_be_considered_enabled() {
         when(webElement.isDisplayed()).thenThrow(new StaleElementReferenceException("Stale element"));
 
-        WebElementFacade elementFacade = new WebElementFacadeImpl(driver, webElement, 100);
+        WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
 
         assertThat(elementFacade.isCurrentlyEnabled(), is(false));
 
@@ -119,7 +120,7 @@ public class WhenManinpulatingWebElements {
 
     @Test
     public void element_can_set_window_focus() {
-        WebElementFacade elementFacade = new WebElementFacadeImpl(driver, webElement, 100) {
+        WebElementFacade elementFacade = new WebElementFacadeImpl(driver, (ElementLocator) null, 100) {
             @Override
             protected JavascriptExecutorFacade getJavascriptExecutorFacade() {
                 return mockJavascriptExecutorFacade;
@@ -138,7 +139,7 @@ public class WhenManinpulatingWebElements {
         when(webElement.getTagName()).thenReturn("input");
         when(webElement.getAttribute("value")).thenReturn("value");
 
-        WebElementFacade elementFacade = new WebElementFacadeImpl(driver, webElement, 100);
+        WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
 
         assertThat(elementFacade.getTextValue(), is("value"));
     }
@@ -150,7 +151,7 @@ public class WhenManinpulatingWebElements {
         when(webElement.getTagName()).thenReturn("input");
         when(webElement.getAttribute("value")).thenReturn(null);
 
-        WebElementFacade elementFacade = new WebElementFacadeImpl(driver, webElement, 100);
+        WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
 
         assertThat(elementFacade.getTextValue(), is(""));
     }
@@ -162,94 +163,94 @@ public class WhenManinpulatingWebElements {
         when(webElement.getTagName()).thenReturn("textarea");
         when(webElement.getAttribute("value")).thenReturn(null);
 
-        WebElementFacade elementFacade = new WebElementFacadeImpl(driver, webElement, 100);
+        WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
 
         assertThat(elementFacade.getTextValue(), is("text"));
     }
 
     @Test
     public void when_webelement_is_null_it_should_be_considered_invisible() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
 
         assertThat(webElementFacade.isVisible(), is(false));
     }
 
     @Test
     public void when_webelement_is_null_it_should_be_considered_not_present() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
 
         assertThat(webElementFacade.isPresent(), is(false));
     }
 
     @Test
     public void when_webelement_is_null_it_should_be_considered_not_enabled() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         assertThat(webElementFacade.isEnabled(), is(false));
     }
 
     @Test(expected = ElementNotVisibleException.class)
     public void when_webelement_is_null_it_should_not_be_clickable() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         webElementFacade.click();
     }
 
     @Test(expected = ElementNotVisibleException.class)
     public void when_webelement_is_null_it_should_fail_wait_until_enabled() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         webElementFacade.waitUntilEnabled();
     }
 
     @Test(expected = ElementNotVisibleException.class)
     public void when_webelement_is_null_it_should_fail_wait_until_disabled() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         webElementFacade.waitUntilDisabled();
     }
 
     @Test(expected = ElementNotVisibleException.class)
     public void when_webelement_is_null_it_should_fail_wait_until_present() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         webElementFacade.waitUntilPresent();
     }
 
     @Test
     public void when_webelement_is_null_it_should_succeed_wait_until_not_visible() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         webElementFacade.waitUntilNotVisible();
     }
 
     @Test
     public void when_webelement_is_null_contains_text_should_fail() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         assertThat(webElementFacade.containsText("text"), is(false));
     }
 
     @Test
     public void when_webelement_is_null_contains_selected_value_should_fail() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         assertThat(webElementFacade.containsSelectOption("value"), is(false));
     }
 
     @Test(expected = ElementNotVisibleException.class)
     public void when_webelement_is_null_get_selected_value_should_fail() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         webElementFacade.getSelectedValue();
     }
 
     @Test(expected = ElementNotVisibleException.class)
     public void when_webelement_is_null_get_text_value_should_fail() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         webElementFacade.getTextValue();
     }
 
     @Test(expected = ElementNotVisibleException.class)
     public void when_webelement_is_null_get_value_should_fail() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         webElementFacade.getValue();
     }
 
     @Test(expected = ElementNotVisibleException.class)
     public void when_webelement_is_null_get_text_should_fail() {
-        WebElementFacade webElementFacade = new WebElementFacadeImpl(driver, (WebElement)null, 100);
+        WebElementFacade webElementFacade = WebElementFacadeImpl.wrapWebElement(driver, (WebElement)null, 100);
         webElementFacade.getText();
     }
 }
