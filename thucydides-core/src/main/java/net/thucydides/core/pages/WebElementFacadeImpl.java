@@ -4,7 +4,6 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.annotations.DelayElementLocation;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.jquery.JQueryEnabledPage;
 import net.thucydides.core.steps.StepEventBus;
@@ -247,7 +246,6 @@ public class WebElementFacadeImpl implements WebElementFacade {
      * by a method called "isCurrently*" and, if so, fail immediately without waiting as it would normally do.
      */
     @Override
-    @DelayElementLocation
 	public boolean isCurrentlyVisible() {
         return isVisible();
     }

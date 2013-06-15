@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import net.thucydides.core.annotations.DelayElementLocation;
 import net.thucydides.core.annotations.ImplementedBy;
 import net.thucydides.core.pages.WebElementFacade;
 
