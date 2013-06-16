@@ -395,8 +395,8 @@ class WhenRunningTestScenarios extends Specification {
 
     @TempDir File temporaryDirectory
 
-    class ATestableThucydidesRunner extends ThucydidesRunner {
-        ATestableThucydidesRunner(Class<?> klass, WebDriverFactory webDriverFactory) {
+    class ATestableThucydidesRunnerSample extends ThucydidesRunner {
+        ATestableThucydidesRunnerSample(Class<?> klass, WebDriverFactory webDriverFactory) {
             super(klass, webDriverFactory)
         }
 
@@ -409,7 +409,7 @@ class WhenRunningTestScenarios extends Specification {
 
     def "xml test results should be written to the output directory"() {
         given:
-        def runner = new ATestableThucydidesRunner(SamplePassingScenario, webDriverFactory)
+        def runner = new ATestableThucydidesRunnerSample(SamplePassingScenario, webDriverFactory)
         when:
         runner.run(new RunNotifier())
         def xmlReports = temporaryDirectory.list().findAll {it.endsWith(".xml")}
@@ -422,8 +422,8 @@ class WhenRunningTestScenarios extends Specification {
 
     def "tests for multiple stories should be written to the output directory"() {
         when:
-        new ATestableThucydidesRunner(SamplePassingScenarioUsingHtmlUnit, webDriverFactory).run(new RunNotifier())
-        new ATestableThucydidesRunner(SampleFailingScenarioUsingHtmlUnit, webDriverFactory).run(new RunNotifier())
+        new ATestableThucydidesRunnerSample(SamplePassingScenarioUsingHtmlUnit, webDriverFactory).run(new RunNotifier())
+        new ATestableThucydidesRunnerSample(SampleFailingScenarioUsingHtmlUnit, webDriverFactory).run(new RunNotifier())
         def xmlReports = temporaryDirectory.list().findAll {it.endsWith(".xml")}
         then:
         xmlReports.size() == 6
@@ -437,7 +437,7 @@ class WhenRunningTestScenarios extends Specification {
 
     def "HTML test results should be written to the output directory"() {
         when:
-        new ATestableThucydidesRunner(SamplePassingScenarioUsingHtmlUnit, webDriverFactory).run(new RunNotifier())
+        new ATestableThucydidesRunnerSample(SamplePassingScenarioUsingHtmlUnit, webDriverFactory).run(new RunNotifier())
         def xmlReports = temporaryDirectory.list().findAll {it.endsWith(".html")}
         then:
         xmlReports.size() == 3

@@ -181,7 +181,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
@@ -234,7 +234,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
@@ -260,7 +260,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
@@ -288,7 +288,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
 
@@ -317,7 +317,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
@@ -344,7 +344,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
@@ -374,7 +374,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport, "timestamp"));
     }
 
     @Test
@@ -403,7 +403,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
@@ -432,7 +432,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
 
@@ -459,7 +459,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
@@ -486,7 +486,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
 
@@ -566,7 +566,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
 
@@ -623,7 +623,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
@@ -673,7 +673,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
@@ -711,7 +711,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
@@ -749,7 +749,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
@@ -787,7 +787,7 @@ public class WhenGeneratingAnXMLReport {
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, isSimilarTo(expectedReport));
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
 
     @Test
