@@ -271,18 +271,18 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
     }
 
 
-    class TestableThucydidesRunner extends ThucydidesRunner {
+    class TestableThucydidesRunnerSample extends ThucydidesRunner {
 
         private final File testOutputDirectory;
 
-        public TestableThucydidesRunner(final Class<?> klass, File outputDirectory) throws InitializationError {
+        public TestableThucydidesRunnerSample(final Class<?> klass, File outputDirectory) throws InitializationError {
             super(klass);
             testOutputDirectory = outputDirectory;
         }
 
-        public TestableThucydidesRunner(Class<?> klass,
-                                        WebDriverFactory webDriverFactory,
-                                        File outputDirectory) throws InitializationError {
+        public TestableThucydidesRunnerSample(Class<?> klass,
+                                              WebDriverFactory webDriverFactory,
+                                              File outputDirectory) throws InitializationError {
             super(klass, webDriverFactory);
             testOutputDirectory = outputDirectory;
         }
@@ -298,7 +298,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
 
         File outputDirectory = temporaryFolder.newFolder("output");
 
-        ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingNonWebScenario.class,
+        ThucydidesRunner runner = new TestableThucydidesRunnerSample(SamplePassingNonWebScenario.class,
                 outputDirectory);
         runner.run(new RunNotifier());
 
@@ -316,7 +316,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
 
         File outputDirectory = temporaryFolder.newFolder("output");
 
-        ThucydidesRunner runner = new TestableThucydidesRunner(SamplePassingNonWebScenario.class,
+        ThucydidesRunner runner = new TestableThucydidesRunnerSample(SamplePassingNonWebScenario.class,
                 outputDirectory);
         runner.run(new RunNotifier());
 
