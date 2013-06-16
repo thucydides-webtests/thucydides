@@ -80,7 +80,7 @@ public abstract class HtmlReporter extends ThucydidesReporter {
 
     protected void copyTestResultsToOutputDirectory() throws IOException {
         File testResultsSource = getSourceDirectoryOrDefault();
-        if ((!getOutputDirectory().equals(testResultsSource)) && testResultsSource.exists()) {
+        if ((!getOutputDirectory().getAbsolutePath().equals(testResultsSource.getAbsolutePath())) && testResultsSource.exists()) {
             FileUtils.copyDirectory(testResultsSource, getOutputDirectory(), withXMLorHTMLorCSVFiles());
         }
     }
