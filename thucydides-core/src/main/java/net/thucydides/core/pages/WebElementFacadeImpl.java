@@ -100,7 +100,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
 		
 	} 
     
-    private WebElement getElement(){
+    protected WebElement getElement(){
     	if (webElement != null){
     		return webElement;
     	}
