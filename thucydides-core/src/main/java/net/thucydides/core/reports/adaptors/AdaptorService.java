@@ -30,7 +30,7 @@ public class AdaptorService {
         if (BUILT_IN_ADAPTORS.containsKey(name)) {
             return BUILT_IN_ADAPTORS.get(name);
         }
-        String customAdaptor = environmentVariables.getProperty("thucydides.xunit.adaptors." + name);
+        String customAdaptor = environmentVariables.getProperty("thucydides.adaptors." + name);
         if (StringUtils.isNotEmpty(customAdaptor)) {
             return newAdaptor(customAdaptor);
         }

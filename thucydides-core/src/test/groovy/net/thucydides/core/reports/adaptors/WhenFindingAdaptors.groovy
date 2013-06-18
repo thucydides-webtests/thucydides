@@ -21,7 +21,7 @@ class WhenFindingAdaptors extends Specification {
     def "should be able to configure a custom adaptor"() {
         given:
             def environmentVariables = new MockEnvironmentVariables()
-            environmentVariables.setProperty("thucydides.xunit.adaptors.myadaptor",
+            environmentVariables.setProperty("thucydides.adaptors.myadaptor",
                                              "net.thucydides.core.reports.adaptors.MyAdaptor")
         and:
             def adaptorService = new AdaptorService(environmentVariables)
@@ -43,7 +43,7 @@ class WhenFindingAdaptors extends Specification {
     def "should fail gracefully if adaptor is not configured correctly"() {
         given:
             def environmentVariables = new MockEnvironmentVariables()
-            environmentVariables.setProperty("thucydides.xunit.adaptors.myadaptor",
+            environmentVariables.setProperty("thucydides.adaptors.myadaptor",
                     "net.thucydides.core.reports.adaptors.AdaptorDoesNotExist")
         and:
             def adaptorService = new AdaptorService(environmentVariables)

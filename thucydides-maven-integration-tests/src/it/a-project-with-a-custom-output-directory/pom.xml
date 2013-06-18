@@ -12,7 +12,7 @@
     <properties>
         <thucydides.version>@project.version@</thucydides.version>
         <thucydides.outputDirectory>${basedir}/build/thucydides-reports</thucydides.outputDirectory>
-        <thucydides.sourceDirectory>${basedir}/build/thucydides-reports</thucydides.sourceDirectory>
+        <thucydides.source>${basedir}/build/thucydides-reports</thucydides.source>
     </properties>
 
     <dependencies>

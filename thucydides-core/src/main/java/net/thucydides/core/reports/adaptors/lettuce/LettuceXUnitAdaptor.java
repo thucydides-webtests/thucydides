@@ -25,9 +25,9 @@ public class LettuceXUnitAdaptor implements TestOutcomeAdaptor {
 
     BasicXUnitLoader loader = new BasicXUnitLoader();
 
-    public List<TestOutcome> loadOutcomesFrom(final File directory) throws IOException {
+    public List<TestOutcome> loadOutcomesFrom(final File source) throws IOException {
         List<TestOutcome> loadedOutcomes = Lists.newArrayList();
-        for(File xunitFile : XUnitFiles.in(directory)) {
+        for(File xunitFile : XUnitFiles.in(source)) {
             loadedOutcomes.addAll(testOutcomesIn(xunitFile));
         }
         return ImmutableList.copyOf(loadedOutcomes);
