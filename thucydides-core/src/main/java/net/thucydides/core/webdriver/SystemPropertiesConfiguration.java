@@ -101,6 +101,11 @@ public class SystemPropertiesConfiguration implements Configuration {
         return environmentVariables;
     }
 
+    public int maxRetries() {
+        int maxRetries = getEnvironmentVariables().getPropertyAsInteger("max.retries", 0);
+        return maxRetries;
+    }
+
     /**
      * Get the currently-configured browser type.
      */

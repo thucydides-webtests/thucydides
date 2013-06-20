@@ -156,6 +156,10 @@ public class ConsoleLoggingListener implements StepListener {
         }
     }
 
+    @Override
+    public void testRetried() {
+    }
+
     private void logFailure(TestOutcome result) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
             getLogger().info(TEST_FAILED + "\nTEST FAILED: " + result.getTitle() + underline(TEST_FAILED));
