@@ -27,7 +27,7 @@ public class WhenImportingExternalTestResults {
     @Before
     public void setupPlugin() throws IOException {
 
-        outputDirectory = temporaryFolder.newFolder();
+        outputDirectory = temporaryFolder.newFolder("sample-output");
 
         plugin = new ThucydidesAdaptorMojo();
         plugin.setOutputDirectory(outputDirectory);

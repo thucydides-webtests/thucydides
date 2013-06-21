@@ -50,5 +50,4 @@ public enum TestResult {
      * A pending test case is a test case that has at least one pending test.
      */
     PENDING
-    
 }

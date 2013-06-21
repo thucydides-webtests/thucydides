@@ -1,14 +1,19 @@
 package net.thucydides.core.requirements.reports;
 
 import net.thucydides.core.issues.IssueTracking;
-import net.thucydides.core.model.CoverageFormatter;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestType;
+import net.thucydides.core.model.formatters.TestCoverageFormatter;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.reports.TestOutcomeCounter;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.Formatter;
-import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
 
 import java.util.List;
+
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sum;
 
 public class RequirementOutcome {
     private final Requirement requirement;
@@ -141,24 +146,8 @@ public class RequirementOutcome {
                 '}';
     }
 
-    public double getPercentagePassingTestCount() {
-        return ((double) getPassingTestCount()) / ((double) totalEstimatedAndImplementedTests());
-    }
-
     public int getTestCount() {
         return testOutcomes.getTotal();
-    }
-
-    public int getPassingTestCount() {
-        return testOutcomes.getSuccessCount();
-    }
-
-    public double getPercentageFailingTestCount() {
-        return ((double) getFailingTestCount()) / ((double) totalEstimatedAndImplementedTests());
-    }
-
-    public double getPercentageErrorTestCount() {
-        return ((double) getErrorTestCount()) / ((double) totalEstimatedAndImplementedTests());
     }
 
     public int getEstimatedUnimplementedTests() {
@@ -170,33 +159,65 @@ public class RequirementOutcome {
         return totalImplementedTests + estimatedUnimplementedTests;
     }
 
-    public int getFailingTestCount() {
-        return testOutcomes.getFailureCount();
+    public RequirementsPercentageFormatter getFormattedPercentage() {
+        return getFormattedPercentage(TestType.ANY);
     }
 
-    public int getErrorTestCount() {
-        return testOutcomes.getErrorCount();
+    public RequirementsPercentageFormatter getFormattedPercentage(String testType) {
+        return new RequirementsPercentageFormatter(percentage(testType));
     }
 
-    public int getPendingTestCount() {
-        return testOutcomes.getPendingCount();
-    }
-
-    public double getPercentagePendingTestCount() {
-        return 1 - getPercentageFailingTestCount() - getPercentagePassingTestCount();
-    }
-
-    /**
-     * @return Formatted version of the test coverage metrics
-     */
-    public CoverageFormatter getFormatted() {
-        return new CoverageFormatter(getPercentagePassingTestCount(),
-                                     getPercentagePendingTestCount(),
-                                     getPercentageFailingTestCount(),
-                                     getPercentageErrorTestCount());
+    public RequirementsPercentageFormatter getFormattedPercentage(TestType testType) {
+        return new RequirementsPercentageFormatter(percentage(testType));
     }
 
     public boolean testsRequirement(Requirement requirement) {
         return requirement.equals(getRequirement()) || testOutcomes.containsTag(requirement.asTag());
     }
+
+    public RequirementsPercentageCounter getPercent() {
+        return percentage(TestType.ANY);
+    }
+
+    public RequirementsPercentageCounter percentage(String testType) {
+        return percentage(TestType.valueOf(testType.toUpperCase()));
+    }
+
+    public RequirementsPercentageCounter percentage(TestType testType) {
+        return new RequirementsPercentageCounter(testType, testOutcomes, totalEstimatedAndImplementedTests());
+    }
+
+    public OutcomeCounter getTotal() {
+        return new OutcomeCounter(TestType.ANY);
+    }
+
+    public OutcomeCounter count(TestType testType) {
+        return new OutcomeCounter(testType);
+    }
+
+    public OutcomeCounter count(String testType) {
+        return new OutcomeCounter(TestType.valueOf(testType.toUpperCase()));
+    }
+
+    public class OutcomeCounter extends TestOutcomeCounter {
+
+        public OutcomeCounter(TestType testType) {
+            super(testType);
+        }
+
+        public int withResult(String expectedResult) {
+            return withResult(TestResult.valueOf(expectedResult.toUpperCase()));
+        }
+
+        public int withResult(TestResult expectedResult) {
+            return sum(testOutcomes.getOutcomes(), on(TestOutcome.class).countResults(expectedResult, testType));
+        }
+
+        public int withIndeterminateResult() {
+            return testOutcomes.getTotal() - withResult(TestResult.SUCCESS)
+                                           - withResult(TestResult.FAILURE)
+                                           - withResult(TestResult.ERROR);
+        }
+    }
+
 }

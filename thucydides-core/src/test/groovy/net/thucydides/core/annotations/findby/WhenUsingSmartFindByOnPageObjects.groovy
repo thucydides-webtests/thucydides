@@ -48,7 +48,7 @@ class WhenUsingSmartFindByOnPageObjects extends Specification {
 		page.waitFor(1).second()
 	}
 	
-	@Timeout(value=500, unit=TimeUnit.MILLISECONDS)
+	@Timeout(value=2000, unit=TimeUnit.MILLISECONDS)
 	def "should be able to find an element using jquery immediately"(){
 
 		when: "page is opened"	
@@ -57,7 +57,7 @@ class WhenUsingSmartFindByOnPageObjects extends Specification {
 			page.firstName.isCurrentlyVisible()
 	}
 	
-	@Timeout(value=500, unit=TimeUnit.MILLISECONDS)
+	@Timeout(value=2000, unit=TimeUnit.MILLISECONDS)
 	def "the responce should be immediate when element is not visible using jquery"(){
 
 		when: "page is opened"
@@ -66,7 +66,7 @@ class WhenUsingSmartFindByOnPageObjects extends Specification {
 			!page.hiddenField.isCurrentlyVisible()
 	}
 	
-	@Timeout(value=500, unit=TimeUnit.MILLISECONDS)
+	@Timeout(value=2000, unit=TimeUnit.MILLISECONDS)
 	def "the responce should be immediate when element does not exist using jquery"(){
 
 		when: "page is opened"

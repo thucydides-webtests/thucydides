@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.exists;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.flatten;
@@ -147,6 +148,7 @@ public class TestOutcome {
     private Optional<String> qualifier;
 
     private DataTable dataTable;
+    private boolean manualTest;
 
     /**
      * The title is immutable once set. For convenience, you can create a test
@@ -181,6 +183,12 @@ public class TestOutcome {
         this.issueTracking = issueTracking;
         return this;
     }
+
+    public TestOutcome asManualTest() {
+        this.manualTest = true;
+        return this;
+    }
+
 
     public void setEnvironmentVariables(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
@@ -632,7 +640,7 @@ public class TestOutcome {
     }
 
     public Throwable getTestFailureCause() {
-        return this.testFailureCause;
+        return testFailureCause;
     }
 
     public void setAnnotatedResult(final TestResult annotatedResult) {
@@ -831,25 +839,39 @@ public class TestOutcome {
     }
 
     public int countResults(TestResult expectedResult) {
+        return countResults(expectedResult, TestType.ANY);
+    }
+
+    public int countResults(TestResult expectedResult, TestType expectedType) {
         if (isDataDriven()) {
             return countDataRowsWithResult(expectedResult);
         } else {
-            return (getResult() == expectedResult) ? 1 : 0;
+            return (getResult() == expectedResult) && (typeCompatibleWith(expectedType)) ? 1 : 0;
+        }
+    }
+
+    private boolean typeCompatibleWith(TestType testType) {
+        switch (testType) {
+            case MANUAL:
+                return isManual();
+            case AUTOMATED:
+                return !isManual();
+            default:
+                return true;
         }
     }
 
     private int countDataRowsWithResult(TestResult expectedResult) {
         List<DataTableRow> matchingRows
-                = filter(having(on(DataTableRow.class).getResult(), is(expectedResult)),
-                getDataTable().getRows());
+                = filter(having(on(DataTableRow.class).getResult(), is(expectedResult)), getDataTable().getRows());
         return matchingRows.size();
     }
 
-    public int countNestedStepsWithResult(TestResult expectedResult) {
+    public int countNestedStepsWithResult(TestResult expectedResult, TestType testType) {
         if (isDataDriven()) {
             return countDataRowStepsWithResult(expectedResult);
         } else {
-            return (getResult() == expectedResult) ? getNestedStepCount() : 0;
+            return (getResult() == expectedResult) && (typeCompatibleWith(testType)) ? getNestedStepCount() : 0;
         }
     }
 
@@ -883,6 +905,10 @@ public class TestOutcome {
 
     public void setStartTime(DateTime startTime) {
         this.startTime = startTime.getMillis();
+    }
+
+    public boolean isManual() {
+        return manualTest;
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {

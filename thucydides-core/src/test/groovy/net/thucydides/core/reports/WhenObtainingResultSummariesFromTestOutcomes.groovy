@@ -34,19 +34,29 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
         then:
-            testOutcomes.successCount == successCount &&
-            testOutcomes.failureCount == failureCount &&
-            testOutcomes.errorCount == errorCount &&
-            testOutcomes.pendingCount == pendingCount &&
-            testOutcomes.skipCount == skipCount
+            testOutcomes.totalTests.withResult("success") == successCount &&
+            testOutcomes.totalTests.withResult("failure") == failureCount &&
+            testOutcomes.totalTests.withResult("error") == errorCount &&
+            testOutcomes.totalTests.withResult("pending") == pendingCount &&
+            testOutcomes.totalTests.withResult("skipped") == skipCount
+            testOutcomes.totalTests.withIndeterminateResult() == indeterminateCount
         where:
-            directory                                  | successCount | failureCount | errorCount   | pendingCount | skipCount
-            "/test-outcomes/all-successful"            | 3            | 0            | 0            | 0            | 0
-            "/test-outcomes/containing-failure"        | 1            | 1            | 0            | 1            | 0
-            "/test-outcomes/containing-nostep-errors"  | 1            | 2            | 1            | 1            | 0
-            "/test-outcomes/containing-errors"         | 1            | 0            | 2            | 0            | 0
-            "/test-outcomes/containing-pending"        | 2            | 0            | 0            | 1            | 0
-            "/test-outcomes/containing-skipped"        | 3            | 0            | 0            | 0            | 1
+            directory                                  | successCount | failureCount | errorCount   | pendingCount | skipCount  | indeterminateCount
+            "/test-outcomes/all-successful"            | 3            | 0            | 0            | 0            | 0          | 0
+            "/test-outcomes/containing-failure"        | 1            | 1            | 0            | 1            | 0          | 1
+            "/test-outcomes/containing-nostep-errors"  | 1            | 2            | 1            | 1            | 0          | 1
+            "/test-outcomes/containing-errors"         | 1            | 0            | 2            | 0            | 0          | 0
+            "/test-outcomes/containing-pending"        | 2            | 0            | 0            | 1            | 0          | 1
+            "/test-outcomes/containing-skipped"        | 3            | 0            | 0            | 0            | 1          | 1
+    }
+
+    def "should find the total number of tests with a given result and a given execution type (manual/automated)"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/all-successful"));
+        then:
+            testOutcomes.count("automated").withResult("success") == 2
+        and:
+            testOutcomes.count("manual").withResult("success") == 1
     }
 
     def "should count the number steps in a set of test outcomes"() {
@@ -60,9 +70,10 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
         then:
-            testOutcomes.percentagePassingStepCount == percentagePassing &&
-            testOutcomes.percentageFailingStepCount == percentageFailing &&
-            testOutcomes.percentagePendingStepCount == percentagePending
+            testOutcomes.percentSteps.withResult("success") == percentagePassing &&
+            testOutcomes.percentSteps.withResult("failure")== percentageFailing &&
+            testOutcomes.percentSteps.withResult("pending") == percentagePending
+            testOutcomes.percentSteps.withIndeterminateResult() == percentagePending
         where:
             directory                                  | percentagePassing | percentageFailing  | percentagePending
             "/test-outcomes/all-successful"            | 1.0               | 0.0                | 0.0
@@ -71,55 +82,58 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             "/test-outcomes/all-pending"               | 0.0               | 0.0                | 1.0
     }
 
-
-    def "should calculate the formatted percentage of passing steps"() {
+    def "should calculate the percentage of passing tests"() {
         when:
-        def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
         then:
-        testOutcomes.decimalPercentagePassingStepCount == percentagePassing &&
-                testOutcomes.decimalPercentageFailingStepCount == percentageFailing &&
-                testOutcomes.decimalPercentagePendingStepCount == percentagePending
+            testOutcomes.percent.withResult("success") == percentagePassing &&
+            testOutcomes.percent.withResult("failure")== percentageFailing &&
+            testOutcomes.percent.withResult("pending") == percentagePending
+            testOutcomes.percent.withIndeterminateResult() == percentagePending
         where:
         directory                                  | percentagePassing | percentageFailing  | percentagePending
-        "/test-outcomes/all-successful"            | "1"                 | "0"                | "0"
-        "/test-outcomes/containing-failure"        | "0.32"              | "0.24"             | "0.44"
-        "/test-outcomes/containing-pending"        | "0.6"               | "0"                | "0.4"
-        "/test-outcomes/all-pending"               | "0"                 | "0"                | "1"
+        "/test-outcomes/all-successful"            | 1.0               | 0.0                | 0.0
+        "/test-outcomes/containing-failure"        | 0.3333333333333333| 0.3333333333333333 | 0.3333333333333333
+        "/test-outcomes/containing-pending"        | 0.6666666666666666| 0.0                | 0.3333333333333333
+        "/test-outcomes/all-pending"               | 0.0               | 0.0                | 1.0
+    }
+
+    def "should calculate the percentage of manual and automated passing steps"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
+        then:
+            testOutcomes.percentageSteps("manual").withResult("success") == percentageManual &&
+            testOutcomes.percentageSteps("automated").withResult("success")== percentageAutomated
+        where:
+            directory                                  | percentageManual  | percentageAutomated
+            "/test-outcomes/all-successful"            | 0.3333333333333333| 0.6666666666666666
     }
 
     def "should provide a formatted version of the passing coverage"() {
         when:
-        def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
         then:
-        testOutcomes.formatted.percentPassingCoverage == "32%"
+            testOutcomes.formatted.percentTests("any").withResult("success") == "33.3%"
+        and:
+            testOutcomes.formatted.percentTests().withResult("success") == "33.3%"
     }
 
-
-    def "should calculate the formatted percentage of passing tests"() {
+    def "should provide a formatted version of the passing step coverage"() {
         when:
-        def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
         then:
-        testOutcomes.decimalPercentagePassingTestCount == percentagePassing &&
-                testOutcomes.decimalPercentageFailingTestCount == percentageFailing &&
-                testOutcomes.decimalPercentageErrorTestCount == percentageErroring &&
-                testOutcomes.decimalPercentagePendingTestCount == percentagePending
-        where:
-        directory                                 | percentagePassing | percentageFailing | percentageErroring | percentagePending
-        "/test-outcomes/all-successful"           | "1"               | "0"               | "0"                | "0"
-        "/test-outcomes/containing-failure"       | "0.33"            | "0.33"            | "0"                | "0.33"
-        "/test-outcomes/containing-pending"       | "0.67"            | "0"               | "0"                | "0.33"
-        "/test-outcomes/containing-nostep-errors" | "0.2"             | "0.4"             | "0.2"              | "0.2"
-        "/test-outcomes/containing-errors"        | "0.33"            | "0"               | "0.67"             | "0"
-        "/test-outcomes/all-pending"              | "0"               | "0"               | "0"                | "1"
+            testOutcomes.formatted.percentSteps("any").withResult("success") == "32%"
+        and:
+            testOutcomes.formatted.percentSteps().withResult("success") == "32%"
     }
 
     def "should provide a formatted version of the failing coverage metrics"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
         then:
-            testOutcomes.formatted.percentFailingCoverage == "24%"
+            testOutcomes.formatted.percentTests.withResult("failure") == "33.3%"
         and:
-            testOutcomes.formattedTestCount.percentFailingCoverage == "33.3%"
+            testOutcomes.formatted.percentSteps.withResult("failure") == "24%"
 
     }
 
@@ -127,32 +141,36 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
         then:
-            testOutcomes.formatted.percentPendingCoverage == "44%"
+            testOutcomes.formatted.percentSteps.withResult("pending") == "44%"
         and:
-            testOutcomes.formattedTestCount.percentPendingCoverage == "33.3%"
+            testOutcomes.formatted.percentTests.withResult("pending") == "33.3%"
+        and:
+            testOutcomes.formatted.percentSteps.withIndeterminateResult() == "44%"
+        and:
+            testOutcomes.formatted.percentTests.withIndeterminateResult() == "33.3%"
     }
 
     def "should return 0% passing coverage if there are no steps"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/with-no-steps"));
         then:
-            testOutcomes.formatted.percentPassingCoverage == "0%"
+            testOutcomes.formatted.percentSteps.withResult("success") == "0%"
         and:
-            testOutcomes.formattedTestCount.percentPassingCoverage == "0%"
+            testOutcomes.formatted.percentTests.withResult("success") == "0%"
     }
 
     def "should return 0% failing coverage if there are no steps"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/with-no-steps"));
         then:
-            testOutcomes.formatted.percentFailingCoverage == "0%"
+            testOutcomes.formatted.percentTests.withResult("failure") == "0%"
     }
 
     def "should return 100% pending coverage if there are no steps"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/with-no-steps"));
         then:
-            testOutcomes.formatted.percentPendingCoverage == "100%"
+            testOutcomes.formatted.percentTests.withResult("pending") == "100%"
     }
 
 
@@ -169,16 +187,16 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/datadriven"));
         then:
-            testOutcomes.successCount == 12
-            testOutcomes.failureCount == 2
+            testOutcomes.totalTests.withResult("success") == 12
+            testOutcomes.totalTests.withResult("failure") == 2
     }
 
     def "should count percentage results in lines of data-driven tests as individual tests"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/datadriven"));
         then:
-            testOutcomes.formatted.percentPassingCoverage == "85.7%"
-            testOutcomes.formatted.percentFailingCoverage == "14.3%"
+            testOutcomes.formatted.percentSteps.withResult("success") == "85.7%"
+            testOutcomes.formatted.percentSteps.withResult("failure") == "14.3%"
     }
 
 
@@ -186,10 +204,10 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/somedatadriven"));
         then:
-            testOutcomes.successCount == 1
-            testOutcomes.failureCount == 2
-            testOutcomes.pendingCount == 3
-            testOutcomes.errorCount == 1
+            testOutcomes.totalTests.withResult("success") == 1
+            testOutcomes.totalTests.withResult("failure") == 2
+            testOutcomes.totalTests.withResult("pending") == 3
+            testOutcomes.totalTests.withResult("error") == 1
             testOutcomes.total  == 7
             testOutcomes.totalTestScenarios  == 4
     }
@@ -200,20 +218,19 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         then:
             testOutcomes.hasDataDrivenTests()
             testOutcomes.totalDataRows == 5
-            testOutcomes.percentagePassingTestCount == 0.14285714285714285
-            testOutcomes.percentageFailingTestCount == 0.2857142857142857
-            testOutcomes.percentageErrorTestCount == 0.14285714285714285
-            testOutcomes.percentagePendingTestCount == 0.42857142857142855
+            testOutcomes.percent.withResult("success") == 0.14285714285714285
+            testOutcomes.percent.withResult("failure") == 0.2857142857142857
+            testOutcomes.percent.withResult("error") == 0.14285714285714285
+            testOutcomes.percent.withResult("pending") == 0.42857142857142855
     }
 
     def "should count percentage results correctly with no results"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes"));
         then:
-            testOutcomes.percentagePassingTestCount == 0.0
-            testOutcomes.percentageFailingTestCount == 0.0
-            testOutcomes.percentageErrorTestCount == 0.0
-            testOutcomes.percentagePendingTestCount == 0.0
+            testOutcomes.percent.withResult("success") == 0.0
+            testOutcomes.percent.withResult("failure") == 0.0
+            testOutcomes.percent.withResult("error") == 0.0
+            testOutcomes.percent.withResult("pending") == 0.0
     }
-
 }

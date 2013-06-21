@@ -137,7 +137,7 @@
                                     </#if>
 
                                     <#assign stability = outcomesForTag.recentStability>
-                                    <#if (outcomesForTag.total == outcomesForTag.pendingCount)>
+                                    <#if (outcomesForTag.total == outcomesForTag.totalTests.withIndeterminateResult())>
                                         <#assign stability_icon = "traffic-in-progress.gif">
                                         <#assign stability_rank = 0>
                                     <#elseif stability < 0.25>
@@ -162,9 +162,9 @@
                                         <td class="lightgreentext">${outcomesForTag.stepCount}</td>
 
                                         <#if reportOptions.showStepDetails>
-                                        <td class="redtext">${outcomesForTag.failureCount}</td>
-                                        <td class="bluetext">${outcomesForTag.pendingCount}</td>
-                                        <td class="bluetext">${outcomesForTag.skipCount}</td>
+                                        <td class="redtext">${outcomesForTag.totalTests.withResult("failure")}</td>
+                                        <td class="bluetext">${outcomesForTag..totalTests.withResult("pending")}</td>
+                                        <td class="bluetext">${outcomesForTag..totalTests.withResult("skipped")}</td>
                                         </#if>
                                         <td class="bluetext">
                                             <img src="images/${stability_icon}"  class="summary-icon"/>

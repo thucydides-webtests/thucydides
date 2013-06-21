@@ -76,6 +76,7 @@ public class TestOutcomeConverter implements Converter {
     private static final String ROWS = "rows";
     private static final String ROW = "row";
     private static final String VALUE = "value";
+    private static final String MANUAL = "manual";
     public static final String NEW_LINE_CHAR = "\n";
     public static final String ESCAPE_CHAR_FOR_NEW_LINE = "&#10;";
     private static final String DEFAULT_ERROR_MESSAGE = "Unspecified failure";
@@ -118,6 +119,9 @@ public class TestOutcomeConverter implements Converter {
         writer.addAttribute(RESULT_FIELD, testOutcome.getResult().name());
         writer.addAttribute(DURATION, Long.toString(testOutcome.getDuration()));
         writer.addAttribute(TIMESTAMP, formattedTimestamp(testOutcome.getStartTime()));
+        if (testOutcome.isManual()) {
+            writer.addAttribute(MANUAL, "true");
+        }
         if (isNotEmpty(testOutcome.getSessionId())) {
             writer.addAttribute(SESSION_ID, testOutcome.getSessionId());
         }
@@ -359,6 +363,10 @@ public class TestOutcomeConverter implements Converter {
         if (startTime.isPresent()) {
             testOutcome.setStartTime(startTime.get());
         }
+        boolean isManualTest = readManualTest(reader);
+        if (isManualTest) {
+            testOutcome = testOutcome.asManualTest();
+        }
         String sessionId = readSessionId(reader);
         testOutcome.setSessionId(sessionId);
         readChildren(reader, testOutcome);
@@ -366,6 +374,15 @@ public class TestOutcomeConverter implements Converter {
             testOutcome.setAnnotatedResult(savedTestResult);
         }
         return testOutcome;
+    }
+
+    private boolean readManualTest(HierarchicalStreamReader reader) {
+        boolean isManualTest = false;
+        String manualTestAttribute = reader.getAttribute(MANUAL);
+        if (manualTestAttribute != null) {
+            isManualTest = Boolean.valueOf(manualTestAttribute);
+        }
+        return isManualTest;
     }
 
     private void readChildren(final HierarchicalStreamReader reader, final TestOutcome testOutcome) {

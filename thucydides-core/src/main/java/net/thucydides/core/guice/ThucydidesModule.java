@@ -14,7 +14,6 @@ import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.reports.json.ColorScheme;
-import net.thucydides.core.reports.json.RelativeSizeColorScheme;
 import net.thucydides.core.reports.renderer.Asciidoc;
 import net.thucydides.core.reports.renderer.AsciidocMarkupRenderer;
 import net.thucydides.core.reports.renderer.MarkupRenderer;
@@ -71,7 +70,6 @@ public class ThucydidesModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(ColorScheme.class).to(RelativeSizeColorScheme.class).in(Singleton.class);
         bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
         bind(TemplateManager.class).to(FreeMarkerTemplateManager.class).in(Singleton.class);
         bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);

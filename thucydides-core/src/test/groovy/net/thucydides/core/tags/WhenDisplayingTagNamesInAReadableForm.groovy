@@ -39,11 +39,11 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
 
     def "should transform a number of object nouns into plural or singular based on the number"() {
         when: "we find the plural or singular form of a word"
-            def pluralForm = inflection.of(count).times(singleForm).inPluralForm().toString()
+            def pluralForm = inflection.of(getTotal).times(singleForm).inPluralForm().toString()
         then: "the form should depend on the number of objects"
             pluralForm == expectedPluralForm
         where:
-            count   | singleForm        | expectedPluralForm
+            getTotal   | singleForm        | expectedPluralForm
             0       | 'epic'            | 'epics'
             1       | 'epic'            | 'epic'
             2       | 'epic'            | 'epics'

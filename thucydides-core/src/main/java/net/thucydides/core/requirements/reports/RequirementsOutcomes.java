@@ -5,7 +5,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.issues.IssueTracking;
-import net.thucydides.core.model.CoverageFormatter;
+import net.thucydides.core.model.OutcomeCounter;
+import net.thucydides.core.model.TestType;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
@@ -13,6 +14,8 @@ import net.thucydides.core.util.EnvironmentVariables;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static ch.lambdaj.Lambda.sum;
 
 /**
  * A set of test results for a list of high-level requirements.
@@ -242,54 +245,35 @@ public class RequirementsOutcomes {
         return ImmutableList.copyOf(flattenedOutcomes);
     }
 
-    public int getFailingTestCount() {
-        return testOutcomes.getFailureCount();
+    public OutcomeCounter getTotal() {
+        return count(TestType.ANY);
     }
 
-    public int getErrorTestCount() {
-        return testOutcomes.getErrorCount();
+    public OutcomeCounter count(TestType testType) {
+        return new OutcomeCounter(testType, getTestOutcomes());
     }
 
-    public int getPassingTestCount() {
-        return testOutcomes.getSuccessCount();
+    public OutcomeCounter count(String testType) {
+        return count(TestType.valueOf(testType.toUpperCase()));
     }
 
     public int getTotalTestCount() {
         return testOutcomes.getTotal();
     }
 
-    public int getPendingTestCount() {
-        return testOutcomes.getPendingCount();
-    }
-
-    public int getSkippedTestCount() {
-        return testOutcomes.getSkipCount();
-    }
-
-    public double getPercentagePassingTestCount() {
-        return ((double) getPassingTestCount()) / ((double) totalEstimatedAndImplementedTests());
-    }
-
-    public double getPercentageFailingTestCount() {
-        return ((double) getFailingTestCount()) / ((double) totalEstimatedAndImplementedTests());
-    }
-
-    public double getPercentageErrorTestCount() {
-        return ((double) getErrorTestCount()) / ((double) totalEstimatedAndImplementedTests());
-    }
-
-    public double getPercentagePendingTestCount() {
-        return 1 - getPercentageFailingTestCount() - getPercentagePassingTestCount() - getPercentageErrorTestCount();
-    }
-
     /**
      * @return Formatted version of the test coverage metrics
      */
-    public CoverageFormatter getFormatted() {
-        return new CoverageFormatter(getPercentagePassingTestCount(),
-                getPercentagePendingTestCount(),
-                getPercentageFailingTestCount(),
-                getPercentageErrorTestCount());
+    public RequirementsPercentageFormatter getFormattedPercentage() {
+        return new RequirementsPercentageFormatter(getPercent());
+    }
+
+    public RequirementsPercentageFormatter getFormattedPercentage(String testType) {
+        return new RequirementsPercentageFormatter(percentage(testType));
+    }
+
+    public RequirementsPercentageFormatter getFormattedPercentage(TestType testType) {
+        return new RequirementsPercentageFormatter(percentage(testType));
     }
 
     private int totalEstimatedAndImplementedTests() {
@@ -304,5 +288,17 @@ public class RequirementsOutcomes {
     private int estimatedTestsPerRequirement() {
         return environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.ESTIMATED_TESTS_PER_REQUIREMENT.toString(),
                 DEFAULT_TESTS_PER_REQUIREMENT);
+    }
+
+    public RequirementsPercentageCounter getPercent() {
+        return percentage(TestType.ANY);
+    }
+
+    public RequirementsPercentageCounter percentage(String testType) {
+        return percentage(TestType.valueOf(testType.toUpperCase()));
+    }
+
+    public RequirementsPercentageCounter percentage(TestType testType) {
+        return new RequirementsPercentageCounter(testType, testOutcomes, totalEstimatedAndImplementedTests());
     }
 }

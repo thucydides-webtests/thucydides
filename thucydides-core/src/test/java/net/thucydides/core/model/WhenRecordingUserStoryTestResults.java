@@ -27,6 +27,10 @@ import static org.mockito.Mockito.when;
 
 public class WhenRecordingUserStoryTestResults {
 
+    private static final String SUCCESS = "success";
+    private static final String FAILURE = "failure";
+    private static final String ERROR = "error";
+    private static final String PENDING = "pending";
     private Story userStory;
     private StoryTestResults storyTestResults;
 
@@ -315,9 +319,9 @@ public class WhenRecordingUserStoryTestResults {
 
         testResults.recordTestRun(thatSucceedsFor(userStory));
 
-        assertThat(testResults.getFormatted().getPercentPassingCoverage(), is("100%"));
-        assertThat(testResults.getFormatted().getPercentFailingCoverage(), is("0%"));
-        assertThat(testResults.getFormatted().getPercentPendingCoverage(), is("0%"));
+        assertThat(testResults.getFormatted().percentTests().withResult("success"), is("100%"));
+        assertThat(testResults.getFormatted().percentTests().withResult("failure"), is("0%"));
+        assertThat(testResults.getFormatted().percentTests().withResult("error"), is("0%"));
     }
 
     @Test
@@ -327,9 +331,9 @@ public class WhenRecordingUserStoryTestResults {
 
         testResults.recordTestRun(thatFailsFor(userStory));
 
-        assertThat(testResults.getFormatted().getPercentPassingCoverage(), is("0%"));
-        assertThat(testResults.getFormatted().getPercentFailingCoverage(), is("100%"));
-        assertThat(testResults.getFormatted().getPercentPendingCoverage(), is("0%"));
+        assertThat(testResults.getFormatted().percentTests().withResult("success"), is("0%"));
+        assertThat(testResults.getFormatted().percentTests().withResult("failure"), is("100%"));
+        assertThat(testResults.getFormatted().percentTests().withResult("error"), is("0%"));
     }
 
     @Test
@@ -339,9 +343,9 @@ public class WhenRecordingUserStoryTestResults {
 
         testResults.recordTestRun(thatIsPendingFor(userStory));
 
-        assertThat(testResults.getFormatted().getPercentPassingCoverage(), is("0%"));
-        assertThat(testResults.getFormatted().getPercentFailingCoverage(), is("0%"));
-        assertThat(testResults.getFormatted().getPercentPendingCoverage(), is("100%"));
+        assertThat(testResults.getFormatted().percentTests().withResult(SUCCESS), is("0%"));
+        assertThat(testResults.getFormatted().percentTests().withResult(FAILURE), is("0%"));
+        assertThat(testResults.getFormatted().percentTests().withResult(PENDING), is("100%"));
     }
 
     private TestOutcome thatFailsFor(Story story) {

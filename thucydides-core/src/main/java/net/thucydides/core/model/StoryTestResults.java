@@ -4,6 +4,8 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.model.formatters.TestCoverageFormatter;
+import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
@@ -221,11 +223,8 @@ public class StoryTestResults {
         return getStory().equals(aUserStory);
     }
 
-    public CoverageFormatter getFormatted() {
-        return new CoverageFormatter(getPercentPassingCoverage(),
-                                     getPercentPendingCoverage(),
-                                     getPercentFailingCoverage(),
-                                     getPercentErrorCoverage());
+    public TestCoverageFormatter getFormatted() {
+        return new TestCoverageFormatter(TestOutcomes.of(testOutcomes));
     }
 
 

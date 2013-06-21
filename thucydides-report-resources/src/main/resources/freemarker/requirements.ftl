@@ -46,10 +46,10 @@
     <script class="code" type="text/javascript">$(document).ready(function () {
         var plot1 = $.jqplot('coverage_pie_chart', [
             [
-                ['Passing', ${requirements.percentagePassingTestCount}],
-                ['Pending', ${requirements.percentagePendingTestCount}],
-                ['Failing', ${requirements.percentageFailingTestCount}],
-                ['Errors',  ${requirements.percentageErrorTestCount}]
+                ['Passing', ${requirements.percent.withResult("SUCCESS")}],
+                ['Pending', ${requirements.percent.withIndeterminateResult()}],
+                ['Failing', ${requirements.percent.withResult("FAILURE")}],
+                ['Errors',  ${requirements.percent.withResult("ERROR")}]
             ]
         ], {
             gridPadding:{top:0, bottom:38, left:0, right:0},
@@ -69,10 +69,10 @@
                 marginTop:'15px'
             },
             series:[
-                {label:'${requirements.formatted.percentPassingCoverage} requirements tested successfully' },
-                {label:'${requirements.formatted.percentPendingCoverage} requirements untested'},
-                {label:'${requirements.formatted.percentFailingCoverage} requirements failing'},
-                {label:'${requirements.formatted.percentErrorCoverage} requirements with errors'}
+                {label:'${requirements.formattedPercentage.withResult("SUCCESS")} requirements tested successfully' },
+                {label:'${requirements.formattedPercentage.withIndeterminateResult()} requirements untested'},
+                {label:'${requirements.formattedPercentage.withResult("FAILURE")}} requirements failing'},
+                {label:'${requirements.formattedPercentage.withIndeterminateResult()}} requirements with errors'}
             ]
         });
         // Results table
@@ -150,6 +150,8 @@
 
 <div class="clr"></div>
 
+
+
 <div id="beforetable"></div>
 <div id="results-dashboard">
 <div class="middlb">
@@ -185,16 +187,16 @@
                 <td class="label">Tests:</td><td class="value">${requirements.totalTestCount}</td>
             <tr/>
             <tr>
-                <td class="label subtopic">Passing tests:</td><td class="value">${requirements.passingTestCount}</td>
+                <td class="label subtopic">Passing tests:</td><td class="value">${requirements.total.withResult("SUCCESS")}</td>
             <tr/>
             <tr>
-                <td class="label subtopic">Failing tests:</td><td class="value">${requirements.failingTestCount}</td>
+                <td class="label subtopic">Failing tests:</td><td class="value">${requirements.total.withResult("FAILURE")}</td>
             <tr/>
             <tr>
-                <td class="label subtopic">Tests with errors:</td><td class="value">${requirements.errorTestCount}</td>
+                <td class="label subtopic">Tests with errors:</td><td class="value">${requirements.total.withResult("ERROR")}</td>
             <tr/>
             <tr>
-                <td class="label subtopic">Pending tests:</td><td class="value">${requirements.pendingTestCount}</td>
+                <td class="label subtopic">Pending tests:</td><td class="value">${requirements.total.withResult("PENDING")}</td>
             <tr/>
             <tr>
                 <td class="label">Estimated unimplemented tests:</td><td class="value">${requirements.estimatedUnimplementedTests}</td>
@@ -241,7 +243,6 @@
                         <th width="50px" class="test-results-heading">Pend</th>
                         <th width="150px" class="test-results-heading">Coverage</th>
                     </tr>
-                    </thead>
                     <tbody>
 
                         <#foreach requirementOutcome in requirements.requirementOutcomes>
@@ -277,24 +278,30 @@
                                 <td class="bluetext requirementRowCell">${requirementOutcome.requirement.childrenCount}</td>
                             </#if>
 
+                            <#assign successCount = requirementOutcome.testOutcomes.totalTests.withResult("success") >
+                            <#assign indeterminateCount = requirementOutcome.testOutcomes.totalTests.withIndeterminateResult() >
+                            <#assign skipCount = requirementOutcome.testOutcomes.totalTests.withResult("skipped") >
+                            <#assign failureCount = requirementOutcome.testOutcomes.totalTests.withResult("failure") >
+                            <#assign errorCount = requirementOutcome.testOutcomes.totalTests.withResult("error") >
+
                             <td class="bluetext requirementRowCell">${requirementOutcome.testOutcomes.total}</td>
-                            <td class="greentext requirementRowCell">${requirementOutcome.testOutcomes.successCount}</td>
-                            <td class="redtext requirementRowCell">${requirementOutcome.testOutcomes.failureCount}</td>
-                            <td class="lightredtext requirementRowCell">${requirementOutcome.testOutcomes.errorCount}</td>
-                            <td class="bluetext requirementRowCell">${requirementOutcome.testOutcomes.pendingCount + requirementOutcome.testOutcomes.skipCount}</td>
+                            <td class="greentext requirementRowCell">${successCount}</td>
+                            <td class="redtext requirementRowCell">${failureCount}</td>
+                            <td class="lightredtext requirementRowCell">${errorCount}</td>
+                            <td class="bluetext requirementRowCell">${indeterminateCount}</td>
 
 
                             <td width="150px" class="lightgreentext requirementRowCell">
 
 
-                                <#assign percentPending = requirementOutcome.percentagePendingTestCount/>
-                                <#assign percentError = requirementOutcome.percentageErrorTestCount/>
-                                <#assign percentFailing = requirementOutcome.percentageFailingTestCount/>
-                                <#assign percentPassing = requirementOutcome.percentagePassingTestCount/>
-                                <#assign passing = requirementOutcome.formatted.percentPassingCoverage>
-                                <#assign failing = requirementOutcome.formatted.percentFailingCoverage>
-                                <#assign error = requirementOutcome.formatted.percentErrorCoverage>
-                                <#assign pending = requirementOutcome.formatted.percentPendingCoverage>
+                                <#assign percentPending = requirementOutcome.percent.withIndeterminateResult()/>
+                                <#assign percentError = requirementOutcome.percent.withResult("ERROR")/>
+                                <#assign percentFailing = requirementOutcome.percent.withResult("FAILURE")/>
+                                <#assign percentPassing = requirementOutcome.percent.withResult("SUCCESS")/>
+                                <#assign passing = requirementOutcome.formattedPercentage.withResult("SUCCESS")>
+                                <#assign failing = requirementOutcome.formattedPercentage.withResult("FAILURE")>
+                                <#assign error = requirementOutcome.formattedPercentage.withResult("ERROR")>
+                                <#assign pending = requirementOutcome.formattedPercentage.withIndeterminateResult()>
 
                                 <#assign errorbar = (percentPassing + percentFailing + percentError)*150>
                                 <#assign failingbar = (percentPassing + percentFailing)*150>
@@ -317,16 +324,16 @@
                                 <#assign overviewCaption =
                                 "${requirementOutcome.requirement.displayName}|
 Tests implemented: ${requirementOutcome.testCount}
-  - Passing tests: ${requirementOutcome.passingTestCount} (${passing} of specified requirements)
-  - Failing tests: ${requirementOutcome.failingTestCount} (${failing} of specified requirements)
-  - Tests with errors: ${requirementOutcome.errorTestCount} (${error} of specified requirements)
+  - Passing tests: ${successCount} (${passing} of specified requirements)
+  <#--- Failing tests: ${failureCount} (${failing} of specified requirements)-->
+  <#--- Tests with errors: ${errorCount} (${error} of specified requirements)-->
 
-Requirements specified:     ${requirementOutcome.flattenedRequirementCount}
-Requirements with no tests: ${requirementOutcome.requirementsWithoutTestsCount}
+<#--Requirements specified:     ${requirementOutcome.flattenedRequirementCount}-->
+<#--Requirements with no tests: ${requirementOutcome.requirementsWithoutTestsCount}-->
 
-Pending tests: ${requirementOutcome.pendingTestCount}
-Estimated unimplemented tests: ${requirementOutcome.estimatedUnimplementedTests}
-Estimated unimplemented or pending requirements: ${pending}">
+<#--Pending tests: ${indeterminateCount}-->
+<#--Estimated unimplemented tests: ${requirementOutcome.estimatedUnimplementedTests}-->
+<#--Estimated unimplemented or pending requirements: ${pending}">-->
 
                                 <table>
                                     <tr>
@@ -425,11 +432,11 @@ Estimated unimplemented or pending requirements: ${pending}">
 
                             <td class="lightgreentext">${testOutcome.nestedStepCount}</td>
                             <#if reportOptions.showStepDetails>
-                                <td class="redtext">${testOutcome.failureCount}</td>
-                                <td class="redtext">${testOutcome.errorCount}</td>
-                                <td class="bluetext">${testOutcome.pendingCount}</td>
-                                <td class="bluetext">${testOutcome.skippedCount}</td>
-                                <td class="bluetext">${testOutcome.ignoredCount}</td>
+                                <td class="redtext">${testOutcome.total.withResult("FAILURE")}</td>
+                                <td class="redtext">${testOutcome.total.withResult("ERROR")}</td>
+                                <td class="bluetext">${testOutcome.total.withResult("PENDING")}</td>
+                                <td class="bluetext">${testOutcome.total.withResult("SKIPPED")}</td>
+                                <td class="bluetext">${testOutcome.total.withResult("IGNORED")}</td>
                             </#if>
                             <td class="bluetext">
                                 <img src="images/${stability_icon}"
