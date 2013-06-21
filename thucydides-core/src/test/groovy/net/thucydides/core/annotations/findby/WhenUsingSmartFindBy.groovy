@@ -33,7 +33,7 @@ class WhenUsingSmartFindBy extends Specification {
     def "should be able to find a nested element using jquery"(){
 
         when: "we try to find an element using a jquery selector"
-        def element = driver.findElement(By.jquery("#firstname"))
+        	def element = driver.findElement(By.jquery("#firstname"))
 
         then: "we should find the element"
         element.getAttribute("value")  == "<enter first name>"
@@ -54,7 +54,7 @@ class WhenUsingSmartFindBy extends Specification {
         when: "we try to find an element using a jquery selector"
             driver.findElement(By.jquery("#does_not_exist"))
 
-        then: "element should be found"
+        then: "element should not be found"
             thrown(NoSuchElementException)
     }
 
@@ -63,7 +63,7 @@ class WhenUsingSmartFindBy extends Specification {
         when: "we try to find an element using a jquery selector"
             driver.findElements(By.jquery("#does_not_exist"))
 
-        then: "element should be found"
+        then: "element should not be found"
             thrown(NoSuchElementException)
     }
 
