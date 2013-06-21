@@ -4,8 +4,10 @@ import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.util.MockEnvironmentVariables;
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
+import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.runners.ThucydidesRunner;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,31 +16,27 @@ import org.junit.runner.notification.RunNotifier;
 
 import java.util.List;
 
+import static net.thucydides.core.webdriver.SystemPropertiesConfiguration.MAX_RETRIES;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class RetryingFailedTests {
 
-    private static final String MAX_RETRIES = "max.retries";
-    private String oldMaxRetries;
+    MockEnvironmentVariables environmentVariables;
 
     @Before
     public void init() {
-        oldMaxRetries = System.getProperty(MAX_RETRIES, "0");
-    }
-
-    @After
-    public void cleanup() {
-        System.setProperty("max.retries", oldMaxRetries);
+        environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty(MAX_RETRIES, "0");
     }
 
     @Test
     public void result_is_a_pass_despite_initial_failure() throws Exception {
-        System.setProperty("max.retries", "5");
-        ThucydidesRunner runner = new ThucydidesRunner(FailThenPass.class);
+        environmentVariables.setProperty(MAX_RETRIES, "5");
+        ThucydidesRunner runner = new ThucydidesRunner(FailThenPass.class,
+                                                       new WebDriverFactory(environmentVariables),
+                                                       new SystemPropertiesConfiguration(environmentVariables));
 
         CapturingNotifier notifier = new CapturingNotifier();
         runner.run(notifier);

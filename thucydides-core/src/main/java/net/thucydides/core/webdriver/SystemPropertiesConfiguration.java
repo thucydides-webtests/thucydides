@@ -61,6 +61,8 @@ public class SystemPropertiesConfiguration implements Configuration {
     public static final String REFUSE_UNTRUSTED_CERTIFICATES
             = ThucydidesSystemProperty.REFUSE_UNTRUSTED_CERTIFICATES.getPropertyName();
 
+    public static final String MAX_RETRIES = "max.retries";
+
     /**
      * By default, reports will go here.
      */
@@ -102,7 +104,7 @@ public class SystemPropertiesConfiguration implements Configuration {
     }
 
     public int maxRetries() {
-        int maxRetries = getEnvironmentVariables().getPropertyAsInteger("max.retries", 0);
+        int maxRetries = getEnvironmentVariables().getPropertyAsInteger(MAX_RETRIES, 0);
         return maxRetries;
     }
 
