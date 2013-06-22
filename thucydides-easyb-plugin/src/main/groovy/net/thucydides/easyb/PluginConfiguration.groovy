@@ -2,6 +2,7 @@ package net.thucydides.easyb
 
 import net.thucydides.core.steps.ScenarioSteps
 import net.thucydides.core.webdriver.SupportedWebDriver
+import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebdriverProxyFactory
 import org.openqa.selenium.WebDriver
 import net.thucydides.core.model.TestTag
@@ -62,7 +63,7 @@ public class PluginConfiguration {
     /**
      * Override the normal web firefoxDriver instance to be used for testing purposes.
      */
-    public void use_mock_driver(WebDriver webDriver) {
+    public void use_mock_driver(WebDriverFacade webDriver) {
         WebdriverProxyFactory.getFactory().useMockDriver(webDriver);
     }
 
