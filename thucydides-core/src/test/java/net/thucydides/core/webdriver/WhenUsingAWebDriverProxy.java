@@ -301,39 +301,6 @@ public class WhenUsingAWebDriverProxy {
         verify(firefoxDriver).get("http://www.google.com");
         verify(firefoxDriver).findElement(By.id("q"));
         verify(firefoxDriver).getScreenshotAs(OutputType.FILE);
-
-    }
-
-    @Test
-    public void proxy_should_allow_a_mock_driver_instead_of_a_real_one_for_testing() {
-
-
-        WebdriverProxyFactory proxyFactory = WebdriverProxyFactory.getFactory();
-
-        proxyFactory.useMockDriver(firefoxDriver);
-
-        WebDriver driver = proxyFactory.proxyFor(FirefoxDriver.class);
-
-        assertThat(driver, is((WebDriver)firefoxDriver));
-    }
-
-    @Test
-    public void proxy_should_allow_a_temporary_mock_driver_instead_of_a_real_one_for_testing() {
-
-
-        WebdriverProxyFactory proxyFactory = WebdriverProxyFactory.getFactory();
-
-        proxyFactory.useMockDriver(firefoxDriver);
-
-        WebDriver driver = proxyFactory.proxyFor(FirefoxDriver.class);
-
-        assertThat(driver, is((WebDriver)firefoxDriver));
-
-        proxyFactory.clearMockDriver();
-
-        driver = proxyFactory.proxyFor(FirefoxDriver.class);
-
-        assertThat(driver, is(not((WebDriver)firefoxDriver)));
     }
 
     @Mock

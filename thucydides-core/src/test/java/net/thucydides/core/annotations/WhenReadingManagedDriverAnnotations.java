@@ -1,10 +1,13 @@
 package net.thucydides.core.annotations;
 
 
+import net.thucydides.core.webdriver.WebDriverFacade;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -45,7 +48,23 @@ public class WhenReadingManagedDriverAnnotations {
     public void shouldRaiseExceptionIfNoManagedFieldFound() {
         ManagedWebDriverAnnotatedField.findFirstAnnotatedField(SampleTestCaseWithNoManagedField.class);
     }
+    
+    static final class SampleTestCaseUsingWebDriverFacade {
 
+        public void normalTest(){}
+
+        @Managed
+        WebDriverFacade webDriver;
+    }
+    
+    @Test
+    public void shouldFindManagedDriverFacadeField() {
+        ManagedWebDriverAnnotatedField managedField
+                = ManagedWebDriverAnnotatedField.findFirstAnnotatedField(SampleTestCaseUsingWebDriverFacade.class);
+
+        assertThat(managedField, is(not(nullValue())));
+    }
+    
     static final class SampleTestCaseUsingUniqueSessionWithChrome {
 
         public void normalTest(){}
@@ -69,6 +88,18 @@ public class WhenReadingManagedDriverAnnotations {
                 = ManagedWebDriverAnnotatedField.findFirstAnnotatedField(SampleTestCaseUsingUniqueSessionWithChrome.class);
 
         assertThat(managedField.getDriver(), is("chrome"));
+    }
+    
+    static final class SampleTestCaseUsingFirefoxWebDriver {
+
+        public void normalTest(){}
+
+        @Managed
+        FirefoxDriver webDriver;
+    }
+    @Test (expected = InvalidManagedWebDriverFieldException.class)
+    public void shouldRaiseExceptionIfNotWebDriverOrFacade() {
+        ManagedWebDriverAnnotatedField.findFirstAnnotatedField(SampleTestCaseUsingFirefoxWebDriver.class);
     }
 
 }
