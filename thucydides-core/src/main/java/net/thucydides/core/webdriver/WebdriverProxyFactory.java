@@ -24,7 +24,7 @@ public class WebdriverProxyFactory implements Serializable {
                                               = synchronizedList(new ArrayList<ThucydidesWebDriverEventListener>());
 
     private WebDriverFactory webDriverFactory;
-    private WebDriver mockDriver;
+    private WebDriverFacade mockDriver;
     private final Configuration configuration;
 
     private WebdriverProxyFactory() {
@@ -42,11 +42,11 @@ public class WebdriverProxyFactory implements Serializable {
     public static List<ThucydidesWebDriverEventListener> getEventListeners() {
         return ImmutableList.copyOf(eventListeners);
     }
-    public WebDriver proxyFor(final Class<? extends WebDriver> driverClass) {
+    public WebDriverFacade proxyFor(final Class<? extends WebDriver> driverClass) {
        return proxyFor(driverClass, new WebDriverFactory());
     }
 
-    public WebDriver proxyFor(final Class<? extends WebDriver> driverClass,
+    public WebDriverFacade proxyFor(final Class<? extends WebDriver> driverClass,
                               final WebDriverFactory webDriverFactory) {
         if (mockDriver != null) {
             return mockDriver;
@@ -76,7 +76,7 @@ public class WebdriverProxyFactory implements Serializable {
         }
     }
 
-    public void useMockDriver(final WebDriver mockDriver) {
+    public void useMockDriver(final WebDriverFacade mockDriver) {
         this.mockDriver = mockDriver;
     }
 
