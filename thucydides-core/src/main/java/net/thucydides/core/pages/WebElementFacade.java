@@ -3,8 +3,7 @@ package net.thucydides.core.pages;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import net.thucydides.core.annotations.DelayElementLocation;
-import net.thucydides.core.annotations.implementedBy;
+import net.thucydides.core.annotations.ImplementedBy;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -13,7 +12,7 @@ import org.openqa.selenium.internal.Locatable;
 import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.support.ui.Wait;
 
-@implementedBy(WebElementFacadeImpl.class)
+@ImplementedBy(WebElementFacadeImpl.class)
 public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 
 	public abstract WebElementFacade then(String xpathOrCssSelector);
@@ -42,8 +41,7 @@ public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 	 * Is this web element present and visible on the screen
 	 * This method will not throw an exception if the element is not on the screen at all.
 	 * If the element is not visible, the method will wait a bit to see if it appears later on.
-	 */
-	@DelayElementLocation
+	 */	
 	public abstract boolean isVisible();
 
 	/**
@@ -63,7 +61,6 @@ public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 	 * There is a little black magic going on here - the web element class will detect if it is being called
 	 * by a method called "isCurrently*" and, if so, fail immediately without waiting as it would normally do.
 	 */
-	@DelayElementLocation
 	public abstract boolean isCurrentlyVisible();
 
 	public abstract boolean isCurrentlyEnabled();
@@ -72,28 +69,24 @@ public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 	 * Checks whether a web element is visible.
 	 * Throws an AssertionError if the element is not rendered.
 	 */
-	@DelayElementLocation
 	public abstract void shouldBeVisible();
 
 	/**
 	 * Checks whether a web element is visible.
 	 * Throws an AssertionError if the element is not rendered.
-	 */
-	@DelayElementLocation
+	 */	
 	public abstract void shouldBeCurrentlyVisible();
 
 	/**
 	 * Checks whether a web element is not visible.
 	 * Throws an AssertionError if the element is not rendered.
 	 */
-	@DelayElementLocation
 	public abstract void shouldNotBeVisible();
 
 	/**
 	 * Checks whether a web element is not visible straight away.
 	 * Throws an AssertionError if the element is not rendered.
 	 */
-	@DelayElementLocation
 	public abstract void shouldNotBeCurrentlyVisible();
 
 	/**
@@ -181,13 +174,10 @@ public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 
 	public abstract WebElementFacade selectByIndex(int indexValue);
 	
-	@DelayElementLocation
 	public abstract boolean isPresent();
 	
-	@DelayElementLocation
 	public abstract void shouldBePresent();
 	
-	@DelayElementLocation
 	public abstract void shouldNotBePresent();
 
 	public abstract WebElementFacade waitUntilVisible();
@@ -196,7 +186,6 @@ public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 
 	public abstract Wait<WebDriver> waitForCondition();
 	
-	@DelayElementLocation
 	public abstract WebElementFacade waitUntilNotVisible();
 
 	public abstract String getValue();

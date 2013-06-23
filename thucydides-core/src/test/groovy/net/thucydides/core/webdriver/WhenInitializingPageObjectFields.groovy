@@ -35,41 +35,29 @@ class WhenInitializingPageObjectFields extends Specification {
     }
 
 	def "should initialize WebElement page object fields"() {
-        given:
-            def pageObjectInitialiser = new DefaultPageObjectInitialiser(driver, 1000);
-            def page = new SamplePageObject(driver)
         when:
-            pageObjectInitialiser.apply(page);
+            def page = new SamplePageObject(driver)
         then:
             page.someField != null
     }
 
     def "should initialize WebElementFacade page object fields"() {
-        given:
-            def pageObjectInitialiser = new DefaultPageObjectInitialiser(driver, 1000);
-            def page = new SamplePageObject(driver)
         when:
-            pageObjectInitialiser.apply(page);
+            def page = new SamplePageObject(driver)
         then:
             page.someFieldFacade != null
     }
 
     def "should initialize WebElement list fields"() {
-        given:
-            def pageObjectInitialiser = new DefaultPageObjectInitialiser(driver, 1000);
+       when:
             def page = new SamplePageObject(driver)
-        when:
-            pageObjectInitialiser.apply(page);
         then:
             page.someFieldList != null
     }
 
     def "should initialize WebElementFacade list fields"() {
-        given:
-            def pageObjectInitialiser = new DefaultPageObjectInitialiser(driver, 1000);
-            def page = new SamplePageObject(driver)
         when:
-            pageObjectInitialiser.apply(page);
+            def page = new SamplePageObject(driver)
         then:
             page.someFieldFacadeList != null
     }

@@ -5,12 +5,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import net.thucydides.core.annotations.DelayElementLocation;
-import net.thucydides.core.annotations.implementedBy;
+import net.thucydides.core.annotations.ImplementedBy;
+import net.thucydides.core.annotations.NotImplementedException;
 import net.thucydides.core.pages.WebElementFacade;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
 
 
@@ -20,11 +19,19 @@ public class SmartElementHandler implements InvocationHandler{
     private final Class<?> implementerClass;
     private final long timeoutInMilliseconds;
     
-    private Class<?> getImplementer(Class<?> interfaceType){
-    	implementedBy implBy = interfaceType.getAnnotation(implementedBy.class);
+    private Class<?> getImplementer(Class<?> interfaceType) {
+    	if (!interfaceType.isInterface()){
+    		throw new NotImplementedException(interfaceType.getSimpleName() + 
+    				" is not an interface");
+    	}
+    	ImplementedBy implBy = interfaceType.getAnnotation(ImplementedBy.class);
+    	if (implBy == null){
+    		throw new NotImplementedException(interfaceType.getSimpleName() + 
+    				" is not implemented by any class (or not annotated by @ImplementedBy)");
+    	}
     	Class<?> implementerClass = implBy.value();
     	if (!interfaceType.isAssignableFrom(implementerClass)) {
-    		throw new RuntimeException("implementer Class does not implement the interface " + interfaceType.getName());
+    		throw new NotImplementedException("implementer Class does not implement the interface " + interfaceType.getName());
     	}
     	return implementerClass;
     }
@@ -34,7 +41,7 @@ public class SmartElementHandler implements InvocationHandler{
     	this.driver = driver;
         this.locator = locator;
         if (!WebElementFacade.class.isAssignableFrom(interfaceType)) {
-            throw new RuntimeException("interface not assignable to WebElementFacade");
+            throw new NotImplementedException("interface not assignable to WebElementFacade");
         }
         
         this.implementerClass = getImplementer(interfaceType);
@@ -43,21 +50,13 @@ public class SmartElementHandler implements InvocationHandler{
 
 	public Object invoke(Object object, Method method, Object[] objects) throws Throwable {
     	try {
-	    	if (method.isAnnotationPresent(DelayElementLocation.class)) {
-	    		Constructor<?> constructor = implementerClass.getConstructor(WebDriver.class, ElementLocator.class, long.class);
-	            Object webElementFacadeExt = constructor.newInstance(driver, locator, timeoutInMilliseconds);
-	            return method.invoke(implementerClass.cast(webElementFacadeExt), objects);
-	        }
-	        WebElement element = locator.findElement();
-	
 	        if ("getWrappedElement".equals(method.getName())) {
-	            return element;
+	            return locator.findElement();
 	        }
+	        Constructor<?> constructor = implementerClass.getConstructor(WebDriver.class, ElementLocator.class, long.class);
+	        Object webElementFacadeExt = constructor.newInstance(driver, locator, timeoutInMilliseconds);
 	        
-	        Constructor<?> constructor = implementerClass.getConstructor(WebDriver.class,WebElement.class, long.class);
-	        Object webElementFacadeExt = constructor.newInstance(driver, element, timeoutInMilliseconds);
-	        //try {
-	            return method.invoke(implementerClass.cast(webElementFacadeExt), objects);
+	        return method.invoke(implementerClass.cast(webElementFacadeExt), objects);
         } catch (InvocationTargetException e) {
             // Unwrap the underlying exception
             throw e.getCause();
