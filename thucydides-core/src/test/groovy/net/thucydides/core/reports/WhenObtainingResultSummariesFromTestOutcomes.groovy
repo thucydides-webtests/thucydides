@@ -44,7 +44,7 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             directory                                  | successCount | failureCount | errorCount   | pendingCount | skipCount  | indeterminateCount
             "/test-outcomes/all-successful"            | 3            | 0            | 0            | 0            | 0          | 0
             "/test-outcomes/containing-failure"        | 1            | 1            | 0            | 1            | 0          | 1
-            "/test-outcomes/containing-nostep-errors"  | 1            | 2            | 1            | 1            | 0          | 1
+            "/test-outcomes/containing-nostep-errors"  | 2            | 3            | 1            | 2            | 0          | 2
             "/test-outcomes/containing-errors"         | 1            | 0            | 2            | 0            | 0          | 0
             "/test-outcomes/containing-pending"        | 2            | 0            | 0            | 1            | 0          | 1
             "/test-outcomes/containing-skipped"        | 3            | 0            | 0            | 0            | 1          | 1
@@ -86,10 +86,10 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
         then:
-            testOutcomes.percent.withResult("success") == percentagePassing &&
-            testOutcomes.percent.withResult("failure")== percentageFailing &&
-            testOutcomes.percent.withResult("pending") == percentagePending
-            testOutcomes.percent.withIndeterminateResult() == percentagePending
+            testOutcomes.proportion.withResult("success") == percentagePassing &&
+            testOutcomes.proportion.withResult("failure")== percentageFailing &&
+            testOutcomes.proportion.withResult("pending") == percentagePending
+            testOutcomes.proportion.withIndeterminateResult() == percentagePending
         where:
         directory                                  | percentagePassing | percentageFailing  | percentagePending
         "/test-outcomes/all-successful"            | 1.0               | 0.0                | 0.0
@@ -102,8 +102,8 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
         then:
-            testOutcomes.percentageSteps("manual").withResult("success") == percentageManual &&
-            testOutcomes.percentageSteps("automated").withResult("success")== percentageAutomated
+            testOutcomes.proportionalStepsOf("manual").withResult("success") == percentageManual &&
+            testOutcomes.proportionalStepsOf("automated").withResult("success")== percentageAutomated
         where:
             directory                                  | percentageManual  | percentageAutomated
             "/test-outcomes/all-successful"            | 0.3333333333333333| 0.6666666666666666
@@ -218,19 +218,19 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         then:
             testOutcomes.hasDataDrivenTests()
             testOutcomes.totalDataRows == 5
-            testOutcomes.percent.withResult("success") == 0.14285714285714285
-            testOutcomes.percent.withResult("failure") == 0.2857142857142857
-            testOutcomes.percent.withResult("error") == 0.14285714285714285
-            testOutcomes.percent.withResult("pending") == 0.42857142857142855
+            testOutcomes.proportion.withResult("success") == 0.14285714285714285
+            testOutcomes.proportion.withResult("failure") == 0.2857142857142857
+            testOutcomes.proportion.withResult("error") == 0.14285714285714285
+            testOutcomes.proportion.withResult("pending") == 0.42857142857142855
     }
 
     def "should count percentage results correctly with no results"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes"));
         then:
-            testOutcomes.percent.withResult("success") == 0.0
-            testOutcomes.percent.withResult("failure") == 0.0
-            testOutcomes.percent.withResult("error") == 0.0
-            testOutcomes.percent.withResult("pending") == 0.0
+            testOutcomes.proportion.withResult("success") == 0.0
+            testOutcomes.proportion.withResult("failure") == 0.0
+            testOutcomes.proportion.withResult("error") == 0.0
+            testOutcomes.proportion.withResult("pending") == 0.0
     }
 }

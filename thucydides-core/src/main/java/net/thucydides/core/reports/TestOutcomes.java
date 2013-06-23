@@ -442,15 +442,6 @@ public class TestOutcomes {
     }
 
     /**
-     * @return The number of successful tests in this set.
-     */
-    public int getSuccessCount() {
-        return successCount(TestType.ANY);
-    }
-
-    public int successCount(TestType testType) { return successCount(testType.toString()); }
-
-    /**
      * @param testType 'manual' or 'automated' (this is a string because it is mainly called from the freemarker templates
      * @return
      */
@@ -471,21 +462,21 @@ public class TestOutcomes {
         return new OutcomeCounter(testType, this);
     }
 
-    public OutcomePercentageCounter getPercent() {
-        return percentage(TestType.ANY);
+    public OutcomeProportionCounter getProportion() {
+        return proportionOf(TestType.ANY);
     }
 
-    public OutcomePercentageCounter percentage(String testType) {
-        return percentage(TestType.valueOf(testType.toUpperCase()));
+    public OutcomeProportionCounter proportionOf(String testType) {
+        return proportionOf(TestType.valueOf(testType.toUpperCase()));
     }
 
-    public OutcomePercentageCounter percentage(TestType testType) {
-        return new OutcomePercentageCounter(testType);
+    public OutcomeProportionCounter proportionOf(TestType testType) {
+        return new OutcomeProportionCounter(testType);
     }
 
-    public class OutcomePercentageCounter extends TestOutcomeCounter {
+    public class OutcomeProportionCounter extends TestOutcomeCounter {
 
-        public OutcomePercentageCounter(TestType testType) {
+        public OutcomeProportionCounter(TestType testType) {
             super(testType);
         }
 
@@ -494,36 +485,37 @@ public class TestOutcomes {
         }
 
         public Double withResult(TestResult testResult) {
-            return getPercentageTestCount(testResult);
+            int matchingTestCount = countTestsWithResult(testResult, testType);
+            return (getTotal() == 0) ? 0 :  (matchingTestCount / (double) getTotal());
         }
 
         public Double withIndeterminateResult() {
-            int passingStepCount = countTestsWithResult(TestResult.SUCCESS, testType);
-            int failingStepCount =  countTestsWithResult(TestResult.FAILURE, testType);
-            int errorStepCount =  countTestsWithResult(TestResult.ERROR, testType);
-            return ((getTotal() - passingStepCount - failingStepCount - errorStepCount) / (double) getTotal());
+            int pendingCount = countTestsWithResult(TestResult.PENDING, testType);
+            int ignoredCount =  countTestsWithResult(TestResult.IGNORED, testType);
+            int skippedCount =  countTestsWithResult(TestResult.SKIPPED, testType);
+            return (getTotal() == 0) ? 0 : ((pendingCount + skippedCount + ignoredCount) / (double) getTotal());
         }
     }
 
-    public OutcomePercentageStepCounter getPercentSteps() {
-        return percentageSteps(TestType.ANY);
+    public OutcomeProportionStepCounter getPercentSteps() {
+        return proportionalStepsOf(TestType.ANY);
     }
 
-    public OutcomePercentageStepCounter percentageSteps(String testType) {
-        return percentageSteps(TestType.valueOf(testType.toUpperCase()));
+    public OutcomeProportionStepCounter proportionalStepsOf(String testType) {
+        return proportionalStepsOf(TestType.valueOf(testType.toUpperCase()));
     }
 
-    public OutcomePercentageStepCounter percentageSteps(TestType testType) {
-        return new OutcomePercentageStepCounter(testType);
+    public OutcomeProportionStepCounter proportionalStepsOf(TestType testType) {
+        return new OutcomeProportionStepCounter(testType);
     }
 
-    public OutcomePercentageStepCounter decimalPercentageSteps(String testType) {
-        return new OutcomePercentageStepCounter(TestType.valueOf(testType.toUpperCase()));
+    public OutcomeProportionStepCounter decimalPercentageSteps(String testType) {
+        return new OutcomeProportionStepCounter(TestType.valueOf(testType.toUpperCase()));
     }
 
-    public class OutcomePercentageStepCounter extends TestOutcomeCounter  {
+    public class OutcomeProportionStepCounter extends TestOutcomeCounter  {
 
-        public OutcomePercentageStepCounter(TestType testType) {
+        public OutcomeProportionStepCounter(TestType testType) {
             super(testType);
         }
 
@@ -537,10 +529,10 @@ public class TestOutcomes {
         }
 
         public Double withIndeterminateResult() {
-            int passingStepCount = countStepsWithResult(TestResult.SUCCESS, testType);
-            int failingStepCount =  countStepsWithResult(TestResult.FAILURE, testType);
-            int errorStepCount =  countStepsWithResult(TestResult.ERROR, testType);
-            return ((getEstimatedTotalStepCount() - passingStepCount - failingStepCount - errorStepCount) / (double) getEstimatedTotalStepCount());
+            int pendingCount = countStepsWithResult(TestResult.PENDING, testType);
+            int ignoredCount =  countStepsWithResult(TestResult.IGNORED, testType);
+            int skippedCount =  countStepsWithResult(TestResult.SKIPPED, testType);
+            return ((pendingCount + skippedCount + ignoredCount) / (double) getEstimatedTotalStepCount());
         }
     }
 
@@ -572,7 +564,15 @@ public class TestOutcomes {
     }
 
     private int countStepsWithResult(TestResult expectedResult, TestType testType) {
-        return sum(outcomes, on(TestOutcome.class).countNestedStepsWithResult(expectedResult, testType));
+        int stepCount = sum(outcomes, on(TestOutcome.class).countNestedStepsWithResult(expectedResult, testType));
+        if ((stepCount == 0) && aMatchingTestExists(expectedResult, testType)) {
+            return 1;
+        }
+        return stepCount;
+    }
+
+    private boolean aMatchingTestExists(TestResult expectedResult, TestType testType) {
+        return (countTestsWithResult(expectedResult, testType) > 0);
     }
 
     protected int countTestsWithResult(TestResult expectedResult) {

@@ -5,10 +5,10 @@ import net.thucydides.core.model.TestResult;
 
 public class RequirementsPercentageFormatter {
 
-        private final RequirementsPercentageCounter counter;
+        private final RequirementsProportionCounter counter;
         private final NumericalFormatter formatter;
 
-        public RequirementsPercentageFormatter(RequirementsPercentageCounter counter) {
+        public RequirementsPercentageFormatter(RequirementsProportionCounter counter) {
             this.counter = counter;
             formatter = new NumericalFormatter();
         }

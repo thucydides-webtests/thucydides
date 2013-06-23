@@ -43,17 +43,36 @@
         .css_right { float: right; }
     </style>
 
+    <#assign successfulManualTests = (requirements.count("manual").withResult("SUCCESS") > 0)>
+    <#assign pendingManualTests = (requirements.count("manual").withIndeterminateResult() > 0)>
+    <#assign failingManualTests = (requirements.count("manual").withResult("FAILURE") > 0)>
+
     <script class="code" type="text/javascript">$(document).ready(function () {
         var plot1 = $.jqplot('coverage_pie_chart', [
             [
-                ['Passing', ${requirements.percent.withResult("SUCCESS")}],
-                ['Pending', ${requirements.percent.withIndeterminateResult()}],
-                ['Failing', ${requirements.percent.withResult("FAILURE")}],
-                ['Errors',  ${requirements.percent.withResult("ERROR")}]
+                ['Passing', ${requirements.proportion.withResult("SUCCESS")}],
+                <#if (successfulManualTests == true)>
+                ['Passing (manual)', ${requirements.proportionOf("manual").withResult("SUCCESS")}],
+                </#if>
+                ['Pending', ${requirements.proportion.withIndeterminateResult()}],
+                <#if (pendingManualTests)>
+                ['Pending (manual)', ${requirements.proportionOf("manual").withIndeterminateResult()}],
+                </#if>
+                ['Failing', ${requirements.proportion.withResult("FAILURE")}],
+                <#if (failingManualTests)>
+                ['Failing (manual)', ${requirements.proportionOf("manual").withResult("FAILURE")}],
+                </#if>
+                ['Errors',  ${requirements.proportion.withResult("ERROR")}]
             ]
         ], {
             gridPadding:{top:0, bottom:38, left:0, right:0},
-            seriesColors:['#30cb23', '#a2f2f2', '#f8001f','#fc6e1f'],
+            seriesColors:['#30cb23',
+                <#if (successfulManualTests)>'#28a818',</#if>
+                '#a2f2f2',
+                <#if (pendingManualTests)>'#8be1df',</#if>
+                '#f8001f',
+                <#if (failingManualTests)>'#e20019',</#if>
+                '#fc6e1f'],
             seriesDefaults:{
                 renderer:$.jqplot.PieRenderer,
                 trendline:{ show:false },
@@ -325,15 +344,15 @@
                                 "${requirementOutcome.requirement.displayName}|
 Tests implemented: ${requirementOutcome.testCount}
   - Passing tests: ${successCount} (${passing} of specified requirements)
-  <#--- Failing tests: ${failureCount} (${failing} of specified requirements)-->
-  <#--- Tests with errors: ${errorCount} (${error} of specified requirements)-->
+  - Failing tests: ${failureCount} (${failing} of specified requirements)
+  - Tests with errors: ${errorCount} (${error} of specified requirements)
 
-<#--Requirements specified:     ${requirementOutcome.flattenedRequirementCount}-->
-<#--Requirements with no tests: ${requirementOutcome.requirementsWithoutTestsCount}-->
+Requirements specified:     ${requirementOutcome.flattenedRequirementCount}
+Requirements with no tests: ${requirementOutcome.requirementsWithoutTestsCount}
 
-<#--Pending tests: ${indeterminateCount}-->
-<#--Estimated unimplemented tests: ${requirementOutcome.estimatedUnimplementedTests}-->
-<#--Estimated unimplemented or pending requirements: ${pending}">-->
+Pending tests: ${indeterminateCount}
+Estimated unimplemented tests: ${requirementOutcome.estimatedUnimplementedTests}
+Estimated unimplemented or pending requirements: ${pending}">
 
                                 <table>
                                     <tr>

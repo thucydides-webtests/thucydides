@@ -4,13 +4,13 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestType;
 import net.thucydides.core.reports.TestOutcomes;
 
-public class RequirementsPercentageCounter {
+public class RequirementsProportionCounter {
 
         private final TestType testType;
         private final TestOutcomes testOutcomes;
         private final int estimatedTotalTests;
 
-        public RequirementsPercentageCounter(TestType testType,
+        public RequirementsProportionCounter(TestType testType,
                                              TestOutcomes testOutcomes,
                                              int estimatedTotalTests) {
             this.testType = testType;

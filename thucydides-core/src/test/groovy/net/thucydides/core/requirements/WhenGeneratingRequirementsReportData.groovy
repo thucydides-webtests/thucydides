@@ -167,10 +167,10 @@ class WhenGeneratingRequirementsReportData extends Specification {
             RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking, environmentVariables)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
-        then: "the percentage of failing, passing and total steps should include estimations for requirements with no tests"
-            outcomes.percent.withResult(TestResult.SUCCESS) == 0.24
-            outcomes.percent.withResult(TestResult.FAILURE) == 0.08
-            outcomes.percent.withIndeterminateResult() == 0.68
+        then: "the proportionOf of failing, passing and total steps should include estimations for requirements with no tests"
+            outcomes.proportion.withResult(TestResult.SUCCESS) == 0.24
+            outcomes.proportion.withResult(TestResult.FAILURE) == 0.08
+            outcomes.proportion.withIndeterminateResult() == 0.68
         and: "the number of requirements should be available"
             outcomes.flattenedRequirementCount == 7
             outcomes.requirementsWithoutTestsCount == 3
@@ -196,7 +196,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
             RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking, environmentVariables)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
-        then: "the percentage of failing, passing and total steps should include estimations for requirements with no tests"
+        then: "the proportionOf of failing, passing and total steps should include estimations for requirements with no tests"
             outcomes.requirementOutcomes[0].percent.withResult(TestResult.SUCCESS) == 0.25
             outcomes.requirementOutcomes[0].percent.withResult(TestResult.FAILURE)  == 0.0
             outcomes.requirementOutcomes[0].percent.withResult(TestResult.ERROR)  == 0.0

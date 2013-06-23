@@ -3,7 +3,6 @@ package net.thucydides.core.requirements.reports;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestType;
-import net.thucydides.core.model.formatters.TestCoverageFormatter;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.reports.TestOutcomeCounter;
 import net.thucydides.core.reports.TestOutcomes;
@@ -175,16 +174,16 @@ public class RequirementOutcome {
         return requirement.equals(getRequirement()) || testOutcomes.containsTag(requirement.asTag());
     }
 
-    public RequirementsPercentageCounter getPercent() {
+    public RequirementsProportionCounter getPercent() {
         return percentage(TestType.ANY);
     }
 
-    public RequirementsPercentageCounter percentage(String testType) {
+    public RequirementsProportionCounter percentage(String testType) {
         return percentage(TestType.valueOf(testType.toUpperCase()));
     }
 
-    public RequirementsPercentageCounter percentage(TestType testType) {
-        return new RequirementsPercentageCounter(testType, testOutcomes, totalEstimatedAndImplementedTests());
+    public RequirementsProportionCounter percentage(TestType testType) {
+        return new RequirementsProportionCounter(testType, testOutcomes, totalEstimatedAndImplementedTests());
     }
 
     public OutcomeCounter getTotal() {

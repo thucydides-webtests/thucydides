@@ -4,7 +4,6 @@ import net.thucydides.core.model.NumericalFormatter;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestType;
 import net.thucydides.core.reports.TestOutcomeCounter;
-import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 
 public class FeatureCoverageFormatter {
@@ -80,14 +79,14 @@ public class FeatureCoverageFormatter {
 
         @Override
         protected double percentageDeterminedResult() {
-            return outcomes.percentage(testType).withResult(TestResult.ERROR)
-                    + outcomes.percentage(testType).withResult(TestResult.FAILURE)
-                    + outcomes.percentage(testType).withResult(TestResult.SUCCESS);
+            return outcomes.proportionOf(testType).withResult(TestResult.ERROR)
+                    + outcomes.proportionOf(testType).withResult(TestResult.FAILURE)
+                    + outcomes.proportionOf(testType).withResult(TestResult.SUCCESS);
         }
 
         @Override
         protected double percentageWithResult(TestResult expectedResult) {
-            return outcomes.percentage(testType).withResult(expectedResult);
+            return outcomes.proportionOf(testType).withResult(expectedResult);
         }
     }
 
@@ -99,15 +98,15 @@ public class FeatureCoverageFormatter {
 
         @Override
         protected double percentageDeterminedResult() {
-//            return outcomes.percentageSteps(testType).withResult(TestResult.ERROR)
-//                    + outcomes.percentageSteps(testType).withResult(TestResult.FAILURE)
-//                    + outcomes.percentageSteps(testType).withResult(TestResult.SUCCESS);
+//            return outcomes.proportionalStepsOf(testType).withResult(TestResult.ERROR)
+//                    + outcomes.proportionalStepsOf(testType).withResult(TestResult.FAILURE)
+//                    + outcomes.proportionalStepsOf(testType).withResult(TestResult.SUCCESS);
             return 0.0;
         }
 
         @Override
         protected double percentageWithResult(TestResult expectedResult) {
-//            return outcomes.percentageSteps(testType).withResult(expectedResult);
+//            return outcomes.proportionalStepsOf(testType).withResult(expectedResult);
             return 0.0;
         }
     }

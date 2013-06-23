@@ -48,7 +48,7 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
 
     @AfterClass
     public static void deleteReportDirectory() {
-        //outputDirectory.delete();
+        outputDirectory.delete();
     }
 
     private static File newTemporaryDirectory() throws IOException {
@@ -178,9 +178,9 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
 
         List<WebElement> testCounts = driver.findElements(By.cssSelector(".test-count"));
         assertThat(testCounts, hasSize(4));
-        Matcher<Iterable<? super WebElement>> passedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("1 passed ,")));
-        Matcher<Iterable<? super WebElement>> pendingMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("1 pending ,")));
-        Matcher<Iterable<? super WebElement>> failedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("2 failed ,")));
+        Matcher<Iterable<? super WebElement>> passedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("2 passed ,")));
+        Matcher<Iterable<? super WebElement>> pendingMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("2 pending ,")));
+        Matcher<Iterable<? super WebElement>> failedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("3 failed ,")));
         Matcher<Iterable<? super WebElement>> errorMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("1 with errors")));
         assertThat(testCounts, allOf(passedMatcher, pendingMatcher, failedMatcher, errorMatcher));
     }

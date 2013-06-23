@@ -265,15 +265,15 @@ public class RequirementsOutcomes {
      * @return Formatted version of the test coverage metrics
      */
     public RequirementsPercentageFormatter getFormattedPercentage() {
-        return new RequirementsPercentageFormatter(getPercent());
+        return new RequirementsPercentageFormatter(getProportion());
     }
 
     public RequirementsPercentageFormatter getFormattedPercentage(String testType) {
-        return new RequirementsPercentageFormatter(percentage(testType));
+        return new RequirementsPercentageFormatter(proportionOf(testType));
     }
 
     public RequirementsPercentageFormatter getFormattedPercentage(TestType testType) {
-        return new RequirementsPercentageFormatter(percentage(testType));
+        return new RequirementsPercentageFormatter(proportionOf(testType));
     }
 
     private int totalEstimatedAndImplementedTests() {
@@ -290,15 +290,15 @@ public class RequirementsOutcomes {
                 DEFAULT_TESTS_PER_REQUIREMENT);
     }
 
-    public RequirementsPercentageCounter getPercent() {
-        return percentage(TestType.ANY);
+    public RequirementsProportionCounter getProportion() {
+        return proportionOf(TestType.ANY);
     }
 
-    public RequirementsPercentageCounter percentage(String testType) {
-        return percentage(TestType.valueOf(testType.toUpperCase()));
+    public RequirementsProportionCounter proportionOf(String testType) {
+        return proportionOf(TestType.valueOf(testType.toUpperCase()));
     }
 
-    public RequirementsPercentageCounter percentage(TestType testType) {
-        return new RequirementsPercentageCounter(testType, testOutcomes, totalEstimatedAndImplementedTests());
+    public RequirementsProportionCounter proportionOf(TestType testType) {
+        return new RequirementsProportionCounter(testType, testOutcomes, totalEstimatedAndImplementedTests());
     }
 }

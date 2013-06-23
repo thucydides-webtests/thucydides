@@ -694,7 +694,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
         assertThat(testOutcome.getTestSteps().size(), is(2));
-        assertThat(stringValue, is("foo"));
+        assertThat(stringValue, is("proportionOf"));
     }
 
     @Test
@@ -712,7 +712,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
         assertThat(testOutcome.getTestSteps().size(), is(2));
-        assertThat(stringValue, is("foo"));
+        assertThat(stringValue, is("proportionOf"));
     }
 
     @Test
