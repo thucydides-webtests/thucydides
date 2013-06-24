@@ -1,7 +1,5 @@
 package net.thucydides.core.reports;
 
-import net.thucydides.core.model.StoryTestResults;
-
 import java.io.File;
 import java.io.IOException;
 

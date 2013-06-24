@@ -1,0 +1,41 @@
+package net.thucydides.core.model
+
+import net.thucydides.core.digest.Digest
+import spock.lang.Specification
+
+class WhenDescribingUserStories extends Specification {
+
+    class SomeTestCaseSample {}
+
+    def "should be able obtain a story from a test class"() {
+        when:
+            def story = Stories.findStoryFrom(SomeTestCaseSample.class)
+        then:
+            story.name == "Some test case sample"
+    }
+
+    def "should be able obtain a story report from a story"() {
+        when:
+            def story = Stories.findStoryFrom(SomeTestCaseSample.class)
+            def htmlReportName = Stories.reportFor(story, ReportType.HTML)
+        then:
+            htmlReportName == Digest.ofTextValue("some_test_case_sample") + ".html"
+    }
+
+    def "should be able obtain a story report name from a test class"() {
+        when:
+            def story = Stories.findStoryFrom(SomeTestCaseSample.class)
+            def htmlReportName = story.reportName
+        then:
+            htmlReportName == Digest.ofTextValue("some_test_case_sample")
+    }
+
+
+    def "should be able obtain an XML story report name from a test class"() {
+        when:
+        def story = Stories.findStoryFrom(SomeTestCaseSample.class)
+        def htmlReportName = story.getReportName(ReportType.XML)
+        then:
+        htmlReportName == Digest.ofTextValue("some_test_case_sample") + ".xml"
+    }
+}

@@ -5,10 +5,7 @@ import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
 
 /**
- * A description goes here.
- * User: john
- * Date: 11/02/13
- * Time: 1:15 PM
+ * A sample resource step class used in the JBehave unit tests.
  */
 public class SomeBoilerplateSteps {
     @Given("a system state")

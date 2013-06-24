@@ -52,10 +52,6 @@ public class FirefoxProfileEnhancer {
         }
     }
 
-    public void enableNativeEventsFor(FirefoxProfile profile) {
-        profile.setEnableNativeEvents(true);
-    }
-
     public void configureJavaSupport(FirefoxProfile profile) {
         boolean enableJava = environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.SECURITY_ENABLE_JAVA, false);
         profile.setPreference("security.enable_java", enableJava);
