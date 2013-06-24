@@ -1,7 +1,7 @@
 Grow red apples
 
 Meta:
-@issue #123
+@issues #123, #456
 
 Narrative:
 In order to sell more apples

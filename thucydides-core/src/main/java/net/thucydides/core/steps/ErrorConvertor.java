@@ -18,13 +18,4 @@ public class ErrorConvertor implements Serializable {
     public AssertionError convertToAssertion() {
         return new WebdriverAssertionError(throwable);
     }
-
-    public String messageFrom(final Throwable error) {
-        String message = (error.getCause() != null) ? error.getCause().getMessage() : error.getMessage();
-        if (message != null) {
-            return message;
-        } else {
-            return error.toString();
-        }
-    }
 }

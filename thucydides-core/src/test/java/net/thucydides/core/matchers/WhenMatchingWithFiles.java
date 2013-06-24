@@ -1,20 +1,13 @@
 package net.thucydides.core.matchers;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.io.File;
 
 import static net.thucydides.core.matchers.FileMatchers.exists;
-import static net.thucydides.core.util.FileSeparatorUtil.changeSeparatorIfRequired;
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 
 public class WhenMatchingWithFiles {

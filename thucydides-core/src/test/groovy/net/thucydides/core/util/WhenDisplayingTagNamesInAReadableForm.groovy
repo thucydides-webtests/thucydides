@@ -1,6 +1,5 @@
-package net.thucydides.core.tags
+package net.thucydides.core.util
 
-import net.thucydides.core.util.Inflector
 import spock.lang.Specification
 
 class WhenDisplayingTagNamesInAReadableForm extends Specification {
