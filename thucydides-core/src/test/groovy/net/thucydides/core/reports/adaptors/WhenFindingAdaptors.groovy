@@ -52,4 +52,5 @@ class WhenFindingAdaptors extends Specification {
         then:
             thrown(UnknownAdaptor)
     }
+
 }

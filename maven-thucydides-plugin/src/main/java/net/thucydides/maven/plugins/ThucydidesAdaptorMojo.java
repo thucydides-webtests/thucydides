@@ -1,7 +1,9 @@
 package net.thucydides.maven.plugins;
 
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.reports.TestOutcomeAdaptorReporter;
 import net.thucydides.core.reports.adaptors.AdaptorService;
+import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,7 +35,7 @@ public class ThucydidesAdaptorMojo extends AbstractMojo {
     public String format;
 
     /**
-     * External test reports are read from here.
+     * External test reports are read from here if necessary.
      * This could be either a directory or a single file, depending on the adaptor used.
      *
      * @parameter expression="${import.source}"
@@ -41,8 +43,18 @@ public class ThucydidesAdaptorMojo extends AbstractMojo {
      */
     public File source;
 
-    private TestOutcomeAdaptorReporter reporter = new TestOutcomeAdaptorReporter();
-    private AdaptorService adaptorService = new AdaptorService();
+    private final EnvironmentVariables environmentVariables;
+    private final AdaptorService adaptorService;
+    private final TestOutcomeAdaptorReporter reporter = new TestOutcomeAdaptorReporter();
+
+    public ThucydidesAdaptorMojo(EnvironmentVariables environmentVariables) {
+        this.environmentVariables = environmentVariables;
+        this.adaptorService = new AdaptorService(environmentVariables);
+    }
+
+    public ThucydidesAdaptorMojo() {
+        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+    }
 
     protected File getOutputDirectory() {
         return outputDirectory;

@@ -1,5 +1,9 @@
 package net.thucydides.maven.plugins;
 
+import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.MockEnvironmentVariables;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,6 +45,21 @@ public class WhenImportingExternalTestResults {
         plugin.execute();
 
         assertThat(outputDirectory.list(xmlFiles())).hasSize(5);
+    }
+
+    @Test
+    public void source_should_not_be_mandatory() throws MojoFailureException, MojoExecutionException, IOException {
+
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("thucydides.adaptors.fileless","net.thucydides.maven.plugins.FilelessAdaptor");
+
+        ThucydidesAdaptorMojo plugin = new ThucydidesAdaptorMojo(environmentVariables);
+        plugin.setFormat("fileless");
+        plugin.setOutputDirectory(outputDirectory);
+
+        plugin.execute();
+
+        assertThat(outputDirectory.list(xmlFiles())).hasSize(2);
     }
 
     private FilenameFilter xmlFiles() {

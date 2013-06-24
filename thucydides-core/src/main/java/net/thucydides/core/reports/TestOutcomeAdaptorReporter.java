@@ -15,10 +15,16 @@ public class TestOutcomeAdaptorReporter extends ThucydidesReporter {
     private List<TestOutcomeAdaptor> adaptors = Lists.newArrayList();
 
     public void generateReportsFrom(File sourceDirectory) throws IOException {
-        getOutputDirectory().mkdirs();
+        setupOutputDirectoryIfRequired();
         for(TestOutcomeAdaptor adaptor : adaptors) {
             List<TestOutcome> outcomes = adaptor.loadOutcomesFrom(sourceDirectory);
             generateReportsFor(outcomes);
+        }
+    }
+
+    private void setupOutputDirectoryIfRequired() {
+        if (getOutputDirectory() != null) {
+            getOutputDirectory().mkdirs();
         }
     }
 

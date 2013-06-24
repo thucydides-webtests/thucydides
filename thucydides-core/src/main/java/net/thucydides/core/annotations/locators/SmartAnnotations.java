@@ -14,176 +14,179 @@ import org.openqa.selenium.support.pagefactory.Annotations;
 
 
 public class SmartAnnotations extends Annotations {
-	
-	private Field field;
 
-	public SmartAnnotations(Field field) {
-		super(field);
-		this.field = field;
-	}
-	
-	private void assertValidAnnotations() {
-	    FindBys findBys = field.getAnnotation(FindBys.class);
-	    FindBy myFindBy = field.getAnnotation(FindBy.class);
-	    if (findBys != null && myFindBy != null) {
-	      throw new IllegalArgumentException("If you use a '@FindBys' annotation, "
-	          + "you must not also use a '@FindBy' annotation");
-	    }
-	  }
-	
-//	@Override
-	public org.openqa.selenium.By buildBy() {
-	    assertValidAnnotations();
+    private Field field;
 
-	    org.openqa.selenium.By ans = null;
-	    
-	    //default implementation in case if org.openqa.selenium.support.FindBy was used
-	    org.openqa.selenium.support.FindBy findBy = field.getAnnotation(org.openqa.selenium.support.FindBy.class);
-	    if (ans == null && findBy != null) {
-	      ans = super.buildByFromFindBy(findBy);
-	    }
-	    
-	    
-	    //my additions to FindBy
-	    FindBy myFindBy = field.getAnnotation(FindBy.class);
-	    if (ans == null && myFindBy != null) {
-	      ans = buildByFromFindBy(myFindBy);
-	    }
-	    
-
-	    FindBys findBys = field.getAnnotation(FindBys.class);
-	    if (ans == null && findBys != null) {
-	      ans = buildByFromFindBys(findBys);
-	    }
-	    
-
-	    if (ans == null) {
-	      ans = buildByFromDefault();
-	    }
-
-	    if (ans == null) {
-	      throw new IllegalArgumentException("Cannot determine how to locate element " + field);
-	    }
-
-	    return ans;
+    public SmartAnnotations(Field field) {
+        super(field);
+        this.field = field;
     }
 
-	
-	protected org.openqa.selenium.By buildByFromFindBy(FindBy myFindBy) {
-	    assertValidFindBy(myFindBy);
+    private void assertValidAnnotations() {
+        FindBys findBys = field.getAnnotation(FindBys.class);
+        FindBy myFindBy = field.getAnnotation(FindBy.class);
+        if (findBys != null && myFindBy != null) {
+            throw new IllegalArgumentException("If you use a '@FindBys' annotation, "
+                    + "you must not also use a '@FindBy' annotation");
+        }
+    }
 
-	    org.openqa.selenium.By ans = buildByFromShortFindBy(myFindBy);
-	    if (ans == null) {
-	      ans = buildByFromLongFindBy(myFindBy);
-	    }
+    //	@Override
+    public org.openqa.selenium.By buildBy() {
+        assertValidAnnotations();
 
-	    return ans;
-	}
+        org.openqa.selenium.By ans = null;
 
-	protected org.openqa.selenium.By buildByFromLongFindBy(FindBy myFindBy) {
-	    How how = myFindBy.how();
-	    String using = myFindBy.using();
+        //default implementation in case if org.openqa.selenium.support.FindBy was used
+        org.openqa.selenium.support.FindBy findBy = field.getAnnotation(org.openqa.selenium.support.FindBy.class);
+        if (ans == null && findBy != null) {
+            ans = super.buildByFromFindBy(findBy);
+        }
 
-	    switch (how) {
-	      case CLASS_NAME:
-	        return org.openqa.selenium.By.className(using);
 
-	      case CSS:
-	        return org.openqa.selenium.By.cssSelector(using);
+        //my additions to FindBy
+        FindBy myFindBy = field.getAnnotation(FindBy.class);
+        if (ans == null && myFindBy != null) {
+            ans = buildByFromFindBy(myFindBy);
+        }
 
-	      case ID:
-	        return org.openqa.selenium.By.id(using);
 
-	      case ID_OR_NAME:
-	        return new ByIdOrName(using);
+        FindBys findBys = field.getAnnotation(FindBys.class);
+        if (ans == null && findBys != null) {
+            ans = buildByFromFindBys(findBys);
+        }
 
-	      case LINK_TEXT:
-	        return org.openqa.selenium.By.linkText(using);
 
-	      case NAME:
-	        return org.openqa.selenium.By.name(using);
+        if (ans == null) {
+            ans = buildByFromDefault();
+        }
 
-	      case PARTIAL_LINK_TEXT:
-	        return org.openqa.selenium.By.partialLinkText(using);
+        if (ans == null) {
+            throw new IllegalArgumentException("Cannot determine how to locate element " + field);
+        }
 
-	      case TAG_NAME:
-	        return org.openqa.selenium.By.tagName(using);
+        return ans;
+    }
 
-	      case XPATH:
-	        return org.openqa.selenium.By.xpath(using);
-	        
-	      case SCLOCATOR:
-		        return By.sclocator(using);
 
-	      default:
-	        // Note that this shouldn't happen (eg, the above matches all
-	        // possible values for the How enum)
-	        throw new IllegalArgumentException("Cannot determine how to locate element " + field);
-	    }
-	}
+    protected org.openqa.selenium.By buildByFromFindBy(FindBy myFindBy) {
+        assertValidFindBy(myFindBy);
 
-	protected org.openqa.selenium.By buildByFromShortFindBy(FindBy myFindBy) {
-	    if (!"".equals(myFindBy.className()))
-	      return org.openqa.selenium.By.className(myFindBy.className());
+        org.openqa.selenium.By ans = buildByFromShortFindBy(myFindBy);
+        if (ans == null) {
+            ans = buildByFromLongFindBy(myFindBy);
+        }
 
-	    if (!"".equals(myFindBy.css()))
-	      return org.openqa.selenium.By.cssSelector(myFindBy.css());
+        return ans;
+    }
 
-	    if (!"".equals(myFindBy.id()))
-	      return org.openqa.selenium.By.id(myFindBy.id());
+    protected org.openqa.selenium.By buildByFromLongFindBy(FindBy myFindBy) {
+        How how = myFindBy.how();
+        String using = myFindBy.using();
 
-	    if (!"".equals(myFindBy.linkText()))
-	      return org.openqa.selenium.By.linkText(myFindBy.linkText());
+        switch (how) {
+            case CLASS_NAME:
+                return org.openqa.selenium.By.className(using);
 
-	    if (!"".equals(myFindBy.name()))
-	      return org.openqa.selenium.By.name(myFindBy.name());
+            case CSS:
+                return org.openqa.selenium.By.cssSelector(using);
 
-	    if (!"".equals(myFindBy.partialLinkText()))
-	      return org.openqa.selenium.By.partialLinkText(myFindBy.partialLinkText());
+            case ID:
+                return org.openqa.selenium.By.id(using);
 
-	    if (!"".equals(myFindBy.tagName()))
-	      return org.openqa.selenium.By.tagName(myFindBy.tagName());
+            case ID_OR_NAME:
+                return new ByIdOrName(using);
 
-	    if (!"".equals(myFindBy.xpath()))
-	      return org.openqa.selenium.By.xpath(myFindBy.xpath());
-	    
-	    if (!"".equals(myFindBy.sclocator()))
-		      return By.sclocator(myFindBy.sclocator());
-	    
-	    if (!"".equals(myFindBy.jquery()))
-		      return By.jquery(myFindBy.jquery());
+            case LINK_TEXT:
+                return org.openqa.selenium.By.linkText(using);
 
-	    // Fall through
-	    return null;
-	}
+            case NAME:
+                return org.openqa.selenium.By.name(using);
 
-	private void assertValidFindBy(FindBy findBy) {
-	    if (findBy.how() != null) {
-	      if (findBy.using() == null) {
-	        throw new IllegalArgumentException(
-	            "If you set the 'how' property, you must also set 'using'");
-	      }
-	    }
+            case PARTIAL_LINK_TEXT:
+                return org.openqa.selenium.By.partialLinkText(using);
 
-	    Set<String> finders = new HashSet<String>();
-	    if (!"".equals(findBy.using())) finders.add("how: " + findBy.using());
-	    if (!"".equals(findBy.className())) finders.add("class name:" + findBy.className());
-	    if (!"".equals(findBy.css())) finders.add("css:" + findBy.css());
-	    if (!"".equals(findBy.id())) finders.add("id: " + findBy.id());
-	    if (!"".equals(findBy.linkText())) finders.add("link text: " + findBy.linkText());
-	    if (!"".equals(findBy.name())) finders.add("name: " + findBy.name());
-	    if (!"".equals(findBy.partialLinkText()))
-	      finders.add("partial link text: " + findBy.partialLinkText());
-	    if (!"".equals(findBy.tagName())) finders.add("tag name: " + findBy.tagName());
-	    if (!"".equals(findBy.xpath())) finders.add("xpath: " + findBy.xpath());
-	    if (!"".equals(findBy.sclocator())) finders.add("scLocator: " + findBy.sclocator());
-	    if (!"".equals(findBy.jquery())) finders.add("jquery: " + findBy.jquery());
+            case TAG_NAME:
+                return org.openqa.selenium.By.tagName(using);
 
-	    // A zero count is okay: it means to look by name or id.
-	    if (finders.size() > 1) {
-	      throw new IllegalArgumentException(
-	          String.format("You must specify at most one location strategy. Number found: %d (%s)",
-	              finders.size(), finders.toString()));
-	    }
-	}
+            case XPATH:
+                return org.openqa.selenium.By.xpath(using);
+
+            case JQUERY:
+                return By.jquery(using);
+
+            case SCLOCATOR:
+                return By.sclocator(using);
+
+            default:
+                // Note that this shouldn't happen (eg, the above matches all
+                // possible values for the How enum)
+                throw new IllegalArgumentException("Cannot determine how to locate element " + field);
+        }
+    }
+
+    protected org.openqa.selenium.By buildByFromShortFindBy(FindBy myFindBy) {
+        if (!"".equals(myFindBy.className()))
+            return org.openqa.selenium.By.className(myFindBy.className());
+
+        if (!"".equals(myFindBy.css()))
+            return org.openqa.selenium.By.cssSelector(myFindBy.css());
+
+        if (!"".equals(myFindBy.id()))
+            return org.openqa.selenium.By.id(myFindBy.id());
+
+        if (!"".equals(myFindBy.linkText()))
+            return org.openqa.selenium.By.linkText(myFindBy.linkText());
+
+        if (!"".equals(myFindBy.name()))
+            return org.openqa.selenium.By.name(myFindBy.name());
+
+        if (!"".equals(myFindBy.partialLinkText()))
+            return org.openqa.selenium.By.partialLinkText(myFindBy.partialLinkText());
+
+        if (!"".equals(myFindBy.tagName()))
+            return org.openqa.selenium.By.tagName(myFindBy.tagName());
+
+        if (!"".equals(myFindBy.xpath()))
+            return org.openqa.selenium.By.xpath(myFindBy.xpath());
+
+        if (!"".equals(myFindBy.sclocator()))
+            return By.sclocator(myFindBy.sclocator());
+
+        if (!"".equals(myFindBy.jquery()))
+            return By.jquery(myFindBy.jquery());
+
+        // Fall through
+        return null;
+    }
+
+    private void assertValidFindBy(FindBy findBy) {
+        if (findBy.how() != null) {
+            if (findBy.using() == null) {
+                throw new IllegalArgumentException(
+                        "If you set the 'how' property, you must also set 'using'");
+            }
+        }
+
+        Set<String> finders = new HashSet<String>();
+        if (!"".equals(findBy.using())) finders.add("how: " + findBy.using());
+        if (!"".equals(findBy.className())) finders.add("class name:" + findBy.className());
+        if (!"".equals(findBy.css())) finders.add("css:" + findBy.css());
+        if (!"".equals(findBy.id())) finders.add("id: " + findBy.id());
+        if (!"".equals(findBy.linkText())) finders.add("link text: " + findBy.linkText());
+        if (!"".equals(findBy.name())) finders.add("name: " + findBy.name());
+        if (!"".equals(findBy.partialLinkText()))
+            finders.add("partial link text: " + findBy.partialLinkText());
+        if (!"".equals(findBy.tagName())) finders.add("tag name: " + findBy.tagName());
+        if (!"".equals(findBy.xpath())) finders.add("xpath: " + findBy.xpath());
+        if (!"".equals(findBy.sclocator())) finders.add("scLocator: " + findBy.sclocator());
+        if (!"".equals(findBy.jquery())) finders.add("jquery: " + findBy.jquery());
+
+        // A zero count is okay: it means to look by name or id.
+        if (finders.size() > 1) {
+            throw new IllegalArgumentException(
+                    String.format("You must specify at most one location strategy. Number found: %d (%s)",
+                            finders.size(), finders.toString()));
+        }
+    }
 }

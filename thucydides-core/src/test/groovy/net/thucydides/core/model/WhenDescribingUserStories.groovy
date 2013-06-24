@@ -1,6 +1,8 @@
 package net.thucydides.core.model
 
 import net.thucydides.core.digest.Digest
+import net.thucydides.core.reflection.sampleclasses.SomeOtherClass
+import spock.lang.Shared
 import spock.lang.Specification
 
 class WhenDescribingUserStories extends Specification {
@@ -37,5 +39,29 @@ class WhenDescribingUserStories extends Specification {
         def htmlReportName = story.getReportName(ReportType.XML)
         then:
         htmlReportName == Digest.ofTextValue("some_test_case_sample") + ".xml"
+    }
+
+    @Shared def story = Stories.findStoryFrom(SomeTestCaseSample.class)
+    @Shared def storyForSameClass = Stories.findStoryFrom(SomeTestCaseSample.class)
+    @Shared def storyForDifferentClass = Stories.findStoryFrom(SomeOtherClass.class)
+
+    def "stories can be compared with each other"() {
+        expect:
+            (story1.equals(story2)) == expectedResult
+        where:
+        story1      | story2                    | expectedResult
+        story       | story                     | true
+        story       | storyForSameClass         | true
+        story       | storyForDifferentClass    | false
+        story       | null                      | false
+        story       | new SomeOtherClass()      | false
+
+    }
+
+    def "story should have a hash code"() {
+        expect:
+            story.hashCode() == storyForSameClass.hashCode()
+        and:
+            story.hashCode() != storyForDifferentClass.hashCode()
     }
 }

@@ -6,11 +6,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.math.BigDecimal;
+
 import static net.thucydides.core.matchers.dates.DateMatchers.isAfter;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 
 public class WhenMatchingPropertyValues {
@@ -19,17 +22,21 @@ public class WhenMatchingPropertyValues {
         private final String firstName;
         private final String lastName;
         private final DateTime birthday;
+        private final BigDecimal favoriteNumber;
 
         Person(String firstName, String lastName, DateTime birthday) {
+            this(firstName, lastName, birthday, new BigDecimal("0.0"));
+        }
+
+        Person(String firstName, String lastName, DateTime birthday, BigDecimal favoriteNumber) {
             this.firstName = firstName;
             this.lastName = lastName;
             this.birthday = birthday;
+            this.favoriteNumber = favoriteNumber;
         }
 
         Person(String firstName, String lastName) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.birthday = new DateTime();
+            this(firstName, lastName, new DateTime(), new BigDecimal("0.0"));
         }
 
         public String getFirstName() {
@@ -42,6 +49,10 @@ public class WhenMatchingPropertyValues {
 
         public DateTime getBirthday() {
             return birthday;
+        }
+
+        public BigDecimal getFavoriteNumber() {
+            return favoriteNumber;
         }
     }
 
@@ -61,6 +72,13 @@ public class WhenMatchingPropertyValues {
         assertThat(birthdayAfter1900.matches(bill)).isTrue();
     }
 
+    @Test
+    public void should_match_number_fields() {
+        Person bill = new Person("Bill", "Oddie", new DateTime(1950, 1, 1, 12, 1), new BigDecimal("42.1"));
+
+        BeanFieldMatcher favoriteNumberIsNot42 = new BeanPropertyMatcher("favoriteNumber", greaterThan(new BigDecimal("42")));
+        assertThat(favoriteNumberIsNot42.matches(bill)).isTrue();
+    }
     @Test
     public void should_fail_if_match_is_not_successful() {
         BeanFieldMatcher matcher = new BeanPropertyMatcher("firstName", is("Bill"));
