@@ -18,12 +18,12 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
 
     def "Should be able to load capabilities from a directory structure containing spaces"() {
         given: "We are using the default requirements provider"
-        RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features_with_spaces");
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features_with_spaces");
         when: "We load the available requirements"
-        def capabilities = capabilityProvider.getRequirements()
-        def capabilityNames = capabilities.collect {it.name}
+            def capabilities = capabilityProvider.getRequirements()
+            def capabilityNames = capabilities.collect {it.name}
         then: "the requirements should be loaded from the first-level sub-directories"
-        capabilityNames == ["Grow apples", "Grow potatoes", "Grow zuchinnis"]
+           capabilityNames == ["Grow apples", "Grow potatoes", "Grow zuchinnis"]
     }
 
     def "Should be able to load issues from the default directory structure"() {

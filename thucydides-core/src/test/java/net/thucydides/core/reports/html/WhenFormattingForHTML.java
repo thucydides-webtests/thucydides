@@ -1,25 +1,26 @@
 package net.thucydides.core.reports.html;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.NumericalFormatter;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
+import java.util.Locale;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 
 public class WhenFormattingForHTML {
+
+    private Locale currentLocale;
 
     @Mock
     IssueTracking issueTracking;
@@ -27,6 +28,13 @@ public class WhenFormattingForHTML {
     @Before
     public void prepareFormatter() {
         MockitoAnnotations.initMocks(this);
+        currentLocale = Locale.getDefault();
+        Locale.setDefault(Locale.US);
+    }
+
+    @After
+    public void after() {
+        Locale.setDefault(currentLocale);
     }
 
     @Test

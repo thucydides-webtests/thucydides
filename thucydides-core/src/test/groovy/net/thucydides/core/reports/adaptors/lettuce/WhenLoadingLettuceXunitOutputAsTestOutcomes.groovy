@@ -2,6 +2,7 @@ package net.thucydides.core.reports.adaptors.lettuce
 
 import net.thucydides.core.model.TestResult
 import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import static net.thucydides.core.util.TestResources.fileInClasspathCalled
@@ -44,6 +45,8 @@ class WhenLoadingLettuceXunitOutputAsTestOutcomes extends Specification {
             testOutcomes[2].result == TestResult.ERROR
 
     }
+
+    @Ignore
     def "should convert a table-based lettuce xunit test result to a test outcome containg the table"() {
 
     }
