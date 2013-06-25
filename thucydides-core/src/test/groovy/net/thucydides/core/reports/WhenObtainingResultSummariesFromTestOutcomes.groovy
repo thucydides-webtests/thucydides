@@ -5,7 +5,15 @@ import spock.lang.Specification
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled
 
 class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
+    def currentLocale = Locale.getDefault()
 
+    def setup() {
+        Locale.setDefault(Locale.US)
+    }
+
+    def cleanup() {
+        Locale.setDefault(currentLocale)
+    }
     def loader = new TestOutcomeLoader()
 
     def "should count the number of successful tests in a set"() {

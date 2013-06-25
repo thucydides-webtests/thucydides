@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 import static net.thucydides.core.model.TestStepFactory.forABrokenTestStepCalled;
@@ -352,9 +353,9 @@ public class WhenCalculatingStoryCoverage {
         featureResults.recordStoryResults(storyResults);
         featureResults.recordStoryResults(storyResults2);
 
-        assertThat(featureResults.getFormatted().getPercentFailingCoverage(), is("37.5%"));
-        assertThat(featureResults.getFormatted().getPercentPassingCoverage(), is("12.5%"));
-        assertThat(featureResults.getFormatted().getPercentPendingCoverage(), is("50%"));
+        assertThat(featureResults.getFormatted().getPercentFailingCoverage(), is(locallyFormatedPercent(0.375, 1)));
+        assertThat(featureResults.getFormatted().getPercentPassingCoverage(), is(locallyFormatedPercent(0.125, 1)));
+        assertThat(featureResults.getFormatted().getPercentPendingCoverage(), is(locallyFormatedPercent(0.5, 0)));
     }
 
     @Test
@@ -490,6 +491,12 @@ public class WhenCalculatingStoryCoverage {
         featureResults.recordStoryResults(storyResults2);
 
         assertThat(featureResults.getCoverage(), is(0.0));
+    }
+
+    private String locallyFormatedPercent(double value, int maxFractionDigits) {
+        NumberFormat pct = NumberFormat.getPercentInstance();
+        pct.setMinimumFractionDigits(maxFractionDigits);
+        return pct.format(value);
     }
 
     private StoryTestResults testResultsFor(Class<?> storyClass,
