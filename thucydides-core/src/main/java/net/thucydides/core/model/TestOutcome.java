@@ -465,6 +465,16 @@ public class TestOutcome {
         }
     }
 
+    public boolean hasNonStepFailure() {
+        boolean stepsContainFailure = false;
+        for(TestStep step : getFlattenedTestSteps()) {
+            if (step.getResult() == FAILURE || step.getResult() == ERROR) {
+                stepsContainFailure = true;
+            }
+        }
+        return (!stepsContainFailure && (getResult() == ERROR || getResult() == FAILURE));
+    }
+
     public List<TestStep> getFlattenedTestSteps() {
         List<TestStep> flattenedTestSteps = new ArrayList<TestStep>();
         for (TestStep step : getTestSteps()) {

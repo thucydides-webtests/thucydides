@@ -9,8 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 @RunWith(ThucydidesRunner.class)
-public class SampleFailingScenarioWithEmptyTests {
+public class SampleOutsideStepFailure {
  
     @Managed
     public WebDriver webdriver;
@@ -23,6 +26,7 @@ public class SampleFailingScenarioWithEmptyTests {
 
     @Test
     public void happy_day_scenario() throws Throwable {
-        throw new AssertionError("TestException without any steps.");
+        steps.stepThatSucceeds();
+        assertThat(1,is(2));
     }
 }

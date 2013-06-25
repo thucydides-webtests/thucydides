@@ -60,6 +60,16 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
     }
 
     @Test
+    public void should_generate_an_HTML_report_for_an_acceptance_test_run_with_no_steps() throws Exception {
+
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+        testOutcome.setTestFailureCause(new AssertionError("test failed"));
+        File htmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+
+        assertThat(htmlReport.exists(), is(true));
+    }
+    @Test
     public void should_generate_an_HTML_report_for_an_acceptance_test_run_with_spaces_in_the_test_name() throws Exception {
 
         TestOutcome testOutcome = new TestOutcome("A simple test case");

@@ -196,7 +196,7 @@ class WhenRunningTestScenarios extends Specification {
 
     def "failing tests with no steps should still record the error"() {
         given:
-        def runner = new ThucydidesRunner(SampleFailingScenarioWithEmptyTests, webDriverFactory)
+        def runner = new ThucydidesRunner(SampleEmptyTestFailing, webDriverFactory)
         when:
         runner.run(new RunNotifier())
         def outcomes = runner.testOutcomes;
@@ -205,6 +205,18 @@ class WhenRunningTestScenarios extends Specification {
         outcomes[0].result == FAILURE
         outcomes[0].testFailureCause.message == "TestException without any steps."
     }
+
+    def "failing tests with with failure outside a step should still record the error"() {
+        given:
+            def runner = new ThucydidesRunner(SampleOutsideStepFailure, webDriverFactory)
+        when:
+            runner.run(new RunNotifier())
+            def outcomes = runner.testOutcomes;
+        then:
+            outcomes.size() == 1
+            outcomes[0].result == FAILURE
+    }
+
 
     def "should skip test steps after a failure"() {
         given:

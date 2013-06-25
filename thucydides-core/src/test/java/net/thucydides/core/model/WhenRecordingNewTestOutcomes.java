@@ -177,6 +177,16 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     @Test
+    public void should_report_failures_or_errors_outside_of_steps() {
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+        outcome.recordStep(forASuccessfulTestStepCalled("The user opens the Google search page"));
+
+        assertThat(outcome.hasNonStepFailure(), is(false));
+        outcome.setTestFailureCause(new AssertionError("test failed"));
+        assertThat(outcome.hasNonStepFailure(), is(true));
+    }
+
+    @Test
     public void a_test_outcome_should_record_the_start_time() {
         DateTime beforeDate = DateTime.now();
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
