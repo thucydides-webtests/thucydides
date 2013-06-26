@@ -130,7 +130,7 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
-                            <forkCount>2C</forkCount>
+                            <!--<forkCount>2C</forkCount>-->
                             <argLine>-Xmx512m -XX:MaxPermSize=128m</argLine>
                             <includes>
                                 <include>**/When*.*</include>
