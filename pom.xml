@@ -130,7 +130,7 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
-                            <forkCount>2C</forkCount>
+                            <!--<forkCount>2C</forkCount>-->
                             <argLine>-Xmx512m</argLine>
                             <includes>
                                 <include>**/When*.*</include>
@@ -156,7 +156,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <forkCount>2C</forkCount>
+                            <!--<forkCount>2C</forkCount>-->
                             <argLine>-Xmx512m</argLine>
                             <skip>false</skip>
                             <excludes>
