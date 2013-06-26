@@ -520,6 +520,13 @@ public class TestOutcome {
         return testResults.getOverallResult();
     }
 
+    public TestOutcome recordSteps(final List<TestStep> steps) {
+        for(TestStep step : steps) {
+            recordStep(step);
+        }
+        return this;
+    }
+
     /**
      * Add a test step to this acceptance test.
      * @param step a completed step to be added to this test outcome.
@@ -533,14 +540,6 @@ public class TestOutcome {
             testSteps.add(step);
         }
         return this;
-    }
-
-    public TestOutcome withStep(final TestStep step) {
-        return recordStep(step);
-    }
-
-    public TestOutcome andStep(final TestStep step) {
-        return recordStep(step);
     }
 
     private TestStep getCurrentStepGroup() {
