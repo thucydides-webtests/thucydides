@@ -2,8 +2,6 @@ package net.thucydides.core.reports.adaptors.specflow;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
@@ -11,8 +9,6 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class SpecflowScenarioTitleLine {
@@ -85,5 +81,9 @@ public class SpecflowScenarioTitleLine {
 
     public String getStoryPath() {
         return storyPath;
+    }
+
+    public String getTitleName() {
+        return storyPath + "." + scenarioTitle;
     }
 }

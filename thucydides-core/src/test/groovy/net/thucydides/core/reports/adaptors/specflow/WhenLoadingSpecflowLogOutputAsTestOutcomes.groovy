@@ -1,14 +1,10 @@
 package net.thucydides.core.reports.adaptors.specflow
-
 import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.core.model.TestResult
 import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor
-import org.jbehave.core.annotations.Given
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import static net.thucydides.core.util.TestResources.fileInClasspathCalled
-
 /**
  * We want to convert Specflow log outputs (possibly with some extra optional data) to TestOutcomes
  * so that they can be used to generate viable Thucydides test reports.
@@ -133,7 +129,10 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
         when:
         def testOutcomes = specflowLoader.loadOutcomesFrom(specflowOutput)
         then:
-        testOutcomes.size() == 8
+        testOutcomes.size() == 1
+        testOutcomes.get(0).getTestSteps().size() == 7
+        testOutcomes.get(0).getDataTable().getSize() == 56
+        testOutcomes.get(0).getDataTable().getRows().get(0).result == TestResult.SUCCESS
     }
 
     def "should load outcomes from output directory"() {
