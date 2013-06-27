@@ -137,22 +137,6 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
         testOutcomes.size() == 8
     }
 
-    def "should record multiple different scenarios in a single file"() {
-        given:
-            def specflowOutput =fileInClasspathCalled("/specflow-output/multiple-separate-scenarios.txt")
-            TestOutcomeAdaptor specflowLoader = new SpecflowAdaptor()
-        when:
-            def testOutcomes = specflowLoader.loadOutcomesFrom(specflowOutput)
-        then:
-            testOutcomes.size() == 3
-        and:
-            testOutcomes.collect { it.title } == ["Populate business payment process drop down list",
-                                                  "Test to fail",
-                                                  "Debit account owner selection"]
-        and:
-            testOutcomes.collect { it.result } == [TestResult.SUCCESS, TestResult.FAILURE, TestResult.PENDING]
-    }
-
     def "should load outcomes from output directory"() {
         given:
             def outputReportsDir = fileInClasspathCalled("/specflow-output/samples")
@@ -164,7 +148,21 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
 
     }
 
-
+    def "should record multiple different scenarios in a single file"() {
+        given:
+        def specflowOutput =fileInClasspathCalled("/specflow-output/multiple-separate-scenarios.txt")
+        TestOutcomeAdaptor specflowLoader = new SpecflowAdaptor()
+        when:
+        def testOutcomes = specflowLoader.loadOutcomesFrom(specflowOutput)
+        then:
+        testOutcomes.size() == 3
+        and:
+        testOutcomes.collect { it.title } == ["Populate business payment process drop down list",
+                "Test to fail",
+                "Debit account owner selection"]
+        and:
+        testOutcomes.collect { it.result } == [TestResult.SUCCESS, TestResult.FAILURE, TestResult.PENDING]
+    }
 
     @Ignore("WIP - TODO")
     def "should record scenarios with rows in a table"() {
