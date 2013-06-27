@@ -214,4 +214,9 @@ public class Story {
     public String getPath() {
         return path;
     }
+
+    public Story withPath(String storyPath) {
+        return new Story(this.qualifiedStoryClassName, this.storyName,
+                         this.qualifiedFeatureClassName,this.featureName, storyPath);
+    }
 }

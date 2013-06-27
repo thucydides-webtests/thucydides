@@ -15,18 +15,22 @@ public class ClasspathTagProviderService implements TagProviderService {
 
     private final Logger logger = LoggerFactory.getLogger(ClasspathTagProviderService.class);
 
+    private List<TagProvider> tagProviders;
+
     public ClasspathTagProviderService() {
     }
 
     @Override
     public List<TagProvider> getTagProviders() {
-        List<TagProvider> tagProviders = Lists.newArrayList();
+        if (tagProviders == null) {
+            tagProviders = Lists.newArrayList();
 
-        ServiceLoader<TagProvider> tagProviderServiceLoader = ServiceLoader.load(TagProvider.class);
+            ServiceLoader<TagProvider> tagProviderServiceLoader = ServiceLoader.load(TagProvider.class);
 
-        for (TagProvider aServiceLoader : tagProviderServiceLoader) {
-            logger.debug("Using tag provider: {}", aServiceLoader.getClass());
-            tagProviders.add(aServiceLoader);
+            for (TagProvider aServiceLoader : tagProviderServiceLoader) {
+                logger.debug("Using tag provider: {}", aServiceLoader.getClass());
+                tagProviders.add(aServiceLoader);
+            }
         }
         return tagProviders;
     }

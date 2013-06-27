@@ -15,7 +15,7 @@ import static net.thucydides.core.util.TestResources.fileInClasspathCalled
  */
 class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
 
-    def simpleSpecflowOutput = """***** my.SpecFlow.Features.MyFeature.MyScenario()
+    def simpleSpecflowOutput = """***** root.packages.MyCapability.SpecFlow.Features.MyFeature.MyScenario()
    Given a precondition
    -> done: bla bla bla (2.3s)
    When something happens
@@ -33,9 +33,12 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
         then:
             testOutcomes.size() == 1
         and:
-           testOutcomes.get(0).title == "My scenario"
+            testOutcomes.get(0).title == "My scenario"
         and:
-           testOutcomes.get(0).storyTitle == "MyFeature"
+            testOutcomes.get(0).storyTitle == "My feature"
+        and:
+            testOutcomes.get(0).getTags()
+            testOutcomes.get(0).path == "root.packages.MyCapability.SpecFlow.Features.MyFeature"
     }
 
     def "should find the scenario steps"() {

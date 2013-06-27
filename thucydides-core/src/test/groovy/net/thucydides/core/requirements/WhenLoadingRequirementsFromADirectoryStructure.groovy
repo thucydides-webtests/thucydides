@@ -73,22 +73,22 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
     def "nested capability types are set by convention if no narrative.txt files are present"() {
         given: "We are using the default requirements provider"
             RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features");
-        when: "We load requirements with nested capability directories and no narrative.txt files"
+        when: "We load requirements with nested requirement directories and no narrative.txt files"
             def capabilities = capabilityProvider.getRequirements()
-        then: "the nested capablities are of type 'feature'"
+        then: "the nested requirement are of type 'feature'"
             def capabilityTypes = capabilities.get(0).children.collect {it.type}
             capabilityTypes == ["feature", "feature", "feature"]
     }
 
-    def "default nested capability types can be overriden using an environment variable"() {
+    def "default nested requirement types can be overriden using an environment variable"() {
         given: "We are using the default requirements provider"
             EnvironmentVariables vars = new MockEnvironmentVariables();
-        and: "We define the capability type hierarchy in the environment variables"
-            vars.setProperty("thucydides.capability.types","theme, epic, feature")
+        and: "We define the requirement type hierarchy in the environment variables"
+            vars.setProperty("thucydides.requirement.types","theme, epic, feature")
             FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features", 0, vars);
-        when: "We load requirements with nested capability directories and no .narrative files"
+        when: "We load requirements with nested requirement directories and no .narrative files"
             def capabilities = capabilityProvider.getRequirements()
-        then: "the second-level capablities are of type 'epic'"
+        then: "the second-level requirement are of type 'epic'"
             capabilities.get(0).getType() == "theme"
             capabilities.get(0).getChildren().get(0).getType() == "epic"
             capabilities.get(0).getChildren().get(0).getChildren().get(0).getType() == "feature"

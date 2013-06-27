@@ -54,8 +54,8 @@ public class SpecflowAdaptor implements TestOutcomeAdaptor {
             @Override
             public TestOutcome convert(List<String> outputLines) {
                 SpecflowScenarioTitleLine titleLine = new SpecflowScenarioTitleLine(outputLines.get(0));
-                TestOutcome outcome = TestOutcome.forTestInStory(titleLine.getScenarioTitle(),
-                                                                 Story.called(titleLine.getStoryTitle()));
+                Story story = Story.called(titleLine.getStoryTitle()).withPath(titleLine.getStoryPath());
+                TestOutcome outcome = TestOutcome.forTestInStory(titleLine.getScenarioTitle(), story);
 
                 List<TestStep> steps = stepsFrom(tail(outputLines));
                 outcome.recordSteps(steps);
