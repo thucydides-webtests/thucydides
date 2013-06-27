@@ -859,7 +859,7 @@ public class TestOutcome {
         }
     }
 
-    private boolean typeCompatibleWith(TestType testType) {
+    public boolean typeCompatibleWith(TestType testType) {
         switch (testType) {
             case MANUAL:
                 return isManual();

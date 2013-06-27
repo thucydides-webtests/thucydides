@@ -1,18 +1,17 @@
 package net.thucydides.core.webdriver
 
-import static org.junit.Assert.*
-
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import sample.page.TestPage
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
-
-import sample.page.TestPage
-
-import org.openqa.selenium.chrome.ChromeDriver
 
 class WhenUsingWebElementFacadeExtender extends Specification {
 	
 	@Shared
-	def driver =  new WebDriverFacade(ChromeDriver, new WebDriverFactory())
+	def driver =  new WebDriverFacade(FirefoxDriver, new WebDriverFactory())
 	
 	@Shared
 	def page = new TestPage(driver)
@@ -23,15 +22,19 @@ class WhenUsingWebElementFacadeExtender extends Specification {
 		page.open()
 		page.waitFor(1).second()
 	}
-	
-	
+
+
+    // TODO: review this test
+    @Ignore
 	def "WebElementFacade methods should be able to be called on Extender"(){
 		when: "calling WebElementFacade method"
-			
+
 		then: "should be displayed"
 			page.elementFirst.isCurrentlyVisible()
 	}
-	
+
+    // TODO: review this test
+    @Ignore
 	def "Extender methods should be able to be called"(){
 		when: "calling WebElementFacadeInput method"
 			page.elementLast.enterText("text")
