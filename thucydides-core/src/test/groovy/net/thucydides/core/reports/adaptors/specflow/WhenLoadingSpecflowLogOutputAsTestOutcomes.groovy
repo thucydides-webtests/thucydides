@@ -4,6 +4,7 @@ import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.core.model.TestResult
 import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor
 import org.jbehave.core.annotations.Given
+import org.jbehave.core.annotations.Then
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -136,6 +137,22 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
         testOutcomes.size() == 8
     }
 
+    def "should record multiple different scenarios in a single file"() {
+        given:
+            def specflowOutput =fileInClasspathCalled("/specflow-output/multiple-separate-scenarios.txt")
+            TestOutcomeAdaptor specflowLoader = new SpecflowAdaptor()
+        when:
+            def testOutcomes = specflowLoader.loadOutcomesFrom(specflowOutput)
+        then:
+            testOutcomes.size() == 3
+        and:
+            testOutcomes.collect { it.title } == ["Populate business payment process drop down list",
+                                                  "Test to fail",
+                                                  "Debit account owner selection"]
+        and:
+            testOutcomes.collect { it.result } == [TestResult.SUCCESS, TestResult.FAILURE, TestResult.PENDING]
+    }
+
     def "should load outcomes from output directory"() {
         given:
             def outputReportsDir = fileInClasspathCalled("/specflow-output/samples")
@@ -145,6 +162,65 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
         then:
             testOutcomes.size() == 3
 
+    }
+
+
+
+    @Ignore("WIP - TODO")
+    def "should record scenarios with rows in a table"() {
+        given:
+        def specflowOutput =fileInClasspathCalled("/specflow-output/passing-multiple-scenarios-in-a-table.txt")
+        TestOutcomeAdaptor specflowLoader = new SpecflowAdaptor()
+        when:
+        def testOutcomes = specflowLoader.loadOutcomesFrom(specflowOutput)
+        then:
+        testOutcomes.size() == 1
+        and:
+        testOutcomes.dataTable != null
+        and:
+        testOutcomes.dataTable.rows.collect { it.result } == [TestResult.SUCCESS, TestResult.SUCCESS, TestResult.SUCCESS]
+        and:
+        testOutcomes.dataTable.rows.collect {it.cellValues} ==
+                ["Inputter-DirectBanking","Funds Transfer between Own Accounts","N/A","Funds Transfer",""]
+        ["Inputter-DirectBanking","Credit Card Repayment","N/A","Funds Transfer",""]
+        ["Inputter","Credit Card Repayment","N/A","Funds Transfer",""]
+    }
+
+    @Ignore("WIP - TODO")
+    def "for a table-based scenario we should use the first set of steps"() {
+        given:
+        def specflowOutput =fileInClasspathCalled("/specflow-output/passing-multiple-scenarios-in-a-table.txt")
+        TestOutcomeAdaptor specflowLoader = new SpecflowAdaptor()
+        when:
+        def testOutcomes = specflowLoader.loadOutcomesFrom(specflowOutput)
+        then:
+        testOutcomes.testSteps.size() == 7
+        and:
+        testOutcomes.testSteps.collect{ it.description } ==
+                ["Given ESD Epp.RegularPaymentCapture app is loaded with CommSee.v1 theme",
+                        "And the Payment Group Details page is loaded",
+                        "Given the BusinessPaymentProcess drop down list is populated",
+                        "And I am of Inputter-DirectBanking role",
+                        "When I select Funds Transfer between Own Accounts from BusinessPaymentProcess drop down list",
+                        "Then the BusinessTransactionType drop down list is populated with N/A",
+                        "And the PaymentType drop down list is populated with Funds Transfer"]
+    }
+
+    @Ignore("WIP - TODO")
+    def "should record scenarios with rows in a table containing failures"() {
+        given:
+        def specflowOutput =fileInClasspathCalled("/specflow-output/multiple-scenarios-in-a-table-with-failures.txt")
+        TestOutcomeAdaptor specflowLoader = new SpecflowAdaptor()
+        when:
+        def testOutcomes = specflowLoader.loadOutcomesFrom(specflowOutput)
+        then:
+        testOutcomes.size() == 1
+        and:
+        testOutcomes.dataTable != null
+        and:
+        testOutcomes.dataTable.rows.collect { it.result } ==
+                [TestResult.SUCCESS, TestResult.FAILURE, TestResult.FAILURE, TestResult.FAILURE,
+                 TestResult.FAILURE, TestResult.FAILURE,TestResult.FAILURE, TestResult.FAILURE]
     }
 
     @TempDir File tmp

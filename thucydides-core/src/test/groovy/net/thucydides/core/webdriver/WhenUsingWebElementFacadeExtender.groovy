@@ -1,17 +1,14 @@
 package net.thucydides.core.webdriver
 
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import sample.page.TestPage
-import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
 class WhenUsingWebElementFacadeExtender extends Specification {
 	
 	@Shared
-	def driver =  new WebDriverFacade(FirefoxDriver, new WebDriverFactory())
+	def driver =  new WebDriverFacade(HtmlUnitDriver, new WebDriverFactory())
 	
 	@Shared
 	def page = new TestPage(driver)
@@ -20,21 +17,23 @@ class WhenUsingWebElementFacadeExtender extends Specification {
 		
 		new DefaultPageObjectInitialiser(driver, 1000).apply(page);
 		page.open()
-		page.waitFor(1).second()
 	}
 
+    def "WebElementFacade methods can be defined in a page object"(){
+        when: "instantiating a page object with WebElementFacade fields"
+        then: "the annotated fields should be instantiated"
+            page.elementFirst != null
 
-    // TODO: review this test
-    @Ignore
+        page.open()
+    }
+
 	def "WebElementFacade methods should be able to be called on Extender"(){
 		when: "calling WebElementFacade method"
 
-		then: "should be displayed"
-			page.elementFirst.isCurrentlyVisible()
+		then: "field should be accessible"
+			page.elementFirst.getTagName() == "input"
 	}
 
-    // TODO: review this test
-    @Ignore
 	def "Extender methods should be able to be called"(){
 		when: "calling WebElementFacadeInput method"
 			page.elementLast.enterText("text")
