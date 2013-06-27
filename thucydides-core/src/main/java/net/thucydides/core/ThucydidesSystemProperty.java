@@ -339,15 +339,34 @@ public enum ThucydidesSystemProperty {
      * If provided, Thucydides will log information about the total number of tests to be executed,
      * and keep a tally of the executed tests. It will also use this as the root package when determining the
      * capabilities associated with a test.
+     * If you are using the File System Requirements provider, Thucydides will expect this directory structure to exist
+     * at the top of the requirements tree. If you want to exclude packages in a requirements definition and start at a
+     * lower level in the hierarchy, use the thucydides.requirement.exclusions property.
      */
     THUCYDIDES_TEST_ROOT("thucydides.test.root"),
 
+    /**
+     * Use this property if you need to completely override the location of requirements for the File System Provider.
+     */
+    REQUIREMENTS_DIRECTORY("thucydides.requirements.dir"),
+
+    /**
+     * Determine what the lowest level requirement (test cases, feature files, story files, should be
+     * called. 'Story' is used by default. 'feature' is a popular alternative.
+     */
+    LOWEST_REQUIREMENT_TYPE("thucydides.lowest.requirement.type"),
+
   /**
-     * The hierarchy of capability types.
-     * This is the list of capability types to be used when reading capabilities from the file system
+     * The hierarchy of requirement types.
+     * This is the list of requirement types to be used when reading requirements from the file system
      * and when organizing the reports. It is a comma-separated list of tags.The default value is: capability, feature
      */
-    CAPABILITY_TYPES("thucydides.capability.types"),
+    REQUIREMENT_TYPES("thucydides.requirement.types"),
+
+    /**
+     * When deriving requirement types from a path, exclude any values from this comma-separated list.
+     */
+    REQUIREMENT_EXCLUSIONS("thucydides.requirement.exclusions"),
 
     /**
      * Normally, Thucydides uses SmartElementLocatorFactory, an extension of the AjaxElementLocatorFactory
@@ -376,13 +395,15 @@ public enum ThucydidesSystemProperty {
     /**
      *  The base directory in which requirements are kept. It is assumed that this directory contains sub folders
      *  src/test/resources. If this property is set, the requirements are read from src/test/resources under this folder
-     *  instead of the classpath or working directory.
+     *  instead of the classpath or working directory. If you need to set an independent requirements directory that
+     *  does not follow the src/test/resources convention, use thucydides.requirements.dir instead
      *
      *  This property is used to support situations where your working directory
      *  is different from the requirements base dir (for example when building a multi-module project from parent pom with
      *  requirements stored inside a sub-module : See Jira #Thucydides-100)
      */
     TEST_REQUIREMENTS_ROOT("thucydides.test.requirements.basedir"),
+
 
     /**
      * Set to true if you want the HTML source code to be recorded as well as the screenshots.

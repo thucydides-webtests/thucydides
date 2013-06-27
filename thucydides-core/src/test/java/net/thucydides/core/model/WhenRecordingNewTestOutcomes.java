@@ -424,11 +424,9 @@ public class WhenRecordingNewTestOutcomes {
     @Test
     public void should_record_nested_test_steps() {
 
-        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 1"));
-        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
+        testOutcome.recordSteps(ImmutableList.of(forASuccessfulTestStepCalled("Step 1"),forASuccessfulTestStepCalled("Step 2")));
         testOutcome.startGroup();
-        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.1"));
-        testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2.2"));
+        testOutcome.recordSteps(ImmutableList.of(forASuccessfulTestStepCalled("Step 2.1"),forASuccessfulTestStepCalled("Step 2.2")));
         testOutcome.endGroup();
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 

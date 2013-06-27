@@ -62,12 +62,14 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     }
 
     public static String getDefaultRootDirectoryPathFrom(EnvironmentVariables environmentVariables) {
-        String rootPath = ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT.from(environmentVariables);
-        if (StringUtils.isEmpty(rootPath)) {
-            return DEFAULT_ROOT_DIRECTORY;
-        } else {
-            return rootPath;
+
+        if (ThucydidesSystemProperty.REQUIREMENTS_DIRECTORY.isDefinedIn(environmentVariables)) {
+            return ThucydidesSystemProperty.REQUIREMENTS_DIRECTORY.from(environmentVariables);
         }
+        if (ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT.isDefinedIn(environmentVariables)) {
+            return ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT.from(environmentVariables);
+        }
+        return DEFAULT_ROOT_DIRECTORY;
     }
 
     public FileSystemRequirementsTagProvider(String rootDirectory, int level) {
@@ -114,7 +116,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
                     allRequirements.addAll(loadCapabilitiesFrom(rootDirectory.listFiles(thatAreDirectories())));
                     allRequirements.addAll(loadStoriesFrom(rootDirectory.listFiles(thatAreStories())));
                     Collections.sort(allRequirements);
-
                     requirements = allRequirements;
                 } else {
                     requirements = NO_REQUIREMENTS;
@@ -133,6 +134,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
             return getRootDirectoryFromRequirementsBaseDir();
         } else {
             Optional<String> rootDirectoryOnClasspath = getRootDirectoryFromClasspath();
+
             if (rootDirectoryOnClasspath.isPresent()) {
                 return rootDirectoryOnClasspath;
             } else {
@@ -154,19 +156,28 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         return getRootDirectoryFromParentDir(System.getProperty(WORKING_DIR));
     }
 
+    private Optional<String> configuredRelativeRootDirectory;
     private Optional<String> getRootDirectoryFromRequirementsBaseDir() {
-        return getRootDirectoryFromParentDir(ThucydidesSystemProperty.TEST_REQUIREMENTS_ROOT.from(environmentVariables,""));
+        if (configuredRelativeRootDirectory == null) {
+            configuredRelativeRootDirectory
+                    = getRootDirectoryFromParentDir(ThucydidesSystemProperty.TEST_REQUIREMENTS_ROOT
+                                                                             .from(environmentVariables,""));
+        }
+        return configuredRelativeRootDirectory;
     }
 
     private Optional<String> getRootDirectoryFromParentDir(String parentDir) {
-        File workingDirectory = new File(parentDir);
-        File resourceDirectory = new File(workingDirectory, DEFAULT_RESOURCE_DIRECTORY);
-        File requirementsDirectory = new File(resourceDirectory, rootDirectoryPath);
+        File resourceDirectory = getResourceDirectory().isPresent() ? new File(parentDir, getResourceDirectory().get()) : new File(parentDir);
+        File requirementsDirectory = absolutePath(rootDirectoryPath) ? new File(rootDirectoryPath) : new File(resourceDirectory, rootDirectoryPath);
         if (requirementsDirectory.exists()) {
             return Optional.of(requirementsDirectory.getAbsolutePath());
         } else {
             return Optional.absent();
         }
+    }
+
+    private boolean absolutePath(String rootDirectoryPath) {
+        return (new File(rootDirectoryPath).isAbsolute() || rootDirectoryPath.startsWith("/"));
     }
 
 
@@ -346,6 +357,8 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
 
     private Requirement readRequirementFrom(File requirementDirectory) {
         Optional<Narrative> requirementNarrative = narrativeReader.loadFrom(requirementDirectory, level);
+
+        System.out.println("READING REQUIRMENTS FROM DIRECTORY " + requirementDirectory);
         if (requirementNarrative.isPresent()) {
             return requirementWithNarrative(requirementDirectory,
                                             humanReadableVersionOf(requirementDirectory.getName()),
@@ -399,7 +412,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     }
 
     private List<String> getRequirementTypes() {
-        String requirementTypes = ThucydidesSystemProperty.CAPABILITY_TYPES.from(environmentVariables);
+        String requirementTypes = ThucydidesSystemProperty.REQUIREMENT_TYPES.from(environmentVariables);
         if (StringUtils.isNotEmpty(requirementTypes)) {
             Iterator<String> types = Splitter.on(",").trimResults().split(requirementTypes).iterator();
             return Lists.newArrayList(types);
@@ -446,5 +459,13 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
                 }
             }
         };
+    }
+
+    public Optional<String> getResourceDirectory() {
+        if (ThucydidesSystemProperty.REQUIREMENTS_DIRECTORY.isDefinedIn(environmentVariables)) {
+            return Optional.absent();
+        } else {
+            return Optional.of(DEFAULT_RESOURCE_DIRECTORY);
+        }
     }
 }

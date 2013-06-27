@@ -45,12 +45,12 @@ class WhenListingAllKnownRequirements extends Specification {
 
     def "Should be able to read requirements from requirements base dir if it is specified in environment properties"() {
         given: "we have stored requirements in a non-standard folder structure"
-            File requirementsFolder = newTemporaryRequirementsDirectory()
-            File storiesFolder = newStoriesFolder(requirementsFolder, "/src/test/resources/stories/search_feature");
-            File story = addStory(storiesFolder)
+            def requirementsFolder = newTemporaryRequirementsDirectory()
+            def storiesFolder = newStoriesFolder(requirementsFolder, "/src/test/resources/stories/search_feature");
+            addStory(storiesFolder)
 
         and: "we have specified the base directory in the system property"
-            EnvironmentVariables environmentVariables = new MockEnvironmentVariables()
+            def environmentVariables = new MockEnvironmentVariables()
             environmentVariables.setProperty("thucydides.test.requirements.basedir",requirementsFolder.getAbsolutePath());
 
         and: " we are using the default requirements provider"
@@ -64,6 +64,29 @@ class WhenListingAllKnownRequirements extends Specification {
         capabilityNames == ["Search feature"]
     }
 
+    def "Should be able to read requirements from an absolutely-defined requirements base dir if it is specified in environment properties"() {
+        given: "we have stored requirements in a non-standard folder structure"
+            def requirementsFolder = newTemporaryRequirementsDirectory()
+            def requirementsRootFolder = newStoriesFolder(requirementsFolder, "/some/directory");
+            def storiesFolder = newStoriesFolder(requirementsRootFolder, "search_feature");
+            addStory(storiesFolder)
+
+        and: "we have specified the base directory in the system property"
+            def environmentVariables = new MockEnvironmentVariables()
+            environmentVariables.setProperty("thucydides.requirements.dir",requirementsRootFolder.getAbsolutePath());
+
+        and: " we are using the default requirements provider"
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider(
+                                                                getDefaultRootDirectoryPathFrom(environmentVariables),
+                                                                0,
+                                                                environmentVariables)
+
+        when: "we obtain the list of requirements"
+            def capabilities = capabilityProvider.getRequirements()
+            def capabilityNames = capabilities.collect {it.name}
+        then:
+            capabilityNames == ["Search feature"]
+    }
 
 
 

@@ -1,5 +1,7 @@
 package net.thucydides.core.requirements;
 
+import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import net.thucydides.core.statistics.service.ClasspathTagProviderService;
 import net.thucydides.core.statistics.service.TagProvider;
@@ -24,6 +26,8 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
 
     private ClasspathTagProviderService tagProviderService;
 
+    private List<RequirementsTagProvider> requirementsTagProviders;
+
     @Inject
     public ClasspathRequirementsProviderService(ClasspathTagProviderService tagProviderService) {
         this.tagProviderService = tagProviderService;
@@ -31,19 +35,29 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
 
 
     public List<RequirementsTagProvider> getRequirementsProviders() {
-        List<RequirementsTagProvider> requirementsTagProviders = new ArrayList<RequirementsTagProvider>();
+
+        if (requirementsTagProviders == null) {
+            requirementsTagProviders = loadRequirementsTagProviders();
+        }
+
+        return ImmutableList.copyOf(requirementsTagProviders);
+    }
+
+    private List<RequirementsTagProvider> loadRequirementsTagProviders() {
+        List<RequirementsTagProvider> providers = new ArrayList<RequirementsTagProvider>();
 
         List<TagProvider> tagProviders = tagProviderService.getTagProviders();
         logger.info("Using requirements providers: {}", tagProviders);
         for (TagProvider tagProvider : tagProviders) {
             if (tagProvider instanceof RequirementsTagProvider) {
-                requirementsTagProviders.add((RequirementsTagProvider)tagProvider);
+                logger.info("ADDING REQUIREMENTS PROVIDER " + tagProvider);
+                providers.add((RequirementsTagProvider)tagProvider);
             }
         }
-        if ((requirementsTagProviders.size() > 1) && (lastProviderIsDefault(requirementsTagProviders))) {
-            requirementsTagProviders.remove(requirementsTagProviders.size() - 1);
+        if ((providers.size() > 1) && (lastProviderIsDefault(providers))) {
+            providers.remove(providers.size() - 1);
         }
-        return requirementsTagProviders;
+        return providers;
     }
 
     private boolean lastProviderIsDefault(List<RequirementsTagProvider> requirementsTagProviders) {

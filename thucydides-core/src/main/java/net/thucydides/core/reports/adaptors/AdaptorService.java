@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.reports.adaptors.lettuce.LettuceXUnitAdaptor;
+import net.thucydides.core.reports.adaptors.specflow.SpecflowAdaptor;
 import net.thucydides.core.reports.adaptors.xunit.DefaultXUnitAdaptor;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +15,7 @@ public class AdaptorService {
 
     private final static Map<String, ? extends TestOutcomeAdaptor> BUILT_IN_ADAPTORS
             = ImmutableMap.of("xunit", new DefaultXUnitAdaptor(),
+                              "specflow", new SpecflowAdaptor(),
                               "lettuce", new LettuceXUnitAdaptor());
 
     private final EnvironmentVariables environmentVariables;
