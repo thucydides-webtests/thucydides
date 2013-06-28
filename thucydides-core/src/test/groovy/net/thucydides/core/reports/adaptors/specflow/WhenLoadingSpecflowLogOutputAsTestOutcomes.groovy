@@ -162,6 +162,30 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
                 "Debit account owner selection"]
         and:
             testOutcomes.collect{ it.result } == [TestResult.SUCCESS, TestResult.FAILURE, TestResult.PENDING]
+        and:
+            testOutcomes.collect {it.dataTable } == [null,null,null,null]
+    }
+
+    def "should record multiple different scenarios including a table in a single file"() {
+        given:
+            def specflowOutput = fileInClasspathCalled("/specflow-output/multiple-separate-scenarios-containing-a-table.txt")
+            TestOutcomeAdaptor specflowLoader = new SpecflowAdaptor()
+        when:
+            def testOutcomes = specflowLoader.loadOutcomesFrom(specflowOutput)
+        then:
+            testOutcomes.size() == 4
+        and:
+            testOutcomes.collect{ it.title } ==
+                    ["Populate business payment process drop down list",
+                    "Test to fail",
+                    "Populate business transaction and payment type drop down lists",
+                    "Debit account owner selection"]
+        and:
+            testOutcomes.collect{ it.result } == [TestResult.SUCCESS, TestResult.FAILURE, TestResult.SUCCESS, TestResult.PENDING]
+        and:
+            testOutcomes.get(2).dataTable.size == 3
+        and:
+            testOutcomes.get(0).dataTable == null && testOutcomes.get(1).dataTable == null && testOutcomes.get(3).dataTable == null
     }
 
     def "should record scenarios with rows in a table"() {
@@ -176,6 +200,8 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
             testOutcomes.get(0).dataTable != null
         and:
             testOutcomes.get(0).dataTable.rows.collect{ it.result } == [TestResult.SUCCESS, TestResult.SUCCESS, TestResult.SUCCESS]
+        and: "we have no way of knowing the header values from this file"
+            testOutcomes.get(0).dataTable.headers == ["","","","",""]
         and:
             testOutcomes.get(0).dataTable.rows.collect{ it.cellValues } ==
                 [["Inputter-DirectBanking", "Funds Transfer between Own Accounts", "N/A", "Funds Transfer", ""],
