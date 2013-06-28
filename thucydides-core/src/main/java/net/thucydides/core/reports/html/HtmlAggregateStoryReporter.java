@@ -61,12 +61,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     public HtmlAggregateStoryReporter(final String projectName,
-                                      final IssueTracking issueTracking) {
-        this(projectName, issueTracking, new TestHistory(projectName));
-    }
-
-
-    public HtmlAggregateStoryReporter(final String projectName,
                                       final IssueTracking issueTracking,
                                       final TestHistory testHistory) {
         this(projectName,"", issueTracking, testHistory);
