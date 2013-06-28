@@ -3,9 +3,7 @@ package net.thucydides.core.reports.adaptors.specflow;
 import ch.lambdaj.function.convert.Converter;
 import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.ImmutableList;
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.*;
 import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor;
 import org.apache.commons.io.FileUtils;
 
@@ -56,12 +54,55 @@ public class SpecflowAdaptor implements TestOutcomeAdaptor {
                 SpecflowScenarioTitleLine titleLine = new SpecflowScenarioTitleLine(outputLines.get(0));
                 Story story = Story.called(titleLine.getStoryTitle()).withPath(titleLine.getStoryPath());
                 TestOutcome outcome = TestOutcome.forTestInStory(titleLine.getScenarioTitle(), story);
-
-                List<TestStep> steps = stepsFrom(tail(outputLines));
-                outcome.recordSteps(steps);
+                List<List<String>> scenarios = splitScenarios(outputLines);
+                List<DataTableRow> rows = Lists.newArrayList();
+                for (int i = 0; i < scenarios.size(); i++) {
+                    if (i == 0) {
+                        List<TestStep> steps = stepsFrom(tail(scenarios.get(0)));
+                        outcome.recordSteps(steps);
+                    }
+                    List<String> scenarioOutput = scenarios.get(i);
+                    List<TestStep> steps = stepsFrom(tail(scenarioOutput));
+                    titleLine = new SpecflowScenarioTitleLine(scenarioOutput.get(0));
+                    DataTableRow dataTableRow = new DataTableRow(titleLine.getArguments());
+                    for (int j = 0; j < steps.size(); j++) {
+                        TestStep step = steps.get(j);
+                        if (!step.getResult().equals(TestResult.SUCCESS) || j == steps.size() - 1) {
+                            dataTableRow.setResult(step.getResult());
+                            break;
+                        }
+                    }
+                    rows.add(dataTableRow);
+                }
+                if (!rows.isEmpty()) {
+                    DataTable dt = DataTable.withHeaders(Lists.newArrayList("Description", "Error message", "Duration", "Result")).build();
+                    dt.addRows(rows);
+                    outcome.useExamplesFrom(dt);
+                }
                 return outcome;
             }
         };
+    }
+
+    // assuming all the output lines belongs to the same scenario
+    // split the lines for each data set
+    // returns a list of of string with the title line
+    private List<List<String>> splitScenarios(List<String> outputLines) {
+        List<List<String>> scenarios = Lists.newArrayList();
+        List<String> current = null;
+        for (String line : outputLines) {
+            if (isTitle(line)) {
+                if (current != null) {
+                    scenarios.add(current);
+                }
+                current = Lists.newArrayList();
+                current.add(line);
+            } else {
+                current.add(line);
+            }
+        }
+        scenarios.add(current);
+        return scenarios;
     }
 
     private List<TestStep> stepsFrom(List<String> scenarioOutput) {
@@ -74,18 +115,23 @@ public class SpecflowAdaptor implements TestOutcomeAdaptor {
         return ImmutableList.copyOf(discoveredSteps);
     }
 
-    private List<String>  tail(List<String> outlineLines) {
-        return ImmutableList.copyOf(outlineLines.subList(1,outlineLines.size()));
+    private List<String> tail(List<String> outlineLines) {
+        return ImmutableList.copyOf(outlineLines.subList(1, outlineLines.size()));
     }
 
     private List<List<String>> scenarioOutputsFrom(List<String> outputLines) {
         List<List<String>> scenarios = Lists.newArrayList();
 
         List<String> currentScenario = null;
-        for(String line : outputLines) {
+        SpecflowScenarioTitleLine currentTitle = null;
+        for (String line : outputLines) {
             if (isTitle(line)) {
-                currentScenario = Lists.newArrayList();
-                scenarios.add(currentScenario);
+                SpecflowScenarioTitleLine newTitleLine = new SpecflowScenarioTitleLine(line);
+                if (currentTitle == null || !newTitleLine.getTitleName().equals(currentTitle.getTitleName())) {
+                    currentTitle = new SpecflowScenarioTitleLine(line);
+                    currentScenario = Lists.newArrayList();
+                    scenarios.add(currentScenario);
+                }
             }
             if (currentScenario != null) {
                 currentScenario.add(line);
