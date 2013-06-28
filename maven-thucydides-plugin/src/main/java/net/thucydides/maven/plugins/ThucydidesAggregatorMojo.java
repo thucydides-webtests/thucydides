@@ -21,7 +21,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
 
     /**
      * Aggregate reports are generated here
-     * @parameter expression="${thucydides.outputDirectory}" default-value="target/site/thucydides/"
+     * @parameter expression="${thucydides.outputDirectory}" default-value="${project.build.directory}/site/thucydides/"
      * @required
      */
     public File outputDirectory;
@@ -29,7 +29,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     /**
      * Thucydides test reports are read from here
      *
-     * @parameter expression="${thucydides.source}" default-value="target/site/thucydides/"
+     * @parameter expression="${thucydides.source}" default-value="${project.build.directory}/site/thucydides/"
      * @required
      */
     public File sourceDirectory;

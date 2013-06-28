@@ -42,8 +42,4 @@ public class JavascriptSupport {
             ((HtmlUnitDriver)driver).setJavascriptEnabled(true);
         }
     }
-
-    public static boolean isHeadlessDriver(WebDriver driver) {
-        return (HtmlUnitDriver.class.isAssignableFrom(getRealDriverClass(driver)));
-    }
 }
