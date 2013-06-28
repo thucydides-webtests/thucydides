@@ -58,15 +58,21 @@ public class SpecflowAdaptor implements TestOutcomeAdaptor {
                 List<DataTableRow> rows = Lists.newArrayList();
                 for (int i = 0; i < scenarios.size(); i++) {
                     if (i == 0) {
-                        List<TestStep> steps = stepsFrom(scenarios.get(0));
+                        List<TestStep> steps = stepsFrom(tail(scenarios.get(0)));
                         outcome.recordSteps(steps);
                     }
-                    List<TestStep> steps = stepsFrom(scenarios.get(i));
-                    for (TestStep step : steps) {
-                        DataTableRow dataTableRow = new DataTableRow(Lists.newArrayList(step.getDescription(), step.getShortErrorMessage(), step.getDuration(), step.getResult().name()));
-                        dataTableRow.setResult(step.getResult());
-                        rows.add(dataTableRow);
+                    List<String> scenarioOutput = scenarios.get(i);
+                    List<TestStep> steps = stepsFrom(tail(scenarioOutput));
+                    titleLine = new SpecflowScenarioTitleLine(scenarioOutput.get(0));
+                    DataTableRow dataTableRow = new DataTableRow(titleLine.getArguments());
+                    for (int j = 0; j < steps.size(); j++) {
+                        TestStep step = steps.get(j);
+                        if (!step.getResult().equals(TestResult.SUCCESS) || j == steps.size() - 1) {
+                            dataTableRow.setResult(step.getResult());
+                            break;
+                        }
                     }
+                    rows.add(dataTableRow);
                 }
                 if (!rows.isEmpty()) {
                     DataTable dt = DataTable.withHeaders(Lists.newArrayList("Description", "Error message", "Duration", "Result")).build();
@@ -80,7 +86,7 @@ public class SpecflowAdaptor implements TestOutcomeAdaptor {
 
     // assuming all the output lines belongs to the same scenario
     // split the lines for each data set
-    // returns a list of of string without the title line
+    // returns a list of of string with the title line
     private List<List<String>> splitScenarios(List<String> outputLines) {
         List<List<String>> scenarios = Lists.newArrayList();
         List<String> current = null;
@@ -90,6 +96,7 @@ public class SpecflowAdaptor implements TestOutcomeAdaptor {
                     scenarios.add(current);
                 }
                 current = Lists.newArrayList();
+                current.add(line);
             } else {
                 current.add(line);
             }

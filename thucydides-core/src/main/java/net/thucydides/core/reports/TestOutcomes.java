@@ -36,6 +36,7 @@ import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.min;
 import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -214,6 +215,16 @@ public class TestOutcomes {
 
     public DateTime getStartTime() {
         return min(outcomes, on(TestOutcome.class).getStartTime());
+    }
+
+    public TestOutcomes ofType(TestType testType) {
+        List<TestOutcome> filteredOutcomes = Lists.newArrayList();
+        for(TestOutcome outcome : outcomes) {
+            if (outcome.typeCompatibleWith(testType)) {
+                filteredOutcomes.add(outcome);
+            }
+        }
+        return TestOutcomes.of(filteredOutcomes);
     }
 
     private class TagFinder {

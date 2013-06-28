@@ -15,7 +15,7 @@ public class SpecflowScenarioTitleLine {
     private final String scenarioTitle;
     private final String storyTitle;
     private final String storyPath;
-    private final List<String> parameters = Lists.newArrayList();
+    private final List<String> parameters;
     private final Inflector inflector = new Inflector();
 
     private final EnvironmentVariables environmentVariables;
@@ -27,6 +27,55 @@ public class SpecflowScenarioTitleLine {
         scenarioTitle = scenarioTitleIn(Lists.reverse(titleElements).get(0));
         storyTitle = storyTitleIn(titleElements);
         storyPath = pathFrom(titleElements);
+        parameters = argumentsFrom(titleLine);
+    }
+
+    /**
+     * From a title line that looks like:
+     * ***** ESD.Epp.RegularPaymentCapture.SpecFlow.Features.RegularPaymentGroupServiceCallsFeature.PopulateBusinessTransactionAndPaymentTypeDropDownLists("Inputter","Funds Transfer between Own Accounts","N/A","Funds Transfer",null)
+     * returns a list of string: ["Inputter","Funds Transfer between Own Accounts","N/A","Funds Transfer",""]
+     * It assumes that the escape character is '\' and it replaces null by an empty string
+     * @param titleLine the title line
+     * @return a list of argumenents
+     */
+    private List<String> argumentsFrom(String titleLine) {
+        if(!titleLine.contains("(")) {
+            return Lists.newArrayList();
+        }
+        String argumentString = titleLine.substring(titleLine.indexOf('(') + 1, titleLine.lastIndexOf(')'));
+        List<String> result = Lists.newArrayList();
+        StringBuilder currentResult = new StringBuilder();
+        int state = 0;//0 ok, 1 next is escaped
+        boolean inString = false;
+        for (int i = 0; i < argumentString.length(); i++) {
+            Character c = argumentString.charAt(i);
+            if(state == 1) {
+                currentResult.append(c);
+                state = 0;
+            } else if(c == '\\') {
+                state = 1;
+                currentResult.append(c);
+            } else if(c == '"'){//this should happen only while parsing string
+                inString = !inString;
+            } else if(c == ',' && !inString) {
+                String s = currentResult.toString();
+                if(s.equals("null")) {
+                    s = "";
+                }
+                result.add(s);
+                currentResult = new StringBuilder();
+            } else {
+                currentResult.append(c);
+            }
+        }
+        if(currentResult.length() != 0) {
+            String s = currentResult.toString();
+            if(s.equals("null")) {
+                s = "";
+            }
+            result.add(s);
+        }
+        return result;
     }
 
     public SpecflowScenarioTitleLine(String titleLine) {
@@ -85,5 +134,9 @@ public class SpecflowScenarioTitleLine {
 
     public String getTitleName() {
         return storyPath + "." + scenarioTitle;
+    }
+
+    public List getArguments() {
+        return parameters;
     }
 }

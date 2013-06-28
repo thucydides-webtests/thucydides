@@ -12,7 +12,7 @@ public class OutcomeCounter extends TestOutcomeCounter {
 
     public OutcomeCounter(TestType testType, TestOutcomes outcomes) {
         super(testType);
-        this.outcomes = outcomes;
+        this.outcomes = outcomes.ofType(testType);
     }
 
     public int withResult(String expectedResult) {
@@ -20,7 +20,7 @@ public class OutcomeCounter extends TestOutcomeCounter {
     }
 
     public int withResult(TestResult expectedResult) {
-        return sum(outcomes.getOutcomes(), on(TestOutcome.class).countResults(expectedResult, testType));
+        return sum(outcomes.getOutcomes(), on(TestOutcome.class).countResults(expectedResult));
     }
 
     public int getTotal() {

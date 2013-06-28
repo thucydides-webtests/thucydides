@@ -67,6 +67,17 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             testOutcomes.count("manual").withResult("success") == 1
     }
 
+    def "should find the total number of manual tests of intermediate results"() {
+        when:
+        def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-pending"));
+        then:
+        testOutcomes.count("automated").withResult("success") == 2
+        and:
+        testOutcomes.count("automated").withIndeterminateResult() == 1
+        and:
+        testOutcomes.count("manual").withIndeterminateResult() == 0
+    }
+
     def "should count the number steps in a set of test outcomes"() {
         when:
            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
