@@ -53,7 +53,7 @@ public class WhenLocatingWebElements {
         when(driver.findElements(By.id("someId"))).thenReturn(ImmutableList.of(webElement));
     }
 
-    @Test(timeout = 500)
+    @Test(timeout = 5000)
     public void should_find_element_immediately_if_a_previous_step_has_failed() {
 
         SmartAjaxElementLocator locator = new SmartAjaxElementLocator(driver, field, 5);
