@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -79,19 +80,19 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     private List<RequirementsTagProvider> getRequirementsTagProviders() {
         if (requirementsTagProviders == null) {
             RequirementsProviderService requirementsProviderService = Injectors.getInjector().getInstance(RequirementsProviderService.class);
-            requirementsTagProviders = requirementsProviderService.getRequirementsProviders();
+            requirementsTagProviders = new ArrayList(requirementsProviderService.getRequirementsProviders());
             Collections.sort(requirementsTagProviders, new Comparator<RequirementsTagProvider>() {
-                public int compare(RequirementsTagProvider firstRquirementsTagProvider, RequirementsTagProvider secondRequirementsTagProvider) {
-                    if ((firstRquirementsTagProvider instanceof FileSystemRequirementsTagProvider) && (secondRequirementsTagProvider instanceof FileSystemRequirementsTagProvider)) {
-                        return firstRquirementsTagProvider.getClass().getName().compareTo(secondRequirementsTagProvider.getClass().getName());
+                public int compare(RequirementsTagProvider firstRequirementsTagProvider, RequirementsTagProvider secondRequirementsTagProvider) {
+                    if ((firstRequirementsTagProvider instanceof FileSystemRequirementsTagProvider) && (secondRequirementsTagProvider instanceof FileSystemRequirementsTagProvider)) {
+                        return firstRequirementsTagProvider.getClass().getName().compareTo(secondRequirementsTagProvider.getClass().getName());
                     }
-                    if (firstRquirementsTagProvider instanceof FileSystemRequirementsTagProvider) {
+                    if (firstRequirementsTagProvider instanceof FileSystemRequirementsTagProvider) {
                         return -1;
                     }
                     if (secondRequirementsTagProvider instanceof  FileSystemRequirementsTagProvider) {
                         return 1;
                     }
-                    return firstRquirementsTagProvider.getClass().getName().compareTo(secondRequirementsTagProvider.getClass().getName());
+                    return firstRequirementsTagProvider.getClass().getName().compareTo(secondRequirementsTagProvider.getClass().getName());
                 }
             });
 
