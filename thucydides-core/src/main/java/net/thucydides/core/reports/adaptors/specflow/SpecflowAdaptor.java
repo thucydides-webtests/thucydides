@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
@@ -74,8 +75,10 @@ public class SpecflowAdaptor implements TestOutcomeAdaptor {
                     }
                     rows.add(dataTableRow);
                 }
-                if (!rows.isEmpty()) {
-                    DataTable dt = DataTable.withHeaders(Lists.newArrayList("Description", "Error message", "Duration", "Result")).build();
+                if (rows.size() > 1) {//if only one row, we don't use a table
+                    String[] headers = new String[titleLine.getArguments().size()];
+                    Arrays.fill(headers, "");
+                    DataTable dt = DataTable.withHeaders(Arrays.asList(headers)).build();
                     dt.addRows(rows);
                     outcome.useExamplesFrom(dt);
                 }

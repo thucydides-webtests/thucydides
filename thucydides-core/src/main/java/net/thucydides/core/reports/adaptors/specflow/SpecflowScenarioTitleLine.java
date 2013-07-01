@@ -12,6 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 public class SpecflowScenarioTitleLine {
+    public static final String START_ARGUMENT = "(";
+    public static final char ESCAPE_CHAR = '\\';
+    public static final char STRING_SEP = '"';
+    public static final char ARG_SEP = ',';
+    public static final char END_ARGUMENT = ')';
+    public static final String NULL = "null";
     private final String scenarioTitle;
     private final String storyTitle;
     private final String storyPath;
@@ -39,43 +45,39 @@ public class SpecflowScenarioTitleLine {
      * @return a list of argumenents
      */
     private List<String> argumentsFrom(String titleLine) {
-        if(!titleLine.contains("(")) {
+        if(!titleLine.contains(START_ARGUMENT)) {
             return Lists.newArrayList();
         }
-        String argumentString = titleLine.substring(titleLine.indexOf('(') + 1, titleLine.lastIndexOf(')'));
+        String argumentString = titleLine.substring(titleLine.indexOf(START_ARGUMENT) + 1, titleLine.lastIndexOf(END_ARGUMENT));
         List<String> result = Lists.newArrayList();
         StringBuilder currentResult = new StringBuilder();
-        int state = 0;//0 ok, 1 next is escaped
         boolean inString = false;
         for (int i = 0; i < argumentString.length(); i++) {
             Character c = argumentString.charAt(i);
-            if(state == 1) {
-                currentResult.append(c);
-                state = 0;
-            } else if(c == '\\') {
-                state = 1;
-                currentResult.append(c);
-            } else if(c == '"'){//this should happen only while parsing string
+            if(c == ESCAPE_CHAR) {
+                i++;
+                currentResult.append(argumentString.charAt(i));
+            } else if(c == STRING_SEP){//this should happen only while parsing string
                 inString = !inString;
-            } else if(c == ',' && !inString) {
-                String s = currentResult.toString();
-                if(s.equals("null")) {
-                    s = "";
-                }
-                result.add(s);
+            } else if(c == ARG_SEP && !inString) {
+                addResult(result, currentResult);
                 currentResult = new StringBuilder();
             } else {
                 currentResult.append(c);
             }
         }
         if(currentResult.length() != 0) {
-            String s = currentResult.toString();
-            if(s.equals("null")) {
-                s = "";
-            }
-            result.add(s);
+            addResult(result, currentResult);
         }
         return result;
+    }
+
+    private void addResult(List<String> result, StringBuilder currentResult) {
+        String s = currentResult.toString();
+        if(s.equals(NULL)) {
+            s = "";
+        }
+        result.add(s);
     }
 
     public SpecflowScenarioTitleLine(String titleLine) {
@@ -117,7 +119,7 @@ public class SpecflowScenarioTitleLine {
     }
 
     private String stripLead(String titleLine) {
-        return StringUtils.strip(titleLine,"* ");
+        return StringUtils.strip(titleLine, "* ");
     }
 
     public String getScenarioTitle() {

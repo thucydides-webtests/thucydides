@@ -163,7 +163,7 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
         and:
             testOutcomes.collect{ it.result } == [TestResult.SUCCESS, TestResult.FAILURE, TestResult.PENDING]
         and:
-            testOutcomes.collect {it.dataTable } == [null,null,null,null]
+            testOutcomes.collect {it.dataTable } == [null,null,null]
     }
 
     def "should record multiple different scenarios including a table in a single file"() {

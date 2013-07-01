@@ -44,4 +44,37 @@ class WhenObtainingASpecflowScenarioTitle extends Specification {
             titleLine.storyPath == "app.capability.MyFeature"
     }
 
+    def "should extract arguments"() {
+        given :
+            def simpleSpecflowTitleLine = "****** app.capability.SpecFlow.Features.MyFeature.MyScenario(\"Inputter\",\"Funds Transfer between Own Accounts\",\"N/A\",\"Funds Transfer\",null)"
+            def environmentVariables = new MockEnvironmentVariables()
+        when:
+            environmentVariables.setProperty("thucydides.requirement.exclusions", "SpecFlow,Features")
+            def titleLine = new SpecflowScenarioTitleLine(simpleSpecflowTitleLine,environmentVariables)
+        then:
+            titleLine.arguments == ["Inputter","Funds Transfer between Own Accounts","N/A","Funds Transfer",""]
+    }
+
+    def "should extract escaped arguments"() {
+        given :
+        def simpleSpecflowTitleLine = "****** app.capability.SpecFlow.Features.MyFeature.MyScenario(\"Inputter \\\"foo\\\"\",\"Funds Transfer between Own Accounts\",\"N/A\",\"Funds Transfer\",null)"
+        def environmentVariables = new MockEnvironmentVariables()
+        when:
+        environmentVariables.setProperty("thucydides.requirement.exclusions", "SpecFlow,Features")
+        def titleLine = new SpecflowScenarioTitleLine(simpleSpecflowTitleLine,environmentVariables)
+        then:
+        titleLine.arguments == ["Inputter \"foo\"","Funds Transfer between Own Accounts","N/A","Funds Transfer",""]
+    }
+
+    def "should extract escaped arguments with string that includes comma"() {
+        given :
+        def simpleSpecflowTitleLine = "****** app.capability.SpecFlow.Features.MyFeature.MyScenario(\"Inputter, Exputter\",\"Funds Transfer between Own Accounts\",\"N/A\",\"Funds Transfer\",null)"
+        def environmentVariables = new MockEnvironmentVariables()
+        when:
+        environmentVariables.setProperty("thucydides.requirement.exclusions", "SpecFlow,Features")
+        def titleLine = new SpecflowScenarioTitleLine(simpleSpecflowTitleLine,environmentVariables)
+        then:
+        titleLine.arguments == ["Inputter, Exputter","Funds Transfer between Own Accounts","N/A","Funds Transfer",""]
+    }
+
 }
