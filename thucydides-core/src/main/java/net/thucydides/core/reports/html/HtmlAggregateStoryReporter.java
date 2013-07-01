@@ -39,7 +39,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlAggregateStoryReporter.class);
 
     private static final String HISTORY_TEMPLATE_PATH = "freemarker/history.ftl";
-    private static final String COVERAGE_DATA_TEMPLATE_PATH = "freemarker/coverage.ftl";
     private static final String TEST_OUTCOME_TEMPLATE_PATH = "freemarker/home.ftl";
     private static final String TAGTYPE_TEMPLATE_PATH = "freemarker/results-by-tagtype.ftl";
 

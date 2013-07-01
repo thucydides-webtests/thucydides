@@ -68,7 +68,6 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     public void should_generate_an_aggregate_dashboard() throws Exception {
         assertThat(new File(outputDirectory,"index.html"), exists());
     }
-
     @Test
     public void should_generate_overall_passed_failed_and_pending_reports() throws Exception {
         ReportNameProvider reportName = new ReportNameProvider();
