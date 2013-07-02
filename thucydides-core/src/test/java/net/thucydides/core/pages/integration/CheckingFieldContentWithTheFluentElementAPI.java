@@ -26,13 +26,13 @@ public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAP
     public static void openStaticPage() {
         htmlUnitDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
         page = new StaticSitePage(htmlUnitDriver, 1);
-        page.setWaitForTimeout(5000);
         page.open();
     }
 
     @Before
     public void refreshPage() {
         refresh(page);
+        page.setWaitForTimeout(5000);
     }
 
     @Test
@@ -170,10 +170,7 @@ public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAP
 
     @Test
     public void should_wait_for_field_to_be_disabled() throws InterruptedException {
-        assertThat(page.element(page.buttonThatIsInitiallyEnabled).isCurrentlyEnabled(), is(true));
-
         page.element(page.buttonThatIsInitiallyEnabled).waitUntilDisabled();
-
         assertThat(page.element(page.buttonThatIsInitiallyEnabled).isCurrentlyEnabled(), is(false));
     }
 
