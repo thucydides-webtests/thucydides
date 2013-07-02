@@ -1,4 +1,4 @@
-package net.thucydides.core.steps;
+package net.thucydides.core.steps.integration;
 
 import com.google.common.collect.Lists;
 import net.thucydides.core.ListenerInWrongPackage;
@@ -13,6 +13,13 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.screenshots.ScreenshotException;
+import net.thucydides.core.steps.BaseStepListener;
+import net.thucydides.core.steps.ExecutedStepDescription;
+import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.steps.StepFactory;
+import net.thucydides.core.steps.StepFailureException;
+import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.steps.samples.FlatScenarioSteps;
 import net.thucydides.core.steps.samples.FluentScenarioSteps;
 import net.thucydides.core.steps.samples.NestedScenarioSteps;
