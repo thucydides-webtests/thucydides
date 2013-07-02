@@ -132,7 +132,7 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
             def testOutcomes = specflowLoader.loadOutcomesFrom(specflowOutput)
         then:
             testOutcomes.size() == 1
-            testOutcomes.get(0).getTestSteps().size() == 7
+            testOutcomes.get(0).getTestSteps().size() == 8
             testOutcomes.get(0).getDataTable().getSize() == 8
             testOutcomes.get(0).getDataTable().getRows().get(0).result == TestResult.SUCCESS
     }
@@ -201,31 +201,12 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
         and:
             testOutcomes.get(0).dataTable.rows.collect{ it.result } == [TestResult.SUCCESS, TestResult.SUCCESS, TestResult.SUCCESS]
         and: "we have no way of knowing the header values from this file"
-            testOutcomes.get(0).dataTable.headers == ["","","","",""]
+            testOutcomes.get(0).dataTable.headers == ["A","B","C","D","E"]
         and:
             testOutcomes.get(0).dataTable.rows.collect{ it.cellValues } ==
                 [["Inputter-DirectBanking", "Funds Transfer between Own Accounts", "N/A", "Funds Transfer", ""],
                         ["Inputter-DirectBanking", "Credit Card Repayment", "N/A", "Funds Transfer", ""],
                         ["Inputter", "Credit Card Repayment", "N/A", "Funds Transfer", ""]]
-    }
-
-    def "for a table-based scenario we should use the first set of steps"() {
-        given:
-            def specflowOutput = fileInClasspathCalled("/specflow-output/passing-multiple-scenarios-in-a-table.txt")
-            TestOutcomeAdaptor specflowLoader = new SpecflowAdaptor()
-        when:
-            def testOutcomes = specflowLoader.loadOutcomesFrom(specflowOutput)
-        then:
-            testOutcomes.get(0).testSteps.size() == 7
-        and:
-            testOutcomes.get(0).testSteps.collect{ it.description } ==
-                ["Given ESD Epp.RegularPaymentCapture app is loaded with CommSee.v1 theme",
-                        "And the Payment Group Details page is loaded",
-                        "Given the BusinessPaymentProcess drop down list is populated",
-                        "And I am of Inputter-DirectBanking role",
-                        "When I select Funds Transfer between Own Accounts from BusinessPaymentProcess drop down list",
-                        "Then the BusinessTransactionType drop down list is populated with N/A",
-                        "And the PaymentType drop down list is populated with Funds Transfer"]
     }
 
     def "should record scenarios with rows in a table containing failures"() {

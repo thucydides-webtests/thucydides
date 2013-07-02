@@ -9,6 +9,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class SpecflowScenarioTitleLine {
@@ -140,5 +141,10 @@ public class SpecflowScenarioTitleLine {
 
     public List getArguments() {
         return parameters;
+    }
+
+
+    public String getRowTitle() {
+        return scenarioTitle + "[" + getArguments() + "]";
     }
 }

@@ -818,6 +818,11 @@ public class TestOutcome {
         dataTable.addRow(data);
     }
 
+    public void addRow(DataTableRow dataTableRow) {
+        dataTable.addRow(dataTableRow);
+    }
+
+
     public int getTestCount() {
         return isDataDriven() ? getDataTable().getSize() : 1;
     }
