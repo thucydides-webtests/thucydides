@@ -26,7 +26,7 @@ public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAP
     public static void openStaticPage() {
         htmlUnitDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
         page = new StaticSitePage(htmlUnitDriver, 1);
-        page.setWaitForTimeout(750);
+        page.setWaitForTimeout(5000);
         page.open();
     }
 
@@ -151,6 +151,7 @@ public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAP
     @Test(expected = ElementNotVisibleException.class)
     public void should_throw_exception_if_waiting_for_field_that_does_not_disappear() {
         assertThat(page.element(page.firstName).isCurrentlyVisible(), is(true));
+        page.setWaitForTimeout(500);
         page.element(page.firstName).waitUntilNotVisible();
     }
 
@@ -161,6 +162,7 @@ public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAP
 
     @Test(expected = ElementNotVisibleException.class)
     public void should_throw_expection_if_waiting_for_field_that_does_not_appear() {
+        page.setWaitForTimeout(500);
         assertThat(page.element(page.hiddenField).isCurrentlyVisible(), is(false));
 
         page.element(page.hiddenField).waitUntilVisible();
@@ -177,6 +179,7 @@ public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAP
 
     @Test(expected = ElementNotVisibleException.class)
     public void should_fail_if_wait_for_field_to_be_enabled_never_happens() throws InterruptedException {
+        page.setWaitForTimeout(500);
         page.element(page.readonlyField).waitUntilEnabled();
     }
 
@@ -187,6 +190,7 @@ public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAP
 
     @Test(expected = ElementNotVisibleException.class)
     public void should_fail_if_wait_for_field_to_be_disabled_never_happens() throws InterruptedException {
+        page.setWaitForTimeout(500);
         page.element(page.firstName).waitUntilDisabled();
     }
 
