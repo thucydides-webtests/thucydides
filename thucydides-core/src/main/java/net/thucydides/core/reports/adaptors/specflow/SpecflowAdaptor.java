@@ -2,10 +2,9 @@ package net.thucydides.core.reports.adaptors.specflow;
 
 import ch.lambdaj.function.convert.Converter;
 import com.beust.jcommander.internal.Lists;
+import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.ImmutableList;
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.*;
 import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor;
 import org.apache.commons.io.FileUtils;
 
@@ -13,7 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static ch.lambdaj.Lambda.convert;
 
@@ -57,11 +58,45 @@ public class SpecflowAdaptor implements TestOutcomeAdaptor {
                 Story story = Story.called(titleLine.getStoryTitle()).withPath(titleLine.getStoryPath());
                 TestOutcome outcome = TestOutcome.forTestInStory(titleLine.getScenarioTitle(), story);
 
-                List<TestStep> steps = stepsFrom(tail(outputLines));
-                outcome.recordSteps(steps);
+                for(SpecflowScenario scenario : ScenarioSplitter.on(outputLines).split()) {
+                    if (scenario.usesDataTable()) {
+                        DataTable dataTable = DataTable.withHeaders(headersFrom(titleLine)).build();
+                        outcome.useExamplesFrom(dataTable);
+                        recordRowSteps(outcome, scenario);
+                    } else {
+                        outcome.recordSteps(stepsFrom(scenario.getSteps()));
+                    }
+                }
+
                 return outcome;
             }
         };
+    }
+
+    private void recordRowSteps(TestOutcome outcome, SpecflowScenario scenario) {
+        for(SpecflowTableRow row : scenario.getRows()) {
+            List<TestStep> rowSteps = stepsFrom(row.getRowSteps());
+            SpecflowScenarioTitleLine rowTitle = new SpecflowScenarioTitleLine(row.getRowTitle());
+            TestResult rowResult = TestResultList.of(getTestResults(rowSteps)).getOverallResult();
+
+            DataTableRow dataTableRow = new DataTableRow(rowTitle.getArguments());
+            dataTableRow.setResult(rowResult);
+            outcome.addRow(dataTableRow);
+
+            outcome.recordStep(TestStep.forStepCalled(rowTitle.getRowTitle()).withResult(rowResult));
+            outcome.startGroup();
+            outcome.recordSteps(rowSteps);
+            outcome.endGroup();
+        }
+    }
+
+    private List<String> headersFrom(SpecflowScenarioTitleLine titleLine) {
+        // TODO: This should eventually come from the .feature file
+        List<String> headers = Lists.newArrayList();
+        for(int i = 0; i < titleLine.getArguments().size(); i++) {
+            headers.add(Character.toString( (char) (65 + i)));
+        }
+        return headers;
     }
 
     private List<TestStep> stepsFrom(List<String> scenarioOutput) {
@@ -74,18 +109,19 @@ public class SpecflowAdaptor implements TestOutcomeAdaptor {
         return ImmutableList.copyOf(discoveredSteps);
     }
 
-    private List<String>  tail(List<String> outlineLines) {
-        return ImmutableList.copyOf(outlineLines.subList(1,outlineLines.size()));
-    }
-
     private List<List<String>> scenarioOutputsFrom(List<String> outputLines) {
         List<List<String>> scenarios = Lists.newArrayList();
 
         List<String> currentScenario = null;
-        for(String line : outputLines) {
+        SpecflowScenarioTitleLine currentTitle = null;
+        for (String line : outputLines) {
             if (isTitle(line)) {
-                currentScenario = Lists.newArrayList();
-                scenarios.add(currentScenario);
+                SpecflowScenarioTitleLine newTitleLine = new SpecflowScenarioTitleLine(line);
+                if (currentTitle == null || !newTitleLine.getTitleName().equals(currentTitle.getTitleName())) {
+                    currentTitle = new SpecflowScenarioTitleLine(line);
+                    currentScenario = Lists.newArrayList();
+                    scenarios.add(currentScenario);
+                }
             }
             if (currentScenario != null) {
                 currentScenario.add(line);
@@ -96,5 +132,15 @@ public class SpecflowAdaptor implements TestOutcomeAdaptor {
 
     private boolean isTitle(String line) {
         return line.trim().startsWith(TITLE_LEAD);
+    }
+
+    private List<TestResult> getTestResults(List<TestStep> testSteps) {
+        return convert(testSteps, new ExtractTestResultsConverter());
+    }
+
+    private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
+        public TestResult convert(final TestStep step) {
+            return step.getResult();
+        }
     }
 }

@@ -28,35 +28,14 @@ import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
-import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.exists;
-import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.filter;
-import static ch.lambdaj.Lambda.flatten;
-import static ch.lambdaj.Lambda.having;
-import static ch.lambdaj.Lambda.join;
-import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.select;
-import static ch.lambdaj.Lambda.sort;
-import static ch.lambdaj.Lambda.sum;
+import static ch.lambdaj.Lambda.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static net.thucydides.core.model.ReportType.HTML;
 import static net.thucydides.core.model.ReportType.ROOT;
-import static net.thucydides.core.model.TestResult.ERROR;
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.IGNORED;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SKIPPED;
-import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.model.TestResult.*;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
 import static org.hamcrest.Matchers.is;
 
@@ -838,6 +817,11 @@ public class TestOutcome {
     public void addRow(Map<String, ?> data) {
         dataTable.addRow(data);
     }
+
+    public void addRow(DataTableRow dataTableRow) {
+        dataTable.addRow(dataTableRow);
+    }
+
 
     public int getTestCount() {
         return isDataDriven() ? getDataTable().getSize() : 1;

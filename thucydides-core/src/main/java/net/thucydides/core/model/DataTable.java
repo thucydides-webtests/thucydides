@@ -67,8 +67,12 @@ public class DataTable {
     }
 
     public void addRow(Map<String, ? extends Object> data) {
-        DataTableRow newRow = new DataTableRow(ImmutableList.copyOf(data.values()));
-        rows.add(newRow);
+        addRow(new DataTableRow(ImmutableList.copyOf(data.values())));
+    }
+
+
+    public void addRow(DataTableRow dataTableRow) {
+        rows.add(dataTableRow);
         currentRow.set(rows.size() - 1);
     }
 
