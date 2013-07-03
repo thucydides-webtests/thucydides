@@ -4,11 +4,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.131-NS</version>
+        <version>0.9.132-NS-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-core</artifactId>
-    <version>0.9.131-NS</version>
+    <version>0.9.132-NS-SNAPSHOT</version>
     <name>thucydides-core</name>
     <properties>
         <root.package>net.thucydides.core</root.package>
