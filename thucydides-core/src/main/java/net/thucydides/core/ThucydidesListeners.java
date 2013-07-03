@@ -25,8 +25,8 @@ public class ThucydidesListeners {
         File outputDirectory = getSystemConfiguration().getOutputDirectory();
         baseStepListener = Listeners.getBaseStepListener().withOutputDirectory(outputDirectory);
         stepListeners = ImmutableList.of(baseStepListener,
-                                         Listeners.getLoggingListener(),
-                                         Listeners.getStatisticsListener());
+                                         Listeners.getLoggingListener());
+                                         //Listeners.getStatisticsListener());
 
         StepEventBus.getEventBus().dropAllListeners();
         registerListeners();

@@ -7,6 +7,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -77,6 +78,7 @@ public class WhenConfiguringTheStatisticsDatabase {
     }
 
     @Test
+    @Ignore
     public void should_validate_but_not_update_an_existing_custom_database() throws SQLException {
         String preexistingDatabaseUrl = "jdbc:hsqldb:mem:existing-database";
         createPreexistingDatabaseFor(preexistingDatabaseUrl);
@@ -93,6 +95,7 @@ public class WhenConfiguringTheStatisticsDatabase {
 
 
     @Test
+    @Ignore
     public void should_update_an_empty_custom_database() throws IOException, SQLException {
         String emptyDatabaseUrl = "jdbc:hsqldb:mem:empty";
         createEmptyDatabaseFor(emptyDatabaseUrl);

@@ -6,12 +6,6 @@ import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.StringUtils;
-import org.h2.tools.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.ServerSocket;
-import java.sql.SQLException;
 
 public class LocalH2ServerDatabase implements LocalDatabase {
 

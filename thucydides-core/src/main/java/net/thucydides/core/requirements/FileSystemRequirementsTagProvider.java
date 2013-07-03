@@ -17,7 +17,6 @@ import net.thucydides.core.util.Inflector;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Transient;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -33,6 +32,8 @@ import java.util.Set;
 import static ch.lambdaj.Lambda.convert;
 import static net.thucydides.core.requirements.RequirementsPath.pathElements;
 import static net.thucydides.core.requirements.RequirementsPath.stripRootFromPath;
+
+//import javax.persistence.Transient;
 
 /**
  * Load a set of requirements (epics/themes,...) from the directory structure.
@@ -54,7 +55,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     private final int level;
     private final EnvironmentVariables environmentVariables;
 
-    @Transient
+//    @Transient
     private List<Requirement> requirements;
 
     public FileSystemRequirementsTagProvider() {

@@ -97,8 +97,8 @@ public class JUnitStepListenerBuilder {
                 testClass,
                 buildBaseStepListener(),
                 Listeners.getLoggingListener(),
-                newTestCountListener(),
-                Listeners.getStatisticsListener());
+                newTestCountListener());
+//                Listeners.getStatisticsListener());
     }
 
     private StepListener newTestCountListener() {
@@ -109,8 +109,8 @@ public class JUnitStepListenerBuilder {
         return new JUnitStepListener(testClass,
                 buildBaseStepListener(),
                 Listeners.getLoggingListener(),
-                newTestCountListener(),
-                Listeners.getStatisticsListener());
+                newTestCountListener());
+//                Listeners.getStatisticsListener());
     }
 
 }

@@ -75,7 +75,7 @@ public class CSVReporter extends ThucydidesReporter {
     }
 
     private Double passRateFor(TestOutcome outcome) {
-        return outcome.getStatistics().getPassRate().overTheLast(5).testRuns();
+        return 0.0;//outcome.getStatistics().getPassRate().overTheLast(5).testRuns();
     }
 
     private String[] withRowDataFrom(TestOutcome outcome) {

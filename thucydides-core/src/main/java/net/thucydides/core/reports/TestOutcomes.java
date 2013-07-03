@@ -8,18 +8,14 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.OutcomeCounter;
-import net.thucydides.core.model.formatters.TestCoverageFormatter;
 import net.thucydides.core.model.TestDuration;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestResultList;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.TestType;
+import net.thucydides.core.model.formatters.TestCoverageFormatter;
 import net.thucydides.core.requirements.model.Requirement;
-import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
-import net.thucydides.core.statistics.TestStatisticsProvider;
-import net.thucydides.core.statistics.With;
-import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -36,7 +32,6 @@ import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.min;
 import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
 import static net.thucydides.core.model.TestResult.PENDING;
@@ -46,6 +41,8 @@ import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTag
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagType;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.withResult;
 import static org.hamcrest.Matchers.is;
+
+//import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
 
 /**
  * A set of test outcomes, which lets you perform query operations on the test outcomes.
@@ -70,40 +67,32 @@ public class TestOutcomes {
     /**
      * Reference to the test statistics service provider, used to inject test history if required.
      */
-    private final HibernateTestStatisticsProvider testStatisticsProvider;
     private static final Integer DEFAULT_ESTIMATED_TOTAL_STEPS = 3;
 
     @Inject
     protected TestOutcomes(List<? extends TestOutcome> outcomes,
                            double estimatedAverageStepCount,
                            String label,
-                           HibernateTestStatisticsProvider testStatisticsProvider,
                            TestOutcomes rootOutcomes) {
         this.outcomes = ImmutableList.copyOf(outcomes);
         this.estimatedAverageStepCount = estimatedAverageStepCount;
         this.label = label;
-        this.testStatisticsProvider = testStatisticsProvider;
         this.rootOutcomes = Optional.fromNullable(rootOutcomes);
     }
 
     protected TestOutcomes(List<? extends TestOutcome> outcomes,
                            double estimatedAverageStepCount,
-                           String label,
-                           HibernateTestStatisticsProvider testStatisticsProvider) {
-        this(outcomes, estimatedAverageStepCount, label, testStatisticsProvider, null);
+                           String label) {
+        this(outcomes, estimatedAverageStepCount, label, null);
     }
 
     protected TestOutcomes(List<? extends TestOutcome> outcomes,
                            double estimatedAverageStepCount) {
-        this(outcomes, estimatedAverageStepCount, "", defaultTestStatisticsProvider());
-    }
-
-    private static HibernateTestStatisticsProvider defaultTestStatisticsProvider() {
-        return Injectors.getInjector().getInstance(HibernateTestStatisticsProvider.class);
+        this(outcomes, estimatedAverageStepCount, "");
     }
 
     public TestOutcomes withLabel(String label) {
-        return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, label, defaultTestStatisticsProvider());
+        return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, label);
     }
 
     public static TestOutcomes of(List<? extends TestOutcome> outcomes) {
@@ -115,10 +104,10 @@ public class TestOutcomes {
         return new TestOutcomes(Collections.EMPTY_LIST,
                 Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
     }
-
-    protected TestStatisticsProvider getTestStatisticsProvider() {
-        return testStatisticsProvider;
-    }
+//
+//    protected TestStatisticsProvider getTestStatisticsProvider() {
+//        return testStatisticsProvider;
+//    }
 
     public String getLabel() {
         return label;
@@ -256,7 +245,7 @@ public class TestOutcomes {
     }
 
     private TestOutcomes withRootOutcomes(TestOutcomes rootOutcomes) {
-        return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, this.label, this.testStatisticsProvider, rootOutcomes);
+        return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, this.label, rootOutcomes);
     }
 
     /**
@@ -312,8 +301,9 @@ public class TestOutcomes {
         return new Converter<TestOutcome, TestOutcome>() {
 
             public TestOutcome convert(TestOutcome testOutcome) {
-                TestStatistics statistics = testStatisticsProvider.statisticsForTests(With.title(testOutcome.getTitle()));
-                testOutcome.setStatistics(statistics);
+                // TODO: Here's where the stats go
+                //TestStatistics statistics = testStatisticsProvider.statisticsForTests(With.title(testOutcome.getTitle()));
+                //testOutcome.setStatistics(statistics);
                 return testOutcome;
             }
         };

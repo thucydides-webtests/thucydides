@@ -171,8 +171,8 @@ public class ThucydidesPlugin extends BasePlugin {
 
         baseStepListener = Listeners.baseStepListener.withPages(pages).and().withOutputDirectory(outputDirectory)
         stepListeners = [baseStepListener,
-                         Listeners.loggingListener,
-                         Listeners.statisticsListener]
+                         Listeners.loggingListener]
+//                         Listeners.statisticsListener]
 
         stepPublisher = (StepPublisher) baseStepListener;
 
