@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -640,15 +641,22 @@ public abstract class PageObject {
     /**
      * Override this method
      */
-    public void callWhenPageOpensMethods() {
+    public void callWhenPageOpensMethods()  {
         for (Method annotatedMethod : methodsAnnotatedWithWhenPageOpens()) {
             try {
                 annotatedMethod.setAccessible(true);
                 annotatedMethod.invoke(this);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 LOGGER.error("Could not execute @WhenPageOpens annotated method: " + e.getMessage());
-                throw new UnableToInvokeWhenPageOpensMethods("Could not execute @WhenPageOpens annotated method: "
-                        + e.getMessage(), e);
+                if (e instanceof InvocationTargetException) {
+                    e = ((InvocationTargetException) e).getTargetException();
+                }
+                if (AssertionError.class.isAssignableFrom(e.getClass())) {
+                    throw (AssertionError) e;
+                } else {
+                    throw new UnableToInvokeWhenPageOpensMethods("Could not execute @WhenPageOpens annotated method: "
+                            + e.getMessage(), e);
+                }
             }
         }
 

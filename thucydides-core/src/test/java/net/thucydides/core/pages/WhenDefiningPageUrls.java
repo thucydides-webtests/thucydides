@@ -568,6 +568,24 @@ public class WhenDefiningPageUrls {
         page.open();
     }
 
+    @DefaultUrl("http://localhost:8080/somepage")
+    final class PageObjectWithFailingOnOpenPageMethod extends PageObject {
+
+        public PageObjectWithFailingOnOpenPageMethod(WebDriver driver) {
+            super(driver);
+        }
+
+        @WhenPageOpens
+        public void checkPageOpens() {
+            throw new AssertionError("could not open page properly");
+        }
+    }
+
+    @Test(expected = AssertionError.class)
+    public void annotated_OnOpenPage_methods_should_report_assertion_errors() {
+        PageObject page = new PageObjectWithFailingOnOpenPageMethod(webdriver);
+        page.open();
+    }
 
     @DefaultUrl("http://localhost:8080/somepage")
     final class PageObjectWithPrivateOnOpenPageMethod extends PageObject {
