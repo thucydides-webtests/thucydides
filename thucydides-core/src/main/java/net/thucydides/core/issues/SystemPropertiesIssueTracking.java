@@ -11,7 +11,11 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  */
 public class SystemPropertiesIssueTracking implements IssueTracking {
 
-    private final EnvironmentVariables environmentVariables;
+    private EnvironmentVariables environmentVariables;
+    
+    public SystemPropertiesIssueTracking() {
+    	
+    }
 
     @Inject
     public SystemPropertiesIssueTracking(EnvironmentVariables environmentVariables) {
