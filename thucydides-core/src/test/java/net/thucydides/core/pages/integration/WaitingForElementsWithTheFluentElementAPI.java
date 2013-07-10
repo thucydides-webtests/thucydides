@@ -1,6 +1,7 @@
 package net.thucydides.core.pages.integration;
 
 
+import org.apache.commons.exec.OS;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -98,17 +99,19 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
     @Test
     public void should_trigger_blur_event_when_focus_leaves_field_in_chrome() {
+        // Not supported on Windows
+        if (!OS.isFamilyWindows()) {
+            StaticSitePage page = getChromePage();
+            page.getDriver().navigate().refresh();
 
-        StaticSitePage page = getChromePage();
-        page.getDriver().navigate().refresh();
+            assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
 
-        assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
+            assertThat(page.focusmessage.getText(), is(""));
 
-        assertThat(page.focusmessage.getText(), is(""));
+            page.element(page.firstName).typeAndTab("joe");
 
-        page.element(page.firstName).typeAndTab("joe");
-
-        assertThat(page.focusmessage.getText(), is("focus left firstname"));
+            assertThat(page.focusmessage.getText(), is("focus left firstname"));
+        }
     }
 
     @Test
