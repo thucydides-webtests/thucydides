@@ -36,13 +36,13 @@ class RequirementsReport extends PageObject {
 
     List<RequirementRow> getRequirements() {
         List<WebElement> rows = driver.findElements(By.cssSelector("#req-results-table .requirementRow"));
-        rows.collect {
+        rows?.collect {
             List<WebElement> cells = it.findElements(By.cssSelector(".requirementRowCell"))
             def iconImage = it.findElement(By.cssSelector(".summary-icon")).getAttribute("src")
-            new RequirementRow(id: cells[1].text,
-                               description : cells[2].text,
-                               children: Integer.parseInt(cells[3].text),
-                               tests: Integer.parseInt(cells[4].text),
+            new RequirementRow(id: cells[1]?.text,
+                               description : cells[2]?.text,
+                               children: cells[3] ? Integer.parseInt(cells[3].text) : 0,
+                               tests: cells[4]? Integer.parseInt(cells[4].text) : 0,
                                icon: iconImage)
         }
     }

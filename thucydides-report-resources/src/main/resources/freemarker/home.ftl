@@ -41,18 +41,31 @@
         .css_right { float: right; }
     </style>
 
+<#assign successfulManualTests = (testOutcomes.count("manual").withResult("SUCCESS") > 0)>
+<#assign pendingManualTests = (testOutcomes.count("manual").withIndeterminateResult() > 0)>
+<#assign failingManualTests = (testOutcomes.count("manual").withResult("FAILURE") > 0)>
+
     <script class="code" type="text/javascript">$(document).ready(function () {
         var test_results_plot = $.jqplot('test_results_pie_chart', [
             [
-                ['Passing', ${testOutcomes.decimalPercentagePassingTestCount}],
-                ['Pending', ${testOutcomes.decimalPercentagePendingTestCount}],
-                ['Failing', ${testOutcomes.decimalPercentageFailingTestCount}],
-                ['Errors',  ${testOutcomes.decimalPercentageErrorTestCount}]
+                ['Passing', ${testOutcomes.proportionOf("automated").withResult("success")}],
+                <#if (successfulManualTests)>['Passing (manual)', ${testOutcomes.proportionOf("manual").withResult("success")}],</#if>
+                ['Pending', ${testOutcomes.proportionOf("automated").withIndeterminateResult()}],
+                <#if (pendingManualTests)>['Pending (manual)', ${testOutcomes.proportionOf("manual").withIndeterminateResult()}],</#if>
+                ['Failing', ${testOutcomes.proportionOf("automated").withResult("failure")}],
+                <#if (failingManualTests)>['Failing (manual)', ${testOutcomes.proportionOf("manual").withResult("failure")}],</#if>
+                ['Errors',  ${testOutcomes.proportionOf("automated").withResult("error")}]
             ]
         ], {
 
             gridPadding:{top:0, bottom:38, left:0, right:0},
-            seriesColors:['#30cb23', '#a2f2f2', '#f8001f','#fc6e1f'],
+            seriesColors:['#30cb23',
+                <#if (successfulManualTests)>'#28a818',</#if>
+                '#a2f2f2',
+                <#if (pendingManualTests)>'#8be1df',</#if>
+                '#f8001f',
+                <#if (failingManualTests)>'#e20019',</#if>
+                '#fc6e1f'],
             seriesDefaults:{
                 renderer:$.jqplot.PieRenderer,
                 trendline:{ show:false },
@@ -68,24 +81,43 @@
                 marginTop:'15px'
             },
             series:[
-                {label:'${testOutcomes.successCount} / ${testOutcomes.total} tests passed' },
-                {label:'${testOutcomes.pendingCount} / ${testOutcomes.total} tests pending'},
-                {label:'${testOutcomes.failureCount} / ${testOutcomes.total} tests failed'},
-                {label:'${testOutcomes.errorCount} / ${testOutcomes.total} errors'}
+                {label:'${testOutcomes.count("automated").withResult("success")} / ${testOutcomes.total} tests passed' },
+                <#if (successfulManualTests)>
+                    {label:'${testOutcomes.count("manual").withResult("success")} / ${testOutcomes.total} manual tests passed' },
+                </#if>
+                {label:'${testOutcomes.count("automated").withIndeterminateResult()} / ${testOutcomes.total} tests pending or not executed'},
+                <#if (pendingManualTests)>
+                    {label:'${testOutcomes.count("manual").withIndeterminateResult()} / ${testOutcomes.total} manual tests pending or not executed' },
+                </#if>
+                {label:'${testOutcomes.count("automated").withResult("failure")} / ${testOutcomes.total} tests failed'},
+                <#if (failingManualTests)>
+                    {label:'${testOutcomes.count("manual").withResult("failure")} / ${testOutcomes.total} manual tests failed' },
+                </#if>
+                {label:'${testOutcomes.count("automated").withResult("error")} / ${testOutcomes.total} errors'}
             ]
         });
 
         var weighted_test_results_plot = $.jqplot('weighted_test_results_pie_chart', [
             [
-                ['Passing', ${testOutcomes.decimalPercentagePassingStepCount}],
-                ['Pending', ${testOutcomes.decimalPercentagePendingStepCount}],
-                ['Failing', ${testOutcomes.decimalPercentageFailingStepCount}],
-                ['Errors', ${testOutcomes.decimalPercentageErrorStepCount}]
+                ['Passing', ${testOutcomes.proportionalStepsOf("automated").withResult("success")}],
+                <#if (successfulManualTests)>['Passing (manual)', ${testOutcomes.proportionalStepsOf("manual").withResult("success")}],</#if>
+                ['Pending', ${testOutcomes.proportionalStepsOf("automated").withResult("pending")}],
+                <#if (pendingManualTests)>['Pending (manual)', ${testOutcomes.proportionalStepsOf("manual").withIndeterminateResult()}],</#if>
+                ['Failing', ${testOutcomes.proportionalStepsOf("automated").withResult("failure")}],
+                <#if (failingManualTests)>['Failing (manual)', ${testOutcomes.proportionalStepsOf("manual").withResult("failure")}],</#if>
+                ['Errors', ${testOutcomes.proportionalStepsOf("automated").withResult("error")}]
             ]
         ], {
 
             gridPadding:{top:0, bottom:38, left:0, right:0},
-            seriesColors:['#30cb23', '#a2f2f2', '#f8001f','#fc6e1f'],
+            seriesColors:['#30cb23',
+                <#if (successfulManualTests)>'#28a818',</#if>
+                '#a2f2f2',
+                <#if (pendingManualTests)>'#8be1df',</#if>
+                '#f8001f',
+                <#if (failingManualTests)>'#e20019',</#if>
+                '#fc6e1f'],
+
             seriesDefaults:{
                 renderer:$.jqplot.PieRenderer,
                 trendline:{ show:false },
@@ -100,11 +132,20 @@
                 location:'s',
                 marginTop:'15px'
             },
-            series:[
-                {label:'${testOutcomes.successCount} / ${testOutcomes.total} tests passed (${testOutcomes.decimalPercentagePassingStepCount}% of all test steps)' },
-                {label:'${testOutcomes.pendingCount} / ${testOutcomes.total} tests pending (${testOutcomes.decimalPercentagePendingStepCount}% of all test steps)'},
-                {label:'${testOutcomes.failureCount} / ${testOutcomes.total} tests failed (${testOutcomes.decimalPercentageFailingStepCount}% of all test steps)'},
-                {label:'${testOutcomes.errorCount} / ${testOutcomes.total} errors (${testOutcomes.decimalPercentageErrorStepCount}% of all test steps)'}
+        series:[
+                {label:'${testOutcomes.count("automated").withResult("success")} / ${testOutcomes.total} tests passed (${testOutcomes.decimalPercentageSteps("automated").withResult("success")}% of all test steps)' },
+                <#if (successfulManualTests)>
+                    {label:'${testOutcomes.count("manual").withResult("success")} / ${testOutcomes.total} manual tests passed (${testOutcomes.decimalPercentageSteps("manual").withResult("success")}% of all test steps)' },
+                </#if>
+                {label:'${testOutcomes.count("automated").withIndeterminateResult()} / ${testOutcomes.total} tests pending or not executed (${testOutcomes.decimalPercentageSteps("automated").withIndeterminateResult()}% of all test steps)'},
+                <#if (pendingManualTests)>
+                    {label:'${testOutcomes.count("manual").withIndeterminateResult()} / ${testOutcomes.total} manual tests pending or not executed (${testOutcomes.decimalPercentageSteps("manual").withIndeterminateResult()}% of all test steps)' },
+                </#if>
+                {label:'${testOutcomes.count("automated").withResult("failure")} / ${testOutcomes.total} tests failed (${testOutcomes.decimalPercentageSteps("automated").withResult("failure")}% of all test steps)'},
+                <#if (failingManualTests)>
+                    {label:'${testOutcomes.count("manual").withResult("failure")} / ${testOutcomes.total} manual tests failed (${testOutcomes.decimalPercentageSteps("manual").withResult("failure")}% of all test steps)' },
+                </#if>
+                {label:'${testOutcomes.count("automated").withResult("error")} / ${testOutcomes.total} errors (${testOutcomes.decimalPercentageSteps("automated").withResult("error")}% of all test steps)'}
             ]
         });
 
@@ -189,31 +230,38 @@
                             <#assign errorReport = reportName.forTestResult("error") >
                             <#assign pendingReport = reportName.forTestResult("pending") >
 
+                            <#assign successCount = testOutcomes.totalTests.withResult("success") >
+                            <#assign pendingCount = testOutcomes.totalTests.withResult("pending") >
+                            <#assign failureCount = testOutcomes.totalTests.withResult("failure") >
+                            <#assign errorCount = testOutcomes.totalTests.withResult("error") >
 
                             <span class="test-count">
-                                    ${testOutcomes.successCount}
-                                    <#if (testOutcomes.successCount > 0 && report.shouldDisplayResultLink)>
-                                        <a href="${relativeLink}${successReport}">passed</a>
-                                    <#else>passed</#if>,
-                                </span>
-                                <span class="test-count">
-                                ${testOutcomes.pendingCount}
-                                <#if (testOutcomes.pendingCount > 0 && report.shouldDisplayResultLink)>
+                                ${successCount}
+                                <#if (successCount > 0 && report.shouldDisplayResultLink)>
+                                    <a href="${relativeLink}${successReport}">passed</a>
+                                <#else>passed</#if>,
+                            </span>
+
+
+                            <span class="test-count">
+                                ${pendingCount}
+                                <#if (pendingCount > 0 && report.shouldDisplayResultLink)>
                                     <a href="${relativeLink}${pendingReport}">pending</a>
                                 <#else>pending</#if>,
-                                </span>
-                                <span class="test-count">
-                                    ${testOutcomes.failureCount}
-                                    <#if (testOutcomes.failureCount > 0 && report.shouldDisplayResultLink)>
+                            </span>
+
+                            <span class="test-count">
+                                ${failureCount}
+                                    <#if (failureCount > 0 && report.shouldDisplayResultLink)>
                                         <a href="${relativeLink}${failureReport}">failed</a>
                                     <#else>failed</#if>,
-                                </span>
-                                <span class="test-count">
-                                    ${testOutcomes.errorCount}
-                                    <#if (testOutcomes.errorCount > 0 && report.shouldDisplayResultLink)>
-                                        <a href="${relativeLink}${errorReport}">with errors</a>
-                                    <#else>errors</#if>
-                                </span>
+                            </span>
+                            <span class="test-count">
+                                ${errorCount}
+                                <#if (errorCount > 0 && report.shouldDisplayResultLink)>
+                                    <a href="${relativeLink}${errorReport}">with errors</a>
+                                <#else>errors</#if>
+                            </span>
                             <#if (csvReport! != '')>
                                 <a href="${csvReport}">[Download CSV]</a>
                             </#if>
@@ -277,7 +325,7 @@
                                 <table id="test-results-table">
                                     <thead>
                                     <tr>
-                                        <th width="30" class="test-results-heading">&nbsp;</th>
+                                        <th width="40" class="test-results-heading">&nbsp;</th>
                                         <th width="%" class="test-results-heading">Tests</th>
                                         <th width="70" class="test-results-heading">Steps</th>
 
@@ -308,6 +356,8 @@
                                             <#assign testrun_outcome_icon = "ignor.png">
                                         </#if>
 
+
+
                                         <#assign stability = testOutcome.recentStability>
                                         <#if (testOutcome.recentTestRunCount == testOutcome.recentPendingCount)>
                                             <#assign stability_icon = "traffic-in-progress.gif">
@@ -327,7 +377,9 @@
                                         </#if>
 
                                     <tr class="test-${testOutcome.result}">
-                                        <td><img src="images/${testrun_outcome_icon}" title="${testOutcome.result}" class="summary-icon"/><span style="display:none">${testOutcome.result}</span></td>
+                                        <td><img src="images/${testrun_outcome_icon}" title="${testOutcome.result}" class="summary-icon"/>
+                                            <#if (testOutcome.manual)><img src="images/spade.png" title="Manual test"/></#if>
+                                            <span style="display:none">${testOutcome.result}</span></td>
                                         <td class="${testOutcome.result}-text"><a href="${relativeLink}${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a></td>
 
                                         <td class="lightgreentext">${testOutcome.nestedStepCount}</td>
@@ -392,7 +444,7 @@
                 <#elseif outcomesForTag.result == "SUCCESS">
                     <#assign outcome_icon = "success.png">
                     <#assign outcome_text = "success-color">
-                <#elseif outcomesForTag.result == "PENDING" || outcomesForTag.result == "IGNORED" >
+                <#elseif outcomesForTag.result == "PENDING" || outcomesForTag.result == "IGNORED"|| outcomesForTag.result == "SKIPPED" >
                     <#assign outcome_icon = "pending.png">
                     <#assign outcome_text = "pending-color">
                 <#else>
@@ -413,35 +465,42 @@
                     </td>
                     <td width="150px" class="lightgreentext">
                         <#if weighted == "true">
-                            <#assign percentPending = outcomesForTag.percentagePendingStepCount/>
-                            <#assign percentError = outcomesForTag.percentageErrorStepCount/>
-                            <#assign percentFailing = outcomesForTag.percentageFailingStepCount/>
-                            <#assign percentPassing = outcomesForTag.percentagePassingStepCount/>
-                            <#assign passing = outcomesForTag.formatted.percentPassingCoverage>
-                            <#assign failing = outcomesForTag.formatted.percentFailingCoverage>
-                            <#assign error = outcomesForTag.formatted.percentErrorCoverage>
-                            <#assign pending = outcomesForTag.formatted.percentPendingCoverage>
-                        <#else>
-                            <#assign percentPending = outcomesForTag.percentagePendingTestCount/>
-                            <#assign percentError = outcomesForTag.percentageErrorTestCount/>
-                            <#assign percentFailing = outcomesForTag.percentageFailingTestCount/>
-                            <#assign percentPassing = outcomesForTag.percentagePassingTestCount/>
+                            <#assign percentPending = outcomesForTag.percentSteps.withIndeterminateResult()/>
+                            <#assign percentError = outcomesForTag.percentSteps.withResult("error")/>
+                            <#assign percentFailing = outcomesForTag.percentSteps.withResult("failure")/>
+                            <#assign percentPassing = outcomesForTag.percentSteps.withResult("success")/>
 
-                            <#assign passing = outcomesForTag.formattedTestCount.percentPassingCoverage>
-                            <#assign failing = outcomesForTag.formattedTestCount.percentFailingCoverage>
-                            <#assign error = outcomesForTag.formattedTestCount.percentErrorCoverage>
-                            <#assign pending = outcomesForTag.formattedTestCount.percentPendingCoverage>
+                            <#assign passing = outcomesForTag.formattedPercentageSteps.withResult("success")>
+                            <#assign failing = outcomesForTag.formattedPercentageSteps.withResult("failure")>
+                            <#assign error = outcomesForTag.formattedPercentageSteps.withResult("error")>
+                            <#assign pending = outcomesForTag.formattedPercentageSteps.withIndeterminateResult()>
+                        <#else>
+                            <#assign percentPending = outcomesForTag.proportion.withIndeterminateResult()/>
+                            <#assign percentError = outcomesForTag.proportion.withResult("error")/>
+                            <#assign percentFailing = outcomesForTag.proportion.withResult("failure")/>
+                            <#assign percentPassing = outcomesForTag.proportion.withResult("success")/>
+
+                            <#assign passing = outcomesForTag.formattedPercentage.withResult("success")>
+                            <#assign failing = outcomesForTag.formattedPercentage.withResult("failure")>
+                            <#assign error = outcomesForTag.formattedPercentage.withResult("error")>
+                            <#assign pending = outcomesForTag.formattedPercentage.withIndeterminateResult()>
                         </#if>
 
                         <#assign errorbar = (percentPassing + percentFailing + percentError)*150>
                         <#assign failingbar = (percentPassing + percentFailing)*150>
                         <#assign passingbar = (percentPassing)*150>
 
+                        <#assign successCount = outcomesForTag.totalTests.withResult("success") >
+                        <#assign indeterminateCount = outcomesForTag.totalTests.withIndeterminateResult() >
+                        <#assign skipCount = outcomesForTag.totalTests.withResult("skipped") >
+                        <#assign failureCount = outcomesForTag.totalTests.withResult("failure") >
+                        <#assign errorCount = outcomesForTag.totalTests.withResult("error") >
+
                         <#assign tests = inflection.of(outcomesForTag.total).times('test') >
-                        <#assign pendingCaption = "${outcomesForTag.pendingCount} out of ${outcomesForTag.total} ${tests} pending">
-                        <#assign passingCaption = "${outcomesForTag.successCount} out of ${outcomesForTag.total} ${tests} passing">
-                        <#assign failingCaption = "${outcomesForTag.failureCount} out of ${outcomesForTag.total} ${tests} failing">
-                        <#assign errorCaption = "${outcomesForTag.errorCount} out of ${outcomesForTag.total} ${tests} broken">
+                        <#assign pendingCaption = "${indeterminateCount} out of ${outcomesForTag.total} ${tests} pending or not executed">
+                        <#assign passingCaption = "${successCount} out of ${outcomesForTag.total} ${tests} passing">
+                        <#assign failingCaption = "${failureCount} out of ${outcomesForTag.total} ${tests} failing">
+                        <#assign errorCaption = "${errorCount} out of ${outcomesForTag.total} ${tests} broken">
 
                         <table>
                             <tr>

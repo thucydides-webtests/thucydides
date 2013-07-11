@@ -196,7 +196,7 @@ class WhenRunningTestScenarios extends Specification {
 
     def "failing tests with no steps should still record the error"() {
         given:
-        def runner = new ThucydidesRunner(SampleFailingScenarioWithEmptyTests, webDriverFactory)
+        def runner = new ThucydidesRunner(SampleEmptyTestFailing, webDriverFactory)
         when:
         runner.run(new RunNotifier())
         def outcomes = runner.testOutcomes;
@@ -205,6 +205,18 @@ class WhenRunningTestScenarios extends Specification {
         outcomes[0].result == FAILURE
         outcomes[0].testFailureCause.message == "TestException without any steps."
     }
+
+    def "failing tests with with failure outside a step should still record the error"() {
+        given:
+            def runner = new ThucydidesRunner(SampleOutsideStepFailure, webDriverFactory)
+        when:
+            runner.run(new RunNotifier())
+            def outcomes = runner.testOutcomes;
+        then:
+            outcomes.size() == 1
+            outcomes[0].result == FAILURE
+    }
+
 
     def "should skip test steps after a failure"() {
         given:
@@ -344,7 +356,7 @@ class WhenRunningTestScenarios extends Specification {
         def outcome = runner.testOutcomes[0]
         def firstStep = outcome.testSteps[0]
         then:
-        firstStep.description == "Step with a parameter: {foo}"
+        firstStep.description == "Step with a parameter: {proportionOf}"
     }
 
     def "steps with multiple parameters should contain the parameter values in the description"() {
@@ -355,7 +367,7 @@ class WhenRunningTestScenarios extends Specification {
         def outcome = runner.testOutcomes[0]
         def firstStep = outcome.testSteps[1]
         then:
-        firstStep.description == "Step with two parameters: {foo, 2}"
+        firstStep.description == "Step with two parameters: {proportionOf, 2}"
     }
 
     def "should be able to override scenario titles using the @Title annotation"() {

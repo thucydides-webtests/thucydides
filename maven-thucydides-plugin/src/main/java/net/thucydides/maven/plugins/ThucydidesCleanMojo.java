@@ -20,8 +20,6 @@ public class ThucydidesCleanMojo extends AbstractMojo {
 
     private HtmlAggregateStoryReporter reporter;
 
-    private ThucydidesHTMLReportGenerator htmlReportGenerator;
-
     protected HtmlAggregateStoryReporter getReporter() {
         if (reporter == null) {
             reporter = new HtmlAggregateStoryReporter(MavenProjectHelper.getProjectIdentifier(project));

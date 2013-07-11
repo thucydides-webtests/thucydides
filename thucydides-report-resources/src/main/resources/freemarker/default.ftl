@@ -158,33 +158,6 @@
             <th width="75" class="greentext">Duration</th>
         </tr>
         <tr class="step-table-separator"><td colspan="5"></td></tr>
-    <#if testOutcome.stepCount == 0>
-        <#if testOutcome.result == "FAILURE">
-            <#assign step_outcome_icon = "fail.png">
-        <#elseif testOutcome.result == "ERROR">
-            <#assign step_outcome_icon = "cross.png">
-        </#if>
-        <#if step_outcome_icon?has_content>
-            <tr class="test-${testOutcome.result}">
-                <td width="40">
-                    <img style="margin-left: 20px; margin-right: 5px;"
-                         src="images/${step_outcome_icon}" class="top-level-icon"/>
-                </td>
-                <td width="%">
-                    <span class="top-level-step">Exception occurred before any Steps could be executed.</span>
-                </td>
-                <td width="150"><span class="top-level-step">${testOutcome.result}</span></td>
-                <td width="100"><span class="top-level-step">${testOutcome.durationInSeconds}s</span></td>
-            </tr>
-            <tr class="test-${testOutcome.result}">
-                <td width="40">&nbsp</td>
-                <td width="%" colspan="4">
-                                    <span class="error-message"
-                                          title="${testOutcome.testFailureCause}">${testOutcome.testFailureCause}</span>
-                </td>
-            </tr>
-        </#if>
-    <#else>
         <#assign level = 1>
         <#assign screenshotCount = 0>
         <#macro write_step(step, step_number)>
@@ -291,8 +264,32 @@
         <#list testOutcome.testSteps as step>
             <@write_step step=step step_number=step_index />
         </#list>
-    </#if>
-    </table>
+        <#if testOutcome.stepCount == 0 || testOutcome.hasNonStepFailure()>
+            <#if testOutcome.result == "FAILURE">
+                <#assign step_outcome_icon = "fail.png">
+            <#elseif testOutcome.result == "ERROR">
+                <#assign step_outcome_icon = "cross.png">
+            </#if>
+            <#if step_outcome_icon?has_content>
+                <tr class="test-${testOutcome.result}">
+                    <td width="40">
+                        <img style="margin-left: 20px; margin-right: 5px;" src="images/${step_outcome_icon}" class="top-level-icon"/>
+                    </td>
+                    <td width="%">
+                        <span class="top-level-step">An error occurred outside of step execution.</span>
+                    </td>
+                    <td width="150"><span class="top-level-step">${testOutcome.result}</span></td>
+                    <td width="100"><span class="top-level-step">${testOutcome.durationInSeconds}s</span></td>
+                </tr>
+                <tr class="test-${testOutcome.result}">
+                    <td width="40">&nbsp</td>
+                    <td width="%" colspan="4">
+                        <span class="error-message" title="${testOutcome.testFailureCause}">${testOutcome.testFailureCause}</span>
+                    </td>
+                </tr>
+            </#if>
+        </#if>
+</table>
 </div>
 <div id="beforefooter"></div>
 <div id="bottomfooter"></div>

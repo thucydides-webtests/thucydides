@@ -253,7 +253,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
         TestStep firstStep = testOutcome.getTestSteps().get(0);
 
-        assertThat(firstStep.getDescription(), is("Step with a parameter: {foo}"));
+        assertThat(firstStep.getDescription(), is("Step with a parameter: {proportionOf}"));
     }
 
     @Test
@@ -267,7 +267,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
         TestStep secondStep = testOutcome.getTestSteps().get(1);
 
-        assertThat(secondStep.getDescription(), is("Step with two parameters: {foo, 2}"));
+        assertThat(secondStep.getDescription(), is("Step with two parameters: {proportionOf, 2}"));
     }
 
 

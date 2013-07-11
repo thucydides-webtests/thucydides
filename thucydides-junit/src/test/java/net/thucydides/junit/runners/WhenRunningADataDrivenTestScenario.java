@@ -22,7 +22,6 @@ import net.thucydides.samples.SampleCSVDataDrivenScenario;
 import net.thucydides.samples.SampleDataDrivenIgnoredScenario;
 import net.thucydides.samples.SampleDataDrivenPendingScenario;
 import net.thucydides.samples.SampleDataDrivenScenario;
-import net.thucydides.samples.SampleDataDrivenWebScenario;
 import net.thucydides.samples.SampleParallelDataDrivenScenario;
 import net.thucydides.samples.SamplePassingScenarioWithTestSpecificData;
 import net.thucydides.samples.SampleScenarioSteps;
@@ -390,7 +389,7 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
     @RunWith(ThucydidesRunner.class)
-    public static class ScenarioWithTestSpecificData {
+    public static class ScenarioWithTestSpecificDataSample {
 
         @Managed(driver="htmlunit")
         public WebDriver webdriver;
@@ -409,7 +408,7 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
     @RunWith(ThucydidesRunner.class)
-    public static class ScenarioWithNestedTestSpecificData {
+    public static class ScenarioWithNestedTestSpecificDataSample {
 
         @Managed(driver="htmlunit")
         public WebDriver webdriver;
@@ -429,7 +428,7 @@ public class WhenRunningADataDrivenTestScenario {
 
 
     @RunWith(ThucydidesRunner.class)
-    public static class ScenarioWithDeeplyNestedTestSpecificData {
+    public static class ScenarioWithDeeplyNestedTestSpecificDataSample {
 
         @Managed(driver="htmlunit")
         public WebDriver webdriver;
@@ -512,7 +511,7 @@ public class WhenRunningADataDrivenTestScenario {
         environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificData.class);
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataSample.class);
 
         runner.run(new RunNotifier());
 
@@ -532,7 +531,7 @@ public class WhenRunningADataDrivenTestScenario {
         environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                 outputDirectory.getAbsolutePath());
 
-        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithNestedTestSpecificData.class);
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithNestedTestSpecificDataSample.class);
 
         runner.run(new RunNotifier());
 
@@ -552,7 +551,7 @@ public class WhenRunningADataDrivenTestScenario {
         environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                 outputDirectory.getAbsolutePath());
 
-        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithDeeplyNestedTestSpecificData.class);
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithDeeplyNestedTestSpecificDataSample.class);
 
         runner.run(new RunNotifier());
 
@@ -571,7 +570,7 @@ public class WhenRunningADataDrivenTestScenario {
         environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
-        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificData.class);
+        ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataSample.class);
 
         runner.run(new RunNotifier());
 

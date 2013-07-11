@@ -9,7 +9,7 @@
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides</artifactId>
-    <version>0.9.127-SNAPSHOT</version>
+    <version>0.9.131-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>thucydides</name>
     <description>An Acceptance Testing framework for web applications
@@ -130,8 +130,8 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
-                            <forkCount>2C</forkCount>
-                            <argLine>-Xmx512m</argLine>
+                            <!--<forkCount>2C</forkCount>-->
+                            <argLine>-Xmx512m -XX:MaxPermSize=128m</argLine>
                             <includes>
                                 <include>**/When*.*</include>
                                 <include>**/*Test.*</include>
@@ -156,7 +156,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <forkCount>2C</forkCount>
+                            <!--<forkCount>2C</forkCount>-->
                             <argLine>-Xmx512m</argLine>
                             <skip>false</skip>
                             <excludes>
@@ -369,23 +369,9 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.6.2.201302030002</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>report</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
-                            </execution>
-                        </executions>
+                        <groupId>com.atlassian.maven.plugins</groupId>
+                        <artifactId>maven-clover2-plugin</artifactId>
+                        <version>3.1.11</version>
                     </plugin>
                 </plugins>
             </build>

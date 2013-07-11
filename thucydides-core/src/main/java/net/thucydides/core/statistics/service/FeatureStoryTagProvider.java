@@ -3,10 +3,13 @@ package net.thucydides.core.statistics.service;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.util.EnvironmentVariables;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +21,14 @@ import java.util.Set;
  */
 public class FeatureStoryTagProvider implements TagProvider {
 
+    private final EnvironmentVariables environmentVariables;
+
     public FeatureStoryTagProvider() {
+        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+    }
+
+    public FeatureStoryTagProvider(EnvironmentVariables environmentVariables) {
+        this.environmentVariables = environmentVariables;
     }
 
     public Set<TestTag> getTagsFor(final TestOutcome testOutcome) {
@@ -31,7 +41,8 @@ public class FeatureStoryTagProvider implements TagProvider {
     private void addStoryTagIfPresent(TestOutcome testOutcome, Set<TestTag> tags) {
         Story story = testOutcome.getUserStory();
         if (story != null) {
-            tags.add(TestTag.withName(story.getName()).andType("story"));
+            String requirementType = environmentVariables.getProperty(ThucydidesSystemProperty.LOWEST_REQUIREMENT_TYPE, "story");
+            tags.add(TestTag.withName(story.getName()).andType(requirementType));
         }
     }
 

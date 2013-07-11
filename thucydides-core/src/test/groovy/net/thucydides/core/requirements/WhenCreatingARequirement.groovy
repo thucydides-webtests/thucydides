@@ -68,6 +68,15 @@ class WhenCreatingARequirement extends Specification {
 
     }
 
+    def "examples should have a descriptive string version"() {
+        given:
+            def example = Example.withDescription("The client buys a blue widget.").andCardNumber("CARD-1")
+        when:
+            def stringVersion = example.toString()
+        then:
+            stringVersion ==  "The client buys a blue widget. [CARD-1]"
+    }
+
     def "should be able to record several examples at the same time"() {
         when: "we create a simple requirement including some examples"
         def requirement = Requirement.named("some_requirement")

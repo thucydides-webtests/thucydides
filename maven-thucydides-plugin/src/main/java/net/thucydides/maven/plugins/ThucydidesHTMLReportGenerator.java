@@ -1,16 +1,7 @@
 package net.thucydides.maven.plugins;
 
-import net.thucydides.core.model.FeatureResults;
-import net.thucydides.core.model.ReportType;
-import net.thucydides.core.model.StoryTestResults;
-import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.TestOutcomes;
-import net.thucydides.core.reports.ThucydidesReportData;
-import net.thucydides.core.util.Inflection;
-import net.thucydides.core.util.Inflector;
 import org.apache.maven.doxia.sink.Sink;
-
-import java.util.List;
 
 /**
  * Generates a report for the Maven site

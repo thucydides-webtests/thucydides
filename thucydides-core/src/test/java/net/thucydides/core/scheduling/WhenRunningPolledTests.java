@@ -96,7 +96,7 @@ public class WhenRunningPolledTests {
         Counter counter = new Counter();
 
         page.waitForWithRefresh()
-                .withTimeoutOf(1000).milliseconds()
+                .withTimeoutOf(5000).milliseconds()
                 .pollingEvery(100).milliseconds()
                 .until(weHaveWaitedEnough(counter));
 
@@ -115,7 +115,7 @@ public class WhenRunningPolledTests {
         StepEventBus.getEventBus().stepFailed(failure);
 
         page.waitForWithRefresh()
-                .withTimeoutOf(1000).milliseconds()
+                .withTimeoutOf(5000).milliseconds()
                 .pollingEvery(100).milliseconds()
                 .until(weHaveWaitedEnough(counter));
 
@@ -128,7 +128,7 @@ public class WhenRunningPolledTests {
 
         Counter counter = new Counter();
         page.waitForCondition()
-                .withTimeoutOf(1000).milliseconds()
+                .withTimeoutOf(5000).milliseconds()
                 .pollingEvery(100).milliseconds()
                 .until(weHaveWaitedEnough(counter));
 
@@ -142,7 +142,7 @@ public class WhenRunningPolledTests {
         NormalFluentWait<WebDriver> waitFor = new NormalFluentWait(driver, clock, sleeper);
         Counter counter = new Counter();
 
-        waitFor.withTimeoutOf(1000).milliseconds()
+        waitFor.withTimeoutOf(5000).milliseconds()
                 .pollingEvery(100).milliseconds()
                 .until(weHaveWaitedEnough(counter));
 
@@ -202,7 +202,7 @@ public class WhenRunningPolledTests {
         Counter counter = new Counter();
 
         page.waitForCondition()
-                .withTimeoutOf(1000).milliseconds()
+                .withTimeoutOf(5000).milliseconds()
                 .pollingEvery(100).milliseconds()
                 .until(weSpitTheDummy(counter));
 
@@ -214,7 +214,7 @@ public class WhenRunningPolledTests {
         Counter counter = new Counter();
 
         page.waitForCondition()
-                .withTimeoutOf(1000).milliseconds()
+                .withTimeoutOf(5000).milliseconds()
                 .pollingEvery(100).milliseconds()
                 .until(weSpitTheDummyWithARuntimeException(counter));
 
@@ -227,7 +227,7 @@ public class WhenRunningPolledTests {
 
         page.waitForCondition()
                 .ignoring(NullPointerException.class)
-                .withTimeoutOf(1000).milliseconds()
+                .withTimeoutOf(5000).milliseconds()
                 .pollingEvery(100).milliseconds()
                 .until(weSpitTheDummyWithARuntimeException(counter));
 
@@ -250,7 +250,7 @@ public class WhenRunningPolledTests {
         SlowPage page = new SlowPage(driver);
 
         page.waitForCondition()
-                .withTimeoutOf(1000).milliseconds()
+                .withTimeoutOf(5000).milliseconds()
                 .pollingEvery(25).milliseconds()
                 .until(weDefineAnInvalidCondition());
 
@@ -284,7 +284,7 @@ public class WhenRunningPolledTests {
         BackEnd backEnd = new BackEnd();
         NormalFluentWait<BackEnd> waitFor = new NormalFluentWait(backEnd);
 
-        waitFor.withTimeoutOf(1000).milliseconds()
+        waitFor.withTimeoutOf(5000).milliseconds()
                 .pollingEvery(10).milliseconds()
                 .until(weHaveWaitedAWhile());
 

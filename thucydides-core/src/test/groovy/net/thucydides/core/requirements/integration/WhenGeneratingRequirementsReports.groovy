@@ -58,7 +58,7 @@ class WhenGeneratingRequirementsReports extends Specification {
         return tempDirectory
     }
 
-    def "Should list all top-level capabilities in the capabilities report"() {
+    def "Should list all top-level requirements in the requirements report"() {
         given: "there are no associated tests"
             issueTracking.getIssueTrackerUrl() >> "http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}"
             def noTestOutcomes = TestOutcomes.of(Collections.EMPTY_LIST)

@@ -24,7 +24,7 @@ public class Example {
     @Override
     public String toString() {
         if (cardNumber.isPresent()) {
-            return description + " [" + cardNumber + "]";
+            return description + " [" + cardNumber.get() + "]";
         } else {
             return description;
         }

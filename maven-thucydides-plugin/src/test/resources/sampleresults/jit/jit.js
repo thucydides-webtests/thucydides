@@ -1794,7 +1794,7 @@ Options.Events = {
   enable - (boolean) Default's *false*. Whether to enable Navigation capabilities.
   type - (string) Default's 'auto'. Whether to attach the navigation events onto the HTML labels (via event delegation) or to use the custom 'Native' canvas Event System of the library. When 'auto' set when you let the <Options.Label> *type* parameter decide this.
   panning - (boolean|string) Default's *false*. Set this property to *true* if you want to add Drag and Drop panning support to the visualization. You can also set this parameter to 'avoid nodes' to enable DnD panning but disable it if the DnD is taking place over a node. This is useful when some other events like Drag & Drop for nodes are added to <Graph.Nodes>.
-  zooming - (boolean|number) Default's *false*. Set this property to a numeric value to turn mouse-scroll zooming on. The number will be proportional to the mouse-scroll sensitivity.
+  zooming - (boolean|number) Default's *false*. Set this property to a numeric value to turn mouse-scroll zooming on. The number will be proportionOf to the mouse-scroll sensitivity.
   
 */
 
@@ -14573,7 +14573,7 @@ $jit.ForceDirected = new Class( {
   computations for final animation positions then you can just choose 'end'.
   
   onStep - (function) A callback function called when each "small part" of the algorithm completed. This function gets as first formal 
-  parameter a percentage value.
+  parameter a proportionOf value.
   
   onComplete - A callback function called when the algorithm completed.
   

@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import net.thucydides.core.annotations.locators.SmartElementProxyCreator;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.fixtureservices.ClasspathFixtureProviderService;
@@ -13,8 +14,6 @@ import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
-import net.thucydides.core.reports.json.ColorScheme;
-import net.thucydides.core.reports.json.RelativeSizeColorScheme;
 import net.thucydides.core.reports.renderer.Asciidoc;
 import net.thucydides.core.reports.renderer.AsciidocMarkupRenderer;
 import net.thucydides.core.reports.renderer.MarkupRenderer;
@@ -51,8 +50,6 @@ import net.thucydides.core.webdriver.ElementProxyCreator;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.WebdriverManager;
-import net.thucydides.core.annotations.locators.SmartElementProxyCreator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +68,6 @@ public class ThucydidesModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(ColorScheme.class).to(RelativeSizeColorScheme.class).in(Singleton.class);
         bind(SystemClock.class).to(InternalSystemClock.class).in(Singleton.class);
         bind(TemplateManager.class).to(FreeMarkerTemplateManager.class).in(Singleton.class);
         bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);

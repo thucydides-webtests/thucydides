@@ -1,26 +1,21 @@
 package net.thucydides.maven.plugins;
 
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.reports.TestOutcomeAdaptorReporter;
-import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.adaptors.AdaptorService;
-import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.doxia.siterenderer.Renderer;
+import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.MavenReportException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
 
 /**
  * This plugin generates converts external (e.g. xUnit) files into Thucydides reports.
  * @goal import
  * @requiresProject false
+ * @description Import other test output formats into Thucydides
  */
 public class ThucydidesAdaptorMojo extends AbstractMojo {
 
@@ -29,7 +24,7 @@ public class ThucydidesAdaptorMojo extends AbstractMojo {
      * @parameter expression="${import.target}" default-value="target/site/thucydides/"
      * @required
      */
-    public String outputDirectory;
+    public File outputDirectory;
 
     /**
      * External test reports are read from here
@@ -40,43 +35,54 @@ public class ThucydidesAdaptorMojo extends AbstractMojo {
     public String format;
 
     /**
-     * External test reports are read from here
+     * External test reports are read from here if necessary.
+     * This could be either a directory or a single file, depending on the adaptor used.
      *
      * @parameter expression="${import.source}"
      * @required
      */
-    public File sourceDirectory;
+    public File source;
 
-    private TestOutcomeAdaptorReporter reporter = new TestOutcomeAdaptorReporter();
-    private AdaptorService adaptorService = new AdaptorService();
+    private final EnvironmentVariables environmentVariables;
+    private final AdaptorService adaptorService;
+    private final TestOutcomeAdaptorReporter reporter = new TestOutcomeAdaptorReporter();
 
-    protected String getOutputDirectory() {
+    public ThucydidesAdaptorMojo(EnvironmentVariables environmentVariables) {
+        this.environmentVariables = environmentVariables;
+        this.adaptorService = new AdaptorService(environmentVariables);
+    }
+
+    public ThucydidesAdaptorMojo() {
+        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+    }
+
+    protected File getOutputDirectory() {
         return outputDirectory;
     }
 
-    public String getOutputName() {
-        return "thucydides";
+    public void setOutputDirectory(File outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
 
-    public String getName(Locale locale) {
-        return "Thucydides Import";
+    public void setFormat(String format) {
+        this.format = format;
     }
 
-    public String getDescription(Locale locale) {
-        return "Import other test output formats into Thucydides";
+    public void setSource(File source) {
+        this.source = source;
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Importing external test reports");
-        getLog().info("Source directory: " + sourceDirectory);
+        getLog().info("Source directory: " + source);
         getLog().info("Output directory: " + getOutputDirectory());
 
         try {
             getLog().info("Adaptor: " + adaptorService.getAdaptor(format));
             reporter.registerAdaptor(adaptorService.getAdaptor(format));
-            reporter.setOutputDirectory(new File(getOutputDirectory()));
-            reporter.generateReportsFrom(sourceDirectory);
+            reporter.setOutputDirectory(outputDirectory);
+            reporter.generateReportsFrom(source);
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage());
         }

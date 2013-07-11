@@ -4,7 +4,6 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.issues.IssueTracking;
@@ -15,21 +14,20 @@ import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.screenshots.ScreenshotFormatter;
-import net.thucydides.core.requirements.FileSystemRequirementsTagProvider;
+import net.thucydides.core.requirements.PlaceFileSystemRequirementsFirst;
 import net.thucydides.core.requirements.RequirementsProviderService;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,22 +77,8 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     private List<RequirementsTagProvider> getRequirementsTagProviders() {
         if (requirementsTagProviders == null) {
             RequirementsProviderService requirementsProviderService = Injectors.getInjector().getInstance(RequirementsProviderService.class);
-            requirementsTagProviders = requirementsProviderService.getRequirementsProviders();
-            Collections.sort(requirementsTagProviders, new Comparator<RequirementsTagProvider>() {
-                public int compare(RequirementsTagProvider firstRquirementsTagProvider, RequirementsTagProvider secondRequirementsTagProvider) {
-                    if ((firstRquirementsTagProvider instanceof FileSystemRequirementsTagProvider) && (secondRequirementsTagProvider instanceof FileSystemRequirementsTagProvider)) {
-                        return firstRquirementsTagProvider.getClass().getName().compareTo(secondRequirementsTagProvider.getClass().getName());
-                    }
-                    if (firstRquirementsTagProvider instanceof FileSystemRequirementsTagProvider) {
-                        return -1;
-                    }
-                    if (secondRequirementsTagProvider instanceof  FileSystemRequirementsTagProvider) {
-                        return 1;
-                    }
-                    return firstRquirementsTagProvider.getClass().getName().compareTo(secondRequirementsTagProvider.getClass().getName());
-                }
-            });
-
+            requirementsTagProviders = new ArrayList(requirementsProviderService.getRequirementsProviders());
+            Collections.sort(requirementsTagProviders, new PlaceFileSystemRequirementsFirst());
         }
         return requirementsTagProviders;
     }

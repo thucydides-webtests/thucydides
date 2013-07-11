@@ -5,7 +5,7 @@ import net.thucydides.core.model.TestOutcome
 
 class MyAdaptor implements TestOutcomeAdaptor {
     @Override
-    List<TestOutcome> loadOutcomesFrom(File directory) throws IOException {
+    List<TestOutcome> loadOutcomesFrom(File source) throws IOException {
         return null
     }
 }

@@ -67,8 +67,12 @@ public class DataTable {
     }
 
     public void addRow(Map<String, ? extends Object> data) {
-        DataTableRow newRow = new DataTableRow(ImmutableList.copyOf(data.values()));
-        rows.add(newRow);
+        addRow(new DataTableRow(ImmutableList.copyOf(data.values())));
+    }
+
+
+    public void addRow(DataTableRow dataTableRow) {
+        rows.add(dataTableRow);
         currentRow.set(rows.size() - 1);
     }
 
@@ -156,17 +160,6 @@ public class DataTable {
 
         public void hasResult(TestResult result) {
             dataTable.rows.get(rowNumber).updateResult(result);
-        }
-
-        public Map<String, Object> getData() {
-            Map<String, Object> rowData = new HashMap<String, Object>();
-            int i = 0;
-            for (Object value : dataTable.rows.get(rowNumber).getValues()) {
-                rowData.put(dataTable.headers.get(i), value);
-                i++;
-            }
-
-            return rowData;
         }
 
         public Map<String, String> toStringMap() {

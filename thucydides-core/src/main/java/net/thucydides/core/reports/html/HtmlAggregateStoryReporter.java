@@ -5,6 +5,7 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.NumericalFormatter;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomeLoader;
@@ -13,14 +14,12 @@ import net.thucydides.core.reports.UserStoryTestReporter;
 import net.thucydides.core.reports.csv.CSVReporter;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.history.TestResultSnapshot;
-import net.thucydides.core.reports.json.JSONResultTree;
 import net.thucydides.core.requirements.RequirementsProviderService;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
 import net.thucydides.core.util.Inflector;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +39,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlAggregateStoryReporter.class);
 
     private static final String HISTORY_TEMPLATE_PATH = "freemarker/history.ftl";
-    private static final String COVERAGE_DATA_TEMPLATE_PATH = "freemarker/coverage.ftl";
     private static final String TEST_OUTCOME_TEMPLATE_PATH = "freemarker/home.ftl";
     private static final String TAGTYPE_TEMPLATE_PATH = "freemarker/results-by-tagtype.ftl";
 
@@ -60,12 +58,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     public HtmlAggregateStoryReporter(final String projectName, final String relativeLink) {
         this(projectName, relativeLink, Injectors.getInjector().getInstance(IssueTracking.class), new TestHistory(projectName));
     }
-
-    public HtmlAggregateStoryReporter(final String projectName,
-                                      final IssueTracking issueTracking) {
-        this(projectName, issueTracking, new TestHistory(projectName));
-    }
-
 
     public HtmlAggregateStoryReporter(final String projectName,
                                       final IssueTracking issueTracking,
@@ -127,7 +119,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateTagTypeReportsFor(testOutcomes);
         generateResultReportsFor(testOutcomes);
         generateHistoryReportFor(testOutcomes);
-        generateCoverageReportsFor(testOutcomes);
+//        generateCoverageReportsFor(testOutcomes);
         generateRequirementsReportsFor(requirementsOutcomes);
     }
 
@@ -204,24 +196,24 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         }
     }
 
-    private void generateCoverageReportsFor(TestOutcomes testOutcomes) throws IOException {
-
-        for (String tagType : testOutcomes.getTagTypes()) {
-            generateCoverageData(testOutcomes, tagType);
-        }
-    }
+//    private void generateCoverageReportsFor(TestOutcomes testOutcomes) throws IOException {
+//
+//        for (String tagType : testOutcomes.getTagTypes()) {
+//            generateCoverageData(testOutcomes, tagType);
+//        }
+//    }
 
     private void generateResultReports(TestOutcomes testOutcomesForThisTag, ReportNameProvider reportName, String tagType) throws IOException {
-        if (testOutcomesForThisTag.getSuccessCount() > 0) {
+        if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.SUCCESS) > 0) {
             generateResultReport(testOutcomesForThisTag.getPassingTests(), reportName, tagType, "success");
         }
-        if (testOutcomesForThisTag.getPendingCount() > 0) {
+        if (testOutcomesForThisTag.getTotalTests().withIndeterminateResult() > 0) {
             generateResultReport(testOutcomesForThisTag.getPendingTests(), reportName, tagType, "pending");
         }
-        if (testOutcomesForThisTag.getFailureCount() > 0) {
+        if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.FAILURE) > 0) {
             generateResultReport(testOutcomesForThisTag.getFailingTests(), reportName, tagType, "failure");
         }
-        if (testOutcomesForThisTag.getErrorCount() > 0) {
+        if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.ERROR) > 0) {
             generateResultReport(testOutcomesForThisTag.getErrorTests(), reportName, tagType, "error");
         }
     }
@@ -311,20 +303,20 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         writeReportToOutputDirectory(outputFile, htmlContents);
     }
 
-    private void generateCoverageData(final TestOutcomes testOutcomes, String tagType) throws IOException {
-        Map<String, Object> context = new HashMap<String, Object>();
-
-        JSONResultTree resultTree = new JSONResultTree();
-        for (String tag : testOutcomes.getTagsOfType(tagType)) {
-            resultTree.addTestOutcomesForTag(tag, testOutcomes.withTag(tag));
-        }
-
-        context.put("coverageData", resultTree.toJSON());
-        addFormattersToContext(context);
-
-        String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
-        writeReportToOutputDirectory(tagType + "-coverage.js", javascriptCoverageData);
-    }
+//    private void generateCoverageData(final TestOutcomes testOutcomes, String tagType) throws IOException {
+//        Map<String, Object> context = new HashMap<String, Object>();
+//
+//        JSONResultTree resultTree = new JSONResultTree();
+//        for (String tag : testOutcomes.getTagsOfType(tagType)) {
+//            resultTree.addTestOutcomesForTag(tag, testOutcomes.withTag(tag));
+//        }
+//
+//        context.put("coverageData", resultTree.toJSON());
+//        addFormattersToContext(context);
+//
+//        String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
+//        writeReportToOutputDirectory(tagType + "-coverage.js", javascriptCoverageData);
+//    }
 
     public void clearHistory() {
         getTestHistory().clearHistory();

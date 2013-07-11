@@ -7,12 +7,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.model.CoverageFormatter;
+import net.thucydides.core.model.OutcomeCounter;
+import net.thucydides.core.model.formatters.TestCoverageFormatter;
 import net.thucydides.core.model.TestDuration;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestResultList;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.model.TestType;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.statistics.HibernateTestStatisticsProvider;
 import net.thucydides.core.statistics.TestStatisticsProvider;
@@ -22,13 +24,10 @@ import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import static ch.lambdaj.Lambda.convert;
@@ -37,10 +36,9 @@ import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.min;
 import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.Lambda.sum;
-import static net.thucydides.core.model.TestResult.ERROR;
-import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
@@ -217,6 +215,16 @@ public class TestOutcomes {
 
     public DateTime getStartTime() {
         return min(outcomes, on(TestOutcome.class).getStartTime());
+    }
+
+    public TestOutcomes ofType(TestType testType) {
+        List<TestOutcome> filteredOutcomes = Lists.newArrayList();
+        for(TestOutcome outcome : outcomes) {
+            if (outcome.typeCompatibleWith(testType)) {
+                filteredOutcomes.add(outcome);
+            }
+        }
+        return TestOutcomes.of(filteredOutcomes);
     }
 
     private class TagFinder {
@@ -445,180 +453,145 @@ public class TestOutcomes {
     }
 
     /**
-     * @return The number of successful tests in this set.
+     * @param testType 'manual' or 'automated' (this is a string because it is mainly called from the freemarker templates
+     * @return
      */
-    public int getSuccessCount() {
-        return sum(outcomes, on(TestOutcome.class).countResults(SUCCESS));
+    public int successCount(String testType) {
+        return sum(outcomes, on(TestOutcome.class).countResults(SUCCESS, TestType.valueOf(testType.toUpperCase())));
     }
 
-    /**
-     * @return How many test cases contain at least one failing test.
-     */
-    public int getFailureCount() {
-        return sum(outcomes, on(TestOutcome.class).countResults(FAILURE));
+
+    public OutcomeCounter getTotalTests() {
+        return count(TestType.ANY);
     }
 
-    /**
-     * @return how many tests contain at least one test with an error
-     */
-    public int getErrorCount() {
-        return sum(outcomes, on(TestOutcome.class).countResults(ERROR));
+    public OutcomeCounter count(String testType) {
+        return count(TestType.valueOf(testType.toUpperCase()));
     }
 
-    /**
-     * @return How many test cases contain at least one pending test.
-     */
-    public int getPendingCount() {
-        return sum(outcomes, on(TestOutcome.class).countResults(PENDING));
+    public OutcomeCounter count(TestType testType) {
+        return new OutcomeCounter(testType, this);
     }
 
-    /**
-     * @return How many tests have been skipped.
-     */
-    public int getSkipCount() {
-        return sum(outcomes, on(TestOutcome.class).countResults(SKIPPED));
+    public OutcomeProportionCounter getProportion() {
+        return proportionOf(TestType.ANY);
     }
 
-    /**
-     * @return The percent of passing steps, based on the real and estimated test size in terms of the relative number
-     *         of steps.
-     */
-    public Double getPercentagePassingStepCount() {
-        int passingStepCount = countStepsWithResult(TestResult.SUCCESS);
-        return (passingStepCount / (double) getEstimatedTotalStepCount());
+    public OutcomeProportionCounter proportionOf(String testType) {
+        return proportionOf(TestType.valueOf(testType.toUpperCase()));
     }
 
-    public Double getPercentagePassingTestCount() {
+    public OutcomeProportionCounter proportionOf(TestType testType) {
+        return new OutcomeProportionCounter(testType);
+    }
+
+    public class OutcomeProportionCounter extends TestOutcomeCounter {
+
+        public OutcomeProportionCounter(TestType testType) {
+            super(testType);
+        }
+
+        public Double withResult(String expectedResult) {
+            return withResult(TestResult.valueOf(expectedResult.toUpperCase()));
+        }
+
+        public Double withResult(TestResult testResult) {
+            int matchingTestCount = countTestsWithResult(testResult, testType);
+            return (getTotal() == 0) ? 0 :  (matchingTestCount / (double) getTotal());
+        }
+
+        public Double withIndeterminateResult() {
+            int pendingCount = countTestsWithResult(TestResult.PENDING, testType);
+            int ignoredCount =  countTestsWithResult(TestResult.IGNORED, testType);
+            int skippedCount =  countTestsWithResult(TestResult.SKIPPED, testType);
+            return (getTotal() == 0) ? 0 : ((pendingCount + skippedCount + ignoredCount) / (double) getTotal());
+        }
+    }
+
+    public OutcomeProportionStepCounter getPercentSteps() {
+        return proportionalStepsOf(TestType.ANY);
+    }
+
+    public OutcomeProportionStepCounter proportionalStepsOf(String testType) {
+        return proportionalStepsOf(TestType.valueOf(testType.toUpperCase()));
+    }
+
+    public OutcomeProportionStepCounter proportionalStepsOf(TestType testType) {
+        return new OutcomeProportionStepCounter(testType);
+    }
+
+    public OutcomeProportionStepCounter decimalPercentageSteps(String testType) {
+        return new OutcomeProportionStepCounter(TestType.valueOf(testType.toUpperCase()));
+    }
+
+    public class OutcomeProportionStepCounter extends TestOutcomeCounter  {
+
+        public OutcomeProportionStepCounter(TestType testType) {
+            super(testType);
+        }
+
+        public Double withResult(String expectedResult) {
+            return withResult(TestResult.valueOf(expectedResult.toUpperCase()));
+        }
+
+        public Double withResult(TestResult expectedResult) {
+            int passingStepCount = countStepsWithResult(expectedResult, testType);
+            return (passingStepCount / (double) getEstimatedTotalStepCount());
+        }
+
+        public Double withIndeterminateResult() {
+            int pendingCount = countStepsWithResult(TestResult.PENDING, testType);
+            int ignoredCount =  countStepsWithResult(TestResult.IGNORED, testType);
+            int skippedCount =  countStepsWithResult(TestResult.SKIPPED, testType);
+            return ((pendingCount + skippedCount + ignoredCount) / (double) getEstimatedTotalStepCount());
+        }
+    }
+
+    public Double getPercentageTestCount(TestResult expectedResult) {
         if (getTotal() > 0) {
-            return (countTestsWithResult(TestResult.SUCCESS) / (double) getTotal());
+            return (countTestsWithResult(expectedResult) / (double) getTotal());
         } else {
             return 0.0;
         }
     }
 
-    public Double getPercentageFailingTestCount() {
-        if (getTotal() > 0) {
-            return (countTestsWithResult(TestResult.FAILURE) / (double) getTotal());
-        } else {
-            return 0.0;
-        }
+    public TestCoverageFormatter.FormattedPercentageStepCoverage getFormattedPercentageSteps() {
+        return new TestCoverageFormatter(this).getPercentSteps();
     }
 
-    public Double getPercentageErrorTestCount() {
-        if (getTotal() > 0) {
-            return (countTestsWithResult(TestResult.ERROR) / (double) getTotal());
-        } else {
-            return 0.0;
-        }
-    }
-
-    public Double getPercentagePendingTestCount() {
-        if (getTotal() > 0) {
-            return ((countTestsWithResult(TestResult.IGNORED)
-                    + countTestsWithResult(TestResult.SKIPPED)
-                    + countTestsWithResult(TestResult.PENDING)) / (double) getTotal());
-        } else {
-            return 0.0;
-        }
-    }
-
-    public String getDecimalPercentagePassingStepCount() {
-        return formatAsDecimal(getPercentagePassingStepCount());
-    }
-
-    public String getDecimalPercentagePendingStepCount() {
-        return formatAsDecimal(getPercentagePendingStepCount());
-    }
-
-    public String getDecimalPercentageFailingStepCount() {
-        return formatAsDecimal(getPercentageFailingStepCount());
-    }
-
-    public String getDecimalPercentageErrorStepCount() {
-        return formatAsDecimal(getPercentageErrorStepCount());
-    }
-
-
-    public String getDecimalPercentagePassingTestCount() {
-        return formatAsDecimal(getPercentagePassingTestCount());
-    }
-
-    public String getDecimalPercentagePendingTestCount() {
-        return formatAsDecimal(getPercentagePendingTestCount());
-    }
-
-    public String getDecimalPercentageFailingTestCount() {
-        return formatAsDecimal(getPercentageFailingTestCount());
-    }
-
-    public String getDecimalPercentageErrorTestCount() {
-        return formatAsDecimal(getPercentageErrorTestCount());
-    }
-
-    DecimalFormat decimalFormat = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.US));
-
-    private String formatAsDecimal(Double value) {
-        return decimalFormat.format(value);
-    }
-
-    /**
-     * @return The percent of failing steps, based on the real and estimated test size in terms of the relative number
-     *         of steps.
-     */
-    public Double getPercentageFailingStepCount() {
-        int failingStepCount = countStepsWithResult(TestResult.FAILURE);
-        return (failingStepCount / (double) getEstimatedTotalStepCount());
-    }
-
-    public Double getPercentageErrorStepCount() {
-        int errorStepCount = countStepsWithResult(TestResult.ERROR);
-        return (errorStepCount / (double) getEstimatedTotalStepCount());
-    }
-
-    /**
-     * @return The percent of pending steps, based on the real and estimated test size in terms of the relative number
-     *         of steps.
-     */
-    public Double getPercentagePendingStepCount() {
-        int passingOrFailingSteps = countStepsWithResult(TestResult.SUCCESS)
-                + countStepsWithResult(TestResult.FAILURE)
-                + countStepsWithResult(TestResult.ERROR);
-        if (passingOrFailingSteps == 0) {
-            return 1.0;
-        } else {
-            int pendingSteps = getEstimatedTotalStepCount() - passingOrFailingSteps;
-            return (pendingSteps / (double) getEstimatedTotalStepCount());
-        }
+    public TestCoverageFormatter.FormattedPercentageCoverage getFormattedPercentage() {
+        return new TestCoverageFormatter(this).getPercentTests();
     }
 
     /**
      * @return Formatted version of the test coverage metrics
      */
-    public CoverageFormatter getFormatted() {
-        return new CoverageFormatter(getPercentagePassingStepCount(),
-                getPercentagePendingStepCount(),
-                getPercentageFailingStepCount(),
-                getPercentageErrorStepCount());
+    public TestCoverageFormatter getFormatted() {
+        return new TestCoverageFormatter(this);
     }
 
-
-    /**
-     * @return Formatted version of the test coverage metrics
-     */
-    public CoverageFormatter getFormattedTestCount() {
-        return new CoverageFormatter(getPercentagePassingTestCount(),
-                getPercentagePendingTestCount(),
-                getPercentageFailingTestCount(),
-                getPercentageErrorTestCount());
+    protected int countStepsWithResult(TestResult expectedResult) {
+        return countStepsWithResult(expectedResult, TestType.ANY);
     }
 
-
-    private int countStepsWithResult(TestResult expectedResult) {
-        return sum(outcomes, on(TestOutcome.class).countNestedStepsWithResult(expectedResult));
+    private int countStepsWithResult(TestResult expectedResult, TestType testType) {
+        int stepCount = sum(outcomes, on(TestOutcome.class).countNestedStepsWithResult(expectedResult, testType));
+        if ((stepCount == 0) && aMatchingTestExists(expectedResult, testType)) {
+            return 1;
+        }
+        return stepCount;
     }
 
-    private int countTestsWithResult(TestResult expectedResult) {
+    private boolean aMatchingTestExists(TestResult expectedResult, TestType testType) {
+        return (countTestsWithResult(expectedResult, testType) > 0);
+    }
+
+    protected int countTestsWithResult(TestResult expectedResult) {
         return sum(outcomes, on(TestOutcome.class).countResults(expectedResult));
+    }
+
+    protected int countTestsWithResult(TestResult expectedResult, TestType testType) {
+        return sum(outcomes, on(TestOutcome.class).countResults(expectedResult, testType));
     }
 
     private Integer getEstimatedTotalStepCount() {

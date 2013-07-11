@@ -36,7 +36,7 @@ public class ThucydidesReportMojo extends AbstractMavenReport {
     /**
      * Thucydides test reports are read from here
      *
-     * @parameter expression="${thucydides.sourceDirectory}" default-value="${project.build.directory}/site/thucydides/"
+     * @parameter expression="${thucydides.source}" default-value="${project.build.directory}/site/thucydides/"
      * @required
      */
     public File sourceDirectory;

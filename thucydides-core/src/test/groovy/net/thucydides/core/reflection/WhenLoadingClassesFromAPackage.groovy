@@ -1,12 +1,11 @@
-package net.thucydides.core.reflection;
+package net.thucydides.core.reflection
 
 import net.thucydides.core.reflection.sampleclasses.SomeClass
 import net.thucydides.core.reflection.sampleclasses.SomeOtherClass
-import net.thucydides.jbehave.SomeBoilerplateSteps
-import spock.lang.Specification
 import net.thucydides.core.reflection.sampleclasses.SomeTestClass
-import org.junit.runner.RunWith
 import net.thucydides.sampletests.SomeTest
+import org.junit.runner.RunWith
+import spock.lang.Specification
 
 public class WhenLoadingClassesFromAPackage extends Specification {
 

@@ -25,8 +25,8 @@ public class TestScenarioWithParameterizedSteps {
     @Test
     @TestsRequirement("SOME_BUSINESS_RULE")
     public void happy_day_scenario() {
-        steps.stepWithAParameter("foo");
-        steps.stepWithTwoParameters("foo", 2);
+        steps.stepWithAParameter("proportionOf");
+        steps.stepWithTwoParameters("proportionOf", 2);
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
         steps.stepThatIsPending();

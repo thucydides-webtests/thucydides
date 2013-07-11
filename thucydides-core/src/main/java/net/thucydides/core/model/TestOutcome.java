@@ -28,34 +28,14 @@ import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
-import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.filter;
-import static ch.lambdaj.Lambda.flatten;
-import static ch.lambdaj.Lambda.having;
-import static ch.lambdaj.Lambda.join;
-import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.select;
-import static ch.lambdaj.Lambda.sort;
-import static ch.lambdaj.Lambda.sum;
+import static ch.lambdaj.Lambda.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static net.thucydides.core.model.ReportType.HTML;
 import static net.thucydides.core.model.ReportType.ROOT;
-import static net.thucydides.core.model.TestResult.ERROR;
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.IGNORED;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SKIPPED;
-import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.model.TestResult.*;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
 import static org.hamcrest.Matchers.is;
 
@@ -147,6 +127,7 @@ public class TestOutcome {
     private Optional<String> qualifier;
 
     private DataTable dataTable;
+    private boolean manualTest;
 
     /**
      * The title is immutable once set. For convenience, you can create a test
@@ -181,6 +162,12 @@ public class TestOutcome {
         this.issueTracking = issueTracking;
         return this;
     }
+
+    public TestOutcome asManualTest() {
+        this.manualTest = true;
+        return this;
+    }
+
 
     public void setEnvironmentVariables(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
@@ -457,6 +444,16 @@ public class TestOutcome {
         }
     }
 
+    public boolean hasNonStepFailure() {
+        boolean stepsContainFailure = false;
+        for(TestStep step : getFlattenedTestSteps()) {
+            if (step.getResult() == FAILURE || step.getResult() == ERROR) {
+                stepsContainFailure = true;
+            }
+        }
+        return (!stepsContainFailure && (getResult() == ERROR || getResult() == FAILURE));
+    }
+
     public List<TestStep> getFlattenedTestSteps() {
         List<TestStep> flattenedTestSteps = new ArrayList<TestStep>();
         for (TestStep step : getTestSteps()) {
@@ -502,6 +499,13 @@ public class TestOutcome {
         return testResults.getOverallResult();
     }
 
+    public TestOutcome recordSteps(final List<TestStep> steps) {
+        for(TestStep step : steps) {
+            recordStep(step);
+        }
+        return this;
+    }
+
     /**
      * Add a test step to this acceptance test.
      * @param step a completed step to be added to this test outcome.
@@ -515,14 +519,6 @@ public class TestOutcome {
             testSteps.add(step);
         }
         return this;
-    }
-
-    public TestOutcome withStep(final TestStep step) {
-        return recordStep(step);
-    }
-
-    public TestOutcome andStep(final TestStep step) {
-        return recordStep(step);
     }
 
     private TestStep getCurrentStepGroup() {
@@ -632,7 +628,7 @@ public class TestOutcome {
     }
 
     public Throwable getTestFailureCause() {
-        return this.testFailureCause;
+        return testFailureCause;
     }
 
     public void setAnnotatedResult(final TestResult annotatedResult) {
@@ -822,6 +818,11 @@ public class TestOutcome {
         dataTable.addRow(data);
     }
 
+    public void addRow(DataTableRow dataTableRow) {
+        dataTable.addRow(dataTableRow);
+    }
+
+
     public int getTestCount() {
         return isDataDriven() ? getDataTable().getSize() : 1;
     }
@@ -831,25 +832,39 @@ public class TestOutcome {
     }
 
     public int countResults(TestResult expectedResult) {
+        return countResults(expectedResult, TestType.ANY);
+    }
+
+    public int countResults(TestResult expectedResult, TestType expectedType) {
         if (isDataDriven()) {
             return countDataRowsWithResult(expectedResult);
         } else {
-            return (getResult() == expectedResult) ? 1 : 0;
+            return (getResult() == expectedResult) && (typeCompatibleWith(expectedType)) ? 1 : 0;
+        }
+    }
+
+    public boolean typeCompatibleWith(TestType testType) {
+        switch (testType) {
+            case MANUAL:
+                return isManual();
+            case AUTOMATED:
+                return !isManual();
+            default:
+                return true;
         }
     }
 
     private int countDataRowsWithResult(TestResult expectedResult) {
         List<DataTableRow> matchingRows
-                = filter(having(on(DataTableRow.class).getResult(), is(expectedResult)),
-                getDataTable().getRows());
+                = filter(having(on(DataTableRow.class).getResult(), is(expectedResult)), getDataTable().getRows());
         return matchingRows.size();
     }
 
-    public int countNestedStepsWithResult(TestResult expectedResult) {
+    public int countNestedStepsWithResult(TestResult expectedResult, TestType testType) {
         if (isDataDriven()) {
             return countDataRowStepsWithResult(expectedResult);
         } else {
-            return (getResult() == expectedResult) ? getNestedStepCount() : 0;
+            return (getResult() == expectedResult) && (typeCompatibleWith(testType)) ? getNestedStepCount() : 0;
         }
     }
 
@@ -883,6 +898,10 @@ public class TestOutcome {
 
     public void setStartTime(DateTime startTime) {
         this.startTime = startTime.getMillis();
+    }
+
+    public boolean isManual() {
+        return manualTest;
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {

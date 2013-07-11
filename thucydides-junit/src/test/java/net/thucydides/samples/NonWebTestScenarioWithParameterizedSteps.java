@@ -13,8 +13,8 @@ public class NonWebTestScenarioWithParameterizedSteps {
         
     @Test
     public void happy_day_scenario() {
-        steps.stepWithAParameter("foo");
-        steps.stepWithTwoParameters("foo", 2);
+        steps.stepWithAParameter("proportionOf");
+        steps.stepWithTwoParameters("proportionOf", 2);
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
         steps.stepThatIsPending();
