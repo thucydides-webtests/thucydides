@@ -1,5 +1,6 @@
-package net.thucydides.core
+package net.thucydides.core.reports
 
+import net.thucydides.core.ThucydidesReports
 import net.thucydides.core.util.MockEnvironmentVariables
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration
 import org.openqa.selenium.WebDriver

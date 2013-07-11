@@ -51,6 +51,10 @@ public class TestStep {
         return !getScreenshots().isEmpty();
     }
 
+    protected List<TestStep> children() {
+        return children;
+    }
+
     public static class TestStepBuilder {
         private final String description;
 

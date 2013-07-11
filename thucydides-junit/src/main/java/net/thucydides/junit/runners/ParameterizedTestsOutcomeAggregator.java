@@ -1,10 +1,15 @@
 package net.thucydides.junit.runners;
 
 import com.google.common.collect.Lists;
+import net.thucydides.core.model.DataTableRow;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestResultList;
 import net.thucydides.core.model.TestStep;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.runner.Runner;
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +51,7 @@ public class ParameterizedTestsOutcomeAggregator {
                     nextStep.setDescription(normalizeTestStepDescription(nextStep.getDescription(), scenarioOutcomes.get(normalizedMethodName).getTestSteps().size() + 1));
                     scenarioOutcomes.get(normalizedMethodName).recordStep(nextStep);
                 }
-
+                updateResultsForAnyExternalFailures(scenarioOutcomes.get(normalizedMethodName), testOutcome);
                 scenarioOutcomes.get(normalizedMethodName).getDataTable().addRows(testOutcome.getDataTable().getRows());
 
             } else {
@@ -59,6 +64,25 @@ public class ParameterizedTestsOutcomeAggregator {
         aggregatedScenarioOutcomes.addAll(scenarioOutcomes.values());
         return aggregatedScenarioOutcomes;
 
+    }
+
+    private void updateResultsForAnyExternalFailures(TestOutcome scenarioOutcome, TestOutcome testOutcome) {
+        if (rowResultsAreInconsistantWithOverallResult(testOutcome)) {
+            testOutcome.getDataTable().getRows().get(0).updateResult(testOutcome.getResult());
+            scenarioOutcome.addFailingExternalStep(testOutcome.getTestFailureCause());
+        }
+    }
+
+    private boolean rowResultsAreInconsistantWithOverallResult(TestOutcome testOutcome) {
+        TestResult overallRowResult = overallResultFrom(testOutcome.getDataTable().getRows());
+        return (testOutcome.isError() || testOutcome.isFailure())
+                && (!testOutcome.getDataTable().getRows().isEmpty())
+                && (testOutcome.getResult() != overallRowResult);
+    }
+
+    private TestResult overallResultFrom(List<DataTableRow> rows) {
+        TestResultList rowResults = TestResultList.of(extract(rows, on(DataTableRow.class).getResult()));
+        return rowResults.getOverallResult();
     }
 
     private String normalizeTestStepDescription(String description, int index) {

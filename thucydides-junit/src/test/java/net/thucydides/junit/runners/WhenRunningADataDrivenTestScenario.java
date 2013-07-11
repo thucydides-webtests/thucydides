@@ -22,6 +22,7 @@ import net.thucydides.samples.SampleCSVDataDrivenScenario;
 import net.thucydides.samples.SampleDataDrivenIgnoredScenario;
 import net.thucydides.samples.SampleDataDrivenPendingScenario;
 import net.thucydides.samples.SampleDataDrivenScenario;
+import net.thucydides.samples.SampleDataDrivenScenarioWithExternalFailure;
 import net.thucydides.samples.SampleParallelDataDrivenScenario;
 import net.thucydides.samples.SamplePassingScenarioWithTestSpecificData;
 import net.thucydides.samples.SampleScenarioSteps;
@@ -364,6 +365,24 @@ public class WhenRunningADataDrivenTestScenario {
         assertThat(dataDrivenSteps.get(1).getResult(), is(TestResult.FAILURE));
         assertThat(dataDrivenSteps.get(2).getResult(), is(TestResult.SUCCESS));
 
+    }
+
+    @Test
+    public void when_a_parameterized_test_fails_outside_a_step_a_failure_should_be_recorded() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                outputDirectory.getAbsolutePath());
+
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenarioWithExternalFailure.class);
+
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> executedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).getTestOutcomesForAllParameterSets();
+        assertThat(executedScenarios.size(), is(10));
+        assertThat(executedScenarios.get(0).getResult(), is(TestResult.SUCCESS));
+        assertThat(executedScenarios.get(1).getResult(), is(TestResult.FAILURE));
+        assertThat(executedScenarios.get(2).getResult(), is(TestResult.SUCCESS));
     }
 
     @Test
@@ -719,8 +738,6 @@ public class WhenRunningADataDrivenTestScenario {
                             outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
-
-        AcceptanceTestReporter reporter = mock(AcceptanceTestReporter.class);
 
         runner.run(new RunNotifier());
 

@@ -19,6 +19,7 @@ import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.statistics.service.TagProvider;
 import net.thucydides.core.statistics.service.TagProviderService;
+import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -715,11 +716,43 @@ public class TestOutcome {
         issues().add(issue);
     }
 
-    public void lastStepFailedWith(StepFailure failure) {
-        setTestFailureCause(failure.getException());
-        TestStep lastTestStep = testSteps.get(testSteps.size() - 1);
-        lastTestStep.failedWith(new StepFailureException(failure.getMessage(), failure.getException()));
+    public void addFailingExternalStep(Throwable testFailureCause) {
+        // Add as a sibling of the last deepest group
+        addFailingStepAsSibling(testSteps, testFailureCause);
     }
+
+    public void addFailingStepAsSibling(List<TestStep> testStepList, Throwable testFailureCause) {
+        if (testStepList.isEmpty()) {
+            testSteps.add(failingStep(testFailureCause));
+        } else {
+            TestStep lastStep = lastStepIn(testStepList);
+            if (lastStep.hasChildren()) {
+                addFailingStepAsSibling(lastStep.children(), testFailureCause);
+            } else {
+                testStepList.add(failingStep(testFailureCause));
+            }
+        }
+    }
+
+    private TestStep failingStep(Throwable testFailureCause) {
+        TestStep failingStep = new TestStep("Failure");
+        failingStep.failedWith(testFailureCause);
+        return failingStep;
+    }
+
+    public void lastStepFailedWith(StepFailure failure) {
+        lastStepFailedWith(failure.getException());
+//        setTestFailureCause(failure.getException());
+//        TestStep lastTestStep = testSteps.get(testSteps.size() - 1);
+//        lastTestStep.failedWith(new StepFailureException(failure.getMessage(), failure.getException()));
+    }
+
+    public void lastStepFailedWith(Throwable testFailureCause) {
+        setTestFailureCause(testFailureCause);
+        TestStep lastTestStep = testSteps.get(testSteps.size() - 1);
+        lastTestStep.failedWith(new StepFailureException(testFailureCause.getMessage(), testFailureCause));
+    }
+
 
     public Set<TestTag> getTags() {
         if (tags == null) {
