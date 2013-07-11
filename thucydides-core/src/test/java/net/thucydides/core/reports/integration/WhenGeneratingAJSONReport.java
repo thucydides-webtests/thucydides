@@ -632,62 +632,69 @@ public class WhenGeneratingAJSONReport {
         assertTrue(result.getMessage(), result.passed());
     }
 
-    /*@Test
+    @Test
     public void should_include_the_session_id_if_provided_in_the_XML_report()
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
         DateTime startTime = new DateTime(2013,1,1,0,0,0,0);
         testOutcome.setStartTime(startTime);
-
-        String expectedReport =
-                "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'   timestamp='2013-01-01T00:00:00.000-05:00' session-id='1234'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
-                        + "  <tags>\n"
-                        + "    <tag name='A user story' type='story'/>\n"
-                        + "  </tags>\n"
-                        + "  <test-step result='SUCCESS' duration='0'>\n"
-                        + "    <description>step 1</description>\n"
-                        + "  </test-step>\n"
-                        + "</acceptance-test-run>";
+        
+        String expectedJsonReport =  
+        	"{\n" + 
+        	"  \"title\": \"Should do this\",\n" + 
+        	"  \"name\": \"should_do_this\",\n" + 
+        	"  \"test-case\": {\n" + 
+        	"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenario\"\n" + 
+        	"  },\n" + 
+        	"  \"result\": \"SUCCESS\",\n" + 
+        	"  \"steps\": \"1\",\n" + 
+        	"  \"successful\": \"1\",\n" + 
+        	"  \"failures\": \"0\",\n" + 
+        	"  \"skipped\": \"0\",\n" + 
+        	"  \"ignored\": \"0\",\n" + 
+        	"  \"pending\": \"0\",\n" + 
+        	"  \"duration\": \"0\",\n" + 
+        	"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
+        	"  \"session-id\": \"1234\",\n" + 
+        	"  \"user-story\": {\n" + 
+        	"    \"userStoryClass\": {\n" + 
+        	"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
+        	"    },\n" + 
+        	"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
+        	"    \"storyName\": \"A user story\",\n" + 
+        	"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
+        	"  },\n" + 
+        	"  \"issues\": [],\n" + 
+        	"  \"tags\": [\n" + 
+        	"    {\n" + 
+        	"      \"name\": \"A user story\",\n" + 
+        	"      \"type\": \"story\"\n" + 
+        	"    }\n" + 
+        	"  ],\n" + 
+        	"  \"test-steps\": [\n" + 
+        	"    {\n" + 
+        	"      \"description\": \"step 1\",\n" + 
+        	"      \"duration\": 0,\n" + 
+        	"      \"startTime\": 1373571216867,\n" + 
+        	"      \"screenshots\": [],\n" + 
+        	"      \"result\": \"SUCCESS\",\n" + 
+        	"      \"children\": []\n" + 
+        	"    }\n" + 
+        	"  ]\n" + 
+        	"}";	
+        		
 
         testOutcome.setSessionId("1234");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
-
-        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
+        
+        File jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+        JSONComparator jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator));       
+        JSONCompareResult result = JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport), jsonCmp);
+        
+        assertTrue(result.getMessage(), result.passed());
     }
 
-    @Test
-    public void should_include_issues_in_the_XML_report()
-            throws Exception {
-        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", ATestScenarioWithIssues.class);
-        DateTime startTime = new DateTime(2013,1,1,0,0,0,0);
-        testOutcome.setStartTime(startTime);
-        String expectedReport =
-                "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'  timestamp='2013-01-01T00:00:00.000-05:00'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
-                        + "  <issues>\n"
-                        + "    <issue>#456</issue>\n"
-                        + "    <issue>#789</issue>\n"
-                        + "    <issue>#123</issue>\n"
-                        + "  </issues>\n"
-                        + "  <tags>\n"
-                        + "    <tag name='A user story' type='story'/>\n"
-                        + "  </tags>\n"
-                        + "  <test-step result='SUCCESS' duration='0'>\n"
-                        + "    <description>step 1</description>\n"
-                        + "  </test-step>\n"
-                        + "</acceptance-test-run>";
-
-        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
-
-        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, isSimilarTo(expectedReport, "timestamp"));
-    }
+    
 
     @Test
     public void the_xml_report_should_contain_the_feature_if_provided()
@@ -695,28 +702,67 @@ public class WhenGeneratingAJSONReport {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioInAFeature.class);
         DateTime startTime = new DateTime(2013,1,1,0,0,0,0);
         testOutcome.setStartTime(startTime);
-
-        String expectedReport =
-                "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0' timestamp='2013-01-01T00:00:00.000-05:00'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.AUserStoryInAFeature' name='A user story in a feature' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature'>\n"
-                        + "    <feature id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature' name='A feature'/>\n"
-                        + "  </user-story>\n"
-                        + "  <tags>\n"
-                        + "    <tag name='A feature' type='feature'/>\n"
-                        + "    <tag name='A user story in a feature' type='story'/>\n"
-                        + "  </tags>"
-                        + "  <test-step result='SUCCESS' duration='0'>\n"
-                        + "    <description>step 1</description>\n"
-                        + "  </test-step>\n"
-                        + "</acceptance-test-run>";
-
+        
+        String expectedJsonReport =
+        		"{\n" + 
+        		"  \"title\": \"Should do this\",\n" + 
+        		"  \"name\": \"should_do_this\",\n" + 
+        		"  \"test-case\": {\n" + 
+        		"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenarioInAFeature\"\n" + 
+        		"  },\n" + 
+        		"  \"result\": \"SUCCESS\",\n" + 
+        		"  \"steps\": \"1\",\n" + 
+        		"  \"successful\": \"1\",\n" + 
+        		"  \"failures\": \"0\",\n" + 
+        		"  \"skipped\": \"0\",\n" + 
+        		"  \"ignored\": \"0\",\n" + 
+        		"  \"pending\": \"0\",\n" + 
+        		"  \"duration\": \"0\",\n" + 
+        		"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
+        		"  \"user-story\": {\n" + 
+        		"    \"userStoryClass\": {\n" + 
+        		"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AFeature$AUserStoryInAFeature\"\n" + 
+        		"    },\n" + 
+        		"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature.AUserStoryInAFeature\",\n" + 
+        		"    \"storyName\": \"A user story in a feature\",\n" + 
+        		"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature\",\n" + 
+        		"    \"qualifiedFeatureClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature\",\n" + 
+        		"    \"featureName\": \"A feature\"\n" + 
+        		"  },\n" + 
+        		"  \"issues\": [],\n" + 
+        		"  \"tags\": [\n" + 
+        		"    {\n" + 
+        		"      \"name\": \"A feature\",\n" + 
+        		"      \"type\": \"feature\"\n" + 
+        		"    },\n" + 
+        		"    {\n" + 
+        		"      \"name\": \"A user story in a feature\",\n" + 
+        		"      \"type\": \"story\"\n" + 
+        		"    }\n" + 
+        		"  ],\n" + 
+        		"  \"test-steps\": [\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 1\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373572931641,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"SUCCESS\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    }\n" + 
+        		"  ]\n" + 
+        		"}\n" + 
+        		"";
+        	
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
+        
+        File jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+        System.out.println(getStringFrom(jsonReport));
+        JSONComparator jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator));       
+        JSONCompareResult result = JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport), jsonCmp);        
+        assertTrue(result.getMessage(), result.passed());
     }
+
 
     @Test
     public void the_xml_report_should_record_features_and_stories_as_tags()
@@ -724,30 +770,67 @@ public class WhenGeneratingAJSONReport {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioInAFeature.class);
         DateTime startTime = new DateTime(2013,1,1,0,0,0,0);
         testOutcome.setStartTime(startTime);
-
-        String expectedReport =
-                "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0' timestamp='2013-01-01T00:00:00.000-05:00'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.AUserStoryInAFeature' name='A user story in a feature' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature'>\n"
-                        + "    <feature id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature' name='A feature'/>\n"
-                        + "  </user-story>\n"
-                        + "  <tags>\n"
-                        + "    <tag name='A feature' type='feature' />\n"
-                        + "    <tag name='A user story in a feature' type='story' />\n"
-                        + "  </tags>\n"
-                        + "  <test-step result='SUCCESS' duration='0'>\n"
-                        + "    <description>step 1</description>\n"
-                        + "  </test-step>\n"
-                        + "</acceptance-test-run>";
+       
+        String expectedJsonReport = 
+        		"{\n" + 
+        		"  \"title\": \"Should do this\",\n" + 
+        		"  \"name\": \"should_do_this\",\n" + 
+        		"  \"test-case\": {\n" + 
+        		"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenarioInAFeature\"\n" + 
+        		"  },\n" + 
+        		"  \"result\": \"SUCCESS\",\n" + 
+        		"  \"steps\": \"1\",\n" + 
+        		"  \"successful\": \"1\",\n" + 
+        		"  \"failures\": \"0\",\n" + 
+        		"  \"skipped\": \"0\",\n" + 
+        		"  \"ignored\": \"0\",\n" + 
+        		"  \"pending\": \"0\",\n" + 
+        		"  \"duration\": \"0\",\n" + 
+        		"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
+        		"  \"user-story\": {\n" + 
+        		"    \"userStoryClass\": {\n" + 
+        		"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AFeature$AUserStoryInAFeature\"\n" + 
+        		"    },\n" + 
+        		"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature.AUserStoryInAFeature\",\n" + 
+        		"    \"storyName\": \"A user story in a feature\",\n" + 
+        		"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature\",\n" + 
+        		"    \"qualifiedFeatureClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature\",\n" + 
+        		"    \"featureName\": \"A feature\"\n" + 
+        		"  },\n" + 
+        		"  \"issues\": [],\n" + 
+        		"  \"tags\": [\n" + 
+        		"    {\n" + 
+        		"      \"name\": \"A feature\",\n" + 
+        		"      \"type\": \"feature\"\n" + 
+        		"    },\n" + 
+        		"    {\n" + 
+        		"      \"name\": \"A user story in a feature\",\n" + 
+        		"      \"type\": \"story\"\n" + 
+        		"    }\n" + 
+        		"  ],\n" + 
+        		"  \"test-steps\": [\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 1\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373573723398,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"SUCCESS\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    }\n" + 
+        		"  ]\n" + 
+        		"}\n" + 
+        		"";
 
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
+        File jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+        System.out.println(getStringFrom(jsonReport));
+        JSONComparator jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator));       
+        JSONCompareResult result = JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport), jsonCmp);        
+        assertTrue(result.getMessage(), result.passed());
     }
 
-
+    /*@Test
     @Test
     public void should_generate_a_qualified_XML_report_for_an_acceptance_test_run_if_the_qualifier_is_specified() throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
