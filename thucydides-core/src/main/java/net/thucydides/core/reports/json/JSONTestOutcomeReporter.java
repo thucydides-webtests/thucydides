@@ -19,8 +19,8 @@ import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.reports.saucelabs.SaucelabsLinkGenerator;
-import net.thucydides.core.util.EnvironmentVariables;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +44,9 @@ import com.google.gson.JsonSerializer;
 
 public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 
+	public static final String NEW_LINE_CHAR = "\n";
+	public static final String ESCAPE_CHAR_FOR_NEW_LINE = "&amp;#10;";
+
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(JSONTestOutcomeReporter.class);
 
@@ -55,12 +58,19 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 
 	public JSONTestOutcomeReporter() {
 		GsonBuilder builder = new GsonBuilder();
-		builder.setPrettyPrinting();		
-		builder.registerTypeAdapter(Class.class, new ClassTypeAdapter());			
-		builder.registerTypeAdapter(IssueTracking.class,new IssueTrackingInstanceCreator());
-		builder.registerTypeAdapter(Optional.class, new GsonOptionalDeserializer<String>());
-		builder.registerTypeAdapter(LinkGenerator.class,new LinkGeneratorInstanceCreator());
-		builder.setExclusionStrategies(new MyExclusionStrategy(EnvironmentVariables.class));
+		builder.setPrettyPrinting();
+		//builder.serializeNulls();
+		builder.registerTypeAdapter(TestOutcome.class, new TestOutcomeSerializer());
+		builder.registerTypeAdapter(Class.class, new ClassTypeAdapter());
+		/*builder.registerTypeAdapter(String.class, new StringTypeAdapter());
+		builder.registerTypeAdapter(IssueTracking.class,
+				new IssueTrackingInstanceCreator());
+		builder.registerTypeAdapter(Optional.class,
+				new GsonOptionalDeserializer<String>());
+		builder.registerTypeAdapter(LinkGenerator.class,
+				new LinkGeneratorInstanceCreator());
+		builder.setExclusionStrategies(new MyExclusionStrategy(
+				EnvironmentVariables.class));*/
 		gson = builder.create();
 	}
 
@@ -72,14 +82,14 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 	@Override
 	public File generateReportFor(TestOutcome testOutcome,
 			TestOutcomes allTestOutcomes) throws IOException {
-		TestOutcome storedTestOutcome = testOutcome.withQualifier(qualifier);
-		storedTestOutcome.setTitle(storedTestOutcome.getTitle());
+		TestOutcome storedTestOutcome = testOutcome.withQualifier(qualifier);	
 		Preconditions.checkNotNull(outputDirectory);
 		String json = gson.toJson(storedTestOutcome);
 		String reportFilename = reportFor(storedTestOutcome);
 		File report = new File(getOutputDirectory(), reportFilename);
 		OutputStream outputStream = new FileOutputStream(report);
-		OutputStreamWriter writer = new OutputStreamWriter(outputStream,Charset.forName("UTF-8"));
+		OutputStreamWriter writer = new OutputStreamWriter(outputStream,
+				Charset.forName("UTF-8"));
 		writer.write(json);
 		writer.flush();
 		writer.close();
@@ -104,7 +114,7 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 	public void setQualifier(final String qualifier) {
 		this.qualifier = qualifier;
 	}
-	
+
 	public void setResourceDirectory(String resourceDirectoryPath) {
 	}
 
@@ -118,36 +128,44 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 		public JsonElement serialize(Class<?> src,
 				java.lang.reflect.Type typeOfSrc,
 				JsonSerializationContext context) {
-			JsonObject jsonObject = new JsonObject();			
+			JsonObject jsonObject = new JsonObject();
 			jsonObject.add(CLASSNAME, new JsonPrimitive(src.getName()));
 			JsonArray issuesJsonArray = new JsonArray();
-			TestAnnotations testAnnotationsForClass = TestAnnotations.forClass(src);
-			String[] annotatedIssuesForTestCase = testAnnotationsForClass.getAnnotatedIssuesForTestCase(src);
-			addIssuesToCollectingJsonArray(issuesJsonArray,annotatedIssuesForTestCase);	
-			String annotatedIssueForTestCase = testAnnotationsForClass.getAnnotatedIssueForTestCase(src);
-			if(annotatedIssueForTestCase != null) {
-				issuesJsonArray.add(new JsonPrimitive(annotatedIssueForTestCase));
+			TestAnnotations testAnnotationsForClass = TestAnnotations
+					.forClass(src);
+			String[] annotatedIssuesForTestCase = testAnnotationsForClass
+					.getAnnotatedIssuesForTestCase(src);
+			addIssuesToCollectingJsonArray(issuesJsonArray,
+					annotatedIssuesForTestCase);
+			String annotatedIssueForTestCase = testAnnotationsForClass
+					.getAnnotatedIssueForTestCase(src);
+			if (annotatedIssueForTestCase != null) {
+				issuesJsonArray
+						.add(new JsonPrimitive(annotatedIssueForTestCase));
 			}
-			for(Method currentMethod : src.getMethods()) {
-				String[] annotatedIssuesForMethod = testAnnotationsForClass.getAnnotatedIssuesForMethod(currentMethod.getName());
-				addIssuesToCollectingJsonArray(issuesJsonArray, annotatedIssuesForMethod);
-				Optional<String> annotatedIssueForMethod = testAnnotationsForClass.getAnnotatedIssueForMethod(currentMethod.getName());
-				if(annotatedIssueForMethod.isPresent()) {
-					issuesJsonArray.add(new JsonPrimitive(annotatedIssueForMethod.get()));
+			for (Method currentMethod : src.getMethods()) {
+				String[] annotatedIssuesForMethod = testAnnotationsForClass
+						.getAnnotatedIssuesForMethod(currentMethod.getName());
+				addIssuesToCollectingJsonArray(issuesJsonArray,
+						annotatedIssuesForMethod);
+				Optional<String> annotatedIssueForMethod = testAnnotationsForClass
+						.getAnnotatedIssueForMethod(currentMethod.getName());
+				if (annotatedIssueForMethod.isPresent()) {
+					issuesJsonArray.add(new JsonPrimitive(
+							annotatedIssueForMethod.get()));
 				}
-			}	
-			if(issuesJsonArray.size() > 0) {
+			}
+			if (issuesJsonArray.size() > 0) {
 				jsonObject.add(ISSUES, issuesJsonArray);
-			}	
+			}
 			return jsonObject;
 		}
 
 		private void addIssuesToCollectingJsonArray(JsonArray issuesJsonArray,
 				String[] issues) {
-			if(issues != null) 
-			{				
-				for(String issue : issues) {
-					issuesJsonArray.add(new JsonPrimitive(issue));					
+			if (issues != null) {
+				for (String issue : issues) {
+					issuesJsonArray.add(new JsonPrimitive(issue));
 				}
 			}
 		}
@@ -155,9 +173,9 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 		@Override
 		public Class<?> deserialize(JsonElement json, Type typeOfT,
 				JsonDeserializationContext context) throws JsonParseException {
-			JsonObject jsonObject = json.getAsJsonObject();			
-			try {			
-				return Class.forName(jsonObject.get(CLASSNAME).getAsString());								
+			JsonObject jsonObject = json.getAsJsonObject();
+			try {
+				return Class.forName(jsonObject.get(CLASSNAME).getAsString());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				return null;
@@ -165,25 +183,45 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 		}
 	}
 
+	private static class StringTypeAdapter implements JsonSerializer<String>,
+			JsonDeserializer<String> {
+
+		@Override
+		public JsonElement serialize(String src,
+				java.lang.reflect.Type typeOfSrc,
+				JsonSerializationContext context) {
+
+			JsonPrimitive escapedString = new JsonPrimitive(escape(src));
+			return escapedString;
+		}
+
+		@Override
+		public String deserialize(JsonElement json, Type typeOfT,
+				JsonDeserializationContext context) throws JsonParseException {
+			String jsonString = json.getAsString();
+			return unescape(jsonString);
+		}
+	}
+
+
 	public class MyExclusionStrategy implements ExclusionStrategy {
-		
+
 		private final Class<?>[] typeToSkip;
 
 		private MyExclusionStrategy(Class<?>... typeToSkip) {
 			this.typeToSkip = typeToSkip;
 		}
 
-		public boolean shouldSkipClass(Class<?> clazz) 
-		{
-			for(Class<?> currentClass : typeToSkip) {
+		public boolean shouldSkipClass(Class<?> clazz) {
+			for (Class<?> currentClass : typeToSkip) {
 				if (currentClass == clazz) {
 					return true;
-				}	
+				}
 			}
-			return false;			
+			return false;
 		}
 
-		public boolean shouldSkipField(FieldAttributes f) {			
+		public boolean shouldSkipField(FieldAttributes f) {
 			return false;
 		}
 	}
@@ -214,25 +252,44 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 			return new SaucelabsLinkGenerator();
 		}
 	}
-	
-	private class GsonOptionalDeserializer<T>
-	implements JsonSerializer<Optional<T>>, JsonDeserializer<Optional<T>> {
 
-	    @Override
-	    public Optional<T> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-	            throws JsonParseException {
-	        final JsonArray asJsonArray = json.getAsJsonArray();
-	        final JsonElement jsonElement = asJsonArray.get(0);
-	        final T value = context.deserialize(jsonElement, ((ParameterizedType) typeOfT).getActualTypeArguments()[0]);
-	        return Optional.fromNullable(value);
-	    }
+	private class GsonOptionalDeserializer<T> implements
+			JsonSerializer<Optional<T>>, JsonDeserializer<Optional<T>> {
 
-	    @Override
-	    public JsonElement serialize(Optional<T> src, Type typeOfSrc, JsonSerializationContext context) {
-	        final JsonElement element = context.serialize(src.orNull());
-	        final JsonArray result = new JsonArray();
-	        result.add(element);
-	        return result;
-	    }
-	}	
+		@Override
+		public Optional<T> deserialize(JsonElement json, Type typeOfT,
+				JsonDeserializationContext context) throws JsonParseException {
+			final JsonArray asJsonArray = json.getAsJsonArray();
+			final JsonElement jsonElement = asJsonArray.get(0);
+			final T value = context.deserialize(jsonElement,
+					((ParameterizedType) typeOfT).getActualTypeArguments()[0]);
+			return Optional.fromNullable(value);
+		}
+
+		@Override
+		public JsonElement serialize(Optional<T> src, Type typeOfSrc,
+				JsonSerializationContext context) {
+			final JsonElement element = context.serialize(src.orNull());
+			final JsonArray result = new JsonArray();
+			result.add(element);
+			return result;
+		}
+	}
+
+	private static String escape(String attribute) {
+
+		if (StringUtils.isNotEmpty(attribute)) {
+			attribute = StringUtils.replace(attribute, NEW_LINE_CHAR,
+					ESCAPE_CHAR_FOR_NEW_LINE);
+		}
+		return attribute;
+	}
+
+	private static String unescape(String attribute) {
+		if (StringUtils.isNotEmpty(attribute)) {
+			attribute = StringUtils.replace(attribute,
+					ESCAPE_CHAR_FOR_NEW_LINE, NEW_LINE_CHAR);
+		}
+		return attribute;
+	}			
 }
