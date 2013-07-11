@@ -274,6 +274,6 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
     }
 
     public Object executeAsyncScript(String script, Object... parameters) {
-        return ((JavascriptExecutor) getProxiedDriver()).executeScript(script, parameters);
+        return ((JavascriptExecutor) getProxiedDriver()).executeAsyncScript(script, parameters);
     }
 }
