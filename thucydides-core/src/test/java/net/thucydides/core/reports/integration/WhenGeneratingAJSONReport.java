@@ -2,7 +2,10 @@ package net.thucydides.core.reports.integration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.startsWith;
+
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -15,6 +18,7 @@ import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.WithTag;
+import net.thucydides.core.digest.Digest;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
@@ -830,35 +834,70 @@ public class WhenGeneratingAJSONReport {
         assertTrue(result.getMessage(), result.passed());
     }
 
-    /*@Test
+    
     @Test
     public void should_generate_a_qualified_XML_report_for_an_acceptance_test_run_if_the_qualifier_is_specified() throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         DateTime startTime = new DateTime(2013,1,1,0,0,0,0);
         testOutcome.setStartTime(startTime);
-
-        String expectedReport =
-                "<acceptance-test-run title='A simple test case [qualifier]' name='a_simple_test_case' qualifier='qualifier' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0' timestamp='2013-01-01T00:00:00.000-05:00'>\n"
-                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
-                        + "  <tags>\n"
-                        + "    <tag name='A user story' type='story'/>\n"
-                        + "  </tags>\n"
-                        + "  <test-step result='SUCCESS' duration='0'>\n"
-                        + "    <description>step 1</description>\n"
-                        + "  </test-step>\n"
-                        + "</acceptance-test-run>";
+       
+        String expectedJsonReport = 
+        		"{\n" + 
+        		"  \"title\": \"A simple test case [qualifier]\",\n" + 
+        		"  \"name\": \"a_simple_test_case\",\n" + 
+        		"  \"test-case\": {\n" + 
+        		"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenario\"\n" + 
+        		"  },\n" + 
+        		"  \"result\": \"SUCCESS\",\n" + 
+        		"  \"qualifier\": \"qualifier\",\n" + 
+        		"  \"steps\": \"1\",\n" + 
+        		"  \"successful\": \"1\",\n" + 
+        		"  \"failures\": \"0\",\n" + 
+        		"  \"skipped\": \"0\",\n" + 
+        		"  \"ignored\": \"0\",\n" + 
+        		"  \"pending\": \"0\",\n" + 
+        		"  \"duration\": \"0\",\n" + 
+        		"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
+        		"  \"user-story\": {\n" + 
+        		"    \"userStoryClass\": {\n" + 
+        		"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
+        		"    },\n" + 
+        		"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
+        		"    \"storyName\": \"A user story\",\n" + 
+        		"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
+        		"  },\n" + 
+        		"  \"issues\": [],\n" + 
+        		"  \"tags\": [\n" + 
+        		"    {\n" + 
+        		"      \"name\": \"A user story\",\n" + 
+        		"      \"type\": \"story\"\n" + 
+        		"    }\n" + 
+        		"  ],\n" + 
+        		"  \"test-steps\": [\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 1\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373574203456,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"SUCCESS\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    }\n" + 
+        		"  ]\n" + 
+        		"}\n" + 
+        		"";
 
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
 
         reporter.setQualifier("qualifier");
-        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
-    }
+        
+        File jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+        System.out.println(getStringFrom(jsonReport));
+        JSONComparator jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator));       
+        JSONCompareResult result = JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport), jsonCmp);        
+        assertTrue(result.getMessage(), result.passed());    }
 
     @Test
-    public void should_generate_a_qualified_XML_report_with_formatted_parameters_if_the_qualifier_is_specified()
+    public void should_generate_a_qualified_JSON_report_with_formatted_parameters_if_the_qualifier_is_specified()
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         DateTime startTime = new DateTime(2013,1,1,0,0,0,0);
@@ -876,12 +915,58 @@ public class WhenGeneratingAJSONReport {
                         + "</acceptance-test-run>";
 
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+        
+        String expectedJsonReport 
+        	= "{\n" + 
+			"  \"title\": \"A simple test case [a_b]\",\n" + 
+			"  \"name\": \"a_simple_test_case\",\n" + 
+			"  \"test-case\": {\n" + 
+			"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenario\"\n" + 
+			"  },\n" + 
+			"  \"result\": \"SUCCESS\",\n" + 
+			"  \"qualifier\": \"a_b\",\n" + 
+			"  \"steps\": \"1\",\n" + 
+			"  \"successful\": \"1\",\n" + 
+			"  \"failures\": \"0\",\n" + 
+			"  \"skipped\": \"0\",\n" + 
+			"  \"ignored\": \"0\",\n" + 
+			"  \"pending\": \"0\",\n" + 
+			"  \"duration\": \"0\",\n" + 
+			"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
+			"  \"user-story\": {\n" + 
+			"    \"userStoryClass\": {\n" + 
+			"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
+			"    },\n" + 
+			"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
+			"    \"storyName\": \"A user story\",\n" + 
+			"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
+			"  },\n" + 
+			"  \"issues\": [],\n" + 
+			"  \"tags\": [\n" + 
+			"    {\n" + 
+			"      \"name\": \"A user story\",\n" + 
+			"      \"type\": \"story\"\n" + 
+			"    }\n" + 
+			"  ],\n" + 
+			"  \"test-steps\": [\n" + 
+			"    {\n" + 
+			"      \"description\": \"step 1\",\n" + 
+			"      \"duration\": 0,\n" + 
+			"      \"startTime\": 1373601008887,\n" + 
+			"      \"screenshots\": [],\n" + 
+			"      \"result\": \"SUCCESS\",\n" + 
+			"      \"children\": []\n" + 
+			"    }\n" + 
+			"  ]\n" + 
+			"}";
 
         reporter.setQualifier("a_b");
-        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
+        
+        File jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+        System.out.println(getStringFrom(jsonReport));
+        JSONComparator jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator));       
+        JSONCompareResult result = JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport), jsonCmp);        
+        assertTrue(result.getMessage(), result.passed());
     }
 
 
@@ -891,7 +976,7 @@ public class WhenGeneratingAJSONReport {
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
 
-        assertThat(xmlReport.getName(), is(Digest.ofTextValue("a_simple_test_case") + ".xml"));
+        assertThat(xmlReport.getName(), is(Digest.ofTextValue("a_simple_test_case") + ".json"));
     }
 
     @Test
@@ -947,6 +1032,113 @@ public class WhenGeneratingAJSONReport {
                         + "    <description>step 9</description>\n"
                         + "  </test-step>\n"
                         + "</acceptance-test-run>";
+        String expectedJsonReport = 
+        		"{\n" + 
+        		"  \"title\": \"A simple test case\",\n" + 
+        		"  \"name\": \"a_simple_test_case\",\n" + 
+        		"  \"test-case\": {\n" + 
+        		"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenario\"\n" + 
+        		"  },\n" + 
+        		"  \"result\": \"FAILURE\",\n" + 
+        		"  \"steps\": \"9\",\n" + 
+        		"  \"successful\": \"2\",\n" + 
+        		"  \"failures\": \"2\",\n" + 
+        		"  \"errors\": \"1\",\n" + 
+        		"  \"skipped\": \"1\",\n" + 
+        		"  \"ignored\": \"2\",\n" + 
+        		"  \"pending\": \"1\",\n" + 
+        		"  \"duration\": \"0\",\n" + 
+        		"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
+        		"  \"user-story\": {\n" + 
+        		"    \"userStoryClass\": {\n" + 
+        		"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
+        		"    },\n" + 
+        		"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
+        		"    \"storyName\": \"A user story\",\n" + 
+        		"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
+        		"  },\n" + 
+        		"  \"issues\": [],\n" + 
+        		"  \"tags\": [\n" + 
+        		"    {\n" + 
+        		"      \"name\": \"A user story\",\n" + 
+        		"      \"type\": \"story\"\n" + 
+        		"    }\n" + 
+        		"  ],\n" + 
+        		"  \"test-steps\": [\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 1\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373601456591,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"SUCCESS\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    },\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 2\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373601456592,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"IGNORED\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    },\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 3\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373601456592,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"IGNORED\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    },\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 4\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373601456592,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"SUCCESS\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    },\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 5\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373601456592,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"FAILURE\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    },\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 6\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373601456592,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"FAILURE\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    },\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 7\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373601456592,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"ERROR\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    },\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 8\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373601456592,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"SKIPPED\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    },\n" + 
+        		"    {\n" + 
+        		"      \"description\": \"step 9\",\n" + 
+        		"      \"duration\": 0,\n" + 
+        		"      \"startTime\": 1373601456592,\n" + 
+        		"      \"screenshots\": [],\n" + 
+        		"      \"result\": \"PENDING\",\n" + 
+        		"      \"children\": []\n" + 
+        		"    }\n" + 
+        		"  ]\n" + 
+        		"}";
 
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
         testOutcome.recordStep(TestStepFactory.ignoredTestStepCalled("step 2"));
@@ -958,10 +1150,22 @@ public class WhenGeneratingAJSONReport {
         testOutcome.recordStep(TestStepFactory.skippedTestStepCalled("step 8"));
         testOutcome.recordStep(TestStepFactory.pendingTestStepCalled("step 9"));
 
-        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
-        String generatedReportText = getStringFrom(xmlReport);
-
-        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
+        File jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+        System.out.println(getStringFrom(jsonReport));
+        JSONComparator jsonCmp = new CustomComparator(JSONCompareMode.STRICT, 
+        											  new Customization("test-steps[0].startTime", comparator), 
+        											  new Customization("test-steps[1].startTime", comparator),
+        											  new Customization("test-steps[2].startTime", comparator),
+        											  new Customization("test-steps[3].startTime", comparator),
+        											  new Customization("test-steps[4].startTime", comparator),
+        											  new Customization("test-steps[5].startTime", comparator),
+        											  new Customization("test-steps[6].startTime", comparator),
+        											  new Customization("test-steps[7].startTime", comparator),
+        											  new Customization("test-steps[8].startTime", comparator),
+        											  new Customization("test-steps[9].startTime", comparator)
+        											  );       
+        JSONCompareResult result = JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport), jsonCmp);        
+        assertTrue(result.getMessage(), result.passed());
     }
 
 
@@ -983,7 +1187,7 @@ public class WhenGeneratingAJSONReport {
         ;
     }
 
-    @Test
+    /*@Test
     public void should_record_test_groups_as_nested_structures()
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
