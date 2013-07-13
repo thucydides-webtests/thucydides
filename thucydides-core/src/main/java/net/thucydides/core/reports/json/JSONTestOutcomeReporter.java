@@ -20,7 +20,6 @@ import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.reports.saucelabs.SaucelabsLinkGenerator;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,18 +58,9 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 	public JSONTestOutcomeReporter() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting();
-		//builder.serializeNulls();
 		builder.registerTypeAdapter(TestOutcome.class, new TestOutcomeSerializer());
 		builder.registerTypeAdapter(Class.class, new ClassTypeAdapter());
-		/*builder.registerTypeAdapter(String.class, new StringTypeAdapter());
-		builder.registerTypeAdapter(IssueTracking.class,
-				new IssueTrackingInstanceCreator());
-		builder.registerTypeAdapter(Optional.class,
-				new GsonOptionalDeserializer<String>());
-		builder.registerTypeAdapter(LinkGenerator.class,
-				new LinkGeneratorInstanceCreator());
-		builder.setExclusionStrategies(new MyExclusionStrategy(
-				EnvironmentVariables.class));*/
+		builder.registerTypeAdapter(Throwable.class, new ThrowableClassAdapter());		
 		gson = builder.create();
 	}
 
@@ -182,26 +172,32 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 			}
 		}
 	}
-
-	private static class StringTypeAdapter implements JsonSerializer<String>,
-			JsonDeserializer<String> {
+	
+	private class ThrowableClassAdapter implements JsonSerializer<Throwable>, JsonDeserializer<Throwable> {
 
 		@Override
-		public JsonElement serialize(String src,
-				java.lang.reflect.Type typeOfSrc,
+		public JsonElement serialize(Throwable src, Type typeOfSrc,
 				JsonSerializationContext context) {
-
-			JsonPrimitive escapedString = new JsonPrimitive(escape(src));
-			return escapedString;
+			JsonObject jsonObject = new JsonObject();
+			jsonObject.add("class", new JsonPrimitive(src.getClass().getName()));		    
+		    jsonObject.add("message", new JsonPrimitive(src.getMessage()));
+		    return jsonObject;
 		}
 
 		@Override
-		public String deserialize(JsonElement json, Type typeOfT,
+		public Throwable deserialize(JsonElement json, Type typeOfT,
 				JsonDeserializationContext context) throws JsonParseException {
-			String jsonString = json.getAsString();
-			return unescape(jsonString);
+			JsonObject jsonObject = json.getAsJsonObject();
+			JsonElement messageElement = jsonObject.get("message");
+			try {
+				Class<?> throwableClass = Class.forName(jsonObject.get("class").getAsString());				
+				return (Throwable) throwableClass.getConstructor(String.class).newInstance(messageElement.getAsString());				
+			} catch (Throwable e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
-	}
+	} 
 
 
 	public class MyExclusionStrategy implements ExclusionStrategy {
@@ -276,20 +272,4 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 		}
 	}
 
-	private static String escape(String attribute) {
-
-		if (StringUtils.isNotEmpty(attribute)) {
-			attribute = StringUtils.replace(attribute, NEW_LINE_CHAR,
-					ESCAPE_CHAR_FOR_NEW_LINE);
-		}
-		return attribute;
-	}
-
-	private static String unescape(String attribute) {
-		if (StringUtils.isNotEmpty(attribute)) {
-			attribute = StringUtils.replace(attribute,
-					ESCAPE_CHAR_FOR_NEW_LINE, NEW_LINE_CHAR);
-		}
-		return attribute;
-	}			
 }
