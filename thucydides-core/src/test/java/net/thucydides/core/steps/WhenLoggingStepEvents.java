@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 
 import static org.mockito.Matchers.contains;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,6 +56,36 @@ public class WhenLoggingStepEvents {
         "    |__|     |__|  |__|  \\______/   \\______|    |__|     |_______/ |__| |_______/ |_______|_______/    \n" +
         "                                                                                                       \n" +
         "-------------------------------------------------------------------------------------------------------\n"));
+
+    }
+
+    @Test
+    public void should_print_shortened_header_banner_before_tests() {
+
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("thucydides.console.headings", "normal");
+        ConsoleLoggingListener consoleLoggingListener = new ConsoleLoggingListener(environmentVariables, logger);
+        verify(logger).info(contains("THUCYDIDES"));
+
+    }
+
+    @Test
+    public void should_print_full_header_banner_before_tests() {
+
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("thucydides.console.headings", "ascii");
+        Logger logger = mock(Logger.class);
+        ConsoleLoggingListener consoleLoggingListener = new ConsoleLoggingListener(environmentVariables, logger);
+        verify(logger).info(contains(
+                "-------------------------------------------------------------------------------------------------------\n" +
+                        ".___________. __    __   __    __    ______ ____    ____  _______   __   _______   _______     _______.\n" +
+                        "|           ||  |  |  | |  |  |  |  /      |\\   \\  /   / |       \\ |  | |       \\ |   ____|   /       |\n" +
+                        "`---|  |----`|  |__|  | |  |  |  | |  ,----' \\   \\/   /  |  .--.  ||  | |  .--.  ||  |__     |   (----`\n" +
+                        "    |  |     |   __   | |  |  |  | |  |       \\_    _/   |  |  |  ||  | |  |  |  ||   __|     \\   \\    \n" +
+                        "    |  |     |  |  |  | |  `--'  | |  `----.    |  |     |  '--'  ||  | |  '--'  ||  |____.----)   |   \n" +
+                        "    |__|     |__|  |__|  \\______/   \\______|    |__|     |_______/ |__| |_______/ |_______|_______/    \n" +
+                        "                                                                                                       \n" +
+                        "-------------------------------------------------------------------------------------------------------\n"));
 
     }
 

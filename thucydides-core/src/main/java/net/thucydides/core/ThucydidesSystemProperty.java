@@ -430,6 +430,11 @@ public enum ThucydidesSystemProperty {
     THUCYDIDES_EXTRA_COLUMNS("thucydides.csv.extra.columns"),
 
     /**
+     * Write the console headings using ascii-art ("ascii", default value) or in normal text ("normal")
+     */
+    THUCYDIDES_CONSOLE_HEADINGS("thucydides.console.headings"),
+
+    /**
      * If set to true, Asciidoc formatting will be supported in the narrative texts.
      */
     THUCYDIDES_NARRATIVE_FORMAT("narrative.format");
