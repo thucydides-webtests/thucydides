@@ -76,6 +76,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
         environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("max.retries", "1");
         configuration = new SystemPropertiesConfiguration(environmentVariables);
     }
 

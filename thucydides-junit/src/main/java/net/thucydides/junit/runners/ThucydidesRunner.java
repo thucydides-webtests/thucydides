@@ -237,8 +237,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         if (!skipThisTest()) {
             try {
                 setupFixtureServices();
-                initializeDriversAndListeners(notifier);
-                super.run(notifier);
+                RunNotifier newNotifier = initializeRunNotifier(notifier);
+                super.run(newNotifier);
             } finally {
                 notifyTestSuiteFinished();
                 generateReports();
@@ -311,9 +311,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private void initializeDriversAndListeners(RunNotifier notifier) {
-        JUnitStepListener listener = getStepListener();
-        notifier.addListener(listener);
+    private RunNotifier initializeRunNotifier(RunNotifier notifier) {
+        RunNotifier notifierForSteps = new RunNotifier();
+        notifierForSteps.addListener(getStepListener());
+        return new RetryFilteringRunNotifier(notifier, notifierForSteps);
     }
 
     protected void initStepEventBus() {
@@ -380,19 +381,51 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-
         if (shouldSkipTest(method)) {
             return;
         }
-        initializeTestSession();
-        resetBroswerFromTimeToTime();
+
         if (isPending(method)) {
             markAsPending(method);
             notifier.fireTestIgnored(describeChild(method));
+            return;
         } else {
             processTestMethodAnnotationsFor(method);
-            super.runChild(method, notifier);
         }
+
+        FailureDetectingStepListener failureDetectingStepListener = new FailureDetectingStepListener();
+        StepEventBus.getEventBus().registerListener(failureDetectingStepListener);
+
+        int maxRetries = getConfiguration().maxRetries();
+        for (int attemptCount = 0; attemptCount <= maxRetries; attemptCount++) {
+            if (notifier instanceof RetryFilteringRunNotifier) {
+                ((RetryFilteringRunNotifier) notifier).reset();
+            }
+
+            if (attemptCount > 0) {
+                logger.warn(method.getName() + " failed, making attempt " + (attemptCount + 1) + ". Max retries: " + maxRetries);
+                StepEventBus.getEventBus().testRetried();
+            }
+
+            initializeTestSession();
+            resetBroswerFromTimeToTime();
+            additionalBrowserCleanup();
+            failureDetectingStepListener.reset();
+
+            super.runChild(method, notifier);
+
+            if (!failureDetectingStepListener.lastTestFailed()) {
+                break;
+            }
+        }
+
+        if (notifier instanceof RetryFilteringRunNotifier) {
+            ((RetryFilteringRunNotifier) notifier).flush();
+        }
+    }
+
+    protected void additionalBrowserCleanup() {
+        // Template method. Override this to do additional cleanup e.g. killing IE processes.
     }
 
     private boolean shouldSkipTest(FrameworkMethod method) {

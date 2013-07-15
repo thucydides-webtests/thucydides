@@ -308,6 +308,11 @@ public class BaseStepListener implements StepListener, StepPublisher {
         currentStepStack.clear();
     }
 
+    public void testRetried() {
+        currentStepStack.clear();
+        testOutcomes.remove(getCurrentTestOutcome());
+    }
+
     private void recordTestDuration() {
         if (!testOutcomes.isEmpty()) {
             getCurrentTestOutcome().recordDuration();

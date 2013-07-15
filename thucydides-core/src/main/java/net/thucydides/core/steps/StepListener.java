@@ -43,6 +43,11 @@ public interface StepListener {
     void testFinished(final TestOutcome result);
 
     /**
+     * The last test run is about to be restarted
+     */
+    void testRetried();
+
+    /**
      * Called when a test step is about to be started.
      *
      * @param description the description of the test that is about to be run

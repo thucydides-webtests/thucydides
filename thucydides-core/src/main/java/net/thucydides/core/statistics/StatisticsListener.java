@@ -60,6 +60,8 @@ public class StatisticsListener implements StepListener {
         }
     }
 
+    public void testRetried() {
+    }
 
     public void testSuiteFinished() {
         if (historyActivated()) {
