@@ -43,6 +43,7 @@ public class FlatScenarioStepsWithSpringDependencies extends ScenarioSteps {
     }
 
     @Step
+
     public void nested_step_three() {
     }
 
