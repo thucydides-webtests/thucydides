@@ -1,9 +1,14 @@
-package net.thucydides.core.steps;
+package net.thucydides.core.steps.integration;
 
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.csv.FailedToInitializeTestData;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.steps.StepFactory;
+import net.thucydides.core.steps.StepFailure;
+import net.thucydides.core.steps.StepListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
