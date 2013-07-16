@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver
 
 import com.opera.core.systems.OperaDriver
+import net.thucydides.core.steps.StepEventBus
 import net.thucydides.core.util.MockEnvironmentVariables
 import org.openqa.selenium.Capabilities
 import org.openqa.selenium.WebDriver
@@ -13,15 +14,6 @@ import org.openqa.selenium.ie.InternetExplorerDriver
 import org.openqa.selenium.remote.DesiredCapabilities
 import org.openqa.selenium.remote.RemoteWebDriver
 import spock.lang.Specification
-import org.junit.Test
-
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.is
-import static org.hamcrest.Matchers.nullValue
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.is
-import static org.hamcrest.Matchers.notNullValue
-import net.thucydides.core.steps.StepEventBus
 
 class WhenOpeningAndClosingBrowserSessions extends Specification {
 
@@ -64,6 +56,7 @@ class WhenOpeningAndClosingBrowserSessions extends Specification {
     def setup() {
         capabilities.asMap() >> [:]
         remote.getCapabilities() >> capabilities
+        environmentVariables.setProperty("webdriver.driver","htmlunit")
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables)
         webdriverManager = new ThucydidesWebdriverManager(webDriverFactory, new SystemPropertiesConfiguration(environmentVariables));
         StepEventBus.eventBus.clear()

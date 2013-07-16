@@ -8,6 +8,7 @@ import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -31,15 +32,14 @@ class WhenUsingSmartFindByOnPageObjects extends Specification {
 	}
 
 	@Shared
-	def driver =  new WebDriverFacade(FirefoxDriver, new WebDriverFactory());
+	def driver =  new WebDriverFacade(HtmlUnitDriver, new WebDriverFactory());
 
 	@Shared
 	StaticSitePageWithFindBy page =  new StaticSitePageWithFindBy(driver);
 
 	def setupSpec() {
-		new DefaultPageObjectInitialiser(driver, 1000).apply(page);
+		new DefaultPageObjectInitialiser(driver, 2000).apply(page);
 		page.open()
-		page.waitFor(2).seconds()
 	}
 	
 	def "should be able to find an element using jquery immediately"(){
