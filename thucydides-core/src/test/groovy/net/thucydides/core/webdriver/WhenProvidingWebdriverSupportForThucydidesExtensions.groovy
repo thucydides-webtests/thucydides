@@ -86,13 +86,6 @@ class WhenProvidingWebdriverSupportForThucydidesExtensions extends Specification
         ThucydidesWebDriverSupport.getDriver() != null
     }
 
-    def "the default driver should be firefox"() {
-        when: "we initialize Thucydides support"
-        ThucydidesWebDriverSupport.initialize()
-        then: "the provided firefoxDriver should be firefox"
-        ThucydidesWebDriverSupport.driver.driverClass == FirefoxDriver
-    }
-
     def "should not initialize agail if already initialized with a given driver"() {
         when: "we initialize Thucydides support"
         ThucydidesWebDriverSupport.initialize()
