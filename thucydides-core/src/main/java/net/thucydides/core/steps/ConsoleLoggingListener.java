@@ -22,8 +22,8 @@ import java.util.Map;
 public class ConsoleLoggingListener implements StepListener {
 
     // STAR WARS
-    private static final List<String> BANNER = ImmutableList.of(
-            "--------------\n" +
+    private static final List<String> BANNER_HEADINGS = ImmutableList.of(
+            "\n--------------\n" +
             "- THUCYDIDES -\n" +
             "--------------",
             "\n\n-------------------------------------------------------------------------------------------------------\n" +
@@ -37,8 +37,8 @@ public class ConsoleLoggingListener implements StepListener {
                     "-------------------------------------------------------------------------------------------------------\n");
 
     // Standard
-    private static final List<String> TEST_STARTED = ImmutableList.of(
-            "----------------\n" +
+    private static final List<String> TEST_STARTED_HEADINGS = ImmutableList.of(
+            "\n----------------\n" +
             "- TEST STARTED -\n" +
             "----------------",
             "\n  _____ _____ ____ _____   ____ _____  _    ____ _____ _____ ____  \n" +
@@ -48,8 +48,8 @@ public class ConsoleLoggingListener implements StepListener {
                     "   |_| |_____|____/ |_|   |____/ |_/_/   \\_\\_| \\_\\|_| |_____|____/ \n" +
                     "                                                                   \n");
 
-    private static final List<String> TEST_PASSED = ImmutableList.of(
-            "---------------\n" +
+    private static final List<String> TEST_PASSED_HEADINGS = ImmutableList.of(
+            "\n---------------\n" +
             "- TEST PASSED -\n" +
             "---------------",
             "\n        __    _____ _____ ____ _____   ____   _    ____  ____  _____ ____  \n" +
@@ -59,8 +59,8 @@ public class ConsoleLoggingListener implements StepListener {
                     " (_)     | |   |_| |_____|____/ |_|   |_| /_/   \\_\\____/|____/|_____|____/ \n" +
                     "        /_/                                                                \n");
 
-    private static final List<String> TEST_FAILED =  ImmutableList.of(
-            "----------------\n" +
+    private static final List<String> TEST_FAILED_HEADINGS =  ImmutableList.of(
+            "\n----------------\n" +
             "- TEST FAILED -\n" +
             "----------------",
             "\n           __  _____ _____ ____ _____   _____ _    ___ _     _____ ____  \n" +
@@ -70,8 +70,8 @@ public class ConsoleLoggingListener implements StepListener {
                     " (_)     | |    |_| |_____|____/ |_|   |_|/_/   \\_\\___|_____|_____|____/ \n" +
                     "          \\_\\                                                            \n");
 
-    private static final List<String> TEST_SKIPPED  = ImmutableList.of(
-            "----------------\n" +
+    private static final List<String> TEST_SKIPPED_HEADINGS  = ImmutableList.of(
+            "\n----------------\n" +
             "- TEST SKIPPED -\n" +
             "----------------",
             "\n            __  _____ _____ ____ _____   ____  _  _____ ____  ____  _____ ____  \n" +
@@ -81,8 +81,8 @@ public class ConsoleLoggingListener implements StepListener {
                     " (_)    /_/      |_| |_____|____/ |_|   |____/|_|\\_\\___|_|   |_|   |_____|____/ \n" +
                     "                                                                                \n");
 
-    private static List<String>  FAILURE  = ImmutableList.of(
-            "-----------\n" +
+    private static List<String>  FAILURE_HEADINGS  = ImmutableList.of(
+            "\n-----------\n" +
             "- FAILURE -\n" +
             "-----------",
             "\n  _____ _    ___ _     _   _ ____  _____ \n" +
@@ -124,8 +124,12 @@ public class ConsoleLoggingListener implements StepListener {
 
     private void logBanner() {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            getLogger().info(BANNER.get(headingStyle));
+            getLogger().info(bannerHeading());
         }
+    }
+
+    private String bannerHeading() {
+        return BANNER_HEADINGS.get(headingStyle);
     }
 
     private boolean loggingLevelIsAtLeast(LoggingLevel minimumLoggingLevel) {
@@ -159,8 +163,12 @@ public class ConsoleLoggingListener implements StepListener {
 
     public void testStarted(String description) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            getLogger().info(TEST_STARTED + "\nTEST STARTED: " + description + underline(TEST_STARTED.get(headingStyle)));
+            getLogger().info(testStartedHeadings() + "\nTEST STARTED: " + description + underline(TEST_STARTED_HEADINGS.get(headingStyle)));
         }
+    }
+
+    private String testStartedHeadings() {
+        return TEST_STARTED_HEADINGS.get(headingStyle);
     }
 
     private String underline(String banner) {
@@ -188,13 +196,17 @@ public class ConsoleLoggingListener implements StepListener {
 
     private void logFailure(TestOutcome result) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            getLogger().info(TEST_FAILED + "\nTEST FAILED: " + result.getTitle() + underline(TEST_FAILED.get(headingStyle)));
+            getLogger().info(testFailureHeading() + "\nTEST FAILED: " + result.getTitle() + underline(TEST_FAILED_HEADINGS.get(headingStyle)));
 
             logRelatedIssues(result);
             logFailureCause(result);
 
-            underline(FAILURE.get(headingStyle));
+            underline(FAILURE_HEADINGS.get(headingStyle));
         }
+    }
+
+    private String testFailureHeading() {
+        return TEST_FAILED_HEADINGS.get(headingStyle);
     }
 
     private void logRelatedIssues(TestOutcome result) {
@@ -205,27 +217,39 @@ public class ConsoleLoggingListener implements StepListener {
 
     private void logFailureCause(TestOutcome result) {
         if (result.getTestFailureCause() != null) {
-            getLogger().info(FAILURE + "\n" + result.getTestFailureCause().getMessage());
+            getLogger().info(failureHeading() + "\n" + result.getTestFailureCause().getMessage());
         }
+    }
+
+    private String failureHeading() {
+        return FAILURE_HEADINGS.get(headingStyle);
     }
 
     private void logPending(TestOutcome result) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            getLogger().info(TEST_SKIPPED + "\nTEST PENDING: " + result.getTitle() + underline(TEST_SKIPPED.get(headingStyle)));
+            getLogger().info(testSkippedHeading() + "\nTEST PENDING: " + result.getTitle() + underline(testSkippedHeading()));
 
         }
     }
 
+    private String testSkippedHeading() {
+        return TEST_SKIPPED_HEADINGS.get(headingStyle);
+    }
+
     private void logSkipped(TestOutcome result) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            getLogger().info(TEST_SKIPPED + "\nTEST SKIPPED: " + result.getTitle() + underline(TEST_SKIPPED.get(headingStyle)));
+            getLogger().info(testSkippedHeading() + "\nTEST SKIPPED: " + result.getTitle() + underline(testSkippedHeading()));
         }
     }
 
     private void logSuccess(TestOutcome result) {
         if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
-            getLogger().info(TEST_PASSED + "\nTEST PASSED: " + result.getTitle() + underline(TEST_PASSED.get(headingStyle)));
+            getLogger().info(testPassedHeading() + "\nTEST PASSED: " + result.getTitle() + underline(testPassedHeading()));
         }
+    }
+
+    private String testPassedHeading() {
+        return TEST_PASSED_HEADINGS.get(headingStyle);
     }
 
     public void stepStarted(ExecutedStepDescription description) {
