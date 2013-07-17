@@ -359,7 +359,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     private Requirement readRequirementFrom(File requirementDirectory) {
         Optional<Narrative> requirementNarrative = narrativeReader.loadFrom(requirementDirectory, level);
 
-        System.out.println("READING REQUIRMENTS FROM DIRECTORY " + requirementDirectory);
         if (requirementNarrative.isPresent()) {
             return requirementWithNarrative(requirementDirectory,
                                             humanReadableVersionOf(requirementDirectory.getName()),

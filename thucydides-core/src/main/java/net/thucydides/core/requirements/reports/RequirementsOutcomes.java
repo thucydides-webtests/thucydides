@@ -52,7 +52,6 @@ public class RequirementsOutcomes {
     private List<RequirementOutcome> buildRequirementOutcomes(List<Requirement> requirements,
                                                               List<RequirementsTagProvider> requirementsTagProviders) {
         List<RequirementOutcome> outcomes = Lists.newArrayList();
-        System.out.println("BUILDING REQUIREMENTS OUTCOMES: " + requirements);
         for (Requirement requirement : requirements) {
             buildRequirements(outcomes, requirementsTagProviders, requirement);
         }
@@ -60,11 +59,7 @@ public class RequirementsOutcomes {
     }
 
     private void buildRequirements(List<RequirementOutcome> outcomes, List<RequirementsTagProvider> requirementsTagProviders, Requirement requirement) {
-        System.out.println("PROCESSING " + requirement.getType() + " REQUIREMENT " + requirement.getName());
-
         TestOutcomes outcomesForRequirement = testOutcomes.forRequirement(requirement);
-
-        System.out.println("  - Test outcomes: " + outcomesForRequirement.getTotal());
 
         int requirementsWithoutTests = countRequirementsWithoutTestsIn(requirement);
         int estimatedUnimplementedTests = requirementsWithoutTests * estimatedTestsPerRequirement();
