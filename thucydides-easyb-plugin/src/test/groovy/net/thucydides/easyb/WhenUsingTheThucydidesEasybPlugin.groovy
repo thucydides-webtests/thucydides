@@ -46,6 +46,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
     ThucydidesPlugin plugin
     Binding binding
     WebDriverFacade mockWebDriver;
+    File reportDirectory
 
     class MockWebDriverFactory extends WebDriverFactory {
          protected WebDriver newFirefoxDriver() {
@@ -99,9 +100,13 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
     @Before
     public void initMocks() {
+        reportDirectory = temporaryDir()
+        System.setProperty("thucydides.outputDirectory", reportDirectory.getAbsolutePath())
+
         mockWebDriver =  new WebDriverFacade(MockWebDriver.class, new WebDriverFactory());
         plugin = new BrowserlessThucydidesPlugin();
         plugin.resetConfiguration();
+
         listener = new ThucydidesListenerBuilder().get();
         binding = new Binding();
         binding.setVariable("sourceFile", "TestStory.story")
@@ -131,10 +136,19 @@ public class WhenUsingTheThucydidesEasybPlugin {
         thenStep.name = 'Some name'
     }
 
+    def temporaryDir() {
+        def tempDir = new File(System.getProperty("java.io.tmpdir"))
+        def reportDirName = "reports-${System.currentTimeMillis()}"
+        new File(tempDir, reportDirName)
+
+    }
+
     @After
     public void clearSystemProperties() {
-        System.setProperty("webdriver.base.url", "");
-        plugin.getConfiguration().stop_using_mock_driver();
+        System.clearProperty("webdriver.base.url")
+        System.clearProperty("thucydides.outputDirectory")
+        plugin.getConfiguration().stop_using_mock_driver()
+        reportDirectory.deleteOnExit()
     }
 
     @Test

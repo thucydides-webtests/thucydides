@@ -64,13 +64,21 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
 
         String reportFilename = reportFor(storedTestOutcome);
 
+        OutputStream outputStream = null;
+        OutputStreamWriter writer = null;
         File report = new File(getOutputDirectory(), reportFilename);
-        OutputStream outputStream = new FileOutputStream(report);
-        OutputStreamWriter writer = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
-        xstream.toXML(storedTestOutcome, writer);
-        writer.flush();
-        writer.close();
-        outputStream.close();
+        try {
+            outputStream = new FileOutputStream(report);
+            writer = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
+            xstream.toXML(storedTestOutcome, writer);
+        } catch(IOException failedToWriteReport) {
+            throw failedToWriteReport;
+        } finally {
+            writer.flush();
+            writer.close();
+            outputStream.close();
+            //System.gc();            // Attempted work-around for Windows IO bugs - see for example ttp://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4469299
+        }
         return report;
     }
 

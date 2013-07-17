@@ -167,12 +167,11 @@ public class ThucydidesPlugin extends BasePlugin {
     private def initializeStepFactoryAndListeners() {
 
         stepFactory = new StepFactory(pages)
-        def outputDirectory = getSystemConfiguration().outputDirectory;
+        def outputDirectory = getSystemConfiguration().outputDirectory
 
         baseStepListener = Listeners.baseStepListener.withPages(pages).and().withOutputDirectory(outputDirectory)
         stepListeners = [baseStepListener,
                          Listeners.loggingListener]
-//                         Listeners.statisticsListener]
 
         stepPublisher = (StepPublisher) baseStepListener;
 

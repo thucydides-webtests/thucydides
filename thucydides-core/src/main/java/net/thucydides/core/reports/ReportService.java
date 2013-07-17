@@ -44,6 +44,10 @@ public class ReportService {
         getSubscribedReporters().addAll(subscribedReporters);
     }
 
+    public void setOutputDirectory(File outputDirectory) {
+        this.outputDirectory = outputDirectory;
+    }
+
     public  List<AcceptanceTestReporter> getSubscribedReporters() {
         if (subscribedReporters == null) {
             subscribedReporters = new ArrayList<AcceptanceTestReporter>();
