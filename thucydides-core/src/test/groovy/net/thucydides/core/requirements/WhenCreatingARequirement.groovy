@@ -1,16 +1,24 @@
 package net.thucydides.core.requirements
 
+import net.thucydides.core.ThucydidesSystemProperty
+import net.thucydides.core.issues.IssueTracking
 import net.thucydides.core.reports.TestOutcomes
+import net.thucydides.core.requirements.model.Example
+import net.thucydides.core.requirements.model.Requirement
 import net.thucydides.core.requirements.reports.RequirementsOutcomes
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory
+import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
-import net.thucydides.core.requirements.model.Requirement
-import net.thucydides.core.issues.IssueTracking
-import net.thucydides.core.requirements.model.Example
 
 class WhenCreatingARequirement extends Specification {
 
-    def requirementsProvider = new FileSystemRequirementsTagProvider()
+    def requirementsProviders
+    def setup() {
+        def vars = new MockEnvironmentVariables()
+        vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, "annotatedstories")
+        requirementsProviders = [new FileSystemRequirementsTagProvider(), new AnnotationBasedTagProvider(vars)]
+    }
+
     def issueTracking = Mock(IssueTracking)
 
     def "Should create a requirement using a simple builder"() {
@@ -28,12 +36,12 @@ class WhenCreatingARequirement extends Specification {
         given: "there are no associated tests"
             def noTestOutcomes = TestOutcomes.of(Collections.EMPTY_LIST)
         and: "we read the requirements from the directory structure"
-            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the test results for the requirements should be empty"
             def requirementsTestCount = outcomes.requirementOutcomes.collect {it.testOutcomes.total}
-            requirementsTestCount == [0,0,0]
+            requirementsTestCount == [0,0,0,0,0,0]
     }
 
     def "should be able to optionally record the examples used to define a requirement"() {

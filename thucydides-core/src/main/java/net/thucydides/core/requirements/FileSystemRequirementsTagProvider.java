@@ -2,8 +2,6 @@ package net.thucydides.core.requirements;
 
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
@@ -15,19 +13,12 @@ import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import net.thucydides.core.util.NameConverter;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static ch.lambdaj.Lambda.convert;
 import static net.thucydides.core.requirements.RequirementsPath.pathElements;
@@ -40,9 +31,7 @@ import static net.thucydides.core.requirements.RequirementsPath.stripRootFromPat
  * This will typically be the directory structure containing the tests (for JUnit) or stories (e.g. for JBehave).
  * By default, the tests
  */
-public class FileSystemRequirementsTagProvider implements RequirementsTagProvider {
-
-    public final static List<String> DEFAULT_CAPABILITY_TYPES = ImmutableList.of("capability", "feature");
+public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagProvider implements RequirementsTagProvider {
 
     private final static String DEFAULT_ROOT_DIRECTORY = "stories";
     private final static String DEFAULT_RESOURCE_DIRECTORY = "src/test/resources";
@@ -53,7 +42,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     private final String rootDirectoryPath;
     private final NarrativeReader narrativeReader;
     private final int level;
-    private final EnvironmentVariables environmentVariables;
 
 //    @Transient
     private List<Requirement> requirements;
@@ -89,7 +77,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     }
 
     public FileSystemRequirementsTagProvider(String rootDirectory, int level, EnvironmentVariables environmentVariables) {
-        this.environmentVariables = environmentVariables;
+        super(environmentVariables);
         this.rootDirectoryPath = rootDirectory;
         this.level = level;
         this.narrativeReader = NarrativeReader.forRootDirectory(rootDirectory)
@@ -381,7 +369,7 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
     private Requirement requirementFromDirectoryName(File requirementDirectory) {
         String shortName = humanReadableVersionOf(requirementDirectory.getName());
         List<Requirement> children = readChildrenFrom(requirementDirectory);
-        return Requirement.named(shortName).withType(getDefaultType()).withNarrativeText(shortName).withChildren(children);
+        return Requirement.named(shortName).withType(getDefaultType(level)).withNarrativeText(shortName).withChildren(children);
     }
 
     private Requirement storyNamed(String storyName) {
@@ -402,25 +390,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
                 .withChildren(children);
     }
 
-    private String getDefaultType() {
-        List<String> types = getRequirementTypes();
-        if (level > types.size() - 1) {
-            return types.get(types.size() - 1);
-        } else {
-            return types.get(level);
-        }
-    }
-
-    private List<String> getRequirementTypes() {
-        String requirementTypes = ThucydidesSystemProperty.REQUIREMENT_TYPES.from(environmentVariables);
-        if (StringUtils.isNotEmpty(requirementTypes)) {
-            Iterator<String> types = Splitter.on(",").trimResults().split(requirementTypes).iterator();
-            return Lists.newArrayList(types);
-        } else {
-            return DEFAULT_CAPABILITY_TYPES;
-        }
-    }
-
     private List<Requirement> readChildrenFrom(File requirementDirectory) {
         String childDirectory = rootDirectoryPath + "/" + requirementDirectory.getName();
         RequirementsTagProvider childReader = new FileSystemRequirementsTagProvider(childDirectory, level + 1, environmentVariables);
@@ -433,11 +402,6 @@ public class FileSystemRequirementsTagProvider implements RequirementsTagProvide
         } else {
             return nameIfNoNarrativePresent;
         }
-    }
-
-    private String humanReadableVersionOf(String name) {
-        String underscoredName = Inflector.getInstance().underscore(name);
-        return Inflector.getInstance().humanize(underscoredName);
     }
 
     private FileFilter thatAreDirectories() {

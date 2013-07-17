@@ -351,6 +351,13 @@ public enum ThucydidesSystemProperty {
     REQUIREMENTS_DIRECTORY("thucydides.requirements.dir"),
 
     /**
+     * Use this property if you need to completely override the location of requirements for the Annotated Provider.
+     * This is recommended if you use File System and Annotated provider simultaneously.
+     * The default value is stories.
+     */
+    ANNOTATED_REQUIREMENTS_DIRECTORY("thucydides.annotated.requirements.dir"),
+
+    /**
      * Determine what the lowest level requirement (test cases, feature files, story files, should be
      * called. 'Story' is used by default. 'feature' is a popular alternative.
      */

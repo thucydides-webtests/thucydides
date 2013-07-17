@@ -1,5 +1,7 @@
 package net.thucydides.core.requirements
 
+import annotatedstories.apples.Test1
+import net.thucydides.core.ThucydidesSystemProperty
 import net.thucydides.core.requirements.stories.grow_potatoes.ASampleTestWithACapability
 import net.thucydides.core.requirements.stories.grow_potatoes.another_package.ASampleTestInAnotherPackage
 import net.thucydides.core.requirements.stories.grow_potatoes.grow_new_potatoes.ASampleNestedTestWithACapability
@@ -75,6 +77,19 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
         then:
             capabilityProvider.getParentRequirementOf(testOutcome).isPresent()
             capabilityProvider.getParentRequirementOf(testOutcome).get().name == "Grow potatoes"
+    }
+
+    def "Should find the direct parent requirement of a test outcome from an annotated story"(){
+        given: "We are using the annotated provider"
+            def vars = new MockEnvironmentVariables()
+            vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, "annotatedstories")
+            RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
+        when: "We load requirements we have an annotated test"
+            def story = new Story(Test1.class)
+            def testOutcome = new TestOutcome("Title for test 1", Test1.class, story)
+        then:
+            capabilityProvider.getParentRequirementOf(testOutcome).isPresent()
+            capabilityProvider.getParentRequirementOf(testOutcome).get().narrativeText == "A Narrative for test 1\nMultiple lines"
     }
 
     def "Should find the direct parent requirement of a test outcome for nested requirements"() {

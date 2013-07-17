@@ -1,6 +1,7 @@
 package net.thucydides.core.requirements
 
 import com.google.common.collect.Lists
+import net.thucydides.core.ThucydidesSystemProperty
 import net.thucydides.core.model.Story
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.model.TestTag
@@ -15,7 +16,15 @@ import net.thucydides.core.model.TestStep
 
 class WhenGeneratingRequirementsReportData extends Specification {
 
-    def requirementsProvider = new FileSystemRequirementsTagProvider()
+    public static final String ROOT_DIRECTORY = "annotatedstories"
+
+    def requirementsProviders
+    def setup() {
+        def vars = new MockEnvironmentVariables()
+        vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY)
+        requirementsProviders = [new FileSystemRequirementsTagProvider(), new AnnotationBasedTagProvider(vars)]
+    }
+
     def issueTracking = Mock(IssueTracking)
 
     def "Should list all top-level capabilities in the capabilities report"() {
@@ -23,33 +32,33 @@ class WhenGeneratingRequirementsReportData extends Specification {
         given: "there are no associated tests"
             def noTestOutcomes = TestOutcomes.of(Collections.EMPTY_LIST)
         and: "we read the requirements from the directory structure"
-            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "all the known capabilities should be listed"
             def requirementsNames = outcomes.requirementOutcomes.collect {it.requirement.name}
-            requirementsNames == ["Grow potatoes", "Grow wheat", "Raise chickens"]
+            requirementsNames == ["Grow potatoes", "Grow wheat",  "Raise chickens", "Apples", "Nice zucchinis", "Potatoes"]
         and: "the display name should be obtained from the narrative file where present"
             def requirementsDisplayNames = outcomes.requirementOutcomes.collect {it.requirement.displayName}
-        requirementsDisplayNames == ["Grow lots of potatoes", "Grow wheat", "Raise chickens"]
+        requirementsDisplayNames == ["Grow lots of potatoes", "Grow wheat", "Raise chickens", "apples", "Nice zucchinis", "Potatoes title"]
     }
 
     def "should report no test results for requirements without associated tests"() {
         given: "there are no associated tests"
             def noTestOutcomes = TestOutcomes.of(Collections.EMPTY_LIST)
         and: "we read the requirements from the directory structure"
-            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the test results for the requirements should be empty"
             def requirementsTestCount = outcomes.requirementOutcomes.collect {it.testOutcomes.total}
-            requirementsTestCount == [0,0,0]
+            requirementsTestCount == [0,0,0,0,0,0]
     }
 
     def "should report narrative test for each requirement"() {
         given: "we read the requirements from the directory structure"
             def noTestOutcomes = TestOutcomes.of(Collections.EMPTY_LIST)
-            def requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+            def requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking)
         when: "we generate the requirement outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the requirement outcomes will contain the requirement narratives when specified"
@@ -62,12 +71,12 @@ class WhenGeneratingRequirementsReportData extends Specification {
     public void "should report test results associated with specified requirements"() {
         given: "we have a set of test outcomes"
             def someTestOutcomes = TestOutcomes.of(someTestResults())
-            def requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+            def requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking)
         when: "we generate the requirement outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(someTestOutcomes)
         then: "the number of tests for each requirement should be recorded in the requirements outcome"
             def requirementsTestCount = outcomes.requirementOutcomes.collect {it.testOutcomes.total}
-            requirementsTestCount == [2,0,0]
+            requirementsTestCount == [2,0,0,0,0,0]
     }
 
 
@@ -75,7 +84,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
         given: "there are no associated tests"
             def noTestOutcomes = TestOutcomes.of(Collections.EMPTY_LIST)
         and: "we read the requirements from the directory structure"
-            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the overall outcome should all be pending"
@@ -86,7 +95,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
         given: "there are no associated tests"
             def noTestOutcomes = TestOutcomes.of(someTestResults())
         and: "we read the requirements from the directory structure"
-            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the overall outcome should all be pending"
@@ -98,7 +107,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
         given: "there are some passing tests"
             def noTestOutcomes = TestOutcomes.of(somePassingTestResults())
         and: "we read the requirements from the directory structure"
-            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "requirements with passing tests should be completed"
@@ -109,7 +118,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
         given: "there are some passing tests"
             def noTestOutcomes = TestOutcomes.of(someFailingTestResults())
         and: "we read the requirements from the directory structure"
-            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "requirements with passing tests should be completed"
@@ -120,18 +129,18 @@ class WhenGeneratingRequirementsReportData extends Specification {
         given: "there are some passing tests"
         def noTestOutcomes = TestOutcomes.of(somePendingTestResults())
         and: "we read the requirements from the directory structure"
-        RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+        RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking)
         when: "we generate the capability outcomes"
         RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "requirements with pending tests should be pending"
-        outcomes.pendingRequirementsCount == 2
+        outcomes.pendingRequirementsCount == 5
     }
 
     def "should report on the number of passing, failing and pending tests for a requirement"() {
         given: "there are some test results"
             def noTestOutcomes = TestOutcomes.of(someVariedTestResults())
         and: "we read the requirements from the directory structure"
-            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking)
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the number of failing, passing and total tests should be reported"
@@ -164,26 +173,26 @@ class WhenGeneratingRequirementsReportData extends Specification {
             def environmentVariables = new MockEnvironmentVariables()
             environmentVariables.setProperty("thucydides.estimated.tests.per.requirement", "5")
         and: "we read the requirements from the directory structure"
-            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking, environmentVariables)
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking, environmentVariables)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the proportionOf of failing, passing and total steps should include estimations for requirements with no tests"
-            outcomes.proportion.withResult(TestResult.SUCCESS) == 0.24
-            outcomes.proportion.withResult(TestResult.FAILURE) == 0.08
-            outcomes.proportion.withIndeterminateResult() == 0.68
+            outcomes.proportion.withResult(TestResult.SUCCESS) == 0.09230769230769231
+            outcomes.proportion.withResult(TestResult.FAILURE) == 0.03076923076923077
+            outcomes.proportion.withIndeterminateResult() == 0.8769230769230769
         and: "the number of requirements should be available"
-            outcomes.flattenedRequirementCount == 7
-            outcomes.requirementsWithoutTestsCount == 3
+            outcomes.flattenedRequirementCount == 15
+            outcomes.requirementsWithoutTestsCount == 11
         and: "the number of tests should be available"
             outcomes.total.total == 10
             outcomes.total.withResult(TestResult.SUCCESS) == 6
             outcomes.total.withResult(TestResult.FAILURE) == 2
             outcomes.total.withResult(TestResult.PENDING) == 1
-            outcomes.estimatedUnimplementedTests == 15
+            outcomes.estimatedUnimplementedTests == 55
         and: "the results should be available as formatted values"
-            outcomes.formattedPercentage.withResult(TestResult.SUCCESS) == "24%"
-            outcomes.formattedPercentage.withResult(TestResult.FAILURE) == "8%"
-            outcomes.formattedPercentage.withIndeterminateResult() == "68%"
+            outcomes.formattedPercentage.withResult(TestResult.SUCCESS) == "9.2%"
+            outcomes.formattedPercentage.withResult(TestResult.FAILURE) == "3.1%"
+            outcomes.formattedPercentage.withIndeterminateResult() == "87.7%"
     }
 
     def "functional coverage should cater for requirements with no tests at the requirement outcome level"() {
@@ -193,7 +202,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
             def environmentVariables = new MockEnvironmentVariables()
             environmentVariables.setProperty("thucydides.estimated.tests.per.requirement", "3")
         and: "we read the requirements from the directory structure"
-            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider],issueTracking, environmentVariables)
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking, environmentVariables)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the proportionOf of failing, passing and total steps should include estimations for requirements with no tests"
