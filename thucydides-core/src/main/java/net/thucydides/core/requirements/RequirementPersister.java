@@ -33,18 +33,23 @@ public class RequirementPersister {
             SortedMap<String, Req> m = mapper.readValue(jsonFile, type);
             map.putAll(m);
             //reset the parents
-            for (Map.Entry<String, Req> e : m.entrySet()) {
-                String key = e.getKey();
+            for (Map.Entry<String, Req> entry : m.entrySet()) {
+                String key = entry.getKey();
                 if (key.contains(".")) {
                     String parent = key.substring(0, key.lastIndexOf("."));
-                    map.get(parent).getChildren().add(e.getValue());
+                    addChildIfNotPresent(map.get(parent), entry.getValue());
                 }
             }
-            return map;
         } catch (IOException e) {
             logger.error("Error while reading requirements from output directory: " + outputDirectory +
                     " ,file: " + rootDirectory + ".json", e);
-            return new ChildrenFirstOrderedMap();
+        }
+        return map;
+    }
+
+    private void addChildIfNotPresent(Req req, Req child) {
+        if (!req.getChildren().contains(child)) {
+            req.getChildren().add(child);
         }
     }
 

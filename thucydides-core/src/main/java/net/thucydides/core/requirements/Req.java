@@ -1,6 +1,8 @@
 package net.thucydides.core.requirements;
 
+import com.google.common.base.Objects;
 import net.thucydides.core.requirements.model.Requirement;
+import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,6 @@ public class Req {
     private String narrativeText;
     private List<Req> children = new ArrayList<Req>();
     private Requirement requirement;
-    private String path;
     private int level;
     private boolean annotatedClass;
     
@@ -66,10 +67,6 @@ public class Req {
         this.requirement = requirement;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
-
     public void setLevel(int level) {
         this.level = level;
     }
@@ -106,15 +103,34 @@ public class Req {
         return requirement;
     }
 
-    public String getPath() {
-        return path;
-    }
-
     public int getLevel() {
         return level;
     }
 
     public boolean isAnnotatedClass() {
         return annotatedClass;
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hashCode(name, publicName, cardNumber, type, narrativeText, children, requirement, level, annotatedClass);
+    }
+
+    @Override
+    public boolean equals(final Object obj){
+        if(obj instanceof Req){
+            final Req other = (Req) obj;
+            return Objects.equal(name, other.name)
+                    && Objects.equal(publicName, other.publicName)
+                    && Objects.equal(cardNumber, other.cardNumber)
+                    && Objects.equal(type, other.type)
+                    && Objects.equal(narrativeText, other.narrativeText)
+                    && Objects.equal(requirement, other.requirement)
+                    && level == other.level
+                    && Objects.equal(annotatedClass, other.annotatedClass)
+                    && Objects.equal(children, other.children);
+        } else{
+            return false;
+        }
     }
 }

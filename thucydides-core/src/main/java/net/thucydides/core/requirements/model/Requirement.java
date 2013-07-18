@@ -169,16 +169,4 @@ public class Requirement implements Comparable {
             return new Requirement(name, displayName, cardNumber, type, narrativeText);
         }
     }
-
-    @Override
-    public String toString() {
-        return "Requirement{" +
-                "displayName='" + displayName + '\'' +
-                ", name='" + name + '\'' +
-                ", type='" + type + '\'' +
-                ", narrativeText='" + narrativeText + '\'' +
-                ", cardNumber='" + cardNumber + '\'' +
-                ", children=" + children +
-                '}';
-    }
 }

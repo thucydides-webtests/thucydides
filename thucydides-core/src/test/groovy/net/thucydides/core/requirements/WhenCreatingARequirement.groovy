@@ -96,6 +96,7 @@ class WhenCreatingARequirement extends Specification {
                                Example.withDescription("The client buys a red widget and has it delivered.").andCardNumber("CARD-2")])
         then: "we should have a correctly instantiated requirement"
             requirement.hasExamples()
+            requirement.exampleCount == 2
             requirement.examples.collect { it.description } == ["The client buys a blue widget and has it delivered.",
                                                                 "The client buys a red widget and has it delivered."]
     }

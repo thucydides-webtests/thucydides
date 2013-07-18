@@ -5,6 +5,7 @@ import net.thucydides.core.ThucydidesSystemProperty
 import net.thucydides.core.model.Story
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.model.TestTag
+import net.thucydides.core.model.TestType
 import net.thucydides.core.reports.TestOutcomes
 import net.thucydides.core.requirements.reports.RequirementsOutcomes
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory
@@ -193,6 +194,9 @@ class WhenGeneratingRequirementsReportData extends Specification {
             outcomes.formattedPercentage.withResult(TestResult.SUCCESS) == "9.2%"
             outcomes.formattedPercentage.withResult(TestResult.FAILURE) == "3.1%"
             outcomes.formattedPercentage.withIndeterminateResult() == "87.7%"
+        and: "we can also display the test results by type"
+            outcomes.getFormattedPercentage(TestType.ANY).withResult(TestResult.SUCCESS) == "9.2%"
+            outcomes.getFormattedPercentage("ANY").withResult(TestResult.SUCCESS) == "9.2%"
     }
 
     def "functional coverage should cater for requirements with no tests at the requirement outcome level"() {

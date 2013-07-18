@@ -2,17 +2,25 @@ package net.thucydides.core.requirements;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import net.thucydides.core.annotations.Narrative;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.reflection.ClassFinder;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
-import org.reflections.Reflections;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * A requirements Provider that read requirement from class or package annotation.
@@ -29,7 +37,6 @@ public class AnnotationBasedTagProvider extends AbstractRequirementsTagProvider 
     private static final String DOT_REGEX = "\\.";
 
     private List<Requirement> requirements;
-    private final Reflections reflections;
     private final Configuration configuration;
     private final RequirementPersister persister;
     private final CachedReq cachedReq;
@@ -40,7 +47,6 @@ public class AnnotationBasedTagProvider extends AbstractRequirementsTagProvider 
 
     public AnnotationBasedTagProvider(EnvironmentVariables vars) {
         super(vars);
-        reflections = new Reflections(rootDirectory);
         configuration = new SystemPropertiesConfiguration(environmentVariables);
         persister = new RequirementPersister(configuration.getOutputDirectory(), rootDirectory);
         cachedReq = new CachedReq(rootDirectory);
@@ -49,7 +55,7 @@ public class AnnotationBasedTagProvider extends AbstractRequirementsTagProvider 
 
     private synchronized void initialize() {
         if (cachedReq.get() == null) {
-            Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Narrative.class);
+            List<Class<?>> classes = ClassFinder.loadClasses().annotatedWith(Narrative.class).fromPackage(rootDirectory);
             SortedMap<String, Req> map;
             if (classes.isEmpty()) {
                 map = persister.read();
@@ -90,7 +96,7 @@ public class AnnotationBasedTagProvider extends AbstractRequirementsTagProvider 
                         .withChildren(new ArrayList(children.values()));
     }
 
-    private SortedMap<String, Req> initializeReqMapFromPackageAnnotations(Set<Class<?>> classes) {
+    private SortedMap<String, Req> initializeReqMapFromPackageAnnotations(Collection<Class<?>> classes) {
         SortedMap<String, Req> map;
         map = new ChildrenFirstOrderedMap();
         for (Class p : classes) {
@@ -156,10 +162,13 @@ public class AnnotationBasedTagProvider extends AbstractRequirementsTagProvider 
 
     @Override
     public Optional<Requirement> getRequirementFor(TestTag testTag) {
+        Preconditions.checkNotNull(testTag.getName());
+        Preconditions.checkNotNull(testTag.getType());
+
         Optional<Requirement> result = Optional.absent();
-        for (Req r : cachedReq.get().values()) {
-            if (testTag.getName() != null && testTag.getType() != null && testTag.getName().equals(r.getName()) && testTag.getType().equals(r.getType())) {
-                return Optional.of(r.getRequirement());
+        for (Req req : cachedReq.get().values()) {
+            if (req.getRequirement().asTag().equals(testTag)) {
+                return Optional.of(req.getRequirement());
             }
         }
         return result;

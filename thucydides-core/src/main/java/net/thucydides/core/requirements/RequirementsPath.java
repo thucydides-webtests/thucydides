@@ -32,26 +32,4 @@ public class RequirementsPath {
     public static List<String> fileSystemPathElements(String path) {
         return toList(Splitter.on(FILE_SYSTEM_PATH_SEPARATORS).omitEmptyStrings().trimResults().split(path).iterator());
     }
-
-    private static class PathStartsWith {
-        private List<String> storyPathElements;
-
-        public PathStartsWith(List<String> storyPathElements) {
-            this.storyPathElements = storyPathElements;
-        }
-
-        public boolean startsWith(List<String> rootElements) {
-            if (storyPathElements.size() >= rootElements.size()) {
-                int elementIndex = 0;
-                for(String pathElement : rootElements) {
-                    if (!pathElement.equals(storyPathElements.get(elementIndex++))) {
-                        return false;
-                    }
-                }
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
 }

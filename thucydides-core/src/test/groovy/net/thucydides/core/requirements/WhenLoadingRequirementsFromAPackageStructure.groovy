@@ -1,8 +1,12 @@
 package net.thucydides.core.requirements
 
+import com.google.common.base.Optional
 import net.thucydides.core.ThucydidesSystemProperty
+import net.thucydides.core.model.TestTag
+import net.thucydides.core.requirements.model.Requirement
 import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class WhenLoadingRequirementsFromAPackageStructure extends Specification {
@@ -23,23 +27,6 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
                     "This is a narrative\nFor a potato"]
     }
 
-    def "Should be able to load capabilities from the file system"() {
-        given: "The "
-            def vars = new MockEnvironmentVariables()
-            def outputDirectory = getClass().getResource("/").getPath()
-            vars.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.propertyName, outputDirectory)
-            vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY + "NotOnClasspath")
-        and: "We are using the Annoation provider"
-            RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
-        when: "we load the requirements"
-            def capabilities = capabilityProvider.getRequirements();
-            def capabilityNames = capabilities.collect {it.name}
-            def capabilitiyTexts = capabilities.collect {it.narrativeText}
-        then:
-            capabilityNames == ["Mycapability1"]
-            capabilitiyTexts == ["A narrative text\nfor capability 1"]
-    }
-
     def "Should be able to load issues from the default directory structure"() {
         given: "We are using the Annotation provider"
             def vars = new MockEnvironmentVariables()
@@ -52,7 +39,7 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
             ids == ["#123", "", ""]
     }
 
-    def "Should derive title from the directory name if not present in narravite"(){
+    def "Should derive title from the directory name if not present in narrative"(){
         given: "there is a Narrative annotation on a pacakge that does not have a title line"
             def vars = new MockEnvironmentVariables()
             vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY)
@@ -63,6 +50,21 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
             def zucchiniCapability = capabilities.get(1)
         then: "the title should be a human-readable version of the directory name"
             zucchiniCapability.name == "Nice zucchinis"
+    }
+
+    def "Should find the requirement for a given tag"() {
+        given: "We are using the default requirements provider"
+            EnvironmentVariables vars = new MockEnvironmentVariables();
+            vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY)
+            RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
+        and: "We define the root package in the 'thucydides.test.root' property"
+            vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
+        when: "We load requirements with nested capability directories and no .narrative files"
+            def growApplesTag = TestTag.withName("Apples").andType("capability")
+        then:
+            Optional<Requirement> requirement = capabilityProvider.getRequirementFor(growApplesTag)
+            requirement.get().getName() == "Apples"
+            requirement.get().getType() == "capability"
     }
 
     def "capabilities can be nested"(){
