@@ -40,6 +40,7 @@ public class WhenInjectingSpringDependenciesIntoAStepLibrary {
         dependencyInjector.injectDependenciesInto(steps);
 
         assertThat(steps.widgetService, is(notNullValue()));
+        assertThat(steps.catalogService, is(notNullValue()));
 
     }
 

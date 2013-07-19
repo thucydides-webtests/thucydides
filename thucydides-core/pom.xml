@@ -12,7 +12,7 @@
     <name>thucydides-core</name>
     <properties>
         <root.package>net.thucydides.core</root.package>
-        <spring.version>3.1.1.RELEASE</spring.version>
+        <spring.version>3.2.3.RELEASE</spring.version>
     </properties>
     <dependencies>
         <dependency>
