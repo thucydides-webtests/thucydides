@@ -4,6 +4,7 @@ import spock.lang.Specification
 
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.is
+import static org.hamcrest.Matchers.greaterThan
 
 class BeanMatcherSpecification extends Specification {
 
@@ -38,6 +39,20 @@ class BeanMatcherSpecification extends Specification {
         100       | 100                      | true
         100       | 0                        | false
         0         | 100                      | false
+    }
+
+    def "should match big decimals"() {
+        when:
+            def matcher = new BigDecimalValueMatcher(1.0, is(1.0))
+        then:
+            matcher.matches()
+    }
+
+    def "should match big decimals with comparisons"() {
+        when:
+        def matcher = new BigDecimalValueMatcher(1.0, greaterThan(0.5))
+        then:
+        matcher.matches()
     }
 
     def "should match numbers with 'is'"() {
