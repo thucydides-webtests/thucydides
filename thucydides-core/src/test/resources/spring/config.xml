@@ -10,4 +10,10 @@
         <property name="name"><value>Widgets</value></property>
         <property name="quota"><value>1</value></property>
     </bean>
+
+
+    <bean id="catalogService" class="net.thucydides.core.steps.samples.CatalogService">
+        <property name="name"><value>Widgets</value></property>
+        <property name="quota"><value>1</value></property>
+    </bean>
 </beans>

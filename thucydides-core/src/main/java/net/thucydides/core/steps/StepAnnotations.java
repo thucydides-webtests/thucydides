@@ -46,7 +46,7 @@ public final class StepAnnotations {
                                                          StepFactory stepFactory,
                                                          StepsAnnotatedField stepsField) {
         if (!stepsField.isInstantiated(testCaseOrSteps)) {
-           Class<? extends ScenarioSteps> scenarioStepsClass = stepsField.getFieldClass();
+           Class<?> scenarioStepsClass = stepsField.getFieldClass();
            Object steps = stepFactory.getStepLibraryFor(scenarioStepsClass);
            stepsField.setValue(testCaseOrSteps, steps);
            injectNestedScenarioStepsInto(steps, stepFactory, scenarioStepsClass);

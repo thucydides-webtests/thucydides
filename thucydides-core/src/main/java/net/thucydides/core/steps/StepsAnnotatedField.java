@@ -96,7 +96,7 @@ public class StepsAnnotatedField {
     }
 
     @SuppressWarnings("unchecked")
-    public Class<? extends ScenarioSteps> getFieldClass() {
-        return (Class<? extends ScenarioSteps>) field.getType();
+    public Class<?> getFieldClass() {
+        return field.getType();
     }
 }
