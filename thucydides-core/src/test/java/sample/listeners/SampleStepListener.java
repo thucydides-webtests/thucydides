@@ -31,6 +31,9 @@ public class SampleStepListener implements StepListener {
         
     }
 
+    public void testRetried() {
+    }
+
     public void stepStarted(ExecutedStepDescription description) {
         
     }
