@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class RetryingFailedTests {
+public class WhenRetryingFailedTests {
 
     MockEnvironmentVariables environmentVariables;
 
