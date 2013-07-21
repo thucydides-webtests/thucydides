@@ -224,6 +224,13 @@ public class StepEventBus {
         clear();
     }
 
+    public void testRetried() {
+        for(StepListener stepListener : getAllListeners()) {
+            stepListener.testRetried();
+        }
+        clear();
+    }
+
     private void pushStep(String stepName) {
         stepStack.push(stepName);
     }

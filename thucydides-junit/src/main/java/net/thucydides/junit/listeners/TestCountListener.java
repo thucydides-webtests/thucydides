@@ -84,6 +84,8 @@ public class TestCountListener implements StepListener {
     public void testFinished(TestOutcome result) {
     }
 
+    public void testRetried() {
+    }
 
     public void stepStarted(ExecutedStepDescription description) {
     }
