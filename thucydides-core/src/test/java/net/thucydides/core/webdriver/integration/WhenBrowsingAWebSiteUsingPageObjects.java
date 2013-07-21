@@ -7,6 +7,7 @@ import net.thucydides.core.pages.WebElementFacadeImpl;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
+import net.thucydides.core.webelements.RadioButtonGroup;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
         public WebElement multiselect;
 
-        public WebElement checkbox;
+        public WebElementFacade checkbox;
 
         public WebElement color;
 
@@ -46,6 +47,10 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         @FindBy(id="firstname")
         public WebElementFacade firstnameWithFindBy;
 
+        @FindBy(name="radio")
+        public List<WebElement> radioButtons;
+
+        public RadioButtonGroup nameRadioButtons = new RadioButtonGroup(radioButtons);
 
         @net.thucydides.core.annotations.findby.FindBy(id="firstname")
         public WebElement firstnameWithExtendedFindBy;
@@ -193,6 +198,18 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     }
 
     @Test
+    public void should_select_radio_buttons_by_value() {
+        indexPage.nameRadioButtons.selectByValue("2");
+        assertThat(indexPage.nameRadioButtons.getSelectedValue().get(), is("2"));
+    }
+
+    @Test
+    public void should_select_radio_buttons_by_visible_text() {
+        indexPage.nameRadioButtons.selectByVisibleText("Value 1");
+        assertThat(indexPage.nameRadioButtons.getSelectedValue().get(), is("1"));
+    }
+
+    @Test
     public void ticking_a_set_checkbox_should_set_the_value_to_true() {
         if (indexPage.checkbox.isSelected()) {
             indexPage.checkbox.click();
@@ -212,13 +229,23 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     }
 
     @Test
+    public void should_be_able_to_test_if_a_checkbox_is_checked() {
+        indexPage.setCheckbox(indexPage.checkbox, true);
+        assertThat(indexPage.checkbox.isSelected(), is(true));
+    }
+
+    @Test
+    public void should_be_able_to_test_if_a_checkbox_is_not_checked() {
+        assertThat(indexPage.checkbox.isSelected(), is(false));
+    }
+
+    @Test
     public void unticking_a_set_checkbox_should_set_the_value_to_false() {
         if (indexPage.checkbox.isSelected()) {
             indexPage.checkbox.click();
         }
 
         indexPage.setCheckbox(indexPage.checkbox, false);
-
         assertThat(indexPage.checkbox.isSelected(), is(false));
     }
 
