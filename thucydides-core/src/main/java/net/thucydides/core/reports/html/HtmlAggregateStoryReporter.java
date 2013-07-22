@@ -117,6 +117,9 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateAggregateReportFor(testOutcomes);
         generateTagReportsFor(testOutcomes);
         generateTagTypeReportsFor(testOutcomes);
+        for(String name : testOutcomes.getTagNames()) {
+            generateTagTypeReportsFor(testOutcomes.withTag(name), new ReportNameProvider(name));
+        }
         generateResultReportsFor(testOutcomes);
         generateHistoryReportFor(testOutcomes);
 //        generateCoverageReportsFor(testOutcomes);
@@ -182,6 +185,10 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     private void generateTagTypeReportsFor(TestOutcomes testOutcomes) throws IOException {
+        generateTagTypeReportsFor(testOutcomes, reportNameProvider);
+    }
+
+    private void generateTagTypeReportsFor(TestOutcomes testOutcomes, ReportNameProvider reportNameProvider) throws IOException {
 
         for (String tagType : testOutcomes.getTagTypes()) {
             generateTagTypeReport(testOutcomes, reportNameProvider, tagType);

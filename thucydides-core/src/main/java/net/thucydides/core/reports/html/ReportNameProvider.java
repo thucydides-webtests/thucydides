@@ -3,11 +3,8 @@ package net.thucydides.core.reports.html;
 import com.google.common.base.Optional;
 import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.model.ReportType;
-import net.thucydides.core.model.TestResult;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.NameConverter;
-
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class ReportNameProvider {
 
@@ -28,6 +25,14 @@ public class ReportNameProvider {
         this.context = context;
         this.reportNamer = ReportNamer.forReportType(type);
     }
+
+    public String getContext() {
+        if(context.isPresent()) {
+            return context.get();
+        } else {
+            return "";
+        }
+     }
 
     public ReportNameProvider forCSVFiles() {
         return new ReportNameProvider(this.context, ReportType.CSV);

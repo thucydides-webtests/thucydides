@@ -50,11 +50,16 @@
     <#else>
         <#assign resultsContext = '- ' + testOutcomes.label>
     </#if>
+    <#if (reportName.context == '')>
+      <#assign contextTitle = ''>
+    <#else>
+      <#assign contextTitle = (' > ' + inflection.of(reportName.context).asATitle()) >
+    </#if>
     <#assign pageTitle = inflection.of(tagType).inPluralForm().asATitle() >
     <div id="contenttop">
         <#--<div class="leftbg"></div>-->
         <div class="middlebg">
-            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > ${pageTitle}</span>
+            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> ${contextTitle} > ${pageTitle}</span>
         </div>
         <div class="rightbg"></div>
     </div>
