@@ -1,24 +1,18 @@
-package net.thucydides.core.reports.integration;
-
-
+package net.thucydides.core.reports.integration
 import com.github.goldin.spock.extensions.tempdir.TempDir
+import net.thucydides.core.ThucydidesSystemProperties
+import net.thucydides.core.ThucydidesSystemProperty
+import net.thucydides.core.issues.IssueTracking
+import net.thucydides.core.reports.history.ProgressSnapshot
+import net.thucydides.core.reports.history.TestHistory
+import net.thucydides.core.reports.history.TestResultSnapshot
+import net.thucydides.core.reports.html.HtmlAggregateStoryReporter
+import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import spock.lang.Specification
 
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled
-import net.thucydides.core.reports.html.HtmlAggregateStoryReporter
-import net.thucydides.core.issues.IssueTracking
-import net.thucydides.core.reports.history.TestHistory
-
-import static org.mockito.Mockito.when
-import net.thucydides.core.reports.history.ProgressSnapshot
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.openqa.selenium.By
-import net.thucydides.core.reports.history.TestResultSnapshot
-import org.openqa.selenium.WebElement
-import org.junit.Test
-import net.thucydides.core.ThucydidesSystemProperty
-import net.thucydides.core.ThucydidesSystemProperties
 
 public class WhenGeneratingAggregateHtmlReports extends Specification {
 
@@ -58,6 +52,29 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         then: "The tags should show the features and stories from the tests"
             tagTypeNames.contains "A User Story In A Feature"
             tagTypeNames.contains "A Feature"
+    }
+
+    def "we can navigate sub reports"() {
+        given: "We generate reports from a directory containing features and stories only"
+            reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
+        when: "we view the report"
+            driver.get reportHomePageUrl();
+            def tagTypeNames = driver.findElements(By.cssSelector(".tagTitle")).collect { it.text}
+        then: "we can see all available tags and click on 'Another Different Feature' link"
+            def anotherDifferentFeatureLink = driver.findElement(By.linkText("Another Different Feature"))
+            anotherDifferentFeatureLink.click()
+            def breadcrumbText = driver.findElement(By.cssSelector(".bluetext")).getText()
+            breadcrumbText == "Thucydides Reports> another different feature"
+        when: "we click on the Features link"
+            def featuresLink = driver.findElement(By.linkText("Features"))
+            featuresLink.click()
+        then: "we see the breadcrumb showing Thucydedes Reports > another different feature"
+            def subReportBreadcrumbText = driver.findElement(By.cssSelector(".bluetext")).getText()
+            subReportBreadcrumbText == "Home > Another Different Feature > Features"
+        and: "a single feature"
+            def featureLink = driver.findElement(By.linkText("Another Different Feature"))
+            featureLink.enabled
+
     }
 
     def "should pass JIRA URL to reporter"() {
