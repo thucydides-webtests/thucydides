@@ -2,6 +2,7 @@ package net.thucydides.core.webdriver;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.fixtureservices.FixtureException;
 import net.thucydides.core.fixtureservices.FixtureProviderService;
@@ -50,7 +51,6 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 /**
  * Provides an instance of a supported WebDriver.
  * When you instanciate a Webdriver instance for Firefox or Chrome, it opens a new browser.
- * We
  *
  * @author johnsmart
  */
@@ -547,9 +547,14 @@ public class WebDriverFactory {
     }
 
     protected FirefoxProfile createNewFirefoxProfile() {
-        FirefoxProfile profile = new FirefoxProfile();
-        profile.setAlwaysLoadNoFocusLib(true);
-        profile.setEnableNativeEvents(true);
+        FirefoxProfile profile;
+        if (Thucydides.getFirefoxProfile() != null) {
+            profile = Thucydides.getFirefoxProfile();
+        } else {
+            profile = new FirefoxProfile();
+            profile.setAlwaysLoadNoFocusLib(true);
+            profile.setEnableNativeEvents(true);
+        }
         return profile;
     }
 

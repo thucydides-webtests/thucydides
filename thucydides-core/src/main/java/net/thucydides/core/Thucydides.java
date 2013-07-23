@@ -13,6 +13,7 @@ import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 
 import java.io.File;
 
@@ -28,6 +29,7 @@ public class Thucydides {
     private static final ThreadLocal<StepFactory> stepFactoryThreadLocal = new ThreadLocal<StepFactory>();
     private static final ThreadLocal<StepListener> stepListenerThreadLocal = new ThreadLocal<StepListener>();
     private static final ThreadLocal<TestSessionVariables> testSessionThreadLocal = new ThreadLocal<TestSessionVariables>();
+    private static final ThreadLocal<FirefoxProfile> firefoxProfileThreadLocal = new ThreadLocal<FirefoxProfile>();
 
     /**
      * Initialize Thucydides-related fields in the specified object.
@@ -166,4 +168,13 @@ public class Thucydides {
         String workingDirPath = System.getProperty("user.dir");
         return new File(workingDirPath).getName();
     }
+
+    public static void useFirefoxProfile(FirefoxProfile profile) {
+        firefoxProfileThreadLocal.set(profile);
+    }
+
+    public static FirefoxProfile getFirefoxProfile() {
+        return firefoxProfileThreadLocal.get();
+    }
+
 }
