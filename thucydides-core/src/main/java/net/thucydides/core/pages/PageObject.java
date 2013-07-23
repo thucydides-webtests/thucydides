@@ -626,8 +626,8 @@ public abstract class PageObject {
 
     private void thisIsNotThePageYourLookingFor() {
 
-        String errorDetails = "This is not the page you're looking for:\n"
-                + "I was looking for a page compatible with " + this.getClass() + "\n"
+        String errorDetails = "This is not the page you're looking for: "
+                + "I was looking for a page compatible with " + this.getClass() + " but "
                 + "I was at the URL " + getDriver().getCurrentUrl();
 
         throw new WrongPageError(errorDetails);

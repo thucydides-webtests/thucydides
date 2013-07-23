@@ -552,6 +552,7 @@ public class WebDriverFactory {
             profile = Thucydides.getFirefoxProfile();
         } else {
             profile = new FirefoxProfile();
+            profile.setPreference("network.proxy.socks_port",9999);
             profile.setAlwaysLoadNoFocusLib(true);
             profile.setEnableNativeEvents(true);
         }

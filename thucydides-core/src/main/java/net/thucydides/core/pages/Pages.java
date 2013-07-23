@@ -241,8 +241,8 @@ public class Pages implements Serializable {
 
     private void thisIsNotThePageYourLookingFor(final Class<? extends PageObject> pageObjectClass) {
 
-        String errorDetails = "This is not the page you're looking for:\n"
-                + "I was looking for a page compatible with " + pageObjectClass + "\n"
+        String errorDetails = "This is not the page you're looking for: "
+                + "I was looking for a page compatible with " + pageObjectClass + " but "
                 + "I was at the URL " + getDriver().getCurrentUrl();
 
         throw new WrongPageError(errorDetails);
