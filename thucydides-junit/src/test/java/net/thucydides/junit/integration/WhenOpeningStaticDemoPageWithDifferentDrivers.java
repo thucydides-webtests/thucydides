@@ -44,6 +44,14 @@ public class WhenOpeningStaticDemoPageWithDifferentDrivers {
     }
 
     @Test
+    @Title("The user selects a value")
+    @WithDriver("phantomjs")
+    public void the_user_selects_a_value_with_phantomjs() {
+        steps.enter_values("Label 2", true);
+        steps.onSamePage(DemoSiteSteps.class).should_have_selected_value("2");
+    }
+
+    @Test
     @Title("The user enters different values.")
     public void the_user_opens_another_page() {
         steps.enter_values("Label 3", true);

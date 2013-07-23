@@ -23,10 +23,15 @@ public enum ThucydidesSystemProperty {
     BASE_URL("webdriver.base.url"),
 
     /**
-     * The URL to be used for remote drivers
+     * The URL to be used for remote drivers (including a selenium grid hub)
      */
     REMOTE_URL("webdriver.remote.url"),
 
+    /**
+     * What port to run PhantomJS on (used in conjunction with webdriver.remote.url to
+     * register with a Selenium hub, e.g. -Dphantomjs.webdriver=5555 -Dwebdriver.remote.url=http://localhost:4444
+     */
+    PHANTOMJS_WEBDRIVER_PORT("phantomjs.webdriver.port"),
 
     /**
      * The driver to be used for remote drivers
@@ -246,15 +251,29 @@ public enum ThucydidesSystemProperty {
     BATCH_NUMBER("thucydides.batch.number"),
 
     /**
-     * HTTP Proxy URL configuration for Firefox
+     * HTTP Proxy URL configuration for Firefox and PhantomJS
      */
     PROXY_URL("thucydides.proxy.http"),
 
     /**
-     * HTTP Proxy port configuration for Firefox
+     * HTTP Proxy port configuration for Firefox and PhantomJS
      */
     PROXY_PORT("thucydides.proxy.http_port"),
 
+    /**
+     * HTTP Proxy type configuration for Firefox and PhantomJS
+     */
+    PROXY_TYPE("thucydides.proxy.type"),
+
+    /**
+     * HTTP Proxy username configuration for Firefox and PhantomJS
+     */
+    PROXY_USER("thucydides.proxy.user"),
+
+    /**
+     * HTTP Proxy password configuration for Firefox and PhantomJS
+     */
+    PROXY_PASSWORD("thucydides.proxy.password"),
 
     /**
      * How long webdriver waits for elements to appear by default, in milliseconds.
@@ -444,7 +463,12 @@ public enum ThucydidesSystemProperty {
     /**
      * If set to true, Asciidoc formatting will be supported in the narrative texts.
      */
-    THUCYDIDES_NARRATIVE_FORMAT("narrative.format");
+    THUCYDIDES_NARRATIVE_FORMAT("narrative.format"),
+
+    /**
+     * Path to PhantomJS executable
+     */
+    PHANTOMJS_PATH("phantomjs.binary.path");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

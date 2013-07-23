@@ -11,6 +11,7 @@ import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
+import net.thucydides.core.webdriver.phantomjs.PhantomJSCapabilityEnhancer;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -27,6 +28,8 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -39,6 +42,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -162,6 +166,8 @@ public class WebDriverFactory {
                 driver = firefoxDriver();
             } else if (isAnHtmlUnitDriver(driverClass)) {
                 driver = htmlunitDriver();
+            } else if (isAPhantomJSDriver(driverClass)) {
+                driver = phantomJSDriver();
             } else if (isAChromeDriver(driverClass)) {
                 driver = chromeDriver();
             } else if (isASafariDriver(driverClass)) {
@@ -180,6 +186,7 @@ public class WebDriverFactory {
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
         }
     }
+
 
     private void setImplicitTimeoutsIfSpecified(WebDriver driver) {
         if (ThucydidesSystemProperty.TIMEOUTS_IMPLICIT_WAIT.isDefinedIn(environmentVariables)) {
@@ -415,6 +422,13 @@ public class WebDriverFactory {
         return webdriverInstanceFactory.newHtmlUnitDriver(enhancedCapabilities(capabilities));
     }
 
+    private WebDriver phantomJSDriver() {
+        DesiredCapabilities capabilities = DesiredCapabilities.phantomjs();
+        PhantomJSCapabilityEnhancer enhancer = new PhantomJSCapabilityEnhancer(environmentVariables);
+        enhancer.enhanceCapabilities(capabilities);
+        return webdriverInstanceFactory.newPhantomDriver(enhancedCapabilities(capabilities));
+    }
+
     private WebDriver firefoxDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         FirefoxProfile profile = buildFirefoxProfile();
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();
@@ -545,6 +559,11 @@ public class WebDriverFactory {
     private boolean isAnHtmlUnitDriver(Class<? extends WebDriver> driverClass) {
         return (HtmlUnitDriver.class.isAssignableFrom(driverClass));
     }
+
+    private boolean isAPhantomJSDriver(Class<? extends WebDriver> driverClass) {
+        return (PhantomJSDriver.class.isAssignableFrom(driverClass));
+    }
+
 
     protected FirefoxProfile createNewFirefoxProfile() {
         FirefoxProfile profile = new FirefoxProfile();

@@ -34,7 +34,7 @@ public class WhenRetryingFailedTests {
     @Test
     public void result_is_a_pass_despite_initial_failure() throws Exception {
         environmentVariables.setProperty(MAX_RETRIES, "5");
-        ThucydidesRunner runner = new ThucydidesRunner(FailThenPass.class,
+        ThucydidesRunner runner = new ThucydidesRunner(FailThenPassSample.class,
                                                        new WebDriverFactory(environmentVariables),
                                                        new SystemPropertiesConfiguration(environmentVariables));
 
@@ -47,7 +47,7 @@ public class WhenRetryingFailedTests {
         assertThat(notifier.failed, is(false));
     }
 
-    public static class FailThenPass {
+    public static class FailThenPassSample {
 
         private static int failureCount;
 
