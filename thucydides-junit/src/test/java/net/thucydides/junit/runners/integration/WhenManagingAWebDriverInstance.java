@@ -1,13 +1,16 @@
-package net.thucydides.junit.runners;
+package net.thucydides.junit.runners.integration;
 
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
+import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverInstanceFactory;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.junit.runners.AbstractTestStepRunnerTest;
+import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.samples.MultipleTestScenario;
 import net.thucydides.samples.MultipleTestScenarioWithUniqueSession;
 import net.thucydides.samples.SamplePassingScenario;
@@ -92,6 +95,9 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
         assertThat(firefoxDriver, is(notNullValue()));
     }
 
+    @Mock
+    ThucydidesWebdriverManager manager;
+
     @Test
     public void the_driver_should_be_reset_after_each_test() throws InitializationError {
 
@@ -99,7 +105,8 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
 
         runner.run(new RunNotifier());
 
-        verify(firefoxDriver,times(3)).quit();
+        verify(manager,times(3)).closeAllCurrentDrivers();
+        //verify(firefoxDriver,times(3)).quit();
     }
 
     @Test
