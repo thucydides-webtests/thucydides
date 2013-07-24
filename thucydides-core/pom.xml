@@ -336,8 +336,8 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <parallel>none</parallel>
-                                    <!--<threadCount>4</threadCount>-->
+                                    <parallel>classes</parallel>
+                                    <threadCount>4</threadCount>
                                 </configuration>
                             </execution>
                         </executions>

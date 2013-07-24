@@ -153,8 +153,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <parallel>classes</parallel>
-                                    <threadCount>4</threadCount>
+                                    <parallel>none</parallel>
                                 </configuration>
                             </execution>
                         </executions>
