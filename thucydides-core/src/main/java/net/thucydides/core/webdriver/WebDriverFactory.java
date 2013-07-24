@@ -343,11 +343,12 @@ public class WebDriverFactory {
 
         switch (driverType) {
             case CHROME:
-                capabilities = DesiredCapabilities.chrome();
+                capabilities = chromeCapabilities();
                 break;
 
             case FIREFOX:
                 capabilities = DesiredCapabilities.firefox();
+                capabilities.setCapability("firefox_profile",buildFirefoxProfile());
                 break;
 
             case HTMLUNIT:
@@ -366,7 +367,7 @@ public class WebDriverFactory {
                 capabilities = new DesiredCapabilities();
                 capabilities.setJavascriptEnabled(true);
         }
-        return capabilities;
+        return (DesiredCapabilities) enhancedCapabilities(capabilities);
     }
 
     private DesiredCapabilities remoteCapabilities() {
@@ -381,7 +382,7 @@ public class WebDriverFactory {
         return capabilities;
     }
 
-    private Capabilities addExtraCatabilitiesTo(DesiredCapabilities capabilities) {
+    private DesiredCapabilities addExtraCatabilitiesTo(DesiredCapabilities capabilities) {
         CapabilitySet capabilitySet = new CapabilitySet(environmentVariables);
         Map<String, Object> extraCapabilities = capabilitySet.getCapabilities();
         for(String capabilityName : extraCapabilities.keySet()) {
@@ -423,14 +424,17 @@ public class WebDriverFactory {
     }
 
     private WebDriver chromeDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        String chromeSwitches = environmentVariables.getProperty(ThucydidesSystemProperty.CHROME_SWITCHES);
-
-        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-        capabilities.setCapability(ChromeOptions.CAPABILITY, optionsFromSwitches(chromeSwitches));
-        capabilities.setCapability("chrome.switches", chromeSwitches);
-
+        DesiredCapabilities capabilities = chromeCapabilities();
         return webdriverInstanceFactory.newChromeDriver(enhancedCapabilities(capabilities));
 
+    }
+
+    private DesiredCapabilities chromeCapabilities() {
+        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+        String chromeSwitches = environmentVariables.getProperty(ThucydidesSystemProperty.CHROME_SWITCHES);
+        capabilities.setCapability(ChromeOptions.CAPABILITY, optionsFromSwitches(chromeSwitches));
+        capabilities.setCapability("chrome.switches", chromeSwitches);
+        return capabilities;
     }
 
     private ChromeOptions optionsFromSwitches(String chromeSwitches) {
