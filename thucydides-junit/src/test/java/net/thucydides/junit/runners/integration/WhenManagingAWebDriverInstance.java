@@ -27,12 +27,16 @@ import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+
+import java.lang.reflect.InvocationTargetException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -105,8 +109,7 @@ public class WhenManagingAWebDriverInstance extends AbstractTestStepRunnerTest {
 
         runner.run(new RunNotifier());
 
-        verify(manager,times(3)).closeAllCurrentDrivers();
-        //verify(firefoxDriver,times(3)).quit();
+        verify(firefoxDriver,times(3)).quit();
     }
 
     @Test
