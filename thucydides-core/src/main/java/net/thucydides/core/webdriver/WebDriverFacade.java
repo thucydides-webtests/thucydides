@@ -199,7 +199,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
             try {
                 getDriverInstance().quit();
             } catch (WebDriverException e) {
-                LOGGER.warn("Error while quitting the driver - is this IE? (" + e.getMessage() + ")");
+                LOGGER.warn("Error while quitting the driver (" + e.getMessage() + ")");
             }
             proxiedWebDriver = null;
         }
