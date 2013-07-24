@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
@@ -45,5 +46,9 @@ public class WebdriverInstanceFactory {
 
     public WebDriver newHtmlUnitDriver(Capabilities capabilities) {
         return new HtmlUnitDriver(capabilities);
+    }
+
+    public WebDriver newPhantomDriver(Capabilities caps) {
+        return new PhantomJSDriver(caps);
     }
 }

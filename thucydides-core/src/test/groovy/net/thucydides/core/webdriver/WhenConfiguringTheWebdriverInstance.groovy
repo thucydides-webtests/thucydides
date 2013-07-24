@@ -9,6 +9,7 @@ import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxProfile
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.openqa.selenium.ie.InternetExplorerDriver
+import org.openqa.selenium.phantomjs.PhantomJSDriver
 import org.openqa.selenium.remote.RemoteWebDriver
 import spock.lang.Specification
 
@@ -22,6 +23,7 @@ class WhenConfiguringTheWebdriverInstance extends Specification {
     def iexplore = Mock(InternetExplorerDriver)
     def opera = Mock(OperaDriver)
     def remote = Mock(RemoteWebDriver)
+    def phantomdriver = Mock(PhantomJSDriver)
     Capabilities configuredRemoteCapabilities
 
     def webdriverInstanceFactory = new WebdriverInstanceFactory() {
@@ -33,6 +35,9 @@ class WhenConfiguringTheWebdriverInstance extends Specification {
 
         @Override
         WebDriver newHtmlUnitDriver(Capabilities caps) { return htmlunit }
+
+        @Override
+        WebDriver newPhantomDriver(Capabilities caps) { return phantomdriver }
 
         @Override
         WebDriver newRemoteDriver(URL remoteUrl, Capabilities capabilities) {
@@ -81,6 +86,14 @@ class WhenConfiguringTheWebdriverInstance extends Specification {
             def webdriver = webDriverFactory.newInstanceOf(SupportedWebDriver.HTMLUNIT)
         then:
             webdriver == htmlunit
+
+    }
+
+    def "Should create phantomjs driver proxy when required"() {
+        when:
+        def webdriver = webDriverFactory.newInstanceOf(SupportedWebDriver.PHANTOMJS)
+        then:
+        webdriver == phantomdriver
 
     }
 

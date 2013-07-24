@@ -84,8 +84,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
 
     WebDriver driver;
 
-    static WebDriver firefoxDriver;
-
     IndexPage indexPage;
 
     MockEnvironmentVariables environmentVariables;
@@ -104,14 +102,6 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     public void initConfiguration() {
         environmentVariables = new MockEnvironmentVariables();
         configuration = new SystemPropertiesConfiguration(environmentVariables);
-    }
-
-
-    @After
-    public void closeDriver() {
-        if (firefoxDriver != null) {
-            firefoxDriver.quit();
-        }
     }
 
     private void openStaticTestSite() {
@@ -135,7 +125,7 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     @Test
     public void should_print_web_element_facade_without_a_webelement_in_a_readable_form() {
 
-        WebElementFacade WebElement = WebElementFacadeImpl.wrapWebElement(driver, (WebElement) null, 0);
+        WebElementFacade WebElement = WebElementFacadeImpl.wrapWebElement(driver, null, 0);
         assertThat(WebElement.toString(), is("<Undefined web element>"));
     }
 
