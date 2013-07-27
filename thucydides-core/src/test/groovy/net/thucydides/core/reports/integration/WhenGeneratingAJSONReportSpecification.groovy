@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
@@ -23,13 +25,17 @@ import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.skyscreamer.jsonassert.comparator.JSONComparator;
 
 import com.github.goldin.spock.extensions.tempdir.TempDir;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.WithTag;
+import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.TestOutcomes;
@@ -340,6 +346,104 @@ class WhenGeneratingAJSONReportSpecification extends spock.lang.Specification {
 		
 		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
 		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator))		
+		expect:
+		   JSONCompare.compareJSON(expectedReport, getStringFrom(jsonReport),jsonCmp).passed();
+	}
+			
+	@Test
+	def "should generate an JSON report for an acceptance test run with a table"()
+			throws Exception {
+
+		def row1 = new ArrayList<Object>(); 
+		row1.addAll(Lists.newArrayList("Joe", "Smith", "20"));
+		def row2 = new ArrayList<Object>(); 
+		row2.addAll(Lists.newArrayList("Jack", "Jones", "21"));
+
+		def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+		DateTime startTime = new DateTime(2013,1,1,0,0,0,0);
+		testOutcome.setStartTime(startTime);
+
+		def table = DataTable.withHeaders(ImmutableList.of("firstName","lastName","age")).
+									andRows(ImmutableList.of(row1, row2)).build();
+		testOutcome.useExamplesFrom(table);
+		table.row(0).hasResult(TestResult.FAILURE);
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+		
+		def expectedReport = """
+			{
+			  "title": "Should do this",
+			  "name": "should_do_this",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$SomeTestScenario"
+			  },
+			  "result": "SUCCESS",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1374906736965,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ],
+			  "examples": {
+			    "headers": [
+			      "firstName",
+			      "lastName",
+			      "age"
+			    ],
+			    "rows": [
+			      {
+			        "cellValues": [
+			          "Joe",
+			          "Smith",
+			          "20"
+			        ],
+			        "result": "FAILURE"
+			      },
+			      {
+			        "cellValues": [
+			          "Jack",
+			          "Jones",
+			          "21"
+			        ],
+			        "result": "UNDEFINED"
+			      }
+			    ],
+			    "predefinedRows": true,
+			    "currentRow": {
+			      "value": 0
+			    }
+			  }
+			}
+			"""				
+		
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator))
 		expect:
 		   JSONCompare.compareJSON(expectedReport, getStringFrom(jsonReport),jsonCmp).passed();
 	}
