@@ -39,14 +39,18 @@ import net.thucydides.core.digest.Digest;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpock.ATestScenarioWithIssues;
+import net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpock.AUserStory;
+import net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpock.SomeNestedTestScenario;
 import net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpock.SomeTestScenario;
 import net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpock.SomeTestScenarioInAFeature;
 import net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpock.SomeTestScenarioWithTags;
 import net.thucydides.core.reports.json.JSONTestOutcomeReporter;
+import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
 
 class WhenGeneratingAJSONReportSpecification extends spock.lang.Specification {
@@ -130,6 +134,23 @@ class WhenGeneratingAJSONReportSpecification extends spock.lang.Specification {
 		}
 	}
 
+	@Story(AUserStory.class)
+	class SomeNestedTestScenario {
+		public void a_nested_test_case() {
+		}
+
+		;
+
+		public void should_do_this() {
+		}
+
+		;
+
+		public void should_do_that() {
+		}
+
+		;
+	}
 
 	
 	def "should get tags from user story if present"() {
@@ -1083,7 +1104,6 @@ class WhenGeneratingAJSONReportSpecification extends spock.lang.Specification {
 			}
 		"""
 		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
-		System.out.println(getStringFrom(jsonReport));		
 		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT,
 			new Customization("test-steps[0].startTime", comparator),
 			new Customization("test-steps[1].startTime", comparator),
@@ -1100,7 +1120,491 @@ class WhenGeneratingAJSONReportSpecification extends spock.lang.Specification {
 		expect:
 		  JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport),jsonCmp).passed();
 	}
+			
+	@Test
+	def "should record test groups as nested structures"()
+			throws Exception {
+		def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+		def startTime = new DateTime(2013,1,1,0,0,0,0);
+		testOutcome.setStartTime(startTime);
+		
+		testOutcome.startGroup("Group 1")
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"))
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 2"))
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 3"))
+		testOutcome.endGroup()
 
+		def expectedJsonReport = """
+			{
+			  "title": "A nested test case",
+			  "name": "a_nested_test_case",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$SomeNestedTestScenario"
+			  },
+			  "result": "SUCCESS",
+			  "steps": "3",
+			  "successful": "3",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "Group 1",
+			      "duration": 0,
+			      "startTime": 1375092576521,
+			      "screenshots": [],
+			      "children": [
+			        {
+			          "description": "step 1",
+			          "duration": 0,
+			          "startTime": 1375092576521,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        },
+			        {
+			          "description": "step 2",
+			          "duration": 0,
+			          "startTime": 1375092576522,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        },
+			        {
+			          "description": "step 3",
+			          "duration": 0,
+			          "startTime": 1375092576522,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        }
+			      ]
+			    }
+			  ]
+			}
+		"""
+			 
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)		
+		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT,
+			new Customization("test-steps[0].startTime", comparator),
+			new Customization("test-steps[0].children[0].startTime", comparator),
+			new Customization("test-steps[0].children[1].startTime", comparator),
+			new Customization("test-steps[0].children[2].startTime", comparator))
+		expect:
+		  JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport),jsonCmp).passed();
+	}
+			
+	@Test
+	def "should_record_nested_test_groups_as_nested_structures"()
+			throws Exception {
+		def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+		def startTime = new DateTime(2013,1,1,0,0,0,0);
+		testOutcome.setStartTime(startTime);
+		testOutcome.startGroup("Group 1");
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 2"));
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 3"));
+		testOutcome.startGroup("Group 1.1");
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 4"));
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 5"));
+		testOutcome.endGroup();
+		testOutcome.endGroup();
+		
+		def expectedJsonReport = """
+			{
+			  "title": "A nested test case",
+			  "name": "a_nested_test_case",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$SomeNestedTestScenario"
+			  },
+			  "result": "SUCCESS",
+			  "steps": "5",
+			  "successful": "5",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "Group 1",
+			      "duration": 0,
+			      "startTime": 1375093323870,
+			      "screenshots": [],
+			      "children": [
+			        {
+			          "description": "step 1",
+			          "duration": 0,
+			          "startTime": 1375093323870,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        },
+			        {
+			          "description": "step 2",
+			          "duration": 0,
+			          "startTime": 1375093323870,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        },
+			        {
+			          "description": "step 3",
+			          "duration": 0,
+			          "startTime": 1375093323870,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        },
+			        {
+			          "description": "Group 1.1",
+			          "duration": 0,
+			          "startTime": 1375093323870,
+			          "screenshots": [],
+			          "children": [
+			            {
+			              "description": "step 4",
+			              "duration": 0,
+			              "startTime": 1375093323870,
+			              "screenshots": [],
+			              "result": "SUCCESS",
+			              "children": []
+			            },
+			            {
+			              "description": "step 5",
+			              "duration": 0,
+			              "startTime": 1375093323870,
+			              "screenshots": [],
+			              "result": "SUCCESS",
+			              "children": []
+			            }
+			          ]
+			        }
+			      ]
+			    }
+			  ]
+			}
+			"""
+		
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT,
+							  new Customization("test-steps[0].startTime", comparator),
+							  new Customization("test-steps[0].children[0].startTime", comparator),
+							  new Customization("test-steps[0].children[1].startTime", comparator),
+							  new Customization("test-steps[0].children[2].startTime", comparator),
+							  new Customization("test-steps[0].children[3].startTime", comparator),
+							  new Customization("test-steps[0].children[3].children[0].startTime", comparator),
+							  new Customization("test-steps[0].children[3].children[1].startTime", comparator));
+
+		expect:
+		  JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport),jsonCmp).passed();
+	}
+			
+	@Test
+	def "should record minimal nested test groups as nested structures"()
+			throws Exception {
+		def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+		def startTime = new DateTime(2013,1,1,0,0,0,0);
+		testOutcome.setStartTime(startTime);
+		testOutcome.startGroup("Group 1");
+		testOutcome.startGroup("Group 1.1");
+		testOutcome.startGroup("Group 1.1.1");
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+		testOutcome.endGroup();
+		testOutcome.endGroup();
+		testOutcome.endGroup();
+	   
+		def expectedJsonReport = """
+			{
+			  "title": "A nested test case",
+			  "name": "a_nested_test_case",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$SomeNestedTestScenario"
+			  },
+			  "result": "SUCCESS",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "Group 1",
+			      "duration": 0,
+			      "startTime": 1375093677896,
+			      "screenshots": [],
+			      "children": [
+			        {
+			          "description": "Group 1.1",
+			          "duration": 0,
+			          "startTime": 1375093677896,
+			          "screenshots": [],
+			          "children": [
+			            {
+			              "description": "Group 1.1.1",
+			              "duration": 0,
+			              "startTime": 1375093677896,
+			              "screenshots": [],
+			              "children": [
+			                {
+			                  "description": "step 1",
+			                  "duration": 0,
+			                  "startTime": 1375093677896,
+			                  "screenshots": [],
+			                  "result": "SUCCESS",
+			                  "children": []
+			                }
+			              ]
+			            }
+			          ]
+			        }
+			      ]
+			    }
+			  ]
+			}
+			"""				
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT,
+										  new Customization("test-steps[0].startTime", comparator),
+										  new Customization("test-steps[0].children[0].startTime", comparator),
+										  new Customization("test-steps[0].children[0].children[0].startTime", comparator),
+										  new Customization("test-steps[0].children[0].children[0].children[0].startTime", comparator))
+
+		expect:
+		  JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport),jsonCmp).passed();
+	}
+
+	@Test
+	def "should record minimal nested test steps as nested structures"()
+			throws Exception {
+		def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+		def startTime = new DateTime(2013,1,1,0,0,0,0);
+		testOutcome.setStartTime(startTime);
+		testOutcome.startGroup("Group 1");
+		testOutcome.startGroup("Group 1.1");
+		testOutcome.startGroup("Group 1.1.1");
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+		testOutcome.endGroup();
+		testOutcome.endGroup();
+		testOutcome.endGroup();
+		
+		def expectedJsonReport = """
+		{
+		  "title": "A nested test case",
+		  "name": "a_nested_test_case",
+		  "test-case": {
+		    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$SomeNestedTestScenario"
+		  },
+		  "result": "SUCCESS",
+		  "steps": "1",
+		  "successful": "1",
+		  "failures": "0",
+		  "skipped": "0",
+		  "ignored": "0",
+		  "pending": "0",
+		  "duration": "0",
+		  "timestamp": "2013-01-01T00:00:00.000+01:00",
+		  "user-story": {
+		    "userStoryClass": {
+		      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$AUserStory"
+		    },
+		    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AUserStory",
+		    "storyName": "A user story",
+		    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification"
+		  },
+		  "issues": [],
+		  "tags": [
+		    {
+		      "name": "A user story",
+		      "type": "story"
+		    }
+		  ],
+		  "test-steps": [
+		    {
+		      "description": "Group 1",
+		      "duration": 0,
+		      "startTime": 1375094107629,
+		      "screenshots": [],
+		      "children": [
+		        {
+		          "description": "Group 1.1",
+		          "duration": 0,
+		          "startTime": 1375094107629,
+		          "screenshots": [],
+		          "children": [
+		            {
+		              "description": "Group 1.1.1",
+		              "duration": 0,
+		              "startTime": 1375094107629,
+		              "screenshots": [],
+		              "children": [
+		                {
+		                  "description": "step 1",
+		                  "duration": 0,
+		                  "startTime": 1375094107629,
+		                  "screenshots": [],
+		                  "result": "SUCCESS",
+		                  "children": []
+		                }
+		              ]
+		            }
+		          ]
+		        }
+		      ]
+		    }
+		  ]
+		}
+		"""						
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT,
+													  new Customization("test-steps[0].startTime", comparator),
+													  new Customization("test-steps[0].children[0].startTime", comparator),
+													  new Customization("test-steps[0].children[0].children[0].startTime", comparator),
+													  new Customization("test-steps[0].children[0].children[0].children[0].startTime", comparator));
+		expect:
+		  JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport),jsonCmp).passed();
+		
+	}
+			
+	@Test
+	def "should include the name of any screenshots where present"() throws Exception {
+		def testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+		def startTime = new DateTime(2013,1,1,0,0,0,0);
+		testOutcome.setStartTime(startTime);
+		def screenshot = new File(outputDirectory,"step_1.png");
+		def source = new File(outputDirectory,"step_1.html");		
+
+		TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+		step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
+		testOutcome.recordStep(step1);
+		testOutcome.recordStep(TestStepFactory.failingTestStepCalled("step 2"));
+		
+		def expectedJsonReport = """
+			{
+			  "title": "A simple test case",
+			  "name": "a_simple_test_case",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$SomeTestScenario"
+			  },
+			  "result": "FAILURE",
+			  "steps": "2",
+			  "successful": "1",
+			  "failures": "1",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1375094538146,
+			      "screenshots": [
+			        {
+			          "screenshot": {
+			            "path": "/tmp/outputDirectory-1402a0578c8/step_1.png"
+			          },
+			          "sourcecode": {
+			            "path": "/tmp/outputDirectory-1402a0578c8/step_1.html"
+			          }
+			        }
+			      ],
+			      "result": "SUCCESS",
+			      "children": []
+			    },
+			    {
+			      "description": "step 2",
+			      "duration": 0,
+			      "startTime": 1375094538150,
+			      "screenshots": [],
+			      "result": "FAILURE",
+			      "children": []
+			    }
+			  ]
+			}
+		"""
+			
+
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+		System.out.println(getStringFrom(jsonReport));
+		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT,
+										  new Customization("test-steps[0].startTime", comparator),
+										  new Customization("test-steps[1].startTime", comparator),
+										  new Customization("test-steps[0].screenshots[0].sourcecode.path", comparator),
+										  new Customization("test-steps[0].screenshots[0].screenshot.path", comparator));
+
+		expect:
+		  JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport),jsonCmp).passed();
+	}
+		
 			
 	def getStringFrom(File reportFile) throws IOException {
 		return FileUtils.readFileToString(reportFile);
