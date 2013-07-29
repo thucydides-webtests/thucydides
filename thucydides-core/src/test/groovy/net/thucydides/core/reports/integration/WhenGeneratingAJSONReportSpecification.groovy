@@ -3,6 +3,8 @@ package net.thucydides.core.reports.integration
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -33,6 +35,7 @@ import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.annotations.WithTag;
+import net.thucydides.core.digest.Digest;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
@@ -747,15 +750,357 @@ class WhenGeneratingAJSONReportSpecification extends spock.lang.Specification {
 			  ]
 			}	
 		"""
-						
 		
 		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
-		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator))
-		System.out.println(getStringFrom(jsonReport));
+		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator))		
 		expect:
 		  JSONCompare.compareJSON(expectedJSonReport, getStringFrom(jsonReport),jsonCmp).passed();		
 	}
+			
+			
+	@Test
+	def "the xml report should record features and stories as tags"()
+			throws Exception {
+		def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioInAFeature.class);
+		def startTime = new DateTime(2013,1,1,0,0,0,0);		
+		testOutcome.setStartTime(startTime);
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+	   
+		def expectedJsonReport = """
+			{
+			  "title": "Should do this",
+			  "name": "should_do_this",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$SomeTestScenarioInAFeature"
+			  },
+			  "result": "SUCCESS",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$AFeature\$AUserStoryInAFeature"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AFeature.AUserStoryInAFeature",
+			    "storyName": "A user story in a feature",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AFeature",
+			    "qualifiedFeatureClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AFeature",
+			    "featureName": "A feature"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A feature",
+			      "type": "feature"
+			    },
+			    {
+			      "name": "A user story in a feature",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1375068763901,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+		"""
+					
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator))
+		expect:
+		  JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport),jsonCmp).passed();
+	}
 	
+	@Test
+	def "should generate a qualified JSON report for an acceptance test run if the qualifier is specified"() throws Exception {
+		def testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+		def startTime = new DateTime(2013,1,1,0,0,0,0);
+		testOutcome.setStartTime(startTime);
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+		reporter.setQualifier("qualifier");
+	   
+		def expectedJsonReport = """
+			{
+			  "title": "A simple test case [qualifier]",
+			  "name": "a_simple_test_case",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$SomeTestScenario"
+			  },
+			  "result": "SUCCESS",
+			  "qualifier": "qualifier",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1375069991988,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+			"""				
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator))
+		expect:
+		  JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport),jsonCmp).passed();
+	}
+	
+	@Test
+	def "should generate a qualified JSON report with formatted parameters if the qualifier is specified"()
+			throws Exception {
+		def testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+		def startTime = new DateTime(2013,1,1,0,0,0,0);
+		testOutcome.setStartTime(startTime);
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+		reporter.setQualifier("a_b");
+		
+		def expectedJsonReport = """
+			{
+			  "title": "A simple test case [a_b]",
+			  "name": "a_simple_test_case",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$SomeTestScenario"
+			  },
+			  "result": "SUCCESS",
+			  "qualifier": "a_b",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1375070305312,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+		"""							
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT, new Customization("test-steps[0].startTime", comparator))
+		expect:
+		  JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport),jsonCmp).passed();
+	}
+			
+	@Test
+	def "should generate an JSON report with a name based on the test run title"()
+			throws Exception {
+		def testOutcome = new TestOutcome("a_simple_test_case");
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes);		
+		
+		expect:		
+		    jsonReport.getName().equals(Digest.ofTextValue("a_simple_test_case") + ".json");
+	}
+
+	@Test
+	public void should_generate_an_JSON_report_in_the_target_directory() throws Exception {
+		def testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+
+		expect:		
+		  jsonReport.getPath().startsWith(outputDirectory.getPath());
+	}
+
+	@Test
+	def "should count the total number of steps with each outcome in acceptance test run"()
+			throws Exception {
+		def testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+		def startTime = new DateTime(2013,1,1,0,0,0,0);
+		testOutcome.setStartTime(startTime);
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+		testOutcome.recordStep(TestStepFactory.ignoredTestStepCalled("step 2"));
+		testOutcome.recordStep(TestStepFactory.ignoredTestStepCalled("step 3"));
+		testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 4"));
+		testOutcome.recordStep(TestStepFactory.failingTestStepCalled("step 5"));
+		testOutcome.recordStep(TestStepFactory.failingTestStepCalled("step 6"));
+		testOutcome.recordStep(TestStepFactory.errorTestStepCalled("step 7"));
+		testOutcome.recordStep(TestStepFactory.skippedTestStepCalled("step 8"));
+		testOutcome.recordStep(TestStepFactory.pendingTestStepCalled("step 9"));
+
+		def expectedJsonReport = """
+			{
+			  "title": "A simple test case",
+			  "name": "a_simple_test_case",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$SomeTestScenario"
+			  },
+			  "result": "FAILURE",
+			  "steps": "9",
+			  "successful": "2",
+			  "failures": "2",
+			  "errors": "1",
+			  "skipped": "1",
+			  "ignored": "2",
+			  "pending": "1",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReportSpecification"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1375070821042,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    },
+			    {
+			      "description": "step 2",
+			      "duration": 0,
+			      "startTime": 1375070821043,
+			      "screenshots": [],
+			      "result": "IGNORED",
+			      "children": []
+			    },
+			    {
+			      "description": "step 3",
+			      "duration": 0,
+			      "startTime": 1375070821043,
+			      "screenshots": [],
+			      "result": "IGNORED",
+			      "children": []
+			    },
+			    {
+			      "description": "step 4",
+			      "duration": 0,
+			      "startTime": 1375070821043,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    },
+			    {
+			      "description": "step 5",
+			      "duration": 0,
+			      "startTime": 1375070821045,
+			      "screenshots": [],
+			      "result": "FAILURE",
+			      "children": []
+			    },
+			    {
+			      "description": "step 6",
+			      "duration": 0,
+			      "startTime": 1375070821045,
+			      "screenshots": [],
+			      "result": "FAILURE",
+			      "children": []
+			    },
+			    {
+			      "description": "step 7",
+			      "duration": 0,
+			      "startTime": 1375070821045,
+			      "screenshots": [],
+			      "result": "ERROR",
+			      "children": []
+			    },
+			    {
+			      "description": "step 8",
+			      "duration": 0,
+			      "startTime": 1375070821046,
+			      "screenshots": [],
+			      "result": "SKIPPED",
+			      "children": []
+			    },
+			    {
+			      "description": "step 9",
+			      "duration": 0,
+			      "startTime": 1375070821046,
+			      "screenshots": [],
+			      "result": "PENDING",
+			      "children": []
+			    }
+			  ]
+			}
+		"""
+		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+		System.out.println(getStringFrom(jsonReport));		
+		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT,
+			new Customization("test-steps[0].startTime", comparator),
+			new Customization("test-steps[1].startTime", comparator),
+			new Customization("test-steps[2].startTime", comparator),
+			new Customization("test-steps[3].startTime", comparator),
+			new Customization("test-steps[4].startTime", comparator),
+			new Customization("test-steps[5].startTime", comparator),
+			new Customization("test-steps[6].startTime", comparator),
+			new Customization("test-steps[7].startTime", comparator),
+			new Customization("test-steps[8].startTime", comparator),
+			new Customization("test-steps[9].startTime", comparator)
+			)
+
+		expect:
+		  JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport),jsonCmp).passed();
+	}
+
 			
 	def getStringFrom(File reportFile) throws IOException {
 		return FileUtils.readFileToString(reportFile);
