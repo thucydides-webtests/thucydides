@@ -2,6 +2,7 @@ package net.thucydides.core.reports.integration
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
@@ -1594,7 +1595,6 @@ class WhenGeneratingAJSONReportSpecification extends spock.lang.Specification {
 			
 
 		def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
-		System.out.println(getStringFrom(jsonReport));
 		def jsonCmp = new CustomComparator(JSONCompareMode.STRICT,
 										  new Customization("test-steps[0].startTime", comparator),
 										  new Customization("test-steps[1].startTime", comparator),
@@ -1604,12 +1604,53 @@ class WhenGeneratingAJSONReportSpecification extends spock.lang.Specification {
 		expect:
 		  JSONCompare.compareJSON(expectedJsonReport, getStringFrom(jsonReport),jsonCmp).passed();
 	}
+	
+	@Test
+	def "should have a qualified filename if qualifier present"() throws Exception {
+		TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+		TestStep step1 = TestStepFactory.successfulTestStepCalled("step 1");
+		File screenshot = new File(outputDirectory,"step_1.png");
+		File source = new File(outputDirectory,"step_1.html");
+		step1.addScreenshot(new ScreenshotAndHtmlSource(screenshot, source));
+		testOutcome.recordStep(step1);
+		reporter.setQualifier("qualifier");		
+		File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+		expect:
+			xmlReport.getName().equals(Digest.ofTextValue("a_user_story_a_simple_test_case_qualifier") + ".json");
+	}
+	
+	@Test
+	def "should include error message for failing test"()
+			throws Exception {
+		TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+		TestStep step = TestStepFactory.failingTestStepCalled("step 1");		
+		step.failedWith(new IllegalArgumentException("Oh nose!"));
+		testOutcome.recordStep(step);
+		File jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+		String generatedReportText = getStringFrom(jsonReport);
 		
+		expect: 
+			generatedReportText.indexOf("Oh nose!") > -1;
+	}
+			
+	@Test
+	def "should include exception stack dump for failing test"()
+			throws Exception {
+						
+		TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
+		TestStep step = TestStepFactory.failingTestStepCalled("step 1");
+		step.failedWith(new IllegalArgumentException("Oh nose!"));
+		testOutcome.recordStep(step);
+		File jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+		String generatedReportText = getStringFrom(jsonReport);
+		
+		expect :
+			generatedReportText.indexOf("java.lang.IllegalArgumentException") > -1;
+	}
 			
 	def getStringFrom(File reportFile) throws IOException {
 		return FileUtils.readFileToString(reportFile);
 	}
-	
 	
 	ValueMatcher<Object> comparator = new ValueMatcher<Object>() {
 		@Override
@@ -1617,5 +1658,4 @@ class WhenGeneratingAJSONReportSpecification extends spock.lang.Specification {
 			return true;
 		}
 	};
-
 }
