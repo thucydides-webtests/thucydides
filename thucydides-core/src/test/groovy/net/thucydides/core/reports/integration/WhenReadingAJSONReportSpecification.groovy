@@ -102,7 +102,7 @@ class WhenReadingAJSONReportSpecification extends spock.lang.Specification {
     }
     
     @Test
-    public void should_load_manual_acceptance_test_report_from_json_file() throws Exception {
+    def "should_load_manual_acceptance_test_report_from_json_file"() throws Exception {
         String expectedReport = 
         	"""
 			{
@@ -155,172 +155,176 @@ class WhenReadingAJSONReportSpecification extends spock.lang.Specification {
 			testOutcome.get().isManual()	
     }
 
-   /* /*@Test
-    public void should_load_a_qualified_acceptance_test_report_from_json_file() throws Exception {
+    @Test
+    def "should_load_a_qualified_acceptance_test_report_from_json_file"() throws Exception {
         
-        String storedReportJson  = 
-        		"{\n" + 
-	        	"  \"title\": \"Should do this [a qualifier]\",\n" + 
-	        	"  \"name\": \"should_do_this\",\n" + 
-	        	"  \"test-case\": {\n" + 
-	        	"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenario\"\n" + 
-	        	"  },\n" + 
-	        	"  \"result\": \"SUCCESS\",\n" + 
-	        	"  \"qualifier\": \"a qualifier\",\n" + 
-	        	"  \"steps\": \"1\",\n" + 
-	        	"  \"successful\": \"1\",\n" + 
-	        	"  \"failures\": \"0\",\n" + 
-	        	"  \"skipped\": \"0\",\n" + 
-	        	"  \"ignored\": \"0\",\n" + 
-	        	"  \"pending\": \"0\",\n" + 
-	        	"  \"duration\": \"0\",\n" + 
-	        	"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
-	        	"  \"user-story\": {\n" + 
-	        	"    \"userStoryClass\": {\n" + 
-	        	"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
-	        	"    },\n" + 
-	        	"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
-	        	"    \"storyName\": \"A user story\",\n" + 
-	        	"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
-	        	"  },\n" + 
-	        	"  \"issues\": [],\n" + 
-	        	"  \"tags\": [\n" + 
-	        	"    {\n" + 
-	        	"      \"name\": \"A user story\",\n" + 
-	        	"      \"type\": \"story\"\n" + 
-	        	"    }\n" + 
-	        	"  ],\n" + 
-	        	"  \"test-steps\": [\n" + 
-	        	"    {\n" + 
-	        	"      \"description\": \"step 1\",\n" + 
-	        	"      \"duration\": 0,\n" + 
-	        	"      \"startTime\": 1373543479702,\n" + 
-	        	"      \"screenshots\": [],\n" + 
-	        	"      \"result\": \"SUCCESS\",\n" + 
-	        	"      \"children\": []\n" + 
-	        	"    }\n" + 
-	        	"  ]\n" + 
-	        	"}"; 
-        
-        File report = temporaryDirectory.newFile("saved-report.json");
-        FileUtils.writeStringToFile(report, storedReportJson);
+        def storedReportJson = """
+			{
+			  "title": "Should do this [a qualifier]",
+			  "name": "should_do_this",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$SomeTestScenario"
+			  },
+			  "result": "SUCCESS",
+			  "qualifier": "a qualifier",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1373543479702,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+			"""        		        
+        File report = new File(outputDirectory,"saved-report.json");
+        FileUtils.writeStringToFile(report, storedReportJson);		
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
-        assertThat(testOutcome.get().getQualifier().get(), is("a qualifier"));
-        assertThat(testOutcome.get().getTitle(), containsString("[a qualifier]"));
-    } */ 
+		expect :
+        	testOutcome.get().getQualifier().get().equals("a qualifier")
+			testOutcome.get().getTitle().indexOf("[a qualifier]") > -1
+    } 
     
-    /*@Test
-    public void should_unescape_newline_in_the_title_and_qualifier_of_a_qualified_acceptance_test_report_from_json_file() throws Exception {       
-        String storedReportJson =
-        		"{\n" + 
-               "  \"title\": \"Should do this [a qualifier with \\u0026#10; a new line]\",\n" + 
-               "  \"name\": \"should_do_this\",\n" + 
-               "  \"test-case\": {\n" + 
-               "    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenario\"\n" + 
-               "  },\n" + 
-               "  \"result\": \"SUCCESS\",\n" + 
-               "  \"qualifier\": \"a qualifier with \\u0026#10; a new line\",\n" + 
-               "  \"steps\": \"1\",\n" + 
-               "  \"successful\": \"1\",\n" + 
-               "  \"failures\": \"0\",\n" + 
-               "  \"skipped\": \"0\",\n" + 
-               "  \"ignored\": \"0\",\n" + 
-               "  \"pending\": \"0\",\n" + 
-               "  \"duration\": \"0\",\n" + 
-               "  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
-               "  \"user-story\": {\n" + 
-               "    \"userStoryClass\": {\n" + 
-               "      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
-               "    },\n" + 
-               "    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
-               "    \"storyName\": \"A user story\",\n" + 
-               "    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
-               "  },\n" + 
-               "  \"issues\": [],\n" + 
-               "  \"tags\": [\n" + 
-               "    {\n" + 
-               "      \"name\": \"A user story\",\n" + 
-               "      \"type\": \"story\"\n" + 
-               "    }\n" + 
-               "  ],\n" + 
-               "  \"test-steps\": [\n" + 
-               "    {\n" + 
-               "      \"description\": \"step 1\",\n" + 
-               "      \"duration\": 0,\n" + 
-               "      \"startTime\": 1373544008557,\n" + 
-               "      \"screenshots\": [],\n" + 
-               "      \"result\": \"SUCCESS\",\n" + 
-               "      \"children\": []\n" + 
-               "    }\n" + 
-               "  ]\n" + 
-               "}";
+    @Test
+    def "should unescape newline in the title and qualifier of a qualified acceptance test report from json file"() throws Exception {       
+        String storedReportJson = """
+			{
+			  "title": "Should do this [a qualifier with \u0026#10; a new line]",
+			  "name": "should_do_this",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$SomeTestScenario"
+			  },
+			  "result": "SUCCESS",
+			  "qualifier": "a qualifier with \u0026#10; a new line",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1373544008557,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+			"""        		
        
-        File report = temporaryDirectory.newFile("saved-report.json");
-        FileUtils.writeStringToFile(report, storedReportJson);
+        File report = new File(outputDirectory,"saved-report.json");
+        FileUtils.writeStringToFile(report, storedReportJson);		
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
-        assertThat(testOutcome.get().getQualifier().get(), is("a qualifier with \n a new line"));
-        assertThat(testOutcome.get().getTitle(), containsString("[a qualifier with \n a new line]"));
-    }*/
+		expect : 
+        	testOutcome.get().getQualifier().get().equals("a qualifier with \n a new line");
+			testOutcome.get().getTitle().indexOf("[a qualifier with \n a new line]") > -1;
+    }
     
-    /*@Test
-    public void should_load_tags_from_json_file() throws Exception {        
-        String storedReportJson =
-        		"{\n" + 
-    			"  \"title\": \"Should do this\",\n" + 
-    			"  \"name\": \"should_do_this\",\n" + 
-    			"  \"test-case\": {\n" + 
-    			"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenarioWithTags\"\n" + 
-    			"  },\n" + 
-    			"  \"result\": \"SUCCESS\",\n" + 
-    			"  \"steps\": \"1\",\n" + 
-    			"  \"successful\": \"1\",\n" + 
-    			"  \"failures\": \"0\",\n" + 
-    			"  \"skipped\": \"0\",\n" + 
-    			"  \"ignored\": \"0\",\n" + 
-    			"  \"pending\": \"0\",\n" + 
-    			"  \"duration\": \"0\",\n" + 
-    			"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
-    			"  \"user-story\": {\n" + 
-    			"    \"userStoryClass\": {\n" + 
-    			"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenarioWithTags\"\n" + 
-    			"    },\n" + 
-    			"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.SomeTestScenarioWithTags\",\n" + 
-    			"    \"storyName\": \"Some test scenario with tags\",\n" + 
-    			"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
-    			"  },\n" + 
-    			"  \"issues\": [],\n" + 
-    			"  \"tags\": [\n" + 
-    			"    {\n" + 
-    			"      \"name\": \"Some test scenario with tags\",\n" + 
-    			"      \"type\": \"story\"\n" + 
-    			"    },\n" + 
-    			"    {\n" + 
-    			"      \"name\": \"simple story\",\n" + 
-    			"      \"type\": \"story\"\n" + 
-    			"    },\n" + 
-    			"    {\n" + 
-    			"      \"name\": \"important feature\",\n" + 
-    			"      \"type\": \"feature\"\n" + 
-    			"    }\n" + 
-    			"  ],\n" + 
-    			"  \"test-steps\": [\n" + 
-    			"    {\n" + 
-    			"      \"description\": \"step 1\",\n" + 
-    			"      \"duration\": 0,\n" + 
-    			"      \"startTime\": 1373544217353,\n" + 
-    			"      \"screenshots\": [],\n" + 
-    			"      \"result\": \"SUCCESS\",\n" + 
-    			"      \"children\": []\n" + 
-    			"    }\n" + 
-    			"  ]\n" + 
-    			"}\n" + 
-    			""; 
+    @Test
+    def "should load tags from json file"() throws Exception {        
+        String storedReportJson = """
+			{
+			  "title": "Should do this",
+			  "name": "should_do_this",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$SomeTestScenarioWithTags"
+			  },
+			  "result": "SUCCESS",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$SomeTestScenarioWithTags"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.SomeTestScenarioWithTags",
+			    "storyName": "Some test scenario with tags",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "Some test scenario with tags",
+			      "type": "story"
+			    },
+			    {
+			      "name": "simple story",
+			      "type": "story"
+			    },
+			    {
+			      "name": "important feature",
+			      "type": "feature"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1373544217353,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+			"""        		
 
-        File report = temporaryDirectory.newFile("saved-report.json");
+        File report = new File(outputDirectory,"saved-report.json");
         FileUtils.writeStringToFile(report, storedReportJson);
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
-        assertThat(testOutcome.get().getTags().size(), is(3));        
-    }*/
+		expect : 
+        	testOutcome.get().getTags().size() == 3        
+    }
     
     /*@Test
     public void should_load_example_data_from_json_file() throws Exception {
