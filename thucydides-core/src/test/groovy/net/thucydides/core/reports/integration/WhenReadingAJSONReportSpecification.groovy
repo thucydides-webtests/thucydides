@@ -537,7 +537,7 @@ class WhenReadingAJSONReportSpecification extends spock.lang.Specification {
     }
     
     @Test
-    def "should_load_the_session_id_from_xml_file"() throws Exception {      
+    def "should load the session id from xml file"() throws Exception {      
         def storedReportJson  = """
 			{
 			  "title": "Should do this",
@@ -584,341 +584,311 @@ class WhenReadingAJSONReportSpecification extends spock.lang.Specification {
 			"""         	
         File report = new File(outputDirectory,"saved-report.json");
         FileUtils.writeStringToFile(report, storedReportJson);
-		System.out.println(storedReportJson)
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
         
         expect: 
 			testOutcome.get().getSessionId().equals("1234")
     }
     
-    /*@Test
-    public void should_return_null_feature_if_no_feature_is_present() {
-        TestOutcome testOutcome = new TestOutcome("aTestMethod");
-        assertThat(testOutcome.getFeature(), is(nullValue()));
+    @Test
+    def "should_return_null_feature_if_no_feature_is_present"() {
+        TestOutcome testOutcome = new TestOutcome("aTestMethod")
+		
+        expect:
+		 testOutcome.getFeature() == null
     }
 
     @Test
-    public void should_load_acceptance_test_report_with_nested_groups_from_xml_file() throws Exception {
-        String storedReportXML = 
-              "<acceptance-test-run title='A nested test case' name='a_nested_test_case' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-            + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
-            + "  <test-group name='Group 1' result='SUCCESS'>\n"
-            + "    <test-group name='Group 1.1' result='SUCCESS'>\n"
-            + "      <test-group name='Group 1.1.1' result='SUCCESS'>\n"
-            + "        <test-step result='SUCCESS'>\n"
-            + "          <description>step 1</description>\n"
-            + "        </test-step>\n"
-            + "      </test-group>\n" 
-            + "    </test-group>\n" 
-            + "  </test-group>\n" 
-            + "</acceptance-test-run>";
+    def "should load acceptance test report with nested groups from xmlfile"() throws Exception {
         
-        String storedReportJson = 
-        		"{\n" + 
-        		"  \"title\": \"A nested test case\",\n" + 
-        		"  \"name\": \"a_nested_test_case\",\n" + 
-        		"  \"test-case\": {\n" + 
-        		"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeNestedTestScenario\"\n" + 
-        		"  },\n" + 
-        		"  \"result\": \"SUCCESS\",\n" + 
-        		"  \"steps\": \"5\",\n" + 
-        		"  \"successful\": \"5\",\n" + 
-        		"  \"failures\": \"0\",\n" + 
-        		"  \"skipped\": \"0\",\n" + 
-        		"  \"ignored\": \"0\",\n" + 
-        		"  \"pending\": \"0\",\n" + 
-        		"  \"duration\": \"0\",\n" + 
-        		"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
-        		"  \"user-story\": {\n" + 
-        		"    \"userStoryClass\": {\n" + 
-        		"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
-        		"    },\n" + 
-        		"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
-        		"    \"storyName\": \"A user story\",\n" + 
-        		"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
-        		"  },\n" + 
-        		"  \"issues\": [],\n" + 
-        		"  \"tags\": [\n" + 
-        		"    {\n" + 
-        		"      \"name\": \"A user story\",\n" + 
-        		"      \"type\": \"story\"\n" + 
-        		"    }\n" + 
-        		"  ],\n" + 
-        		"  \"test-steps\": [\n" + 
-        		"    {\n" + 
-        		"      \"description\": \"Group 1\",\n" + 
-        		"      \"duration\": 0,\n" + 
-        		"      \"startTime\": 1373625031524,\n" + 
-        		"      \"screenshots\": [],\n" + 
-        		"      \"children\": [\n" + 
-        		"        {\n" + 
-        		"          \"description\": \"step 1\",\n" + 
-        		"          \"duration\": 0,\n" + 
-        		"          \"startTime\": 1373625031524,\n" + 
-        		"          \"screenshots\": [],\n" + 
-        		"          \"result\": \"SUCCESS\",\n" + 
-        		"          \"children\": []\n" + 
-        		"        },\n" + 
-        		"        {\n" + 
-        		"          \"description\": \"step 2\",\n" + 
-        		"          \"duration\": 0,\n" + 
-        		"          \"startTime\": 1373625031524,\n" + 
-        		"          \"screenshots\": [],\n" + 
-        		"          \"result\": \"SUCCESS\",\n" + 
-        		"          \"children\": []\n" + 
-        		"        },\n" + 
-        		"        {\n" + 
-        		"          \"description\": \"step 3\",\n" + 
-        		"          \"duration\": 0,\n" + 
-        		"          \"startTime\": 1373625031524,\n" + 
-        		"          \"screenshots\": [],\n" + 
-        		"          \"result\": \"SUCCESS\",\n" + 
-        		"          \"children\": []\n" + 
-        		"        },\n" + 
-        		"        {\n" + 
-        		"          \"description\": \"Group 1.1\",\n" + 
-        		"          \"duration\": 0,\n" + 
-        		"          \"startTime\": 1373625031524,\n" + 
-        		"          \"screenshots\": [],\n" + 
-        		"          \"children\": [\n" + 
-        		"            {\n" + 
-        		"              \"description\": \"step 4\",\n" + 
-        		"              \"duration\": 0,\n" + 
-        		"              \"startTime\": 1373625031530,\n" + 
-        		"              \"screenshots\": [],\n" + 
-        		"              \"result\": \"SUCCESS\",\n" + 
-        		"              \"children\": []\n" + 
-        		"            },\n" + 
-        		"            {\n" + 
-        		"              \"description\": \"step 5\",\n" + 
-        		"              \"duration\": 0,\n" + 
-        		"              \"startTime\": 1373625031530,\n" + 
-        		"              \"screenshots\": [],\n" + 
-        		"              \"result\": \"SUCCESS\",\n" + 
-        		"              \"children\": []\n" + 
-        		"            }\n" + 
-        		"          ]\n" + 
-        		"        }\n" + 
-        		"      ]\n" + 
-        		"    }\n" + 
-        		"  ]\n" + 
-        		"}";
-	
-
-        File report = temporaryDirectory.newFile("saved-report.json");
+        def storedReportJson = """
+			{
+			  "title": "A nested test case",
+			  "name": "a_nested_test_case",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$SomeNestedTestScenario"
+			  },
+			  "result": "SUCCESS",
+			  "steps": "5",
+			  "successful": "5",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "Group 1",
+			      "duration": 0,
+			      "startTime": 1373625031524,
+			      "screenshots": [],
+			      "children": [
+			        {
+			          "description": "step 1",
+			          "duration": 0,
+			          "startTime": 1373625031524,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        },
+			        {
+			          "description": "step 2",
+			          "duration": 0,
+			          "startTime": 1373625031524,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        },
+			        {
+			          "description": "step 3",
+			          "duration": 0,
+			          "startTime": 1373625031524,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        },
+			        {
+			          "description": "Group 1.1",
+			          "duration": 0,
+			          "startTime": 1373625031524,
+			          "screenshots": [],
+			          "children": [
+			            {
+			              "description": "step 4",
+			              "duration": 0,
+			              "startTime": 1373625031530,
+			              "screenshots": [],
+			              "result": "SUCCESS",
+			              "children": []
+			            },
+			            {
+			              "description": "step 5",
+			              "duration": 0,
+			              "startTime": 1373625031530,
+			              "screenshots": [],
+			              "result": "SUCCESS",
+			              "children": []
+			            }
+			          ]
+			        }
+			      ]
+			    }
+			  ]
+			}
+			""" 
+        File report =  new File(outputDirectory,"saved-report.json");		
         FileUtils.writeStringToFile(report, storedReportJson);
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
-
-        assertThat(testOutcome.get().getTitle(), is("A nested test case"));
-        
         TestStep group1 = testOutcome.get().getTestSteps().get(0);
-        assertThat(testOutcome.get().getTestSteps().size(), is(1));
-        assertThat(group1.getChildren().size(), is(4));
-        assertThat(group1.getChildren().get(3).getChildren().size(), is(2));
+		
+		expect : 
+        	testOutcome.get().getTitle().equals("A nested test case")        
+			testOutcome.get().getTestSteps().size() == 1
+			group1.getChildren().size() == 4
+			group1.getChildren().get(3).getChildren().size() == 2
         
     }
 
     @Test
-    public void should_load_acceptance_test_report_with_simple_nested_groups_from_xml_file() throws Exception {        
+    def "should load acceptance test report with simple nested groups from xml file"() throws Exception {        
     	
-        String storedReportJson = 
-        	    "{\n" + 
-				"  \"title\": \"A nested test case\",\n" + 
-				"  \"name\": \"a_nested_test_case\",\n" + 
-				"  \"test-case\": {\n" + 
-				"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeNestedTestScenario\"\n" + 
-				"  },\n" + 
-				"  \"result\": \"SUCCESS\",\n" + 
-				"  \"steps\": \"3\",\n" + 
-				"  \"successful\": \"3\",\n" + 
-				"  \"failures\": \"0\",\n" + 
-				"  \"skipped\": \"0\",\n" + 
-				"  \"ignored\": \"0\",\n" + 
-				"  \"pending\": \"0\",\n" + 
-				"  \"duration\": \"0\",\n" + 
-				"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
-				"  \"user-story\": {\n" + 
-				"    \"userStoryClass\": {\n" + 
-				"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
-				"    },\n" + 
-				"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
-				"    \"storyName\": \"A user story\",\n" + 
-				"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
-				"  },\n" + 
-				"  \"issues\": [],\n" + 
-				"  \"tags\": [\n" + 
-				"    {\n" + 
-				"      \"name\": \"A user story\",\n" + 
-				"      \"type\": \"story\"\n" + 
-				"    }\n" + 
-				"  ],\n" + 
-				"  \"test-steps\": [\n" + 
-				"    {\n" + 
-				"      \"description\": \"Group 1\",\n" + 
-				"      \"duration\": 0,\n" + 
-				"      \"startTime\": 1373624139680,\n" + 
-				"      \"screenshots\": [],\n" + 
-				"      \"children\": [\n" + 
-				"        {\n" + 
-				"          \"description\": \"step 1\",\n" + 
-				"          \"duration\": 0,\n" + 
-				"          \"startTime\": 1373624139681,\n" + 
-				"          \"screenshots\": [],\n" + 
-				"          \"result\": \"SUCCESS\",\n" + 
-				"          \"children\": []\n" + 
-				"        },\n" + 
-				"        {\n" + 
-				"          \"description\": \"step 2\",\n" + 
-				"          \"duration\": 0,\n" + 
-				"          \"startTime\": 1373624139681,\n" + 
-				"          \"screenshots\": [],\n" + 
-				"          \"result\": \"SUCCESS\",\n" + 
-				"          \"children\": []\n" + 
-				"        },\n" + 
-				"        {\n" + 
-				"          \"description\": \"step 3\",\n" + 
-				"          \"duration\": 0,\n" + 
-				"          \"startTime\": 1373624139681,\n" + 
-				"          \"screenshots\": [],\n" + 
-				"          \"result\": \"SUCCESS\",\n" + 
-				"          \"children\": []\n" + 
-				"        }\n" + 
-				"      ]\n" + 
-				"    }\n" + 
-				"  ]\n" + 
-				"}";
-        File report = temporaryDirectory.newFile("saved-report.json");
+        def storedReportJson = """
+			{
+			  "title": "A nested test case",
+			  "name": "a_nested_test_case",			  
+			  "result": "SUCCESS",
+			  "steps": "3",
+			  "successful": "3",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {			    
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "Group 1",
+			      "duration": 0,
+			      "startTime": 1373624139680,
+			      "screenshots": [],
+			      "children": [
+			        {
+			          "description": "step 1",
+			          "duration": 0,
+			          "startTime": 1373624139681,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        },
+			        {
+			          "description": "step 2",
+			          "duration": 0,
+			          "startTime": 1373624139681,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        },
+			        {
+			          "description": "step 3",
+			          "duration": 0,
+			          "startTime": 1373624139681,
+			          "screenshots": [],
+			          "result": "SUCCESS",
+			          "children": []
+			        }
+			      ]
+			    }
+			  ]
+			}
+		""" 
+        File report = new File(outputDirectory,"saved-report.json");
         FileUtils.writeStringToFile(report, storedReportJson);
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
-
-        assertThat(testOutcome.get().getTitle(), is("A nested test case"));
-        
         TestStep group1 = testOutcome.get().getTestSteps().get(0);
-        assertThat(testOutcome.get().getTestSteps().size(), is(1));
-        assertThat(group1.getChildren().size(), is(3));
+		expect : 
+        	testOutcome.get().getTitle().equals("A nested test case")        
+			testOutcome.get().getTestSteps().size() == 1
+		    group1.getChildren().size() == 3
     }
 
 
     @Test
-    public void should_load_acceptance_test_report_with_multiple_test_steps_from_xml_file() throws Exception {        
+    def "should load acceptance test report with multiple test steps from xml file"() throws Exception {        
         
-        String storedReportJson = 
-        		"{\n" + 
-        		"  \"title\": \"A simple test case\",\n" + 
-        		"  \"name\": \"a_simple_test_case\",\n" + 
-        		"  \"test-case\": {\n" + 
-        		"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenario\"\n" + 
-        		"  },\n" + 
-        		"  \"result\": \"FAILURE\",\n" + 
-        		"  \"steps\": \"9\",\n" + 
-        		"  \"successful\": \"2\",\n" + 
-        		"  \"failures\": \"2\",\n" + 
-        		"  \"errors\": \"1\",\n" + 
-        		"  \"skipped\": \"1\",\n" + 
-        		"  \"ignored\": \"2\",\n" + 
-        		"  \"pending\": \"1\",\n" + 
-        		"  \"duration\": \"0\",\n" + 
-        		"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
-        		"  \"user-story\": {\n" + 
-        		"    \"userStoryClass\": {\n" + 
-        		"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
-        		"    },\n" + 
-        		"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
-        		"    \"storyName\": \"A user story\",\n" + 
-        		"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
-        		"  },\n" + 
-        		"  \"issues\": [],\n" + 
-        		"  \"tags\": [\n" + 
-        		"    {\n" + 
-        		"      \"name\": \"A user story\",\n" + 
-        		"      \"type\": \"story\"\n" + 
-        		"    }\n" + 
-        		"  ],\n" + 
-        		"  \"test-steps\": [\n" + 
-        		"    {\n" + 
-        		"      \"description\": \"step 1\",\n" + 
-        		"      \"duration\": 0,\n" + 
-        		"      \"startTime\": 1373601456591,\n" + 
-        		"      \"screenshots\": [],\n" + 
-        		"      \"result\": \"SUCCESS\",\n" + 
-        		"      \"children\": []\n" + 
-        		"    },\n" + 
-        		"    {\n" + 
-        		"      \"description\": \"step 2\",\n" + 
-        		"      \"duration\": 0,\n" + 
-        		"      \"startTime\": 1373601456592,\n" + 
-        		"      \"screenshots\": [],\n" + 
-        		"      \"result\": \"IGNORED\",\n" + 
-        		"      \"children\": []\n" + 
-        		"    }\n" +         		        		         		
-        		"  ]\n" + 
-        		"}";
-
-        File report = temporaryDirectory.newFile("saved-report.json");
+        def storedReportJson = """
+		{
+		  "title": "A simple test case",
+		  "name": "a_simple_test_case",		  
+		  "result": "FAILURE",
+		  "steps": "9",
+		  "successful": "2",
+		  "failures": "2",
+		  "errors": "1",
+		  "skipped": "1",
+		  "ignored": "2",
+		  "pending": "1",
+		  "duration": "0",
+		  "timestamp": "2013-01-01T00:00:00.000+01:00",
+		  "user-story": {		    
+		    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory",
+		    "storyName": "A user story",
+		    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport"
+		  },
+		  "issues": [],
+		  "tags": [
+		    {
+		      "name": "A user story",
+		      "type": "story"
+		    }
+		  ],
+		  "test-steps": [
+		    {
+		      "description": "step 1",
+		      "duration": 0,
+		      "startTime": 1373601456591,
+		      "screenshots": [],
+		      "result": "SUCCESS",
+		      "children": []
+		    },
+		    {
+		      "description": "step 2",
+		      "duration": 0,
+		      "startTime": 1373601456592,
+		      "screenshots": [],
+		      "result": "IGNORED",
+		      "children": []
+		    }
+		  ]
+		}
+		""" 
+        File report = new File(outputDirectory,"saved-report.json");
         FileUtils.writeStringToFile(report, storedReportJson);
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+		
+		expect :
+        	testOutcome.get().getTitle().equals("A simple test case")
+			testOutcome.get().getTestSteps().size() == 2
+			testOutcome.get().getTestSteps().get(0).getResult().equals(TestResult.SUCCESS)
+			testOutcome.get().getTestSteps().get(0).getDescription().equals("step 1")
+			testOutcome.get().getTestSteps().get(1).getResult().equals(TestResult.IGNORED)
+			testOutcome.get().getTestSteps().get(1).getDescription().equals("step 2")
+    }
 
-        assertThat(testOutcome.get().getTitle(), is("A simple test case"));
-        assertThat(testOutcome.get().getTestSteps().size(), is(2));
-        assertThat(testOutcome.get().getTestSteps().get(0).getResult(), is(TestResult.SUCCESS));
-        assertThat(testOutcome.get().getTestSteps().get(0).getDescription(), is("step 1"));
-        assertThat(testOutcome.get().getTestSteps().get(1).getResult(), is(TestResult.IGNORED));
-        assertThat(testOutcome.get().getTestSteps().get(1).getDescription(), is("step 2"));
-    }*/
-
-    /*@Test
+    @Test
     public void should_load_qualified_acceptance_test_report_with_a_qualified_name() throws Exception {
-        String storedReportJson = 
-            	"{\n" + 
-    			"  \"title\": \"A simple test case [a_b]\",\n" + 
-    			"  \"name\": \"a_simple_test_case\",\n" + 
-    			"  \"test-case\": {\n" + 
-    			"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenario\"\n" + 
-    			"  },\n" + 
-    			"  \"result\": \"SUCCESS\",\n" + 
-    			"  \"qualifier\": \"a_b\",\n" + 
-    			"  \"steps\": \"1\",\n" + 
-    			"  \"successful\": \"1\",\n" + 
-    			"  \"failures\": \"0\",\n" + 
-    			"  \"skipped\": \"0\",\n" + 
-    			"  \"ignored\": \"0\",\n" + 
-    			"  \"pending\": \"0\",\n" + 
-    			"  \"duration\": \"0\",\n" + 
-    			"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
-    			"  \"user-story\": {\n" + 
-    			"    \"userStoryClass\": {\n" + 
-    			"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
-    			"    },\n" + 
-    			"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
-    			"    \"storyName\": \"A user story\",\n" + 
-    			"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
-    			"  },\n" + 
-    			"  \"issues\": [],\n" + 
-    			"  \"tags\": [\n" + 
-    			"    {\n" + 
-    			"      \"name\": \"A user story\",\n" + 
-    			"      \"type\": \"story\"\n" + 
-    			"    }\n" + 
-    			"  ],\n" + 
-    			"  \"test-steps\": [\n" + 
-    			"    {\n" + 
-    			"      \"description\": \"step 1\",\n" + 
-    			"      \"duration\": 0,\n" + 
-    			"      \"startTime\": 1373601008887,\n" + 
-    			"      \"screenshots\": [],\n" + 
-    			"      \"result\": \"SUCCESS\",\n" + 
-    			"      \"children\": []\n" + 
-    			"    }\n" + 
-    			"  ]\n" + 
-    			"}";
-
-
-        File report = temporaryDirectory.newFile("saved-report.json");
+        def storedReportJson = """
+			{
+			  "title": "A simple test case [a_b]",
+			  "name": "a_simple_test_case",
+			  "result": "SUCCESS",
+			  "qualifier": "a_b",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {			    
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1373601008887,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+			""" 
+        File report = new File(outputDirectory,"saved-report.json");
         FileUtils.writeStringToFile(report, storedReportJson);
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
 
-        assertThat(testOutcome.get().getTitle(), is("A simple test case [a_b]"));
-        assertThat(testOutcome.get().getTitleWithLinks(), is("A simple test case [a_b]"));
-    }*/
+		expect :
+        	testOutcome.get().getTitle().equals("A simple test case [a_b]")
+        	testOutcome.get().getTitleWithLinks().equals("A simple test case [a_b]")
+    }
 
 }
