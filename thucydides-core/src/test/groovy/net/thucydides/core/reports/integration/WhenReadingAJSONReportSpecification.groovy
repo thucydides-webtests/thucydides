@@ -326,286 +326,272 @@ class WhenReadingAJSONReportSpecification extends spock.lang.Specification {
         	testOutcome.get().getTags().size() == 3        
     }
     
-    /*@Test
-    public void should_load_example_data_from_json_file() throws Exception {
-    	String storedReportJson =
-           		"{\n" + 
-        		"  \"title\": \"Should do this\",\n" + 
-        		"  \"name\": \"should_do_this\",\n" + 
-        		"  \"test-case\": {\n" + 
-        		"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenario\"\n" + 
-        		"  },\n" + 
-        		"  \"result\": \"SUCCESS\",\n" + 
-        		"  \"steps\": \"1\",\n" + 
-        		"  \"successful\": \"1\",\n" + 
-        		"  \"failures\": \"0\",\n" + 
-        		"  \"skipped\": \"0\",\n" + 
-        		"  \"ignored\": \"0\",\n" + 
-        		"  \"pending\": \"0\",\n" + 
-        		"  \"duration\": \"0\",\n" + 
-        		"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
-        		"  \"user-story\": {\n" + 
-        		"    \"userStoryClass\": {\n" + 
-        		"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
-        		"    },\n" + 
-        		"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
-        		"    \"storyName\": \"A user story\",\n" + 
-        		"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
-        		"  },\n" + 
-        		"  \"issues\": [],\n" + 
-        		"  \"tags\": [\n" + 
-        		"    {\n" + 
-        		"      \"name\": \"A user story\",\n" + 
-        		"      \"type\": \"story\"\n" + 
-        		"    }\n" + 
-        		"  ],\n" + 
-        		"  \"test-steps\": [\n" + 
-        		"    {\n" + 
-        		"      \"description\": \"step 1\",\n" + 
-        		"      \"duration\": 0,\n" + 
-        		"      \"startTime\": 1373543300323,\n" + 
-        		"      \"screenshots\": [],\n" + 
-        		"      \"result\": \"SUCCESS\",\n" + 
-        		"      \"children\": []\n" + 
-        		"    }\n" + 
-        		"  ],\n" + 
-        		"  \"examples\": {\n" + 
-        		"    \"headers\": [\n" + 
-        		"      \"firstName\",\n" + 
-        		"      \"lastName\",\n" + 
-        		"      \"age\"\n" + 
-        		"    ],\n" + 
-        		"    \"rows\": [\n" + 
-        		"      {\n" + 
-        		"        \"cellValues\": [\n" + 
-        		"          \"Joe\",\n" + 
-        		"          \"Smith\",\n" + 
-        		"          \"20\"\n" + 
-        		"        ],\n" + 
-        		"        \"result\": \"FAILURE\"\n" + 
-        		"      },\n" + 
-        		"      {\n" + 
-        		"        \"cellValues\": [\n" + 
-        		"          \"Jack\",\n" + 
-        		"          \"Jones\",\n" + 
-        		"          \"21\"\n" + 
-        		"        ],\n" + 
-        		"        \"result\": \"SUCCESS\"\n" + 
-        		"      }\n" + 
-        		"    ],\n" + 
-        		"    \"predefinedRows\": true,\n" + 
-        		"    \"currentRow\": {\n" + 
-        		"      \"value\": 0\n" + 
-        		"    }\n" + 
-        		"  }\n" + 
-        		"}";
+    @Test
+    def "should load example data from json file"() throws Exception {
+    	def storedReportJson = """
+			{
+			  "title": "Should do this",
+			  "name": "should_do_this",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$SomeTestScenario"
+			  },
+			  "result": "SUCCESS",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1373543300323,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ],
+			  "examples": {
+			    "headers": [
+			      "firstName",
+			      "lastName",
+			      "age"
+			    ],
+			    "rows": [
+			      {
+			        "cellValues": [
+			          "Joe",
+			          "Smith",
+			          "20"
+			        ],
+			        "result": "FAILURE"
+			      },
+			      {
+			        "cellValues": [
+			          "Jack",
+			          "Jones",
+			          "21"
+			        ],
+			        "result": "SUCCESS"
+			      }
+			    ],
+			    "predefinedRows": true,
+			    "currentRow": {
+			      "value": 0
+			    }
+			  }
+			}
+			"""           		
         
-        File report = temporaryDirectory.newFile("saved-report.json");
-        FileUtils.writeStringToFile(report, storedReportJson);
-        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
-        
-        DataTable table = testOutcome.get().getDataTable();
-        assertThat(table.getHeaders(), hasItems("firstName","lastName","age"));
-        assertThat(table.getRows().size(), is(2));
-        assertThat(table.getRows().get(0).getStringValues(), hasItems("Joe","Smith","20"));
-        assertThat(table.getRows().get(0).getResult(), is(TestResult.FAILURE));
-        assertThat(table.getRows().get(1).getStringValues(), hasItems("Jack","Jones","21"));
-        assertThat(table.getRows().get(1).getResult(), is(TestResult.SUCCESS));
-    }*/
-    
-    /*@Test
-    public void should_load_acceptance_test_report_including_issues() throws Exception {
-        String storedReportJson =
-        		"{\n" + 
-	        	"  \"title\": \"Should do this\",\n" + 
-	        	"  \"name\": \"should_do_this\",\n" + 
-	        	"  \"test-case\": {\n" + 
-	        	"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$ATestScenarioWithIssues\",\n" + 
-	        	"    \"issues\": [\n" + 
-	        	"      \"#123\",\n" + 
-	        	"      \"#456\",\n" + 
-	        	"      \"#789\"\n" + 
-	        	"    ]\n" + 
-	        	"  },\n" + 
-	        	"  \"result\": \"SUCCESS\",\n" + 
-	        	"  \"steps\": \"1\",\n" + 
-	        	"  \"successful\": \"1\",\n" + 
-	        	"  \"failures\": \"0\",\n" + 
-	        	"  \"skipped\": \"0\",\n" + 
-	        	"  \"ignored\": \"0\",\n" + 
-	        	"  \"pending\": \"0\",\n" + 
-	        	"  \"duration\": \"0\",\n" + 
-	        	"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
-	        	"  \"user-story\": {\n" + 
-	        	"    \"userStoryClass\": {\n" + 
-	        	"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
-	        	"    },\n" + 
-	        	"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
-	        	"    \"storyName\": \"A user story\",\n" + 
-	        	"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
-	        	"  },\n" + 
-	        	"  \"issues\": [\n" + 
-	        	"    \"#456\",\n" + 
-	        	"    \"#789\",\n" + 
-	        	"    \"#123\"\n" + 
-	        	"  ],\n" + 
-	        	"  \"tags\": [\n" + 
-	        	"    {\n" + 
-	        	"      \"name\": \"A user story\",\n" + 
-	        	"      \"type\": \"story\"\n" + 
-	        	"    }\n" + 
-	        	"  ],\n" + 
-	        	"  \"test-steps\": [\n" + 
-	        	"    {\n" + 
-	        	"      \"description\": \"step 1\",\n" + 
-	        	"      \"duration\": 0,\n" + 
-	        	"      \"startTime\": 1373542631993,\n" + 
-	        	"      \"screenshots\": [],\n" + 
-	        	"      \"result\": \"SUCCESS\",\n" + 
-	        	"      \"children\": []\n" + 
-	        	"    }\n" + 
-	        	"  ]\n" + 
-	        	"}"	;
-
-        File report = temporaryDirectory.newFile("saved-report.json");
+        File report = new File(outputDirectory,"saved-report.json");		
         FileUtils.writeStringToFile(report, storedReportJson);
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);        
-        assertThat(testOutcome.get().getTitle(), is("Should do this"));
-        assertThat(testOutcome.get().getIssues().size(), is(3));                
+        DataTable table = testOutcome.get().getDataTable();
+		
+		expect: 
+        	table.getHeaders().containsAll("firstName","lastName","age")
+			table.getRows().size() == 2
+			table.getRows().get(0).getStringValues().containsAll("Joe","Smith","20")			
+			table.getRows().get(0).getResult().equals(TestResult.FAILURE)
+			table.getRows().get(1).getStringValues().containsAll("Jack","Jones","21")
+			table.getRows().get(1).getResult().equals(TestResult.SUCCESS)
     }
     
     @Test
-    public void should_load_feature_details_from_json_file() throws Exception {
-        String storedReportXML =
-            "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-          + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story'>\n"
-          + "    <feature id='myapp.myfeatures.SomeFeature' name='Some feature' />\n"
-          + "  </user-story>"
-          + "  <test-step result='SUCCESS'>\n"
-          + "    <description>step 1</description>\n"
-          + "  </test-step>\n"
-          + "</acceptance-test-run>";
-        String storedReportJson = 
-        		"{\n" + 
-        		"  \"title\": \"Should do this\",\n" + 
-        		"  \"name\": \"should_do_this\",\n" + 
-        		"  \"test-case\": {\n" + 
-        		"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenarioInAFeature\"\n" + 
-        		"  },\n" + 
-        		"  \"result\": \"SUCCESS\",\n" + 
-        		"  \"steps\": \"1\",\n" + 
-        		"  \"successful\": \"1\",\n" + 
-        		"  \"failures\": \"0\",\n" + 
-        		"  \"skipped\": \"0\",\n" + 
-        		"  \"ignored\": \"0\",\n" + 
-        		"  \"pending\": \"0\",\n" + 
-        		"  \"duration\": \"0\",\n" + 
-        		"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
-        		"  \"user-story\": {\n" + 
-        		"    \"userStoryClass\": {\n" + 
-        		"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AFeature$AUserStoryInAFeature\"\n" + 
-        		"    },\n" + 
-        		"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature.AUserStoryInAFeature\",\n" + 
-        		"    \"storyName\": \"A user story in a feature\",\n" + 
-        		"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature\",\n" + 
-        		"    \"qualifiedFeatureClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature\",\n" + 
-        		"    \"featureName\": \"A feature\"\n" + 
-        		"  },\n" + 
-        		"  \"issues\": [],\n" + 
-        		"  \"tags\": [\n" + 
-        		"    {\n" + 
-        		"      \"name\": \"A feature\",\n" + 
-        		"      \"type\": \"feature\"\n" + 
-        		"    },\n" + 
-        		"    {\n" + 
-        		"      \"name\": \"A user story in a feature\",\n" + 
-        		"      \"type\": \"story\"\n" + 
-        		"    }\n" + 
-        		"  ],\n" + 
-        		"  \"test-steps\": [\n" + 
-        		"    {\n" + 
-        		"      \"description\": \"step 1\",\n" + 
-        		"      \"duration\": 0,\n" + 
-        		"      \"startTime\": 1373572931641,\n" + 
-        		"      \"screenshots\": [],\n" + 
-        		"      \"result\": \"SUCCESS\",\n" + 
-        		"      \"children\": []\n" + 
-        		"    }\n" + 
-        		"  ]\n" + 
-        		"}\n" + 
-        		"";
-        File report = temporaryDirectory.newFile("saved-report.json");
+    def "should load acceptance test report including issues"() throws Exception {
+        def storedReportJson = """
+		{
+		  "title": "Should do this",
+		  "name": "should_do_this",
+		  "test-case": {
+		    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$ATestScenarioWithIssues",
+		    "issues": [
+		      "#123",
+		      "#456",
+		      "#789"
+		    ]
+		  },
+		  "result": "SUCCESS",
+		  "steps": "1",
+		  "successful": "1",
+		  "failures": "0",
+		  "skipped": "0",
+		  "ignored": "0",
+		  "pending": "0",
+		  "duration": "0",
+		  "timestamp": "2013-01-01T00:00:00.000+01:00",
+		  "user-story": {
+		    "userStoryClass": {
+		      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$AUserStory"
+		    },
+		    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory",
+		    "storyName": "A user story",
+		    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport"
+		  },
+		  "issues": [
+		    "#456",
+		    "#789",
+		    "#123"
+		  ],
+		  "tags": [
+		    {
+		      "name": "A user story",
+		      "type": "story"
+		    }
+		  ],
+		  "test-steps": [
+		    {
+		      "description": "step 1",
+		      "duration": 0,
+		      "startTime": 1373542631993,
+		      "screenshots": [],
+		      "result": "SUCCESS",
+		      "children": []
+		    }
+		  ]
+		}
+		"""
+        File report = new File(outputDirectory,"saved-report.json");
+        FileUtils.writeStringToFile(report, storedReportJson);
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);  
+		expect:      
+        	testOutcome.get().getTitle().equals("Should do this")
+        	testOutcome.get().getIssues().size() == 3                
+    }
+    
+    @Test
+    def "should load feature details from json file"() throws Exception {        
+        String storedReportJson = """
+			{
+			  "title": "Should do this",
+			  "name": "should_do_this",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$SomeTestScenarioInAFeature"
+			  },
+			  "result": "SUCCESS",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$AFeature\$AUserStoryInAFeature"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature.AUserStoryInAFeature",
+			    "storyName": "A user story in a feature",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature",
+			    "qualifiedFeatureClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature",
+			    "featureName": "A feature"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A feature",
+			      "type": "feature"
+			    },
+			    {
+			      "name": "A user story in a feature",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1373572931641,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+			"""        	
+        File report = new File(outputDirectory,"saved-report.json");
         FileUtils.writeStringToFile(report, storedReportJson);
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
-        
-
-        assertThat(testOutcome.get().getFeature().getId(), is("net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature"));
-        assertThat(testOutcome.get().getFeature().getName(), is("A feature"));
+        expect: 
+        	testOutcome.get().getFeature().getId().equals("net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AFeature")
+			testOutcome.get().getFeature().getName().equals("A feature");
     }
     
     @Test
-    public void should_load_the_session_id_from_xml_file() throws Exception {
-        String storedReportXML =
-                  "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' session-id='1234'>\n"
-                + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story'>\n"
-                + "    <feature id='myapp.myfeatures.SomeFeature' name='Some feature' />\n"
-                + "  </user-story>"
-                + "  <test-step result='SUCCESS'>\n"
-                + "    <description>step 1</description>\n"
-                + "  </test-step>\n"
-                + "</acceptance-test-run>";
-
-        String storedReportJson  = 
-        		"{\n" + 
-	        	"  \"title\": \"Should do this\",\n" + 
-	        	"  \"name\": \"should_do_this\",\n" + 
-	        	"  \"test-case\": {\n" + 
-	        	"    \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$SomeTestScenario\"\n" + 
-	        	"  },\n" + 
-	        	"  \"result\": \"SUCCESS\",\n" + 
-	        	"  \"steps\": \"1\",\n" + 
-	        	"  \"successful\": \"1\",\n" + 
-	        	"  \"failures\": \"0\",\n" + 
-	        	"  \"skipped\": \"0\",\n" + 
-	        	"  \"ignored\": \"0\",\n" + 
-	        	"  \"pending\": \"0\",\n" + 
-	        	"  \"duration\": \"0\",\n" + 
-	        	"  \"timestamp\": \"2013-01-01T00:00:00.000+01:00\",\n" + 
-	        	"  \"session-id\": \"1234\",\n" + 
-	        	"  \"user-story\": {\n" + 
-	        	"    \"userStoryClass\": {\n" + 
-	        	"      \"classname\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport$AUserStory\"\n" + 
-	        	"    },\n" + 
-	        	"    \"qualifiedStoryClassName\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory\",\n" + 
-	        	"    \"storyName\": \"A user story\",\n" + 
-	        	"    \"path\": \"net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\"\n" + 
-	        	"  },\n" + 
-	        	"  \"issues\": [],\n" + 
-	        	"  \"tags\": [\n" + 
-	        	"    {\n" + 
-	        	"      \"name\": \"A user story\",\n" + 
-	        	"      \"type\": \"story\"\n" + 
-	        	"    }\n" + 
-	        	"  ],\n" + 
-	        	"  \"test-steps\": [\n" + 
-	        	"    {\n" + 
-	        	"      \"description\": \"step 1\",\n" + 
-	        	"      \"duration\": 0,\n" + 
-	        	"      \"startTime\": 1373571216867,\n" + 
-	        	"      \"screenshots\": [],\n" + 
-	        	"      \"result\": \"SUCCESS\",\n" + 
-	        	"      \"children\": []\n" + 
-	        	"    }\n" + 
-	        	"  ]\n" + 
-	        	"}";	
-        File report = temporaryDirectory.newFile("saved-report.json");
+    def "should_load_the_session_id_from_xml_file"() throws Exception {      
+        def storedReportJson  = """
+			{
+			  "title": "Should do this",
+			  "name": "should_do_this",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$SomeTestScenario"
+			  },
+			  "result": "SUCCESS",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "2013-01-01T00:00:00.000+01:00",
+			  "session-id": "1234",
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.integration.WhenGeneratingAJSONReport"
+			  },
+			  "issues": [],
+			  "tags": [
+			    {
+			      "name": "A user story",
+			      "type": "story"
+			    }
+			  ],
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1373571216867,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+			"""         	
+        File report = new File(outputDirectory,"saved-report.json");
         FileUtils.writeStringToFile(report, storedReportJson);
+		System.out.println(storedReportJson)
         Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
         
-        assertThat(testOutcome.get().getSessionId(), is("1234"));
+        expect: 
+			testOutcome.get().getSessionId().equals("1234")
     }
     
-    @Test
+    /*@Test
     public void should_return_null_feature_if_no_feature_is_present() {
         TestOutcome testOutcome = new TestOutcome("aTestMethod");
         assertThat(testOutcome.getFeature(), is(nullValue()));
