@@ -59,8 +59,7 @@ class WhenUsingPhantomJS extends Specification {
     }
 
     def openStaticTestSite(driver) {
-        def baseDir = new File(System.getProperty("user.dir"));
-        def testSite = new File(baseDir, "src/test/resources/static-site/index.html");
-        driver.get("file://" + testSite.getAbsolutePath());
+		URL siteURL = getClass().getClassLoader().getResource("static-site/index.html")
+		driver.get(siteURL.toString())
     }
 }
