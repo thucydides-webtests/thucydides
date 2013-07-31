@@ -6,6 +6,7 @@ import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.*;
 import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor;
+import net.thucydides.core.reports.adaptors.common.FilebasedOutcomeAdaptor;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -21,7 +22,7 @@ import static ch.lambdaj.Lambda.convert;
 /**
  * Loads TestOutcomes from a specflow output file
  */
-public class SpecflowAdaptor implements TestOutcomeAdaptor {
+public class SpecflowAdaptor extends FilebasedOutcomeAdaptor {
 
     private static final String TITLE_LEAD = "***** ";
 

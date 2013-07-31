@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor;
+import net.thucydides.core.reports.adaptors.common.FilebasedOutcomeAdaptor;
 import net.thucydides.core.reports.adaptors.xunit.io.XUnitFiles;
 import net.thucydides.core.reports.adaptors.xunit.model.TestCase;
 import net.thucydides.core.reports.adaptors.xunit.model.TestException;
@@ -18,7 +19,7 @@ import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
 
-public class DefaultXUnitAdaptor implements TestOutcomeAdaptor {
+public class DefaultXUnitAdaptor extends FilebasedOutcomeAdaptor {
     private final XUnitLoader loader = new BasicXUnitLoader();
 
     public List<TestOutcome> loadOutcomesFrom(final File source) throws IOException {

@@ -3,6 +3,7 @@ package net.thucydides.core.model;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -16,6 +17,7 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor;
 import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.statistics.service.TagProvider;
 import net.thucydides.core.statistics.service.TagProviderService;
@@ -25,6 +27,8 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.seleniumhq.jetty7.util.log.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,6 +78,7 @@ public class TestOutcome {
 
     private static final int RECENT_TEST_RUN_COUNT = 10;
     private static final String ISSUES = "issues";
+    private static final String NEW_LINE = System.getProperty("line.separator");
     /**
      * The name of the method implementing this test.
      */
@@ -148,6 +153,9 @@ public class TestOutcome {
 
     private DataTable dataTable;
     private boolean manualTest;
+
+
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(TestOutcome.class);
 
     /**
      * The title is immutable once set. For convenience, you can create a test
@@ -343,8 +351,31 @@ public class TestOutcome {
         if (storedTitle == null) {
             return obtainTitleFromAnnotationOrMethodName();
         } else {
-            return storedTitle;
+            return getTitleFrom(storedTitle);
         }
+    }
+
+    private String getTitleFrom(String storedTitle) {
+        return Lists.newArrayList(Splitter.on("\n\r").split(storedTitle)).get(0);
+    }
+
+    public Optional<String> getDescription() {
+        if (storedTitle != null) {
+            return getDescriptionFrom(storedTitle);
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Optional<String> getDescriptionFrom(String storedTitle) {
+        List<String> multilineTitle = Lists.newArrayList(Splitter.on("\n\r").split(storedTitle));
+        if (multilineTitle.size() > 1) {
+            multilineTitle.remove(0);
+            return Optional.of(Joiner.on(NEW_LINE).join(multilineTitle));
+        } else {
+            return Optional.absent();
+        }
+
     }
 
     public String getTitleWithLinks() {
@@ -783,9 +814,14 @@ public class TestOutcome {
     private Set<TestTag> getTagsUsingTagProviders(List<TagProvider> tagProviders) {
         Set<TestTag> tags  = Sets.newHashSet();
         for (TagProvider tagProvider : tagProviders) {
-            Set<TestTag> providedTags = tagProvider.getTagsFor(this);
-            if (providedTags != null) {
-                tags.addAll(tagProvider.getTagsFor(this));
+            try {
+                Set<TestTag> providedTags = tagProvider.getTagsFor(this);
+                if (providedTags != null) {
+                    tags.addAll(tagProvider.getTagsFor(this));
+                }
+            } catch(Throwable theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt) {
+                logger.error("Tag provider " + tagProvider + " failure",
+                             theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt);
             }
         }
         return tags;

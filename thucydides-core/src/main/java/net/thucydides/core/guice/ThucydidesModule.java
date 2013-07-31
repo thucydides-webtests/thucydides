@@ -1,7 +1,6 @@
 package net.thucydides.core.guice;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import net.thucydides.core.annotations.locators.SmartElementProxyCreator;
@@ -27,8 +26,6 @@ import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor;
 import net.thucydides.core.statistics.AtomicTestCount;
 import net.thucydides.core.statistics.TestCount;
-import net.thucydides.core.statistics.database.LocalDatabase;
-import net.thucydides.core.statistics.database.LocalH2ServerDatabase;
 import net.thucydides.core.statistics.service.ClasspathTagProviderService;
 import net.thucydides.core.statistics.service.TagProviderService;
 import net.thucydides.core.steps.ConsoleLoggingListener;
@@ -102,12 +99,12 @@ public class ThucydidesModule extends AbstractModule {
         return environmentVariables;
     }
 
-    @Provides
-    @Singleton
-    @Inject
-    public LocalDatabase provideLocalDatabase(EnvironmentVariables environmentVariables) {
-        return new LocalH2ServerDatabase(environmentVariables);
-    }
+//    @Provides
+//    @Singleton
+//    @Inject
+//    public LocalDatabase provideLocalDatabase(EnvironmentVariables environmentVariables) {
+//        return new LocalH2ServerDatabase(environmentVariables);
+//    }
 
 //    @Provides
 //    @Singleton

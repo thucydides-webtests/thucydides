@@ -55,7 +55,7 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
         }
     }
 
-    
+
     public Integer getPropertyAsInteger(Enum<?> property, Integer defaultValue) {
         return getPropertyAsInteger(property.toString(), defaultValue);
     }
