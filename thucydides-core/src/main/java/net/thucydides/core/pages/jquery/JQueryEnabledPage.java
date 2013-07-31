@@ -74,4 +74,8 @@ public class JQueryEnabledPage {
             executeScriptFrom("jquery/jquery-thucydides-plugin.js");
         }
     }
+    
+    public void injectJavaScriptUtils(){
+    	executeScriptFrom("javascript/cycle.js");
+    }
 }
