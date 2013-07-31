@@ -29,8 +29,7 @@ public abstract class By extends org.openqa.selenium.By {
 
         @Override
         public List<WebElement> findElements(SearchContext context) {
-            throw new IllegalArgumentException(
-                    "SmartGWT does not provide the functionality to find multiple elements");
+            throw new IllegalArgumentException("SmartGWT does not provide the functionality to find multiple elements");
         }
         
         @Override
@@ -44,7 +43,7 @@ public abstract class By extends org.openqa.selenium.By {
             } catch (WebDriverException e){
             	if ((Boolean) ((JavascriptExecutor) context)
             	.executeScript("return (typeof isc == 'undefined')")){
-            		throw new RuntimeException("Not a SmartGWT page. Cannot locate element using SmartGTW locator " + toString());
+            		throw new NoSuchElementException("Not a SmartGWT page. Cannot locate element using SmartGTW locator " + toString());
             	}
             }
             throw new NoSuchElementException("Cannot locate element using " + toString());
