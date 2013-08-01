@@ -61,30 +61,6 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <plugin>
-                <groupId>org.easyb</groupId>
-                <artifactId>maven-easyb-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
-                        <version>${groovy.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <storyType>html</storyType>
-                    <storyReport>target/easyb/easyb.html</storyReport>
-                    <easybTestDirectory>src/test/stories</easybTestDirectory>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -114,4 +90,47 @@
             <version>${groovy.version}</version>
         </dependency>
     </dependencies>
+    <profiles>
+	    <profile>
+			<id>easyb</id>
+			  <!-- When maven.test.skip is defined, don't run easyb tests. Ideally, it should check 
+			  for skipTests flag too,but maven profile activation doesn't support multiple variables. 
+			  More details is here http://jira.codehaus.org/browse/MNG-3328. There is also easyb ticket 
+			  created for this issue: http://code.google.com/p/easyb/issues/detail?id=192.-->  
+		  	<activation>
+				<property>
+					<name>!maven.test.skip</name>
+		    	</property>
+		  	</activation>
+
+		  	<build>
+		    	<plugins>
+					<plugin>
+	                	<groupId>org.easyb</groupId>
+	                	<artifactId>maven-easyb-plugin</artifactId>
+	                	<version>1.4</version>
+	                	<executions>
+	                    <execution>
+	                        <goals>
+	                            <goal>test</goal>
+	                        </goals>
+	                    </execution>
+	            	    </executions>
+	                	<dependencies>
+	                    <dependency>
+	                        <groupId>org.codehaus.groovy</groupId>
+	                        <artifactId>groovy-all</artifactId>
+	                        <version>${groovy.version}</version>
+	                    </dependency>
+		                </dependencies>
+		                <configuration>
+		                    <storyType>html</storyType>
+		                    <storyReport>target/easyb/easyb.html</storyReport>
+		                    <easybTestDirectory>src/test/stories</easybTestDirectory>
+		                </configuration>
+		            </plugin>			
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
