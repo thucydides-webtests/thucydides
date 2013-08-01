@@ -16,8 +16,13 @@ import java.security.Key;
  */
 public class SaucelabsLinkGenerator implements LinkGenerator {
 
-    private final EnvironmentVariables environmentVariables;
+    private EnvironmentVariables environmentVariables;
 
+    //no arg constructor for serialization
+    public SaucelabsLinkGenerator() {
+    	
+    }
+    
     @Inject
     public SaucelabsLinkGenerator(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
