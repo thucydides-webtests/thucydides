@@ -409,7 +409,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
 	public void shouldBeEnabled() {
         if (!isEnabled()) {
             String errorMessage = String.format(
-                    "Field '%s' should be enabled", getElement());
+                    "Field '%s' should be enabled", toString());
             throw new AssertionError(errorMessage);
         }
     }
@@ -423,7 +423,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
 	public void shouldNotBeEnabled() {
         if (isEnabled()) {
             String errorMessage = String.format(
-                    "Field '%s' should not be enabled", getElement());
+                    "Field '%s' should not be enabled", toString());
             throw new AssertionError(errorMessage);
         }
     }
@@ -729,7 +729,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
             waitForCondition().until(elementIsEnabled());
             return this;
         } catch (TimeoutException timeout) {
-            throw new ElementNotVisibleException("Expected enabled element " + this + "was not enabled" , timeout);
+            throw new ElementNotVisibleException("Expected enabled element '"+ toString() + "' was not enabled" , timeout);
         }
     }
 
@@ -743,7 +743,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
             waitForCondition().until(elementIsNotEnabled());
             return this;
         } catch (TimeoutException timeout) {
-            throw new ElementNotVisibleException("Expected disabled element " + this + "  was not disabled", timeout);
+            throw new ElementNotVisibleException("Expected disabled element '"+ toString() + "'  was not disabled", timeout);
         }
     }
 
@@ -823,11 +823,13 @@ public class WebElementFacadeImpl implements WebElementFacade {
 
 	@Override
     public String toString() {
-        if (getElement() != null) {
-            return getElement().toString();
-        } else {
-            return "<Undefined web element>";
+		try {
+	        if (getElement() != null) {
+	       		return getElement().toString();
+	        }
+        } catch (NoSuchElementException e) {
         }
+		return "<Undefined web element>";
     }
 	
 	/*
