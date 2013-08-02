@@ -203,7 +203,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     {
                       "description": "step 1",
                       "duration": 0,
-                      "startTime": 1356958800000,
+                      "startTime": $FIRST_OF_JANUARY.millis,
                       "screenshots": [],
                       "result": "SUCCESS",
                       "children": []
