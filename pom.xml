@@ -8,7 +8,7 @@
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides</artifactId>
-    <version>0.9.203-SNAPSHOT</version>
+    <version>0.9.204-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>thucydides</name>
     <description>An Acceptance Testing framework for web applications
@@ -268,7 +268,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>0.9.24</version>
+            <version>1.0.13</version>
             <scope>test</scope>
         </dependency>
 

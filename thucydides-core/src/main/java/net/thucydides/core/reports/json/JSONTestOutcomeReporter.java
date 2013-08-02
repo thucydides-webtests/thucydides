@@ -1,36 +1,10 @@
 package net.thucydides.core.reports.json;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.nio.charset.Charset;
-
-import net.thucydides.core.annotations.TestAnnotations;
-import net.thucydides.core.issues.IssueTracking;
-import net.thucydides.core.issues.SystemPropertiesIssueTracking;
-import net.thucydides.core.model.ReportType;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.core.reports.TestOutcomes;
-import net.thucydides.core.reports.saucelabs.LinkGenerator;
-import net.thucydides.core.reports.saucelabs.SaucelabsLinkGenerator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.InstanceCreator;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -40,11 +14,24 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import net.thucydides.core.annotations.TestAnnotations;
+import net.thucydides.core.model.ReportType;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.TestOutcomes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 
 public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
-
-	public static final String NEW_LINE_CHAR = "\n";
-	public static final String ESCAPE_CHAR_FOR_NEW_LINE = "&amp;#10;";
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(JSONTestOutcomeReporter.class);
@@ -121,17 +108,12 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 			JsonObject jsonObject = new JsonObject();
 			jsonObject.add(CLASSNAME, new JsonPrimitive(src.getName()));
 			JsonArray issuesJsonArray = new JsonArray();
-			TestAnnotations testAnnotationsForClass = TestAnnotations
-					.forClass(src);
-			String[] annotatedIssuesForTestCase = testAnnotationsForClass
-					.getAnnotatedIssuesForTestCase(src);
-			addIssuesToCollectingJsonArray(issuesJsonArray,
-					annotatedIssuesForTestCase);
-			String annotatedIssueForTestCase = testAnnotationsForClass
-					.getAnnotatedIssueForTestCase(src);
+			TestAnnotations testAnnotationsForClass = TestAnnotations.forClass(src);
+			String[] annotatedIssuesForTestCase = testAnnotationsForClass.getAnnotatedIssuesForTestCase(src);
+			addIssuesToCollectingJsonArray(issuesJsonArray, annotatedIssuesForTestCase);
+			String annotatedIssueForTestCase = testAnnotationsForClass.getAnnotatedIssueForTestCase(src);
 			if (annotatedIssueForTestCase != null) {
-				issuesJsonArray
-						.add(new JsonPrimitive(annotatedIssueForTestCase));
+				issuesJsonArray.add(new JsonPrimitive(annotatedIssueForTestCase));
 			}
 			for (Method currentMethod : src.getMethods()) {
 				String[] annotatedIssuesForMethod = testAnnotationsForClass
@@ -167,7 +149,7 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 			try {
 				return Class.forName(jsonObject.get(CLASSNAME).getAsString());
 			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+                LOGGER.warn("Could not find test class when deserializing JSON file", e);
 				return null;
 			}
 		}
@@ -190,35 +172,12 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 			JsonObject jsonObject = json.getAsJsonObject();
 			JsonElement messageElement = jsonObject.get("message");
 			try {
-				Class<?> throwableClass = Class.forName(jsonObject.get("class").getAsString());				
-				return (Throwable) throwableClass.getConstructor(String.class).newInstance(messageElement.getAsString());				
+				Class<?> throwableClass = Class.forName(jsonObject.get("class").getAsString());
+				return (Throwable) throwableClass.getConstructor(String.class).newInstance(messageElement.getAsString());
 			} catch (Throwable e) {
-				e.printStackTrace();
+                LOGGER.warn("Could not find test class when deserializing JSON file", e);
 				return null;
 			}
-		}
-	} 
-
-
-	public class MyExclusionStrategy implements ExclusionStrategy {
-
-		private final Class<?>[] typeToSkip;
-
-		private MyExclusionStrategy(Class<?>... typeToSkip) {
-			this.typeToSkip = typeToSkip;
-		}
-
-		public boolean shouldSkipClass(Class<?> clazz) {
-			for (Class<?> currentClass : typeToSkip) {
-				if (currentClass == clazz) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public boolean shouldSkipField(FieldAttributes f) {
-			return false;
 		}
 	}
 
@@ -234,42 +193,4 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter {
 			return Optional.absent();
 		}
 	}
-
-	private class IssueTrackingInstanceCreator implements
-			InstanceCreator<IssueTracking> {
-		public IssueTracking createInstance(Type type) {
-			return new SystemPropertiesIssueTracking();
-		}
-	}
-
-	private class LinkGeneratorInstanceCreator implements
-			InstanceCreator<LinkGenerator> {
-		public LinkGenerator createInstance(Type type) {
-			return new SaucelabsLinkGenerator();
-		}
-	}
-
-	private class GsonOptionalDeserializer<T> implements
-			JsonSerializer<Optional<T>>, JsonDeserializer<Optional<T>> {
-
-		@Override
-		public Optional<T> deserialize(JsonElement json, Type typeOfT,
-				JsonDeserializationContext context) throws JsonParseException {
-			final JsonArray asJsonArray = json.getAsJsonArray();
-			final JsonElement jsonElement = asJsonArray.get(0);
-			final T value = context.deserialize(jsonElement,
-					((ParameterizedType) typeOfT).getActualTypeArguments()[0]);
-			return Optional.fromNullable(value);
-		}
-
-		@Override
-		public JsonElement serialize(Optional<T> src, Type typeOfSrc,
-				JsonSerializationContext context) {
-			final JsonElement element = context.serialize(src.orNull());
-			final JsonArray result = new JsonArray();
-			result.add(element);
-			return result;
-		}
-	}
-
 }

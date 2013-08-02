@@ -105,10 +105,7 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         }
 		Long duration = readDuration(outcomeJsonObject);
         testOutcome.setDuration(duration);
-        Optional<DateTime> startTime = readTimestamp(outcomeJsonObject);
-        if (startTime.isPresent()) {
-            testOutcome.setStartTime(startTime.get());
-        }
+        testOutcome.setStartTime(readTimestamp(outcomeJsonObject));
         boolean isManualTest = readManualTest(outcomeJsonObject);
         if (isManualTest) {
             testOutcome = testOutcome.asManualTest();
@@ -144,20 +141,11 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 	}
 	
 	private String escape(String attribute) {
-
-		if (StringUtils.isNotEmpty(attribute)) {
-			attribute = StringUtils.replace(attribute, NEW_LINE_CHAR,
-					ESCAPE_CHAR_FOR_NEW_LINE);
-		}
-		return attribute;
+		return StringUtils.replace(attribute, NEW_LINE_CHAR, ESCAPE_CHAR_FOR_NEW_LINE);
 	}
 
 	private String unescape(String attribute) {
-		if (StringUtils.isNotEmpty(attribute)) {
-			attribute = StringUtils.replace(attribute,
-					ESCAPE_CHAR_FOR_NEW_LINE, NEW_LINE_CHAR);
-		}
-		return attribute;
+		return StringUtils.replace(attribute, ESCAPE_CHAR_FOR_NEW_LINE, NEW_LINE_CHAR);
 	}
 
 	private String titleFrom(final TestOutcome testOutcome) {
@@ -185,11 +173,9 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 		}
 	}
 	
-	private static final Optional<DateTime> NO_TIMESTAMP = Optional.absent();
-
-    private Optional<DateTime> readTimestamp(JsonObject jsonObject) {
+    private DateTime readTimestamp(JsonObject jsonObject) {
         String timestamp = jsonObject.get(TIMESTAMP).getAsString();
-        return (timestamp != null) ? Optional.of(DateTime.parse(timestamp)) : NO_TIMESTAMP;
+        return DateTime.parse(timestamp);
     }
     
     private boolean readManualTest(JsonObject jsonObject) {

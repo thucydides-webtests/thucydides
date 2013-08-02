@@ -14,10 +14,10 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
-import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor;
 import net.thucydides.core.statistics.model.TestStatistics;
 import net.thucydides.core.statistics.service.TagProvider;
 import net.thucydides.core.statistics.service.TagProviderService;
@@ -27,7 +27,6 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.seleniumhq.jetty7.util.log.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -167,7 +166,7 @@ public class TestOutcome {
     }
 
     public TestOutcome(final String methodName, final Class<?> testCase) {
-        startTime = System.currentTimeMillis();
+        startTime = now();
         this.methodName = methodName;
         this.testCase = testCase;
         this.additionalIssues = new HashSet<String>();
@@ -178,6 +177,7 @@ public class TestOutcome {
             initializeStoryFrom(testCase);
         }
     }
+
 
     private TagProviderService getTagProviderService() {
         if (tagProviderService == null) {
@@ -216,7 +216,7 @@ public class TestOutcome {
      *                  represent the story in which the test is implemented.
      */
     protected TestOutcome(final String methodName, final Class<?> testCase, final Story userStory) {
-        startTime = System.currentTimeMillis();
+        startTime = now();
         this.methodName = methodName;
         this.testCase = testCase;
         this.additionalIssues = new HashSet<String>();
@@ -238,7 +238,8 @@ public class TestOutcome {
                           final Throwable testFailureCause,
                           final TestResult annotatedResult,
                           final DataTable dataTable,
-                          final Optional<String> qualifier) {
+                          final Optional<String> qualifier,
+                          final boolean manualTest) {
         this.startTime = startTime;
         this.duration = duration;
         this.storedTitle = title;
@@ -255,6 +256,7 @@ public class TestOutcome {
         this.dataTable = dataTable;
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
+        this.manualTest = manualTest;
     }
 
     /**
@@ -269,20 +271,21 @@ public class TestOutcome {
 
     public TestOutcome withQualifier(String qualifier) {
         if (qualifier != null) {
-            return new TestOutcome(this.startTime,
-                    this.duration,
-                    this.storedTitle,
-                    this.methodName,
-                    this.testCase,
-                    this.testSteps,
-                    this.issues,
-                    this.additionalIssues,
-                    this.tags,
-                    this.userStory,
-                    this.testFailureCause,
-                    this.annotatedResult,
-                    this.dataTable,
-                    Optional.fromNullable(qualifier));
+        return new TestOutcome(this.startTime,
+                this.duration,
+                this.storedTitle,
+                this.methodName,
+                this.testCase,
+                this.testSteps,
+                this.issues,
+                this.additionalIssues,
+                this.tags,
+                this.userStory,
+                this.testFailureCause,
+                this.annotatedResult,
+                this.dataTable,
+                Optional.fromNullable(qualifier),
+                this.manualTest);
         } else {
             return this;
         }
@@ -304,7 +307,8 @@ public class TestOutcome {
                     this.testFailureCause,
                     this.annotatedResult,
                     this.dataTable,
-                    this.qualifier);
+                    this.qualifier,
+                    this.manualTest);
         } else {
             return this;
         }
@@ -351,12 +355,8 @@ public class TestOutcome {
         if (storedTitle == null) {
             return obtainTitleFromAnnotationOrMethodName();
         } else {
-            return getTitleFrom(storedTitle);
+            return storedTitle;
         }
-    }
-
-    private String getTitleFrom(String storedTitle) {
-        return Lists.newArrayList(Splitter.on("\n\r").split(storedTitle)).get(0);
     }
 
     public Optional<String> getDescription() {
@@ -990,6 +990,14 @@ public class TestOutcome {
 
     public boolean isManual() {
         return manualTest;
+    }
+
+    private SystemClock getSystemClock() {
+        return Injectors.getInjector().getInstance(SystemClock.class);
+    }
+
+    private long now() {
+        return getSystemClock().getCurrentTime().getMillis();
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
