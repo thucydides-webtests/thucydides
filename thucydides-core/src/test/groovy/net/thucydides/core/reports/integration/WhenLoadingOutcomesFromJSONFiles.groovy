@@ -322,7 +322,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.SomeTestScenarioWithTags",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.SomeTestScenario",
 			    "storyName": "Some test scenario with tags",
 			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
 			  },
@@ -453,7 +453,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 		  "title": "Should do this",
 		  "name": "should_do_this",
 		  "test-case": {
-		    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$ATestScenarioWithIssues",
+		    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario",
 		    "issues": [
 		      "#123",
 		      "#456",
@@ -473,7 +473,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 		    "userStoryClass": {
 		      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 		    },
-		    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+		    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory",
 		    "storyName": "A user story",
 		    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
 		  },
@@ -516,7 +516,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "title": "Should do this",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenarioInAFeature"
+			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
 			  },
 			  "result": "SUCCESS",
 			  "steps": "1",
@@ -529,9 +529,9 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AFeature\$AUserStoryInAFeature"
+			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AFeature.AUserStoryInAFeature",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory",
 			    "storyName": "A user story in a feature",
 			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AFeature",
 			    "qualifiedFeatureClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AFeature",
