@@ -2,6 +2,8 @@ package net.thucydides.core.reports
 
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.model.TestTag
+import net.thucydides.core.util.EnvironmentVariables
+import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Ignore
 import spock.lang.Specification
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled
@@ -19,6 +21,18 @@ class WhenProcessingTestOutcomes extends Specification {
     def "should load test outcomes from a given directory"() {
         when:
             List<TestOutcome> testOutcomes = loader.loadFrom(directoryInClasspathCalled("/tagged-test-outcomes"));
+        then:
+            testOutcomes.size() == 3
+    }
+
+    EnvironmentVariables environmentVariables = new MockEnvironmentVariables()
+
+    def "should load tests in JSON if configured"() {
+        given:
+            environmentVariables.setProperty("thucydides.report.format","json");
+            def loader = new TestOutcomeLoader(environmentVariables)
+        when:
+            List<TestOutcome> testOutcomes = loader.loadFrom(directoryInClasspathCalled("/json-reports"));
         then:
             testOutcomes.size() == 3
     }
@@ -173,6 +187,17 @@ class WhenProcessingTestOutcomes extends Specification {
         then:
             tests.size() == 1
             tests everyItem(withResult(TestResult.SUCCESS))
+    }
+
+    def "should list all passing tests from JSON files"() {
+        given:
+            environmentVariables.setProperty("thucydides.report.format","json");
+            def loader = new TestOutcomeLoader(environmentVariables)
+            TestOutcomes testOutcomes = TestOutcomes.of(loader.loadFrom(directoryInClasspathCalled("/test-outcomes/full-json")));
+        when:
+            def tests = testOutcomes.passingTests.getTests()
+        then:
+            tests.size() == 5
     }
 
     def "should list all failing tests"() {

@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.AcceptanceTestLoader;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.TestOutcomes;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ import static net.thucydides.core.model.ReportType.XML;
  * Generates acceptance test results in XML form.
  * 
  */
-public class XMLTestOutcomeReporter implements AcceptanceTestReporter {
+public class XMLTestOutcomeReporter implements AcceptanceTestReporter, AcceptanceTestLoader {
 
     private File outputDirectory;
 

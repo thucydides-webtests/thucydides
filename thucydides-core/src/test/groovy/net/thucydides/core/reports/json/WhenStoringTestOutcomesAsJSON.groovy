@@ -1,4 +1,4 @@
-package net.thucydides.core.reports.integration
+package net.thucydides.core.reports.json
 
 import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.core.annotations.*
@@ -9,7 +9,7 @@ import net.thucydides.core.model.TestResult
 import net.thucydides.core.model.TestStep
 import net.thucydides.core.reports.AcceptanceTestReporter
 import net.thucydides.core.reports.TestOutcomes
-import net.thucydides.core.reports.json.JSONTestOutcomeReporter
+import net.thucydides.core.reports.integration.TestStepFactory
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource
 import org.joda.time.DateTime
 import org.joda.time.LocalDateTime
@@ -47,6 +47,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         }
     }
 
+    @Issue("PROJ-123")
     @WithTag(name = "important feature", type = "feature")
     class SomeTestScenarioWithTags {
         public void a_simple_test_case() {
@@ -124,7 +125,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "title": "Should do this",
                   "name": "should_do_this",
                   "test-case": {
-                    "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+                    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
                   },
                   "result": "SUCCESS",
                   "steps": "1",
@@ -137,11 +138,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "timestamp": "${FIRST_OF_JANUARY}",
                   "user-story": {
                     "userStoryClass": {
-                      "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                     "storyName": "A user story",
-                    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+                    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
                   "tags": [
@@ -178,7 +179,6 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
             def expectedReport = """\
                 {
                   "title": "Should do this",
-                  "name": "should_do_this",
                   "result": "SUCCESS",
                   "steps": "1",
                   "successful": "1",
@@ -229,7 +229,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "title": "Should do this",
                   "name": "should_do_this",
                   "test-case": {
-                    "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$ATestScenarioWithIssues",
+                    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$ATestScenarioWithIssues",
                     "issues": [
                       "#123",
                       "#456",
@@ -247,11 +247,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "timestamp": "$FIRST_OF_JANUARY",
                   "user-story": {
                     "userStoryClass": {
-                      "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                     "storyName": "A user story",
-                    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+                    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [
                     "#456",
@@ -294,7 +294,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  "title": "Should do this",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
 			  },
 			  "result": "SUCCESS",
 			  "steps": "1",
@@ -308,11 +308,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  "manual": "true",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -356,7 +356,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "title": "Should do this",
                   "name": "should_do_this",
                   "test-case": {
-                    "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+                    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
                   },
                   "result": "SUCCESS",
                   "steps": "1",
@@ -369,11 +369,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "timestamp": "$FIRST_OF_JANUARY",
                   "user-story": {
                     "userStoryClass": {
-                      "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                     "storyName": "A user story",
-                    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+                    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
                   "tags": [
@@ -440,7 +440,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  "title": "Should do this [a qualifier]",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
 			  },
 			  "result": "SUCCESS",
 			  "qualifier": "a qualifier",
@@ -454,11 +454,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  "timestamp": "$FIRST_OF_JANUARY",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -496,7 +496,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  "title": "Should do this [a qualifier with \u0026#10; a new line]",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
 			  },
 			  "result": "SUCCESS",
 			  "qualifier": "a qualifier with \u0026#10; a new line",
@@ -510,11 +510,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  "timestamp": "$FIRST_OF_JANUARY",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -542,7 +542,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
     }
 
 
-    def "should store tags in the JSON reports"() {
+    def "should store annotated tags and issues in the JSON reports"() {
         given:
             def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioWithTags.class);
             testOutcome.startTime = FIRST_OF_JANUARY
@@ -553,7 +553,10 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "title": "Should do this",
               "name": "should_do_this",
               "test-case": {
-                "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenarioWithTags"
+                "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenarioWithTags",
+                "issues": [
+                    "PROJ-123"
+                ]
               },
               "result": "SUCCESS",
               "steps": "1",
@@ -566,13 +569,15 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "timestamp": "$FIRST_OF_JANUARY",
               "user-story": {
                 "userStoryClass": {
-                  "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenarioWithTags"
+                  "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenarioWithTags"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.SomeTestScenarioWithTags",
+                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.SomeTestScenarioWithTags",
                 "storyName": "Some test scenario with tags",
-                "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+                "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
-              "issues": [],
+              "issues": [
+                "PROJ-123"
+              ],
               "tags": [
                 {
                   "name": "Some test scenario with tags",
@@ -617,7 +622,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "title": "Should do this",
                   "name": "should_do_this",
                   "test-case": {
-                    "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+                    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
                   },
                   "result": "SUCCESS",
                   "steps": "1",
@@ -631,11 +636,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "session-id": "1234",
                   "user-story": {
                     "userStoryClass": {
-                      "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                     "storyName": "A user story",
-                    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+                    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
                   "tags": [
@@ -673,7 +678,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  "title": "Should do this",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenarioInAFeature"
+			    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenarioInAFeature"
 			  },
 			  "result": "SUCCESS",
 			  "steps": "1",
@@ -686,12 +691,12 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  "timestamp": "$FIRST_OF_JANUARY",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AFeature\$AUserStoryInAFeature"
+			      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AFeature\$AUserStoryInAFeature"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AFeature.AUserStoryInAFeature",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature.AUserStoryInAFeature",
 			    "storyName": "A user story in a feature",
-			    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AFeature",
-			    "qualifiedFeatureClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AFeature",
+			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
+			    "qualifiedFeatureClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
 			    "featureName": "A feature"
 			  },
 			  "issues": [],
@@ -735,7 +740,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "title": "Should do this",
                   "name": "should_do_this",
                   "test-case": {
-                    "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenarioInAFeature"
+                    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenarioInAFeature"
                   },
                   "result": "SUCCESS",
                   "steps": "1",
@@ -748,12 +753,12 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "timestamp": "$FIRST_OF_JANUARY",
                   "user-story": {
                     "userStoryClass": {
-                      "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AFeature\$AUserStoryInAFeature"
+                      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AFeature\$AUserStoryInAFeature"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AFeature.AUserStoryInAFeature",
+                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature.AUserStoryInAFeature",
                     "storyName": "A user story in a feature",
-                    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AFeature",
-                    "qualifiedFeatureClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AFeature",
+                    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
+                    "qualifiedFeatureClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
                     "featureName": "A feature"
                   },
                   "issues": [],
@@ -855,7 +860,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "title": "A simple test case [qualifier]",
                   "name": "a_simple_test_case",
                   "test-case": {
-                    "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+                    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
                   },
                   "result": "SUCCESS",
                   "qualifier": "qualifier",
@@ -869,11 +874,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "timestamp": "$FIRST_OF_JANUARY",
                   "user-story": {
                     "userStoryClass": {
-                      "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                     "storyName": "A user story",
-                    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+                    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
                   "tags": [
@@ -912,7 +917,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "title": "A simple test case [a_b]",
               "name": "a_simple_test_case",
               "test-case": {
-                "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+                "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
               },
               "result": "SUCCESS",
               "qualifier": "a_b",
@@ -926,11 +931,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "timestamp": "$FIRST_OF_JANUARY",
               "user-story": {
                 "userStoryClass": {
-                  "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                  "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                 "storyName": "A user story",
-                "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+                "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
               "tags": [
@@ -977,7 +982,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "title": "A simple test case",
               "name": "a_simple_test_case",
               "test-case": {
-                "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+                "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
               },
               "result": "FAILURE",
               "steps": "9",
@@ -991,11 +996,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "timestamp": "$FIRST_OF_JANUARY",
               "user-story": {
                 "userStoryClass": {
-                  "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                  "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                 "storyName": "A user story",
-                "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+                "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
               "tags": [
@@ -1104,7 +1109,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "title": "A nested test case",
               "name": "a_nested_test_case",
               "test-case": {
-                "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeNestedTestScenario"
+                "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeNestedTestScenario"
               },
               "result": "SUCCESS",
               "steps": "3",
@@ -1117,11 +1122,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "timestamp": "$FIRST_OF_JANUARY",
               "user-story": {
                 "userStoryClass": {
-                  "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                  "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                 "storyName": "A user story",
-                "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+                "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
               "tags": [
@@ -1195,7 +1200,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "title": "A nested test case",
               "name": "a_nested_test_case",
               "test-case": {
-                "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeNestedTestScenario"
+                "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeNestedTestScenario"
               },
               "result": "SUCCESS",
               "steps": "5",
@@ -1208,11 +1213,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "timestamp": "$FIRST_OF_JANUARY",
               "user-story": {
                 "userStoryClass": {
-                  "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                  "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                 "storyName": "A user story",
-                "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+                "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
               "tags": [
@@ -1309,7 +1314,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "title": "A nested test case",
               "name": "a_nested_test_case",
               "test-case": {
-                "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeNestedTestScenario"
+                "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeNestedTestScenario"
               },
               "result": "SUCCESS",
               "steps": "1",
@@ -1322,11 +1327,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "timestamp": "$FIRST_OF_JANUARY",
               "user-story": {
                 "userStoryClass": {
-                  "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                  "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                 "storyName": "A user story",
-                "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+                "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
               "tags": [
@@ -1394,7 +1399,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
              "title": "A simple test case",
              "name": "a_simple_test_case",
              "test-case": {
-               "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+               "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
              },
              "result": "FAILURE",
              "steps": "2",
@@ -1407,11 +1412,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
              "timestamp": "$FIRST_OF_JANUARY",
              "user-story": {
                "userStoryClass": {
-                 "classname": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                 "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                },
-               "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON.AUserStory",
+               "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                "storyName": "A user story",
-               "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+               "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
              },
              "issues": [],
              "tags": [

@@ -73,7 +73,6 @@ class ClassTypeAdapter implements JsonSerializer<Class<?>>, JsonDeserializer<Cla
         try {
             return Class.forName(jsonObject.get(CLASSNAME).getAsString());
         } catch (ClassNotFoundException e) {
-            LOGGER.warn("Could not find test class when deserializing JSON file", e);
             return null;
         }
     }

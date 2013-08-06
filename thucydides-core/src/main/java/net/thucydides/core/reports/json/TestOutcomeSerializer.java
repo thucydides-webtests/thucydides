@@ -1,22 +1,8 @@
 package net.thucydides.core.reports.json;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Set;
-
-import net.thucydides.core.model.DataTable;
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
-import net.thucydides.core.model.TestTag;
-
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-
+import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -25,6 +11,22 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import net.thucydides.core.model.DataTable;
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestTag;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+
+import static ch.lambdaj.Lambda.convert;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 		JsonDeserializer<TestOutcome> {
@@ -99,13 +101,12 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 		TestOutcome testOutcome = new TestOutcome(testOutcomeName,testCase);
 		testOutcome.setTitle(unescape(outcomeJsonObject.get(TITLE_FIELD).getAsString()));
 		TestResult savedTestResult = TestResult.valueOf(outcomeJsonObject.get(RESULT_FIELD).getAsString());
-		JsonElement qualifierField = outcomeJsonObject.get(QUALIFIER_FIELD);
-		if (qualifierField != null) {
-            testOutcome = testOutcome.withQualifier(unescape(qualifierField.getAsString()));
-        }
 		Long duration = readDuration(outcomeJsonObject);
         testOutcome.setDuration(duration);
-        testOutcome.setStartTime(readTimestamp(outcomeJsonObject));
+        Optional<DateTime> timestamp = readTimestamp(outcomeJsonObject);
+        if (timestamp.isPresent()) {
+            testOutcome.setStartTime(timestamp.get());
+        }
         boolean isManualTest = readManualTest(outcomeJsonObject);
         if (isManualTest) {
             testOutcome = testOutcome.asManualTest();
@@ -115,14 +116,10 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         
         Story story = context.deserialize(outcomeJsonObject.getAsJsonObject(USER_STORY), Story.class);
         testOutcome.setUserStory(story);
-                
-        Set<String> issues = context.deserialize(outcomeJsonObject.getAsJsonArray(ISSUES), Set.class);
-        ArrayList<String> issuesAsString = new ArrayList<String>();
-        issuesAsString.addAll(issues);
-        testOutcome.addIssues(issuesAsString);        
-                
-        Set<TestTag> tags = context.deserialize(outcomeJsonObject.getAsJsonArray(TAGS), Set.class);
-        testOutcome.setTags(tags);
+
+        testOutcome = addQualifierIfPresent(outcomeJsonObject, testOutcome);
+        addIssuesIfPresent(context, outcomeJsonObject, testOutcome);
+        addTagsIfPresent(context, outcomeJsonObject, testOutcome);
         
         JsonArray testStepsJsonArray = outcomeJsonObject.getAsJsonArray(TEST_STEPS);
         for(JsonElement currentJsonElement : testStepsJsonArray ){
@@ -139,8 +136,42 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         }
 		return testOutcome;
 	}
-	
-	private String escape(String attribute) {
+
+    private TestOutcome addQualifierIfPresent(JsonObject outcomeJsonObject, TestOutcome testOutcome) {
+        JsonElement qualifierField = outcomeJsonObject.get(QUALIFIER_FIELD);
+        if (qualifierField != null) {
+            testOutcome = testOutcome.withQualifier(unescape(qualifierField.getAsString()));
+        }
+        return testOutcome;
+    }
+
+    private void addTagsIfPresent(JsonDeserializationContext context, JsonObject outcomeJsonObject, TestOutcome testOutcome) {
+        Set<TestTag> tags = Sets.newHashSet(convert(context.deserialize(outcomeJsonObject.getAsJsonArray(TAGS), Set.class), toTags()));
+        if (tags != null) {
+            testOutcome.setTags(tags);
+        }
+    }
+
+    private Converter<Map, TestTag> toTags() {
+        return new Converter<Map, TestTag>() {
+
+            @Override
+            public TestTag convert(Map from) {
+                return TestTag.withName((String)from.get("name")).andType((String)from.get("type"));
+            }
+        };
+    }
+
+    private void addIssuesIfPresent(JsonDeserializationContext context, JsonObject outcomeJsonObject, TestOutcome testOutcome) {
+        Set<String> issues = context.deserialize(outcomeJsonObject.getAsJsonArray(ISSUES), Set.class);
+        if (issues != null) {
+            ArrayList<String> issuesAsString = new ArrayList<String>();
+            issuesAsString.addAll(issues);
+            testOutcome.addIssues(issuesAsString);
+        }
+    }
+
+    private String escape(String attribute) {
 		return StringUtils.replace(attribute, NEW_LINE_CHAR, ESCAPE_CHAR_FOR_NEW_LINE);
 	}
 
@@ -153,11 +184,7 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 	}
 	
 	private String nameFrom(final TestOutcome testOutcome) {
-		if (testOutcome.getMethodName() != null) {
-			return testOutcome.getMethodName();
-		} else {
-			return testOutcome.getTitle();
-		}
+    	return testOutcome.getMethodName();
 	}
 
 	private String formattedTimestamp(DateTime startTime) {
@@ -165,17 +192,22 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 	}
 		
 	private long readDuration(JsonObject jsonObject) {
-		String durationValue = jsonObject.get(DURATION).getAsString();
-		if (StringUtils.isNumeric(durationValue)) {
+        JsonElement durationElement = jsonObject.get(DURATION);
+        if (durationElement != null && StringUtils.isNumeric(durationElement.getAsString())) {
 			return Long.parseLong(jsonObject.get(DURATION).getAsString());
 		} else {
 			return 0;
 		}
 	}
 	
-    private DateTime readTimestamp(JsonObject jsonObject) {
-        String timestamp = jsonObject.get(TIMESTAMP).getAsString();
-        return DateTime.parse(timestamp);
+    private Optional<DateTime> readTimestamp(JsonObject jsonObject) {
+        DateTime timestamp = null;
+        JsonElement timestampElement = jsonObject.get(TIMESTAMP);
+        if (timestampElement != null) {
+            String timestampValue = jsonObject.get(TIMESTAMP).getAsString();
+            timestamp = DateTime.parse(timestampValue);
+        }
+        return Optional.fromNullable(timestamp);
     }
     
     private boolean readManualTest(JsonObject jsonObject) {

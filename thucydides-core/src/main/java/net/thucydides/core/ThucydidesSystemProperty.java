@@ -466,6 +466,11 @@ public enum ThucydidesSystemProperty {
     THUCYDIDES_NARRATIVE_FORMAT("narrative.format"),
 
     /**
+     * Internal report format used when loading test outcome reports during aggregation - json or xml (xml by default)
+     */
+    THUCYDIDES_REPORT_FORMAT("thucydides.report.format"),
+
+    /**
      * Path to PhantomJS executable
      */
     PHANTOMJS_PATH("phantomjs.binary.path");

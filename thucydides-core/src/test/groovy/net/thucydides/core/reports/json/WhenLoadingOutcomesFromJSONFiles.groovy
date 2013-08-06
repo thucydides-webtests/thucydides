@@ -1,14 +1,10 @@
-package net.thucydides.core.reports.integration
+package net.thucydides.core.reports.json
 
 import com.github.goldin.spock.extensions.tempdir.TempDir
 import com.google.common.base.Optional
 import net.thucydides.core.annotations.Issue
 import net.thucydides.core.annotations.Story
-import net.thucydides.core.model.DataTable
-import net.thucydides.core.model.TestOutcome
-import net.thucydides.core.model.TestResult
-import net.thucydides.core.model.TestStep
-import net.thucydides.core.reports.json.JSONTestOutcomeReporter
+import net.thucydides.core.model.*
 import org.joda.time.DateTime
 import org.joda.time.LocalDateTime
 import spock.lang.Specification
@@ -35,6 +31,18 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
         public void should_do_that() {
         }
     }
+    @Issue("PROJ-123")
+    @Story(AUserStory.class)
+    class SomeTestScenarioWithIssues {
+        public void a_simple_test_case() {
+        }
+
+        public void should_do_this() {
+        }
+
+        public void should_do_that() {
+        }
+    }
 
 	public void setup() throws IOException {
 		outcomeReporter = new JSONTestOutcomeReporter();
@@ -50,7 +58,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "title": "Should do this",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
 			  },
 			  "result": "SUCCESS",
 			  "steps": "1",
@@ -65,11 +73,11 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
               "tags": [],
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
 			  "test-steps": [
 			    {
@@ -93,6 +101,55 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
             testOutcome.startTime == FIRST_OF_JANUARY
     }
 
+    def "should load acceptance test report with no test case class"(){
+
+        given:
+        def report = new File(outputDirectory,"saved-report.json");
+        report << """
+			{
+			  "title": "Should do this",
+			  "name": "should_do_this",
+			  "result": "SUCCESS",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "$FIRST_OF_JANUARY",
+              "issues": [],
+              "tags": [],
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
+			  },
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1374810594394,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+    		"""
+        when:
+            TestOutcome testOutcome = outcomeReporter.loadReportFrom(report).get();
+        then:
+            testOutcome.result == TestResult.SUCCESS
+        and:
+            testOutcome.title == "Should do this"
+            testOutcome.methodName == "should_do_this"
+            testOutcome.startTime == FIRST_OF_JANUARY
+    }
+
     def "should load acceptance tests without steps"(){
 
         given:
@@ -102,7 +159,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "title": "Should do this",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
 			  },
 			  "result": "PENDING",
 			  "steps": "1",
@@ -117,11 +174,11 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
               "tags": [],
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenStoringTestOutcomesAsJSON"
+			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
 			  "test-steps": []
 			}
@@ -132,6 +189,57 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
             testOutcome.result == TestResult.PENDING
     }
 
+    def "should load acceptance test report even if the test case class no longer exists"(){
+
+        given:
+            def report = new File(outputDirectory,"saved-report.json");
+            report << """
+			{
+			  "title": "Should do this",
+			  "name": "should_do_this",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.json.DoesNotExist"
+			  },
+			  "result": "SUCCESS",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "$FIRST_OF_JANUARY",
+              "issues": [],
+              "tags": [],
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
+			  },
+			  "test-steps": [
+			    {
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1374810594394,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+    		"""
+        when:
+            TestOutcome testOutcome = outcomeReporter.loadReportFrom(report).get();
+        then:
+            testOutcome.result == TestResult.SUCCESS
+        and:
+            testOutcome.title == "Should do this"
+            testOutcome.methodName == "should_do_this"
+            testOutcome.startTime == FIRST_OF_JANUARY
+    }
 
 
     def "should load manual acceptance test report from json file"() {
@@ -142,7 +250,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "title": "Should do this",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
 			  },
 			  "result": "SUCCESS",
 			  "steps": "1",
@@ -156,11 +264,11 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "manual": "true",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
+			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -198,7 +306,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "title": "Should do this [a qualifier]",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			  },
 			  "result": "SUCCESS",
 			  "qualifier": "a qualifier",
@@ -212,11 +320,11 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
+			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -245,7 +353,6 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			testOutcome.title.contains "[a qualifier]"
     } 
 
-    // TODO - handle new lines in titles properly
     def "should unescape newline in the title and qualifier of a qualified acceptance test report from json file"() throws Exception {
         given:
             File report = new File(outputDirectory,"saved-report.json")
@@ -254,7 +361,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "title": "Should do this [a qualifier with \u0026#10; a new line]",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
 			  },
 			  "result": "SUCCESS",
 			  "qualifier": "a qualifier with \u0026#10; a new line",
@@ -268,11 +375,11 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
+			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -307,7 +414,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "title": "Should do this",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenarioWithIssues"
 			  },
 			  "result": "SUCCESS",
 			  "steps": "1",
@@ -320,11 +427,11 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenarioWithIssues"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.SomeTestScenario",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.SomeTestScenario",
 			    "storyName": "Some test scenario with tags",
-			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
+			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -356,7 +463,9 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
         when:
             TestOutcome testOutcome = outcomeReporter.loadReportFrom(report).get();
 		then :
-        	testOutcome.tags.collect { it.name } == ["simple story", "Some test scenario with tags", "important feature"]
+        	Set<TestTag> tags = testOutcome.tags
+            tags.each { assert it.class == TestTag }
+            tags.collect { it.name } == ["Some test scenario with tags", "simple story", "important feature"]
     }
     
     def "should load example data from json file"() {
@@ -366,7 +475,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "title": "Should do this",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
 			  },
 			  "result": "SUCCESS",
 			  "steps": "1",
@@ -379,11 +488,11 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
+			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -453,7 +562,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 		  "title": "Should do this",
 		  "name": "should_do_this",
 		  "test-case": {
-		    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario",
+		    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario",
 		    "issues": [
 		      "#123",
 		      "#456",
@@ -471,11 +580,11 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 		  "timestamp": "2013-01-01T00:00:00.000+01:00",
 		  "user-story": {
 		    "userStoryClass": {
-		      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+		      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 		    },
-		    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory",
+		    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory",
 		    "storyName": "A user story",
-		    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
+		    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 		  },
 		  "issues": [
 		    "#456",
@@ -516,7 +625,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "title": "Should do this",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
 			  },
 			  "result": "SUCCESS",
 			  "steps": "1",
@@ -529,12 +638,12 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory",
 			    "storyName": "A user story in a feature",
-			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AFeature",
-			    "qualifiedFeatureClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AFeature",
+			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AFeature",
+			    "qualifiedFeatureClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AFeature",
 			    "featureName": "A feature"
 			  },
 			  "issues": [],
@@ -563,7 +672,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
         when:
             TestOutcome testOutcome = outcomeReporter.loadReportFrom(report).get()
         then:
-        	testOutcome.feature.id == "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AFeature"
+        	testOutcome.feature.id == "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AFeature"
 			testOutcome.feature.name == "A feature"
     }
     
@@ -575,7 +684,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "title": "Should do this",
 			  "name": "should_do_this",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
 			  },
 			  "result": "SUCCESS",
 			  "steps": "1",
@@ -589,11 +698,11 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "session-id": "1234",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
+			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -633,7 +742,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "title": "A nested test case",
 			  "name": "a_nested_test_case",
 			  "test-case": {
-			    "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
+			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
 			  },
 			  "result": "SUCCESS",
 			  "steps": "5",
@@ -646,11 +755,11 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
 			  "user-story": {
 			    "userStoryClass": {
-			      "classname": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
+			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -749,9 +858,9 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "duration": "0",
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
 			  "user-story": {			    
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
+			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -824,9 +933,9 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
               "duration": "0",
               "timestamp": "2013-01-01T00:00:00.000+01:00",
               "user-story": {
-                "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
                 "storyName": "A user story",
-                "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
+                "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
               },
               "issues": [],
               "tags": [
@@ -884,9 +993,9 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "duration": "0",
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
 			  "user-story": {			    
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
-			    "path": "net.thucydides.core.reports.integration.WhenLoadingOutcomesFromJSONFiles"
+			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
 			  "issues": [],
 			  "tags": [
@@ -913,5 +1022,81 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
         	testOutcome.title == "A simple test case [a_b]"
         	testOutcome.titleWithLinks == "A simple test case [a_b]"
     }
+
+    def "should load from externally-provided json file"() {
+        given:
+            File report = new File(outputDirectory,"saved-report.json");
+            report << """{
+    "title": "Should do this",
+    "name": "should_do_this",
+    "steps": "6",
+    "successful": "5",
+    "failures": "0",
+    "skipped": "0",
+    "ignored": "0",
+    "pending": "1",
+    "result": "PENDING",
+    "user-story": {
+        "id": "net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.AUserStoryInAFeature",
+        "name": "A user story in a feature"
+    },
+    "test-steps": [
+        {
+            "result": "SUCCESS",
+            "description": "The customer navigates from metro jobs link.",
+            "screenshot": "the_customer_navigates_from_metro_jobs_link1.png"
+        },
+        {
+            "result": "SUCCESS",
+            "description": "The customer navigates to the metro masthead site.",
+            "screenshot": "the_customer_navigates_to_the_metro_masthead_site2.png"
+        },
+        {
+            "result": "SUCCESS",
+            "description": "The customer navigates to classified place ad page.",
+            "screenshot": "the_customer_navigates_to_classified_place_ad_page3.png"
+        },
+        {
+            "result": "SUCCESS",
+            "description": "The customer chooses the jobs section.",
+            "screenshot": "the_customer_chooses_the_jobs_section4.png"
+        },
+        {
+            "result": "SUCCESS",
+            "description": "The customer selects a run option.",
+            "screenshot": "the_customer_selects_a_run_option5.png"
+        },
+        {
+            "result": "PENDING",
+            "description": "The customer provides email address for registration."
+        }
+    ]
+}
+"""
+        when:
+            def testOutcome = outcomeReporter.loadReportFrom(report);
+        then :
+            testOutcome.isPresent()
+
+    }
+
+    def "should not load from a missing file"(){
+        given:
+            def report = new File(outputDirectory,"missing-report.json");
+        when:
+            def testOutcome = outcomeReporter.loadReportFrom(report)
+        then:
+            !testOutcome.isPresent()
+    }
+
+    def "should load from JSON files in a directory"() {
+        given:
+            def reportDirectory = new File(this.class.getResource( '/json-reports' ).toURI())
+        when:
+            def testOutcomes = outcomeReporter.loadReportsFrom(reportDirectory)
+        then:
+            testOutcomes.size() == 3
+    }
+
 
 }
