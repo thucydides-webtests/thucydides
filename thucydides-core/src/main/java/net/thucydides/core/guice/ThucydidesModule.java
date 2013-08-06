@@ -6,6 +6,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import net.thucydides.core.annotations.locators.SmartElementProxyCreator;
 import net.thucydides.core.batches.BatchManager;
+import net.thucydides.core.batches.BatchManagerProvider;
 import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.fixtureservices.ClasspathFixtureProviderService;
 import net.thucydides.core.fixtureservices.FixtureProviderService;
@@ -63,7 +64,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(Configuration.class).to(SystemPropertiesConfiguration.class).in(Singleton.class);
         bind(IssueTracking.class).to(SystemPropertiesIssueTracking.class).in(Singleton.class);
         bind(WebdriverManager.class).to(ThucydidesWebdriverManager.class).in(Singleton.class);
-        bind(BatchManager.class).to(SystemVariableBasedBatchManager.class);
+        bind(BatchManager.class).toProvider(BatchManagerProvider.class).in(Singleton.class);
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(ScreenshotProcessor.class).to(SingleThreadScreenshotProcessor.class).in(Singleton.class);
 

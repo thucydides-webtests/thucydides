@@ -3,13 +3,11 @@ package net.thucydides.junit.runners;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.batches.BatchManager;
-import net.thucydides.core.batches.BatchStrategy;
-import net.thucydides.core.batches.UnsupportedBatchStrategyException;
+import net.thucydides.core.batches.BatchManagerProvider;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
@@ -21,7 +19,6 @@ import net.thucydides.core.steps.StepData;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.tags.TagScanner;
-import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
@@ -112,22 +109,34 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         this(klass,
             injector.getInstance(WebdriverManager.class),
             injector.getInstance(Configuration.class),
-            getBatchManager(injector.getInstance(Configuration.class)));
+            injector.getInstance(BatchManager.class)
+            );
     }
 
     public ThucydidesRunner(final Class<?> klass,
                             final WebDriverFactory webDriverFactory) throws InitializationError {
         this(klass, webDriverFactory, Injectors.getInjector().getInstance(Configuration.class));
     }
-
+    
+    public ThucydidesRunner(final Class<?> klass,
+            final WebDriverFactory webDriverFactory,
+            final Configuration configuration) throws InitializationError {
+			this(klass, 
+					webDriverFactory,
+					configuration,
+					new BatchManagerProvider(configuration).get()
+			);
+    }
+    
     public ThucydidesRunner(final Class<?> klass,
                             final WebDriverFactory webDriverFactory,
-                            final Configuration configuration) throws InitializationError {
+                            final Configuration configuration,
+                            final BatchManager batchManager) throws InitializationError {
         this(klass,
                 new ThucydidesWebdriverManager(webDriverFactory, configuration),
                 configuration,
-                getBatchManager(configuration));
-
+                batchManager
+                );
     }
 
     public ThucydidesRunner(final Class<?> klass, final BatchManager batchManager) throws InitializationError {
@@ -166,17 +175,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             return ManagedWebDriverAnnotatedField.findFirstAnnotatedField(klass).getDriver();
         } else {
             return null;
-        }
-    }
-
-    private static BatchManager getBatchManager(Configuration configuration) {
-        EnvironmentVariables environmentVariables = configuration.getEnvironmentVariables();
-        String batchManagerProperty = ThucydidesSystemProperty.BATCH_STRATEGY.from(environmentVariables,
-                BatchStrategy.DIVIDE_EQUALLY.name());
-        try {
-            return BatchStrategy.valueOf(batchManagerProperty).instance(environmentVariables);
-        } catch (Exception e) {
-            throw new UnsupportedBatchStrategyException(batchManagerProperty + " is not a supported batch strategy.", e);
         }
     }
 

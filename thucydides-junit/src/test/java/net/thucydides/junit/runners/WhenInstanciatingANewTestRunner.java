@@ -1,11 +1,8 @@
 package net.thucydides.junit.runners;
 
-import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.batches.BatchStrategy;
 import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.batches.TestCountBasedBatchManager;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
-import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.samples.SuccessfulSingleTestScenario;
 import net.thucydides.samples.SuccessfulSingleTestScenarioWithFirefox;
@@ -23,7 +20,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
 
 /**
  * Instanciating new Webdriver instances. When using the Thucydides test runner,
@@ -42,7 +38,6 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
     @Test
     public void the_default_output_directory_should_follow_the_maven_convention() throws InitializationError {
 
-        WebDriverFactory mockBrowserFactory = mock(WebDriverFactory.class);
         ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 
         File outputDirectory = runner.getOutputDirectory();
@@ -152,7 +147,8 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
     @Test
     public void a_batch_runner_can_be_overridden_using_system_property() throws InitializationError {
 
-        environmentVariables.setProperty(ThucydidesSystemProperty.BATCH_STRATEGY.getPropertyName(), BatchStrategy.DIVIDE_BY_TEST_COUNT.name());
+//        environmentVariables.setProperty(ThucydidesSystemProperty.BATCH_STRATEGY.getPropertyName(), BatchStrategy.DIVIDE_BY_TEST_COUNT.name());
+        environmentVariables.setProperty("thucydides.batch.strategy", "DIVIDE_BY_TEST_COUNT");
 
         ThucydidesRunner  runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);
 

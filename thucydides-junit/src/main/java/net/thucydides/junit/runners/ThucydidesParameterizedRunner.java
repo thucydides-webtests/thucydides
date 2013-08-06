@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestOutcome;
@@ -39,7 +40,9 @@ public class ThucydidesParameterizedRunner extends Suite {
      */
     public ThucydidesParameterizedRunner(final Class<?> klass,
                                          Configuration configuration,
-                                         final WebDriverFactory webDriverFactory) throws Throwable {
+                                         final WebDriverFactory webDriverFactory,
+                                         final BatchManager batchManager
+                                         ) throws Throwable {
         super(klass, Collections.<Runner>emptyList());
         this.configuration = configuration;
 
@@ -49,9 +52,9 @@ public class ThucydidesParameterizedRunner extends Suite {
 
         DataDrivenAnnotations testClassAnnotations = getTestAnnotations();
         if (testClassAnnotations.hasTestDataDefined()) {
-            buildTestRunnersForEachDataSetUsing(webDriverFactory);
+            buildTestRunnersForEachDataSetUsing(webDriverFactory, batchManager);
         } else if (testClassAnnotations.hasTestDataSourceDefined()) {
-            buildTestRunnersFromADataSourceUsing(webDriverFactory);
+            buildTestRunnersFromADataSourceUsing(webDriverFactory, batchManager);
         }
     }
 
@@ -87,13 +90,15 @@ public class ThucydidesParameterizedRunner extends Suite {
         }
     }
 
-    private void buildTestRunnersForEachDataSetUsing(final WebDriverFactory webDriverFactory) throws Throwable {
+    private void buildTestRunnersForEachDataSetUsing(final WebDriverFactory webDriverFactory, 
+    		final BatchManager batchManager) throws Throwable {
         DataTable parametersTable = getTestAnnotations().getParametersTableFromTestDataAnnotation();
         for (int i = 0; i < parametersTable.getRows().size(); i++) {
             Class<?> testClass = getTestClass().getJavaClass();
             ThucydidesRunner runner = new TestClassRunnerForParameters(testClass,
                                                                        configuration,
                                                                        webDriverFactory,
+                                                                       batchManager,
                                                                        parametersTable,
                                                                        i);
             runner.useQualifier(from(parametersTable.getRows().get(i).getValues()));
@@ -101,7 +106,8 @@ public class ThucydidesParameterizedRunner extends Suite {
         }
     }
 
-    private void buildTestRunnersFromADataSourceUsing(final WebDriverFactory webDriverFactory) throws Throwable {
+    private void buildTestRunnersFromADataSourceUsing(final WebDriverFactory webDriverFactory, 
+    		final BatchManager batchManager) throws Throwable {
 
         List<?> testCases = getTestAnnotations().getDataAsInstancesOf(getTestClass().getJavaClass());
         DataTable parametersTable = getTestAnnotations().getParametersTableFromTestDataSource();
@@ -111,6 +117,7 @@ public class ThucydidesParameterizedRunner extends Suite {
             ThucydidesRunner runner = new TestClassRunnerForInstanciatedTestCase(testCase,
                                                                                  configuration,
                                                                                  webDriverFactory,
+                                                                                 batchManager,
                                                                                  parametersTable,
                                                                                  i);
             runner.useQualifier(getQualifierFor(testCase));
@@ -144,7 +151,8 @@ public class ThucydidesParameterizedRunner extends Suite {
      * Only called reflectively. Do not use programmatically.
      */
     public ThucydidesParameterizedRunner(final Class<?> klass) throws Throwable {
-        this(klass, Injectors.getInjector().getInstance(Configuration.class), new WebDriverFactory());
+        this(klass, Injectors.getInjector().getInstance(Configuration.class), new WebDriverFactory(),
+        		Injectors.getInjector().getInstance(BatchManager.class));
     }
 
     @Override
