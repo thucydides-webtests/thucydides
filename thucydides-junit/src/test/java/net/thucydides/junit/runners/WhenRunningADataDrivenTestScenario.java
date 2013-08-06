@@ -4,6 +4,8 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
+import net.thucydides.core.batches.BatchManager;
+import net.thucydides.core.batches.BatchManagerProvider;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
@@ -784,13 +786,15 @@ public class WhenRunningADataDrivenTestScenario {
     protected ThucydidesParameterizedRunner getTestRunnerUsing(Class<?> testClass) throws Throwable {
         Configuration configuration = new SystemPropertiesConfiguration(environmentVariables);
         WebDriverFactory factory = new WebDriverFactory(environmentVariables);
-        return new ThucydidesParameterizedRunner(testClass, configuration, factory);
+        BatchManager batchManager = new BatchManagerProvider(configuration).get();
+        return new ThucydidesParameterizedRunner(testClass, configuration, factory, batchManager);
     }
 
     protected ThucydidesParameterizedRunner getStubbedTestRunnerUsing(Class<?> testClass) throws Throwable {
         Configuration configuration = new SystemPropertiesConfiguration(environmentVariables);
         WebDriverFactory factory = new WebDriverFactory(environmentVariables);
-        return new ThucydidesParameterizedRunner(testClass, configuration, factory) {
+        BatchManager batchManager = new BatchManagerProvider(configuration).get();
+        return new ThucydidesParameterizedRunner(testClass, configuration, factory, batchManager) {
             @Override
             public void generateReports() {
                 //do nothing

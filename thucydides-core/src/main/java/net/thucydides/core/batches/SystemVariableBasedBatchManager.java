@@ -29,7 +29,7 @@ public class SystemVariableBasedBatchManager implements BatchManager {
 
     /**
      * The batch manager is initiated using system properties.
-     * These properties are "thucydides.batch.count" and "thucydides.batch.number".
+     * These properties are "thucydides.batch.size" (or "thucydides.batch.count") and "thucydides.batch.number".
      */
     @Inject
     public SystemVariableBasedBatchManager(EnvironmentVariables environmentVariables) {
