@@ -2,6 +2,7 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import org.joda.time.DateTime;
 
 import static net.thucydides.core.model.TestResult.ERROR;
 import static net.thucydides.core.model.TestResult.FAILURE;

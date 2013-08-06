@@ -9,6 +9,7 @@ import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.reports.adaptors.common.FilebasedOutcomeAdaptor;
 import net.thucydides.core.reports.adaptors.xunit.BasicXUnitLoader;
 import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor;
 import net.thucydides.core.reports.adaptors.xunit.io.XUnitFiles;
@@ -21,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class LettuceXUnitAdaptor implements TestOutcomeAdaptor {
+public class LettuceXUnitAdaptor extends FilebasedOutcomeAdaptor {
 
     BasicXUnitLoader loader = new BasicXUnitLoader();
 

@@ -14,7 +14,10 @@ public enum ReportType {
     CSV("csv"),
 
     /** HTML reports. */
-    HTML("html");
+    HTML("html"),
+    
+    /** JSON reports. */
+    JSON("json");
 
     private String suffix;
 

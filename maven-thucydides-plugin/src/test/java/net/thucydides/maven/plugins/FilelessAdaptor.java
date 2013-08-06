@@ -15,6 +15,11 @@ public class FilelessAdaptor implements TestOutcomeAdaptor {
     TestOutcome outcome2 = TestOutcome.forTestInStory("some other test", Story.called("some story"));
 
     @Override
+    public List<TestOutcome> loadOutcomes() throws IOException {
+        return null;
+    }
+
+    @Override
     public List<TestOutcome> loadOutcomesFrom(File source) throws IOException {
         return Lists.newArrayList(outcome1, outcome2);
     }

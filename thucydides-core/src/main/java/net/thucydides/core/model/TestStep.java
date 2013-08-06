@@ -1,7 +1,10 @@
 package net.thucydides.core.model;
 
 import com.google.common.collect.ImmutableList;
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,7 +43,15 @@ public class TestStep {
     private List<TestStep> children = new ArrayList<TestStep>();
 
     public TestStep() {
-        startTime = System.currentTimeMillis();
+        startTime = now().getMillis();
+    }
+
+    private SystemClock getSystemClock() {
+        return Injectors.getInjector().getInstance(SystemClock.class);
+    }
+
+    private DateTime now() {
+        return getSystemClock().getCurrentTime();
     }
 
     public static TestStepBuilder forStepCalled(String description) {
@@ -83,8 +94,26 @@ public class TestStep {
         this.description = description;
     }
 
+    public TestStep(final DateTime startTime, final String description) {
+        this();
+        this.startTime = startTime.getMillis();
+        this.description = description;
+    }
+
+    public TestStep startingAt(DateTime time) {
+        TestStep newTestStep = new TestStep();
+        newTestStep.description = description;
+        newTestStep.startTime = time.getMillis();
+        newTestStep.duration = duration;
+        newTestStep.screenshots = new ArrayList(screenshots);
+        newTestStep.cause = cause;
+        newTestStep.result = result;
+        return newTestStep;
+    }
+
+
     public void recordDuration() {
-        setDuration(System.currentTimeMillis() - startTime);
+        setDuration(now().getMillis() - startTime);
     }
     
     public void setDescription(final String description) {

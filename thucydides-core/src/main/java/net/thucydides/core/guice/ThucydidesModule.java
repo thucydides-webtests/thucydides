@@ -1,7 +1,6 @@
 package net.thucydides.core.guice;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import net.thucydides.core.annotations.locators.SmartElementProxyCreator;
@@ -28,8 +27,6 @@ import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor;
 import net.thucydides.core.statistics.AtomicTestCount;
 import net.thucydides.core.statistics.TestCount;
-import net.thucydides.core.statistics.database.LocalDatabase;
-import net.thucydides.core.statistics.database.LocalH2ServerDatabase;
 import net.thucydides.core.statistics.service.ClasspathTagProviderService;
 import net.thucydides.core.statistics.service.TagProviderService;
 import net.thucydides.core.steps.ConsoleLoggingListener;
@@ -52,9 +49,6 @@ import java.io.IOException;
 
 public class ThucydidesModule extends AbstractModule {
 
-//    private static final ThreadLocal<EntityManager> ENTITY_MANAGER_CACHE
-//            = new ThreadLocal<EntityManager>();
-
     private final Logger LOGGER = LoggerFactory.getLogger(ThucydidesModule.class);
 
     @Override
@@ -68,16 +62,11 @@ public class ThucydidesModule extends AbstractModule {
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(ScreenshotProcessor.class).to(SingleThreadScreenshotProcessor.class).in(Singleton.class);
 
-        //bind(DatabaseConfig.class).to(EnvironmentVariablesDatabaseConfig.class).in(Singleton.class);
-        //bind(TestOutcomeHistoryDAO.class).to(HibernateTestOutcomeHistoryDAO.class).in(Singleton.class);
-        //bind(TestStatisticsProvider.class).to(HibernateTestStatisticsProvider.class).in(Singleton.class);
-
         bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
         bind(RequirementsProviderService.class).to(ClasspathRequirementsProviderService.class).in(Singleton.class);
         bind(DependencyInjectorService.class).to(ClasspathDependencyInjectorService.class).in(Singleton.class);
         bind(FixtureProviderService.class).to(ClasspathFixtureProviderService.class).in(Singleton.class);
 
-        //bind(StepListener.class).annotatedWith(Statistics.class).to(StatisticsListener.class).in(Singleton.class);
         bind(StepListener.class).annotatedWith(ThucydidesLogging.class).to(ConsoleLoggingListener.class).in(Singleton.class);
         bind(ElementProxyCreator.class).to(SmartElementProxyCreator.class).in(Singleton.class);
 
@@ -102,60 +91,4 @@ public class ThucydidesModule extends AbstractModule {
         }
         return environmentVariables;
     }
-
-    @Provides
-    @Singleton
-    @Inject
-    public LocalDatabase provideLocalDatabase(EnvironmentVariables environmentVariables) {
-        return new LocalH2ServerDatabase(environmentVariables);
-    }
-
-//    @Provides
-//    @Singleton
-//    @Inject
-//    public EntityManagerFactory provideEntityManagerFactory(DatabaseConfig databaseConfig,
-//                                                            LocalDatabase localDatabase) {
-//
-//        if (databaseConfig.isUsingLocalDatabase()) {
-//            startIfNotAlreadyRunning(localDatabase);
-//        }
-//
-//        EntityManagerFactory entityManagerFactory = null;
-//        try {
-//            entityManagerFactory = createEntityManagerFactory(databaseConfig);
-//        } catch (SQLException e) {
-//            LOGGER.error("Could not connect to statistics database - statistics will be disabled", e);
-//            databaseConfig.disable();
-//        }
-//
-//        return entityManagerFactory;
-//
-//    }
-//
-//    private EntityManagerFactory createEntityManagerFactory(DatabaseConfig databaseConfig) throws SQLException {
-//        return Persistence.createEntityManagerFactory("db-manager", databaseConfig.getProperties());
-//    }
-
-//    private void startIfNotAlreadyRunning(LocalDatabase localDatabase) {
-//        if (!localDatabase.isAvailable()) {
-//            localDatabase.start();
-//            addShutdownHookFor(localDatabase);
-//        }
-//    }
-//
-//    private void addShutdownHookFor(final LocalDatabase localDatabase) {
-//        Runtime.getRuntime().addShutdownHook(new Thread() {
-//            @Override
-//            public void run() {
-//                localDatabase.stop();
-//            }
-//        });
-//    }
-
-    /**
-     * Used for testing
-     */
-//    protected void clearEntityManagerCache() {
-//        ENTITY_MANAGER_CACHE.remove();
-//    }
 }

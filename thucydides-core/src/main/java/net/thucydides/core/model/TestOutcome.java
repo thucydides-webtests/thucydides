@@ -3,6 +3,7 @@ package net.thucydides.core.model;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -13,6 +14,7 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
@@ -25,6 +27,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,6 +77,7 @@ public class TestOutcome {
 
     private static final int RECENT_TEST_RUN_COUNT = 10;
     private static final String ISSUES = "issues";
+    private static final String NEW_LINE = System.getProperty("line.separator");
     /**
      * The name of the method implementing this test.
      */
@@ -149,6 +153,9 @@ public class TestOutcome {
     private DataTable dataTable;
     private boolean manualTest;
 
+
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(TestOutcome.class);
+
     /**
      * The title is immutable once set. For convenience, you can create a test
      * run directly with a title using this constructor.
@@ -159,7 +166,7 @@ public class TestOutcome {
     }
 
     public TestOutcome(final String methodName, final Class<?> testCase) {
-        startTime = System.currentTimeMillis();
+        startTime = now();
         this.methodName = methodName;
         this.testCase = testCase;
         this.additionalIssues = new HashSet<String>();
@@ -170,6 +177,7 @@ public class TestOutcome {
             initializeStoryFrom(testCase);
         }
     }
+
 
     private TagProviderService getTagProviderService() {
         if (tagProviderService == null) {
@@ -208,7 +216,7 @@ public class TestOutcome {
      *                  represent the story in which the test is implemented.
      */
     protected TestOutcome(final String methodName, final Class<?> testCase, final Story userStory) {
-        startTime = System.currentTimeMillis();
+        startTime = now();
         this.methodName = methodName;
         this.testCase = testCase;
         this.additionalIssues = new HashSet<String>();
@@ -230,7 +238,8 @@ public class TestOutcome {
                           final Throwable testFailureCause,
                           final TestResult annotatedResult,
                           final DataTable dataTable,
-                          final Optional<String> qualifier) {
+                          final Optional<String> qualifier,
+                          final boolean manualTest) {
         this.startTime = startTime;
         this.duration = duration;
         this.storedTitle = title;
@@ -247,6 +256,7 @@ public class TestOutcome {
         this.dataTable = dataTable;
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
+        this.manualTest = manualTest;
     }
 
     /**
@@ -261,20 +271,21 @@ public class TestOutcome {
 
     public TestOutcome withQualifier(String qualifier) {
         if (qualifier != null) {
-            return new TestOutcome(this.startTime,
-                    this.duration,
-                    this.storedTitle,
-                    this.methodName,
-                    this.testCase,
-                    this.testSteps,
-                    this.issues,
-                    this.additionalIssues,
-                    this.tags,
-                    this.userStory,
-                    this.testFailureCause,
-                    this.annotatedResult,
-                    this.dataTable,
-                    Optional.fromNullable(qualifier));
+        return new TestOutcome(this.startTime,
+                this.duration,
+                this.storedTitle,
+                this.methodName,
+                this.testCase,
+                this.testSteps,
+                this.issues,
+                this.additionalIssues,
+                this.tags,
+                this.userStory,
+                this.testFailureCause,
+                this.annotatedResult,
+                this.dataTable,
+                Optional.fromNullable(qualifier),
+                this.manualTest);
         } else {
             return this;
         }
@@ -296,7 +307,8 @@ public class TestOutcome {
                     this.testFailureCause,
                     this.annotatedResult,
                     this.dataTable,
-                    this.qualifier);
+                    this.qualifier,
+                    this.manualTest);
         } else {
             return this;
         }
@@ -345,6 +357,25 @@ public class TestOutcome {
         } else {
             return storedTitle;
         }
+    }
+
+    public Optional<String> getDescription() {
+        if (storedTitle != null) {
+            return getDescriptionFrom(storedTitle);
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Optional<String> getDescriptionFrom(String storedTitle) {
+        List<String> multilineTitle = Lists.newArrayList(Splitter.on("\n\r").split(storedTitle));
+        if (multilineTitle.size() > 1) {
+            multilineTitle.remove(0);
+            return Optional.of(Joiner.on(NEW_LINE).join(multilineTitle));
+        } else {
+            return Optional.absent();
+        }
+
     }
 
     public String getTitleWithLinks() {
@@ -783,9 +814,14 @@ public class TestOutcome {
     private Set<TestTag> getTagsUsingTagProviders(List<TagProvider> tagProviders) {
         Set<TestTag> tags  = Sets.newHashSet();
         for (TagProvider tagProvider : tagProviders) {
-            Set<TestTag> providedTags = tagProvider.getTagsFor(this);
-            if (providedTags != null) {
-                tags.addAll(tagProvider.getTagsFor(this));
+            try {
+                Set<TestTag> providedTags = tagProvider.getTagsFor(this);
+                if (providedTags != null) {
+                    tags.addAll(tagProvider.getTagsFor(this));
+                }
+            } catch(Throwable theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt) {
+                logger.error("Tag provider " + tagProvider + " failure",
+                             theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt);
             }
         }
         return tags;
@@ -954,6 +990,14 @@ public class TestOutcome {
 
     public boolean isManual() {
         return manualTest;
+    }
+
+    private SystemClock getSystemClock() {
+        return Injectors.getInjector().getInstance(SystemClock.class);
+    }
+
+    private long now() {
+        return getSystemClock().getCurrentTime().getMillis();
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
