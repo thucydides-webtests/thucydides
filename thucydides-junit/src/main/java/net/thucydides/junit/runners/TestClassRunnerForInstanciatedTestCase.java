@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.webdriver.Configuration;
@@ -19,9 +20,10 @@ class TestClassRunnerForInstanciatedTestCase extends ThucydidesRunner {
     TestClassRunnerForInstanciatedTestCase(final Object instanciatedTest,
                                            Configuration configuration,
                                            WebDriverFactory webDriverFactory,
+                                           final BatchManager batchManager,
                                            final DataTable parametersTable,
                                            final int parameterSetNumber) throws InitializationError {
-        super(instanciatedTest.getClass(), webDriverFactory, configuration);
+        super(instanciatedTest.getClass(), webDriverFactory, configuration, batchManager);
         this.instanciatedTest = instanciatedTest;
         this.parameterSetNumber = parameterSetNumber;
         this.parametersTable    = parametersTable;
