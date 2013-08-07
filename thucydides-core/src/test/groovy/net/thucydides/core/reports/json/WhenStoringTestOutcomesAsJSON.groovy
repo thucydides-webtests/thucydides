@@ -1394,6 +1394,8 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
             testOutcome.recordStep(step1);
             testOutcome.recordStep(TestStepFactory.failingTestStepCalled("step 2").startingAt(FIRST_OF_JANUARY));
          and:
+            def osNeutralScreenshot = osNeutralPath(screenshot.absolutePath)
+            def osNeutralSource = osNeutralPath(source.absolutePath)
             def expectedReport = """
             {
              "title": "A simple test case",
@@ -1433,10 +1435,10 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                  "screenshots": [
                    {
                      "screenshot": {
-                       "path": "$screenshot"
+                       "path": "$osNeutralScreenshot"
                      },
                      "sourcecode": {
-                       "path": "$source"
+                       "path": "$osNeutralSource"
                      }
                    }
                  ],
@@ -1459,5 +1461,9 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
             def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
         then:
             JSONCompare.compareJSON(expectedReport, jsonReport.text, JSONCompareMode.LENIENT).passed();
+    }
+
+    def osNeutralPath(path){
+        path.replace("\\","\\\\")
     }
 }
