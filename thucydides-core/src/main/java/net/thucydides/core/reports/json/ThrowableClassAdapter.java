@@ -15,7 +15,9 @@ class ThrowableClassAdapter implements JsonSerializer<Throwable> {
                                  JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("class", new JsonPrimitive(src.getClass().getName()));
-        jsonObject.add("message", new JsonPrimitive(src.getMessage()));
+        if (src.getMessage() != null) {
+            jsonObject.add("message", new JsonPrimitive(src.getMessage()));
+        }
         return jsonObject;
     }
 }
