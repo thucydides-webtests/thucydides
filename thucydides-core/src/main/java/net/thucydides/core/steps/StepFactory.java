@@ -135,6 +135,8 @@ public class StepFactory {
         T steps = createProxyStepLibrary(scenarioStepsClass, stepInterceptor);
 
         instantiateAnyNestedStepLibrariesIn(steps, scenarioStepsClass);
+        
+        injectOtherDependenciesInto(steps);
 
         return steps;
     }

@@ -149,7 +149,7 @@ public class CSVTestDataSource implements TestDataSource {
 
     public <T> List<T> getInstanciatedInstancesFrom(final Class<T> clazz, final StepFactory factory) {
         List<Map<String, String>> data = getData();
-
+        
         List<T> resultsList = new ArrayList<T>();
         for (Map<String, String> rowData : data) {
             resultsList.add(newInstanceFrom(clazz, factory, rowData));
@@ -169,7 +169,8 @@ public class CSVTestDataSource implements TestDataSource {
     private <T> T newInstanceFrom(final Class<T> clazz,
                                   final StepFactory factory,
                                   final Map<String,String> rowData) {
-        T newObject = factory.getUniqueStepLibraryFor(clazz);
+    	
+    	T newObject = factory.getUniqueStepLibraryFor(clazz);
         assignPropertiesFromTestData(clazz, rowData, newObject);
         return newObject;
     }
