@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 
+import sample.csv.TestPageObject;
+
 import java.io.IOException;
 
 import static net.thucydides.core.steps.StepData.setDefaultStepFactory;
@@ -41,6 +43,12 @@ public class WhenRunningStepsWithTestData {
         private String name;
         private String address;
         private String dateOfBirth;
+        
+        public TestPageObject testPage;
+    	
+    	public void verifyPage(){
+    		getDriver().get(testPage.toString());
+    	}
 
         public TestSteps(Pages pages) {
             super(pages);
@@ -331,6 +339,15 @@ public class WhenRunningStepsWithTestData {
         setDefaultStepFactory(factory);
 
         withTestDataFrom("testdata/test.csv").run(steps).nameStep();
+    }
+    
+    @Test
+    public void should_instantiate_any_uninitialized_page_objects_in_a_step_class_when_using_data_driven_approach()
+    	throws IOException {
+	
+		TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
+		withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).verifyPage();
+		verify(driver, times(3)).get("TestPageObject");
     }
 
 }
