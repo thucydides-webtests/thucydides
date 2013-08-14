@@ -206,7 +206,10 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 			try {
 				elements = SmartAjaxElementLocator.super.findElements();
 				if (elements.size() == 0) {
-					throw new NoSuchElementException("Unable to locate the element");
+					/*return even if empty and don't wait for them to become available.
+					*not sure that it is the correct approach for Ajax Element Locator that should wait for elements
+					*however correcting it due to https://java.net/jira/browse/THUCYDIDES-187 */
+					return; 
 				}
 				for (WebElement element : elements) {
 					if (!isElementUsable(element)) {
