@@ -6,6 +6,7 @@ import net.thucydides.core.webdriver.WebDriverFactory
 import net.thucydides.core.webdriver.integration.WhenBrowsingAWebSiteUsingPageObjects.IndexPage
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebDriverException
+import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.phantomjs.PhantomJSDriver
 
 import com.fasterxml.jackson.core.JsonParser
@@ -24,7 +25,7 @@ import spock.lang.Shared
 class WhenDeserializingJSONObjects extends Specification {
 	
 	@Shared
-	WebDriver driver = new PhantomJSDriver()
+	WebDriver driver = new FirefoxDriver()
 	
 	JavascriptExecutorFacade jsFacade;
 	
