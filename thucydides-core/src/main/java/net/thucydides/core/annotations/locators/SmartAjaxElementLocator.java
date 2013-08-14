@@ -165,12 +165,12 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 			try {
 				element = SmartAjaxElementLocator.super.findElement();
 				if (!isElementUsable(element)) {
-					throw new NoSuchElementException("Element is not usable");
+					throw new NoSuchElementException("Element is not usable " + element.toString());
 				}
 			} catch (NoSuchElementException e) {
 				lastException = e;
 				// Should use JUnit's AssertionError, but it may not be present
-				throw new NoSuchElementError("Unable to locate the element", e);
+				throw new NoSuchElementError("Unable to locate the element: " + e.getMessage(), e);
 			}
 		}
 
@@ -206,7 +206,10 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 			try {
 				elements = SmartAjaxElementLocator.super.findElements();
 				if (elements.size() == 0) {
-					throw new NoSuchElementException("Unable to locate the element");
+					/*return even if empty and don't wait for them to become available.
+					*not sure that it is the correct approach for Ajax Element Locator that should wait for elements
+					*however correcting it due to https://java.net/jira/browse/THUCYDIDES-187 */
+					return; 
 				}
 				for (WebElement element : elements) {
 					if (!isElementUsable(element)) {
@@ -216,7 +219,7 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 			} catch (NoSuchElementException e) {
 				lastException = e;
 				// Should use JUnit's AssertionError, but it may not be present
-				throw new NoSuchElementError("Unable to locate the element", e);
+				throw new NoSuchElementError("Unable to locate the element " + e.getMessage(), e);
 			}
 		}
 
