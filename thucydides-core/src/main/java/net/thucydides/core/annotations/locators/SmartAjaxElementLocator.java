@@ -165,12 +165,12 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 			try {
 				element = SmartAjaxElementLocator.super.findElement();
 				if (!isElementUsable(element)) {
-					throw new NoSuchElementException("Element is not usable");
+					throw new NoSuchElementException("Element is not usable " + element.toString());
 				}
 			} catch (NoSuchElementException e) {
 				lastException = e;
 				// Should use JUnit's AssertionError, but it may not be present
-				throw new NoSuchElementError("Unable to locate the element", e);
+				throw new NoSuchElementError("Unable to locate the element: " + e.getMessage(), e);
 			}
 		}
 
@@ -216,7 +216,7 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 			} catch (NoSuchElementException e) {
 				lastException = e;
 				// Should use JUnit's AssertionError, but it may not be present
-				throw new NoSuchElementError("Unable to locate the element", e);
+				throw new NoSuchElementError("Unable to locate the element " + e.getMessage(), e);
 			}
 		}
 
