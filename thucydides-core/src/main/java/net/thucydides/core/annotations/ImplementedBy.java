@@ -7,7 +7,11 @@ import java.lang.annotation.RetentionPolicy;
 
 import net.thucydides.core.pages.WebElementFacadeImpl;
 
-
+/**
+ *  Annotation is used to specify the implementation Class of the interface
+ *  that extends WebElementFacade. 
+ *
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ImplementedBy {
