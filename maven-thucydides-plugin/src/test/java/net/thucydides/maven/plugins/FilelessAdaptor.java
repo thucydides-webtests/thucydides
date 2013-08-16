@@ -16,7 +16,7 @@ public class FilelessAdaptor implements TestOutcomeAdaptor {
 
     @Override
     public List<TestOutcome> loadOutcomes() throws IOException {
-        return null;
+        return Lists.newArrayList(outcome1, outcome2);
     }
 
     @Override

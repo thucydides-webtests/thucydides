@@ -52,7 +52,7 @@ public class TestOutcomeAdaptorReporter extends ThucydidesReporter {
         AcceptanceTestReporter jsonReporter = getJsonReporter();
 
         TestOutcomes allOutcomes = TestOutcomes.of(outcomes);
-        for(TestOutcome outcome : outcomes) {
+        for(TestOutcome outcome : allOutcomes.getOutcomes()) {
             xmlTestOutcomeReporter.generateReportFor(outcome, allOutcomes);
             jsonReporter.generateReportFor(outcome, allOutcomes);
             htmlAcceptanceTestReporter.generateReportFor(outcome, allOutcomes);
