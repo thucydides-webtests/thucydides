@@ -43,7 +43,7 @@ public class AdaptorService {
         try {
             return (TestOutcomeAdaptor) Class.forName(customAdaptor).newInstance();
         } catch (Exception e) {
-            throw new UnknownAdaptor("Test outcome adaptor could not be instanciated: " + customAdaptor);
+            throw new UnknownAdaptor("Test outcome adaptor could not be instanciated: " + customAdaptor, e);
         }
     }
 }

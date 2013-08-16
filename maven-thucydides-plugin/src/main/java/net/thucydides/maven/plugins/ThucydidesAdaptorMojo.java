@@ -37,9 +37,9 @@ public class ThucydidesAdaptorMojo extends AbstractMojo {
     /**
      * External test reports are read from here if necessary.
      * This could be either a directory or a single file, depending on the adaptor used.
+     * For some adaptors (e.g. database connectors), it will not be necessary.
      *
      * @parameter expression="${import.source}"
-     * @required
      */
     public File source;
 

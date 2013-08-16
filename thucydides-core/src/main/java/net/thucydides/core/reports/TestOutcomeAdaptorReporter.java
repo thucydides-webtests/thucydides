@@ -1,9 +1,11 @@
 package net.thucydides.core.reports;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
+import net.thucydides.core.reports.json.JSONTestOutcomeReporter;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
 
 import java.io.File;
@@ -14,10 +16,25 @@ public class TestOutcomeAdaptorReporter extends ThucydidesReporter {
 
     private List<TestOutcomeAdaptor> adaptors = Lists.newArrayList();
 
+    private final Optional<File> NO_SOURCE_FILE = Optional.absent();
+
+    public void generateReports() throws IOException {
+        generateReports(NO_SOURCE_FILE);
+    }
+
+    /**
+     * @param sourceDirectory
+     * @throws IOException
+     */
     public void generateReportsFrom(File sourceDirectory) throws IOException {
+        generateReports(Optional.fromNullable(sourceDirectory));
+    }
+
+    public void generateReports(Optional<File> sourceDirectory) throws IOException {
         setupOutputDirectoryIfRequired();
         for(TestOutcomeAdaptor adaptor : adaptors) {
-            List<TestOutcome> outcomes = adaptor.loadOutcomesFrom(sourceDirectory);
+            List<TestOutcome> outcomes = sourceDirectory.isPresent() ?
+                                             adaptor.loadOutcomesFrom(sourceDirectory.get()) : adaptor.loadOutcomes();
             generateReportsFor(outcomes);
         }
     }
@@ -32,16 +49,24 @@ public class TestOutcomeAdaptorReporter extends ThucydidesReporter {
 
         AcceptanceTestReporter xmlTestOutcomeReporter = getXMLReporter();
         AcceptanceTestReporter htmlAcceptanceTestReporter = getHTMLReporter();
+        AcceptanceTestReporter jsonReporter = getJsonReporter();
 
         TestOutcomes allOutcomes = TestOutcomes.of(outcomes);
         for(TestOutcome outcome : outcomes) {
             xmlTestOutcomeReporter.generateReportFor(outcome, allOutcomes);
+            jsonReporter.generateReportFor(outcome, allOutcomes);
             htmlAcceptanceTestReporter.generateReportFor(outcome, allOutcomes);
         }
     }
 
     private AcceptanceTestReporter getXMLReporter() {
         XMLTestOutcomeReporter reporter = new XMLTestOutcomeReporter();
+        reporter.setOutputDirectory(getOutputDirectory());
+        return reporter;
+    }
+
+    private AcceptanceTestReporter getJsonReporter() {
+        JSONTestOutcomeReporter reporter = new JSONTestOutcomeReporter();
         reporter.setOutputDirectory(getOutputDirectory());
         return reporter;
     }
