@@ -183,7 +183,7 @@ public class PageUrls {
     }
 
     private String removeDoubleSlashesFrom(String url) {
-        return url.replaceAll("[^:]//","/");
+        return url.replaceAll("([^:])//","$1/");
     }
 
     private String pathFrom(String url) throws MalformedURLException {
