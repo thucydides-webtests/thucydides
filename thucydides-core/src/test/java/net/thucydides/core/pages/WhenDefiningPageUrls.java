@@ -207,6 +207,19 @@ public class WhenDefiningPageUrls {
 
         verify(webdriver).get("http://www.wikipedia.org/");
     }
+
+    @Test
+    public void the_base_url_is_overrided_by_the_webdriver_base_url_system_property_even_with_trailing_slashes_and_should_include_full_path() {
+        PageObject page = new PageObjectWithFullUrlAndPageDefinition(webdriver);
+        PageUrls pageUrls = new PageUrls(page, configuration);
+        page.setPageUrls(pageUrls);
+
+        environmentVariables.setProperty("webdriver.base.url","http://www.wikipedia.org/test/");
+        page.open();
+
+        verify(webdriver).get("http://www.wikipedia.org/test/somepage");
+    }
+
     @Test
     public void the_base_url_should_be_used_if_no_url_annotation_is_present() {
         PageObject page = new PageObjectWithNoUrlDefinition(webdriver);
