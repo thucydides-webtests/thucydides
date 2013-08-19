@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.html;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.NumericalFormatter;

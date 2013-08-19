@@ -22,6 +22,8 @@ import org.apache.commons.lang3.text.translate.LookupTranslator;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Options;
 
+import javax.swing.table.TableModel;
+
 import static org.asciidoctor.Asciidoctor.Factory.create;
 
 import java.text.MessageFormat;
@@ -147,6 +149,23 @@ public class Formatter {
                 text.replaceAll(IOUtils.LINE_SEPARATOR_WINDOWS, "<br>").replaceAll(IOUtils.LINE_SEPARATOR_UNIX, "<br>") : "";
     }
 
+    public String convertAnyTables(String text) {
+        if (text.contains("|")) {
+            String unformattedTable = getEmbeddedTable(text);
+            ExampleTable table = new ExampleTable(unformattedTable);
+
+            text = text.replace(unformattedTable, table.inHtmlFormat());
+
+        }
+        return text;
+    }
+
+    private String getEmbeddedTable(String text) {
+        int startIndex = text.indexOf("|") - 1;
+        int endIndex = text.lastIndexOf("|") + 2;
+        return text.substring(startIndex, endIndex);
+    }
+
     private final CharSequenceTranslator ESCAPE_SPECIAL_CHARS = new AggregateTranslator(
             new LookupTranslator(EntityArrays.ISO8859_1_ESCAPE()),
             new LookupTranslator(EntityArrays.HTML40_EXTENDED_ESCAPE())
@@ -215,7 +234,7 @@ public class Formatter {
         for (String field : fields) {
             textWithEscapedFields = textWithEscapedFields.replaceAll("<" + field + ">", "&lt;" + field + "&gt;");
         }
-        return addLineBreaks(textWithEscapedFields);
+        return addLineBreaks(convertAnyTables(textWithEscapedFields));
     }
 
     private String stripLeadingHashFrom(final String issue) {

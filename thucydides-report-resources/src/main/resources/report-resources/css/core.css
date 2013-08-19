@@ -1072,3 +1072,19 @@ table.coverage_data td {
 .date-and-time {
     float:right; padding: 10px;
 }
+
+.embedded {
+    margin: 4px;
+    padding: 4px;
+    border-collapse:collapse;
+}
+
+.embedded th {
+    padding: 4px;
+    border: thin solid #d3d3d3;
+}
+
+.embedded td {
+    padding: 4px;
+    border: thin solid #d3d3d3;
+}

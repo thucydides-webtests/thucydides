@@ -152,9 +152,9 @@
             <th width="40">&nbsp;</th>
             <th width="%" class="greentext">Steps</th>
         <#if testOutcome.hasScreenshots()>
-            <th width="150" class="greentext">Screenshot</th>
+            <th width="120" class="greentext">Screenshot</th>
         </#if>
-            <th width="150" class="greentext">Outcome</th>
+            <th width="100" class="greentext">Outcome</th>
             <th width="75" class="greentext">Duration</th>
         </tr>
         <tr class="step-table-separator"><td colspan="5"></td></tr>
@@ -243,7 +243,7 @@
                         </#if>
                     </td>
                 </#if>
-                <td width="150"><span class="${step_class_root}-step">${step.result}</span></td>
+                <td width="100"><span class="${step_class_root}-step">${step.result}</span></td>
                 <td width="100"><span class="${step_class_root}-step">${step.durationInSeconds}s</span></td>
             </tr>
             <#if (step.result == "FAILURE" || step.result == "ERROR") && !step.isAGroup()>
@@ -278,7 +278,7 @@
                     <td width="%">
                         <span class="top-level-step">An error occurred outside of step execution.</span>
                     </td>
-                    <td width="150"><span class="top-level-step">${testOutcome.result}</span></td>
+                    <td width="100"><span class="top-level-step">${testOutcome.result}</span></td>
                     <td width="100"><span class="top-level-step">${testOutcome.durationInSeconds}s</span></td>
                 </tr>
                 <tr class="test-${testOutcome.result}">
