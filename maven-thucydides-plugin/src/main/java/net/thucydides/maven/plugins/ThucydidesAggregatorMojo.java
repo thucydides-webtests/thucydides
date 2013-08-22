@@ -10,6 +10,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * Generate aggregate XML acceptance test reports.
@@ -127,6 +128,9 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     }
 
     private void configureEnvironmentVariables() {
+
+        Locale.setDefault(Locale.ENGLISH);
+
         updateSystemProperty(ThucydidesSystemProperty.PROJECT_KEY.getPropertyName(), projectKey, Thucydides.getDefaultProjectKey());
 
         updateSystemProperty("thucydides.statistics.driver_class", statisticsDriver);
