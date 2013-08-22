@@ -1,7 +1,9 @@
 package net.thucydides.junit.runners.integration;
 
+import net.thucydides.core.annotations.Pending;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.runners.ThucydidesParameterizedRunner;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,12 +33,14 @@ public class SimpleSuccessfulParametrizedTestSample {
 	public void test2(){
 		System.out.println("test 2 for " + userRole);
 	}
-	
+
+    @Pending
 	@Test
 	public void testFailing(){
 		throw new AssertionError("failing test");
 	}
-	
+
+    @Ignore
 	@Test
 	public void test4(){
 		System.out.println("test 4 for " + userRole);
