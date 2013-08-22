@@ -66,10 +66,18 @@ public class DataDrivenAnnotations {
                         .build();
     }
 
-    public DataTable getParametersTableFromTestDataAnnotation() throws Throwable {
-        Method testDataMethod = getTestDataMethod().getMethod();
-        String columnNamesString = testDataMethod.getAnnotation(TestData.class).columnNames();
-        List<Object[]> parametersList = (List<Object[]>) testDataMethod.invoke(null);
+    public DataTable getParametersTableFromTestDataAnnotation() {
+        Method testDataMethod = null;
+        String columnNamesString = null;
+        List<Object[]> parametersList = null;
+
+        try {
+            testDataMethod = getTestDataMethod().getMethod();
+            columnNamesString = testDataMethod.getAnnotation(TestData.class).columnNames();
+            parametersList = (List<Object[]>) testDataMethod.invoke(null);
+            } catch (Exception e) {
+               throw new RuntimeException("Could not obtain test data from the test class", e);
+            }
 
         return createParametersTableFrom(columnNamesString, convert(parametersList, toListOfObjects()));
     }

@@ -51,8 +51,10 @@ public class ParameterizedTestsOutcomeAggregator {
                     nextStep.setDescription(normalizeTestStepDescription(nextStep.getDescription(), scenarioOutcomes.get(normalizedMethodName).getTestSteps().size() + 1));
                     scenarioOutcomes.get(normalizedMethodName).recordStep(nextStep);
                 }
-                updateResultsForAnyExternalFailures(scenarioOutcomes.get(normalizedMethodName), testOutcome);
-                scenarioOutcomes.get(normalizedMethodName).getDataTable().addRows(testOutcome.getDataTable().getRows());
+                if (testOutcome.isDataDriven()) {
+                    updateResultsForAnyExternalFailures(scenarioOutcomes.get(normalizedMethodName), testOutcome);
+                    scenarioOutcomes.get(normalizedMethodName).getDataTable().addRows(testOutcome.getDataTable().getRows());
+                }
 
             } else {
                 TestOutcome scenarioOutcome = createScenarioOutcome(testOutcome);
