@@ -5,7 +5,7 @@ import net.thucydides.junit.rules.DisableThucydidesHistoryRule;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.runners.AbstractTestStepRunnerTest;
 import net.thucydides.junit.runners.ThucydidesRunner;
-import net.thucydides.samples.LongSamplePassingScenarioUsingFirefox;
+import net.thucydides.samples.LongSamplePassingScenarioUsingPhantomJS;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
@@ -14,7 +14,6 @@ import org.junit.runners.model.InitializationError;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
@@ -29,7 +28,7 @@ public class WhenRunningATestScenarioWithScreenshots extends AbstractTestStepRun
     @Test
     public void the_test_runner_records_the_steps_as_they_are_executed() throws InitializationError {
 
-        ThucydidesRunner runner = new ThucydidesRunner(LongSamplePassingScenarioUsingFirefox.class);
+        ThucydidesRunner runner = new ThucydidesRunner(LongSamplePassingScenarioUsingPhantomJS.class);
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
