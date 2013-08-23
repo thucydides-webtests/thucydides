@@ -43,7 +43,8 @@ public class ParameterizedTestsOutcomeAggregator {
         Map<String, TestOutcome> scenarioOutcomes = new HashMap<String, TestOutcome>();
 
         for (TestOutcome testOutcome : allOutcomes) {
-            String normalizedMethodName = normalizeMethodName(testOutcome.getMethodName());
+            String normalizedMethodName = normalizeMethodName(testOutcome);
+
             if (scenarioOutcomes.containsKey(normalizedMethodName)) {
                 List<TestStep> testSteps = testOutcome.getTestSteps();
                 if (!testSteps.isEmpty()) {
@@ -56,7 +57,8 @@ public class ParameterizedTestsOutcomeAggregator {
                     scenarioOutcomes.get(normalizedMethodName).getDataTable().addRows(testOutcome.getDataTable().getRows());
                 }
 
-            } else {
+            }
+            else {
                 TestOutcome scenarioOutcome = createScenarioOutcome(testOutcome);
                 scenarioOutcomes.put(scenarioOutcome.getMethodName(), scenarioOutcome);
             }
@@ -92,19 +94,22 @@ public class ParameterizedTestsOutcomeAggregator {
     }
 
     private TestOutcome createScenarioOutcome(TestOutcome parameterizedOutcome) {
-        TestOutcome scenarioOutcome = parameterizedOutcome.withMethodName(normalizeMethodName(parameterizedOutcome.getMethodName()));
+        TestOutcome scenarioOutcome = parameterizedOutcome.withMethodName(normalizeMethodName(parameterizedOutcome));
         scenarioOutcome.endGroup(); //pop group stack so next item gets added as sibling
         return scenarioOutcome;
     }
 
-    private String normalizeMethodName(String methodName) {
-        return methodName.replaceAll("\\[\\d\\]", "");
+    private String normalizeMethodName(TestOutcome testOutcome) {
+        String qualification = "";
+        if (testOutcome.getQualifier().isPresent()) {
+            qualification = " [" + testOutcome.getQualifier().get() + "]";
+        }
+        return testOutcome.getMethodName().replaceAll("\\[\\d\\]", "") + qualification;
     }
 
     public List<TestOutcome> getTestOutcomesForAllParameterSets() {
         List<TestOutcome> testOutcomes = new ArrayList<TestOutcome>();
 
-        testOutcomes.addAll(((ThucydidesRunner) thucydidesParameterizedRunner.getRunners().get(0)).getTestOutcomes());
         for (Runner runner : thucydidesParameterizedRunner.getRunners()) {
             for (TestOutcome testOutcome : ((ThucydidesRunner) runner).getTestOutcomes()) {
                 if (!testOutcomes.contains(testOutcome)) {

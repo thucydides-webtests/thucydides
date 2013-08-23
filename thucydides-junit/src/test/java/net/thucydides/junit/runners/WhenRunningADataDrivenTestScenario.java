@@ -19,6 +19,8 @@ import net.thucydides.junit.annotations.Concurrent;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.junit.runners.integration.SimpleFailingParameterizedTestSample;
+import net.thucydides.junit.runners.integration.SimpleSuccessfulParametrizedTestSample;
 import net.thucydides.samples.NestedDatadrivenSteps;
 import net.thucydides.samples.SampleCSVDataDrivenScenario;
 import net.thucydides.samples.SampleDataDrivenIgnoredScenario;
@@ -609,6 +611,42 @@ public class WhenRunningADataDrivenTestScenario {
 
 
     }
+
+
+    @Test
+    public void running_a_simple_parameterized_test_should_produce_an_outcome_per_data_row() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                outputDirectory.getAbsolutePath());
+
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SimpleSuccessfulParametrizedTestSample.class);
+
+        runner.run(new RunNotifier());
+
+        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+
+        assertThat(reportContents.size(), is(12));
+
+    }
+
+    @Test
+    public void running_a_failing_parameterized_test_should_produce_an_outcome_per_data_row() throws Throwable  {
+
+        File outputDirectory = tempFolder.newFolder("thucydides");
+        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+                outputDirectory.getAbsolutePath());
+
+        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SimpleFailingParameterizedTestSample.class);
+
+        runner.run(new RunNotifier());
+
+        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
+
+        assertThat(reportContents.size(), is(12));
+
+    }
+
 
     @Test
     public void when_the_Concurrent_annotation_is_used_tests_should_be_run_in_parallel() throws Throwable  {

@@ -11,11 +11,11 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(ThucydidesParameterizedRunner.class)
-public class SimpleSuccessfulParametrizedTestSample {
+public class SimpleFailingParameterizedTestSample {
 
 	protected String userRole = "ROLE";
 
-	public SimpleSuccessfulParametrizedTestSample(String userRole) {
+	public SimpleFailingParameterizedTestSample(String userRole) {
 		this.userRole = userRole;
 	}
 	
@@ -26,27 +26,35 @@ public class SimpleSuccessfulParametrizedTestSample {
 	
 	@Test
 	public void test1(){
+		System.out.println("test 1 for " + userRole);
 	}
 	
 	@Test
 	public void test2(){
+		System.out.println("test 2 for " + userRole);
 	}
 
+    @Pending
 	@Test
-	public void test3(){
+	public void testFailing(){
+		throw new AssertionError("failing test");
 	}
 
+    @Ignore
 	@Test
 	public void test4(){
+		System.out.println("test 4 for " + userRole);
 	}
 	
 	
 	@Test
 	public void test5(){
+		System.out.println("test 5 for " + userRole);
 	}
 	
 	@Test
-	public void test6(){
+	public void testRuntimeError(){
+		throw new RuntimeException("runtime error");
 	}
 
 }

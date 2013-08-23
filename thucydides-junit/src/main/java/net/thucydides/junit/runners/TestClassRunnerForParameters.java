@@ -1,8 +1,10 @@
 package net.thucydides.junit.runners;
 
+import com.beust.jcommander.internal.Lists;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.DataTableRow;
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
@@ -17,11 +19,12 @@ import java.util.List;
 class TestClassRunnerForParameters extends ThucydidesRunner {
     private final int parameterSetNumber;
     private final DataTable parametersTable;
+    private String qualifier;
 
     TestClassRunnerForParameters(final Class<?> type,
                                  final Configuration configuration,
                                  final WebDriverFactory webDriverFactory,
-                         		final BatchManager batchManager,
+                                 final BatchManager batchManager,
                                  final DataTable parametersTable,
                                  final int i) throws InitializationError {
         super(type, webDriverFactory, configuration, batchManager);
@@ -58,17 +61,6 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
         }
     }
 
-//    @Override
-//    protected boolean restartBrowserBeforeTest() {
-//        if (super.restartBrowserBeforeTest()) {
-//            return true;
-//        } else if (parameterSetNumber > 0) {
-//            return (restartFrequency() > 0) && (parameterSetNumber % restartFrequency() == 0);
-//        }
-//        return false;
-//    }
-
-
     @Override
     protected String getName() {
         String firstParameter = parametersTable.getRows().get(parameterSetNumber).getValues().get(0).toString();
@@ -94,5 +86,25 @@ class TestClassRunnerForParameters extends ThucydidesRunner {
     protected void generateReports() {
         //do not generate reports at example level
     }
+
+    @Override
+    public void useQualifier(final String qualifier) {
+        this.qualifier = qualifier;
+        super.useQualifier(qualifier);
+    }
+
+    @Override
+    public List<TestOutcome> getTestOutcomes() {
+        return qualified(super.getTestOutcomes());
+    }
+
+    private List<TestOutcome> qualified(List<TestOutcome> testOutcomes) {
+        List<TestOutcome> qualifiedOutcomes = Lists.newArrayList();
+        for(TestOutcome outcome : testOutcomes) {
+            qualifiedOutcomes.add(outcome.withQualifier(qualifier));
+        }
+        return qualifiedOutcomes;
+    }
+
 
 }
