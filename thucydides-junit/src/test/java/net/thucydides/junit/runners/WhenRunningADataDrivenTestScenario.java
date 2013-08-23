@@ -103,6 +103,20 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
         assertThat(aggregatedScenarios.size(), is(2));
+        assertThat(aggregatedScenarios.get(0).getStepCount(), is(10));
+        assertThat(aggregatedScenarios.get(1).getStepCount(), is(10));
+    }
+
+    @Test
+    public void a_data_driven_test_driver_should_aggregate_test_outcomes_without_steps() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SimpleSuccessfulParametrizedTestSample.class);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
+        assertThat(aggregatedScenarios.size(), is(2));
+        assertThat(aggregatedScenarios.get(0).getStepCount(), is(3));
+        assertThat(aggregatedScenarios.get(1).getStepCount(), is(3));
     }
 
     @Test
@@ -117,14 +131,14 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
     @Test
-    public void an_ignored_data_driven_test_should_have_zero_test_steps() throws Throwable  {
+    public void an_ignored_data_driven_test_should_have_a_step_for_each_row() throws Throwable  {
 
         ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenIgnoredScenario.class);
         runner.run(new RunNotifier());
 
         List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
         assertThat(aggregatedScenarios.size(), is(1));
-        assertThat(aggregatedScenarios.get(0).getTestSteps().size(), is(0));
+        assertThat(aggregatedScenarios.get(0).getTestSteps().size(), is(10));
     }
 
     @Test
@@ -139,14 +153,14 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
     @Test
-    public void a_pending_data_driven_test_should_have_zero_test_steps() throws Throwable  {
+    public void a_pending_data_driven_test_should_have_a_test_step_for_each_row() throws Throwable  {
 
         ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleDataDrivenPendingScenario.class);
         runner.run(new RunNotifier());
 
         List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
         assertThat(aggregatedScenarios.size(), is(1));
-        assertThat(aggregatedScenarios.get(0).getTestSteps().size(), is(0));
+        assertThat(aggregatedScenarios.get(0).getTestSteps().size(), is(10));
     }
 
     @Test
@@ -189,38 +203,6 @@ public class WhenRunningADataDrivenTestScenario {
 
         File[] reports = outputDirectory.listFiles(new XMLFileFilter());
         assertThat(reports.length, is(2));
-    }
-
-    @Test
-    public void xml_report_names_should_reflect_the_test_scenarios() throws Throwable  {
-
-        File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
-                            outputDirectory.getAbsolutePath());
-
-        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
-
-        runner.run(new RunNotifier());
-
-        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
-        assertThat(reportFilenames, hasItem(digest("sample_data_driven_scenario_happy_day_scenario.xml")));
-        assertThat(reportFilenames, hasItem(digest("sample_data_driven_scenario_not_so_happy_day_scenario.xml")));
-    }
-
-    @Test
-    public void xml_report_names_should_reflect_the_test_scenarios_when_data_is_read_from_csv_file() throws Throwable  {
-
-        File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
-                            outputDirectory.getAbsolutePath());
-
-        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleCSVDataDrivenScenario.class);
-
-        runner.run(new RunNotifier());
-
-        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new XMLFileFilter()));
-        assertThat(reportFilenames, hasItem(digest("sample_c_s_v_data_driven_scenario_data_driven_test.xml")));
-        assertThat(reportFilenames, hasItem(digest("sample_c_s_v_data_driven_scenario_another_data_driven_test.xml")));
     }
 
     @Test
@@ -626,27 +608,9 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
 
-        assertThat(reportContents.size(), is(12));
+        assertThat(reportContents.size(), is(2));
 
     }
-
-    @Test
-    public void running_a_failing_parameterized_test_should_produce_an_outcome_per_data_row() throws Throwable  {
-
-        File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
-                outputDirectory.getAbsolutePath());
-
-        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SimpleFailingParameterizedTestSample.class);
-
-        runner.run(new RunNotifier());
-
-        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
-
-        assertThat(reportContents.size(), is(12));
-
-    }
-
 
     @Test
     public void when_the_Concurrent_annotation_is_used_tests_should_be_run_in_parallel() throws Throwable  {
@@ -770,23 +734,6 @@ public class WhenRunningADataDrivenTestScenario {
     private String stringContentsOf(File reportFile) throws IOException {
         return FileUtils.readFileToString(reportFile);
     }
-
-    @Test
-    public void html_report_names_should_reflect_the_test_scenario() throws Throwable  {
-
-        File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
-                            outputDirectory.getAbsolutePath());
-
-        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
-
-        runner.run(new RunNotifier());
-
-        List<String> reportFilenames = filenamesOf(outputDirectory.listFiles(new HTMLFileFilter()));
-        assertThat(reportFilenames, allOf(hasItem(digest("sample_data_driven_scenario_happy_day_scenario.html")),
-                hasItem(digest("sample_data_driven_scenario_not_so_happy_day_scenario.html"))));
-    }
-
 
     @Test
     public void a_separate_html_report_should_be_generated_from_each_scenario() throws Throwable  {

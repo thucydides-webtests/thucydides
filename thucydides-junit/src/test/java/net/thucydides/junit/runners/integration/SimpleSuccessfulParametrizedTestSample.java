@@ -1,8 +1,10 @@
 package net.thucydides.junit.runners.integration;
 
 import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.annotations.Steps;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.runners.ThucydidesParameterizedRunner;
+import net.thucydides.samples.SampleScenarioSteps;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,32 +23,18 @@ public class SimpleSuccessfulParametrizedTestSample {
 	
 	@TestData(columnNames = "User")
 	public static Collection<Object[]> testData(){
-		return Arrays.asList(new Object[][]{{"STAFF"}, {"EYEDEMAND_ADMIN"}});
+		return Arrays.asList(new Object[][]{{"A"}, {"B"}, {"C"}});
 	}
-	
+
+    @Steps
+    public SampleScenarioSteps steps;
+
 	@Test
 	public void test1(){
 	}
 	
 	@Test
 	public void test2(){
-	}
-
-	@Test
-	public void test3(){
-	}
-
-	@Test
-	public void test4(){
-	}
-	
-	
-	@Test
-	public void test5(){
-	}
-	
-	@Test
-	public void test6(){
 	}
 
 }

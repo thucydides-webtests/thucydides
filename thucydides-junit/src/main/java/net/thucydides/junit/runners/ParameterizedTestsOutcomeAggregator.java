@@ -47,7 +47,10 @@ public class ParameterizedTestsOutcomeAggregator {
 
             if (scenarioOutcomes.containsKey(normalizedMethodName)) {
                 List<TestStep> testSteps = testOutcome.getTestSteps();
-                if (!testSteps.isEmpty()) {
+                if (testSteps.isEmpty()) {
+                    TestStep nestedStep = TestStep.forStepCalled(testOutcome.getTitle()).withResult(testOutcome.getResult());
+                    scenarioOutcomes.get(normalizedMethodName).recordStep(nestedStep);
+                } else {
                     TestStep nextStep = testSteps.get(0);
                     nextStep.setDescription(normalizeTestStepDescription(nextStep.getDescription(), scenarioOutcomes.get(normalizedMethodName).getTestSteps().size() + 1));
                     scenarioOutcomes.get(normalizedMethodName).recordStep(nextStep);
@@ -60,6 +63,9 @@ public class ParameterizedTestsOutcomeAggregator {
             }
             else {
                 TestOutcome scenarioOutcome = createScenarioOutcome(testOutcome);
+                if (scenarioOutcome.getTestSteps().isEmpty()) {
+                    scenarioOutcome.startGroup();
+                }
                 scenarioOutcomes.put(scenarioOutcome.getMethodName(), scenarioOutcome);
             }
         }
@@ -95,16 +101,16 @@ public class ParameterizedTestsOutcomeAggregator {
 
     private TestOutcome createScenarioOutcome(TestOutcome parameterizedOutcome) {
         TestOutcome scenarioOutcome = parameterizedOutcome.withMethodName(normalizeMethodName(parameterizedOutcome));
+        if (scenarioOutcome.getTestSteps().isEmpty()) {
+            TestStep firstStep = TestStep.forStepCalled(parameterizedOutcome.getTitle()).withResult(scenarioOutcome.getResult());
+            scenarioOutcome.recordStep(firstStep);
+        }
         scenarioOutcome.endGroup(); //pop group stack so next item gets added as sibling
         return scenarioOutcome;
     }
 
     private String normalizeMethodName(TestOutcome testOutcome) {
-        String qualification = "";
-        if (testOutcome.getQualifier().isPresent()) {
-            qualification = " [" + testOutcome.getQualifier().get() + "]";
-        }
-        return testOutcome.getMethodName().replaceAll("\\[\\d\\]", "") + qualification;
+        return testOutcome.getMethodName().replaceAll("\\[\\d\\]", "");
     }
 
     public List<TestOutcome> getTestOutcomesForAllParameterSets() {
