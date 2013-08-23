@@ -19,8 +19,18 @@ public class WhenMakingTestNamesMoreReadable {
     }
 
     @Test
+    public void simple_lowercase_name_should_be_capitalized() {
+        assertThat(NameConverter.humanize("sometest"), is("Sometest"));
+    }
+
+    @Test
+    public void camel_cased_name_should_be_split() {
+        assertThat(NameConverter.humanize("someTest"), is("Some test"));
+    }
+
+    @Test
     public void camel_cased_test_names_should_be_converted_to_human_readable_sentences() {
-        assertThat(NameConverter.humanize("ATestClassName"), is("A test class name"));
+        assertThat(NameConverter.humanize("aTestClassName"), is("A test class name"));
     }
 
     @Test
@@ -32,6 +42,22 @@ public class WhenMakingTestNamesMoreReadable {
     public void test_names_with_parameters_should_only_modify_the_name() {
         assertThat(NameConverter.humanize("aTestMethod: ABC def bGd"), is("A test method: ABC def bGd"));
     }
+
+    @Test
+    public void test_names_should_not_convert_single_letter_words() {
+        assertThat(NameConverter.humanize("a_test_method_with_a_in_it"), is("A test method with a in it"));
+    }
+
+    @Test
+    public void test_names_should_not_convert_single_letter_words_in_camel_case() {
+        assertThat(NameConverter.humanize("MyTestCaseWithoutAStory"), is("My test case without a story"));
+    }
+
+    @Test
+    public void should_recognize_acronyms() {
+        assertThat(NameConverter.humanize("aTESTMethod"), is("A TEST method"));
+    }
+
 
     @Test
     public void camelCase_method_names_should_be_converted_to_human_readable_sentences() {

@@ -1,10 +1,10 @@
 package net.thucydides.core.util;
 
+    import org.apache.commons.lang3.CharUtils;
     import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+    import java.util.regex.Pattern;
 
 /**
  * Utility class to convert test case and method names into human-readable form.
@@ -13,8 +13,6 @@ import java.util.regex.Pattern;
  *
  */
 public final class NameConverter {
-
-    private static final Pattern CAMEL_CASE_MATCHER_PATTERN = Pattern.compile("\\p{Lu}");
 
     private NameConverter() {}
 
@@ -33,7 +31,7 @@ public final class NameConverter {
         } else {
             String noUnderscores = name.replaceAll("_", " ");
             String splitCamelCase = splitCamelCase(noUnderscores);
-            return StringUtils.capitalize(splitCamelCase.toLowerCase(Locale.getDefault()));
+            return StringUtils.capitalize(splitCamelCase);
         }
     }
 
@@ -53,13 +51,45 @@ public final class NameConverter {
      * Inserts spaces between words in a CamelCase name.
      */
     public static String splitCamelCase(final String name) {
-        Matcher m = CAMEL_CASE_MATCHER_PATTERN.matcher(name);
-        StringBuffer sb = new StringBuffer();
-        while (m.find()) {
-            m.appendReplacement(sb, " " + m.group());
+        StringBuffer splitWords = new StringBuffer();
+
+        // AbcDef
+        boolean inWord = false;
+        String currentWord = "";
+        for(int index = 0; index < name.length(); index++) {
+            if (onWordBoundary(name, index)) {
+                splitWords.append(lowercaseOrAcronym(currentWord)).append(" ");
+                currentWord = String.valueOf(name.charAt(index));
+            } else {
+                currentWord = currentWord + (name.charAt(index));
+            }
         }
-        m.appendTail(sb);
-        return sb.toString().trim();
+        splitWords.append(lowercaseOrAcronym(currentWord));
+
+        return splitWords.toString().trim();
+    }
+
+    private static String lowercaseOrAcronym(String word) {
+        if (StringUtils.isAllUpperCase(word) && word.length() > 1) {
+            return word;
+        } else {
+            return StringUtils.lowerCase(word);
+        }
+    }
+
+    private static boolean onWordBoundary(String name, int index) {
+        return (uppercaseLetterAt(name, index)
+                && (lowercaseLetterAt(name, index - 1) || lowercaseLetterAt(name, index + 1)));
+    }
+
+    private static boolean uppercaseLetterAt(String name, int index) {
+        return CharUtils.isAsciiAlphaUpper(name.charAt(index));
+    }
+
+    private static boolean lowercaseLetterAt(String name, int index) {
+        return (index >= 0)
+                && (index < name.length())
+                && CharUtils.isAsciiAlphaLower(name.charAt(index));
     }
 
     public static String withNoArguments(final String methodName) {
