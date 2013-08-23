@@ -15,8 +15,14 @@ public enum ThucydidesSystemProperty {
     /**
      * The WebDriver driver - firefox, chrome, iexplorer, htmlunit, safari.
      */
-    DRIVER("webdriver.driver"),    
-    
+    DRIVER("webdriver.driver"),
+
+    /**
+     * If using a provided driver, what type is it.
+     * The implementation class needs to be defined in the webdriver.provided.{type} system property.
+    */
+    PROVIDED_DRIVER_TYPE("webdriver.provided.type"),
+
     /**
      * The default starting URL for the application, and base URL for relative paths.
      */

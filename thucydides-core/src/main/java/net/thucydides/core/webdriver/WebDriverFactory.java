@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import net.thucydides.core.Thucydides;
@@ -174,6 +175,8 @@ public class WebDriverFactory {
                 driver = safariDriver();
             } else if (isAnInternetExplorerDriver(driverClass)) {
                 driver = internetExplorerDriver();
+            } else if (isAProvidedDriver(driverClass)) {
+                driver = providedDriver();
             } else {
                 driver = newDriverInstanceFrom(driverClass);
             }
@@ -187,6 +190,25 @@ public class WebDriverFactory {
         }
     }
 
+    private boolean isAProvidedDriver(Class<? extends WebDriver> driverClass) {
+        return ProvidedDriver.class.isAssignableFrom(driverClass);
+    }
+
+    private WebDriver providedDriver() {
+        String providedDriverType = environmentVariables.getProperty(ThucydidesSystemProperty.PROVIDED_DRIVER_TYPE);
+        Preconditions.checkNotNull(providedDriverType,"No provider type was specified in 'webdriver.provided.type'");
+
+        String providedImplementation = environmentVariables.getProperty("webdriver.provided." + providedDriverType);
+        Preconditions.checkNotNull(providedDriverType,
+                                  "No provider implementation was specified in 'webdriver.provided.'" + providedDriverType);
+
+        try {
+            DriverSource driverSource = (DriverSource) Class.forName(providedImplementation).newInstance();
+            return driverSource.newDriver();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not instantiate the custom webdriver provider of type " + providedImplementation);
+        }
+    }
 
     private void setImplicitTimeoutsIfSpecified(WebDriver driver) {
         if (ThucydidesSystemProperty.TIMEOUTS_IMPLICIT_WAIT.isDefinedIn(environmentVariables)) {
