@@ -13,6 +13,7 @@ import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import net.thucydides.core.util.NameConverter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -135,10 +136,14 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     private Optional<String> getRootDirectoryFromClasspath() throws IOException {
         Enumeration<URL> requirementResources = getDirectoriesFrom(rootDirectoryPath);
         if (requirementResources.hasMoreElements()) {
-            return Optional.of(requirementResources.nextElement().getPath());
+            return Optional.of(withRestoredSpaces(requirementResources.nextElement().getPath()));
         } else {
             return Optional.absent();
         }
+    }
+
+    private String withRestoredSpaces(String path) {
+        return StringUtils.replace(path,"%20"," ");
     }
 
     private Optional<String> getRootDirectoryFromWorkingDirectory() throws IOException {

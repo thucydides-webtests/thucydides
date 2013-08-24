@@ -345,9 +345,8 @@ public class WebDriverFactory {
             driver = REMOTE_DRIVER;
         }
         SupportedWebDriver driverType = driverTypeFor(driver);
-        if (driverType == null) {
-            throw new IllegalArgumentException("Unsupported remote driver type: " + driver);
-        }
+
+        Preconditions.checkNotNull(driverType, "Unsupported remote driver type: ");
 
         if (driverType == SupportedWebDriver.REMOTE) {
             return (DesiredCapabilities) enhancedCapabilities(remoteCapabilities());
@@ -683,9 +682,6 @@ public class WebDriverFactory {
      */
     public void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver, int timeoutInSeconds) {
     	proxyCreator.proxyElements(pageObject, driver, timeoutInSeconds);
-
     }
-
-
 
 }
