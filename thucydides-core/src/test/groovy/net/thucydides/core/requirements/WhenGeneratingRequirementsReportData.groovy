@@ -38,10 +38,10 @@ class WhenGeneratingRequirementsReportData extends Specification {
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "all the known capabilities should be listed"
             def requirementsNames = outcomes.requirementOutcomes.collect {it.requirement.name}
-            requirementsNames == ["Grow potatoes", "Grow wheat",  "Raise chickens", "Apples", "Nice zucchinis", "Potatoes"]
+            requirementsNames == ["Grow cucumbers", "Grow potatoes", "Grow wheat",  "Raise chickens", "Apples", "Nice zucchinis", "Potatoes"]
         and: "the display name should be obtained from the narrative file where present"
             def requirementsDisplayNames = outcomes.requirementOutcomes.collect {it.requirement.displayName}
-        requirementsDisplayNames == ["Grow lots of potatoes", "Grow wheat", "Raise chickens", "apples", "Nice zucchinis", "Potatoes title"]
+        requirementsDisplayNames == ["Grow cucumbers", "Grow lots of potatoes", "Grow wheat", "Raise chickens", "apples", "Nice zucchinis", "Potatoes title"]
     }
 
     def "should report no test results for requirements without associated tests"() {
@@ -53,7 +53,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the test results for the requirements should be empty"
             def requirementsTestCount = outcomes.requirementOutcomes.collect {it.testOutcomes.total}
-            requirementsTestCount == [0,0,0,0,0,0]
+            requirementsTestCount == [0,0,0,0,0,0,0]
     }
 
     def "should report narrative test for each requirement"() {
@@ -64,9 +64,9 @@ class WhenGeneratingRequirementsReportData extends Specification {
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the requirement outcomes will contain the requirement narratives when specified"
             def requirementsNarratives = outcomes.requirementOutcomes.collect {it.requirement.narrativeText}
-            requirementsNarratives[0].contains("In order to let my country eat chips") == true
-            requirementsNarratives[1] == "Grow wheat"
-            requirementsNarratives[2] == "Raise chickens"
+            requirementsNarratives[1].contains("In order to let my country eat chips") == true
+            requirementsNarratives[2] == "Grow wheat"
+            requirementsNarratives[3] == "Raise chickens"
     }
 
     public void "should report test results associated with specified requirements"() {
@@ -77,9 +77,8 @@ class WhenGeneratingRequirementsReportData extends Specification {
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(someTestOutcomes)
         then: "the number of tests for each requirement should be recorded in the requirements outcome"
             def requirementsTestCount = outcomes.requirementOutcomes.collect {it.testOutcomes.total}
-            requirementsTestCount == [2,0,0,0,0,0]
+            requirementsTestCount == [0,2,0,0,0,0,0]
     }
-
 
     def "a requirement with no associated tests is pending"() {
         given: "there are no associated tests"
@@ -134,7 +133,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
         when: "we generate the capability outcomes"
         RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "requirements with pending tests should be pending"
-        outcomes.pendingRequirementsCount == 5
+        outcomes.pendingRequirementsCount == 6
     }
 
     def "should report on the number of passing, failing and pending tests for a requirement"() {
@@ -178,25 +177,25 @@ class WhenGeneratingRequirementsReportData extends Specification {
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the proportionOf of failing, passing and total steps should include estimations for requirements with no tests"
-            outcomes.proportion.withResult(TestResult.SUCCESS) == 0.09230769230769231
-            outcomes.proportion.withResult(TestResult.FAILURE) == 0.03076923076923077
-            outcomes.proportion.withIndeterminateResult() == 0.8769230769230769
+            outcomes.proportion.withResult(TestResult.SUCCESS) == 0.075
+            outcomes.proportion.withResult(TestResult.FAILURE) == 0.025
+            outcomes.proportion.withIndeterminateResult() == 0.9
         and: "the number of requirements should be available"
-            outcomes.flattenedRequirementCount == 15
-            outcomes.requirementsWithoutTestsCount == 11
+            outcomes.flattenedRequirementCount == 18
+            outcomes.requirementsWithoutTestsCount == 14
         and: "the number of tests should be available"
             outcomes.total.total == 10
             outcomes.total.withResult(TestResult.SUCCESS) == 6
             outcomes.total.withResult(TestResult.FAILURE) == 2
             outcomes.total.withResult(TestResult.PENDING) == 1
-            outcomes.estimatedUnimplementedTests == 55
+            outcomes.estimatedUnimplementedTests == 70
         and: "the results should be available as formatted values"
-            outcomes.formattedPercentage.withResult(TestResult.SUCCESS) == "9.2%"
-            outcomes.formattedPercentage.withResult(TestResult.FAILURE) == "3.1%"
-            outcomes.formattedPercentage.withIndeterminateResult() == "87.7%"
+            outcomes.formattedPercentage.withResult(TestResult.SUCCESS) == "7.5%"
+            outcomes.formattedPercentage.withResult(TestResult.FAILURE) == "2.5%"
+            outcomes.formattedPercentage.withIndeterminateResult() == "90%"
         and: "we can also display the test results by type"
-            outcomes.getFormattedPercentage(TestType.ANY).withResult(TestResult.SUCCESS) == "9.2%"
-            outcomes.getFormattedPercentage("ANY").withResult(TestResult.SUCCESS) == "9.2%"
+            outcomes.getFormattedPercentage(TestType.ANY).withResult(TestResult.SUCCESS) == "7.5%"
+            outcomes.getFormattedPercentage("ANY").withResult(TestResult.SUCCESS) == "7.5%"
     }
 
     def "functional coverage should cater for requirements with no tests at the requirement outcome level"() {
@@ -210,27 +209,27 @@ class WhenGeneratingRequirementsReportData extends Specification {
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the proportionOf of failing, passing and total steps should include estimations for requirements with no tests"
-            outcomes.requirementOutcomes[0].percent.withResult(TestResult.SUCCESS) == 0.25
-            outcomes.requirementOutcomes[0].percent.withResult(TestResult.FAILURE)  == 0.0
-            outcomes.requirementOutcomes[0].percent.withResult(TestResult.ERROR)  == 0.0
-            outcomes.requirementOutcomes[0].percent.withIndeterminateResult()  == 0.75
+            outcomes.requirementOutcomes[1].percent.withResult(TestResult.SUCCESS) == 0.25
+            outcomes.requirementOutcomes[1].percent.withResult(TestResult.FAILURE)  == 0.0
+            outcomes.requirementOutcomes[1].percent.withResult(TestResult.ERROR)  == 0.0
+            outcomes.requirementOutcomes[1].percent.withIndeterminateResult()  == 0.75
         and: "the number of requirements should be available"
-            outcomes.requirementOutcomes[0].flattenedRequirementCount == 5
+            outcomes.requirementOutcomes[1].flattenedRequirementCount == 5
         and: "the number of implemented tests should be available"
-            outcomes.requirementOutcomes[0].testCount == 2
-            outcomes.requirementOutcomes[0].total.withResult(TestResult.SUCCESS) == 2
-            outcomes.requirementOutcomes[0].total.withResult(TestResult.FAILURE) == 0
-            outcomes.requirementOutcomes[0].total.withResult(TestResult.ERROR) == 0
-            outcomes.requirementOutcomes[0].total.withIndeterminateResult() == 0
+            outcomes.requirementOutcomes[1].testCount == 2
+            outcomes.requirementOutcomes[1].total.withResult(TestResult.SUCCESS) == 2
+            outcomes.requirementOutcomes[1].total.withResult(TestResult.FAILURE) == 0
+            outcomes.requirementOutcomes[1].total.withResult(TestResult.ERROR) == 0
+            outcomes.requirementOutcomes[1].total.withIndeterminateResult() == 0
         and: "the number of requirements without tests should be available"
-            outcomes.requirementOutcomes[0].requirementsWithoutTestsCount == 2
+            outcomes.requirementOutcomes[1].requirementsWithoutTestsCount == 2
         and: "the estimated unimplemented test count should be available"
-            outcomes.requirementOutcomes[0].estimatedUnimplementedTests == 6
+            outcomes.requirementOutcomes[1].estimatedUnimplementedTests == 6
         and: "the results should be available as formatted values"
-            outcomes.requirementOutcomes[0].formattedPercentage.withResult(TestResult.SUCCESS) == "25%"
-            outcomes.requirementOutcomes[0].formattedPercentage.withResult(TestResult.FAILURE) == "0%"
-            outcomes.requirementOutcomes[0].formattedPercentage.withResult(TestResult.ERROR) == "0%"
-            outcomes.requirementOutcomes[0].formattedPercentage.withIndeterminateResult() == "75%"
+            outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.SUCCESS) == "25%"
+            outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.FAILURE) == "0%"
+            outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.ERROR) == "0%"
+            outcomes.requirementOutcomes[1].formattedPercentage.withIndeterminateResult() == "75%"
     }
 
     def someTestResults() {

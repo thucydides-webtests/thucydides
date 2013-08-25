@@ -9,7 +9,6 @@ import spock.lang.Unroll
 
 class WhenOrderingRequirementsTagProviders extends Specification {
 
-
     static def LESS_THAN = -1
     static def GREATER_THAN = 1
     static def EQUALS = 0
@@ -55,6 +54,4 @@ class WhenOrderingRequirementsTagProviders extends Specification {
             case GREATER_THAN: return value > 0
         }
     }
-
-
 }

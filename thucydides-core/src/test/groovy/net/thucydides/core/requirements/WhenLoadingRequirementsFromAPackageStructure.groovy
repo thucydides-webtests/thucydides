@@ -6,7 +6,6 @@ import net.thucydides.core.model.TestTag
 import net.thucydides.core.requirements.model.Requirement
 import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class WhenLoadingRequirementsFromAPackageStructure extends Specification {

@@ -71,9 +71,6 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
             !narrative.get().getText().contains("Meta") && !narrative.get().getText().contains("issue")
     }
 
-
-
-
     File directoryInClasspathAt(String path) {
         new File(getClass().getClassLoader().getResources(path).nextElement().getPath())
     }

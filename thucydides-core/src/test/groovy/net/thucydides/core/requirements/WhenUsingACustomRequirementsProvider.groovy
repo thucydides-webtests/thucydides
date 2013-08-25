@@ -36,5 +36,4 @@ class WhenUsingACustomRequirementsProvider extends Specification {
         then: "We obtain the default requirements provider"
             requirementsProviders.collect { it.class.simpleName } == ["CustomRequirementsTagProvider"]
     }
-
 }

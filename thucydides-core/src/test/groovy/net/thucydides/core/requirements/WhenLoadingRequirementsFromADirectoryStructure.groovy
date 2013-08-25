@@ -109,5 +109,4 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
             capabilities.get(0).getChildren().get(0).getChildren().get(0).getType() == "feature"
             capabilities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getType() == "feature"
     }
-
 }
