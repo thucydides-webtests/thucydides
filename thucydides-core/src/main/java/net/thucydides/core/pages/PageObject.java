@@ -779,6 +779,10 @@ public abstract class PageObject {
         return element(xpathOrCssSelector);
     }
 
+    public List<WebElementFacade> findAll(String xpathOrCssSelector) {
+        return findAll(xpathOrCssSelector(xpathOrCssSelector));
+    }
+
     public static boolean isXPath(String xpathExpression) {
         XPathFactory factory = XPathFactory.newInstance();
         XPath xpath = factory.newXPath();

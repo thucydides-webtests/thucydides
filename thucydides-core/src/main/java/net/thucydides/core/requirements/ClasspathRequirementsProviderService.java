@@ -54,13 +54,20 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
                 providers.add((RequirementsTagProvider)tagProvider);
             }
         }
-        if ((providers.size() > 1) && (lastProviderIsDefault(providers))) {
-            providers.remove(providers.size() - 1);
-        }
+        removeDefaultProviderIfItIsNotFirstFrom(providers);
         return providers;
     }
 
-    private boolean lastProviderIsDefault(List<RequirementsTagProvider> requirementsTagProviders) {
-        return (requirementsTagProviders.get(requirementsTagProviders.size() - 1) instanceof FileSystemRequirementsTagProvider);
+    private void removeDefaultProviderIfItIsNotFirstFrom(List<RequirementsTagProvider> providers) {
+        int defaultProviderPos = -1;
+        for(int i = 0; i < providers.size(); i++) {
+            if (providers.get(i) instanceof  FileSystemRequirementsTagProvider) {
+                defaultProviderPos = i;
+                break;
+            }
+        }
+        if (defaultProviderPos > 0) {
+            providers.remove(defaultProviderPos);
+        }
     }
 }
