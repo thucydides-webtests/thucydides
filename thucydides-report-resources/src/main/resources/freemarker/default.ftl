@@ -149,8 +149,8 @@
 <div>
     <table class="step-table">
         <tr class="step-titles">
-            <th width="40">&nbsp;</th>
-            <th width="%" class="greentext">Steps</th>
+            <th width="40"><#if (testOutcome.manual)><img src="images/spade.png" title="Manual test"/></#if>&nbsp;</th>
+            <th width="%" class="greentext"><#if (testOutcome.manual)>Manual </#if>Steps</th>
         <#if testOutcome.hasScreenshots()>
             <th width="120" class="greentext">Screenshot</th>
         </#if>
