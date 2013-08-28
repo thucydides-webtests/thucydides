@@ -325,7 +325,7 @@
                                 <table id="test-results-table">
                                     <thead>
                                     <tr>
-                                        <th width="40" class="test-results-heading">&nbsp;</th>
+                                        <th width="50" class="test-results-heading">&nbsp;</th>
                                         <th width="%" class="test-results-heading">Tests</th>
                                         <th width="70" class="test-results-heading">Steps</th>
 
@@ -378,7 +378,7 @@
 
                                     <tr class="test-${testOutcome.result}">
                                         <td><img src="images/${testrun_outcome_icon}" title="${testOutcome.result}" class="summary-icon"/>
-                                            <#if (testOutcome.manual)><img src="images/spade.png" title="Manual test"/></#if>
+                                            <#if (testOutcome.manual)><img src="images/worker.png" title="Manual test"/></#if>
                                             <span style="display:none">${testOutcome.result}</span></td>
                                         <td class="${testOutcome.result}-text"><a href="${relativeLink}${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a></td>
 

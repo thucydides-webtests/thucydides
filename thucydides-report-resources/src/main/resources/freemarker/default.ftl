@@ -48,7 +48,15 @@
     </#list>
         <li><a href="history.html">History</a></li>
     </ul>
-    <span class="date-and-time">Tests run ${timestamp}</span>
+    <#if (testOutcome.manual)>
+        <#if (testOutcome.startTimeNotDefined)>
+            <span class="date-and-time">Manual test not yet executed</span>
+        <#else>
+            <span class="date-and-time">Manual test last executed ${timestamp}</span>
+        </#if>
+    <#else>
+        <span class="date-and-time">Test run ${timestamp}</span>
+    </#if>
     <br style="clear:left"/>
 </div>
 
@@ -149,7 +157,7 @@
 <div>
     <table class="step-table">
         <tr class="step-titles">
-            <th width="40"><#if (testOutcome.manual)><img src="images/spade.png" title="Manual test"/></#if>&nbsp;</th>
+            <th width="40"><#if (testOutcome.manual)><img src="images/worker.png" title="Manual test"/></#if>&nbsp;</th>
             <th width="%" class="greentext"><#if (testOutcome.manual)>Manual </#if>Steps</th>
         <#if testOutcome.hasScreenshots()>
             <th width="120" class="greentext">Screenshot</th>

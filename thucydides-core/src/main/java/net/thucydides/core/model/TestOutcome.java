@@ -988,8 +988,16 @@ public class TestOutcome {
         this.startTime = startTime.getMillis();
     }
 
+    public void clearStartTime() {
+        this.startTime = 0;
+    }
+
     public boolean isManual() {
         return manualTest;
+    }
+
+    public boolean isStartTimeNotDefined() {
+        return this.startTime == 0;
     }
 
     private SystemClock getSystemClock() {

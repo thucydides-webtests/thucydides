@@ -18,4 +18,13 @@ class WhenRepresentingManualTestOutcomes extends Specification {
             outcome.isManual()
     }
 
+    def "a manual test does not need to have a start time"() {
+        given:
+            def outcome = TestOutcome.forTestInStory("someTest", Story.withId("1","story")).asManualTest();
+        when:
+            outcome.clearStartTime()
+        then:
+            outcome.startTimeNotDefined
+    }
+
 }
