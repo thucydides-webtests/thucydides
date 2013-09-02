@@ -33,11 +33,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.extract;
@@ -99,10 +101,11 @@ public class TestOutcome {
      */
     private Story userStory;
 
-    private String storedTitle;
+    private String title;
+    private String description;
 
-    private Set<String> issues;
-    private Set<String> additionalIssues;
+    private List<String> issues;
+    private List<String> additionalIssues;
     private Set<TestTag> tags;
 
     private long duration;
@@ -169,7 +172,7 @@ public class TestOutcome {
         startTime = now();
         this.methodName = methodName;
         this.testCase = testCase;
-        this.additionalIssues = new HashSet<String>();
+        this.additionalIssues = Lists.newArrayList();
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
         this.qualifier = Optional.absent();
@@ -219,7 +222,7 @@ public class TestOutcome {
         startTime = now();
         this.methodName = methodName;
         this.testCase = testCase;
-        this.additionalIssues = new HashSet<String>();
+        this.additionalIssues = Lists.newArrayList();
         this.userStory = userStory;
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
@@ -228,11 +231,12 @@ public class TestOutcome {
     protected TestOutcome(final long startTime,
                           final long duration,
                           final String title,
+                          final String description,
                           final String methodName,
                           final Class<?> testCase,
                           final List<TestStep> testSteps,
-                          final Set<String> issues,
-                          final Set<String> additionalIssues,
+                          final List<String> issues,
+                          final List<String> additionalIssues,
                           final Set<TestTag> tags,
                           final Story userStory,
                           final Throwable testFailureCause,
@@ -242,11 +246,12 @@ public class TestOutcome {
                           final boolean manualTest) {
         this.startTime = startTime;
         this.duration = duration;
-        this.storedTitle = title;
+        this.title = title;
+        this.description = description;
         this.methodName = methodName;
         this.testCase = testCase;
         this.testSteps.addAll(testSteps);
-        this.issues = issues;
+        this.issues = removeDuplicates(issues);
         this.additionalIssues = additionalIssues;
         this.tags = tags;
         this.userStory = userStory;
@@ -257,6 +262,18 @@ public class TestOutcome {
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
         this.manualTest = manualTest;
+    }
+
+    private List<String> removeDuplicates(List<String> issues) {
+        List<String> issuesWithNoDuplicates = Lists.newArrayList();
+        if (issues != null) {
+            for(String issue : issues) {
+                if (!issuesWithNoDuplicates.contains(issue)) {
+                    issuesWithNoDuplicates.add(issue);
+                }
+            }
+        }
+        return issuesWithNoDuplicates;
     }
 
     /**
@@ -271,32 +288,52 @@ public class TestOutcome {
 
     public TestOutcome withQualifier(String qualifier) {
         if (qualifier != null) {
+            return new TestOutcome(this.startTime,
+                    this.duration,
+                    this.title,
+                    this.description,
+                    this.methodName,
+                    this.testCase,
+                    this.testSteps,
+                    this.issues,
+                    this.additionalIssues,
+                    this.tags,
+                    this.userStory,
+                    this.testFailureCause,
+                    this.annotatedResult,
+                    this.dataTable,
+                    Optional.fromNullable(qualifier),
+                    this.manualTest);
+        } else {
+            return this;
+        }
+    }
+
+    public TestOutcome withIssues(List<String> issues) {
         return new TestOutcome(this.startTime,
                 this.duration,
-                this.storedTitle,
+                this.title,
+                this.description,
                 this.methodName,
                 this.testCase,
                 this.testSteps,
-                this.issues,
+                ImmutableList.copyOf(issues),
                 this.additionalIssues,
                 this.tags,
                 this.userStory,
                 this.testFailureCause,
                 this.annotatedResult,
                 this.dataTable,
-                Optional.fromNullable(qualifier),
+                this.qualifier,
                 this.manualTest);
-        } else {
-            return this;
-        }
     }
-
 
     public TestOutcome withMethodName(String methodName) {
         if (methodName != null) {
             return new TestOutcome(this.startTime,
                     this.duration,
-                    this.storedTitle,
+                    this.title,
+                    this.description,
                     methodName,
                     this.testCase,
                     this.getTestSteps(),
@@ -352,23 +389,38 @@ public class TestOutcome {
      * @return the human-readable name for this test.
      */
     public String getTitle() {
-        if (storedTitle == null) {
+        if (title == null) {
             return obtainTitleFromAnnotationOrMethodName();
         } else {
-            return storedTitle;
+            return title;
         }
     }
 
-    public Optional<String> getDescription() {
-        if (storedTitle != null) {
-            return getDescriptionFrom(storedTitle);
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Tests may have a description.
+     * This can be defined with the scenarios (e.g. in the .feature files for Cucumber)
+     * or defined elsewhere, such as in JIRA for manual tests.
+     */
+    public Optional<String> getDescriptionText() {
+        if (getDescription() != null) {
+            return Optional.of(description);
+        } else if (title != null) {
+            return getDescriptionFrom(title);
         } else {
             return Optional.absent();
         }
     }
 
     private Optional<String> getDescriptionFrom(String storedTitle) {
-        List<String> multilineTitle = Lists.newArrayList(Splitter.on("\n\r").split(storedTitle));
+        List<String> multilineTitle = Lists.newArrayList(Splitter.on(Pattern.compile("\r?\n")).split(storedTitle));
         if (multilineTitle.size() > 1) {
             multilineTitle.remove(0);
             return Optional.of(Joiner.on(NEW_LINE).join(multilineTitle));
@@ -596,7 +648,7 @@ public class TestOutcome {
     }
 
     public void setTitle(final String title) {
-        this.storedTitle = title;
+        this.title = title;
     }
 
     private List<TestResult> getCurrentTestResults() {
@@ -688,26 +740,26 @@ public class TestOutcome {
         }
     }
 
-    private Set<String> issues() {
+    private List<String> issues() {
         if (!thereAre(issues)) {
-            issues = readIssues();
+            issues = removeDuplicates(readIssues());
         }
         return issues;
     }
 
-    public Set<String> getIssues() {
-        Set<String> allIssues = new HashSet<String>(issues());
+    public List<String> getIssues() {
+        List<String> allIssues = new ArrayList(issues());
         if (thereAre(additionalIssues)) {
             allIssues.addAll(additionalIssues);
         }
-        return allIssues;
+        return ImmutableList.copyOf(allIssues);
     }
 
     public Class<?> getTestCase() {
         return testCase;
     }
 
-    private boolean thereAre(Set<String> anyIssues) {
+    private boolean thereAre(Collection<String> anyIssues) {
         return ((anyIssues != null) && (!anyIssues.isEmpty()));
     }
 
@@ -715,8 +767,8 @@ public class TestOutcome {
         additionalIssues.addAll(issues);
     }
 
-    private Set<String> readIssues() {
-        Set<String> taggedIssues = new HashSet<String>();
+    private List<String> readIssues() {
+        List<String> taggedIssues = Lists.newArrayList();
         if (testCase != null) {
             addMethodLevelIssuesTo(taggedIssues);
             addClassLevelIssuesTo(taggedIssues);
@@ -725,7 +777,7 @@ public class TestOutcome {
         return taggedIssues;
     }
 
-    private void addClassLevelIssuesTo(Set<String> issues) {
+    private void addClassLevelIssuesTo(List<String> issues) {
         String classIssue = TestAnnotations.forClass(testCase).getAnnotatedIssueForTestCase(testCase);
         if (classIssue != null) {
             issues.add(classIssue);
@@ -736,7 +788,7 @@ public class TestOutcome {
         }
     }
 
-    private void addMethodLevelIssuesTo(Set<String> issues) {
+    private void addMethodLevelIssuesTo(List<String> issues) {
         Optional<String> issue = TestAnnotations.forClass(testCase).getAnnotatedIssueForMethod(getMethodName());
         if (issue.isPresent()) {
             issues.add(issue.get());
@@ -745,7 +797,7 @@ public class TestOutcome {
         issues.addAll(Arrays.asList(multipleIssues));
     }
 
-    private void addTitleLevelIssuesTo(Set<String> issues) {
+    private void addTitleLevelIssuesTo(List<String> issues) {
         List<String> titleIssues = Formatter.issuesIn(getTitle());
         if (!titleIssues.isEmpty()) {
             issues.addAll(titleIssues);
@@ -753,7 +805,7 @@ public class TestOutcome {
     }
 
     public String getFormattedIssues() {
-        Set<String> issues = getIssues();
+        List<String> issues = getIssues();
         if (!issues.isEmpty()) {
             List<String> orderedIssues = sort(getIssues(), on(String.class));
             return "(" + getFormatter().addLinks(StringUtils.join(orderedIssues, ", ")) + ")";
@@ -763,7 +815,9 @@ public class TestOutcome {
     }
 
     public void isRelatedToIssue(String issue) {
-        issues().add(issue);
+        if (!issues().contains(issue)) {
+            issues().add(issue);
+        }
     }
 
     public void addFailingExternalStep(Throwable testFailureCause) {

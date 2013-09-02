@@ -39,6 +39,7 @@ public class TestOutcomeConverter implements Converter {
 
     private static final String TITLE_FIELD = "title";
     private static final String NAME_FIELD = "name";
+    private static final String DESCRIPTION_FIELD = "description";
     private static final String ID_FIELD = "id";
     private static final String PATH_FIELD = "path";
     private static final String STEPS_FIELD = "steps";
@@ -104,6 +105,9 @@ public class TestOutcomeConverter implements Converter {
 
         writer.addAttribute(TITLE_FIELD, escape(titleFrom(testOutcome)));
         writer.addAttribute(NAME_FIELD, nameFrom(testOutcome));
+        if (testOutcome.getDescription() != null) {
+            writer.addAttribute(DESCRIPTION_FIELD, escape(descriptionFrom(testOutcome)));
+        }
         if (testOutcome.getQualifier() != null && testOutcome.getQualifier().isPresent()) {
             writer.addAttribute(QUALIFIER_FIELD, escape(testOutcome.getQualifier().get()));
         }
@@ -159,6 +163,9 @@ public class TestOutcomeConverter implements Converter {
         return testOutcome.getTitle();
     }
 
+    private String descriptionFrom(final TestOutcome testOutcome) {
+        return testOutcome.getDescription();
+    }
 
     private String nameFrom(final TestOutcome testOutcome) {
         if (testOutcome.getMethodName() != null) {
@@ -215,7 +222,7 @@ public class TestOutcomeConverter implements Converter {
     }
 
 
-    private void addIssuesTo(final HierarchicalStreamWriter writer, final Set<String> issues) {
+    private void addIssuesTo(final HierarchicalStreamWriter writer, final List<String> issues) {
         if (!issues.isEmpty()) {
             writer.startNode(ISSUES);
             for (String issue : issues) {
@@ -353,6 +360,11 @@ public class TestOutcomeConverter implements Converter {
         String methodName = reader.getAttribute(NAME_FIELD);
         TestOutcome testOutcome = new TestOutcome(methodName);
         testOutcome.setTitle(unescape(reader.getAttribute(TITLE_FIELD)));
+
+        if (reader.getAttribute(DESCRIPTION_FIELD) != null) {
+            testOutcome.setDescription(unescape(reader.getAttribute(DESCRIPTION_FIELD)));
+        }
+
         TestResult savedTestResult = TestResult.valueOf(reader.getAttribute(RESULT_FIELD));
         if (reader.getAttribute(QUALIFIER_FIELD) != null) {
             testOutcome = testOutcome.withQualifier(unescape(reader.getAttribute(QUALIFIER_FIELD)));

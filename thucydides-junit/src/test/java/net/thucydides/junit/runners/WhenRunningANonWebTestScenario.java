@@ -45,8 +45,6 @@ import static org.mockito.Mockito.verify;
 
 public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
 
-    EnvironmentVariables environmentVariables;
-
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -304,9 +302,6 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
 
         List<String> generatedXMLReports = Arrays.asList(outputDirectory.list(new XMLFileFilter()));
         assertThat(generatedXMLReports.size(), is(3));
-        assertThat(generatedXMLReports, hasItems(digest("sample_passing_non_web_scenario_edge_case_1.xml"),
-                digest("sample_passing_non_web_scenario_edge_case_2.xml"),
-                digest("sample_passing_non_web_scenario_happy_day_scenario.xml")));
 
 
     }
@@ -322,9 +317,6 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
 
         List<String> generatedHtmlReports = Arrays.asList(outputDirectory.list(new HTMLFileFilter()));
         assertThat(generatedHtmlReports.size(), is(3));
-        assertThat(generatedHtmlReports, hasItems(digest("sample_passing_non_web_scenario_edge_case_1.html"),
-                digest("sample_passing_non_web_scenario_edge_case_2.html"),
-                digest("sample_passing_non_web_scenario_happy_day_scenario.html")));
     }
 
     private class XMLFileFilter implements FilenameFilter {

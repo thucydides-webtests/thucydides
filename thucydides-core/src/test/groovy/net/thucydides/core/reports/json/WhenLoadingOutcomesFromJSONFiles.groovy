@@ -60,6 +60,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "test-case": {
 			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
 			  },
+              "description":"Some description",
 			  "result": "SUCCESS",
 			  "steps": "1",
 			  "successful": "1",
@@ -98,6 +99,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 		and:
             testOutcome.title == "Should do this"
             testOutcome.methodName == "should_do_this"
+            testOutcome.descriptionText.get() == "Some description"
             testOutcome.startTime == FIRST_OF_JANUARY
     }
 
@@ -614,7 +616,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 		then:
         	testOutcome.title == "Should do this"
         and:
-            testOutcome.issues == ["#456","#789","#123"] as Set
+            testOutcome.issues == ["#456","#789","#123"]
     }
     
     def "should load feature details from json file"() {

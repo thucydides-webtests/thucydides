@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import java.util.List;
 
@@ -24,8 +25,8 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     private static WebDriver driver;
 
     @BeforeClass
-    public static void openFirefox() {
-        driver = new FirefoxDriver();
+    public static void openDriver() {
+        driver = new PhantomJSDriver();
         page = new StaticSitePage(driver, 1000);
         page.open();
     }
@@ -37,28 +38,34 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
 
     @Test
     public void should_check_and_close_javascript_alerts() {
-        StaticSitePage page = getFirefoxPage();
+        WebDriver driver = new FirefoxDriver();
+        StaticSitePage page = new StaticSitePage(driver, 1000);
+        page.open();
 
 		page.openAlert();
         page.getAlert().accept();
 
         assertThat(page.getTitle(), is("Thucydides Test Site"));
-
+        driver.close();
     }
 
     @Test
     public void should_inject_jquery_into_the_page() {
-        StaticSitePage page = getFirefoxPage();
+        WebDriver driver = new FirefoxDriver();
+        StaticSitePage page = new StaticSitePage(driver, 1000);
+        page.open();
 
         page.evaluateJavascript("$('#firstname').focus();");
 
         Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
         assertThat(jqueryInjected, is(true));
+
+        driver.close();
     }
 
     @Test
     public void should_be_able_to_use_the_javascript_executor_with_parameters() {
-        StaticSitePage page = getFirefoxPage();
+        StaticSitePage page = getPage();
 
         page.evaluateJavascript("$('#firstname').focus();", "#firstname");
 
@@ -67,7 +74,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
 
     @Test
     public void should_be_able_to_set_focus_directly() {
-        StaticSitePage page = getFirefoxPage();
+        StaticSitePage page = getPage();
 
         JavascriptExecutorFacade js = new JavascriptExecutorFacade(page.getDriver());
         js.executeScript("$('#firstname').focus();");
@@ -78,7 +85,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     @Test
     public void should_support_jquery_queries_in_the_page() {
 
-        StaticSitePage page = getFirefoxPage();
+        StaticSitePage page = getPage();
         page.evaluateJavascript("$('#firstname').focus();");
 
         assertThat(page.element(page.firstName).hasFocus(), is(true));
@@ -91,7 +98,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     @Test
     public void should_support_jquery_queries_that_return_values_in_the_page() {
 
-        StaticSitePage page = getFirefoxPage();
+        StaticSitePage page = getPage();
         Object result = page.evaluateJavascript("return $('#country').val();");
 
         assertThat(result.toString(), is("Australia"));
@@ -99,7 +106,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
 
     @Test
     public void should_be_able_to_find_an_element_using_a_jquery_expression() {
-        StaticSitePage page = getFirefoxPage();
+        StaticSitePage page = getPage();
 
         WebElement link = page.getDriver().findElement(ByJQuery.selector("a[title='Click Me']"));
         assertThat(link.isDisplayed(), is(true));
@@ -107,33 +114,33 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
 
     @Test
     public void should_be_able_to_find_multiple_elements_using_a_jquery_expression() {
-        StaticSitePage page = getFirefoxPage();
+        StaticSitePage page = getPage();
         List<WebElement> links = page.getDriver().findElements(ByJQuery.selector("h2"));
         assertThat(links.size(), is(2));
     }
 
     @Test(expected = WebDriverException.class)
     public void should_fail_gracefully_if_no_jquery_element_is_found() {
-        StaticSitePage page = getFirefoxPage();
+        StaticSitePage page = getPage();
         page.getDriver().findElement(ByJQuery.selector("a[title='Does Not Exist']"));
     }
 
     @Test(expected = WebDriverException.class)
     public void should_fail_gracefully_if_jquery_selector_is_invalid() {
-        StaticSitePage page = getFirefoxPage();
+        StaticSitePage page = getPage();
         page.getDriver().findElement(ByJQuery.selector("a[title='Does Not Exist'"));
     }
 
     @Test
     public void should_evaluate_javascript_within_browser() {
-        StaticSitePage page = getFirefoxPage();
+        StaticSitePage page = getPage();
         String result = (String) page.evaluateJavascript("return document.title");
         assertThat(result, is("Thucydides Test Site"));
     }
 
     @Test
     public void should_execute_javascript_within_browser() {
-        StaticSitePage page = getFirefoxPage();
+        StaticSitePage page = getPage();
         page.open();
         assertThat(page.element(page.firstName).hasFocus(), is(false));
         page.evaluateJavascript("document.getElementById('firstname').focus()");
@@ -148,7 +155,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
         assertThat(jQuerySelector.toString(), containsString("a[title='Click Me']"));
     }
 
-    public StaticSitePage getFirefoxPage() {
+    public StaticSitePage getPage() {
         return page;
     }
 }

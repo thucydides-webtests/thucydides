@@ -191,7 +191,7 @@ class WhenRunningTestScenarios extends Specification {
         SamplePassingScenarioWithIgnoredTests   | SUCCESS | IGNORED | IGNORED
         SamplePassingScenarioWithEmptyTests     | SUCCESS | PENDING | PENDING
         MockOpenStaticDemoPageWithFailureSample | FAILURE | SUCCESS | SUCCESS
-        MockOpenPageWithWebdriverErrorSample    | ERROR | SUCCESS | SUCCESS
+        MockOpenPageWithWebdriverErrorSample    | ERROR   | SUCCESS | SUCCESS
     }
 
     def "failing tests with no steps should still record the error"() {
@@ -427,9 +427,6 @@ class WhenRunningTestScenarios extends Specification {
         def xmlReports = temporaryDirectory.list().findAll {it.endsWith(".xml")}
         then:
         xmlReports.size() == 3
-        xmlReports.contains digest("sample_passing_scenario_edge_case_1.xml")
-        xmlReports.contains digest("sample_passing_scenario_edge_case_2.xml")
-        xmlReports.contains digest("sample_passing_scenario_happy_day_scenario.xml")
     }
 
     def "tests for multiple stories should be written to the output directory"() {
@@ -439,12 +436,6 @@ class WhenRunningTestScenarios extends Specification {
         def xmlReports = temporaryDirectory.list().findAll {it.endsWith(".xml")}
         then:
         xmlReports.size() == 6
-        xmlReports.contains digest("sample_passing_scenario_using_html_unit_edge_case_1.xml")
-        xmlReports.contains digest("sample_passing_scenario_using_html_unit_edge_case_2.xml")
-        xmlReports.contains digest("sample_passing_scenario_using_html_unit_happy_day_scenario.xml")
-        xmlReports.contains digest("sample_failing_scenario_using_html_unit_edge_case_1.xml")
-        xmlReports.contains digest("sample_failing_scenario_using_html_unit_edge_case_2.xml")
-        xmlReports.contains digest("sample_failing_scenario_using_html_unit_happy_day_scenario.xml")
     }
 
     def "HTML test results should be written to the output directory"() {
@@ -453,9 +444,6 @@ class WhenRunningTestScenarios extends Specification {
         def xmlReports = temporaryDirectory.list().findAll {it.endsWith(".html")}
         then:
         xmlReports.size() == 3
-        xmlReports.contains digest("sample_passing_scenario_using_html_unit_edge_case_1.html")
-        xmlReports.contains digest("sample_passing_scenario_using_html_unit_edge_case_2.html")
-        xmlReports.contains digest("sample_passing_scenario_using_html_unit_happy_day_scenario.html")
     }
 
 

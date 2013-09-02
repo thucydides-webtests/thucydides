@@ -117,6 +117,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         given:
             def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
             testOutcome.startTime = FIRST_OF_JANUARY
+            testOutcome.description = "Some description"
             testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").
                                                    startingAt(FIRST_OF_JANUARY))
         and:
@@ -127,6 +128,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "test-case": {
                     "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
                   },
+                  "description":"Some description",
                   "result": "SUCCESS",
                   "steps": "1",
                   "successful": "1",
@@ -254,9 +256,9 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [
-                    "#456",
                     "#789",
-                    "#123"
+                    "#123",
+                    "#456"
                   ],
                   "tags": [
                     {
@@ -818,7 +820,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
             reporter.setQualifier("qualifier");
             def report = reporter.generateReportFor(testOutcome, allTestOutcomes);
         then:
-            report.name == Digest.ofTextValue("a_user_story_a_simple_test_case_qualifier") + ".json";
+            report.name == Digest.ofTextValue("net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON/a_user_story_a_simple_test_case_qualifier") + ".json";
     }
 
     def "should include error message for failing test"() {

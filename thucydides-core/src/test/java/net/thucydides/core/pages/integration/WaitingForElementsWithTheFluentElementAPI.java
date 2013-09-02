@@ -12,6 +12,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -29,7 +30,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
     @BeforeClass
     public static void openBrowsers() {
-        firefoxDriver = new FirefoxDriver();
+        firefoxDriver = new PhantomJSDriver();// FirefoxDriver();
         chromeDriver = new ChromeDriver();
 
         firefoxPage = new StaticSitePage(firefoxDriver, 1000);
@@ -141,7 +142,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
     @Test
     public void should_let_you_remove_the_focus_from_the_current_active_field() {
-        StaticSitePage page = getChromePage();
+        StaticSitePage page = getFirefoxPage();
 
         page.element(page.firstName).click();
 
@@ -151,20 +152,6 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
         page.element(page.focusmessage).shouldContainText("focus left firstname");
 
     }
-
-    @Ignore("This doesn't work in Firefox on Linux")
-    @Test
-    public void should_let_you_remove_the_focus_from_the_current_active_field_in_firefox() {
-
-       StaticSitePage page = getFirefoxPage();
-        page.element(page.firstName).click();
-
-        assertThat(page.element(page.focusmessage).getText(), is(""));
-        page.blurActiveElement();
-        page.waitForTextToAppear("focus left firstname");
-        page.element(page.focusmessage).shouldContainText("focus left firstname");
-    }
-
 
     @Test
     public void should_wait_for_text_to_dissapear() {

@@ -40,19 +40,19 @@ public class WhenNamingTheReports {
     @Test
     public void the_report_filename_should_be_based_on_the_test_case_name() {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-        assertThat(testOutcome.getReportName(), is(Digest.ofTextValue("a_user_story_a_simple_test_case")));
+        assertThat(testOutcome.getReportName(), is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_a_simple_test_case")));
     }
 
     @Test
     public void the_html_report_filename_should_be_based_on_the_test_case_name() {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-        assertThat(testOutcome.getHtmlReport(), is(Digest.ofTextValue("a_user_story_a_simple_test_case") + ".html"));
+        assertThat(testOutcome.getHtmlReport(), is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_a_simple_test_case") + ".html"));
     }
 
     @Test
     public void the_report_screenshot_filename_should_be_based_on_the_test_case_name() {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
-        assertThat(testOutcome.getScreenshotReportName(), is(Digest.ofTextValue("a_user_story_a_simple_test_case") + "_screenshots"));
+        assertThat(testOutcome.getScreenshotReportName(), is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_a_simple_test_case") + "_screenshots"));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class WhenNamingTheReports {
         TestOutcome testOutcome = TestOutcome.forTestInStory("A simple test case", net.thucydides.core.model.Story.from(AUserStory.class));
         String reportName = testOutcome.getReportName(XML);
         
-        assertThat(reportName, is(Digest.ofTextValue("a_user_story_a_simple_test_case") + ".xml"));
+        assertThat(reportName, is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_a_simple_test_case") + ".xml"));
     }
 
     @Test
@@ -70,7 +70,7 @@ public class WhenNamingTheReports {
         TestOutcome testOutcome = TestOutcome.forTestInStory("A simple test case", net.thucydides.core.model.Story.from(AUserStory.class));
         String reportName = testOutcome.getSimpleReportName(XML);
 
-        assertThat(reportName, is(Digest.ofTextValue("a_user_story_a_simple_test_case") + ".xml"));
+        assertThat(reportName, is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_a_simple_test_case") + ".xml"));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class WhenNamingTheReports {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
         String reportName = testOutcome.getReportName(XML);
 
-        assertThat(reportName, is(Digest.ofTextValue("a_user_story_a_simple_test_case") + ".xml"));
+        assertThat(reportName, is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_a_simple_test_case") + ".xml"));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class WhenNamingTheReports {
 
         String reportName = testOutcome.getReportName(HTML);
         
-        assertThat(reportName, is(Digest.ofTextValue("a_user_story_should_do_this") + ".html"));
+        assertThat(reportName, is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_should_do_this") + ".html"));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class WhenNamingTheReports {
 
         String reportName = testOutcome.getReportName(HTML);
 
-        assertThat(reportName, is(Digest.ofTextValue("a_user_story_should_do_this_qualifier") + ".html"));
+        assertThat(reportName, is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_should_do_this_qualifier") + ".html"));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class WhenNamingTheReports {
 
         String reportName = testOutcome.getReportName(HTML);
 
-        assertThat(reportName, is(Digest.ofTextValue("a_user_story_should_do_this") + ".html"));
+        assertThat(reportName, is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_should_do_this") + ".html"));
     }
 
     @Test
@@ -126,7 +126,7 @@ public class WhenNamingTheReports {
 
         String reportName = testOutcome.getReportName(HTML);
 
-        assertThat(reportName, is(Digest.ofTextValue("a_user_story_should_do_this") + ".html"));
+        assertThat(reportName, is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_should_do_this") + ".html"));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class WhenNamingTheReports {
 
         String reportName = testOutcome.getReportName(XML);
 
-        assertThat(reportName, is(Digest.ofTextValue("a_user_story_should_do_this_qualifier") + ".xml"));
+        assertThat(reportName, is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_should_do_this_qualifier") + ".xml"));
     }
 
     @Test

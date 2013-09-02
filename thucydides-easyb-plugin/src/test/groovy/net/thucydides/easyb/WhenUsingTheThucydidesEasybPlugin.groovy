@@ -163,7 +163,7 @@ public class WhenUsingTheThucydidesEasybPlugin {
 
         runStories(plugin, binding);
 
-        WebDriver driver = (WebDriver) binding.getVariable("firefoxDriver");
+        WebDriver driver = (WebDriver) binding.getVariable("driver");
 
         assert driver != null
     }

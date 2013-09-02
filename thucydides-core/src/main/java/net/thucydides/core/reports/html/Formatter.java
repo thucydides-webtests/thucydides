@@ -137,11 +137,17 @@ public class Formatter {
 
     public String renderDescription(final String text) {
         String format = environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_NARRATIVE_FORMAT,"");
-        if (format.equalsIgnoreCase(ASCIIDOC)) {
+        if (isRenderedHtml(text)) {
+            return text;
+        } else if (format.equalsIgnoreCase(ASCIIDOC)) {
             return renderAsciidoc(text);
         } else {
             return addLineBreaks(text);
         }
+    }
+
+    private boolean isRenderedHtml(String text) {
+        return text.startsWith("<");
     }
 
     public String addLineBreaks(final String text) {

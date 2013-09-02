@@ -65,10 +65,10 @@ public class WhenTakingLargeScreenshots {
     @Test
     public void should_take_screenshot_with_specified_dimensions() throws Exception {
 
-        environmentVariables.setProperty("thucydides.browser.width", "800");
+        environmentVariables.setProperty("thucydides.browser.width", "640");
         environmentVariables.setProperty("thucydides.browser.height", "400");
 
-        driver = testSite.open();
+        driver = testSite.open("phantomjs");
 
         ScreenshotProcessor screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables);
         Photographer photographer = new Photographer(driver, screenshotDirectory,screenshotProcessor);
@@ -78,19 +78,19 @@ public class WhenTakingLargeScreenshots {
 
         ResizableImage image = ResizableImage.loadFrom(screenshotFile);
 
-        assertThat(image.getWitdh(), is(greaterThan(700))); // In Windows the actual dimensions are slightly less
+        assertThat(image.getWitdh(), is(greaterThan(350))); // In Windows the actual dimensions may be are slightly less
     }
 
 
     @Test
     public void should_resize_screenshot_if_requested() throws Exception {
 
-        environmentVariables.setProperty("thucydides.browser.width", "1000");
-        environmentVariables.setProperty("thucydides.browser.height", "800");
+        environmentVariables.setProperty("thucydides.browser.width", "640");
+        environmentVariables.setProperty("thucydides.browser.height", "480");
 
-        environmentVariables.setProperty("thucydides.resized.image.width", "600");
+        environmentVariables.setProperty("thucydides.resized.image.width", "300");
 
-        driver = testSite.open();
+        driver = testSite.open("phantomjs");
 
         ScreenshotProcessor screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables);
         Photographer photographer = new Photographer(driver, screenshotDirectory, screenshotProcessor);
@@ -100,7 +100,7 @@ public class WhenTakingLargeScreenshots {
 
         ResizableImage image = ResizableImage.loadFrom(screenshotFile);
 
-        assertThat(image.getWitdh(), is(600));
+        assertThat(image.getWitdh(), is(300));
     }
 
 

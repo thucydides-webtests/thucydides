@@ -1088,3 +1088,17 @@ table.coverage_data td {
     padding: 4px;
     border: thin solid #d3d3d3;
 }
+
+.confluenceTable {
+    margin: 4px;
+    padding: 4px;
+    border-collapse:collapse;
+}
+
+.confluenceTable th {
+    border: thin solid #d3d3d3;
+}
+
+.confluenceTable td {
+     border: thin solid #d3d3d3;
+}

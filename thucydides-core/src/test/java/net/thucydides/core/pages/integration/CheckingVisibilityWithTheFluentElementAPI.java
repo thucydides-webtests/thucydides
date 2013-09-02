@@ -301,7 +301,6 @@ public class CheckingVisibilityWithTheFluentElementAPI extends FluentElementAPIT
         assertThat(page.element(page.textField).getText(), is("text value"));
     }
 
-    @Ignore
     @Test
     public void should_execute_javascript_within_browser() {
         page.open();
