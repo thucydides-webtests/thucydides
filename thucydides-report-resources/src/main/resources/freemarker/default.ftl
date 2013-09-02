@@ -73,8 +73,7 @@
     <div class="titlebar">
         <div class="story-title">
             <table width="1005">
-                <td width="50"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25"
-                                    height="25"/>
+                <td width="50"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25" height="25"/>
                 </td>
             <#if (testOutcome.videoLink)??>
                 <td width="25"><a href="${relativeLink!}${testOutcome.videoLink}"><img class="story-outcome-icon" src="images/video.png" width="25" height="25" alt="Video"/></a></td>
@@ -96,7 +95,7 @@
                             <#else>
                                 <#assign issueNumber = "">
                             </#if>
-                            <h3>${parentType}: ${issueNumber} ${parentTitle}</h3>
+                            <h3>${parentType}: ${parentTitle} ${issueNumber}</h3>
                             <div class="requirementNarrativeTitle">
                             ${formatter.renderDescription(parentRequirement.get().narrativeText)}
                             </div>
@@ -128,6 +127,14 @@
 </#if>
 
 <div id="beforetable"></div>
+
+<#if (testOutcome.descriptionText.isPresent())>
+    <div class="story-title">
+        <div class="requirementNarrativeTitle">
+            ${formatter.renderDescription(testOutcome.descriptionText.get())}
+        </div>
+    </div>
+</#if>
 
 <#if (testOutcome.isDataDriven())>
 <h3>Examples:</h3>
