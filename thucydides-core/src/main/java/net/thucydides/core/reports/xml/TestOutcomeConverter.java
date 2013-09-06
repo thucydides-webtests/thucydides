@@ -439,7 +439,7 @@ public class TestOutcomeConverter implements Converter {
         if (feature == null) {
             story = Story.withIdAndPath(storyId, storyName,storyPath);
         } else {
-            story = Story.withId(storyId, storyName, feature.getId(), feature.getName());
+            story = Story.withIdAndPathAndFeature(storyId, storyName, storyPath, feature.getId(), feature.getName());
         }
         testOutcome.setUserStory(story);
     }

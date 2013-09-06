@@ -293,7 +293,7 @@ public class WhenReadingAnXMLReport {
     public void should_load_feature_details_from_xml_file() throws Exception {
         String storedReportXML =
             "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
-          + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story'>\n"
+          + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'>\n"
           + "    <feature id='myapp.myfeatures.SomeFeature' name='Some feature' />\n"
           + "  </user-story>"
           + "  <test-step result='SUCCESS'>\n"
@@ -310,6 +310,7 @@ public class WhenReadingAnXMLReport {
         ApplicationFeature expectedFeature = new ApplicationFeature("myapp.myfeatures.SomeFeature", "Some feature");
         assertThat(testOutcome.get().getFeature().getId(), is("myapp.myfeatures.SomeFeature"));
         assertThat(testOutcome.get().getFeature().getName(), is("Some feature"));
+        assertThat(testOutcome.get().getPath(), is("net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport"));
     }
 
     @Test
