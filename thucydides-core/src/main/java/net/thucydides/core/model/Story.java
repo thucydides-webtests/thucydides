@@ -5,11 +5,6 @@ import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.EqualsUtils;
 import net.thucydides.core.util.NameConverter;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static ch.lambdaj.Lambda.index;
-import static ch.lambdaj.Lambda.joinFrom;
 import static net.thucydides.core.model.ReportType.ROOT;
 
 /**
@@ -105,6 +100,12 @@ public class Story {
                                final String featureClassName, final String featureName) {
         return new Story(storyId, storyName, featureClassName, featureName, null);
     }
+
+
+  public static Story withIdAndPathAndFeature(final String storyId, final String storyName, String storyPath,
+                             final String featureClassName, final String featureName) {
+    return new Story(storyId, storyName, featureClassName, featureName, storyPath);
+  }
 
 
     @Override

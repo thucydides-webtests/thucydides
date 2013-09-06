@@ -4,7 +4,6 @@ import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Story;
 import net.thucydides.core.digest.Digest;
 import net.thucydides.core.model.TestOutcome;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 
 import static net.thucydides.core.model.ReportType.HTML;
