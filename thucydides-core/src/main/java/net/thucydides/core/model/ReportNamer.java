@@ -1,7 +1,6 @@
 package net.thucydides.core.model;
 
 import net.thucydides.core.digest.Digest;
-import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
