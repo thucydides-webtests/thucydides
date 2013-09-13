@@ -82,6 +82,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  },
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": 1374810594394,
@@ -132,6 +133,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  },
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": 1374810594394,
@@ -223,6 +225,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  },
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": 1374810594394,
@@ -281,6 +284,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": 1374811596702,
@@ -337,6 +341,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": 1373543479702,
@@ -392,6 +397,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": 1373544008557,
@@ -452,6 +458,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": 1373544217353,
@@ -505,6 +512,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": 1373543300323,
@@ -601,6 +609,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 		  ],
 		  "test-steps": [
 		    {
+		      "number": 1,
 		      "description": "step 1",
 		      "duration": 0,
 		      "startTime": 1373542631993,
@@ -661,6 +670,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": 1373572931641,
@@ -715,6 +725,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": 1373571216867,
@@ -772,12 +783,14 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "Group 1",
 			      "duration": 0,
 			      "startTime": 1373625031524,
 			      "screenshots": [],
 			      "children": [
 			        {
+			          "number": 2,
 			          "description": "step 1",
 			          "duration": 0,
 			          "startTime": 1373625031524,
@@ -786,6 +799,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			          "children": []
 			        },
 			        {
+			          "number": 3,
 			          "description": "step 2",
 			          "duration": 0,
 			          "startTime": 1373625031524,
@@ -794,6 +808,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			          "children": []
 			        },
 			        {
+			          "number": 4,
 			          "description": "step 3",
 			          "duration": 0,
 			          "startTime": 1373625031524,
@@ -802,12 +817,14 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			          "children": []
 			        },
 			        {
+			          "number": 5,
 			          "description": "Group 1.1",
 			          "duration": 0,
 			          "startTime": 1373625031524,
 			          "screenshots": [],
 			          "children": [
 			            {
+			              "number": 6,
 			              "description": "step 4",
 			              "duration": 0,
 			              "startTime": 1373625031530,
@@ -816,6 +833,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			              "children": []
 			            },
 			            {
+			              "number": 7,
 			              "description": "step 5",
 			              "duration": 0,
 			              "startTime": 1373625031530,
@@ -859,7 +877,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "pending": "0",
 			  "duration": "0",
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
-			  "user-story": {			    
+			  "user-story": {
 			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
@@ -873,12 +891,14 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "Group 1",
 			      "duration": 0,
 			      "startTime": 1373624139680,
 			      "screenshots": [],
 			      "children": [
 			        {
+			          "number": 2,
 			          "description": "step 1",
 			          "duration": 0,
 			          "startTime": 1373624139681,
@@ -887,6 +907,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			          "children": []
 			        },
 			        {
+			          "number": 3,
 			          "description": "step 2",
 			          "duration": 0,
 			          "startTime": 1373624139681,
@@ -895,6 +916,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			          "children": []
 			        },
 			        {
+			          "number": 4,
 			          "description": "step 3",
 			          "duration": 0,
 			          "startTime": 1373624139681,
@@ -948,6 +970,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
               ],
               "test-steps": [
                 {
+                  "number": 1,
                   "description": "step 1",
                   "duration": 0,
                   "startTime": 1373601456591,
@@ -956,6 +979,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
                   "children": []
                 },
                 {
+                  "number": 2,
                   "description": "step 2",
                   "duration": 0,
                   "startTime": 1373601456592,
@@ -1008,6 +1032,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": 1373601008887,
@@ -1044,31 +1069,37 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
     },
     "test-steps": [
         {
+            "number": 1,
             "result": "SUCCESS",
             "description": "The customer navigates from metro jobs link.",
             "screenshot": "the_customer_navigates_from_metro_jobs_link1.png"
         },
         {
+           "number": 2,
             "result": "SUCCESS",
             "description": "The customer navigates to the metro masthead site.",
             "screenshot": "the_customer_navigates_to_the_metro_masthead_site2.png"
         },
         {
+            "number": 3,
             "result": "SUCCESS",
             "description": "The customer navigates to classified place ad page.",
             "screenshot": "the_customer_navigates_to_classified_place_ad_page3.png"
         },
         {
+            "number": 4,
             "result": "SUCCESS",
             "description": "The customer chooses the jobs section.",
             "screenshot": "the_customer_chooses_the_jobs_section4.png"
         },
         {
+            "number": 5,
             "result": "SUCCESS",
             "description": "The customer selects a run option.",
             "screenshot": "the_customer_selects_a_run_option5.png"
         },
         {
+            "number": 6,
             "result": "PENDING",
             "description": "The customer provides email address for registration."
         }

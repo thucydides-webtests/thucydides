@@ -33,6 +33,7 @@ import static net.thucydides.core.model.TestResult.SUCCESS;
  */
 public class TestStep {
 
+    private int number;
     private String description;    
     private long duration;
     private long startTime;
@@ -44,6 +45,10 @@ public class TestStep {
 
     public TestStep() {
         startTime = now().getMillis();
+    }
+
+    protected void setNumber(int number) {
+        this.number = number;
     }
 
     private SystemClock getSystemClock() {
@@ -64,6 +69,21 @@ public class TestStep {
 
     protected List<TestStep> children() {
         return children;
+    }
+
+    public int renumberFrom(int count) {
+        setNumber(count++);
+        if (hasChildren()) {
+            count = renumberChildrenFrom(count);
+        }
+        return count;
+    }
+
+    private int renumberChildrenFrom(int count) {
+        for(TestStep step :children) {
+            count = step.renumberFrom(count);
+        }
+        return count;
     }
 
     public static class TestStepBuilder {
@@ -101,13 +121,21 @@ public class TestStep {
     }
 
     public TestStep startingAt(DateTime time) {
+        TestStep newTestStep = copyOfThisTestStep();
+        newTestStep.startTime = time.getMillis();
+        return newTestStep;
+    }
+
+    protected TestStep copyOfThisTestStep() {
         TestStep newTestStep = new TestStep();
         newTestStep.description = description;
-        newTestStep.startTime = time.getMillis();
+        newTestStep.startTime = startTime;
         newTestStep.duration = duration;
         newTestStep.screenshots = new ArrayList(screenshots);
         newTestStep.cause = cause;
         newTestStep.result = result;
+        newTestStep.number = number;
+        newTestStep.children = new ArrayList(children);
         return newTestStep;
     }
 
@@ -115,7 +143,11 @@ public class TestStep {
     public void recordDuration() {
         setDuration(now().getMillis() - startTime);
     }
-    
+
+    public int getNumber() {
+        return number;
+    }
+
     public void setDescription(final String description) {
         this.description = description;
     }
@@ -270,8 +302,9 @@ public class TestStep {
         return hasChildren();
     }
 
-    public void addChildStep(final TestStep step) {
+    public TestStep addChildStep(final TestStep step) {
         children.add(step);
+        return this;
     }
 
     public boolean hasChildren() {
@@ -290,10 +323,11 @@ public class TestStep {
         return leafSteps;
     }
 
-    public void addScreenshot(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
+    public TestStep addScreenshot(ScreenshotAndHtmlSource screenshotAndHtmlSource) {
         if (thisIsANew(screenshotAndHtmlSource)) {
             screenshots.add(screenshotAndHtmlSource);
         }
+        return this;
     }
 
     private boolean thisIsANew(ScreenshotAndHtmlSource screenshotAndHtmlSource) {

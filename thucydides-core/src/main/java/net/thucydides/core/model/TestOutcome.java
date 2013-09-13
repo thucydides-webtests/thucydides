@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import static ch.lambdaj.Lambda.convert;
@@ -250,7 +251,7 @@ public class TestOutcome {
         this.description = description;
         this.methodName = methodName;
         this.testCase = testCase;
-        this.testSteps.addAll(testSteps);
+        addSteps(testSteps);
         this.issues = removeDuplicates(issues);
         this.additionalIssues = additionalIssues;
         this.tags = tags;
@@ -618,10 +619,28 @@ public class TestOutcome {
         checkNotNull(step.getDescription(), "The test step description was not defined.");
         if (inGroup()) {
             getCurrentStepGroup().addChildStep(step);
+            renumberTestSteps();
         } else {
-            testSteps.add(step);
+            addStep(step);
         }
         return this;
+    }
+
+    private void addStep(TestStep step) {
+        testSteps.add(step);
+        renumberTestSteps();
+    }
+
+    private void addSteps(List<TestStep> steps) {
+        testSteps.addAll(steps);
+        renumberTestSteps();
+    }
+
+    private void renumberTestSteps() {
+        int count = 1;
+        for(TestStep step : testSteps) {
+            count = step.renumberFrom(count);
+        }
     }
 
     private TestStep getCurrentStepGroup() {
@@ -827,7 +846,7 @@ public class TestOutcome {
 
     public void addFailingStepAsSibling(List<TestStep> testStepList, Throwable testFailureCause) {
         if (testStepList.isEmpty()) {
-            testSteps.add(failingStep(testFailureCause));
+            addStep(failingStep(testFailureCause));
         } else {
             TestStep lastStep = lastStepIn(testStepList);
             if (lastStep.hasChildren()) {
@@ -846,9 +865,6 @@ public class TestOutcome {
 
     public void lastStepFailedWith(StepFailure failure) {
         lastStepFailedWith(failure.getException());
-//        setTestFailureCause(failure.getException());
-//        TestStep lastTestStep = testSteps.get(testSteps.size() - 1);
-//        lastTestStep.failedWith(new StepFailureException(failure.getMessage(), failure.getException()));
     }
 
     public void lastStepFailedWith(Throwable testFailureCause) {

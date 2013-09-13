@@ -171,6 +171,70 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
             JSONCompare.compareJSON(expectedReport, jsonReport.text, JSONCompareMode.LENIENT).passed();
     }
 
+    def "should record screenshot details"() {
+        given:
+        def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
+        testOutcome.startTime = FIRST_OF_JANUARY
+        testOutcome.description = "Some description"
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").
+                startingAt(FIRST_OF_JANUARY).addScreenshot(new ScreenshotAndHtmlSource(new File("screenshot1.png"))))
+        and:
+        def expectedReport = """\
+                {
+                  "title": "Should do this",
+                  "name": "should_do_this",
+                  "test-case": {
+                    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+                  },
+                  "description":"Some description",
+                  "result": "SUCCESS",
+                  "steps": "1",
+                  "successful": "1",
+                  "failures": "0",
+                  "skipped": "0",
+                  "ignored": "0",
+                  "pending": "0",
+                  "duration": "0",
+                  "timestamp": "${FIRST_OF_JANUARY}",
+                  "user-story": {
+                    "userStoryClass": {
+                      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                    },
+                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "storyName": "A user story",
+                    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
+                  },
+                  "issues": [],
+                  "tags": [
+                    {
+                      "name": "A user story",
+                      "type": "story"
+                    }
+                  ],
+                  "test-steps": [
+                    {
+                      "description": "step 1",
+                      "duration": 0,
+                      "startTime": ${FIRST_OF_JANUARY.millis},
+                      "screenshots":  [
+                            {
+                              "screenshot": {
+                                "path": "screenshot1.png"
+                              }
+                            }
+                          ],
+                      "result": "SUCCESS",
+                      "children": []
+                    }
+                  ]
+                }
+            """
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        then:
+        JSONCompare.compareJSON(expectedReport, jsonReport.text, JSONCompareMode.LENIENT).passed();
+    }
+
     def "should generate an JSON report for an acceptance test run without a test class"() {
         given:
             def testOutcome = TestOutcome.forTestInStory("should_do_this",
@@ -268,6 +332,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   ],
                   "test-steps": [
                     {
+                      "number": 1,
                       "description": "step 1",
                       "duration": 0,
                       "startTime": $FIRST_OF_JANUARY.millis,
@@ -325,6 +390,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": $FIRST_OF_JANUARY.millis,
@@ -386,6 +452,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   ],
                   "test-steps": [
                     {
+                      "number": 1,
                       "description": "step 1",
                       "duration": 0,
                       "startTime": $FIRST_OF_JANUARY.millis,
@@ -471,6 +538,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+                  "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": $FIRST_OF_JANUARY.millis,
@@ -527,6 +595,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": $FIRST_OF_JANUARY.millis,
@@ -653,6 +722,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   ],
                   "test-steps": [
                     {
+                      "number": 1,
                       "description": "step 1",
                       "duration": 0,
                       "startTime": $FIRST_OF_JANUARY.millis,
@@ -948,6 +1018,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               ],
               "test-steps": [
                 {
+                  "number": 1,
                   "description": "step 1",
                   "duration": 0,
                   "startTime": $FIRST_OF_JANUARY.millis,
@@ -1431,6 +1502,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
              ],
              "test-steps": [
                {
+                 "number" : 1,
                  "description": "step 1",
                  "duration": 0,
                  "startTime": $FIRST_OF_JANUARY.millis,
@@ -1448,6 +1520,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                  "children": []
                },
                {
+                 "number" : 2,
                  "description": "step 2",
                  "duration": 0,
                  "startTime": $FIRST_OF_JANUARY.millis,
