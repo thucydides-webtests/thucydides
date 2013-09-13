@@ -82,30 +82,43 @@ public abstract class PageObject {
 
     private final Sleeper sleeper;
     private final Clock webdriverClock;
-    private final JavascriptExecutorFacade javascriptExecutorFacade;
+    private JavascriptExecutorFacade javascriptExecutorFacade;
     
     private enum OpenMode {
     	CHECK_URL_PATTERNS,
     	IGNORE_URL_PATTERNS
     }
 
-    protected PageObject(final WebDriver driver, Predicate<PageObject> callback) {
+    protected PageObject() {
         this.webdriverClock = new SystemClock();
         this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
-        this.driver = driver;
-        this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
-
         setupPageUrls();
-        callback.apply(this); //need to handle return value
     }
 
+    protected PageObject(final WebDriver driver, Predicate<PageObject> callback) {
+        this();
+        this.driver = driver;
+        callback.apply(this);
+    }
     public PageObject(final WebDriver driver, final int ajaxTimeout) {
-        this(driver, new DefaultPageObjectInitialiser(driver, ajaxTimeout));
+        this();
+        setDriver(driver, ajaxTimeout);
     }
 
     public PageObject(final WebDriver driver) {
-        this(driver, (int)WAIT_FOR_TIMEOUT);
+        this();
+        setDriver(driver);
+    }
+
+
+    protected void setDriver(WebDriver driver, int timeout) {
+        this.driver = driver;
+        new DefaultPageObjectInitialiser(driver, timeout).apply(this);
+    }
+
+    protected void setDriver(WebDriver driver) {
+        setDriver(driver, (int) WAIT_FOR_TIMEOUT);
     }
 
     public void setPages(Pages pages) {
@@ -717,6 +730,9 @@ public abstract class PageObject {
     }
 
     protected JavascriptExecutorFacade getJavascriptExecutorFacade() {
+        if (javascriptExecutorFacade == null) {
+            javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
+        }
         return javascriptExecutorFacade;
     }
 
