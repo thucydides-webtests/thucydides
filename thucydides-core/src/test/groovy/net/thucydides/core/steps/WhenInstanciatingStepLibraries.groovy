@@ -61,6 +61,13 @@ class WhenInstanciatingStepLibraries extends Specification {
     }
 
 
+    static class MyExtraSimpleStepLibrary extends ScenarioSteps {
+
+        @Step
+        def aStep() {}
+    }
+
+
     def "the step factory should provide new instantiated step libraries"() {
         when:
             def myStepLibrary = stepFactory.getStepLibraryFor(MyStepLibrary)
@@ -73,6 +80,13 @@ class WhenInstanciatingStepLibraries extends Specification {
             def myStepLibrary = stepFactory.getStepLibraryFor(MyStepLibrary)
         then:
             myStepLibrary.myPageObject != null
+    }
+
+    def "should instantiate any uninitialized page objects in a step class with no page constructor"() {
+        when:
+            def myStepLibrary = stepFactory.getStepLibraryFor(MyExtraSimpleStepLibrary)
+        then:
+            myStepLibrary.getPages() != null
     }
 
     def "should instantiate any uninitialized simplified page objects in a step class"() {

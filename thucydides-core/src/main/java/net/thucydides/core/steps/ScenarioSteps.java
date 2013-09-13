@@ -21,18 +21,26 @@ public class ScenarioSteps implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioSteps.class);
 
-    private final Pages pages;
+    private Pages pages;
     private final SystemClock clock;
+
+    public ScenarioSteps() {
+        this.clock = Injectors.getInjector().getInstance(SystemClock.class);
+    }
 
     public ScenarioSteps(final Pages pages) {
         this.pages = pages;
         this.clock = Injectors.getInjector().getInstance(SystemClock.class);
     }
-    
+
     public WebDriver getDriver() {
         return pages.getDriver();
     }
-    
+
+    protected void setPages(Pages pages) {
+        this.pages = pages;
+    }
+
     public Pages getPages() {
         return pages;
     }

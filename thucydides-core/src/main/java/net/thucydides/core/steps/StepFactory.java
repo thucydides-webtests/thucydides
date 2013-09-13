@@ -9,6 +9,7 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
+import net.thucydides.core.reflection.FieldSetter;
 import net.thucydides.core.steps.di.DependencyInjectorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,7 +168,9 @@ public class StepFactory {
     }
 
     private <T> T injectPagesInto(final Class<T> stepLibraryClass, T newStepLibrary) {
-        if (hasAPagesField(stepLibraryClass)) {
+        if (ScenarioSteps.class.isAssignableFrom(stepLibraryClass))  {
+            ((ScenarioSteps) newStepLibrary).setPages(pages);
+        } else if (hasAPagesField(stepLibraryClass)) {
             ImmutableSet<Field> fields = copyOf(stepLibraryClass.getDeclaredFields());
             Field pagesField =  Iterables.find(fields, ofTypePages());
             pagesField.setAccessible(true);
