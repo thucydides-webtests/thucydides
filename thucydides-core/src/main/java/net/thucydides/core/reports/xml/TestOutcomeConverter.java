@@ -56,6 +56,8 @@ public class TestOutcomeConverter implements Converter {
     private static final String FEATURE = "feature";
     private static final String ISSUES = "issues";
     private static final String ISSUE = "issue";
+    private static final String VERSIONS = "versions";
+    private static final String VERSION = "version";
     private static final String TAGS = "tags";
     private static final String TAG = "tag";
     private static final String QUALIFIER_FIELD = "qualifier";
@@ -131,6 +133,7 @@ public class TestOutcomeConverter implements Converter {
         }
         addUserStoryTo(writer, testOutcome.getUserStory());
         addIssuesTo(writer, testOutcome.getIssues());
+        addVersionsTo(writer, testOutcome.getVersions());
         addTagsTo(writer, testOutcome.getTags());
         addExamplesTo(writer, testOutcome.getDataTable());
         List<TestStep> steps = testOutcome.getTestSteps();
@@ -228,6 +231,18 @@ public class TestOutcomeConverter implements Converter {
             for (String issue : issues) {
                 writer.startNode(ISSUE);
                 writer.setValue(issue);
+                writer.endNode();
+            }
+            writer.endNode();
+        }
+    }
+
+    private void addVersionsTo(final HierarchicalStreamWriter writer, final List<String> versions) {
+        if (!versions.isEmpty()) {
+            writer.startNode(VERSIONS);
+            for (String version : versions) {
+                writer.startNode(VERSION);
+                writer.setValue(version);
                 writer.endNode();
             }
             writer.endNode();
@@ -407,6 +422,8 @@ public class TestOutcomeConverter implements Converter {
                 readTestGroup(reader, testOutcome);
             } else if (childNode.equals(ISSUES)) {
                 readTestRunIssues(reader, testOutcome);
+            } else if (childNode.equals(VERSIONS)) {
+                readTestRunVersions(reader, testOutcome);
             } else if (childNode.equals(USER_STORY)) {
                 readUserStory(reader, testOutcome);
             } else if (childNode.equals(TAGS)) {
@@ -458,6 +475,16 @@ public class TestOutcomeConverter implements Converter {
             reader.moveDown();
             String issue = reader.getValue();
             testOutcome.isRelatedToIssue(issue);
+            reader.moveUp();
+        }
+    }
+
+    private void readTestRunVersions(final HierarchicalStreamReader reader,
+                                     final TestOutcome testOutcome) {
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String version = reader.getValue();
+            testOutcome.addVersion(version);
             reader.moveUp();
         }
     }

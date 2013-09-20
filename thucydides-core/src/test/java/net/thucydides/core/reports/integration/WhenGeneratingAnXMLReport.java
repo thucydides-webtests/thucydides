@@ -404,6 +404,40 @@ public class WhenGeneratingAnXMLReport {
     }
 
     @Test
+    public void should_include_versions_in_the_XML_report()
+            throws Exception {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", ATestScenarioWithIssues.class);
+        DateTime startTime = new DateTime(2013,1,1,0,0,0,0);
+        testOutcome.setStartTime(startTime);
+        String expectedReport =
+                "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'  timestamp='2013-01-01T00:00:00.000-05:00'>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
+                        + "  <issues>\n"
+                        + "    <issue>#789</issue>\n"
+                        + "    <issue>#123</issue>\n"
+                        + "    <issue>#456</issue>\n"
+                        + "  </issues>\n"
+                        + "  <versions>\n"
+                        + "    <version>Release 1</version>\n"
+                        + "    <version>Version 1.1</version>\n"
+                        + "  </versions>\n"
+                        + "  <tags>\n"
+                        + "    <tag name='A user story' type='story'/>\n"
+                        + "  </tags>\n"
+                        + "  <test-step result='SUCCESS' duration='0'>\n"
+                        + "    <description>step 1</description>\n"
+                        + "  </test-step>\n"
+                        + "</acceptance-test-run>";
+
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+        testOutcome.addVersion("Release 1").addVersion("Version 1.1");
+
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport, "timestamp"));
+    }
+    @Test
     public void the_xml_report_should_contain_the_feature_if_provided()
             throws Exception {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioInAFeature.class);

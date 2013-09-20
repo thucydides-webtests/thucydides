@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -207,10 +208,33 @@ public class WhenReadingAnXMLReport {
         String storedReportXML =
             "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
           + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
+          + "  <versions>\n"
+          + "    <version>Release 1</version>\n"
+          + "    <version>Version 1.1</version>\n"
+          + "  </versions>\n"
           + "  <test-step result='SUCCESS'>\n"
           + "    <description>step 1</description>\n"
           + "  </test-step>\n"
           + "</acceptance-test-run>";
+
+        File report = temporaryDirectory.newFile("saved-report.xml");
+        FileUtils.writeStringToFile(report, storedReportXML);
+
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+        assertThat(testOutcome.get().getTitle(), is("Should do this"));
+        assertThat(testOutcome.get().getVersions(),hasItem("Release 1"));
+        assertThat(testOutcome.get().getVersions(),hasItem("Version 1.1"));
+    }
+
+    @Test
+    public void should_load_acceptance_test_report_including_versions() throws Exception {
+        String storedReportXML =
+                "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS'>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' />\n"
+                        + "  <test-step result='SUCCESS'>\n"
+                        + "    <description>step 1</description>\n"
+                        + "  </test-step>\n"
+                        + "</acceptance-test-run>";
 
         File report = temporaryDirectory.newFile("saved-report.xml");
         FileUtils.writeStringToFile(report, storedReportXML);

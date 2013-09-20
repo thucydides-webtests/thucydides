@@ -1,11 +1,9 @@
 package net.thucydides.core.annotations;
 
-import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.html.Formatter;
-import net.thucydides.core.tags.TagConverters;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
@@ -117,10 +115,18 @@ public class TestAnnotations {
     }
 
 
-    private Optional<String> getAnnotatedIssue(String methodName) {
+    public Optional<String> getAnnotatedIssue(String methodName) {
         Optional<Method> testMethod = getMethodCalled(methodName);
         if ((testMethod.isPresent()) && (testMethod.get().getAnnotation(Issue.class) != null)) {
             return Optional.of(testMethod.get().getAnnotation(Issue.class).value());
+        }
+        return Optional.absent();
+    }
+
+    private Optional<String> getAnnotatedVersion(String methodName) {
+        Optional<Method> testMethod = getMethodCalled(methodName);
+        if ((testMethod.isPresent()) && (testMethod.get().getAnnotation(Version.class) != null)) {
+            return Optional.of(testMethod.get().getAnnotation(Version.class).value());
         }
         return Optional.absent();
     }
@@ -142,6 +148,10 @@ public class TestAnnotations {
         return getAnnotatedIssue(methodName);
     }
 
+    public Optional<String> getAnnotatedVersionForMethod(String methodName) {
+        return getAnnotatedVersion(methodName);
+    }
+
     public String[] getAnnotatedIssuesForMethod(String methodName) {
         return getAnnotatedIssues(methodName);
     }
@@ -150,6 +160,15 @@ public class TestAnnotations {
         Issue issueAnnotation = testCase.getAnnotation(Issue.class);
         if (issueAnnotation != null) {
             return issueAnnotation.value();
+        } else {
+            return null;
+        }
+    }
+
+    public String getAnnotatedVersionForTestCase(Class<?> testCase) {
+        Version versionAnnotation = testCase.getAnnotation(Version.class);
+        if (versionAnnotation != null) {
+            return versionAnnotation.value();
         } else {
             return null;
         }

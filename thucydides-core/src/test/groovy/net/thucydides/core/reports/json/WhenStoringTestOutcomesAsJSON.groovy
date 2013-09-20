@@ -147,6 +147,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A user story",
@@ -170,6 +171,8 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         then:
             JSONCompare.compareJSON(expectedReport, jsonReport.text, JSONCompareMode.LENIENT).passed();
     }
+
+
 
     def "should record screenshot details"() {
         given:
@@ -205,6 +208,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A user story",
@@ -259,6 +263,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "storyName": "name"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "name",
@@ -324,6 +329,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "#123",
                     "#456"
                   ],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A user story",
@@ -382,6 +388,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
 			  "issues": [],
+			  "versions": [],
 			  "tags": [
 			    {
 			      "name": "A user story",
@@ -444,6 +451,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A user story",
@@ -530,6 +538,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
 			  "issues": [],
+			  "versions": [],
 			  "tags": [
 			    {
 			      "name": "A user story",
@@ -587,6 +596,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
 			  "issues": [],
+			  "versions": [],
 			  "tags": [
 			    {
 			      "name": "A user story",
@@ -649,6 +659,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "issues": [
                 "PROJ-123"
               ],
+              "versions": [],
               "tags": [
                 {
                   "name": "Some test scenario with tags",
@@ -714,6 +725,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A user story",
@@ -772,6 +784,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "featureName": "A feature"
 			  },
 			  "issues": [],
+			  "versions": [],
 			  "tags": [
 			    {
 			      "name": "A feature",
@@ -834,6 +847,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "featureName": "A feature"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A feature",
@@ -953,6 +967,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A user story",
@@ -1010,6 +1025,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
+              "versions": [],
               "tags": [
                 {
                   "name": "A user story",
@@ -1076,6 +1092,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
+              "versions": [],
               "tags": [
                 {
                   "name": "A user story",
@@ -1202,6 +1219,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
+              "versions": [],
               "tags": [
                 {
                   "name": "A user story",
@@ -1293,6 +1311,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
+              "versions": [],
               "tags": [
                 {
                   "name": "A user story",
@@ -1407,6 +1426,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
+              "versions": [],
               "tags": [
                 {
                   "name": "A user story",
@@ -1494,6 +1514,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
              },
              "issues": [],
+             "versions": [],
              "tags": [
                {
                  "name": "A user story",

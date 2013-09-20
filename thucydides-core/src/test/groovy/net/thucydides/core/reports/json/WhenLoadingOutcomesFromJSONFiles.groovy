@@ -565,7 +565,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			table.rows.get(1).result == TestResult.SUCCESS
     }
     
-    def "should load acceptance test report including issues"()  {
+    def "should load acceptance test report including issues and versions"()  {
         File report = new File(outputDirectory,"saved-report.json");
         report << """
 		{
@@ -601,6 +601,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 		    "#789",
 		    "#123"
 		  ],
+		  "versions": ["Release 1","Version 1.1"],
 		  "tags": [
 		    {
 		      "name": "A user story",
@@ -626,6 +627,8 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
         	testOutcome.title == "Should do this"
         and:
             testOutcome.issues == ["#456","#789","#123"]
+        and:
+            testOutcome.versions == ["Release 1","Version 1.1"]
     }
     
     def "should load feature details from json file"() {

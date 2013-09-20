@@ -45,6 +45,7 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
     private static final String TEST_STEPS = "test-steps";
     private static final String USER_STORY = "user-story";
     private static final String ISSUES = "issues";
+    private static final String VERSIONS = "versions";
     private static final String TAGS = "tags";
     private static final String QUALIFIER_FIELD = "qualifier";
     private static final String DURATION = "duration";
@@ -90,6 +91,7 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         }
         obj.add(USER_STORY, context.serialize(testOutcome.getUserStory()));
         obj.add(ISSUES, context.serialize(testOutcome.getIssues()));
+        obj.add(VERSIONS, context.serialize(testOutcome.getVersions()));
         obj.add(TAGS, context.serialize(testOutcome.getTags()));
         obj.add(TEST_STEPS, context.serialize(testOutcome.getTestSteps()));
         obj.add(EXAMPLES, context.serialize(testOutcome.getDataTable()));
@@ -128,6 +130,7 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 
         testOutcome = addQualifierIfPresent(outcomeJsonObject, testOutcome);
         addIssuesIfPresent(context, outcomeJsonObject, testOutcome);
+        addVersionsIfPresent(context, outcomeJsonObject, testOutcome);
         addTagsIfPresent(context, outcomeJsonObject, testOutcome);
         
         JsonArray testStepsJsonArray = outcomeJsonObject.getAsJsonArray(TEST_STEPS);
@@ -177,6 +180,15 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
             ArrayList<String> issuesAsString = new ArrayList<String>();
             issuesAsString.addAll(issues);
             testOutcome.addIssues(issuesAsString);
+        }
+    }
+
+    private void addVersionsIfPresent(JsonDeserializationContext context, JsonObject outcomeJsonObject, TestOutcome testOutcome) {
+        Set<String> versions = context.deserialize(outcomeJsonObject.getAsJsonArray(VERSIONS), Set.class);
+        if (versions != null) {
+            ArrayList<String> versionsAsString = new ArrayList<String>();
+            versionsAsString.addAll(versions);
+            testOutcome.addVersions(versionsAsString);
         }
     }
 

@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import static ch.lambdaj.Lambda.convert;
@@ -106,6 +105,10 @@ public class TestOutcome {
 
     private List<String> issues;
     private List<String> additionalIssues;
+
+    private List<String> versions;
+    private List<String> additionalVersions;
+
     private Set<TestTag> tags;
 
     private long duration;
@@ -173,6 +176,7 @@ public class TestOutcome {
         this.methodName = methodName;
         this.testCase = testCase;
         this.additionalIssues = Lists.newArrayList();
+        this.additionalVersions = Lists.newArrayList();
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
         this.qualifier = Optional.absent();
@@ -223,6 +227,7 @@ public class TestOutcome {
         this.methodName = methodName;
         this.testCase = testCase;
         this.additionalIssues = Lists.newArrayList();
+        this.additionalVersions = Lists.newArrayList();
         this.userStory = userStory;
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
@@ -252,6 +257,7 @@ public class TestOutcome {
         this.testCase = testCase;
         addSteps(testSteps);
         this.issues = removeDuplicates(issues);
+        this.additionalVersions = removeDuplicates(additionalVersions);
         this.additionalIssues = additionalIssues;
         this.tags = tags;
         this.userStory = userStory;
@@ -773,6 +779,26 @@ public class TestOutcome {
         return ImmutableList.copyOf(allIssues);
     }
 
+    private List<String> versions() {
+        if (!thereAre(versions)) {
+            versions = removeDuplicates(readVersions());
+        }
+        return versions;
+    }
+
+    private List<String> readVersions() {
+        return TestOutcomeAnnotationReader.forTestOutcome(this).readVersions();
+    }
+
+
+    public List<String> getVersions() {
+        List<String> allVersions = new ArrayList(versions());
+        if (thereAre(additionalVersions)) {
+            allVersions.addAll(additionalVersions);
+        }
+        return ImmutableList.copyOf(allVersions);
+    }
+
     public Class<?> getTestCase() {
         return testCase;
     }
@@ -781,45 +807,22 @@ public class TestOutcome {
         return ((anyIssues != null) && (!anyIssues.isEmpty()));
     }
 
+    public TestOutcome addVersion(String version) {
+        additionalVersions.add(version);
+        return this;
+    }
+
+    public TestOutcome addVersions(List<String> versions) {
+        additionalVersions.addAll(versions);
+        return this;
+    }
+
     public void addIssues(List<String> issues) {
         additionalIssues.addAll(issues);
     }
 
     private List<String> readIssues() {
-        List<String> taggedIssues = Lists.newArrayList();
-        if (testCase != null) {
-            addMethodLevelIssuesTo(taggedIssues);
-            addClassLevelIssuesTo(taggedIssues);
-        }
-        addTitleLevelIssuesTo(taggedIssues);
-        return taggedIssues;
-    }
-
-    private void addClassLevelIssuesTo(List<String> issues) {
-        String classIssue = TestAnnotations.forClass(testCase).getAnnotatedIssueForTestCase(testCase);
-        if (classIssue != null) {
-            issues.add(classIssue);
-        }
-        String[] classIssues = TestAnnotations.forClass(testCase).getAnnotatedIssuesForTestCase(testCase);
-        if (classIssues != null) {
-            issues.addAll(Arrays.asList(classIssues));
-        }
-    }
-
-    private void addMethodLevelIssuesTo(List<String> issues) {
-        Optional<String> issue = TestAnnotations.forClass(testCase).getAnnotatedIssueForMethod(getMethodName());
-        if (issue.isPresent()) {
-            issues.add(issue.get());
-        }
-        String[] multipleIssues = TestAnnotations.forClass(testCase).getAnnotatedIssuesForMethod(getMethodName());
-        issues.addAll(Arrays.asList(multipleIssues));
-    }
-
-    private void addTitleLevelIssuesTo(List<String> issues) {
-        List<String> titleIssues = Formatter.issuesIn(getTitle());
-        if (!titleIssues.isEmpty()) {
-            issues.addAll(titleIssues);
-        }
+        return TestOutcomeAnnotationReader.forTestOutcome(this).readIssues();
     }
 
     public String getFormattedIssues() {
