@@ -479,7 +479,13 @@ public enum ThucydidesSystemProperty {
     /**
      * Path to PhantomJS executable
      */
-    PHANTOMJS_PATH("phantomjs.binary.path");
+    PHANTOMJS_PATH("phantomjs.binary.path"),
+
+    /**
+     * If set to true, don't format embedded tables in JBehave or Gherkin steps.
+     * False by default.
+     */
+    IGNORE_EMBEDDED_TABLES("ignore.embedded.tables");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

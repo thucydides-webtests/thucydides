@@ -2,6 +2,8 @@ package net.thucydides.core.reports.html
 
 import com.google.common.collect.ImmutableList
 import net.thucydides.core.issues.IssueTracking
+import net.thucydides.core.util.MockEnvironmentVariables
+import org.jbehave.core.annotations.Given
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -62,6 +64,7 @@ class WhenFormattingDataForTheHTMLReports extends Specification {
         then:
             formattedDescription.contains("Given the following accounts:")
             formattedDescription.contains("<table class='embedded'><thead><th>owner</th><th>points</th><th>statusPoints</th></thead>")
+            formattedDescription.contains("<tbody><tr><td>Jill</td><td>100000</td><td>800</td></tr><tr><td>Joe</td><td>50000</td><td>50</td></tr></tbody></table>")
     }
 
     def "should format single cell table"() {
@@ -72,6 +75,28 @@ class WhenFormattingDataForTheHTMLReports extends Specification {
             def embeddedTable = formatter.convertAnyTables(singleCellTable)
         then:
             embeddedTable == "<table class='embedded'><thead><th>heading</th></thead><tbody></tbody></table>"
+    }
+
+    def "should ignore table formatting if configured"() {
+        given:
+            def singleCellTable = "[|heading|]"
+            def environmentVariables = new MockEnvironmentVariables()
+            def formatter = new Formatter(issueTracking,environmentVariables);
+        when:
+            environmentVariables.setProperty("ignore.embedded.tables","true")
+        and:
+            def embeddedTable = formatter.convertAnyTables(singleCellTable)
+        then:
+            embeddedTable == singleCellTable
+    }
+
+    def "should cope with pipe that is not in a table"() {
+        given:
+            def formatter = new Formatter(issueTracking);
+        when:
+            def noEmbeddedTable = formatter.convertAnyTables("fdg|dsf")
+        then:
+            noEmbeddedTable == "fdg|dsf"
     }
 
     def "should format multi cell table"() {
@@ -87,7 +112,7 @@ class WhenFormattingDataForTheHTMLReports extends Specification {
     def "should format a table with a single row"() {
         given:
             def singleCellTable = """[| owner | points |
-                                       | Joe   | 50000  |]"""
+                                      | Joe   | 50000  |]"""
 
             def formatter = new Formatter(issueTracking);
         when:
@@ -99,8 +124,8 @@ class WhenFormattingDataForTheHTMLReports extends Specification {
     def "should format a table with several rows"() {
         given:
         def singleCellTable = """[| owner | points |
-                                       | Jane  | 80000  |
-                                       | Joe   | 50000  |]"""
+                                  | Jane  | 80000  |
+                                  | Joe   | 50000  |]"""
 
         def formatter = new Formatter(issueTracking);
         when:
