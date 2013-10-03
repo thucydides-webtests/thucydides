@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.reports.adaptors.common.FilebasedOutcomeAdaptor;
 import net.thucydides.core.reports.adaptors.xunit.io.XUnitFiles;
 import net.thucydides.core.reports.adaptors.xunit.model.TestCase;
@@ -30,7 +30,7 @@ public class DefaultXUnitAdaptor extends FilebasedOutcomeAdaptor {
         return ImmutableList.copyOf(loadedOutcomes);
     }
 
-    private List<TestOutcome> testOutcomesIn(File xunitFile) throws IOException {
+    public List<TestOutcome> testOutcomesIn(File xunitFile) throws IOException {
         List<TestSuite> xunitTestSuites =  loader.loadFrom(xunitFile);
         List<TestOutcome> testOutcomes = Lists.newArrayList();
         for(TestSuite testSuite : xunitTestSuites) {
@@ -53,10 +53,15 @@ public class DefaultXUnitAdaptor extends FilebasedOutcomeAdaptor {
                 if (from.getError().isPresent()) {
                     TestException failure = from.getError().get();
                     outcome.setTestFailureCause(failure.asException());
-                }
-                if (from.getFailure().isPresent()) {
+                } else if (from.getFailure().isPresent()) {
                     TestException failure = from.getFailure().get();
                     outcome.setTestFailureCause(failure.asAssertionFailure());
+                } else if (from.getSkipped().isPresent()) {
+                    //although it is logged by junit as 'skipped', Thucydides
+                    //makes a distinction between skipped and ignored.
+                    outcome.setAnnotatedResult(TestResult.IGNORED);
+                } else {
+                    outcome.setAnnotatedResult(TestResult.SUCCESS);
                 }
                 return outcome;
             }
