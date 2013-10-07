@@ -16,7 +16,6 @@ import net.thucydides.core.steps.StepDelayer;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.DefaultPageObjectInitialiser;
 import net.thucydides.core.webdriver.WebDriverFacade;
-import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webelements.Checkbox;
 import org.apache.commons.lang3.StringUtils;

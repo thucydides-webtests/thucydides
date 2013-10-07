@@ -31,7 +31,9 @@ public class PageObjectDependencyInjector implements DependencyInjector {
             pageObjectField.setAccessible(true);
             if (pageObjectField.get(target) == null) {
                 Class<PageObject> pageObjectClass = (Class<PageObject>) pageObjectField.getType();
-                pageObjectField.set(target, pages.getPage(pageObjectClass));
+                PageObject newPageObject = pages.getPage(pageObjectClass);
+                injectDependenciesInto(newPageObject);
+                pageObjectField.set(target, newPageObject);
             }
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Could not instanciate page objects in " + target);
