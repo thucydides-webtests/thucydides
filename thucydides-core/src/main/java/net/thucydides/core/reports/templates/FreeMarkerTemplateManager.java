@@ -13,6 +13,7 @@ public class FreeMarkerTemplateManager implements TemplateManager {
 
     public FreeMarkerTemplateManager() throws Exception {
         cfg = new Configuration();
+        cfg.setNumberFormat("0.######");
         cfg.setClassForTemplateLoading(getClass(), "/");
         cfg.setObjectWrapper(new DefaultObjectWrapper());
     }
