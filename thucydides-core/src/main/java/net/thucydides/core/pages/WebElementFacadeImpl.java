@@ -823,15 +823,50 @@ public class WebElementFacadeImpl implements WebElementFacade {
 
 	@Override
     public String toString() {
-		try {
-	        if (getElement() != null) {
-	       		return getElement().toString();
-	        }
-        } catch (NoSuchElementException e) {
-        }
-		return "<Undefined web element>";
+        return webElementDescription();
     }
-	
+
+    private String webElementDescription() {
+        if (getElement() == null) {
+            return "<Undefined web element>";
+        }
+
+        StringBuffer description = new StringBuffer();
+        description.append("<")
+                   .append(getElement().getTagName());
+
+        boolean descriptiveFieldFound = false;
+        if (StringUtils.isNotEmpty(getElement().getAttribute("id"))) {
+            description.append(attributeValue(getElement(),"id"));
+            descriptiveFieldFound = true;
+        }
+        if (StringUtils.isNotEmpty(getElement().getAttribute("name"))) {
+            description.append(attributeValue(getElement(),"name"));
+            descriptiveFieldFound = true;
+        }
+        if (!descriptiveFieldFound && StringUtils.isNotEmpty(getElement().getAttribute("href"))) {
+            description.append(attributeValue(getElement(),"href"));
+            descriptiveFieldFound = true;
+        }
+        if (StringUtils.isNotEmpty(getElement().getAttribute("type"))) {
+            description.append(attributeValue(getElement(),"type"));
+            descriptiveFieldFound = true;
+        }
+        if (StringUtils.isNotEmpty(getElement().getAttribute("value"))) {
+            description.append(attributeValue(getElement(),"value"));
+            descriptiveFieldFound = true;
+        }
+        if (!descriptiveFieldFound && StringUtils.isNotEmpty(getElement().getAttribute("class"))) {
+            description.append(attributeValue(getElement(),"class"));
+        }
+
+        description.append(">");
+        return description.toString();
+    }
+
+    private String attributeValue(WebElement webElement, String attribute) {
+        return " " + attribute + "='" + webElement.getAttribute(attribute) + "'";
+    }
 	/*
 	 * WebDirver default 
 	 * 
