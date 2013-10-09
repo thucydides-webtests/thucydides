@@ -627,14 +627,26 @@ public abstract class PageObject {
 
 	private void checkUrlPatterns(final OpenMode openMode) {
 		if (openMode == OpenMode.CHECK_URL_PATTERNS) {
-			if (!matchesAnyUrl()) {
-				String currentUrl = getDriver().getCurrentUrl();
-				if (!compatibleWithUrl(currentUrl)) {
-					thisIsNotThePageYourLookingFor();
-				}
-			}
-		}
+            ensurePageIsOnAMatchingUrl();
+        }
 	}
+
+    private void ensurePageIsOnAMatchingUrl() {
+        if (!matchesAnyUrl()) {
+            String currentUrl = getDriver().getCurrentUrl();
+            if (!compatibleWithUrl(currentUrl)) {
+                thisIsNotThePageYourLookingFor();
+            }
+        }
+    }
+
+    /**
+     * Use the @At annotation (if present) to check that a page object is displaying the correct page.
+     * Will throw an exception if the current URL does not match the expected one.
+     */
+    public void shouldBeDisplayed() {
+        ensurePageIsOnAMatchingUrl();
+    }
 
     private void thisIsNotThePageYourLookingFor() {
 
@@ -671,7 +683,6 @@ public abstract class PageObject {
                 }
             }
         }
-
     }
 
     private List<Method> methodsAnnotatedWithWhenPageOpens() {
