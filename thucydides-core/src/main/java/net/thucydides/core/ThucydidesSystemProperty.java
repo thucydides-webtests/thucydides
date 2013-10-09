@@ -485,7 +485,17 @@ public enum ThucydidesSystemProperty {
      * If set to true, don't format embedded tables in JBehave or Gherkin steps.
      * False by default.
      */
-    IGNORE_EMBEDDED_TABLES("ignore.embedded.tables");
+    IGNORE_EMBEDDED_TABLES("ignore.embedded.tables"),
+
+    /**
+     * If set, this will define the list of tag types to appear on the dashboard screens
+     */
+    DASHBOARD_TAG_LIST("dashboard.tag.list"),
+
+    /**
+     * If set, this will define the list of tag types to be excluded from the dashboard screens
+     */
+    DASHBOARD_EXCLUDED_TAG_LIST("dashboard.excluded.tag.list");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

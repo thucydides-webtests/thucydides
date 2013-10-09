@@ -418,7 +418,7 @@
 <div id="bottomfooter"></div>
 <#macro list_tags(weighted)>
 <h4>${tagsTitle}</h4>
-    <#foreach tagType in testOutcomes.tagTypes>
+    <#foreach tagType in tagTypes>
         <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
         <#assign outcomesForType = testOutcomes.withTagType(tagType) >
         <#assign tagNames = testOutcomes.getTagsOfTypeExcluding(tagType, testOutcomes.label) >

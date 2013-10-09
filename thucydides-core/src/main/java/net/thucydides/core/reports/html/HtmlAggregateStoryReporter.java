@@ -1,5 +1,8 @@
 package net.thucydides.core.reports.html;
 
+import com.beust.jcommander.internal.Lists;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
@@ -20,12 +23,16 @@ import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
 import net.thucydides.core.util.Inflector;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -277,14 +284,18 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private Map<String, Object> buildContext(TestOutcomes testOutcomesForTagType,
                                              ReportNameProvider reportName) {
         Map<String, Object> context = new HashMap<String, Object>();
+        TagFilter tagFilter = new TagFilter(getEnvironmentVariables());
         context.put("testOutcomes", testOutcomesForTagType);
         context.put("allTestOutcomes", testOutcomesForTagType.getRootOutcomes());
+        context.put("tagTypes", tagFilter.filteredTagTypes(testOutcomesForTagType.getTagTypes()));
+
         context.put("reportName", reportName);
         context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
         context.put("timestamp", timestampFrom(testOutcomesForTagType.getRootOutcomes()));
         addFormattersToContext(context);
         return context;
     }
+
 
     private void updateHistoryFor(final RequirementsOutcomes requirementsOutcomes) {
         getTestHistory().updateData(requirementsOutcomes);
