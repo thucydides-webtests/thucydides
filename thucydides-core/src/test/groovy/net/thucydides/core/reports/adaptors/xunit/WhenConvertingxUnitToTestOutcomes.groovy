@@ -41,7 +41,7 @@ class WhenConvertingxUnitToTestOutcomes extends Specification {
             outcome.result == TestResult.SUCCESS
     }
 
-    def "should convert skipped tests into an outcome with Ignored result"() {
+    def "should convert skipped tests into an outcome with Pending result"() {
 
         given:
             def xunitFile = fileInClasspathCalled("/xunit-sample-output/skippedTestCase.xml")
@@ -53,6 +53,6 @@ class WhenConvertingxUnitToTestOutcomes extends Specification {
             outcomes.size() == 1
             outcome.testCount == 1
             outcome.title == "Should do something"
-            outcome.result == TestResult.IGNORED
+            outcome.result == TestResult.PENDING
     }
 }
