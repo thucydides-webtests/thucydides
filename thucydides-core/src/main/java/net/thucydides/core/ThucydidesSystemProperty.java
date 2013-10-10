@@ -306,6 +306,12 @@ public enum ThucydidesSystemProperty {
     FIREFOX_PREFERENCES("firefox.preferences"),
 
     /**
+     * Full path to the Firefox profile to be used with Firefox.
+     * You can include Java system properties ${user.dir}, ${user.home} and the Windows environment variables %APPDIR%
+     * and %USERPROFILE (assuming these are correctly set in the environment)
+     */
+    FIREFOX_PROFILE("webdriver.firefox.profile"),
+    /**
      * Enable JQuery integration.
      * If set to true (the default), JQuery will be injected into any page that does not already have it.
      * You can turn this option off for performance reasons if you are not using JQuery selectors.

@@ -10,6 +10,7 @@ import net.thucydides.core.fixtureservices.FixtureProviderService;
 import net.thucydides.core.fixtureservices.FixtureService;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.PageObject;
+import net.thucydides.core.steps.FilePathParser;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
@@ -608,10 +609,11 @@ public class WebDriverFactory {
     }
 
     protected FirefoxProfile buildFirefoxProfile() {
-        String profileName = environmentVariables.getProperty("webdriver.firefox.profile");
+        String profileName = ThucydidesSystemProperty.FIREFOX_PROFILE.from(environmentVariables);
+        FilePathParser parser = new FilePathParser(environmentVariables);
         DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
         if (StringUtils.isNotEmpty(profileName)) {
-            firefoxCapabilities.setCapability(FirefoxDriver.PROFILE,profileName);
+            firefoxCapabilities.setCapability(FirefoxDriver.PROFILE, parser.getInstanciatedPath(profileName));
         }
 
 
