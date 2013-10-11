@@ -59,7 +59,11 @@ public class DefaultXUnitAdaptor extends FilebasedOutcomeAdaptor {
                 } else if (from.getSkipped().isPresent()) {
                     //although it is logged by junit as 'skipped', Thucydides
                     //makes a distinction between skipped and ignored.
-                    outcome.setAnnotatedResult(TestResult.IGNORED);
+                    //outcome.setAnnotatedResult(TestResult.IGNORED);
+
+                    //setting the outcome to PENDING for now as the reports don't yet handle the
+                    //ignored test cases
+                    outcome.setAnnotatedResult(TestResult.PENDING);
                 } else {
                     outcome.setAnnotatedResult(TestResult.SUCCESS);
                 }
