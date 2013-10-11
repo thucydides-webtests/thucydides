@@ -81,7 +81,7 @@ public class BasicXUnitLoader implements XUnitLoader {
         NodeList skipElements = testCaseElement.getElementsByTagName("skipped");
         if (skipElements.getLength() > 0) {
             skipMessage = ((Element) skipElements.item(0)).getAttribute("type");
-
+            skipMessage = StringUtils.isEmpty(skipMessage) ? "unknown" : skipMessage;
         }
         return skipMessage;
     }

@@ -4,6 +4,6 @@
         <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     </properties>
     <testcase name="should_do_something" classname="SomeTestClass" time="1.0">
-        <skipped type="UndefinedStep"/>
+        <skipped/>
     </testcase>
 </testsuite>
