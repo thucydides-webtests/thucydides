@@ -93,6 +93,7 @@
         <ul>
             <li><a href="index.html" class="current">Test Results</a></li>
             <li><a href="capabilities.html">Requirements</a></li>
+            <li><a href="releases.html">Releases</a></li>
             <li><a href="progress-report.html">Progress</a></li>
         <#list allTestOutcomes.tagTypes as tagType>
             <#assign tagReport = reportName.forTagType(tagType) >

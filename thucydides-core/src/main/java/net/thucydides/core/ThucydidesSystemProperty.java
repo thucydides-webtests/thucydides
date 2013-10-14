@@ -407,6 +407,12 @@ public enum ThucydidesSystemProperty {
     REQUIREMENT_EXCLUSIONS("thucydides.requirement.exclusions"),
 
     /**
+     * What tag names identify the release types (e.g. Release, Iteration, Sprint).
+     * A comma-separated list. By default, "Release, Iteration"
+     */
+    RELEASE_TYPES("thucydides.release.types"),
+
+    /**
      * Normally, Thucydides uses SmartElementLocatorFactory, an extension of the AjaxElementLocatorFactory
      * when instantiating page objects. This is to ensure that web elements are available and usable before they are used.
      * For alternative behaviour, you can set this value to DisplayedElementLocatorFactory, AjaxElementLocatorFactory or DefaultElementLocatorFactory.

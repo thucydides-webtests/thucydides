@@ -8,8 +8,10 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.NumericalFormatter;
+import net.thucydides.core.model.Release;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.releases.ReleaseManager;
 import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomeLoader;
 import net.thucydides.core.reports.TestOutcomes;
@@ -47,6 +49,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     private static final String HISTORY_TEMPLATE_PATH = "freemarker/history.ftl";
     private static final String TEST_OUTCOME_TEMPLATE_PATH = "freemarker/home.ftl";
+    private static final String RELEASES_TEMPLATE_PATH = "freemarker/releases.ftl";
     private static final String TAGTYPE_TEMPLATE_PATH = "freemarker/results-by-tagtype.ftl";
 
     private TestHistory testHistory;
@@ -122,6 +125,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         copyTestResultsToOutputDirectory();
 
         generateAggregateReportFor(testOutcomes);
+        generateReleasesReportFor(testOutcomes);
         generateTagReportsFor(testOutcomes);
         generateTagTypeReportsFor(testOutcomes);
         for(String name : testOutcomes.getTagNames()) {
@@ -182,6 +186,19 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, "index.html");
         generateCSVReportFor(testOutcomes,"results.csv");
     }
+
+    private void generateReleasesReportFor(TestOutcomes testOutcomes) throws IOException {
+        ReportNameProvider defaultNameProvider = new ReportNameProvider();
+        Map<String, Object> context = buildContext(testOutcomes, defaultNameProvider);
+        context.put("report", ReportProperties.forAggregateResultsReport());
+        ReleaseManager releaseManager = new ReleaseManager(getEnvironmentVariables(), defaultNameProvider);
+        List<Release> releases = releaseManager.getReleasesFrom(testOutcomes);
+        String releaseData = releaseManager.getJSONReleasesFrom(testOutcomes);
+        context.put("releases", releases);
+        context.put("releaseData", releaseData);
+        generateReportPage(context, RELEASES_TEMPLATE_PATH, "releases.html");
+    }
+
 
     private void generateTagReportsFor(TestOutcomes testOutcomes) throws IOException {
 
@@ -258,6 +275,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, report);
         generateCSVReportFor(testOutcomesForTag, csvReport);
     }
+
 
     private void generateTagTypeReport(TestOutcomes testOutcomes, ReportNameProvider reportName, String tagType) throws IOException {
         TestOutcomes testOutcomesForTagType = testOutcomes.withTagType(tagType);

@@ -8,6 +8,8 @@
     <tags>
         <tag type="story" name="yet another user story"/>
         <tag name="another different feature" type="feature"/>
+        <tag type="version" name="Release 1.2"/>
+        <tag type="version" name="Iteration 3.0"/>
     </tags>
     <test-step result="SUCCESS">
         <description>The customer navigates from metro jobs link.</description>

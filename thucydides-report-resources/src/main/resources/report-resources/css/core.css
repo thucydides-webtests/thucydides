@@ -921,6 +921,10 @@ h4 {
     padding: 0.5em 0 0 !important;
 }
 
+#releases {
+    padding: 0.5em 0 0
+}
+
 .test-results label {
     font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;
 }
@@ -1101,4 +1105,14 @@ table.coverage_data td {
 
 .confluenceTable td {
      border: thin solid #d3d3d3;
+}
+
+#releases {
+    border: solid #d3d3d3 1px;
+    padding: 8px;
+    padding-left: 16px;
+}
+
+.jqtree-title {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #0d78ae;
 }

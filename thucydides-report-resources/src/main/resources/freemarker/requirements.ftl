@@ -155,6 +155,7 @@
     <ul>
         <li><a href="index.html">Test Results</a></li>
         <li><a href="capabilities.html" class="current">Requirements</a></li>
+        <li><a href="releases.html">Releases</a></li>
         <li><a href="progress-report.html">Progress</a></li>
     <#foreach tagType in allTestOutcomes.tagTypes>
         <#assign tagReport = reportName.forTagType(tagType) >

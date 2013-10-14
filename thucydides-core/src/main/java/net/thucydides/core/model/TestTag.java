@@ -2,7 +2,9 @@ package net.thucydides.core.model;
 
 import com.google.common.base.Preconditions;
 
-public class TestTag {
+import static org.apache.commons.lang3.ObjectUtils.compare;
+
+public class TestTag implements Comparable {
 
     private final String name;
     private final String type;
@@ -34,6 +36,17 @@ public class TestTag {
             return TestTag.withName(name).andType(type);
         } else {
             return TestTag.withName(value.trim()).andType("feature");
+        }
+    }
+
+    @Override
+    public int compareTo(Object other) {
+        TestTag otherTag = (TestTag) other;
+        int typeComparison = compare(getType(), otherTag.getType());
+        if (typeComparison != 0) {
+            return typeComparison;
+        } else {
+            return compare(getName(), otherTag.getName());
         }
     }
 

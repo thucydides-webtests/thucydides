@@ -5,6 +5,8 @@
     <tags>
         <tag type="story" name="a user story in a feature"/>
         <tag name="a feature" type="feature"/>
+        <tag type="version" name="Release 1.0"/>
+        <tag type="version" name="Iteration 1.0"/>
     </tags>
     <test-step result="SUCCESS">
     <description>The customer navigates from metro jobs link.</description>

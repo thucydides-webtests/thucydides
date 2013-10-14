@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.html;
 
 import com.google.common.base.Optional;
+import net.thucydides.core.model.Release;
 import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.model.ReportType;
 import net.thucydides.core.requirements.model.Requirement;
@@ -65,4 +66,9 @@ public class ReportNameProvider {
     public String forRequirement(Requirement parentRequirement) {
         return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "requirement_" + parentRequirement.getName());
     }
+
+    public String forRelease(Release release) {
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "release_" + release.getName());
+    }
+
 }

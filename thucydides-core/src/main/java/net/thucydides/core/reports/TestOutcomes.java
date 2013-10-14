@@ -18,6 +18,8 @@ import net.thucydides.core.model.formatters.TestCoverageFormatter;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
+import org.hamcrest.Matcher;
+import org.hamcrest.core.Is;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -636,5 +638,63 @@ public class TestOutcomes {
     public int getTotalDataRows() {
         List datadrivenTestOutcomes = filter(having(on(TestOutcome.class).isDataDriven(), is(true)), outcomes);
         return sum(datadrivenTestOutcomes, on(TestOutcome.class).getDataTable().getSize());
+    }
+
+    public TestOutcomeMatcher findMatchingTags() {
+        return new TestOutcomeMatcher(this);
+    }
+
+    public final class TestOutcomeMatcher {
+
+        private final TestOutcomes outcomes;
+        private Optional<Matcher<String>> nameMatcher = Optional.absent();
+        private Optional<Matcher<String>> typeMatcher = Optional.absent();
+
+        public TestOutcomeMatcher(TestOutcomes outcomes) {
+            this.outcomes = outcomes;
+        }
+
+        public TestOutcomeMatcher withName(Matcher<String> nameMatcher) {
+            this.nameMatcher = Optional.of(nameMatcher);
+            return this;
+        }
+
+        public TestOutcomeMatcher withName(String name) {
+            return withName(is(name));
+        }
+
+        public TestOutcomeMatcher withType(Matcher<String> typeMatcher) {
+            this.typeMatcher = Optional.of(typeMatcher);
+            return this;
+        }
+
+        public TestOutcomeMatcher withType(String type) {
+            return withType(is(type));
+        }
+
+        public List<TestTag> list() {
+            List<TestTag> matches = Lists.newArrayList();
+            for(TestTag tag : outcomes.getTags()) {
+                if (compatibleTag(tag)) {
+                    matches.add(tag);
+                }
+            }
+            Collections.sort(matches);
+            return matches;
+        }
+
+        private boolean compatibleTag(TestTag tag) {
+            if (nameMatcher.isPresent()) {
+                if (!nameMatcher.get().matches(tag.getName())) {
+                    return false;
+                }
+            }
+            if (typeMatcher.isPresent()) {
+                if (!typeMatcher.get().matches(tag.getType())) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
