@@ -55,4 +55,17 @@ class WhenConvertingxUnitToTestOutcomes extends Specification {
             outcome.title == "Should do something"
             outcome.result == TestResult.PENDING
     }
+
+    def "should humanize the title but not assume that it has method argments when there is a colon in the title"() {
+        given:
+            def xunitFile = fileInClasspathCalled("/xunit-sample-output/singleTestCaseWithColonInName.xml")
+            def xUnitAdaptor = new DefaultXUnitAdaptor()
+        when:
+            List<TestOutcome> outcomes = xUnitAdaptor.testOutcomesIn(xunitFile)
+            TestOutcome outcome = outcomes[0];
+        then:
+            outcomes.size() == 1
+            outcome.testCount == 1
+            outcome.title == "Should do something: 1 | 2 | 3"
+    }
 }
