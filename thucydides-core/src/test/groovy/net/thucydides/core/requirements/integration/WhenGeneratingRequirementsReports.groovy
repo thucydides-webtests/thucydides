@@ -110,7 +110,7 @@ class WhenGeneratingRequirementsReports extends Specification {
         and: "the number of child requirements should be displayed"
             rows[1].children == 3
             rows[2].children == 0
-            rows[3].children == 0
+            rows[3].children == 1
         and: "the icons should reflect the test results"
             rows[1].icon.contains("yellow") == true
             rows[2].icon.contains("green") == true

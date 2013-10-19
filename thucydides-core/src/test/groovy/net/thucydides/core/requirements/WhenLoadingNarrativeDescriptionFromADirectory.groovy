@@ -52,6 +52,18 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
             narrative.get().type == "feature"
     }
 
+    def "Should read release version numbers if provided"() {
+        given: "there is a narrative.txt file in a directory"
+            File directoryContainingANarrative = directoryInClasspathAt("sample-story-directories/capabilities_and_features/grow_apples/grow_red_apples/grow_special_red_apples")
+        when: "We try to load the narrativeText from the directory"
+            def reader = NarrativeReader.forRootDirectory("sample-story-directories/capabilities_and_features")
+            Optional<Narrative> narrative = reader.loadFrom(directoryContainingANarrative)
+        then: "the narrativeText should be found"
+            narrative.present
+        and: "the narrativeText should contain release version numbers"
+            narrative.get().versionNumbers == ["Release 1", "Iteration 1.1"]
+    }
+
     def "Should ignore GivenStories clause in requirements from .story files"() {
         given: "there is a .story file in a directory"
             File storyFile = directoryInClasspathAt("sample-story-directories/capabilities_and_features/grow_apples/grow_red_apples/grow_special_red_apples/PlantingAnotherAppleTree.story")

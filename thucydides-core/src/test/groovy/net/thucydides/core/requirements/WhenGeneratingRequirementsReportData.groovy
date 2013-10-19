@@ -2,6 +2,7 @@ package net.thucydides.core.requirements
 
 import com.google.common.collect.Lists
 import net.thucydides.core.ThucydidesSystemProperty
+import net.thucydides.core.model.Release
 import net.thucydides.core.model.Story
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.model.TestTag
@@ -181,7 +182,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
             outcomes.proportion.withResult(TestResult.FAILURE) == 0.025
             outcomes.proportion.withIndeterminateResult() == 0.9
         and: "the number of requirements should be available"
-            outcomes.flattenedRequirementCount == 18
+            outcomes.flattenedRequirementCount == 19
             outcomes.requirementsWithoutTestsCount == 14
         and: "the number of tests should be available"
             outcomes.total.total == 10
@@ -230,6 +231,23 @@ class WhenGeneratingRequirementsReportData extends Specification {
             outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.FAILURE) == "0%"
             outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.ERROR) == "0%"
             outcomes.requirementOutcomes[1].formattedPercentage.withIndeterminateResult() == "75%"
+    }
+
+    def "should get test outcomes for a given release"() {
+        given: "there are some test results"
+            def testOutcomes = TestOutcomes.of(someVariedTestResults())
+            def environmentVariables = new MockEnvironmentVariables()
+        and: "we read the requirements from the directory structure"
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking, environmentVariables)
+            RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(testOutcomes)
+        when:
+            RequirementsOutcomes releasedOutcomes = outcomes.getReleasedRequirementsFor(Release.ofVersion("Release 1"))
+        then:
+            releasedOutcomes.requirementOutcomes.size() == 2
+        and:
+            releasedOutcomes.flattenedRequirementOutcomes.size() == 6
+        and:
+            releasedOutcomes.testOutcomes.outcomes.size() == 4
     }
 
     def someTestResults() {
@@ -316,6 +334,8 @@ class WhenGeneratingRequirementsReportData extends Specification {
         testOutcome1.addTags(Lists.asList(TestTag.withName("Plant potatoes").andType("story")));
         testOutcome1.addTags(Lists.asList(TestTag.withName("Grow new potatoes").andType("feature")));
         testOutcome1.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
+        testOutcome1.addVersion("Release 1");
+        testOutcome1.addVersion("Iteration 1.1");
 
         TestOutcome testOutcome2 = TestOutcome.forTestInStory("planting potatoes in the rain", Story.called("plant potatoes"))
         testOutcome2.recordStep(TestStep.forStepCalled("step 2.1").withResult(TestResult.SUCCESS))
@@ -323,38 +343,60 @@ class WhenGeneratingRequirementsReportData extends Specification {
         testOutcome2.addTags(Lists.asList(TestTag.withName("Plant potatoes").andType("story")));
         testOutcome2.addTags(Lists.asList(TestTag.withName("Grow new potatoes").andType("feature")));
         testOutcome2.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
+        testOutcome2.addVersion("Release 1");
+        testOutcome2.addVersion("Iteration 1.1");
 
         TestOutcome testOutcome3 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
         testOutcome3.recordStep(TestStep.forStepCalled("step 3").withResult(TestResult.SUCCESS))
         testOutcome3.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome3.addTags(Lists.asList(TestTag.withName("Daily care of chickens").andType("feature")));
+        testOutcome3.addTags(Lists.asList(TestTag.withName("Feed chickens").andType("story")));
+        testOutcome3.addVersion("Release 1");
+        testOutcome3.addVersion("Iteration 1.3");
 
         TestOutcome testOutcome4 = TestOutcome.forTestInStory("Feed chickens cake", Story.called("Feed chickens"))
         testOutcome4.recordStep(TestStep.forStepCalled("step 4").withResult(TestResult.SUCCESS))
         testOutcome4.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome4.addTags(Lists.asList(TestTag.withName("Daily care of chickens").andType("feature")));
+        testOutcome4.addTags(Lists.asList(TestTag.withName("Feed chickens").andType("story")));
+        testOutcome4.addVersion("Release 1");
+        testOutcome4.addVersion("Iteration 1.3");
 
         TestOutcome testOutcome5 = TestOutcome.forTestInStory("Feed chickens bread", Story.called("Feed chickens"))
         testOutcome5.recordStep(TestStep.forStepCalled("step 5").withResult(TestResult.FAILURE))
         testOutcome5.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome5.addVersion("Release 2");
+        testOutcome5.addVersion("Iteration 2.1");
 
         TestOutcome testOutcome6 = TestOutcome.forTestInStory("Feed chickens oranges", Story.called("Feed chickens"))
         testOutcome6.recordStep(TestStep.forStepCalled("step 6").withResult(TestResult.PENDING))
         testOutcome6.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome6.addVersion("Release 2");
+        testOutcome6.addVersion("Iteration 2.1");
 
         TestOutcome testOutcome7 = TestOutcome.forTestInStory("Feed chickens apples", Story.called("Feed chickens"))
         testOutcome7.recordStep(TestStep.forStepCalled("step 7").withResult(TestResult.SKIPPED))
         testOutcome7.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome7.addVersion("Release 2");
+        testOutcome7.addVersion("Iteration 2.1");
 
         TestOutcome testOutcome8 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
         testOutcome8.recordStep(TestStep.forStepCalled("step 8").withResult(TestResult.SUCCESS))
         testOutcome8.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome8.addVersion("Release 3");
+        testOutcome8.addVersion("Iteration 3.1");
 
         TestOutcome testOutcome9 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
         testOutcome9.recordStep(TestStep.forStepCalled("step 9").withResult(TestResult.SUCCESS))
         testOutcome9.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome9.addVersion("Release 3");
+        testOutcome9.addVersion("Iteration 3.1");
 
         TestOutcome testOutcome10 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
         testOutcome10.recordStep(TestStep.forStepCalled("step 10").withResult(TestResult.FAILURE))
         testOutcome10.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome6.addVersion("Release 3");
+        testOutcome6.addVersion("Iteration 3.1");
 
         return [testOutcome1, testOutcome2, testOutcome3, testOutcome4, testOutcome5, testOutcome6, testOutcome7,
                 testOutcome8, testOutcome9, testOutcome10]

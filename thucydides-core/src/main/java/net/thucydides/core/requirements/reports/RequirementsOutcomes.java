@@ -1,21 +1,37 @@
 package net.thucydides.core.requirements.reports;
 
+import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.OutcomeCounter;
+import net.thucydides.core.model.Release;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.TestType;
+import net.thucydides.core.releases.ReleaseManager;
 import net.thucydides.core.reports.TestOutcomes;
+import net.thucydides.core.reports.html.ReportNameProvider;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sum;
+import static org.hamcrest.Matchers.hasItem;
 
 /**
  * A set of test results for a list of high-level requirements.
@@ -27,6 +43,7 @@ public class RequirementsOutcomes {
     private final EnvironmentVariables environmentVariables;
     private final IssueTracking issueTracking;
     private final List<RequirementsTagProvider> requirementsTagProviders;
+    private final ReleaseManager releaseManager;
 
     public final static Integer DEFAULT_TESTS_PER_REQUIREMENT = 4;
 
@@ -47,6 +64,7 @@ public class RequirementsOutcomes {
         this.issueTracking = issueTracking;
         this.requirementsTagProviders = requirementsTagProviders;
         this.requirementOutcomes = buildRequirementOutcomes(requirements, requirementsTagProviders);
+        this.releaseManager = new ReleaseManager(environmentVariables, new ReportNameProvider());
     }
 
     private List<RequirementOutcome> buildRequirementOutcomes(List<Requirement> requirements,
@@ -219,22 +237,35 @@ public class RequirementsOutcomes {
     }
 
     public List<RequirementOutcome> getFlattenedRequirementOutcomes(List<RequirementOutcome> outcomes) {
-        List<RequirementOutcome> flattenedOutcomes = new ArrayList<RequirementOutcome>();
+        Set<RequirementOutcome> flattenedOutcomes = Sets.newHashSet();
+
 
         for (RequirementOutcome requirementOutcome : outcomes) {
             flattenedOutcomes.add(requirementOutcome);
-            Requirement requirement = requirementOutcome.getRequirement();
-            if (requirement.hasChildren()) {
-                for (Requirement childRequirement : requirement.getChildren()) {
-                    TestOutcomes testOutcomesForChildRequirement = requirementOutcome.getTestOutcomes().withTag(childRequirement.getName());
-                    List<Requirement> childRequirements = childRequirement.getChildren();
-                    RequirementsOutcomes childOutcomes =
-                            new RequirementsOutcomes(childRequirement, childRequirements,
-                                                     testOutcomesForChildRequirement, issueTracking,
-                                                     environmentVariables, requirementsTagProviders);
-                    flattenedOutcomes.addAll(getFlattenedRequirementOutcomes(childOutcomes.getRequirementOutcomes()));
-                }
+            List<Requirement> nestedRequirements = requirementOutcome.getFlattenedRequirements();
+            for(Requirement requirement : nestedRequirements) {
+                TestTag requirementTag = TestTag.withName(requirement.getName()).andType(requirement.getType());
+                TestOutcomes testOutcomesForRequirement = requirementOutcome.getTestOutcomes().withTag(requirementTag);
+                List<Requirement> childRequirements = requirement.getChildren();
+
+                RequirementsOutcomes childOutcomes =
+                        new RequirementsOutcomes(childRequirements, testOutcomesForRequirement, issueTracking,
+                                                 environmentVariables, requirementsTagProviders);
+                flattenedOutcomes.addAll(getFlattenedRequirementOutcomes(childOutcomes.getRequirementOutcomes()));
             }
+//
+//            Requirement requirement = requirementOutcome.getRequirement();
+//            if (requirement.hasChildren()) {
+//                for (Requirement childRequirement : requirement.getChildren()) {
+//                    TestOutcomes testOutcomesForChildRequirement = requirementOutcome.getTestOutcomes().withTag(childRequirement.getName());
+//                    List<Requirement> childRequirements = childRequirement.getChildren();
+//                    RequirementsOutcomes childOutcomes =
+//                            new RequirementsOutcomes(childRequirement, childRequirements,
+//                                                     testOutcomesForChildRequirement, issueTracking,
+//                                                     environmentVariables, requirementsTagProviders);
+//                    flattenedOutcomes.addAll(getFlattenedRequirementOutcomes(childOutcomes.getRequirementOutcomes()));
+//                }
+//            }
         }
 
         return ImmutableList.copyOf(flattenedOutcomes);
@@ -295,5 +326,53 @@ public class RequirementsOutcomes {
 
     public RequirementsProportionCounter proportionOf(TestType testType) {
         return new RequirementsProportionCounter(testType, testOutcomes, totalEstimatedAndImplementedTests());
+    }
+
+    public RequirementsOutcomes getReleasedRequirementsFor(Release release) {
+        List<Requirement> matchingRequirements = Lists.newArrayList();
+        List<TestOutcome> matchingTestOutcomes = Lists.newArrayList();
+        List<List<Requirement>> matchingRequirementPaths = Lists.newArrayList();
+
+        // Add all test outcomes with a matching release
+
+        List<RequirementOutcome> requirementOutcomes
+                = releaseManager.enrichRequirementsOutcomesWithReleaseTags(getRequirementOutcomes());
+
+        for(RequirementOutcome outcome : requirementOutcomes) {//  getFlattenedRequirementOutcomes()) {
+            Collection<String> releaseVersions = outcome.getReleaseVersions();
+            if (releaseVersions.contains(release.getName())) {
+                List<TestOutcome> outcomesForRelease = outcomesForRelease(outcome.getTestOutcomes().getOutcomes(), release.getName());
+                matchingTestOutcomes.addAll(outcomesForRelease);
+                matchingRequirements.add(outcome.getRequirement());
+            }
+        }
+        matchingRequirements = removeRequirementsWithoutTestsFrom(matchingRequirements);
+        return new RequirementsOutcomes(Lists.newArrayList(matchingRequirements),
+                                        TestOutcomes.of(matchingTestOutcomes),
+                                        issueTracking,
+                                        environmentVariables,
+                                        requirementsTagProviders);
+    }
+
+    private List<Requirement> removeRequirementsWithoutTestsFrom(List<Requirement> requirements) {
+        List<Requirement> prunedRequirements = Lists.newArrayList();
+        for(Requirement requirement : requirements) {
+            if (testsExistFor(requirement)) {
+                List<Requirement> prunedChildren = removeRequirementsWithoutTestsFrom(requirement.getChildren());
+                prunedRequirements.add(requirement.withChildren(prunedChildren));
+            }
+        }
+        return ImmutableList.copyOf(prunedRequirements);
+    }
+
+    private boolean testsExistFor(Requirement requirement) {
+        TestTag requirementTag = TestTag.withName(requirement.getName()).andType(requirement.getType());
+        return !getTestOutcomes().withTag(requirementTag).getOutcomes().isEmpty();
+    }
+
+    private List<TestOutcome> outcomesForRelease(List<? extends TestOutcome> outcomes,
+                                                 String releaseName) {
+        releaseManager.enrichOutcomesWithReleaseTags(outcomes);
+        return (List<TestOutcome>) filter(having(on(TestOutcome.class).getVersions(), hasItem(releaseName)), outcomes);
     }
 }

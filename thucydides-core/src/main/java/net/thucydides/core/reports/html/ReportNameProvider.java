@@ -71,4 +71,8 @@ public class ReportNameProvider {
         return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "release_" + release.getName());
     }
 
+    public String forRelease(String releaseName) {
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "release_" + releaseName);
+    }
+
 }

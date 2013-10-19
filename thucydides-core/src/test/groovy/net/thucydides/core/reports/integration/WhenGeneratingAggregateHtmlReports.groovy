@@ -9,7 +9,9 @@ import net.thucydides.core.reports.history.TestResultSnapshot
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import org.openqa.selenium.phantomjs.PhantomJSDriver
 import spock.lang.Specification
 
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled
@@ -50,8 +52,8 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
             def tagTypeNames = driver.findElements(By.cssSelector(".tagTitle")).collect { it.text}
 
         then: "The tags should show the features and stories from the tests"
-            tagTypeNames.contains "A User Story In A Feature"
-            tagTypeNames.contains "A Feature"
+            tagTypeNames.contains "Daily Care Of Chickens"
+            tagTypeNames.contains "Raise Chickens"
     }
 
     def "we can navigate sub reports"() {
@@ -60,33 +62,21 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         when: "we view the report"
             driver.get reportHomePageUrl();
             def tagTypeNames = driver.findElements(By.cssSelector(".tagTitle")).collect { it.text}
-        then: "we can see all available tags and click on 'Another Different Feature' link"
-            def anotherDifferentFeatureLink = driver.findElement(By.linkText("Another Different Feature"))
+        then: "we can see all available tags and click on 'Grow New Potatoes' link"
+            def anotherDifferentFeatureLink = driver.findElement(By.linkText("Grow New Potatoes"))
             anotherDifferentFeatureLink.click()
             def breadcrumbText = driver.findElement(By.cssSelector(".bluetext")).getText()
-            breadcrumbText == "Thucydides Reports> another different feature"
+            breadcrumbText == "Thucydides Reports> Grow new potatoes"
         when: "we click on the Features link"
             def featuresLink = driver.findElement(By.linkText("Features"))
             featuresLink.click()
         then: "we see the breadcrumb showing Thucydedes Reports > another different feature"
             def subReportBreadcrumbText = driver.findElement(By.cssSelector(".bluetext")).getText()
-            subReportBreadcrumbText == "Home > Another Different Feature > Features"
+            subReportBreadcrumbText == "Home > Grow New Potatoes > Features"
         and: "a single feature"
-            def featureLink = driver.findElement(By.linkText("Another Different Feature"))
+            def featureLink = driver.findElement(By.linkText("Grow New Potatoes"))
             featureLink.enabled
 
-    }
-
-    def "should generate release report"() {
-        given: "We generate reports from a directory containing features and stories only"
-            reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
-        when: "we view the report"
-            driver.get reportHomePageUrl();
-        then: "we should see a Releases tab"
-            def releasesLink = driver.findElement(By.linkText("Releases"))
-            releasesLink.click();
-        and:"a list of releases should be displayed"
-            driver.findElement(By("#releases"))
     }
 
     def "should pass JIRA URL to reporter"() {
@@ -125,6 +115,36 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         then:
             1 * mockTestHistory.clearHistory()
     }
+
+    def "should generate an overall release report"() {
+        given: "We generate reports from a directory containing features and stories only"
+            reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
+        when: "we view the report"
+            driver = new FirefoxDriver()
+            driver.get reportHomePageUrl();
+        then: "we should see a Releases tab"
+            def releasesLink = driver.findElement(By.linkText("Releases"))
+            releasesLink.click();
+        and:"a list of releases should be displayed"
+            def releases = driver.findElements(By.cssSelector(".jqtree-title")).collect { it.text }
+            releases.containsAll(["Release 1.0", "Release 2.0"])
+    }
+
+    def "should generate a detailed release report for each release"() {
+        given: "We generate reports from a directory containing features and stories only"
+            reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
+        when: "we view the release report"
+            driver = new PhantomJSDriver();
+            driver.get reportHomePageUrl();
+            def releasesLink = driver.findElement(By.linkText("Releases"))
+            releasesLink.click();
+        then: "we should be able to display a release report for each release"
+            driver.findElement(By.className("jqtree-title")).click()
+        and: "the release report should contain the requirement type as a title"
+            driver.findElement(By.className("requirementTitle"))?.getText() == "Capabilities"
+
+    }
+
 
     class CustomHtmlAggregateStoryReporter extends HtmlAggregateStoryReporter {
 

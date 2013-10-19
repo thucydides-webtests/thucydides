@@ -11,6 +11,7 @@ import net.thucydides.core.model.NumericalFormatter;
 import net.thucydides.core.model.Release;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.model.TestType;
 import net.thucydides.core.releases.ReleaseManager;
 import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomeLoader;
@@ -20,7 +21,10 @@ import net.thucydides.core.reports.csv.CSVReporter;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.history.TestResultSnapshot;
 import net.thucydides.core.requirements.RequirementsProviderService;
+import net.thucydides.core.requirements.RequirementsService;
+import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
+import net.thucydides.core.requirements.model.RequirementsConfiguration;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
@@ -50,6 +54,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final String HISTORY_TEMPLATE_PATH = "freemarker/history.ftl";
     private static final String TEST_OUTCOME_TEMPLATE_PATH = "freemarker/home.ftl";
     private static final String RELEASES_TEMPLATE_PATH = "freemarker/releases.ftl";
+    private static final String RELEASE_TEMPLATE_PATH = "freemarker/release.ftl";
     private static final String TAGTYPE_TEMPLATE_PATH = "freemarker/results-by-tagtype.ftl";
 
     private TestHistory testHistory;
@@ -60,6 +65,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private final RequirmentsOutcomeFactory requirementsFactory;
     private final HtmlRequirementsReporter htmlRequirementsReporter;
     private final HtmlProgressReporter htmlProgressReporter;
+    private final RequirementsConfiguration requirementsConfiguration;
 
     public HtmlAggregateStoryReporter(final String projectName) {
         this(projectName,"");
@@ -89,6 +95,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         RequirementsProviderService requirementsProviderService = Injectors.getInjector().getInstance(RequirementsProviderService.class);
         this.requirementsFactory = new RequirmentsOutcomeFactory(requirementsProviderService.getRequirementsProviders(), issueTracking);
+        this.requirementsConfiguration = new RequirementsConfiguration(getEnvironmentVariables());
     }
 
     public String getProjectName() {
@@ -125,7 +132,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         copyTestResultsToOutputDirectory();
 
         generateAggregateReportFor(testOutcomes);
-        generateReleasesReportFor(testOutcomes);
         generateTagReportsFor(testOutcomes);
         generateTagTypeReportsFor(testOutcomes);
         for(String name : testOutcomes.getTagNames()) {
@@ -134,7 +140,11 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateResultReportsFor(testOutcomes);
         generateHistoryReportFor(testOutcomes);
 //        generateCoverageReportsFor(testOutcomes);
+
         generateRequirementsReportsFor(requirementsOutcomes);
+
+        generateReleasesReportFor(testOutcomes, requirementsOutcomes);
+
     }
 
     private void generateCSVReportFor(TestOutcomes testOutcomes, String reportName) throws IOException {
@@ -187,18 +197,64 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateCSVReportFor(testOutcomes,"results.csv");
     }
 
-    private void generateReleasesReportFor(TestOutcomes testOutcomes) throws IOException {
-        ReportNameProvider defaultNameProvider = new ReportNameProvider();
-        Map<String, Object> context = buildContext(testOutcomes, defaultNameProvider);
+    private ReleaseManager releaseManager;
+
+    private ReleaseManager getReleaseManager() {
+        if (releaseManager == null) {
+            ReportNameProvider defaultNameProvider = new ReportNameProvider();
+            releaseManager = new ReleaseManager(getEnvironmentVariables(), defaultNameProvider);
+        }
+        return releaseManager;
+    }
+
+    private ReportNameProvider defaultNameProvider;
+
+    private ReportNameProvider getReportNameProvider() {
+        if (defaultNameProvider == null) {
+            defaultNameProvider = new ReportNameProvider();
+        }
+        return defaultNameProvider;
+    }
+
+    private void generateReleasesReportFor(TestOutcomes testOutcomes,
+                                           RequirementsOutcomes requirementsOutcomes) throws IOException {
+        Map<String, Object> context = buildContext(testOutcomes, getReportNameProvider());
         context.put("report", ReportProperties.forAggregateResultsReport());
-        ReleaseManager releaseManager = new ReleaseManager(getEnvironmentVariables(), defaultNameProvider);
-        List<Release> releases = releaseManager.getReleasesFrom(testOutcomes);
-        String releaseData = releaseManager.getJSONReleasesFrom(testOutcomes);
+        List<Release> releases = getReleaseManager().getReleasesFrom(testOutcomes);
+        String releaseData = getReleaseManager().getJSONReleasesFrom(testOutcomes);
         context.put("releases", releases);
         context.put("releaseData", releaseData);
         generateReportPage(context, RELEASES_TEMPLATE_PATH, "releases.html");
+        generateReleaseDetailsReportsFor(testOutcomes, requirementsOutcomes);
     }
 
+    private void generateReleaseDetailsReportsFor(TestOutcomes testOutcomes,
+                                                  RequirementsOutcomes requirementsOutcomes) throws IOException {
+        List<Release> allReleases = getReleaseManager().getFlattenedReleasesFrom(testOutcomes);
+        String topLevelRequirementType = requirementsConfiguration.getRequirementTypes().get(0);
+        String secondLevelRequirementType = requirementsConfiguration.getRequirementTypes().get(1);
+        String topLevelRequirementTypeTitle = Inflector.getInstance().of(topLevelRequirementType)
+                                                                     .inPluralForm().asATitle().toString();
+        String secondLevelRequirementTypeTitle = Inflector.getInstance().of(secondLevelRequirementType)
+                .inPluralForm().asATitle().toString();
+        for(Release release : allReleases) {
+            RequirementsOutcomes releaseRequirements = requirementsOutcomes.getReleasedRequirementsFor(release);
+            Map<String, Object> context = buildContext(testOutcomes, getReportNameProvider());
+
+            requirementsOutcomes.getRequirementOutcomes().get(0).count("AUTOMATED").withIndeterminateResult();
+
+            context.put("report", ReportProperties.forAggregateResultsReport());
+            context.put("release", release);
+            context.put("releaseData", getReleaseManager().getJSONReleasesFrom(release));
+            context.put("requirementOutcomes", releaseRequirements.getRequirementOutcomes());
+            context.put("requirementType", topLevelRequirementTypeTitle);
+            context.put("secondLevelRequirementType", secondLevelRequirementTypeTitle);
+
+            // capability | features | total automated tests | %automated pass | total manual | % manual
+            String reportName = getReportNameProvider().forRelease(release);
+            generateReportPage(context, RELEASE_TEMPLATE_PATH, reportName);
+        }
+    }
 
     private void generateTagReportsFor(TestOutcomes testOutcomes) throws IOException {
 

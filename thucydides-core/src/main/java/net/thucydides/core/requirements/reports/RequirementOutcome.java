@@ -1,6 +1,11 @@
 package net.thucydides.core.requirements.reports;
 
+import com.beust.jcommander.internal.Lists;
+import com.beust.jcommander.internal.Sets;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.model.OutcomeCounter;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestType;
 import net.thucydides.core.model.TestResult;
@@ -10,6 +15,7 @@ import net.thucydides.core.reports.html.Formatter;
 import net.thucydides.core.requirements.model.Requirement;
 
 import java.util.List;
+import java.util.Set;
 
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sum;
@@ -33,6 +39,10 @@ public class RequirementOutcome {
 
     public RequirementOutcome(Requirement requirement, TestOutcomes testOutcomes, IssueTracking issueTracking) {
         this(requirement, testOutcomes, 0, 0, issueTracking);
+    }
+
+    public RequirementOutcome withTestOutcomes(TestOutcomes testOutcomes) {
+        return new RequirementOutcome(requirement, testOutcomes, requirementsWithoutTests, estimatedUnimplementedTests, issueTracking);
     }
 
     public Requirement getRequirement() {
@@ -60,7 +70,13 @@ public class RequirementOutcome {
     }
 
     public int getFlattenedRequirementCount() {
-        return requirement.getNestedChildren().size() + 1;
+        return getFlattenedRequirements().size();
+    }
+
+    public List<Requirement> getFlattenedRequirements() {
+        List<Requirement> flattenedRequirements = Lists.newArrayList(requirement);
+        flattenedRequirements.addAll(requirement.getNestedChildren());
+        return ImmutableList.copyOf(flattenedRequirements);
     }
 
     public int getRequirementsWithoutTestsCount() {
@@ -149,6 +165,10 @@ public class RequirementOutcome {
         return testOutcomes.getTotal();
     }
 
+    public TestOutcomes getTests() {
+        return testOutcomes;
+    }
+
     public int getEstimatedUnimplementedTests() {
         return estimatedUnimplementedTests;
     }
@@ -198,6 +218,14 @@ public class RequirementOutcome {
         return new OutcomeCounter(TestType.valueOf(testType.toUpperCase()));
     }
 
+    public Set<String> getReleaseVersions() {
+        Set<String> releaseVersions = Sets.newHashSet();
+        for(TestOutcome outcome : getTestOutcomes().getOutcomes()) {
+            releaseVersions.addAll(outcome.getVersions());
+        }
+        return ImmutableSet.copyOf(releaseVersions);
+    }
+
     public class OutcomeCounter extends TestOutcomeCounter {
 
         public OutcomeCounter(TestType testType) {
@@ -216,6 +244,14 @@ public class RequirementOutcome {
             return testOutcomes.getTotal() - withResult(TestResult.SUCCESS)
                                            - withResult(TestResult.FAILURE)
                                            - withResult(TestResult.ERROR);
+        }
+
+        public int withFailureOrError() {
+            return withResult(TestResult.FAILURE) + withResult(TestResult.ERROR);
+        }
+
+        public int withAnyResult() {
+            return testOutcomes.getTotal();
         }
     }
 

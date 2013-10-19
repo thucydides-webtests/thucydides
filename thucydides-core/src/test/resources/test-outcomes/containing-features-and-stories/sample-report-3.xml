@@ -1,12 +1,11 @@
-<acceptance-test-run title="An acceptance test run" name="an_acceptance_test_run" steps="6" successful="5" failures="1" skipped="0" ignored="0" pending="0" result="FAILURE">
+<acceptance-test-run title="An acceptance test run" name="an_acceptance_test_run_3" steps="6" successful="5" failures="1" skipped="0" ignored="0" pending="0" result="FAILURE">
   <user-story id="net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AFeature.AnotherUserStoryInAFeature" name="Another user story in a feature">
      <feature id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AnotherFeature' name='Another feature'/>
   </user-story>
     <tags>
-        <tag type="story" name="another user story in a feature"/>
-        <tag name="another feature" type="feature"/>
-        <tag type="version" name="Release 1.1"/>
-        <tag type="version" name="Iteration 1.3"/>
+        <tag name="Raise chickens" type="capability"/>
+        <tag name="Daily care of chickens" type="feature"/>
+        <tag name="Feed chickens" type="story"/>
     </tags>
     <test-step result="SUCCESS">
     <description>The customer navigates from metro jobs link.</description>

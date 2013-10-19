@@ -40,7 +40,7 @@ public class NarrativeReader {
     }
 
     public static NarrativeReader forRootDirectory(String rootDirectory) {
-        return new NarrativeReader(rootDirectory, FileSystemRequirementsTagProvider.DEFAULT_CAPABILITY_TYPES);
+        return new NarrativeReader(rootDirectory, RequirementsConfiguration.DEFAULT_CAPABILITY_TYPES);
     }
 
     public NarrativeReader withRequirementTypes(List<String> requirementTypes) {
@@ -77,13 +77,17 @@ public class NarrativeReader {
 
             String title = null;
             String cardNumber = findCardNumberIn(lines);
+            List<String> versionNumbers = findVersionNumberIn(lines);
             Optional<String> titleLine = readOptionalTitleFrom(lines);
             if (titleLine.isPresent()) {
                 title = titleLine.get();
             }
             String text = readNarrativeFrom(lines);
             reader.close();
-            return Optional.of(new Narrative(Optional.fromNullable(title), Optional.fromNullable(cardNumber), type, text));
+            return Optional.of(new Narrative(Optional.fromNullable(title),
+                                             Optional.fromNullable(cardNumber),
+                                             versionNumbers,
+                                             type, text));
         } catch(IOException ex) {
             ex.printStackTrace();
         }
@@ -108,6 +112,17 @@ public class NarrativeReader {
             }
         }
         return cardNumber;
+    }
+
+    private List<String> findVersionNumberIn(List<String> lines) {
+        for(String line: lines) {
+            String normalizedLine = line.toUpperCase();
+            if (normalizedLine.startsWith("@VERSIONS")) {
+                String versionList = line.substring("@VERSIONS".length()).trim();
+                return Lists.newArrayList(Splitter.on(",").trimResults().split(versionList));
+            }
+        }
+        return ImmutableList.of();
     }
 
     private String readNarrativeFrom(List<String> lines) {
@@ -180,7 +195,7 @@ public class NarrativeReader {
         String normalizedText = normalizedLine(nextLine);
         return !normalizedText.isEmpty()
                 && !normalizedText.startsWith("meta:")
-                && !(normalizedText.startsWith("@") && (!normalizedText.startsWith("@issue")));
+                && !(normalizedText.startsWith("@") && (!normalizedText.startsWith("@issue") && (!normalizedText.startsWith("@versions"))));
     }
 
     private String directoryLevelInRequirementsHierarchy(File narrativeFile, int requirementsLevel) {

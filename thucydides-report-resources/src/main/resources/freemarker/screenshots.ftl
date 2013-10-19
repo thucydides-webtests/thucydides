@@ -95,7 +95,7 @@
             <li><a href="capabilities.html">Requirements</a></li>
             <li><a href="releases.html">Releases</a></li>
             <li><a href="progress-report.html">Progress</a></li>
-        <#list allTestOutcomes.tagTypes as tagType>
+        <#list allTestOutcomes.firstClassTagTypes as tagType>
             <#assign tagReport = reportName.forTagType(tagType) >
             <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
             <li><a href="${tagReport}">${tagTypeTitle}</a></li>

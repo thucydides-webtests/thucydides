@@ -16,6 +16,7 @@ import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.TestType;
 import net.thucydides.core.model.formatters.TestCoverageFormatter;
 import net.thucydides.core.requirements.model.Requirement;
+import net.thucydides.core.requirements.reports.RequirementsPercentageFormatter;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
@@ -123,6 +124,15 @@ public class TestOutcomes {
         for (TestOutcome outcome : outcomes) {
             addTagTypesFrom(outcome, tagTypes);
         }
+        return sort(ImmutableList.copyOf(tagTypes), on(String.class));
+    }
+
+    public List<String> getFirstClassTagTypes() {
+        Set<String> tagTypes = Sets.newHashSet();
+        for (TestOutcome outcome : outcomes) {
+            addTagTypesFrom(outcome, tagTypes);
+        }
+        tagTypes.remove("version");
         return sort(ImmutableList.copyOf(tagTypes), on(String.class));
     }
 
@@ -498,6 +508,9 @@ public class TestOutcomes {
             int skippedCount =  countTestsWithResult(TestResult.SKIPPED, testType);
             return (getTotal() == 0) ? 0 : ((pendingCount + skippedCount + ignoredCount) / (double) getTotal());
         }
+        public Double withFailureOrError() {
+            return withResult(TestResult.FAILURE) + withResult(TestResult.ERROR);
+        }
     }
 
     public OutcomeProportionStepCounter getPercentSteps() {
@@ -553,6 +566,15 @@ public class TestOutcomes {
 
     public TestCoverageFormatter.FormattedPercentageCoverage getFormattedPercentage() {
         return new TestCoverageFormatter(this).getPercentTests();
+    }
+
+    public TestCoverageFormatter.FormattedPercentageCoverage getFormattedPercentage(String testType) {
+        this.getFormattedPercentage().withIndeterminateResult();
+        return new TestCoverageFormatter(this).percentTests(testType);
+    }
+
+    public TestCoverageFormatter.FormattedPercentageCoverage getFormattedPercentage(TestType testType) {
+        return new TestCoverageFormatter(this).percentTests(testType);
     }
 
     /**

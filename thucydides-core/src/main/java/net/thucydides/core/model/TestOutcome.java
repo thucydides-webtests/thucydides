@@ -808,12 +808,16 @@ public class TestOutcome {
     }
 
     public TestOutcome addVersion(String version) {
-        additionalVersions.add(version);
+        if (!getVersions().contains(version)){
+            additionalVersions.add(version);
+        }
         return this;
     }
 
     public TestOutcome addVersions(List<String> versions) {
-        additionalVersions.addAll(versions);
+        for(String version : versions) {
+            addVersion(version);
+        }
         return this;
     }
 

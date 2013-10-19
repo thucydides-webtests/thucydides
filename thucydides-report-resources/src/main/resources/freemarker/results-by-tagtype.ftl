@@ -75,7 +75,7 @@
             <li><a href="progress-report.html">Progress</a></li>
         <#--<li><a href="treemap.html">Tree Map</a></li>-->
             <#--<li><a href="dashboard.html">Progress</a></li>-->
-            <#foreach type in allTestOutcomes.tagTypes>
+            <#foreach type in allTestOutcomes.firstClassTagTypes>
                 <#assign tagTypeReport = reportName.forTagType(type) >
                 <#assign tagTypeTitle = inflection.of(type).inPluralForm().asATitle() >
                 <li>

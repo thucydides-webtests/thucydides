@@ -1,11 +1,8 @@
 package net.thucydides.core.reports.html;
 
 import ch.lambdaj.function.convert.Converter;
-import com.beust.jcommander.internal.Lists;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.issues.IssueTracking;
@@ -16,13 +13,8 @@ import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.screenshots.ScreenshotFormatter;
-import net.thucydides.core.requirements.AnnotationBasedTagProvider;
-import net.thucydides.core.requirements.FileSystemRequirementsTagProvider;
-import net.thucydides.core.requirements.RequirementsProviderService;
-import net.thucydides.core.requirements.RequirementsTagProvider;
-import net.thucydides.core.requirements.model.Requirement;
+import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.screenshots.ScreenshotException;
-import net.thucydides.core.statistics.service.FeatureStoryTagProvider;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import org.slf4j.Logger;
@@ -36,9 +28,8 @@ import java.util.Map;
 
 import static ch.lambdaj.Lambda.convert;
 import static com.google.common.collect.Iterables.any;
-import static net.thucydides.core.model.ReportType.HTML;
-
 import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_KEEP_UNSCALED_SCREENSHOTS;
+import static net.thucydides.core.model.ReportType.HTML;
 
 /**
  * Generates acceptance test results in HTML form.
@@ -55,7 +46,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     private String qualifier;
 
     private final IssueTracking issueTracking;
-    private List<RequirementsTagProvider> requirementsTagProviders;
+    private RequirementsService requirementsService;
 
     public void setQualifier(final String qualifier) {
         this.qualifier = qualifier;
@@ -64,59 +55,18 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     public HtmlAcceptanceTestReporter() {
         super();
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
+        this.requirementsService = Injectors.getInjector().getInstance(RequirementsService.class);
     }
 
     public HtmlAcceptanceTestReporter(final EnvironmentVariables environmentVariables,
                                       final IssueTracking issueTracking) {
         super(environmentVariables);
         this.issueTracking = issueTracking;
+        this.requirementsService = Injectors.getInjector().getInstance(RequirementsService.class);
     }
 
     public String getName() {
         return "html";
-    }
-
-    private static final List<String> LOW_PRIORITY_PROVIDERS =
-            ImmutableList.of(AnnotationBasedTagProvider.class.getCanonicalName(),
-                             FeatureStoryTagProvider.class.getCanonicalName(),
-                             FileSystemRequirementsTagProvider.class.getCanonicalName());
-
-    private List<RequirementsTagProvider> getRequirementsTagProviders() {
-        if (requirementsTagProviders == null) {
-            RequirementsProviderService requirementsProviderService = Injectors.getInjector().getInstance(RequirementsProviderService.class);
-            requirementsTagProviders = reprioritizeProviders(requirementsProviderService.getRequirementsProviders());
-        }
-        return requirementsTagProviders;
-    }
-
-    private List<RequirementsTagProvider> reprioritizeProviders(List<RequirementsTagProvider> requirementsTagProviders) {
-        List<RequirementsTagProvider> lowPriorityProviders = Lists.newArrayList();
-        List<RequirementsTagProvider> prioritizedProviders = Lists.newArrayList();
-
-        for(RequirementsTagProvider provider : requirementsTagProviders) {
-            if (LOW_PRIORITY_PROVIDERS.contains(provider.getClass().getCanonicalName())) {
-                lowPriorityProviders.add(provider);
-            } else {
-                prioritizedProviders.add(provider);
-            }
-        }
-        prioritizedProviders.addAll(lowPriorityProviders);
-        return prioritizedProviders;
-
-    }
-
-    private Optional<Requirement> getParentRequirementForOutcome(TestOutcome testOutcome) {
-        try {
-            for (RequirementsTagProvider tagProvider : getRequirementsTagProviders()) {
-                Optional<Requirement> requirement = tagProvider.getParentRequirementOf(testOutcome);
-                if (requirement.isPresent()) {
-                    return requirement;
-                }
-            }
-        } catch(RuntimeException handleTagProvidersElegantly) {
-            LOGGER.error("Tag provider failure", handleTagProvidersElegantly);
-        }
-        return Optional.absent();
     }
 
     /**
@@ -162,7 +112,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         context.put("allTestOutcomes", allTestOutcomes);
         context.put("testOutcome", testOutcome);
         context.put("inflection", Inflector.getInstance());
-        context.put("parentRequirement", getParentRequirementForOutcome(testOutcome));
+        context.put("parentRequirement", requirementsService.getParentRequirementFor(testOutcome));
     }
 
     private void addFormattersToContext(final Map<String,Object> context) {
@@ -213,7 +163,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
                 throw new ScreenshotException("Failed to write scaled screenshot", e);
             }
         }
-    };
+    }
 
     private boolean shouldKeepOriginalScreenshots() {
         return getEnvironmentVariables().getPropertyAsBoolean(THUCYDIDES_KEEP_UNSCALED_SCREENSHOTS, false);

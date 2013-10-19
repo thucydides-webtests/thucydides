@@ -204,7 +204,7 @@
         <li><a href="progress-report.html">Progress</a></li>
     <#--<li><a href="treemap.html">Tree Map</a></li>-->
     <#--<li><a href="dashboard.html">Progress</a></li>-->
-    <#foreach tagType in allTestOutcomes.tagTypes>
+    <#foreach tagType in allTestOutcomes.firstClassTagTypes>
         <#assign tagReport = reportName.forTagType(tagType) >
         <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
         <li><a href="${tagReport}">${tagTypeTitle}</a></li>

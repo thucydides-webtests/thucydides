@@ -32,4 +32,12 @@ public class OutcomeCounter extends TestOutcomeCounter {
                 - withResult(TestResult.FAILURE)
                 - withResult(TestResult.ERROR);
     }
+
+    public int withFailureOrError() {
+        return withResult(TestResult.FAILURE) + withResult(TestResult.ERROR);
+    }
+
+    public int withAnyResult() {
+        return outcomes.getTotal();
+    }
 }
