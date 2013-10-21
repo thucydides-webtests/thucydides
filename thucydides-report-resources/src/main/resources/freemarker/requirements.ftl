@@ -6,6 +6,10 @@
     <meta charset="UTF-8" />
     <title>${pageTitle}</title>
     <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="font-awesome/css/font-awesome-ie7.min.css">
+    <![endif]-->
     <link rel="stylesheet" href="css/core.css"/>
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
     <style type="text/css">a:link {
@@ -256,11 +260,20 @@
                             <#assign childrenTitle = inflection.of(requirements.childrenType).inPluralForm().asATitle()>
                             <th width="65" class="test-results-heading">${childrenTitle}</th>
                         </#if>
-                        <th width="50px" class="test-results-heading">Tests</th>
-                        <th width="50px" class="test-results-heading">Pass</th>
-                        <th width="50px" class="test-results-heading">Fail</th>
-                        <th width="50px" class="test-results-heading">Error</th>
-                        <th width="50px" class="test-results-heading">Pend</th>
+                        <th class="test-results-heading" width="75px">Auto.<br/>Tests</th>
+                        <th class="test-results-heading" width="25px"><i class="icon-check icon-large" title="Tests passed (automated)"></i></th>
+                        <th class="test-results-heading" width="25px"><i class="icon-ban-circle icon-large" title="Tests skipped or pending (automated)"></th>
+                        <th class="test-results-heading" width="25px"><i class="icon-thumbs-down icon-large" title="Tests failed (automated)"></th>
+                        <th class="test-results-heading" width="25px"><i class="icon-exclamation-sign icon-large" title="Tests failed with an error (automated)"></th>
+                        <#if reportOptions.showManualTests>
+                            <th class="test-results-heading" width="75px">Manual<br/>Tests</th>
+                            <th class="test-results-heading" width="25px"><i class="icon-check icon-large" title="Tests passed (manual)"></i></th>
+                            <th class="test-results-heading" width="25px"><i class="icon-ban-circle icon-large" title="Tests skipped or pending (manual)"></th>
+                            <th class="test-results-heading" width="25px"><i class="icon-thumbs-down icon-large" title="Tests failed (manual)"></th>
+                            <th class="test-results-heading" width="25px"><i class="icon-exclamation-sign icon-large" title="Tests failed with an error (manual)"></th>
+                        </#if>
+
+
                         <th width="150px" class="test-results-heading">Coverage</th>
                     </tr>
                     <tbody>
@@ -304,16 +317,43 @@
                             <#assign failureCount = requirementOutcome.testOutcomes.totalTests.withResult("failure") >
                             <#assign errorCount = requirementOutcome.testOutcomes.totalTests.withResult("error") >
 
-                            <td class="bluetext requirementRowCell">${requirementOutcome.testOutcomes.total}</td>
-                            <td class="greentext requirementRowCell">${successCount}</td>
-                            <td class="redtext requirementRowCell">${failureCount}</td>
-                            <td class="lightredtext requirementRowCell">${errorCount}</td>
-                            <td class="bluetext requirementRowCell">${indeterminateCount}</td>
+                            <#--<td class="bluetext requirementRowCell">${requirementOutcome.testOutcomes.total}</td>-->
+                            <#--<td class="greentext requirementRowCell">${successCount}</td>-->
+                            <#--<td class="redtext requirementRowCell">${failureCount}</td>-->
+                            <#--<td class="lightredtext requirementRowCell">${errorCount}</td>-->
+                            <#--<td class="bluetext requirementRowCell">${indeterminateCount}</td>-->
 
+                            <#assign totalAutomated = requirementOutcome.tests.count("AUTOMATED").withAnyResult()/>
+                            <#assign automatedPassedPercentage = requirementOutcome.tests.getFormattedPercentage("AUTOMATED").withResult("SUCCESS")/>
+                            <#assign automatedFailedPercentage = requirementOutcome.tests.getFormattedPercentage("AUTOMATED").withFailureOrError()/>
+                            <#assign automatedPendingPercentage = requirementOutcome.tests.getFormattedPercentage("AUTOMATED").withIndeterminateResult()/>
+                            <#assign automatedPassed = requirementOutcome.tests.count("AUTOMATED").withResult("SUCCESS")/>
+                            <#assign automatedPending = requirementOutcome.tests.count("AUTOMATED").withIndeterminateResult()/>
+                            <#assign automatedFailed = requirementOutcome.tests.count("AUTOMATED").withResult("FAILURE")/>
+                            <#assign automatedError = requirementOutcome.tests.count("AUTOMATED").withResult("ERROR")/>
+                            <#assign totalManual = requirementOutcome.tests.count("MANUAL").withAnyResult()/>
+                            <#assign manualPassedPercentage = requirementOutcome.tests.getFormattedPercentage("MANUAL").withResult("SUCCESS")/>
+                            <#assign manualFailedPercentage = requirementOutcome.tests.getFormattedPercentage("MANUAL").withFailureOrError()/>
+                            <#assign manualPending = requirementOutcome.tests.count("MANUAL").withIndeterminateResult()/>
+                            <#assign manualPendingPercentage = requirementOutcome.tests.getFormattedPercentage("MANUAL").withIndeterminateResult()/>
+                            <#assign manualPassed = requirementOutcome.tests.count("MANUAL").withResult("SUCCESS")/>
+                            <#assign manualFailed = requirementOutcome.tests.count("MANUAL").withResult("FAILURE")/>
+                            <#assign manualError = requirementOutcome.tests.count("MANUAL").withResult("ERROR")/>
+
+                            <td class="greentext requirementRowCell">${totalAutomated}</td>
+                            <td class="greentext requirementRowCell">${automatedPassed}</td>
+                            <td class="bluetext requirementRowCell">${automatedPending}</td>
+                            <td class="redtext requirementRowCell">${automatedFailed}</td>
+                            <td class="lightorangetext requirementRowCell">${automatedError}</td>
+                            <#if reportOptions.showManualTests>
+                                <td class="greentext requirementRowCell">${totalManual}</td>
+                                <td class="greentext requirementRowCell">${manualPassed}</td>
+                                <td class="bluetext requirementRowCell">${manualPending}</td>
+                                <td class="redtext requirementRowCell">${manualFailed}</td>
+                                <td class="lightorangetext requirementRowCell">${manualError}</td>
+                            </#if>
 
                             <td width="150px" class="lightgreentext requirementRowCell">
-
-
                                 <#assign percentPending = requirementOutcome.percent.withIndeterminateResult()/>
                                 <#assign percentError = requirementOutcome.percent.withResult("ERROR")/>
                                 <#assign percentFailing = requirementOutcome.percent.withResult("FAILURE")/>
@@ -323,9 +363,9 @@
                                 <#assign error = requirementOutcome.formattedPercentage.withResult("ERROR")>
                                 <#assign pending = requirementOutcome.formattedPercentage.withIndeterminateResult()>
 
-                                <#assign errorbar = (percentPassing + percentFailing + percentError)*150>
-                                <#assign failingbar = (percentPassing + percentFailing)*150>
-                                <#assign passingbar = percentPassing*150>
+                                <#assign errorbar = (percentPassing + percentFailing + percentError)*125>
+                                <#assign failingbar = (percentPassing + percentFailing)*125>
+                                <#assign passingbar = percentPassing*125>
 
                                 <#assign tests = inflection.of(requirementOutcome.testOutcomes.total).times("test") >
 
@@ -357,8 +397,8 @@ Estimated unimplemented or pending requirements: ${pending}">
 
                                 <table>
                                     <tr>
-                                        <td width="50px">${passing}</td>
-                                        <td width="150px">
+                                        <td width="40px"><div class="small">${passing}</div></td>
+                                        <td width="125px">
                                             <div class="percentagebar"
                                                  title="${overviewCaption}"
                                                  style="width: 150px;">

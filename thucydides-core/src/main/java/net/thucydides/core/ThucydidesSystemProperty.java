@@ -125,6 +125,11 @@ public enum ThucydidesSystemProperty {
     SHOW_STEP_DETAILS("thucydides.reports.show.step.details"),
 
     /**
+     * Show statistics for manual tests in the test reports.
+     */
+    SHOW_MANUAL_TESTS("thucydides.report.show.manual.tests"),
+
+    /**
      * Restart the browser every so often during data-driven tests.
      */
     RESTART_BROWSER_FREQUENCY("thucydides.restart.browser.frequency"),

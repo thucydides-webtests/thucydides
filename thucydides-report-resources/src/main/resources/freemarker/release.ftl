@@ -37,7 +37,6 @@
     <script src="jqtree/tree.jquery.js"></script>
     <link rel="stylesheet" href="jqtree/jqtree.css">
 
-    <link rel="stylesheet" href="font-awesome/css/bootstrap.min.css">
     <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
     <!--[if IE 7]>
     <link rel="stylesheet" href="font-awesome/css/font-awesome-ie7.min.css">
@@ -185,14 +184,18 @@
                                                 <th width="40" class="test-results-heading">&nbsp;</th>
                                                 <th width="250" class="test-results-heading">${requirementType}</th>
                                                 <th width="250"  class="test-results-heading">${secondLevelRequirementType}</th>
-                                                <th class="test-results-heading" width="120px">Automated<br/>Tests</th>
-                                                <th class="test-results-heading" width="50px"><i class="icon-check icon-large" title="Tests passed (automated)"></i></th>
-                                                <th class="test-results-heading" width="50px"><i class="icon-check-empty icon-large" title="Tests skipped or pending (automated)"></th>
-                                                <th class="test-results-heading" width="50px"><i class="icon-exclamation-sign icon-large" title="Tests failed (automated)"></th>
-                                                <th class="test-results-heading" width="120px">Manual<br/>Tests</th>
-                                                <th class="test-results-heading" width="50px"><i class="icon-check icon-large" title="Tests passed (manual)"></i></th>
-                                                <th class="test-results-heading" width="50px"><i class="icon-check-empty icon-large" title="Tests skipped or pending (manual)"></th>
-                                                <th class="test-results-heading" width="50px"><i class="icon-exclamation-sign icon-large" title="Tests failed (manual)"></th>
+                                                <th class="test-results-heading" width="75px">Auto.<br/>Tests</th>
+                                                <th class="test-results-heading" width="25px"><i class="icon-check icon-large" title="Tests passed (automated)"></i></th>
+                                                <th class="test-results-heading" width="25px"><i class="icon-ban-circle icon-large" title="Tests skipped or pending (automated)"></th>
+                                                <th class="test-results-heading" width="25px"><i class="icon-thumbs-down icon-large" title="Tests failed (automated)"></th>
+                                                <th class="test-results-heading" width="25px"><i class="icon-exclamation-sign icon-large" title="Tests failed with an error (automated)"></th>
+                                            <#if reportOptions.showManualTests>
+                                                <th class="test-results-heading" width="75px">Manual<br/>Tests</th>
+                                                <th class="test-results-heading" width="25px"><i class="icon-check icon-large" title="Tests passed (manual)"></i></th>
+                                                <th class="test-results-heading" width="25px"><i class="icon-ban-circle icon-large" title="Tests skipped or pending (manual)"></th>
+                                                <th class="test-results-heading" width="25px"><i class="icon-thumbs-down icon-large" title="Tests failed (manual)"></th>
+                                                <th class="test-results-heading" width="25px"><i class="icon-exclamation-sign icon-large" title="Tests failed with an error (manual)"></th>
+                                            </#if>
                                             </tr>
                                             <tbody>
 
@@ -235,23 +238,29 @@
                                                 <#assign automatedPendingPercentage = requirementOutcome.tests.getFormattedPercentage("AUTOMATED").withIndeterminateResult()/>
                                                 <#assign automatedPassed = requirementOutcome.tests.count("AUTOMATED").withResult("SUCCESS")/>
                                                 <#assign automatedPending = requirementOutcome.tests.count("AUTOMATED").withIndeterminateResult()/>
-                                                <#assign automatedFailed = requirementOutcome.tests.count("AUTOMATED").withFailureOrError()/>
+                                                <#assign automatedFailed = requirementOutcome.tests.count("AUTOMATED").withResult("FAILURE")/>
+                                                <#assign automatedError = requirementOutcome.tests.count("AUTOMATED").withResult("ERROR")/>
                                                 <#assign totalManual = requirementOutcome.tests.count("MANUAL").withAnyResult()/>
                                                 <#assign manualPassedPercentage = requirementOutcome.tests.getFormattedPercentage("MANUAL").withResult("SUCCESS")/>
                                                 <#assign manualFailedPercentage = requirementOutcome.tests.getFormattedPercentage("MANUAL").withFailureOrError()/>
                                                 <#assign manualPending = requirementOutcome.tests.count("MANUAL").withIndeterminateResult()/>
                                                 <#assign manualPendingPercentage = requirementOutcome.tests.getFormattedPercentage("MANUAL").withIndeterminateResult()/>
                                                 <#assign manualPassed = requirementOutcome.tests.count("MANUAL").withResult("SUCCESS")/>
-                                                <#assign manualFailed = requirementOutcome.tests.count("MANUAL").withFailureOrError()/>
+                                                <#assign manualFailed = requirementOutcome.tests.count("MANUAL").withResult("FAILURE")/>
+                                                <#assign manualError = requirementOutcome.tests.count("MANUAL").withResult("ERROR")/>
 
                                                 <td class="greentext">${totalAutomated}<div class="small">(${automatedPassedPercentage} pass)</div></td>
                                                 <td class="greentext">${automatedPassed}</td>
                                                 <td class="bluetext">${automatedPending}</td>
                                                 <td class="redtext">${automatedFailed}</td>
+                                                <td class="lightorangetext">${automatedError}</td>
+                                            <#if reportOptions.showManualTests>
                                                 <td class="greentext">${totalManual}<div class="small">(${manualPassedPercentage} pass)</div></td>
                                                 <td class="greentext">${manualPassed}</td>
                                                 <td class="bluetext">${manualPending}</td>
                                                 <td class="redtext">${manualFailed}</td>
+                                                <td class="lightorangetext">${manualError}</td>
+                                            </#if>
                                             </tr>
                                             </#foreach>
                                             </tbody>
