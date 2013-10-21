@@ -274,7 +274,7 @@
                         </#if>
 
 
-                        <th width="150px" class="test-results-heading">Coverage</th>
+                        <th width="125px" class="test-results-heading">Coverage</th>
                     </tr>
                     <tbody>
 
@@ -340,20 +340,20 @@
                             <#assign manualFailed = requirementOutcome.tests.count("MANUAL").withResult("FAILURE")/>
                             <#assign manualError = requirementOutcome.tests.count("MANUAL").withResult("ERROR")/>
 
-                            <td class="greentext requirementRowCell">${totalAutomated}</td>
+                            <td class="greentext highlighted-value requirementRowCell">${totalAutomated}</td>
                             <td class="greentext requirementRowCell">${automatedPassed}</td>
                             <td class="bluetext requirementRowCell">${automatedPending}</td>
                             <td class="redtext requirementRowCell">${automatedFailed}</td>
                             <td class="lightorangetext requirementRowCell">${automatedError}</td>
                             <#if reportOptions.showManualTests>
-                                <td class="greentext requirementRowCell">${totalManual}</td>
+                                <td class="greentext highlighted-value requirementRowCell">${totalManual}</td>
                                 <td class="greentext requirementRowCell">${manualPassed}</td>
                                 <td class="bluetext requirementRowCell">${manualPending}</td>
                                 <td class="redtext requirementRowCell">${manualFailed}</td>
                                 <td class="lightorangetext requirementRowCell">${manualError}</td>
                             </#if>
 
-                            <td width="150px" class="lightgreentext requirementRowCell">
+                            <td width="125px" class="lightgreentext requirementRowCell">
                                 <#assign percentPending = requirementOutcome.percent.withIndeterminateResult()/>
                                 <#assign percentError = requirementOutcome.percent.withResult("ERROR")/>
                                 <#assign percentFailing = requirementOutcome.percent.withResult("FAILURE")/>
@@ -401,7 +401,7 @@ Estimated unimplemented or pending requirements: ${pending}">
                                         <td width="125px">
                                             <div class="percentagebar"
                                                  title="${overviewCaption}"
-                                                 style="width: 150px;">
+                                                 style="width: 125px;">
                                                 <div class="errorbar"
                                                      style="width: ${errorbar?string("0")}px;"
                                                      title="${overviewCaption}">

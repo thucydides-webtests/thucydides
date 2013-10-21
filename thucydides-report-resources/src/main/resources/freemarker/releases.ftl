@@ -95,7 +95,7 @@
         <ul>
             <li><a href="index.html">Test Results</a></li>
             <li><a href="capabilities.html">Requirements</a></li>
-            <li><a href="releases.html" class="current">Releases</a></li>
+            <#if reportOptions.showReleases><li><a href="releases.html" class="current">Releases</a></li></#if>
             <li><a href="progress-report.html">Progress</a></li>
         <#foreach tagType in allTestOutcomes.firstClassTagTypes>
             <#assign tagReport = reportName.forTagType(tagType) >

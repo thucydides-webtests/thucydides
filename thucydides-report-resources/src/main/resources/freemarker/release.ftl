@@ -110,7 +110,7 @@
         <ul>
             <li><a href="index.html">Test Results</a></li>
             <li><a href="capabilities.html">Requirements</a></li>
-            <li><a href="releases.html" class="current">Releases</a></li>
+            <#if reportOptions.showReleases><li><a href="releases.html" class="current">Releases</a></li></#if>
             <li><a href="progress-report.html">Progress</a></li>
         <#foreach tagType in allTestOutcomes.firstClassTagTypes>
             <#assign tagReport = reportName.forTagType(tagType) >
@@ -249,13 +249,13 @@
                                                 <#assign manualFailed = requirementOutcome.tests.count("MANUAL").withResult("FAILURE")/>
                                                 <#assign manualError = requirementOutcome.tests.count("MANUAL").withResult("ERROR")/>
 
-                                                <td class="greentext">${totalAutomated}<div class="small">(${automatedPassedPercentage} pass)</div></td>
+                                                <td class="greentext highlighted-value">${totalAutomated}<div class="small">(${automatedPassedPercentage} pass)</div></td>
                                                 <td class="greentext">${automatedPassed}</td>
                                                 <td class="bluetext">${automatedPending}</td>
                                                 <td class="redtext">${automatedFailed}</td>
                                                 <td class="lightorangetext">${automatedError}</td>
                                             <#if reportOptions.showManualTests>
-                                                <td class="greentext">${totalManual}<div class="small">(${manualPassedPercentage} pass)</div></td>
+                                                <td class="greentext highlighted-value">${totalManual}<div class="small">(${manualPassedPercentage} pass)</div></td>
                                                 <td class="greentext">${manualPassed}</td>
                                                 <td class="bluetext">${manualPending}</td>
                                                 <td class="redtext">${manualFailed}</td>

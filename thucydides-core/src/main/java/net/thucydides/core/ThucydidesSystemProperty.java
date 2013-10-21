@@ -130,6 +130,11 @@ public enum ThucydidesSystemProperty {
     SHOW_MANUAL_TESTS("thucydides.report.show.manual.tests"),
 
     /**
+     * Report on releases
+     */
+    SHOW_RELEASES("thucydides.report.show.releases"),
+
+    /**
      * Restart the browser every so often during data-driven tests.
      */
     RESTART_BROWSER_FREQUENCY("thucydides.restart.browser.frequency"),

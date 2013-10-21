@@ -1147,3 +1147,7 @@ ul.second-level-requirements  {
     list-style-type: circle;
     margin-left: 20px;
 }
+
+.highlighted-value {
+    font-style: italic;
+}
