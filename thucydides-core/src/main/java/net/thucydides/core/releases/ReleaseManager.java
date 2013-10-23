@@ -14,9 +14,13 @@ import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.ReportNameProvider;
 import net.thucydides.core.requirements.RequirementsService;
+import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.util.EnvironmentVariables;
+import org.hamcrest.Matcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +36,7 @@ public class ReleaseManager {
     private List<String> releaseTypes;
     private ReportNameProvider reportNameProvider;
     private RequirementsService requirementsService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequirementsTagProvider.class);
 
     public ReleaseManager(EnvironmentVariables environmentVariables, ReportNameProvider reportNameProvider) {
         this.reportNameProvider = reportNameProvider;
@@ -75,6 +80,7 @@ public class ReleaseManager {
     public List<Release> getReleasesFrom(TestOutcomes testOutcomes) {
 
         List<Release> releases = requirementsService.getReleasesFromRequirements();
+        LOGGER.debug("Loaded Releases: " + releases);
 
         enrichOutcomesWithReleaseTags(testOutcomes.getOutcomes());
 
@@ -88,12 +94,21 @@ public class ReleaseManager {
         List<Release> releases = Lists.newArrayList();
         List<TestTag> releaseTags = testOutcomes.findMatchingTags()
                 .withType("version")
-                .withName(containsString(releaseTypes.get(0)))
+                .withNameIn(matchingNames(releaseTypes.get(0)))
                 .list();
         for (TestTag tag : releaseTags) {
             releases.add(extractReleaseFor(tag, testOutcomes.withTag(tag), 1, NO_PARENTS));
         }
         return releases;
+    }
+
+    private List<Matcher<String>> matchingNames(String possibleNames) {
+        List<Matcher<String>> matchers = Lists.newArrayList();
+        List<String> nameCandidates = Splitter.on(":").trimResults().splitToList(possibleNames);
+        for(String nameCandidate : nameCandidates) {
+            matchers.add((containsString(nameCandidate)));
+        }
+        return matchers;
     }
 
     public List<RequirementOutcome> enrichRequirementsOutcomesWithReleaseTags(List<? extends RequirementOutcome> outcomes) {

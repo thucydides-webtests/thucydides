@@ -83,7 +83,7 @@
 <div class="middlecontent">
     <div id="contenttop">
         <div class="middlebg">
-            <span class="bluetext"><a href="index.html" class="bluetext">Releases</a> </span>
+            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > Releases </span>
         </div>
         <div class="rightbg"></div>
     </div>
@@ -91,22 +91,9 @@
     <div class="clr"></div>
 
     <!--/* starts second table*/-->
-    <div class="menu">
-        <ul>
-            <li><a href="index.html">Test Results</a></li>
-            <li><a href="capabilities.html">Requirements</a></li>
-            <#if reportOptions.showReleases><li><a href="releases.html" class="current">Releases</a></li></#if>
-            <li><a href="progress-report.html">Progress</a></li>
-        <#foreach tagType in allTestOutcomes.firstClassTagTypes>
-            <#assign tagReport = reportName.forTagType(tagType) >
-            <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
-            <li><a href="${tagReport}">${tagTypeTitle}</a></li>
-        </#foreach>
-            <li><a href="history.html">History</a></li>
-        </ul>
-        <span class="date-and-time">Tests run ${timestamp}</span>
-        <br style="clear:left"/>
-    </div>
+<#include "menu.ftl">
+<@main_menu selected="releases" />
+
 
     <div class="clr"></div>
 
@@ -136,6 +123,7 @@
                         );
 
                     </script>
+
                 </div>
             </div>
         </div>

@@ -78,8 +78,6 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         TestOutcome storedTestOutcome = testOutcome.withQualifier(qualifier);
 
-        LOGGER.debug("Generating XML report for {}/{}", storedTestOutcome.getTitle(), storedTestOutcome.getMethodName());
-
         Map<String,Object> context = new HashMap<String,Object>();
         addTestOutcomeToContext(storedTestOutcome, allTestOutcomes, context);
         addFormattersToContext(context);
@@ -93,6 +91,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         }
 
         String reportFilename = reportFor(storedTestOutcome);
+        LOGGER.debug("Generating HTML report for {} to file {}", storedTestOutcome.getTitle(), reportFilename);
         return writeReportToOutputDirectory(reportFilename, htmlContents);
     }
 
@@ -113,6 +112,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         context.put("testOutcome", testOutcome);
         context.put("inflection", Inflector.getInstance());
         context.put("parentRequirement", requirementsService.getParentRequirementFor(testOutcome));
+        addTimestamp(testOutcome, context);
     }
 
     private void addFormattersToContext(final Map<String,Object> context) {

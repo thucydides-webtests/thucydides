@@ -134,6 +134,12 @@ public enum ThucydidesSystemProperty {
      */
     SHOW_RELEASES("thucydides.report.show.releases"),
 
+    SHOW_PROGRESS("thucydides.report.show.progress"),
+
+    SHOW_HISTORY("thucydides.report.show.history"),
+
+    SHOW_TAG_MENUS("thucydides.report.show.tags"),
+
     /**
      * Restart the browser every so often during data-driven tests.
      */
@@ -390,6 +396,13 @@ public enum ThucydidesSystemProperty {
      * Use this property if you need to completely override the location of requirements for the File System Provider.
      */
     REQUIREMENTS_DIRECTORY("thucydides.requirements.dir"),
+
+    /**
+     * By default, Thucydides will read requirements from the directory structure that contains the stories.
+     * When other tag and requirements plugins are used, such as the JIRA plugin, this can cause conflicting
+     * tags. Set this property to false to deactivate this feature (it is true by default).
+     */
+    USE_REQUIREMENTS_DIRECTORY("thucydides.use.requirements.directories"),
 
     /**
      * Use this property if you need to completely override the location of requirements for the Annotated Provider.

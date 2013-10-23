@@ -16,7 +16,9 @@ import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.TestType;
 import net.thucydides.core.model.formatters.TestCoverageFormatter;
 import net.thucydides.core.requirements.model.Requirement;
+import net.thucydides.core.requirements.model.RequirementsConfiguration;
 import net.thucydides.core.requirements.reports.RequirementsPercentageFormatter;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.count;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
@@ -61,6 +64,8 @@ public class TestOutcomes {
     private final List<? extends TestOutcome> outcomes;
     private final Optional<TestOutcomes> rootOutcomes;
     private final double estimatedAverageStepCount;
+    private final EnvironmentVariables environmentVariables;
+    private final RequirementsConfiguration requirementsConfiguration;
 
     /**
      * A label indicating where these tests come from (e.g. the tag, the result status, etc).
@@ -76,17 +81,20 @@ public class TestOutcomes {
     protected TestOutcomes(List<? extends TestOutcome> outcomes,
                            double estimatedAverageStepCount,
                            String label,
-                           TestOutcomes rootOutcomes) {
+                           TestOutcomes rootOutcomes,
+                           EnvironmentVariables environmentVariables) {
         this.outcomes = ImmutableList.copyOf(outcomes);
         this.estimatedAverageStepCount = estimatedAverageStepCount;
         this.label = label;
         this.rootOutcomes = Optional.fromNullable(rootOutcomes);
+        this.environmentVariables = environmentVariables;
+        this.requirementsConfiguration = new RequirementsConfiguration(environmentVariables);
     }
 
     protected TestOutcomes(List<? extends TestOutcome> outcomes,
                            double estimatedAverageStepCount,
                            String label) {
-        this(outcomes, estimatedAverageStepCount, label, null);
+        this(outcomes, estimatedAverageStepCount, label, null, Injectors.getInjector().getInstance(EnvironmentVariables.class));
     }
 
     protected TestOutcomes(List<? extends TestOutcome> outcomes,
@@ -133,7 +141,20 @@ public class TestOutcomes {
             addTagTypesFrom(outcome, tagTypes);
         }
         tagTypes.remove("version");
+        tagTypes.removeAll(getRequirementTagTypes());
         return sort(ImmutableList.copyOf(tagTypes), on(String.class));
+    }
+
+    public List<String> getRequirementTagTypes() {
+       List<String> tagTypes = Lists.newArrayList();
+
+       List<String> candidateTagTypes = requirementsConfiguration.getRequirementTypes();
+       for(String tagType : candidateTagTypes) {
+           if (getTagTypes().contains(tagType)) {
+               tagTypes.add(tagType);
+           }
+       }
+       return ImmutableList.copyOf(tagTypes);
     }
 
     /**
@@ -257,7 +278,7 @@ public class TestOutcomes {
     }
 
     private TestOutcomes withRootOutcomes(TestOutcomes rootOutcomes) {
-        return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, this.label, rootOutcomes);
+        return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, this.label, rootOutcomes, environmentVariables);
     }
 
     /**
@@ -485,6 +506,7 @@ public class TestOutcomes {
 
     public OutcomeProportionCounter proportionOf(TestType testType) {
         return new OutcomeProportionCounter(testType);
+
     }
 
     public class OutcomeProportionCounter extends TestOutcomeCounter {
@@ -669,7 +691,7 @@ public class TestOutcomes {
     public final class TestOutcomeMatcher {
 
         private final TestOutcomes outcomes;
-        private Optional<Matcher<String>> nameMatcher = Optional.absent();
+        private Optional<List<Matcher<String>>> nameMatcher = Optional.absent();
         private Optional<Matcher<String>> typeMatcher = Optional.absent();
 
         public TestOutcomeMatcher(TestOutcomes outcomes) {
@@ -677,7 +699,14 @@ public class TestOutcomes {
         }
 
         public TestOutcomeMatcher withName(Matcher<String> nameMatcher) {
-            this.nameMatcher = Optional.of(nameMatcher);
+            List<Matcher<String>> matchers = Lists.newArrayList(nameMatcher);
+            this.nameMatcher = Optional.of(matchers);
+            return this;
+        }
+
+        public TestOutcomeMatcher withNameIn(List<Matcher<String>>  nameMatchers) {
+            List<Matcher<String>> matchers = Lists.newArrayList(nameMatchers);
+            this.nameMatcher = Optional.of(matchers);
             return this;
         }
 
@@ -707,7 +736,7 @@ public class TestOutcomes {
 
         private boolean compatibleTag(TestTag tag) {
             if (nameMatcher.isPresent()) {
-                if (!nameMatcher.get().matches(tag.getName())) {
+                if (!matches(tag.getName(), nameMatcher.get())) {
                     return false;
                 }
             }
@@ -717,6 +746,15 @@ public class TestOutcomes {
                 }
             }
             return true;
+        }
+
+        private boolean matches(String name, List<Matcher<String>> matchers) {
+            for(Matcher<String> match : matchers) {
+                if (match.matches(name)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

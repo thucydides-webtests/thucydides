@@ -1151,3 +1151,28 @@ ul.second-level-requirements  {
 .highlighted-value {
     font-style: italic;
 }
+
+
+.summary-table {
+    width: 100%;
+    border: solid #d3d3d3 1px;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+    padding: 4px;
+}
+
+.summary-table td,th {
+    border: solid #d3d3d3 1px;
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: black; font-weight:normal; font-size-adjust:inherit;
+}
+
+.summary-table th {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #0d78ae; font-weight:normal; font-size-adjust:inherit;
+    background-color: #f0f0f0;
+}
+
+.summary-leading-column {
+    background-color: #f0f0f0;
+    font-style: italic;
+}
+

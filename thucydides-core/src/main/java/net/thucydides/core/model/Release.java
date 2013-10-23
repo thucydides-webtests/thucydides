@@ -90,4 +90,11 @@ public class Release implements Comparable {
     public int compareTo(Object otherRelease) {
         return getName().compareTo(((Release) otherRelease).getName());
     }
+
+    @Override
+    public String toString() {
+        return "Release{" +
+                "label='" + label + '\'' +
+                '}';
+    }
 }

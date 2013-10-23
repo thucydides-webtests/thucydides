@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static ch.lambdaj.Lambda.collect;
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
@@ -74,6 +75,21 @@ public class RequirementsOutcomes {
             buildRequirements(outcomes, requirementsTagProviders, requirement);
         }
         return outcomes;
+    }
+
+    public RequirementsOutcomes requirementsOfType(String type) {
+        List<Requirement> matchingRequirements = Lists.newArrayList();
+        List<TestOutcome> matchingTests = Lists.newArrayList();
+        for(RequirementOutcome requirementOutcome : getFlattenedRequirementOutcomes()) {
+            if (requirementOutcome.getRequirement().getType().equalsIgnoreCase(type)) {
+                matchingRequirements.add(requirementOutcome.getRequirement());
+                matchingTests.addAll(requirementOutcome.getTestOutcomes().getOutcomes());
+            }
+        }
+
+        return new RequirementsOutcomes(matchingRequirements,
+                                        TestOutcomes.of(matchingTests),
+                                        issueTracking, environmentVariables, requirementsTagProviders);
     }
 
     private void buildRequirements(List<RequirementOutcome> outcomes, List<RequirementsTagProvider> requirementsTagProviders, Requirement requirement) {
@@ -138,6 +154,17 @@ public class RequirementsOutcomes {
         return typeOfFirstChildPresent();
     }
 
+    public List<String> getTypes() {
+        List<Requirement> requirements = getAllRequirements();
+        List<String> types = Lists.newArrayList();
+        for (Requirement requirement : requirements) {
+            if (!types.contains(requirement.getType())) {
+                types.add(requirement.getType());
+            }
+        }
+        return types;
+    }
+
     private String typeOfFirstChildPresent() {
         for (RequirementOutcome outcome : requirementOutcomes) {
             if (!outcome.getRequirement().getChildren().isEmpty()) {
@@ -173,7 +200,7 @@ public class RequirementsOutcomes {
     public int getFailingRequirementsCount() {
         int failingRequirements = 0;
         for (RequirementOutcome requirementOutcome : requirementOutcomes) {
-            if (requirementOutcome.isFailure()) {
+            if (requirementOutcome.isFailure() || requirementOutcome.isError()) {
                 failingRequirements++;
             }
         }
@@ -218,6 +245,10 @@ public class RequirementsOutcomes {
             addFlattenedRequirements(outcome.getRequirement(), allRequirements);
         }
         return ImmutableList.copyOf(allRequirements);
+    }
+
+    public int getTotalRequirements() {
+        return getAllRequirements().size();
     }
 
     private void addFlattenedRequirements(Requirement requirement, List<Requirement> allRequirements) {

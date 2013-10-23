@@ -106,23 +106,8 @@
     <div class="clr"></div>
 
     <!--/* starts second table*/-->
-    <div class="menu">
-        <ul>
-            <li><a href="index.html">Test Results</a></li>
-            <li><a href="capabilities.html">Requirements</a></li>
-            <#if reportOptions.showReleases><li><a href="releases.html" class="current">Releases</a></li></#if>
-            <li><a href="progress-report.html">Progress</a></li>
-        <#foreach tagType in allTestOutcomes.firstClassTagTypes>
-            <#assign tagReport = reportName.forTagType(tagType) >
-            <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
-            <li><a href="${tagReport}">${tagTypeTitle}</a></li>
-        </#foreach>
-            <li><a href="history.html">History</a></li>
-        </ul>
-        <span class="date-and-time">Tests run ${timestamp}</span>
-        <br style="clear:left"/>
-    </div>
-
+    <#include "menu.ftl">
+    <@main_menu selected="releases" />
     <div class="clr"></div>
 
 
@@ -199,7 +184,7 @@
                                             </tr>
                                             <tbody>
 
-                                            <#foreach requirementOutcome in requirementOutcomes>
+                                            <#foreach requirementOutcome in releaseRequirementOutcomes>
                                                 <#if requirementOutcome.testOutcomes.stepCount == 0 || requirementOutcome.testOutcomes.result == "PENDING" || requirementOutcome.testOutcomes.result == "IGNORED">
                                                     <#assign status_icon = "traffic-yellow.gif">
                                                     <#assign status_rank = 0>

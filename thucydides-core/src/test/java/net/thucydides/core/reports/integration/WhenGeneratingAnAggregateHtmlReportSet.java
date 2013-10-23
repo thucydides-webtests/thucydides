@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
@@ -104,7 +105,7 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         String expectedSuccessReport = reportName.forTestResult("success");
 
         File report = new File(outputDirectory, expectedSuccessReport);
-
+        driver = new FirefoxDriver();
         driver.get(urlFor(report));
         assertThat(driver.findElement(By.cssSelector(".date-and-time")).getText(), containsString("01-2013"));
     }

@@ -3,8 +3,11 @@ package net.thucydides.core.requirements;
 import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
+import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.statistics.service.ClasspathTagProviderService;
 import net.thucydides.core.statistics.service.TagProvider;
+import net.thucydides.core.util.EnvironmentVariables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +31,12 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
 
     private List<RequirementsTagProvider> requirementsTagProviders;
 
+    private final EnvironmentVariables environmentVariables;
+
     @Inject
     public ClasspathRequirementsProviderService(ClasspathTagProviderService tagProviderService) {
         this.tagProviderService = tagProviderService;
+        environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
     }
 
 
@@ -46,7 +52,7 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
     private List<RequirementsTagProvider> loadRequirementsTagProviders() {
         List<RequirementsTagProvider> providers = new ArrayList<RequirementsTagProvider>();
 
-        List<TagProvider> tagProviders = tagProviderService.getTagProviders();
+        List<TagProvider> tagProviders = active(tagProviderService.getTagProviders());
         logger.info("Using requirements providers: {}", tagProviders);
         for (TagProvider tagProvider : tagProviders) {
             if (tagProvider instanceof RequirementsTagProvider) {
@@ -57,6 +63,23 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
         removeDefaultProviderIfItIsNotFirstFrom(providers);
         return providers;
     }
+
+    private List<TagProvider> active(List<TagProvider> requirementsProviders) {
+        boolean useDirectoryBasedRequirements =  environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.USE_REQUIREMENTS_DIRECTORY, true);
+
+        if (useDirectoryBasedRequirements) {
+            return requirementsProviders;
+        } else {
+            List<TagProvider> activeRequirementsProviders = Lists.newArrayList();
+            for (TagProvider provider : requirementsProviders) {
+                if (!(provider instanceof FileSystemRequirementsTagProvider)) {
+                    activeRequirementsProviders.add(provider);
+                }
+            }
+            return activeRequirementsProviders;
+        }
+    }
+
 
     private void removeDefaultProviderIfItIsNotFirstFrom(List<RequirementsTagProvider> providers) {
         int defaultProviderPos = -1;

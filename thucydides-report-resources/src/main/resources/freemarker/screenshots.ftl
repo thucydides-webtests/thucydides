@@ -89,21 +89,8 @@
     <div class="clr"></div>
 
     <!--/* starts second table*/-->
-    <div class="menu">
-        <ul>
-            <li><a href="index.html" class="current">Test Results</a></li>
-            <li><a href="capabilities.html">Requirements</a></li>
-            <li><a href="releases.html">Releases</a></li>
-            <li><a href="progress-report.html">Progress</a></li>
-        <#list allTestOutcomes.firstClassTagTypes as tagType>
-            <#assign tagReport = reportName.forTagType(tagType) >
-            <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
-            <li><a href="${tagReport}">${tagTypeTitle}</a></li>
-        </#list>
-            <li><a href="history.html">History</a></li>
-        </ul>
-        <br style="clear:left"/>
-    </div>
+    <#include "menu.ftl">
+    <@main_menu selected="home" />
 
     <div class="clr"></div>
     <div id="contentbody">

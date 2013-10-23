@@ -1,4 +1,5 @@
 package net.thucydides.core.reports.integration
+
 import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.core.ThucydidesSystemProperties
 import net.thucydides.core.ThucydidesSystemProperty
@@ -60,21 +61,22 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
         when: "we view the report"
+        driver = new FirefoxDriver();
             driver.get reportHomePageUrl();
             def tagTypeNames = driver.findElements(By.cssSelector(".tagTitle")).collect { it.text}
         then: "we can see all available tags and click on 'Grow New Potatoes' link"
             def anotherDifferentFeatureLink = driver.findElement(By.linkText("Grow New Potatoes"))
             anotherDifferentFeatureLink.click()
             def breadcrumbText = driver.findElement(By.cssSelector(".bluetext")).getText()
-            breadcrumbText == "Thucydides Reports> Grow new potatoes"
+            breadcrumbText == "Home > Grow new potatoes"
         when: "we click on the Features link"
-            def featuresLink = driver.findElement(By.linkText("Features"))
+            def featuresLink = driver.findElement(By.linkText("Requirements"))
             featuresLink.click()
         then: "we see the breadcrumb showing Thucydedes Reports > another different feature"
             def subReportBreadcrumbText = driver.findElement(By.cssSelector(".bluetext")).getText()
-            subReportBreadcrumbText == "Home > Grow New Potatoes > Features"
+            subReportBreadcrumbText == "Home > Capabilities"
         and: "a single feature"
-            def featureLink = driver.findElement(By.linkText("Grow New Potatoes"))
+            def featureLink = driver.findElement(By.linkText("Grow cucumbers"))
             featureLink.enabled
 
     }
@@ -120,7 +122,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
         when: "we view the report"
-            driver = new FirefoxDriver()
+            driver = new PhantomJSDriver()
             driver.get reportHomePageUrl();
         then: "we should see a Releases tab"
             def releasesLink = driver.findElement(By.linkText("Releases"))

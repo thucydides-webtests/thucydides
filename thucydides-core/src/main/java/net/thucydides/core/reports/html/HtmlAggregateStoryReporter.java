@@ -137,6 +137,10 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         for(String name : testOutcomes.getTagNames()) {
             generateTagTypeReportsFor(testOutcomes.withTag(name), new ReportNameProvider(name));
         }
+        List<String> requirementTypes = requirementsOutcomes.getTypes();
+        for(String requirementType : requirementTypes) {
+            generateRequirementTypeReportFor(requirementType, requirementsOutcomes.requirementsOfType(requirementType).getTestOutcomes());    
+        }
         generateResultReportsFor(testOutcomes);
         generateHistoryReportFor(testOutcomes);
 //        generateCoverageReportsFor(testOutcomes);
@@ -145,6 +149,10 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         generateReleasesReportFor(testOutcomes, requirementsOutcomes);
 
+    }
+
+    private void generateRequirementTypeReportFor(String requirementType, TestOutcomes testOutcomes) {
+        //To change body of created methods use File | Settings | File Templates.
     }
 
     private void generateCSVReportFor(TestOutcomes testOutcomes, String reportName) throws IOException {
@@ -224,6 +232,8 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         String releaseData = getReleaseManager().getJSONReleasesFrom(testOutcomes);
         context.put("releases", releases);
         context.put("releaseData", releaseData);
+        context.put("requirements", requirementsOutcomes);
+        context.put("releaseRequirementOutcomes", requirementsOutcomes.getRequirementOutcomes());
         generateReportPage(context, RELEASES_TEMPLATE_PATH, "releases.html");
         generateReleaseDetailsReportsFor(testOutcomes, requirementsOutcomes);
     }
@@ -242,11 +252,13 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
             Map<String, Object> context = buildContext(testOutcomes, getReportNameProvider());
 
             requirementsOutcomes.getRequirementOutcomes().get(0).count("AUTOMATED").withIndeterminateResult();
-
             context.put("report", ReportProperties.forAggregateResultsReport());
             context.put("release", release);
             context.put("releaseData", getReleaseManager().getJSONReleasesFrom(release));
-            context.put("requirementOutcomes", releaseRequirements.getRequirementOutcomes());
+            context.put("requirementOutcomes", releaseRequirements);
+            context.put("requirements", requirementsOutcomes);
+            context.put("releaseRequirementOutcomes", requirementsOutcomes.getRequirementOutcomes());
+
             context.put("requirementType", topLevelRequirementTypeTitle);
             context.put("secondLevelRequirementType", secondLevelRequirementTypeTitle);
 

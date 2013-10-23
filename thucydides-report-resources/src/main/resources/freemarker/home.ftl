@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <title>Thucydides Reports</title>
     <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="font-awesome/css/font-awesome-ie7.min.css">
+    <![endif]-->
     <link rel="stylesheet" href="css/core.css"/>
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
     <style type="text/css">a:link {
@@ -75,7 +80,7 @@
                 show:true,
                 placement:'outside',
                 rendererOptions:{
-                    numberRows:1
+                    numberRows:2
                 },
                 location:'s',
                 marginTop:'15px'
@@ -127,7 +132,7 @@
                 show:true,
                 placement:'outside',
                 rendererOptions:{
-                    numberRows:1
+                    numberRows:2
                 },
                 location:'s',
                 marginTop:'15px'
@@ -171,12 +176,11 @@
 
 <div class="middlecontent">
 
+<#assign tagsTitle = 'Related tags' >
 <#if (testOutcomes.label == '')>
     <#assign resultsContext = ''>
     <#assign pageTitle = 'Test Results: All Tests' >
-    <#assign tagsTitle = 'All available tags' >
 <#else>
-    <#assign tagsTitle = 'Related tags' >
     <#assign resultsContext = '> ' + testOutcomes.label>
     <#assign reportName = reportName.withPrefix(testOutcomes.label)>
     <#if (currentTagType! != '')>
@@ -188,7 +192,7 @@
 <div id="contenttop">
 <#--<div class="leftbg"></div>-->
     <div class="middlebg">
-        <span class="bluetext"><a href="index.html" class="bluetext">Thucydides Reports</a>${resultsContext}</span>
+        <span class="bluetext"><a href="index.html" class="bluetext">Home</a> ${resultsContext}</span>
     </div>
     <div class="rightbg"></div>
 </div>
@@ -196,25 +200,8 @@
 <div class="clr"></div>
 
 <!--/* starts second table*/-->
-<div class="menu">
-    <ul>
-        <li><a href="index.html" class="current">Test Results</a></li>
-        <li><a href="capabilities.html">Requirements</a></li>
-        <li><a href="releases.html">Releases</a></li>
-        <li><a href="progress-report.html">Progress</a></li>
-    <#--<li><a href="treemap.html">Tree Map</a></li>-->
-    <#--<li><a href="dashboard.html">Progress</a></li>-->
-    <#foreach tagType in allTestOutcomes.firstClassTagTypes>
-        <#assign tagReport = reportName.forTagType(tagType) >
-        <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
-        <li><a href="${tagReport}">${tagTypeTitle}</a></li>
-    </#foreach>
-        <li><a href="history.html">History</a></li>
-    </ul>
-    <span class="date-and-time">Tests run ${timestamp}</span>
-    <br style="clear:left"/>
-</div>
-
+<#include "menu.ftl">
+<@main_menu selected="home" />
 <div class="clr"></div>
 <div id="beforetable"></div>
 <div id="results-dashboard">
@@ -231,10 +218,12 @@
                             <#assign errorReport = reportName.forTestResult("error") >
                             <#assign pendingReport = reportName.forTestResult("pending") >
 
+                            <#assign totalCount = testOutcomes.totalTests.total >
                             <#assign successCount = testOutcomes.totalTests.withResult("success") >
                             <#assign pendingCount = testOutcomes.totalTests.withResult("pending") >
                             <#assign failureCount = testOutcomes.totalTests.withResult("failure") >
                             <#assign errorCount = testOutcomes.totalTests.withResult("error") >
+                            <#assign failureOrErrorCount = testOutcomes.totalTests.withFailureOrError() >
 
                             <span class="test-count">
                                 ${successCount}
@@ -286,7 +275,10 @@
                                         </td>
                                         <td class="related-tags-section">
                                             <div>
-                                            <@list_tags weighted="false"/>
+                                                <#include "test-result-summary.ftl"/>
+                                            </div>
+                                            <div>
+                                                <@list_tags weighted="false"/>
                                             </div>
                                         </td>
                                     </tr>
@@ -305,7 +297,10 @@
                                         </td>
                                         <td class="related-tags-section">
                                             <div>
-                                            <@list_tags weighted="true"/>
+                                                <#include "test-result-summary.ftl"/>
+                                            </div>
+                                            <div>
+                                                <@list_tags weighted="true"/>
                                             </div>
                                         </td>
                                     </tr>
@@ -534,5 +529,6 @@
         </#if>
     </#foreach>
 </#macro>
+
 </body>
 </html>

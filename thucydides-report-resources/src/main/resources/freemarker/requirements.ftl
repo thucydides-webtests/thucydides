@@ -86,7 +86,7 @@
                 show:true,
                 placement:'outside',
                 rendererOptions:{
-                    numberRows:1
+                    numberRows:3
                 },
                 location:'s',
                 marginTop:'15px'
@@ -155,26 +155,10 @@
 <div class="clr"></div>
 
 <!--/* starts second table*/-->
-<div class="menu">
-    <ul>
-        <li><a href="index.html">Test Results</a></li>
-        <li><a href="capabilities.html" class="current">Requirements</a></li>
-        <li><a href="releases.html">Releases</a></li>
-        <li><a href="progress-report.html">Progress</a></li>
-    <#foreach tagType in allTestOutcomes.firstClassTagTypes>
-        <#assign tagReport = reportName.forTagType(tagType) >
-        <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
-        <li><a href="${tagReport}">${tagTypeTitle}</a></li>
-    </#foreach>
-        <li><a href="history.html">History</a></li>
-    </ul>
-    <span class="date-and-time">Tests run ${timestamp}</span>
-    <br style="clear:left"/>
-</div>
+<#include "menu.ftl">
+<@main_menu selected="requirements" />
 
 <div class="clr"></div>
-
-
 
 <div id="beforetable"></div>
 <div id="results-dashboard">
@@ -200,32 +184,36 @@
 <div id="requirements-summary">
     <div id="coverage_pie_chart"  style="margin-top:10px; margin-left:10px; width:250px; height:250px;"></div>
     <div id="coverage_summary">
-        <table class="coverage_data">
-            <tr>
-                <td class="label">Total requirement count:</td><td class="value">${requirements.flattenedRequirementCount}</td>
-            </tr>
-            <tr>
-                <td class="label subtopic">Untested requirements:</td><td class="value">${requirements.requirementsWithoutTestsCount}</td>
-            <tr/>
-            <tr>
-                <td class="label">Tests:</td><td class="value">${requirements.totalTestCount}</td>
-            <tr/>
-            <tr>
-                <td class="label subtopic">Passing tests:</td><td class="value">${requirements.total.withResult("SUCCESS")}</td>
-            <tr/>
-            <tr>
-                <td class="label subtopic">Failing tests:</td><td class="value">${requirements.total.withResult("FAILURE")}</td>
-            <tr/>
-            <tr>
-                <td class="label subtopic">Tests with errors:</td><td class="value">${requirements.total.withResult("ERROR")}</td>
-            <tr/>
-            <tr>
-                <td class="label subtopic">Pending tests:</td><td class="value">${requirements.total.withResult("PENDING")}</td>
-            <tr/>
-            <tr>
-                <td class="label">Estimated unimplemented tests:</td><td class="value">${requirements.estimatedUnimplementedTests}</td>
-            <tr/>
-        </table>
+        <div>
+            <h4>Requirements Overview</h4>
+            <table class="summary-table">
+                <head>
+                    <tr>
+                        <th>Requirement Type</th>
+                        <th>Total</th>
+                        <th>Pass&nbsp;<i class="icon-check"/> </th>
+                        <th>Fail&nbsp;<i class="icon-thumbs-down"/></th>
+                        <th>Pending&nbsp;<i class="icon-ban-circle"/></th>
+                        <th>Untested&nbsp;<i class="icon-question"/></th>
+                    </tr>
+                </head>
+                <body>
+                <#foreach requirementType in requirements.types>
+                <tr>
+                    <#assign requirementTitle = inflection.of(requirementType).inPluralForm().asATitle() />
+                    <td class="summary-leading-column">${requirementTitle}</td>
+                    <td>${requirements.requirementsOfType(requirementType).requirementCount}</td>
+                    <td>${requirements.requirementsOfType(requirementType).completedRequirementsCount}</td>
+                    <td>${requirements.requirementsOfType(requirementType).failingRequirementsCount}</td>
+                    <td>${requirements.requirementsOfType(requirementType).pendingRequirementsCount}</td>
+                    <td>${requirements.requirementsOfType(requirementType).requirementsWithoutTestsCount}</td>
+                </tr>
+                </#foreach>
+                </body>
+            </table>
+        </div>
+        <#include "test-result-summary.ftl"/>
+
     </div>
 </div>
 <div class="clr"></div>

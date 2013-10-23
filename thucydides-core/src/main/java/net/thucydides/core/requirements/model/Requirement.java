@@ -201,4 +201,13 @@ public class Requirement implements Comparable {
         result = 31 * result + (type != null ? type.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Requirement{" +
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", cardNumber='" + cardNumber + '\'' +
+                '}';
+    }
 }
