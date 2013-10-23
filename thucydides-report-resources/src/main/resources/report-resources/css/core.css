@@ -756,6 +756,7 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 .overview {
     border: 0px;
     padding-top: 10px;
+    min-height: 650px;
     background: #f1f3e8;
 }
 
@@ -1005,6 +1006,7 @@ h4 {
     float: right;
     display: inline-block;
     padding: 10px;
+    min-height: 320px;
 }
 
 .coverage_stats {
@@ -1061,6 +1063,10 @@ table.coverage_data td {
 
 #test_results_pie_chart {
     margin-top:20px; margin-left:20px; width:375px; height:375px;
+}
+
+#test-results-tabs-1 {
+    min-height: 475px;
 }
 
 #weighted_test_results_pie_chart {

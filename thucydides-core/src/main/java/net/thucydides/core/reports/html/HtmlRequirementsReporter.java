@@ -13,6 +13,7 @@ import net.thucydides.core.util.Inflector;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HtmlRequirementsReporter extends HtmlReporter {
@@ -22,6 +23,8 @@ public class HtmlRequirementsReporter extends HtmlReporter {
 
     private final IssueTracking issueTracking;
     private final String relativeLink;
+
+    private List<String> requirementTypes;
 
     public HtmlRequirementsReporter() {
         this("", Injectors.getInjector().getInstance(IssueTracking.class));
@@ -50,6 +53,7 @@ public class HtmlRequirementsReporter extends HtmlReporter {
         Map<String,Object> context = new HashMap<String,Object>();
 
         context.put("requirements", requirementsOutcomes);
+        context.put("requirementTypes", requirementTypes);
         context.put("testOutcomes", requirementsOutcomes.getTestOutcomes());
         context.put("allTestOutcomes", testOutcomes);
         context.put("timestamp", timestampFrom(testOutcomes));
@@ -70,5 +74,9 @@ public class HtmlRequirementsReporter extends HtmlReporter {
 
         context.put("formatted", new NumericalFormatter());
         context.put("inflection", Inflector.getInstance());
+    }
+
+    public void setRequirementTypes(List<String> requirementTypes) {
+        this.requirementTypes = requirementTypes;
     }
 }

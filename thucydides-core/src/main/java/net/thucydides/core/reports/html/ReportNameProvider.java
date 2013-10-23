@@ -51,6 +51,10 @@ public class ReportNameProvider {
         return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tagtype_" + tagType);
     }
 
+    public String forRequirementType(String tagType) {
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "requirement_type_" + tagType);
+    }
+
     public ReportNameProvider withPrefix(String prefix) {
         return new ReportNameProvider(prefix);
     }
