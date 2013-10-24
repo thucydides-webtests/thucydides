@@ -50,6 +50,11 @@ public enum ThucydidesSystemProperty {
     PROJECT_KEY("thucydides.project.key"),
 
     /**
+     * What name should appear on the reports
+     */
+    PROJECT_NAME("thucydides.project.name"),
+
+    /**
      * The home directory for Thucydides output and data files - by default, $USER_HOME/.thucydides
      */
     THUCYDIDES_HOME("thucydides.home"),
@@ -521,6 +526,12 @@ public enum ThucydidesSystemProperty {
      * False by default.
      */
     IGNORE_EMBEDDED_TABLES("ignore.embedded.tables"),
+
+    /**
+     * If set, this will display the related tag statistics on the home page.
+     * If you are using external requirements, you may not want to display these tags on the dashboard.
+     */
+    SHOW_RELATED_TAGS("show.related.tags"),
 
     /**
      * If set, this will define the list of tag types to appear on the dashboard screens

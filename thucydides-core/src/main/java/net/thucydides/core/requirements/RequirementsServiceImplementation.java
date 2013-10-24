@@ -161,6 +161,18 @@ public class RequirementsServiceImplementation implements RequirementsService {
         return getReleaseManager().extractReleasesFrom(releaseVersions);
     }
 
+    @Override
+    public List<String> getRequirementTypes() {
+        List<Requirement> requirements = getAllRequirements();
+        List<String> types = com.google.common.collect.Lists.newArrayList();
+        for (Requirement requirement : requirements) {
+            if (!types.contains(requirement.getType())) {
+                types.add(requirement.getType());
+            }
+        }
+        return types;
+    }
+
     private List<List<String>> getReleaseVersionsFrom(List<Requirement> requirements) {
         List<List<String>> releaseVersions = Lists.newArrayList();
         for (Requirement requirement : requirements) {
@@ -209,5 +221,18 @@ public class RequirementsServiceImplementation implements RequirementsService {
         }
         prioritizedProviders.addAll(lowPriorityProviders);
         return prioritizedProviders;
+    }
+
+    public List<Requirement> getAllRequirements() {
+        List<Requirement> allRequirements = Lists.newArrayList();
+        addRequirementsFrom(getRequirements(), allRequirements);
+        return allRequirements;
+    }
+
+    private void addRequirementsFrom(List<Requirement> requirements, List<Requirement> allRequirements) {
+        allRequirements.addAll(requirements);
+        for(Requirement requirement : requirements) {
+            addRequirementsFrom(requirement.getChildren(), allRequirements);
+        }
     }
 }

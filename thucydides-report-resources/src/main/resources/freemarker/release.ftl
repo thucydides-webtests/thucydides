@@ -87,6 +87,9 @@
 <div id="topheader">
     <div id="topbanner">
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">${reportOptions.projectName}</span>
+        </div>
     </div>
 </div>
 
@@ -156,9 +159,7 @@
                         <div id="tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
                             <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
                                 <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active requirementTitle">
-                                    <a href="#tabs-1">
-                                    ${requirementType}
-                                    </a></li>
+                                    <a href="#tabs-1">Scheduled Requirements</a></li>
                             </ul>
                             <!----->
 
@@ -171,8 +172,10 @@
                                             <tr>
                                                 <th width="40" class="test-results-heading">&nbsp;</th>
                                                 <th width="250" class="test-results-heading">${requirementType}</th>
+                                                <#if secondLevelRequirementTypeTitle??>
                                                 <th width="250"
-                                                    class="test-results-heading">${secondLevelRequirementType}</th>
+                                                    class="test-results-heading">${secondLevelRequirementTypeTitle}</th>
+                                                </#if>
                                                 <th class="test-results-heading" width="50px">Auto.<br/>Tests</th>
                                                 <th class="test-results-heading" width="50px">%Pass</th>
                                                 <th class="test-results-heading" width="25px"><i
@@ -231,6 +234,7 @@
                                                     <#assign requirementReport = reportName.forRequirement(requirementOutcome.requirement) >
                                                     <a href="${requirementReport}">${requirementOutcome.requirement.name}</a>
                                                 </td>
+                                                <#if secondLevelRequirementTypeTitle??>
                                                 <td class="release-title">
                                                     <ul class="second-level-requirements">
                                                         <#foreach childRequirement in requirementOutcome.requirement.children>
@@ -241,6 +245,7 @@
                                                         </#foreach>
                                                     </ul>
                                                 </td>
+                                                </#if>
 
                                                 <#assign totalAutomated = requirementOutcome.tests.count("AUTOMATED").withAnyResult()/>
                                                 <#assign automatedPassedPercentage = requirementOutcome.tests.getFormattedPercentage("AUTOMATED").withResult("SUCCESS")/>

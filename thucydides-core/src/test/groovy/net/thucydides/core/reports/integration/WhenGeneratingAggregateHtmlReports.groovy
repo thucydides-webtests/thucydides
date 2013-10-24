@@ -61,7 +61,6 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
         when: "we view the report"
-        driver = new FirefoxDriver();
             driver.get reportHomePageUrl();
             def tagTypeNames = driver.findElements(By.cssSelector(".tagTitle")).collect { it.text}
         then: "we can see all available tags and click on 'Grow New Potatoes' link"
@@ -74,7 +73,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
             featuresLink.click()
         then: "we see the breadcrumb showing Thucydedes Reports > another different feature"
             def subReportBreadcrumbText = driver.findElement(By.cssSelector(".bluetext")).getText()
-            subReportBreadcrumbText == "Home > Capabilities"
+            subReportBreadcrumbText == "Home > Requirements"
         and: "a single feature"
             def featureLink = driver.findElement(By.linkText("Grow cucumbers"))
             featureLink.enabled
@@ -143,7 +142,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         then: "we should be able to display a release report for each release"
             driver.findElement(By.className("jqtree-title")).click()
         and: "the release report should contain the requirement type as a title"
-            driver.findElement(By.className("requirementTitle"))?.getText() == "Capabilities"
+            driver.findElement(By.className("requirementTitle"))?.getText() == "Scheduled Requirements"
 
     }
 

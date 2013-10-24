@@ -73,7 +73,7 @@ class WhenGeneratingRequirementsReports extends Specification {
             def rows = report.requirements;
             report.names == ['Grow cucumbers', 'Grow lots of potatoes', 'Grow wheat', 'Raise chickens']
         and: "the title should reflect the requirements type"
-            report.title == 'Capabilities'
+            report.title == 'Requirements'
         and: "the table title should reflect the requirements type"
             report.tableTitle.startsWith('Capabilities (')
         and: "card numbers should be displayed for requirement entries"

@@ -81,6 +81,9 @@
 <div id="topheader">
     <div id="topbanner">
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">${reportOptions.projectName}</span>
+        </div>
     </div>
 </div>
 
@@ -182,7 +185,7 @@
 
                                         <#foreach release in releases>
                                             <#assign releaseOutcomes = requirements.getReleasedRequirementsFor(release)/>
-                                            <#if releaseOutcomes.testOutcomes.stepCount == 0 || releaseOutcomes.testOutcomes.result == "PENDING" || requirementOutcome.testOutcomes.result == "IGNORED">
+                                            <#if releaseOutcomes.testOutcomes.stepCount == 0 || releaseOutcomes.testOutcomes.result == "PENDING" || releaseOutcomes.testOutcomes.result == "IGNORED">
                                                 <#assign status_icon = "traffic-yellow.gif">
                                                 <#assign status_rank = 0>
                                             <#elseif releaseOutcomes.testOutcomes.result == "ERROR">

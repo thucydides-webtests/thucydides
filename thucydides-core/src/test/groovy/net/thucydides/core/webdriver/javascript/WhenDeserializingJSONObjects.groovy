@@ -25,7 +25,7 @@ import spock.lang.Shared
 class WhenDeserializingJSONObjects extends Specification {
 	
 	@Shared
-	WebDriver driver = new FirefoxDriver()
+	WebDriver driver = new PhantomJSDriver()
 	
 	JavascriptExecutorFacade jsFacade;
 	

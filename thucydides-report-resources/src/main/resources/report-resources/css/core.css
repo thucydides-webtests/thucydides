@@ -757,6 +757,7 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
     border: 0px;
     padding-top: 10px;
     min-height: 650px;
+    min-width: 1000px;
     background: #f1f3e8;
 }
 
@@ -1165,6 +1166,7 @@ ul.second-level-requirements  {
     margin-bottom: 20px;
     border-collapse: collapse;
     padding: 4px;
+    min-width:500px;
 }
 
 .summary-table td,th {
@@ -1182,3 +1184,11 @@ ul.second-level-requirements  {
     font-style: italic;
 }
 
+#projectname-banner {
+    float:right
+}
+
+.projectname {
+    font-family:euphemia, verdana, sans-serif;
+    font-weight:bold; font-size:2em; color:white; position:relative; top:30px; right:20px;
+}

@@ -21,4 +21,6 @@ public interface RequirementsService {
     List<String> getReleaseVersionsFor(TestOutcome testOutcome);
 
     List<Release> getReleasesFromRequirements();
+
+    List<String> getRequirementTypes();
 }

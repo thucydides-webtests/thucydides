@@ -18,12 +18,14 @@ import net.thucydides.core.reports.csv.CSVReporter;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.history.TestResultSnapshot;
 import net.thucydides.core.requirements.RequirementsProviderService;
+import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.requirements.model.RequirementsConfiguration;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
 import net.thucydides.core.util.Inflector;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,29 +56,32 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private String relativeLink;
     private ReportNameProvider reportNameProvider;
     private final IssueTracking issueTracking;
+    private final RequirementsService requirementsService;
     private final RequirmentsOutcomeFactory requirementsFactory;
     private final HtmlRequirementsReporter htmlRequirementsReporter;
     private final HtmlProgressReporter htmlProgressReporter;
-    private final RequirementsConfiguration requirementsConfiguration;
+
 
     public HtmlAggregateStoryReporter(final String projectName) {
         this(projectName, "");
     }
 
     public HtmlAggregateStoryReporter(final String projectName, final String relativeLink) {
-        this(projectName, relativeLink, Injectors.getInjector().getInstance(IssueTracking.class), new TestHistory(projectName));
+        this(projectName, relativeLink, Injectors.getInjector().getInstance(IssueTracking.class), new TestHistory(projectName),
+             Injectors.getInjector().getInstance(RequirementsService.class));
     }
 
     public HtmlAggregateStoryReporter(final String projectName,
                                       final IssueTracking issueTracking,
                                       final TestHistory testHistory) {
-        this(projectName, "", issueTracking, testHistory);
+        this(projectName, "", issueTracking, testHistory, Injectors.getInjector().getInstance(RequirementsService.class));
     }
 
     public HtmlAggregateStoryReporter(final String projectName,
                                       final String relativeLink,
                                       final IssueTracking issueTracking,
-                                      final TestHistory testHistory) {
+                                      final TestHistory testHistory,
+                                      final RequirementsService requirementsService) {
         this.projectName = projectName;
         this.relativeLink = relativeLink;
         this.issueTracking = issueTracking;
@@ -87,7 +92,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         RequirementsProviderService requirementsProviderService = Injectors.getInjector().getInstance(RequirementsProviderService.class);
         this.requirementsFactory = new RequirmentsOutcomeFactory(requirementsProviderService.getRequirementsProviders(), issueTracking);
-        this.requirementsConfiguration = new RequirementsConfiguration(getEnvironmentVariables());
+        this.requirementsService = requirementsService;
     }
 
     public String getProjectName() {
@@ -107,6 +112,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         context.put("formatted", new NumericalFormatter());
         context.put("inflection", Inflector.getInstance());
         context.put("relativeLink", relativeLink);
+        context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
     }
 
     public TestOutcomes generateReportsForTestResultsFrom(final File sourceDirectory) throws IOException {
@@ -115,11 +121,8 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         return allTestOutcomes;
     }
 
-    private List<String> requirementTypes = Lists.newArrayList();
-
     public void generateReportsForTestResultsIn(TestOutcomes testOutcomes) throws IOException {
         RequirementsOutcomes requirementsOutcomes = requirementsFactory.buildRequirementsOutcomesFrom(testOutcomes);
-        requirementTypes = requirementsOutcomes.getTypes();
 
         updateHistoryFor(requirementsOutcomes);
 
@@ -173,7 +176,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     public void generateRequirementsReportsFor(RequirementsOutcomes requirementsOutcomes) throws IOException {
 
         htmlRequirementsReporter.setOutputDirectory(getOutputDirectory());
-        htmlRequirementsReporter.setRequirementTypes(requirementTypes);
         htmlRequirementsReporter.generateReportFor(requirementsOutcomes);
 
         htmlProgressReporter.setOutputDirectory(getOutputDirectory());
@@ -194,7 +196,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     private void generateNestedRequirementsReportsFor(Requirement parentRequirement, RequirementsOutcomes requirementsOutcomes) throws IOException {
         htmlRequirementsReporter.setOutputDirectory(getOutputDirectory());
-        htmlRequirementsReporter.setRequirementTypes(requirementTypes);
         String reportName = reportNameProvider.forRequirement(parentRequirement);
         htmlRequirementsReporter.generateReportFor(requirementsOutcomes, requirementsOutcomes.getTestOutcomes(), reportName);
 
@@ -241,28 +242,36 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Map<String, Object> context = buildContext(testOutcomes, getReportNameProvider());
         context.put("report", ReportProperties.forAggregateResultsReport());
         List<Release> releases = getReleaseManager().getReleasesFrom(testOutcomes);
-        RequirementsOutcomes releaseOutcomes = requirementsOutcomes.getReleasedRequirementsFor(releases.get(0));
+        if (!releases.isEmpty()) {
+            RequirementsOutcomes releaseOutcomes = requirementsOutcomes.getReleasedRequirementsFor(releases.get(0));
 
-        releaseOutcomes.getTestOutcomes().count("AUTOMATED").withAnyResult();
+            releaseOutcomes.getTestOutcomes().count("AUTOMATED").withAnyResult();
 
-        String releaseData = getReleaseManager().getJSONReleasesFrom(testOutcomes);
-        context.put("releases", releases);
-        context.put("releaseData", releaseData);
-        context.put("requirements", requirementsOutcomes);
-        context.put("releaseRequirementOutcomes", requirementsOutcomes.getRequirementOutcomes());
-        generateReportPage(context, RELEASES_TEMPLATE_PATH, "releases.html");
-        generateReleaseDetailsReportsFor(testOutcomes, requirementsOutcomes);
+            String releaseData = getReleaseManager().getJSONReleasesFrom(testOutcomes);
+            context.put("releases", releases);
+            context.put("releaseData", releaseData);
+            context.put("requirements", requirementsOutcomes);
+            context.put("releaseRequirementOutcomes", requirementsOutcomes.getRequirementOutcomes());
+            generateReportPage(context, RELEASES_TEMPLATE_PATH, "releases.html");
+            generateReleaseDetailsReportsFor(testOutcomes, requirementsOutcomes);
+        }
     }
 
     private void generateReleaseDetailsReportsFor(TestOutcomes testOutcomes,
                                                   RequirementsOutcomes requirementsOutcomes) throws IOException {
         List<Release> allReleases = getReleaseManager().getFlattenedReleasesFrom(testOutcomes);
-        String topLevelRequirementType = requirementsConfiguration.getRequirementTypes().get(0);
-        String secondLevelRequirementType = requirementsConfiguration.getRequirementTypes().get(1);
+        List<String> requirementsTypes = requirementsService.getRequirementTypes();
+        String topLevelRequirementType = requirementsService.getRequirementTypes().get(0);
+        String secondLevelRequirementType = "";
+        String secondLevelRequirementTypeTitle = "";
         String topLevelRequirementTypeTitle = Inflector.getInstance().of(topLevelRequirementType)
                 .inPluralForm().asATitle().toString();
-        String secondLevelRequirementTypeTitle = Inflector.getInstance().of(secondLevelRequirementType)
-                .inPluralForm().asATitle().toString();
+
+        if (requirementsTypes.size() > 1) {
+            secondLevelRequirementType = requirementsService.getRequirementTypes().get(1);
+            secondLevelRequirementTypeTitle = Inflector.getInstance().of(secondLevelRequirementType)
+                    .inPluralForm().asATitle().toString();
+        }
         for (Release release : allReleases) {
             RequirementsOutcomes releaseRequirements = requirementsOutcomes.getReleasedRequirementsFor(release);
             Map<String, Object> context = buildContext(testOutcomes, getReportNameProvider());
@@ -270,13 +279,16 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
             requirementsOutcomes.getRequirementOutcomes().get(0).count("AUTOMATED").withIndeterminateResult();
             context.put("report", ReportProperties.forAggregateResultsReport());
             context.put("release", release);
+            context.put("releases", getReleaseManager().getReleasesFrom(testOutcomes));
             context.put("releaseData", getReleaseManager().getJSONReleasesFrom(release));
             context.put("requirementOutcomes", releaseRequirements);
             context.put("requirements", requirementsOutcomes);
             context.put("releaseRequirementOutcomes", requirementsOutcomes.getRequirementOutcomes());
 
             context.put("requirementType", topLevelRequirementTypeTitle);
-            context.put("secondLevelRequirementType", secondLevelRequirementTypeTitle);
+            if (StringUtils.isNotBlank(secondLevelRequirementTypeTitle)) {
+                context.put("secondLevelRequirementType", secondLevelRequirementTypeTitle);
+            }
 
             // capability | features | total automated tests | %automated pass | total manual | % manual
             String reportName = getReportNameProvider().forRelease(release);
@@ -392,9 +404,11 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         context.put("tagTypes", tagFilter.filteredTagTypes(testOutcomesForTagType.getTagTypes()));
 
         context.put("reportName", reportName);
+        context.put("absoluteReportName", new ReportNameProvider());
+
         context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
         context.put("timestamp", timestampFrom(testOutcomesForTagType.getRootOutcomes()));
-        context.put("requirementTypes",requirementTypes);
+        context.put("requirementTypes",requirementsService.getRequirementTypes());
         addFormattersToContext(context);
         return context;
     }

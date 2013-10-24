@@ -6,6 +6,7 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.phantomjs.PhantomJSDriver
 
 /**
  * Models the requirements progress report page for testing purposes
@@ -13,7 +14,7 @@ import org.openqa.selenium.firefox.FirefoxDriver
 class ProgressReport extends PageObject {
 
     static ProgressReport inDirectory(File directory) {
-        def driver = new FirefoxDriver();
+        def driver = new PhantomJSDriver();
         def report = new ProgressReport(driver)
         report.openAt("file:///" +  directory.getAbsolutePath() + "/progress-report.html");
         return report

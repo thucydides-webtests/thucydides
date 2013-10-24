@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html">
-<#assign pageTitle = inflection.of(requirements.type).inPluralForm().asATitle() >
+
+<#if requirements.parentRequirement.isPresent()>
+    <#assign pageTitle = inflection.of(requirements.parentRequirement.get().type).inPluralForm().asATitle() >
+<#else>
+    <#assign pageTitle = "Requirements" >
+</#if>
+
 <#assign requirementTypeTitle = inflection.of(requirements.type).asATitle() >
+<#assign requirementsSectionTitle = inflection.of(requirements.type).inPluralForm().asATitle() >
 <head>
     <meta charset="UTF-8" />
     <title>${pageTitle}</title>
@@ -140,6 +147,9 @@
 <div id="topheader">
     <div id="topbanner">
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">${reportOptions.projectName}</span>
+        </div>
     </div>
 </div>
 
@@ -147,7 +157,12 @@
 <div class="middlecontent">
 <div id="contenttop">
     <div class="middlebg">
-        <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > ${pageTitle} </span>
+        <#if requirements.parentRequirement.isPresent()>
+            <#assign breadcrumbs = "Requirements > " + pageTitle >
+        <#else>
+            <#assign breadcrumbs = "Requirements" >
+        </#if>
+        <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > ${breadcrumbs} </span>
     </div>
     <div class="rightbg"></div>
 </div>
@@ -156,7 +171,12 @@
 
 <!--/* starts second table*/-->
 <#include "menu.ftl">
-<@main_menu selected="requirements" />
+
+<#if requirements.parentRequirement.isPresent()>
+    <@main_menu selected="${requirements.parentRequirement.get().type}" />
+<#else>
+    <@main_menu selected="requirements" />
+</#if>
 
 <div class="clr"></div>
 
@@ -225,7 +245,7 @@
     <ul>
         <#if (requirements.requirementOutcomes?has_content)>
             <li><a href="#tabs-1">
-            ${pageTitle} (${requirements.requirementCount})
+            ${requirementsSectionTitle} (${requirements.requirementCount})
             </a></li>
         </#if>
         <#if (requirements.parentRequirement.isPresent() && requirements.parentRequirement.get().hasExamples())>

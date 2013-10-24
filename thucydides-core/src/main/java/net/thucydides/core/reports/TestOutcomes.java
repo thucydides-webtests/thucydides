@@ -15,6 +15,7 @@ import net.thucydides.core.model.TestResultList;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.TestType;
 import net.thucydides.core.model.formatters.TestCoverageFormatter;
+import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.requirements.model.RequirementsConfiguration;
 import net.thucydides.core.requirements.reports.RequirementsPercentageFormatter;
@@ -65,7 +66,8 @@ public class TestOutcomes {
     private final Optional<TestOutcomes> rootOutcomes;
     private final double estimatedAverageStepCount;
     private final EnvironmentVariables environmentVariables;
-    private final RequirementsConfiguration requirementsConfiguration;
+    //private final RequirementsConfiguration requirementsConfiguration;
+    private final RequirementsService requirementsService;
 
     /**
      * A label indicating where these tests come from (e.g. the tag, the result status, etc).
@@ -88,7 +90,8 @@ public class TestOutcomes {
         this.label = label;
         this.rootOutcomes = Optional.fromNullable(rootOutcomes);
         this.environmentVariables = environmentVariables;
-        this.requirementsConfiguration = new RequirementsConfiguration(environmentVariables);
+        //this.requirementsConfiguration = new RequirementsConfiguration(environmentVariables);
+        this.requirementsService = Injectors.getInjector().getInstance(RequirementsService.class);
     }
 
     protected TestOutcomes(List<? extends TestOutcome> outcomes,
@@ -148,7 +151,7 @@ public class TestOutcomes {
     public List<String> getRequirementTagTypes() {
        List<String> tagTypes = Lists.newArrayList();
 
-       List<String> candidateTagTypes = requirementsConfiguration.getRequirementTypes();
+       List<String> candidateTagTypes = requirementsService.getRequirementTypes();// requirementsConfiguration.getRequirementTypes();
        for(String tagType : candidateTagTypes) {
            if (getTagTypes().contains(tagType)) {
                tagTypes.add(tagType);

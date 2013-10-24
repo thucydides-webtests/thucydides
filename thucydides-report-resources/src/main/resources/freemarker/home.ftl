@@ -171,6 +171,9 @@
 <div id="topheader">
     <div id="topbanner">
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">${reportOptions.projectName}</span>
+        </div>
     </div>
 </div>
 
@@ -278,7 +281,9 @@
                                                 <#include "test-result-summary.ftl"/>
                                             </div>
                                             <div>
+<#if reportOptions.showRelatedTags>
                                                 <@list_tags weighted="false"/>
+</#if>
                                             </div>
                                         </td>
                                     </tr>
@@ -300,7 +305,9 @@
                                                 <#include "test-result-summary.ftl"/>
                                             </div>
                                             <div>
+<#if reportOptions.showRelatedTags>
                                                 <@list_tags weighted="true"/>
+</#if>
                                             </div>
                                         </td>
                                     </tr>
@@ -429,7 +436,7 @@
             </tr>
             <#foreach tagName in tagNames>
                 <#assign tagTitle = inflection.of(tagName).asATitle() >
-                <#assign tagReport = reportName.forTag(tagName) >
+                <#assign tagReport = absoluteReportName.forTag(tagName) >
                 <#assign outcomesForTag = outcomesForType.withTag(tagName) >
                 <#if outcomesForTag.result == "FAILURE">
                     <#assign outcome_icon = "fail.png">

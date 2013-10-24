@@ -7,6 +7,7 @@ import net.thucydides.core.geometry.Line;
 import net.thucydides.core.geometry.Point;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.NumericalFormatter;
+import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.history.ProgressSnapshot;
 import net.thucydides.core.reports.history.TestHistory;
@@ -60,6 +61,7 @@ public class HtmlProgressReporter extends HtmlReporter {
         context.put("testOutcomes", requirementsOutcomes.getTestOutcomes());
         context.put("allTestOutcomes", testOutcomes);
         context.put("reportName", new ReportNameProvider());
+        context.put("absoluteReportName", new ReportNameProvider());
         context.put("timestamp", timestampFrom(testOutcomes));
 
         addFormattersToContext(context);
@@ -161,5 +163,6 @@ public class HtmlProgressReporter extends HtmlReporter {
 
         context.put("formatted", new NumericalFormatter());
         context.put("inflection", Inflector.getInstance());
+        context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
     }
 }

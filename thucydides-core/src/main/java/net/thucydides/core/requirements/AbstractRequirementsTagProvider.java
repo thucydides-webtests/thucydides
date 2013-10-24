@@ -4,6 +4,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.requirements.model.RequirementsConfiguration;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
@@ -17,10 +18,12 @@ public class AbstractRequirementsTagProvider {
     protected final EnvironmentVariables environmentVariables;
     protected final String rootDirectory;
     protected final RequirementsConfiguration requirementsConfiguration;
+    protected final RequirementsService requirementsService;
 
     protected AbstractRequirementsTagProvider(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
         this.requirementsConfiguration = new RequirementsConfiguration(environmentVariables);
+        this.requirementsService = Injectors.getInjector().getInstance(RequirementsService.class);
         this.rootDirectory = getDefaultRootDirectory();
     }
 

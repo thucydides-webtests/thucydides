@@ -80,6 +80,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
 
         Map<String,Object> context = new HashMap<String,Object>();
         addTestOutcomeToContext(storedTestOutcome, allTestOutcomes, context);
+
         addFormattersToContext(context);
         addTimestamp(testOutcome, context);
 
@@ -112,6 +113,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         context.put("testOutcome", testOutcome);
         context.put("inflection", Inflector.getInstance());
         context.put("parentRequirement", requirementsService.getParentRequirementFor(testOutcome));
+        context.put("requirementTypes", requirementsService.getRequirementTypes());
         addTimestamp(testOutcome, context);
     }
 
@@ -120,6 +122,8 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
         context.put("formatter", formatter);
         context.put("reportName", new ReportNameProvider());
+        context.put("absoluteReportName", new ReportNameProvider());
+        context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
     }
 
     private void generateScreenshotReportsFor(final TestOutcome testOutcome, final TestOutcomes allTestOutcomes) throws IOException {
@@ -135,6 +139,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         addFormattersToContext(context);
         context.put("screenshots", screenshots);
         context.put("reportName", new ReportNameProvider());
+        context.put("absoluteReportName", new ReportNameProvider());
         context.put("narrativeView", testOutcome.getReportName());
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_SCREENSHOT).usingContext(context);
         writeReportToOutputDirectory(screenshotReport, htmlContents);
