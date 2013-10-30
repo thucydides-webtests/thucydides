@@ -1,6 +1,5 @@
 package net.thucydides.core.reports.html;
 
-import com.beust.jcommander.internal.Lists;
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
@@ -9,6 +8,7 @@ import net.thucydides.core.model.NumericalFormatter;
 import net.thucydides.core.model.Release;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.model.TestType;
 import net.thucydides.core.releases.ReleaseManager;
 import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomeLoader;
@@ -20,7 +20,6 @@ import net.thucydides.core.reports.history.TestResultSnapshot;
 import net.thucydides.core.requirements.RequirementsProviderService;
 import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.model.Requirement;
-import net.thucydides.core.requirements.model.RequirementsConfiguration;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
@@ -242,16 +241,13 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Map<String, Object> context = buildContext(testOutcomes, getReportNameProvider());
         context.put("report", ReportProperties.forAggregateResultsReport());
         List<Release> releases = getReleaseManager().getReleasesFrom(testOutcomes);
+        LOGGER.info("Generating release reports for: " + releases);
         if (!releases.isEmpty()) {
-            RequirementsOutcomes releaseOutcomes = requirementsOutcomes.getReleasedRequirementsFor(releases.get(0));
-
-            releaseOutcomes.getTestOutcomes().count("AUTOMATED").withAnyResult();
-
             String releaseData = getReleaseManager().getJSONReleasesFrom(testOutcomes);
             context.put("releases", releases);
             context.put("releaseData", releaseData);
             context.put("requirements", requirementsOutcomes);
-            context.put("releaseRequirementOutcomes", requirementsOutcomes.getRequirementOutcomes());
+
             generateReportPage(context, RELEASES_TEMPLATE_PATH, "releases.html");
             generateReleaseDetailsReportsFor(testOutcomes, requirementsOutcomes);
         }
@@ -276,14 +272,10 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
             RequirementsOutcomes releaseRequirements = requirementsOutcomes.getReleasedRequirementsFor(release);
             Map<String, Object> context = buildContext(testOutcomes, getReportNameProvider());
 
-            requirementsOutcomes.getRequirementOutcomes().get(0).count("AUTOMATED").withIndeterminateResult();
             context.put("report", ReportProperties.forAggregateResultsReport());
             context.put("release", release);
-            context.put("releases", getReleaseManager().getReleasesFrom(testOutcomes));
             context.put("releaseData", getReleaseManager().getJSONReleasesFrom(release));
-            context.put("requirementOutcomes", releaseRequirements);
-            context.put("requirements", requirementsOutcomes);
-            context.put("releaseRequirementOutcomes", requirementsOutcomes.getRequirementOutcomes());
+            context.put("releaseRequirementOutcomes", releaseRequirements.getRequirementOutcomes());
 
             context.put("requirementType", topLevelRequirementTypeTitle);
             if (StringUtils.isNotBlank(secondLevelRequirementTypeTitle)) {

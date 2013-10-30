@@ -245,9 +245,44 @@ class WhenGeneratingRequirementsReportData extends Specification {
         then:
             releasedOutcomes.requirementOutcomes.size() == 2
         and:
-            releasedOutcomes.flattenedRequirementOutcomes.size() == 6
+            releasedOutcomes.flattenedRequirementOutcomes.size() == 5
         and:
             releasedOutcomes.testOutcomes.outcomes.size() == 4
+    }
+
+
+    def "should get test outcomes for a given nested release"() {
+        given: "there are some test results"
+            def testOutcomes = TestOutcomes.of(someVariedTestResults())
+            def environmentVariables = new MockEnvironmentVariables()
+        and: "we read the requirements from the directory structure"
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking, environmentVariables)
+            RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(testOutcomes)
+        when:
+            RequirementsOutcomes releasedOutcomes = outcomes.getReleasedRequirementsFor(Release.ofVersion("Iteration 1.1"))
+        then:
+            releasedOutcomes.requirementOutcomes.size() == 1
+        and:
+            releasedOutcomes.flattenedRequirementOutcomes.size() == 3
+        and:
+            releasedOutcomes.testOutcomes.outcomes.size() == 2
+    }
+
+    def "should get all nested test outcomes for a given release"() {
+        given: "there are some test results"
+            def testOutcomes = TestOutcomes.of(someVariedTestResults())
+            def environmentVariables = new MockEnvironmentVariables()
+        and: "we read the requirements from the directory structure"
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking, environmentVariables)
+            RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(testOutcomes)
+        when:
+            RequirementsOutcomes releasedOutcomes = outcomes.getReleasedRequirementsFor(Release.ofVersion("Release 3"))
+        then:
+            releasedOutcomes.requirementOutcomes.size() == 1
+        and:
+            releasedOutcomes.flattenedRequirementOutcomes.size() ==2
+        and:
+            releasedOutcomes.testOutcomes.outcomes.size() == 3
     }
 
     def someTestResults() {
@@ -380,13 +415,13 @@ class WhenGeneratingRequirementsReportData extends Specification {
         testOutcome7.addVersion("Release 2");
         testOutcome7.addVersion("Iteration 2.1");
 
-        TestOutcome testOutcome8 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
+        TestOutcome testOutcome8 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens grain type A"))
         testOutcome8.recordStep(TestStep.forStepCalled("step 8").withResult(TestResult.SUCCESS))
         testOutcome8.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
         testOutcome8.addVersion("Release 3");
         testOutcome8.addVersion("Iteration 3.1");
 
-        TestOutcome testOutcome9 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
+        TestOutcome testOutcome9 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens grain type B"))
         testOutcome9.recordStep(TestStep.forStepCalled("step 9").withResult(TestResult.SUCCESS))
         testOutcome9.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
         testOutcome9.addVersion("Release 3");
@@ -396,7 +431,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
         testOutcome10.recordStep(TestStep.forStepCalled("step 10").withResult(TestResult.FAILURE))
         testOutcome10.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
         testOutcome6.addVersion("Release 3");
-        testOutcome6.addVersion("Iteration 3.1");
+        testOutcome6.addVersion("Iteration 3.2");
 
         return [testOutcome1, testOutcome2, testOutcome3, testOutcome4, testOutcome5, testOutcome6, testOutcome7,
                 testOutcome8, testOutcome9, testOutcome10]

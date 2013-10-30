@@ -210,31 +210,61 @@
                                                 <a href="${releaseReport}">${release.name}</a>
                                             </td>
                                             <#assign totalAutomated = releaseOutcomes.testOutcomes.count("AUTOMATED").withAnyResult()/>
-                                            <#assign automatedPassedPercentage = releaseOutcomes.testOutcomes.getFormattedPercentage("AUTOMATED").withResult("SUCCESS")/>
-                                            <#assign automatedFailedPercentage = releaseOutcomes.testOutcomes.getFormattedPercentage("AUTOMATED").withFailureOrError()/>
-                                            <#assign automatedPendingPercentage = releaseOutcomes.testOutcomes.getFormattedPercentage("AUTOMATED").withIndeterminateResult()/>
                                             <#assign automatedPassed = releaseOutcomes.testOutcomes.count("AUTOMATED").withResult("SUCCESS")/>
                                             <#assign automatedPending = releaseOutcomes.testOutcomes.count("AUTOMATED").withIndeterminateResult()/>
                                             <#assign automatedFailed = releaseOutcomes.testOutcomes.count("AUTOMATED").withResult("FAILURE")/>
                                             <#assign automatedError = releaseOutcomes.testOutcomes.count("AUTOMATED").withResult("ERROR")/>
+                                            <#if (totalAutomated > 0) >
+                                                <#assign automatedPercentagePassed =  (automatedPassed / totalAutomated)/>
+                                            <#else>
+                                                <#assign automatedPercentagePassed = 0.0/>
+                                            </#if>
+
                                             <#assign totalManual = releaseOutcomes.testOutcomes.count("MANUAL").withAnyResult()/>
-                                            <#assign manualPassedPercentage = releaseOutcomes.testOutcomes.getFormattedPercentage("MANUAL").withResult("SUCCESS")/>
-                                            <#assign manualFailedPercentage = releaseOutcomes.testOutcomes.getFormattedPercentage("MANUAL").withFailureOrError()/>
                                             <#assign manualPending = releaseOutcomes.testOutcomes.count("MANUAL").withIndeterminateResult()/>
-                                            <#assign manualPendingPercentage =releaseOutcomes.testOutcomes.getFormattedPercentage("MANUAL").withIndeterminateResult()/>
                                             <#assign manualPassed = releaseOutcomes.testOutcomes.count("MANUAL").withResult("SUCCESS")/>
                                             <#assign manualFailed = releaseOutcomes.testOutcomes.count("MANUAL").withResult("FAILURE")/>
                                             <#assign manualError = releaseOutcomes.testOutcomes.count("MANUAL").withResult("ERROR")/>
+                                            <#if (totalManual > 0)>
+                                                <#assign manualPercentagePassed = (manualPassed / totalManual)/>
+                                            <#else>
+                                                <#assign manualPercentagePassed = 0.0/>
+                                            </#if>
 
-                                            <td class="greentext highlighted-value">${totalAutomated}</td>
-                                            <td class="greentext">${automatedPassedPercentage}</td>
+                                            <#assign totalTests = totalAutomated + totalManual/>
+                                            <#if (totalTests > 0)>
+                                                <#assign percentagePassed = ((automatedPassed + manualPassed) / totalTests)/>
+                                            <#else>
+                                                <#assign percentagePassed = 0.0/>
+                                            </#if>
+
+                                            <#if (automatedFailed + automatedError > 0)>
+                                                <#assign automatedColor = "redtext"/>
+                                            <#elseif (automatedPending > 0)>
+                                                <#assign automatedColor = "bluetext"/>
+                                            <#elseif (totalAutomated == 0)>
+                                                <#assign automatedColor = "bluetext"/>
+                                            <#else>
+                                                <#assign automatedColor = "greentext"/>
+                                            </#if>
+                                            <td class="${automatedColor} highlighted-value">${totalAutomated}</td>
+                                            <td class="${automatedColor}">${automatedPercentagePassed?string.percent}</td>
                                             <td class="greentext">${automatedPassed}</td>
                                             <td class="bluetext">${automatedPending}</td>
                                             <td class="redtext">${automatedFailed}</td>
                                             <td class="lightorangetext">${automatedError}</td>
                                             <#if reportOptions.showManualTests>
-                                                <td class="greentext highlighted-value">${totalManual}</td>
-                                                <td class="greentext">${manualPassedPercentage}</td>
+                                                <#if (manualFailed + manualError > 0)>
+                                                    <#assign manualColor = "redtext"/>
+                                                <#elseif (manualPending > 0)>
+                                                    <#assign manualColor = "bluetext"/>
+                                                <#elseif (totalManual == 0)>
+                                                    <#assign manualColor = "bluetext"/>
+                                                <#else>
+                                                    <#assign manualColor = "greentext"/>
+                                                </#if>
+                                                <td class="${manualColor} highlighted-value">${totalManual}</td>
+                                                <td class="${manualColor}">${manualPercentagePassed?string.percent}</td>
                                                 <td class="greentext">${manualPassed}</td>
                                                 <td class="bluetext">${manualPending}</td>
                                                 <td class="redtext">${manualFailed}</td>

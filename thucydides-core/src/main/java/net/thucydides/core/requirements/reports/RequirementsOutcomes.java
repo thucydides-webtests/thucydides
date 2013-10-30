@@ -270,15 +270,14 @@ public class RequirementsOutcomes {
     public List<RequirementOutcome> getFlattenedRequirementOutcomes(List<RequirementOutcome> outcomes) {
         Set<RequirementOutcome> flattenedOutcomes = Sets.newHashSet();
 
-
         for (RequirementOutcome requirementOutcome : outcomes) {
             flattenedOutcomes.add(requirementOutcome);
-            List<Requirement> nestedRequirements = requirementOutcome.getFlattenedRequirements();
-            for(Requirement requirement : nestedRequirements) {
+            for(Requirement requirement : requirementOutcome.getRequirement().getChildren()) {
                 TestTag requirementTag = TestTag.withName(requirement.getName()).andType(requirement.getType());
                 TestOutcomes testOutcomesForRequirement = requirementOutcome.getTestOutcomes().withTag(requirementTag);
-                List<Requirement> childRequirements = requirement.getChildren();
+                flattenedOutcomes.add(new RequirementOutcome(requirement, testOutcomesForRequirement, issueTracking));
 
+                List<Requirement> childRequirements = requirement.getChildren();
                 RequirementsOutcomes childOutcomes =
                         new RequirementsOutcomes(childRequirements, testOutcomesForRequirement, issueTracking,
                                                  environmentVariables, requirementsTagProviders);
@@ -362,19 +361,20 @@ public class RequirementsOutcomes {
     public RequirementsOutcomes getReleasedRequirementsFor(Release release) {
         List<Requirement> matchingRequirements = Lists.newArrayList();
         List<TestOutcome> matchingTestOutcomes = Lists.newArrayList();
-        List<List<Requirement>> matchingRequirementPaths = Lists.newArrayList();
 
         // Add all test outcomes with a matching release
 
         List<RequirementOutcome> requirementOutcomes
                 = releaseManager.enrichRequirementsOutcomesWithReleaseTags(getRequirementOutcomes());
 
-        for(RequirementOutcome outcome : requirementOutcomes) {//  getFlattenedRequirementOutcomes()) {
+        for(RequirementOutcome outcome : requirementOutcomes) {
             Collection<String> releaseVersions = outcome.getReleaseVersions();
             if (releaseVersions.contains(release.getName())) {
                 List<TestOutcome> outcomesForRelease = outcomesForRelease(outcome.getTestOutcomes().getOutcomes(), release.getName());
-                matchingTestOutcomes.addAll(outcomesForRelease);
-                matchingRequirements.add(outcome.getRequirement());
+                if (!outcomesForRelease.isEmpty()) {
+                    matchingTestOutcomes.addAll(outcomesForRelease);
+                    matchingRequirements.add(outcome.getRequirement());
+                }
             }
         }
         matchingRequirements = removeRequirementsWithoutTestsFrom(matchingRequirements);

@@ -796,7 +796,16 @@ public class TestOutcome {
         if (thereAre(additionalVersions)) {
             allVersions.addAll(additionalVersions);
         }
+        addVersionsDefinedInTagsTo(allVersions);
         return ImmutableList.copyOf(allVersions);
+    }
+
+    private void addVersionsDefinedInTagsTo(List<String> allVersions) {
+        for(TestTag tag : getTags()) {
+            if (tag.getType().equalsIgnoreCase("version") && (!allVersions.contains(tag.getName()))) {
+                allVersions.add(tag.getName());
+            }
+        }
     }
 
     public Class<?> getTestCase() {
@@ -1353,5 +1362,33 @@ public class TestOutcome {
 
     public DataTable getDataTable() {
         return dataTable;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TestOutcome that = (TestOutcome) o;
+
+        if (manualTest != that.manualTest) return false;
+        if (methodName != null ? !methodName.equals(that.methodName) : that.methodName != null) return false;
+        if (qualifier != null ? !qualifier.equals(that.qualifier) : that.qualifier != null) return false;
+        if (testCase != null ? !testCase.equals(that.testCase) : that.testCase != null) return false;
+        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        if (userStory != null ? !userStory.equals(that.userStory) : that.userStory != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = methodName != null ? methodName.hashCode() : 0;
+        result = 31 * result + (testCase != null ? testCase.hashCode() : 0);
+        result = 31 * result + (userStory != null ? userStory.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (qualifier != null ? qualifier.hashCode() : 0);
+        result = 31 * result + (manualTest ? 1 : 0);
+        return result;
     }
 }

@@ -84,6 +84,13 @@ public class RequirementOutcome {
         return ImmutableList.copyOf(flattenedRequirements);
     }
 
+    public List<Requirement> getFlattenedRequirements(Requirement... excludingRequirement) {
+        List<Requirement> flattenedRequirements = Lists.newArrayList(requirement);
+        flattenedRequirements.addAll(requirement.getNestedChildren());
+        flattenedRequirements.removeAll(Lists.newArrayList(excludingRequirement));
+        return ImmutableList.copyOf(flattenedRequirements);
+    }
+
     public int getRequirementsWithoutTestsCount() {
         return requirementsWithoutTests;
     }

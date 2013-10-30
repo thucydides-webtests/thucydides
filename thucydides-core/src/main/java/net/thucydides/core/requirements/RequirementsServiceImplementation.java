@@ -13,7 +13,6 @@ import net.thucydides.core.releases.ReleaseManager;
 import net.thucydides.core.reports.html.ReportNameProvider;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.statistics.service.FeatureStoryTagProvider;
-import net.thucydides.core.statistics.service.TagProvider;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Collections.*;
 
 public class RequirementsServiceImplementation implements RequirementsService {
 
@@ -101,7 +102,7 @@ public class RequirementsServiceImplementation implements RequirementsService {
 
         try {
             for (RequirementsTagProvider tagProvider : getRequirementsTagProviders()) {
-                Optional<Requirement> requirement = tagProvider.getParentRequirementOf(testOutcome);
+                Optional<Requirement> requirement = getParentRequirementOf(testOutcome, tagProvider);
                 if (requirement.isPresent()) {
                     return requirement;
                 }
@@ -128,11 +129,10 @@ public class RequirementsServiceImplementation implements RequirementsService {
         return Optional.absent();
     }
 
-
     @Override
     public List<Requirement> getAncestorRequirementsFor(TestOutcome testOutcome) {
         for (RequirementsTagProvider tagProvider : getRequirementsTagProviders()) {
-            Optional<Requirement> requirement = tagProvider.getParentRequirementOf(testOutcome);
+            Optional<Requirement> requirement = getParentRequirementOf(testOutcome, tagProvider);
             if (requirement.isPresent()) {
                 LOGGER.info("Requirement found for test outcome " + testOutcome.getTitle() + "-" + testOutcome.getIssueKeys() + ":");
                 LOGGER.info("Requirement:" + requirement);
@@ -143,7 +143,19 @@ public class RequirementsServiceImplementation implements RequirementsService {
                 }
             }
         }
-        return Collections.EMPTY_LIST;
+        return EMPTY_LIST;
+    }
+
+    Map<TestOutcome, Optional<Requirement>> requirementCache = Maps.newConcurrentMap();
+
+    private Optional<Requirement> getParentRequirementOf(TestOutcome testOutcome, RequirementsTagProvider tagProvider) {
+        if (requirementCache.containsKey(testOutcome)) {
+            return requirementCache.get(testOutcome);
+        } else {
+            Optional<Requirement> parentRequirement = tagProvider.getParentRequirementOf(testOutcome);
+            requirementCache.put(testOutcome, parentRequirement);
+            return parentRequirement;
+        }
     }
 
     @Override
@@ -157,8 +169,22 @@ public class RequirementsServiceImplementation implements RequirementsService {
 
     @Override
     public List<Release> getReleasesFromRequirements() {
-        List<List<String>> releaseVersions = getReleaseVersionsFrom(getRequirements());
-        return getReleaseManager().extractReleasesFrom(releaseVersions);
+        if (getReleaseProvider().isPresent()) {
+            return getReleaseProvider().get().getReleases();
+        } else {
+            List<List<String>> releaseVersions = getReleaseVersionsFrom (getRequirements());
+            return getReleaseManager().extractReleasesFrom(releaseVersions);
+        }
+    }
+
+    private Optional<ReleaseProvider> getReleaseProvider() {
+        List<RequirementsTagProvider> requirementsTagProviders = getRequirementsTagProviders();
+        for(RequirementsTagProvider provider : requirementsTagProviders) {
+            if ((provider instanceof ReleaseProvider) && ((ReleaseProvider) provider).isActive()) {
+                return Optional.of((ReleaseProvider) provider);
+            }
+        }
+        return Optional.absent();
     }
 
     @Override
