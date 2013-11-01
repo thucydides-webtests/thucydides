@@ -1,6 +1,7 @@
 package annotatedstories.apples;
 
 import net.thucydides.core.annotations.Narrative;
+import org.junit.Test;
 
 @Narrative(
         title = "Title for test 1",
@@ -8,4 +9,6 @@ import net.thucydides.core.annotations.Narrative;
                 "Multiple lines"}
 )
 public class Test1 {
+    @Test
+    public void someTest() {}
 }

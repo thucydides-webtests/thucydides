@@ -394,6 +394,7 @@ public enum ThucydidesSystemProperty {
      * If you are using the File System Requirements provider, Thucydides will expect this directory structure to exist
      * at the top of the requirements tree. If you want to exclude packages in a requirements definition and start at a
      * lower level in the hierarchy, use the thucydides.requirement.exclusions property.
+     * This is also used by the AnnotationBasedTagProvider to know where to look for annotated requirements.
      */
     THUCYDIDES_TEST_ROOT("thucydides.test.root"),
 

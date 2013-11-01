@@ -88,7 +88,7 @@ class WhenGeneratingRequirementsReports extends Specification {
         when: "we get the child requirement type of a requirement"
             Requirement firstRequirement = outcomes.getRequirementOutcomes().get(0).getRequirement();
         then:
-            firstRequirement.getChildType() == 'feature'
+            firstRequirement.childType() == 'feature'
     }
 
     def "Should summarize test results in the capabilities report"() {

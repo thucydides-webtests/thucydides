@@ -178,6 +178,7 @@
                                                     <th width="500" class="test-results-heading">${requirementType}</th>
                                                 </#if>
                                                 <th class="test-results-heading" width="50px">Total.<br/>Tests</th>
+                                                <th class="test-results-heading" width="50px">%Pass</th>
                                                 <th class="test-results-heading" width="50px">Auto.<br/>Tests</th>
                                                 <th class="test-results-heading" width="50px">%Pass</th>
                                                 <th class="test-results-heading" width="25px"><i
@@ -265,11 +266,13 @@
                                                 <#assign manualPassed = requirementOutcome.tests.count("MANUAL").withResult("SUCCESS")/>
                                                 <#assign manualFailed = requirementOutcome.tests.count("MANUAL").withResult("FAILURE")/>
                                                 <#assign manualError = requirementOutcome.tests.count("MANUAL").withResult("ERROR")/>
+
                                                 <#if (totalManual > 0)>
                                                     <#assign manualPercentagePassed = (manualPassed / totalManual)/>
                                                 <#else>
                                                     <#assign manualPercentagePassed = 0.0/>
                                                 </#if>
+
                                                 <#assign totalTests = totalAutomated + totalManual/>
                                                 <#if (totalTests > 0)>
                                                     <#assign percentagePassed = ((automatedPassed + manualPassed) / totalTests)/>
@@ -286,7 +289,19 @@
                                                 <#else>
                                                     <#assign automatedColor = "greentext"/>
                                                 </#if>
-                                                <td class="${automatedColor} highlighted-value">${totalTests}</td>
+
+                                                <#if (automatedFailed + automatedError + manualFailed + manualError > 0)>
+                                                    <#assign totalColor = "redtext"/>
+                                                <#elseif (automatedPending + manualPending > 0)>
+                                                    <#assign totalColor = "bluetext"/>
+                                                <#elseif (totalAutomated == 0)>
+                                                    <#assign totalColor = "bluetext"/>
+                                                <#else>
+                                                    <#assign totalColor = "greentext"/>
+                                                </#if>
+
+                                                <td class="${totalColor} highlighted-value">${totalTests}</td>
+                                                <td class="${totalColor}">${percentagePassed?string.percent} </td>
                                                 <td class="${automatedColor} highlighted-value">${totalAutomated}</td>
                                                 <td class="${automatedColor}">${automatedPercentagePassed?string.percent} </td>
                                                 <td class="greentext">${automatedPassed}</td>

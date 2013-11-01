@@ -150,6 +150,8 @@
                                         <tr>
                                             <th width="40" class="test-results-heading">&nbsp;</th>
                                             <th width="500" class="test-results-heading">Release</th>
+                                            <th class="test-results-heading" width="50px">Total.<br/>Tests</th>
+                                            <th class="test-results-heading" width="50px">%Pass</th>
                                             <th class="test-results-heading" width="50px">Auto.<br/>Tests</th>
                                             <th class="test-results-heading" width="50px">%Pass</th>
                                             <th class="test-results-heading" width="25px"><i
@@ -247,8 +249,22 @@
                                             <#else>
                                                 <#assign automatedColor = "greentext"/>
                                             </#if>
-                                            <td class="${automatedColor} highlighted-value">${totalAutomated}</td>
-                                            <td class="${automatedColor}">${automatedPercentagePassed?string.percent}</td>
+
+                                            <#if (automatedFailed + automatedError + manualFailed + manualError > 0)>
+                                                <#assign totalColor = "redtext"/>
+                                            <#elseif (automatedPending + manualPending > 0)>
+                                                <#assign totalColor = "bluetext"/>
+                                            <#elseif (totalAutomated == 0)>
+                                                <#assign totalColor = "bluetext"/>
+                                            <#else>
+                                                <#assign totalColor = "greentext"/>
+                                            </#if>
+
+                                            <td class="${totalColor} highlighted-value">${totalTests}</td>
+                                            <td class="${totalColor}">${percentagePassed?string.percent} </td>
+
+                                            <td class="${totalColor} highlighted-value">${totalAutomated}</td>
+                                            <td class="${totalColor}">${automatedPercentagePassed?string.percent}</td>
                                             <td class="greentext">${automatedPassed}</td>
                                             <td class="bluetext">${automatedPending}</td>
                                             <td class="redtext">${automatedFailed}</td>

@@ -1,8 +1,12 @@
 package net.thucydides.core.requirements.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.requirements.model.RequirementBuilderNameStep;
+import net.thucydides.core.requirements.model.RequirementBuilderTypeStep;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,14 +18,18 @@ import java.util.List;
  */
 public class Requirement implements Comparable {
 
-    private final String displayName;
-    private final String name;
-    private final String type;
-    private final String narrativeText;
-    private final String cardNumber;
-    private final List<Requirement> children;
-    private final List<Example> examples;
-    private final List<String> releaseVersions;
+    private String displayName;
+    private String name;
+    private String type;
+    private String narrativeText;
+    private String cardNumber;
+    private List<Requirement> children;
+    private List<Example> examples;
+    private List<String> releaseVersions;
+
+    public Requirement() {
+        // Used by Jackson
+    }
 
     protected Requirement(String name, String displayName, String cardNumber, String type, String narrativeText,
                           List<Requirement> children, List<Example> examples,
@@ -59,7 +67,7 @@ public class Requirement implements Comparable {
         return type;
     }
 
-    public String getChildType() {
+    public String childType() {
         return (!children.isEmpty()) ? children.get(0).getType() : null;
     }
 
@@ -71,6 +79,7 @@ public class Requirement implements Comparable {
         return releaseVersions;
     }
 
+    @JsonIgnore
     public int getChildrenCount() {
         return children.size();
     }
@@ -87,6 +96,7 @@ public class Requirement implements Comparable {
         return !examples.isEmpty();
     }
 
+    @JsonIgnore
     public int getExampleCount() {
         return examples.size();
     }
@@ -138,49 +148,7 @@ public class Requirement implements Comparable {
         return TestTag.withName(getName()).andType(getType());
     }
 
-    public static class RequirementBuilderNameStep {
 
-        final String name;
-        String displayName;
-        String cardNumber;
-
-        public RequirementBuilderNameStep(String name) {
-            this.name = name;
-            this.displayName = name;
-        }
-
-        public RequirementBuilderNameStep withOptionalDisplayName(String displayName) {
-            this.displayName = displayName;
-            return this;
-        }
-
-        public RequirementBuilderNameStep withOptionalCardNumber(String cardNumber) {
-            this.cardNumber = cardNumber;
-            return this;
-        }
-
-        public RequirementBuilderTypeStep withType(String type) {
-            return new RequirementBuilderTypeStep(this, type);
-        }
-
-    }
-
-    public static class RequirementBuilderTypeStep {
-        final RequirementBuilderNameStep requirementBuilderNameStep;
-        final String type;
-
-        public RequirementBuilderTypeStep(RequirementBuilderNameStep requirementBuilderNameStep, String type) {
-            this.requirementBuilderNameStep = requirementBuilderNameStep;
-            this.type = type;
-        }
-
-        public Requirement withNarrativeText(String narrativeText) {
-            String name = requirementBuilderNameStep.name;
-            String displayName = requirementBuilderNameStep.displayName;
-            String cardNumber = requirementBuilderNameStep.cardNumber;
-            return new Requirement(name, displayName, cardNumber, type, narrativeText);
-        }
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -209,5 +177,12 @@ public class Requirement implements Comparable {
                 ", type='" + type + '\'' +
                 ", cardNumber='" + cardNumber + '\'' +
                 '}';
+    }
+
+    public Requirement withChild(Requirement child) {
+        List<Requirement> newChildren = Lists.newArrayList(children);
+        newChildren.remove(child);
+        newChildren.add(child);
+        return new Requirement(name,displayName,cardNumber,type,narrativeText, newChildren, examples,releaseVersions);
     }
 }

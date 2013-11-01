@@ -6,8 +6,6 @@ public class Example {
     private final String description;
     private final Optional<String> cardNumber;
 
-    private final static Optional<String> NO_CARD_NUMBER = Optional.absent();
-
     public Example(String description, Optional<String> cardNumber) {
         this.description = description;
         this.cardNumber = cardNumber;
@@ -34,19 +32,5 @@ public class Example {
         return new ExampleBuilder(description);
     }
 
-    public static class ExampleBuilder {
-        private final String description;
 
-        public ExampleBuilder(String description) {
-            this.description = description;
-        }
-
-        public Example andCardNumber(String cardNumber) {
-            return new Example(description, Optional.of(cardNumber));
-        }
-
-        public Example andNoCardNumber() {
-            return new Example(description, NO_CARD_NUMBER);
-        }
-    }
 }
