@@ -3,7 +3,5 @@
     <properties>
         <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     </properties>
-    <testcase name="should_do_something" classname="SomeTestClass" time="1.0">
-        <skipped/>
-    </testcase>
+    <testcase name="should_do_something: 1 | 2 | 3" classname="SomeTestClass" time="1.0"/>
 </testsuite>

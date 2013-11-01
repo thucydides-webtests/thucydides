@@ -11,6 +11,7 @@ import net.thucydides.core.reports.adaptors.xunit.io.XUnitFiles;
 import net.thucydides.core.reports.adaptors.xunit.model.TestCase;
 import net.thucydides.core.reports.adaptors.xunit.model.TestException;
 import net.thucydides.core.reports.adaptors.xunit.model.TestSuite;
+import net.thucydides.core.util.NameConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +50,9 @@ public class DefaultXUnitAdaptor extends FilebasedOutcomeAdaptor {
             @Override
             public TestOutcome convert(TestCase from) {
                 TestOutcome outcome = TestOutcome.forTestInStory(from.getName(), Story.called(from.getClassname()));
+                outcome.setTitle(NameConverter.humanize(from.getName()));
                 outcome.setDuration(timeAsLong(from.getTime()));
+
                 if (from.getError().isPresent()) {
                     TestException failure = from.getError().get();
                     outcome.setTestFailureCause(failure.asException());
@@ -59,7 +62,11 @@ public class DefaultXUnitAdaptor extends FilebasedOutcomeAdaptor {
                 } else if (from.getSkipped().isPresent()) {
                     //although it is logged by junit as 'skipped', Thucydides
                     //makes a distinction between skipped and ignored.
-                    outcome.setAnnotatedResult(TestResult.IGNORED);
+                    //outcome.setAnnotatedResult(TestResult.IGNORED);
+
+                    //setting the outcome to PENDING for now as the reports don't yet handle the
+                    //ignored test cases
+                    outcome.setAnnotatedResult(TestResult.PENDING);
                 } else {
                     outcome.setAnnotatedResult(TestResult.SUCCESS);
                 }

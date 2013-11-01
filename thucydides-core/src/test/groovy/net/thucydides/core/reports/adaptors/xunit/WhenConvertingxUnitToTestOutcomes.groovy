@@ -41,7 +41,7 @@ class WhenConvertingxUnitToTestOutcomes extends Specification {
             outcome.result == TestResult.SUCCESS
     }
 
-    def "should convert skipped tests into an outcome with Ignored result"() {
+    def "should convert skipped tests into an outcome with Pending result"() {
 
         given:
             def xunitFile = fileInClasspathCalled("/xunit-sample-output/skippedTestCase.xml")
@@ -53,6 +53,19 @@ class WhenConvertingxUnitToTestOutcomes extends Specification {
             outcomes.size() == 1
             outcome.testCount == 1
             outcome.title == "Should do something"
-            outcome.result == TestResult.IGNORED
+            outcome.result == TestResult.PENDING
+    }
+
+    def "should humanize the title but not assume that it has method argments when there is a colon in the title"() {
+        given:
+            def xunitFile = fileInClasspathCalled("/xunit-sample-output/singleTestCaseWithColonInName.xml")
+            def xUnitAdaptor = new DefaultXUnitAdaptor()
+        when:
+            List<TestOutcome> outcomes = xUnitAdaptor.testOutcomesIn(xunitFile)
+            TestOutcome outcome = outcomes[0];
+        then:
+            outcomes.size() == 1
+            outcome.testCount == 1
+            outcome.title == "Should do something: 1 | 2 | 3"
     }
 }
