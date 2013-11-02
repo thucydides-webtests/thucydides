@@ -21,7 +21,7 @@ class WhenConvertingxUnitToTestOutcomes extends Specification {
             List<TestOutcome> outcomes = xUnitAdaptor.loadOutcomesFrom(xunitFileDirectory)
             TestOutcome outcome = outcomes[0];
         then:
-            outcomes.size() == 6
+            outcomes.size() == 7
             outcome.testCount == 1
             outcome.title == "Should do something"
 
