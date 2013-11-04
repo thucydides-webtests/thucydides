@@ -179,7 +179,9 @@ public class Formatter {
     }
 
     private int lastPipeIndex(String text) {
-        return text.lastIndexOf("|") + 2;
+        int lastPipe = text.lastIndexOf("|");
+
+        return (lastPipe + 2 < text.length()) ?  lastPipe + 2 : text.length();
     }
 
     private int firstPipeIndex(String text) {
