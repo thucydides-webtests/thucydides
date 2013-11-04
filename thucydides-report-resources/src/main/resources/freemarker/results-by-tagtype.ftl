@@ -62,7 +62,7 @@
     <div id="contenttop">
         <#--<div class="leftbg"></div>-->
         <div class="middlebg">
-            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> ${contextTitle} > ${pageTitle}</span>
+            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> ${contextTitle} > ${formatter.truncatedHtmlCompatible(pageTitle,60)}</span>
         </div>
         <div class="rightbg"></div>
     </div>

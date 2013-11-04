@@ -119,7 +119,7 @@
 <div class="middlecontent">
 <div id="contenttop">
     <div class="middlebg">
-        <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > Requirements > ${pageTitle} </span>
+        <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > Requirements > ${formatter.truncatedHtmlCompatible(pageTitle,60)} </span>
     </div>
     <div class="rightbg"></div>
 </div>

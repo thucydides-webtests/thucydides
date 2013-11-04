@@ -261,7 +261,7 @@ public class Formatter {
     }
 
     private String removeMacros(String textToFormat) {
-        return StringUtils.replace(textToFormat, "{trim=false","");
+        return textToFormat.replaceAll("\\{trim=false\\}\\s*\\r?\\n","");
     }
 
     private String stripLeadingHashFrom(final String issue) {

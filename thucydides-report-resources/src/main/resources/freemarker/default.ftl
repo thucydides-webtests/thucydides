@@ -31,7 +31,7 @@
 <div class="middlecontent">
 <div id="contenttop">
     <div class="middlebg">
-        <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > ${testOutcome.title} </span>
+        <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > ${formatter.truncatedHtmlCompatible(testOutcome.title,80)} </span>
     </div>
     <div class="rightbg"></div>
 </div>
