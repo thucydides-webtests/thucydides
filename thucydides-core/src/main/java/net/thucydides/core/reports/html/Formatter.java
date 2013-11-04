@@ -10,6 +10,7 @@ import net.thucydides.core.reports.renderer.Asciidoc;
 import net.thucydides.core.reports.renderer.MarkupRenderer;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.AggregateTranslator;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.apache.commons.lang3.text.translate.EntityArrays;
@@ -256,7 +257,11 @@ public class Formatter {
         for (String field : fields) {
             textWithEscapedFields = textWithEscapedFields.replaceAll("<" + field + ">", "&lt;" + field + "&gt;");
         }
-        return addLineBreaks(convertAnyTables(textWithEscapedFields));
+        return addLineBreaks(removeMacros(convertAnyTables(textWithEscapedFields)));
+    }
+
+    private String removeMacros(String textToFormat) {
+        return StringUtils.replace(textToFormat, "{trim=false","");
     }
 
     private String stripLeadingHashFrom(final String issue) {
