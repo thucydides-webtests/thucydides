@@ -79,6 +79,14 @@
                 ],
                 "bJQueryUI": true
             });
+
+            // Results table
+            $('#release-test-results-table').dataTable({
+                "aaSorting": [
+                    [ 2, "asc" ]
+                ],
+                "bJQueryUI": true
+            });
         });
     </script>
 </head>
@@ -120,7 +128,7 @@
     <div id="results-dashboard">
         <div class="middlb">
             <div class="table">
-
+            <div id="tabs">
                 <div id="releases">
                     <h3>Release Details</h3>
                     <table>
@@ -154,6 +162,10 @@
                         );
 
                     </script>
+
+                    <div>
+                        <#assign releaseTestReport = reportName.withPrefix(currentTag).forTestResult("pending") >
+                    </div>
 
                     <div id="release-coverage">
                         <div id="tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
@@ -334,7 +346,94 @@
                             </div>
 
                             <!----->
+                            <#if releaseTestOutcomes.tests?has_content >
+                            <#--- Test Results -->
 
+                            <div id="test-tabs">
+                                <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+                                    <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active requirementTitle">
+                                        <a href="#test-tabs-1">Tests (${releaseTestOutcomes.total})</a>
+                                    </li>
+                                </ul>
+                                <div id="test_list_tests" class="table">
+                                    <div class="test-results">
+                                        <table id="release-test-results-table">
+                                            <thead>
+                                            <tr>
+                                                <th width="30" class="test-results-heading">&nbsp;</th>
+                                                <th width="%" class="test-results-heading">Tests</th>
+                                                <th width="70" class="test-results-heading">Steps</th>
+                                                <#if reportOptions.showStepDetails>
+                                                    <th width="65" class="test-results-heading">Fail</th>
+                                                    <th width="65" class="test-results-heading">Errors</th>
+                                                    <th width="65" class="test-results-heading">Pend</th>
+                                                    <th width="65" class="test-results-heading">Ignore</th>
+                                                    <th width="65" class="test-results-heading">Skip</th>
+                                                </#if>
+                                                <th width="65" class="test-results-heading">Stable</th>
+                                                <th width="100" class="test-results-heading">Duration<br>(seconds)</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <#assign testResultSet = releaseTestOutcomes.tests >
+                                                <#foreach testOutcome in testResultSet>
+                                                    <#if testOutcome.result == "PENDING" || testOutcome.result == "IGNORED">
+                                                        <#assign testrun_outcome_icon = "pending.png">
+                                                    <#elseif testOutcome.result == "FAILURE">
+                                                        <#assign testrun_outcome_icon = "fail.png">
+                                                    <#elseif testOutcome.result == "ERROR">
+                                                        <#assign testrun_outcome_icon = "cross.png">
+                                                    <#elseif testOutcome.result == "SUCCESS">
+                                                        <#assign testrun_outcome_icon = "success.png">
+                                                    <#else>
+                                                        <#assign testrun_outcome_icon = "ignor.png">
+                                                    </#if>
+
+                                                    <#assign stability = testOutcome.recentStability>
+                                                    <#if (testOutcome.recentTestRunCount == testOutcome.recentPendingCount)>
+                                                        <#assign stability_icon = "traffic-in-progress.gif">
+                                                        <#assign stability_rank = 0>
+                                                    <#elseif stability < 0.25>
+                                                        <#assign stability_icon = "traffic-red.gif">
+                                                        <#assign stability_rank = 1>
+                                                    <#elseif stability < 0.5 >
+                                                        <#assign stability_icon = "traffic-orange.gif">
+                                                        <#assign stability_rank = 2>
+                                                    <#elseif stability < 0.5 >
+                                                        <#assign stability_icon = "traffic-yellow.gif">
+                                                        <#assign stability_rank = 3>
+                                                    <#else>
+                                                        <#assign stability_icon = "traffic-green.gif">
+                                                        <#assign stability_rank = 4>
+                                                    </#if>
+
+                                                <tr class="test-${testOutcome.result}">
+                                                    <td><img src="images/${testrun_outcome_icon}" title="${testOutcome.result}" class="summary-icon"/><span style="display:none">${testOutcome.result}</span></td>
+                                                    <td class="${testOutcome.result}-text"><a href="${relativeLink!}${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a></td>
+
+                                                    <td class="lightgreentext">${testOutcome.nestedStepCount}</td>
+                                                    <#if reportOptions.showStepDetails>
+                                                        <td class="redtext">${testOutcome.total.withResult("FAILURE")}</td>
+                                                        <td class="redtext">${testOutcome.total.withResult("ERROR")}</td>
+                                                        <td class="bluetext">${testOutcome.total.withResult("PENDING")}</td>
+                                                        <td class="bluetext">${testOutcome.total.withResult("SKIPPED")}</td>
+                                                        <td class="bluetext">${testOutcome.total.withResult("IGNORED")}</td>
+                                                    </#if>
+                                                    <td class="bluetext">
+                                                        <img src="images/${stability_icon}"
+                                                             title="Over the last ${testOutcome.recentTestRunCount} tests: ${testOutcome.recentPassCount} passed, ${testOutcome.recentFailCount} failed, ${testOutcome.recentPendingCount} pending"
+                                                             class="summary-icon"/>
+                                                        <span style="display:none">${stability_rank }</span>
+                                                    </td>
+                                                    <td class="lightgreentext">${testOutcome.durationInSeconds}</td>
+                                                </tr>
+                                                </#foreach>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            </#if>
 
                         </div>
                     </div>

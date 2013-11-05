@@ -9,6 +9,7 @@ import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomes;
@@ -92,7 +93,6 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         }
 
         String reportFilename = reportFor(storedTestOutcome);
-        LOGGER.debug("Generating HTML report for {} to file {}", storedTestOutcome.getTitle(), reportFilename);
         return writeReportToOutputDirectory(reportFilename, htmlContents);
     }
 
@@ -111,6 +111,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
     private void addTestOutcomeToContext(final TestOutcome testOutcome, final TestOutcomes allTestOutcomes, final Map<String,Object> context) {
         context.put("allTestOutcomes", allTestOutcomes);
         context.put("testOutcome", testOutcome);
+        context.put("currentTag", TestTag.EMPTY_TAG);
         context.put("inflection", Inflector.getInstance());
         context.put("parentRequirement", requirementsService.getParentRequirementFor(testOutcome));
         context.put("requirementTypes", requirementsService.getRequirementTypes());

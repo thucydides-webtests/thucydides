@@ -6,6 +6,8 @@ import static org.apache.commons.lang3.ObjectUtils.compare;
 
 public class TestTag implements Comparable {
 
+    public static final TestTag EMPTY_TAG = new TestTag("","");
+
     private final String name;
     private final String type;
 

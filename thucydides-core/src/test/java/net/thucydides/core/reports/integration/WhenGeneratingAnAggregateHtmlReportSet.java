@@ -14,7 +14,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.*;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
@@ -105,7 +104,6 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         String expectedSuccessReport = reportName.forTestResult("success");
 
         File report = new File(outputDirectory, expectedSuccessReport);
-        driver = new FirefoxDriver();
         driver.get(urlFor(report));
         assertThat(driver.findElement(By.cssSelector(".date-and-time")).getText(), containsString("01-2013"));
     }
@@ -116,9 +114,9 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
 
     @Test
     public void should_generate_overall_passed_failed_and_pending_reports_for_each_tag() throws Exception {
-        assertThat(new File(outputDirectory, digest("context_a_feature_result_success") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("context_a_feature_result_pending") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("context_a_feature_result_pending") + ".html"), exists());
+        assertThat(new File(outputDirectory, digest("context_feature_a_feature_result_success") + ".html"), exists());
+        assertThat(new File(outputDirectory, digest("context_feature_a_feature_result_pending") + ".html"), exists());
+        assertThat(new File(outputDirectory, digest("context_feature_a_feature_result_pending") + ".html"), exists());
     }
 
     @Test

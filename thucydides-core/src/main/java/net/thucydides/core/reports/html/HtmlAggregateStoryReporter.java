@@ -8,7 +8,6 @@ import net.thucydides.core.model.NumericalFormatter;
 import net.thucydides.core.model.Release;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestTag;
-import net.thucydides.core.model.TestType;
 import net.thucydides.core.releases.ReleaseManager;
 import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomeLoader;
@@ -274,8 +273,10 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
             context.put("report", ReportProperties.forAggregateResultsReport());
             context.put("release", release);
+
             context.put("releaseData", getReleaseManager().getJSONReleasesFrom(release));
             context.put("releaseRequirementOutcomes", releaseRequirements.getRequirementOutcomes());
+            context.put("releaseTestOutcomes", testOutcomes.withTag(release.getReleaseTag()));
 
             context.put("requirementType", topLevelRequirementTypeTitle);
             if (StringUtils.isNotBlank(secondLevelRequirementTypeTitle)) {
@@ -308,10 +309,10 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     private void generateResultReportsFor(TestOutcomes testOutcomes) throws IOException {
-        generateResultReports(testOutcomes, reportNameProvider, "");
+        generateResultReports(testOutcomes, reportNameProvider);
 
         for (TestTag tag : testOutcomes.getTags()) {
-            generateResultReports(testOutcomes.withTag(tag.getName()), new ReportNameProvider(tag.getName()), tag.getType());
+            generateResultReports(testOutcomes.withTag(tag.getName()), new ReportNameProvider(tag.getName()), tag);
         }
     }
 
@@ -321,31 +322,34 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 //            generateCoverageData(testOutcomes, tagType);
 //        }
 //    }
+    private void generateResultReports(TestOutcomes testOutcomes, ReportNameProvider reportName) throws IOException {
+        generateResultReports(testOutcomes,reportName, TestTag.EMPTY_TAG);
+    }
 
-    private void generateResultReports(TestOutcomes testOutcomesForThisTag, ReportNameProvider reportName, String tagType) throws IOException {
+    private void generateResultReports(TestOutcomes testOutcomesForThisTag, ReportNameProvider reportName, TestTag tag) throws IOException {
         if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.SUCCESS) > 0) {
-            generateResultReport(testOutcomesForThisTag.getPassingTests(), reportName, tagType, "success");
+            generateResultReport(testOutcomesForThisTag.getPassingTests(), reportName, tag, "success");
         }
         if (testOutcomesForThisTag.getTotalTests().withIndeterminateResult() > 0) {
-            generateResultReport(testOutcomesForThisTag.getPendingTests(), reportName, tagType, "pending");
+            generateResultReport(testOutcomesForThisTag.getPendingTests(), reportName, tag, "pending");
         }
         if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.FAILURE) > 0) {
-            generateResultReport(testOutcomesForThisTag.getFailingTests(), reportName, tagType, "failure");
+            generateResultReport(testOutcomesForThisTag.getFailingTests(), reportName, tag, "failure");
         }
         if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.ERROR) > 0) {
-            generateResultReport(testOutcomesForThisTag.getErrorTests(), reportName, tagType, "error");
+            generateResultReport(testOutcomesForThisTag.getErrorTests(), reportName, tag, "error");
         }
     }
 
-    private void generateResultReport(TestOutcomes testOutcomes, ReportNameProvider reportName, String tagType, String testResult) throws IOException {
+    private void generateResultReport(TestOutcomes testOutcomes, ReportNameProvider reportName, TestTag tag, String testResult) throws IOException {
         Map<String, Object> context = buildContext(testOutcomes, reportName);
         context.put("report", ReportProperties.forTestResultsReport());
-        context.put("currentTagType", tagType);
+        context.put("currentTagType", tag.getType());
+        context.put("currentTag", tag);
 
         String csvReport = reportName.forCSVFiles().forTestResult(testResult);
         context.put("csvReport", csvReport);
-
-        String report = reportName.forTestResult(testResult);
+        String report = reportName.withPrefix(tag).forTestResult(testResult);
         generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, report);
         generateCSVReportFor(testOutcomes, csvReport);
     }
@@ -355,6 +359,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Map<String, Object> context = buildContext(testOutcomesForTag, reportName);
         context.put("report", ReportProperties.forTagResultsReport());
         context.put("currentTagType", tag.getType());
+        context.put("currentTag", tag);
 
         String csvReport = reportName.forCSVFiles().forTag(tag.getName());
         context.put("csvReport", csvReport);
@@ -394,7 +399,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         context.put("testOutcomes", testOutcomesForTagType);
         context.put("allTestOutcomes", testOutcomesForTagType.getRootOutcomes());
         context.put("tagTypes", tagFilter.filteredTagTypes(testOutcomesForTagType.getTagTypes()));
-
+        context.put("currentTag", TestTag.EMPTY_TAG);
         context.put("reportName", reportName);
         context.put("absoluteReportName", new ReportNameProvider());
 
