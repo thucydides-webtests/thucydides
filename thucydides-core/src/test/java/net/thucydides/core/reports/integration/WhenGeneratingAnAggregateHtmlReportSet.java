@@ -158,17 +158,6 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     }
 
     @Test
-    public void aggregate_dashboard_should_contain_a_list_of_all_tags() throws Exception {
-
-        File report = new File(outputDirectory,"index.html");
-        driver.get(urlFor(report));
-
-        List<WebElement> tagTypes = driver.findElements(By.cssSelector(".tagTitle"));
-        List<String> tagTypeNames = extract(tagTypes, on(WebElement.class).getText());
-        assertThat(tagTypeNames, hasItems("A Story","A Feature", "An Epic", "Another Different Story"));
-    }
-
-    @Test
     public void aggregate_dashboard_should_contain_correct_test_counts() throws Exception {
 
         File report = new File(outputDirectory,"index.html");

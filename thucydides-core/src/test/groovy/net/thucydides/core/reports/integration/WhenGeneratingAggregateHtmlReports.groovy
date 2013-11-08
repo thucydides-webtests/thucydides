@@ -43,20 +43,6 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         mockTestHistory.history >> NO_SNAPSHOTS
     }
 
-    def "aggregate dashboard should contain a list of features and stories for legacy tests"() {
-
-        given: "We generate reports from a directory containing features and stories only"
-            reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
-
-        when: "we view the report"
-            driver.get reportHomePageUrl();
-            def tagTypeNames = driver.findElements(By.cssSelector(".tagTitle")).collect { it.text}
-
-        then: "The tags should show the features and stories from the tests"
-            tagTypeNames.contains "Daily Care Of Chickens"
-            tagTypeNames.contains "Raise Chickens"
-    }
-
     def "we can navigate sub reports"() {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
