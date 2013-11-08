@@ -709,12 +709,15 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 
 .test-summary-table {
     border: 1px solid #BBB;
-    width: 530px;
+    width: 100%;
     margin-bottom: 20px;
     background-color: white;
 
 }
 
+.tag-title {
+    width: 100%;
+}
 
 .menu {
     width: 99%;
@@ -1072,6 +1075,7 @@ table.coverage_data td {
     vertical-align: top;
     padding-top: 20px;
     padding-left: 20px;
+    width: 100%;
 }
 
 #test_results_pie_chart {
@@ -1203,4 +1207,24 @@ ul.second-level-requirements  {
 .projectname {
     font-family:euphemia, verdana, sans-serif;
     font-weight:bold; font-size:2em; color:white; position:relative; top:30px; right:20px;
+}
+
+.togglePieChart {
+    float:right;
+}
+
+.togglePieChart a:link,
+.togglePieChart a:visited  {
+    color: white;
+    background-color: #0d78ae;
+    font-size: 0.9em;
+    padding: 4px;
+    border: solid thin blue;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.togglePieChart a:hover {
+    color: yellow;
 }

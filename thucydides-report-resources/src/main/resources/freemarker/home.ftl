@@ -162,6 +162,21 @@
 
         // Pie charts
         $('#test-results-tabs').tabs()
+
+        $('#toggleNormalPieChart').click(function() {
+            $("#test_results_pie_chart").toggle();
+        });
+
+        $('#toggleWeightedPieChart').click(function() {
+            $("#weighted_test_results_pie_chart").toggle();
+        });
+
+        <#if !reportOptions.displayPiechart>
+            $("#test_results_pie_chart").hide();
+            $("#weighted_test_results_pie_chart").hide();
+        </#if>
+
+
     })
     ;
     </script>
@@ -179,7 +194,7 @@
 
 <div class="middlecontent">
 
-<#assign tagsTitle = 'Related tags' >
+<#assign tagsTitle = 'Related Tags' >
 <#if (testOutcomes.label == '')>
     <#assign resultsContext = ''>
     <#assign pageTitle = 'Test Results: All Tests' >
@@ -270,6 +285,7 @@
                                     <tr>
                                         <td colspan="2">
                                             <span class="caption">Total number of tests that pass, fail, or are pending.</span>
+                                            <span class="togglePieChart" id="toggleNormalPieChart"><a href="#">Show/Hide Pie Chart</a></span>
                                         </td>
                                     </tr>
                                     <tr>
@@ -294,6 +310,7 @@
                                     <tr>
                                         <td colspan="2">
                                             <span class="caption">Total number of tests, weighted by test steps.</span>
+                                            <span class="togglePieChart" id="toggleWeightedPieChart"><a href="#">Show/Hide Pie Chart</a></span>
                                         </td>
                                     </tr>
                                     <tr>
@@ -455,16 +472,14 @@
                     <#assign outcome_text = "ignore-color">
                 </#if>
                 <tr>
-                    <td class="bluetext" width="300px">
-                        <div class="tagTitle">
-                                <span class="${outcomesForTag.result}-text">
-                                    <#if testOutcomes.label == tagName>
-                                        <a href="${tagReport}" class="currentTag">${tagTitle}</a>
-                                    <#else>
-                                        <a href="${tagReport}">${tagTitle}</a>
-                                    </#if>
-                                </span>
-                        </div>
+                    <td class="bluetext" class="tag-title">
+                        <span class="${outcomesForTag.result}-text">
+                            <#if testOutcomes.label == tagName>
+                                <a href="${tagReport}" class="currentTag">${tagTitle}</a>
+                            <#else>
+                                <a href="${tagReport}">${tagTitle}</a>
+                            </#if>
+                        </span>
                     </td>
                     <td width="150px" class="lightgreentext">
                         <#if weighted == "true">

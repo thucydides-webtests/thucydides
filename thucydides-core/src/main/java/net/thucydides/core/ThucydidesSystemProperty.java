@@ -535,6 +535,12 @@ public enum ThucydidesSystemProperty {
     SHOW_RELATED_TAGS("show.related.tags"),
 
     /**
+     * Display the pie charts on the dashboard by default.
+     * If this is set to false, the pie charts will be initially hidden on the dashboard.
+     */
+    SHOW_PIE_CHARTS("show.pie.charts"),
+
+    /**
      * If set, this will define the list of tag types to appear on the dashboard screens
      */
     DASHBOARD_TAG_LIST("dashboard.tag.list"),

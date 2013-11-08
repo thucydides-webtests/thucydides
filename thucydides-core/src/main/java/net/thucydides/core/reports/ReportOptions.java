@@ -12,6 +12,7 @@ import static net.thucydides.core.ThucydidesSystemProperty.SHOW_PROGRESS;
 import static net.thucydides.core.ThucydidesSystemProperty.SHOW_HISTORY;
 import static net.thucydides.core.ThucydidesSystemProperty.SHOW_TAG_MENUS;
 import static net.thucydides.core.ThucydidesSystemProperty.SHOW_RELATED_TAGS;
+import static net.thucydides.core.ThucydidesSystemProperty.SHOW_PIE_CHARTS;
 
 /**
  * Encapsulates user-specified formatting options for the generated reports.
@@ -29,6 +30,8 @@ public class ReportOptions {
 
     private RequirementsService requirementsService;
 
+    final private boolean displayPiechart;
+
     public ReportOptions(EnvironmentVariables environmentVariables) {
         showStepDetails = Boolean.valueOf(SHOW_STEP_DETAILS.from(environmentVariables, "false"));
         showManualTests = Boolean.valueOf(SHOW_MANUAL_TESTS.from(environmentVariables, "true"));
@@ -37,6 +40,7 @@ public class ReportOptions {
         showHistory = Boolean.valueOf(SHOW_HISTORY.from(environmentVariables, "false"));
         showTagMenus = Boolean.valueOf(SHOW_TAG_MENUS.from(environmentVariables, "false"));
         showRelatedTags = Boolean.valueOf(SHOW_RELATED_TAGS.from(environmentVariables, "true"));
+        displayPiechart = Boolean.valueOf(SHOW_PIE_CHARTS.from(environmentVariables, "true"));
         projectName = PROJECT_NAME.from(environmentVariables,"");
         requirementsService = Injectors.getInjector().getInstance(RequirementsService.class);
     }
@@ -71,5 +75,9 @@ public class ReportOptions {
 
     public String getProjectName() {
         return projectName;
+    }
+
+    public boolean isDisplayPiechart() {
+        return displayPiechart;
     }
 }
