@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.containsString;
 
 public class ReleaseManager {
 
-    private final static String DEFAULT_RELEASE_TYPES = "Release,Iteration";
+    private final static String DEFAULT_RELEASE_TYPES = "Release,Iteration:Sprint";
     private List<String> releaseTypes;
     private ReportNameProvider reportNameProvider;
     private RequirementsService requirementsService;
@@ -104,9 +104,9 @@ public class ReleaseManager {
 
     private List<Matcher<String>> matchingNames(String possibleNames) {
         List<Matcher<String>> matchers = Lists.newArrayList();
-        List<String> nameCandidates = Splitter.on(":").trimResults().splitToList(possibleNames);
+        List<String> nameCandidates = Splitter.on(":").trimResults().splitToList(possibleNames.toLowerCase());
         for(String nameCandidate : nameCandidates) {
-            matchers.add((containsString(nameCandidate)));
+            matchers.add((containsString(nameCandidate.toLowerCase())));
         }
         return matchers;
     }
@@ -151,7 +151,7 @@ public class ReleaseManager {
             String childReleaseType = releaseTypes.get(level);
             List<TestTag> childReleaseTags = testOutcomes.findMatchingTags()
                     .withType("version")
-                    .withName(containsString(childReleaseType))
+                    .withNameIn(matchingNames(childReleaseType))
                     .list();
             List<Release> children = Lists.newArrayList();
             for (TestTag tag : childReleaseTags) {
@@ -186,7 +186,7 @@ public class ReleaseManager {
         List<Release> releases = Lists.newArrayList();
         Set<String> distinctReleases = getDistinct(releaseVersions);
         for (String release : distinctReleases) {
-            if (release.contains(releaseTypes.get(0))) {
+            if (releaseIsOfType(release, releaseTypes.get(0))) {
                 List<Release> subReleases = extractSubReleasesOfLevel(releaseVersions,
                                                                       release,
                                                                       1,
@@ -200,6 +200,15 @@ public class ReleaseManager {
         }
         Collections.sort(releases);
         return releases;
+    }
+
+    private boolean releaseIsOfType(String release, String releaseTypes) {
+        for(Matcher matcher : matchingNames(releaseTypes)) {
+            if (matcher.matches(release.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void addUniqueRelease(List<Release> releases, Release release) {
@@ -251,7 +260,7 @@ public class ReleaseManager {
     private List<String> releasesOfType(String type, List<String> releaseVersionSet) {
         List<String> matchingReleases = Lists.newArrayList();
         for (String release : releaseVersionSet) {
-            if (release.contains(type)) {
+            if (releaseIsOfType(release, type)) {
                 matchingReleases.add(release);
             }
         }

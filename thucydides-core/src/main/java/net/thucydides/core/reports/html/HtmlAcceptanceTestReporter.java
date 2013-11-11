@@ -82,15 +82,15 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         Map<String,Object> context = new HashMap<String,Object>();
         addTestOutcomeToContext(storedTestOutcome, allTestOutcomes, context);
 
+        if (containsScreenshots(storedTestOutcome)) {
+            generateScreenshotReportsFor(storedTestOutcome, allTestOutcomes);
+        }
+
         addFormattersToContext(context);
         addTimestamp(testOutcome, context);
 
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_REPORT).usingContext(context);
         copyResourcesToOutputDirectory();
-
-        if (containsScreenshots(storedTestOutcome)) {
-            generateScreenshotReportsFor(storedTestOutcome, allTestOutcomes);
-        }
 
         String reportFilename = reportFor(storedTestOutcome);
         return writeReportToOutputDirectory(reportFilename, htmlContents);
@@ -165,8 +165,8 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
                                           .keepOriginals(shouldKeepOriginalScreenshots())
                                           .expandToHeight(maxHeight);
             } catch (IOException e) {
-                LOGGER.error("Failed to write scaled screenshot for {}: {}", screenshot, e);
-                throw new ScreenshotException("Failed to write scaled screenshot", e);
+                LOGGER.warn("Failed to write scaled screenshot for {}: {}", screenshot, e);
+                return screenshot;
             }
         }
     }

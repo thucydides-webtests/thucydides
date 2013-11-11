@@ -562,7 +562,6 @@ public enum ThucydidesSystemProperty {
         return propertyName;
     }
 
-
     @Override
     public String toString() {
         return propertyName;
