@@ -2,6 +2,7 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.digest.Digest;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
@@ -69,6 +70,19 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         assertThat(htmlReport.exists(), is(true));
     }
+
+    @Test
+    public void should_generate_an_HTML_report_for_a_failing_manual_acceptance_test() throws Exception {
+
+        TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+        testOutcome.asManualTest();
+        testOutcome.setAnnotatedResult(TestResult.FAILURE);
+        File htmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+
+        assertThat(htmlReport.exists(), is(true));
+    }
+
     @Test
     public void should_generate_an_HTML_report_for_an_acceptance_test_run_with_spaces_in_the_test_name() throws Exception {
 
