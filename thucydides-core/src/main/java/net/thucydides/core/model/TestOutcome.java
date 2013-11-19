@@ -471,6 +471,15 @@ public class TestOutcome {
         }
     }
 
+    public String getPathId() {
+        if (userStory != null) {
+            return userStory.getId();
+        } else {
+            return getPath();
+        }
+    }
+
+
     private String getTitleFrom(final Story userStory) {
         return userStory.getName();
     }
