@@ -26,6 +26,7 @@ public class RequirementsServiceImplementation implements RequirementsService {
 
     private List<RequirementsTagProvider> requirementsTagProviders;
     private List<Requirement> requirements;
+    private List<Release> releases;
     private Map<Requirement, List<Requirement>> requirementAncestors;
     private final EnvironmentVariables environmentVariables;
 
@@ -168,17 +169,20 @@ public class RequirementsServiceImplementation implements RequirementsService {
 
     @Override
     public List<Release> getReleasesFromRequirements() {
-        if (getReleaseProvider().isPresent()) {
-            return getReleaseProvider().get().getReleases();
-        } else {
-            List<List<String>> releaseVersions = getReleaseVersionsFrom (getRequirements());
-            return getReleaseManager().extractReleasesFrom(releaseVersions);
+        if (releases == null) {
+            if (getReleaseProvider().isPresent() && (getReleaseProvider().get().isActive())) {
+                releases = getReleaseProvider().get().getReleases();
+            } else {
+                List<List<String>> releaseVersions = getReleaseVersionsFrom(getRequirements());
+                releases = getReleaseManager().extractReleasesFrom(releaseVersions);
+            }
         }
+        return releases;
     }
 
     private Optional<ReleaseProvider> getReleaseProvider() {
         List<RequirementsTagProvider> requirementsTagProviders = getRequirementsTagProviders();
-        for(RequirementsTagProvider provider : requirementsTagProviders) {
+        for (RequirementsTagProvider provider : requirementsTagProviders) {
             if ((provider instanceof ReleaseProvider) && ((ReleaseProvider) provider).isActive()) {
                 return Optional.of((ReleaseProvider) provider);
             }
@@ -256,7 +260,7 @@ public class RequirementsServiceImplementation implements RequirementsService {
 
     private void addRequirementsFrom(List<Requirement> requirements, List<Requirement> allRequirements) {
         allRequirements.addAll(requirements);
-        for(Requirement requirement : requirements) {
+        for (Requirement requirement : requirements) {
             addRequirementsFrom(requirement.getChildren(), allRequirements);
         }
     }

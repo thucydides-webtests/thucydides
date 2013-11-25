@@ -73,11 +73,16 @@ public class AnnotationBasedTagProvider extends AbstractRequirementsTagProvider 
     public Set<TestTag> getTagsFor(TestOutcome testOutcome) {
         Set<TestTag> result = new HashSet<TestTag>();
         for (Requirement requirement : getAllRequirements()) {
-            if (fullPathOf(requirement).matchesOrIsADescendantOf(normalizedPath(testOutcome.getPathId()))) {
+            if (isMatchingRequirementFor(testOutcome, requirement)) {
                 result.add(TestTag.withName(humanReadableVersionOf(requirement.getName())).andType(requirement.getType()));
             }
         }
         return result;
+    }
+
+    private boolean isMatchingRequirementFor(TestOutcome testOutcome, Requirement requirement) {
+        return (fullPathOf(requirement).matchesOrIsADescendantOf(normalizedPath(testOutcome.getPathId())))
+                || (fullPathOf(requirement).matchesOrIsADescendantOf(normalizedPath(testOutcome.getPath())));
     }
 
     private String normalizedPath(String path) {
