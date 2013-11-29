@@ -15,19 +15,20 @@ import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.ReportNameProvider;
 import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.RequirementsTagProvider;
-import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.util.EnvironmentVariables;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.apache.commons.lang3.StringUtils.capitalize;
+import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.hamcrest.Matchers.containsString;
 
 public class ReleaseManager {
@@ -106,7 +107,9 @@ public class ReleaseManager {
         List<Matcher<String>> matchers = Lists.newArrayList();
         List<String> nameCandidates = Splitter.on(":").trimResults().splitToList(possibleNames.toLowerCase());
         for(String nameCandidate : nameCandidates) {
-            matchers.add((containsString(nameCandidate.toLowerCase())));
+            matchers.add((containsString(nameCandidate)));
+            matchers.add((containsString(capitalize(nameCandidate))));
+            matchers.add((containsString(lowerCase(nameCandidate))));
         }
         return matchers;
     }
