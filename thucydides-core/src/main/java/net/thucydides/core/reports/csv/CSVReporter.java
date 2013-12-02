@@ -45,29 +45,6 @@ public class CSVReporter extends ThucydidesReporter {
         this.setOutputDirectory(outputDirectory);
         this.extraColumns = extraColumnsDefinedIn(environmentVariables);
         this.encoding = ThucydidesSystemProperty.REPORT_ENCODING.from(environmentVariables, java.nio.charset.Charset.defaultCharset().name());
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
-        System.out.println(encoding);
     }
 
     private List<String> extraColumnsDefinedIn(EnvironmentVariables environmentVariables) {
