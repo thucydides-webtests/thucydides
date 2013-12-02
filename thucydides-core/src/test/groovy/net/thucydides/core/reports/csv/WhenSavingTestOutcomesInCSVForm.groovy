@@ -19,6 +19,8 @@ class WhenSavingTestOutcomesInCSVForm extends Specification {
     @TempDir File temporaryDirectory
     def loader = new TestOutcomeLoader()
 
+    def environmentVariables = new MockEnvironmentVariables()
+
     def "should store an empty set of test outcomes as an empty CSV file with only column titles"() {
         given: "no test results"
             def testOutcomeList = TestOutcomes.withNoResults()
@@ -42,11 +44,8 @@ class WhenSavingTestOutcomesInCSVForm extends Specification {
             lines.size() == 4
     }
 
-    def environmentVariables = new MockEnvironmentVariables()
-
     def "should store user-configurable extra columns"() {
         given: "a set of test results"
-            def loader = new TestOutcomeLoader()
             def testOutcomeList = loader.loadFrom(directoryInClasspathCalled("/tagged-test-outcomes"));
         and: "we want to store extra columns from tag values"
             environmentVariables.setProperty("thucydides.csv.extra.columns","feature, epic")
@@ -60,8 +59,21 @@ class WhenSavingTestOutcomesInCSVForm extends Specification {
            linesIn(csvResults)[2][6] == "A Feature" && linesIn(csvResults)[2][7] == ""
     }
 
+    def "should store windows-1251 encoding, if it set in config"() {
+        given: "a set of test results in windows-1251"
+            def testOutcomeList = loader.loadFrom(directoryInClasspathCalled("/tagged-test-outcomes-win-1251"));
+            System.out.println(testOutcomeList);
+        and: "in environment setted windows-1251 encoding"
+            environmentVariables.setProperty("thucydides.report.encoding", "windows-1251")
+        when: "we store these outcomes as a CSV file"
+            def csvReporter = new CSVReporter(temporaryDirectory, environmentVariables)
+            File csvResults = csvReporter.generateReportFor(TestOutcomes.of(testOutcomeList), "results.csv")
+        then: "the results should contain a column for each additional column"
+            linesIn(csvResults)[1][1] == "Другой приемлемый" || linesIn(csvResults)[1][1] == "Применимый тестовый запуск" || linesIn(csvResults)[1][1] == "Третий приемлемый"
+    }
+
     def linesIn(File csvResults) {
-        def reader = new CSVReader(new FileReader(csvResults))
+        def reader = new CSVReader(new java.io.InputStreamReader(new java.io.FileInputStream(csvResults), "windows-1251"))
         reader.readAll()
     }
 }

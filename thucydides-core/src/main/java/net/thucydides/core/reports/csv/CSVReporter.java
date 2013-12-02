@@ -35,6 +35,7 @@ public class CSVReporter extends ThucydidesReporter {
     private static final String[] OF_STRINGS = new String[]{};
 
     private final List<String> extraColumns;
+    private final String encoding;
 
     public CSVReporter(File outputDirectory) {
         this(outputDirectory, Injectors.getInjector().getInstance(EnvironmentVariables.class));
@@ -43,6 +44,7 @@ public class CSVReporter extends ThucydidesReporter {
     public CSVReporter(File outputDirectory, EnvironmentVariables environmentVariables) {
         this.setOutputDirectory(outputDirectory);
         this.extraColumns = extraColumnsDefinedIn(environmentVariables);
+        this.encoding = ThucydidesSystemProperty.REPORT_ENCODING.from(environmentVariables, java.nio.charset.Charset.defaultCharset().name());
     }
 
     private List<String> extraColumnsDefinedIn(EnvironmentVariables environmentVariables) {
@@ -51,7 +53,7 @@ public class CSVReporter extends ThucydidesReporter {
     }
 
     public File generateReportFor(TestOutcomes testOutcomes, String reportName) throws IOException {
-        CSVWriter writer = new CSVWriter(new FileWriter(getOutputFile(reportName)));
+        CSVWriter writer = new CSVWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(getOutputFile(reportName)), encoding));
         writeTitleRow(writer);
         writeEachRow(testOutcomes.withHistory(), writer);
         writer.close();
