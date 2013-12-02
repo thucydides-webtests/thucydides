@@ -31,7 +31,7 @@ import static ch.lambdaj.Lambda.on;
  * Stores test outcomes as CSV files
  */
 public class CSVReporter extends ThucydidesReporter {
-    private static final String[] TITLE_LINE = {"History", "Title", "Result", "Date", "Stability", "Duration (s)"};
+    private static final String[] TITLE_LINE = {"Story", "Title", "Result", "Date", "Stability", "Duration (s)"};
     private static final String[] OF_STRINGS = new String[]{};
 
     private final List<String> extraColumns;
