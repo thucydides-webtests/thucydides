@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Properties that can be passed to a web driver test to customize its behaviour.
  * This class is mainly for internal use.
- * 
+ *
  * @author johnsmart
  *
  */
@@ -15,8 +15,8 @@ public enum ThucydidesSystemProperty {
     /**
      * The WebDriver driver - firefox, chrome, iexplorer, htmlunit, safari.
      */
-    DRIVER("webdriver.driver"),    
-    
+    DRIVER("webdriver.driver"),
+
     /**
      * The default starting URL for the application, and base URL for relative paths.
      */
@@ -63,6 +63,11 @@ public enum ThucydidesSystemProperty {
      * This directory currently needs to be provided in a JAR file.
      */
     REPORT_RESOURCE_PATH("thucydides.report.resources"),
+
+    /**
+     * Encoding for reports output
+     */
+    REPORT_ENCODING("thucydides.report.encoding"),
 
     /**
      * Where should reports be generated.

@@ -13,6 +13,7 @@
     <properties>
         <root.package>net.thucydides.core</root.package>
         <spring.version>3.2.3.RELEASE</spring.version>
+        <thucydides.report.encoding>cp1251</thucydides.report.encoding>
     </properties>
     <dependencies>
         <dependency>
