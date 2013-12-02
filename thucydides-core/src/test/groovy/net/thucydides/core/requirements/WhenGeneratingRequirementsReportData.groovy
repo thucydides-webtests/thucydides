@@ -2,6 +2,7 @@ package net.thucydides.core.requirements
 
 import com.google.common.collect.Lists
 import net.thucydides.core.ThucydidesSystemProperty
+import net.thucydides.core.model.Release
 import net.thucydides.core.model.Story
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.model.TestTag
@@ -38,10 +39,10 @@ class WhenGeneratingRequirementsReportData extends Specification {
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "all the known capabilities should be listed"
             def requirementsNames = outcomes.requirementOutcomes.collect {it.requirement.name}
-            requirementsNames == ["Grow potatoes", "Grow wheat",  "Raise chickens", "Apples", "Nice zucchinis", "Potatoes"]
+            requirementsNames == ["Grow cucumbers", "Grow potatoes", "Grow wheat",  "Raise chickens", "Apples", "Nice zucchinis", "Potatoes"]
         and: "the display name should be obtained from the narrative file where present"
             def requirementsDisplayNames = outcomes.requirementOutcomes.collect {it.requirement.displayName}
-        requirementsDisplayNames == ["Grow lots of potatoes", "Grow wheat", "Raise chickens", "apples", "Nice zucchinis", "Potatoes title"]
+        requirementsDisplayNames == ["Grow cucumbers", "Grow lots of potatoes", "Grow wheat", "Raise chickens", "apples", "Nice zucchinis", "Potatoes title"]
     }
 
     def "should report no test results for requirements without associated tests"() {
@@ -53,7 +54,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the test results for the requirements should be empty"
             def requirementsTestCount = outcomes.requirementOutcomes.collect {it.testOutcomes.total}
-            requirementsTestCount == [0,0,0,0,0,0]
+            requirementsTestCount == [0,0,0,0,0,0,0]
     }
 
     def "should report narrative test for each requirement"() {
@@ -64,9 +65,9 @@ class WhenGeneratingRequirementsReportData extends Specification {
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the requirement outcomes will contain the requirement narratives when specified"
             def requirementsNarratives = outcomes.requirementOutcomes.collect {it.requirement.narrativeText}
-            requirementsNarratives[0].contains("In order to let my country eat chips") == true
-            requirementsNarratives[1] == "Grow wheat"
-            requirementsNarratives[2] == "Raise chickens"
+            requirementsNarratives[1].contains("In order to let my country eat chips") == true
+            requirementsNarratives[2] == "Grow wheat"
+            requirementsNarratives[3] == "Raise chickens"
     }
 
     public void "should report test results associated with specified requirements"() {
@@ -77,9 +78,8 @@ class WhenGeneratingRequirementsReportData extends Specification {
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(someTestOutcomes)
         then: "the number of tests for each requirement should be recorded in the requirements outcome"
             def requirementsTestCount = outcomes.requirementOutcomes.collect {it.testOutcomes.total}
-            requirementsTestCount == [2,0,0,0,0,0]
+            requirementsTestCount == [0,2,0,0,0,0,0]
     }
-
 
     def "a requirement with no associated tests is pending"() {
         given: "there are no associated tests"
@@ -134,7 +134,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
         when: "we generate the capability outcomes"
         RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "requirements with pending tests should be pending"
-        outcomes.pendingRequirementsCount == 5
+        outcomes.pendingRequirementsCount == 6
     }
 
     def "should report on the number of passing, failing and pending tests for a requirement"() {
@@ -178,25 +178,25 @@ class WhenGeneratingRequirementsReportData extends Specification {
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the proportionOf of failing, passing and total steps should include estimations for requirements with no tests"
-            outcomes.proportion.withResult(TestResult.SUCCESS) == 0.09230769230769231
-            outcomes.proportion.withResult(TestResult.FAILURE) == 0.03076923076923077
-            outcomes.proportion.withIndeterminateResult() == 0.8769230769230769
+            outcomes.proportion.withResult(TestResult.SUCCESS) == 0.075
+            outcomes.proportion.withResult(TestResult.FAILURE) == 0.025
+            outcomes.proportion.withIndeterminateResult() == 0.9
         and: "the number of requirements should be available"
-            outcomes.flattenedRequirementCount == 15
-            outcomes.requirementsWithoutTestsCount == 11
+            outcomes.flattenedRequirementCount == 19
+            outcomes.requirementsWithoutTestsCount == 14
         and: "the number of tests should be available"
             outcomes.total.total == 10
             outcomes.total.withResult(TestResult.SUCCESS) == 6
             outcomes.total.withResult(TestResult.FAILURE) == 2
             outcomes.total.withResult(TestResult.PENDING) == 1
-            outcomes.estimatedUnimplementedTests == 55
+            outcomes.estimatedUnimplementedTests == 70
         and: "the results should be available as formatted values"
-            outcomes.formattedPercentage.withResult(TestResult.SUCCESS) == "9.2%"
-            outcomes.formattedPercentage.withResult(TestResult.FAILURE) == "3.1%"
-            outcomes.formattedPercentage.withIndeterminateResult() == "87.7%"
+            outcomes.formattedPercentage.withResult(TestResult.SUCCESS) == "7.5%"
+            outcomes.formattedPercentage.withResult(TestResult.FAILURE) == "2.5%"
+            outcomes.formattedPercentage.withIndeterminateResult() == "90%"
         and: "we can also display the test results by type"
-            outcomes.getFormattedPercentage(TestType.ANY).withResult(TestResult.SUCCESS) == "9.2%"
-            outcomes.getFormattedPercentage("ANY").withResult(TestResult.SUCCESS) == "9.2%"
+            outcomes.getFormattedPercentage(TestType.ANY).withResult(TestResult.SUCCESS) == "7.5%"
+            outcomes.getFormattedPercentage("ANY").withResult(TestResult.SUCCESS) == "7.5%"
     }
 
     def "functional coverage should cater for requirements with no tests at the requirement outcome level"() {
@@ -210,27 +210,79 @@ class WhenGeneratingRequirementsReportData extends Specification {
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the proportionOf of failing, passing and total steps should include estimations for requirements with no tests"
-            outcomes.requirementOutcomes[0].percent.withResult(TestResult.SUCCESS) == 0.25
-            outcomes.requirementOutcomes[0].percent.withResult(TestResult.FAILURE)  == 0.0
-            outcomes.requirementOutcomes[0].percent.withResult(TestResult.ERROR)  == 0.0
-            outcomes.requirementOutcomes[0].percent.withIndeterminateResult()  == 0.75
+            outcomes.requirementOutcomes[1].percent.withResult(TestResult.SUCCESS) == 0.25
+            outcomes.requirementOutcomes[1].percent.withResult(TestResult.FAILURE)  == 0.0
+            outcomes.requirementOutcomes[1].percent.withResult(TestResult.ERROR)  == 0.0
+            outcomes.requirementOutcomes[1].percent.withIndeterminateResult()  == 0.75
         and: "the number of requirements should be available"
-            outcomes.requirementOutcomes[0].flattenedRequirementCount == 5
+            outcomes.requirementOutcomes[1].flattenedRequirementCount == 5
         and: "the number of implemented tests should be available"
-            outcomes.requirementOutcomes[0].testCount == 2
-            outcomes.requirementOutcomes[0].total.withResult(TestResult.SUCCESS) == 2
-            outcomes.requirementOutcomes[0].total.withResult(TestResult.FAILURE) == 0
-            outcomes.requirementOutcomes[0].total.withResult(TestResult.ERROR) == 0
-            outcomes.requirementOutcomes[0].total.withIndeterminateResult() == 0
+            outcomes.requirementOutcomes[1].testCount == 2
+            outcomes.requirementOutcomes[1].total.withResult(TestResult.SUCCESS) == 2
+            outcomes.requirementOutcomes[1].total.withResult(TestResult.FAILURE) == 0
+            outcomes.requirementOutcomes[1].total.withResult(TestResult.ERROR) == 0
+            outcomes.requirementOutcomes[1].total.withIndeterminateResult() == 0
         and: "the number of requirements without tests should be available"
-            outcomes.requirementOutcomes[0].requirementsWithoutTestsCount == 2
+            outcomes.requirementOutcomes[1].requirementsWithoutTestsCount == 2
         and: "the estimated unimplemented test count should be available"
-            outcomes.requirementOutcomes[0].estimatedUnimplementedTests == 6
+            outcomes.requirementOutcomes[1].estimatedUnimplementedTests == 6
         and: "the results should be available as formatted values"
-            outcomes.requirementOutcomes[0].formattedPercentage.withResult(TestResult.SUCCESS) == "25%"
-            outcomes.requirementOutcomes[0].formattedPercentage.withResult(TestResult.FAILURE) == "0%"
-            outcomes.requirementOutcomes[0].formattedPercentage.withResult(TestResult.ERROR) == "0%"
-            outcomes.requirementOutcomes[0].formattedPercentage.withIndeterminateResult() == "75%"
+            outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.SUCCESS) == "25%"
+            outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.FAILURE) == "0%"
+            outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.ERROR) == "0%"
+            outcomes.requirementOutcomes[1].formattedPercentage.withIndeterminateResult() == "75%"
+    }
+
+    def "should get test outcomes for a given release"() {
+        given: "there are some test results"
+            def testOutcomes = TestOutcomes.of(someVariedTestResults())
+            def environmentVariables = new MockEnvironmentVariables()
+        and: "we read the requirements from the directory structure"
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking, environmentVariables)
+            RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(testOutcomes)
+        when:
+            RequirementsOutcomes releasedOutcomes = outcomes.getReleasedRequirementsFor(Release.ofVersion("Release 1"))
+        then:
+            releasedOutcomes.requirementOutcomes.size() == 2
+        and:
+            releasedOutcomes.flattenedRequirementOutcomes.size() == 5
+        and:
+            releasedOutcomes.testOutcomes.outcomes.size() == 4
+    }
+
+
+    def "should get test outcomes for a given nested release"() {
+        given: "there are some test results"
+            def testOutcomes = TestOutcomes.of(someVariedTestResults())
+            def environmentVariables = new MockEnvironmentVariables()
+        and: "we read the requirements from the directory structure"
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking, environmentVariables)
+            RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(testOutcomes)
+        when:
+            RequirementsOutcomes releasedOutcomes = outcomes.getReleasedRequirementsFor(Release.ofVersion("Iteration 1.1"))
+        then:
+            releasedOutcomes.requirementOutcomes.size() == 1
+        and:
+            releasedOutcomes.flattenedRequirementOutcomes.size() == 3
+        and:
+            releasedOutcomes.testOutcomes.outcomes.size() == 2
+    }
+
+    def "should get all nested test outcomes for a given release"() {
+        given: "there are some test results"
+            def testOutcomes = TestOutcomes.of(someVariedTestResults())
+            def environmentVariables = new MockEnvironmentVariables()
+        and: "we read the requirements from the directory structure"
+            RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking, environmentVariables)
+            RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(testOutcomes)
+        when:
+            RequirementsOutcomes releasedOutcomes = outcomes.getReleasedRequirementsFor(Release.ofVersion("Release 3"))
+        then:
+            releasedOutcomes.requirementOutcomes.size() == 1
+        and:
+            releasedOutcomes.flattenedRequirementOutcomes.size() ==2
+        and:
+            releasedOutcomes.testOutcomes.outcomes.size() == 3
     }
 
     def someTestResults() {
@@ -317,6 +369,8 @@ class WhenGeneratingRequirementsReportData extends Specification {
         testOutcome1.addTags(Lists.asList(TestTag.withName("Plant potatoes").andType("story")));
         testOutcome1.addTags(Lists.asList(TestTag.withName("Grow new potatoes").andType("feature")));
         testOutcome1.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
+        testOutcome1.addVersion("Release 1");
+        testOutcome1.addVersion("Iteration 1.1");
 
         TestOutcome testOutcome2 = TestOutcome.forTestInStory("planting potatoes in the rain", Story.called("plant potatoes"))
         testOutcome2.recordStep(TestStep.forStepCalled("step 2.1").withResult(TestResult.SUCCESS))
@@ -324,38 +378,60 @@ class WhenGeneratingRequirementsReportData extends Specification {
         testOutcome2.addTags(Lists.asList(TestTag.withName("Plant potatoes").andType("story")));
         testOutcome2.addTags(Lists.asList(TestTag.withName("Grow new potatoes").andType("feature")));
         testOutcome2.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
+        testOutcome2.addVersion("Release 1");
+        testOutcome2.addVersion("Iteration 1.1");
 
         TestOutcome testOutcome3 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
         testOutcome3.recordStep(TestStep.forStepCalled("step 3").withResult(TestResult.SUCCESS))
         testOutcome3.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome3.addTags(Lists.asList(TestTag.withName("Daily care of chickens").andType("feature")));
+        testOutcome3.addTags(Lists.asList(TestTag.withName("Feed chickens").andType("story")));
+        testOutcome3.addVersion("Release 1");
+        testOutcome3.addVersion("Iteration 1.3");
 
         TestOutcome testOutcome4 = TestOutcome.forTestInStory("Feed chickens cake", Story.called("Feed chickens"))
         testOutcome4.recordStep(TestStep.forStepCalled("step 4").withResult(TestResult.SUCCESS))
         testOutcome4.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome4.addTags(Lists.asList(TestTag.withName("Daily care of chickens").andType("feature")));
+        testOutcome4.addTags(Lists.asList(TestTag.withName("Feed chickens").andType("story")));
+        testOutcome4.addVersion("Release 1");
+        testOutcome4.addVersion("Iteration 1.3");
 
         TestOutcome testOutcome5 = TestOutcome.forTestInStory("Feed chickens bread", Story.called("Feed chickens"))
         testOutcome5.recordStep(TestStep.forStepCalled("step 5").withResult(TestResult.FAILURE))
         testOutcome5.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome5.addVersion("Release 2");
+        testOutcome5.addVersion("Iteration 2.1");
 
         TestOutcome testOutcome6 = TestOutcome.forTestInStory("Feed chickens oranges", Story.called("Feed chickens"))
         testOutcome6.recordStep(TestStep.forStepCalled("step 6").withResult(TestResult.PENDING))
         testOutcome6.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome6.addVersion("Release 2");
+        testOutcome6.addVersion("Iteration 2.1");
 
         TestOutcome testOutcome7 = TestOutcome.forTestInStory("Feed chickens apples", Story.called("Feed chickens"))
         testOutcome7.recordStep(TestStep.forStepCalled("step 7").withResult(TestResult.SKIPPED))
         testOutcome7.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome7.addVersion("Release 2");
+        testOutcome7.addVersion("Iteration 2.1");
 
-        TestOutcome testOutcome8 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
+        TestOutcome testOutcome8 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens grain type A"))
         testOutcome8.recordStep(TestStep.forStepCalled("step 8").withResult(TestResult.SUCCESS))
         testOutcome8.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome8.addVersion("Release 3");
+        testOutcome8.addVersion("Iteration 3.1");
 
-        TestOutcome testOutcome9 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
+        TestOutcome testOutcome9 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens grain type B"))
         testOutcome9.recordStep(TestStep.forStepCalled("step 9").withResult(TestResult.SUCCESS))
         testOutcome9.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome9.addVersion("Release 3");
+        testOutcome9.addVersion("Iteration 3.1");
 
         TestOutcome testOutcome10 = TestOutcome.forTestInStory("Feed chickens grain", Story.called("Feed chickens"))
         testOutcome10.recordStep(TestStep.forStepCalled("step 10").withResult(TestResult.FAILURE))
         testOutcome10.addTags(Lists.asList(TestTag.withName("Raise chickens").andType("capability")));
+        testOutcome6.addVersion("Release 3");
+        testOutcome6.addVersion("Iteration 3.2");
 
         return [testOutcome1, testOutcome2, testOutcome3, testOutcome4, testOutcome5, testOutcome6, testOutcome7,
                 testOutcome8, testOutcome9, testOutcome10]

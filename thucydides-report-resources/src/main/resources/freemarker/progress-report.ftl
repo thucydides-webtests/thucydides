@@ -32,6 +32,9 @@
 <div id="topheader">
     <div id="topbanner">
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">${reportOptions.projectName}</span>
+        </div>
     </div>
 </div>
 
@@ -52,7 +55,8 @@
             <li><a href="index.html">Test Results</a></li>
             <li><a href="capabilities.html">Requirements</a></li>
             <li><a href="progress-report.html" class="current">Progress</a></li>
-            <#foreach tagType in allTestOutcomes.tagTypes>
+            <li><a href="releases.html">Releases</a></li>
+            <#foreach tagType in allTestOutcomes.firstClassTagTypes>
                 <#assign tagReport = reportName.forTagType(tagType) >
                 <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
                 <li><a href="${tagReport}">${tagTypeTitle}</a></li>

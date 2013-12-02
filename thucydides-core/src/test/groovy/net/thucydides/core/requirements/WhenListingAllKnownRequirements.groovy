@@ -16,7 +16,7 @@ class WhenListingAllKnownRequirements extends Specification {
             def capabilities = capabilityProvider.getRequirements()
             def capabilityNames = capabilities.collect {it.name}
         then:
-            capabilityNames == ["Grow potatoes", "Grow wheat", "Raise chickens"]
+            capabilityNames == ["Grow cucumbers","Grow potatoes", "Grow wheat", "Raise chickens"]
     }
 
     def "Should be able to list all the available capabilities from a package structure"() {
@@ -40,7 +40,7 @@ class WhenListingAllKnownRequirements extends Specification {
             def capabilities = capabilityProvider.getRequirements()
             def plantPotatoesStory = capabilities.get(0).getChildren().get(0).getChildren().get(0);
         then:
-            plantPotatoesStory.getName() == "Plant potatoes"
+            plantPotatoesStory.getName() == "Planting cucumbers"
     }
 
     def "Should be able to read requirements from requirements base dir if it is specified in environment properties"() {
@@ -87,8 +87,6 @@ class WhenListingAllKnownRequirements extends Specification {
         then:
             capabilityNames == ["Search feature"]
     }
-
-
 
     def newTemporaryRequirementsDirectory() {
         File requirementsDir= File.createTempFile("test-project","");

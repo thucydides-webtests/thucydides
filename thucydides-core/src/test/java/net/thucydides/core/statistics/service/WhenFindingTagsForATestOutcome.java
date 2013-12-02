@@ -285,7 +285,6 @@ public class WhenFindingTagsForATestOutcome {
         assertThat(tags, hasItem(TestTag.withName("Grow new potatoes").andType("feature")));
     }
 
-
     @Test
     public void should_get_tags_from_story_path_with_file_separators() {
         FileSystemRequirementsTagProvider tagProvider = new FileSystemRequirementsTagProvider();

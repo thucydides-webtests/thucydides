@@ -19,6 +19,7 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
             'stories'           | 'stories'
             'octopus'           | 'octopi'
             'sheep'             | 'sheep'
+            ''                  | ''
     }
 
     def "should transform plural nouns into singles"() {

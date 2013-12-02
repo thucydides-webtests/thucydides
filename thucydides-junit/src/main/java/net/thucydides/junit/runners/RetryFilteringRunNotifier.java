@@ -45,6 +45,7 @@ public class RetryFilteringRunNotifier extends RunNotifierDecorator {
     @Override
     public void fireTestFailure(Failure failure) {
         log.debug("Test failed: " + failure);
+        testStartAlreadyFired = false;
         testFailed = true;
         lastFailure = failure;
 
@@ -78,6 +79,7 @@ public class RetryFilteringRunNotifier extends RunNotifierDecorator {
 
     @Override
     public void fireTestFinished(Description description) {
+        testStartAlreadyFired = false;
         log.debug("Test finished: " + description);
         lastDescription = description;
 
@@ -88,7 +90,10 @@ public class RetryFilteringRunNotifier extends RunNotifierDecorator {
     public void fireTestIgnored(Description description) {
         log.debug("Test ignored: " + description);
         lastIgnored = description;
-
+        if (!testStartAlreadyFired) {
+            super.fireTestStarted(description);
+        }
+        testStartAlreadyFired = false;
         retryAwareRunNotifier.fireTestIgnored(description);
     }
 

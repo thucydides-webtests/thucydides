@@ -25,7 +25,7 @@ class WhenProvidingWebdriverSupportForThucydidesExtensions extends Specification
     def "should allow plugins to obtain a webdriver driver instance"() {
         when: "we initialize Thucydides support"
         ThucydidesWebDriverSupport.initialize()
-        then: "we can obtain a webdriver firefoxDriver"
+        then: "we can obtain a webdriver driver"
         ThucydidesWebDriverSupport.getDriver() != null
     }
 
@@ -82,7 +82,7 @@ class WhenProvidingWebdriverSupportForThucydidesExtensions extends Specification
     def "should provide access to the webdriver instance"() {
         when: "we initialize Thucydides support"
         ThucydidesWebDriverSupport.initialize()
-        then: "we should be able to access the current firefoxDriver"
+        then: "we should be able to access the current driver"
         ThucydidesWebDriverSupport.getDriver() != null
     }
 
@@ -93,14 +93,14 @@ class WhenProvidingWebdriverSupportForThucydidesExtensions extends Specification
         and: "we initialize support again"
         ThucydidesWebDriverSupport.initialize()
         def secondDriver = ThucydidesWebDriverSupport.driver;
-        then: "the firefoxDriver should be unchanged"
+        then: "the driver should be unchanged"
         secondDriver == firstDriver
     }
 
     def "should be able to define the driver"() {
-        when: "we initialize Thucydides support with a specified firefoxDriver"
+        when: "we initialize Thucydides support with a specified driver"
         ThucydidesWebDriverSupport.initialize("htmlunit")
-        then: "the provided firefoxDriver should be of the specified type"
+        then: "the provided driver should be of the specified type"
         ThucydidesWebDriverSupport.driver.driverClass == HtmlUnitDriver
     }
 

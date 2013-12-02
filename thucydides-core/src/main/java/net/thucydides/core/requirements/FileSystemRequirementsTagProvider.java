@@ -13,6 +13,7 @@ import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import net.thucydides.core.util.NameConverter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -135,10 +136,14 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     private Optional<String> getRootDirectoryFromClasspath() throws IOException {
         Enumeration<URL> requirementResources = getDirectoriesFrom(rootDirectoryPath);
         if (requirementResources.hasMoreElements()) {
-            return Optional.of(requirementResources.nextElement().getPath());
+            return Optional.of(withRestoredSpaces(requirementResources.nextElement().getPath()));
         } else {
             return Optional.absent();
         }
+    }
+
+    private String withRestoredSpaces(String path) {
+        return StringUtils.replace(path,"%20"," ");
     }
 
     private Optional<String> getRootDirectoryFromWorkingDirectory() throws IOException {
@@ -228,17 +233,53 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
             List<String> storyPathElements = stripStorySuffixFrom(stripRootFrom(pathElements(stripRootPathFrom(testOutcome.getPath()))));
             return lastRequirementFrom(storyPathElements);
         } else {
-            return Optional.absent();
+            return mostSpecificTagRequirementFor(testOutcome);
         }
     }
 
+    private Optional<Requirement> mostSpecificTagRequirementFor(TestOutcome testOutcome) {
+        Optional<Requirement> mostSpecificRequirement = Optional.absent();
+        int currentSpecificity = -1;
+
+        for(TestTag tag : testOutcome.getTags()) {
+            Optional<Requirement> matchingRequirement = getRequirementFor(tag);
+            if (matchingRequirement.isPresent()) {
+                int specificity = requirementsConfiguration.getRequirementTypes().indexOf(matchingRequirement.get().getType());
+                if (currentSpecificity < specificity) {
+                    currentSpecificity = specificity;
+                    mostSpecificRequirement = matchingRequirement;
+                }
+            }
+
+        }
+        return mostSpecificRequirement;
+    }
+
     public Optional<Requirement> getRequirementFor(TestTag testTag) {
-        for(Requirement requirement : getRequirements()) {
-            if (requirement.getName().equals(testTag.getName()) && requirement.getType().equals(testTag.getType())) {
+        for(Requirement requirement : getFlattenedRequirements()) {
+            if (requirement.getName().equalsIgnoreCase(testTag.getName()) && requirement.getType().equalsIgnoreCase(testTag.getType())) {
                 return Optional.of(requirement);
             }
         }
         return Optional.absent();
+    }
+
+    private List<Requirement> getFlattenedRequirements() {
+        List<Requirement> allRequirements = Lists.newArrayList();
+        for(Requirement requirement : getRequirements()) {
+            allRequirements.add(requirement);
+            allRequirements.addAll(childRequirementsOf(requirement));
+        }
+        return allRequirements;
+    }
+
+    private Collection<Requirement> childRequirementsOf(Requirement requirement) {
+        List<Requirement> childRequirements = Lists.newArrayList();
+        for(Requirement childRequirement : requirement.getChildren()) {
+            childRequirements.add(childRequirement);
+            childRequirements.addAll(childRequirementsOf(childRequirement));
+        }
+        return childRequirements;
     }
 
     private Optional<Requirement> lastRequirementFrom(List<String> storyPathElements) {
@@ -381,12 +422,14 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
         String displayName = getTitleFromNarrativeOrDirectoryName(requirementNarrative, shortName);
         String cardNumber = requirementNarrative.getCardNumber().orNull();
         String type = requirementNarrative.getType();
+        List<String> releaseVersions = requirementNarrative.getVersionNumbers();
         List<Requirement> children = readChildrenFrom(requirementDirectory);
         return Requirement.named(shortName)
                 .withOptionalDisplayName(displayName)
                 .withOptionalCardNumber(cardNumber)
                 .withType(type)
                 .withNarrativeText(requirementNarrative.getText())
+                .withReleaseVersions(releaseVersions)
                 .withChildren(children);
     }
 

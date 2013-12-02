@@ -20,6 +20,9 @@
 <div id="topheader">
     <div id="topbanner">
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">${reportOptions.projectName}</span>
+        </div>
     </div>
 </div>
 
@@ -28,7 +31,7 @@
 <div class="middlecontent">
 <div id="contenttop">
     <div class="middlebg">
-        <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > ${testOutcome.title} </span>
+        <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > ${formatter.truncatedHtmlCompatible(testOutcome.title,80)} </span>
     </div>
     <div class="rightbg"></div>
 </div>
@@ -36,22 +39,8 @@
 <div class="clr"></div>
 
 <!--/* starts second table*/-->
-<div class="menu">
-    <ul>
-        <li><a href="index.html" class="current">Test Results</a></li>
-        <li><a href="capabilities.html">Requirements</a></li>
-        <li><a href="progress-report.html">Progress</a></li>
-    <#list allTestOutcomes.tagTypes as tagType>
-        <#assign tagReport = reportName.forTagType(tagType) >
-        <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
-        <li><a href="${tagReport}">${tagTypeTitle}</a></li>
-    </#list>
-        <li><a href="history.html">History</a></li>
-    </ul>
-    <span class="date-and-time">Tests run ${timestamp}</span>
-    <br style="clear:left"/>
-</div>
-
+<#include "menu.ftl">
+<@main_menu selected="home" />
 <div class="clr"></div>
 
 <#if testOutcome.result == "FAILURE"><#assign outcome_icon = "fail.png"><#assign outcome_text = "failing-color">
@@ -65,8 +54,7 @@
     <div class="titlebar">
         <div class="story-title">
             <table width="1005">
-                <td width="50"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25"
-                                    height="25"/>
+                <td width="50"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25" height="25"/>
                 </td>
             <#if (testOutcome.videoLink)??>
                 <td width="25"><a href="${relativeLink!}${testOutcome.videoLink}"><img class="story-outcome-icon" src="images/video.png" width="25" height="25" alt="Video"/></a></td>
@@ -88,7 +76,7 @@
                             <#else>
                                 <#assign issueNumber = "">
                             </#if>
-                            <h3>${parentType}: ${issueNumber} ${parentTitle}</h3>
+                            <h3>${parentType}: ${parentTitle} ${issueNumber}</h3>
                             <div class="requirementNarrativeTitle">
                             ${formatter.renderDescription(parentRequirement.get().narrativeText)}
                             </div>
@@ -121,6 +109,14 @@
 
 <div id="beforetable"></div>
 
+<#if (testOutcome.descriptionText.isPresent())>
+    <div class="story-title">
+        <div class="requirementNarrativeTitle">
+            ${formatter.renderDescription(testOutcome.descriptionText.get())}
+        </div>
+    </div>
+</#if>
+
 <#if (testOutcome.isDataDriven())>
 <h3>Examples:</h3>
 <div class="example-table">
@@ -149,8 +145,8 @@
 <div>
     <table class="step-table">
         <tr class="step-titles">
-            <th width="40">&nbsp;</th>
-            <th width="%" class="greentext">Steps</th>
+            <th width="40"><#if (testOutcome.manual)><img src="images/worker.png" title="Manual test"/></#if>&nbsp;</th>
+            <th width="%" class="greentext"><#if (testOutcome.manual)>Manual </#if>Steps</th>
         <#if testOutcome.hasScreenshots()>
             <th width="120" class="greentext">Screenshot</th>
         </#if>
@@ -284,7 +280,9 @@
                 <tr class="test-${testOutcome.result}">
                     <td width="40">&nbsp</td>
                     <td width="%" colspan="4">
-                        <span class="error-message" title="${testOutcome.testFailureCause}">${testOutcome.testFailureCause}</span>
+                        <#if (testOutcome.testFailureCause)??>
+                            <span class="error-message" title="${testOutcome.testFailureCause}">${testOutcome.testFailureCause}</span>
+                        </#if>
                     </td>
                 </tr>
             </#if>

@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <title>Thucydides Reports</title>
     <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="font-awesome/css/font-awesome-ie7.min.css">
+    <![endif]-->
     <link rel="stylesheet" href="css/core.css"/>
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
     <style type="text/css">a:link {
@@ -75,7 +80,7 @@
                 show:true,
                 placement:'outside',
                 rendererOptions:{
-                    numberRows:1
+                    numberRows:2
                 },
                 location:'s',
                 marginTop:'15px'
@@ -127,7 +132,7 @@
                 show:true,
                 placement:'outside',
                 rendererOptions:{
-                    numberRows:1
+                    numberRows:2
                 },
                 location:'s',
                 marginTop:'15px'
@@ -157,6 +162,21 @@
 
         // Pie charts
         $('#test-results-tabs').tabs()
+
+        $('#toggleNormalPieChart').click(function() {
+            $("#test_results_pie_chart").toggle();
+        });
+
+        $('#toggleWeightedPieChart').click(function() {
+            $("#weighted_test_results_pie_chart").toggle();
+        });
+
+        <#if !reportOptions.displayPiechart>
+            $("#test_results_pie_chart").hide();
+            $("#weighted_test_results_pie_chart").hide();
+        </#if>
+
+
     })
     ;
     </script>
@@ -166,19 +186,21 @@
 <div id="topheader">
     <div id="topbanner">
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">${reportOptions.projectName}</span>
+        </div>
     </div>
 </div>
 
 <div class="middlecontent">
 
+<#assign tagsTitle = 'Related Tags' >
 <#if (testOutcomes.label == '')>
     <#assign resultsContext = ''>
     <#assign pageTitle = 'Test Results: All Tests' >
-    <#assign tagsTitle = 'All available tags' >
 <#else>
-    <#assign tagsTitle = 'Related tags' >
     <#assign resultsContext = '> ' + testOutcomes.label>
-    <#assign reportName = reportName.withPrefix(testOutcomes.label)>
+    <#--<#assign reportName = reportName.withPrefix(testOutcomes.label)>-->
     <#if (currentTagType! != '')>
         <#assign pageTitle = inflection.of(currentTagType!"").asATitle() + ': ' +  inflection.of(testOutcomes.label).asATitle() >
     <#else>
@@ -188,7 +210,7 @@
 <div id="contenttop">
 <#--<div class="leftbg"></div>-->
     <div class="middlebg">
-        <span class="bluetext"><a href="index.html" class="bluetext">Thucydides Reports</a>${resultsContext}</span>
+        <span class="bluetext"><a href="index.html" class="bluetext">Home</a> ${resultsContext}</span>
     </div>
     <div class="rightbg"></div>
 </div>
@@ -196,24 +218,8 @@
 <div class="clr"></div>
 
 <!--/* starts second table*/-->
-<div class="menu">
-    <ul>
-        <li><a href="index.html" class="current">Test Results</a></li>
-        <li><a href="capabilities.html">Requirements</a></li>
-        <li><a href="progress-report.html">Progress</a></li>
-    <#--<li><a href="treemap.html">Tree Map</a></li>-->
-    <#--<li><a href="dashboard.html">Progress</a></li>-->
-    <#foreach tagType in allTestOutcomes.tagTypes>
-        <#assign tagReport = reportName.forTagType(tagType) >
-        <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
-        <li><a href="${tagReport}">${tagTypeTitle}</a></li>
-    </#foreach>
-        <li><a href="history.html">History</a></li>
-    </ul>
-    <span class="date-and-time">Tests run ${timestamp}</span>
-    <br style="clear:left"/>
-</div>
-
+<#include "menu.ftl">
+<@main_menu selected="home" />
 <div class="clr"></div>
 <div id="beforetable"></div>
 <div id="results-dashboard">
@@ -225,15 +231,17 @@
                     <td width="375px" valign="top">
                         <div class="test-count-summary">
                             <span class="test-count-title">${testOutcomes.total} test scenarios <#if (testOutcomes.hasDataDrivenTests())>(including ${testOutcomes.totalDataRows} rows of test data)</#if>:</span>
-                            <#assign successReport = reportName.forTestResult("success") >
-                            <#assign failureReport = reportName.forTestResult("failure") >
-                            <#assign errorReport = reportName.forTestResult("error") >
-                            <#assign pendingReport = reportName.forTestResult("pending") >
+                            <#assign successReport = reportName.withPrefix(currentTag).forTestResult("success") >
+                            <#assign failureReport = reportName.withPrefix(currentTag).forTestResult("failure") >
+                            <#assign errorReport = reportName.withPrefix(currentTag).forTestResult("error") >
+                            <#assign pendingReport = reportName.withPrefix(currentTag).forTestResult("pending") >
 
+                            <#assign totalCount = testOutcomes.totalTests.total >
                             <#assign successCount = testOutcomes.totalTests.withResult("success") >
                             <#assign pendingCount = testOutcomes.totalTests.withResult("pending") >
                             <#assign failureCount = testOutcomes.totalTests.withResult("failure") >
                             <#assign errorCount = testOutcomes.totalTests.withResult("error") >
+                            <#assign failureOrErrorCount = testOutcomes.totalTests.withFailureOrError() >
 
                             <span class="test-count">
                                 ${successCount}
@@ -277,6 +285,7 @@
                                     <tr>
                                         <td colspan="2">
                                             <span class="caption">Total number of tests that pass, fail, or are pending.</span>
+                                            <span class="togglePieChart" id="toggleNormalPieChart"><a href="#">Show/Hide Pie Chart</a></span>
                                         </td>
                                     </tr>
                                     <tr>
@@ -285,7 +294,12 @@
                                         </td>
                                         <td class="related-tags-section">
                                             <div>
-                                            <@list_tags weighted="false"/>
+                                                <#include "test-result-summary.ftl"/>
+                                            </div>
+                                            <div>
+<#if reportOptions.showRelatedTags>
+                                                <@list_tags weighted="false"/>
+</#if>
                                             </div>
                                         </td>
                                     </tr>
@@ -296,6 +310,7 @@
                                     <tr>
                                         <td colspan="2">
                                             <span class="caption">Total number of tests, weighted by test steps.</span>
+                                            <span class="togglePieChart" id="toggleWeightedPieChart"><a href="#">Show/Hide Pie Chart</a></span>
                                         </td>
                                     </tr>
                                     <tr>
@@ -304,7 +319,12 @@
                                         </td>
                                         <td class="related-tags-section">
                                             <div>
-                                            <@list_tags weighted="true"/>
+                                                <#include "test-result-summary.ftl"/>
+                                            </div>
+                                            <div>
+<#if reportOptions.showRelatedTags>
+                                                <@list_tags weighted="true"/>
+</#if>
                                             </div>
                                         </td>
                                     </tr>
@@ -325,7 +345,7 @@
                                 <table id="test-results-table">
                                     <thead>
                                     <tr>
-                                        <th width="40" class="test-results-heading">&nbsp;</th>
+                                        <th width="50" class="test-results-heading">&nbsp;</th>
                                         <th width="%" class="test-results-heading">Tests</th>
                                         <th width="70" class="test-results-heading">Steps</th>
 
@@ -378,7 +398,7 @@
 
                                     <tr class="test-${testOutcome.result}">
                                         <td><img src="images/${testrun_outcome_icon}" title="${testOutcome.result}" class="summary-icon"/>
-                                            <#if (testOutcome.manual)><img src="images/spade.png" title="Manual test"/></#if>
+                                            <#if (testOutcome.manual)><img src="images/worker.png" title="Manual test"/></#if>
                                             <span style="display:none">${testOutcome.result}</span></td>
                                         <td class="${testOutcome.result}-text"><a href="${relativeLink}${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a></td>
 
@@ -418,7 +438,7 @@
 <div id="bottomfooter"></div>
 <#macro list_tags(weighted)>
 <h4>${tagsTitle}</h4>
-    <#foreach tagType in testOutcomes.tagTypes>
+    <#foreach tagType in tagTypes>
         <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
         <#assign outcomesForType = testOutcomes.withTagType(tagType) >
         <#assign tagNames = testOutcomes.getTagsOfTypeExcluding(tagType, testOutcomes.label) >
@@ -433,7 +453,7 @@
             </tr>
             <#foreach tagName in tagNames>
                 <#assign tagTitle = inflection.of(tagName).asATitle() >
-                <#assign tagReport = reportName.forTag(tagName) >
+                <#assign tagReport = absoluteReportName.forTag(tagName) >
                 <#assign outcomesForTag = outcomesForType.withTag(tagName) >
                 <#if outcomesForTag.result == "FAILURE">
                     <#assign outcome_icon = "fail.png">
@@ -452,16 +472,14 @@
                     <#assign outcome_text = "ignore-color">
                 </#if>
                 <tr>
-                    <td class="bluetext" width="300px">
-                        <div class="tagTitle">
-                                <span class="${outcomesForTag.result}-text">
-                                    <#if testOutcomes.label == tagName>
-                                        <a href="${tagReport}" class="currentTag">${tagTitle}</a>
-                                    <#else>
-                                        <a href="${tagReport}">${tagTitle}</a>
-                                    </#if>
-                                </span>
-                        </div>
+                    <td class="bluetext" class="tag-title">
+                        <span class="${outcomesForTag.result}-text">
+                            <#if testOutcomes.label == tagName>
+                                <a href="${tagReport}" class="currentTag">${tagTitle}</a>
+                            <#else>
+                                <a href="${tagReport}">${tagTitle}</a>
+                            </#if>
+                        </span>
                     </td>
                     <td width="150px" class="lightgreentext">
                         <#if weighted == "true">
@@ -533,5 +551,6 @@
         </#if>
     </#foreach>
 </#macro>
+
 </body>
 </html>

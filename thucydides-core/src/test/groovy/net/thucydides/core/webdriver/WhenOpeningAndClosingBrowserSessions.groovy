@@ -23,7 +23,6 @@ class WhenOpeningAndClosingBrowserSessions extends Specification {
     def chrome = Mock(ChromeDriver)
     def htmlunit = Mock(HtmlUnitDriver)
     def iexplore = Mock(InternetExplorerDriver)
-    def opera = Mock(OperaDriver)
     def remote = Mock(RemoteWebDriver)
 
     def webdriverInstanceFactory = new WebdriverInstanceFactory() {
@@ -43,7 +42,6 @@ class WhenOpeningAndClosingBrowserSessions extends Specification {
         WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass) {
             switch (webdriverClass) {
                 case InternetExplorerDriver : return iexplore
-                case OperaDriver : return opera
             }
         }
     }

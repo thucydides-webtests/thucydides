@@ -64,6 +64,7 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter, Acceptanc
         xstream.registerConverter(usingXmlConverter());
 
         String reportFilename = reportFor(storedTestOutcome);
+        LOGGER.debug("Generating XML report for {} to file {}", testOutcome.getTitle(), storedTestOutcome);
 
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;

@@ -40,6 +40,9 @@
 <div id="topheader">
     <div id="topbanner">
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">${reportOptions.projectName}</span>
+        </div>
     </div>
 </div>
 
@@ -59,7 +62,7 @@
     <div id="contenttop">
         <#--<div class="leftbg"></div>-->
         <div class="middlebg">
-            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> ${contextTitle} > ${pageTitle}</span>
+            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> ${contextTitle} > ${formatter.truncatedHtmlCompatible(pageTitle,60)}</span>
         </div>
         <div class="rightbg"></div>
     </div>
@@ -67,29 +70,9 @@
     <div class="clr"></div>
 
     <!--/* starts second table*/-->
-    <div class="menu">
-        <ul>
-            <li><a href="index.html">Test Results</a></li>
-            <li><a href="capabilities.html">Requirements</a></li>
-            <li><a href="progress-report.html">Progress</a></li>
-        <#--<li><a href="treemap.html">Tree Map</a></li>-->
-            <#--<li><a href="dashboard.html">Progress</a></li>-->
-            <#foreach type in allTestOutcomes.tagTypes>
-                <#assign tagTypeReport = reportName.forTagType(type) >
-                <#assign tagTypeTitle = inflection.of(type).inPluralForm().asATitle() >
-                <li>
-                    <#if type == tagType>
-                        <a href="${tagTypeReport}" class="current">${tagTypeTitle}</a>
-                    <#else>
-                        <a href="${tagTypeReport}">${tagTypeTitle}</a>
-                    </#if>
-                </li>
-            </#foreach>
-            <li><a href="history.html">History</a></li>
-        </ul>
-        <span class="date-and-time">Tests run ${timestamp}</span>
-        <br style="clear:left"/>
-    </div>
+    <#include "menu.ftl">
+    <@main_menu selected="home" />
+
 
     <#assign tagTypeTitlePlural = inflection.of(tagType).inPluralForm().asATitle() >
     <#assign tagTypeTitle = inflection.of(tagType).asATitle() >

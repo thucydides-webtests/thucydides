@@ -13,7 +13,7 @@ import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.support.ui.Wait;
 
 @ImplementedBy(WebElementFacadeImpl.class)
-public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
+public interface WebElementFacade extends WebElement, WrapsElement, Locatable, WebElementState {
 
 	public abstract WebElementFacade then(String xpathOrCssSelector);
 
@@ -37,14 +37,7 @@ public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 	public abstract WebElementFacade withTimeoutOf(int timeout,
 			TimeUnit unit);
 
-	/**
-	 * Is this web element present and visible on the screen
-	 * This method will not throw an exception if the element is not on the screen at all.
-	 * If the element is not visible, the method will wait a bit to see if it appears later on.
-	 */	
-	public abstract boolean isVisible();
-
-	/**
+    /**
 	 * Convenience method to chain method calls more fluently.
 	 */
 	public abstract WebElementFacade and();
@@ -54,93 +47,9 @@ public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 	 */
 	public abstract WebElementFacade then();
 
-	/**
-	 * Is this web element present and visible on the screen
-	 * This method will not throw an exception if the element is not on the screen at all.
-	 * The method will fail immediately if the element is not visible on the screen.
-	 * There is a little black magic going on here - the web element class will detect if it is being called
-	 * by a method called "isCurrently*" and, if so, fail immediately without waiting as it would normally do.
-	 */
-	public abstract boolean isCurrentlyVisible();
+    public abstract List<String> getSelectOptions();
 
-	public abstract boolean isCurrentlyEnabled();
-
-	/**
-	 * Checks whether a web element is visible.
-	 * Throws an AssertionError if the element is not rendered.
-	 */
-	public abstract void shouldBeVisible();
-
-	/**
-	 * Checks whether a web element is visible.
-	 * Throws an AssertionError if the element is not rendered.
-	 */	
-	public abstract void shouldBeCurrentlyVisible();
-
-	/**
-	 * Checks whether a web element is not visible.
-	 * Throws an AssertionError if the element is not rendered.
-	 */
-	public abstract void shouldNotBeVisible();
-
-	/**
-	 * Checks whether a web element is not visible straight away.
-	 * Throws an AssertionError if the element is not rendered.
-	 */
-	public abstract void shouldNotBeCurrentlyVisible();
-
-	/**
-	 * Does this element currently have the focus.
-	 */
-	public abstract boolean hasFocus();
-
-	/**
-	 * Does this element contain a given text?
-	 */
-	public abstract boolean containsText(String value);
-
-	/**
-	 * Does this element exactly match  given text?
-	 */
-	public abstract boolean containsOnlyText(String value);
-
-	/**
-	 * Does this dropdown contain the specified value.
-	 */
-	public abstract boolean containsSelectOption(String value);
-
-	public abstract List<String> getSelectOptions();
-
-	/**
-	 * Check that an element contains a text value
-	 *
-	 * @param textValue
-	 */
-	public abstract void shouldContainText(String textValue);
-
-	/**
-	 * Check that an element exactly matches a text value
-	 *
-	 * @param textValue
-	 */
-	public abstract void shouldContainOnlyText(String textValue);
-
-	public abstract void shouldContainSelectedOption(String textValue);
-
-	/**
-	 * Check that an element does not contain a text value
-	 *
-	 * @param textValue
-	 */
-	public abstract void shouldNotContainText(String textValue);
-
-	public abstract void shouldBeEnabled();
-
-	public abstract boolean isEnabled();
-
-	public abstract void shouldNotBeEnabled();
-
-	/**
+    /**
 	 * Type a value into a field, making sure that the field is empty first.
 	 *
 	 * @param value
@@ -166,21 +75,11 @@ public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 
 	public abstract WebElementFacade selectByVisibleText(String label);
 
-	public abstract String getSelectedVisibleTextValue();
+    public abstract WebElementFacade selectByValue(String value);
 
-	public abstract WebElementFacade selectByValue(String value);
+    public abstract WebElementFacade selectByIndex(int indexValue);
 
-	public abstract String getSelectedValue();
-
-	public abstract WebElementFacade selectByIndex(int indexValue);
-	
-	public abstract boolean isPresent();
-	
-	public abstract void shouldBePresent();
-	
-	public abstract void shouldNotBePresent();
-
-	public abstract WebElementFacade waitUntilVisible();
+    public abstract WebElementFacade waitUntilVisible();
 
 	public abstract WebElementFacade waitUntilPresent();
 
@@ -190,17 +89,13 @@ public interface WebElementFacade extends WebElement, WrapsElement, Locatable{
 
 	public abstract String getValue();
 
-	public abstract boolean isSelected();
-
-	public abstract String getText();
+    public abstract String getText();
 
 	public abstract WebElementFacade waitUntilEnabled();
 
 	public abstract WebElementFacade waitUntilDisabled();
 
-	public abstract String getTextValue();
-
-	/**
+    /**
 	 * Wait for an element to be visible and enabled, and then click on it.
 	 */
 	public abstract void click();

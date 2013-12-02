@@ -2,33 +2,24 @@ package net.thucydides.core.reports.html;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Key;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.issues.IssueTracking;
-import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.reports.renderer.Asciidoc;
-import net.thucydides.core.reports.renderer.AsciidocMarkupRenderer;
 import net.thucydides.core.reports.renderer.MarkupRenderer;
-import net.thucydides.core.statistics.Statistics;
-import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.AggregateTranslator;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.apache.commons.lang3.text.translate.LookupTranslator;
-import org.asciidoctor.Asciidoctor;
-import org.asciidoctor.Options;
-
-import javax.swing.table.TableModel;
 
 import static org.asciidoctor.Asciidoctor.Factory.create;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -137,11 +128,17 @@ public class Formatter {
 
     public String renderDescription(final String text) {
         String format = environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_NARRATIVE_FORMAT,"");
-        if (format.equalsIgnoreCase(ASCIIDOC)) {
+        if (isRenderedHtml(text)) {
+            return text;
+        } else if (format.equalsIgnoreCase(ASCIIDOC)) {
             return renderAsciidoc(text);
         } else {
             return addLineBreaks(text);
         }
+    }
+
+    private boolean isRenderedHtml(String text) {
+        return text.startsWith("<");
     }
 
     public String addLineBreaks(final String text) {
@@ -150,7 +147,7 @@ public class Formatter {
     }
 
     public String convertAnyTables(String text) {
-        if (text.contains("|")) {
+        if (shouldFormatEmbeddedTables() && containsEmbeddedTable(text)) {
             String unformattedTable = getEmbeddedTable(text);
             ExampleTable table = new ExampleTable(unformattedTable);
 
@@ -160,10 +157,36 @@ public class Formatter {
         return text;
     }
 
+    private boolean shouldFormatEmbeddedTables() {
+        return !environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.IGNORE_EMBEDDED_TABLES, false);
+    }
+
+    private boolean containsEmbeddedTable(String text) {
+        return ((positionOfFirstPipeIn(text) >= 0)  && (positionOfLastPipeIn(text) >= 0));
+    }
+
+    private int positionOfLastPipeIn(String text) {
+        return text.indexOf("|", positionOfFirstPipeIn(text) + 1);
+    }
+
+    private int positionOfFirstPipeIn(String text) {
+        return text.indexOf("|");
+    }
+
     private String getEmbeddedTable(String text) {
-        int startIndex = text.indexOf("|") - 1;
-        int endIndex = text.lastIndexOf("|") + 2;
+        int startIndex = firstPipeIndex(text);
+        int endIndex = lastPipeIndex(text);
         return text.substring(startIndex, endIndex);
+    }
+
+    private int lastPipeIndex(String text) {
+        int lastPipe = text.lastIndexOf("|");
+
+        return (lastPipe + 2 < text.length()) ?  lastPipe + 2 : text.length();
+    }
+
+    private int firstPipeIndex(String text) {
+        return positionOfFirstPipeIn(text) - 1;
     }
 
     private final CharSequenceTranslator ESCAPE_SPECIAL_CHARS = new AggregateTranslator(
@@ -234,7 +257,11 @@ public class Formatter {
         for (String field : fields) {
             textWithEscapedFields = textWithEscapedFields.replaceAll("<" + field + ">", "&lt;" + field + "&gt;");
         }
-        return addLineBreaks(convertAnyTables(textWithEscapedFields));
+        return addLineBreaks(removeMacros(convertAnyTables(textWithEscapedFields)));
+    }
+
+    private String removeMacros(String textToFormat) {
+        return textToFormat.replaceAll("\\{trim=false\\}\\s*\\r?\\n","");
     }
 
     private String stripLeadingHashFrom(final String issue) {

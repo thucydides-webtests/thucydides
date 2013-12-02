@@ -43,19 +43,29 @@ public class ParameterizedTestsOutcomeAggregator {
         Map<String, TestOutcome> scenarioOutcomes = new HashMap<String, TestOutcome>();
 
         for (TestOutcome testOutcome : allOutcomes) {
-            String normalizedMethodName = normalizeMethodName(testOutcome.getMethodName());
+            String normalizedMethodName = normalizeMethodName(testOutcome);
+
             if (scenarioOutcomes.containsKey(normalizedMethodName)) {
                 List<TestStep> testSteps = testOutcome.getTestSteps();
-                if (!testSteps.isEmpty()) {
+                if (testSteps.isEmpty()) {
+                    TestStep nestedStep = TestStep.forStepCalled(testOutcome.getTitle()).withResult(testOutcome.getResult());
+                    scenarioOutcomes.get(normalizedMethodName).recordStep(nestedStep);
+                } else {
                     TestStep nextStep = testSteps.get(0);
                     nextStep.setDescription(normalizeTestStepDescription(nextStep.getDescription(), scenarioOutcomes.get(normalizedMethodName).getTestSteps().size() + 1));
                     scenarioOutcomes.get(normalizedMethodName).recordStep(nextStep);
                 }
-                updateResultsForAnyExternalFailures(scenarioOutcomes.get(normalizedMethodName), testOutcome);
-                scenarioOutcomes.get(normalizedMethodName).getDataTable().addRows(testOutcome.getDataTable().getRows());
+                if (testOutcome.isDataDriven()) {
+                    updateResultsForAnyExternalFailures(scenarioOutcomes.get(normalizedMethodName), testOutcome);
+                    scenarioOutcomes.get(normalizedMethodName).getDataTable().addRows(testOutcome.getDataTable().getRows());
+                }
 
-            } else {
+            }
+            else {
                 TestOutcome scenarioOutcome = createScenarioOutcome(testOutcome);
+                if (scenarioOutcome.getTestSteps().isEmpty()) {
+                    scenarioOutcome.startGroup();
+                }
                 scenarioOutcomes.put(scenarioOutcome.getMethodName(), scenarioOutcome);
             }
         }
@@ -90,19 +100,22 @@ public class ParameterizedTestsOutcomeAggregator {
     }
 
     private TestOutcome createScenarioOutcome(TestOutcome parameterizedOutcome) {
-        TestOutcome scenarioOutcome = parameterizedOutcome.withMethodName(normalizeMethodName(parameterizedOutcome.getMethodName()));
+        TestOutcome scenarioOutcome = parameterizedOutcome.withMethodName(normalizeMethodName(parameterizedOutcome));
+        if (scenarioOutcome.getTestSteps().isEmpty()) {
+            TestStep firstStep = TestStep.forStepCalled(parameterizedOutcome.getTitle()).withResult(scenarioOutcome.getResult());
+            scenarioOutcome.recordStep(firstStep);
+        }
         scenarioOutcome.endGroup(); //pop group stack so next item gets added as sibling
         return scenarioOutcome;
     }
 
-    private String normalizeMethodName(String methodName) {
-        return methodName.replaceAll("\\[\\d\\]", "");
+    private String normalizeMethodName(TestOutcome testOutcome) {
+        return testOutcome.getMethodName().replaceAll("\\[\\d\\]", "");
     }
 
     public List<TestOutcome> getTestOutcomesForAllParameterSets() {
         List<TestOutcome> testOutcomes = new ArrayList<TestOutcome>();
 
-        testOutcomes.addAll(((ThucydidesRunner) thucydidesParameterizedRunner.getRunners().get(0)).getTestOutcomes());
         for (Runner runner : thucydidesParameterizedRunner.getRunners()) {
             for (TestOutcome testOutcome : ((ThucydidesRunner) runner).getTestOutcomes()) {
                 if (!testOutcomes.contains(testOutcome)) {

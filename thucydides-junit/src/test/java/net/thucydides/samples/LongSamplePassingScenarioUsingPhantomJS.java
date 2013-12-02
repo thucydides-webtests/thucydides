@@ -10,9 +10,9 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
-public class LongSamplePassingScenarioUsingFirefox {
+public class LongSamplePassingScenarioUsingPhantomJS {
     
-    @Managed(uniqueSession = true)
+    @Managed(uniqueSession = true, driver="phantomjs")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "classpath:static-site/index.html")

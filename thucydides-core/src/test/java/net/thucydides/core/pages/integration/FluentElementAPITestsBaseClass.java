@@ -30,7 +30,7 @@ public class FluentElementAPITestsBaseClass {
     protected StaticSitePage getFirefoxPage() {
 
         if (firefoxPage == null) {
-            WebDriver driver = getStaticTestSite().open("firefox");
+            WebDriver driver = getStaticTestSite().open("phantomjs");
             firefoxPage = new StaticSitePage(driver, 1000);
             firefoxPage.open();
         }

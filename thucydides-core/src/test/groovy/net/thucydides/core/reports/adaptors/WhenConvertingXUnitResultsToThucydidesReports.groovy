@@ -22,8 +22,8 @@ class WhenConvertingXUnitResultsToThucydidesReports extends Specification {
         when:
             xunitReporter.generateReportsFrom(xunitFileDirectory)
         then:
-            generatedXmlFiles().size() == 2
-            generatedHtmlFiles().size() == 2
+            generatedXmlFiles().size() == 3
+            generatedHtmlFiles().size() == 3
     }
 
     def generatedXmlFiles() {

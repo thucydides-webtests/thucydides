@@ -39,6 +39,7 @@ public class TestOutcomeConverter implements Converter {
 
     private static final String TITLE_FIELD = "title";
     private static final String NAME_FIELD = "name";
+    private static final String DESCRIPTION_FIELD = "description";
     private static final String ID_FIELD = "id";
     private static final String PATH_FIELD = "path";
     private static final String STEPS_FIELD = "steps";
@@ -55,6 +56,8 @@ public class TestOutcomeConverter implements Converter {
     private static final String FEATURE = "feature";
     private static final String ISSUES = "issues";
     private static final String ISSUE = "issue";
+    private static final String VERSIONS = "versions";
+    private static final String VERSION = "version";
     private static final String TAGS = "tags";
     private static final String TAG = "tag";
     private static final String QUALIFIER_FIELD = "qualifier";
@@ -104,6 +107,9 @@ public class TestOutcomeConverter implements Converter {
 
         writer.addAttribute(TITLE_FIELD, escape(titleFrom(testOutcome)));
         writer.addAttribute(NAME_FIELD, nameFrom(testOutcome));
+        if (testOutcome.getDescription() != null) {
+            writer.addAttribute(DESCRIPTION_FIELD, escape(descriptionFrom(testOutcome)));
+        }
         if (testOutcome.getQualifier() != null && testOutcome.getQualifier().isPresent()) {
             writer.addAttribute(QUALIFIER_FIELD, escape(testOutcome.getQualifier().get()));
         }
@@ -127,6 +133,7 @@ public class TestOutcomeConverter implements Converter {
         }
         addUserStoryTo(writer, testOutcome.getUserStory());
         addIssuesTo(writer, testOutcome.getIssues());
+        addVersionsTo(writer, testOutcome.getVersions());
         addTagsTo(writer, testOutcome.getTags());
         addExamplesTo(writer, testOutcome.getDataTable());
         List<TestStep> steps = testOutcome.getTestSteps();
@@ -159,6 +166,9 @@ public class TestOutcomeConverter implements Converter {
         return testOutcome.getTitle();
     }
 
+    private String descriptionFrom(final TestOutcome testOutcome) {
+        return testOutcome.getDescription();
+    }
 
     private String nameFrom(final TestOutcome testOutcome) {
         if (testOutcome.getMethodName() != null) {
@@ -215,12 +225,24 @@ public class TestOutcomeConverter implements Converter {
     }
 
 
-    private void addIssuesTo(final HierarchicalStreamWriter writer, final Set<String> issues) {
+    private void addIssuesTo(final HierarchicalStreamWriter writer, final List<String> issues) {
         if (!issues.isEmpty()) {
             writer.startNode(ISSUES);
             for (String issue : issues) {
                 writer.startNode(ISSUE);
                 writer.setValue(issue);
+                writer.endNode();
+            }
+            writer.endNode();
+        }
+    }
+
+    private void addVersionsTo(final HierarchicalStreamWriter writer, final List<String> versions) {
+        if (!versions.isEmpty()) {
+            writer.startNode(VERSIONS);
+            for (String version : versions) {
+                writer.startNode(VERSION);
+                writer.setValue(version);
                 writer.endNode();
             }
             writer.endNode();
@@ -353,6 +375,11 @@ public class TestOutcomeConverter implements Converter {
         String methodName = reader.getAttribute(NAME_FIELD);
         TestOutcome testOutcome = new TestOutcome(methodName);
         testOutcome.setTitle(unescape(reader.getAttribute(TITLE_FIELD)));
+
+        if (reader.getAttribute(DESCRIPTION_FIELD) != null) {
+            testOutcome.setDescription(unescape(reader.getAttribute(DESCRIPTION_FIELD)));
+        }
+
         TestResult savedTestResult = TestResult.valueOf(reader.getAttribute(RESULT_FIELD));
         if (reader.getAttribute(QUALIFIER_FIELD) != null) {
             testOutcome = testOutcome.withQualifier(unescape(reader.getAttribute(QUALIFIER_FIELD)));
@@ -395,6 +422,8 @@ public class TestOutcomeConverter implements Converter {
                 readTestGroup(reader, testOutcome);
             } else if (childNode.equals(ISSUES)) {
                 readTestRunIssues(reader, testOutcome);
+            } else if (childNode.equals(VERSIONS)) {
+                readTestRunVersions(reader, testOutcome);
             } else if (childNode.equals(USER_STORY)) {
                 readUserStory(reader, testOutcome);
             } else if (childNode.equals(TAGS)) {
@@ -427,7 +456,7 @@ public class TestOutcomeConverter implements Converter {
         if (feature == null) {
             story = Story.withIdAndPath(storyId, storyName,storyPath);
         } else {
-            story = Story.withId(storyId, storyName, feature.getId(), feature.getName());
+            story = Story.withIdAndPathAndFeature(storyId, storyName, storyPath, feature.getId(), feature.getName());
         }
         testOutcome.setUserStory(story);
     }
@@ -446,6 +475,16 @@ public class TestOutcomeConverter implements Converter {
             reader.moveDown();
             String issue = reader.getValue();
             testOutcome.isRelatedToIssue(issue);
+            reader.moveUp();
+        }
+    }
+
+    private void readTestRunVersions(final HierarchicalStreamReader reader,
+                                     final TestOutcome testOutcome) {
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String version = reader.getValue();
+            testOutcome.addVersion(version);
             reader.moveUp();
         }
     }

@@ -7,15 +7,7 @@ import org.junit.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-/**
- * A description goes here.
- * User: john
- * Date: 10/08/12
- * Time: 2:51 PM
- */
 public class WhenObtainingADataDrivenTestSource {
-//    @UseTestDataFrom(value="${DATADIR}/simple-semicolon-data.csv", separator=';')
-//    final static class DataDrivenTestScenarioFromSpecifiedDataDirectory {}
 
     @Test
     public void should_convert_data_file_path_to_operating_system_localized_path() {
@@ -46,4 +38,90 @@ public class WhenObtainingADataDrivenTestSource {
 
         assertThat(testDataSourcePath.getInstanciatedPath("${DATADIR}/simple-semicolon-data.csv"), is("/some/dir/simple-semicolon-data.csv"));
     }
+
+    @Test
+    public void should_inject_user_home_directory_into_path() {
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("user.home","/home/john");
+        FilePathParser testDataSourcePath = new FilePathParser(environmentVariables) {
+            @Override
+            protected String getFileSeparator() {
+                return "/";
+            }
+        };
+        assertThat(testDataSourcePath.getInstanciatedPath("${user.home}/simple-semicolon-data.csv"), is("/home/john/simple-semicolon-data.csv"));
+
+    }
+
+    @Test
+    public void should_inject_user_home_directory_into_path_using_HOME_variable() {
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("user.home","/home/john");
+        FilePathParser testDataSourcePath = new FilePathParser(environmentVariables) {
+            @Override
+            protected String getFileSeparator() {
+                return "/";
+            }
+        };
+        assertThat(testDataSourcePath.getInstanciatedPath("$HOME/simple-semicolon-data.csv"), is("/home/john/simple-semicolon-data.csv"));
+    }
+
+    @Test
+    public void should_inject_current_directory_into_path() {
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("user.dir","/home/john/work");
+        FilePathParser testDataSourcePath = new FilePathParser(environmentVariables) {
+            @Override
+            protected String getFileSeparator() {
+                return "/";
+            }
+        };
+        assertThat(testDataSourcePath.getInstanciatedPath("${user.dir}/simple-semicolon-data.csv"), is("/home/john/work/simple-semicolon-data.csv"));
+
+    }
+
+    @Test
+    public void should_inject_current_directory_into_path_using_USERDIR_variable() {
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("user.dir","/home/john/work");
+        FilePathParser testDataSourcePath = new FilePathParser(environmentVariables) {
+            @Override
+            protected String getFileSeparator() {
+                return "/";
+            }
+        };
+        assertThat(testDataSourcePath.getInstanciatedPath("$USERDIR/simple-semicolon-data.csv"), is("/home/john/work/simple-semicolon-data.csv"));
+
+    }
+
+    @Test
+    public void should_inject_current_directory_into_path_using_USERPROFILE_variable() {
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("user.home","/home/john");
+        FilePathParser testDataSourcePath = new FilePathParser(environmentVariables) {
+            @Override
+            protected String getFileSeparator() {
+                return "/";
+            }
+        };
+        assertThat(testDataSourcePath.getInstanciatedPath("%USERPROFILE%/simple-semicolon-data.csv"), is("/home/john/simple-semicolon-data.csv"));
+
+    }
+
+    @Test
+    public void should_inject_Windows_application_directory_into_path_using_APPDATA_variable() {
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        ((MockEnvironmentVariables)environmentVariables).setValue("APPDATA","/home/john/work");
+        FilePathParser testDataSourcePath = new FilePathParser(environmentVariables) {
+            @Override
+            protected String getFileSeparator() {
+                return "/";
+            }
+        };
+        assertThat(testDataSourcePath.getInstanciatedPath("%APPDATA%/simple-semicolon-data.csv"), is("/home/john/work/simple-semicolon-data.csv"));
+
+    }
+
 }
+
+

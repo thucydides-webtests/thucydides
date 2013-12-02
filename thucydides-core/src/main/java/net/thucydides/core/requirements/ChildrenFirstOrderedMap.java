@@ -1,9 +1,11 @@
 package net.thucydides.core.requirements;
 
+import net.thucydides.core.requirements.model.Requirement;
+
 import java.util.Comparator;
 import java.util.TreeMap;
 
-public class ChildrenFirstOrderedMap extends TreeMap<String, Req> {
+public class ChildrenFirstOrderedMap extends TreeMap<String, Requirement> {
     private static final String DOT_REGEX = "\\.";
 
     public ChildrenFirstOrderedMap() {

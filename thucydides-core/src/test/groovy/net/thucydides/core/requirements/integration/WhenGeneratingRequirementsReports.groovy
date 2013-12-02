@@ -71,13 +71,13 @@ class WhenGeneratingRequirementsReports extends Specification {
             report = RequirementsReport.inDirectory(outputDirectory)
         then: "all the known capabilities should be listed"
             def rows = report.requirements;
-            report.names == ['Grow lots of potatoes', 'Grow wheat', 'Raise chickens']
+            report.names == ['Grow cucumbers', 'Grow lots of potatoes', 'Grow wheat', 'Raise chickens']
         and: "the title should reflect the requirements type"
-            report.title == 'Capabilities'
+            report.title == 'Requirements'
         and: "the table title should reflect the requirements type"
             report.tableTitle.startsWith('Capabilities (')
         and: "card numbers should be displayed for requirement entries"
-            rows[0].id == '#CAP-123'
+            rows[1].id == '#CAP-123'
     }
 
     def "Should know the type of child requirements"() {
@@ -88,7 +88,7 @@ class WhenGeneratingRequirementsReports extends Specification {
         when: "we get the child requirement type of a requirement"
             Requirement firstRequirement = outcomes.getRequirementOutcomes().get(0).getRequirement();
         then:
-            firstRequirement.getChildType() == 'feature'
+            firstRequirement.childType() == 'feature'
     }
 
     def "Should summarize test results in the capabilities report"() {
@@ -104,17 +104,17 @@ class WhenGeneratingRequirementsReports extends Specification {
             report = RequirementsReport.inDirectory(outputDirectory)
         then: "there should be test results for each capability"
             def rows = report.requirements;
-            rows[0].tests == 2
-            rows[1].tests == 1
+            rows[1].tests == 2
             rows[2].tests == 1
+            rows[3].tests == 1
         and: "the number of child requirements should be displayed"
-            rows[0].children == 3
-            rows[1].children == 0
+            rows[1].children == 3
             rows[2].children == 0
+            rows[3].children == 1
         and: "the icons should reflect the test results"
-            rows[0].icon.contains("yellow") == true
-            rows[1].icon.contains("green") == true
-            rows[2].icon.contains("red") == true
+            rows[1].icon.contains("yellow") == true
+            rows[2].icon.contains("green") == true
+            rows[3].icon.contains("red") == true
     }
 
     def "Should generate reports for child requirements"() {

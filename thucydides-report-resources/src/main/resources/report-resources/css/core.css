@@ -258,6 +258,12 @@ body {
     font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-weight:normal;
 }
 
+.small
+{
+    font-size:12px;
+}
+
+
 .caption
 {
     font-family:euphemia, verdana, sans-serif; font-size:14px; color: #0d78ae; padding-left: 25px; font-style: italic
@@ -424,6 +430,16 @@ body {
 .IGNORED-item-text {
     font-family:euphemia, verdana, sans-serif; font-size:14px; color:#0d78ae; font-style:italic;
 }
+
+.release-title {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #88a717;
+}
+
+.release-stats {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: black;
+}
+
+
 /*
 .redtext
 {
@@ -693,12 +709,15 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 
 .test-summary-table {
     border: 1px solid #BBB;
-    width: 530px;
+    width: 100%;
     margin-bottom: 20px;
     background-color: white;
 
 }
 
+.tag-title {
+    width: 100%;
+}
 
 .menu {
     width: 99%;
@@ -740,6 +759,8 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 .overview {
     border: 0px;
     padding-top: 10px;
+    min-height: 650px;
+    min-width: 1000px;
     background: #f1f3e8;
 }
 
@@ -805,6 +826,13 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
     min-width: 1008px;
 }
 
+#release-test-results-table {
+    color:#0d78ae;
+    font-family:euphemia, verdana, sans-serif;
+    font-size:16px;
+    width: 980px;
+    min-width: 980px;
+}
 
 #results-dashboard
 {
@@ -823,6 +851,8 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 .test-results-heading
 {
     font-family:euphemia, verdana, sans-serif; font-size:14px; color: #88a717; font-weight:bold; white-space: nowrap;
+    text-align: left;
+    padding-left: 4px;
 }
 
 #test_list_tests {
@@ -919,6 +949,19 @@ h4 {
 
 .capabilities-table {
     padding: 0.5em 0 0 !important;
+    padding-bottom:20px;
+}
+
+#releases {
+    padding: 0.5em 0 0
+}
+
+.release-context-tree {
+    padding-left: 10px;
+}
+
+.test-results {
+    padding-bottom: 20px;
 }
 
 .test-results label {
@@ -979,6 +1022,7 @@ h4 {
     float: right;
     display: inline-block;
     padding: 10px;
+    min-height: 320px;
 }
 
 .coverage_stats {
@@ -1031,10 +1075,15 @@ table.coverage_data td {
     vertical-align: top;
     padding-top: 20px;
     padding-left: 20px;
+    width: 100%;
 }
 
 #test_results_pie_chart {
     margin-top:20px; margin-left:20px; width:375px; height:375px;
+}
+
+#test-results-tabs-1 {
+    min-height: 475px;
 }
 
 #weighted_test_results_pie_chart {
@@ -1087,4 +1136,95 @@ table.coverage_data td {
 .embedded td {
     padding: 4px;
     border: thin solid #d3d3d3;
+}
+
+.confluenceTable {
+    margin: 4px;
+    padding: 4px;
+    border-collapse:collapse;
+}
+
+.confluenceTable th {
+    border: thin solid #d3d3d3;
+}
+
+.confluenceTable td {
+     border: thin solid #d3d3d3;
+}
+
+#releases {
+    border: solid #d3d3d3 1px;
+    padding: 8px;
+    padding-left: 16px;
+}
+
+.jqtree-title {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #0d78ae;
+}
+
+.jqtree_common {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #0d78ae;
+}
+
+ul.second-level-requirements  {
+    list-style-type: circle;
+    margin-left: 20px;
+}
+
+.highlighted-value {
+    font-style: italic;
+}
+
+
+.summary-table {
+    width: 100%;
+    border: solid #d3d3d3 1px;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+    padding: 4px;
+    min-width:500px;
+}
+
+.summary-table td,th {
+    border: solid #d3d3d3 1px;
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: black; font-weight:normal; font-size-adjust:inherit;
+}
+
+.summary-table th {
+    font-family:euphemia, verdana, sans-serif; font-size:14px; color: #0d78ae; font-weight:normal; font-size-adjust:inherit;
+    background-color: #f0f0f0;
+}
+
+.summary-leading-column {
+    background-color: #f0f0f0;
+    font-style: italic;
+}
+
+#projectname-banner {
+    float:right
+}
+
+.projectname {
+    font-family:euphemia, verdana, sans-serif;
+    font-weight:bold; font-size:2em; color:white; position:relative; top:30px; right:20px;
+}
+
+.togglePieChart {
+    float:right;
+}
+
+.togglePieChart a:link,
+.togglePieChart a:visited  {
+    color: white;
+    background-color: #0d78ae;
+    font-size: 0.9em;
+    padding: 4px;
+    border: solid thin blue;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.togglePieChart a:hover {
+    color: yellow;
 }

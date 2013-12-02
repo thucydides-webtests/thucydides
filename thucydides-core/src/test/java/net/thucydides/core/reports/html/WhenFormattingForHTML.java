@@ -144,6 +144,33 @@ public class WhenFormattingForHTML {
         assertThat(formatted, is("a quick *brown* fox<br>jumped over a log"));
     }
 
+    private final String htmlDescription = "<h2><a name=\"ScenarioDosometests\"></a>Scenario Do some tests</h2>\n"+
+            "<p><b>Given</b> we want to test some stuff<br/>\n"+
+            "<b>When</b> we do some tests<br/>\n"+
+            "<b>Then</b> the stuff should be tested<br/>\n"+
+            "<b>Examples</b></p>\n"+
+            "<table class='confluenceTable'><tbody>\n"+
+            "<tr>\n"+
+            "<td class='confluenceTd'> test     </td>\n"+
+            "<td class='confluenceTd'> expected </td>\n"+
+            "</tr>\n"+
+            "<tr>\n"+
+            "<td class='confluenceTd'> Test 1 </td>\n"+
+            "<td class='confluenceTd'> success  </td>\n"+
+            "</tr>\n"+
+            "<tr>\n"+
+            "<td class='confluenceTd'> Test 2 </td>\n"+
+            "<td class='confluenceTd'> failure     </td>\n"+
+            "</tr>\n"+
+            "</tbody></table>\n";
+
+    @Test
+    public void formatter_should_leave_rendered_html_as_is() {
+        EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        Formatter formatter = new Formatter(issueTracking, environmentVariables);
+        String formatted = formatter.renderDescription(htmlDescription);
+        assertThat(formatted, is(htmlDescription));
+    }
 
     @Test
     public void should_identify_issues_in_a_text() {

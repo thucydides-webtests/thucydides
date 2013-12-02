@@ -2,23 +2,19 @@ package net.thucydides.core.reports.adaptors.xunit;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import net.thucydides.core.reports.adaptors.xunit.model.Skip;
-import net.thucydides.core.reports.adaptors.xunit.model.TestException;
 import net.thucydides.core.reports.adaptors.xunit.model.TestCase;
+import net.thucydides.core.reports.adaptors.xunit.model.TestException;
 import net.thucydides.core.reports.adaptors.xunit.model.TestSuite;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 public class BasicXUnitLoader implements XUnitLoader {
@@ -85,7 +81,7 @@ public class BasicXUnitLoader implements XUnitLoader {
         NodeList skipElements = testCaseElement.getElementsByTagName("skipped");
         if (skipElements.getLength() > 0) {
             skipMessage = ((Element) skipElements.item(0)).getAttribute("type");
-
+            skipMessage = StringUtils.isEmpty(skipMessage) ? "unknown" : skipMessage;
         }
         return skipMessage;
     }

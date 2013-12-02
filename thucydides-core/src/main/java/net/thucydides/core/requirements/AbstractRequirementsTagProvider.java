@@ -4,6 +4,8 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.requirements.model.RequirementsConfiguration;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import org.apache.commons.lang3.StringUtils;
@@ -12,14 +14,16 @@ import java.util.Iterator;
 import java.util.List;
 
 public class AbstractRequirementsTagProvider {
-    public final static List<String> DEFAULT_CAPABILITY_TYPES = ImmutableList.of("capability", "feature");
-    protected static final String DEFAULT_ROOT_DIRECTORY = "stories";
 
     protected final EnvironmentVariables environmentVariables;
     protected final String rootDirectory;
+    protected final RequirementsConfiguration requirementsConfiguration;
+    protected final RequirementsService requirementsService;
 
     protected AbstractRequirementsTagProvider(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
+        this.requirementsConfiguration = new RequirementsConfiguration(environmentVariables);
+        this.requirementsService = Injectors.getInjector().getInstance(RequirementsService.class);
         this.rootDirectory = getDefaultRootDirectory();
     }
 
@@ -38,19 +42,10 @@ public class AbstractRequirementsTagProvider {
     }
 
     protected List<String> getRequirementTypes() {
-        String requirementTypes = ThucydidesSystemProperty.REQUIREMENT_TYPES.from(environmentVariables);
-        if (StringUtils.isNotEmpty(requirementTypes)) {
-            Iterator<String> types = Splitter.on(",").trimResults().split(requirementTypes).iterator();
-            return Lists.newArrayList(types);
-        } else {
-            return DEFAULT_CAPABILITY_TYPES;
-        }
+        return requirementsConfiguration.getRequirementTypes();
     }
 
     protected String getDefaultRootDirectory() {
-        if (ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.isDefinedIn(environmentVariables)) {
-            return ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.from(environmentVariables);
-        }
-        return DEFAULT_ROOT_DIRECTORY;
+        return requirementsConfiguration.getDefaultRootDirectory();
     }
 }

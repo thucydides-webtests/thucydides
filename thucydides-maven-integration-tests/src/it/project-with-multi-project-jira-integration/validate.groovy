@@ -1,5 +1,5 @@
 // Verify story printing
-htmlReport = new File("${basedir}/target/site/thucydides/e4cf909ced91d97f7c4907cfddc0f65e98708c3e4bc4d6c645b7168b598f760d.html")
+htmlReport = new File("${basedir}/target/site/thucydides/cc01122f4ddb558d18f0f05ea292c168afddbf7625b150b76aeafc62af4dde64.html")
 assert htmlReport.exists()
 
 def htmlStoriesReport = htmlReport.text

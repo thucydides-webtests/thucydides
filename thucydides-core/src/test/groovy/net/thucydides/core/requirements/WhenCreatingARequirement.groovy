@@ -41,7 +41,7 @@ class WhenCreatingARequirement extends Specification {
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the test results for the requirements should be empty"
             def requirementsTestCount = outcomes.requirementOutcomes.collect {it.testOutcomes.total}
-            requirementsTestCount == [0,0,0,0,0,0]
+            requirementsTestCount == [0,0,0,0,0,0,0]
     }
 
     def "should be able to optionally record the examples used to define a requirement"() {

@@ -64,7 +64,12 @@ public enum SupportedWebDriver {
     /**
      * Safari
      */
-    SAFARI(SafariDriver.class);
+    SAFARI(SafariDriver.class),
+
+    /**
+     * A user-provided driver
+     */
+    PROVIDED(ProvidedDriver.class);
 
     private final Class<? extends WebDriver> webdriverClass;
 

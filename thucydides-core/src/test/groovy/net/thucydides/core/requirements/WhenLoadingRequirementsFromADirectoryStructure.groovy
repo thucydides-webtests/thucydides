@@ -16,6 +16,16 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
             capabilityNames == ["Grow apples", "Grow potatoes", "Grow zuchinnis"]
     }
 
+    def "Should be able to load release versions with the capabilities from the default directory structure"() {
+        given: "We are using the default requirements provider"
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features");
+        when: "We load the available requirements"
+            def capabilities = capabilityProvider.getRequirements()
+            def capabilityNames = capabilities.collect {it.name}
+        then: "the requirements should have release versions if specified"
+            capabilities[0].children[2].children[0].releaseVersions == ["Release 1", "Iteration 1.1"]
+    }
+
     def "Should be able to load capabilities from a directory structure containing spaces"() {
         given: "We are using the default requirements provider"
             RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features_with_spaces");
@@ -24,6 +34,21 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
             def capabilityNames = capabilities.collect {it.name}
         then: "the requirements should be loaded from the first-level sub-directories"
            capabilityNames == ["Grow apples", "Grow potatoes", "Grow zuchinnis"]
+    }
+
+    def "Should be able to load capabilities from a directory structure containing spaces in the path"() {
+        given: "We are using the default requirements provider"
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories");
+        when: "We load the available requirements"
+            def capabilities = capabilityProvider.getRequirements()
+            def capabilityNames = capabilities.collect {it.name}
+        then: "the requirements should be loaded from the first-level sub-directories"
+            capabilityNames == ["Grow cucumbers", "Grow potatoes", "Grow wheat", "Raise chickens"]
+        and: "the child requirements should be found"
+            def growCucumbers = capabilities.get(0)
+            def cucumberFeatures =  growCucumbers.children.collect {it.name}
+            cucumberFeatures == ["Grow green cucumbers"]
+
     }
 
     def "Should be able to load issues from the default directory structure"() {
@@ -94,5 +119,4 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
             capabilities.get(0).getChildren().get(0).getChildren().get(0).getType() == "feature"
             capabilities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getType() == "feature"
     }
-
 }

@@ -5,7 +5,6 @@ import net.thucydides.junit.rules.DisableThucydidesHistoryRule;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.runners.AbstractTestStepRunnerTest;
 import net.thucydides.junit.runners.ThucydidesRunner;
-import net.thucydides.samples.LongSamplePassingScenarioUsingFirefox;
 import net.thucydides.samples.SampleNonWebScenarioWithError;
 import org.junit.Rule;
 import org.junit.Test;

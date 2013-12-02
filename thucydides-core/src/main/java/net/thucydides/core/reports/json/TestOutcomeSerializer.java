@@ -33,6 +33,7 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 
 	private static final String TITLE_FIELD = "title";
     private static final String NAME_FIELD = "name";
+    private static final String DESCRIPTION_FIELD = "description";
     private static final String STEPS_FIELD = "steps";
     private static final String SUCCESSFUL_FIELD = "successful";
     private static final String FAILURES_FIELD = "failures";
@@ -44,6 +45,7 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
     private static final String TEST_STEPS = "test-steps";
     private static final String USER_STORY = "user-story";
     private static final String ISSUES = "issues";
+    private static final String VERSIONS = "versions";
     private static final String TAGS = "tags";
     private static final String QUALIFIER_FIELD = "qualifier";
     private static final String DURATION = "duration";
@@ -61,7 +63,10 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 			JsonSerializationContext context) {
 		JsonObject obj = new JsonObject();
 		obj.addProperty(TITLE_FIELD, escape(titleFrom(testOutcome)));
-		obj.addProperty(NAME_FIELD, nameFrom(testOutcome));
+        obj.addProperty(NAME_FIELD, nameFrom(testOutcome));
+        if (testOutcome.getDescription() != null) {
+            obj.addProperty(DESCRIPTION_FIELD, escape(descriptionFrom(testOutcome)));
+        }
 		obj.add(TEST_CASE_FIELD, context.serialize(testOutcome.getTestCase()));
 		obj.addProperty(RESULT_FIELD, testOutcome.getResult().name());
         if (testOutcome.getQualifier() != null && testOutcome.getQualifier().isPresent()) {
@@ -86,6 +91,7 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         }
         obj.add(USER_STORY, context.serialize(testOutcome.getUserStory()));
         obj.add(ISSUES, context.serialize(testOutcome.getIssues()));
+        obj.add(VERSIONS, context.serialize(testOutcome.getVersions()));
         obj.add(TAGS, context.serialize(testOutcome.getTags()));
         obj.add(TEST_STEPS, context.serialize(testOutcome.getTestSteps()));
         obj.add(EXAMPLES, context.serialize(testOutcome.getDataTable()));
@@ -100,6 +106,11 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 		String testOutcomeName = outcomeJsonObject.get(NAME_FIELD).getAsString();
 		TestOutcome testOutcome = new TestOutcome(testOutcomeName,testCase);
 		testOutcome.setTitle(unescape(outcomeJsonObject.get(TITLE_FIELD).getAsString()));
+
+        if (outcomeJsonObject.get(DESCRIPTION_FIELD) != null) {
+            testOutcome.setDescription(unescape(outcomeJsonObject.get(DESCRIPTION_FIELD).getAsString()));
+        }
+
 		TestResult savedTestResult = TestResult.valueOf(outcomeJsonObject.get(RESULT_FIELD).getAsString());
 		Long duration = readDuration(outcomeJsonObject);
         testOutcome.setDuration(duration);
@@ -119,6 +130,7 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 
         testOutcome = addQualifierIfPresent(outcomeJsonObject, testOutcome);
         addIssuesIfPresent(context, outcomeJsonObject, testOutcome);
+        addVersionsIfPresent(context, outcomeJsonObject, testOutcome);
         addTagsIfPresent(context, outcomeJsonObject, testOutcome);
         
         JsonArray testStepsJsonArray = outcomeJsonObject.getAsJsonArray(TEST_STEPS);
@@ -171,6 +183,15 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         }
     }
 
+    private void addVersionsIfPresent(JsonDeserializationContext context, JsonObject outcomeJsonObject, TestOutcome testOutcome) {
+        Set<String> versions = context.deserialize(outcomeJsonObject.getAsJsonArray(VERSIONS), Set.class);
+        if (versions != null) {
+            ArrayList<String> versionsAsString = new ArrayList<String>();
+            versionsAsString.addAll(versions);
+            testOutcome.addVersions(versionsAsString);
+        }
+    }
+
     private String escape(String attribute) {
 		return StringUtils.replace(attribute, NEW_LINE_CHAR, ESCAPE_CHAR_FOR_NEW_LINE);
 	}
@@ -182,10 +203,14 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 	private String titleFrom(final TestOutcome testOutcome) {
 		return testOutcome.getTitle();
 	}
-	
-	private String nameFrom(final TestOutcome testOutcome) {
-    	return testOutcome.getMethodName();
-	}
+
+    private String nameFrom(final TestOutcome testOutcome) {
+        return testOutcome.getMethodName();
+    }
+
+    private String descriptionFrom(final TestOutcome testOutcome) {
+        return testOutcome.getDescription();
+    }
 
 	private String formattedTimestamp(DateTime startTime) {
 		return startTime.toString();

@@ -117,6 +117,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         given:
             def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
             testOutcome.startTime = FIRST_OF_JANUARY
+            testOutcome.description = "Some description"
             testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").
                                                    startingAt(FIRST_OF_JANUARY))
         and:
@@ -127,6 +128,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "test-case": {
                     "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
                   },
+                  "description":"Some description",
                   "result": "SUCCESS",
                   "steps": "1",
                   "successful": "1",
@@ -145,6 +147,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A user story",
@@ -167,6 +170,73 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
             def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
         then:
             JSONCompare.compareJSON(expectedReport, jsonReport.text, JSONCompareMode.LENIENT).passed();
+    }
+
+
+
+    def "should record screenshot details"() {
+        given:
+        def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
+        testOutcome.startTime = FIRST_OF_JANUARY
+        testOutcome.description = "Some description"
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").
+                startingAt(FIRST_OF_JANUARY).addScreenshot(new ScreenshotAndHtmlSource(new File("screenshot1.png"))))
+        and:
+        def expectedReport = """\
+                {
+                  "title": "Should do this",
+                  "name": "should_do_this",
+                  "test-case": {
+                    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+                  },
+                  "description":"Some description",
+                  "result": "SUCCESS",
+                  "steps": "1",
+                  "successful": "1",
+                  "failures": "0",
+                  "skipped": "0",
+                  "ignored": "0",
+                  "pending": "0",
+                  "duration": "0",
+                  "timestamp": "${FIRST_OF_JANUARY}",
+                  "user-story": {
+                    "userStoryClass": {
+                      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                    },
+                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "storyName": "A user story",
+                    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
+                  },
+                  "issues": [],
+                  "versions": [],
+                  "tags": [
+                    {
+                      "name": "A user story",
+                      "type": "story"
+                    }
+                  ],
+                  "test-steps": [
+                    {
+                      "description": "step 1",
+                      "duration": 0,
+                      "startTime": ${FIRST_OF_JANUARY.millis},
+                      "screenshots":  [
+                            {
+                              "screenshot": {
+                                "path": "screenshot1.png"
+                              }
+                            }
+                          ],
+                      "result": "SUCCESS",
+                      "children": []
+                    }
+                  ]
+                }
+            """
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        then:
+        JSONCompare.compareJSON(expectedReport, jsonReport.text, JSONCompareMode.LENIENT).passed();
     }
 
     def "should generate an JSON report for an acceptance test run without a test class"() {
@@ -193,6 +263,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "storyName": "name"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "name",
@@ -254,10 +325,11 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [
-                    "#456",
                     "#789",
-                    "#123"
+                    "#123",
+                    "#456"
                   ],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A user story",
@@ -266,6 +338,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   ],
                   "test-steps": [
                     {
+                      "number": 1,
                       "description": "step 1",
                       "duration": 0,
                       "startTime": $FIRST_OF_JANUARY.millis,
@@ -315,6 +388,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
 			  "issues": [],
+			  "versions": [],
 			  "tags": [
 			    {
 			      "name": "A user story",
@@ -323,6 +397,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": $FIRST_OF_JANUARY.millis,
@@ -376,6 +451,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A user story",
@@ -384,6 +460,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   ],
                   "test-steps": [
                     {
+                      "number": 1,
                       "description": "step 1",
                       "duration": 0,
                       "startTime": $FIRST_OF_JANUARY.millis,
@@ -461,6 +538,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
 			  "issues": [],
+			  "versions": [],
 			  "tags": [
 			    {
 			      "name": "A user story",
@@ -469,6 +547,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+                  "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": $FIRST_OF_JANUARY.millis,
@@ -517,6 +596,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
 			  "issues": [],
+			  "versions": [],
 			  "tags": [
 			    {
 			      "name": "A user story",
@@ -525,6 +605,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			  ],
 			  "test-steps": [
 			    {
+			      "number": 1,
 			      "description": "step 1",
 			      "duration": 0,
 			      "startTime": $FIRST_OF_JANUARY.millis,
@@ -578,6 +659,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               "issues": [
                 "PROJ-123"
               ],
+              "versions": [],
               "tags": [
                 {
                   "name": "Some test scenario with tags",
@@ -643,6 +725,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A user story",
@@ -651,6 +734,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   ],
                   "test-steps": [
                     {
+                      "number": 1,
                       "description": "step 1",
                       "duration": 0,
                       "startTime": $FIRST_OF_JANUARY.millis,
@@ -700,6 +784,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "featureName": "A feature"
 			  },
 			  "issues": [],
+			  "versions": [],
 			  "tags": [
 			    {
 			      "name": "A feature",
@@ -762,6 +847,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "featureName": "A feature"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A feature",
@@ -818,7 +904,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
             reporter.setQualifier("qualifier");
             def report = reporter.generateReportFor(testOutcome, allTestOutcomes);
         then:
-            report.name == Digest.ofTextValue("a_user_story_a_simple_test_case_qualifier") + ".json";
+            report.name == Digest.ofTextValue("net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON/a_user_story_a_simple_test_case_qualifier") + ".json";
     }
 
     def "should include error message for failing test"() {
@@ -881,6 +967,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
                   "issues": [],
+                  "versions": [],
                   "tags": [
                     {
                       "name": "A user story",
@@ -938,6 +1025,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
+              "versions": [],
               "tags": [
                 {
                   "name": "A user story",
@@ -946,6 +1034,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
               ],
               "test-steps": [
                 {
+                  "number": 1,
                   "description": "step 1",
                   "duration": 0,
                   "startTime": $FIRST_OF_JANUARY.millis,
@@ -1003,6 +1092,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
+              "versions": [],
               "tags": [
                 {
                   "name": "A user story",
@@ -1129,6 +1219,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
+              "versions": [],
               "tags": [
                 {
                   "name": "A user story",
@@ -1220,6 +1311,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
+              "versions": [],
               "tags": [
                 {
                   "name": "A user story",
@@ -1334,6 +1426,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
               "issues": [],
+              "versions": [],
               "tags": [
                 {
                   "name": "A user story",
@@ -1421,6 +1514,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
              },
              "issues": [],
+             "versions": [],
              "tags": [
                {
                  "name": "A user story",
@@ -1429,6 +1523,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
              ],
              "test-steps": [
                {
+                 "number" : 1,
                  "description": "step 1",
                  "duration": 0,
                  "startTime": $FIRST_OF_JANUARY.millis,
@@ -1446,6 +1541,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                  "children": []
                },
                {
+                 "number" : 2,
                  "description": "step 2",
                  "duration": 0,
                  "startTime": $FIRST_OF_JANUARY.millis,

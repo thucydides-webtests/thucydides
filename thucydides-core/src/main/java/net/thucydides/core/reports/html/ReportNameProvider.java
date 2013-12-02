@@ -1,8 +1,10 @@
 package net.thucydides.core.reports.html;
 
 import com.google.common.base.Optional;
+import net.thucydides.core.model.Release;
 import net.thucydides.core.model.ReportNamer;
 import net.thucydides.core.model.ReportType;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.NameConverter;
 
@@ -46,15 +48,32 @@ public class ReportNameProvider {
         return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tag_" + tag);
     }
 
+    public String forTag(TestTag tag) {
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tag_" + tag.getType() + "_" + tag.getName());
+    }
+
+
     public String forTagType(String tagType) {
         return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tagtype_" + tagType);
+    }
+
+    public String forRequirementType(String tagType) {
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "requirement_type_" + tagType);
     }
 
     public ReportNameProvider withPrefix(String prefix) {
         return new ReportNameProvider(prefix);
     }
 
-    private String prefixUsing(Optional<String> context) {
+    public ReportNameProvider withPrefix(TestTag tag) {
+        if (tag.equals(TestTag.EMPTY_TAG)) {
+            return new ReportNameProvider();
+        } else {
+            return new ReportNameProvider(tag.getType() + ":" + tag.getName());
+        }
+    }
+
+    private String prefixUsing(Optional <String> context) {
         if (context.isPresent()) {
             return "context_" + NameConverter.underscore(context.get()) + "_";
         } else {
@@ -65,4 +84,13 @@ public class ReportNameProvider {
     public String forRequirement(Requirement parentRequirement) {
         return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "requirement_" + parentRequirement.getName());
     }
+
+    public String forRelease(Release release) {
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "release_" + release.getName());
+    }
+
+    public String forRelease(String releaseName) {
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "release_" + releaseName);
+    }
+
 }

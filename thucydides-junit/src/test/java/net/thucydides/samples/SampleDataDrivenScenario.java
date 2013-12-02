@@ -56,8 +56,7 @@ public class SampleDataDrivenScenario {
     }
 
     @Test
-    @Ignore
-    public void not_so_happy_day_scenario() {
+    public void another_happy_day_scenario() {
         steps.stepWithParameters(option1,option2);
     }
 

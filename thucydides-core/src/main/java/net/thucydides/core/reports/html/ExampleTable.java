@@ -8,12 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-/**
- * A description goes here.
- * User: john
- * Date: 19/08/13
- * Time: 8:38 PM
- */
 public class ExampleTable {
     List<String> headers;
     List<List<String>> rows = Lists.newArrayList();

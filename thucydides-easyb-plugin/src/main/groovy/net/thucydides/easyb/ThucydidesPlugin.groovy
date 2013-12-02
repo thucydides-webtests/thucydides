@@ -115,7 +115,7 @@ public class ThucydidesPlugin extends BasePlugin {
         }
         initializeTestSession();
         binding.setVariable("pages", pages)
-        binding.setVariable("firefoxDriver", getWebDriver());
+        binding.setVariable("driver", getWebDriver());
         binding.setVariable("thucydides", configuration);
 
 

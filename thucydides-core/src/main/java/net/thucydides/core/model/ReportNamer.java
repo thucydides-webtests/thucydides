@@ -1,7 +1,6 @@
 package net.thucydides.core.model;
 
 import net.thucydides.core.digest.Digest;
-import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,7 +39,7 @@ public class ReportNamer {
              testName = NameConverter.underscore(testOutcome.getUserStory().getName());
         }
         String scenarioName = NameConverter.underscore(testOutcome.getQualifiedMethodName());
-        return withNoIssueNumbers(appendToIfNotNull(testName, scenarioName));
+        return pathFrom(testOutcome) + withNoIssueNumbers(appendToIfNotNull(testName, scenarioName));
     }
 
 
@@ -54,8 +53,12 @@ public class ReportNamer {
             testName = NameConverter.underscore(testOutcome.getUserStory().getName());
         }
         String scenarioName = NameConverter.underscore(testOutcome.getMethodName());
-        testName = withNoIssueNumbers(withNoArguments(appendToIfNotNull(testName, scenarioName)));
+        testName = pathFrom(testOutcome) + withNoIssueNumbers(withNoArguments(appendToIfNotNull(testName, scenarioName)));
         return appendSuffixTo(Digest.ofTextValue(testName));
+    }
+
+    private String pathFrom(TestOutcome testOutcome) {
+        return (testOutcome.getPath() != null) ? testOutcome.getPath() + "/" : "";
     }
 
     private String appendToIfNotNull(final String baseString, final String nextElement) {

@@ -67,6 +67,9 @@
 <div id="topheader">
     <div id="topbanner">
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">${reportOptions.projectName}</span>
+        </div>
     </div>
 </div>
 
@@ -81,7 +84,7 @@
 <div class="middlecontent">
     <div id="contenttop">
         <div class="middlebg">
-            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > <a href="${narrativeView}.html">${testOutcome.title}</a> > Screenshots </span>
+            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > <a href="${narrativeView}.html">${formatter.truncatedHtmlCompatible(testOutcome.title,60)} </a> > Screenshots </span>
         </div>
         <div class="rightbg"></div>
     </div>
@@ -89,20 +92,8 @@
     <div class="clr"></div>
 
     <!--/* starts second table*/-->
-    <div class="menu">
-        <ul>
-            <li><a href="index.html" class="current">Test Results</a></li>
-            <li><a href="capabilities.html">Requirements</a></li>
-            <li><a href="progress-report.html">Progress</a></li>
-        <#list allTestOutcomes.tagTypes as tagType>
-            <#assign tagReport = reportName.forTagType(tagType) >
-            <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
-            <li><a href="${tagReport}">${tagTypeTitle}</a></li>
-        </#list>
-            <li><a href="history.html">History</a></li>
-        </ul>
-        <br style="clear:left"/>
-    </div>
+    <#include "menu.ftl">
+    <@main_menu selected="home" />
 
     <div class="clr"></div>
     <div id="contentbody">

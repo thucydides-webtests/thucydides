@@ -18,6 +18,12 @@ public enum ThucydidesSystemProperty {
     DRIVER("webdriver.driver"),
 
     /**
+     * If using a provided driver, what type is it.
+     * The implementation class needs to be defined in the webdriver.provided.{type} system property.
+    */
+    PROVIDED_DRIVER_TYPE("webdriver.provided.type"),
+
+    /**
      * The default starting URL for the application, and base URL for relative paths.
      */
     BASE_URL("webdriver.base.url"),
@@ -42,6 +48,11 @@ public enum ThucydidesSystemProperty {
      * A unique identifier for the project under test, used to record test statistics.
      */
     PROJECT_KEY("thucydides.project.key"),
+
+    /**
+     * What name should appear on the reports
+     */
+    PROJECT_NAME("thucydides.project.name"),
 
     /**
      * The home directory for Thucydides output and data files - by default, $USER_HOME/.thucydides
@@ -122,6 +133,22 @@ public enum ThucydidesSystemProperty {
      * This is false by default.
      */
     SHOW_STEP_DETAILS("thucydides.reports.show.step.details"),
+
+    /**
+     * Show statistics for manual tests in the test reports.
+     */
+    SHOW_MANUAL_TESTS("thucydides.report.show.manual.tests"),
+
+    /**
+     * Report on releases
+     */
+    SHOW_RELEASES("thucydides.report.show.releases"),
+
+    SHOW_PROGRESS("thucydides.report.show.progress"),
+
+    SHOW_HISTORY("thucydides.report.show.history"),
+
+    SHOW_TAG_MENUS("thucydides.report.show.tags"),
 
     /**
      * Restart the browser every so often during data-driven tests.
@@ -305,6 +332,12 @@ public enum ThucydidesSystemProperty {
     FIREFOX_PREFERENCES("firefox.preferences"),
 
     /**
+     * Full path to the Firefox profile to be used with Firefox.
+     * You can include Java system properties ${user.dir}, ${user.home} and the Windows environment variables %APPDIR%
+     * and %USERPROFILE (assuming these are correctly set in the environment)
+     */
+    FIREFOX_PROFILE("webdriver.firefox.profile"),
+    /**
      * Enable JQuery integration.
      * If set to true (the default), JQuery will be injected into any page that does not already have it.
      * You can turn this option off for performance reasons if you are not using JQuery selectors.
@@ -366,6 +399,7 @@ public enum ThucydidesSystemProperty {
      * If you are using the File System Requirements provider, Thucydides will expect this directory structure to exist
      * at the top of the requirements tree. If you want to exclude packages in a requirements definition and start at a
      * lower level in the hierarchy, use the thucydides.requirement.exclusions property.
+     * This is also used by the AnnotationBasedTagProvider to know where to look for annotated requirements.
      */
     THUCYDIDES_TEST_ROOT("thucydides.test.root"),
 
@@ -373,6 +407,13 @@ public enum ThucydidesSystemProperty {
      * Use this property if you need to completely override the location of requirements for the File System Provider.
      */
     REQUIREMENTS_DIRECTORY("thucydides.requirements.dir"),
+
+    /**
+     * By default, Thucydides will read requirements from the directory structure that contains the stories.
+     * When other tag and requirements plugins are used, such as the JIRA plugin, this can cause conflicting
+     * tags. Set this property to false to deactivate this feature (it is true by default).
+     */
+    USE_REQUIREMENTS_DIRECTORY("thucydides.use.requirements.directories"),
 
     /**
      * Use this property if you need to completely override the location of requirements for the Annotated Provider.
@@ -398,6 +439,12 @@ public enum ThucydidesSystemProperty {
      * When deriving requirement types from a path, exclude any values from this comma-separated list.
      */
     REQUIREMENT_EXCLUSIONS("thucydides.requirement.exclusions"),
+
+    /**
+     * What tag names identify the release types (e.g. Release, Iteration, Sprint).
+     * A comma-separated list. By default, "Release, Iteration"
+     */
+    RELEASE_TYPES("thucydides.release.types"),
 
     /**
      * Normally, Thucydides uses SmartElementLocatorFactory, an extension of the AjaxElementLocatorFactory
@@ -478,7 +525,35 @@ public enum ThucydidesSystemProperty {
     /**
      * Path to PhantomJS executable
      */
-    PHANTOMJS_PATH("phantomjs.binary.path");
+    PHANTOMJS_PATH("phantomjs.binary.path"),
+
+    /**
+     * If set to true, don't format embedded tables in JBehave or Gherkin steps.
+     * False by default.
+     */
+    IGNORE_EMBEDDED_TABLES("ignore.embedded.tables"),
+
+    /**
+     * If set, this will display the related tag statistics on the home page.
+     * If you are using external requirements, you may not want to display these tags on the dashboard.
+     */
+    SHOW_RELATED_TAGS("show.related.tags"),
+
+    /**
+     * Display the pie charts on the dashboard by default.
+     * If this is set to false, the pie charts will be initially hidden on the dashboard.
+     */
+    SHOW_PIE_CHARTS("show.pie.charts"),
+
+    /**
+     * If set, this will define the list of tag types to appear on the dashboard screens
+     */
+    DASHBOARD_TAG_LIST("dashboard.tag.list"),
+
+    /**
+     * If set, this will define the list of tag types to be excluded from the dashboard screens
+     */
+    DASHBOARD_EXCLUDED_TAG_LIST("dashboard.excluded.tag.list");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;
@@ -491,7 +566,6 @@ public enum ThucydidesSystemProperty {
     public String getPropertyName() {
         return propertyName;
     }
-
 
     @Override
     public String toString() {

@@ -10,6 +10,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import static net.thucydides.core.webdriver.StaticTestSite.fileInClasspathCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,27 +33,27 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
         }
     }
 
-    private static WebDriver firefoxDriver;
+    private static WebDriver driver;
 
     @BeforeClass
     public static void openStaticTestSite() {
         String url = "file://" + fileInClasspathCalled("static-site/index.html").getAbsolutePath();
-        firefoxDriver = new FirefoxDriver();
-        firefoxDriver.get(url);
+        driver = new PhantomJSDriver(); // FirefoxDriver();
+        driver.get(url);
     }
 
     IndexPage indexPage;
 
     @Before
     public void setupPage(){
-        firefoxDriver.navigate().refresh();
-        indexPage = new IndexPage(firefoxDriver);
+        driver.navigate().refresh();
+        indexPage = new IndexPage(driver);
         indexPage.setWaitForTimeout(150);
     }
 
     @AfterClass
     public static void closeBrowser() {
-        firefoxDriver.quit();
+        driver.quit();
     }
 
     @Test

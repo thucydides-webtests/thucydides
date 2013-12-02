@@ -1,16 +1,21 @@
 package net.thucydides.core.requirements.model;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 public class Narrative {
     private final Optional<String> title;
     private final Optional<String> cardNumber;
+    private final List<String> versionNumbers;
     private final String text;
     private String type;
 
-    public Narrative(Optional<String> title, Optional<String> cardNumber, String type, String text) {
+    public Narrative(Optional<String> title, Optional<String> cardNumber, List<String> versionNumbers, String type, String text) {
         this.title = title;
         this.cardNumber = cardNumber;
+        this.versionNumbers = versionNumbers;
         this.type = type;
         this.text = text;
     }
@@ -29,5 +34,9 @@ public class Narrative {
 
     public String getType() {
         return type;
+    }
+
+    public List<String> getVersionNumbers() {
+        return ImmutableList.copyOf(versionNumbers);
     }
 }

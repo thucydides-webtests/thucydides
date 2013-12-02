@@ -5,12 +5,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor;
+import net.thucydides.core.model.TestResult;
 import net.thucydides.core.reports.adaptors.common.FilebasedOutcomeAdaptor;
 import net.thucydides.core.reports.adaptors.xunit.io.XUnitFiles;
 import net.thucydides.core.reports.adaptors.xunit.model.TestCase;
 import net.thucydides.core.reports.adaptors.xunit.model.TestException;
 import net.thucydides.core.reports.adaptors.xunit.model.TestSuite;
+import net.thucydides.core.util.NameConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class DefaultXUnitAdaptor extends FilebasedOutcomeAdaptor {
         return ImmutableList.copyOf(loadedOutcomes);
     }
 
-    private List<TestOutcome> testOutcomesIn(File xunitFile) throws IOException {
+    public List<TestOutcome> testOutcomesIn(File xunitFile) throws IOException {
         List<TestSuite> xunitTestSuites =  loader.loadFrom(xunitFile);
         List<TestOutcome> testOutcomes = Lists.newArrayList();
         for(TestSuite testSuite : xunitTestSuites) {
@@ -49,14 +50,25 @@ public class DefaultXUnitAdaptor extends FilebasedOutcomeAdaptor {
             @Override
             public TestOutcome convert(TestCase from) {
                 TestOutcome outcome = TestOutcome.forTestInStory(from.getName(), Story.called(from.getClassname()));
+                outcome.setTitle(NameConverter.humanize(from.getName()));
                 outcome.setDuration(timeAsLong(from.getTime()));
+
                 if (from.getError().isPresent()) {
                     TestException failure = from.getError().get();
                     outcome.setTestFailureCause(failure.asException());
-                }
-                if (from.getFailure().isPresent()) {
+                } else if (from.getFailure().isPresent()) {
                     TestException failure = from.getFailure().get();
                     outcome.setTestFailureCause(failure.asAssertionFailure());
+                } else if (from.getSkipped().isPresent()) {
+                    //although it is logged by junit as 'skipped', Thucydides
+                    //makes a distinction between skipped and ignored.
+                    //outcome.setAnnotatedResult(TestResult.IGNORED);
+
+                    //setting the outcome to PENDING for now as the reports don't yet handle the
+                    //ignored test cases
+                    outcome.setAnnotatedResult(TestResult.PENDING);
+                } else {
+                    outcome.setAnnotatedResult(TestResult.SUCCESS);
                 }
                 return outcome;
             }

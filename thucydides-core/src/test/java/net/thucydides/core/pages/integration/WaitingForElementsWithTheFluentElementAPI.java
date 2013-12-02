@@ -4,14 +4,13 @@ package net.thucydides.core.pages.integration;
 import org.apache.commons.exec.OS;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -21,19 +20,19 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    private static WebDriver firefoxDriver;
+    private static WebDriver driver;
     private static WebDriver chromeDriver;
 
-    private static StaticSitePage firefoxPage;
+    private static StaticSitePage staticPage;
     private static StaticSitePage chromePage;
 
     @BeforeClass
     public static void openBrowsers() {
-        firefoxDriver = new FirefoxDriver();
+        driver = new PhantomJSDriver();
         chromeDriver = new ChromeDriver();
 
-        firefoxPage = new StaticSitePage(firefoxDriver, 1000);
-        firefoxPage.open();
+        staticPage = new StaticSitePage(driver, 1000);
+        staticPage.open();
 
         chromePage = new StaticSitePage(chromeDriver, 1000);
         chromePage.open();
@@ -41,12 +40,12 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
     @AfterClass
     public static void quitBrowsers() {
-        firefoxDriver.quit();
+        driver.quit();
         chromeDriver.quit();
     }
 
     protected StaticSitePage getFirefoxPage() {
-        return firefoxPage;
+        return staticPage;
     }
 
     protected StaticSitePage getChromePage() {
@@ -141,7 +140,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
     @Test
     public void should_let_you_remove_the_focus_from_the_current_active_field() {
-        StaticSitePage page = getChromePage();
+        StaticSitePage page = getFirefoxPage();
 
         page.element(page.firstName).click();
 
@@ -151,20 +150,6 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
         page.element(page.focusmessage).shouldContainText("focus left firstname");
 
     }
-
-    @Ignore("This doesn't work in Firefox on Linux")
-    @Test
-    public void should_let_you_remove_the_focus_from_the_current_active_field_in_firefox() {
-
-       StaticSitePage page = getFirefoxPage();
-        page.element(page.firstName).click();
-
-        assertThat(page.element(page.focusmessage).getText(), is(""));
-        page.blurActiveElement();
-        page.waitForTextToAppear("focus left firstname");
-        page.element(page.focusmessage).shouldContainText("focus left firstname");
-    }
-
 
     @Test
     public void should_wait_for_text_to_dissapear() {

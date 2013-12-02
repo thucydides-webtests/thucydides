@@ -38,6 +38,18 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
             narrative.get().type == "feature"
     }
 
+    def "Should be able to cope with missing title lines"() {
+        given: "there is a narrative.txt file in a directory"
+            File reqDirectory = directoryInClasspathAt("sample-story-directories/capabilities_and_features/grow_apples/grow_granny_smiths")
+        when: "We try to load the narrativeText from the directory"
+            def reader = NarrativeReader.forRootDirectory("sample-story-directories/capabilities_and_features")
+            Optional<Narrative> narrative = reader.loadFromStoryFile(new File(reqDirectory, "PlantingASmallAppleTree.story"))
+        then: "the narrativeText should be found"
+            narrative.present
+        and: "the narrativeText title should not be loaded"
+            !narrative.get().title.isPresent()
+    }
+
     def "Should use the lowest requirement type for deeply nested requirements"() {
         given: "there is a narrative.txt file in a directory"
             File directoryContainingANarrative = directoryInClasspathAt("sample-story-directories/capabilities_and_features/grow_apples/grow_red_apples/grow_special_red_apples")
@@ -50,6 +62,18 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
             narrative.get().title.get() == "Grow special red apples"
         and: "the type should be derived from lowest requirement type"
             narrative.get().type == "feature"
+    }
+
+    def "Should read release version numbers if provided"() {
+        given: "there is a narrative.txt file in a directory"
+            File directoryContainingANarrative = directoryInClasspathAt("sample-story-directories/capabilities_and_features/grow_apples/grow_red_apples/grow_special_red_apples")
+        when: "We try to load the narrativeText from the directory"
+            def reader = NarrativeReader.forRootDirectory("sample-story-directories/capabilities_and_features")
+            Optional<Narrative> narrative = reader.loadFrom(directoryContainingANarrative)
+        then: "the narrativeText should be found"
+            narrative.present
+        and: "the narrativeText should contain release version numbers"
+            narrative.get().versionNumbers == ["Release 1", "Iteration 1.1"]
     }
 
     def "Should ignore GivenStories clause in requirements from .story files"() {
@@ -70,9 +94,6 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
         and: "meta data is skipped"
             !narrative.get().getText().contains("Meta") && !narrative.get().getText().contains("issue")
     }
-
-
-
 
     File directoryInClasspathAt(String path) {
         new File(getClass().getClassLoader().getResources(path).nextElement().getPath())

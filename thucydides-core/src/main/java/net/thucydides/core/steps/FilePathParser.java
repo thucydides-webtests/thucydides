@@ -20,13 +20,17 @@ public class FilePathParser {
         if (path == null) {
             return path;
         }
-        String testDataSource = operatingSystemLocalized(path);
-        testDataSource = injectVariable(testDataSource, "HOME", System.getProperty("user.home"));
-        testDataSource = injectVariable(testDataSource, "USERDIR", System.getProperty("user.dir"));
-        testDataSource = injectVariable(testDataSource, "DATADIR",
+        String localizedPath = operatingSystemLocalized(path);
+        localizedPath = injectVariable(localizedPath, "HOME", environmentVariables.getProperty("user.home"));
+        localizedPath = injectVariable(localizedPath, "user.home", environmentVariables.getProperty("user.home"));
+        localizedPath = injectVariable(localizedPath, "USERDIR", environmentVariables.getProperty("user.dir"));
+        localizedPath = injectVariable(localizedPath, "USERPROFILE", environmentVariables.getProperty("user.home"));
+        localizedPath = injectVariable(localizedPath, "user.dir", environmentVariables.getProperty("user.dir"));
+        localizedPath = injectVariable(localizedPath, "APPDATA", environmentVariables.getValue("APPDATA"));
+        localizedPath = injectVariable(localizedPath, "DATADIR",
                                         ThucydidesSystemProperty.DATA_DIRECTORY.from(environmentVariables));
 
-        return testDataSource;
+        return localizedPath;
     }
 
     private String operatingSystemLocalized(String testDataSource) {
@@ -36,6 +40,7 @@ public class FilePathParser {
     private String injectVariable(String path, String variable, String directory) {
         if (StringUtils.isNotEmpty(directory)) {
             path = StringUtils.replace(path, "$" + variable, directory);
+            path = StringUtils.replace(path, "%" + variable + "%", directory);
             return StringUtils.replace(path, "${" + variable + "}", directory);
         } else {
             return path;

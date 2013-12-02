@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import net.thucydides.core.Thucydides;
@@ -9,6 +10,7 @@ import net.thucydides.core.fixtureservices.FixtureProviderService;
 import net.thucydides.core.fixtureservices.FixtureService;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.PageObject;
+import net.thucydides.core.steps.FilePathParser;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
@@ -174,6 +176,8 @@ public class WebDriverFactory {
                 driver = safariDriver();
             } else if (isAnInternetExplorerDriver(driverClass)) {
                 driver = internetExplorerDriver();
+            } else if (isAProvidedDriver(driverClass)) {
+                driver = providedDriver();
             } else {
                 driver = newDriverInstanceFrom(driverClass);
             }
@@ -187,6 +191,25 @@ public class WebDriverFactory {
         }
     }
 
+    private boolean isAProvidedDriver(Class<? extends WebDriver> driverClass) {
+        return ProvidedDriver.class.isAssignableFrom(driverClass);
+    }
+
+    private WebDriver providedDriver() {
+        String providedDriverType = environmentVariables.getProperty(ThucydidesSystemProperty.PROVIDED_DRIVER_TYPE);
+        Preconditions.checkNotNull(providedDriverType,"No provider type was specified in 'webdriver.provided.type'");
+
+        String providedImplementation = environmentVariables.getProperty("webdriver.provided." + providedDriverType);
+        Preconditions.checkNotNull(providedDriverType,
+                                  "No provider implementation was specified in 'webdriver.provided.'" + providedDriverType);
+
+        try {
+            DriverSource driverSource = (DriverSource) Class.forName(providedImplementation).newInstance();
+            return driverSource.newDriver();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not instantiate the custom webdriver provider of type " + providedImplementation);
+        }
+    }
 
     private void setImplicitTimeoutsIfSpecified(WebDriver driver) {
         if (ThucydidesSystemProperty.TIMEOUTS_IMPLICIT_WAIT.isDefinedIn(environmentVariables)) {
@@ -323,9 +346,8 @@ public class WebDriverFactory {
             driver = REMOTE_DRIVER;
         }
         SupportedWebDriver driverType = driverTypeFor(driver);
-        if (driverType == null) {
-            throw new IllegalArgumentException("Unsupported remote driver type: " + driver);
-        }
+
+        Preconditions.checkNotNull(driverType, "Unsupported remote driver type: ");
 
         if (driverType == SupportedWebDriver.REMOTE) {
             return (DesiredCapabilities) enhancedCapabilities(remoteCapabilities());
@@ -587,10 +609,11 @@ public class WebDriverFactory {
     }
 
     protected FirefoxProfile buildFirefoxProfile() {
-        String profileName = environmentVariables.getProperty("webdriver.firefox.profile");
+        String profileName = ThucydidesSystemProperty.FIREFOX_PROFILE.from(environmentVariables);
+        FilePathParser parser = new FilePathParser(environmentVariables);
         DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
         if (StringUtils.isNotEmpty(profileName)) {
-            firefoxCapabilities.setCapability(FirefoxDriver.PROFILE,profileName);
+            firefoxCapabilities.setCapability(FirefoxDriver.PROFILE, parser.getInstanciatedPath(profileName));
         }
 
 
@@ -661,9 +684,6 @@ public class WebDriverFactory {
      */
     public void initElementsWithAjaxSupport(final PageObject pageObject, final WebDriver driver, int timeoutInSeconds) {
     	proxyCreator.proxyElements(pageObject, driver, timeoutInSeconds);
-
     }
-
-
 
 }

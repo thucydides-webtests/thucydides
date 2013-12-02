@@ -16,7 +16,6 @@ import net.thucydides.core.steps.StepDelayer;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.DefaultPageObjectInitialiser;
 import net.thucydides.core.webdriver.WebDriverFacade;
-import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webelements.Checkbox;
 import org.apache.commons.lang3.StringUtils;
@@ -82,30 +81,43 @@ public abstract class PageObject {
 
     private final Sleeper sleeper;
     private final Clock webdriverClock;
-    private final JavascriptExecutorFacade javascriptExecutorFacade;
+    private JavascriptExecutorFacade javascriptExecutorFacade;
     
     private enum OpenMode {
     	CHECK_URL_PATTERNS,
     	IGNORE_URL_PATTERNS
     }
 
-    protected PageObject(final WebDriver driver, Predicate<PageObject> callback) {
+    protected PageObject() {
         this.webdriverClock = new SystemClock();
         this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
-        this.driver = driver;
-        this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
-
         setupPageUrls();
-        callback.apply(this); //need to handle return value
     }
 
+    protected PageObject(final WebDriver driver, Predicate<PageObject> callback) {
+        this();
+        this.driver = driver;
+        callback.apply(this);
+    }
     public PageObject(final WebDriver driver, final int ajaxTimeout) {
-        this(driver, new DefaultPageObjectInitialiser(driver, ajaxTimeout));
+        this();
+        setDriver(driver, ajaxTimeout);
     }
 
     public PageObject(final WebDriver driver) {
-        this(driver, (int)WAIT_FOR_TIMEOUT);
+        this();
+        setDriver(driver);
+    }
+
+
+    protected void setDriver(WebDriver driver, int timeout) {
+        this.driver = driver;
+        new DefaultPageObjectInitialiser(driver, timeout).apply(this);
+    }
+
+    protected void setDriver(WebDriver driver) {
+        setDriver(driver, (int) WAIT_FOR_TIMEOUT);
     }
 
     public void setPages(Pages pages) {
@@ -615,14 +627,26 @@ public abstract class PageObject {
 
 	private void checkUrlPatterns(final OpenMode openMode) {
 		if (openMode == OpenMode.CHECK_URL_PATTERNS) {
-			if (!matchesAnyUrl()) {
-				String currentUrl = getDriver().getCurrentUrl();
-				if (!compatibleWithUrl(currentUrl)) {
-					thisIsNotThePageYourLookingFor();
-				}
-			}
-		}
+            ensurePageIsOnAMatchingUrl();
+        }
 	}
+
+    private void ensurePageIsOnAMatchingUrl() {
+        if (!matchesAnyUrl()) {
+            String currentUrl = getDriver().getCurrentUrl();
+            if (!compatibleWithUrl(currentUrl)) {
+                thisIsNotThePageYourLookingFor();
+            }
+        }
+    }
+
+    /**
+     * Use the @At annotation (if present) to check that a page object is displaying the correct page.
+     * Will throw an exception if the current URL does not match the expected one.
+     */
+    public void shouldBeDisplayed() {
+        ensurePageIsOnAMatchingUrl();
+    }
 
     private void thisIsNotThePageYourLookingFor() {
 
@@ -659,7 +683,6 @@ public abstract class PageObject {
                 }
             }
         }
-
     }
 
     private List<Method> methodsAnnotatedWithWhenPageOpens() {
@@ -717,6 +740,9 @@ public abstract class PageObject {
     }
 
     protected JavascriptExecutorFacade getJavascriptExecutorFacade() {
+        if (javascriptExecutorFacade == null) {
+            javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
+        }
         return javascriptExecutorFacade;
     }
 
@@ -777,6 +803,10 @@ public abstract class PageObject {
 
     public WebElementFacade findBy(String xpathOrCssSelector) {
         return element(xpathOrCssSelector);
+    }
+
+    public List<WebElementFacade> findAll(String xpathOrCssSelector) {
+        return findAll(xpathOrCssSelector(xpathOrCssSelector));
     }
 
     public static boolean isXPath(String xpathExpression) {

@@ -3,6 +3,8 @@ package net.thucydides.core.pages;
 import com.google.common.base.Optional;
 import net.thucydides.core.annotations.Fields;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.reflection.FieldFinder;
+import net.thucydides.core.reflection.FieldSetter;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
@@ -30,6 +32,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class Pages implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final String NO_VALID_CONSTRUCTOR_FOUND = "This page object does not appear have an empty constructor or a constructor that takes a WebDriver parameter";
 
     private transient WebDriver driver;
 
@@ -200,11 +203,10 @@ public class Pages implements Serializable {
     private <T extends PageObject> T getCurrentPageOfType(final Class<T> pageObjectClass) {
         T currentPage = null;
         try {
-            Class[] constructorArgs = new Class[1];
-            constructorArgs[0] = WebDriver.class;
-            Constructor<? extends PageObject> constructor = pageObjectClass.getConstructor(constructorArgs);
-            currentPage = (T) constructor.newInstance(driver);
-
+            currentPage = createFromSimpleConstructor(pageObjectClass);
+            if (currentPage == null) {
+                currentPage = createFromConstructorWithWebdriver(pageObjectClass);
+            }
             if (hasPageFactoryProperty(currentPage)) {
                 setPageFactory(currentPage);
             }
@@ -223,6 +225,29 @@ public class Pages implements Serializable {
             thisPageObjectLooksDodgy(pageObjectClass,"Failed to instantiate page (" + e +")");
         }
         return currentPage;
+    }
+
+    private <T extends PageObject> T createFromSimpleConstructor(Class<T> pageObjectClass)
+            throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
+        T newPage = null;
+        try {
+            Class[] constructorArgs = new Class[0];
+            Constructor<? extends PageObject> constructor = pageObjectClass.getConstructor(constructorArgs);
+            newPage = (T) constructor.newInstance();
+            newPage.setDriver(driver);
+
+        } catch (NoSuchMethodException e) {
+            // Try a different constructor
+        }
+        return newPage;
+    }
+
+    private <T extends PageObject> T createFromConstructorWithWebdriver(Class<T> pageObjectClass)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Class[] constructorArgs = new Class[1];
+        constructorArgs[0] = WebDriver.class;
+        Constructor<? extends PageObject> constructor = pageObjectClass.getConstructor(constructorArgs);
+        return (T) constructor.newInstance(driver);
     }
 
     private boolean hasPageFactoryProperty(Object pageObject) {

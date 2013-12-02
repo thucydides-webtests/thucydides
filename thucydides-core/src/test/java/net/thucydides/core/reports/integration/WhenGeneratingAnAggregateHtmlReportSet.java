@@ -104,7 +104,6 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         String expectedSuccessReport = reportName.forTestResult("success");
 
         File report = new File(outputDirectory, expectedSuccessReport);
-
         driver.get(urlFor(report));
         assertThat(driver.findElement(By.cssSelector(".date-and-time")).getText(), containsString("01-2013"));
     }
@@ -115,9 +114,9 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
 
     @Test
     public void should_generate_overall_passed_failed_and_pending_reports_for_each_tag() throws Exception {
-        assertThat(new File(outputDirectory, digest("context_a_feature_result_success") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("context_a_feature_result_pending") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("context_a_feature_result_pending") + ".html"), exists());
+        assertThat(new File(outputDirectory, digest("context_feature_a_feature_result_success") + ".html"), exists());
+        assertThat(new File(outputDirectory, digest("context_feature_a_feature_result_pending") + ".html"), exists());
+        assertThat(new File(outputDirectory, digest("context_feature_a_feature_result_pending") + ".html"), exists());
     }
 
     @Test
@@ -156,17 +155,6 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
 
     private String urlFor(File report) {
         return "file:///" + report.getAbsolutePath();
-    }
-
-    @Test
-    public void aggregate_dashboard_should_contain_a_list_of_all_tags() throws Exception {
-
-        File report = new File(outputDirectory,"index.html");
-        driver.get(urlFor(report));
-
-        List<WebElement> tagTypes = driver.findElements(By.cssSelector(".tagTitle"));
-        List<String> tagTypeNames = extract(tagTypes, on(WebElement.class).getText());
-        assertThat(tagTypeNames, hasItems("A Story","A Feature", "An Epic", "Another Different Story"));
     }
 
     @Test

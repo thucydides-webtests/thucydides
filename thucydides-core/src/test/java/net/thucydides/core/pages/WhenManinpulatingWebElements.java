@@ -49,12 +49,60 @@ public class WhenManinpulatingWebElements {
 
     @Test
     public void web_element_facade_should_be_printed_as_the_web_element() {
-        when(webElement.toString()).thenReturn("<web element>");
+        when(webElement.getAttribute("id")).thenReturn("idvalue");
+        when(webElement.getTagName()).thenReturn("tag");
         WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
 
-        assertThat(elementFacade.toString(), is("<web element>"));
+        assertThat(elementFacade.toString(), is("<tag id='idvalue'>"));
 
     }
+
+    @Test
+    public void web_element_facade_should_be_printed_using_name_if_id_not_available() {
+        when(webElement.getAttribute("name")).thenReturn("somename");
+        when(webElement.getTagName()).thenReturn("tag");
+        WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
+
+        assertThat(elementFacade.toString(), is("<tag name='somename'>"));
+    }
+
+
+    @Test
+    public void web_element_facade_should_be_printed_using_class_if_id_and_name_not_available() {
+        when(webElement.getAttribute("class")).thenReturn("someclass");
+        when(webElement.getTagName()).thenReturn("tag");
+        WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
+
+        assertThat(elementFacade.toString(), is("<tag class='someclass'>"));
+    }
+
+    @Test
+    public void web_element_facade_should_be_printed_using_href_if_present() {
+        when(webElement.getAttribute("href")).thenReturn("link");
+        when(webElement.getTagName()).thenReturn("a");
+        WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
+
+        assertThat(elementFacade.toString(), is("<a href='link'>"));
+    }
+
+    @Test
+    public void web_element_facade_should_be_printed_using_type_and_name_if_present() {
+        when(webElement.getAttribute("type")).thenReturn("button");
+        when(webElement.getAttribute("value")).thenReturn("submit");
+        when(webElement.getTagName()).thenReturn("input");
+        WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
+
+        assertThat(elementFacade.toString(), is("<input type='button' value='submit'>"));
+    }
+    @Test
+    public void web_element_facade_should_be_printed_as_tag_element_if_nothing_available() {
+
+        WebElementFacade elementFacade = WebElementFacadeImpl.wrapWebElement(driver, webElement, 100);
+        when(webElement.getTagName()).thenReturn("tag");
+
+        assertThat(elementFacade.toString(), is("<tag>"));
+    }
+
 
     @Test
     public void stale_element_found_using_a_finder_should_not_be_considered_displayed() {

@@ -156,6 +156,9 @@
 <div id="topheader">
     <div id="topbanner">
         <div id="logo"><a href="index.html"><img src="images/logo.jpg" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">${reportOptions.projectName}</span>
+        </div>
     </div>
 </div>
 
@@ -171,25 +174,8 @@
     <div class="clr"></div>
 
     <!--/* starts second table*/-->
-    <div class="menu">
-        <ul>
-            <li><a href="index.html">Test Results</a></li>
-            <li><a href="capabilities.html">Requirements</a></li>
-            <li><a href="progress-report.html">Progress</a></li>
-            <#--<li><a href="treemap.html">Tree Map</a></li>-->
-            <#--<li><a href="dashboard.html">Progress</a></li>-->
-            <#foreach tagType in allTestOutcomes.tagTypes>
-                <#assign tagReport = reportName.forTagType(tagType) >
-                <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
-                <li><a href="${tagReport}">${tagTypeTitle}</a></li>
-            </#foreach>
-            <li><a href="history.html" class="current">History</a></li>
-
-        </ul>
-        <span class="date-and-time">Tests run ${timestamp}</span>
-        <br style="clear:left"/>
-    </div>
-
+<#include "menu.ftl">
+<@main_menu selected="history" />
     <div class="clr"></div>
     <div id="beforetable"></div>
     <div id="results-dashboard">
