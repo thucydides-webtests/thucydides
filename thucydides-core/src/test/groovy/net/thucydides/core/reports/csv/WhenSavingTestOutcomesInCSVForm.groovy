@@ -30,7 +30,7 @@ class WhenSavingTestOutcomesInCSVForm extends Specification {
         then: "the CSV file contains a single line"
             csvResults.text.readLines().size() == 1
         and: "the first line should contain the test outcome headings"
-            linesIn(csvResults)[0] == ["History", "Title", "Result", "Date", "Stability", "Duration (s)"]
+            linesIn(csvResults)[0] == ["Story", "Title", "Result", "Date", "Stability", "Duration (s)"]
     }
 
     def "should store a row of data for each test result"() {
@@ -53,7 +53,7 @@ class WhenSavingTestOutcomesInCSVForm extends Specification {
             def csvReporter = new CSVReporter(temporaryDirectory, environmentVariables)
             File csvResults = csvReporter.generateReportFor(TestOutcomes.of(testOutcomeList), "results.csv")
         then: "the results should contain a column for each additional column"
-            linesIn(csvResults)[0] == ["History", "Title", "Result", "Date", "Stability", "Duration (s)", "Feature", "Epic"]
+            linesIn(csvResults)[0] == ["Story", "Title", "Result", "Date", "Stability", "Duration (s)", "Feature", "Epic"]
         and: "the extra column data should come from the tags"
            linesIn(csvResults)[1][6] == "" && linesIn(csvResults)[1][7] == "an epic" &&
            linesIn(csvResults)[2][6] == "A Feature" && linesIn(csvResults)[2][7] == ""
