@@ -1,5 +1,7 @@
 package net.thucydides.core.webdriver.javascript
 
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
+
 import java.io.IOException;
 
 import net.thucydides.core.webdriver.WebDriverFactory
@@ -25,8 +27,8 @@ import spock.lang.Shared
 class WhenDeserializingJSONObjects extends Specification {
 	
 	@Shared
-	WebDriver driver = new PhantomJSDriver()
-	
+	WebDriver driver = new FirefoxDriver();
+
 	JavascriptExecutorFacade jsFacade;
 	
 	def setup() {
