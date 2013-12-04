@@ -121,7 +121,8 @@ public abstract class HtmlReporter extends ThucydidesReporter {
     }
 
     protected String timestampFrom(TestOutcomes rootOutcomes) {
-        return timestampFrom(rootOutcomes.getRootOutcomes().getStartTime());
+        //return timestampFrom(rootOutcomes.getRootOutcomes().getStartTime());
+        return timestampFrom(currentTime());
     }
 
     protected String timestampFrom(DateTime startTime) {
@@ -129,7 +130,11 @@ public abstract class HtmlReporter extends ThucydidesReporter {
     }
 
     protected void addTimestamp(TestOutcome testOutcome, Map<String, Object> context) {
-        context.put("timestamp", timestampFrom(testOutcome.getStartTime()));
+        context.put("timestamp", timestampFrom(currentTime()));
+    }
+
+    protected DateTime currentTime() {
+        return new DateTime();
     }
 
     protected Merger mergeTemplate(final String templateFile) {

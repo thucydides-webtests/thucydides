@@ -25,7 +25,7 @@
         <li><a href="history.html" <#if selected=="history">class="current"</#if>>History</a></li>
     </#if>
     </ul>
-    <span class="date-and-time">Tests run ${timestamp}</span>
+    <span class="date-and-time">Report generated ${timestamp}</span>
     <br style="clear:left"/>
 </div>
 </#macro>

@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.html;
 
+import com.beust.jcommander.internal.Lists;
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
@@ -19,6 +20,7 @@ import net.thucydides.core.reports.history.TestResultSnapshot;
 import net.thucydides.core.requirements.RequirementsProviderService;
 import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.model.Requirement;
+import net.thucydides.core.requirements.model.RequirementsConfiguration;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
@@ -58,7 +60,8 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private final RequirmentsOutcomeFactory requirementsFactory;
     private final HtmlRequirementsReporter htmlRequirementsReporter;
     private final HtmlProgressReporter htmlProgressReporter;
-
+    private List<String> requirementTypes;
+    private final RequirementsConfiguration requirementsConfiguration;
 
     public HtmlAggregateStoryReporter(final String projectName) {
         this(projectName, "");
@@ -91,6 +94,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         RequirementsProviderService requirementsProviderService = Injectors.getInjector().getInstance(RequirementsProviderService.class);
         this.requirementsFactory = new RequirmentsOutcomeFactory(requirementsProviderService.getRequirementsProviders(), issueTracking);
         this.requirementsService = requirementsService;
+        this.requirementsConfiguration = new RequirementsConfiguration(getEnvironmentVariables());
     }
 
     public String getProjectName() {
@@ -255,15 +259,15 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private void generateReleaseDetailsReportsFor(TestOutcomes testOutcomes,
                                                   RequirementsOutcomes requirementsOutcomes) throws IOException {
         List<Release> allReleases = getReleaseManager().getFlattenedReleasesFrom(testOutcomes);
-        List<String> requirementsTypes = requirementsService.getRequirementTypes();
-        String topLevelRequirementType = requirementsService.getRequirementTypes().get(0);
+        List<String> requirementsTypes = getRequirementTypes();
+        String topLevelRequirementType = requirementsTypes.get(0);
         String secondLevelRequirementType = "";
         String secondLevelRequirementTypeTitle = "";
         String topLevelRequirementTypeTitle = Inflector.getInstance().of(topLevelRequirementType)
                 .inPluralForm().asATitle().toString();
 
         if (requirementsTypes.size() > 1) {
-            secondLevelRequirementType = requirementsService.getRequirementTypes().get(1);
+            secondLevelRequirementType = requirementsTypes.get(1);
             secondLevelRequirementTypeTitle = Inflector.getInstance().of(secondLevelRequirementType)
                     .inPluralForm().asATitle().toString();
         }
@@ -404,7 +408,8 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         context.put("absoluteReportName", new ReportNameProvider());
 
         context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
-        context.put("timestamp", timestampFrom(testOutcomesForTagType.getRootOutcomes()));
+        //context.put("timestamp", timestampFrom(testOutcomesForTagType.getRootOutcomes()));
+        context.put("timestamp", timestampFrom(currentTime()));
         context.put("requirementTypes",requirementsService.getRequirementTypes());
         addFormattersToContext(context);
         return context;
@@ -485,6 +490,16 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     public void setJiraPassword(String jiraPassword) {
         if (jiraPassword != null) {
             getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_PASSWORD, jiraPassword);
+        }
+    }
+
+    public List<String> getRequirementTypes() {
+        List<String> types = requirementsService.getRequirementTypes();
+        if (types.isEmpty()) {
+            LOGGER.warn("No requirement types found in the test outcome requirements: using default requirements");
+            return requirementsConfiguration.getRequirementTypes();
+        } else {
+            return types;
         }
     }
 }
