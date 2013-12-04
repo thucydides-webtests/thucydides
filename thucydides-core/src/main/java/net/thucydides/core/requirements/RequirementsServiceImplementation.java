@@ -1,6 +1,5 @@
 package net.thucydides.core.requirements;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -19,8 +18,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import static java.util.Collections.*;
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Collections.EMPTY_LIST;
 
 public class RequirementsServiceImplementation implements RequirementsService {
 
@@ -44,7 +48,7 @@ public class RequirementsServiceImplementation implements RequirementsService {
     @Override
     public List<Requirement> getRequirements() {
         if (requirements == null) {
-            requirements = Lists.newArrayList();
+            requirements = newArrayList();
             for (RequirementsTagProvider tagProvider : getRequirementsTagProviders()) {
                 LOGGER.info("Reading requirements from " + tagProvider);
                 requirements = tagProvider.getRequirements();
@@ -88,7 +92,7 @@ public class RequirementsServiceImplementation implements RequirementsService {
 
     private void indexChildRequirements(List<Requirement> ancestors, List<Requirement> children) {
         for (Requirement requirement : children) {
-            List<Requirement> requirementPath = Lists.newArrayList(ancestors);
+            List<Requirement> requirementPath = newArrayList(ancestors);
             requirementPath.add(requirement);
             requirementAncestors.put(requirement, ImmutableList.copyOf(requirementPath));
             LOGGER.info("Requirement ancestors for:" + requirement + " = " + requirementPath);
@@ -160,7 +164,7 @@ public class RequirementsServiceImplementation implements RequirementsService {
 
     @Override
     public List<String> getReleaseVersionsFor(TestOutcome testOutcome) {
-        List<String> releases = Lists.newArrayList(testOutcome.getVersions());
+        List<String> releases = newArrayList(testOutcome.getVersions());
         for (Requirement parentRequirement : getAncestorRequirementsFor(testOutcome)) {
             releases.addAll(parentRequirement.getReleaseVersions());
         }
@@ -193,17 +197,12 @@ public class RequirementsServiceImplementation implements RequirementsService {
     @Override
     public List<String> getRequirementTypes() {
         List<Requirement> requirements = getAllRequirements();
-        List<String> types = com.google.common.collect.Lists.newArrayList();
-        for (Requirement requirement : requirements) {
-            if (!types.contains(requirement.getType())) {
-                types.add(requirement.getType());
-            }
-        }
-        return types;
+        Set<String> typeSet = newHashSet(extract(requirements, on(Requirement.class).getType()));
+        return ImmutableList.copyOf(typeSet);
     }
 
     private List<List<String>> getReleaseVersionsFrom(List<Requirement> requirements) {
-        List<List<String>> releaseVersions = Lists.newArrayList();
+        List<List<String>> releaseVersions = newArrayList();
         for (Requirement requirement : requirements) {
             releaseVersions.add(requirement.getReleaseVersions());
             releaseVersions.addAll(getReleaseVersionsFrom(requirement.getChildren()));
@@ -226,7 +225,7 @@ public class RequirementsServiceImplementation implements RequirementsService {
         if (useDirectoryBasedRequirements) {
             return requirementsProviders;
         } else {
-            List<RequirementsTagProvider> activeRequirementsProviders = Lists.newArrayList();
+            List<RequirementsTagProvider> activeRequirementsProviders = newArrayList();
             for (RequirementsTagProvider provider : requirementsProviders) {
                 if (!(provider instanceof FileSystemRequirementsTagProvider)) {
                     activeRequirementsProviders.add(provider);
@@ -238,8 +237,8 @@ public class RequirementsServiceImplementation implements RequirementsService {
 
 
     private List<RequirementsTagProvider> reprioritizeProviders(List<RequirementsTagProvider> requirementsTagProviders) {
-        List<RequirementsTagProvider> lowPriorityProviders = Lists.newArrayList();
-        List<RequirementsTagProvider> prioritizedProviders = Lists.newArrayList();
+        List<RequirementsTagProvider> lowPriorityProviders = newArrayList();
+        List<RequirementsTagProvider> prioritizedProviders = newArrayList();
 
         for (RequirementsTagProvider provider : requirementsTagProviders) {
             if (LOW_PRIORITY_PROVIDERS.contains(provider.getClass().getCanonicalName())) {
@@ -253,7 +252,7 @@ public class RequirementsServiceImplementation implements RequirementsService {
     }
 
     public List<Requirement> getAllRequirements() {
-        List<Requirement> allRequirements = Lists.newArrayList();
+        List<Requirement> allRequirements = newArrayList();
         addRequirementsFrom(getRequirements(), allRequirements);
         return allRequirements;
     }

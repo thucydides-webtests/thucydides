@@ -12,6 +12,8 @@ import org.openqa.selenium.support.ByIdOrName;
 import org.openqa.selenium.support.FindBys;
 import org.openqa.selenium.support.pagefactory.Annotations;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 
 public class SmartAnnotations extends Annotations {
 
@@ -126,39 +128,46 @@ public class SmartAnnotations extends Annotations {
     }
 
     protected org.openqa.selenium.By buildByFromShortFindBy(FindBy myFindBy) {
-        if (!"".equals(myFindBy.className()))
+        if (isNotEmpty(myFindBy.className())) {
             return org.openqa.selenium.By.className(myFindBy.className());
-
-        if (!"".equals(myFindBy.css()))
+        }
+        if (isNotEmpty(myFindBy.css())) {
             return org.openqa.selenium.By.cssSelector(myFindBy.css());
-
-        if (!"".equals(myFindBy.id()))
+        }
+        if (isNotEmpty(myFindBy.id())) {
             return org.openqa.selenium.By.id(myFindBy.id());
-
-        if (!"".equals(myFindBy.linkText()))
+        }
+        if (isNotEmpty(myFindBy.linkText())) {
             return org.openqa.selenium.By.linkText(myFindBy.linkText());
-
-        if (!"".equals(myFindBy.name()))
+        }
+        if (isNotEmpty(myFindBy.name())) {
             return org.openqa.selenium.By.name(myFindBy.name());
+        }
+        if (isNotEmpty(myFindBy.ngModel())) {
+            return org.openqa.selenium.By.cssSelector("*[ng-model='" + myFindBy.ngModel() + "']");
+        }
 
-        if (!"".equals(myFindBy.partialLinkText()))
+        if (isNotEmpty(myFindBy.partialLinkText())) {
             return org.openqa.selenium.By.partialLinkText(myFindBy.partialLinkText());
-
-        if (!"".equals(myFindBy.tagName()))
+        }
+        if (isNotEmpty(myFindBy.tagName())) {
             return org.openqa.selenium.By.tagName(myFindBy.tagName());
+        }
 
-        if (!"".equals(myFindBy.xpath()))
+        if (isNotEmpty(myFindBy.xpath())) {
             return org.openqa.selenium.By.xpath(myFindBy.xpath());
+        }
 
-        if (!"".equals(myFindBy.sclocator()))
+        if (isNotEmpty(myFindBy.sclocator())) {
             return By.sclocator(myFindBy.sclocator());
-
-        if (!"".equals(myFindBy.jquery()))
+        }
+        if (isNotEmpty(myFindBy.jquery())) {
             return By.jquery(myFindBy.jquery());
-
+        }
         // Fall through
         return null;
     }
+
 
     private void assertValidFindBy(FindBy findBy) {
         if (findBy.how() != null) {
@@ -175,8 +184,8 @@ public class SmartAnnotations extends Annotations {
         if (!"".equals(findBy.id())) finders.add("id: " + findBy.id());
         if (!"".equals(findBy.linkText())) finders.add("link text: " + findBy.linkText());
         if (!"".equals(findBy.name())) finders.add("name: " + findBy.name());
-        if (!"".equals(findBy.partialLinkText()))
-            finders.add("partial link text: " + findBy.partialLinkText());
+        if (!"".equals(findBy.ngModel())) finders.add("ngModel: " + findBy.ngModel());
+        if (!"".equals(findBy.partialLinkText())) finders.add("partial link text: " + findBy.partialLinkText());
         if (!"".equals(findBy.tagName())) finders.add("tag name: " + findBy.tagName());
         if (!"".equals(findBy.xpath())) finders.add("xpath: " + findBy.xpath());
         if (!"".equals(findBy.sclocator())) finders.add("scLocator: " + findBy.sclocator());

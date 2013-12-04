@@ -88,6 +88,25 @@ class WhenListingAllKnownRequirements extends Specification {
             capabilityNames == ["Search feature"]
     }
 
+    def "should be able to get a list of all known requirements"() {
+        given:
+            def requirementsService = new RequirementsServiceImplementation()
+        when:
+            def allRequirements = requirementsService.getRequirements()
+        then:
+            allRequirements.size() > 0
+    }
+
+
+    def "should be able to get a list of all known requirement types"() {
+        given:
+            def requirementsService = new RequirementsServiceImplementation()
+        when:
+            def allRequirementTypes = requirementsService.getRequirementTypes()
+        then:
+            allRequirementTypes == ["story","feature","capability"]
+    }
+
     def newTemporaryRequirementsDirectory() {
         File requirementsDir= File.createTempFile("test-project","");
         if (requirementsDir.exists()) requirementsDir.delete();

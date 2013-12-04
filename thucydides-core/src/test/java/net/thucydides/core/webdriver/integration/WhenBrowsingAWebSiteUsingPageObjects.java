@@ -64,6 +64,9 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
         @net.thucydides.core.annotations.findby.FindBy(name = "specialField")
         public WebElementFacade extraWithExtendedFindBy;
 
+        @net.thucydides.core.annotations.findby.FindBy(ngModel = "angularField")
+        public WebElementFacade ngModelField;
+
         WebElementFacade checkbox() {
             return element(checkbox);
         }
@@ -323,6 +326,12 @@ public class WhenBrowsingAWebSiteUsingPageObjects {
     public void should_initialize_a_web_element_facade_by_extended_annotation() {
         assertNotNull(indexPage.extraWithExtendedFindBy );
         assertThat(indexPage.extraWithExtendedFindBy.getValue(), is("Special"));
+    }
+
+    @Test
+    public void should_initialize_a_web_element_facade_using_the_ngmodel_field() {
+        assertNotNull(indexPage.ngModelField);
+        assertThat(indexPage.ngModelField.getValue(), is("Model value"));
     }
 
 

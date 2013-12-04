@@ -18,6 +18,8 @@ public @interface FindBy{
 
   String name() default "";
 
+  String ngModel() default "";
+
   String className() default "";
 
   String css() default "";

@@ -91,7 +91,7 @@ public class SystemPropertiesConfiguration implements Configuration {
 
     public Configuration withEnvironmentVariables(EnvironmentVariables environmentVariables) {
         SystemPropertiesConfiguration copy = new SystemPropertiesConfiguration(environmentVariables.copy());
-        copy.outputDirectory = outputDirectory;
+        copy.outputDirectory = null; // Reset to be reloaded from the System properties
         copy.defaultBaseUrl = defaultBaseUrl;
         return copy;
     }

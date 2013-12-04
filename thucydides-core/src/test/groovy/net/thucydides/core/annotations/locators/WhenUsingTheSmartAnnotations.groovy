@@ -26,6 +26,9 @@ class WhenUsingTheSmartAnnotations extends Specification {
         @FindBy(name ="someName")
         public WebElement byName;
 
+        @FindBy(ngModel="someModelName")
+        public WebElement byNgModelName;
+
         @FindBy(linkText = "linkText")
         public WebElement byLinkText;
 
@@ -89,18 +92,19 @@ class WhenUsingTheSmartAnnotations extends Specification {
         then:
             by.class == expectedType
         where:
-        field                                               | expectedType
-        AnnotatedPageSample.class.getField("byId")          | By.ById
-        AnnotatedPageSample.class.getField("byIdOrName")    | ByIdOrName
-        AnnotatedPageSample.class.getField("byCss")         | By.ByCssSelector
-        AnnotatedPageSample.class.getField("byName")        | By.ByName
-        AnnotatedPageSample.class.getField("byClassName")   | By.ByClassName
-        AnnotatedPageSample.class.getField("byLinkText")    | By.ByLinkText
-        AnnotatedPageSample.class.getField("byPartialLinkText")   | By.ByPartialLinkText
-        AnnotatedPageSample.class.getField("byXpath")       | By.ByXPath
-        AnnotatedPageSample.class.getField("byTagname")     | By.ByTagName
-        AnnotatedPageSample.class.getField("byJQuery")      | net.thucydides.core.annotations.findby.By.ByjQuerySelector
-        AnnotatedPageSample.class.getField("bySCLocator")   | net.thucydides.core.annotations.findby.By.ByScLocator
+        field                                                   | expectedType
+        AnnotatedPageSample.class.getField("byId")              | By.ById
+        AnnotatedPageSample.class.getField("byIdOrName")        | ByIdOrName
+        AnnotatedPageSample.class.getField("byCss")             | By.ByCssSelector
+        AnnotatedPageSample.class.getField("byName")            | By.ByName
+        AnnotatedPageSample.class.getField("byClassName")       | By.ByClassName
+        AnnotatedPageSample.class.getField("byLinkText")        | By.ByLinkText
+        AnnotatedPageSample.class.getField("byPartialLinkText") | By.ByPartialLinkText
+        AnnotatedPageSample.class.getField("byXpath")           | By.ByXPath
+        AnnotatedPageSample.class.getField("byTagname")         | By.ByTagName
+        AnnotatedPageSample.class.getField("byJQuery")          | net.thucydides.core.annotations.findby.By.ByjQuerySelector
+        AnnotatedPageSample.class.getField("bySCLocator")       | net.thucydides.core.annotations.findby.By.ByScLocator
+        AnnotatedPageSample.class.getField("byNgModelName")     | By.ByCssSelector
     }
 
 
