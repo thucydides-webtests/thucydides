@@ -5,6 +5,7 @@
     <title>Home</title>
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="css/core.css"/>
+    <link type="text/css" media="screen" href="css/screen.css" rel="Stylesheet" />
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
 
     <!--[if IE]>
@@ -17,12 +18,6 @@
 
     <link type="text/css" href="jqueryui/css/start/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
     <script type="text/javascript" src="jqueryui/js/jquery-ui-1.8.18.custom.min.js"></script>
-
-    <style type="text/css" media="screen">
-        .dataTables_info { padding-top: 0; }
-        .dataTables_paginate { padding-top: 0; }
-        .css_right { float: right; }
-    </style>
 
     <script class="code" type="text/javascript">$(document).ready(function () {
 
