@@ -4,11 +4,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.228-SNAPSHOT</version>
+        <version>0.9.229-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-core</artifactId>
-    <version>0.9.228-SNAPSHOT</version>
+    <version>0.9.229-SNAPSHOT</version>
     <name>thucydides-core</name>
     <properties>
         <root.package>net.thucydides.core</root.package>
@@ -50,6 +50,11 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -217,11 +222,6 @@
             <artifactId>jsonassert</artifactId>
             <version>1.2.0</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>org.freemarker</groupId>

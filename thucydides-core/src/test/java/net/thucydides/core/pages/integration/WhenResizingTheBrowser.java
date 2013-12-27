@@ -61,7 +61,7 @@ public class WhenResizingTheBrowser {
         page.open();
 
         int width = ((Long)(((JavascriptExecutor)driver).executeScript("return window.innerWidth"))).intValue();
-        assertThat(width, allOf(lessThanOrEqualTo(400), greaterThan(380)));
+        assertThat(width, allOf(lessThanOrEqualTo(450), greaterThan(350)));
     }
 
 

@@ -95,7 +95,7 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     public void should_display_the_date_and_time_of_tests_on_the_home_page() throws Exception {
         File report = new File(outputDirectory,"index.html");
         driver.get(urlFor(report));
-        assertThat(driver.findElement(By.cssSelector(".date-and-time")).getText(), containsString("01-2013"));
+        assertThat(driver.findElement(By.cssSelector(".date-and-time")).isDisplayed(), is(true));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
 
         File report = new File(outputDirectory, expectedSuccessReport);
         driver.get(urlFor(report));
-        assertThat(driver.findElement(By.cssSelector(".date-and-time")).getText(), containsString("01-2013"));
+        assertThat(driver.findElement(By.cssSelector(".date-and-time")).isDisplayed(), is(true));
     }
 
     private String digest(String value) {

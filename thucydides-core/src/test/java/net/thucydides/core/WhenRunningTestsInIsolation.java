@@ -1,5 +1,6 @@
 package net.thucydides.core;
 
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Step;
@@ -13,10 +14,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
 
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertTrue;
 
 public class WhenRunningTestsInIsolation {
 
@@ -182,6 +186,40 @@ public class WhenRunningTestsInIsolation {
         Thucydides.initialize(sampleTestClass);
 
         assertThat(Thucydides.getStepListener(), is(not(nullValue())));
+
+    }
+
+    enum StatusLevel { BRONZE, SILVER, GOLD, PLATINUM }
+
+    class FrequentFlyerMember {
+        int age;
+        String name;
+        StatusLevel statusLevel;
+
+
+        FrequentFlyerMember(String name,int age,StatusLevel statusLevel) {
+            this.age = age;
+            this.name = name;
+            this.statusLevel = statusLevel;
+        }
+    }
+
+    @Test
+    public void foo() {
+
+        List<FrequentFlyerMember> childFliers = ImmutableList.of(new FrequentFlyerMember("Joe",10, StatusLevel.PLATINUM),
+                                                                 new FrequentFlyerMember("Jill", 7, StatusLevel.GOLD),
+                                                                 new FrequentFlyerMember("Jane", 12, StatusLevel.GOLD));
+
+        for(FrequentFlyerMember member : childFliers) {
+            assertTrue(member.age < 18
+                       && member.statusLevel == StatusLevel.GOLD
+                       || member.statusLevel == StatusLevel.PLATINUM);
+        }
+
+
+
+
 
     }
 
