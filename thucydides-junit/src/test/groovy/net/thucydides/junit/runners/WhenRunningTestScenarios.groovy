@@ -90,7 +90,7 @@ class WhenRunningTestScenarios extends Specification {
         outcomes.size() == 3
         results["joes_test"].result == SUCCESS
         results["jills_test"].result == SUCCESS
-        results["no_ones_test"].result == PENDING
+        results["no_ones_test"].result == SUCCESS
 
     }
 
@@ -187,11 +187,11 @@ class WhenRunningTestScenarios extends Specification {
 
         where:
         testclass                               | happy_day_result   | edge_case_1_result | edge_case_2_result
-        SamplePassingScenarioWithPendingTests   | SUCCESS | PENDING | PENDING
-        SamplePassingScenarioWithIgnoredTests   | SUCCESS | IGNORED | IGNORED
-        SamplePassingScenarioWithEmptyTests     | SUCCESS | PENDING | PENDING
-        MockOpenStaticDemoPageWithFailureSample | FAILURE | SUCCESS | SUCCESS
-        MockOpenPageWithWebdriverErrorSample    | ERROR   | SUCCESS | SUCCESS
+        SamplePassingScenarioWithPendingTests   | SUCCESS            | PENDING | PENDING
+        SamplePassingScenarioWithIgnoredTests   | SUCCESS            | IGNORED | IGNORED
+        SamplePassingScenarioWithEmptyTests     | SUCCESS            | SUCCESS | SUCCESS
+        MockOpenStaticDemoPageWithFailureSample | FAILURE            | SUCCESS | SUCCESS
+        MockOpenPageWithWebdriverErrorSample    | ERROR              | SUCCESS | SUCCESS
     }
 
     def "failing tests with no steps should still record the error"() {

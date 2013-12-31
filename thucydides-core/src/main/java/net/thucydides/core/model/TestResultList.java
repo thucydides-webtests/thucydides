@@ -37,7 +37,7 @@ public class TestResultList {
 
     public TestResult getOverallResult() {
         if (testResults.isEmpty()) {
-            return PENDING;
+            return SUCCESS;
         }
 
         if (testResults.contains(FAILURE)) {

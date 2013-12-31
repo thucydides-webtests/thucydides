@@ -108,7 +108,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
     }
 
     @Test
-    public void tests_with_no_steps_should_be_marked_as_pending() throws InitializationError {
+    public void tests_with_no_steps_should_be_marked_as_successful() throws InitializationError {
 
         ThucydidesRunner runner = new ThucydidesRunner(SamplePassingNonWebScenarioWithEmptyTests.class);
         runner.run(new RunNotifier());
@@ -117,7 +117,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         assertThat(executedSteps.size(), is(3));
 
         assertThat(inTheTesOutcomes(executedSteps).theResultFor("happy_day_scenario"), is(TestResult.SUCCESS));
-        assertThat(inTheTesOutcomes(executedSteps).theResultFor("edge_case_1"), is(TestResult.PENDING));
+        assertThat(inTheTesOutcomes(executedSteps).theResultFor("edge_case_1"), is(TestResult.SUCCESS));
         assertThat(inTheTesOutcomes(executedSteps).theResultFor("edge_case_2"), is(TestResult.PENDING));
 
     }

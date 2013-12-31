@@ -1,5 +1,6 @@
 package net.thucydides.samples;
 
+import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class SamplePassingNonWebScenarioWithEmptyTests {
     @Test
     public void edge_case_1() {}
 
-    @Test
+    @Pending @Test
     public void edge_case_2() {}
 }
 

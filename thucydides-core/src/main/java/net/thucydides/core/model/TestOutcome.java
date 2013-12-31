@@ -1158,7 +1158,7 @@ public class TestOutcome {
     }
 
     public Boolean isPending() {
-        return ((getResult() == PENDING) || (getStepCount() == 0));
+        return (getResult() == PENDING); //((getResult() == PENDING) || (getStepCount() == 0));
     }
 
     public Boolean isSkipped() {

@@ -58,7 +58,7 @@ public class RequirementOutcome {
      * A Requirement is considered complete if it has associated tests to all of the tests are successful.
      */
     public boolean isComplete() {
-        return getTestOutcomes().getResult() == TestResult.SUCCESS && allChildRequirementsAreSuccessful();
+        return (!getTestOutcomes().getTests().isEmpty()) && getTestOutcomes().getResult() == TestResult.SUCCESS && allChildRequirementsAreSuccessful();
     }
 
     public boolean isFailure() {
@@ -71,7 +71,7 @@ public class RequirementOutcome {
 
 
     public boolean isPending() {
-        return getTestOutcomes().getResult() == TestResult.PENDING || anyChildRequirementsArePending();
+        return (getTestOutcomes().getTestCount() == 0) || getTestOutcomes().getResult() == TestResult.PENDING || anyChildRequirementsArePending();
     }
 
     public int getFlattenedRequirementCount() {

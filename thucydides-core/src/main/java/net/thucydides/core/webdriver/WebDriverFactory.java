@@ -461,8 +461,16 @@ public class WebDriverFactory {
 
     private WebDriver chromeDriver() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         DesiredCapabilities capabilities = chromeCapabilities();
+        updateChromePathIfSpecifiedIn(environmentVariables);
         return webdriverInstanceFactory.newChromeDriver(enhancedCapabilities(capabilities));
 
+    }
+
+    private void updateChromePathIfSpecifiedIn(EnvironmentVariables environmentVariables) {
+        String environmentDefinedChromeDriverPath = environmentVariables.getProperty(ThucydidesSystemProperty.CHROME_DRIVER_PATH);
+        if (StringUtils.isNotEmpty(environmentDefinedChromeDriverPath)) {
+            System.setProperty(ThucydidesSystemProperty.CHROME_DRIVER_PATH.toString(), environmentDefinedChromeDriverPath);
+        }
     }
 
     private DesiredCapabilities chromeCapabilities() {

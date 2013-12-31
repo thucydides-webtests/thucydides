@@ -523,10 +523,10 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     @Test
-    public void a_test_case_with_no_steps_should_be_considered_pending() {
-        assertThat(testOutcome.getResult(), is(PENDING));
-        assertThat(testOutcome.isSuccess(), is(false));
-        assertThat(testOutcome.isPending(), is(true));
+    public void a_test_case_with_no_steps_should_be_considered_successful_if_no_exceptions_occur() {
+        assertThat(testOutcome.getResult(), is(SUCCESS));
+        assertThat(testOutcome.isSuccess(), is(true));
+        assertThat(testOutcome.isPending(), is(false));
 
     }
 
@@ -665,12 +665,6 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forAPendingTestStepCalled("Step 2"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 4"));
-
-        assertThat(testOutcome.getResult(), is(PENDING));
-    }
-
-    @Test
-    public void the_acceptance_test_case_is_considered_pending_if_has_no_steps() {
 
         assertThat(testOutcome.getResult(), is(PENDING));
     }

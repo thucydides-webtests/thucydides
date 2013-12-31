@@ -45,6 +45,11 @@ public enum ThucydidesSystemProperty {
     REMOTE_DRIVER("webdriver.remote.driver"),
 
     /**
+     * Path to the Chrome driver, if it is not on the system path.
+     */
+    CHROME_DRIVER_PATH("webdriver.chrome.driver"),
+
+    /**
      * A unique identifier for the project under test, used to record test statistics.
      */
     PROJECT_KEY("thucydides.project.key"),
