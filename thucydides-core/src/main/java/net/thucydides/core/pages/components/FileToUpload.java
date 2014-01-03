@@ -3,6 +3,8 @@ package net.thucydides.core.pages.components;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.LocalFileDetector;
+import org.openqa.selenium.remote.RemoteWebElement;
 
 import java.io.File;
 import java.net.URL;
@@ -16,6 +18,7 @@ public class FileToUpload {
     static final String WINDOWS_PATH_PATTERN = "^[A-Z]:\\\\.*";
 
     private static Pattern fullWindowsPath = Pattern.compile(WINDOWS_PATH_PATTERN);
+    private boolean remoteDriver = false;
 
     public FileToUpload(final String filename) {
         if (isOnTheClasspath(filename)) {
@@ -62,7 +65,25 @@ public class FileToUpload {
 
 
     public void to(final WebElement uploadFileField) {
-        uploadFileField.sendKeys(osSpecificPathOf(filename));
+        if (isRemoteDriver()) {
+            LocalFileDetector detector = new LocalFileDetector();
+            File localFile = detector.getLocalFile(osSpecificPathOf(filename));
+            if (uploadFileField instanceof RemoteWebElement)
+                ((RemoteWebElement) uploadFileField).setFileDetector(detector);
+            String absolutePath = localFile.getAbsolutePath();
+            uploadFileField.sendKeys(absolutePath);
+        } else {
+            uploadFileField.sendKeys(osSpecificPathOf(filename));
+        }
+    }
+
+    public boolean isRemoteDriver() {
+        return remoteDriver;
+    }
+
+    public FileToUpload useRemoteDriver(boolean remoteDriver) {
+        this.remoteDriver = remoteDriver;
+        return this;
     }
 
 

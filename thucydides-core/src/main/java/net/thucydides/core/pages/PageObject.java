@@ -2,6 +2,7 @@ package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Predicate;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.WhenPageOpens;
 import net.thucydides.core.fluent.ThucydidesFluentAdapter;
 import net.thucydides.core.guice.Injectors;
@@ -133,7 +134,11 @@ public abstract class PageObject {
     }
 
     public FileToUpload upload(final String filename) {
-        return new FileToUpload(filename);
+        return new FileToUpload(filename).useRemoteDriver(isDefinedRemoteUrl());
+    }
+
+    private boolean isDefinedRemoteUrl() {
+        return ThucydidesSystemProperty.REMOTE_URL.isDefinedIn(pages.getConfiguration().getEnvironmentVariables());
     }
 
     private void setupPageUrls() {
