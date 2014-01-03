@@ -1,13 +1,13 @@
 package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.pages.PageObject;
+import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.components.FileToUpload;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.FindBy;
 
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.verify;
 
 public class WhenUploadingFiles {
 
-    public class UploadPage extends PageObject {
+    public static class UploadPage extends PageObject {
 
         @FindBy(name = "upload")
         public WebElement uploadField;
@@ -38,10 +38,12 @@ public class WhenUploadingFiles {
     }
 
     private static WebDriver driver;
+    private static Pages pageFactory;
 
     @BeforeClass
     public static void open_local_static_site() {
         driver = new HtmlUnitDriver();
+        pageFactory = new Pages(driver);
         openStaticTestSite(driver);
     }
 
@@ -59,7 +61,7 @@ public class WhenUploadingFiles {
 
     @Test
     public void should_upload_a_file_from_the_resources_directory() {
-        UploadPage uploadPage = new UploadPage(driver);
+        UploadPage uploadPage = pageFactory.get(UploadPage.class);
 
         uploadPage.uploadFile("uploads/readme.txt");
 
@@ -69,7 +71,7 @@ public class WhenUploadingFiles {
 
     @Test
     public void should_upload_a_file_from_the_classpath() {
-        UploadPage uploadPage = new UploadPage(driver);
+        UploadPage uploadPage = pageFactory.get(UploadPage.class);
 
         uploadPage.uploadFile("/report-resources/css/core.css");
 
@@ -128,16 +130,16 @@ public class WhenUploadingFiles {
         File currentDirectory = new File(System.getProperty("user.dir"));
         File targetDirectory = new File(currentDirectory, "target");
         File uploadedFile = new File(targetDirectory, "upload.txt");
-        writeTextToFile("Hi there", uploadedFile);
+        writeTextToFile(uploadedFile);
 
-        UploadPage uploadPage = new UploadPage(driver);
+        UploadPage uploadPage = pageFactory.get(UploadPage.class);
 
         uploadPage.uploadFile("target/upload.txt");
 
         assertThat(uploadPage.uploadField.getAttribute("value"), containsString("upload.txt"));
     }
 
-    private void writeTextToFile(String text, File uploadedFile) throws IOException {
+    private void writeTextToFile(File uploadedFile) throws IOException {
         PrintWriter out = new PrintWriter(uploadedFile);
         out.close();
     }
