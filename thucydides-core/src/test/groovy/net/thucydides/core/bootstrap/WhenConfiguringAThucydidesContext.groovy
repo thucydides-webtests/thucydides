@@ -1,9 +1,9 @@
 package net.thucydides.core.bootstrap
 
-import spock.lang.Specification
+import com.google.common.base.Optional
 import net.thucydides.core.steps.Listeners
 import net.thucydides.core.steps.StepEventBus
-import com.google.common.base.Optional
+import spock.lang.Specification
 
 class WhenConfiguringAThucydidesContext extends Specification {
 

@@ -1,5 +1,4 @@
-package net.thucydides.junit.runners;
-
+package net.thucydides.junit.runners
 
 import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.core.steps.StepFailureException
@@ -8,21 +7,15 @@ import net.thucydides.core.webdriver.SystemPropertiesConfiguration
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager
 import net.thucydides.core.webdriver.WebDriverFactory
 import net.thucydides.core.webdriver.WebdriverInstanceFactory
+import net.thucydides.samples.*
 import org.junit.runner.notification.RunNotifier
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import spock.lang.Specification
-import net.thucydides.samples.*
 import spock.lang.Unroll
 
-import static net.thucydides.core.model.TestResult.ERROR
-import static net.thucydides.core.model.TestResult.FAILURE
-import static net.thucydides.core.model.TestResult.IGNORED
-import static net.thucydides.core.model.TestResult.PENDING
-import static net.thucydides.core.model.TestResult.SKIPPED
-import static net.thucydides.core.model.TestResult.SUCCESS
+import static net.thucydides.core.model.TestResult.*
 import static net.thucydides.junit.runners.TestOutcomeChecks.resultsFrom
-import static net.thucydides.junit.util.FileFormating.digest
 
 class WhenRunningTestScenarios extends Specification {
 

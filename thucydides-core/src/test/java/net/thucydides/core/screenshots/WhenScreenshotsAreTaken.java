@@ -2,7 +2,6 @@ package net.thucydides.core.screenshots;
 
 import com.google.common.base.Optional;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.resources.FileResources;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;

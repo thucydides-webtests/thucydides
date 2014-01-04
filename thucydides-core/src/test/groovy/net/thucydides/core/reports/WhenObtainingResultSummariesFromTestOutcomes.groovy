@@ -2,6 +2,7 @@ package net.thucydides.core.reports
 
 import net.thucydides.core.model.TestResult
 import spock.lang.Specification
+
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled
 
 class WhenObtainingResultSummariesFromTestOutcomes extends Specification {

@@ -1,14 +1,9 @@
 package net.thucydides.core.annotations.locators;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.WebElementFacadeImpl;
 import net.thucydides.core.steps.StepEventBus;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -16,6 +11,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.SlowLoadableComponent;
 import org.openqa.selenium.support.ui.SystemClock;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 public class SmartAjaxElementLocator extends SmartElementLocator {
 	protected final int timeOutInSeconds;

@@ -5,14 +5,14 @@ import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.util.EnvironmentVariables;
 
 import static net.thucydides.core.ThucydidesSystemProperty.PROJECT_NAME;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_STEP_DETAILS;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_MANUAL_TESTS;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_RELEASES;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_PROGRESS;
 import static net.thucydides.core.ThucydidesSystemProperty.SHOW_HISTORY;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_TAG_MENUS;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_RELATED_TAGS;
+import static net.thucydides.core.ThucydidesSystemProperty.SHOW_MANUAL_TESTS;
 import static net.thucydides.core.ThucydidesSystemProperty.SHOW_PIE_CHARTS;
+import static net.thucydides.core.ThucydidesSystemProperty.SHOW_PROGRESS;
+import static net.thucydides.core.ThucydidesSystemProperty.SHOW_RELATED_TAGS;
+import static net.thucydides.core.ThucydidesSystemProperty.SHOW_RELEASES;
+import static net.thucydides.core.ThucydidesSystemProperty.SHOW_STEP_DETAILS;
+import static net.thucydides.core.ThucydidesSystemProperty.SHOW_TAG_MENUS;
 
 /**
  * Encapsulates user-specified formatting options for the generated reports.

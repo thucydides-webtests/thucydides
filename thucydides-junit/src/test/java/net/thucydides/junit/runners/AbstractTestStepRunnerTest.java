@@ -1,6 +1,5 @@
 package net.thucydides.junit.runners;
 
-import com.google.inject.Module;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.util.MockEnvironmentVariables;

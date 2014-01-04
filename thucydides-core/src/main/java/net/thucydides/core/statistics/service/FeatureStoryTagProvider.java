@@ -1,7 +1,6 @@
 package net.thucydides.core.statistics.service;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
@@ -11,8 +10,6 @@ import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.EnvironmentVariables;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**

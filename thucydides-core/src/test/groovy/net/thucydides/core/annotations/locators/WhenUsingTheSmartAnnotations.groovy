@@ -2,7 +2,6 @@ package net.thucydides.core.annotations.locators
 
 import net.thucydides.core.annotations.findby.FindBy
 import net.thucydides.core.annotations.findby.How
-import net.thucydides.core.webdriver.jquery.ByJQuery
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ByIdOrName

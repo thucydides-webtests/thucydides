@@ -4,9 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-
 import net.thucydides.core.webdriver.WebDriverFacade;
-
 import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.Field;

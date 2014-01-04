@@ -1,7 +1,6 @@
 package net.thucydides.core.geometry;
 
 import com.google.common.base.Optional;
-import com.google.inject.binder.ConstantBindingBuilder;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

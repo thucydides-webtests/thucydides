@@ -1,6 +1,5 @@
 package net.thucydides.core.webdriver
 
-import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import sample.page.TestPage
 import spock.lang.Ignore

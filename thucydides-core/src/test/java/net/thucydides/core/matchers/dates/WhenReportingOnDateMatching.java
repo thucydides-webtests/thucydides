@@ -2,7 +2,6 @@ package net.thucydides.core.matchers.dates;
 
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.junit.Test;

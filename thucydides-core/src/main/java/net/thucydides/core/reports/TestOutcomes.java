@@ -17,13 +17,10 @@ import net.thucydides.core.model.TestType;
 import net.thucydides.core.model.formatters.TestCoverageFormatter;
 import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.model.Requirement;
-import net.thucydides.core.requirements.model.RequirementsConfiguration;
-import net.thucydides.core.requirements.reports.RequirementsPercentageFormatter;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
-import org.hamcrest.core.Is;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -33,7 +30,6 @@ import java.util.List;
 import java.util.Set;
 
 import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.count;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;

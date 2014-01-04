@@ -2,7 +2,6 @@ package net.thucydides.core.pages;
 
 import net.thucydides.core.scheduling.NormalFluentWait;
 import net.thucydides.core.scheduling.ThucydidesFluentWait;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
@@ -21,8 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static com.google.common.collect.Lists.reverse;
 
 /**
  * A page view that handles checking and waiting for element visibility.

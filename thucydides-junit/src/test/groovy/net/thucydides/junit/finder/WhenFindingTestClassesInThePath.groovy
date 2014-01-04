@@ -4,7 +4,6 @@ import spock.lang.Specification
 import net.thucydides.junit.sampletests.thucydidestests.SampleTestCase
 import net.thucydides.junit.sampletests.thucydidestests.SampleDataDrivenTestCase
 import net.thucydides.junit.sampletests.thucydidestests.SampleNonThucydidesTestCase
-import net.thucydides.core.reflection.ClassFinder
 
 class WhenFindingTestClassesInThePath extends Specification {
 

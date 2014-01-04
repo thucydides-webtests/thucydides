@@ -2,7 +2,6 @@ package net.thucydides.core.annotations;
 
 
 import net.thucydides.core.webdriver.WebDriverFacade;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;

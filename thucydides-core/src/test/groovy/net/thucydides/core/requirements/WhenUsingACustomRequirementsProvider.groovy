@@ -1,7 +1,7 @@
 package net.thucydides.core.requirements
 
-import spock.lang.Specification
 import net.thucydides.core.statistics.service.ClasspathTagProviderService
+import spock.lang.Specification
 
 class WhenUsingACustomRequirementsProvider extends Specification {
 

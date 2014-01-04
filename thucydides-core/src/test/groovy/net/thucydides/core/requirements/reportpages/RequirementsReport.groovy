@@ -1,11 +1,11 @@
 package net.thucydides.core.requirements.reportpages
 
-import net.thucydides.core.pages.WebElementFacade
-import org.openqa.selenium.WebDriver
 import net.thucydides.core.pages.PageObject
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import net.thucydides.core.pages.WebElementFacade
 import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
 /**
  * Models the capabilities report page for testing purposes

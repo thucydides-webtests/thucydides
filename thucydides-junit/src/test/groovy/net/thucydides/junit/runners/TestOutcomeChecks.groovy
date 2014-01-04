@@ -1,7 +1,6 @@
 package net.thucydides.junit.runners
 
 import net.thucydides.core.model.TestOutcome
-import net.thucydides.core.model.TestResult
 
 class TestOutcomeChecks {
 

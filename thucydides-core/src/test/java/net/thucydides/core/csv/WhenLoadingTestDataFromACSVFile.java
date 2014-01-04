@@ -1,11 +1,9 @@
 package net.thucydides.core.csv;
 
 import net.thucydides.core.util.ExtendedTemporaryFolder;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.BufferedWriter;
 import java.io.File;

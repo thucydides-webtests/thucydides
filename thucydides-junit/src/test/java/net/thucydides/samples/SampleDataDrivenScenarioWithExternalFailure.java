@@ -6,7 +6,6 @@ import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.runners.ThucydidesParameterizedRunner;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -17,7 +16,6 @@ import java.util.Collection;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(ThucydidesParameterizedRunner.class)
 public class SampleDataDrivenScenarioWithExternalFailure {

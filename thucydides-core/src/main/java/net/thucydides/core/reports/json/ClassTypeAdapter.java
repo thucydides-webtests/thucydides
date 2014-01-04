@@ -10,8 +10,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import net.thucydides.core.annotations.Issue;
-import net.thucydides.core.annotations.Issues;
 import net.thucydides.core.annotations.TestAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

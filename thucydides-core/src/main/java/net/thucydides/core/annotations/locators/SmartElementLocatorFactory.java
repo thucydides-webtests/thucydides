@@ -1,10 +1,10 @@
 package net.thucydides.core.annotations.locators;
 
-import java.lang.reflect.Field;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
+
+import java.lang.reflect.Field;
 
 public final class SmartElementLocatorFactory implements ElementLocatorFactory {
 	  private final WebDriver webDriver;

@@ -4,9 +4,6 @@ import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.model.Screenshot;
 import org.apache.commons.io.FileUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 

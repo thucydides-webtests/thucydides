@@ -4,7 +4,6 @@ import net.thucydides.core.annotations.Step;
 import net.thucydides.junit.spring.samples.dao.GizmoDao;
 import net.thucydides.junit.spring.samples.service.BazingaService;
 import net.thucydides.junit.spring.samples.service.GizmoService;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;

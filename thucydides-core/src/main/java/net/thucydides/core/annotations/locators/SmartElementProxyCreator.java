@@ -1,15 +1,14 @@
 package net.thucydides.core.annotations.locators;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
-import org.openqa.selenium.support.pagefactory.FieldDecorator;
-
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.ElementLocatorFactorySelector;
 import net.thucydides.core.webdriver.ElementProxyCreator;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
+import org.openqa.selenium.support.pagefactory.FieldDecorator;
 
 public class SmartElementProxyCreator implements ElementProxyCreator {
 

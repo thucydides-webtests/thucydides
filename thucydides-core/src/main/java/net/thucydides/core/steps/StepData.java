@@ -1,6 +1,5 @@
 package net.thucydides.core.steps;
 
-import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.Lists;
 import net.thucydides.core.csv.CSVTestDataSource;
 import net.thucydides.core.csv.TestDataSource;
@@ -11,8 +10,6 @@ import net.thucydides.core.util.EnvironmentVariables;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import static ch.lambdaj.Lambda.convert;
 
 /**
  * Data-driven test step execution.

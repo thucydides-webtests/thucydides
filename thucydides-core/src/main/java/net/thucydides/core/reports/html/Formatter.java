@@ -10,13 +10,10 @@ import net.thucydides.core.reports.renderer.Asciidoc;
 import net.thucydides.core.reports.renderer.MarkupRenderer;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.AggregateTranslator;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.apache.commons.lang3.text.translate.LookupTranslator;
-
-import static org.asciidoctor.Asciidoctor.Factory.create;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;

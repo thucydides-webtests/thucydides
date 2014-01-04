@@ -13,10 +13,6 @@ import net.thucydides.core.reports.history.ProgressSnapshot;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.util.Inflector;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.joda.time.DateTime;
 
 import java.io.File;
@@ -26,8 +22,6 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static ch.lambdaj.Lambda.filter;
 
 public class HtmlProgressReporter extends HtmlReporter {
 

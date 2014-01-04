@@ -1,16 +1,15 @@
 package net.thucydides.core.pages;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import net.thucydides.core.annotations.ImplementedBy;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.Locatable;
 import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.support.ui.Wait;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @ImplementedBy(WebElementFacadeImpl.class)
 public interface WebElementFacade extends WebElement, WrapsElement, Locatable, WebElementState {

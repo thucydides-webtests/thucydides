@@ -1,6 +1,5 @@
 package net.thucydides.core.reports.html;
 
-import com.beust.jcommander.internal.Lists;
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;

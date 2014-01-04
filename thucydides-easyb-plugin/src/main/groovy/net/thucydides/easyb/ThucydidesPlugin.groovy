@@ -1,7 +1,7 @@
-package net.thucydides.easyb;
-
+package net.thucydides.easyb
 
 import com.google.common.collect.ImmutableList
+import net.thucydides.core.batches.BatchManager
 import net.thucydides.core.guice.Injectors
 import net.thucydides.core.model.Story
 import net.thucydides.core.model.TestOutcome
@@ -10,10 +10,8 @@ import net.thucydides.core.reports.AcceptanceTestReporter
 import net.thucydides.core.reports.ReportService
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter
-import net.thucydides.core.steps.StepEventBus
-import net.thucydides.core.steps.StepFactory
-import net.thucydides.core.steps.StepListener
-import net.thucydides.core.steps.StepPublisher
+import net.thucydides.core.steps.*
+import net.thucydides.core.util.Inflector
 import net.thucydides.core.webdriver.Configuration
 import net.thucydides.core.webdriver.WebdriverManager
 import org.easyb.listener.ListenerFactory
@@ -21,12 +19,9 @@ import org.easyb.plugin.BasePlugin
 import org.openqa.selenium.WebDriver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import static net.thucydides.easyb.StepName.defaultNameOf
-import net.thucydides.core.batches.BatchManager
+
 import static net.thucydides.core.Thucydides.initializeTestSession
-import net.thucydides.core.steps.Listeners
-import net.thucydides.core.steps.BaseStepListener
-import net.thucydides.core.util.Inflector
+import static net.thucydides.easyb.StepName.defaultNameOf
 
 public class ThucydidesPlugin extends BasePlugin {
 

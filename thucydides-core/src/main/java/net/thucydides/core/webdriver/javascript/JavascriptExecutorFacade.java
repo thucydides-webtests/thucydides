@@ -1,20 +1,19 @@
 package net.thucydides.core.webdriver.javascript;
 
-import java.io.IOException;
-import java.util.List;
-
-import net.thucydides.core.pages.jquery.JQueryEnabledPage;
-import net.thucydides.core.webdriver.WebDriverFacade;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import net.thucydides.core.pages.jquery.JQueryEnabledPage;
+import net.thucydides.core.webdriver.WebDriverFacade;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+
+import java.io.IOException;
+import java.util.List;
 
 import static net.thucydides.core.webdriver.javascript.JavascriptSupport.javascriptIsSupportedIn;
 

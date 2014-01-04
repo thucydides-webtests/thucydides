@@ -3,8 +3,6 @@ package net.thucydides.core.pages;
 import com.google.common.base.Optional;
 import net.thucydides.core.annotations.Fields;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.reflection.FieldFinder;
-import net.thucydides.core.reflection.FieldSetter;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
@@ -18,7 +16,6 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 

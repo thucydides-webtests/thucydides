@@ -1,25 +1,21 @@
 package net.thucydides.core.requirements.integration
 
 import com.google.common.collect.Lists
-import net.thucydides.core.model.Story
-import net.thucydides.core.model.TestOutcome
-import net.thucydides.core.model.TestTag
+import net.thucydides.core.issues.IssueTracking
+import net.thucydides.core.model.*
 import net.thucydides.core.reports.TestOutcomes
+import net.thucydides.core.reports.history.DateProvider
+import net.thucydides.core.reports.history.TestHistory
+import net.thucydides.core.reports.html.HtmlAggregateStoryReporter
+import net.thucydides.core.reports.html.HtmlRequirementsReporter
+import net.thucydides.core.requirements.FileSystemRequirementsTagProvider
+import net.thucydides.core.requirements.model.Requirement
 import net.thucydides.core.requirements.reports.RequirementsOutcomes
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory
-import spock.lang.Specification
-import net.thucydides.core.reports.html.HtmlRequirementsReporter
-import net.thucydides.core.requirements.reportpages.RequirementsReport
-import net.thucydides.core.issues.IssueTracking
-import net.thucydides.core.model.TestStep
-import net.thucydides.core.model.TestResult
-import net.thucydides.core.reports.html.HtmlAggregateStoryReporter
-import net.thucydides.core.requirements.model.Requirement
-import net.thucydides.core.requirements.reportpages.ProgressReport
-import net.thucydides.core.reports.history.TestHistory
-import net.thucydides.core.reports.history.DateProvider
 import org.joda.time.DateTime
-import net.thucydides.core.requirements.FileSystemRequirementsTagProvider
+import spock.lang.Specification
+import net.thucydides.core.requirements.reportpages.RequirementsReport
+import net.thucydides.core.requirements.reportpages.ProgressReport
 
 class WhenGeneratingRequirementsReports extends Specification {
 

@@ -2,19 +2,13 @@ package net.thucydides.core.requirements
 
 import com.google.common.collect.Lists
 import net.thucydides.core.ThucydidesSystemProperty
-import net.thucydides.core.model.Release
-import net.thucydides.core.model.Story
-import net.thucydides.core.model.TestOutcome
-import net.thucydides.core.model.TestTag
-import net.thucydides.core.model.TestType
+import net.thucydides.core.issues.IssueTracking
+import net.thucydides.core.model.*
 import net.thucydides.core.reports.TestOutcomes
 import net.thucydides.core.requirements.reports.RequirementsOutcomes
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory
 import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
-import net.thucydides.core.issues.IssueTracking
-import net.thucydides.core.model.TestResult
-import net.thucydides.core.model.TestStep
 
 class WhenGeneratingRequirementsReportData extends Specification {
 

@@ -1,8 +1,6 @@
 package net.thucydides.core.model;
 
-import ch.lambdaj.Lambda;
 import com.google.common.base.Optional;
-import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 

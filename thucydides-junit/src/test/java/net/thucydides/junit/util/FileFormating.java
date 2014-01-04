@@ -1,7 +1,6 @@
 package net.thucydides.junit.util;
 
 import net.thucydides.core.digest.Digest;
-import org.apache.commons.codec.digest.DigestUtils;
 
 public class FileFormating {
 

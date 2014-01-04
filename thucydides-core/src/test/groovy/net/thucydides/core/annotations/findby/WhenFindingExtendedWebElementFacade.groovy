@@ -1,15 +1,11 @@
 package net.thucydides.core.annotations.findby
 
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import spock.lang.Shared
-import spock.lang.Specification
-
-import sample.page.TestPage
-
-import net.thucydides.core.webdriver.DefaultPageObjectInitialiser
 import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
-import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import sample.page.TestPage
+import spock.lang.Shared
+import spock.lang.Specification
 
 class WhenFindingExtendedWebElementFacade extends Specification {
 	

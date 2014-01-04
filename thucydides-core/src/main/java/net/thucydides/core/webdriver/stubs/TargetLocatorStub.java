@@ -1,6 +1,5 @@
 package net.thucydides.core.webdriver.stubs;
 
-import net.thucydides.core.webdriver.WebDriverFacade;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;

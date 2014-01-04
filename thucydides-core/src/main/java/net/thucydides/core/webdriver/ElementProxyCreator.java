@@ -1,7 +1,6 @@
 package net.thucydides.core.webdriver;
 
 import net.thucydides.core.pages.PageObject;
-
 import org.openqa.selenium.WebDriver;
 
 public interface ElementProxyCreator {

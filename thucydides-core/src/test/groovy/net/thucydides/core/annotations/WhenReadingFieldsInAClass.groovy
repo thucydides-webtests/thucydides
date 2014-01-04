@@ -1,7 +1,5 @@
 package net.thucydides.core.annotations
 
-import org.openqa.selenium.WebDriver
-import spock.lang.Shared
 import spock.lang.Specification
 
 class WhenReadingFieldsInAClass extends Specification {

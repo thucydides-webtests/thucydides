@@ -10,7 +10,6 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
@@ -19,7 +18,6 @@ import net.thucydides.junit.annotations.Concurrent;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
-import net.thucydides.junit.runners.integration.SimpleFailingParameterizedTestSample;
 import net.thucydides.junit.runners.integration.SimpleSuccessfulParametrizedTestSample;
 import net.thucydides.samples.NestedDatadrivenSteps;
 import net.thucydides.samples.SampleCSVDataDrivenScenario;
@@ -54,13 +52,9 @@ import java.util.List;
 
 import static ch.lambdaj.Lambda.filter;
 import static net.thucydides.core.steps.StepData.withTestDataFrom;
-import static net.thucydides.junit.util.FileFormating.digest;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 
 public class WhenRunningADataDrivenTestScenario {
 

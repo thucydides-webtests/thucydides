@@ -1,11 +1,10 @@
 package net.thucydides.core.batches;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
-
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 public class BatchManagerProvider implements Provider<BatchManager>{
 	

@@ -1,6 +1,5 @@
 package net.thucydides.core.reports;
 
-import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -16,12 +15,10 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

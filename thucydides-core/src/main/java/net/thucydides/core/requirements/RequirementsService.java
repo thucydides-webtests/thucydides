@@ -6,7 +6,6 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.requirements.model.Requirement;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface RequirementsService {

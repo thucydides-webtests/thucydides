@@ -1,9 +1,6 @@
 package net.thucydides.spock;
 
-import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.SpecInfo;
-
-import java.util.List;
 
 /**
  *

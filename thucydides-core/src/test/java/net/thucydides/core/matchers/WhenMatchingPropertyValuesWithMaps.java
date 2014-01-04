@@ -2,9 +2,7 @@ package net.thucydides.core.matchers;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
 import java.util.HashMap;

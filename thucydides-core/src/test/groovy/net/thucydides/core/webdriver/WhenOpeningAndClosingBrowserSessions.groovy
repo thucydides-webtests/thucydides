@@ -1,6 +1,5 @@
 package net.thucydides.core.webdriver
 
-import com.opera.core.systems.OperaDriver
 import net.thucydides.core.steps.StepEventBus
 import net.thucydides.core.util.MockEnvironmentVariables
 import org.openqa.selenium.Capabilities

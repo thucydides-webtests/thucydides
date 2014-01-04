@@ -15,7 +15,6 @@ import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.screenshots.ScreenshotFormatter;
 import net.thucydides.core.requirements.RequirementsService;
-import net.thucydides.core.screenshots.ScreenshotException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import org.slf4j.Logger;

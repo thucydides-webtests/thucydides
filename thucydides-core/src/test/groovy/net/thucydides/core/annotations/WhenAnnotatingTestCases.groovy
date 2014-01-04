@@ -1,8 +1,8 @@
 package net.thucydides.core.annotations
 
-import spock.lang.Specification
 import org.openqa.selenium.WebDriver
 import spock.lang.Shared
+import spock.lang.Specification
 
 class WhenAnnotatingTestCases extends Specification {
 

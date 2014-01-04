@@ -1,7 +1,5 @@
 package net.thucydides.core.csv.converters;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.math.BigDecimal;
 
 public class BigDecimalTypeConverter implements TypeConverter {

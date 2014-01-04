@@ -8,13 +8,14 @@ import net.thucydides.core.model.TestResultList;
 import net.thucydides.core.model.TestStep;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.runner.Runner;
-import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.on;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
 
 public class ParameterizedTestsOutcomeAggregator {
     private final ThucydidesParameterizedRunner thucydidesParameterizedRunner;

@@ -1,11 +1,10 @@
 package net.thucydides.easyb
 
+import net.thucydides.core.model.TestTag
 import net.thucydides.core.steps.ScenarioSteps
 import net.thucydides.core.webdriver.SupportedWebDriver
 import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebdriverProxyFactory
-import org.openqa.selenium.WebDriver
-import net.thucydides.core.model.TestTag
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

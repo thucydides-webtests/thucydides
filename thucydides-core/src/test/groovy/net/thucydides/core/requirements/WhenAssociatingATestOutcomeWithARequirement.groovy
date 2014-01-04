@@ -1,19 +1,19 @@
 package net.thucydides.core.requirements
 
 import annotatedstories.apples.Test1
+import com.google.common.base.Optional
 import net.thucydides.core.ThucydidesSystemProperty
+import net.thucydides.core.model.Story
+import net.thucydides.core.model.TestOutcome
+import net.thucydides.core.model.TestTag
+import net.thucydides.core.requirements.model.Requirement
 import net.thucydides.core.requirements.stories.grow_potatoes.ASampleTestWithACapability
 import net.thucydides.core.requirements.stories.grow_potatoes.another_package.ASampleTestInAnotherPackage
 import net.thucydides.core.requirements.stories.grow_potatoes.grow_new_potatoes.ASampleNestedTestWithACapability
 import net.thucydides.core.requirements.stories.nocapacities.ASampleTestWithNoCapability
-import net.thucydides.core.model.TestOutcome
-import net.thucydides.core.model.TestTag
 import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
-import net.thucydides.core.model.Story
-import net.thucydides.core.requirements.model.Requirement
-import com.google.common.base.Optional
 
 class WhenAssociatingATestOutcomeWithARequirement extends Specification {
 

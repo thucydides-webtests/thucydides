@@ -1,7 +1,6 @@
 package net.thucydides.core.steps;
 
 
-import net.thucydides.core.PendingStepException;
 import net.thucydides.core.model.TestOutcome;
 import org.openqa.selenium.firefox.FirefoxDriver;
 

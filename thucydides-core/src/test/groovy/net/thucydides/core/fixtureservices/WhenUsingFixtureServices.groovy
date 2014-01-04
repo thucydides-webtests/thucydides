@@ -1,9 +1,5 @@
 package net.thucydides.core.fixtureservices
 
-import net.thucydides.core.fixtureservices.ClasspathFixtureProviderService
-import net.thucydides.core.fixtureservices.FixtureProviderService
-import net.thucydides.core.fixtureservices.FixtureService
-import net.thucydides.core.fixtureservices.SampleFixtureService
 import net.thucydides.core.util.MockEnvironmentVariables
 import net.thucydides.core.webdriver.SupportedWebDriver
 import net.thucydides.core.webdriver.WebDriverFacade
@@ -12,7 +8,6 @@ import net.thucydides.core.webdriver.WebdriverInstanceFactory
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.firefox.FirefoxDriver
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import spock.lang.Specification
 
 class WhenUsingFixtureServices extends Specification {

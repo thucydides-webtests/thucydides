@@ -1,9 +1,8 @@
 package sample.elements;
 
+import net.thucydides.core.pages.WebElementFacadeImpl;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
-
-import net.thucydides.core.pages.WebElementFacadeImpl;
 
 public class WebElementFacadeInputImpl extends WebElementFacadeImpl implements WebElementFacadeInput{
 

@@ -18,9 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;

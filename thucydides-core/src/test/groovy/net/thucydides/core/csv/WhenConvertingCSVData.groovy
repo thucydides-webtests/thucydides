@@ -1,10 +1,6 @@
 package net.thucydides.core.csv
 
-import net.thucydides.core.csv.converters.BigDecimalTypeConverter
-import net.thucydides.core.csv.converters.BooleanTypeConverter
-import net.thucydides.core.csv.converters.IntegerTypeConverter
-import net.thucydides.core.csv.converters.StringTypeConverter
-import net.thucydides.core.csv.converters.TypeConverters
+import net.thucydides.core.csv.converters.*
 import spock.lang.Specification
 
 class WhenConvertingCSVData extends Specification {

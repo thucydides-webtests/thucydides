@@ -11,7 +11,6 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.adaptors.common.FilebasedOutcomeAdaptor;
 import net.thucydides.core.reports.adaptors.xunit.BasicXUnitLoader;
-import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor;
 import net.thucydides.core.reports.adaptors.xunit.io.XUnitFiles;
 import net.thucydides.core.reports.adaptors.xunit.model.TestCase;
 import net.thucydides.core.reports.adaptors.xunit.model.TestSuite;

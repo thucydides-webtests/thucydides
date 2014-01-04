@@ -1,12 +1,9 @@
 package net.thucydides.core.reports.adaptors.specflow;
 
 import com.beust.jcommander.internal.Lists;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
-import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 

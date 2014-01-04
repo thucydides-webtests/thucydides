@@ -1,12 +1,12 @@
 package net.thucydides.core.util;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
 
 public class ExtendedTemporaryFolder extends ExternalResource {
 	

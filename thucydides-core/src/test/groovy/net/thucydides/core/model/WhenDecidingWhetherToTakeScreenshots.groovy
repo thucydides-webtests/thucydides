@@ -1,12 +1,12 @@
 package net.thucydides.core.model
 
+import com.google.common.base.Optional
+import net.thucydides.core.annotations.Screenshots
+import net.thucydides.core.util.MockEnvironmentVariables
+import net.thucydides.core.webdriver.Configuration
+import net.thucydides.core.webdriver.SystemPropertiesConfiguration
 import spock.lang.Specification
 import spock.lang.Unroll
-import net.thucydides.core.webdriver.Configuration
-import net.thucydides.core.annotations.Screenshots
-import net.thucydides.core.webdriver.SystemPropertiesConfiguration
-import net.thucydides.core.util.MockEnvironmentVariables
-import com.google.common.base.Optional
 
 class WhenDecidingWhetherToTakeScreenshots extends Specification {
 

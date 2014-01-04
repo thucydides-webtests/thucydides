@@ -2,15 +2,10 @@ package net.thucydides.core.pages.integration;
 
 
 import net.thucydides.core.webdriver.StaticTestSite;
-import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.openqa.selenium.WebDriver;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 public class FluentElementAPITestsBaseClass {
 

@@ -1,9 +1,8 @@
 package net.thucydides.core.webdriver;
 
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.annotations.locators.SmartElementLocatorFactory;
-
+import net.thucydides.core.util.EnvironmentVariables;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory;

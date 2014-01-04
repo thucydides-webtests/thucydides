@@ -1,14 +1,10 @@
 package net.thucydides.junit.rules;
 
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Conserves the webdriver-related system properties (webdriver.*).

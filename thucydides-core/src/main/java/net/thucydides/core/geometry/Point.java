@@ -1,6 +1,5 @@
 package net.thucydides.core.geometry;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

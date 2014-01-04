@@ -17,7 +17,6 @@ import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.util.EnvironmentVariables;
-import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

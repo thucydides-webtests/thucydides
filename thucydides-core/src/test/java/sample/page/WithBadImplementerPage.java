@@ -1,11 +1,9 @@
 package sample.page;
 
-import org.openqa.selenium.WebDriver;
-
-import sample.elements.HasBadImplementer;
-
 import net.thucydides.core.annotations.findby.FindBy;
 import net.thucydides.core.pages.PageObject;
+import org.openqa.selenium.WebDriver;
+import sample.elements.HasBadImplementer;
 
 public class WithBadImplementerPage extends PageObject{
 

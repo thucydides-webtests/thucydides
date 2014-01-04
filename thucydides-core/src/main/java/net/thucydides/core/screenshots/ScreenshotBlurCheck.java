@@ -3,7 +3,6 @@ package net.thucydides.core.screenshots;
 import com.google.common.base.Optional;
 import net.thucydides.core.annotations.BlurScreenshots;
 import net.thucydides.core.reflection.StackTraceAnalyser;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Method;
 

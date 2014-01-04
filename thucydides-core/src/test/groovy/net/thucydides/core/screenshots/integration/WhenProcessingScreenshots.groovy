@@ -1,13 +1,11 @@
 package net.thucydides.core.screenshots.integration
 
-import net.thucydides.core.reports.TestOutcomeLoader
-import spock.lang.Specification
-import net.thucydides.core.util.EnvironmentVariables
-import net.thucydides.core.util.MockEnvironmentVariables
 import com.google.common.io.Files
-
 import net.thucydides.core.screenshots.QueuedScreenshot
 import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor
+import net.thucydides.core.util.EnvironmentVariables
+import net.thucydides.core.util.MockEnvironmentVariables
+import spock.lang.Specification
 import spock.lang.Timeout
 
 class WhenProcessingScreenshots extends Specification {

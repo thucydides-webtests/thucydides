@@ -1,7 +1,8 @@
 package net.thucydides.easyb
 
-import javax.imageio.spi.ServiceRegistry
 import org.easyb.plugin.EasybPlugin
+
+import javax.imageio.spi.ServiceRegistry
 
 public class ThucydidesExtensions {
 

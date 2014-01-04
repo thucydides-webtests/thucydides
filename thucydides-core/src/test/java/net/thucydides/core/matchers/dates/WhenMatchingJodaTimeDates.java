@@ -8,11 +8,11 @@ import org.junit.Test;
 
 import java.util.Set;
 
+import static net.thucydides.core.matchers.dates.DateMatchers.containsSameDateTimesAs;
 import static net.thucydides.core.matchers.dates.DateMatchers.isAfter;
 import static net.thucydides.core.matchers.dates.DateMatchers.isBefore;
 import static net.thucydides.core.matchers.dates.DateMatchers.isBetween;
 import static net.thucydides.core.matchers.dates.DateMatchers.isSameAs;
-import static net.thucydides.core.matchers.dates.DateMatchers.containsSameDateTimesAs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 

@@ -1,7 +1,5 @@
 package net.thucydides.core.requirements.model;
 
-import net.thucydides.core.requirements.model.Requirement;
-
 public class RequirementBuilderTypeStep {
     final RequirementBuilderNameStep requirementBuilderNameStep;
     final String type;

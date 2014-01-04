@@ -1,11 +1,9 @@
 package net.thucydides.junit.runners.integration;
 
-import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.runners.ThucydidesParameterizedRunner;
 import net.thucydides.samples.SampleScenarioSteps;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

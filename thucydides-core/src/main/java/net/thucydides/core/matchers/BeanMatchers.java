@@ -1,15 +1,8 @@
 package net.thucydides.core.matchers;
 
 import org.hamcrest.Matcher;
-import org.openqa.selenium.lift.match.ValueMatcher;
 
 import java.math.BigDecimal;
-
-import static ch.lambdaj.Lambda.filter;
-import static ch.lambdaj.Lambda.join;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 public class BeanMatchers {
 

@@ -1,16 +1,15 @@
 package net.thucydides.core.annotations.locators;
 
+import net.thucydides.core.annotations.ImplementedBy;
+import net.thucydides.core.annotations.NotImplementedException;
+import net.thucydides.core.pages.WebElementFacade;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.pagefactory.ElementLocator;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import net.thucydides.core.annotations.ImplementedBy;
-import net.thucydides.core.annotations.NotImplementedException;
-import net.thucydides.core.pages.WebElementFacade;
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.pagefactory.ElementLocator;
 
 
 public class SmartElementHandler implements InvocationHandler{	

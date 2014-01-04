@@ -7,10 +7,7 @@ import net.thucydides.core.steps.StepEventBus
 import net.thucydides.core.steps.StepFailure
 import spock.lang.Specification
 
-import static net.thucydides.core.model.TestResult.FAILURE
-import static net.thucydides.core.model.TestResult.PENDING
-import static net.thucydides.core.model.TestResult.SUCCESS
-import static net.thucydides.core.model.TestResult.UNDEFINED
+import static net.thucydides.core.model.TestResult.*
 
 class WhenRecordingDataDrivenTestOutcomes extends Specification {
 

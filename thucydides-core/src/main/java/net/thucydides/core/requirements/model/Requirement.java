@@ -1,12 +1,9 @@
 package net.thucydides.core.requirements.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.model.TestTag;
-import net.thucydides.core.requirements.model.RequirementBuilderNameStep;
-import net.thucydides.core.requirements.model.RequirementBuilderTypeStep;
 
 import java.util.Collections;
 import java.util.List;

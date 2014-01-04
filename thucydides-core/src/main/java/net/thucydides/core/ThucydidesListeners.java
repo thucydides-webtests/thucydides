@@ -7,7 +7,6 @@ import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.Listeners;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepListener;
-import net.thucydides.core.steps.StepPublisher;
 import net.thucydides.core.webdriver.Configuration;
 import org.openqa.selenium.WebDriver;
 

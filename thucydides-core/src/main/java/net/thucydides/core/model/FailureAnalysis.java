@@ -4,7 +4,6 @@ import net.thucydides.core.PendingStepException;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
-import org.apache.regexp.RETest;
 
 import static net.thucydides.core.model.TestResult.ERROR;
 import static net.thucydides.core.model.TestResult.FAILURE;

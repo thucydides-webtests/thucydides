@@ -2,10 +2,14 @@ package net.thucydides.core.reports.adaptors.specflow;
 
 import ch.lambdaj.function.convert.Converter;
 import com.beust.jcommander.internal.Lists;
-import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.ImmutableList;
-import net.thucydides.core.model.*;
-import net.thucydides.core.reports.adaptors.TestOutcomeAdaptor;
+import net.thucydides.core.model.DataTable;
+import net.thucydides.core.model.DataTableRow;
+import net.thucydides.core.model.Story;
+import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestResultList;
+import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.adaptors.common.FilebasedOutcomeAdaptor;
 import org.apache.commons.io.FileUtils;
 
@@ -13,9 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static ch.lambdaj.Lambda.convert;
 

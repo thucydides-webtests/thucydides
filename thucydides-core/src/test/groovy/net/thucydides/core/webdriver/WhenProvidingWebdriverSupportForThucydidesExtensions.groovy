@@ -1,16 +1,11 @@
 package net.thucydides.core.webdriver
 
-import spock.lang.Specification
 import net.thucydides.core.annotations.Managed
-import org.openqa.selenium.WebDriver
-import net.thucydides.core.pages.Pages
 import net.thucydides.core.annotations.ManagedPages
+import net.thucydides.core.pages.Pages
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.openqa.selenium.firefox.FirefoxDriver
-import org.junit.Test
-
-import static org.mockito.Mockito.verify
-import net.thucydides.core.util.MockEnvironmentVariables
+import spock.lang.Specification
 
 class WhenProvidingWebdriverSupportForThucydidesExtensions extends Specification {
 

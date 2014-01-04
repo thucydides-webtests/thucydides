@@ -7,13 +7,11 @@ import com.google.common.collect.Maps;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.StringUtils;
 
-import static ch.lambdaj.Lambda.convert;
-import static net.thucydides.core.ThucydidesSystemProperty.DRIVER_CAPABILITIES;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
+
+import static ch.lambdaj.Lambda.convert;
+import static net.thucydides.core.ThucydidesSystemProperty.DRIVER_CAPABILITIES;
 
 /**
  * A set of user-defined capabilities to be used to configure the WebDriver driver.

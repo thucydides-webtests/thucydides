@@ -2,6 +2,7 @@ package net.thucydides.junit.finder;
 
 import ch.lambdaj.function.matcher.Predicate;
 import org.hamcrest.Matcher;
+
 import java.lang.reflect.Method;
 import java.util.List;
 

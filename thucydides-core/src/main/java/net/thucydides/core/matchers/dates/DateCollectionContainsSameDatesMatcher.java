@@ -4,13 +4,11 @@ import ch.lambdaj.function.convert.Converter;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import static ch.lambdaj.Lambda.collect;
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.join;
 

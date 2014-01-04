@@ -1,16 +1,10 @@
 package net.thucydides.core.requirements;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.requirements.model.RequirementsConfiguration;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class AbstractRequirementsTagProvider {

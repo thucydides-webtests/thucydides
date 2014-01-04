@@ -2,8 +2,8 @@ package net.thucydides.core.csv;
 
 import net.thucydides.core.csv.converters.TypeConverter;
 import net.thucydides.core.csv.converters.TypeConverters;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

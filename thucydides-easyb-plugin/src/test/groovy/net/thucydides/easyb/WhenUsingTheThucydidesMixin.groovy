@@ -1,6 +1,6 @@
-package net.thucydides.easyb;
+package net.thucydides.easyb
 
-
+import net.thucydides.core.model.TestTag
 import net.thucydides.core.util.SystemEnvironmentVariables
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration
 import net.thucydides.core.webdriver.ThucydidesWebdriverManager
@@ -11,7 +11,6 @@ import net.thucydides.easyb.samples.SampleSteps
 import org.junit.Before
 import org.junit.Test
 import org.openqa.selenium.WebDriver
-import net.thucydides.core.model.TestTag
 
 public class WhenUsingTheThucydidesMixin {
 

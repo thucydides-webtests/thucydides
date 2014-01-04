@@ -2,14 +2,12 @@ package net.thucydides.core.reports.adaptors.specflow;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import net.thucydides.core.model.TestResult;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Set;
 
 public class ScenarioStep {
 

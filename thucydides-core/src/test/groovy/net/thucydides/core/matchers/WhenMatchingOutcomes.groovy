@@ -4,12 +4,10 @@ import net.thucydides.core.model.Story
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.model.TestResult
 import net.thucydides.core.model.TestStep
-import spock.lang.Shared
 import spock.lang.Specification
 
 import static net.thucydides.core.matchers.PublicThucydidesMatchers.containsResults
 import static org.hamcrest.MatcherAssert.assertThat
-
 
 class WhenMatchingOutcomes extends Specification {
 

@@ -2,23 +2,20 @@ package net.thucydides.core.matchers;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static net.thucydides.core.matchers.BeanMatcherAsserts.filterElements;
 import static net.thucydides.core.matchers.BeanMatcherAsserts.matches;
 import static net.thucydides.core.matchers.BeanMatcherAsserts.shouldMatch;
 import static net.thucydides.core.matchers.BeanMatchers.each;
-import static net.thucydides.core.matchers.BeanMatcherAsserts.filterElements;
 import static net.thucydides.core.matchers.BeanMatchers.max;
 import static net.thucydides.core.matchers.BeanMatchers.min;
 import static net.thucydides.core.matchers.BeanMatchers.the;
 import static net.thucydides.core.matchers.BeanMatchers.the_count;
 import static org.fest.assertions.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class WhenMatchingPropertyValueCollections {

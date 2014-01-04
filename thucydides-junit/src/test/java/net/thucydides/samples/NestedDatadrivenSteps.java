@@ -2,7 +2,6 @@ package net.thucydides.samples;
 
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.Steps;
-import org.junit.Test;
 
 import java.io.IOException;
 

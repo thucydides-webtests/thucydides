@@ -5,8 +5,6 @@ import org.hamcrest.TypeSafeMatcher;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
-import java.util.Date;
-
 
 class DateTimeIsCloseToAsMatcher extends TypeSafeMatcher<DateTime> {
 

@@ -2,10 +2,8 @@ package net.thucydides.core.reports.csv
 
 import au.com.bytecode.opencsv.CSVReader
 import com.github.goldin.spock.extensions.tempdir.TempDir
-import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.reports.TestOutcomeLoader
 import net.thucydides.core.reports.TestOutcomes
-import net.thucydides.core.reports.csv.CSVReporter
 import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
 

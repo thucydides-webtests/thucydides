@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import net.thucydides.core.annotations.Fields;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.Pages;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestContextManager;
 
 import java.lang.reflect.Field;
 import java.util.List;

@@ -1,8 +1,6 @@
 package net.thucydides.core.pages.components;
 
 import ch.lambdaj.function.convert.Converter;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import net.thucydides.core.matchers.BeanMatcher;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -14,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ch.lambdaj.Lambda.by;
 import static ch.lambdaj.Lambda.convert;
 
 /**

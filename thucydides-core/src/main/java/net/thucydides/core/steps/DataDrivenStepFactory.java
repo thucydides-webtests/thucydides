@@ -1,9 +1,5 @@
 package net.thucydides.core.steps;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.thucydides.core.Thucydides;
-import net.thucydides.core.pages.Pages;
-
 import java.util.List;
 
 /**

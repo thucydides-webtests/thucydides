@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import net.thucydides.core.annotations.Screenshots;
 import net.thucydides.core.reflection.StackTraceAnalyser;
 import net.thucydides.core.webdriver.Configuration;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Method;
 

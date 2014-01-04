@@ -1,12 +1,12 @@
 package net.thucydides.core.util;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
 
 import java.io.File;
 
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class WhenChangingFileSeparator {
 

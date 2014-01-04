@@ -5,12 +5,10 @@ import net.thucydides.core.steps.StepFailureException
 import net.thucydides.core.webdriver.WebdriverAssertionError
 import org.junit.internal.ArrayComparisonFailure
 import org.openqa.selenium.WebDriverException
-
-import static net.thucydides.core.model.TestResult.FAILURE
-import static net.thucydides.core.model.TestResult.PENDING
-import static net.thucydides.core.model.TestResult.ERROR
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static net.thucydides.core.model.TestResult.*
 
 class WhenReportingExceptions extends Specification {
 

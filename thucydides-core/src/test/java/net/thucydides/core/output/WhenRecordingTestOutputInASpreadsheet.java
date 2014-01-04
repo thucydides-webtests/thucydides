@@ -1,9 +1,7 @@
 package net.thucydides.core.output;
 
 import com.google.common.collect.ImmutableList;
-
 import net.thucydides.core.util.ExtendedTemporaryFolder;
-
 import org.junit.Rule;
 import org.junit.Test;
 

@@ -35,7 +35,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static net.thucydides.core.model.TestResult.ERROR;
 import static net.thucydides.core.model.TestResult.FAILURE;
 import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;

@@ -18,7 +18,6 @@ import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;

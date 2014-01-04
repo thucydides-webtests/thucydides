@@ -1,19 +1,7 @@
 package net.thucydides.core.webdriver
 
-import com.opera.core.systems.OperaDriver
-import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
-import org.openqa.selenium.Capabilities
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.android.library.DriverProvider
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.openqa.selenium.ie.InternetExplorerDriver
-import org.openqa.selenium.phantomjs.PhantomJSDriver
-import org.openqa.selenium.remote.RemoteWebDriver
-import org.openqa.selenium.remote.server.DriverFactory
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class WhenProvidingYourOwnWebdriverInstance extends Specification {

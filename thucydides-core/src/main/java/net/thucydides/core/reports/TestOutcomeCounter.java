@@ -1,9 +1,6 @@
 package net.thucydides.core.reports;
 
-import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestType;
-
-import java.util.List;
 
 /**
  * A basic builder used to count test outcomes of a particular type

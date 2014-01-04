@@ -14,7 +14,6 @@ import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
-import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;

@@ -15,7 +15,6 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 public class WhenRunningATestScenarioWithErrrors extends AbstractTestStepRunnerTest {
 

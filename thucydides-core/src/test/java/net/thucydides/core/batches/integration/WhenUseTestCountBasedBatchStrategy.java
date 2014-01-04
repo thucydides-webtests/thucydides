@@ -1,20 +1,19 @@
 package net.thucydides.core.batches.integration;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
+import net.thucydides.core.batches.TestCountBasedBatchManager;
+import net.thucydides.core.util.MockEnvironmentVariables;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runners.model.InitializationError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.thucydides.core.batches.TestCountBasedBatchManager;
-import net.thucydides.core.util.MockEnvironmentVariables;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runners.model.InitializationError;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
 
 public class WhenUseTestCountBasedBatchStrategy {
 	private MockEnvironmentVariables environmentVariables;

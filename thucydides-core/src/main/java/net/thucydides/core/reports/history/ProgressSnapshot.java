@@ -1,7 +1,6 @@
 package net.thucydides.core.reports.history;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
 
 public class ProgressSnapshot implements Comparable<ProgressSnapshot> {
 

@@ -1,13 +1,8 @@
 package net.thucydides.core.steps.samples;
 
-import net.thucydides.core.Thucydides;
-import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.annotations.Title;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
-import org.junit.Ignore;
 
 public class FluentScenarioSteps extends ScenarioSteps {
 

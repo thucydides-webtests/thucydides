@@ -1,45 +1,32 @@
-package net.thucydides.easyb;
-
+package net.thucydides.easyb
 
 import net.thucydides.core.pages.Pages
+import net.thucydides.core.steps.ExecutedStepDescription
 import net.thucydides.core.steps.StepListener
 import net.thucydides.core.util.SystemEnvironmentVariables
-import net.thucydides.core.webdriver.SystemPropertiesConfiguration
-import net.thucydides.core.webdriver.ThucydidesWebdriverManager
-import net.thucydides.core.webdriver.UnsupportedDriverException
-import net.thucydides.core.webdriver.WebDriverFacade
-import net.thucydides.core.webdriver.WebDriverFactory
-import net.thucydides.core.webdriver.WebdriverManager
+import net.thucydides.core.webdriver.*
+import org.easyb.BehaviorStep
+import org.easyb.domain.Behavior
+import org.easyb.listener.ExecutionListener
+import org.easyb.util.BehaviorStepType
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
+import org.junit.runners.model.InitializationError
 import org.mockito.Mockito
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.firefox.FirefoxDriver
-import static org.hamcrest.Matchers.containsString
-import static org.mockito.Matchers.anyString
-import static org.mockito.Mockito.atLeast
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.verify
-import static org.mockito.Mockito.when
-import org.easyb.listener.ExecutionListener
-import org.easyb.domain.Behavior
-import org.easyb.BehaviorStep
-import org.easyb.util.BehaviorStepType
-import org.junit.runners.model.InitializationError
+
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
-import net.thucydides.core.model.TestOutcome
-import net.thucydides.core.steps.ExecutedStepDescription
-import net.thucydides.core.model.TestTag
-import net.thucydides.core.annotations.DefaultUrl
-import net.thucydides.core.pages.PageObject
-import org.openqa.selenium.WebElement
-import org.junit.Ignore
+
+import static org.hamcrest.Matchers.containsString
+import static org.mockito.Matchers.anyString
+import static org.mockito.Mockito.*
 
 public class WhenUsingTheThucydidesEasybPlugin {
 

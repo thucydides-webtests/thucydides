@@ -1,7 +1,6 @@
 package net.thucydides.core.reports.adaptors;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.reports.adaptors.lettuce.LettuceXUnitAdaptor;
 import net.thucydides.core.reports.adaptors.specflow.SpecflowAdaptor;

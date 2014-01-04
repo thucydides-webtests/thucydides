@@ -1,16 +1,5 @@
 package net.thucydides.core.webdriver.javascript
 
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
-
-import java.io.IOException;
-
-import net.thucydides.core.webdriver.WebDriverFactory
-import net.thucydides.core.webdriver.integration.WhenBrowsingAWebSiteUsingPageObjects.IndexPage
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.WebDriverException
-import org.openqa.selenium.firefox.FirefoxDriver
-import org.openqa.selenium.phantomjs.PhantomJSDriver
-
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationContext
@@ -18,11 +7,13 @@ import com.fasterxml.jackson.databind.InjectableValues
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
-
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebDriverException
+import org.openqa.selenium.firefox.FirefoxDriver
 import sample.deserialization.DeserializationClass
 import sample.deserialization.DeserializationWithInjection
-import spock.lang.Specification
 import spock.lang.Shared
+import spock.lang.Specification
 
 class WhenDeserializingJSONObjects extends Specification {
 	

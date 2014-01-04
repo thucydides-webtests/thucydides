@@ -1,11 +1,11 @@
 package net.thucydides.core.util;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 public class ExtendedTemporaryFolderTest {
 

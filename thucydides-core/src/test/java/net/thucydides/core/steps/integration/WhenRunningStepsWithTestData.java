@@ -2,7 +2,6 @@ package net.thucydides.core.steps.integration;
 
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.csv.FailedToInitializeTestData;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.steps.StepEventBus;
@@ -14,7 +13,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
-
 import sample.csv.TestPageObject;
 
 import java.io.IOException;

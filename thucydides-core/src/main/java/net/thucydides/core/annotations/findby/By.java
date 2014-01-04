@@ -1,13 +1,13 @@
 package net.thucydides.core.annotations.findby;
 
-import java.util.List;
-
 import com.google.common.base.Preconditions;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+
+import java.util.List;
 
 public abstract class By extends org.openqa.selenium.By {
 

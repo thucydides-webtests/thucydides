@@ -6,7 +6,6 @@ import com.google.inject.Singleton;
 import net.thucydides.core.annotations.locators.SmartElementProxyCreator;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.BatchManagerProvider;
-import net.thucydides.core.batches.SystemVariableBasedBatchManager;
 import net.thucydides.core.fixtureservices.ClasspathFixtureProviderService;
 import net.thucydides.core.fixtureservices.FixtureProviderService;
 import net.thucydides.core.issues.IssueTracking;

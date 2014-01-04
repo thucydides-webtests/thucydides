@@ -3,14 +3,11 @@ package net.thucydides.samples;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
-import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.SessionId;
 
 @RunWith(ThucydidesRunner.class)
 public class AnotherSamplePassingScenario {

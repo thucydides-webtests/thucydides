@@ -7,7 +7,6 @@ import net.thucydides.core.webdriver.DefaultPageObjectInitialiser
 import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import spock.lang.Shared
 import spock.lang.Specification

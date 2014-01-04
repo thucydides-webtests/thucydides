@@ -2,13 +2,10 @@ package net.thucydides.core.matchers.dates;
 
 import ch.lambdaj.function.convert.Converter;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.joda.time.DateTime;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;

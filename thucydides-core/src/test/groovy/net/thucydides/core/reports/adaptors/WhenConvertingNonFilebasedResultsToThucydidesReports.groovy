@@ -3,11 +3,7 @@ package net.thucydides.core.reports.adaptors
 import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.reports.TestOutcomeAdaptorReporter
-import net.thucydides.core.reports.adaptors.lettuce.LettuceXUnitAdaptor
-import net.thucydides.core.reports.adaptors.xunit.DefaultXUnitAdaptor
 import spock.lang.Specification
-
-import static net.thucydides.core.util.TestResources.fileInClasspathCalled
 
 class WhenConvertingNonFilebasedResultsToThucydidesReports extends Specification {
 

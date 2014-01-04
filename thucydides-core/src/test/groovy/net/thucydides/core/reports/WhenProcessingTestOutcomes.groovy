@@ -1,18 +1,17 @@
 package net.thucydides.core.reports
 
 import net.thucydides.core.model.TestOutcome
+import net.thucydides.core.model.TestResult
 import net.thucydides.core.model.TestTag
+import net.thucydides.core.statistics.model.TestStatistics
 import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Ignore
 import spock.lang.Specification
+
+import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.*
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled
 import static org.junit.matchers.JUnitMatchers.everyItem
-import net.thucydides.core.model.TestResult
-import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.withResult
-import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagName
-import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagType
-import net.thucydides.core.statistics.model.TestStatistics
 
 class WhenProcessingTestOutcomes extends Specification {
 

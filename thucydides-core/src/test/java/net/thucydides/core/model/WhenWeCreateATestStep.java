@@ -2,7 +2,6 @@ package net.thucydides.core.model;
 
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
-
 import org.junit.Rule;
 import org.junit.Test;
 
