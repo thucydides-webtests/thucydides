@@ -251,9 +251,17 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
 
 
     public boolean canTakeScreenshots() {
-        return (driverClass != null)
-                && ((TakesScreenshot.class.isAssignableFrom(driverClass))
-                    || (driverClass == RemoteWebDriver.class));
+    	if (driverClass != null) {
+    		if (driverClass == ProvidedDriver.class) {
+    			return TakesScreenshot.class.isAssignableFrom(getProxiedDriver().getClass()) 
+    					|| (getProxiedDriver().getClass() == RemoteWebDriver.class);
+    		} else {
+    			return TakesScreenshot.class.isAssignableFrom(driverClass)
+    					|| (driverClass == RemoteWebDriver.class);
+    		}
+    	} else {
+    		return false;
+    	}
     }
 
     public boolean isInstantiated() {

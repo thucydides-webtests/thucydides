@@ -200,7 +200,7 @@ public class WebDriverFactory {
         Preconditions.checkNotNull(providedDriverType,"No provider type was specified in 'webdriver.provided.type'");
 
         String providedImplementation = environmentVariables.getProperty("webdriver.provided." + providedDriverType);
-        Preconditions.checkNotNull(providedDriverType,
+        Preconditions.checkNotNull(providedImplementation,
                                   "No provider implementation was specified in 'webdriver.provided.'" + providedDriverType);
 
         try {
