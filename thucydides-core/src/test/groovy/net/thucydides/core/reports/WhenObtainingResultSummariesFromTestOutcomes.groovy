@@ -1,6 +1,7 @@
 package net.thucydides.core.reports
 
 import net.thucydides.core.model.TestResult
+import net.thucydides.core.model.TestType
 import spock.lang.Specification
 
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled
@@ -102,6 +103,23 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             "/test-outcomes/all-pending"               | 0.0               | 0.0                | 1.0
     }
 
+    def "should provide a formatted version of the percentage of passing steps"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
+        then:
+            testOutcomes.formattedPercentageSteps.withResult("success") == percentagePassing &&
+            testOutcomes.formattedPercentageSteps.withResult("failure")== percentageFailing &&
+            testOutcomes.formattedPercentageSteps.withResult("pending") == percentagePending
+            testOutcomes.formattedPercentageSteps.withIndeterminateResult() == percentagePending
+        where:
+            directory                                  | percentagePassing | percentageFailing  | percentagePending
+            "/test-outcomes/all-successful"            | "100%"            | "0%"               | "0%"
+            "/test-outcomes/containing-failure"        | "32%"             | "24%"              | "44%"
+            "/test-outcomes/containing-pending"        | "60%"             | "0%"               | "40%"
+            "/test-outcomes/all-pending"               | "0%"              | "0%"               | "100%"
+    }
+
+
     def "should calculate the percentage of passing tests"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
@@ -118,6 +136,24 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         "/test-outcomes/all-pending"               | 0.0               | 0.0                | 1.0
     }
 
+
+    def "should provide a formatted version of the percentage of passing tests"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
+        then:
+            testOutcomes.formattedPercentage.withResult("success") == percentagePassing &&
+            testOutcomes.formattedPercentage.withResult("failure")== percentageFailing &&
+            testOutcomes.formattedPercentage.withResult("pending") == percentagePending
+            testOutcomes.formattedPercentage.withIndeterminateResult() == percentagePending
+        where:
+        directory                                  | percentagePassing | percentageFailing  | percentagePending
+        "/test-outcomes/all-successful"            | "100%"            | "0%"               | "0%"
+        "/test-outcomes/containing-failure"        | "33.3%"           | "33.3%"            | "33.3%"
+        "/test-outcomes/containing-pending"        | "66.7%"           | "0%"               | "33.3%"
+        "/test-outcomes/all-pending"               | "0%"              | "0%"               | "100%"
+    }
+
+
     def "should calculate the percentage of manual and automated passing steps"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
@@ -129,13 +165,27 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             "/test-outcomes/all-successful"            | 0.3333333333333333| 0.6666666666666666
     }
 
+    def "should calculate the formatted percentage of manual and automated passing steps"() {
+        when:
+            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled(directory));
+        then:
+            testOutcomes.decimalPercentageSteps("manual").withResult("success") == percentageManual &&
+            testOutcomes.decimalPercentageSteps("automated").withResult("success")== percentageAutomated
+        where:
+            directory                                  | percentageManual   | percentageAutomated
+            "/test-outcomes/all-successful"            | 0.3333333333333333 | 0.6666666666666666
+    }
+
     def "should provide a formatted version of the passing coverage"() {
         when:
             def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
         then:
             testOutcomes.formatted.percentTests("any").withResult("success") == "33.3%"
         and:
-            testOutcomes.formatted.percentTests().withResult("success") == "33.3%"
+            testOutcomes.getFormattedPercentage("any").withResult("success") == "33.3%"
+        and:
+
+        testOutcomes.getFormattedPercentage(TestType.ANY).withResult("success") == "33.3%"
     }
 
     def "should provide a formatted version of the passing step coverage"() {
@@ -154,6 +204,8 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             testOutcomes.formatted.percentTests.withResult("failure") == "33.3%"
         and:
             testOutcomes.formatted.percentSteps.withResult("failure") == "24%"
+        and:
+            testOutcomes.formatted.percentTests.withFailureOrError() == "33.3%"
 
     }
 
@@ -168,6 +220,8 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             testOutcomes.formatted.percentSteps.withIndeterminateResult() == "44%"
         and:
             testOutcomes.formatted.percentTests.withIndeterminateResult() == "33.3%"
+        and:
+            testOutcomes.formatted.percentTests.withFailureOrError() == "33.3%"
     }
 
     def "should return 0% passing coverage if there are no steps"() {
@@ -242,6 +296,7 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             testOutcomes.proportion.withResult("failure") == 0.2857142857142857
             testOutcomes.proportion.withResult("error") == 0.14285714285714285
             testOutcomes.proportion.withResult("pending") == 0.42857142857142855
+            testOutcomes.proportion.withFailureOrError() == 0.42857142857142855
     }
 
     def "should count percentage results correctly with no results"() {

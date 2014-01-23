@@ -25,8 +25,6 @@ public class ResourceList {
     private static final List<String> UNREQUIRED_FILES = Arrays.asList("pom.xml");
     private static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
-    private final Logger LOGGER = LoggerFactory.getLogger(ResourceList.class);
-
     private final Pattern pattern;
 
     public static ResourceList forResources(final Pattern pattern) {

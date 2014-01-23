@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 
 import static org.apache.commons.lang3.ObjectUtils.compare;
 
-public class TestTag implements Comparable {
+public class TestTag implements Comparable<TestTag> {
 
     public static final TestTag EMPTY_TAG = new TestTag("","");
 
@@ -42,8 +42,7 @@ public class TestTag implements Comparable {
     }
 
     @Override
-    public int compareTo(Object other) {
-        TestTag otherTag = (TestTag) other;
+    public int compareTo(TestTag otherTag) {
         int typeComparison = compare(getType(), otherTag.getType());
         if (typeComparison != 0) {
             return typeComparison;

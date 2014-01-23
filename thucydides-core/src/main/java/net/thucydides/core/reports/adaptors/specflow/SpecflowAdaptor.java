@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
@@ -105,7 +106,7 @@ public class SpecflowAdaptor extends FilebasedOutcomeAdaptor {
     private List<TestStep> stepsFrom(List<String> scenarioOutput) {
         List<TestStep> discoveredSteps = Lists.newArrayList();
         ScenarioStepReader stepReader = new ScenarioStepReader();
-        List<String> lines = new ArrayList(scenarioOutput);
+        List<String> lines = Lists.newArrayList(scenarioOutput);
         while (!lines.isEmpty()) {
             discoveredSteps.add(stepReader.consumeNextStepFrom(lines));
         }

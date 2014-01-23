@@ -5,6 +5,7 @@ import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStepFactory;
 import net.thucydides.core.reports.TestOutcomes;
+import net.thucydides.core.reports.TestOutcomesBuilder;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.history.TestResultSnapshot;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
@@ -30,9 +31,6 @@ public class WhenTrackingTestResultsOverTime {
     private TestHistory testHistory;
 
     private File homeDirectory;
-
-    private final static DateTime EARLY_DATE = new DateTime(2013,01,01,0,0);
-    private final static DateTime LATE_DATE = new DateTime(2013,01,02,0,0);
 
     @Rule
     public ExtendedTemporaryFolder temporaryFolder = new ExtendedTemporaryFolder();
@@ -90,7 +88,7 @@ public class WhenTrackingTestResultsOverTime {
 
         TestOutcomes results  = getResults();
 
-        assertThat(results.getStartTime(), is(EARLY_DATE));
+        assertThat(results.getStartTime(), is(TestOutcomesBuilder.EARLY_DATE));
     }
 
     @Test
@@ -215,67 +213,7 @@ public class WhenTrackingTestResultsOverTime {
     }
 
     private TestOutcomes getResults() {
-        List<TestOutcome> testOutcomeList = new ArrayList<TestOutcome>();
-
-        Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
-        testOutcomeList.add(thatSucceedsFor(story, 10));
-        testOutcomeList.add(thatSucceedsFor(story, 20));
-        testOutcomeList.add(thatIsFailingFor(story, 30));
-        testOutcomeList.add(thatIsPendingFor(story, 0));
-        testOutcomeList.add(thatIsPendingFor(story, 0));
-        testOutcomeList.add(thatIsPendingFor(story, 0));
-
-        testOutcomeList.add(thatIsFailingFor(story, 10));
-        testOutcomeList.add(thatIsFailingFor(story, 20));
-        testOutcomeList.add(thatIsFailingFor(story, 30));
-        testOutcomeList.add(thatIsIgnoredFor(story, 10));
-        testOutcomeList.add(thatIsPendingFor(story, 0));
-        testOutcomeList.add(thatIsPendingFor(story, 0));
-
-        return TestOutcomes.of(testOutcomeList);
+        TestOutcomesBuilder builder = new TestOutcomesBuilder();
+        return builder.getDefaultResults();
     }
-
-
-    @Feature
-    class WidgetFeature {
-         class PurchaseNewWidget{};
-         class SearchWidgets{};
-         class DisplayWidgets{};
-    }
-
-    private TestOutcome thatSucceedsFor(Story story, int stepCount) {
-        TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
-        for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(TestStepFactory.forASuccessfulTestStepCalled("Step " + i));
-        }
-        testOutcome.setStartTime(EARLY_DATE);
-        return testOutcome;
-    }
-
-    private TestOutcome thatIsPendingFor(Story story, int stepCount) {
-        TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
-        for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(TestStepFactory.forAPendingTestStepCalled("Step " + i));
-        }
-        testOutcome.setStartTime(LATE_DATE);
-        return testOutcome;
-    }
-
-    private TestOutcome thatIsIgnoredFor(Story story, int stepCount) {
-        TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
-        for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(TestStepFactory.forAnIgnoredTestStepCalled("Step " + i));
-        }
-        return testOutcome;
-    }
-
-    private TestOutcome thatIsFailingFor(Story story, int stepCount) {
-        TestOutcome testOutcome = TestOutcome.forTestInStory("a test", story);
-        for(int i = 1; i <= stepCount; i++ ){
-            testOutcome.recordStep(TestStepFactory.forABrokenTestStepCalled("Step " + i, new AssertionError()));
-        }
-        testOutcome.setStartTime(LATE_DATE);
-        return testOutcome;
-    }
-
 }

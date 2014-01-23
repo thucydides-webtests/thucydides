@@ -1,5 +1,6 @@
 package net.thucydides.core.reports;
 
+import ch.lambdaj.Lambda;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -23,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -110,14 +110,12 @@ public class TestOutcomes {
                 Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
     }
 
+    private static List<TestOutcome> NO_OUTCOMES = ImmutableList.of();
+
     public static TestOutcomes withNoResults() {
-        return new TestOutcomes(Collections.EMPTY_LIST,
-                Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
+        return new TestOutcomes(NO_OUTCOMES,
+                                Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
     }
-//
-//    protected TestStatisticsProvider getTestStatisticsProvider() {
-//        return testStatisticsProvider;
-//    }
 
     public String getLabel() {
         return label;
@@ -147,7 +145,7 @@ public class TestOutcomes {
     public List<String> getRequirementTagTypes() {
        List<String> tagTypes = Lists.newArrayList();
 
-       List<String> candidateTagTypes = requirementsService.getRequirementTypes();// requirementsConfiguration.getRequirementTypes();
+       List<String> candidateTagTypes = requirementsService.getRequirementTypes();
        for(String tagType : candidateTagTypes) {
            if (getTagTypes().contains(tagType)) {
                tagTypes.add(tagType);
@@ -296,7 +294,7 @@ public class TestOutcomes {
     }
 
     public TestOutcomes withTags(List<TestTag> tags) {
-        List<TestOutcome> filteredOutcomes = new ArrayList();
+        List<TestOutcome> filteredOutcomes = Lists.newArrayList();
         for (TestTag tag : tags) {
             filteredOutcomes.addAll(matchingOutcomes(outcomes, tag));
         }
@@ -382,7 +380,6 @@ public class TestOutcomes {
      *
      * @return A new set of test outcomes containing only the pending or ignored tests
      */
-    @SuppressWarnings("unchecked")
     public TestOutcomes getPendingTests() {
 
         List<TestOutcome> pendingOrSkippedOutcomes = outcomesWithResults(outcomes, PENDING, SKIPPED);
@@ -476,7 +473,6 @@ public class TestOutcomes {
 
     /**
      * @param testType 'manual' or 'automated' (this is a string because it is mainly called from the freemarker templates
-     * @return
      */
     public int successCount(String testType) {
         return sum(outcomes, on(TestOutcome.class).countResults(SUCCESS, TestType.valueOf(testType.toUpperCase())));
@@ -573,14 +569,6 @@ public class TestOutcomes {
         }
     }
 
-    public Double getPercentageTestCount(TestResult expectedResult) {
-        if (getTotal() > 0) {
-            return (countTestsWithResult(expectedResult) / (double) getTotal());
-        } else {
-            return 0.0;
-        }
-    }
-
     public TestCoverageFormatter.FormattedPercentageStepCoverage getFormattedPercentageSteps() {
         return new TestCoverageFormatter(this).getPercentSteps();
     }
@@ -605,10 +593,6 @@ public class TestOutcomes {
         return new TestCoverageFormatter(this);
     }
 
-    protected int countStepsWithResult(TestResult expectedResult) {
-        return countStepsWithResult(expectedResult, TestType.ANY);
-    }
-
     private int countStepsWithResult(TestResult expectedResult, TestType testType) {
         int stepCount = sum(outcomes, on(TestOutcome.class).countNestedStepsWithResult(expectedResult, testType));
         if ((stepCount == 0) && aMatchingTestExists(expectedResult, testType)) {
@@ -619,10 +603,6 @@ public class TestOutcomes {
 
     private boolean aMatchingTestExists(TestResult expectedResult, TestType testType) {
         return (countTestsWithResult(expectedResult, testType) > 0);
-    }
-
-    protected int countTestsWithResult(TestResult expectedResult) {
-        return sum(outcomes, on(TestOutcome.class).countResults(expectedResult));
     }
 
     protected int countTestsWithResult(TestResult expectedResult, TestType testType) {
@@ -679,7 +659,7 @@ public class TestOutcomes {
     }
 
     public int getTotalDataRows() {
-        List datadrivenTestOutcomes = filter(having(on(TestOutcome.class).isDataDriven(), is(true)), outcomes);
+        List<? extends TestOutcome> datadrivenTestOutcomes = filter(having(on(TestOutcome.class).isDataDriven(), is(true)), outcomes);
         return sum(datadrivenTestOutcomes, on(TestOutcome.class).getDataTable().getSize());
     }
 
@@ -697,6 +677,7 @@ public class TestOutcomes {
             this.outcomes = outcomes;
         }
 
+        @SuppressWarnings("unchecked")
         public TestOutcomeMatcher withName(Matcher<String> nameMatcher) {
             List<Matcher<String>> matchers = Lists.newArrayList(nameMatcher);
             this.nameMatcher = Optional.of(matchers);

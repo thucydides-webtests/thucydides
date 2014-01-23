@@ -1,5 +1,6 @@
 package net.thucydides.junit.runners;
 
+import com.beust.jcommander.internal.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
@@ -718,7 +719,7 @@ public class WhenRunningADataDrivenTestScenario {
 
 
     private List<String> contentsOf(File[] files) throws IOException {
-        List<String> contents = new ArrayList();
+        List<String> contents = Lists.newArrayList();
         for(File file : files) {
             contents.add(stringContentsOf(file));
         }

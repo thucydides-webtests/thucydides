@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,8 +83,6 @@ public class ClassFinder {
      * Adapted from http://snippets.dzone.com/posts/show/4831 and extended to support use of JAR files
      * @param packageName The base package
      * @return The classes
-     * @throws ClassNotFoundException
-     * @throws IOException
      */
     public static List<Class<?>> getClasses(String packageName) {
         try {
@@ -122,8 +119,8 @@ public class ClassFinder {
     /**
      * Recursive method used to find all classes in a given directory and subdirs. * Adapted from http://snippets.dzone.com/posts/show/4831 and extended to support use of JAR files * @param directory The base directory * @param packageName The package name for classes found inside the base directory * @return The classes * @throws ClassNotFoundException
      */
-    private static TreeSet findClasses(String directory, String packageName) throws Exception {
-        TreeSet classes = new TreeSet();
+    private static TreeSet<String> findClasses(String directory, String packageName) throws Exception {
+        TreeSet<String> classes = Sets.newTreeSet();
         if (directory.startsWith("file:") && directory.contains("!")) {
             String[] split = directory.split("!");
             URL jar = new URL(split[0]);

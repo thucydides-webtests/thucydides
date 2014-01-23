@@ -10,6 +10,7 @@ import net.thucydides.core.reports.history.TestResultSnapshot
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.openqa.selenium.phantomjs.PhantomJSDriver
 import spock.lang.Specification
@@ -106,7 +107,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
         when: "we view the report"
-            driver = new PhantomJSDriver()
+            driver = new FirefoxDriver()
             driver.get reportHomePageUrl();
         then: "we should see a Releases tab"
             def releasesLink = driver.findElement(By.linkText("Releases"))
@@ -114,13 +115,14 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         and:"a list of releases should be displayed"
             def releases = driver.findElements(By.cssSelector(".jqtree-title")).collect { it.text }
             releases.containsAll(["Release 1.0", "Release 2.0"])
+            driver.close()
     }
 
     def "should generate a detailed release report for each release"() {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
         when: "we view the release report"
-            driver = new PhantomJSDriver();
+            driver = new FirefoxDriver();
             driver.get reportHomePageUrl();
             def releasesLink = driver.findElement(By.linkText("Releases"))
             releasesLink.click();
@@ -128,6 +130,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
             driver.findElement(By.className("jqtree-title")).click()
         and: "the release report should contain the requirement type as a title"
             driver.findElement(By.className("requirementTitle"))?.getText() == "Scheduled Requirements"
+            driver.close()
 
     }
 

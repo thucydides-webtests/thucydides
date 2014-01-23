@@ -20,9 +20,9 @@ public class ByJQuerySelector extends By {
     }
 
     @Override
-    public List findElements(SearchContext context) {
+    public List<WebElement> findElements(SearchContext context) {
         String jquery = "return $(" + quoted(jQuerySelector) + ").get();";
-        return (List) ((JavascriptExecutor) context).executeScript(jquery);
+        return (List<WebElement>) ((JavascriptExecutor) context).executeScript(jquery);
     }
 
     @Override

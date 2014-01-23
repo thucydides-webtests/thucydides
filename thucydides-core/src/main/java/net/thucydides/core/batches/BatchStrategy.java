@@ -18,7 +18,7 @@ public enum BatchStrategy {
 
     public BatchManager instance(EnvironmentVariables environmentVariables) throws NoSuchMethodException, InvocationTargetException,
             IllegalAccessException, InstantiationException {
-        Class[] constructorArgs = {EnvironmentVariables.class};
+        Class<?>[] constructorArgs = {EnvironmentVariables.class};
         Constructor<? extends BatchManager> constructor = batchManagerClass.getConstructor(constructorArgs);
         return constructor.newInstance(environmentVariables);
     }
