@@ -286,6 +286,27 @@ public class WebDriverFactory {
         if (isNotEmpty(platformValue)) {
             capabilities.setCapability("platform", platformFrom(platformValue));
         }
+        if (capabilities.getBrowserName().equals("safari"))
+        {
+            setAppropriateSaucelabsPlatformVersionForSafari(capabilities);
+        }
+    }
+
+    private void setAppropriateSaucelabsPlatformVersionForSafari(DesiredCapabilities capabilities)
+    {
+        String browserVersion = ThucydidesSystemProperty.SAUCELABS_DRIVER_VERSION.from(environmentVariables);
+        if (browserVersion.equals("5"))
+        {
+            capabilities.setCapability("platform", "OS X 10.6");
+        }
+        else if (browserVersion.equals("6"))
+        {
+            capabilities.setCapability("platform", "OS X 10.8");
+        }
+        else if (browserVersion.equals("7"))
+        {
+            capabilities.setCapability("platform", "OS X 10.9");
+        }
     }
 
     private void configureTestName(DesiredCapabilities capabilities) {
@@ -371,6 +392,10 @@ public class WebDriverFactory {
         switch (driverType) {
             case CHROME:
                 capabilities = chromeCapabilities();
+                break;
+
+            case SAFARI:
+                capabilities = DesiredCapabilities.safari();
                 break;
 
             case FIREFOX:
