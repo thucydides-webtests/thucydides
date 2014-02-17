@@ -44,6 +44,10 @@ public enum ThucydidesSystemProperty {
      */
     REMOTE_DRIVER("webdriver.remote.driver"),
 
+    REMOTE_BROWSER_VERSION("webdriver.remote.browser.version"),
+
+    REMOTE_OS("webdriver.remote.os"),
+
     /**
      * Path to the Chrome driver, if it is not on the system path.
      */

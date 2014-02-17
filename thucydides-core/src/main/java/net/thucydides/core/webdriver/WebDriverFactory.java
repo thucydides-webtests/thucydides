@@ -406,6 +406,15 @@ public class WebDriverFactory {
               = environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.SAUCELABS_RECORD_SCREENSHOTS, false);
         capabilities.setCapability("record-screenshots", recordScreenshotsInSaucelabs);
 
+
+        if (environmentVariables.getProperty(ThucydidesSystemProperty.REMOTE_OS) != null) {
+            capabilities.setCapability("platform", Platform.valueOf(environmentVariables.getProperty(ThucydidesSystemProperty.REMOTE_OS)));
+        }
+
+        if (environmentVariables.getProperty(ThucydidesSystemProperty.REMOTE_BROWSER_VERSION) != null) {
+            capabilities.setCapability("version", Platform.valueOf(environmentVariables.getProperty(ThucydidesSystemProperty.REMOTE_BROWSER_VERSION)));
+        }
+
         return capabilities;
     }
 

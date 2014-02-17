@@ -234,7 +234,7 @@ public class WhenFormattingForHTML {
 
         String formattedValue = formatter.convertAnyTables("A table: | name | age |\n|Bill|20|");
 
-        assertThat(formattedValue, is("A table: <table class='embedded'><thead><th>name</th><th>age</th></thead><tbody><tr><td>Bill</td><td>20</td></tr></tbody></table>"));
+        assertThat(formattedValue, is("A table:<table class='embedded'><thead><th>name</th><th>age</th></thead><tbody><tr><td>Bill</td><td>20</td></tr></tbody></table>"));
     }
 
     @Test
