@@ -3,6 +3,7 @@ package net.thucydides.core.reports.html;
 import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Splitter;
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -15,14 +16,14 @@ public class ExampleTable {
     final static Pattern NEW_LINE = Pattern.compile("(\\r\\n)|(\\n)|(\\r)");
 
     public ExampleTable(String unformattedTable) {
-        String tableContents = unformattedTable.substring(unformattedTable.indexOf("|") + 1, unformattedTable.lastIndexOf("|"));
+            String tableContents = unformattedTable.substring(unformattedTable.indexOf("|") + 1, unformattedTable.lastIndexOf("|"));
 
-        Iterator<String> lineIter = Splitter.on(NEW_LINE).omitEmptyStrings().trimResults().split(tableContents).iterator();
-        List<String> lines = IteratorUtils.toList(lineIter);
-        addHeaderFrom(lines.get(0));
-        for(int row = 1; row < lines.size(); row++) {
-            addRowFrom(lines.get(row));
-        }
+            Iterator<String> lineIter = Splitter.on(NEW_LINE).omitEmptyStrings().trimResults().split(tableContents).iterator();
+            List<String> lines = IteratorUtils.toList(lineIter);
+            addHeaderFrom(lines.get(0));
+            for(int row = 1; row < lines.size(); row++) {
+                addRowFrom(lines.get(row));
+            }
     }
 
     private void addRowFrom(String row) {

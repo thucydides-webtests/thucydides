@@ -218,6 +218,37 @@ public class WhenFormattingForHTML {
     }
 
     @Test
+    public void should_convert_text_tables_into_html_tables() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.convertAnyTables("| name | age |\n|Bill|20|");
+
+        assertThat(formattedValue, is("<table class='embedded'><thead><th>name</th><th>age</th></thead><tbody><tr><td>Bill</td><td>20</td></tr></tbody></table>"));
+    }
+
+    @Test
+    public void should_convert_embedded_text_tables_into_html_tables() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.convertAnyTables("A table: | name | age |\n|Bill|20|");
+
+        assertThat(formattedValue, is("A table: <table class='embedded'><thead><th>name</th><th>age</th></thead><tbody><tr><td>Bill</td><td>20</td></tr></tbody></table>"));
+    }
+
+    @Test
+    public void should_ignore_isolated_pipes() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.convertAnyTables("Not a table: | that was a pipe");
+
+        assertThat(formattedValue, is("Not a table: | that was a pipe"));
+    }
+
+
+    @Test
     public void should_return_empty_string_when_inserting_line_breaks_into_a_null_value() {
         when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
         Formatter formatter = new Formatter(issueTracking);

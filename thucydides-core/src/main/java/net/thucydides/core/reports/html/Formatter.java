@@ -173,7 +173,11 @@ public class Formatter {
     private String getEmbeddedTable(String text) {
         int startIndex = firstPipeIndex(text);
         int endIndex = lastPipeIndex(text);
-        return text.substring(startIndex, endIndex);
+        if (startIndex > 0) {
+            return text.substring(startIndex, endIndex);
+        } else {
+            return text.substring(0, endIndex);
+        }
     }
 
     private int lastPipeIndex(String text) {
@@ -183,7 +187,7 @@ public class Formatter {
     }
 
     private int firstPipeIndex(String text) {
-        return positionOfFirstPipeIn(text) - 1;
+        return positionOfFirstPipeIn(text);
     }
 
     private final CharSequenceTranslator ESCAPE_SPECIAL_CHARS = new AggregateTranslator(
