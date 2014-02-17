@@ -4,7 +4,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.230</version>
+        <version>0.9.231-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-sample-alternative-resources</artifactId>
