@@ -57,6 +57,7 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
         String json = gson.toJson(storedTestOutcome);
         String reportFilename = reportFor(storedTestOutcome);
         File report = new File(getOutputDirectory(), reportFilename);
+        LOGGER.info("Generating JSON report for {} to file {}", testOutcome.getTitle(), report.getAbsolutePath());
         OutputStream outputStream = new FileOutputStream(report);
         OutputStreamWriter writer = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
         writer.write(json);

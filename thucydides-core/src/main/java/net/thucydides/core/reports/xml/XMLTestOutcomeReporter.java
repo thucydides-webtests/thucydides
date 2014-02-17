@@ -64,11 +64,13 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter, Acceptanc
         xstream.registerConverter(usingXmlConverter());
 
         String reportFilename = reportFor(storedTestOutcome);
-        LOGGER.debug("Generating XML report for {} to file {}", testOutcome.getTitle(), storedTestOutcome);
 
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
         File report = new File(getOutputDirectory(), reportFilename);
+
+        LOGGER.info("Generating XML report for {} to file {}", testOutcome.getTitle(), report.getAbsolutePath());
+
         try {
             outputStream = new FileOutputStream(report);
             writer = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
