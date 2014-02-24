@@ -78,6 +78,10 @@ public class StepFactory {
         return instantiateUniqueStepLibraryFor(scenarioStepsClass);
     }
 
+    public void reset() {
+        index.clear();
+    }
+
     private boolean isStepLibraryInstantiatedFor(Class<?> scenarioStepsClass) {
         return index.containsKey(scenarioStepsClass);
     }
