@@ -109,4 +109,6 @@ public interface WebElementState {
     boolean isSelected();
 
     String getTextValue();
+
+    WebElementState expect(String errorMessage);
 }

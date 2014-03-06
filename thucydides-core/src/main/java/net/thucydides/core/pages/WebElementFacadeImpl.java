@@ -1,6 +1,7 @@
 package net.thucydides.core.pages;
 
 import ch.lambdaj.function.convert.Converter;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 import static ch.lambdaj.Lambda.convert;
@@ -73,6 +75,10 @@ public class WebElementFacadeImpl implements WebElementFacade {
 		this.sleeper = Sleeper.SYSTEM_SLEEPER;
 		this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
 		this.environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+    }
+
+    private WebElementFacadeImpl copy() {
+        return new WebElementFacadeImpl(driver, locator, webElement, timeoutInMilliseconds);
     }
     
     /**
@@ -268,7 +274,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
     @Override
 	public void shouldBeVisible() {
         if (!isVisible()) {
-            throw new AssertionError("Element should be visible");
+            failWithMessage("Element should be visible");
         }
     }
 
@@ -279,7 +285,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
     @Override
 	public void shouldBeCurrentlyVisible() {
         if (!isCurrentlyVisible()) {
-            throw new AssertionError("Element should be visible");
+            failWithMessage("Element should be visible");
         }
     }
 
@@ -290,7 +296,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
     @Override
 	public void shouldNotBeVisible() {
         if (isCurrentlyVisible()) {
-            throw new AssertionError("Element should not be visible");
+            failWithMessage("Element should not be visible");
         }
     }
 
@@ -301,7 +307,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
     @Override
 	public void shouldNotBeCurrentlyVisible() {
         if (isCurrentlyVisible()) {
-            throw new AssertionError("Element should not be visible");
+            failWithMessage("Element should not be visible");
         }
     }
 
@@ -364,7 +370,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
         if (!containsText(textValue)) {
             String errorMessage = String.format(
                     "The text '%s' was not found in the web element. Element text '%s'.", textValue, getElement().getText());
-            throw new AssertionError(errorMessage);
+            failWithMessage(errorMessage);
         }
     }
 
@@ -378,7 +384,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
         if (!containsOnlyText(textValue)) {
             String errorMessage = String.format(
                     "The text '%s' does not match the elements text '%s'.", textValue, getElement().getText());
-            throw new AssertionError(errorMessage);
+            failWithMessage(errorMessage);
         }
     }
 
@@ -387,7 +393,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
         if (!containsSelectOption(textValue)) {
             String errorMessage = String.format(
                     "The list element '%s' was not found in the web element", textValue);
-            throw new AssertionError(errorMessage);
+            failWithMessage(errorMessage);
         }
     }
 
@@ -401,7 +407,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
         if (containsText(textValue)) {
             String errorMessage = String.format(
                     "The text '%s' was found in the web element when it should not have. Element text '%s'.", textValue, getElement().getText());
-            throw new AssertionError(errorMessage);
+            failWithMessage(errorMessage);
         }
     }
 
@@ -410,7 +416,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
         if (!isEnabled()) {
             String errorMessage = String.format(
                     "Field '%s' should be enabled", toString());
-            throw new AssertionError(errorMessage);
+            failWithMessage(errorMessage);
         }
     }
 
@@ -424,7 +430,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
         if (isEnabled()) {
             String errorMessage = String.format(
                     "Field '%s' should not be enabled", toString());
-            throw new AssertionError(errorMessage);
+            failWithMessage(errorMessage);
         }
     }
 
@@ -561,19 +567,19 @@ public class WebElementFacadeImpl implements WebElementFacade {
     @Override
 	public void shouldBePresent() {
         if (!isPresent()) {
-            String errorMessage = String.format(
-                    "Field should be present");
-            throw new AssertionError(errorMessage);
+            failWithMessage("Field should be present");
         }
     }
 
     @Override
 	public void shouldNotBePresent() {
         if (isPresent()) {
-            String errorMessage = String.format(
-                    "Field should not be present");
-            throw new AssertionError(errorMessage);
+            failWithMessage("Field should not be present");
         }
+    }
+
+    private void failWithMessage(String errorMessage) {
+        throw new AssertionError(getErrorMessage(errorMessage));
     }
 
     @Override
@@ -765,6 +771,21 @@ public class WebElementFacadeImpl implements WebElementFacade {
         return "";
     }
 
+    @Override
+    public WebElementState expect(String errorMessage) {
+        return copy().expectingErrorMessage(errorMessage);
+    }
+
+    private Optional<String> expectedErrorMessage = Optional.absent();
+
+    protected WebElementState expectingErrorMessage(String errorMessage) {
+        this.expectedErrorMessage = Optional.of(errorMessage);
+        return this;
+    }
+
+    protected String getErrorMessage(String defaultErrorMessage) {
+        return expectedErrorMessage.or(defaultErrorMessage);
+    }
 
     private boolean valueAttributeSupportedAndDefinedIn(final WebElement webElement) {
         return hasValueAttribute(webElement) && StringUtils.isNotEmpty(getValue());
