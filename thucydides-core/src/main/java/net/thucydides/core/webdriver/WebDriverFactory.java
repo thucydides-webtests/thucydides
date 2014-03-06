@@ -13,6 +13,7 @@ import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.steps.FilePathParser;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
+import net.thucydides.core.webdriver.chrome.OptionsSplitter;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
 import net.thucydides.core.webdriver.phantomjs.PhantomJSCapabilityEnhancer;
 import org.apache.commons.lang3.StringUtils;
@@ -519,7 +520,7 @@ public class WebDriverFactory {
     private ChromeOptions optionsFromSwitches(String chromeSwitches) {
         ChromeOptions options = new ChromeOptions();
         if (StringUtils.isNotEmpty(chromeSwitches)) {
-            List<String> arguments =  Lists.newArrayList(Splitter.on(",").trimResults().split(chromeSwitches));
+            List<String> arguments = new OptionsSplitter().split(chromeSwitches);
             options.addArguments(arguments);
         }
         return options;
