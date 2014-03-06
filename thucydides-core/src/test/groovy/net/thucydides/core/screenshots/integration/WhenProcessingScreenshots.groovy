@@ -76,4 +76,5 @@ class WhenProcessingScreenshots extends Specification {
             assert targetDirectory.list().size() == 100
     }
 
+
 }

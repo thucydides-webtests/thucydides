@@ -3,6 +3,7 @@ package net.thucydides.core.requirements.reportpages
 import net.thucydides.core.pages.PageObject
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.phantomjs.PhantomJSDriver
 
 /**
@@ -11,7 +12,7 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver
 class ProgressReport extends PageObject {
 
     static ProgressReport inDirectory(File directory) {
-        def driver = new PhantomJSDriver();
+        def driver = new FirefoxDriver();
         def report = new ProgressReport(driver)
         report.openAt("file:///" +  directory.getAbsolutePath() + "/progress-report.html");
         return report

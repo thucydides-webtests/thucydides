@@ -1,18 +1,24 @@
 package net.thucydides.core.pages.integration;
 
 
+import net.thucydides.core.pages.WebElementFacade;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
@@ -123,6 +129,7 @@ public class CheckingVisibilityWithTheFluentElementAPI extends FluentElementAPIT
     public void should_check_element_as_not_visible_quickly_if_not_present_right_now() {
         page.element(page.fieldDoesNotExist).shouldBeCurrentlyVisible();
     }
+
 
     @Test
     public void should_check_element_as_visible_quickly_if_not_present_right_now() {

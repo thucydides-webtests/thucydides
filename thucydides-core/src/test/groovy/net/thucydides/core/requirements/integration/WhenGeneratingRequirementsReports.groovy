@@ -130,8 +130,8 @@ class WhenGeneratingRequirementsReports extends Specification {
     def "Should display a progress graph showing the number of specified requirements"() {
         given: "there are some associated tests"
             issueTracking.getIssueTrackerUrl() >> "http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}"
-        def someTestOutcomes = TestOutcomes.of(someTestResults())
-        def someMoreTestOutcomes = TestOutcomes.of(someMoreTestResults())
+            def someTestOutcomes = TestOutcomes.of(someTestResults())
+            def someMoreTestOutcomes = TestOutcomes.of(someMoreTestResults())
         and: "we read the requirements from the directory structure"
             def requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider], issueTracking)
         when: "we store the requirements progress data"

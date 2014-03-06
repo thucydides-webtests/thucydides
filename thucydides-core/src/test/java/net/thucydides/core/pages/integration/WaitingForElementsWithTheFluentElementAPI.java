@@ -4,12 +4,14 @@ package net.thucydides.core.pages.integration;
 import org.apache.commons.exec.OS;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,36 +23,30 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     public ExpectedException expectedException = ExpectedException.none();
 
     private static WebDriver driver;
-    private static WebDriver chromeDriver;
 
     private static StaticSitePage staticPage;
-    private static StaticSitePage chromePage;
 
     @BeforeClass
     public static void openBrowsers() {
-        driver = new PhantomJSDriver();
-        chromeDriver = new ChromeDriver();
-
+        driver = new FirefoxDriver();
         staticPage = new StaticSitePage(driver, 1000);
         staticPage.open();
-
-        chromePage = new StaticSitePage(chromeDriver, 1000);
-        chromePage.open();
     }
 
     @AfterClass
     public static void quitBrowsers() {
-        driver.quit();
-        chromeDriver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     protected StaticSitePage getFirefoxPage() {
         return staticPage;
     }
 
-    protected StaticSitePage getChromePage() {
-        return chromePage;
-    }
+//    protected StaticSitePage getChromePage() {
+//        return chromePage;
+//    }
 
     @Test
     public void should_obtain_text_value_from_input() {
@@ -61,14 +57,15 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
     @Test
     public void should_optionally_type_enter_after_entering_text() {
-        StaticSitePage page = getChromePage();
-        chromeDriver.navigate().refresh();
+
+        StaticSitePage page = getFirefoxPage();
+        page.getDriver().navigate().refresh();
 
         assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
 
         page.element(page.firstName).typeAndEnter("joe");
 
-        assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
+        assertThat(page.firstName.getAttribute("value"), is("joe"));
     }
 
     @Test
@@ -83,17 +80,6 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
             assertThat(page.element(page.lastName).hasFocus(), is(true));
         }
-    }
-
-    @Test
-    public void should_optionally_type_tab_after_entering_text_in_firefox() {
-
-        StaticSitePage page = getFirefoxPage();
-
-        assertThat(page.firstName.getAttribute("value"), is("<enter first name>"));
-
-        page.element(page.firstName).typeAndTab("joe");
-        assertThat(page.element(page.lastName).hasFocus(), is(true));
     }
 
     @Test
@@ -139,6 +125,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
 
     @Test
+    @Ignore("Unreliable for current version of WebDriver")
     public void should_let_you_remove_the_focus_from_the_current_active_field() {
         StaticSitePage page = getFirefoxPage();
 
@@ -146,7 +133,6 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
         assertThat(page.element(page.focusmessage).getText(), is(""));
         page.blurActiveElement();
-
         page.element(page.focusmessage).shouldContainText("focus left firstname");
 
     }
