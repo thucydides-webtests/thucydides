@@ -8,6 +8,7 @@ import net.thucydides.core.digest.Digest;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.WebDriverFacade;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -22,7 +23,11 @@ import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
 import java.util.UUID;
 
 /**
@@ -92,39 +97,26 @@ public class Photographer {
         return blurLevel;
     }
 
-    protected long nextScreenshotNumber() {
-        return screenshotSequence.next();
-    }
-
-    private String nextScreenshotName(final String prefix) {
-        long nextScreenshotNumber = nextScreenshotNumber();
-        return "screenshot-" + Digest.ofTextValue(prefix) + nextScreenshotNumber + ".png";
-    }
-
     /**
      * Take a screenshot of the current browser and store it in the output directory.
      */
-    public Optional<File> takeScreenshot(final String prefix) {
+    public Optional<File> takeScreenshot() {
         if (driverCanTakeSnapshots()) {
             try {
-                File screenshotFile = null;
+                File screenshotTempFile = null;
                 Object capturedScreenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
                 if (isAFile(capturedScreenshot)) {
-                    screenshotFile = (File) capturedScreenshot;
+                    screenshotTempFile = (File) capturedScreenshot;
                 } else if (isByteArray(capturedScreenshot)) {
-                    screenshotFile = saveScreenshotData((byte[]) capturedScreenshot);
+                    screenshotTempFile = saveScreenshotData((byte[]) capturedScreenshot);
                 }
-                if (screenshotFile != null && blurLevel.isPresent()) {
-                    screenshotFile = blur(screenshotFile);
+                if (screenshotTempFile != null && blurLevel.isPresent()) {
+                    screenshotTempFile = blur(screenshotTempFile);
                 }
-                if (screenshotFile != null) {
-                    File savedScreenshot = targetScreenshot(prefix);
-                    screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile, savedScreenshot));
-
-                    if (!blurLevel.isPresent() && shouldSavePageSource()) {
-                        savePageSourceFor(savedScreenshot.getAbsolutePath());
-                    }
-
+                if (screenshotTempFile != null) {
+                    String storedFilename = getDigestScreenshotNameFor(screenshotTempFile);
+                    File savedScreenshot = targetScreenshot(storedFilename);
+                    screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotTempFile, savedScreenshot));
                     return Optional.of(savedScreenshot);
                 }
             } catch (Throwable e) {
@@ -134,8 +126,9 @@ public class Photographer {
         return Optional.absent();
     }
 
-    private boolean shouldSavePageSource() {
-        return environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.THUCYDIDES_STORE_HTML_SOURCE, false);
+    private String getDigestScreenshotNameFor(File screenshotTempFile) throws IOException {
+        ScreenshotDigest screenshotDigest = new ScreenshotDigest(environmentVariables, blurLevel.orNull());
+        return screenshotDigest.forScreenshot(screenshotTempFile);
     }
 
     protected File blur(File srcFile) throws IOException {
@@ -149,7 +142,7 @@ public class Photographer {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         ImageIO.write(destImage, "png", outStream);
 
-        return  saveScreenshotData(outStream.toByteArray());
+        return saveScreenshotData(outStream.toByteArray());
     }
 
     private BufferedImage deepCopy(BufferedImage srcImage) {
@@ -181,9 +174,9 @@ public class Photographer {
         return (screenshot instanceof byte[]);
     }
 
-    private File targetScreenshot(String prefix) {
+    private File targetScreenshot(String storedFilename) {
         targetDirectory.mkdirs();
-        return new File(targetDirectory, nextScreenshotName(prefix));
+        return new File(targetDirectory, storedFilename);
     }
 
     protected boolean driverCanTakeSnapshots() {
@@ -197,27 +190,14 @@ public class Photographer {
         }
     }
 
-    private void savePageSourceFor(final String screenshotFile) throws IOException {
-        try {
-            WebDriver webdriver = driver;
-            String pageSource = webdriver.getPageSource();
-
-            File savedSource = new File(sourceCodeFileFor(screenshotFile));
-            FileUtils.writeStringToFile(savedSource, pageSource);
-        } catch (WebDriverException e) {
-            getLogger().warn("Failed to save screen source code", e);
-        }
-    }
-
-
-    private String sourceCodeFileFor(final String screenshotFile) {
-        String rootFilename = screenshotFile.substring(0, screenshotFile.length() - PNG_SUFFIX_LENGTH);
+    private String sourceCodeFileFor(final File screenshotFile) throws IOException {
+        String rootFilename = DigestUtils.md5Hex(new FileInputStream(screenshotFile));
         return rootFilename + ".html";
     }
 
-    public File getMatchingSourceCodeFor(final File screenshot) {
+    public File getMatchingSourceCodeFor(final File screenshot) throws IOException  {
         if (screenshot != null) {
-            return new File(sourceCodeFileFor(screenshot.getAbsolutePath()));
+            return new File(sourceCodeFileFor(screenshot));
         } else {
             return null;
         }

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -72,13 +73,28 @@ public class WhenTakingLargeScreenshots {
 
         ScreenshotProcessor screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables);
         Photographer photographer = new Photographer(driver, screenshotDirectory,screenshotProcessor);
-        File screenshotFile = photographer.takeScreenshot("screenshot").get();
+        File screenshotFile = photographer.takeScreenshot().get();
 
 		waitUntilFileIsWritten(screenshotFile);
 
         ResizableImage image = ResizableImage.loadFrom(screenshotFile);
 
         assertThat(image.getWitdh(), is(greaterThan(350))); // In Windows the actual dimensions may be are slightly less
+    }
+
+    @Test
+    public void should_only_store_one_file_for_identical_screenshots() throws Exception {
+
+        System.setProperty("phantomjs.binary.path","/opt/phantomjs/phantomjs");
+        driver = testSite.open("phantomjs");
+
+        ScreenshotProcessor screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables);
+        Photographer photographer = new Photographer(driver, screenshotDirectory,screenshotProcessor);
+        File screenshot1File = photographer.takeScreenshot().get();
+        File screenshot2File = photographer.takeScreenshot().get();
+
+        assertThat(screenshot1File.getName(), equalTo(screenshot2File.getName()));
+
     }
 
 
@@ -94,7 +110,7 @@ public class WhenTakingLargeScreenshots {
 
         ScreenshotProcessor screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables);
         Photographer photographer = new Photographer(driver, screenshotDirectory, screenshotProcessor);
-        File screenshotFile = photographer.takeScreenshot("screenshot").get();
+        File screenshotFile = photographer.takeScreenshot().get();
 
         waitUntilFileIsWritten(screenshotFile);
 
@@ -109,7 +125,7 @@ public class WhenTakingLargeScreenshots {
         driver = testSite.open("http:www.google.com", "screenshots/google.html");
 
         Photographer photographer = new Photographer(driver, screenshotDirectory);
-        File screenshotFile = photographer.takeScreenshot("screenshot").get();
+        File screenshotFile = photographer.takeScreenshot().get();
 
 		waitUntilFileIsWritten(screenshotFile);
 
@@ -122,7 +138,7 @@ public class WhenTakingLargeScreenshots {
         driver = testSite.open("http://www.google.com", "screenshots/google.html", "chrome");
 
         Photographer photographer = new Photographer(driver, screenshotDirectory);
-        File screenshotFile = photographer.takeScreenshot("screenshot").get();
+        File screenshotFile = photographer.takeScreenshot().get();
 
 		waitUntilFileIsWritten(screenshotFile);
 
@@ -158,6 +174,6 @@ public class WhenTakingLargeScreenshots {
                 return logger;
             }
         };
-        photographer.takeScreenshot("screenshot");
+        photographer.takeScreenshot();
     }
 }

@@ -1503,25 +1503,6 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
-    public void screenshot_source_will_be_stored_if_configured() {
-
-        environmentVariables.setProperty("thucydides.store.html.source","true");
-        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
-        StepEventBus.getEventBus().testStarted("app_should_work");
-
-        NestedScenarioSteps steps = stepFactory.getStepLibraryFor(NestedScenarioSteps.class);
-        steps.step1();
-        steps.step2();
-        StepEventBus.getEventBus().testFinished(testOutcome);
-
-        List<TestOutcome> results = stepListener.getTestOutcomes();
-        TestOutcome testOutcome = results.get(0);
-        TestStep firstStep = testOutcome.getTestSteps().get(0).getChildren().get(0);
-        ScreenshotAndHtmlSource screenshot = firstStep.getScreenshots().get(0);
-        assertThat(screenshot.getSourcecode().isPresent(), is(true));
-    }
-
-    @Test
     public void blurred_screenshots_will_be_stored_if_configured() throws IOException {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);

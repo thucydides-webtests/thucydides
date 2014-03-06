@@ -621,16 +621,17 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private Optional<ScreenshotAndHtmlSource> grabScreenshotFor(final String testName) {
-        String snapshotName = underscore(testName);
+        //String snapshotName = underscore(testName);
 
-        Optional<File> screenshot = getPhotographer().takeScreenshot(snapshotName);
+        Optional<File> screenshot = getPhotographer().takeScreenshot();
         if (screenshot.isPresent()) {
-            if (shouldStoreSourcecode()) {
-                File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot.get());
-                return Optional.of(new ScreenshotAndHtmlSource(screenshot.get(), sourcecode));
-            } else {
-                return Optional.of(new ScreenshotAndHtmlSource(screenshot.get()));
-            }
+            return Optional.of(new ScreenshotAndHtmlSource(screenshot.get()));
+//            if (shouldStoreSourcecode()) {
+//                File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot.get());
+//                return Optional.of(new ScreenshotAndHtmlSource(screenshot.get(), sourcecode));
+//            } else {
+//                return Optional.of(new ScreenshotAndHtmlSource(screenshot.get()));
+//            }
         }
         return Optional.absent();
     }

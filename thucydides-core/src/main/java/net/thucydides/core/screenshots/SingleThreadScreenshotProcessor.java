@@ -78,6 +78,12 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
         }
 
         private void processScreenshot(QueuedScreenshot queuedScreenshot) {
+            if (!queuedScreenshot.getDestinationFile().exists()) {
+                resizeOrMoveScreenshot(queuedScreenshot);
+            }
+        }
+
+        private void resizeOrMoveScreenshot(QueuedScreenshot queuedScreenshot) {
             if (shouldResize(queuedScreenshot)) {
                 resizeScreenshot(queuedScreenshot);
             } else {
