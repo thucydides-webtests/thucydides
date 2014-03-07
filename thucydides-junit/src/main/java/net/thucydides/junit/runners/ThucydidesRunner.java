@@ -2,6 +2,8 @@ package net.thucydides.junit.runners;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import net.thucydides.core.Thucydides;
+import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.TestCaseAnnotations;
@@ -378,6 +380,9 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
+
+        clearMetadataIfRequired();
+
         if (shouldSkipTest(method)) {
             return;
         }
@@ -418,6 +423,12 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
         if (notifier instanceof RetryFilteringRunNotifier) {
             ((RetryFilteringRunNotifier) notifier).flush();
+        }
+    }
+
+    private void clearMetadataIfRequired() {
+        if (!configuration.getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.MAINTAIN_SESSION, false)) {
+            Thucydides.getCurrentSession().clearMetaData();
         }
     }
 

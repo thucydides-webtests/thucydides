@@ -562,7 +562,13 @@ public enum ThucydidesSystemProperty {
     /**
      * If set, this will define the list of tag types to be excluded from the dashboard screens
      */
-    DASHBOARD_EXCLUDED_TAG_LIST("dashboard.excluded.tag.list");
+    DASHBOARD_EXCLUDED_TAG_LIST("dashboard.excluded.tag.list"),
+
+    /**
+     * Keep the Thucydides session data between tests.
+     * Normally, the session data is cleared between tests.
+     */
+    MAINTAIN_SESSION("thucydides.maintain.session");
 
     private String propertyName;
     public static final int DEFAULT_HEIGHT = 700;

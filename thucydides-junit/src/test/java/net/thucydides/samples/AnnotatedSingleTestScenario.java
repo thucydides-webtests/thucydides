@@ -1,5 +1,6 @@
 package net.thucydides.samples;
 
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;
@@ -25,9 +26,21 @@ public class AnnotatedSingleTestScenario {
     @Test
     @Title("Oh happy days!")
     public void happy_day_scenario() {
+        Thucydides.getCurrentSession().put("count",1);
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
         steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
-    }    
+    }
+
+
+    @Test
+    @Title("Oh happy days!")
+    public void happy_day_scenario_2() {
+        Thucydides.getCurrentSession().get("count");
+        steps.stepThatSucceeds();
+        steps.stepThatIsIgnored();
+        steps.stepThatIsPending();
+        steps.anotherStepThatSucceeds();
+    }
 }
