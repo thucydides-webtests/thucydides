@@ -4,11 +4,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.233-SNAPSHOT</version>
+        <version>0.9.235-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-core</artifactId>
-    <version>0.9.233-SNAPSHOT</version>
+    <version>0.9.235-SNAPSHOT</version>
     <name>thucydides-core</name>
     <properties>
         <root.package>net.thucydides.core</root.package>
@@ -97,7 +97,7 @@
         <dependency>
             <groupId>com.github.detro.ghostdriver</groupId>
             <artifactId>phantomjsdriver</artifactId>
-            <version>1.0.4</version>
+            <version>1.1.0</version>
              <exclusions>
                 <exclusion>
                     <groupId>org.seleniumhq.selenium</groupId>
