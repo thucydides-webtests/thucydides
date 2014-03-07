@@ -11,5 +11,5 @@ import org.junit.runners.Suite;
                        UsingTheWebElementFacade.class,
                        WaitingForElementsWithTheFluentElementAPI.class,
                        ReadingTableData.class})
-public class WhenUsingTheFluentElementAPI {
+public class  WhenUsingTheFluentElementAPI {
 }

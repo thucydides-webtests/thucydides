@@ -85,7 +85,6 @@ public class WhenTakingLargeScreenshots {
     @Test
     public void should_only_store_one_file_for_identical_screenshots() throws Exception {
 
-        System.setProperty("phantomjs.binary.path","/opt/phantomjs/phantomjs");
         driver = testSite.open("phantomjs");
 
         ScreenshotProcessor screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables);

@@ -27,6 +27,7 @@ class WhenConfiguringExtraWebdriverCapabilities extends Specification {
         capabilitySet.capabilities == [:]
     }
 
+
     def "should add multiple capabilities defined in a system property"() {
 
         given:
@@ -65,6 +66,17 @@ class WhenConfiguringExtraWebdriverCapabilities extends Specification {
         def capabilitySet = new CapabilitySet(environmentVariables)
         then:
         capabilitySet.capabilities == ["tags":["tag1","tag2","tag3"]]
+    }
+
+
+    def "should support windows paths in capability values"() {
+
+        given:
+        environmentVariables.setProperty("thucydides.driver.capabilities","app:D:/GoogleEx/GoogleEx.apk")
+        when:
+        def capabilitySet = new CapabilitySet(environmentVariables)
+        then:
+        capabilitySet.capabilities == ["app":"D:/GoogleEx/GoogleEx.apk"]
     }
 
     def "should add value-list capabilities with non-string types defined in a system property"() {

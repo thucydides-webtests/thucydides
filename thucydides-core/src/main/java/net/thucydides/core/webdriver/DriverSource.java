@@ -12,4 +12,9 @@ public interface DriverSource {
      */
     WebDriver newDriver();
 
+    /**
+     * Return true if the driver is configured to take screenshots.
+     */
+    boolean takesScreenshots();
+
 }

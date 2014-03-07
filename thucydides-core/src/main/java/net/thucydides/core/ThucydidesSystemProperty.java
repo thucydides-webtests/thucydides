@@ -103,7 +103,7 @@ public enum ThucydidesSystemProperty {
 
     /**
      * A set of user-defined capabilities to be used to configure the WebDriver driver.
-     * Capabilities should be passed in as a semi-colon-separated list of key:value pairs, e.g.
+     * Capabilities should be passed in as a space or semi-colon-separated list of key:value pairs, e.g.
      * "build:build-1234; max-duration:300; single-window:true; tags:[tag1,tag2,tag3]"
      */
     DRIVER_CAPABILITIES("thucydides.driver.capabilities"),

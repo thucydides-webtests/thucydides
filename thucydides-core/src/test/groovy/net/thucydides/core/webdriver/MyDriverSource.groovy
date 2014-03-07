@@ -9,4 +9,9 @@ public class MyDriverSource implements DriverSource {
     public WebDriver newDriver() {
         return new HtmlUnitDriver()
     }
+
+    @Override
+    boolean takesScreenshots() {
+        return true
+    }
 }

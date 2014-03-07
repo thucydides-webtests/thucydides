@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import ch.lambdaj.function.convert.Converter;
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -20,7 +21,7 @@ import static net.thucydides.core.ThucydidesSystemProperty.DRIVER_CAPABILITIES;
  */
 class CapabilitySet {
     private final EnvironmentVariables environmentVariables;
-    private static final char CAPABILITY_SEPARATOR = ';';
+    private static final CharMatcher CAPABILITY_SEPARATOR = CharMatcher.anyOf(" ;");
     private static final char CAPABILITY_NAME_VALUE_SEPARATOR = ':';
 
     CapabilitySet(EnvironmentVariables environmentVariables) {
@@ -89,8 +90,14 @@ class CapabilitySet {
             List<String> capabilityTokens =
                     Lists.newArrayList(Splitter.on(CAPABILITY_NAME_VALUE_SEPARATOR).trimResults().split(capability));
 
-            name = (!capabilityTokens.isEmpty()) ? capabilityTokens.get(0) : null;
-            value = (capabilityTokens.size() > 1) ? capabilityTokens.get(1) : null;
+            int colonIndex = capability.indexOf(":");
+            if (colonIndex >= 0)  {
+                name = capability.substring(0, colonIndex);
+                value = capability.substring(colonIndex + 1);
+            } else {
+                name = capability;
+                value = null;
+            }
         }
 
         public String getName() {
