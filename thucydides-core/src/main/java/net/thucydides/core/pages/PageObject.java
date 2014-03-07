@@ -15,6 +15,7 @@ import net.thucydides.core.scheduling.NormalFluentWait;
 import net.thucydides.core.scheduling.ThucydidesFluentWait;
 import net.thucydides.core.steps.StepDelayer;
 import net.thucydides.core.steps.StepEventBus;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.DefaultPageObjectInitialiser;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
@@ -66,7 +67,7 @@ public abstract class PageObject {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PageObject.class);
 
-    private static final long WAIT_FOR_TIMEOUT = 30000;
+    private static final int WAIT_FOR_TIMEOUT = 30000;
 
     private WebDriver driver;
 
@@ -83,7 +84,9 @@ public abstract class PageObject {
     private final Sleeper sleeper;
     private final Clock webdriverClock;
     private JavascriptExecutorFacade javascriptExecutorFacade;
-    
+
+    private EnvironmentVariables environmentVariables;
+
     private enum OpenMode {
     	CHECK_URL_PATTERNS,
     	IGNORE_URL_PATTERNS
@@ -92,6 +95,7 @@ public abstract class PageObject {
     protected PageObject() {
         this.webdriverClock = new SystemClock();
         this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
+        this.environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
         setupPageUrls();
     }
@@ -118,7 +122,12 @@ public abstract class PageObject {
     }
 
     protected void setDriver(WebDriver driver) {
-        setDriver(driver, (int) WAIT_FOR_TIMEOUT);
+        setDriver(driver, waitForTimeout());
+    }
+
+    protected int waitForTimeout() {
+        return environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.TIMEOUTS_IMPLICIT_WAIT, WAIT_FOR_TIMEOUT);
+
     }
 
     public void setPages(Pages pages) {
