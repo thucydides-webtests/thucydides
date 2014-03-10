@@ -269,7 +269,7 @@ public abstract class PageObject {
     }
 
     /**
-     * Waits for a given text to appear anywhere on the page.
+     * Waits for a given text to appear inside the element.
      */
     public PageObject waitForTextToAppear(final WebElement element,
                                           final String expectedText) {
@@ -278,7 +278,7 @@ public abstract class PageObject {
     }
 
     /**
-     * Waits for a given text to appear anywhere on the page.
+     * Waits for a given text to disappear from the element.
      */
     public PageObject waitForTextToDisappear(final WebElement element,
                                              final String expectedText) {
