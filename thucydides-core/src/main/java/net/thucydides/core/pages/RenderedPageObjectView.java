@@ -178,12 +178,7 @@ class RenderedPageObjectView {
     }
 
     public boolean containsText(final WebElement element, final String textValue) {
-        String textInBody = String.format("//body[contains(.,\"%s\")]", textValue);
-        List<WebElement> elements = element.findElements(By.xpath(textInBody));
-        if (foundNo(elements)) {
-            return false;
-        }
-        return true;
+        return element.getText().contains(textValue);
     }
 
     private ExpectedCondition<Boolean> textNotPresent(final String expectedText) {
