@@ -620,12 +620,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
     private ExpectedCondition<Boolean> elementIsDisplayed() {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
-                try {
-                    return (getElement() != null) && (getElement().isDisplayed());
-                } catch (NullPointerException e) {
-                    // Selenium sometimes throws a NPE if the element is not present at all on the page.
-                    return false;
-                }
+                return isCurrentlyVisible();
             }
         };
     }
