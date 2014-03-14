@@ -248,8 +248,8 @@ public class WebElementFacadeImpl implements WebElementFacade {
      * Is this web element present and visible on the screen
      * This method will not throw an exception if the element is not on the screen at all.
      * The method will fail immediately if the element is not visible on the screen.
-     * There is a little black magic going on here - the web element class will detect if it is being called
-     * by a method called "isCurrently*" and, if so, fail immediately without waiting as it would normally do.
+     * SmartAjaxElementLocator check that method name contains "Currently"
+     * and, if so, fail immediately without waiting as it would normally do.
      */
     @Override
 	public boolean isCurrentlyVisible() {
