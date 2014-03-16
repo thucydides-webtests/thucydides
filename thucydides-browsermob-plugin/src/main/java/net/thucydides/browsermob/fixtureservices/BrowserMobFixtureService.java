@@ -51,7 +51,7 @@ public class BrowserMobFixtureService implements FixtureService {
         }
     }
 
-    protected ProxyServer getProxyServer() {
+    public ProxyServer getProxyServer() {
         return threadLocalproxyServer.get();
     }
 
