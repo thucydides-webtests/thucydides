@@ -220,6 +220,7 @@ public class WhenManagingAPageObject {
         List<WebElement> listWithElements = Arrays.asList(textBlock);
 
         when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList).thenReturn(listWithElements);
+        when(searchedBlock.getText()).thenReturn("contains 'hi there'");
 
         page.waitForTextToAppear(searchedBlock,"hi there");
     }
@@ -235,6 +236,7 @@ public class WhenManagingAPageObject {
         List<WebElement> listWithElements = Arrays.asList(textBlock);
 
         when(searchedBlock.findElements(any(By.class))).thenReturn(listWithElements);
+        when(searchedBlock.getText()).thenReturn("contains 'hi there'");
 
         page.waitForTextToAppear(searchedBlock,"hi there");
     }
@@ -249,6 +251,7 @@ public class WhenManagingAPageObject {
         List<WebElement> emptyList = Arrays.asList();
 
         when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList);
+        when(searchedBlock.getText()).thenReturn("no matching text here");
 
         page.waitForTextToAppear(searchedBlock,"hi there");
     }
@@ -263,6 +266,7 @@ public class WhenManagingAPageObject {
         List<WebElement> listWithElements = Arrays.asList(textBlock);
 
         when(searchedBlock.findElements(any(By.class))).thenReturn(listWithElements);
+        when(searchedBlock.getText()).thenReturn("contains 'hi there'");
 
         page.waitForTextToAppear(searchedBlock,"hi there");
     }
@@ -278,6 +282,7 @@ public class WhenManagingAPageObject {
         List<WebElement> listWithElements = Arrays.asList(textBlock);
 
         when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList).thenReturn(listWithElements);
+        when(searchedBlock.getText()).thenReturn("contains 'hi there'");
 
         page.waitForAnyTextToAppear(searchedBlock, "hi there");
     }
@@ -292,6 +297,8 @@ public class WhenManagingAPageObject {
         List<WebElement> emptyList = Arrays.asList();
 
         when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList);
+        when(searchedBlock.getText()).thenReturn("no matching text");
+
         page.setWaitForTimeout(200);
         page.waitForAnyTextToAppear(searchedBlock, "hi there");
     }
@@ -305,6 +312,7 @@ public class WhenManagingAPageObject {
         List<WebElement> emptyList = Arrays.asList();
 
         when(searchedBlock.findElements(any(By.class))).thenReturn(emptyList);
+        when(searchedBlock.getText()).thenReturn("no matching text");
 
         page.setWaitForTimeout(200);
         page.waitForAnyTextToAppear(searchedBlock, "hi there");

@@ -735,7 +735,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
             waitForCondition().until(elementIsEnabled());
             return this;
         } catch (TimeoutException timeout) {
-            throw new ElementNotVisibleException("Expected enabled element '"+ toString() + "' was not enabled" , timeout);
+            throw new ElementNotVisibleException("Expected enabled element was not enabled" , timeout);
         }
     }
 
@@ -749,7 +749,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
             waitForCondition().until(elementIsNotEnabled());
             return this;
         } catch (TimeoutException timeout) {
-            throw new ElementNotVisibleException("Expected disabled element '"+ toString() + "'  was not disabled", timeout);
+            throw new ElementNotVisibleException("Expected disabled element was not disabled", timeout);
         }
     }
 

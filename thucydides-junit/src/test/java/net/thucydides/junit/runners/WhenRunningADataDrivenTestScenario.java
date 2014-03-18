@@ -670,6 +670,18 @@ public class WhenRunningADataDrivenTestScenario {
 
     }
 
+    @Test
+    public void the_number_of_threads_can_be_overridden_with_a_system_property() throws Throwable  {
+
+        environmentVariables.setProperty("thucydides.concurrent.threads","4");
+        ThucydidesParameterizedRunner runner
+                = getTestRunnerUsing(ParallelDataDrivenScenarioWithSpecifiedThreadCountSample.class);
+        int threadCount = runner.getThreadCountFor(ParallelDataDrivenScenarioWithSpecifiedThreadCountSample.class);
+
+        assertThat(threadCount, is(4));
+
+    }
+
     @RunWith(ThucydidesParameterizedRunner.class)
     @Concurrent(threads = "7x")
     public static final class ParallelDataDrivenScenarioWithRelativeThreadCountSample {

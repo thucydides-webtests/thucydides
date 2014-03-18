@@ -473,4 +473,7 @@ public class StepEventBus {
         getBaseStepListener().takeScreenshot();
     }
 
+    public boolean testSuiteHasStarted() {
+        return getBaseStepListener().testSuiteRunning();
+    }
 }

@@ -4,12 +4,10 @@ import com.google.common.base.Joiner;
 import com.opera.core.systems.OperaDriver;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.android.AndroidDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.iphone.IPhoneDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
@@ -48,14 +46,6 @@ public enum SupportedWebDriver {
      */
     REMOTE(RemoteWebDriver.class),
 
-    /**
-     * Android driver
-     */
-    ANDROID(AndroidDriver.class),
-    /**
-     * iPhone driver
-     */
-    IPHONE(IPhoneDriver.class),
     /**
      * Internet Explorer
      */

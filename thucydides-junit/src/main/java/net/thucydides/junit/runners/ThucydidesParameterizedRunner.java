@@ -8,6 +8,7 @@ import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import net.thucydides.junit.ThucydidesJUnitSystemProperties;
 import net.thucydides.junit.annotations.Concurrent;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.runner.Runner;
@@ -68,7 +69,7 @@ public class ThucydidesParameterizedRunner extends Suite {
 
     protected int getThreadCountFor(final Class<?> klass) {
         Concurrent concurrent = klass.getAnnotation(Concurrent.class);
-        String threadValue = concurrent.threads();
+        String threadValue = getThreadParameter(concurrent);
         int threads = (AVAILABLE_PROCESSORS * 2);
         if (StringUtils.isNotEmpty(threadValue)) {
             if (StringUtils.isNumeric(threadValue)) {
@@ -79,6 +80,14 @@ public class ThucydidesParameterizedRunner extends Suite {
 
         }
         return threads;
+    }
+
+    private String getThreadParameter(Concurrent concurrent) {
+        String systemPropertyThreadValue =
+                configuration.getEnvironmentVariables().getProperty(ThucydidesJUnitSystemProperties.CONCURRENT_THREADS.getName());
+        String annotatedThreadValue = concurrent.threads();
+        return (StringUtils.isNotEmpty(systemPropertyThreadValue) ? systemPropertyThreadValue : annotatedThreadValue);
+
     }
 
     private int getRelativeThreadCount(final String threadValue) {

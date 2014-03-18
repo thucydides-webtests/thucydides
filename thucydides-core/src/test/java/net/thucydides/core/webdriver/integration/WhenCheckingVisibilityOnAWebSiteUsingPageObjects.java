@@ -1,6 +1,8 @@
 package net.thucydides.core.webdriver.integration;
 
 import net.thucydides.core.pages.PageObject;
+import net.thucydides.core.pages.WebElementFacade;
+import net.thucydides.core.pages.WebElementFacadeImpl;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
