@@ -196,29 +196,6 @@ public class WhenScreenshotsAreTaken {
 //        assertThat(htmlSource.isFile(), is(true));
 //    }
 
-    @Test
-    public void the_photographer_should_not_provide_the_HTML_source_code_for_a_given_screenshot_by_default() throws Exception {
-
-        Photographer photographer = new Photographer(driver, screenshotDirectory,
-                Injectors.getInjector().getInstance(ScreenshotProcessor.class),
-                null,
-                environmentVariables);
-
-        when(driver.getScreenshotAs(OutputType.FILE)).thenReturn(screenshotTaken);
-        when(driver.getPageSource()).thenReturn("<html/>");
-
-        File screenshotFile = photographer.takeScreenshot().get();
-        waitUntilScreenshotsProcessed();
-
-        File htmlSource = photographer.getMatchingSourceCodeFor(screenshotFile);
-
-        assertThat(htmlSource.isFile(), is(false));
-    }
-
-    @Test
-    public void the_photographer_should_return_null_for_the_source_code_of_a_null_screenshot() throws IOException {
-        assertThat( photographer.getMatchingSourceCodeFor(null), is(nullValue()));
-    }
 
     @Test
     public void calling_api_generates_a_filename_safe_hashed_name_for_the_screenshot() throws Exception {

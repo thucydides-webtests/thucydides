@@ -153,7 +153,7 @@ public class Photographer {
         String screenshotTempFileName = "screenshot_" + UUID.randomUUID();
         screenshotFile = new File(FileUtils.getTempDirectory(), screenshotTempFileName);
         byte[] screenshotData = capturedScreenshot;
-        screenshotFile.deleteOnExit();
+        FileUtils.deleteQuietly(screenshotFile);
         if (screenshotData.length > 0) {
             FileUtils.writeByteArrayToFile(screenshotFile, screenshotData);
         } else {
@@ -192,19 +192,6 @@ public class Photographer {
 
     private boolean driverIsProvided() {
         return false;
-    }
-
-    private String sourceCodeFileFor(final File screenshotFile) throws IOException {
-        String rootFilename = DigestUtils.md5Hex(new FileInputStream(screenshotFile));
-        return rootFilename + ".html";
-    }
-
-    public File getMatchingSourceCodeFor(final File screenshot) throws IOException  {
-        if (screenshot != null) {
-            return new File(sourceCodeFileFor(screenshot));
-        } else {
-            return null;
-        }
     }
 
     public void setScreenshotProcessor(ScreenshotProcessor screenshotProcessor) {

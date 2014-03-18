@@ -4,16 +4,16 @@ import java.io.File;
 
 public class QueuedScreenshot {
 
-    private final File filename;
+    private final File destinationFilename;
     private final File sourceFilename;
 
-    public QueuedScreenshot(File sourceFilename, File targetFilename) {
-        this.filename = targetFilename;
+    public QueuedScreenshot(File sourceFilename, File destinationFilename) {
         this.sourceFilename = sourceFilename;
+        this.destinationFilename = destinationFilename;
     }
 
     public File getDestinationFile() {
-        return filename;
+        return destinationFilename;
     }
 
     public File getSourceFile() {

@@ -1,16 +1,20 @@
 package net.thucydides.core.screenshots;
 
-import com.google.common.io.Files;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.util.EnvironmentVariables;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -118,10 +122,17 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
 
         private void moveScreenshot(QueuedScreenshot queuedScreenshot) {
             try {
-                Files.move(queuedScreenshot.getSourceFile(),
-                           queuedScreenshot.getDestinationFile());
+//                Path sourcePath = queuedScreenshot.getSourceFile().toPath();
+//                Path destinationPath = queuedScreenshot.getDestinationFile().toPath().getParent();
+//                if (!Files.exists(destinationPath)) {
+//                    Files.createDirectory(destinationPath);
+//                }
+//                Files.copy(sourcePath, destinationPath);
+//                Files.delete(sourcePath);
+                FileUtils.copyFile(queuedScreenshot.getSourceFile(),queuedScreenshot.getDestinationFile());
+                FileUtils.deleteQuietly(queuedScreenshot.getSourceFile());
             } catch (Throwable e) {
-                logger.warn("Failed to move the screenshot to the destination directory: " + e.getMessage());
+                logger.warn("Failed to copy the screenshot to the destination directory: " + e.getMessage());
             }
         }
 
@@ -135,7 +146,7 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
 
                 BufferedImage resizedImage = resize(image, targetWidth, targetHeight);
                 ImageIO.write(resizedImage, "png", queuedScreenshot.getDestinationFile());
-                queuedScreenshot.getSourceFile().delete();
+                FileUtils.deleteQuietly(queuedScreenshot.getSourceFile());
             } catch (Throwable e) {
                 logger.warn("Failed to resize screenshot: using original size " + e.getMessage());
                 moveScreenshot(queuedScreenshot);

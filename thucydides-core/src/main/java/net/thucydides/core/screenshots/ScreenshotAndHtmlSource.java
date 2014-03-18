@@ -72,14 +72,7 @@ public class ScreenshotAndHtmlSource {
         if (hasNoScreenshot() || anotherScreenshotAndHtmlSource.hasNoScreenshot()) {
             return false;
         }
-        try {
-            File screenshotTargetDirectory = new File(getScreenshotFile().getParent());
-            return (checksumCRC32(getScreenshotFile(screenshotTargetDirectory))
-                    == checksumCRC32(anotherScreenshotAndHtmlSource.getScreenshotFile(screenshotTargetDirectory)));
-        } catch (IOException e) {
-            LOGGER.warn("Failed to compare screenshots: " + e.getMessage());
-        }
-        return false;
+        return (getScreenshotFile().getName().equals(anotherScreenshotAndHtmlSource.getScreenshotFile().getName()));
     }
 
     public File getScreenshotFile(File screenshotTargetDirectory) {
