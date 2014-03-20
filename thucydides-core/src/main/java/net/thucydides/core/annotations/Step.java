@@ -14,4 +14,5 @@ import java.lang.annotation.Target;
 public @interface Step {
     String value() default "";
     boolean fluent() default false;
+    boolean callNestedMethods() default true;
 }

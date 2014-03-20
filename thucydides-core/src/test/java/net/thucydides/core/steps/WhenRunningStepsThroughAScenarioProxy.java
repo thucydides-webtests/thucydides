@@ -17,6 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -44,7 +45,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         @Steps
         NestedNestedTestScenarioSteps nestedNestedTestScenarioSteps;
 
-        @StepGroup("Step group 1")
+        @Step("Step group 1")
         public void step_group1(){
             step1();
             step2();
@@ -75,6 +76,16 @@ public class WhenRunningStepsThroughAScenarioProxy {
         @Step
         public void nested_steps() {
             nestedNestedTestScenarioSteps.step1();
+        }
+
+        @Step
+        public void failing_step() {
+            throw new AssertionError("Deliberate failure");
+        }
+
+        @Step(callNestedMethods=false)
+        public void shouldnt_call_nested_methods_after_failure() {
+            getDriver().get("nested.method");
         }
     }
 
@@ -212,6 +223,120 @@ public class WhenRunningStepsThroughAScenarioProxy {
         }
 
     }
+
+
+    static class DatabaseAPI {
+        public void call(String param) {}
+    }
+
+
+    static class NestedDatabaseScenarioSteps extends ScenarioSteps {
+
+        public DatabaseAPI databaseAPI;
+
+        public NestedDatabaseScenarioSteps(Pages pages) {
+            super(pages);
+        }
+
+
+        @Steps
+        NestedNestedTestScenarioSteps nestedNestedTestScenarioSteps;
+
+        @Step
+        public void steps_without_failure(){
+            step1();
+            step2();
+            shouldnt_call_nested_methods_after_failure();
+        }
+
+        @Step
+        public void steps_with_failure(){
+            step1();
+            failing_step();
+            shouldnt_call_nested_methods_after_failure();
+        }
+
+        @Step
+        public void steps_with_error(){
+            step1();
+            step_with_error();
+            shouldnt_call_nested_methods_after_failure();
+        }
+
+
+        @Step
+        public void steps_with_ignored_step(){
+            step1();
+            ignored_step();
+            shouldnt_call_nested_methods_after_failure();
+        }
+
+        @Step
+        public void step1(){
+            databaseAPI.call("nested.step_one");
+        }
+
+        @Step
+        public void step2(){
+            databaseAPI.call("nested.step_two");
+        }
+
+        @Step
+        public void step3(){
+            databaseAPI.call("nested.step_three");
+        }
+
+        @Step
+        public void failing_step() {
+            throw new AssertionError("Deliberate failure");
+        }
+
+        @Step
+        public void step_with_error() {
+            throw new NullPointerException("Deliberate failure");
+        }
+
+
+        @Step
+        @Ignore
+        public void ignored_step() {
+            throw new NullPointerException("Deliberate failure");
+        }
+
+
+        @Step(callNestedMethods=false)
+        public void shouldnt_call_nested_methods_after_failure() {
+            databaseAPI.call("nested.method");
+        }
+    }
+
+
+    static class SimpleTestScenarioStepsWithNestedCallsDisabled extends ScenarioSteps {
+
+        @Steps
+        public NestedTestScenarioSteps nestedSteps;
+
+        DatabaseAPI databaseAPI;
+
+        public SimpleTestScenarioStepsWithNestedCallsDisabled(Pages pages) {
+            super(pages);
+        }
+
+        @Step
+        public void steps_with_failure(){
+            nestedSteps.step1();
+            nestedSteps.failing_step();
+            nestedSteps.shouldnt_call_nested_methods_after_failure();
+        }
+
+        @Step
+        public void steps_without_failure(){
+            nestedSteps.step1();
+            nestedSteps.step2();
+            nestedSteps.shouldnt_call_nested_methods_after_failure();
+        }
+    }
+
 
     @Mock
     WebDriver driver;
@@ -604,6 +729,60 @@ public class WhenRunningStepsThroughAScenarioProxy {
         verify(driver).get("nested.step_two");
         verify(driver).get("nested.step_three");
         verify(driver).get("nested.nested.step_one");
+    }
+
+    @Test
+    public void the_proxy_skipped_nested_step_methods_after_failure_if_nested_calls_are_disabled() {
+        NestedDatabaseScenarioSteps steps =  factory.getStepLibraryFor(NestedDatabaseScenarioSteps.class);
+
+        DatabaseAPI databaseAPI = Mockito.mock(DatabaseAPI.class);
+        steps.databaseAPI = databaseAPI;
+
+        StepEventBus.getEventBus().testStarted("SimpleTestScenarioStepsWithNestedCallsDisabled");
+        steps.steps_with_failure();
+
+        verify(databaseAPI, never()).call("nested.method");
+
+    }
+
+    @Test
+    public void the_proxy_skipped_nested_step_methods_after_errors_if_nested_calls_are_disabled() {
+        NestedDatabaseScenarioSteps steps =  factory.getStepLibraryFor(NestedDatabaseScenarioSteps.class);
+
+        DatabaseAPI databaseAPI = Mockito.mock(DatabaseAPI.class);
+        steps.databaseAPI = databaseAPI;
+
+        StepEventBus.getEventBus().testStarted("SimpleTestScenarioStepsWithNestedCallsDisabled");
+        steps.steps_with_error();
+
+        verify(databaseAPI, never()).call("nested.method");
+    }
+
+
+    @Test
+    public void the_proxy_skipped_nested_step_methods_after_ignored_steps_if_nested_calls_are_disabled() {
+        NestedDatabaseScenarioSteps steps =  factory.getStepLibraryFor(NestedDatabaseScenarioSteps.class);
+
+        DatabaseAPI databaseAPI = Mockito.mock(DatabaseAPI.class);
+        steps.databaseAPI = databaseAPI;
+
+        StepEventBus.getEventBus().testStarted("SimpleTestScenarioStepsWithNestedCallsDisabled");
+        steps.steps_with_error();
+
+        verify(databaseAPI, never()).call("nested.method");
+    }
+
+    @Test
+    public void the_proxy_runs_nested_step_methods_if_no_failure_has_occurred_even_if_nested_calls_are_disabled() {
+        NestedDatabaseScenarioSteps steps =  factory.getStepLibraryFor(NestedDatabaseScenarioSteps.class);
+
+        DatabaseAPI databaseAPI = Mockito.mock(DatabaseAPI.class);
+        steps.databaseAPI = databaseAPI;
+
+        StepEventBus.getEventBus().testStarted("SimpleTestScenarioStepsWithNestedCallsDisabled");
+        steps.steps_without_failure();
+
+        verify(databaseAPI).call("nested.method");
     }
 
     static class IsolatedTestScenarioStepsWithPages {

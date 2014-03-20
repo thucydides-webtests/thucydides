@@ -138,12 +138,20 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         LOGGER.trace("Running test step " + getTestNameFrom(method, args, false));
         Object result = null;
         StepEventBus.getEventBus().temporarilySuspendWebdriverCalls();
+        result = runIfNestedMethodsShouldBeRun(obj, method, args, proxy);
+        StepEventBus.getEventBus().reenableWebdriverCalls();
+        return result;
+    }
+
+    private Object runIfNestedMethodsShouldBeRun(Object obj, Method method, Object[] args, MethodProxy proxy) {
+        Object result = null;
         try {
-            result = invokeMethod(obj, method, args, proxy);
+            if (!TestAnnotations.shouldSkipNested(method)) {
+                result = invokeMethod(obj, method, args, proxy);
+            }
         } catch (Throwable anyException) {
             LOGGER.trace("Ignoring exception thrown during a skipped test", anyException);
         }
-        StepEventBus.getEventBus().reenableWebdriverCalls();
         return result;
     }
 

@@ -55,6 +55,14 @@ public class TestAnnotations {
         return false;
     }
 
+    public static boolean shouldSkipNested(Method method) {
+        if (method != null) {
+            Step stepAnnotation = method.getAnnotation(Step.class);
+            return ((stepAnnotation != null) && (!stepAnnotation.callNestedMethods()));
+        }
+        return false;
+    }
+
     private static boolean hasAnnotationCalled(Method method, String annotationName) {
         Annotation[] annotations = method.getAnnotations();
         for (Annotation annotation : annotations) {
@@ -269,4 +277,5 @@ public class TestAnnotations {
             return TestTag.withValue(withTag.value());
         }
     }
+
 }
