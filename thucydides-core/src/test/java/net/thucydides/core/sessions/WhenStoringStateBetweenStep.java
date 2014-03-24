@@ -31,6 +31,7 @@ public class WhenStoringStateBetweenStep {
 
         @Step
         public String retrieveName() {
+            Thucydides.getCurrentSession().shouldContainKey("name");
             return (String) Thucydides.getCurrentSession().get("name");
         }
 
@@ -85,5 +86,4 @@ public class WhenStoringStateBetweenStep {
 
         assertThat(steps.checkName(), is(false));
     }
-
 }

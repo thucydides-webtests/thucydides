@@ -81,7 +81,6 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter, Acceptanc
             writer.flush();
             writer.close();
             outputStream.close();
-            //System.gc();            // Attempted work-around for Windows IO bugs - see for example ttp://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4469299
         }
         return report;
     }

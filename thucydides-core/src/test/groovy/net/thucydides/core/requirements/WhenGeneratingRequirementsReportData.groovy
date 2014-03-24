@@ -58,7 +58,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
         when: "we generate the requirement outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the requirement outcomes will contain the requirement narratives when specified"
-            def requirementsNarratives = outcomes.requirementOutcomes.collect {it.requirement.narrativeText}
+            def requirementsNarratives = outcomes.requirementOutcomes.collect {it.requirement.narrative.renderedText}
             requirementsNarratives[1].contains("In order to let my country eat chips") == true
             requirementsNarratives[2] == "Grow wheat"
             requirementsNarratives[3] == "Raise chickens"

@@ -28,7 +28,7 @@ class WhenCreatingARequirement extends Specification {
                                          .withOptionalDisplayName("a longer name for display purposes")
                                          .withOptionalCardNumber("CARD-1")
                                          .withType("capability")
-                                         .withNarrativeText("as a someone I want something so that something else")
+                                         .withNarrative("as a someone I want something so that something else")
        then: "we should have a correctly instantiated requirement"
     }
 
@@ -50,7 +50,7 @@ class WhenCreatingARequirement extends Specification {
                     .withOptionalDisplayName("a longer name for display purposes")
                     .withOptionalCardNumber("CARD-1")
                     .withType("capability")
-                    .withNarrativeText("as a someone I want something so that something else")
+                    .withNarrative("as a someone I want something so that something else")
         and: "we associate it with some examples"
             requirement = requirement.withExample(Example.withDescription("The client buys a blue widget and has it delivered.")
                                                          .andNoCardNumber())
@@ -64,7 +64,7 @@ class WhenCreatingARequirement extends Specification {
                 .withOptionalDisplayName("a longer name for display purposes")
                 .withOptionalCardNumber("CARD-1")
                 .withType("capability")
-                .withNarrativeText("as a someone I want something so that something else")
+                .withNarrative("as a someone I want something so that something else")
         and: "we associate it with some examples"
             requirement = requirement.withExample(Example.withDescription("The client buys a blue widget and has it delivered.").andCardNumber("CARD-1"))
                                      .withExample(Example.withDescription("The client buys a red widget and has it delivered.").andCardNumber("CARD-2"))
@@ -91,7 +91,7 @@ class WhenCreatingARequirement extends Specification {
                 .withOptionalDisplayName("a longer name for display purposes")
                 .withOptionalCardNumber("CARD-1")
                 .withType("capability")
-                .withNarrativeText("as a someone I want something so that something else")
+                .withNarrative("as a someone I want something so that something else")
                 .withExamples([Example.withDescription("The client buys a blue widget and has it delivered.").andCardNumber("CARD-1"),
                                Example.withDescription("The client buys a red widget and has it delivered.").andCardNumber("CARD-2")])
         then: "we should have a correctly instantiated requirement"

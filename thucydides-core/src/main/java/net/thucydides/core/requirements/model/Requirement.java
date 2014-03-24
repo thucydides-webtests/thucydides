@@ -1,6 +1,7 @@
 package net.thucydides.core.requirements.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.thucydides.core.model.TestTag;
@@ -18,38 +19,45 @@ public class Requirement implements Comparable {
     private String displayName;
     private String name;
     private String type;
-    private String narrativeText;
+    private CustomFieldValue narrative;
     private String cardNumber;
     private List<Requirement> children;
     private List<Example> examples;
     private List<String> releaseVersions;
+    private List<CustomFieldValue> customFields;
 
     public Requirement() {
         // Used by Jackson
+        children = Lists.newArrayList();
+        examples = Lists.newArrayList();
+        releaseVersions = Lists.newArrayList();
+        customFields = Lists.newArrayList();
     }
 
-    protected Requirement(String name, String displayName, String cardNumber, String type, String narrativeText,
+    protected Requirement(String name, String displayName, String cardNumber, String type, CustomFieldValue narrative,
                           List<Requirement> children, List<Example> examples,
                           List<String> releaseVersions) {
+        this(name, displayName, cardNumber, type, narrative, children, examples,releaseVersions, Collections.EMPTY_LIST);
+    }
+
+    protected Requirement(String name, String displayName, String cardNumber, String type, CustomFieldValue narrative) {
+        this(name, displayName, cardNumber, type, narrative, Collections.EMPTY_LIST, Collections.EMPTY_LIST,Collections.EMPTY_LIST,
+                 Collections.EMPTY_LIST);
+    }
+
+    protected Requirement(String name, String displayName, String cardNumber, String type, CustomFieldValue narrative,
+                          List<Requirement> children, List<Example> examples,
+                          List<String> releaseVersions,
+                          List<CustomFieldValue> customFields) {
         this.name = name;
         this.displayName = displayName;
         this.cardNumber = cardNumber;
         this.type = type;
-        this.narrativeText = narrativeText;
+        this.narrative = narrative;
         this.children = ImmutableList.copyOf(children);
         this.examples = ImmutableList.copyOf(examples);
         this.releaseVersions = ImmutableList.copyOf(releaseVersions);
-    }
-
-    protected Requirement(String name, String displayName, String cardNumber, String type, String narrativeText) {
-        this.name = name;
-        this.displayName = displayName;
-        this.cardNumber = cardNumber;
-        this.type = type;
-        this.narrativeText = narrativeText;
-        this.children = Collections.EMPTY_LIST;
-        this.examples = Collections.EMPTY_LIST;
-        this.releaseVersions = Collections.EMPTY_LIST;
+        this.customFields = ImmutableList.copyOf(customFields);
     }
 
     public String getName() {
@@ -68,8 +76,8 @@ public class Requirement implements Comparable {
         return (!children.isEmpty()) ? children.get(0).getType() : null;
     }
 
-    public String getNarrativeText() {
-        return narrativeText;
+    public CustomFieldValue getNarrative() {
+        return narrative;
     }
 
     public List<String> getReleaseVersions() {
@@ -111,21 +119,21 @@ public class Requirement implements Comparable {
     }
 
     public Requirement withChildren(List<Requirement> children) {
-        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children, examples, releaseVersions);
+        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrative, children, examples, releaseVersions);
     }
 
     public Requirement withExample(Example example) {
         List<Example> updatedExamples = Lists.newArrayList(examples);
         updatedExamples.add(example);
-        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children, updatedExamples, releaseVersions);
+        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrative, children, updatedExamples, releaseVersions);
     }
 
     public Requirement withExamples(List<Example> examples) {
-        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children, examples, releaseVersions);
+        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrative, children, examples, releaseVersions);
     }
 
     public Requirement withReleaseVersions(List<String> releaseVersions) {
-        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrativeText, children, examples, releaseVersions);
+        return new Requirement(this.name, this.displayName, this.cardNumber, this.type, this.narrative, children, examples, releaseVersions);
     }
 
     public boolean hasChildren() {
@@ -180,6 +188,55 @@ public class Requirement implements Comparable {
         List<Requirement> newChildren = Lists.newArrayList(children);
         newChildren.remove(child);
         newChildren.add(child);
-        return new Requirement(name,displayName,cardNumber,type,narrativeText, newChildren, examples,releaseVersions);
+        return new Requirement(name,displayName,cardNumber,type,narrative, newChildren, examples,releaseVersions);
+    }
+
+    public CustomFieldSetter withCustomField(String fieldName) {
+        return new CustomFieldSetter(this, fieldName);
+    }
+
+    public List<CustomFieldValue> getCustomFieldValues() {
+        return ImmutableList.copyOf(customFields);
+    }
+
+    public Optional<CustomFieldValue> getCustomField(String fieldName) {
+        for(CustomFieldValue field : customFields) {
+            if (field.getName().equals(fieldName)) {
+                return Optional.of(field);
+            }
+        }
+        return Optional.absent();
+    }
+
+    public List<String> getCustomFields() {
+        List<String> customFieldNames = Lists.newArrayList();
+        for(CustomFieldValue field : customFields) {
+            customFieldNames.add(field.getName());
+        }
+        return customFieldNames;
+    }
+
+    public class CustomFieldSetter {
+
+        Requirement requirement;
+        String fieldName;
+
+        public CustomFieldSetter(Requirement requirement, String fieldName) {
+            this.requirement = requirement;
+            this.fieldName = fieldName;
+        }
+
+        public Requirement setTo(String value, String renderedValue) {
+            List<CustomFieldValue> customFields = Lists.newArrayList(requirement.getCustomFieldValues());
+            customFields.add(new CustomFieldValue(fieldName, value, renderedValue));
+            return new Requirement(requirement.name, requirement.displayName,
+                    requirement.cardNumber, requirement.type, requirement.narrative,
+                    requirement.children, requirement.examples, requirement.releaseVersions,
+                    customFields);
+        }
+
+        public Requirement setTo(String value) {
+            return setTo(value, null);
+        }
     }
 }

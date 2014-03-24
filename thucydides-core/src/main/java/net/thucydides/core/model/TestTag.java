@@ -47,7 +47,7 @@ public class TestTag implements Comparable<TestTag> {
         if (typeComparison != 0) {
             return typeComparison;
         } else {
-            return compare(getName(), otherTag.getName());
+            return getName().compareToIgnoreCase(otherTag.getName());
         }
     }
 

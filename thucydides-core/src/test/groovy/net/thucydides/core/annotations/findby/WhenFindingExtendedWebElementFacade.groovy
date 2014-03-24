@@ -7,6 +7,7 @@ import sample.page.TestPage
 import spock.lang.Shared
 import spock.lang.Specification
 
+
 class WhenFindingExtendedWebElementFacade extends Specification {
 	
 	@Shared

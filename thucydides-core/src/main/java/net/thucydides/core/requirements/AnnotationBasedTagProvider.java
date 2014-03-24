@@ -314,7 +314,7 @@ public class AnnotationBasedTagProvider extends AbstractRequirementsTagProvider 
                 .withOptionalCardNumber(cardNumber)
                 .withOptionalDisplayName(StringUtils.isEmpty(requirementTitle) ? humanReadableVersionOf(packageName) : requirementTitle)
                 .withType(requirementType)
-                .withNarrativeText(narrativeText);
+                .withNarrative(narrativeText);
     }
 
     private String getRequirementType(int level, Class candidateClass) {

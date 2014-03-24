@@ -10,13 +10,11 @@ public class TestSessionVariables extends ConcurrentHashMap implements SessionMa
 
     private final Map<String, String> metadata = new ConcurrentHashMap();
 
-    @Override
-    public Object get(Object o) {
+    public void shouldContainKey(Object o) {
         Object result = super.get(o);
         if (result == null) {
             throw new AssertionError("Session variable " + o + " expected but not found.");
         }
-        return result;
     }
 
     @Override
@@ -34,4 +32,9 @@ public class TestSessionVariables extends ConcurrentHashMap implements SessionMa
         metadata.clear();
     }
 
+    @Override
+    public void clear() {
+        clearMetaData();
+        super.clear();
+    }
 }

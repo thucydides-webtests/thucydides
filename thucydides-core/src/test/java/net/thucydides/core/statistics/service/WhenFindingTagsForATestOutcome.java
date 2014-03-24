@@ -197,15 +197,8 @@ public class WhenFindingTagsForATestOutcome {
         AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
 
         Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
-        assertThat(tags.size(), is(2));
-        TestTag tag1 = (TestTag) tags.toArray()[0];
-        assertThat(tag1.getName(), is("A feature"));
-        assertThat(tag1.getType(), is("feature"));
-
-        TestTag tag2 = (TestTag) tags.toArray()[1];
-        assertThat(tag2.getName(), is("car sales"));
-        assertThat(tag2.getType(), is("pillar"));
-
+        assertThat(tags, hasItem(TestTag.withName("A feature").andType("feature")));
+        assertThat(tags, hasItem(TestTag.withName("car sales").andType("pillar")));
     }
 
 
@@ -327,9 +320,9 @@ public class WhenFindingTagsForATestOutcome {
 
         assertThat(requirement.isPresent(), is(true));
         assertThat(requirement.get().getName(), is("Plant potatoes"));
-        assertThat(requirement.get().getNarrativeText(), containsString("As a farmer"));
-        assertThat(requirement.get().getNarrativeText(), containsString("I want to plant potatoes"));
-        assertThat(requirement.get().getNarrativeText(), containsString("So that I can harvest them later on"));
+        assertThat(requirement.get().getNarrative().getText(), containsString("As a farmer"));
+        assertThat(requirement.get().getNarrative().getText(), containsString("I want to plant potatoes"));
+        assertThat(requirement.get().getNarrative().getText(), containsString("So that I can harvest them later on"));
     }
 }
 

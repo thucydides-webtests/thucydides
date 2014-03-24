@@ -24,10 +24,14 @@ import org.joda.time.DateTime;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sort;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
@@ -252,7 +256,9 @@ public class TestOutcomeConverter implements Converter {
     private void addTagsTo(HierarchicalStreamWriter writer, Set<TestTag> tags) {
         if (!CollectionUtils.isEmpty(tags)) {
             writer.startNode(TAGS);
-            for (TestTag tag : tags) {
+            List<TestTag> orderedTags = Lists.newArrayList(tags);
+            Collections.sort(orderedTags);
+            for (TestTag tag : orderedTags) {
                 writer.startNode(TAG);
                 writer.addAttribute(TAG_NAME, tag.getName());
                 writer.addAttribute(TAG_TYPE, tag.getType());

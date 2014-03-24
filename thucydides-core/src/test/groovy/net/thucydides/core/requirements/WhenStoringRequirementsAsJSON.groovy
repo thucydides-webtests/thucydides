@@ -15,8 +15,8 @@ class WhenStoringRequirementsAsJSON extends Specification {
             def persister = new RequirementPersister(tempDirectory, "annotatedstories")
         and:
             SortedMap<String, Requirement> map = Maps.newTreeMap()
-            map.put("apples", Requirement.named("Grow Apples").withType("feature").withNarrativeText("A feature"))
-            map.put("oranges", Requirement.named("Grow Oranges").withType("feature").withNarrativeText("A feature"))
+            map.put("apples", Requirement.named("Grow Apples").withType("feature").withNarrative("A feature"))
+            map.put("oranges", Requirement.named("Grow Oranges").withType("feature").withNarrative("A feature"))
         when:
             persister.write(map);
         then:
@@ -29,9 +29,9 @@ class WhenStoringRequirementsAsJSON extends Specification {
             def persister = new RequirementPersister(tempDirectory, "annotatedstories")
         and:
             SortedMap<String, Requirement> map = Maps.newTreeMap()
-            map.put("apples", Requirement.named("Grow Apples").withType("capability").withNarrativeText("A capability"))
-            map.put("apples.green", Requirement.named("Grow Green Apples").withType("feature").withNarrativeText("A feature"))
-            map.put("oranges", Requirement.named("Grow Oranges").withType("feature").withNarrativeText("A feature"))
+            map.put("apples", Requirement.named("Grow Apples").withType("capability").withNarrative("A capability"))
+            map.put("apples.green", Requirement.named("Grow Green Apples").withType("feature").withNarrative("A feature"))
+            map.put("oranges", Requirement.named("Grow Oranges").withType("feature").withNarrative("A feature"))
         when:
             persister.write(map);
         then:
@@ -45,9 +45,9 @@ class WhenStoringRequirementsAsJSON extends Specification {
             def persister = new RequirementPersister(tempDirectory, "annotatedstories")
         and:
             SortedMap<String, Requirement> map = Maps.newTreeMap()
-            map.put("apples", Requirement.named("Grow Apples").withType("capability").withNarrativeText("A capability"))
-            map.put("apples.green", Requirement.named("Grow Green Apples").withType("feature").withNarrativeText("A feature"))
-            map.put("oranges", Requirement.named("Grow Oranges").withType("feature").withNarrativeText("A feature"))
+            map.put("apples", Requirement.named("Grow Apples").withType("capability").withNarrative("A capability"))
+            map.put("apples.green", Requirement.named("Grow Green Apples").withType("feature").withNarrative("A feature"))
+            map.put("oranges", Requirement.named("Grow Oranges").withType("feature").withNarrative("A feature"))
         and:
             persister.write(map);
         when:

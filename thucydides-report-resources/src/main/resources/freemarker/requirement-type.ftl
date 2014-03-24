@@ -200,7 +200,7 @@
                                         <span class="requirementName"><a
                                                 href="${requirementReport}">${requirementOutcome.requirement.displayName}</a></span>
 
-                                        <div class="requirementNarrative read-more-text">${formatter.renderDescription(requirementOutcome.requirement.narrativeText)}</div>
+                                        <div class="requirementNarrative read-more-text">${formatter.renderDescription(requirementOutcome.requirement.narrative.renderedText)}</div>
                                     </td>
 
                                     <#if (requirements.childrenType?has_content) >

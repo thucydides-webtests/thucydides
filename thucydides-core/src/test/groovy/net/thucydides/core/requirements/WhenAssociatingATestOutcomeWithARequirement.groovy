@@ -89,7 +89,7 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
             def testOutcome = new TestOutcome("Title for test 1", Test1.class, story)
         then:
             capabilityProvider.getParentRequirementOf(testOutcome).isPresent()
-            capabilityProvider.getParentRequirementOf(testOutcome).get().narrativeText == "A Narrative for test 1\nMultiple lines"
+            capabilityProvider.getParentRequirementOf(testOutcome).get().narrative.renderedText == "A Narrative for test 1\nMultiple lines"
     }
 
     def "Should find the direct parent requirement of a test outcome for nested requirements"() {
@@ -142,7 +142,7 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
             Optional<Requirement> requirement = capabilityProvider.getRequirementFor(growPotatoesTag)
             requirement.get().getName() == "Grow potatoes"
             requirement.get().getType() == "capability"
-            requirement.get().narrativeText.contains "I want to grow potatoes"
+            requirement.get().narrative.renderedText.contains "I want to grow potatoes"
     }
 
     def "Should not find the requirement if there are no matching requirements for a tag"() {

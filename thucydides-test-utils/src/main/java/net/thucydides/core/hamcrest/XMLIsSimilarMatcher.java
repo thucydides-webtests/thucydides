@@ -50,9 +50,7 @@ public class XMLIsSimilarMatcher extends TypeSafeMatcher<String> {
                 }
 
                 @Override
-                public void skippedComparison(Node node, Node node2) {
-                    int i = 0;
-                }
+                public void skippedComparison(Node node, Node node2) {}
             });
             xmlIsSimilar = difference.similar();
         } catch (Exception e) {

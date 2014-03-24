@@ -78,7 +78,7 @@
                             </#if>
                             <h3>${parentType}: ${parentTitle} ${issueNumber}</h3>
                             <div class="requirementNarrativeTitle">
-                            ${formatter.renderDescription(parentRequirement.get().narrativeText)}
+                            ${formatter.renderDescription(parentRequirement.get().narrative.renderedText)}
                             </div>
                         </div>
                     </#if>

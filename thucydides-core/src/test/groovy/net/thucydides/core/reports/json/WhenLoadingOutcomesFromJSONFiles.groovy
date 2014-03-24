@@ -474,7 +474,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 		then :
         	Set<TestTag> tags = testOutcome.tags
             tags.each { assert it.class == TestTag }
-            tags.collect { it.name } == ["Some test scenario with tags", "simple story", "important feature"]
+            tags.collect { it.name } as Set == ["Some test scenario with tags", "simple story", "important feature"] as Set
     }
     
     def "should load example data from json file"() {

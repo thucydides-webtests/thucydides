@@ -416,12 +416,12 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     private Requirement requirementFromDirectoryName(File requirementDirectory) {
         String shortName = humanReadableVersionOf(requirementDirectory.getName());
         List<Requirement> children = readChildrenFrom(requirementDirectory);
-        return Requirement.named(shortName).withType(getDefaultType(level)).withNarrativeText(shortName).withChildren(children);
+        return Requirement.named(shortName).withType(getDefaultType(level)).withNarrative(shortName).withChildren(children);
     }
 
     private Requirement storyNamed(String storyName) {
         String shortName = humanReadableVersionOf(storyName);
-        return Requirement.named(shortName).withType("story").withNarrativeText(shortName);
+        return Requirement.named(shortName).withType("story").withNarrative(shortName);
     }
 
     private Requirement requirementWithNarrative(File requirementDirectory, String shortName, Narrative requirementNarrative) {
@@ -434,7 +434,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
                 .withOptionalDisplayName(displayName)
                 .withOptionalCardNumber(cardNumber)
                 .withType(type)
-                .withNarrativeText(requirementNarrative.getText())
+                .withNarrative(requirementNarrative.getText())
                 .withReleaseVersions(releaseVersions)
                 .withChildren(children);
     }

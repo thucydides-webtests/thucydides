@@ -174,9 +174,19 @@
         <#assign issueNumber = "">
     </#if>
     <h2>${parentType}: ${issueNumber} ${parentTitle}</h2>
-    <div class="requirementNarrativeTitle">
-    ${formatter.renderDescription(requirements.parentRequirement.get().narrativeText)}
-    </div>
+
+    <#if requirements.parentRequirement.get().narrative.renderedText?has_content>
+        <div class="requirementNarrativeTitle">
+            ${formatter.renderDescription(requirements.parentRequirement.get().narrative.renderedText)}
+        </div>
+    </#if>
+
+    <#foreach customField in requirements.parentRequirement.get().customFields >
+        <#if requirements.parentRequirement.get().getCustomField(customField).present>
+            <a href="javaScript:void(0)" class="read-more-link"><img src="images/plus.png" height="15" /><h3><span class="custom-field-title">${customField}</span></h3></a>
+            <div class="read-more-text">${requirements.parentRequirement.get().getCustomField(customField).get()}</div>
+        </#if>
+    </#foreach>
 </div>
 </#if>
 
@@ -290,9 +300,13 @@
 
                             <#assign requirementReport = reportName.forRequirement(requirementOutcome.requirement) >
                             <td class="${requirementOutcome.testOutcomes.result}-text requirementRowCell">
-                                <a href="javaScript:void(0)" class="read-more-link"><img src="images/plus.png" height="20" /></a>
+                                <#if requirementOutcome.requirement.displayName?has_content>
+                                    <a href="javaScript:void(0)" class="read-more-link"><img src="images/plus.png" height="20" /></a>
+                                </#if>
                                 <span class="requirementName"><a href="${requirementReport}">${requirementOutcome.requirement.displayName}</a></span>
-                                <div class="requirementNarrative read-more-text">${formatter.renderDescription(requirementOutcome.requirement.narrativeText)}</div>
+                                <#if requirementOutcome.requirement.narrative.renderedText?has_content>
+                                    <div class="requirementNarrative read-more-text">${formatter.renderDescription(requirementOutcome.requirement.narrative.renderedText)}</div>
+                                </#if>
                             </td>
 
                             <#if (requirements.childrenType?has_content) >

@@ -14,7 +14,7 @@
 <#if (autoTotalCount > 0)>
     <#assign autoPercentageSuccessCount = autoSuccessCount / autoTotalCount >
     <#assign autoPercentagePendingCount = autoPendingCount / autoTotalCount  >
-    <#assign autoPercentageFailureOrErrorCount = autoPendingCount / autoTotalCount  >
+    <#assign autoPercentageFailureOrErrorCount = autoFailureOrErrorCount / autoTotalCount  >
 <#else>
     <#assign autoPercentageSuccessCount = 0.0 >
     <#assign autoPercentagePendingCount = 0.0 >
@@ -56,7 +56,7 @@
                 <th>Pass&nbsp;<i class="icon-check"/> </th>
                 <th>% Pass</th>
                 <th>Fail&nbsp;<i class="icon-thumbs-down"/></th>
-                <th>% Pass</th>
+                <th>% Fail</th>
                 <th>Pending&nbsp;<i class="icon-ban-circle"/></th>
                 <th>% Pending</th>
             </tr>

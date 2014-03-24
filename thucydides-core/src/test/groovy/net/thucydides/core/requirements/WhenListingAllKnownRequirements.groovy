@@ -103,7 +103,7 @@ class WhenListingAllKnownRequirements extends Specification {
         when:
             def allRequirementTypes = requirementsService.getRequirementTypes()
         then:
-            allRequirementTypes == ["story","feature","capability"]
+            allRequirementTypes as Set == ["story","feature","capability"] as Set
     }
 
     def newTemporaryRequirementsDirectory() {

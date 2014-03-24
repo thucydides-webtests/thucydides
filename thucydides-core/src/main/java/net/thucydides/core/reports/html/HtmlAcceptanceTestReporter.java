@@ -6,6 +6,7 @@ import com.google.common.base.Predicate;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
@@ -92,6 +93,8 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         copyResourcesToOutputDirectory();
 
         String reportFilename = reportFor(storedTestOutcome);
+        LOGGER.info("GENERATING HTML REPORT FOR " + storedTestOutcome.getCompleteName() + "/" + qualifier + " => " + reportFilename);
+
         return writeReportToOutputDirectory(reportFilename, htmlContents);
     }
 

@@ -374,7 +374,7 @@
                                             <#assign stability_rank = 3>
                                         <#else>
                                             <#assign stability_icon = "traffic-green.gif">
-                                            <#assign stability_rank = 4>
+                                            <#assign stability_rank = 4>                                               x
                                         </#if>
 
                                     <tr class="test-${testOutcome.result}">

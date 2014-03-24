@@ -36,11 +36,11 @@ class WhenConvertingCSVData extends Specification {
         then:
             convertedValue == expectedValue
         where:
-        value      | fieldType  | expectedValue
-        "1"        | Integer    |  1
-        "1"        | BigDecimal |  1.0
-        "1.2"      | BigDecimal |  1.2
-        "true"     | Boolean    |  true
-        "foo"      | String     |  "foo"
+            value      | fieldType  | expectedValue
+            "1"        | Integer    |  1
+            "1"        | BigDecimal |  1.0
+            "1.2"      | BigDecimal |  1.2
+            "true"     | Boolean    |  true
+            "foo"      | String     |  "foo"
     }
 }
