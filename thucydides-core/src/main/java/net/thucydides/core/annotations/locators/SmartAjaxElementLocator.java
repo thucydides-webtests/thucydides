@@ -237,5 +237,10 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 		}
 	}
 
-
+    @Override
+    public String toString() {
+        SmartAnnotations annotations = new SmartAnnotations(field);
+        By by = annotations.buildBy();
+        return by.toString();
+    }
 }
